@@ -1,0 +1,35 @@
+# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+pm_IO_trade, parameter, ??
+pm_EN_demand_from_initialcap2, parameter, ??
+sm_EJ_2_TWa, scalar, ??
+cm_earlyreti_rate, scalar, ??
+vm_prodPe, variable, ??
+vm_Xport, variable, ??
+vm_Mport, variable, ??
+pm_ttot_val, parameter, ??
+pm_ts, parameter, ??
+pm_prtp, parameter, ??
+cm_startyear, switch, ???
+cm_nucscen, switch, ???
+cm_limit_peur_scen,switch,???
+cm_rentdiscoil,switch,???
+cm_rentdiscoil2,switch,???
+cm_rentconvoil,switch,???
+cm_rentdiscgas,switch,???
+cm_rentdiscgas2,switch,???
+cm_rentconvgas,switch,???
+cm_rentdisccoal,switch,???
+cm_rentdisccoal2,switch,???
+cm_rentconvcoal,switch,???
+pm_costsTradePeFinancial,parameter,???
+cm_trdadj,switch,???
+qm_fuel2pe,equation,???
+pm_ffPolyCumEx,input,questionnaire
+pm_fuelex_cum,input,questionnaire
+pm_prodIni,input,questionnaire

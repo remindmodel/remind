@@ -1,0 +1,133 @@
+*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  authors, and contributors see CITATION.cff file. This file is part
+*** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+*** |  AGPL-3.0, you are granted additional permissions described in the
+*** |  REMIND License Exception, version 1.0 (see LICENSE file).
+*** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/31_fossil/MOFEX/equations.gms
+*===========================================
+* MODULE.....: 31 FOSSIL
+* REALISATION: MOFEX
+* FILE.......: equations.gms
+*===========================================
+* Decription: This realisation activates time-dependent grade structures for
+*   oil, gas and coal. This enables the model to take into account exogenous technological
+*   change for example.
+*===========================================
+* Authors...: SB
+* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
+* History...:
+*   - 2012-09-10 : Creation
+*===========================================
+
+*' @equations 
+*' MOFEX (Model of Fossil Extraction) takes fossil demand, imports and exports from a prior REMIND run as inputs, 
+*' and it calculates fossil extraction and trade as outputs. 
+
+
+*** Trade of resources (oil, gas and coal)
+q31_MOFEX_tradebal(t,trade(peExGrade))..
+    sum(regi,  vm_Xport(t,regi,trade) - vm_Mport(t,regi,trade)) =e= 0;
+
+*** Discounted extraction and trade costs of fossil fuels 
+q31_MOFEX_costMinFuelEx..
+         v31_MOFEX_costMinFuelEx
+         =e=
+         sum(ttot$(ttot.val ge cm_startyear), 
+           sum(regi,
+             pm_ts(ttot) / ((1 + pm_prtp(regi))**(pm_ttot_val(ttot)-cm_startyear))
+             * (sum(peFos(enty), vm_costFuEx(ttot,regi,enty))
+               + sum(peFos(enty), pm_costsTradePeFinancial(regi,"Mport",enty) * vm_Mport(ttot,regi,enty))
+               + sum(peFos(enty),
+                 (pm_costsTradePeFinancial(regi,"Xport",enty) * vm_Xport(ttot,regi,enty))
+                 * (1
+                   + pm_costsTradePeFinancial(regi,"XportElasticity",enty) / sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1))
+                   * ( vm_Xport(ttot,regi,enty)  / (vm_Xport(ttot-1,regi,enty) + pm_costsTradePeFinancial(regi, "tradeFloor",enty)) - 1)
+                 )
+               )
+             )
+           )
+         );
+
+***-----------------------------------------
+*** Fossil fuel extraction (grade structure)
+***-----------------------------------------
+*NB/LB/BB/GL/IM* fossil extraction costs as grade structure with linear increasing marginal extraction costs
+***This is used for oil, gas and coal. Notice that coal supply cost curves remain constant over time
+
+*' Fossil fuels are represented by discrete grades based on ranges of marginal extraction costs. The total extraction cost for each time step 
+*' is calculated based on long-term marginal extraction costs and short-term calibrated adjustment costs which capture inertias, e.g. from infrastructure
+
+q31_costFuExGrade(ttot,regi,peExGrade(enty))$(ttot.val ge cm_startyear)..
+  vm_costFuEx(ttot,regi,enty)
+  =e=
+*NB*111123 this is the long-term marginal extraction cost part
+  sum(pe2rlf(enty,rlf),
+    ((p31_grades(ttot,regi,"xi1",enty, rlf) + pm_costsTradePeFinancial(regi,"use",enty)
+       + (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * v31_fuExtrCum(ttot-1,regi,enty, rlf)$(ttot.val gt 2005) / p31_grades(ttot,regi,"xi3",enty, rlf)
+       + (p31_grades(ttot,regi,"xi2",enty,rlf)-p31_grades(ttot,regi,"xi1",enty, rlf)) * (v31_fuExtrCum(ttot,regi,enty,rlf)-v31_fuExtrCum(ttot-1,regi,enty,rlf)$(ttot.val gt 2005)) / (2 * p31_grades(ttot,regi,"xi3",enty, rlf))
+     )
+***this is the short-term adjustment cost part
+     * (
+         (1 +
+           (p31_datafosdyn(regi,enty,rlf,"alph") * 1/(sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1)))
+             * sqr(((vm_fuExtr(ttot,regi,enty,rlf)-vm_fuExtr(ttot-1,regi,enty,rlf))/(vm_fuExtr(ttot-1,regi,enty,rlf)+
+                                                                                     0.001*p31_grades(ttot,regi,"xi3",enty,rlf) + 
+                                                                                     p31_extraseed(ttot,regi,enty,rlf) +
+                                                                                     1.e-9)))
+           )$(ttot.val gt 2005) 
+         )
+       )
+       * vm_fuExtr(ttot,regi,enty,rlf)
+     )$(p31_grades(ttot,regi,"xi3",enty,rlf) gt 0)
+  )
+;
+
+*--------------------------------------
+*** Calculate cumulated fuel extraction
+*--------------------------------------
+*' Cumulated fuel extraction (oil, gas and coal) is the sum of extraction in each time step multiplied by the time step length.
+*' If early retirement of oil wells is switched on, any slack capacity from those fields is also added.
+
+q31_fuExtrCum(ttot,regi,pe2rlf(peEx(enty),rlf))$(ttot.val ge cm_startyear)..
+        v31_fuExtrCum(ttot,regi,enty,rlf) 
+        =e= 
+        v31_fuExtrCum(ttot-1,regi,enty,rlf)$(ttot.val gt 2005) + pm_ts(ttot)*(vm_fuExtr(ttot,regi,enty,rlf)
+$if %cm_OILRETIRE% == "on"    + v31_fuSlack(ttot,regi,enty,rlf)
+        );
+
+*NB*110720 dynamic constraints on resource extraction
+*' These dynamic constraints on the decline and increase rates of production reflect physical and technical inertias of oil, gas and coal
+*** --------------------------------------
+*' Dynamic constraint on decline rate
+*** --------------------------------------
+q31_fuExtrDec(ttot+1,regi,enty2rlf_dec(enty,rlf))$(pm_ttot_val(ttot+1) ge max(2010,cm_startyear))..
+         vm_fuExtr(ttot+1,regi,enty,rlf)
+$if %cm_OILRETIRE% == "on"    + v31_fuSlack(ttot+1,regi,enty,rlf)
+         =g=
+          p31_datafosdyn(regi,enty,rlf,"decoffset") * p31_grades(ttot,regi,"xi3",enty,rlf) * 0.5 * ( pm_ts(ttot+1) + pm_ts(ttot) )     !! This is an (arbitrarily set) minimal amount that can simply be turned off from one time step to the next
+
+$if not setglobal test_TS   + (1-p31_datafosdyn(regi,enty,rlf,"dec"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
+$if setglobal test_TS       + (1-p31_datafosdyn(regi,enty,rlf,"dec")-0.002)**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
+
+$IFTHEN.cm_OILRETIRE %cm_OILRETIRE% == "on"
+q31_smoothoilphaseout(ttot,regi,enty2rlf_dec(enty,rlf))$( (ttot.val ge cm_startyear) AND (ttot.val lt 2120) AND (sameas(enty,"peoil")) )..
+    v31_fuSlack(ttot+1,regi,enty,rlf)
+    =l=
+    v31_fuSlack(ttot,regi,enty,rlf) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * cm_earlyreti_rate * 0.3 * p31_max_oil_extraction(regi,enty,rlf); !! 0.3 is an arbitrarily chosen number to make the retirement of oil comparable to retirement of other sectors- the "max_oil_extraction" is alsways higher than the real extraction, so some decrease of this limit makes the results smoother. 
+;
+$ENDIF.cm_OILRETIRE
+
+*** --------------------------------------
+*' Dynamic constraint on increase rate
+*** --------------------------------------
+q31_fuExtrInc(ttot+1,regi,enty2rlf_inc(enty,rlf))$((p31_grades(ttot,regi,"xi3",enty,rlf) gt 0) AND (pm_ttot_val(ttot+1) ge max(2010,cm_startyear)))..
+         vm_fuExtr(ttot+1,regi,enty,rlf)
+         =l=
+         (1 + p31_datafosdyn(regi,enty,rlf,"inc"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (vm_fuExtr(ttot,regi,enty,rlf) + p31_datafosdyn(regi,enty,rlf,"incoffset"))
+$ifthen.cm_oil_scen %cm_oil_scen% == "highOil"	  +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
+$elseif.cm_oil_scen %cm_oil_scen% == "6"          +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND (sameas(enty,"peoil") AND sameas(rlf,"1") AND sameas(regi,"REF")));
+$elseif.cm_oil_scen %cm_oil_scen% == "4"          +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
+$endif.cm_oil_scen
+;
+*** EOF ./modules/31_fossil/MOFEX/equations.gms

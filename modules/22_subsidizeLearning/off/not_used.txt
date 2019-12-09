@@ -1,0 +1,17 @@
+# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name, type, reason
+vm_deltaCap, variable, ???
+pm_capCumForeign, parameter, ???
+pm_ts, parameter, ???
+qm_budget, equation, ???
+cm_startyear, switch, ???
+pm_SolNonInfes, parameter, ???
+pm_capCum0,parameter,???
+qm_deltaCapCumNet,equation,???
+sm_fadeoutPriceAnticip,scalar,???
+vm_costTeCapital,varaible,???
