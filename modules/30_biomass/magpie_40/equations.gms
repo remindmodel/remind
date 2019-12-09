@@ -15,7 +15,7 @@
 *' The first part, summing over *peren2rlf30*, represents costs for biomass with fixed prices.
 *' The second part that includes *v30_pebiolc_costs* represents costs for biomass with continous supply curves from MAgPIE.
 *' In coupled runs *v30_multcost* is a cost markup factor improving the optimization performance by penalizing
-*' (too) large jumps in the demand in between two iterations. It converges to 1 and therefore does not affect the outcome.
+*' (too) large jumps in the demand in between two coupling iterations. It converges to 1 and therefore does not affect the outcome.
 *' The last part, containing *pm_costsTradePeFinancial*, represents additional tradecosts (only for purpose grown lignocellulosic biomass).
 
 q30_costFuBio(ttot,regi)$(ttot.val ge cm_startyear).. 
