@@ -1,0 +1,11 @@
+*** SOF ./core/input/p_costMarkupAdvTech.prn
+*** p_costMarkupAdvTech.prn
+
+     2005    2010    2015   2020    2025   2030
+0     1.0     1.0     1.0    1.0    1.0    1.0
+1     1.9     1.6     1.3    1.1    1.0    1.0
+2     2.0     2.0     1.9    1.6    1.3    1.1 
+3     2.3     2.3     2.2    1.8    1.5    1.2  
+
+
+*** EOF ./core/input/p_costMarkupAdvTech.prn
