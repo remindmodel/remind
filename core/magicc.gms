@@ -7,12 +7,12 @@
 *** SOF ./core/magicc.gms
 *** FILE magicc.gms ***
 $ontext
-This connects REMIND-R with the MAGICC model.
+This connects REMIND with the MAGICC model.
 
 TODO
 - more documentation
 - document MAGICC_scen_*.inc files
-- document excel files and upload to Wiki
+- document excel files and upload to tutorials
 $offtext
 
 $ifthen %cm_rcp_scen% == "rcp20"   p_MAGICC_emi(tall,RCP_regions_world,emiRCP) = magicc_default_data_450(RCP_regions_world,tall,emiRCP);
