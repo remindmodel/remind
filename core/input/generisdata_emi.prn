@@ -1,0 +1,52 @@
+*** SOF ./core/input/generisdata_emi.prn
+*TA* This file includes the emission factors of secondary energy production technologies given in GtC per ZJ (ie 10^9tC per 10^9TJ) 
+*RP* the emission factors for oil were reduced from 20 to 18.4 to represent 
+***  that a share of oil is not burned but rather converted into long-lived
+***  goods (bitumen->tar for streets, durable plastics - most of plastics is 
+***  quickly burned, but some remains unburnt for decades) - "carbonstored".
+***  NB: reduction calculated based on values in manual to IEA CO2 emissions statistics (2007).
+*JeS* emission factors for n2o are in Tg N per TWa (native remind units)
+*LP* ratio of C to H  in CCU-technologies (make sure if it is H or H2 you are reffering to!)
+
+                               co2      cco2      n2o            CtoH
+pegas.seel.ngcc                15.3             0.00315
+pegas.seel.ngt                 15.3             0.00315
+pegas.seel.gaschp              15.3             0.00315
+pegas.seel.ngccc                1.5      13.8   0.00315
+pegas.segafos.gastr            15.3             0.00315
+pegas.seh2.gash2               15.3             0.00315
+pegas.seh2.gash2c               1.5      13.8   0.00315
+pegas.sehe.gashp               15.3             0.00315
+pegas.seliqfos.gasftrec        15.3           
+pegas.seliqfos.gasftcrec       13.8       1.5
+pecoal.seel.igcc               26.1             0.04415
+pecoal.seel.pc                 26.1             0.04415
+pecoal.seel.igccc               2.6      23.5   0.04415
+$ifthen setGlobal cm_ccsfosall
+pecoal.seel.pcc                 2.6      23.5   0.04415
+pecoal.seel.pco                 0.2      25.9   0.04415
+$endif
+pecoal.seel.coalchp            26.1             0.04415
+pecoal.sehe.coalhp             26.1             0.04415
+pecoal.seh2.coalh2             26.1             0.04415
+pecoal.seh2.coalh2c             2.6      23.5   0.04415
+pecoal.seliqfos.coalftrec      26.1           
+pecoal.seliqfos.coalftcrec      7.8      18.3
+pecoal.sesofos.coaltr          26.1             0.04415
+pecoal.segafos.coalgas         26.1             0.04415
+pebiolc.seel.bioigccc         -20.0      20.0   0.12614
+pebiolc.seel.bioigcc                            0.12614
+pebiolc.seliqbio.bioftcrec    -12.0      12.0 
+pebiolc.seh2.bioh2c           -22.5      22.5   0.12614
+pebiolc.seel.biochp                             0.12614
+pebiolc.seh2.bioh2                              0.12614
+pebiolc.sehe.biohp                              0.12614
+pebiolc.sesobio.biotr                           0.12614
+pebiolc.sesobio.biotrmod                        0.12614
+pebiolc.segabio.biogas                          0.12614
+peoil.seliqfos.refliq          18.4               
+peoil.seel.dot                 18.4             0.01892
+seh2.segafos.h22ch4                                              0.395
+seh2.seliqfos.MeOH                                               0.53
+
+*** EOF ./core/input/generisdata_emi.prn
