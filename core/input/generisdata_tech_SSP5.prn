@@ -8,7 +8,7 @@ eta         Conversion efficieny, i.e. energy output divided by energy input (fo
 omf         Fixed operation and maintenace costs given as a fraction of investment costs
 omv         Variable operation and maintenance costs given in $(2015)/kWa energy production
 lifetime    given in years
-incolearn   Floor investment costs given in $(2015)/kW electricity capacity
+incolearn   Difference from inco0 to floor investment costs, given in $(2015)/kW electricity capacity for electricity generation technologies
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 $offtext
