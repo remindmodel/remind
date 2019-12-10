@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 
 
-*' @description This realization ised IEA data from 2014.
+*' @description This realization used IEA data from 2014.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/04_PE_FE_parameters/iea2014/sets.gms"

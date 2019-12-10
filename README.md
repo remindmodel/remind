@@ -107,7 +107,7 @@ Model run settings are set in `config/default.cfg` (or another config file of
 the same structure). New model scenarios can be created by adding a column to
 `config/scenario_config.csv`
 
-## HOW TO RUN   --- HIER BIN ICH
+## HOW TO RUN
 To run the model execute `Rscript start.R` (or `source("start.R")` from within
 R) in the main folder of the model.
 Make sure that the config file has been set correctly before
