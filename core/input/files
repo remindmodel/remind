@@ -13,9 +13,8 @@ p_abatparam_N2O.cs4r
 p_abatparam_CO2.cs4r
 p_adj_deltacapoffset.cs4r
 p_boundEmi.cs4r
-p_boundInvMacro.cs4r
+p01_boundInvMacro.cs4r
 pm_NuclearConstraint.cs4r
-p_costsPEtradeMp.cs4r
 pm_dataccs.cs3r
 p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r
@@ -32,7 +31,6 @@ p_share_ind_fesos.cs4r
 p_share_ind_fesos_bio.cs4r
 pm_boundCapCCS.cs4r
 pm_boundCapEV.cs4r
-pm_costsTradePeFinancial.cs3r
 pm_shPPPMER.cs4r
 p_inco0.cs4r
 p_boundCapCCSindicator.cs4r

@@ -594,8 +594,6 @@ loop(ttot$(ttot.val ge 2005),
 * assume GDP is flat from 2150 on (only enters damage calculations in the far future)
 pm_GDPGross(tall,regi)$(tall.val ge 2150) = pm_GDPGross("2149",regi); 
 
-pm_Xport0(ttot,regi,tradePe)      = vm_Xport.l(ttot,regi,tradePe);
-
 
 
 ***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------

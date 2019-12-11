@@ -85,7 +85,7 @@ if (length(args) == 1) {
     p_nw                   = 'p80_nw',
     c_nucscen              = 'cm_nucscen',
     q_co2eq                = 'q_co2eq',
-    pm_costsPEtradeMp      = 'p_costsPEtradeMp', 
+    pm_costsPEtradeMp      = 'pm_costsPEtradeMp', 
     vm_welfare             = 'v_welfare',
     pm_tau_fe_sub          = 'p21_tau_fe_sub', 
     pm_tau_fe_tax          = 'p21_tau_fe_tax',

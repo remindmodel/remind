@@ -798,6 +798,7 @@ sets
        tax
        subsidizeLearning
        capitalMarket
+       trade
        agCosts
        CES_parameters
        biomass
@@ -832,6 +833,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        tax . %tax%
        subsidizeLearning . %subsidizeLearning%
        capitalMarket . %capitalMarket%
+       trade . %trade%
        agCosts . %agCosts%
        CES_parameters . %CES_parameters%
        biomass . %biomass%
@@ -1912,18 +1914,6 @@ Sets
     compl_coef    "coefficients for the perfectly complementary factors"
   /
 
-  trade(all_enty)             "all traded commodities"
-  //
-  tradeMacro(all_enty)      "traded macro-economic commodities"
-  /good, perm/
-  tradePe(all_enty)         "traded primary energy commodities"
-  /
-  peoil, pecoal, pegas, peur, pebiolc
-  /
-  tradeSe(all_enty)         "traded secondary energy commodities"
-  /
-  null
-  /
 
 ***-------------------------------------------------------------------------------
 ***                 SETS for fragmented policy regimes

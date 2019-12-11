@@ -35,7 +35,6 @@ p_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterati
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
-pm_Xport0(tall,all_regi,all_enty)                    "reference level value of export"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
 pm_cesdata_putty(tall,all_regi,all_in,cesParameter)  "quantities for the putty clay factors"
 pm_delta_kap(all_regi,all_in)                        "depreciation rate of capital"
@@ -46,7 +45,6 @@ pm_gdp(tall,all_regi)                                "GDP data [trn US$ 2005]"
 p_developmentState(tall,all_regi)                    "level of development based on GDP per capita"
 f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
-pm_IO_trade(tall,all_regi,all_enty,char)             "Energy trade bounds based on IEA data"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 pm_ppfen_ratios(all_in,all_in)                       "limit ratio of two primary production factors of energy (ppfEn)"
 pm_ppfen_shares(all_in,all_in)                       "limit the share of one ppfEn in total CES nest inputs"
@@ -205,9 +203,7 @@ o_negitr_disc_cons_drInt_reg(iteration,all_regi)     "estimated discounted consu
 o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
 ***----------------------------------------------------------------------------------------
-***------------------------------------------------trade module----------------------------
-p_tradecostgood(all_regi)                            "tradecosts (final good)"
-                               
+***------------------------------------------------trade module----------------------------                              
 pm_ttot_val(ttot)                                    "value of ttot set element"
 p_tall_val(tall)                                     "value of tall set element"
 pm_ts(tall)                                          "(t_n+1 - t_n-1)/2 for a timestep t_n"
@@ -225,8 +221,6 @@ p_teAnnuity(all_te)                                  "Annuity factor of a techno
 
 pm_cumDeprecFactor_old(ttot,all_regi,all_in)         "investment depreciation within a period, applied to the investment of t -1"
 pm_cumDeprecFactor_new(ttot,all_regi,all_in)         "investment depreciation within a period, applied to the investment of t"
-
-p_Mport2005correct(all_regi,all_enty)                "correction factor to match fossil supply and internal region energy demand in the initial year"
 
 p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC; from Eurostat and CEDS, to correct CH4 and N2O reporting"
 p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
@@ -324,12 +318,6 @@ vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-***----------------------------------------------------------------------------------------
-***------------------------------------------------trade module----------------------------
-vm_Xport(tall,all_regi,all_enty)                     "export of traded commodity [TWa]"
-vm_Mport(tall,all_regi,all_enty)                     "import of traded commodity [TWa]"
-*** Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
-vm_costAdjNash(ttot,all_regi)                        "adjustment costs for deviation from the trade structure of the last iteration"
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS

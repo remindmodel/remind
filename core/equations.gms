@@ -387,7 +387,7 @@ q_capCumNet(t0,regi,teLearn)..
 qm_fuel2pe(t,regi,peRicardian(enty))..
   vm_prodPe(t,regi,enty)
   =e=
-  sum(pe2rlf(enty,rlf2),vm_fuExtr(t,regi,enty,rlf2))-(vm_Xport(t,regi,enty)-(1-p_costsPEtradeMp(regi,enty))*vm_Mport(t,regi,enty))$(tradePe(enty)) -
+  sum(pe2rlf(enty,rlf2),vm_fuExtr(t,regi,enty,rlf2))-(vm_Xport(t,regi,enty)-(1-pm_costsPEtradeMp(regi,enty))*vm_Mport(t,regi,enty))$(tradePe(enty)) -
                       sum(pe2rlf(enty2,rlf2), (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0));
 
 ***---------------------------------------------------------------------------
@@ -766,7 +766,7 @@ q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(tto
 qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) .. 
     vm_cesIO(ttot,regi,"inco") * vm_damageFactor(ttot,regi) 
   - vm_Xport(ttot,regi,"good") 
-  + vm_Mport(ttot,regi,"good") * (1 - p_tradecostgood(regi) - pm_risk_premium(regi))
+  + vm_Mport(ttot,regi,"good") * (1 - pm_tradecostgood(regi) - pm_risk_premium(regi))
   =g=
     vm_cons(ttot,regi)
   + sum(ppfKap(in), vm_invMacro(ttot,regi,in))
