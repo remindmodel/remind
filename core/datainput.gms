@@ -113,12 +113,11 @@ $offdelim
 ;
 
 *** Set c_GDPpcScen according to c_GDPScen
-$if %cm_GDPscen% == "gdp_SDP" c_GDPpcScen = "SDP";
-$if %cm_GDPscen% == "gdp_SSP1" c_GDPpcScen = "SSP1";
-$if %cm_GDPscen% == "gdp_SSP2" c_GDPpcScen = "SSP2";
-$if %cm_GDPscen% == "gdp_SSP3" c_GDPpcScen = "SSP3";
-$if %cm_GDPscen% == "gdp_SSP4" c_GDPpcScen = "SSP4";
-$if %cm_GDPscen% == "gdp_SSP5" c_GDPpcScen = "SSP5";
+$if %cm_GDPScen% == "gdpSSP1" c_GDPpcScen = "SSP1"
+$if %cm_GDPScen% == "gdpSSP2" c_GDPpcScen = "SSP2"
+$if %cm_GDPScen% == "gdpSSP3" c_GDPpcScen = "SSP3"
+$if %cm_GDPScen% == "gdpSSP4" c_GDPpcScen = "SSP4"
+$if %cm_GDPScen% == "gdpSSP5" c_GDPpcScen = "SSP5"
 
 p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
 
@@ -781,7 +780,7 @@ loop(ttot$(ttot.val ge 2005),
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
-
+  
   p_adj_coeff(ttot,regi,te)                = 0.2;
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
@@ -805,7 +804,7 @@ loop(ttot$(ttot.val ge 2005),
 
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
-p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
+p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);  
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
 p_adj_coeff_glob(te)        = 0.0;
