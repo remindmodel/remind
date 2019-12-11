@@ -85,7 +85,7 @@ q30_pebiolc_costs(ttot,regi)$(ttot.val ge cm_startyear)..
 *' **Calculate shift factor for bioenergy costs**  
 *' The factor is computed by minimizing least squares (*v30_shift_r2*) of cost differences between MAgPIE output and MAgPIE emulator.
 *' It is solved in presolve (*s30_switch_shiftcalc* = 1) and deactivated in main solve (*s30_switch_shiftcalc* = 0).
-*' *pm_ts* is used as a weight factor.
+*' *pm_ts* is used as a weight factor, representing the time step length.
 
 q30_priceshift$(s30_switch_shiftcalc eq 1)..
          v30_shift_r2
