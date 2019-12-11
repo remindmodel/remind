@@ -58,7 +58,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Fri Dec 06 16:04:29 2019
+* Last modification (input data): Wed Dec 11 09:40:06 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -297,7 +297,7 @@ c21_cprice_red_factor  = 0.5;         !! def = 0.5
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in core/datainput.gms based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs

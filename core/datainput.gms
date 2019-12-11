@@ -111,14 +111,6 @@ $ondelim
 $include "./core/input/f_developmentState.cs3r"
 $offdelim
 ;
-
-*** Set c_GDPpcScen according to c_GDPScen
-$if %cm_GDPScen% == "gdpSSP1" c_GDPpcScen = "SSP1"
-$if %cm_GDPScen% == "gdpSSP2" c_GDPpcScen = "SSP2"
-$if %cm_GDPScen% == "gdpSSP3" c_GDPpcScen = "SSP3"
-$if %cm_GDPScen% == "gdpSSP4" c_GDPpcScen = "SSP4"
-$if %cm_GDPScen% == "gdpSSP5" c_GDPpcScen = "SSP5"
-
 p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
 
 *** load data for macro investments in 2005, used as bound

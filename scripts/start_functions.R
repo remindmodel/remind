@@ -86,6 +86,8 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
                                       "GDP_", cfg$gms$cm_GDPscen, "-",
                                       "Kap_", cfg$gms$capitalMarket, "-",
                                       "Reg_", substr(regionscode(cfg$regionmapping),1,10))
+   # adjust GDPpcScen based on GDPscen
+  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
 
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scritps
