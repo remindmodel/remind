@@ -199,7 +199,7 @@ cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
 c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2020 (delatcap=0)"
-c21_cprice_red_factor "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
+cm_cprice_red_factor "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step"
 cm_stagestart             "start of staged accession for delay runs"
 cm_stageend                       "end of staged accession for delay runs"
@@ -293,7 +293,7 @@ cm_bioenergymaxscen = 0;         !! def = 3
 c_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
-c21_cprice_red_factor  = 0.5;         !! def = 0.5
+cm_cprice_red_factor  = 0.5;         !! def = 0.5
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2

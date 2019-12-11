@@ -59,7 +59,7 @@ v21_taxrevGHG(t,regi) =g= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_t
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCO2luc(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCO2luc(t,regi) =g= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi))* c21_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
+v21_taxrevCO2luc(t,regi) =g= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi))* cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
                            - p21_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------

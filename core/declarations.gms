@@ -136,7 +136,7 @@ p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacitie
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
 pm_cf(tall,all_regi,all_te)                          "Installed capacity availability - capacity factor (fraction of the year that a plant is running)"
-pm_tkpremused(all_regi,all_te)                       "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
+p_tkpremused(all_regi,all_te)                       "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
 p_aux_tlt(all_te)                                    "auxilliary parameter to determine maximal lifetime of a technology"
 p_aux_check_omeg(all_te)                             "auxiliary parameter for an automated check that no technology is erroneously entered with pm_omeg('1') value of 0"
 p_aux_check_tlt(all_te)                              "auxiliary parameter for an automated check that the pm_omeg calculation and filling of the opTimeYr2te mapping is in accordance"
