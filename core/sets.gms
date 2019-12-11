@@ -771,6 +771,7 @@ sets
 
        modules "all the available modules"
        /
+       welfare
        PE_FE_parameters
        initialCap
        aerosols
@@ -804,6 +805,7 @@ sets
        /
 
 module2realisation(modules,*) "mapping of modules and active realisations" /
+       welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
        initialCap . %initialCap%
        aerosols . %aerosols%
