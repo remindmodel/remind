@@ -436,6 +436,11 @@ loop(regi,
           p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
       );
 );
+
+$if %cm_GDPscen% == "gdp_SDP"  p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.50 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPscen% == "gdp_SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.65 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPscen% == "gdp_SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.65 * p05_deltacap_res(t,regi,"biotr");
+
 display p05_deltacap_res;
 
 p05_cap_res(ttot,regi,teBioPebiolc) = 
