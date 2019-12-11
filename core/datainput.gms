@@ -847,7 +847,7 @@ $offdelim
 
 *** then calculate the financing costs during construction
 loop(te$(fm_dataglob("constrTme",te) > 0),
-  pm_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
+  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
 $if %cm_techcosts% == "REG"  (1.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
 $if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
@@ -855,14 +855,14 @@ $if %cm_techcosts% == "GLO"  (1.03 + pm_prtp(regi) )                            
 );
 *** nuclear sees 3% higher interest rates during construction time due to higher construction time risk, see "The economic future of nuclear power - A study conducted at The University of Chicago" (2004)
 loop(te$sameas(te,"tnrs"),
-  pm_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
+  p_tkpremused(regi,te) = 1/fm_dataglob("constrTme",te)
     * sum(integ$(integ.val <= fm_dataglob("constrTme",te)),
 $if %cm_techcosts% == "REG"  (1.03 + 0.03 + pm_prtp(regi) + p_risk_premium_constr(regi) )  ** (integ.val - 0.5) - 1
 $if %cm_techcosts% == "GLO"  (1.03 + 0.03 + pm_prtp(regi) )                                 ** (integ.val - 0.5) - 1
       )
 );
 
-display pm_tkpremused;
+display p_tkpremused;
 ***for those technologies, for which differentiated costs are available for 2015-2040, use those
 ***$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
 ***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
@@ -876,11 +876,11 @@ display pm_tkpremused;
 
 
 
-pm_data(regi,"inco0",te)       = (1 + pm_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
-pm_data(regi,"incolearn",te)   = (1 + pm_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
-p_inco0(ttot,regi,teRegTechCosts)  = (1 + pm_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
-*** take region average pm_tkpremused for global convergence price
-fm_dataglob("inco0",te)       = (1 + sum(regi, pm_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
+pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
+pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
+p_inco0(ttot,regi,teRegTechCosts)  = (1 + p_tkpremused(regi,teRegTechCosts) ) * p_inco0(ttot,regi,teRegTechCosts);
+*** take region average p_tkpremused for global convergence price
+fm_dataglob("inco0",te)       = (1 + sum(regi, p_tkpremused(regi,te))/sum(regi, 1)) * fm_dataglob("inco0",te);
 
 if( cm_solwindenergyscen = 2,
     loop(te$( sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") ),
