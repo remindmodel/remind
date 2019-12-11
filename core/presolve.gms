@@ -127,7 +127,7 @@ p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
 *** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
 *** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
 *** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * c21_cprice_red_factor;
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * cm_cprice_red_factor;
 *** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
