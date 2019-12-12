@@ -205,22 +205,22 @@ display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 *RP* implement switch for scenarios with different nuclear assumptions:
 *** ------------------------------------------------------------------------------------------
 if (cm_nucscen eq 2 OR cm_nucscen eq 1, !! but no fnrs (default in REMIND 1.7)
-  vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
+  vm_deltaCap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
+  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = 0;
 );
 *mh no fnrs, no tnrs:
 if (cm_nucscen eq 3,  !! no tnrs no fnrs
-  vm_deltaCap.up(t,regi,"tnrs",rlf)$(t.val ge 2010) = 0;
-  vm_deltaCap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.lo(t,regi,"tnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
+  vm_deltaCap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
+  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
 );
 
 if (cm_nucscen eq 5, !! no new nuclear investments after 2020, until then all currently planned plants are built
-  vm_deltaCap.up(t,regi,"tnrs",rlf)$(t.val gt 2020)= 0;
-  vm_deltaCap.fx(t,regi,"fnrs",rlf)            = 0;
-  vm_cap.lo(t,regi,"tnrs",rlf)$(t.val gt 2015)  = 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)                 = 0;
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
+  vm_deltaCap.fx(t,regi_nucscen,"fnrs",rlf)            = 0;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
+  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)                 = 0;
 );
 
 *** -------------------------------------------------------------
@@ -240,8 +240,8 @@ if (cm_emiscen ne 1,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
   if (cm_nucscen eq 4,
-    vm_cap.up(t,regi,"tnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi,"tnrs",rlf);
-    vm_cap.up(t,regi,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi,"fnrs",rlf);
+    vm_cap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"tnrs",rlf);
+    vm_cap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"fnrs",rlf);
   );
 );
 

@@ -761,6 +761,16 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+*** FS: definition of regional sensitivity/scenario sets
+
+$IFTHEN.RegScenNuc "%c_regi_nucscen%" == "all"
+  set regi_nucscen(all_regi) "regions which nucscen applies to";
+  regi_nucscen(all_regi)=YES;
+$ELSE.RegScenNuc
+  set regi_nucscen(all_regi) "regions which nucscen applies to" / %c_regi_nucscen% /;
+$ENDIF.RegScenNuc
+
+
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
