@@ -45,6 +45,13 @@ index_Nr "index to differentiate data points with identical characteristics"
 /
 0*62
 /
+
+  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+  /
+    level
+    midperiod
+    width
+  /
   ;
 t_29(ttot) = NO;
 t_29(t) = YES;

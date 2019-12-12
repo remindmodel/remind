@@ -4,16 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/29_CES_parameters/load/sets.gms
+*** SOF ./modules/29_CES_parameters/load/declarations.gms
 
-Set 
-  regi_dyn29(all_regi)   "dynamic region set for compatibility with testOneRegi"
-
-  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
-  /
-    level
-    midperiod
-    width
-  /
+Parameters
+  pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 ;
-*** EOF ./modules/29_CES_parameters/load/sets.gms
+
+*** EOF ./modules/29_CES_parameters/load/declarations.gms
+
