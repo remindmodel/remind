@@ -10,5 +10,5 @@ vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   = s37_clinker_process_CO2
   * p37_clinker_cement_ratio(ttot,regi)
   * vm_cesIO.l(ttot,regi,"ue_cement")
-  / sm_c_2_co2;
+  / sm_C_2_CO2;
 *** EOF ./modules/37_industry/subsectors/presolve.gms
