@@ -98,28 +98,28 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *RP* implement switch for scenarios with different carbon capture assumptions::
 *** ------------------------------------------------------------------------------------------
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
-  vm_cap.fx(t,regi,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi,"pcc",rlf)          = 0;
-  vm_cap.fx(t,regi,"pco",rlf)          = 0;
-  vm_cap.fx(t,regi,"ccsinje",rlf)      = 0;
-***  vm_cap.fx(t,regi,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
-  vm_cap.fx(t,regi,"gash2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"igccc",rlf)        = 0;
-  vm_cap.fx(t,regi,"coalftcrec",rlf)   = 0;
-  vm_cap.fx(t,regi,"coalh2c",rlf)      = 0;
-  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"pcc",rlf)          = 0;
+  vm_cap.fx(t,regi_capturescen,"pco",rlf)          = 0;
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
+***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
+***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
+***  vm_cap.fx(t,regi_capturescen,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
+  vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
+  vm_cap.fx(t,regi_capturescen,"coalh2c",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
-  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi,pm_emifac("2020",regi,enty,"seel",te,"cco2")) > 0 ),  
+  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),  
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi,te,rlf)        = 0;
+      vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
     );
   );
 );

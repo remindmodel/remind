@@ -770,6 +770,13 @@ $ELSE.RegScenNuc
   set regi_nucscen(all_regi) "regions which nucscen applies to" / %c_regi_nucscen% /;
 $ENDIF.RegScenNuc
 
+$IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
+  set regi_capturescen(all_regi) "regions which capturescen applies to";
+  regi_capturescen(all_regi)=YES;
+$ELSE.RegScenCapt
+  set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
+$ENDIF.RegScenCapt
+
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################

@@ -257,6 +257,7 @@ cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
 c_regi_nucscen       "regions which nucscen applies to"
+c_regi_capturescen   "regions which capturescen applies to"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -367,6 +368,8 @@ cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
 
 $setGlobal c_regi_nucscen  all !! def = all
+$setGlobal c_regi_capturescen  all !! def = all
+
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
