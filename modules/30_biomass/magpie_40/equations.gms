@@ -30,7 +30,7 @@ $if %cm_MAgPIE_coupling% == "off" (v30_pebiolc_costs(ttot,regi))
 
 *' **Calculate cost markup factor for coupled runs**  
 *' It penalizes large jumps from the previous coupling iteration and converges to 1, as the difference between *vm_fuExtr* and 
-*' *p30_pebiolc_demandmag* will vanish.
+*' *p30_pebiolc_demandmag* vanish when the coupling converges over iterations.
 q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
          v30_multcost(ttot,regi)
          =e=

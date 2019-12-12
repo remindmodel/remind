@@ -82,6 +82,10 @@ loop(regi,
         );
 );
 
+$if %cm_GDPscen% == "gdp_SDP"  vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.50 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.65 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.65 * vm_deltaCap.lo(t,regi,"biotr","1");
+
 *** ------------------------------------------------------------------------------------------
 *LP* implement switch for scenarios with or without carbon sequestration:
 *** ------------------------------------------------------------------------------------------
