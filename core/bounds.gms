@@ -208,23 +208,28 @@ display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 *** ------------------------------------------------------------------------------------------
 *RP* implement switch for scenarios with different nuclear assumptions:
 *** ------------------------------------------------------------------------------------------
-if (cm_nucscen eq 2 OR cm_nucscen eq 1, !! but no fnrs (default in REMIND 1.7)
-  vm_deltaCap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = 0;
-);
-*mh no fnrs, no tnrs:
-if (cm_nucscen eq 3,  !! no tnrs no fnrs
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
-  vm_deltaCap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010)= 0;
+
+** FS: swtich on fnrs only in nucscen 0 and 4, (2 is default)
+if (cm_nucscen gt 0 AND cm_nucscen ne 4,
+  vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
+  vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
 );
 
-if (cm_nucscen eq 5, !! no new nuclear investments after 2020, until then all currently planned plants are built
+*mh no tnrs:
+if (cm_nucscen eq 3,  
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
+);
+
+* no new nuclear investments after 2020, until then all currently planned plants are built
+if (cm_nucscen eq 5, 
   vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
-  vm_deltaCap.fx(t,regi_nucscen,"fnrs",rlf)            = 0;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
-  vm_cap.fx(t,regi_nucscen,"fnrs",rlf)                 = 0;
+);
+
+*FS: nuclear phase-out by 2040
+if (cm_nucscen eq 7,
+  vm_prodSe.up(t,regi_nucscen,"peur","seel","tnrs")$(t.val ge 2040) = 0;
 );
 
 *** -------------------------------------------------------------
@@ -351,12 +356,15 @@ vm_capEarlyReti.up(ttot,regi,te) = 0;
 
 ***generally allow full early retiremnt for all fossil technologies without CCS
 vm_capEarlyReti.up(ttot,regi,te)$(teFosNoCCS(te)) = 1;
+*** FS: allow nuclear early retirement (for nucscen 7)
+vm_capEarlyReti.up(ttot,regi,"tnrs") = 1;
 
 ***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
 
 *cb 20120224 lower bound of 0.01% to help the model to be aware of the early retirement option
 vm_capEarlyReti.lo(ttot,regi,te)$(teFosNoCCS(te) AND ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
+vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;
