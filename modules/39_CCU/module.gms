@@ -6,6 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/39_CCU.gms
 
+*' @title CCU
+*'
+*' @description  The 39_CCU module calculates emissions from synthetic gas and liquids.
+*'
+*' @authors Laura Popin, Jessica Strefler
+
 *####################### R SECTION START (MODULETYPES) ##############################
 $Ifi "%CCU%" == "off" $include "./modules/39_CCU/off/realization.gms"
 $Ifi "%CCU%" == "on" $include "./modules/39_CCU/on/realization.gms"

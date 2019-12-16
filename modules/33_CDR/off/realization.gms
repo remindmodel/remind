@@ -6,6 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/off.gms
 
+*' @description 
+*' In this realization, no additional CDR option other than BECCS and afforestation is available.
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/33_CDR/off/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/33_CDR/off/bounds.gms"
