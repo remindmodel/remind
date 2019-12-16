@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/41_emicapregi.gms
 
+*' @title Regional Emission Caps 
+*'
+*' @description
+*' This module computes reginal emission caps both in absolute terms and as share of global emissions.
+*' In a setting with emissions trading these caps represent allocated permits and permit shares, respectively.
+*' The allocation of caps and permits is based on different burden sharing rules.
+
+*' @limitations
+*' Permit allocation and emissions trading yield less robust results under Nash (decentralized optimization)
+*' compared to Negishi (Social planner optimization).
+
+*' @authors Marian Leimbach, Christoph Bertram
+
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%emicapregi%" == "AbilityToPay" $include "./modules/41_emicapregi/AbilityToPay/realization.gms"
 $Ifi "%emicapregi%" == "CandC" $include "./modules/41_emicapregi/CandC/realization.gms"

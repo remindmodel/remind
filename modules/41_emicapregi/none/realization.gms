@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/none.gms
 
+*' @description
+*' No allocation of regional emission caps/permits - applies to tax scenarios and 
+*' no-tax scenarios without permit trading  
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/none/datainput.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/41_emicapregi/none/bounds.gms"

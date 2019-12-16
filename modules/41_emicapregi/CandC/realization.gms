@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/CandC.gms
 
+*' @description
+*' Emission caps/permits are allocated according to the contraction and convergence 
+*' rule (transition towards equal per capita allocation; with reference years 2005 and 2050)
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/CandC/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/CandC/datainput.gms"
