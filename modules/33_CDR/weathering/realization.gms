@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/weathering.gms
 
+*' @description 
+*' In this realization, enhanced weathering of rocks can be used to remove CO2 from the atmosphere in addition to BECCS and afforestation. 
+*' Electricty is needed to grind the rocks and diesel is needed for transportation and spreading on crop fields.
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/33_CDR/weathering/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/33_CDR/weathering/declarations.gms"

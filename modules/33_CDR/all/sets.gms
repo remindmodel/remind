@@ -7,7 +7,7 @@
 *** SOF ./modules/33_CDR/all/sets.gms
 sets
 
-te_dyn33(all_te)  "???"
+te_dyn33(all_te)  "all technologies"
 /
 		rockgrind		"grinding rock for enhanced weathering"
 		dac		"direct air capture"

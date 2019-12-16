@@ -8,9 +8,8 @@
 
 
 ***---------------------------------------------------------------------------
-*** LP
-*** Managing the C/H ratio in CCU-Technologies
-*** amount of C temporary used in CCU-products in relation to the amount of hydrogen necessary [GtC/y]
+*' Managing the C/H ratio in CCU-Technologies
+*' amount of C temporary used in CCU-products in relation to the amount of hydrogen necessary [GtC/y]
 ***---------------------------------------------------------------------------
 
 q39_emiCCU(t,regi) .. 

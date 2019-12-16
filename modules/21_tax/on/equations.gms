@@ -63,7 +63,7 @@ v21_taxrevCO2luc(t,regi) =g= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + p
                            - p21_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Calculation of CCS tax: tax rate (defined as fraction(or multiplier) of O&M costs) times sequestration
+*'  Calculation of CCS tax: tax rate (defined as fraction(or multiplier) of O&M costs) times amount of CO2 sequestration
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCCS(t,regi)$(t.val ge max(2010,cm_startyear))..
@@ -74,7 +74,7 @@ v21_taxrevCCS(t,regi)
 	- p21_taxrevCCS0(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Calculation of net negative emissions tax: tax rate (defined as fraction of carbon price) times negative emissions
+*'  Calculation of net-negative emissions tax: tax rate (defined as fraction of carbon price) times net-negative emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
@@ -82,7 +82,7 @@ v21_taxrevNetNegEmi(t,regi) =g=  cm_frac_NetNegEmi * pm_taxCO2eq(t,regi) * v21_e
                                  - p21_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Auxiliary calculation of negative emissions: 
+*'  Auxiliary calculation of net-negative emissions: 
 *'  v21_emiAllco2neg and v21_emiAllco2neg_slack are defined as positive variables
 *'  so as long as vm_emiAll is positive, v21_emiAllco2neg_slack adjusts so that sum is zero
 *'  if vm_emiAll is negative, in order to minimize tax v21_emiAllco2neg_slack becomes zero

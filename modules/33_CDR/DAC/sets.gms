@@ -7,7 +7,7 @@
 *** SOF ./modules/33_CDR/DAC/sets.gms
 sets
 
-te_dyn33(all_te)  "???"
+te_dyn33(all_te)  "all technologies"
 /
 		dac		"direct air capture"
 /
