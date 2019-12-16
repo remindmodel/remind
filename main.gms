@@ -256,6 +256,8 @@ cm_noReboundEffect      "Switch for allowing a rebound effect when closing the e
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+c_regi_nucscen				"regions to apply nucscen to"
+c_regi_capturescen			"region to apply ccapturescen to"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -364,6 +366,10 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 cm_DiscRateScen = 0;!! def = 0
 cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
+
+
+$setGlobal c_regi_nucscen all !! def = all
+$setGlobal c_regi_capturescen all !! def = all
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
