@@ -6,6 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/33_CDR.gms
 
+*' @title CDR
+*'
+*' @description  The 33_CDR module calculates CO2 removed from the atmosphere by options other than BECCS or afforestation, which are calculated in the core.
+*'
+*' @authors Jessica Strefler
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%CDR%" == "DAC" $include "./modules/33_CDR/DAC/realization.gms"
 $Ifi "%CDR%" == "all" $include "./modules/33_CDR/all/realization.gms"

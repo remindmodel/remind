@@ -5,8 +5,8 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/POPint/datainput.gms
-*gl* calculate share of global emissions according to different burden sharing rules
-*ML* cumulated POP shares
+
+*** calculate share of global emissions 
      pm_shPerm(t,regi)  =  sum(t2, pm_pop(t2,regi))/sum((t2,regi2),pm_pop(t2,regi2));
 
 *** EOF ./modules/41_emicapregi/POPint/datainput.gms
