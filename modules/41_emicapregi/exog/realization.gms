@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/exog.gms
 
+*' @description
+*' Emission caps/permits are allocated from an exogenous emission path that have 
+*' to be provided "manually"
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/exog/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/exog/datainput.gms"
