@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/15_climate/magicc.gms
 
+*' @description 
+*' In this realization, concentration, forcing, and temperature values are calculated using a MAGICC6.4. 
+*' MAGICC is run in between iterations and can be used to adapt carbon tax pathways and budgets to meet a give climate target.
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/15_climate/magicc/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/15_climate/magicc/declarations.gms"

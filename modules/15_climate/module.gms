@@ -6,6 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/15_climate/15_climate.gms
 
+*' @title climate
+*'
+*' @description  The 15_climate module calculates the resulting climate variables using either MAGICC6.4 or a stylized box model that can be used within the optimization routine.
+*'
+*' @authors Jessica Strefler, Michaja Pehl, Christoph Bertram
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%climate%" == "box" $include "./modules/15_climate/box/realization.gms"
 $Ifi "%climate%" == "magicc" $include "./modules/15_climate/magicc/realization.gms"

@@ -6,6 +6,11 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/POPint.gms
 
+*' @description
+*' Emission caps/permits are allocated according to each region's share on
+*' cumulated population 
+*' 
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/POPint/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/POPint/datainput.gms"

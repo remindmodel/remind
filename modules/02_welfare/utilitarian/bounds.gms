@@ -4,10 +4,14 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/41_emicapregi/GDPint/datainput.gms
+*** SOF ./modules/02_welfare/utilitarian/bounds.gms
 
-*** calculate share of global emissions 
-     pm_shPerm(t,regi)  =  pm_gdp_gdx(t,regi) / sum(regi2, pm_gdp_gdx(t,regi2));
+$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
+v02_sesoInconvPenSlack.lo(t,regi)=0;
+v02_inconvPenCoalSolids.fx("2005",regi) = 0;
+v02_inconvPenCoalSolids.lo(t,regi) = 0;
+v02_inconvPen.lo(t,regi) = 0;
+v02_inconvPen.fx("2005",regi) = 0;
+$ENDIF.INCONV
 
-
-*** EOF ./modules/41_emicapregi/GDPint/datainput.gms
+*** EOF ./modules/02_welfare/utilitarian/bounds.gms

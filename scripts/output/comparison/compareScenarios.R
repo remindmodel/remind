@@ -57,7 +57,7 @@ start_comp <- function(outputdirs,shortTerm,outfilename) {
     outfilename    <- jobname
     tmp.env <- new.env()
     script <- "scripts/run_submit/run_compareScenarios.R"
-    tmp.erorr <- try(sys.source(script,envir=tmp.env))
+    tmp.error <- try(sys.source(script,envir=tmp.env))
     if(!is.null(tmp.error)) warning("Script ",script," was stopped by an error and not executed properly!")
     rm(tmp.env)
   }

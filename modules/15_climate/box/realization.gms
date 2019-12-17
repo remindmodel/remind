@@ -6,6 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/15_climate/box.gms
 
+*' @description 
+*' In this realization, concentration, forcing, and temperature values are calculated using a simple model that can be used within the optimization routine.
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/15_climate/box/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/15_climate/box/declarations.gms"

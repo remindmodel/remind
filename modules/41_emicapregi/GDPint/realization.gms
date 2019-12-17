@@ -6,6 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/GDPint.gms
 
+*' @description
+*' Emission caps/permits are allocated according to GDP intensity
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/GDPint/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/GDPint/datainput.gms"

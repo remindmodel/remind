@@ -4,10 +4,9 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/41_emicapregi/GDPint/datainput.gms
+*** SOF ./modules/02_welfare/utilitarian/datainput.gms
 
-*** calculate share of global emissions 
-     pm_shPerm(t,regi)  =  pm_gdp_gdx(t,regi) / sum(regi2, pm_gdp_gdx(t,regi2));
+pm_welf(ttot)$(ttot.val ge 2005) = 1;
+$if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
 
-
-*** EOF ./modules/41_emicapregi/GDPint/datainput.gms
+*** EOF ./modules/02_welfare/utilitarian/datainput.gms

@@ -12,6 +12,12 @@ vm_cap.lo(t,regi,"wind","1") = p40_TechBound(t,regi,"wind")*0.001;
 vm_cap.lo(t,regi,"tnrs","1") = p40_TechBound(t,regi,"tnrs")*0.001;
 vm_cap.lo(t,regi,"hydro","1") = p40_TechBound(t,regi,"hydro")*0.001;
 vm_cap.lo(t,regi,"apCarElT","1") = p40_TechBound(t,regi,"apCarElT");
+vm_cap.lo(t,regi,"tnrs","1") = p40_TechBound(t,regi,"tnrs")*0.001;
+* FS: in case of a nuclear phase-out scenario (nucscen 7), nuclear lower bound from p40_techBound only up to 2025
+if(cm_nucscen eq 7,
+  vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2025) = 0;
+);
+
 
 display vm_cap.lo;
 
