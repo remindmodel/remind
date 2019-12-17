@@ -752,66 +752,6 @@ q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(tto
 *** more retirement possible for first generation biofuels		
 		+ 0.05$(sameas(te,"biodiesel") or sameas(te, "bioeths")));
 
-***---------------------------------------------------------------------------
-*' The objective of the optimization is to maximize the total discounted intertemporal utility.
-*' It is summed over all regions. 
-***---------------------------------------------------------------------------
-q_welfareGlob..
-    vm_welfareGlob
-    =e=
-      SUM(regi, 
-        pm_w(regi) * v_welfare(regi)
-      )
-;
-
-***---------------------------------------------------------------------------
-*' Total discounted intertemporal regional welfare calculated from per capita consumption 
-*' summing over all time steps taking into account the pure time preference rate.
-*' Assuming an intertemporal elasticity of substitution of 1, it holds:
-***---------------------------------------------------------------------------
-q_welfare(regi)..
-    v_welfare(regi) =e=
-    SUM(ttot $(ttot.val ge 2005),
-        pm_welf(ttot) * pm_ts(ttot) * (1 / ( (1 + pm_prtp(regi))**(pm_ttot_val(ttot)-2005) ) )
-        *   (  (pm_pop(ttot,regi) 
-                *   (
-                        ((( (vm_cons(ttot,regi)*(1-c_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
-                       + (log((vm_cons(ttot,regi)*(1-c_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)))$(pm_ies(regi) eq 1)
-                    )
-                )
-$if %c_INCONV_PENALTY% == "on"  - v_inconvPen(ttot,regi) - v_inconvPenCoalSolids(ttot,regi)
-            )
-    )
-;
-
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
-
-***---------------------------------------------------------------------------
-*' Calculation of the inconvenience penalty:
-***---------------------------------------------------------------------------
-q_inconvPen(t,regi)$(t.val > 2005)..
-    v_inconvPen(t,regi)
-    =g=
-*' local air pollution for all entySe production except for coal solids (=sesofos), which is treated separately (see below)
-    SUM(pe2se(enty,entySe,te)$(NOT sameas(entySe,"sesofos")),
-        p_inconvpen_lap(t,regi,te) * (vm_prodSe(t,regi,enty,entySe,te))
-    )
-;
-q_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
-    v_inconvPenCoalSolids(t,regi)
-    =g=
-*' local air pollution for coal: inconvinienve penalty applies only for buildings use; slack variable ensures that v_inconvPen can stay > 0 
-    p_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
-	- vm_cesIO(t,regi,"fesoi"))
-	+ v_sesoInconvPenSlack(t,regi)
-;
-
-v_sesoInconvPenSlack.lo(t,regi)=0;
-v_inconvPenCoalSolids.fx("2005",regi) = 0;
-v_inconvPenCoalSolids.lo(t,regi) = 0;
-v_inconvPen.lo(t,regi) = 0;
-v_inconvPen.fx("2005",regi) = 0;
-$ENDIF.INCONV
 
 ***---------------------------------------------------------------------------
 *' Usable macroeconomic output - net of climate change damages - is calculated from the macroeconomic output, 

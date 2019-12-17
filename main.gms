@@ -58,7 +58,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Wed Dec 11 09:40:06 2019
+* Last modification (input data): Thu Dec 12 14:55:25 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -104,12 +104,14 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  welfare_mod_namechange
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
 ***------------------------------------------------------------------------------
 
+***---------------------    02_welfare    ---------------------------------------
+$setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
 $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 ***---------------------    05_initialCap    ------------------------------------
@@ -118,7 +120,7 @@ $setGlobal initialCap  on             !! def = on
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
 $setGlobal climate  off               !! def = off
-***---------------------    16_downscaleTemperature    ---------------------------------------
+***---------------------    16_downscaleTemperature    --------------------------
 $setGlobal downscaleTemperature  off  !! def = off
 ***---------------------    20_growth    ----------------------------------------
 $setGlobal growth  exogenous          !! def = exogenous

@@ -9,6 +9,7 @@
 $setglobal phase %1
 
 *######################## R SECTION START (MODULES) ############################
+$include "./modules/02_welfare/module.gms"
 $include "./modules/04_PE_FE_parameters/module.gms"
 $include "./modules/05_initialCap/module.gms"
 $include "./modules/11_aerosols/module.gms"
