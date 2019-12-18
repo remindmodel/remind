@@ -8,3 +8,4 @@ pm_pop,parameter,???
 pm_gdp,input,questionnaire
 vm_shUePeT,input,questionnaire
 pm_NuclearConstraint,input,questionnaire
+cm_nucscen,input,questionnaire
