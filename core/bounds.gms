@@ -98,28 +98,28 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *RP* implement switch for scenarios with different carbon capture assumptions::
 *** ------------------------------------------------------------------------------------------
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
-  vm_cap.fx(t,regi,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi,"pcc",rlf)          = 0;
-  vm_cap.fx(t,regi,"pco",rlf)          = 0;
-  vm_cap.fx(t,regi,"ccsinje",rlf)      = 0;
-***  vm_cap.fx(t,regi,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
-***  vm_cap.fx(t,regi,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
-  vm_cap.fx(t,regi,"gash2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"igccc",rlf)        = 0;
-  vm_cap.fx(t,regi,"coalftcrec",rlf)   = 0;
-  vm_cap.fx(t,regi,"coalh2c",rlf)      = 0;
-  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"pcc",rlf)          = 0;
+  vm_cap.fx(t,regi_capturescen,"pco",rlf)          = 0;
+  vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
+***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
+***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
+***  vm_cap.fx(t,regi_capturescen,"ccsmoni",rlf)      = 0; !! technologies disabled in REMIND 1.7
+  vm_cap.fx(t,regi_capturescen,"gash2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
+  vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
+  vm_cap.fx(t,regi_capturescen,"coalh2c",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
-  vm_cap.fx(t,regi,"bioftcrec",rlf)    = 0;
-  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
-  vm_cap.fx(t,regi,"bioigccc",rlf)     = 0;
+  vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
+  vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
+  vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi,pm_emifac("2020",regi,enty,"seel",te,"cco2")) > 0 ),  
+  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),  
     loop(te2rlf(te,rlf),
-      vm_cap.fx(t,regi,te,rlf)        = 0;
+      vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
     );
   );
 );
@@ -208,23 +208,28 @@ display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 *** ------------------------------------------------------------------------------------------
 *RP* implement switch for scenarios with different nuclear assumptions:
 *** ------------------------------------------------------------------------------------------
-if (cm_nucscen eq 2 OR cm_nucscen eq 1, !! but no fnrs (default in REMIND 1.7)
+
+** FS: swtich on fnrs only in nucscen 0 and 4, (2 is default)
+if (cm_nucscen gt 0 AND cm_nucscen ne 4,
   vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
   vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
 );
-*mh no fnrs, no tnrs:
-if (cm_nucscen eq 3,  !! no tnrs no fnrs
-  vm_deltaCap.up(t,regi,"tnrs",rlf)$(t.val ge 2010) = 0;
-  vm_deltaCap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.lo(t,regi,"tnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
+
+*mh no tnrs:
+if (cm_nucscen eq 3,  
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
 );
 
-if (cm_nucscen eq 5, !! no new nuclear investments after 2020, until then all currently planned plants are built
-  vm_deltaCap.up(t,regi,"tnrs",rlf)$(t.val gt 2020)= 0;
-  vm_deltaCap.fx(t,regi,"fnrs",rlf)            = 0;
-  vm_cap.lo(t,regi,"tnrs",rlf)$(t.val gt 2015)  = 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)                 = 0;
+* no new nuclear investments after 2020, until then all currently planned plants are built
+if (cm_nucscen eq 5, 
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
+  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
+);
+
+*FS: nuclear phase-out by 2040
+if (cm_nucscen eq 7,
+  vm_prodSe.up(t,regi_nucscen,"peur","seel","tnrs")$(t.val ge 2040) = 0;
 );
 
 *** -------------------------------------------------------------
@@ -244,8 +249,8 @@ if (cm_emiscen ne 1,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
   if (cm_nucscen eq 4,
-    vm_cap.up(t,regi,"tnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi,"tnrs",rlf);
-    vm_cap.up(t,regi,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi,"fnrs",rlf);
+    vm_cap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"tnrs",rlf);
+    vm_cap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"fnrs",rlf);
   );
 );
 
@@ -351,12 +356,15 @@ vm_capEarlyReti.up(ttot,regi,te) = 0;
 
 ***generally allow full early retiremnt for all fossil technologies without CCS
 vm_capEarlyReti.up(ttot,regi,te)$(teFosNoCCS(te)) = 1;
+*** FS: allow nuclear early retirement (for nucscen 7)
+vm_capEarlyReti.up(ttot,regi,"tnrs") = 1;
 
 ***restrict early retirement to the modeling time frame (to reduce runtime, the early retirement equations are phased out after 2110)
 vm_capEarlyReti.up(ttot,regi,te)$(ttot.val lt 2009 or ttot.val gt 2111) = 0;
 
 *cb 20120224 lower bound of 0.01% to help the model to be aware of the early retirement option
 vm_capEarlyReti.lo(ttot,regi,te)$(teFosNoCCS(te) AND ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
+vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0.0001;
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;

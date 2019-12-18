@@ -761,6 +761,23 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+*** FS: definition of regional sensitivity/scenario sets
+
+$IFTHEN.RegScenNuc "%c_regi_nucscen%" == "all"
+  set regi_nucscen(all_regi) "regions which nucscen applies to";
+  regi_nucscen(all_regi)=YES;
+$ELSE.RegScenNuc
+  set regi_nucscen(all_regi) "regions which nucscen applies to" / %c_regi_nucscen% /;
+$ENDIF.RegScenNuc
+
+$IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
+  set regi_capturescen(all_regi) "regions which capturescen applies to";
+  regi_capturescen(all_regi)=YES;
+$ELSE.RegScenCapt
+  set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
+$ENDIF.RegScenCapt
+
+
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
@@ -771,6 +788,7 @@ sets
 
        modules "all the available modules"
        /
+       welfare
        PE_FE_parameters
        initialCap
        aerosols
@@ -804,6 +822,7 @@ sets
        /
 
 module2realisation(modules,*) "mapping of modules and active realisations" /
+       welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
        initialCap . %initialCap%
        aerosols . %aerosols%

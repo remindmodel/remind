@@ -62,9 +62,6 @@ pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
 
-pm_welf(ttot)$(ttot.val ge 2005) = 1;
-$if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
-
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 ***                                macro-economy

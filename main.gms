@@ -58,7 +58,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Wed Dec 11 09:40:06 2019
+* Last modification (input data): Thu Dec 12 14:55:25 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -104,12 +104,14 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  welfare_mod_namechange
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
 ***------------------------------------------------------------------------------
 
+***---------------------    02_welfare    ---------------------------------------
+$setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
 $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 ***---------------------    05_initialCap    ------------------------------------
@@ -118,7 +120,7 @@ $setGlobal initialCap  on             !! def = on
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
 $setGlobal climate  off               !! def = off
-***---------------------    16_downscaleTemperature    ---------------------------------------
+***---------------------    16_downscaleTemperature    --------------------------
 $setGlobal downscaleTemperature  off  !! def = off
 ***---------------------    20_growth    ----------------------------------------
 $setGlobal growth  exogenous          !! def = exogenous
@@ -256,6 +258,8 @@ cm_noReboundEffect      "Switch for allowing a rebound effect when closing the e
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+c_regi_nucscen				"regions to apply nucscen to"
+c_regi_capturescen			"region to apply ccapturescen to"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -364,6 +368,10 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 cm_DiscRateScen = 0;!! def = 0
 cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
+
+
+$setGlobal c_regi_nucscen all !! def = all
+$setGlobal c_regi_capturescen all !! def = all
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
