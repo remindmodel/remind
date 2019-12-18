@@ -28,11 +28,11 @@ q02_welfare(regi)..
         pm_welf(ttot) * pm_ts(ttot) * (1 / ( (1 + pm_prtp(regi))**(pm_ttot_val(ttot)-2005) ) )
         *   (  (pm_pop(ttot,regi) 
                 *   (
-                        ((( (vm_cons(ttot,regi)*(1-c_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
-                       + (log((vm_cons(ttot,regi)*(1-c_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)))$(pm_ies(regi) eq 1)
+                        ((( (vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
+                       + (log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)))$(pm_ies(regi) eq 1)
                     )
                 )
-$if %c_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
+$if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
             )
         )
 ;
@@ -40,13 +40,13 @@ $if %c_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSo
 ***---------------------------------------------------------------------------
 *' Calculation of the inconvenience penalty:
 ***---------------------------------------------------------------------------
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
+$IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(t,regi)$(t.val > 2005)..
     v02_inconvPen(t,regi)
   =g=
 *' local air pollution for all entySe production except for coal solids (=sesofos), which is treated separately (see below)
     SUM(pe2se(enty,entySe,te)$(NOT sameas(entySe,"sesofos")),
-        p_inconvpen_lap(t,regi,te) * (vm_prodSe(t,regi,enty,entySe,te))
+        p02_inconvpen_lap(t,regi,te) * (vm_prodSe(t,regi,enty,entySe,te))
     )
 ;
 
@@ -54,7 +54,7 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
     v02_inconvPenCoalSolids(t,regi)
   =g=
 *' local air pollution for coal: inconvinienve penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
-    p_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
+    p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
   - vm_cesIO(t,regi,"fesoi"))
   + v02_sesoInconvPenSlack(t,regi)
 ;

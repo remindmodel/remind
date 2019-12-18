@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/utilitarian/bounds.gms
 
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
+$IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"
 v02_sesoInconvPenSlack.lo(t,regi)=0;
 v02_inconvPenCoalSolids.fx("2005",regi) = 0;
 v02_inconvPenCoalSolids.lo(t,regi) = 0;
