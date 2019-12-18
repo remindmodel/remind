@@ -11,7 +11,7 @@
 *' emission budgets are adjusted, such that a predefined forcing target in 2100 is met
 *' the actual 2100 forcing after each iteration is calculated by a magicc run started from GAMS
 ***---------------------------------------------------------------------------
-
+*' @code
 *** Generate MAGICC scenario file
 $include "./core/magicc.gms";
 *** execute MAGICC (this is cheap enough, ~2s)
@@ -139,4 +139,5 @@ if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postso
     display pm_taxCO2eq;
     );
 );
+*' @stop
 *** EOF ./modules/15_climate/magicc/postsolve.gms
