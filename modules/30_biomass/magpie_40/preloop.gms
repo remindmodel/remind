@@ -77,9 +77,7 @@ $endif
 ***------------ Step 3: calculate bioenergy costs -------------
 *** The costs are calculated applying the regular cost equation. 
 *** This equation integrates the shifted (!) price supply curve over the demand.
-*** Since the price shift factor is required for this it has been calcualted before (see above).
-*** There is no cost shift factor (anymore) since there is no cost emulator (anymore), 
-*** because the costs are calculated by integrating the shifted price supply curve.
+*** It requires the price shift factor to be calcualted before (see above).
 
 solve model_biopresolve_c using cns; !!! nothing has to be optimized here, just pure calculation
 

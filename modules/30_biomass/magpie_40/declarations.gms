@@ -58,7 +58,6 @@ v30_multcost(ttot,all_regi)        "cost markup factor for deviations from deman
 equations
 q30_costFuBio(ttot,all_regi)             "total costs of bioenergy production"
 q30_pebiolc_price(ttot,all_regi)         "MAgPIE emulator: calculates the price of pebiolc according to MAgPIE supply curves"
-q30_pebiolc_price_base(ttot,all_regi)    "MAgPIE emulator: calculates the price of pebiolc according to MAgPIE supply curves"
 q30_pebiolc_costs(ttot,all_regi)         "MAgPIE emulator: calculates the costs of pebiolc according to MAgPIE supply curves"
 q30_priceshift                           "calculates shift factor by minimizing least squares of price differences between MAgPIE output and MAgPIE emulator"
 q30_limitXpBio(ttot,all_regi)            "only purpose grown bioenergy may be exported, no residues"

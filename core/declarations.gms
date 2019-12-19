@@ -302,7 +302,6 @@ vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
 vm_pebiolc_price(ttot,all_regi)                      "bioenergy price according to MAgPIE supply curves"
-vm_pebiolc_price_shifted(ttot,all_regi)              "bioenergy price according to shifted MAgPIE supply curves, required only for calculation of the bioenergy tax"
 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
