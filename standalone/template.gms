@@ -163,7 +163,7 @@ cm_rentconvcoal       "[grades2poly] number of years required to converge to the
 cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-c_damage              "c_damage factor for forcing overshoot"
+cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -264,7 +264,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-c_damage              = 0.005;     !! def = 0.005
+cm_damage              = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -305,7 +305,7 @@ cm_noReboundEffect = 0;
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel   !! def = parallel
 $setGlobal cm_OILRETIRE  off        !! def = off
-$setglobal c_INCONV_PENALTY  on         !! def = on
+$setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off

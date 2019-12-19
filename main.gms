@@ -58,7 +58,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Wed Dec 11 09:40:06 2019
+* Last modification (input data): Thu Dec 12 14:55:25 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -104,12 +104,14 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  welfare_mod_namechange
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
 ***------------------------------------------------------------------------------
 
+***---------------------    02_welfare    ---------------------------------------
+$setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
 $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 ***---------------------    05_initialCap    ------------------------------------
@@ -118,7 +120,7 @@ $setGlobal initialCap  on             !! def = on
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
 $setGlobal climate  off               !! def = off
-***---------------------    16_downscaleTemperature    ---------------------------------------
+***---------------------    16_downscaleTemperature    --------------------------
 $setGlobal downscaleTemperature  off  !! def = off
 ***---------------------    20_growth    ----------------------------------------
 $setGlobal growth  exogenous          !! def = exogenous
@@ -221,7 +223,7 @@ cm_rentconvcoal       "[grades2poly] number of years required to converge to the
 cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-c_damage              "c_damage factor for forcing overshoot"
+cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -328,7 +330,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-c_damage              = 0.005;     !! def = 0.005
+cm_damage              = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -379,7 +381,7 @@ $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel   !! def = parallel
 $setGlobal c_EARLYRETIRE        on         !! def = on
 $setGlobal cm_OILRETIRE  off        !! def = off
-$setglobal c_INCONV_PENALTY  on         !! def = on
+$setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off

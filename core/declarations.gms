@@ -15,8 +15,6 @@ parameters
 
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
-pm_welf(tall)                                        "weight parameter in the welfare function to avoid jumps with cm_less_TS"
-
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
@@ -53,9 +51,6 @@ pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per un
 pm_ppfen_ratios(all_in,all_in)                       "limit ratio of two primary production factors of energy (ppfEn)"
 pm_ppfen_shares(all_in,all_in)                       "limit the share of one ppfEn in total CES nest inputs"
 
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
-p_inconvpen_lap(ttot,all_regi,all_te)                "parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
-$ENDIF.INCONV
 
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
 
@@ -211,7 +206,6 @@ o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------trade module----------------------------
-pm_w(all_regi)                                       "Negishi weights"
 p_tradecostgood(all_regi)                            "tradecosts (final good)"
                                
 pm_ttot_val(ttot)                                    "value of ttot set element"
@@ -221,8 +215,6 @@ pm_dt(tall)                                          "difference to last timeste
 pm_interpolWeight_ttot_tall(tall)                    "weight for linear interpolation of ttot-dependent variables"
 pm_tall_2_ttot(tall,ttot)                            "mapping from tall to ttot"
 pm_ttot_2_tall(ttot,tall)                            "mapping from ttot to tall"
-
-pm_prtp(all_regi)                                    "pure rate of time preference"
                                                              
 p_share_seliq_s(ttot,all_regi)                       "share of liquids used for stationary sector (fehos). [0..1]"
 p_share_seh2_s(ttot,all_regi)                        "share of hydrogen used for stationary sector (feh2s). [0..1]"
@@ -243,17 +235,9 @@ p_Mport2005correct(all_regi,all_enty)                "correction factor to match
 variables
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
-v_welfare(all_regi)                                  "regional welfare"
-vm_welfareGlob                                       "global welfare"
 vm_taxrev(ttot,all_regi)                             "difference between tax volume in current and previous iteration"
 vm_costSubsidizeLearning(ttot,all_regi)              "regional cost of subsidy for learning technologies"
 vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that helps to meet permit allocation equation in nash case"
-$ifthen.inconv %c_INCONV_PENALTY% == "on" 
-v_inconvPen(ttot,all_regi)                           "Inconvenience penalty in the welfare function, e.g. for air pollution.  [Utils]"
-v_inconvPenCoalSolids(ttot,all_regi)                 "Inconvenience penalty in the welfare function, e.g. for air pollution.  [Utils]"
-v_inconvPenCoalSolids(ttot,all_regi)                 "Inconvenience penalty in the welfare function, e.g. for air pollution.  [Utils]"
-v_sesoInconvPenSlack(ttot,all_regi)                  "slack to avoid negative inconvenience penalty for Coal Solids" 
-$endif.inconv
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
 vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
@@ -342,8 +326,6 @@ v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (un
 ***------------------------------------------------trade module----------------------------
 vm_Xport(tall,all_regi,all_enty)                     "export of traded commodity"
 vm_Mport(tall,all_regi,all_enty)                     "import of traded commodity"
-*AG* brought here from former climate files during modularisation
-vm_forcOs(ttot)                                      "forcing overshoot"
 *** Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
 vm_costAdjNash(ttot,all_regi)                        "adjustment costs for deviation from the trade structure of the last iteration"
 ;
@@ -353,8 +335,6 @@ vm_costAdjNash(ttot,all_regi)                        "adjustment costs for devia
 equations
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------MACRO module----------------------------
-q_welfareGlob                                        "global welfare"
-q_welfare                                            "regional welfare"
 qm_budget(ttot,all_regi)                             "budget balance"
 q_balLab(ttot,all_regi)                              "labour balance"
 q_cesIO(ttot,all_regi,all_in)                        "production function"
@@ -368,10 +348,6 @@ q_invMacroAdj(ttot,all_regi,all_in)                  "adjustment costs for macro
 qm_balFeForCesAndEs(ttot,all_regi,all_enty)          "FE balance coupling ESM and production function either directly (Pathway I) or Indirectly through Energy services (Pathway III)"
 *** perm_restr(ttot,all_regi)                                  "emission permit trade restriction"
 *** multistage(ttot)                                           "calculation of remaining permits in multistage approach"
-$ifthen.inconv %c_INCONV_PENALTY% == "on"
-q_inconvPen(ttot,all_regi)                           "calculate the inconvenience penalty v_inconvPen"
-q_inconvPenCoalSolids(ttot,all_regi)                 "calculate the inconvenience penalty v_inconvPen"
-$endif.inconv
 q_limtRatioPpfen(ttot,all_regi,all_in,all_in)        "limit the ratio of two ppfEn"
 q_limitShPpfen(ttot,all_regi,all_in,all_in)          "limit the share of one ppfEn in total CES nest inputs"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity that can be used for fehes"

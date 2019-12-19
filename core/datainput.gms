@@ -30,7 +30,7 @@ vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 if (cm_emiscen ne 8,
-c_damage = 0.0;
+cm_damage = 0.0;
 );
 
 *------------------------------------------------------------------------------------
@@ -61,9 +61,6 @@ pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 *** define pm_prtp according to cm_prtpScen:
 if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
-
-pm_welf(ttot)$(ttot.val ge 2005) = 1;
-$if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -980,22 +977,6 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-*RP* 2012-03-06: Inconvenience costs on seprod
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
-p_inconvpen_lap(ttot,regi,"coaltr")$(ttot.val ge 2005)      = 0.5;   !! In dollar per GJ seprod at 1.000$/cap GDP, or 10$/GJ at 10.000$_GDP/cap
-p_inconvpen_lap(ttot,regi,"biotr")$(ttot.val ge 2005)       = 1.0;   !! In dollar per GJ seprod
-p_inconvpen_lap(ttot,regi,"biotrmod")$(ttot.val ge 2005)    = 0.25;    !! In dollar per GJ seprod. Biotrmod is a mix of wood stoves and automated wood pellets for heating, which has lower air pollution and other discomfort effects
-*' Transformation of coal to liquids/gases/H2 brings local pollution, which is less accepted at higher incomes -> use the inconvenience cost channel
-p_inconvpen_lap(ttot,regi,"coalftrec")$(ttot.val ge 2005)   = 0.1;    !! In dollar per GJ seprod
-p_inconvpen_lap(ttot,regi,"coalftcrec")$(ttot.val ge 2005)  = 0.1;    !!  equivalent to 4$/GJ at 40.000$_GDP/cap, or 10$/GJ at 100.000$_GDP/cap
-p_inconvpen_lap(ttot,regi,"coalgas")$(ttot.val ge 2005)   = 0.1;    !!
-p_inconvpen_lap(ttot,regi,"coalh2")$(ttot.val ge 2005)   = 0.1;    !!
-p_inconvpen_lap(ttot,regi,"coalh2c")$(ttot.val ge 2005)  = 0.1;    !!
-p_inconvpen_lap(ttot,regi,te)$(ttot.val ge 2005) = p_inconvpen_lap(ttot,regi,te) * 4.3 * 1E-4;            !! this is now equivalent to 1$/GJ at 1000$/per Capita in the welfare logarithm
-p_inconvpen_lap(ttot,regi,te)$(ttot.val ge 2005) = p_inconvpen_lap(ttot,regi,te) * (1/sm_giga_2_non) / sm_GJ_2_TWa; !! conversion util/(GJ/cap) -> util/(TWa/Gcap)
-*RP* these values are all calculated on seprod level.
-display p_inconvpen_lap;
-$ENDIF.INCONV
 
 
 
