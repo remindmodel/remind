@@ -6,6 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/costs.gms
 
+*' @description
+*' Agricultural production costs in REMIND consist of the following components: actual production costs 
+*' (land conversion, crop cultivation, irrigation, technological change, ...), bioenergy costs, cost for abating
+*' emissions accruing from agricultural activity (marginal abatement costs = MAC cost). 
+
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/26_agCosts/costs/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/26_agCosts/costs/datainput.gms"
