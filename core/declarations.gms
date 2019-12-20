@@ -51,9 +51,6 @@ pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per un
 pm_ppfen_ratios(all_in,all_in)                       "limit ratio of two primary production factors of energy (ppfEn)"
 pm_ppfen_shares(all_in,all_in)                       "limit the share of one ppfEn in total CES nest inputs"
 
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
-p_inconvpen_lap(ttot,all_regi,all_te)                "parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
-$ENDIF.INCONV
 
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
 

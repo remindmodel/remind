@@ -13,6 +13,10 @@ parameters
 pm_welf(tall)                                     "Weight parameter in the welfare function to avoid jumps with cm_less_TS"
 pm_w(all_regi)                                    "Negishi weights"
 pm_prtp(all_regi)                                 "Pure rate of time preference"
+
+$ifthen.inconv %cm_INCONV_PENALTY% == "on"
+p02_inconvpen_lap(ttot,all_regi,all_te)           "Parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
+$endif.inconv
 ;
 
 ***-------------------------------------------------------------------------------
@@ -22,7 +26,7 @@ variables
 v02_welfare(all_regi)                             "Regional welfare"
 vm_welfareGlob                                    "Global welfare"
 
-$ifthen.inconv %c_INCONV_PENALTY% == "on" 
+$ifthen.inconv %cm_INCONV_PENALTY% == "on" 
 v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
 v02_inconvPenCoalSolids(ttot,all_regi)            "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
 v02_inconvPenCoalSolids(ttot,all_regi)            "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
@@ -41,7 +45,7 @@ equations
 q02_welfareGlob                                   "Global welfare"
 q02_welfare                                       "Regional welfare"
 
-$ifthen.inconv %c_INCONV_PENALTY% == "on"
+$ifthen.inconv %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience penalty v02_inconvPen"
 q02_inconvPenCoalSolids(ttot,all_regi)            "Calculate the inconvenience penalty v02_inconvPen"
 $endif.inconv
