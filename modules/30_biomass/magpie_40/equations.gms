@@ -15,7 +15,7 @@
 *' The first part, summing over *peren2rlf30*, represents costs for biomass with fixed prices.
 *' The second part that includes *v30_pebiolc_costs* represents costs for biomass with continous 
 *' supply curves from MAgPIE. In coupled runs *v30_multcost* is a cost markup factor improving 
-*' the optimization performance by penalizing (too) large jumps in the demand between two coupling 
+*' the convergence by penalizing large jumps in the demand between two coupling 
 *' iterations. It converges to 1 and therefore does not affect the outcome. The last part, containing 
 *' *pm_costsTradePeFinancial*, represents additional tradecosts (only for purpose grown lignocellulosic biomass).
 
@@ -76,10 +76,7 @@ q30_pebiolc_costs(ttot,regi)$(ttot.val ge cm_startyear)..
 q30_priceshift$(s30_switch_shiftcalc eq 1)..
          v30_shift_r2
          =e=
-         sum(regi,
-             sum(ttot$(ttot.val ge 2005 AND p30_pebiolc_pricemag(ttot,regi) gt 0), power((p30_pebiolc_pricemag(ttot,regi) - vm_pebiolc_price(ttot,regi))*pm_ts(ttot),2)
-             )
-         )
+         sum(regi, sum(ttot$(ttot.val ge 2005 AND p30_pebiolc_pricemag(ttot,regi) gt 0), power((p30_pebiolc_pricemag(ttot,regi) - vm_pebiolc_price(ttot,regi))*pm_ts(ttot),2)))
 ;
 
 ***---------------------------------------------------------------------------
@@ -87,6 +84,7 @@ q30_priceshift$(s30_switch_shiftcalc eq 1)..
 ***---------------------------------------------------------------------------
 
 *' **Calculate cost markup factor for coupled runs**  
+*' Improve convergence of the REMIND-MAgPIE coupling by penalizing deviations from last coupling iteration. 
 *' This applies in coupled runs only to prevent large jumps in bioenergy demand between coupling iterations. 
 *' It penalizes deviations in the demand for purpose grown bioenergy from the previous coupling iteration 
 *' by increasing the costs proportional to the deviation. The factor converges to 1, as the 

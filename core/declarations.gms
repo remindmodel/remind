@@ -107,8 +107,8 @@ p_emi_quan_conv_ar4(all_enty)                               "conversion factor f
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
 pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
-pm_pedem_res(ttot,all_regi,all_te)                          "demand for pebiolc residues, needed for enhancement of residue potential"
-p_ef_dem(all_enty)                                          "demand side emission factor of final energy carriers [MtCO2/EJ]"
+pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
+p_ef_dem(all_enty)                                          "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 p_bioshare(tall,all_regi,all_enty)                          "bioshare for each FE carrier"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
@@ -289,7 +289,7 @@ vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distribute
 vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions"
 vm_capCum(tall,all_regi,all_te)                      "gross capacities (=capacities cumulated over time)"
-vm_fuExtr(ttot,all_regi,all_enty,rlf)                "fuel use"
+vm_fuExtr(ttot,all_regi,all_enty,rlf)                "fuel use [TWa]"
 
 vm_demPe(tall,all_regi,all_enty,all_enty,all_te)     "pe demand. [TWa, Uranium: Mt Ur]"
 vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Uranium: Mt Ur]"
@@ -298,7 +298,7 @@ vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
-vm_pebiolc_price(ttot,all_regi)                      "bioenergy price according to MAgPIE supply curves"
+vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
@@ -323,8 +323,8 @@ vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which 
 v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------trade module----------------------------
-vm_Xport(tall,all_regi,all_enty)                     "export of traded commodity"
-vm_Mport(tall,all_regi,all_enty)                     "import of traded commodity"
+vm_Xport(tall,all_regi,all_enty)                     "export of traded commodity [TWa]"
+vm_Mport(tall,all_regi,all_enty)                     "import of traded commodity [TWa]"
 *** Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
 vm_costAdjNash(ttot,all_regi)                        "adjustment costs for deviation from the trade structure of the last iteration"
 ;
