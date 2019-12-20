@@ -11,10 +11,26 @@
 *' It solves for an inter-temporal Pareto optimum in economic and energy investments in the model regions, fully accounting for interregional trade in goods, 
 *' energy carriers and emissions allowances. REMIND allows for the analysis of technology options and policy proposals for climate mitigation.
 *'
-*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global welfare is optimized subject to equilibrium constraints.
-*' Intertemporal optimization with perfect foresight subject to market clearing.
+*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global welfare is optimized subject to equilibrium constraints ([02_welfare]).
+*' Intertemporal optimization ([80_optimization]) with perfect foresight is subject to market clearing. The model explicitly represents trade in final goods, primary energy carriers, 
+*' and in the case of climate policy, emissions allowances. Macro-economic production factors are capital, labor, and final energy. 
+*' The production function with constant elasticity of substitution (nested CES production function) determines the final energy demand ([29_CES_parameters]).
+*' REMIND uses economic output for investments in the macro-economic capital stock as well as consumption, trade, and energy system expenditures. 
+*' 
+*' The macro-economic core and the energy system part are hard-linked via the final energy demand and costs incurred by the energy system. 
+*' Economic activity results in demand for final energy in different sectors such as transport energy ([35_transport]), electricity ([32_power]), 
+*' and non-electric energy for stationary end uses ([38_stationary]) splitted into an industy ([37_industry]) and buildings ([36_buildings]) sector. 
+ 
+*' The primary energy carriers in REMIND include both exhaustible and renewable resources. Exhaustible resources comprise uranium as well as three fossil resources ([31_fossil]), namely coal, oil, and gas. 
+*' Renewable resources include hydro, wind, solar, geothermal, and biomass ([30_biomass]). 
+*' More than 50 technologies are available for the conversion of primary energy into secondary energy carriers as well as for the distribution of secondary energy carriers into final energy.
 *'
-*' The code is structured in a modular way. The technical structure looky as follows: At the top level you find the folders config, core, modules and scripts. 
+*' The model accounts for the full range of anthropogenic greenhouse gas (GHG) emissions, most of which are represented by source. 
+*' REMIND simulates emissions from long-lived GHGs (CO2, CH4, N2O), short-lived GHGs (CO, NOx, VOC) and aerosols (SO2, BC, OC). 
+*' It accounts for these emissions with different levels of detail depending on the types and sources of emissions. 
+*' It calculates CO2 emissions from fuel combustion, CH4 emissions from fossil fuel extraction and residential energy use and N2O emissions from energy supply based on sources. 
+*'
+*' The numerical code is structured in a modular way. The technical structure looky as follows: At the top level you find the folders config, core, modules and scripts. 
 *' The overall structure is build in the file main.gms. All settings and configuration information is given in the config folder. 
 *' The core folder contains all files that are part of the core of the REMIND model. For each module there exists a sub-folder in the modules folder. 
 *' Helpful scripts for e.g. starting a run or analysing results you find in the scripts folder.
@@ -58,7 +74,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Thu Dec 12 14:55:25 2019
+* Last modification (input data): Fri Dec 20 13:26:17 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -370,8 +386,8 @@ cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
 
 
-$setGlobal c_regi_nucscen all !! def = all
-$setGlobal c_regi_capturescen all !! def = all
+$setGlobal c_regi_nucscen  all !! def = all
+$setGlobal c_regi_capturescen  all !! def = all
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
