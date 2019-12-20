@@ -58,7 +58,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Thu Dec 12 14:55:25 2019
+* Last modification (input data): Fri Dec 20 09:59:38 2019
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -198,15 +198,15 @@ cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
-cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
+cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
 c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2020 (delatcap=0)"
-cm_cprice_red_factor "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
+cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step"
-cm_stagestart             "start of staged accession for delay runs"
-cm_stageend                       "end of staged accession for delay runs"
+cm_stagestart         "start of staged accession for delay runs"
+cm_stageend           "end of staged accession for delay runs"
 c_start_budget        "start of GHG budget limit"
-cm_prtpScen            "pure rate of time preference standard values"
+cm_prtpScen           "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
 cm_multigasscen       "scenario on GHG portfolio to be included in permit trading scheme"
 cm_permittradescen    "scenario on permit trade"
@@ -293,7 +293,7 @@ cm_CCS_steel           = 1;        !! def = 1
 
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
-cm_bioenergymaxscen = 0;         !! def = 3
+cm_bioenergymaxscen = 0;         !! def = 0
 c_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
@@ -370,8 +370,8 @@ cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
 
 
-$setGlobal c_regi_nucscen all !! def = all
-$setGlobal c_regi_capturescen all !! def = all
+$setGlobal c_regi_nucscen  all !! def = all
+$setGlobal c_regi_capturescen  all !! def = all
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)

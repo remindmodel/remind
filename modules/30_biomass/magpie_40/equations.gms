@@ -33,9 +33,10 @@ $if %cm_MAgPIE_coupling% == "off" (v30_pebiolc_costs(ttot,regi))
 ***                      MAgPIE EMULATOR
 ***---------------------------------------------------------------------------
 
-*' **Caclulate bioenergy prices according to MAgPIE supply curves**  
-*' The equation is used by shift factor calculation in the preloop stage. In the main solve stage the price is only used to apply
-*' the bioenergy tax.
+*' **MAgPIE EMULATOR: PRICE**  
+*' This equation calculates the price for purpose grown lignocellulosic biomass as a (linear) function of demand according to the supplycurve as it was derived
+*' from MAgPIE. The equation is used by the shift factor calculation in the preloop stage. In the main solve stage the price is only 
+*' used to apply the bioenergy tax. It contains optional shift and scaling of supply curves in coupled runs. 
 
 q30_pebiolc_price(ttot,regi)$(ttot.val ge cm_startyear)..
          vm_pebiolc_price(ttot,regi)
@@ -43,10 +44,11 @@ q30_pebiolc_price(ttot,regi)$(ttot.val ge cm_startyear)..
          (v30_priceshift(ttot,regi) 
        + i30_bioen_price_a(ttot,regi) 
        + i30_bioen_price_b(ttot,regi) * (vm_fuExtr(ttot,regi,"pebiolc","1") + sm_eps) )
-       * v30_pricemult(ttot,regi);
+       * v30_pricemult(ttot,regi)
+;
 
-*' **MAgPIE EMULATOR**  
-*' Calculates bioenergy costs of purpose grown lignocellulosic biomass by integrating the linear price supply curve.
+*' **MAgPIE EMULATOR: COST**  
+*' Calculates bioenergy costs of purpose grown lignocellulosic biomass by integrating the linear price supply curve (see above).
 *' It contains optional shift and scaling of supply curves in coupled runs. 
 *' The equation is used both in preloop and main solve.
 
@@ -58,7 +60,6 @@ q30_pebiolc_costs(ttot,regi)$(ttot.val ge cm_startyear)..
        + i30_bioen_price_b(ttot,regi) / 2 * (vm_fuExtr(ttot,regi,"pebiolc","1") + sm_eps) )
        * v30_pricemult(ttot,regi)
        * vm_fuExtr(ttot,regi,"pebiolc","1")
-       
 ;
 
 ***---------------------------------------------------------------------------
@@ -66,7 +67,9 @@ q30_pebiolc_costs(ttot,regi)$(ttot.val ge cm_startyear)..
 ***---------------------------------------------------------------------------
 
 *' **Calculate shift factor for bioenergy costs**  
-*' The factor is computed by minimizing least squares (*v30_shift_r2*) of cost differences between MAgPIE output and MAgPIE emulator.
+*' This applies in coupled runs only to shift the supplycurve according to the price response of MAgPIE. The factor is computed 
+*' by minimizing least squares (*v30_shift_r2*) of price differences between actual MAgPIE output (from coupled runs) and the 
+*' supply curve (aka MAgPIE emulator). 
 *' It is solved in presolve (*s30_switch_shiftcalc* = 1) and deactivated in main solve (*s30_switch_shiftcalc* = 0).
 *' *pm_ts* is used as a weight factor, representing the time step length.
 
@@ -84,10 +87,12 @@ q30_priceshift$(s30_switch_shiftcalc eq 1)..
 ***---------------------------------------------------------------------------
 
 *' **Calculate cost markup factor for coupled runs**  
+*' This applies in coupled runs only to prevent large jumps in bioenergy demand between coupling iterations. 
 *' It penalizes deviations in the demand for purpose grown bioenergy from the previous coupling iteration 
-*' by increasing the costs proportional to the deviation. The scaling factor converges to 1, as the 
+*' by increasing the costs proportional to the deviation. The factor converges to 1, as the 
 *' difference between *vm_fuExtr* and *p30_pebiolc_demandmag* vanishes when the coupling converges over 
 *' iterations.
+
 q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
          v30_multcost(ttot,regi)
          =e=
