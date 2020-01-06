@@ -332,7 +332,7 @@ $include "./core/input/p_costsPEtradeMp.cs4r"
 $offdelim
 /
 ;
-table pm_costsTradePeFinancial(all_regi,char,all_enty)        "PE tradecosts (financial costs on import, export and use)"
+table pm_costsTradePeFinancial(all_regi,char,all_enty)        "Financial costs on import, export and use of primary energy"
 $ondelim
 $include "./core/input/pm_costsTradePeFinancial.cs3r"
 $offdelim

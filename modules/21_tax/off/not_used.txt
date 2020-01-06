@@ -21,7 +21,6 @@ cm_bioenergy_tax, switch, ???
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
-vm_pebiolc_price_shifted,variable,???
 pm_gdp_gdx,parameter,???
 pm_pop,parameter,???
 cm_so2tax_scen,switch,???
@@ -50,3 +49,4 @@ p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
 cm_cprice_red_factor,input,questionnaire
+vm_pebiolc_price,input,questionnaire

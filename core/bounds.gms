@@ -235,7 +235,7 @@ if (cm_nucscen eq 7,
 *** -------------------------------------------------------------
 *** *DK* Phaseout of 1st generation biofuel technologies
 *** -------------------------------------------------------------
-if(cm_1stgen_phaseout=1,
+if(c_1stgen_phaseout=1,
    vm_deltaCap.up(t,regi,"bioeths",rlf)$(t.val gt 2030)   = 0;
    vm_deltaCap.up(t,regi,"biodiesel",rlf)$(t.val gt 2030) = 0;
 );

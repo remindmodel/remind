@@ -21,7 +21,7 @@ $offdelim
 ;
 
 *** costs: use global costs for all regions ($/GJ -> T$/TWa)
-*** define costs for pebiolc residues (defined only for 2nd grade) 
+*** define costs for pebiolc residues (2nd grade) 
 *** and for pebios, pebioil (defined only for 5th grade)
 p30_datapebio(regi,"pebios","5","cost",ttot)$(ttot.val ge 2005)  = 12.4 * s30_D2TD / sm_GJ_2_TWa;
 p30_datapebio(regi,"pebioil","5","cost",ttot)$(ttot.val ge 2005) = 15.8 * s30_D2TD / sm_GJ_2_TWa;

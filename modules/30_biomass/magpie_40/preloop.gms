@@ -7,14 +7,15 @@
 *** SOF ./modules/30_biomass/magpie_4/preloop.gms
 
 ***=============================================================
-***  BEGIN: calculate shift factors for bioenergy prices that 
-***  shift supply curves according to the comparison of results
-***  from MAgPIE and the emulators. Steps:
+***  BEGIN: calculate shift factors for bioenergy prices 
+***  Compare price response from MAgPIE run with emulator prices
+***  and shift emulator supply curves to match the MAgPIE price.
+***  Steps:
 ***  1  Fix fuelex to MAgPIE demand
 ***  2a Calculate bioenergy prices with emulator based on MAgPIE demand
-***  2b Compare this with original MAgPIE prices and calculate price shift factor
-***  3 Calculate costs
-***  4  Release the bound on fuelex (to be precise: fuelex has to be fixed only for 2a and 3a)  
+***  2b Calculate price shift factor by comparing 2a with original MAgPIE prices
+***  3  Calculate costs based on MAgPIE demand
+***  4  Release the bound on fuelex (to be precise: fuelex has to be fixed only for 2a and 3)  
 ***  Note: In the cost formula in 3a the price shift factor is used!
 
 *** Eliminate effect of shift and mult for calculating the original emulator price
@@ -77,13 +78,11 @@ $endif
 ***------------ Step 3: calculate bioenergy costs -------------
 *** The costs are calculated applying the regular cost equation. 
 *** This equation integrates the shifted (!) price supply curve over the demand.
-*** Since the price shift factor is required for this it has been calcualted before (see above).
-*** There is no cost shift factor (anymore) since there is no cost emulator (anymore), 
-*** because the costs are calculated by integrating the shifted price supply curve.
+*** It requires the price shift factor to be calcualted before (see above).
 
 solve model_biopresolve_c using cns; !!! nothing has to be optimized here, just pure calculation
 
-p30_pebiolc_costs_emu_preloop(ttot,regi) = v30_pebiolc_costs.l(ttot,regi); !!! save for reporting
+p30_pebiolc_costs_emu_preloop(ttot,regi) = v30_pebiolc_costs.l(ttot,regi);
 
 display p30_pebiolc_costs_emu_preloop;
 

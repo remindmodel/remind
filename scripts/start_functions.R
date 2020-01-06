@@ -97,7 +97,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
   if (on_cluster)
-    system("find ./core/magicc/ -type f -not -name \"magicc6\" | xargs dos2unix -q")
+    system("find ./core/magicc/ -type f | xargs dos2unix -q")
   
   # Create output folder
   if (!file.exists(cfg$results_folder)) {
