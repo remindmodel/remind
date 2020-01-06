@@ -104,7 +104,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  welfare_mod_namechange
+$setGlobal c_expname  default
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
