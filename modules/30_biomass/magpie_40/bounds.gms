@@ -19,18 +19,13 @@
 *** Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
 
-*** Prescribe upper limit for first generation biomass from 2030 on only, so REMIND has freedom before
-*** To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths
+*** Prescribe upper and lower limit for first generation biomass from 2030/45 on, so REMIND has freedom before.
+*** To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths.
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
-if(cm_1stgen_phaseout=0,
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
-else
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
-);
+vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 
 *** -------------------------------------------------------------
 *** Bounds on 2nd generation biomass annual production

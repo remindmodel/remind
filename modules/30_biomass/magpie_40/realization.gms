@@ -7,7 +7,7 @@
 *** SOF ./modules/30_biomass/magpie_linear.gms
 
 *' @description
-*' Calculation of biomass costs. The costs for purpose grown ligno-cellulosic biomass 
+*' The costs for purpose grown ligno-cellulosic biomass 
 *' are the integral under the supplycurve. The supplycurves have been derived from MAgPIE 4.1
 
 *####################### R SECTION START (PHASES) ##############################
