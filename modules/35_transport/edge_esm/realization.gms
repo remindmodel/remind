@@ -24,5 +24,6 @@ $Ifi "%phase%" == "equations" $include "./modules/35_transport/edge_esm/equation
 $Ifi "%phase%" == "preloop" $include "./modules/35_transport/edge_esm/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/35_transport/edge_esm/bounds.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/35_transport/edge_esm/presolve.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/35_transport/edge_esm/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/35_transport/edge_esm.gms
