@@ -248,8 +248,7 @@ for(scen in common){
   # Create list of previously defined paths to gdxs
   gdxlist <- c(input.gdx     = settings_remind[scen, "path_gdx"], # eventually this was updated if older runs exists in this folder (see above)
                input_ref.gdx = settings_remind[scen, "path_gdx_ref"],
-               input_bau.gdx = settings_remind[scen, "path_gdx_bau"],
-               input_opt.gdx = settings_remind[scen, "path_gdx_opt"])
+               input_bau.gdx = settings_remind[scen, "path_gdx_bau"])
 
   # Remove potential elements that contain ".gdx" and append gdxlist
   cfg_rem$files2export$start <- .setgdxcopy(".gdx",cfg_rem$files2export$start,gdxlist)
@@ -267,7 +266,6 @@ for(scen in common){
       # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
       cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
-      cfg_rem$files2export$start['input_opt.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_opt"],"-rem-",max_iterations,"/fulldata.gdx")
       
       # If the preceding run has already finished (= their gdx files exist) start the current run immediately.
       # This might be the case e.g. if you started the baseline and NDC runs in a first batch and now want to start the subsequent policy runs by hand after the baselines have finished
@@ -297,7 +295,6 @@ for(scen in common){
   cat("remind gdx  : ",ifelse(file.exists(cfg_rem$files2export$start["input.gdx"]),green,red), cfg_rem$files2export$start["input.gdx"], NC, "\n",sep="")
   cat("ref_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_ref.gdx"]),green,red), cfg_rem$files2export$start["input_ref.gdx"], NC, "\n",sep="")
   cat("bau_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
-  cat("opt_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_opt.gdx"]),green,red), cfg_rem$files2export$start["input_opt.gdx"], NC, "\n",sep="")
   cat("path_report : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
   cat("LU_pricing  :",LU_pricing,"\n")
  

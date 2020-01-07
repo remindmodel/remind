@@ -101,8 +101,7 @@ for (scen in rownames(scenarios)) {
   # Define path where the GDXs will be taken from
   gdxlist <- c(input.gdx     = settings[scen, "path_gdx"],
                input_ref.gdx = settings[scen, "path_gdx_ref"],
-               input_bau.gdx = settings[scen, "path_gdx_bau"],
-               input_opt.gdx = settings[scen, "path_gdx_opt"])
+               input_bau.gdx = settings[scen, "path_gdx_bau"])
 
   # Remove potential elements that contain ".gdx" and append gdxlist
   cfg$files2export$start <- .setgdxcopy(".gdx", cfg$files2export$start, gdxlist)

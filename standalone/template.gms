@@ -142,8 +142,6 @@ cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
 c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_startyear          "first optimized modelling time step"
-cm_stagestart             "start of staged accession for delay runs"
-cm_stageend                       "end of staged accession for delay runs"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen            "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
@@ -237,8 +235,6 @@ $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
-cm_stagestart     = 2020;      !! def = 2020
-cm_stageend       = 2040;      !! def = 2040
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3

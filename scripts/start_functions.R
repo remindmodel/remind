@@ -60,13 +60,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   # reportCEScalib only works with the calibrate module
   if ( cfg$gms$CES_parameters != "calibrate" ) cfg$output <- setdiff(cfg$output,"reportCEScalib")
   
-  # Replace :title: and :date: tokens in results directory name
-  rundate <- Sys.time()
-  date <- format(rundate, "_%Y-%m-%d_%H.%M.%S")
-  cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
-  cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
-
-    #AJS quit if title is too long - GAMS can't handle that
+  #AJS quit if title is too long - GAMS can't handle that
   if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
@@ -80,40 +74,35 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
-   # adjust GDPpcScen based on GDPscen
+  
+  # write name of corresponding CES file to datainput.gms
+  replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
+                  content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
+                  subject = "CES INPUT")
+ 
+  # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
 
+  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
+  if (on_cluster)
+    system("find ./core/magicc/ -type f | xargs dos2unix -q")
+  
+  # Set source_include so that loaded scripts know they are included as 
+  # source (instead a load from command line)
+  source_include <- TRUE
+   
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scritps
   lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
   on.exit(model_unlock(lock_id, oncluster=on_cluster))  
   ################## M O D E L   L O C K ###################################
 
-  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
-  if (on_cluster)
-    system("find ./core/magicc/ -type f | xargs dos2unix -q")
-  
-  # Create output folder
-  if (!file.exists(cfg$results_folder)) {
-    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-  } else if (!force) {
-    stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
-  } else {
-    cat("Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
-    unlink(cfg$results_folder, recursive = TRUE)
-    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-  }
-  
   # If report and scenname are supplied the data of this scenario in the report will be converted to REMIND input
+  # Used for REMIND-MAgPIE coupling
   if (!is.null(report) && !is.null(sceninreport)) {
-    #cfg$gms$biomass <- "magpie_linear" # is already set in start_couple.R
     getReportData(report,sceninreport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
   }
   
-  # Set source_include so that loaded scripts know they are included as 
-  # source (instead a load from command line)
-  source_include <- TRUE
-   
   # Update module paths in GAMS code
   update_modules_embedding()
 
@@ -122,16 +111,6 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   # run main.gms if not further specified
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
-  
-  # Configure input.gms in all modules based on settings of cfg file
-  l1 <- path("modules", list.dirs("modules/"))
-  for(l in l1) {
-    l2 <- path(l, list.dirs(l))
-    for(ll in l2) {
-      if (file.exists(path(ll, "input.gms")))
-        manipulateConfig(path(ll, "input.gms"), cfg$gms)
-      }
-    }
   
   # Check all setglobal settings for consistency
   settingsCheck()
@@ -188,7 +167,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
     content <- c(content, '      /')
     content <- c(content, ' ')
     # iso countries set
-	content <- c(content,'   iso "list of iso countries" /')
+	  content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
     for(i in levels(map$RegionCode)) {
@@ -204,7 +183,6 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
     content <- c(content,'      /',';') 
     replace_in_file('core/sets.gms',content,"SETS",comment="***")
   }
-  ###################################################################### 
   
   ############### download and distribute input data ################### 
   # check wheather the regional resolution and input data revision are outdated and update data if needed
@@ -222,7 +200,6 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
                           modelfolder  = ".",
                           debug        = FALSE)
   }
-  ######################################################################
   
   ##################### update information #############################
   # update_info, which regional resolution and input data revision in cfg$model
@@ -231,7 +208,6 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping,sep=";")  
   update_sets(map)
-  ######################################################################
   
   ###########################################################################################################
   ############# PROCESSING INPUT DATA ###################### END ############################################
@@ -247,47 +223,21 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
     content <- c(modification_warning,'','sets')
     content <- c(content,'','       modules "all the available modules"')
     content <- c(content,'       /',paste0("       ",getModules("modules/")[,"name"]),'       /')
-#    content <- c(content,'','       realisation "all the active realisations"')
-#    content <- c(content,'       /',paste0("       ",unlist(unique(cfg$gms[getModules("modules/")[,"name"]]))),"       /")
     content <- c(content,'','module2realisation(modules,*) "mapping of modules and active realisations" /')
     content <- c(content,paste0("       ",getModules("modules/")[,"name"]," . %",getModules("modules/")[,"name"],"%"))
     content <- c(content,'      /',';')
     replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ############# ADD MODULE INFO IN SETS  ###################### END ############################################
       
-  # For the performance tests create the workspace for validation
-  tmp <- strsplit(cfg$results_folder, "/")[[1]] # take name of output folder without "output/"
-  cfg$val_workspace <- paste(cfg$results_folder, "/", tmp[length(tmp)],".RData", sep = "")
-  validation <- list()
-  validation$technical <- list()
-  validation$technical$time <- list()
-  save(validation, file = cfg$val_workspace)
-  
-  # Delete unneeded gdx from files2export
-  tmp <- cfg$files2export$start
-#  if (cfg$gms$cm_startyear < 2020 && !is.null(names(tmp))) { # < 2020
-#    tmp <- tmp[!grepl("input_ref.gdx",names(tmp))]
-#	  cat("Removed input_ref.gdx from cfg$files2export$start.\n")
-#	}
-#  if ((cfg$gms$cm_emiscen == 1 | cfg$gms$cm_startyear < 2010) && !is.null(names(tmp))) { # < 2010
-#    tmp <- tmp[!grepl("input_bau.gdx",names(tmp))]
-#	  cat("Removed input_bau.gdx from cfg$files2export$start.\n")
-#	}
-  if ((cfg$gms$cm_emiscen != 9 | cfg$gms$cm_startyear < 2025) && !is.null(names(tmp))) {
-    tmp <- tmp[!grepl("input_opt.gdx",names(tmp))]
-    cat("Removed input_opt.gdx from cfg$files2export$start.\n")
-  }
-  cfg$files2export$start <- tmp
-
   # Replace load leveler-script with appropriate version
   if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-	if(length(unique(map$RegionCode)) <= 12) { 
-		cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-      "scripts/run_submit/submit_par.cmd"
-	} else { # use max amount of cores if regions number is greater than 12 
-		cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-      "scripts/run_submit/submit_par16.cmd"
-	}
+    if(length(unique(map$RegionCode)) <= 12) {
+      cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
+        "scripts/run_submit/submit_par.cmd"
+    } else { # use max amount of cores if regions number is greater than 12 
+      cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
+        "scripts/run_submit/submit_par16.cmd"
+    }
   } else if (cfg$gms$optimization == "testOneRegi") {
     cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
       "scripts/run_submit/submit_short.cmd"
@@ -295,6 +245,22 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
 
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
+  
+  # Create name of output folder and output folder itself
+  rundate <- Sys.time()
+  date <- format(rundate, "_%Y-%m-%d_%H.%M.%S")
+  cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
+  cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
+  # Create output folder
+  if (!file.exists(cfg$results_folder)) {
+    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
+  } else if (!force) {
+    stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
+  } else {
+    cat("Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
+    unlink(cfg$results_folder, recursive = TRUE)
+    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
+  }
   
   # Copy important files into output_folder (before REMIND execution)
   .copy.fromlist(cfg$files2export$start,cfg$results_folder)
@@ -305,25 +271,8 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   # Save configuration
   save(cfg, file = path(cfg$results_folder, "config.Rdata"))
 
-  if (grepl("_UBA_Sust",cfg$title)){
-    replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
-                    content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'_UBA.inc"'),
-                    subject = "CES INPUT")
-  } else {
-    replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
-                    content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
-                    subject = "CES INPUT")
-  }
- 
   # Merge GAMS files
   singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
-  
-#   # Check for illegal declaration - e.g. regi instead of all_regi 
-#   a <- codeExtract(path(cfg$results_folder, "full.gms"),"code")
-#   regi <- found <- grep("(^|,)regi(,|$)",a$declarations[,"sets"])
-#   if(length(regi <- found)>0) {
-#       stop("Some objects are declared over regi instead of regi_all! This is illegal, stopping. Check these declarations please: (",   paste(a$declarations[regi <- found,"names"],collapse=", "),")")
-#   }
   
   # Collect run statistics (will be saved to central database in submit.R)
   lucode::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -345,21 +294,21 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   
   setwd(cfg$results_folder)
   
-  # Determine if REMIND is to be run in sequential order or not
-  if (is.na(cfg$sequential)) {
+  # Decide whether the runs should be send to slurm (TRUE) or executed directly (FALSE)
+  if (is.na(cfg$sendToSlurm)) {
     if (on_cluster) {
-      cfg$sequential <- FALSE
+      cfg$sendToSlurm <- TRUE
     } else {
-      cfg$sequential <- TRUE
+      cfg$sendToSlurm <- FALSE
     }
   }
 
-  # "Compilation only" is always sequential
-  if (cfg$action == "c") cfg$sequential <- TRUE
+  # "Compilation only" is always executed directly
+  if (cfg$action == "c") cfg$sendToSlurm <- FALSE
   
   # Call appropriate submit script
-  if (!cfg$sequential) {
-      # parallel
+  if (cfg$sendToSlurm) {
+      # send to slurm
       if(cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
          if(length(unique(map$RegionCode)) <= 12) { 
            system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par.cmd"))
@@ -380,7 +329,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
           }
       }
   } else {
-      # sequential
+      # execute directly
       system("Rscript submit.R")
   }
   
