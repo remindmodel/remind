@@ -123,7 +123,6 @@ cm_iteration_max      "number of Negishi iterations (up to 49)"
 c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
-cm_postproc            "turn on postprocessing" !! warning: you have to rerun the scenario
 cm_emiscen            "policy scenario choice"
 cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 cm_co2_tax_growth     "growth rate of carbon tax"
@@ -205,7 +204,6 @@ cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
-cm_postproc            = 0;     !! def = 0
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1

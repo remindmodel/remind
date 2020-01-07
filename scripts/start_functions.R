@@ -30,8 +30,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   on.exit(setwd(maindir))
   
   # Is the run performed on the cluster?
-  on_cluster    <- file.exists('/iplex/01/landuse') || file.exists('/p')
-  on_newcluster <- file.exists('/p')  
+  on_cluster    <- file.exists('/p')
   
   # Adapt configuration to predifined scenario, if given
   if(!is.null(scenario))
@@ -52,11 +51,6 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}  
-  # Update CO2 tax information for exogenous carbon price runs with 4x the CO2 price from a previous run
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "Exog4xPrevious")){
-    source("scripts/input/create_Exog4xPrevious_CO2price_file.R")
-    create_Exog4xPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
-  }  
   
   #AJS
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -82,10 +76,10 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
                                          "indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
-                                      "POP_", cfg$gms$cm_POPscen, "-",
-                                      "GDP_", cfg$gms$cm_GDPscen, "-",
-                                      "Kap_", cfg$gms$capitalMarket, "-",
-                                      "Reg_", substr(regionscode(cfg$regionmapping),1,10))
+                                         "POP_", cfg$gms$cm_POPscen, "-",
+                                         "GDP_", cfg$gms$cm_GDPscen, "-",
+                                         "Kap_", cfg$gms$capitalMarket, "-",
+                                         "Reg_", substr(regionscode(cfg$regionmapping),1,10))
    # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
 
@@ -361,58 +355,33 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   }
 
   # "Compilation only" is always sequential
-  if (cfg$action == "c")
-    cfg$sequential <- TRUE
+  if (cfg$action == "c") cfg$sequential <- TRUE
+  
   # Call appropriate submit script
   if (!cfg$sequential) {
-    if(cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel" && cfg$gms$cm_postproc == 0) {
-      if(length(unique(map$RegionCode)) <= 12) { 
-		if (on_newcluster) {
-		 system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par.cmd"))
-		 system("sbatch submit_par.cmd")
-		} else {
-		 system("llsubmit submit_par.cmd")
-		}
-      } else { # use max amount of cores if regions number is greater than 12 
-		if (on_newcluster) {
-		 system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par16.cmd"))
-		 system("sbatch submit_par16.cmd")
-		} else {
-		 system("llsubmit submit_par16.cmd")
-		}
-      }
-    } else if (cfg$gms$optimization == "testOneRegi" && cfg$gms$cm_postproc == 0) {
-      if (on_newcluster) {
-        system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit_short.cmd"))
-        system("sbatch submit_short.cmd")
+      # parallel
+      if(cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
+         if(length(unique(map$RegionCode)) <= 12) { 
+           system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par.cmd"))
+           system("sbatch submit_par.cmd")
+         } else { # use max amount of cores if regions number is greater than 12 
+           system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par16.cmd"))
+           system("sbatch submit_par16.cmd")
+         }
+      } else if (cfg$gms$optimization == "testOneRegi") {
+          system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit_short.cmd"))
+          system("sbatch submit_short.cmd")
       } else {
-        system("llsubmit submit_short.cmd")
+          system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit.cmd"))
+          if (cfg$gms$cm_startyear > 2030) {
+              system("sbatch --partition=ram_gpu submit.cmd")
+          } else {
+              system("sbatch submit.cmd")
+          }
       }
-    } else if (cfg$gms$cm_postproc == 1) {
-      if (on_newcluster) {
-        system(paste0("sed -i 's/__JOB_NAME__/REMIND-PP_", cfg$title,"/g' submit_postp.cmd"))
-        system("sbatch submit_postp.cmd")     
-      } else {
-        system("llsubmit submit_postp.cmd")
-      }
-    } else {
-      if (on_newcluster) {
-        system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit.cmd"))
-		if (cfg$gms$cm_startyear > 2030) {
-		    system("sbatch --partition=ram_gpu submit.cmd")
-        } else {
-		    system("sbatch submit.cmd")
-		}	
-      } else {
-        system("llsubmit submit.cmd")
-      }
-    }
   } else {
-    if (cfg$gms$cm_postproc == 1) {
-      system("Rscript submit_postp.R")
-    } else {
+      # sequential
       system("Rscript submit.R")
-    }
   }
   
   # on.exit sets working directory back to REMIND main folder   
