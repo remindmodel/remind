@@ -120,7 +120,7 @@ p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calc
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes"
-
+pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
 
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"

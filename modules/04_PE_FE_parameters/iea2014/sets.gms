@@ -32,6 +32,7 @@ uet2fet(all_enty,all_enty,all_te,all_te)  "match ESM fe for ue-items of the tran
   fedie.fedie.tdbiodie.tdbiodie
   fedie.fedie.tdfosdie.tdfosdie
   feelt.feelt.tdelt.tdelt
+  fegat.fegat.tdgat.tdgat
 /
 in2enty(all_enty,all_enty,all_te,all_te)  "match ESM fe to CES structure"
 in2enty2(all_enty,all_enty,all_te,all_te)  "alias of in2enty"

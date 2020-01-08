@@ -21,7 +21,7 @@ if(cm_nucscen eq 7,
 
 display vm_cap.lo;
 
-
+$ifthen.complex_transport "%transport%" == "complex"
 *** additional target for electro mobility, overwriting the general bounds in 35_transport/complex/bounds.gms
 *** requiring higher EV and FC vehicle shares, to mirror efficiency mandates and EV legislation in many countries
  loop(regi,
@@ -52,6 +52,6 @@ display vm_cap.lo;
      );
    );
  );
-
+$endif.complex_transport
 
 *** EOF ./modules/40_techpol/NDC2018/bounds.gms
