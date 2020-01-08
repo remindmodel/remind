@@ -167,7 +167,7 @@ v21_taxrevSO2(t,regi) =g= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevBio(t,regi) =g= v21_tau_bio(t) * vm_fuExtr(t,regi,"pebiolc","1") * vm_pebiolc_price_shifted(t,regi)
+v21_taxrevBio(t,regi) =g= v21_tau_bio(t) * vm_fuExtr(t,regi,"pebiolc","1") * vm_pebiolc_price(t,regi)
                           - p21_taxrevBio0(t,regi);
 						  
 ***---------------------------------------------------------------------------
