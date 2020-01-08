@@ -95,6 +95,13 @@ eta                 0.95        0.85        0.85        1.00        1.00        
 omf                 0.03        0.02        0.02        0.03        0.03        0.02        0.06    
 lifetime              45          45          45          30          30          45          45       
 
++                tdbiogat    tdfosgat      
+inco0                 360         360        
+mix0                 1.00        1.00       
+eta                  0.85        0.85   
+omf                  0.02        0.02    
+lifetime               45          45       
+
 +                 tdbiosos  tdfossos       tdhes    tdbiodie    tdfosdie    tdbiopet    tdfospet      tdelt
 inco0                   60       60         240         600         600         600         600       6000
 mix0                  1.00     1.00        1.00        1.00        1.00        1.00        1.00       1.00
