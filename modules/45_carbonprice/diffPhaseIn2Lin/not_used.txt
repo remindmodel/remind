@@ -17,8 +17,6 @@ pm_ttot_2_tall,input,questionnaire
 pm_prtp,input,questionnaire
 cm_emiscen,input,questionnaire
 cm_co2_tax_growth,input,questionnaire
-cm_stagestart,input,questionnaire
-cm_stageend,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
 cm_expoLinear_yearStart,input,questionnaire
 cm_carbonprice_temperatureLimit,input,questionnaire

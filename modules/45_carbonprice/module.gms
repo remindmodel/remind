@@ -28,7 +28,6 @@ $Ifi "%carbonprice%" == "diffPriceSameCost" $include "./modules/45_carbonprice/d
 $Ifi "%carbonprice%" == "exogenous" $include "./modules/45_carbonprice/exogenous/realization.gms"
 $Ifi "%carbonprice%" == "expoLinear" $include "./modules/45_carbonprice/expoLinear/realization.gms"
 $Ifi "%carbonprice%" == "exponential" $include "./modules/45_carbonprice/exponential/realization.gms"
-$Ifi "%carbonprice%" == "linadjust" $include "./modules/45_carbonprice/linadjust/realization.gms"
 $Ifi "%carbonprice%" == "linear" $include "./modules/45_carbonprice/linear/realization.gms"
 $Ifi "%carbonprice%" == "none" $include "./modules/45_carbonprice/none/realization.gms"
 $Ifi "%carbonprice%" == "temperatureNotToExceed" $include "./modules/45_carbonprice/temperatureNotToExceed/realization.gms"

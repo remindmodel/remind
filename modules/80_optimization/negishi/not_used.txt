@@ -27,7 +27,6 @@ pm_budgetCO2eq, parameter, ???
 sm_budgetCO2eqGlob, parameter, ???
 qm_co2eqCum, equation, ???
 sm_endBudgetCO2eq,scalar,???
-cm_postproc,switch,???
 sm_fadeoutPriceAnticip,scalar,???
 vm_co2eq,variable,???
 
