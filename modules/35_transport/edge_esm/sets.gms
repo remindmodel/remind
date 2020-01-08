@@ -123,8 +123,10 @@ SSP_scenario(SSP_scenario_all)
 
 EDGE_scenario_all    "EDGE scenarios"
 /
-conservative
-progressive
+Conservative_liquids
+Hydrogen_push
+Electricity_push
+Smart_lifestyles_Electricity_push
 /
 
 EDGE_scenario(EDGE_scenario_all)

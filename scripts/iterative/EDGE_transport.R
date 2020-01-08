@@ -8,23 +8,6 @@ require(moinput)
 setConfig(forcecache=T)
 
 
-## option to include calculation of endogenous efficiency for LDVs
-endogeff = TRUE
-## option to include the additional taxes in the market
-selfmarket_taxes <<- FALSE
-## option to include a policy push
-selfmarket_policypush <<- FALSE
-## option to include the increased acceptancy of the market
-selfmarket_acceptancy <<- FALSE
-## technology pushed by the market
-techswitch <<- "Liquids"  ## choose either BEV, FCEV, synth (synthetic fuels scenario), "none" if none
-## option to represent an enhanced tech world
-enhancedtech <<- FALSE
-## include rebates and feebates
-rebates_febates <<- FALSE ##NB THEY ARE ONLY IN PSI! ONLY WORKING IN EUROPE
-## save temporary input (useful for reporting only)
-savetmpinput <<- FALSE
-
 mapspath <- function(fname){
     file.path("../../modules/35_transport/edge_esm/input", fname)
 }
@@ -49,6 +32,34 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+
+EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+
+merge_traccs <<- EDGEscenarios[options == "merge_traccs", switch]
+addvintages <<- EDGEscenarios[options == "addvintages", switch]
+inconvenience <<- EDGEscenarios[options == "inconvenience", switch]
+selfmarket_taxes <<- EDGEscenarios[options == "selfmarket_taxes", switch]
+selfmarket_policypush <<- EDGEscenarios[options == "selfmarket_policypush", switch]
+selfmarket_acceptancy <<- EDGEscenarios[options == "selfmarket_acceptancy", switch]
+
+if (EDGE_scenario == "Conservative_liquids") {
+  techswitch <<- "Liquids"
+} else if (EDGE_scenario %in% c("Electricity_push", "Smart_lifestyles_Electricity_push")) {
+  techswitch <<- "BEV"
+} else if (EDGE_scenario == "Hydrogen_push") {
+  techswitch <<- "FCEV"
+} else {
+  print("You selected a not allowed scenario. Scenarios allowed are: Conservative_liquids, Hydrogen_push, Electricity_push, Smart_lifestyles_Electricity_push")
+  exit()
+}
+
+endogeff <<- EDGEscenarios[options== "endogeff", switch]
+enhancedtech <<- EDGEscenarios[options== "enhancedtech", switch]
+rebates_febates <<- EDGEscenarios[options== "rebates_febates", switch] ##NB THEY ARE ONLY IN PSI! ONLY WORKING IN EUROPE
+savetmpinput <<- FALSE
+smartlifestyle <<- EDGEscenarios[options== "smartlifestyle", switch]
+
+
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
 EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
