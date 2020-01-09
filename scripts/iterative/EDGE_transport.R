@@ -93,12 +93,12 @@ if (setlearning | addvintages){
 }
 
 
-if (setlearning & file.exists("demand_previousiter.RDS")) {  
+if (setlearning & file.exists("demand_previousiter.RDS")) {
   ## load previous iteration number of cars
   demand_BEVtmp = readRDS("demand_BEV.RDS")
   ## load previous iteration demand
   ES_demandpr = readRDS("demand_previousiter.RDS")
-  ## calculate non fuel costs and 
+  ## calculate non fuel costs and
   nonfuel_costs = applylearning(gdx,REMINDmapping,EDGE2teESmap, demand_BEVtmp, ES_demandpr)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
 }
@@ -127,21 +127,21 @@ saveRDS(REMIND_prices, paste0("REMINDprices", iter, ".RDS"))
 
 if(average_prices){
 
-if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30){
-  old_prices <- readRDS(pfile)
-  all_prices <- rbind(old_prices, REMIND_prices)
-  setkeyv(all_prices, keys)
-  ## apply moving avg
-  REMIND_prices <- REMIND_prices[
-    all_prices[iternum >= 20, mean(tot_price), by=keys], tot_price := V1]
-  all_prices <- rbind(old_prices, REMIND_prices)
-}else{
-  all_prices <- REMIND_prices
-}
-saveRDS(all_prices, pfile)
+  if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30){
+    old_prices <- readRDS(pfile)
+    all_prices <- rbind(old_prices, REMIND_prices)
+    setkeyv(all_prices, keys)
+    ## apply moving avg
+    REMIND_prices <- REMIND_prices[
+      all_prices[iternum >= 20, mean(tot_price), by=keys], tot_price := V1]
+    all_prices <- rbind(old_prices, REMIND_prices)
+  }else{
+    all_prices <- REMIND_prices
+  }
+  saveRDS(all_prices, pfile)
 
-## save REMIND prices (after dampening)
-saveRDS(REMIND_prices,paste0("REMINDpricesDampened", iter, ".RDS"))
+  ## save REMIND prices (after dampening)
+  saveRDS(REMIND_prices,paste0("REMINDpricesDampened", iter, ".RDS"))
 
 }
 
@@ -149,15 +149,15 @@ REMIND_prices[, "iternum" := NULL]
 
 ## calculates logit
 if (inconvenience) {
-years=copy(REMINDyears)
+  years=copy(REMINDyears)
 
-logit_data <- calculate_logit_inconv_endog(
-        prices= REMIND_prices[tot_price > 0],
-        vot_data = vot_data,
-        inco_data = inco_data,
-        logit_params = logit_params,
-        intensity_data = int_dat,
-        price_nonmot = price_nonmot)
+  logit_data <- calculate_logit_inconv_endog(
+    prices= REMIND_prices[tot_price > 0],
+    vot_data = vot_data,
+    inco_data = inco_data,
+    logit_params = logit_params,
+    intensity_data = int_dat,
+    price_nonmot = price_nonmot)
 
 } else{
 
@@ -172,7 +172,7 @@ logit_data <- calculate_logit_inconv_endog(
 
 }
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
-shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
+## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
 
 mj_km_data <- logit_data[["mj_km_data"]] ## energy intensity at a technology level
 prices <- logit_data[["prices_list"]] ## prices at each level of the logit function, 1990USD/pkm
@@ -205,12 +205,12 @@ demByTech <- shares_intensity_demand[["demand"]] ##in [-]
 intensity <- shares_intensity_demand[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_intensity_demand$demandF_plot_pkm ## total demand is 1, required for costs
 
-if (setlearning) { 
+if (setlearning) {
   demand_BEV=calc_num_vehicles( norm_dem_BEV = norm_demand[technology == "BEV" & ## battery vehicles
                                                            subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
                                                            c("iso", "year", "sector", "vehicle_type", "demand_F") ],
                                 ES_demand = ES_demand)
-  
+
   ## save number of vehicles for next iteration
   saveRDS(demand_BEV, "demand_BEV.RDS")
   ## save the demand for next iteration renaming the column
@@ -244,8 +244,8 @@ finalInputs <- prepare4REMIND(
     REMINDtall = REMINDtall,
     REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
 
-	
-	
+
+
 ## add the columns of SSP scenario and EDGE scenario to the output parameters
 for (i in names(finalInputs)) {
              finalInputs[[i]]$SSP_scenario <- scenario
