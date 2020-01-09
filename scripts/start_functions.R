@@ -247,8 +247,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
   
   # Create name of output folder and output folder itself
-  rundate <- Sys.time()
-  date <- format(rundate, "_%Y-%m-%d_%H.%M.%S")
+  date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
   cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
   # Create output folder
@@ -277,7 +276,7 @@ start_run <- function(cfg, scenario = NULL, report = NULL, sceninreport = NULL, 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
                         user = Sys.info()[["user"]],
-                        date = rundate,
+                        date = Sys.time(),
                         version_management = "git",
                         revision = try(system("git rev-parse --short HEAD", intern=TRUE), silent=TRUE),
                         #revision_date = try(as.POSIXct(system("git show -s --format=%ci", intern=TRUE), silent=TRUE)),

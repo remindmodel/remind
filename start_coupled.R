@@ -56,6 +56,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
+    cfg_rem$force_replace  <- TRUE # overwrite existing output folders
     #cfg_rem$gms$biomass    <- "magpie_linear"
 
     # define gdx paths
@@ -103,18 +104,16 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cfg_rem$gms$cm_MAgPIE_coupling <- "off"
       cat("### COUPLING ### No MAgPIE report for REMIND input provided.\n")
       cat("### COUPLING ### REMIND will be startet in stand-alone mode with\n    ",runname,"\n    ",cfg_rem$results_folder,"\n")
-      outfolder_rem <- start_run(cfg_rem,coupled=T,force=T)
+      outfolder_rem <- start_run(cfg_rem,coupled=T)
     } else if (grepl(paste0("report.mif"),report)) { # if it is a MAgPIE report
       ######### S T A R T   R E M I N D   C O U P L E D ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "on"
       if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
-      rep <- read.report(report,as.list=FALSE)
-      sceninreport <- getNames(rep,dim="scenario") # report must only contain ONE scenario
-      cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Scenario used as input=",sceninreport,"\n    Folder=",cfg_rem$results_folder,"\n")
+      cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
       # Keep path to MAgPIE report in mind to have it availalbe after the coupling loop
       mag_report_keep_in_mind <- report
       ####### START REMIND #######
-      outfolder_rem <- start_run(cfg_rem, report=rep, sceninreport=sceninreport,coupled=T,force=T)
+      outfolder_rem <- start_run(cfg_rem, report=report, coupled=T)
       ############################
     } else if (grepl("REMIND_generic_",report)) { # if it is a REMIND report
       ############### O M I T   R E M I N D  ###############################
