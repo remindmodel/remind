@@ -74,7 +74,7 @@
 * 
 * Input data revision: 5.936
 * 
-* Last modification (input data): Tue Jan 07 08:18:21 2020
+* Last modification (input data): Thu Jan  9 10:03:55 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -159,7 +159,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -385,6 +385,7 @@ cm_DiscRateScen = 0;!! def = 0
 cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
 
+$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -413,7 +414,7 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 
 
 $setglobal cm_compile_main       TRUE     !! this will be changed by submit.R
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
