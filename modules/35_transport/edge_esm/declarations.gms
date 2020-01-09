@@ -5,4 +5,11 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/declarations.gms
+Positive variables
+vm_shBioFe(ttot,all_regi) "Share of biofuels in all final energies used for transportation. Value between 0 and 1."
+;
+
+Equations
+q35_shBioFe(ttot,all_regi) "Define the share of biofuels in all final energies for transportation."
+;
 *** EOF ./modules/35_transport/edge_esm/declarations.gms
