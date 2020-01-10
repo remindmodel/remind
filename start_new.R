@@ -49,7 +49,7 @@ choose_submit <- function(title="Please choose run submission type") {
 
 
 # Choose submission type
-slurm <- TRUE #suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
+slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
 if (slurm) {
   slurmConfig <- choose_submit("Choose submission type")
   } else {
