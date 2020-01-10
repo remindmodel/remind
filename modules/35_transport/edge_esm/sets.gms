@@ -144,13 +144,11 @@ segafos.fegat.tdfosgat
 fe_with_bio_dyn35(all_enty)
 /
 fepet
-fegat
 fedie
 /
 
 se_with_bio_dyn35(all_enty)
 /
-segabio
 seliqbio
 /
 
