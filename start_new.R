@@ -1,5 +1,7 @@
 library(lucode)
 
+source("scripts/start/submit_run.R")
+
 #######################################################################
 ############### Select slurm partitiion ###############################
 #######################################################################
@@ -49,9 +51,9 @@ choose_submit <- function(title="Please choose run submission type") {
 # Choose submission type
 slurm <- TRUE #suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
 if (slurm) {
-  user_choice_submit <- choose_submit("Choose submission type")
+  slurmConfig <- choose_submit("Choose submission type")
   } else {
-  user_choice_submit <- "direct"
+  slurmConfig <- "direct"
   }
 
 #######################################################################
@@ -141,92 +143,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     return(icfg)
 }
 
-############## Define function: .copy.fromlist #########################
-
-.copy.fromlist <- function(filelist,destfolder) {
-  if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
-  for(i in 1:length(filelist)) {
-    if(!is.na(filelist[i])) {
-      to <- paste0(destfolder,"/",names(filelist)[i])
-      if(!file.copy(filelist[i],to=to,recursive=dir.exists(to),overwrite=T))
-        cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
-    }
-  }
-}
-
-############## Define function: runsubmit #########################
-
-submit_run <- function(icfg) {
-  
-  # Create name of output folder and output folder itself
-  date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
-  icfg$results_folder <- gsub(":date:", date, icfg$results_folder, fixed = TRUE)
-  icfg$results_folder <- gsub(":title:", icfg$title, icfg$results_folder, fixed = TRUE)
-  # Create output folder
-  if (!file.exists(icfg$results_folder)) {
-    dir.create(icfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-  } else if (!icfg$force_replace) {
-    stop(paste0("Results folder ",icfg$results_folder," could not be created because it already exists."))
-  } else {
-    cat("Deleting results folder because it alreay exists:",icfg$results_folder,"\n")
-    unlink(icfg$results_folder, recursive = TRUE)
-    dir.create(icfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-  }
-  
-  # Copy files required to confiugre and start a run
-  filelist <- c(paste0(icfg$title,".Rdata")            = "config.Rdata",
-                "scripts/run_submit/prepare_and_run.R" = "prepare_and_run.R")
-  .copy.fromlist(filelist,icfg$results_folder)
-
-  # change to run folder
-  mainfolder <- getwd()
-  setwd(icfg$results_folder)
-  on.exit(setwd(mainfolder))
- 
-  # send prepare_and_run.R to cluster 
-  cat("Executing prepare_and_run.R for",icfg$title,"\n")
-  sbatch_command <- paste0("sbatch --job-name=",icfg$title," --output=",icfg$title,"-%j.out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R ",icfg$title,"\"")
-  if(icfg$submit_settings=="direct") {
-    log <- format(Sys.time(), paste0(icfg$title,"-%Y-%H-%M-%S-%OS3.log"))
-    system("Rscript prepare_and_run.R ",icfg$title, stderr = log, stdout = log, wait=FALSE)
-  } else if(icfg$submit_settings=="priority") {
-    system(paste(sbatch_command,"--qos=priority"))
-    Sys.sleep(1)
-  } else if(icfg$submit_settings=="standby") {
-    #tmp <- paste(sbatch_command,"--qos=standby")
-    #print(tmp)
-    system(paste(sbatch_command,"--qos=standby"))
-    Sys.sleep(1)
-  } else if(icfg$submit_settings=="short") {
-    system(paste(sbatch_command,"--qos=short"))
-    Sys.sleep(1)
-  } else if(icfg$submit_settings=="medium") {
-    system(paste(sbatch_command,"--qos=medium"))
-    Sys.sleep(1)
-  } else if(icfg$submit_settings=="long") {
-    system(paste(sbatch_command,"--qos=long"))
-    Sys.sleep(1)
-  } else {
-    stop("Unknown submission type")
-  }
-  
-  # Gedächtnisstütze für die slurm-Varianten
-  ## Replace load leveler-script with appropriate version
-  #if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-  #  if(length(unique(map$RegionCode)) <= 12) {
-  #    cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #      "scripts/run_submit/submit_par.cmd"
-  #  } else { # use max amount of cores if regions number is greater than 12 
-  #    cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #      "scripts/run_submit/submit_par16.cmd"
-  #  }
-  #} else if (cfg$gms$optimization == "testOneRegi") {
-  #  cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #    "scripts/run_submit/submit_short.cmd"
-  #}
-}
-
 ###################### Load csv if provided  ##########################
+
 # If scenario_config.csv was provided from command line, set cfg according to it (copy from start_bundle)
 # check for config file parameter
 config.file <- commandArgs(trailingOnly = TRUE)[1]
@@ -253,9 +171,8 @@ for (scen in rownames(scenarios)) {
   source("config/default.cfg")
   
   # Have the log output written in a file (not on the screen)
-  cfg$submit_settings <- user_choice_submit
+  cfg$slurmConfig <- slurmConfig
   cfg$logoption   <- 2
-  cfg$sendToSlurm <- NA
   
   # configure cfg based on settings from csv if provided
   if (!is.na(config.file)) cfg <- configure_cfg(cfg, scen, scenarios, settings)
