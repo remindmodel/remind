@@ -1,8 +1,6 @@
-  library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
-
-
 
 getReportData <- function(rep,inputpath_mag="magpie",inputpath_acc="costs") {
 	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
@@ -144,7 +142,7 @@ getReportData <- function(rep,inputpath_mag="magpie",inputpath_acc="costs") {
 ###############################################################################
 ###############################################################################
 
-prepare_and_run <- function(cfg) {
+prepare_and_run <- function() {
   
   # Load libraries
   require(lucode, quietly = TRUE,warn.conflicts =FALSE)
@@ -379,6 +377,7 @@ prepare_and_run <- function(cfg) {
   save(cfg, file = path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
+  cat("Creating full.gms\n")
   singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
   
   # Collect run statistics (will be saved to central database in submit.R)
@@ -815,3 +814,5 @@ prepare_and_run <- function(cfg) {
   
 }
 
+# call prepare and run (always without cfg, because cfg is always read from results folder, where it has been copied by submit_run(cfg))
+prepare_and_run()

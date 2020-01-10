@@ -173,17 +173,21 @@ for (scen in rownames(scenarios)) {
   # Have the log output written in a file (not on the screen)
   cfg$slurmConfig <- slurmConfig
   cfg$logoption   <- 2
+  start_now <- TRUE
   
   # configure cfg based on settings from csv if provided
-  if (!is.na(config.file)) cfg <- configure_cfg(cfg, scen, scenarios, settings)
+  if (!is.na(config.file)) {
+  
+  cfg <- configure_cfg(cfg, scen, scenarios, settings)
+  
+  # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
+  start_now <- (substr(scenarios[scen,"path_gdx_ref"], nchar(scenarios[scen,"path_gdx_ref"])-3, nchar(scenarios[scen,"path_gdx_ref"])) == ".gdx" 
+               | is.na(scenarios[scen,"path_gdx_ref"]))
+  }
   
   # save the cfg data for later start of subsequent runs (after preceding run finished)
   cat("Writing cfg to file\n")
   save(cfg,file=paste0(scen,".RData"))
-  
-  # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
-  start_now <- substr(settings[scen,"path_gdx_ref"], nchar(settings[scen,"path_gdx_ref"])-3, nchar(settings[scen,"path_gdx_ref"])) == ".gdx" 
-               | is.na(settings[scen,"path_gdx_ref"])
   
   if (start_now){
    cat("Creating and starting: ",cfg$title,"\n")

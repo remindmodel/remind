@@ -38,12 +38,12 @@ submit_run <- function(cfg) {
   save(cfg,file=paste0(cfg$title,".RData"))
   
   # Copy files required to confiugre and start a run
-  filelist <- c(paste0(cfg$title,".Rdata")            = "config.Rdata",
-                "scripts/run_submit/prepare_and_run.R" = "prepare_and_run.R")
+  filelist <- c("config.Rdata" = paste0(cfg$title,".RData"),
+                "prepare_and_run.R" = "scripts/run_submit/prepare_and_run.R")
   .copy.fromlist(filelist,cfg$results_folder)
   
   # remove config in main folder (after copying into results folder)
-  if(!file.remove(paste0(cfg$title,".Rdata"))
+  file.remove(paste0(cfg$title,".RData"))
 
   # change to run folder
   setwd(cfg$results_folder)
@@ -51,7 +51,7 @@ submit_run <- function(cfg) {
 
   # send prepare_and_run.R to cluster 
   cat("Executing prepare_and_run.R for",cfg$title,"\n")
-  sbatch_command <- paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,"-%j.out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R ",cfg$title,"\"")
+  sbatch_command <- paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,"-%j.out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \"")
   if(cfg$slurmConfig=="direct") {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R ",cfg$title, stderr = log, stdout = log, wait=FALSE)
@@ -59,8 +59,8 @@ submit_run <- function(cfg) {
     system(paste(sbatch_command,"--qos=priority"))
     Sys.sleep(1)
   } else if(cfg$slurmConfig=="standby") {
-    #tmp <- paste(sbatch_command,"--qos=standby")
-    #print(tmp)
+    tmp <- paste(sbatch_command,"--qos=standby")
+    print(tmp)
     system(paste(sbatch_command,"--qos=standby"))
     Sys.sleep(1)
   } else if(cfg$slurmConfig=="short") {
