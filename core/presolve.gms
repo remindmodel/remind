@@ -27,7 +27,7 @@ p_emineg_econometric(regi,"n2owaste","p2")$(pm_gdp_gdx("2005",regi)/pm_pop("2005
 *JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
 *** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
 p_switch_cement(ttot,regi)$(ttot.val ge 2005) = 1 / ( 1 + exp( - (s_c_so2 / s_tau_cement)
-                                          *(1000 * p_inv_gdx(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)) - p_emineg_econometric(regi,"co2cement_process","p4"))
+                                          *(1000 * pm_inv_gdx(ttot,regi) / (pm_pop(ttot,regi)*pm_shPPPMER(regi)) - p_emineg_econometric(regi,"co2cement_process","p4"))
                                         ) 
                               );
 display p_switch_cement;
@@ -43,8 +43,8 @@ p_emineg_econometric(regi,"co2cement_process","p1")$( p_switch_cement("2005",reg
     * ( ( 1000
           !! use default per-capita investments if no investment data in gdx
           !! (due to different region settings)
-        * ( (p_inv_gdx("2005",regi) / pm_pop("2005",regi))$( p_inv_gdx("2005",regi) )
-          + 4$( NOT p_inv_gdx("2005",regi) )
+        * ( (pm_inv_gdx("2005",regi) / pm_pop("2005",regi))$( pm_inv_gdx("2005",regi) )
+          + 4$( NOT pm_inv_gdx("2005",regi) )
           )
         / pm_shPPPMER(regi)
         )
@@ -97,7 +97,7 @@ display p_efFossilFuelExtr;
 ***--------------------------------------
 *JeS CO2 emissions from cement production. p_switch_cement describes an s-curve to provide a smooth switching from the short-term
 *** behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions).
-p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(1000*p_inv_gdx(ttot,regi)/(pm_pop(ttot,regi)*pm_shPPPMER(regi))-p_emineg_econometric(regi,"co2cement_process","p4"))));
+p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(1000*pm_inv_gdx(ttot,regi)/(pm_pop(ttot,regi)*pm_shPPPMER(regi))-p_emineg_econometric(regi,"co2cement_process","p4"))));
 display p_switch_cement;
 
 *** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
@@ -156,7 +156,7 @@ vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
     * ( (1 - p_switch_cement(ttot,regi))
       * p_emineg_econometric(regi,"co2cement_process","p1") 
       * ( (1000 
-          * p_inv_gdx(ttot,regi)
+          * pm_inv_gdx(ttot,regi)
           / ( pm_pop(ttot,regi)
             * pm_shPPPMER(regi)
             )
@@ -166,7 +166,7 @@ vm_macBase.fx(ttot,regi,"co2cement_process")$( ttot.val ge 2005 )
         * p_emineg_econometric(regi,"co2cement_process","p3")
         )
        )
-    )$(p_inv_gdx(ttot,regi) ne 0)
+    )$(pm_inv_gdx(ttot,regi) ne 0)
 ;
 
 vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )

@@ -452,148 +452,148 @@ all_exogEmi     " all exogenous emission types"
         GrasslandBurning "Exogenous emissions from Grassland Burning"
 /
 
-  all_in   "all inputs and outputs of the CES function"
-  /
-    inco    "macroeconomic output"  
+all_in   "all inputs and outputs of the CES function"
+/
+  inco                    "macroeconomic output"  
 
-    lab     "labour input"
-    kap     "capital input"
-    en      "energy input"
+  lab                     "labour input"
+  kap                     "capital input"
+  en                      "energy input"
 
-    ens     "stationary energy use"
-    ensh    "stationary heat energy use"
-    fesos   "stationary use of solid energy carriers"
-    fehos   "stationary use of liquid energy carriers"
-    fegas   "stationary use of gaseous energy carriers"
-    feh2s   "stationary use of hydrogen"
-    fehes   "stationary use of district heat"
-    feels   "stationary use of electricity"
+  ens                     "stationary energy use"
+  ensh                    "stationary heat energy use"
+  fesos                   "stationary use of solid energy carriers"
+  fehos                   "stationary use of liquid energy carriers"
+  fegas                   "stationary use of gaseous energy carriers"
+  feh2s                   "stationary use of hydrogen"
+  fehes                   "stationary use of district heat"
+  feels                   "stationary use of electricity"
 
-    enb     "buildings energy use"
-    enhb    "buildings heat energy use"
-    fesob   "buildings use of solid energy carriers"
-    fehob   "buildings use of liquid energy carriers"
-    fegab   "buildings use of gaseous energy carriers"
-    feh2b   "buildings use of hydrogen"
-    feheb   "buildings use of district heat"
-    feelb   "buildings use of electricity"
+  enb                     "buildings energy use"
+  enhb                    "buildings heat energy use"
+  fesob                   "buildings use of solid energy carriers"
+  fehob                   "buildings use of liquid energy carriers"
+  fegab                   "buildings use of gaseous energy carriers"
+  feh2b                   "buildings use of hydrogen"
+  feheb                   "buildings use of district heat"
+  feelb                   "buildings use of electricity"
 
-    eni     "industry energy use"
-    enhi    "industry heat energy use"
-    fesoi   "industry use of solid energy carriers"
-    fehoi   "industry use of liquid energy carriers"
-    fegai   "industry use of gaseous energy carriers"
-    feh2i   "industry use of hydrogen"
-    fehei   "industry use of district heat"
-    feeli   "industry use of electricity"
+  eni                     "industry energy use"
+  enhi                    "industry heat energy use"
+  fesoi                   "industry use of solid energy carriers"
+  fehoi                   "industry use of liquid energy carriers"
+  fegai                   "industry use of gaseous energy carriers"
+  feh2i                   "industry use of hydrogen"
+  fehei                   "industry use of district heat"
+  feeli                   "industry use of electricity"
 
-    fehcsob  "buildings heating and cooking solids final energy"
-    fehcelb  "buildings heating and cooking electricity final energy" 
-    fehcheb  "buildings heating and cooking district heat final energy"
-    fehcgab  "buildings heating and cooking gas final energy"
-    fehchob  "buildings heating and cooking liquids final energy"
-    fealelb  "buildings appliances and light electricity final energy"
-    fecwsob  "buildings cooking and water heating solids final energy"
-    fecwelb  "buildings cooking and water heating electricity final energy" 
-    fecwhpb  "buildings cooking and water heating electricity heat pump final energy" 
-    fecwheb  "buildings cooking and water heating district heat final energy"
-    fecwgab  "buildings cooking and water heating gas final energy"
-    fecwhob  "buildings cooking and water heating liquids final energy"
-    fescelb  "buildings space cooling electricity final energy"
-    feshsob  "buildings space heating solids final energy"
-    feshelb  "buildings space heating electricity final energy" 
-    feshheb  "buildings space heating district heat final energy"
-    feshgab  "buildings space heating gas final energy"
-    feshhob  "buildings space heating liquids final energy"
-    feshhpb  "buildings space heating electricity heat pump final energy"
+  fehcsob                 "buildings heating and cooking solids final energy"
+  fehcelb                 "buildings heating and cooking electricity final energy" 
+  fehcheb                 "buildings heating and cooking district heat final energy"
+  fehcgab                 "buildings heating and cooking gas final energy"
+  fehchob                 "buildings heating and cooking liquids final energy"
+  fealelb                 "buildings appliances and light electricity final energy"
+  fecwsob                 "buildings cooking and water heating solids final energy"
+  fecwelb                 "buildings cooking and water heating electricity final energy" 
+  fecwhpb                 "buildings cooking and water heating electricity heat pump final energy" 
+  fecwheb                 "buildings cooking and water heating district heat final energy"
+  fecwgab                 "buildings cooking and water heating gas final energy"
+  fecwhob                 "buildings cooking and water heating liquids final energy"
+  fescelb                 "buildings space cooling electricity final energy"
+  feshsob                 "buildings space heating solids final energy"
+  feshelb                 "buildings space heating electricity final energy" 
+  feshheb                 "buildings space heating district heat final energy"
+  feshgab                 "buildings space heating gas final energy"
+  feshhob                 "buildings space heating liquids final energy"
+  feshhpb                 "buildings space heating electricity heat pump final energy"
     
-    esswb   "buildings weatherization energy service"
-    uehcb    "buildings heating and cooking useful energy"
-    uecwb    "buildings cooking and water heating useful energy"
-    uescb    "buildings space cooling useful energy"
-    ueshb    "buildings space heating useful energy"
-    uealb  "buildings appliances and light, useful energy"
-    ueswb   "buildings weatherization"
-    feshh2b  "buildings space heating hydrogen"
-    fecwb    "buildings cooking and water heating FE"
-    fecwh2b  "buildings cooking and water heating hydrogen"
+  esswb                   "buildings weatherization energy service"
+  uehcb                   "buildings heating and cooking useful energy"
+  uecwb                   "buildings cooking and water heating useful energy"
+  uescb                   "buildings space cooling useful energy"
+  ueshb                   "buildings space heating useful energy"
+  uealb                   "buildings appliances and light, useful energy"
+  ueswb                   "buildings weatherization"
+  feshh2b                 "buildings space heating hydrogen"
+  fecwb                   "buildings cooking and water heating FE"
+  fecwh2b                 "buildings cooking and water heating hydrogen"
 *** FIXME this should be reworked with Robert when revising the transport module
-    entrp   "transport energy use"
-    fetf    "transport fuel use"
-    ueLDVt   "transport useful energy light duty vehicles"
-    ueHDVt   "transport useful energy heavy duty vehicles"
-    feh2t   "transport hydrogen use"
-    ueelTt    "transport useful energy for electric trains"
+  entrp                   "transport energy use"
+  fetf                    "transport fuel use"
+  ueLDVt                  "transport useful energy light duty vehicles"
+  ueHDVt                  "transport useful energy heavy duty vehicles"
+  feh2t                   "transport hydrogen use"
+  ueelTt                  "transport useful energy for electric trains"
 
-    entrp_pass    "passenger transport"
-    entrp_frgt    "freight transport"
-    entrp_pass_sm    "short-to-medium distance passenger transport"
-    entrp_pass_lo    "long distance passenger transport"
-    entrp_frgt_sm    "short-to-medium distance freight transport"
-    entrp_frgt_lo    "long distance freight transport"
-    fepet_pass_sm    "short-to-medium distance passenger transport, petrol"
-    fedie_pass_sm    "short-to-medium distance passenger transport, diesel"
-    feelt_pass_sm    "short-to-medium distance passenger transport, electricity"
-    fedie_pass_lo    "long distance passenger transport, diesel"
-    fedie_frgt_sm    "short-to-medium distance freight transport, diesel"
-    feelt_frgt_sm    "short-to-medium distance freight transport, electricity"
-    fedie_frgt_lo    "long distance freight transport, diesel"
+  entrp_pass              "passenger transport"
+  entrp_frgt              "freight transport"
+  entrp_pass_sm           "short-to-medium distance passenger transport"
+  entrp_pass_lo           "long distance passenger transport"
+  entrp_frgt_sm           "short-to-medium distance freight transport"
+  entrp_frgt_lo           "long distance freight transport"
+  fepet_pass_sm           "short-to-medium distance passenger transport, petrol"
+  fedie_pass_sm           "short-to-medium distance passenger transport, diesel"
+  feelt_pass_sm           "short-to-medium distance passenger transport, electricity"
+  fedie_pass_lo           "long distance passenger transport, diesel"
+  fedie_frgt_sm           "short-to-medium distance freight transport, diesel"
+  feelt_frgt_sm           "short-to-medium distance freight transport, electricity"
+  fedie_frgt_lo           "long distance freight transport, diesel"
 
-    kaphc     "buildings capital stock insulation"
-    kapsc     "buildings capital stock space cooling"
-    kapal     "buildings capital stock appliances and light"
+  kaphc                   "buildings capital stock insulation"
+  kapsc                   "buildings capital stock space cooling"
+  kapal                   "buildings capital stock appliances and light"
     
-    !! production factors of industry with subsectors
-    ue_industry   "useful energy of industry sector"
+  !! production factors of industry with subsectors
+  ue_industry             "useful energy of industry sector"
 
-    ue_cement                "useful energy of cement production"
-    en_cement                "energy use of cement production"
-    kap_cement               "energy efficiency capital of cement production"
-    en_cement_non_electric   "non-electric energy use of cement production"
-    feso_cement              "solids energy use of cement production"
-    feli_cement              "liquids energy use of cement production"
-    fega_cement              "gases energy use of cement production"
-    feh2_cement              "hydrogen energy use of cement production"
-    feel_cement              "electricity energy use of cement production"
+  ue_cement               "useful energy of cement production"
+  en_cement               "energy use of cement production"
+  kap_cement              "energy efficiency capital of cement production"
+  en_cement_non_electric  "non-electric energy use of cement production"
+  feso_cement             "solids energy use of cement production"
+  feli_cement             "liquids energy use of cement production"
+  fega_cement             "gases energy use of cement production"
+  feh2_cement             "hydrogen energy use of cement production"
+  feel_cement             "electricity energy use of cement production"
  
 
-    ue_chemicals         "useful energy of chemicals production"
-    en_chemicals         "energy use of chemicals production"
-    kap_chemicals        "energy efficiency capital of chemicals production"
-    en_chemicals_fhth    "feedstock and high temperature heat enery use of chemicals production"
-    feso_chemicals       "solids energy use of cement production"
-    feli_chemicals       "liquids energy use of chemicals production"
-    fega_chemicals       "gases energy use of chemicals production"
-    feh2_chemicals       "hydrogen energy use of chemicals production"
-    feelhth_chemicals    "high temperature heat electricity energy use of chemicals production"
-    feelwlth_chemicals   "work and low temperature heat electricity energy use of chemicals production"
+  ue_chemicals            "useful energy of chemicals production"
+  en_chemicals            "energy use of chemicals production"
+  kap_chemicals           "energy efficiency capital of chemicals production"
+  en_chemicals_fhth       "feedstock and high temperature heat enery use of chemicals production"
+  feso_chemicals          "solids energy use of cement production"
+  feli_chemicals          "liquids energy use of chemicals production"
+  fega_chemicals          "gases energy use of chemicals production"
+  feh2_chemicals          "hydrogen energy use of chemicals production"
+  feelhth_chemicals       "high temperature heat electricity energy use of chemicals production"
+  feelwlth_chemicals      "work and low temperature heat electricity energy use of chemicals production"
 
-    ue_steel               "useful energy of steel production"
-    ue_steel_primary       "useful energy of primary steel production"
-    ue_steel_secondary     "useful energy of secondary steel production"
-    en_steel_primary       "energy use of primary steel production"
-    kap_steel_primary      "energy efficiency capital of primary steel production"
-    kap_steel_secondary    "energy efficiency capital of secondary steel production"
-    en_steel_furnace       "non-electric energy use of primary steel production"
-    feso_steel             "solids energy use of primary steel production"
-    feli_steel             "liquids energy use of primary steel production"
-    fega_steel             "gases energy use of primary steel production"
-    feh2_steel             "hydrogen energy use of primary steel production"
-    feel_steel_primary     "electricity energy use pf primary steel production"
-    feel_steel_secondary   "electricity energy use of secondary steel production"
+  ue_steel                "useful energy of steel production"
+  ue_steel_primary        "useful energy of primary steel production"
+  ue_steel_secondary      "useful energy of secondary steel production"
+  en_steel_primary        "energy use of primary steel production"
+  kap_steel_primary       "energy efficiency capital of primary steel production"
+  kap_steel_secondary     "energy efficiency capital of secondary steel production"
+  en_steel_furnace        "non-electric energy use of primary steel production"
+  feso_steel              "solids energy use of primary steel production"
+  feli_steel              "liquids energy use of primary steel production"
+  fega_steel              "gases energy use of primary steel production"
+  feh2_steel              "hydrogen energy use of primary steel production"
+  feel_steel_primary      "electricity energy use pf primary steel production"
+  feel_steel_secondary    "electricity energy use of secondary steel production"
 
-    ue_otherInd         "useful energy of other industry production"
-    en_otherInd         "energy use of other industry production"
-    kap_otherInd        "energy efficiency capital of other industry production"
-    en_otherInd_hth     "non-electric energy use of other industry production"
-    feso_otherInd       "solids energy use of other industry production"
-    feli_otherInd       "liquids energy use of other industry production"
-    fega_otherInd       "gases energy use of other industry production"
-    feh2_otherInd       "hydrogen energy use of other industry production"
-    fehe_otherInd       "heat energy use of other industry production"
-    feelhth_otherInd    "high temperature heat electricity energy use of other industry production"
-    feelwlth_otherInd   "work and low temperature heat electricity energy use of other industry production"
-  /
+  ue_otherInd             "useful energy of other industry production"
+  en_otherInd             "energy use of other industry production"
+  kap_otherInd            "energy efficiency capital of other industry production"
+  en_otherInd_hth         "non-electric energy use of other industry production"
+  feso_otherInd           "solids energy use of other industry production"
+  feli_otherInd           "liquids energy use of other industry production"
+  fega_otherInd           "gases energy use of other industry production"
+  feh2_otherInd           "hydrogen energy use of other industry production"
+  fehe_otherInd           "heat energy use of other industry production"
+  feelhth_otherInd        "high temperature heat electricity energy use of other industry production"
+  feelwlth_otherInd       "work and low temperature heat electricity energy use of other industry production"
+/
 
 all_teEs                 "energy service technologies"
 /
@@ -788,6 +788,7 @@ sets
 
        modules "all the available modules"
        /
+       macro
        welfare
        PE_FE_parameters
        initialCap
@@ -822,6 +823,7 @@ sets
        /
 
 module2realisation(modules,*) "mapping of modules and active realisations" /
+       macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
        initialCap . %initialCap%
@@ -1873,29 +1875,7 @@ s_statusTe   "technology status: how close a technology is to market readiness. 
 ***-----------------------------------------------------------------------------
 
 Sets
-  in(all_in)        "all inputs and outputs of the CES function"
-  /
-    inco    "macroeconomic output"  
-    lab     "labour input"
-    kap     "capital input"
-    en      "energy input"
-  /
 
-  ppf(all_in)                "all primary production factors"
-  ipf(all_in)                "all intermediate production factors"
-  ppfKap(all_in)              "primary production factors capital"   / kap /
-  ppfEn(all_in)              "primary production factors energy" /  /
-  in_putty(all_in)               "production factors subject to putty-clay dynamics"
-  ppf_putty(all_in)           "all putty-clay primary production factors"
-  ipf_putty(all_in)           "all putty-clay intermediate production factors"
-  ppfIO_putty(all_in)         "factors treated in the normal CES as ppf and in putty-clay as output"
-  nests_putty(all_in,all_in)  "defines factors which are in the same putty subnest. The first all_in gives the higher factors of the subnest"
-  in_complements(all_in)           "factors which are perfect complements" 
-  //
-  in_enerSerAdj(all_in)                "energy services factors which should be constrained by adjustment costs"
-  //
-  complements_ref(all_in,all_in)    "correspondence between complementary factors. Necessary to have a reference factor for the constraints equations"
- 
   fe_tax_sub_sbi(all_in,all_in) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway I to the CES "
   //
   fe_tax_subEs(all_in,all_esty) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway III to the CES "
@@ -1993,10 +1973,7 @@ alias(teEs,teEs2);
 alias(esty,esty2);
 alias(rlf,rlf2);
 alias(regi,regi2);
-alias(in,out);
 alias(steps,steps2);
-alias(in,in2,in3);
-alias(ipf,ipf2);
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -2537,10 +2514,7 @@ emiRCP2unitsMagicc(emiRCP,unitsMagicc) "match units to emission types"
     (CF4,C2F6,C6F14,HFC23,HFC32,HFC43-10,HFC125,HFC134a,HFC143a,HFC227ea,HFC245fa,SF6) . kt
 /
 
-cesOut2cesIn(all_in,all_in)              "CES tree structure"
-/
-    inco  . (lab, kap, en)
-/
+
 
 ue2ppfen(all_enty,all_in)      "matching UE in ESM to ppfEn in MACRO"
 //
@@ -2548,16 +2522,7 @@ ue2ppfen(all_enty,all_in)      "matching UE in ESM to ppfEn in MACRO"
 es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 //
 
-cesLevel2cesIO(counter,all_in)   "CES tree structure by level"
-cesRev2cesIO(counter,all_in)   "CES tree structure by level - descending order"
-cesOut2cesIn_below(all_in,all_in) "all elements of the CES below located below the first item given"
-in_below_putty(all_in)            "all elements of the CES below ppf_putty, excluding ppf_putty. Only meaningful in case putty structures are not intertwined"
 ;
-
-in_putty(all_in)    = NO;   
-ppf_putty(all_in)   = NO; 
-ipf_putty(all_in)   = NO; 
-ppfIO_putty(all_in) = NO;  
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -2565,7 +2530,6 @@ ppfIO_putty(all_in) = NO;
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 
-alias(cesOut2cesIn,cesOut2cesIn2);
 alias(ccs2te,ccs2te2);
 alias(pe2se,pe2se2);
 

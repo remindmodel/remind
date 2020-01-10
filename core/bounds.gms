@@ -281,10 +281,7 @@ vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
 *cb 20120319 avoid negative adjustment costs in 2005 (they would allow the model to artificially save money)
 v_adjFactor.fx("2005",regi,te)=0;
 
-*nb* lower bounds on CES values
-vm_cesIO.lo(t,regi,in) = 1e-6;
-vm_cesIOdelta.lo(t,regi,in_putty) = 1e-6;
-vm_cons.lo(t,regi)     = 1e-3;
+
 
 vm_emiMacSector.lo(t,regi,enty)    =  0;    
 vm_emiMacSector.lo(t,regi,"co2luc")= -5.0;  !! afforestation can lead to negative emissions
@@ -369,9 +366,6 @@ vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 
-*nb fix energy inputs to CES structure in t0 to the parameter values
-vm_cesIO.fx(t0(tall),regi,in)$(ppfEn(in) OR ppfIO_putty(in)) = pm_cesdata(tall,regi,in,"quantity");
-vm_cesIOdelta.fx(t0(tall),regi,in)$(ppfEn(in) OR in_putty(in)) = pm_cesdata_putty(tall,regi,in,"quantity");
 *** -----------------------------------------------------------------------------
 *DK 20100929 Bound on CCS injection rate 
 *** -----------------------------------------------------------------------------
@@ -406,17 +400,17 @@ vm_Xport.lo(ttot,regi,tradePe)$(ttot.val ge 2005) = 0;
 loop( regi,
     loop (enty$peFos(enty),
 *** if imports minus exports is higher than initial year demand there is a surplus of pe in the region. Correction -> set imports to 80% of the region pe demand plus Xports in the initial year
-        if ( (pm_EN_demand_from_initialcap2(regi,enty) < (1-p_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")),     !!region has more available pe through trade than it needs
+        if ( (pm_EN_demand_from_initialcap2(regi,enty) < (1-pm_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")),     !!region has more available pe through trade than it needs
             p_Mport2005correct(regi,enty) = (pm_EN_demand_from_initialcap2(regi,enty) + pm_IO_trade("2005",regi,enty,"Xport")) - pm_IO_trade("2005",regi,enty,"Mport");
         );
 *** if internal region production (plus trade) is not enough to provide the energy demand. Correction ->  set imports to the difference between region energy demand (pm_EN_demand_from_initialcap2) and the internal production (pm_ffPolyCumEx(regi,enty,"max")) plus the trade balance (Mports-Xports) 
 $iftheni.fossil_realization %cfg$gms$fossil% == "timeDepGrades"
-        if ( pm_prodIni(regi,enty) + (1-p_costsPEtradeMp(regi,enty))*(pm_IO_trade("2005",regi,enty,"Mport")+ p_Mport2005correct(regi,enty)) -  pm_IO_trade("2005",regi,enty,"Xport") < pm_EN_demand_from_initialcap2(regi,enty),     !!region has a unbalance
-            p_Mport2005correct(regi,enty) = pm_EN_demand_from_initialcap2(regi,enty)  - ((1-p_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")) - pm_prodIni(regi,enty) ;  !! SB: use pm_prodIni as an analog for pm_ffPolyCumEx(regi,enty,"max"), which does not exist in timeDepGrades
+        if ( pm_prodIni(regi,enty) + (1-pm_costsPEtradeMp(regi,enty))*(pm_IO_trade("2005",regi,enty,"Mport")+ p_Mport2005correct(regi,enty)) -  pm_IO_trade("2005",regi,enty,"Xport") < pm_EN_demand_from_initialcap2(regi,enty),     !!region has a unbalance
+            p_Mport2005correct(regi,enty) = pm_EN_demand_from_initialcap2(regi,enty)  - ((1-pm_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")) - pm_prodIni(regi,enty) ;  !! SB: use pm_prodIni as an analog for pm_ffPolyCumEx(regi,enty,"max"), which does not exist in timeDepGrades
         );
 $elseifi.fossil_realization %cfg$gms$fossil% == "grades2poly"
-        if ( (pm_ffPolyCumEx(regi,enty,"max") / (5*4)) + (1-p_costsPEtradeMp(regi,enty))*(pm_IO_trade("2005",regi,enty,"Mport")+ p_Mport2005correct(regi,enty)) -  pm_IO_trade("2005",regi,enty,"Xport") < pm_EN_demand_from_initialcap2(regi,enty),     !!region has a unbalance
-            p_Mport2005correct(regi,enty) = pm_EN_demand_from_initialcap2(regi,enty)  - ((1-p_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")) - pm_ffPolyCumEx(regi,enty,"max") / (5*4) ;  !!pm_ffPolyCumEx(regi,enty,"max") is a 5 years value, so we dived by 5 to get the annual value and additionally we assume that if all the extraction is made in the first years, this would take a t least 4 time steps to completely exhaust the resources 
+        if ( (pm_ffPolyCumEx(regi,enty,"max") / (5*4)) + (1-pm_costsPEtradeMp(regi,enty))*(pm_IO_trade("2005",regi,enty,"Mport")+ p_Mport2005correct(regi,enty)) -  pm_IO_trade("2005",regi,enty,"Xport") < pm_EN_demand_from_initialcap2(regi,enty),     !!region has a unbalance
+            p_Mport2005correct(regi,enty) = pm_EN_demand_from_initialcap2(regi,enty)  - ((1-pm_costsPEtradeMp(regi,enty))*pm_IO_trade("2005",regi,enty,"Mport") -  pm_IO_trade("2005",regi,enty,"Xport")) - pm_ffPolyCumEx(regi,enty,"max") / (5*4) ;  !!pm_ffPolyCumEx(regi,enty,"max") is a 5 years value, so we dived by 5 to get the annual value and additionally we assume that if all the extraction is made in the first years, this would take a t least 4 time steps to completely exhaust the resources 
         );
 $endif.fossil_realization
     );
@@ -471,10 +465,6 @@ loop(regi,
       );
 );
 
-*** set macro investments to bound in 2005
-vm_invMacro.fx("2005",regi,"kap") = p_boundInvMacro(regi);
-*cb 2012-05-23 lower bound for capital investment to avoid "zero investment" problem for the conopt solver
-vm_invMacro.lo(t,regi,"kap")$(t.val gt 2005) = 0.01 * vm_invMacro.lo("2005",regi,"kap");
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP 1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"

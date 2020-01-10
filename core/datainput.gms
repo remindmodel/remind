@@ -110,35 +110,24 @@ $offdelim
 ;
 p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
 
-*** load data for macro investments in 2005, used as bound
-parameter p_boundInvMacro(all_regi)        "macro investments in 2005"
-/
-$ondelim
-$include "./core/input/p_boundInvMacro.cs4r"
-$offdelim
-/
-;
-p_boundInvMacro(all_regi) = p_boundInvMacro(all_regi) * pm_shPPPMER(all_regi);
 
 *ML* Reintroduction of trade cost for composite good (based on export/import value difference for non-energy goods in GTAP6)
-p_tradecostgood(regi)        = 0.03;
+pm_tradecostgood(regi)        = 0.03;
 
 *** Load information from BAU run
 $ifthen.cm_compile_main %cm_compile_main% == "TRUE"
 pm_gdp_gdx(ttot,regi) = 0;
-p_inv_gdx(ttot,regi)  = 0;
+pm_inv_gdx(ttot,regi)  = 0;
 $else.cm_compile_main
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
-p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
+pm_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 $endif.cm_compile_main
 
 *** permit price initilization
 pm_pricePerm(ttot) = 0;
 
-*** depreciation rate of capital
-pm_delta_kap(regi,"kap") = 0.05;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -343,10 +332,10 @@ p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 
 *** load data on transportation costs
-parameter p_costsPEtradeMp(all_regi,all_enty)         "PE tradecosts (energy losses on import)"
+parameter pm_costsPEtradeMp(all_regi,all_enty)         "PE tradecosts (energy losses on import)"
 /
 $ondelim
-$include "./core/input/p_costsPEtradeMp.cs4r"
+$include "./core/input/pm_costsPEtradeMp.cs4r"
 $offdelim
 /
 ;

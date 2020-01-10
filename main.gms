@@ -72,9 +72,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.936
+* Input data revision: 5.937
 * 
-* Last modification (input data): Mon Jan 13 09:10:28 2020
+* Last modification (input data): Wed Jan 15 10:44:14 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -120,12 +120,14 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  default_mm
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
 ***------------------------------------------------------------------------------
 
+***---------------------    01_macro    -----------------------------------------
+$setGlobal macro  singleSectorGr  !! def = singleSectorGr
 ***---------------------    02_welfare    ---------------------------------------
 $setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------

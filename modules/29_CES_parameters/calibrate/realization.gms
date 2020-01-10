@@ -197,7 +197,7 @@
 *'
 *'To implement perfectly complementary factors, you should include the factors in the set `in_complements`. In addition, the elasticity of substitution between these factors should be set to `INF` (which is counter-intuitive). Prices of complementary inputs are set to 1, so that the output is equal to the sum of inputs (reason why the substitution elasticity should be INF), which makes sense for energetic entities. It would however be possible to change this (by choosing another elasticity of substitution) without harming the calibration.
 *'
-*'In the model, the complementary factors are subject to a constraint (`q_prodCompl` or `q_prodCompl_putty`), so that each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes this factor for each period.
+*'In the model, the complementary factors are subject to a constraint (`q01_prodCompl` or `q01_prodCompl_putty`), so that each variable is computed by multiplying a key variable of the CES function by a given factor. The calibration computes this factor for each period.
 *'
 *'#### Setup
 *'

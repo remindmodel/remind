@@ -13,9 +13,8 @@ p_abatparam_N2O.cs4r
 p_abatparam_CO2.cs4r
 p_adj_deltacapoffset.cs4r
 p_boundEmi.cs4r
-p_boundInvMacro.cs4r
 pm_NuclearConstraint.cs4r
-p_costsPEtradeMp.cs4r
+pm_costsPEtradeMp.cs4r
 pm_dataccs.cs3r
 p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r

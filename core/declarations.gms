@@ -25,8 +25,8 @@ pm_pricePerm(ttot)                                   "permit price in special ca
                                                   
 p_share(ttot,all_regi,all_in,all_in)                 "share of production factors"
 pm_share_trans(tall,all_regi)                        "transportation share"
-pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively"
-p_inv_gdx(tall,all_regi)                             "macro-investments  path from gdx, updated iteratively"
+pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively."   
+pm_inv_gdx(tall,all_regi)                            "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqHist(ttot,all_regi)                       "Historic CO2 tax path in 2010 and 2015 (also in BAU!) in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
@@ -38,7 +38,6 @@ pm_co2eqForeign(tall,all_regi)                       "emissions, which are part 
 pm_Xport0(tall,all_regi,all_enty)                    "reference level value of export"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
 pm_cesdata_putty(tall,all_regi,all_in,cesParameter)  "quantities for the putty clay factors"
-pm_delta_kap(all_regi,all_in)                        "depreciation rate of capital"
 pm_capital_lifetime_exp(all_regi,all_in)             "number of years for which 25% of the CES capital stocks remains"
 f_pop(tall,all_regi,all_POPscen)                     "population data for all possible scenarios"
 pm_pop(tall,all_regi)                                "population data [bn people]"
@@ -48,8 +47,6 @@ f_lab(tall,all_regi,all_POPscen)                     "labour data for all possib
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_IO_trade(tall,all_regi,all_enty,char)             "Energy trade bounds based on IEA data"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-pm_ppfen_ratios(all_in,all_in)                       "limit ratio of two primary production factors of energy (ppfEn)"
-pm_ppfen_shares(all_in,all_in)                       "limit the share of one ppfEn in total CES nest inputs"
 
 
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
@@ -176,7 +173,6 @@ pm_damageGrowthRate(tall,all_regi)                   "damage function for growth
 pm_damageMarginal(tall,all_regi)                     "damage function derivative"
 pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) "
 
-pm_consPC(tall,all_regi)                             "consumption per capita"
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages)"
 ***----------------------------------------------------------------------------------------
 *** ----- Parameters needed for MAGICC ----------------------------------------------------
@@ -206,7 +202,7 @@ o_negitr_total_forc(iteration)                       "total forcing in 2100"
 
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------trade module----------------------------
-p_tradecostgood(all_regi)                            "tradecosts (final good)"
+pm_tradecostgood(all_regi)                            "tradecosts (final good)"
                                
 pm_ttot_val(ttot)                                    "value of ttot set element"
 p_tall_val(tall)                                     "value of tall set element"
@@ -222,9 +218,6 @@ p_share_seel_s(ttot,all_regi)                        "Share of electricity used 
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
 p_teAnnuity(all_te)                                  "Annuity factor of a technology"
-
-pm_cumDeprecFactor_old(ttot,all_regi,all_in)         "investment depreciation within a period, applied to the investment of t -1"
-pm_cumDeprecFactor_new(ttot,all_regi,all_in)         "investment depreciation within a period, applied to the investment of t"
 
 p_Mport2005correct(all_regi,all_enty)                "correction factor to match fossil supply and internal region energy demand in the initial year"
 
@@ -274,19 +267,14 @@ vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single 
 positive variables
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------MACRO module---------------------------
-vm_cesIO(tall,all_regi,all_in)                       "production factor"
-vm_invMacro(ttot,all_regi,all_in)                    "investment for capital for ttot"
-vm_cons(ttot,all_regi)                               "consumption"
-v_invMacroAdj(ttot,all_regi,all_in)                  "adjustment costs of macro economic investments"
 vm_effGr(ttot,all_regi,all_in)                       "growth of factor efficiency"
-vm_invInno(ttot,all_regi,all_in)                     "investment into innovation"
-vm_invImi(ttot, all_regi,all_in)                     "investment into imitation"
-vm_cesIOdelta(tall,all_regi,all_in)                  "putty-clay production factor"
 vm_enerSerAdj(tall,all_regi,all_in)                  "adjustment costs for energy service transformations"
 vm_damageFactor(ttot,all_regi)                       "damage factor reducing GDP"
-v_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end-use capital at the energy service level"
+vm_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end-use capital at the energy service level"
 ***----------------------------------------------------------------------------------------
 *-----------------------------------------------ESM module---------------------------------
+vm_costEnergySys(ttot,all_regi)                         "total energy cost"
+
 vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
 vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
 vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
@@ -337,31 +325,13 @@ vm_costAdjNash(ttot,all_regi)                        "adjustment costs for devia
 equations
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------MACRO module----------------------------
-qm_budget(ttot,all_regi)                             "budget balance"
-q_balLab(ttot,all_regi)                              "labour balance"
-q_cesIO(ttot,all_regi,all_in)                        "production function"
-q_prodCompl(ttot,all_regi,all_in,all_in)             "Constraints for perfect complements in the CES tree"
-
-q_kapMo(ttot,all_regi,all_in)                        "capital motion equation"
-q_kapMo0(t0,all_regi,all_in)                         "initial condition for capital"
-
-q_invMacroAdj(ttot,all_regi,all_in)                  "adjustment costs for macro economic investments"
-*** FIXME q_balFeForCes(ttot,all_regi,all_enty,all_in)         "balance of final energy to couple esm and mgm"
 qm_balFeForCesAndEs(ttot,all_regi,all_enty)          "FE balance coupling ESM and production function either directly (Pathway I) or Indirectly through Energy services (Pathway III)"
-*** perm_restr(ttot,all_regi)                                  "emission permit trade restriction"
-*** multistage(ttot)                                           "calculation of remaining permits in multistage approach"
-q_limtRatioPpfen(ttot,all_regi,all_in,all_in)        "limit the ratio of two ppfEn"
-q_limitShPpfen(ttot,all_regi,all_in,all_in)          "limit the share of one ppfEn in total CES nest inputs"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity that can be used for fehes"
-*** putty-clay
-q_cesIO_puttyclay(ttot,all_regi,all_in)              "putty-clay production function"
-q_puttyclay(ttot,all_regi,all_in)                    "putty-clay Correspondance between variations in input and past stocks of input"
-q_prodCompl_putty(ttot,all_regi,all_in,all_in)       "Putty-Clay constraints for perfect complements in the CES tree"
-***q_puttykap(ttot,all_regi,all_in)                            "putty-clay Correspondance between variations in capital and past stocks of capital"
-q_kapMo_putty(ttot,all_regi,all_in)                  "putty-clay capital motion equation"
 q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for end-use capital investments (energy service layer)"
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
+q_costEnergySys(ttot,all_regi)                          "total energy cost"
+
 q_costFu(ttot,all_regi)                              "costs of fuels"
 q_costOM(ttot,all_regi)                              "costs of o&m"
 q_costInv(ttot,all_regi)                             "costs of investment"

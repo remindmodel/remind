@@ -564,21 +564,7 @@ display p_bioshare;
 
 *LB* update parameter that are used for variables during the run
 pm_gdp_gdx(ttot,regi)$(ttot.val ge 2005)    = vm_cesIO.l(ttot,regi,"inco");
-p_inv_gdx(ttot,regi)$(ttot.val ge 2005)     = vm_invMacro.l(ttot,regi,"kap");
-
-*consumption per capita
-pm_consPC(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2150 and (pm_SolNonInfes(regi) eq 1) ) =
-    vm_cons.l(ttot,regi)/pm_pop(ttot,regi)
-;
-
-*interpolate years
-loop(ttot$(ttot.val ge 2005),
-	loop(tall$(pm_tall_2_ttot(tall, ttot)),
-		pm_consPC(tall,regi) =
-		    (1- pm_interpolWeight_ttot_tall(tall)) * pm_consPC(ttot,regi)
-		    + pm_interpolWeight_ttot_tall(tall) * pm_consPC(ttot + 1,regi);
-));
-pm_consPC(tall,regi)$(tall.val gt 2150) = pm_consPC("2150",regi);
+pm_inv_gdx(ttot,regi)$(ttot.val ge 2005)     = vm_invMacro.l(ttot,regi,"kap");
 
 pm_GDPGross(ttot,regi)$( (pm_SolNonInfes(regi) eq 1) ) =  vm_cesIO.l(ttot,regi,"inco");
 
