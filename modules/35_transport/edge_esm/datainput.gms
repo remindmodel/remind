@@ -37,6 +37,13 @@ $include "./modules/35_transport/edge_esm/input/fe_demand_tech.cs4r"
 $offdelim
 /
 
+p35_demLimit(tall,all_regi,SSP_scenario_all,EDGE_scenario_all,all_in)
+/
+$ondelim
+$include "./modules/35_transport/edge_esm/input/dem_smart_Elpush.csv"
+$offdelim
+/
+
 p35_shFeCes(tall,all_regi,SSP_scenario_all,EDGE_scenario_all,all_enty,all_in,all_teEs)                "shares by fuel"
 ;
 

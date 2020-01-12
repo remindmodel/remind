@@ -5,7 +5,9 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/bounds.gms
-vm_shBioFe.lo(t,regi)$(t.val > 2020) = 0.1;
-vm_shBioFe.lo(t,regi)$(t.val > 2025) = 0.2;
-vm_shBioFe.lo(t,regi)$(t.val > 2030) = 0.4;
+* vm_shBioFe.lo(t,regi)$(t.val > 2020) = 0.1;
+* vm_shBioFe.lo(t,regi)$(t.val > 2025) = 0.2;
+* vm_shBioFe.lo(t,regi)$(t.val > 2030) = 0.4;
+
+vm_cesIO.up(t,regi,ppfen_dyn35)$(t.val > 2025) = p35_demLimit(t,regi,"gdp_SSP2","Smart_lifestyles_Electricity_push",ppfen_dyn35);
 *** EOF ./modules/35_transport/edge_esm/bounds.gms
