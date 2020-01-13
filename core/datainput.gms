@@ -293,6 +293,24 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
+* Read in mac historical emissions to calibrate MAC reference emissions
+parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
+/
+$ondelim
+$include "./core/input/p_histEmiMac.cs4r"
+$offdelim
+/
+;
+* Read in historical emissions per sector to calibrate MAC reference emissions
+parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
+/
+$ondelim
+$include "./core/input/p_histEmiSector.cs4r"
+$offdelim
+/
+;
+
+
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
