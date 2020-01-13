@@ -1,60 +1,10 @@
 library(lucode)
 
 source("scripts/start/submit.R")
-
-#######################################################################
-############### Select slurm partitiion ###############################
-#######################################################################
-
-get_line <- function(){
-  # gets characters (line) from the terminal or from a connection
-  # and returns it
-  if(interactive()){
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn=FALSE)
-    on.exit(close(con))
-  }
-  return(s);
-}
-
-choose_submit <- function(title="Please choose run submission type") {
-  
-  # xxx add REMIND specific combinations of qos and number of nodes
-  modes <- c("SLURM priority (recommended)",
-             "SLURM standby (recommended)",
-             "SLURM short",
-             "SLURM medium",
-             "SLURM long")
-
-  cat("\nCurrent cluster utilization:\n")
-  system("sclass")
-  cat("\n")
-
-  cat("\n",title,":\n", sep="")
-  cat(paste(1:length(modes), modes, sep=": " ),sep="\n")
-  cat("Number: ")
-  identifier <- get_line()
-  identifier <- as.numeric(strsplit(identifier,",")[[1]])
-  comp <- switch(identifier,
-                 "1" = "priority",
-                 "2" = "standby",
-                 "3" = "short",
-                 "4" = "medium",
-                 "5" = "long")
-  if(is.null(comp)) stop("This type is invalid. Please choose a valid type")
-  return(comp)
-}
-
+source("scripts/start/choose_slurmConfig.R")
 
 # Choose submission type
-slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
-if (slurm) {
-  slurmConfig <- choose_submit("Choose submission type")
-  } else {
-  slurmConfig <- "direct"
-  }
+slurmConfig <- choose_slurmConfig()
 
 #######################################################################
 ######################## Submit run ###################################

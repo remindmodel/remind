@@ -54,62 +54,11 @@ submit <- function(cfg) {
   sbatch_command <- paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,".out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \"")
   if(cfg$slurmConfig=="direct") {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
-    system("Rscript prepare_and_run.R ",cfg$title, stderr = log, stdout = log, wait=FALSE)
-  } else if(cfg$slurmConfig=="priority") {
-    system(paste(sbatch_command,"--nodes=1 --tasks-per-node=12 --qos=priority"))
-    Sys.sleep(1)
-  } else if(cfg$slurmConfig=="standby") {
-    system(paste(sbatch_command,"--nodes=1 --tasks-per-node=12 --qos=standby"))
-    Sys.sleep(1)
-  } else if(cfg$slurmConfig=="short") {
-    system(paste(sbatch_command,"--qos=short"))
-    Sys.sleep(1)
-  } else if(cfg$slurmConfig=="medium") {
-    system(paste(sbatch_command,"--qos=medium"))
-    Sys.sleep(1)
-  } else if(cfg$slurmConfig=="long") {
-    system(paste(sbatch_command,"--qos=long"))
-    Sys.sleep(1)
+    system("Rscript prepare_and_run.R")
   } else {
-    stop("Unknown submission type")
+    system(paste(sbatch_command,cfg$slurmConfig))
+    Sys.sleep(1)
   }
-  
-  # Gedächtnisstütze für die slurm-Varianten
-  ## Replace load leveler-script with appropriate version
-  #if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-  #  if(length(unique(map$RegionCode)) <= 12) {
-  #    cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #      "scripts/run_submit/submit_par.cmd"
-  #  } else { # use max amount of cores if regions number is greater than 12 
-  #    cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #      "scripts/run_submit/submit_par16.cmd"
-  #  }
-  #} else if (cfg$gms$optimization == "testOneRegi") {
-  #  cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-  #    "scripts/run_submit/submit_short.cmd"
-  #}
-    # Call appropriate submit script
-  #if (cfg$sendToSlurm) {
-  #    # send to slurm
-  #    if(cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-  #       if(length(unique(map$RegionCode)) <= 12) { 
-  #         system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par.cmd"))
-  #         system("sbatch submit_par.cmd")
-  #       } else { # use max amount of cores if regions number is greater than 12 
-  #         system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par16.cmd"))
-  #         system("sbatch submit_par16.cmd")
-  #       }
-  #    } else if (cfg$gms$optimization == "testOneRegi") {
-  #        system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit_short.cmd"))
-  #        system("sbatch submit_short.cmd")
-  #    } else {
-  #        system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit.cmd"))
-  #        if (cfg$gms$cm_startyear > 2030) {
-  #            system("sbatch --partition=ram_gpu submit.cmd")
-  #        } else {
-  #            system("sbatch submit.cmd")
-  #        }
-  
+    
   return(cfg$results_folder)
-  
 }
