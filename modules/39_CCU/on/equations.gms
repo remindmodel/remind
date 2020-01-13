@@ -25,8 +25,8 @@ q39_emiCCU(t,regi) ..
 
 q39_shSynSe(t,regi)..
   (
-      sum(se2se(entySe,"seliqfos",te), vm_prodSe(t,regi,entySe,"seliqfos",te) ) +
-      sum(pe2se(entyPe,"seliqfos",te), vm_prodSe(t,regi,entyPe,"seliqfos",te) )
+      sum(se2fe(entySe,"fepet",te), vm_prodFe(t,regi,entySe,"fepet",te) ) +
+      sum(se2fe(entySe,"fedie",te), vm_prodFe(t,regi,entySe,"fedie",te) )
   ) * vm_shSynSe(t,regi)
   =e=
   vm_prodSe(t,regi,"seh2","seliqfos","MeOH")
