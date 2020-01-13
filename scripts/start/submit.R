@@ -13,7 +13,7 @@
 
 ############## Define function: runsubmit #########################
 
-submit_run <- function(cfg) {
+submit <- function(cfg) {
   
   # Create name of output folder and output folder itself
   date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")

@@ -1,6 +1,6 @@
 library(lucode)
 
-source("scripts/start/submit_run.R")
+source("scripts/start/submit.R")
 
 #######################################################################
 ############### Select slurm partitiion ###############################
@@ -191,7 +191,7 @@ for (scen in rownames(scenarios)) {
   
   if (start_now){
    cat("Creating and starting: ",cfg$title,"\n")
-   submit_run(cfg)
+   submit(cfg)
    }
 }
   

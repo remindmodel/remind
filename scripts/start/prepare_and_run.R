@@ -688,6 +688,9 @@ prepare_and_run <- function() {
     }
   }
 
+  # Print REMIND runtime
+  cat("\n gams_runtime is ", gams_runtime, "\n")
+
   # Collect and submit run statistics to central data base
   lucode::runstatistics(file       = "runstatistics.rda",
                         modelstat  = readGDX(gdx="fulldata.gdx","o_modelstat", format="first_found"),
@@ -714,7 +717,7 @@ prepare_and_run <- function() {
   no_ref_runs <- identical(cfg$RunsUsingTHISgdxAsBAU,character(0)) | all(is.na(cfg$RunsUsingTHISgdxAsBAU)) | coupled_run
 
   if(!no_ref_runs) {
-    source("scripts/start/submit_run.R")
+    source("scripts/start/submit.R")
     # Save the current cfg settings into a different data object, so that they are not overwritten
     cfg_main <- cfg
     
@@ -740,7 +743,7 @@ prepare_and_run <- function() {
   } else {
     # Save the current cfg settings into a different data object, so that they are not overwritten
     cfg_main <- cfg
-    source("scripts/start/submit_run.R")
+    source("scripts/start/submit.R")
     
     for(run in seq(1,length(cfg_main$subsequentruns))){
       # for each of the subsequent runs, read in the cfg, ...
@@ -753,7 +756,7 @@ prepare_and_run <- function() {
       # Subsequent runs will be started in submit.R using the RData files written above 
       # after the current run has finished.
       cat("Starting subsequent run ",cfg_main$subsequentruns[run],"\n")
-      submit_run(cfg)
+      submit(cfg)
     }
     # Set cfg back to original
     cfg <- cfg_main
@@ -783,18 +786,6 @@ prepare_and_run <- function() {
 
   #=================== END - Subsequent runs ========================
     
-  # Reload the REMIND run configuration
-  load(cfg$val_workspace) 
-
-  # Print REMIND runtime
-  cat("\n gams_runtime is ", gams_runtime, "\n")
-
-  # Save runtime for REMIND validation
-  validation$technical$time$full.gms <- gams_runtime
-  save(validation, file = cfg$val_workspace)
-  # Remove unused variables
-  rm(gams_runtime, validation)
-
   # Copy important files into output_folder (after REMIND execution)
   for (file in cfg$files2export$end)
     file.copy(file, cfg$results_folder, overwrite = TRUE)
@@ -814,5 +805,5 @@ prepare_and_run <- function() {
   
 }
 
-# call prepare and run (always without cfg, because cfg is always read from results folder, where it has been copied by submit_run(cfg))
+# call prepare and run (always without cfg, because cfg is always read from results folder, where it has been copied by submit(cfg))
 prepare_and_run()
