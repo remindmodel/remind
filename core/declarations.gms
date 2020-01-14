@@ -227,6 +227,9 @@ pm_cumDeprecFactor_old(ttot,all_regi,all_in)         "investment depreciation wi
 pm_cumDeprecFactor_new(ttot,all_regi,all_in)         "investment depreciation within a period, applied to the investment of t"
 
 p_Mport2005correct(all_regi,all_enty)                "correction factor to match fossil supply and internal region energy demand in the initial year"
+
+p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC; from Eurostat and CEDS, to correct CH4 and N2O reporting"
+p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
 ;
 
 ***----------------------------------------------------------------------------------------

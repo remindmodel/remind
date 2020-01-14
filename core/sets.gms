@@ -1707,6 +1707,28 @@ sectorExogEmi(all_sectorEmi) "sectors with exogenous emissions"
     extraction
     indprocess
 /
+emi_sectors  "comprehensive sector set used for more detailed emissions accounting (REMIND-EU) and for CH4 tier 1 scaling - potentially to be integrated with similar set all_exogEmi"
+/
+        power   "public electricity and heat production"
+        refining "petroleum refining"
+        solids  "manufacture of solid fuels and other energy industries"
+        extraction "fugitive emissions from fuel extraction"
+        build   "Commercial sector, institutional sector and households"
+        indst   "industry (including industrial processes)"
+        trans   "transportation"
+        agriculture "agriculture (plus forestry and fishing energy use)"
+        waste   "waste management"
+        cdr     "Transport, capture and storage of CO2"
+        lulucf  "Land use,  land use change,  and forestry (LULUCF)"
+        bunkers "International bunkers (maritime and aviation)"
+        other   "other sectors and multilateral operations"
+        indirect
+/
+sector_types "differentiation of energy and process emissions in each sector"
+/
+        energy "fuel combustion part (and emissions) of the sector activity"
+        process "process sepecific part (and emissions) of the sector activity"
+/
 ccsCo2(all_enty)    "only cco2 (???)"
 /
         cco2
