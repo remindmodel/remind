@@ -106,5 +106,30 @@ pm_vintage_in(regi,"1",te) = pm_vintage_in(regi,"1",te) * max((pm_histfegrowth(r
 pm_vintage_in(regi,"6",te) = pm_vintage_in(regi,"6",te) * max(((pm_histfegrowth(regi,entyFe)- 0.005 + 1/fm_dataglob("lifetime",te))/(1/fm_dataglob("lifetime",te)) + 1) * 0.75,0.2);
 );
 
+$ifthen setGlobal c_scaleEmiHistorical
+*re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
+display p_macBaseMagpie;
+loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
+  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
+   p_macBaseMagpie(ttot,regi,enty) *
+    ( (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
+      /
+      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
+    )
+  ;
+);
+loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp")),
+  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
+    p_macBaseMagpie(ttot,regi,enty) *
+    ( p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions)
+* eurostat uses 298 to convert N2O to CO2eq
+      /
+      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
+    )
+  ;
+);
+display p_macBaseMagpie;
+$endif
+
 
 *** EOF ./core/preloop.gms

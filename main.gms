@@ -378,6 +378,7 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 cm_DiscRateScen = 0;!! def = 0
 cm_noReboundEffect = 0;
 $setGlobal cm_EsubGrowth  low  !! def = low
+$setGlobal c_scaleEmiHistorical  off  !! def = off
 
 
 $setGlobal c_regi_nucscen  all !! def = all

@@ -211,6 +211,10 @@ display s_actualbudgetco2;
 	 );
 );
 
+*** ---------------------------------------------------------------------------------------------------------------
+*** ENGAGE peakBudg formulation that works with several CO2 price path realizations of module 45 ---------------------
+*** it results in a peak budget with zero net CO2 emissions afterwards
+*** ---------------------------------------------------------------------------------------------------------------
 if(cm_iterative_target_adj eq 7,
 *JeS/CB* Update tax levels/ multigasbudget values to reach the peak CO2 budget, but make sure CO2 emissions afterward are close to zero on the global level
  
@@ -237,20 +241,20 @@ display p_actualbudgetco2;
 *** use multiplicative for budgets higher than 1600 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2 > 1600,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				p_taxCO2eq_iterationdiff(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				p_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
 				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
 				p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
 				!! until cm_peakBudgYr: expolinear price trajectory
-				p_taxCO2eq_iterationdiff_tmp(t,regi)$(t.val le cm_peakBudgYr) = 
+				p_taxCO2eq_iterationdiff_tmp(t,regi) = 
 				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + 
 				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
-			    p_taxCO2eq_until2150(t,regi)$(t.val le cm_peakBudgYr) = p_taxCO2eq_until2150(t,regi) + 
+			    p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + 
 				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-p_taxCO2eq_until2150(t,regi)/2);
-				p_taxCO2eq_iterationdiff(t,regi)$(t.val le cm_peakBudgYr) = p_taxCO2eq_iterationdiff_tmp(t,regi);
+				p_taxCO2eq_iterationdiff(t,regi) = p_taxCO2eq_iterationdiff_tmp(t,regi);
 				!! after cm_peakBudgYr: adjustment so that emissions become zero: increase/decrease tax in each time step after cm_peakBudgYr by percentage of that year's total CO2 emissions of 2015 emissions
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = p_taxCO2eq_iterationdiff("2030",regi);
@@ -297,8 +301,7 @@ display p_actualbudgetco2;
 		    display "shift peakBudgYr right";
             o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot + 1);  !! ttot+1 is the new peakBudgYr
 			loop(t$(t.val ge pm_ttot_val(ttot + 1)),
-              pm_taxCO2eq(t,regi) = p_taxCO2eq_until2150(ttot+1,regi) 
-			                        + (t.val - pm_ttot_val(ttot + 1)) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year 
+              pm_taxCO2eq(t,regi) = p_taxCO2eq_until2150(t,regi);
             );
 		  );
         
