@@ -201,10 +201,22 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   setwd(mainwd)
   cat(" to",getwd(),"\n")
   
+  # for the sbatch command of the subsequent runs below set the number of tasks per node
+  # this not clean, because we use the number of regions of the *current* run to set the number of tasks for the *subsequent* runs
+  # but it is sufficiently clean, since the number of regions should not differ between current and subsequent
+  if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
+    # for nash: set the number of CPUs per node to number of regions + 1
+    nr_of_regions <- length(levels(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1 
+  } else {
+    # for negishi: use only one CPU
+    nr_of_regions <- 1
+  }
+
   #start subsequent runs via cmd scripts created at the end of start_bundle_coupled.R
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    system(paste0("sbatch cluster_start_coupled_",run,".cmd"))
+    #system(paste0("sbatch cluster_start_coupled_",run,".cmd"))
+    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=13",nr_of_regions," --wrap=\"Rscript start_coupled.R \" coupled_config=",run,".RData"))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
