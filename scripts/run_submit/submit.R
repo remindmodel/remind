@@ -409,17 +409,8 @@ if(no_subsequent_runs){
 
 #=================== END - Subsequent runs ========================
   
-# Reload the REMIND run configuration
-load(cfg$val_workspace) 
-
 # Print REMIND runtime
 cat("\n gams_runtime is ", gams_runtime, "\n")
-
-# Save runtime for REMIND validation
-validation$technical$time$full.gms <- gams_runtime
-save(validation, file = cfg$val_workspace)
-# Remove unused variables
-rm(gams_runtime, validation)
 
 # Copy important files into output_folder (after REMIND execution)
 for (file in cfg$files2export$end)

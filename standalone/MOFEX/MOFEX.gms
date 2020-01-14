@@ -115,7 +115,6 @@ cm_iteration_max      "number of Negishi iterations (up to 49)"
 c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
-cm_postproc            "turn on postprocessing" !! warning: you have to rerun the scenario
 cm_emiscen            "policy scenario choice"
 cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 cm_co2_tax_growth     "growth rate of carbon tax"
@@ -133,10 +132,8 @@ c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
 c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2020 (delatcap=0)"
+c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_startyear          "first optimized modelling time step"
-cm_stagestart             "start of staged accession for delay runs"
-cm_stageend                       "end of staged accession for delay runs"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen            "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
@@ -197,7 +194,6 @@ cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
-cm_postproc            = 0;     !! def = 0
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
@@ -220,10 +216,10 @@ cm_CCS_steel           = 1;        !! def = 1
 
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
-cm_bioenergymaxscen = 0;         !! def = 3
+cm_bioenergymaxscen = 0;         !! def = 0
 c_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-cm_1stgen_phaseout  = 0;         !! def = 0
+c_1stgen_phaseout  = 0;         !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
@@ -231,8 +227,6 @@ $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
-cm_stagestart     = 2020;      !! def = 2020
-cm_stageend       = 2040;      !! def = 2040
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
