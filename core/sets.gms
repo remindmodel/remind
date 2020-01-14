@@ -1705,7 +1705,7 @@ emi_sectors  "comprehensive sector set used for more detailed emissions accounti
         other   "other sectors and multilateral operations"
         indirect
 /
-sector_types
+sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
         process "process sepecific part (and emissions) of the sector activity"
