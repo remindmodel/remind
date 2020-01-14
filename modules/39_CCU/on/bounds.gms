@@ -46,9 +46,5 @@ vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 *** vm_prodSe.lo("2060","SSA",enty,"segafos",te) = 1;
 *** vm_prodSe.lo("2060","USA",enty,"segafos",te) = 0.5;
 
-vm_shSynSe.lo(t,regi)$(t.val > 2020) = 0.1;
-vm_shSynSe.lo(t,regi)$(t.val > 2025) = 0.2;
-vm_shSynSe.lo(t,regi)$(t.val > 2030) = 0.4;
-
 
 *** EOF ./modules/39_CCU/39_CCU.gms

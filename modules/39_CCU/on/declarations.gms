@@ -25,8 +25,6 @@ p39_ratioCtoH(tall,all_regi,all_enty,all_enty,all_te,all_enty)         "ratio be
 
 positive variables
 vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
-
-vm_shSynSe(ttot,all_regi)          "Share of synthetic liquids in all fossil liquids. Value between 0 and 1."
 ;
 
 
@@ -38,8 +36,6 @@ vm_shSynSe(ttot,all_regi)          "Share of synthetic liquids in all fossil liq
 
 equations
 q39_emiCCU(ttot,all_regi)                                               "Managing the C/H ratio in CCU-Technologies"
-
-q39_shSynSe(ttot,all_regi)                    "Define share of synthetic liquids in all fossil liquids."
 ;
 
 *** EOF ./modules/39_CCU/on/declarations.gms
