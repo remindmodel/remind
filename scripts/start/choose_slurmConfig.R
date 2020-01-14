@@ -19,15 +19,15 @@ choose_slurmConfig <- function() {
   
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
   if (slurm) {
-    modes <- c("SLURM standby  - task per node: 12 (nash H12) [recommended]",
-               "SLURM standby  - task per node: 13 (nash H12 coupled)",
-               "SLURM standby  - task per node: 16 (nash H12+)",
-               "SLURM standby  - task per node:  1 (nash debug, test one regi)",
-               "SLURM priority - task per node: 12 (nash H12) [recommended]",
-               "SLURM priority - task per node: 13 (nash H12 coupled)",
-               "SLURM priority - task per node: 16 (nash H12+)",
-               "SLURM priority - task per node:  1 (nash debug, test one regi)",
-               "SLURM short    - task per node: 12 (nash H12)",
+    modes <- c(" SLURM standby  - task per node: 12 (nash H12) [recommended]",
+               " SLURM standby  - task per node: 13 (nash H12 coupled)",
+               " SLURM standby  - task per node: 16 (nash H12+)",
+               " SLURM standby  - task per node:  1 (nash debug, test one regi)",
+               " SLURM priority - task per node: 12 (nash H12) [recommended]",
+               " SLURM priority - task per node: 13 (nash H12 coupled)",
+               " SLURM priority - task per node: 16 (nash H12+)",
+               " SLURM priority - task per node:  1 (nash debug, test one regi)",
+               " SLURM short    - task per node: 12 (nash H12)",
                "SLURM short    - task per node: 16 (nash H12+)",
                "SLURM short    - task per node:  1 (nash debug, test one regi)",
                "SLURM medium   - task per node:  1 (negishi)",
@@ -64,40 +64,3 @@ choose_slurmConfig <- function() {
 
   return(comp)
 }
-
-   Gedächtnisstütze für die slurm-Varianten
-  # Replace load leveler-script with appropriate version
-  if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-    if(length(unique(map$RegionCode)) <= 12) {
-      cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-        "scripts/run_submit/submit_par.cmd"
-    } else { # use max amount of cores if regions number is greater than 12 
-      cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-        "scripts/run_submit/submit_par16.cmd"
-    }
-  } else if (cfg$gms$optimization == "testOneRegi") {
-    cfg$files2export$start[cfg$files2export$start == "scripts/run_submit/submit.cmd"] <- 
-      "scripts/run_submit/submit_short.cmd"
-  }
-   # Call appropriate submit script
-  if (cfg$sendToSlurm) {
-      # send to slurm
-      if(cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode == "parallel") {
-         if(length(unique(map$RegionCode)) <= 12) { 
-           system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par.cmd"))
-           system("sbatch submit_par.cmd")
-         } else { # use max amount of cores if regions number is greater than 12 
-           system(paste0("sed -i 's/__JOB_NAME__/pREMIND_", cfg$title,"/g' submit_par16.cmd"))
-           system("sbatch submit_par16.cmd")
-         }
-      } else if (cfg$gms$optimization == "testOneRegi") {
-          system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit_short.cmd"))
-          system("sbatch submit_short.cmd")
-      } else {
-          system(paste0("sed -i 's/__JOB_NAME__/REMIND_", cfg$title,"/g' submit.cmd"))
-          if (cfg$gms$cm_startyear > 2030) {
-              system("sbatch --partition=ram_gpu submit.cmd")
-          } else {
-              system("sbatch submit.cmd")
-          }
-
