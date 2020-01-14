@@ -3,13 +3,6 @@ library(lucode)
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
-# Choose submission type
-slurmConfig <- choose_slurmConfig()
-
-#######################################################################
-######################## Submit run ###################################
-#######################################################################
-
 ############## Define function: configure_cfg #########################
 
 configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
@@ -93,6 +86,9 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     return(icfg)
 }
 
+###################### Choose submission type #########################
+slurmConfig <- choose_slurmConfig()
+
 ###################### Load csv if provided  ##########################
 
 # If scenario_config.csv was provided from command line, set cfg according to it (copy from start_bundle)
@@ -123,7 +119,7 @@ for (scen in rownames(scenarios)) {
   # Have the log output written in a file (not on the screen)
   cfg$slurmConfig <- slurmConfig
   cfg$logoption   <- 2
-  start_now <- TRUE
+  start_now       <- TRUE
   
   # configure cfg based on settings from csv if provided
   if (!is.na(config.file)) {
@@ -144,4 +140,3 @@ for (scen in rownames(scenarios)) {
    submit(cfg)
    }
 }
-  

@@ -175,7 +175,7 @@ prepare_and_run <- function() {
   cfg <- check_config(cfg, reference_file="config/default.cfg", settings_config = "config/settings_config.csv")
   
   
-###-------- do update of input files based on previous runs if applicable ------###
+  ###-------- do update of input files based on previous runs if applicable ------###
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_ref.gdx"]))
@@ -351,21 +351,20 @@ prepare_and_run <- function() {
   ############# PROCESSING INPUT DATA ###################### END ############################################
   ###########################################################################################################
 
-
-  ############# ADD MODULE INFO IN SETS  ###################### START ##########################################
-    content <- NULL
-    modification_warning <- c(
-      '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
-      '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START',
-      '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R')
-    content <- c(modification_warning,'','sets')
-    content <- c(content,'','       modules "all the available modules"')
-    content <- c(content,'       /',paste0("       ",getModules("modules/")[,"name"]),'       /')
-    content <- c(content,'','module2realisation(modules,*) "mapping of modules and active realisations" /')
-    content <- c(content,paste0("       ",getModules("modules/")[,"name"]," . %",getModules("modules/")[,"name"],"%"))
-    content <- c(content,'      /',';')
-    replace_in_file('core/sets.gms',content,"MODULES",comment="***")
-  ############# ADD MODULE INFO IN SETS  ###################### END ############################################
+  ############# ADD MODULE INFO IN SETS  ###################### START #######################################
+  content <- NULL
+  modification_warning <- c(
+    '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
+    '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START',
+    '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R')
+  content <- c(modification_warning,'','sets')
+  content <- c(content,'','       modules "all the available modules"')
+  content <- c(content,'       /',paste0("       ",getModules("modules/")[,"name"]),'       /')
+  content <- c(content,'','module2realisation(modules,*) "mapping of modules and active realisations" /')
+  content <- c(content,paste0("       ",getModules("modules/")[,"name"]," . %",getModules("modules/")[,"name"],"%"))
+  content <- c(content,'      /',';')
+  replace_in_file('core/sets.gms',content,"MODULES",comment="***")
+  ############# ADD MODULE INFO IN SETS  ###################### END #########################################
       
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
@@ -773,12 +772,12 @@ prepare_and_run <- function() {
   } else {
     #  go up to the main folder, where the cfg. files for subsequent runs are stored
     filetext <- paste0("setwd('",cfg$remind_folder,"')\n")
-    filetext <- paste0(filetext,"source('scripts/start_functions.R')\n")
+    filetext <- paste0(filetext,"source('scripts/start/submit.R')\n")
     for(run in seq(1,length(cfg$subsequentruns))){
       filetext <- paste0(filetext,"\n")
       filetext <- paste0(filetext,"load('",cfg$subsequentruns[run],".RData')\n")
       filetext <- paste0(filetext,"cat('",cfg$subsequentruns[run],"')\n")
-      filetext <- paste0(filetext,"start_run(cfg)\n")
+      filetext <- paste0(filetext,"submit(cfg)\n")
     }
     # Write the text to the file
     write(filetext,file=subseq_start_file)

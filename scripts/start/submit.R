@@ -51,12 +51,11 @@ submit <- function(cfg) {
 
   # send prepare_and_run.R to cluster 
   cat("Executing prepare_and_run.R for",cfg$title,"\n")
-  sbatch_command <- paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,".out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \"")
   if(cfg$slurmConfig=="direct") {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")
   } else {
-    system(paste(sbatch_command,cfg$slurmConfig))
+    system(paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,".out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
     Sys.sleep(1)
   }
     
