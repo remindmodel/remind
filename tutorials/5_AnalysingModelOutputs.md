@@ -40,13 +40,12 @@ Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives
 
 ### 3.1 Access Cluster
 
-To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, one way is to download the mif-file, for example, via WinSCP. Another way is to mount your cluster folder as a network drive on your local computer. However, you will be only be able to access the cluster folder like this as long as you are in the PIK-network. For working in the PIK-network, though, mounting can be quite convenient. Then, you can directly plug in the path to your mounted network drive in the above command. 
+To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster here:
 
-For mounting a cluster folder in Windows: Open the explorer -> right-click on Computer -> "map network drive" -> insert "\\\\CLUSTERFS\\Path\\to\\Folder". Often, people work in their tmp-folders, e.g.  "\\\\CLUSTERFS\\tmp\\YourUsername". For mounting a cluster folder in Linux, insert in the command line correspondingly: 
 
-``` r
-sshfs -o reconnect,ServerAliveInterval=15 -o follow_symlinks USERNAME@cluster.pik-potsdam.de:/PATH/TO/DIR /home/USERNAME/YOURLOCALPATH 
-```
+https://redmine.pik-potsdam.de/projects/mo/wiki/Getting_ready_to_use_the_Cluster
+
+
 ### 3.2 Load mif file as Magpie Object
 
 You can load the mif-file of your run into a magpie object from the **magclass** R library by
