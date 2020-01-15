@@ -7,6 +7,7 @@ f_macBaseMagpie.cs4r
 f_maxProdGradeRegiHydro.cs3r
 f_maxProdGradeRegiWind.cs3r
 f_pop.cs3r
+f_IO_trade.cs4r
 p_abatparam_CH4.cs4r
 p_abatparam_N2O.cs4r
 p_abatparam_CO2.cs4r
@@ -18,6 +19,8 @@ p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r
 p_emineg_econometric.cs3r
 p_histCap.cs3r
+p_histEmiMac.cs4r
+p_histEmiSector.cs4r
 p_PE_histCap.cs3r
 p_macBase1990.cs4r
 p_macBase2005.cs4r

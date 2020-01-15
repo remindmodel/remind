@@ -74,7 +74,7 @@
 * 
 * Input data revision: 5.937
 * 
-* Last modification (input data): Wed Jan 15 10:44:14 2020
+* Last modification (input data): Wed Jan 15 14:19:35 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -120,7 +120,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default_mm
+$setGlobal c_expname  default
 
 ***------------------------------------------------------------------------------
 ***                           MODULES

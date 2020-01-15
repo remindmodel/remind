@@ -26,7 +26,7 @@ pm_pricePerm(ttot)                                   "permit price in special ca
 p_share(ttot,all_regi,all_in,all_in)                 "share of production factors"
 pm_share_trans(tall,all_regi)                        "transportation share"
 pm_gdp_gdx(tall,all_regi)                            "GDP path from gdx, updated iteratively."   
-pm_inv_gdx(tall,all_regi)                            "macro-investments path from gdx, updated iteratively."
+p_inv_gdx(tall,all_regi)                            "macro-investments path from gdx, updated iteratively."
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqHist(ttot,all_regi)                       "Historic CO2 tax path in 2010 and 2015 (also in BAU!) in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
@@ -267,7 +267,7 @@ vm_damageFactor(ttot,all_regi)                       "damage factor reducing GDP
 vm_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end-use capital at the energy service level"
 ***----------------------------------------------------------------------------------------
 *-----------------------------------------------ESM module---------------------------------
-vm_costEnergySys(ttot,all_regi)                         "total energy cost"
+vm_costEnergySys(ttot,all_regi)                      "energy system costs"
 
 vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
 vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
@@ -318,7 +318,7 @@ q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the shar
 q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for end-use capital investments (energy service layer)"
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
-q_costEnergySys(ttot,all_regi)                          "total energy cost"
+q_costEnergySys(ttot,all_regi)                       "energy system costs"
 
 q_costFu(ttot,all_regi)                              "costs of fuels"
 q_costOM(ttot,all_regi)                              "costs of o&m"

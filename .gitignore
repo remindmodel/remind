@@ -18,6 +18,7 @@ core/input/f_macBaseMagpie.cs4r
 core/input/f_maxProdGradeRegiHydro.cs3r
 core/input/f_maxProdGradeRegiWind.cs3r
 core/input/f_pop.cs3r
+core/input/f_IO_trade.cs4r
 core/input/p_abatparam_CH4.cs4r
 core/input/p_abatparam_N2O.cs4r
 core/input/p_abatparam_CO2.cs4r
@@ -79,7 +80,6 @@ modules/23_capitalMarket/imperfect/input/pm_ies.cs4r
 modules/23_capitalMarket/imperfect/input/pm_nfa_start.cs4r
 modules/23_capitalMarket/imperfect/input/pm_risk_premium.cs4r
 modules/23_capitalMarket/perfect/input/pm_nfa_start.cs4r
-modules/24_trade/standard/input/f24_IO_trade.cs4r
 modules/24_trade/standard/input/pm_costsPEtradeMp.cs4r
 modules/24_trade/standard/input/pm_costsTradePeFinancial.cs3r
 modules/26_agCosts/costs/input/p26_totLUcostLookup.cs4r

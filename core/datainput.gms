@@ -114,12 +114,12 @@ p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcSc
 *** Load information from BAU run
 $ifthen.cm_compile_main %cm_compile_main% == "TRUE"
 pm_gdp_gdx(ttot,regi) = 0;
-pm_inv_gdx(ttot,regi)  = 0;
+p_inv_gdx(ttot,regi)  = 0;
 $else.cm_compile_main
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
-pm_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
+p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 $endif.cm_compile_main
 
 *** permit price initilization
@@ -326,6 +326,26 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
+
+*NB* include data and parameters for upper bounds on fossil fuel transport
+parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
+/
+$ondelim
+$include "./core/input/f_IO_trade.cs4r"
+$offdelim
+/
+;
+pm_IO_trade(ttot,regi,enty,char) = f_IO_trade(ttot,regi,enty,char) * sm_EJ_2_TWa;
+
+*LB* use scaled data for export to guarantee net trade = 0 for each traded good
+loop(tradePe,
+    loop(t,
+       if(sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport")) ne 0,
+            pm_IO_trade(t,regi,tradePe,"Xport") = pm_IO_trade(t,regi,tradePe,"Xport") * sum(regi2, pm_IO_trade(t,regi2,tradePe,"Mport")) / sum(regi2, pm_IO_trade(t,regi2,tradePe,"Xport"));
+       );
+    );
+);
+display pm_IO_trade;
 
 ***nicolasb*DOT* FILE produced from D:\projekte\rose\resources\fossilGrades_nico.m; 2011,12,16;12:14:44
 ***nicolasb*DOT* original data from literature (Brandt 2009, Charpentier 2009)
