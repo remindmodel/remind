@@ -269,10 +269,11 @@ pm_cesdata(t,regi,in,"quantity") $ p29_fedemand(t,regi,"%cm_GDPscen%",in)
 pm_cesdata(t,regi,in,"quantity") $ p29_esdemand(t,regi,"%cm_GDPscen%",in) 
            = p29_esdemand(t,regi,"%cm_GDPscen%",in);
 
-*** Load exogenous transport demand
+*** Load exogenous transport demand - required for the EDGE transport module
+$ifthen.edgesm %transport% ==  "edge_esm"
 pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%",in)
            = p29_trpdemand(t,regi,"%cm_GDPscen%",in);
-
+$endif.edgesm
 
 *** Load capital quantities
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
