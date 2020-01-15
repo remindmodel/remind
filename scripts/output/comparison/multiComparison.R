@@ -66,7 +66,7 @@ compareScenTable <- function(listofruns){
 
   if(system("hash sbatch 2>/dev/null") == 0){
     cat("Submitting comparison Jobs:\n")
-    system("sbatch scripts/run_submit/submit_compare.cmd")
+     system(paste0("sbatch --job-name=rem-compare --output=log-%j.out --mail-type=END --cpus-per-task=2 --qos=priority --wrap=\"Rscript scripts/utils/compareParallel.R \""))
   }else{
     source("scripts/utils/compareParallel.R")
   }

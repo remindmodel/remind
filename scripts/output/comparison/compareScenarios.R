@@ -52,11 +52,11 @@ start_comp <- function(outputdirs,shortTerm,outfilename) {
   cat("Starting ",jobname,"\n")
   on_cluster <- file.exists("/p/projects/")
   if (on_cluster) {
-    system(paste0("srun --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 Rscript scripts/run_submit/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," &"))
+    system(paste0("srun --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," &"))
   } else {
     outfilename    <- jobname
     tmp.env <- new.env()
-    script <- "scripts/run_submit/run_compareScenarios.R"
+    script <- "scripts/utils/run_compareScenarios.R"
     tmp.error <- try(sys.source(script,envir=tmp.env))
     if(!is.null(tmp.error)) warning("Script ",script," was stopped by an error and not executed properly!")
     rm(tmp.env)
