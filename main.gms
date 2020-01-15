@@ -148,6 +148,8 @@ $setGlobal tax  on                    !! def = on
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
 $setGlobal capitalMarket  perfect     !! def = perfect
+***---------------------    24_trade    -----------------------------------------
+$setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
@@ -216,7 +218,7 @@ cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
-c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
+cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
@@ -256,7 +258,7 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-c_trdcst              "parameter to scale trade export cost for gas"
+cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
@@ -308,7 +310,7 @@ cm_CCS_steel           = 1;        !! def = 1
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
-c_tradecost_bio     = 2;         !! def = 2
+cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 c_1stgen_phaseout  = 0;         !! def = 0
 cm_cprice_red_factor  = 0.5;         !! def = 0.5
@@ -366,7 +368,7 @@ cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
 
 cm_trdadj            = 2;    !! def = 2.0
-c_trdcst             = 1.5;  !! def = 1.5
+cm_trdcst             = 1.5;  !! def = 1.5
 c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5

@@ -2,7 +2,6 @@ f_cf.cs3r
 f_dataRegiSolar.cs3r
 f_emiFgas.cs4r
 f_gdp.cs3r
-f_IO_trade.cs4r
 f_lab.cs3r
 f_macBaseMagpie.cs4r
 f_maxProdGradeRegiHydro.cs3r
@@ -14,7 +13,6 @@ p_abatparam_CO2.cs4r
 p_adj_deltacapoffset.cs4r
 p_boundEmi.cs4r
 pm_NuclearConstraint.cs4r
-pm_costsPEtradeMp.cs4r
 pm_dataccs.cs3r
 p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r
@@ -31,7 +29,6 @@ p_share_ind_fesos.cs4r
 p_share_ind_fesos_bio.cs4r
 pm_boundCapCCS.cs4r
 pm_boundCapEV.cs4r
-pm_costsTradePeFinancial.cs3r
 pm_shPPPMER.cs4r
 p_inco0.cs4r
 p_boundCapCCSindicator.cs4r
