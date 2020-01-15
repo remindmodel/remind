@@ -11,3 +11,4 @@ pm_ttot_val, parameter, ???
 pm_ts, parameter, ???
 cm_startyear, switch, ???
 pm_cumEff, parameter, ???
+vm_invRD,input,questionnaire

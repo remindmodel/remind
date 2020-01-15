@@ -23,6 +23,11 @@ pm_cumEff(tall,all_regi,all_in)          "parameter for spillover externality (a
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 ;
 
+positive variable
+*AJS* Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
+vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from the trade structure of the last iteration." 
+;
+
 equations
 q80_balTrade(ttot,all_enty)              "trade balance equation"
 q80_budget_helper(ttot,all_regi)         "Helper declaration for import from gdx"
