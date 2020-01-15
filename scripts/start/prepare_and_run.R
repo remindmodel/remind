@@ -2,7 +2,7 @@ library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
 
-getReportData <- function(rep,inputpath_mag="magpie",inputpath_acc="costs") {
+getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
 	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   .bioenergy_price <- function(mag){
@@ -124,7 +124,7 @@ getReportData <- function(rep,inputpath_mag="magpie",inputpath_acc="costs") {
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"),file_type="csvr")
   }
   
-  rep <- read.report(rep,as.list=FALSE)
+  rep <- read.report(path_to_report,as.list=FALSE)
   if (length(getNames(rep,dim="scenario"))!=1) stop("getReportData: MAgPIE data contains more or less than 1 scenario.")
   rep <- collapseNames(rep) # get rid of scenrio and model dimension if they exist
   years <- 2000+5*(1:30)

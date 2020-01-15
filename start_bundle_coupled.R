@@ -95,7 +95,7 @@ if (!identical(common,character(0))) {
 for(scen in common){
   cat(paste0("\n################################\nPreparing run ",scen,"\n"))
   
-  prefix_runname <- strsplit(path_remind,"/")[[1]][length(strsplit(path_remind,"/")[[1]])]
+  prefix_runname <- "C" #strsplit(path_remind,"/")[[1]][length(strsplit(path_remind,"/")[[1]])]
   prefix_runname <- paste0(prefix_runname,"_")
   
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
@@ -293,26 +293,16 @@ for(scen in common){
   cat("path_report : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
   cat("LU_pricing  :",LU_pricing,"\n")
  
-  # create cluster_start_coupled_scen.cmd file
-  # 1. copy general cluster_start_coupled file
-  #system(paste0("cp cluster_start_coupled.cmd cluster_start_coupled_",scen,".cmd"))
-  # 2. modify accordingly
-  #manipulateConfig(paste0("cluster_start_coupled_",scen,".cmd"),coupled_config=paste0(runname,".RData"),line_endings = "NOTwin")
-  #manipulateConfig(paste0("cluster_start_coupled_",scen,".cmd"),"--job-name"=runname,line_endings = "NOTwin")
-  #manipulateConfig(paste0("cluster_start_coupled_",scen,".cmd"),"--output"=paste0(runname,".log"),line_endings = "NOTwin")
   if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
     # for nash: set the number of CPUs per node to number of regions + 1
     nr_of_regions <- length(levels(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1 
-    #manipulateConfig(paste0("cluster_start_coupled_",scen,".cmd"),"--tasks-per-node"=nr_of_regions,line_endings = "NOTwin")
   } else {
     # for negishi: use only one CPU
     nr_of_regions <- 1
-    #manipulateConfig(paste0("cluster_start_coupled_",scen,".cmd"),"--tasks-per-node"=1,line_endings = "NOTwin")
   }
 
   if (start_now){
-      #if (!exists("test")) system(paste0("sbatch cluster_start_coupled_",scen,".cmd"))
-      if (!exists("test")) system(paste0("sbatch --qos=standby --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R \" coupled_config=",runname,".RData"))
+      if (!exists("test")) system(paste0("sbatch --qos=standby --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
       else cat("Test mode: run NOT submitted to the cluster\n")
   } else {
      cat(paste0("Run ",runname," will start after preceding run ",prefix_runname,settings_remind[scen,"path_gdx_ref"]," has finished\n"))

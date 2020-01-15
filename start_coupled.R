@@ -52,7 +52,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     cat("### COUPLING ### Set working directory from",getwd());
     setwd(path_remind)
     cat(" to",getwd(),"\n")
-    source("scripts/start_functions.R") # provide source of "get_magpie_data" and "start_run"
+    source("scripts/start/submit.R") # provide source of "get_magpie_data" and "start_run"
     
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
@@ -212,11 +212,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     nr_of_regions <- 1
   }
 
-  #start subsequent runs via cmd scripts created at the end of start_bundle_coupled.R
+  #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    #system(paste0("sbatch cluster_start_coupled_",run,".cmd"))
-    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=13",nr_of_regions," --wrap=\"Rscript start_coupled.R \" coupled_config=",run,".RData"))
+    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=13",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
