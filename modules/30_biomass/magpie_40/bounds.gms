@@ -24,8 +24,13 @@
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
-vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+if(cm_1stgen_phaseout=0,
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+else
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+);
 
 *** -------------------------------------------------------------
 *** Bounds on 2nd generation biomass annual production
