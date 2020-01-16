@@ -141,7 +141,7 @@ segabio.fegat.tdbiogat
 segafos.fegat.tdfosgat
 /
 
-fe_with_bio_dyn35(all_enty)
+fe_transport_liquids_dyn35(all_enty)
 /
 fepet
 fedie
