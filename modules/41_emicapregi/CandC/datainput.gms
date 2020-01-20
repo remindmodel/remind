@@ -15,14 +15,6 @@ Execute_Loadpoint "input_ref" p41_co2eq = vm_co2eq.l;
 p41_shEmi2005(regi) = p41_co2eq("2005",regi) / sum(regi2, p41_co2eq("2005",regi2) );
 display p41_shEmi2005;
 
-*LB* safe formulation of c_polscen = 11
-$ontext
-***  contraction & convergence (reference year 2020)  +++++++++
-        p41_lambda(tall) $(tall.val<2050) = (tall.val-2020) / 30;
-        p41_lambda(tall) $(tall.val>2049) = 1;
-$offtext
-
-*gl* calculate share of global emissions according to different burden sharing rules
      pm_shPerm(t,regi) =  p41_lambda(t) * pm_pop(t,regi) / sum(regi2,pm_pop(t,regi2))
          + (1 - p41_lambda(t)) * p41_shEmi2005(regi) / sum(regi2, p41_shEmi2005(regi2));
 *** EOF ./modules/41_emicapregi/CandC/datainput.gms

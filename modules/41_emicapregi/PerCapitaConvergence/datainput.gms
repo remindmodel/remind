@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/41_emicapregi/PerCapitaConvergence/datainput.gms
 
-***   contraction & convergence (reference year 2005)  +++++++++
+***   contraction & convergence (reference year 2020)  +++++++++
 p41_convergenceyear = 2050;
 p41_lambda(tall) $(tall.val < p41_convergenceyear) = (tall.val - 2020) / (p41_convergenceyear-2020);
 p41_lambda(tall) $(tall.val>2049) = 1;
@@ -21,14 +21,7 @@ display p41_shEmi2020;
 *** calculate global emissions pathway in cost-optimal scenario
 pm_emicapglob(ttot) = sum(regi, p41_co2eq(ttot,regi));
 
-*LB* safe formulation of c_polscen = 11
-$ontext
-***  contraction & convergence (reference year 2020)  +++++++++
-        p41_lambda(tall) $(tall.val<2050) = (tall.val-2020) / 30;
-        p41_lambda(tall) $(tall.val>2049) = 1;
-$offtext
-
-*gl* calculate share of global emissions according to different burden sharing rules
+*** calculate share of global emissions 
      pm_shPerm(t,regi) =  p41_lambda(t) * pm_pop(t,regi) / sum(regi2,pm_pop(t,regi2))
          + (1 - p41_lambda(t)) * p41_shEmi2020(regi) / sum(regi2, p41_shEmi2020(regi2));
 

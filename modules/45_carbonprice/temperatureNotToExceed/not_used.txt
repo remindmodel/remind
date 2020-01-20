@@ -1,9 +1,3 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
-# |  authors, and contributors see CITATION.cff file. This file is part
-# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-# |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
-# |  Contact: remind@pik-potsdam.de
 name,type,reason
 sm_c_2_co2,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
@@ -18,8 +12,6 @@ pm_ts,input,questionnaire
 cm_co2_tax_2020,input,questionnaire
 cm_co2_tax_growth,input,questionnaire
 cm_startyear,input,questionnaire
-cm_stagestart,input,questionnaire
-cm_stageend,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
 cm_expoLinear_yearStart,input,questionnaire
 pm_prodCouple,input,questionnaire

@@ -18,14 +18,14 @@ The model documentation for version 2.1 can be found at XXX.
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function (goxygen(unitPattern = c("\\[","\\]"), includeCore=T)) 
+package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T))`
 in the main folder of the model.
 The resulting documentation can be found in the folder "doc".
 
-Please pay attentions to the REMIND Coding Etiquette when you modify the code.
-The Coding Etiquette you find as part of the documentation in the file main.gms.
-The Coding Etiquette explains also the used name conventions and other
-structural characteristics.
+Please pay attention to the REMIND Coding Etiquette when you modify the code
+(if you plan on contributing to the REMIND official repository).
+The Coding Etiquette is found in the documentation section of the file main.gms.
+It explains also the used name conventions and other structural characteristics.
 
 ## COPYRIGHT
 Copyright 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
@@ -51,7 +51,7 @@ in the official main repository at https://github.com/remindmodel add a suffix
 to the name to allow distinguishing versions (format **REMIND-suffix**).
 
 ## SYSTEM REQUIREMENTS
-The model is quite resource heavy and works best on machines with high CPU clock
+The full model is quite resource heavy and works best on machines with high CPU clock
 and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 16GB of memory and a Core i7 CPU or similar.
 
@@ -75,8 +75,8 @@ available repositories via:
 options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
 ```
 
-Under Windows you need to install Rtools
-(https://cran.r-project.org/bin/windows/Rtools/) and to add it to the PATH
+On Windows you need to install Rtools
+(https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH
 variable. After that you can run the following lines of code:
 
 

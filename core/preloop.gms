@@ -6,42 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./core/preloop.gms
 
-loop ((t,counter),
-if ( pm_dt(t) eq 2 * counter.val,
-pm_cumDeprecFactor_old(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
-=   ((1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 )
-      - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t) ))
-     /  pm_delta_kap(regi,in)
-    ;
-
-pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
-=   ( 1 
-     - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2)
-      )
-     /  pm_delta_kap(regi,in)
-    ;
-
-);
-if ( pm_dt(t) eq (2 * counter.val -1),
-pm_cumDeprecFactor_old(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
-=   ((1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5)
-      - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)))
-     /  pm_delta_kap(regi,in)
-    - 1/2 * (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5 ) 
-    ;
-
-pm_cumDeprecFactor_new(t,regi,in)$(ppfKap(in) OR in_putty(in)) 
-=   ( 1 
-     - (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5 + 1)
-      )
-     /  pm_delta_kap(regi,in)
-    - 1/2 * (1 - pm_delta_kap(regi,in)) ** (pm_dt(t)/2 - 0.5) 
-    ;
-    
-);
-); 
-display "test Deprec", pm_cumDeprecFactor_new,pm_cumDeprecFactor_old;
-
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
 ***                   MODEL             HYBRID
@@ -55,9 +19,6 @@ model hybrid /all/;
 ***                   GDX    stuff       
 ***------------------------------------------------------------------------------
 ***------------------------------------------------------------------------------
-$ifthen %c_INCONV_PENALTY% == "on"
-  vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
-$endif
 
 *** Set level values, so that reference value is available even if gdx has no level value to overwrite. Gams complains if .l was never initialized.
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
@@ -70,7 +31,6 @@ vm_capDistr.l(t,regi,te,rlf)          = 0;
 vm_cap.l(t,regi,te,rlf)              = 0;
 vm_fuExtr.l(ttot,regi,"pebiolc","1")$(ttot.val ge 2005)  = 0;
 vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005)         = 0;
-vm_pebiolc_price_shifted.l(ttot,regi)$(ttot.val ge 2005) = 0;
   
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
@@ -109,6 +69,31 @@ loop(fe2ue(entyFe,enty,te)$((not sameas(te, "apCarElT")) AND (not sameas(te, "ap
 pm_vintage_in(regi,"1",te) = pm_vintage_in(regi,"1",te) * max((pm_histfegrowth(regi,entyFe)- 0.005 + 1/fm_dataglob("lifetime",te))/(1/fm_dataglob("lifetime",te)),0.1);
 pm_vintage_in(regi,"6",te) = pm_vintage_in(regi,"6",te) * max(((pm_histfegrowth(regi,entyFe)- 0.005 + 1/fm_dataglob("lifetime",te))/(1/fm_dataglob("lifetime",te)) + 1) * 0.75,0.2);
 );
+
+$ifthen setGlobal c_scaleEmiHistorical
+*re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
+display p_macBaseMagpie;
+loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
+  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
+   p_macBaseMagpie(ttot,regi,enty) *
+    ( (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
+      /
+      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
+    )
+  ;
+);
+loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp")),
+  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
+    p_macBaseMagpie(ttot,regi,enty) *
+    ( p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions)
+* eurostat uses 298 to convert N2O to CO2eq
+      /
+      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
+    )
+  ;
+);
+display p_macBaseMagpie;
+$endif
 
 
 *** EOF ./core/preloop.gms

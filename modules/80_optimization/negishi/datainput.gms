@@ -9,15 +9,12 @@
 pm_pvp(ttot,trade)$(ttot.val ge 2005)               = 1;
 p80_trade(ttot,regi,trade)$(ttot.val ge 2005)       = 0;
 
-$ifthen.cm_compile_main %cm_compile_main% == "FALSE"
-
 if (cm_emiscen eq 1,
   Execute_Loadpoint "./input.gdx", p80_currentaccount_bau = p80_curracc;
 else
   Execute_Loadpoint "./input_ref.gdx", p80_currentaccount_bau = p80_curracc;
 );
 
-$endif.cm_compile_main
 
 p80_defic_sum("1") = 1;
 

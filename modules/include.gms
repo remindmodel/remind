@@ -9,6 +9,8 @@
 $setglobal phase %1
 
 *######################## R SECTION START (MODULES) ############################
+$include "./modules/01_macro/module.gms"
+$include "./modules/02_welfare/module.gms"
 $include "./modules/04_PE_FE_parameters/module.gms"
 $include "./modules/05_initialCap/module.gms"
 $include "./modules/11_aerosols/module.gms"
@@ -18,6 +20,7 @@ $include "./modules/20_growth/module.gms"
 $include "./modules/21_tax/module.gms"
 $include "./modules/22_subsidizeLearning/module.gms"
 $include "./modules/23_capitalMarket/module.gms"
+$include "./modules/24_trade/module.gms"
 $include "./modules/26_agCosts/module.gms"
 $include "./modules/29_CES_parameters/module.gms"
 $include "./modules/30_biomass/module.gms"

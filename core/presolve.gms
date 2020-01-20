@@ -8,7 +8,6 @@
 *JeS* calculate share of transport fuels in liquids
 pm_share_trans(ttot,regi)$(ttot.val ge 2005) = sum(se2fe(entySe,entyFe,te)$(seAgg2se("all_seliq",entySe) AND ( sameas(entyFe,"fepet") OR sameas(entyFe,"fedie"))), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) / (sum(se2fe(entySe,entyFe,te)$seAgg2se("all_seliq",entySe), vm_prodFe.l(ttot,regi,entySe,entyFe,te)) + 0.0000001);
 
-pm_Xport0(ttot,regi,tradePe)      = vm_Xport.l(ttot,regi,tradePe);
 *AJS* we need those in nash
 pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_capCum.l(ttot,regi,teLearn);
 pm_co2eq0(ttot,regi)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq 1)) = vm_co2eq.l(ttot,regi);
@@ -326,7 +325,25 @@ p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
       p_macUse2005(regi,enty)
     )$( (ttot.val gt 2040) )
 ;
+
+$ifthen setGlobal c_scaleEmiHistorical
+
+**p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
+* Set minimum abatment levels based on historical emissions
+p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"ch4","agriculture","process")+p_histEmiSector("2010",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")));
+p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"ch4","agriculture","process")+p_histEmiSector("2015",regi,"ch4","lulucf","process"))/(p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) );
+p_macLevFree("2010",regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2010",regi,"n2o","agriculture","process")+p_histEmiSector("2010",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp"))) = max( 0, 1 - (p_histEmiSector("2015",regi,"n2o","agriculture","process")+p_histEmiSector("2015",regi,"n2o","lulucf","process"))/(p_histEmiSector("2005",regi,"n2o","agriculture","process")+p_histEmiSector("2005",regi,"n2o","lulucf","process")) );
+
+p_macLevFree("2010",regi,enty)$((p_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
+p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
+
+$else
+
 p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
+
+$endif
+
 pm_macAbatLev(ttot,regi,enty) = 0.0;
 pm_macAbatLev("2005",regi,enty) = p_macUse2005(regi,enty);
 pm_macAbatLev("2010",regi,enty) = p_macLevFree("2010",regi,enty);

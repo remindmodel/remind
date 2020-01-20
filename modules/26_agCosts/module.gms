@@ -6,6 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/26_agCosts.gms
 
+*' @title Agricultural costs
+*'
+*' @description This module calculates the costs for agricultural production which is exogenous to REMIND.
+*'
+*' @authors Franziska Piontek, David Klein
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%agCosts%" == "costs" $include "./modules/26_agCosts/costs/realization.gms"
 $Ifi "%agCosts%" == "costs_trade" $include "./modules/26_agCosts/costs_trade/realization.gms"

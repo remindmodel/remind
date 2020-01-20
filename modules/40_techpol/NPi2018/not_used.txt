@@ -2,3 +2,4 @@ name,type,reason
 pm_ttot_val,parameter,???
 vm_deltaCap,input,questionnaire
 pm_NuclearConstraint,input,questionnaire
+cm_nucscen,input,questionnaire

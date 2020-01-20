@@ -6,10 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/26_agCosts/costs/declarations.gms
 parameter
-pm_totLUcosts(tall,all_regi)           "total landuse costs (agriculture, bioenergy, MAC, etc), in standalone runs MAC costs are substituted by costs from teh REMIND-MAC"
-p26_totLUcosts_withMAC(tall,all_regi)  "total landuse costs including MAC (agriculture, bioenergy, MAC, etc)"
-p26_macCostLu(tall,all_regi)           "Land use emissions MAC cost"
-pm_NXagr(tall,all_regi)                "net agricultural exports"
+pm_totLUcosts(tall,all_regi)           "Total landuse costs (agriculture, bioenergy, MAC, etc). In standalone runs MAC costs are substituted by costs from the endogenous REMIND-MAC [T$US]"
+p26_totLUcosts_withMAC(tall,all_regi)  "Total landuse costs including agricultural MAC costs (agriculture, bioenergy, MAC, etc) [T$US]"
+p26_macCostLu(tall,all_regi)           "Land use emissions MAC cost [T$US]"
+pm_NXagr(tall,all_regi)                "Net agricultural exports"
 ;
 
 *** EOF ./modules/26_agCosts/costs/declarations.gms

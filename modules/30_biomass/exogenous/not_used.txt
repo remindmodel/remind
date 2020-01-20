@@ -10,10 +10,9 @@ sm_GJ_2_TWa, scalar, ???
 pm_pedem_res, parameter, ???
 vm_pebiolc_price, variable, ??
 vm_Xport, variable, ??
-cm_1stgen_phaseout, switch, ???
 cm_startyear, switch, ???
-vm_pebiolc_price_shifted,variable,???
 pm_costsTradePeFinancial,parameter,???
 sm_eps,scalar,???
 sm_EJ_2_TWa,input,questionnaire
 pm_ts,input,questionnaire
+cm_1stgen_phaseout,input,questionnaire

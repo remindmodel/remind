@@ -13,20 +13,19 @@ core/input/f_cf.cs3r
 core/input/f_dataRegiSolar.cs3r
 core/input/f_emiFgas.cs4r
 core/input/f_gdp.cs3r
-core/input/f_IO_trade.cs4r
 core/input/f_lab.cs3r
 core/input/f_macBaseMagpie.cs4r
 core/input/f_maxProdGradeRegiHydro.cs3r
 core/input/f_maxProdGradeRegiWind.cs3r
 core/input/f_pop.cs3r
+core/input/f_IO_trade.cs4r
 core/input/p_abatparam_CH4.cs4r
 core/input/p_abatparam_N2O.cs4r
 core/input/p_abatparam_CO2.cs4r
 core/input/p_adj_deltacapoffset.cs4r
 core/input/p_boundEmi.cs4r
-core/input/p_boundInvMacro.cs4r
 core/input/pm_NuclearConstraint.cs4r
-core/input/p_costsPEtradeMp.cs4r
+core/input/pm_costsPEtradeMp.cs4r
 core/input/pm_dataccs.cs3r
 core/input/p_earlyRetirementAdjFactor.cs3r
 core/input/p_emiFossilFuelExtr.cs4r
@@ -43,7 +42,6 @@ core/input/p_share_ind_fesos.cs4r
 core/input/p_share_ind_fesos_bio.cs4r
 core/input/pm_boundCapCCS.cs4r
 core/input/pm_boundCapEV.cs4r
-core/input/pm_costsTradePeFinancial.cs3r
 core/input/pm_shPPPMER.cs4r
 core/input/p_inco0.cs4r
 core/input/p_boundCapCCSindicator.cs4r
@@ -55,6 +53,7 @@ core/input/
 core/input/core/input/p_NuclearConstraint.cs4r
 core/input/core/input/pm_inco0.cs4r
 core/input/historical/historical.mif
+modules/01_macro/singleSectorGr/input/p01_boundInvMacro.cs4r
 modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r
 modules/04_PE_FE_parameters/iea2014/input/f04_IO_output.cs4r
 modules/04_PE_FE_parameters/iea2014/input/
@@ -81,6 +80,8 @@ modules/23_capitalMarket/imperfect/input/pm_ies.cs4r
 modules/23_capitalMarket/imperfect/input/pm_nfa_start.cs4r
 modules/23_capitalMarket/imperfect/input/pm_risk_premium.cs4r
 modules/23_capitalMarket/perfect/input/pm_nfa_start.cs4r
+modules/24_trade/standard/input/pm_costsPEtradeMp.cs4r
+modules/24_trade/standard/input/pm_costsTradePeFinancial.cs3r
 modules/26_agCosts/costs/input/p26_totLUcostLookup.cs4r
 modules/26_agCosts/costs/input/p26_macCostLuLookup.cs4r
 modules/26_agCosts/costs/input/

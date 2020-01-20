@@ -115,7 +115,6 @@ cm_iteration_max      "number of Negishi iterations (up to 49)"
 c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
-cm_postproc            "turn on postprocessing" !! warning: you have to rerun the scenario
 cm_emiscen            "policy scenario choice"
 cm_co2_tax_2020       "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 cm_co2_tax_growth     "growth rate of carbon tax"
@@ -132,11 +131,9 @@ cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
-c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2020 (delatcap=0)"
+cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
+cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_startyear          "first optimized modelling time step"
-cm_stagestart             "start of staged accession for delay runs"
-cm_stageend                       "end of staged accession for delay runs"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen            "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
@@ -155,7 +152,7 @@ cm_rentconvcoal       "[grades2poly] number of years required to converge to the
 cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-c_damage              "c_damage factor for forcing overshoot"
+cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -173,7 +170,7 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-c_trdcst              "parameter to scale trade export cost for gas"
+cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
@@ -197,7 +194,6 @@ cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
-cm_postproc            = 0;     !! def = 0
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
@@ -220,8 +216,8 @@ cm_CCS_steel           = 1;        !! def = 1
 
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
-cm_bioenergymaxscen = 0;         !! def = 3
-c_tradecost_bio     = 2;         !! def = 2
+cm_bioenergymaxscen = 0;         !! def = 0
+cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
 
@@ -231,8 +227,6 @@ $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
-cm_stagestart     = 2020;      !! def = 2020
-cm_stageend       = 2040;      !! def = 2040
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
@@ -256,7 +250,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-c_damage              = 0.005;     !! def = 0.005
+cm_damage              = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -277,7 +271,7 @@ c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiCO2target  off     !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
-c_trdcst             = 1.5;  !! def = 1.5
+cm_trdcst             = 1.5;  !! def = 1.5
 c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
@@ -297,7 +291,7 @@ cm_noReboundEffect = 0;
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel   !! def = parallel
 $setGlobal cm_OILRETIRE  on        !! def = off
-$setglobal c_INCONV_PENALTY  on         !! def = on
+$setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  on        !! def = off
@@ -311,8 +305,6 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-
-$setglobal cm_compile_main       TRUE     !! this will be changed by submit.R
 $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_ccd632d33a   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0

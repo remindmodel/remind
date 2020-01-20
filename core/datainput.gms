@@ -30,7 +30,7 @@ vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
 if (cm_emiscen ne 8,
-c_damage = 0.0;
+cm_damage = 0.0;
 );
 
 *------------------------------------------------------------------------------------
@@ -61,9 +61,6 @@ pm_ttot_2_tall(ttot,tall)$((ttot.val = tall.val) ) = Yes;
 *** define pm_prtp according to cm_prtpScen:
 if(cm_prtpScen eq 1, pm_prtp(regi) = 0.01);
 if(cm_prtpScen eq 3, pm_prtp(regi) = 0.03);
-
-pm_welf(ttot)$(ttot.val ge 2005) = 1;
-$if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
@@ -113,42 +110,22 @@ $offdelim
 ;
 p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
 
-*** load data for macro investments in 2005, used as bound
-parameter p_boundInvMacro(all_regi)        "macro investments in 2005"
-/
-$ondelim
-$include "./core/input/p_boundInvMacro.cs4r"
-$offdelim
-/
-;
-p_boundInvMacro(all_regi) = p_boundInvMacro(all_regi) * pm_shPPPMER(all_regi);
-
-*ML* Reintroduction of trade cost for composite good (based on export/import value difference for non-energy goods in GTAP6)
-p_tradecostgood(regi)        = 0.03;
 
 *** Load information from BAU run
-$ifthen.cm_compile_main %cm_compile_main% == "TRUE"
-pm_gdp_gdx(ttot,regi) = 0;
-p_inv_gdx(ttot,regi)  = 0;
-$else.cm_compile_main
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
-$endif.cm_compile_main
 
 *** permit price initilization
 pm_pricePerm(ttot) = 0;
 
-*** depreciation rate of capital
-pm_delta_kap(regi,"kap") = 0.05;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 ***                                ESM
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
-pm_Xport0("2005",regi,peFos) = 0;
 
 *** default conversion for energy services
 pm_fe2es(ttot,regi,teEs) = 1;
@@ -293,6 +270,24 @@ table f_dataetaglob(tall,all_te)                      "global eta data"
 $include "./core/input/generisdata_varying_eta.prn"
 ;
 
+* Read in mac historical emissions to calibrate MAC reference emissions
+parameter p_histEmiMac(tall,all_regi,all_enty)    "historical emissions per MAC"
+/
+$ondelim
+$include "./core/input/p_histEmiMac.cs4r"
+$offdelim
+/
+;
+* Read in historical emissions per sector to calibrate MAC reference emissions
+parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
+/
+$ondelim
+$include "./core/input/p_histEmiSector.cs4r"
+$offdelim
+/
+;
+
+
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
@@ -326,30 +321,6 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
-
-*** load data on transportation costs
-parameter p_costsPEtradeMp(all_regi,all_enty)         "PE tradecosts (energy losses on import)"
-/
-$ondelim
-$include "./core/input/p_costsPEtradeMp.cs4r"
-$offdelim
-/
-;
-table pm_costsTradePeFinancial(all_regi,char,all_enty)        "PE tradecosts (financial costs on import, export and use)"
-$ondelim
-$include "./core/input/pm_costsTradePeFinancial.cs3r"
-$offdelim
-;
-pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
-pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
-
-*DK* Only for SSP cases other than SSP2: use default trade costs
-if(c_tradecost_bio = 1,
-pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(regi,"Xport", "pebiolc")/2;
-);
-
-pm_costsTradePeFinancial(regi,"Xport", "pegas") = c_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
-pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"
@@ -980,22 +951,6 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-*RP* 2012-03-06: Inconvenience costs on seprod
-$IFTHEN.INCONV %c_INCONV_PENALTY% == "on"
-p_inconvpen_lap(ttot,regi,"coaltr")$(ttot.val ge 2005)      = 0.5;   !! In dollar per GJ seprod at 1.000$/cap GDP, or 10$/GJ at 10.000$_GDP/cap
-p_inconvpen_lap(ttot,regi,"biotr")$(ttot.val ge 2005)       = 1.0;   !! In dollar per GJ seprod
-p_inconvpen_lap(ttot,regi,"biotrmod")$(ttot.val ge 2005)    = 0.25;    !! In dollar per GJ seprod. Biotrmod is a mix of wood stoves and automated wood pellets for heating, which has lower air pollution and other discomfort effects
-*' Transformation of coal to liquids/gases/H2 brings local pollution, which is less accepted at higher incomes -> use the inconvenience cost channel
-p_inconvpen_lap(ttot,regi,"coalftrec")$(ttot.val ge 2005)   = 0.1;    !! In dollar per GJ seprod
-p_inconvpen_lap(ttot,regi,"coalftcrec")$(ttot.val ge 2005)  = 0.1;    !!  equivalent to 4$/GJ at 40.000$_GDP/cap, or 10$/GJ at 100.000$_GDP/cap
-p_inconvpen_lap(ttot,regi,"coalgas")$(ttot.val ge 2005)   = 0.1;    !!
-p_inconvpen_lap(ttot,regi,"coalh2")$(ttot.val ge 2005)   = 0.1;    !!
-p_inconvpen_lap(ttot,regi,"coalh2c")$(ttot.val ge 2005)  = 0.1;    !!
-p_inconvpen_lap(ttot,regi,te)$(ttot.val ge 2005) = p_inconvpen_lap(ttot,regi,te) * 4.3 * 1E-4;            !! this is now equivalent to 1$/GJ at 1000$/per Capita in the welfare logarithm
-p_inconvpen_lap(ttot,regi,te)$(ttot.val ge 2005) = p_inconvpen_lap(ttot,regi,te) * (1/sm_giga_2_non) / sm_GJ_2_TWa; !! conversion util/(GJ/cap) -> util/(TWa/Gcap)
-*RP* these values are all calculated on seprod level.
-display p_inconvpen_lap;
-$ENDIF.INCONV
 
 
 
