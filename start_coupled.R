@@ -215,7 +215,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=13",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",run,".RData\""))
+    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
