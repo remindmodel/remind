@@ -55,7 +55,7 @@ submit <- function(cfg) {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")
   } else {
-    system(paste0("sbatch --job-name=",cfg$title," --output=",cfg$title,".out --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
+    system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
     Sys.sleep(1)
   }
     
