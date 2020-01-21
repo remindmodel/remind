@@ -101,6 +101,8 @@ config.file <- argv[1]
 if ('--testOneRegi' %in% argv) {
   testOneRegi <- TRUE
   config.file <- NA
+} else {
+  testOneRegi <- FALSE
 }
 
 if (!is.na(config.file)) {
@@ -137,7 +139,7 @@ for (scen in rownames(scenarios)) {
     cfg$results_folder   <- 'output/testOneRegi'
 
     # delete existing Results directory
-    unlink('output/testOneRegi', recursive = TRUE)
+    cfg$force_replace    <- TRUE
   }
 
   # configure cfg based on settings from csv if provided
