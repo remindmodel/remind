@@ -6,8 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/testOneRegi/solve.gms
 
-$IFI %optimization% == "testOneRegi" s80_cnptfile = 9;
-hybrid.optfile = s80_cnptfile;
+hybrid.optfile = 9;
 
 ***reduce the problem to one region
 regi(all_regi) = NO;

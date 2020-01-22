@@ -92,7 +92,7 @@ How to make a new module or realization in REMIND
 
 If you want to create a **new module** in REMIND first think about the interfaces between the core code and your new module. This helps you to design your module. 
 
-For creating a new module you can use the function **module_skeleton** from the R library "lucode". Start R and set the working directory to the folder of your REMIND version you want to make the changes (e.g. setwd(../../remind_20/trunk)). 
+For creating a new module you can use the function **module_skeleton** from the R package "lucode". Start R and set the working directory to the folder of your REMIND version you want to make the changes (e.g. setwd(../../remind_20/trunk)). 
 
 ``` r
 library(lucode)
@@ -101,7 +101,7 @@ module.skeleton(100,"bla",c("on","off"))
 
 It creates all folders and gams files for your new module "100_bla" with the realizations "on" and "off". More information about the function module_skeleton you can find at the help desk of R. 
 
-For creating a **new realization** of an existing module you can also use the function module_skeleton of the R library "lucode". Go into the folder "module" of your REMIND version and there in the folder of the module you want to make a new realization for (e.g. "module/100_bla", "module/10_climate"). Now you can start R and set the working directory to the head folder of your REMIND version you want to introduce the new realization. 
+For creating a **new realization** of an existing module you can also use the function module_skeleton of the R package "lucode". Go into the folder "module" of your REMIND version and there in the folder of the module you want to make a new realization for (e.g. "module/100_bla", "module/10_climate"). Now you can start R and set the working directory to the head folder of your REMIND version you want to introduce the new realization. 
 
 ``` r
 library(lucode)

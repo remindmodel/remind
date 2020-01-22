@@ -72,9 +72,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.936
+* Input data revision: 5.937
 * 
-* Last modification (input data): Mon Jan 13 09:10:28 2020
+* Last modification (input data): Thu Jan 16 14:11:39 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -126,6 +126,8 @@ $setGlobal c_expname  default
 ***                           MODULES
 ***------------------------------------------------------------------------------
 
+***---------------------    01_macro    -----------------------------------------
+$setGlobal macro  singleSectorGr  !! def = singleSectorGr
 ***---------------------    02_welfare    ---------------------------------------
 $setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
@@ -146,6 +148,8 @@ $setGlobal tax  on                    !! def = on
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
 $setGlobal capitalMarket  perfect     !! def = perfect
+***---------------------    24_trade    -----------------------------------------
+$setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
@@ -214,8 +218,8 @@ cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
-c_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
+cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
@@ -254,7 +258,7 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-c_trdcst              "parameter to scale trade export cost for gas"
+cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
@@ -306,9 +310,9 @@ cm_CCS_steel           = 1;        !! def = 1
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
-c_tradecost_bio     = 2;         !! def = 2
+cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-c_1stgen_phaseout  = 0;         !! def = 0
+cm_1stgen_phaseout  = 0;         !! def = 0
 cm_cprice_red_factor  = 0.5;         !! def = 0.5
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
@@ -324,8 +328,8 @@ cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
 cm_limit_peur_scen  = 1;         !! def = 1
-$setGlobal cm_oil_scen  medOil         !! def = medOil
-$setGlobal cm_gas_scen  medGas         !! def = medGas
+$setGlobal cm_oil_scen   medOil         !! def = medOil
+$setGlobal cm_gas_scen   medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
 cm_rentdiscoil      = 0.2;       !! def 0.2
 cm_rentdiscoil2     = 0.9;       !! def 0.9
@@ -340,7 +344,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage              = 0.005;     !! def = 0.005
+cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -364,7 +368,7 @@ cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
 
 cm_trdadj            = 2;    !! def = 2.0
-c_trdcst             = 1.5;  !! def = 1.5
+cm_trdcst            = 1.5;  !! def = 1.5
 c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
@@ -375,10 +379,10 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen = 0;!! def = 0
-cm_noReboundEffect = 0;
-$setGlobal cm_EsubGrowth  low  !! def = low
-$setGlobal c_scaleEmiHistorical  off  !! def = off
+cm_DiscRateScen        = 0;!! def = 0
+cm_noReboundEffect     = 0;
+$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal c_scaleEmiHistorical  on  !! def = on
 
 
 $setGlobal c_regi_nucscen  all !! def = all
@@ -389,15 +393,15 @@ $setGlobal c_regi_capturescen  all !! def = all
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode  parallel   !! def = parallel
-$setGlobal c_EARLYRETIRE        on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
-$setglobal cm_INCONV_PENALTY  on         !! def = on
-$setGlobal cm_so2_out_of_opt  on         !! def = on
-$setGlobal c_skip_output  off        !! def = off
-$setGlobal cm_MOFEX  off        !! def = off
-$setGlobal cm_conoptv  conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall  off        !! def = off
+$setGlobal cm_nash_mode        debug      !! def = parallel
+$setGlobal c_EARLYRETIRE       on         !! def = on
+$setGlobal cm_OILRETIRE        off        !! def = off
+$setglobal cm_INCONV_PENALTY   on         !! def = on
+$setGlobal cm_so2_out_of_opt   on         !! def = on
+$setGlobal c_skip_output       off        !! def = off
+$setGlobal cm_MOFEX            off        !! def = off
+$setGlobal cm_conoptv          conopt3    !! def = conopt3
+$setGlobal cm_ccsfosall        off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
@@ -406,8 +410,6 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-
-$setglobal cm_compile_main       TRUE     !! this will be changed by submit.R
 $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
