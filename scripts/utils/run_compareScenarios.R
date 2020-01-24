@@ -13,8 +13,6 @@ if(!exists("source_include")) {
   readArgs("outfilename")
 }
 
-source("compareScenarios.R")
-
 wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename) {
   # Set mif path
   scenNames <- getScenNames(outputdirs)

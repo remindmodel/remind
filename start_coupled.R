@@ -225,6 +225,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   runs <- findCoupledruns(resultsfolder=remindpath)
   ret  <- findIterations(runs,modelpath=c(remindpath,magpiepath),latest=FALSE)
   readRuntime(ret,plot=TRUE,coupled=TRUE)
+  unlink(c("runtime.log","runtime.out","runtime.rda"))
   
   # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
   report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
