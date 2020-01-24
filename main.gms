@@ -328,8 +328,8 @@ cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
 cm_limit_peur_scen  = 1;         !! def = 1
-$setGlobal cm_oil_scen  medOil         !! def = medOil
-$setGlobal cm_gas_scen  medGas         !! def = medGas
+$setGlobal cm_oil_scen   medOil         !! def = medOil
+$setGlobal cm_gas_scen   medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
 cm_rentdiscoil      = 0.2;       !! def 0.2
 cm_rentdiscoil2     = 0.9;       !! def 0.9
@@ -344,7 +344,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage              = 0.005;     !! def = 0.005
+cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -368,7 +368,7 @@ cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
 
 cm_trdadj            = 2;    !! def = 2.0
-cm_trdcst             = 1.5;  !! def = 1.5
+cm_trdcst            = 1.5;  !! def = 1.5
 c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
@@ -379,10 +379,10 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen = 0;!! def = 0
-cm_noReboundEffect = 0;
-$setGlobal cm_EsubGrowth  low  !! def = low
-$setGlobal c_scaleEmiHistorical  off  !! def = off
+cm_DiscRateScen        = 0;!! def = 0
+cm_noReboundEffect     = 0;
+$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal c_scaleEmiHistorical  on  !! def = on
 
 
 $setGlobal c_regi_nucscen  all !! def = all
@@ -393,15 +393,15 @@ $setGlobal c_regi_capturescen  all !! def = all
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode  debug   !! def = parallel
-$setGlobal c_EARLYRETIRE        on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
-$setglobal cm_INCONV_PENALTY  on         !! def = on
-$setGlobal cm_so2_out_of_opt  on         !! def = on
-$setGlobal c_skip_output  off        !! def = off
-$setGlobal cm_MOFEX  off        !! def = off
-$setGlobal cm_conoptv  conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall  off        !! def = off
+$setGlobal cm_nash_mode        debug      !! def = parallel
+$setGlobal c_EARLYRETIRE       on         !! def = on
+$setGlobal cm_OILRETIRE        off        !! def = off
+$setglobal cm_INCONV_PENALTY   on         !! def = on
+$setGlobal cm_so2_out_of_opt   on         !! def = on
+$setGlobal c_skip_output       off        !! def = off
+$setGlobal cm_MOFEX            off        !! def = off
+$setGlobal cm_conoptv          conopt3    !! def = conopt3
+$setGlobal cm_ccsfosall        off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
