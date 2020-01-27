@@ -261,9 +261,7 @@ vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single 
 positive variables
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------MACRO module---------------------------
-vm_effGr(ttot,all_regi,all_in)                       "growth of factor efficiency"
 vm_enerSerAdj(tall,all_regi,all_in)                  "adjustment costs for energy service transformations"
-vm_damageFactor(ttot,all_regi)                       "damage factor reducing GDP"
 vm_esCapInv(ttot,all_regi,all_teEs)                   "investment for energy end-use capital at the energy service level"
 ***----------------------------------------------------------------------------------------
 *-----------------------------------------------ESM module---------------------------------
