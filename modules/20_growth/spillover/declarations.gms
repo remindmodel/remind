@@ -24,6 +24,7 @@ Parameters
 
 *mlb*  vm_invInno and  vm_invImi and pm_cumEff shifted to the core folder
 Positive variables
+ vm_effGr(ttot,all_regi,all_in)            "growth of factor efficiency"
  v20_effInno(ttot,all_regi,all_in)         "efficiency improvement by innovation"
  v20_effImi(ttot,all_regi,all_in)          "efficiency improvement by imitation"
 ;
