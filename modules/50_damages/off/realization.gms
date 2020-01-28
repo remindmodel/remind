@@ -9,6 +9,7 @@
 *' @description The off-realization of the damage module sets the damage factor on output to 1, meaning no damage.
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/50_damages/off/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/50_damages/off/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/50_damages/off.gms
