@@ -42,7 +42,7 @@ submit <- function(cfg) {
                 "prepare_and_run.R" = "scripts/start/prepare_and_run.R")
   .copy.fromlist(filelist,cfg$results_folder)
   
-  # Do not remove RData files from REMIND main folder because they are needed for manually restarting subsequent runs
+  # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs
 
   # change to run folder
   setwd(cfg$results_folder)
