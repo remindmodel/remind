@@ -19,6 +19,9 @@ pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = max(pm_taxCO2eq(ttot,regi),1*sm_DptC
 *** exception for China to meet the target of 2030 peak: linear increase starts already in 2025
 pm_taxCO2eq(ttot,regi)$(ttot.val gt 2025 AND (sameas(regi,"CHN") OR sameas(regi,"CHA"))) = max(pm_taxCO2eq(ttot,regi),1*sm_DptCO2_2_TDpGtC * (1+(ttot.val-2025)*9/7));
 
+*** new 2020 carbon price definition: weighted average of 2015 and 2025, with triple weight for 2015 (which is zero for all non-eu regions).
+pm_taxCO2eq("2020",regi) = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
+
 
 *#' @equations 
 *#'  calculate level of emission target that it should converge to, two types of targets
