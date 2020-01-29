@@ -16,7 +16,8 @@ Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark
 
 1. Your first run
 ==================
-   	
+   
+
 This section will explain how you start your first run in REMIND.
 
 Default Configurations (config/default.cfg)
@@ -28,7 +29,7 @@ a. The first part, MODULES, contains the various modules used in REMIND and vari
 
 ``` bash
 cfg$gms$<module name
-``` 
+```
 
 b. The SWITCHES and FLAGS section are various settings to control, for e.g., how many iterations to run, which technologies to run, which SSP to use, start and end year of model run etc. See the fourth section, explanations of switches and flags, to know more. 
 
@@ -47,7 +48,7 @@ Your config file should look like this:
 <p class="caption">
 Example for a scenario_config of REMIND
 </p>
-	
+
 Save the config file as a csv file with `;` as delimiter. You can check that, for example, by opening the csv in a text editor. If the delimiter is not `;`, change it in Windows under ***Control Panel*** ->  ***Region***  -> ***Additional Settings*** -> ***List separator***. 
 
 To finally start REMIND with this config file, you need to run the R-script ***start_bundle.R*** on the cluster on this config file. For this:
@@ -67,7 +68,7 @@ For starting one single or a bundle of runs via scenario_config.csv you use the 
 
 ``` r
 nohup Rscript start_bundle.R config/scenario_config.csv &
-```		
+```
 Now, keep your fingers crossed that everything works as it should.The process of your job submission is documented in the file nohup.out that you created with the nohup command. After a couple of minutes, you should see something like `Submitted Batch Job ...` in the nohup.out file. This means that your run has been started. To see how far your run is or whether it was stopped due to some problems, go to the `Output` folder and type 
 
 ``` bash
@@ -97,13 +98,14 @@ in the terminal.
 2. What happens during a REMIND run?
 =====================================
 	
+
 This section will give some technical introduction into what happens after you have started a run. It will not be a tutorial, but rather an explanation of the different parts in the modeling routine. The whole routine is illustrated in Figure 1. The core of the model is the optimization written in GAMS. However, there is some pre-processing of the input data and some post-processing of the output data using R scripts.
 
 <img src="figures/REMIND_flow.png" alt="REMIND modeling routine" width="100%" />
 <p class="caption">
 REMIND modeling routine
 </p>
-	
+​	
 
 3. What happens once you start REMIND on the Cluster? 
 =======================================================
@@ -117,8 +119,8 @@ The optimization in REMIND requires a lot of input data. For example, the model 
 ``` bash
 /p/projects/rd3mod/inputdata/sources.
 ```
-		
-The data are mostly in csv files. During the input data preparation, these files are read and processed, using functions from the *moinput* library. Input data are available on country-level. Then, depending on the regionmapping file you chose in the config file of your run, the country-level data are aggregated into regions, e.g. to LAM (Latin America), EUR (Europe) and so on. Finally, the data are stored as .cs3r or .cs4r files in various input folders of your REMIND directory. These files are basically tables, too, that you can open with a text editor or Excel. For example, you find the input file `p_histCap.cs3r` in your REMIND directory under `core/input`. It provides the model with historically observed values of installed capacities of some technologies in the respective regions. 
+
+The data are mostly in csv files. During the input data preparation, these files are read and processed, using functions from the *moinput* package. Input data are available on country-level. Then, depending on the regionmapping file you chose in the config file of your run, the country-level data are aggregated into regions, e.g. to LAM (Latin America), EUR (Europe) and so on. Finally, the data are stored as .cs3r or .cs4r files in various input folders of your REMIND directory. These files are basically tables, too, that you can open with a text editor or Excel. For example, you find the input file `p_histCap.cs3r` in your REMIND directory under `core/input`. It provides the model with historically observed values of installed capacities of some technologies in the respective regions. 
 The regional resolution of the run is set in the config/default.cfg by 
 ``` bash
 cfg$regionmapping
@@ -135,7 +137,7 @@ The actual REMIND is written in GAMS, a programming software to numerically solv
 		 
 c) Output Processing
 ----------------------
-The output processing works with a number of R functions from the **remind** library (most of them start with `report... .R`). The wrapper function **convGDX2MIF.R** writes the most relevant output into the so-called **.mif** file. Again, it is a table that you can open in Excel for example. You find under `output` in the folder of your REMIND run as 
+The output processing works with a number of R functions from the **remind** package (most of them start with `report... .R`). The wrapper function **convGDX2MIF.R** writes the most relevant output into the so-called **.mif** file. Again, it is a table that you can open in Excel for example. You find under `output` in the folder of your REMIND run as 
 
 ``` bash
 REMIND_generic_YourRun.mif

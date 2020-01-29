@@ -110,42 +110,22 @@ $offdelim
 ;
 p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcScen%");
 
-*** load data for macro investments in 2005, used as bound
-parameter p_boundInvMacro(all_regi)        "macro investments in 2005"
-/
-$ondelim
-$include "./core/input/p_boundInvMacro.cs4r"
-$offdelim
-/
-;
-p_boundInvMacro(all_regi) = p_boundInvMacro(all_regi) * pm_shPPPMER(all_regi);
-
-*ML* Reintroduction of trade cost for composite good (based on export/import value difference for non-energy goods in GTAP6)
-p_tradecostgood(regi)        = 0.03;
 
 *** Load information from BAU run
-$ifthen.cm_compile_main %cm_compile_main% == "TRUE"
-pm_gdp_gdx(ttot,regi) = 0;
-p_inv_gdx(ttot,regi)  = 0;
-$else.cm_compile_main
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
-$endif.cm_compile_main
 
 *** permit price initilization
 pm_pricePerm(ttot) = 0;
 
-*** depreciation rate of capital
-pm_delta_kap(regi,"kap") = 0.05;
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
 ***                                ESM
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
-pm_Xport0("2005",regi,peFos) = 0;
 
 *** default conversion for energy services
 pm_fe2es(ttot,regi,teEs) = 1;
@@ -341,30 +321,6 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
 p_bound_cap(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
-
-*** load data on transportation costs
-parameter p_costsPEtradeMp(all_regi,all_enty)         "PE tradecosts (energy losses on import)"
-/
-$ondelim
-$include "./core/input/p_costsPEtradeMp.cs4r"
-$offdelim
-/
-;
-table pm_costsTradePeFinancial(all_regi,char,all_enty)        "Financial costs on import, export and use of primary energy"
-$ondelim
-$include "./core/input/pm_costsTradePeFinancial.cs3r"
-$offdelim
-;
-pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
-pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
-
-*DK* Only for SSP cases other than SSP2: use default trade costs
-if(c_tradecost_bio = 1,
-pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(regi,"Xport", "pebiolc")/2;
-);
-
-pm_costsTradePeFinancial(regi,"Xport", "pegas") = c_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
-pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
 *NB* include data and parameters for upper bounds on fossil fuel transport
 parameter f_IO_trade(tall,all_regi,all_enty,char)        "Energy trade bounds based on IEA data"

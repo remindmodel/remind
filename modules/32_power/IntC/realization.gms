@@ -8,17 +8,17 @@
 
 *' @description  
 *'
-*'The `IntC` realization (Integrated Costs) assume a single electricity market balance.
+*'The `IntC` realization (Integrated Costs) assumes a single electricity market balance.
 *'
-*'This module determine power system supply specific technology behavior, which summs up to the general core capacity equations to define the power sector operation and investment decisions.
+*'This module determines power system supply specific technology behavior, which sums up to the general core capacity equations to define the power sector operation and investment decisions.
 *'
-*'Contrary to other secondary energies in REMIND, this requires to move the electricity secondary energy balance (supply = demand) from the core to the module code.
+*'Contrary to other secondary energy types in REMIND, this requires to move the electricity secondary energy balance (supply = demand) from the core to the module code.
 *'
 *'
 *'In summary, the specific power technology equations found in this module reflect the points below.
 *'
 *'
-*'Storage requirements are based on intermittent renewables share, sinergies between different renewables production profiles and curtailment.
+*'Storage requirements are based on intermittent renewables share, synergies between different renewables production profiles and curtailment.
 *'
 *'Additional grid capacities are calculated for high intermittent renewable capacity (solar and wind) and regional spatial differences. 
 *'

@@ -387,7 +387,7 @@ q_capCumNet(t0,regi,teLearn)..
 qm_fuel2pe(t,regi,peRicardian(enty))..
   vm_prodPe(t,regi,enty)
   =e=
-  sum(pe2rlf(enty,rlf2),vm_fuExtr(t,regi,enty,rlf2))-(vm_Xport(t,regi,enty)-(1-p_costsPEtradeMp(regi,enty))*vm_Mport(t,regi,enty))$(tradePe(enty)) -
+  sum(pe2rlf(enty,rlf2),vm_fuExtr(t,regi,enty,rlf2))-(vm_Xport(t,regi,enty)-(1-pm_costsPEtradeMp(regi,enty))*vm_Mport(t,regi,enty))$(tradePe(enty)) -
                       sum(pe2rlf(enty2,rlf2), (pm_fuExtrOwnCons(regi, enty, enty2) * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0));
 
 ***---------------------------------------------------------------------------
@@ -467,12 +467,13 @@ q_costTeCapital(t,regi,teLearn) ..
 ***---------------------------------------------------------------------------
 *** this is to prevent that in the long term, all solids are supplied by biomass. Residential solids can be fully supplied by biomass (-> wood pellets), so the FE residential demand is subtracted
 *** vm_cesIO(t,regi,"fesob") will be 0 in the stationary realization
-q_limitBiotrmod(t,regi)$(t.val > 2050).. 
+q_limitBiotrmod(t,regi)$(t.val > 2020).. 
     vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod") 
    - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in)) 
    - sum (fe2es(entyFe,esty,teEs)$buildMoBio(esty), vm_demFeForEs(t,regi,entyFe,esty,teEs) )
     =l=
-    3 * vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
+    (2 +  max(0,min(1,( 2100 - pm_ttot_val(t)) / ( 2100 - 2020 ))) * 3) !! 5 in 2020 and 2 in 2100
+    * vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
 ;
 
 ***-----------------------------------------------------------------------------
@@ -753,236 +754,32 @@ q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(tto
 		+ 0.05$(sameas(te,"biodiesel") or sameas(te, "bioeths")));
 
 
-***---------------------------------------------------------------------------
-*' Usable macroeconomic output - net of climate change damages - is calculated from the macroeconomic output, 
-*' taking into account export and import of the final good, taking specific trade costs into account, 
-*' which are assigned to the importer. The resulting output is used for consumption, 
-*' for investments into the capital stock, and for the energy system cost components investments,
-*' fuel costs and operation & maintenance. 
-*' Other additional costs like non-energy related greenhouse gas abatement costs and
-*' agricultural costs, which are delivered by the land use model MAgPIE, are deduced from disposable output. 
-*' Net tax revenues and adjustment costs converge to zero in the optimal solution (equilibrium point).
-***---------------------------------------------------------------------------
-qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) .. 
-    vm_cesIO(ttot,regi,"inco") * vm_damageFactor(ttot,regi) 
-  - vm_Xport(ttot,regi,"good") 
-  + vm_Mport(ttot,regi,"good") * (1 - p_tradecostgood(regi) - pm_risk_premium(regi))
-  =g=
-    vm_cons(ttot,regi)
-  + sum(ppfKap(in), vm_invMacro(ttot,regi,in))
-  + sum(in, vm_invInno(ttot,regi,in))
-  + sum(in, vm_invImi(ttot,regi,in))
-***   energy system costs
-  + ( v_costFu(ttot,regi) 
+
+*JK* Result of split of budget equation. Sum of all energy related costs. 
+q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
+    vm_costEnergySys(ttot,regi)
+  =e=
+    ( v_costFu(ttot,regi) 
     + v_costOM(ttot,regi) 
     + v_costInv(ttot,regi)
     ) 
-***   agricultural MACs are part of pm_totLUcosts (see module 26_agCosts)
-  + sum(enty$(emiMacSector(enty) AND (NOT emiMacMagpie(enty))), pm_macCost(ttot,regi,enty))  
   + sum(emiInd37, vm_IndCCSCost(ttot,regi,emiInd37))
   + pm_CementDemandReductionCost(ttot,regi)
-  + sum(tradePe(enty), 
-      pm_costsTradePeFinancial(regi,"Mport",enty) 
-    * vm_Mport(ttot,regi,enty)
-    )
-  + sum(tradePe(enty),
-      (pm_costsTradePeFinancial(regi,"Xport",enty) * vm_Xport(ttot,regi,enty))
-    * ( 1
-      + (
-          ( pm_costsTradePeFinancial(regi,"XportElasticity",enty)
-          / sqr(pm_ttot_val(ttot)-pm_ttot_val(ttot-1))
-          * ( vm_Xport(ttot,regi,enty)
-            / ( vm_Xport(ttot-1,regi,enty) 
-              + pm_costsTradePeFinancial(regi, "tradeFloor",enty)
-              )
-            - 1
-            )
-          )$( ttot.val ge max(2010, cm_startyear) )
-        )
-      )
-    )
-  + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
-  + sum(ppfKap(in),v_invMacroAdj(ttot,regi,in))
-  + sum(in_enerSerAdj(in), vm_enerSerAdj(ttot,regi,in))
-*** ES layer costs
-  + sum(teEs, v_esCapInv(ttot,regi,teEs))
-  + vm_costAdjNash(ttot,regi)
-  + vm_costpollution(ttot,regi)
-  + pm_totLUcosts(ttot,regi)
 ;
 
-***---------------------------------------------------------------------------
-*' The labor available in every time step and every region comes from exogenous data. 
-*' It is the population corrected by the population age structure,
-*' which results in the labour force of people agged 15 to 65. 
-*' The labor participation rate is not factored into the labour supply (as it would only imply a
-*' rescaling of parameters without consequences for the model's dynamic). 
-*' The labour market balance equation reads as follows:
-***---------------------------------------------------------------------------
-q_balLab(t,regi)..
-    vm_cesIO(t,regi,"lab") 
-    =e= 
-    pm_lab(t,regi);
 
-***---------------------------------------------------------------------------
-*' The production function is a nested CES (constant elasticity of substitution) production function. 
-*' The macroeconomic output is generated by the inputs capital, labor, and total final energy (as a macro-ecoomic
-*' aggregate in $US units). The generation of total final energy is described
-*' by a CES production function as well, whose input factors are CES function outputs again. 
-*' Hence, the outputs of CES nests are intermediates measured in $US units. 
-*' According to the Euler-equation the value of the intermediate equals the sum of expenditures for the inputs. 
-*' Sector-specific final energy types represent the bottom end of the `CES-tree'. These 'CES leaves' are
-*' measured in physical units and have a price in $US per physical unit. 
-*' The top of the tree is the total economic output measured in $US.
-*' The following equation is the generic form of the production function. 
-*' It treats the various CES nests separately and the nests are inter-connetected via mappings. 
-*' This equation calculates the amount of intermediate output in a time-step and region 
-*' from the associated factor input amounts according to:
-*** Keep in mind to adjust the calculation of derivatives and shares 
-*** in ./core/reswrite.inc if you change the structure of this function.
-***---------------------------------------------------------------------------
-q_cesIO(t,regi,ipf(out))$ ( NOT ipf_putty(out)) ..
-  vm_cesIO(t,regi,out)
-  =e=
-    sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( 
-        pm_cesdata(t,regi,in,"eff")
-      * vm_effGr(t,regi,in)
-      * vm_cesIO(t,regi,in)
-      )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"))
-;
-
-***---------------------------------------------------------------------------
-*' Constraints for perfect complements in the CES tree
-***---------------------------------------------------------------------------
-q_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2)
-                                 AND (( NOT in_putty(in2)) OR ppfIO_putty(in2))) ..
-      vm_cesIO(t,regi,in) 
-                              =e= pm_cesdata(t,regi,in2,"compl_coef")
-                                * vm_cesIO(t,regi,in2);
-                                
-***---------------------------------------------------------------------------                                
-*** Start of Putty-Clay equations 
-*' Putty-Clay production function:
-***---------------------------------------------------------------------------
-q_cesIO_puttyclay(t,regi,ipf_putty(out)) ..
-  vm_cesIOdelta(t,regi,out)
-  =e=
-    sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( 
-        pm_cesdata(t,regi,in,"eff")
-      * vm_effGr(t,regi,in)
-      * vm_cesIOdelta(t,regi,in)
-      )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"))
-;
-
-*' Putty-Clay constraints for perfect complements in the CES tree:
-q_prodCompl_putty(t,regi,in,in2) $ (complements_ref(in,in2)
-                                 AND ( in_putty(in2) AND  ( NOT ppfIO_putty(in2)))) ..
-      vm_cesIOdelta(t,regi,in) =e=
-                                pm_cesdata(t,regi,in2,"compl_coef")
-                                * vm_cesIOdelta(t,regi,in2);
-
-*' Correspondance between vm_cesIO and vm_cesIOdelta:
-q_puttyclay(ttot,regi,in_putty(in))$(ord(ttot) lt card(ttot)  AND (pm_ttot_val(ttot+1) ge max(2010, cm_startyear)))..
-  vm_cesIO(ttot+1,regi,in)
-  =e=
-  vm_cesIO(ttot,regi,in)*(1- pm_delta_kap(regi,in))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot))
-           +  pm_cumDeprecFactor_old(ttot+1,regi,in)* vm_cesIOdelta(ttot,regi,in)
-           +  pm_cumDeprecFactor_new(ttot+1,regi,in)* vm_cesIOdelta(ttot+1,regi,in)
-;
-
-*' Capital motion equation for putty clay capital:
-q_kapMo_putty(ttot,regi,in_putty(in))$(ppfKap(in) AND (ord(ttot) le card(ttot)) AND (pm_ttot_val(ttot) ge max(2005, cm_startyear)) AND (pm_cesdata("2005",regi,in,"quantity") gt 0))..
-    vm_cesIOdelta(ttot,regi,in)
-    =e=
-             0
-$ifthen setGlobal END2110
-*gl* short time horizon requires investments to materialize in the same time step
-                  + pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5 - (0.5*pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5)$(ord(ttot) eq card(ttot));
-$else
-                  + vm_invMacro(ttot,regi,in)
-                   ;
-$endif
-;
-***---------------------------------------------------------------------------
-*** End of Putty-Clay equations
-***---------------------------------------------------------------------------
 ***---------------------------------------------------------------------------
 *' Investment equation for end-use capital investments (energy service layer):
 ***---------------------------------------------------------------------------
 q_esCapInv(ttot,regi,teEs)$pm_esCapCost(ttot,regi,teEs) ..
-    v_esCapInv(ttot,regi,teEs)
+    vm_esCapInv(ttot,regi,teEs)
     =e=
     sum (fe2es(entyFe,esty,teEs),
     pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
     );
     ;
 
-***---------------------------------------------------------------------------    
-*' The capital stock is claculated recursively. Its amount in the previous time
-*' step is devaluated by an annual depreciation factor and enlarged by investments. 
-*' Both depreciation and investments are expressed as annual values,
-*' so the time step length is taken into account.
-***---------------------------------------------------------------------------
-q_kapMo(ttot,regi,ppfKap(in))$( ( NOT in_putty(in)) AND (ord(ttot) lt card(ttot)) AND (pm_ttot_val(ttot+1) ge max(2010, cm_startyear)) AND (pm_cesdata("2005",regi,in,"quantity") gt 0))..
-    vm_cesIO(ttot+1,regi,in)
-    =e=
-             (1- pm_delta_kap(regi,in))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_cesIO(ttot,regi,in)
-$ifthen setGlobal END2110
-*gl* short time horizon requires investments to materialize in the same time step
-                  + pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5 - (0.5*pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5)$(ord(ttot) eq card(ttot));
-$else
-                  + pm_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
-                  + pm_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in) ;
-$endif
-;
 
-***---------------------------------------------------------------------------
-*' Adjustment costs of macro economic investments:
-***---------------------------------------------------------------------------
-v_invMacroAdj.fx("2005",regi,ppfKap(in)) = 0;
-
-q_invMacroAdj(ttot,regi,ppfKap(in))$( ttot.val ge max(2010, cm_startyear))..
-    v_invMacroAdj(ttot,regi,in)
-    =e= 
-    sqr( (vm_invMacro(ttot,regi,in)-vm_invMacro(ttot-1,regi,in)) / (pm_ttot_val(ttot)-pm_ttot_val(ttot-1)) 
-        / (vm_invMacro(ttot,regi,in)+0.0001)
-    )
-    * vm_cesIO(ttot,regi,in) / 11
-*ML/RP* use "kap/11"  instead of "vm_invMacro" for the scaling to remove the "invest=0"-trap that sometimes appeared in delay scenarios; kap/11 corresponds to the global average ratio of investments to capital in 2005.
-*** In some regions the ratio kap:invest is higher, in some it is lower.
-;
-
-***---------------------------------------------------------------------------
-*' Initial conditions for capital:
-***---------------------------------------------------------------------------
-q_kapMo0(t0(t),regi,ppfKap(in))$(pm_cesdata(t,regi,in,"quantity") gt 0)..
-        vm_cesIO(t,regi,in) =e= pm_cesdata(t,regi,in,"quantity");
-
-*' Limit the share of one ppfEn in total CES nest inputs:
-q_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(out,in) ) ..
-  vm_cesIO(t,regi,in)
-  =l=
-    pm_ppfen_shares(out,in)
-  * sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2))
-;
-
-*' Limit the ratio of two ppfEn:
-q_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(in,in2) ) ..
-  vm_cesIO(t,regi,in)
-  =l=
-    pm_ppfen_ratios(in,in2)
-  * vm_cesIO(t,regi,in2)
-;
 
 *' Limit electricity use for fehes to 1/4th of total electricity use:
 q_limitSeel2fehes(t,regi)..
