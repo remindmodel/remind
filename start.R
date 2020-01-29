@@ -15,7 +15,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Edit run title
     icfg$title <- iscen
-    cat("\n", iscen, "\n")
+    cat("   Configuring cfg for", iscen,"\n")
 
     # Edit main file of model
     if( "model" %in% names(iscenarios)){
@@ -106,7 +106,7 @@ if ('--testOneRegi' %in% argv) {
 }
 
 if (!is.na(config.file)) {
-  cat(paste("reading config file", config.file, "\n"))
+  cat(paste("\nReading config file", config.file, "\n"))
 
   # Read-in the switches table, use first column as row names
   settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1, comment.char = "#", na.strings = "")
@@ -142,6 +142,8 @@ for (scen in rownames(scenarios)) {
     cfg$force_replace    <- TRUE
   }
 
+  cat("\n",scen,"\n")
+
   # configure cfg based on settings from csv if provided
   if (!is.na(config.file)) {
     cfg <- configure_cfg(cfg, scen, scenarios, settings)
@@ -149,14 +151,19 @@ for (scen in rownames(scenarios)) {
     start_now <- (substr(scenarios[scen,"path_gdx_ref"], nchar(scenarios[scen,"path_gdx_ref"])-3, nchar(scenarios[scen,"path_gdx_ref"])) == ".gdx"
                  | is.na(scenarios[scen,"path_gdx_ref"]))
   }
-
+  
   # save the cfg data for later start of subsequent runs (after preceding run finished)
   filename <- paste0(scen,".RData")
-  cat("Writing cfg to file",filename,"\n")
+  cat("   Writing cfg to file",filename,"\n")
   save(cfg,file=filename)
 
   if (start_now){
-   # Create results folder and start run
-   submit(cfg)
-   }
+    # Create results folder and start run
+    submit(cfg)
+    } else {
+    cat("   Waiting for", scenarios[scen,'path_gdx_ref'] ,"\n")
+    }
+   
+  if (!identical(cfg$subsequentruns,character(0))) cat("   Subsequent runs:",cfg$subsequentruns,"\n")
+   
 }
