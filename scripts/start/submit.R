@@ -15,7 +15,7 @@
 
 submit <- function(cfg) {
   
-  # Create name of output folder and output folder itself
+  # Generate name of output folder and create the folder
   date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
   cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
@@ -30,26 +30,25 @@ submit <- function(cfg) {
     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
   }
   
-  # save main folder
-  cfg$remind_folder <- getwd()
- 
-  # save the cfg data before moving it into the results folder
+  # Save the cfg (with the updated name of the result folder) into the results folder. 
+  # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+  # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
   cat("Writing cfg to file\n")
-  save(cfg,file=paste0(cfg$title,".RData"))
+  save(cfg,file=paste0(cfg$results_folder,"/config.RData"))
   
   # Copy files required to confiugre and start a run
-  filelist <- c("config.Rdata" = paste0(cfg$title,".RData"),
-                "prepare_and_run.R" = "scripts/start/prepare_and_run.R")
+  filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R")
   .copy.fromlist(filelist,cfg$results_folder)
   
-  # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs
+  # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
 
-  # change to run folder
+  # remember main folder and change to run folder
+  cfg$remind_folder <- getwd()
   setwd(cfg$results_folder)
   on.exit(setwd(cfg$remind_folder))
 
   # send prepare_and_run.R to cluster 
-  cat("Executing prepare_and_run.R for",cfg$title,"\n")
+  cat("Executing prepare_and_run.R with",cfg$title,"\n")
   if(cfg$slurmConfig=="direct") {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")

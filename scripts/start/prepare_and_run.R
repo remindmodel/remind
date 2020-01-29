@@ -776,7 +776,7 @@ prepare_and_run <- function() {
     for(run in seq(1,length(cfg$subsequentruns))){
       filetext <- paste0(filetext,"\n")
       filetext <- paste0(filetext,"load('",cfg$subsequentruns[run],".RData')\n")
-      filetext <- paste0(filetext,"cfg$results_folder <- 'output/:title::date:'\n")
+      #filetext <- paste0(filetext,"cfg$results_folder <- 'output/:title::date:'\n")
       filetext <- paste0(filetext,"cat('",cfg$subsequentruns[run],"')\n")
       filetext <- paste0(filetext,"submit(cfg)\n")
     }
