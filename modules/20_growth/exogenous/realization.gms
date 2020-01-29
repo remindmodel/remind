@@ -16,6 +16,7 @@
 *' growth paths in reaction of policy shocks. This correction is done by an adjustment of capital accumulation.
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/20_growth/exogenous/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/20_growth/exogenous/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/20_growth/exogenous.gms
