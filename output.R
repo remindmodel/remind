@@ -22,8 +22,12 @@ library(lucode)
 
 ###Define arguments that can be read from command line
 if(!exists("source_include")) {
+  # if this script is not being sourced by another script but called from the command line via Rscript read the command line arguments and let the user choose the slurm options
   readArgs("outputdir","output","comp","remind_dir")
-}
+  #source("scripts/utils/choose_slurmConfig.R")
+  #slurmConfig <- choose_slurmConfig()
+} 
+
 #Setting relevant paths
 if(file.exists('/iplex/01/landuse')) { #run is performed on the cluster
   pythonpath <- '/iplex/01/landuse/bin/python/bin/'
@@ -91,7 +95,6 @@ choose_folder <- function(folder,title="Please choose a folder") {
 		return(dirs[identifier])
 	} else return(dirs[identifier])
 }
-
 
 choose_module <- function(Rfolder,title="Please choose an outputmodule") {
   module <- gsub("\\.R$","",grep("\\.R$",list.files(Rfolder), value=TRUE))
@@ -186,6 +189,16 @@ if (comp==TRUE) {
       }
     } 
   } else outputdirs <- outputdir
+
+  # define slurm class or direct execution
+  if(!exists("source_include")) {
+    # if this script is not being sourced by another script but called from the command line via Rscript let the user choose the slurm options
+    source("scripts/start/choose_slurmConfig.R")
+    slurmConfig <- choose_slurmConfig()
+  } else {
+    # if this script is being sourced by another script exectue the output scripts directly without sending them to the cluster
+    slurmConfig <- "direct"
+  }
  
   #Execute outputscripts for all choosen folders
   for (outputdir in outputdirs) {
@@ -244,18 +257,27 @@ if (comp==TRUE) {
     for(rout in output){
       name<-paste(rout,".R",sep="")
       if(file.exists(paste0("scripts/output/single/",name))){
-        print(paste("Executing",name))
-        tmp.env <- new.env()
-        tmp.error <- try(sys.source(paste0("scripts/output/single/",name),envir=tmp.env))
-#        rm(list=ls(tmp.env),envir=tmp.env)
-        rm(tmp.env)
-        gc()
-        if(!is.null(tmp.error)) warning("Script ",name," was stopped by an error and not executed properly!")
+        if (slurmConfig == "direct") {
+          # execute output script directly (without sending it to slurm)
+          print(paste("Executing",name))
+          tmp.env <- new.env()
+          tmp.error <- try(sys.source(paste0("scripts/output/single/",name),envir=tmp.env))
+  #        rm(list=ls(tmp.env),envir=tmp.env)
+          rm(tmp.env)
+          gc()
+          if(!is.null(tmp.error)) warning("Script ",name," was stopped by an error and not executed properly!")
+        } else {
+          # send the output script to slurm
+          slurmcmd <- paste0("sbatch ",slurmConfig," --job-name=",outputdir," --output=",outputdir,".txt --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/",rout,".R  outputdir=",outputdir,"\"")
+          cat("Sending to slurm: ",name,"\n")
+          system(slurmcmd)
+          Sys.sleep(1)
+        }
       }
     }
     # finished
     cat(paste("\nFinished output generation for",outputdir,"!\n\n"))
     rm(source_include)
-    print(warnings())
+    if(!is.null(warnings())) print(warnings())
   }
 }
