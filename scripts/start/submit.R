@@ -15,13 +15,12 @@
 
 submit <- function(cfg) {
   
-  cat("   Creating results folder for",cfg$title,"\n")
-  
   # Generate name of output folder and create the folder
   date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
   cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
   # Create output folder
+  cat("   Creating results folder",cfg$results_folder,"\n")
   if (!file.exists(cfg$results_folder)) {
     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
   } else if (!cfg$force_replace) {
@@ -51,7 +50,7 @@ submit <- function(cfg) {
   # Change to run folder
   setwd(cfg$results_folder)
   on.exit(setwd(cfg$remind_folder))
-
+  
   # send prepare_and_run.R to cluster 
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
   if(cfg$slurmConfig=="direct") {

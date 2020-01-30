@@ -162,8 +162,8 @@ for (scen in rownames(scenarios)) {
     submit(cfg)
     } else {
     cat("   Waiting for", scenarios[scen,'path_gdx_ref'] ,"\n")
-    }
-   
+  }
+
   if (!identical(cfg$subsequentruns,character(0))) cat("   Subsequent runs:",cfg$subsequentruns,"\n")
-   
+  
 }
