@@ -52,7 +52,8 @@ start_comp <- function(outputdirs,shortTerm,outfilename) {
   cat("Starting ",jobname,"\n")
   on_cluster <- file.exists("/p/projects/")
   if (on_cluster) {
-    system(paste0("srun --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," &"))
+    clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname,"\"")
+    system(clcom)
   } else {
     outfilename    <- jobname
     tmp.env <- new.env()
