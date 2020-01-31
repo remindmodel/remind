@@ -17,8 +17,7 @@ vm_cesIO.up(ttot,regi,"ue_steel_secondary")
     );
 $endif.secondary_steel_bound
 
-vm_cesIO.lo(t,regi,in_industry_dyn37(in))$( 
-                             t.val gt 2005 AND NOT vm_cesIO.lo(t,regi,in) ne 0 )
+vm_cesIO.lo(t,regi,in_industry_dyn37(in))$( vm_cesIO.lo(t,regi,in) ne 0 )
   = 1e-12$( NOT pm_cesdata(t,regi,in,"offset_quantity") )
   - pm_cesdata(t,regi,in,"offset_quantity")$(
                                       pm_cesdata(t,regi,in,"offset_quantity") );
