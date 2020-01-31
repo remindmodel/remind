@@ -313,7 +313,7 @@ pm_cesdata(t,regi,in_29,"price") $ (( not ((ord(t) le 1) or (ord(t) eq card(t)))
   loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
     pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29))
     = max(
-    1e-2,
+    1e-3,
     ( pm_cesdata(ttot,regi,in_29,"price")
       + p29_alpha(regi,in_29) + p29_beta(regi,in_29) * ttot.val
       )
@@ -325,7 +325,7 @@ pm_cesdata(t,regi,in_29,"price") $ (( not ((ord(t) le 1) or (ord(t) eq card(t)))
   loop (ttot$( ttot.val ge 2005),
     pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29))
     = max(
-    1e-2,
+    1e-3,
     pm_cesdata(ttot,regi,in_29,"price")
     );
   );
