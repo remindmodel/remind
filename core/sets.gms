@@ -1939,23 +1939,16 @@ steps         "iterator for MAC steps"
 ***                             Helpful constructs: alias
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
-alias(t,t2);
-alias(t,t3);
-alias(tall,tall2);
-alias(tall,tall3);
+alias(t,t2,t3);
+alias(tall,tall2,tall3);
 alias(ttot,ttot2);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);
 alias(all_te,all_te2);
-alias(te,te2);
+alias(te,te2,te3);
 alias(all_enty,all_enty2);
-alias(enty,enty2);
-alias(enty,enty3);
-alias(enty,enty4);
-alias(enty,enty5);
-alias(enty,enty6);
-alias(enty,enty7);
+alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
 alias(entyPE,entyPE2);
 alias(entySe,entySe2);
 alias(entyFe,entyFe2);
@@ -2522,5 +2515,6 @@ es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 
 alias(ccs2te,ccs2te2);
 alias(pe2se,pe2se2);
+alias(se2fe,se2fe2);
 
 *** EOF ./core/sets.gms
