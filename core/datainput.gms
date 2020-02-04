@@ -613,6 +613,12 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWind(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"wind")     = f_maxProdGradeRegiWind(all_regi,"nur",rlf);
 
+table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
+$ondelim
+$include "./core/input/f_maxProdGeothermal.cs3r"
+$offdelim
+;
+
 table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
 $ondelim
 $include "./core/input/f_dataRegiSolar.cs3r"
@@ -624,6 +630,9 @@ pm_dataren(all_regi,"nur",rlf,"csp")        = f_dataRegiSolar(all_regi,"nur","cs
 pm_dataren(all_regi,"nur",rlf,"spv")        = f_dataRegiSolar(all_regi,"nur","spv",rlf);
 p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitGeopot","spv",rlf);
 pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
+
+pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
+pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 
 *mh* set 'nur' for all non renewable technologies to '1':
 pm_dataren(regi,"nur",rlf,teNoRe)    = 1;
