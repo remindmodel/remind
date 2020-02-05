@@ -20,7 +20,7 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
         !! share of SE in FE production
         * ( vm_prodFE.l(ttot,regi,entySE,entyFE,te2)
           / sum(se2fe2(entySE2,entyFE,te3),
-              vm_prodSE.l(ttot,regi,entySE2,entyFE,te3)
+              vm_prodFE.l(ttot,regi,entySE2,entyFE,te3)
             )
           )
         )
