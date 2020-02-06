@@ -460,35 +460,34 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3))..
 *' Total energy-emissions:
 ***--------------------------------------------------
 *mh calculate total energy system emissions for each region and timestep:
-q_emiTe(t,regi,emiTe(enty)) .. 
+q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-    !! emissions from fuel combustion
+***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
       vm_emiTeDetail(t,regi,enty2,enty3,te,enty)
     )
-    !! emissions from non-conventional fuel extraction
+***   emissions from non-conventional fuel extraction
   + sum(emi2fuelMine(enty,enty2,rlf),       
       p_cint(regi,enty,enty2,rlf)
     * vm_fuExtr(t,regi,enty2,rlf)
     )$( c_cint_scen eq 1 )
-    !! emissions from conventional fuel extraction
-  + sum((pe2rlf(enty3,rlf2),enty2)$( pm_fuExtrOwnCons(regi,enty,enty2) gt 0 ),
-      p_cintraw(enty2)
-    * pm_fuExtrOwnCons(regi,enty2,enty3) 
-    * vm_fuExtr(t,regi,enty3,rlf2)
-    )
-    !! Industry CCS emissions
+***   emissions from conventional fuel extraction
+  + sum(pe2rlf(enty3,rlf2),sum(enty2,       
+     (p_cintraw(enty2)
+      * pm_fuExtrOwnCons(regi, enty2, enty3) 
+      * vm_fuExtr(t,regi,enty3,rlf2)
+     )$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)    
+    ))
+***   Industry CCS emissions
   - sum(emiMac2mac(emiInd37_fuel,enty2),
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") )
-    !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS 
-    !! capacity don't have the same lifetime
+	
+***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + v_co2capturevalve(t,regi)$( sameas(enty,"co2") )
-    !! CO2 from short-term CCU
-  + sum(teCCU2rlf(te2,rlf), 
-      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)
-    )
+***  JS CO2 from short-term CCU
+  + sum(teCCU2rlf(te2,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf) )
 ;
 
 ***-----------------------------------------------------------------------------
