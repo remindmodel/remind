@@ -18,6 +18,8 @@
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/36_buildings/simple/sets.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/36_buildings/simple/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/36_buildings/simple/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/36_buildings/simple/equations.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/36_buildings/simple.gms

@@ -15,6 +15,7 @@ $offdelim
 ;
 p31_costExPoly(all_regi,xirog,all_enty) = f31_costExPoly(all_regi,all_enty,xirog);
 
+p31_costExPoly(all_regi,"xi1","peur") = 0.025; !! forcing the same x intercept value as the region disaggregation method could force an approximated value instead  
 ***----------------------------------------------------------------------
 *** Get oil, gas and coal extraction cost data (7th-order grades2poly based on REMIND output obtained with timeDepGrades)
 ***----------------------------------------------------------------------

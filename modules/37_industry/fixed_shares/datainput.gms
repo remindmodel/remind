@@ -50,8 +50,11 @@ $offdelim
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
 *** fill in share of other industry sector
-loop ((all_regi,all_in)$(    sameas(all_in,"fesoi") OR sameas(all_in,"fehoi")
-                          OR sameas(all_in,"fegai") ),
+p37_shIndFE(regi,"feh2i",secInd37) = p37_shIndFE(regi,"fegai",secInd37);
+
+***loop ((all_regi,all_in)$(    sameas(all_in,"fesoi") OR sameas(all_in,"fehoi")
+***                          OR sameas(all_in,"fegai") ),
+loop ((all_regi,ppfen_industry_dyn37(all_in)),
   p37_shIndFE(all_regi,all_in,"otherInd")
   = 1
   - sum(secInd37$( NOT sameas(secInd37,"otherInd") ),

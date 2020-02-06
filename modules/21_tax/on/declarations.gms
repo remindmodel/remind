@@ -41,6 +41,7 @@ p21_taxrevXport0(ttot,all_regi)              "reference level value of exports t
 p21_taxrevSO20(ttot,all_regi)                "reference level value of SO2 tax"
 p21_taxrevBio0(ttot,all_regi)                "reference level value of bioenergy tax"
 p21_implicitDiscRate0(ttot,all_regi)           "reference level value of implicit tax on energy efficient capital"
+p21_taxemiMkt0(ttot,all_regi,all_emiMkt)     "reference level value of pe2se technologies tax"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
@@ -85,6 +86,7 @@ v21_taxrevXport(ttot,all_regi)               "tax on exports (?)"
 v21_taxrevSO2(ttot,all_regi)                 "tax on SO2 (to reflect health impacts)"
 v21_taxrevBio(ttot,all_regi)                 "tax on bioenergy (to reflect sustainability constraints on bioenergy production)"
 v21_implicitDiscRate(ttot,all_regi)           "implicit tax on energy efficient capital"
+v21_taxemiMkt(ttot,all_regi,all_emiMkt)      "tax on greenhouse gas emissions"
 ;
 
 Positive Variable
@@ -108,6 +110,7 @@ q21_taxrevXport(ttot,all_regi)               "calculation of tax on exports"
 q21_taxrevSO2(ttot,all_regi)                 "calculation of tax on SO2"
 q21_taxrevBio(ttot,all_regi)                 "calculation of tax on bioenergy"
 q21_implicitDiscRate(ttot,all_regi)           "calculation of the implicit discount rate on energy efficiency capital"
+q21_taxemiMkt(ttot,all_regi,all_emiMkt)      "calculation of specific emission market tax on CO2 emissions"
 ;   
 
 *** EOF ./modules/21_tax/on/declarations.gms

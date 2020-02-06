@@ -7,6 +7,14 @@
 *** SOF ./modules/33_CDR/all/equations.gms
 
 ***---------------------------------------------------------------------------
+*'  CDR Final Energy Balance
+***---------------------------------------------------------------------------
+q33_balFeCDR(t,regi,entyFe)..
+	vm_otherFEdemand(t,regi,entyFe)
+	=e=
+	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"));
+
+***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
 ***---------------------------------------------------------------------------
 q33_capconst_grindrock(t,regi)..

@@ -1119,13 +1119,17 @@ $offdelim
 *** ----- Emission factor of final energy carriers -----------------------------------
 *GL* demand side emission factor of final energy carriers in MtCO2/EJ
 *** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
-p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 69.3;
-p_ef_dem("fehos") = 69.3;
-p_ef_dem("fepet") = 68.5;
 p_ef_dem("fegas") = 50.3;
 p_ef_dem("fesos") = 90.5;
+p_ef_dem("fehos") = 69.3;
+p_ef_dem("fepet") = 68.5;
+p_ef_dem("fedie") = 69.3;
 
+pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

@@ -11,6 +11,10 @@ vm_shUePeT(ttot,all_regi,all_te)             "share of the Uepet production from
 ;
 
 equations
+q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt)       "Transportation final energy demand"
+q35_limitCapUe(ttot,all_regi,all_enty,all_enty,all_te)  "capacity constraint for ES production"
+q35_transFe2Ue(ttot,all_regi,all_enty,all_enty,all_te)  "energy tranformation fe to es"
+q35_esm2macro(ttot,all_regi,all_in)                     "hand over amount of entyFe/entyUe from ESM(GENERIS) to the MACRO module"
 q35_shUePeT(ttot,all_regi,all_te)             "calculate share of the Uepet production from a certain LDV type in the total Uepet production"
 q35_shUePeTbal(ttot,all_regi)                 "shares sum must be equal to 100"
 ;

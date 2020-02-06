@@ -98,6 +98,14 @@ Sets
   fehei . fehei
   feeli . feeli
   /
+  
+  secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
+  /
+    cement.ETS
+    chemicals.ETS
+    steel.ETS
+    otherInd.ES  
+  /  
 ;
 
 *** add module specific sets and mappings to the global sets and mappings

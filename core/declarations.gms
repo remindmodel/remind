@@ -33,6 +33,8 @@ pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in ite
 p_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
 p_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
+pm_taxemiMkt(ttot,all_regi,all_emiMkt)
+pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
@@ -71,6 +73,8 @@ pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on 
 pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
 p_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
 p_macUse2005(all_regi,all_enty)                      "usage of MACs in 2005 [fraction]"
+p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC; from Eurostat and CEDS, to correct CH4 and N2O reporting"
+p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
 p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) []"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
@@ -214,9 +218,6 @@ p_share_seel_s(ttot,all_regi)                        "Share of electricity used 
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
 p_teAnnuity(all_te)                                  "Annuity factor of a technology"
-
-p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC; from Eurostat and CEDS, to correct CH4 and N2O reporting"
-p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -241,6 +242,7 @@ vm_emiAllGlob(ttot,all_enty)                         "total global emissions - l
 vm_perm(ttot,all_regi)                               "emission allowances"
 vm_co2eqGlob(ttot)                                   "global emissions to be balanced by allowances. [GtCeq]"
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
+vm_co2eqMkt(ttot,all_regi,all_emiMkt)                                         "total emissions per market measured in co2 equivalents ATTENTION: content depends on multigasscen. Unit: GtCeq"
 v_co2eqCum(all_regi)                                 "cumulated vm_co2eq emissions for the first budget period.  [GtCeq]"
 vm_banking(ttot,all_regi)                            "banking of emission permits"
 v_adjFactor(tall,all_regi,all_te)                    "factor to multiply with investment costs for adjustment costs"
@@ -253,6 +255,9 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
+v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
+vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
+vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -279,6 +284,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
+vm_demFeSector(tall,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market. Unit: TWa"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
 vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
@@ -311,7 +317,6 @@ v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (un
 equations
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------MACRO module----------------------------
-qm_balFeForCesAndEs(ttot,all_regi,all_enty)          "FE balance coupling ESM and production function either directly (Pathway I) or Indirectly through Energy services (Pathway III)"
 q_limitSeel2fehes(ttot,all_regi)                     "equation to limit the share of electricity that can be used for fehes"
 q_esCapInv(ttot,all_regi,all_teEs)                   "investment equation for end-use capital investments (energy service layer)"
 ***----------------------------------------------------------------------------------------
@@ -336,6 +341,7 @@ q_costTeCapital(tall,all_regi,all_te)                "calculation of investment 
 
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
+q_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
 
 q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
 q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
@@ -354,9 +360,15 @@ q_emiAllGlob(ttot,all_enty)                          "calculates all global emis
 q_emiCap(ttot,all_regi)                              "emission cap"
 q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
+q_co2eqMkt(ttot,all_regi,all_emiMkt)                           "regional emissions per market in co2 equivalents"
 q_co2eqGlob(ttot)                                    "global emissions in co2 equivalents"
 qm_co2eqCum(all_regi)                                "cumulate regional emissions over time"
 q_budgetCO2eqGlob                                    "global emission budget balance"
+
+q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
+q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)			             "total energy-emissions per region and market"
+q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)
+
 
 q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf)        "transformation equation for ccs"
 q_limitCapCCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)                              "capacity constraint for ccs"
@@ -364,11 +376,6 @@ q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)                               
 
 q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
-
-q_limitCapUe(ttot,all_regi,all_enty,all_enty,all_te)  "capacity constraint for ES production"
-q_transFe2Ue(ttot,all_regi,all_enty,all_enty,all_te)  "energy tranformation fe to es"
-q_balFe(ttot,all_regi,all_enty)                       "balance of FE that are transformed into ES"
-q_esm2macro(ttot,all_regi,all_in)                     "hand over amount of entyFe/entyUe from ESM(GENERIS) to the MACRO module"
 
 q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
 q_limitCO2(ttot,all_regi)                             "prevent CO2 from rising again after 2050"

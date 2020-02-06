@@ -208,6 +208,7 @@ prepare_and_run <- function() {
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0("INNOP_", cfg$gms$cm_calibration_string, "-"),
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
   
   # write name of corresponding CES file to datainput.gms

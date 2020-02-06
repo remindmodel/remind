@@ -445,7 +445,7 @@ all_sectorEmi     "all sectors with emissions"
 all_exogEmi     " all exogenous emission types"
 /       Aviation         "Exog emi from Aviation"
         InternationalShipping "Ecog emi from Int. Shipping" 
-        Waste            "???"
+        Waste            "Exogenous emissions from Waste treatment"
         Agriculture      "Exogenous emissions from Agriculture" 
         AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
         ForestBurning    "Exogenous emissions from Forest Burning"
@@ -1525,6 +1525,7 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
 /
         pesol        "PE solar"
 /
+
 entySe(all_enty)       "secondary energy types"
 /
         seliqbio     "secondary energy liquids from biomass"
@@ -1536,6 +1537,13 @@ entySe(all_enty)       "secondary energy types"
         segabio      "secondary energy gas from biomass"
 		segafos      "secondary energy gas from fossil primary energy"
         sehe         "SE district heating nd heat pumps"
+/
+
+entySeBio(all_enty)       "biomass secondary energy types"
+/
+        seliqbio     "secondary energy liquids from biomass"
+	sesobio      "secondary energy solids from biomass"
+	segabio      "secondary energy gas from biomass"
 /
 
 entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
@@ -1732,6 +1740,91 @@ sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
         process "process sepecific part (and emissions) of the sector activity"
+/
+
+entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings and transportation)"
+/
+		fegas.build
+		fegas.indst
+		fehos.build
+		fehos.indst
+		fesos.build
+		fesos.indst
+		feels.build
+		feels.indst
+		fehes.build
+		fehes.indst
+		feh2s.build
+		feh2s.indst
+		fepet.trans
+		fedie.trans
+		feh2t.trans
+		feelt.trans
+/
+
+ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
+/
+		fegab.build
+		fegai.indst
+		fehob.build
+		fehoi.indst
+		fesob.build
+		fesoi.indst
+		feelb.build
+		feeli.indst
+		feheb.build
+		fehei.indst
+		feh2b.build
+		feh2i.indst
+		ueHDVt.trans
+		ueLDVt.trans
+		ueelTt.trans
+/
+
+all_emiMkt         "emission markets"
+/	ETS     "ETS emission market"
+	ES      "Effort sharing emission market"
+	other	"other market configurations"	
+/
+
+sector2emiMkt(emi_sectors,all_emiMkt)
+/
+        indst.ETS
+        indst.ES
+        build.ES
+        trans.ES
+        trans.other
+/
+
+
+macSector2emiMkt(all_enty,all_emiMkt)
+/
+        ch4coal.ETS      
+        ch4gas.ETS       
+        ch4oil.ETS       
+        ch4wstl.ES       
+        ch4wsts.ES       
+        ch4rice.ES       
+        ch4animals.ES    
+        ch4anmlwst.ES    
+        ch4agwaste.ES    
+        ch4forest.other  
+        ch4savan.other   
+        n2oforest.other  
+        n2osavan.other   
+        n2otrans.ES      
+        n2oadac.ETS      
+        n2onitac.ETS     
+        n2ofertin.ES     
+        n2ofertcr.ES     
+        n2ofertsom.other 
+        n2oanwstc.ES     
+        n2oanwstm.ES     
+        n2oanwstp.ES     
+        n2oagwaste.ES    
+        n2owaste.ES      
+        co2luc.other     
+        co2cement_process.ETS 
 /
 ccsCo2(all_enty)    "only cco2 (???)"
 /
@@ -1964,6 +2057,9 @@ alias(esty,esty2);
 alias(rlf,rlf2);
 alias(regi,regi2);
 alias(steps,steps2);
+alias(all_emiMkt,emiMkt);
+alias(emi_sectors,sector);
+alias(sector_types,type)
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -2232,25 +2328,32 @@ $endif
         pebiolc.seel.bioigcc.n2o
         pebiolc.segabio.biogas.n2o
         segabio.fegas.tdbiogas.ch4
-		segafos.fegas.tdfosgas.ch4
+	segafos.fegas.tdfosgas.ch4
 *        cco2.pco2.ccscomp.co2
 *        pco2.tco2.ccspipe.co2
         cco2.ico2.ccsinje.co2
         pebiolc.seel.bioigccc.co2
         pebiolc.seel.bioigccc.cco2
         seliqbio.fehos.tdbiohos.bc
-		seliqfos.fehos.tdfoshos.bc
+	seliqfos.fehos.tdfoshos.bc
         seliqbio.fedie.tdbiodie.bc
-		seliqfos.fedie.tdfosdie.bc
+	seliqfos.fedie.tdfosdie.bc
         seliqbio.fepet.tdbiopet.bc
-		seliqfos.fepet.tdfospet.bc
+	seliqfos.fepet.tdfospet.bc
         seliqbio.fehos.tdbiohos.oc
-		seliqfos.fehos.tdfoshos.oc
+	seliqfos.fehos.tdfoshos.oc
         seliqbio.fedie.tdbiodie.oc
-		seliqfos.fedie.tdfosdie.oc
+	seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
-		seliqfos.fepet.tdfospet.oc
+	seliqfos.fepet.tdfospet.oc
+
+        segafos.fegas.tdfosgas.co2
+        seliqfos.fehos.tdfoshos.co2
+        sesofos.fesos.tdfossos.co2
+        seliqfos.fepet.tdfospet.co2
+        seliqfos.fedie.tdfosdie.co2
 /
+
 emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
 /
     pecoal.ch4coal
@@ -2291,6 +2394,25 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2chemicals . co2chemicals
         co2steel     . co2steel
 /
+
+emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
+/
+        (ch4coal, ch4gas, ch4oil).extraction.process.ch4
+        (ch4wstl, ch4wsts).waste.process.ch4
+        (ch4rice, ch4animals, ch4anmlwst, ch4agwaste).agriculture.process.ch4
+        (ch4forest, ch4savan).lulucf.process.ch4
+
+        (n2otrans).trans.process.n2o
+        (n2oadac, n2onitac).indst.process.n2o
+        (n2owaste).waste.process.n2o
+        (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
+        (n2oforest, n2osavan).lulucf.process.n2o
+        
+        (co2cement_process,co2cement,co2chemicals,co2steel).indst.process.co2
+        (co2luc).lulucf.process.co2
+/
+
+
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
 /

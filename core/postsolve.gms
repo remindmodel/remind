@@ -9,6 +9,7 @@
 *-------------------------------calculate regional permit prices-----------------------------------
 *** saving CO2 tax used in this iteration
 pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
+pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
 *RP* added the historic 2010/2015 CO2 prices 
 if (cm_emiscen eq 9,

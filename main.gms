@@ -366,6 +366,14 @@ $setGlobal cm_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
+$setGlobal cm_emiMktETS  off       !! def = off
+$setGlobal cm_emiMktETS_type  off   !! def = off
+$setGlobal cm_emiMktES  off       !! def = off	
+$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
+$setGlobal cm_emiMktEScoop  off   !! def = off	
+$setGlobal cm_emiMktES2050	 off   !! def = off	
+$setGlobal cm_NucRegiPol	 off   !! def = off		
+$setGlobal cm_CCSRegiPol	 off   !! def = off	
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
@@ -397,6 +405,7 @@ $setGlobal cm_nash_mode        debug      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE        off        !! def = off
 $setglobal cm_INCONV_PENALTY   on         !! def = on
+$setglobal cm_INCONV_PENALTY_bioSwitch off !! def = off
 $setGlobal cm_so2_out_of_opt   on         !! def = on
 $setGlobal c_skip_output       off        !! def = off
 $setGlobal cm_MOFEX            off        !! def = off
@@ -417,6 +426,7 @@ $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal cm_calibration_string off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
