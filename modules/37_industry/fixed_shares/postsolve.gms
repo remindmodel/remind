@@ -17,6 +17,12 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
           * p37_shIndFE(regi,in,secInd37)
           )
         * p37_fctEmi(entyFE)
+        !! share of SE in FE production
+        * ( vm_prodFE.l(ttot,regi,entySE,entyFE,te2)
+          / sum(se2fe2(entySE2,entyFE,te3),
+              vm_prodFE.l(ttot,regi,entySE2,entyFE,te3)
+            )
+          )
         )
         !! share of PE in SE production
       * ( vm_prodSE.l(ttot,regi,entyPE,entySE,te)
