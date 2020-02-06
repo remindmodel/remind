@@ -766,7 +766,7 @@ prepare_and_run <- function() {
   # In case there are no subsequent runs (or it's coupled runs), the file contains only 
   # a small message.
 
-  subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns.R")
+  subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns_manually.R")
 
   if(no_subsequent_runs){
     write("cat('\nNo subsequent run was set for this scenario\n')",file=subseq_start_file)
@@ -777,6 +777,7 @@ prepare_and_run <- function() {
     for(run in seq(1,length(cfg$subsequentruns))){
       filetext <- paste0(filetext,"\n")
       filetext <- paste0(filetext,"load('",cfg$subsequentruns[run],".RData')\n")
+      #filetext <- paste0(filetext,"cfg$results_folder <- 'output/:title::date:'\n")
       filetext <- paste0(filetext,"cat('",cfg$subsequentruns[run],"')\n")
       filetext <- paste0(filetext,"submit(cfg)\n")
     }

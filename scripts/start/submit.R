@@ -15,42 +15,44 @@
 
 submit <- function(cfg) {
   
-  # Create name of output folder and output folder itself
+  # Generate name of output folder and create the folder
   date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
   cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
   # Create output folder
+  cat("   Creating results folder",cfg$results_folder,"\n")
   if (!file.exists(cfg$results_folder)) {
     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
   } else if (!cfg$force_replace) {
     stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
   } else {
-    cat("Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
+    cat("    Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
     unlink(cfg$results_folder, recursive = TRUE)
     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
   }
   
-  # save main folder
+  # remember main folder
   cfg$remind_folder <- getwd()
- 
-  # save the cfg data before moving it into the results folder
-  cat("Writing cfg to file\n")
-  save(cfg,file=paste0(cfg$title,".RData"))
+  
+  # Save the cfg (with the updated name of the result folder) into the results folder. 
+  # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+  # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
+  filename <- paste0(cfg$results_folder,"/config.Rdata")
+  cat("   Writing cfg to file",filename,"\n")
+  save(cfg,file=filename)
   
   # Copy files required to confiugre and start a run
-  filelist <- c("config.Rdata" = paste0(cfg$title,".RData"),
-                "prepare_and_run.R" = "scripts/start/prepare_and_run.R")
+  filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R")
   .copy.fromlist(filelist,cfg$results_folder)
   
-  # remove config in main folder (after copying into results folder)
-  file.remove(paste0(cfg$title,".RData"))
+  # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
 
-  # change to run folder
+  # Change to run folder
   setwd(cfg$results_folder)
   on.exit(setwd(cfg$remind_folder))
-
+  
   # send prepare_and_run.R to cluster 
-  cat("Executing prepare_and_run.R for",cfg$title,"\n")
+  cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
   if(cfg$slurmConfig=="direct") {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")
