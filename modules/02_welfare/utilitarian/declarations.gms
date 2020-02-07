@@ -31,16 +31,15 @@ v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the 
 v02_inconvPenCoalSolids(ttot,all_regi)            "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
 v02_sesoInconvPenSlack(ttot,all_regi)             "Slack to avoid negative inconvenience penalty for Coal Solids" 
 $endif.inconv
-
-$IFTHEN.INCONV_bioSwitch %cm_INCONV_PENALTY_bioSwitch% == "on"
-v_NegInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Negative inconvenience penalty in the welfare function for bio/fossil shares switch between sectors"
-v_PosInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Positive inconvenience penalty in the welfare function for bio/fossil shares switch between sectors"
-$ENDIF.INCONV_bioSwitch
-
 ;
 
 positive variables
 vm_forcOs(ttot)                                   "Forcing overshoot"
+
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
+v_NegInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Negative inconvenience penalty in the welfare function for bio/fossil shares switch between sectors"
+v_PosInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Positive inconvenience penalty in the welfare function for bio/fossil shares switch between sectors"
+$ENDIF.INCONV_bioSwitch
 ;
 
 ***-------------------------------------------------------------------------------
@@ -55,7 +54,7 @@ q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience p
 q02_inconvPenCoalSolids(ttot,all_regi)            "Calculate the inconvenience penalty v02_inconvPen"
 $endif.inconv
 
-$IFTHEN.INCONV_bioSwitch %cm_INCONV_PENALTY_bioSwitch% == "on"
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
 q_inconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)  "Calculate the inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)"
 $ENDIF.INCONV_bioSwitch
 
