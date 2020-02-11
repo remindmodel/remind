@@ -69,7 +69,7 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
 *' `pm_macAbat` holds the abatement level (as a fraction) on that step.  The 
 *' emission abatement equals the area under the MAC curve (turqoise area in the 
 *' figure).  To calculate it, `pm_macStep` is multiplied by `pm_macAbat` (the 
-*' horizontal and vertical lines enclosing the colourd rectangle in the 
+*' horizontal and vertical lines enclosing the coloured rectangle in the 
 *' figure).  The `sum(steps$( ord(steps) eq pm_macStep ... )` part simply 
 *' selects the right step within the MAC curve.  From this product (rectangle),
 *' the area above the MAC curve (pink) is subtractad.  To calculate it, the 
@@ -79,6 +79,23 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
 *' steps at which price level no abatement is available). 
 *' Multiplying the area under the curve with the step width `sm_dmac` and the 
 *' baseline emissions (before mitigation) converts the units to $/tC and GtC.
+*'
+*' Example:  The carbon price is 43.6 $/tCO~2~, which translates to step 32 on 
+*' the discrete MAC curve (43.6 $/tCO~2~ * (44/12 tCO~2~/tC) / (5 $/step)). 
+*' The calculation then is:
+*' ```
+*' vm_emiIndCCS = 
+*'     0.001
+*'   * vm_macBaseInd
+*'   * sm_dmac
+*'   * ( 32 * 0.3
+*'     - ( 15 * 0
+*'       + 14 * 0.2
+*'       +  3 * 0.3
+*'       )
+*'     )
+*'
+
 q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=
