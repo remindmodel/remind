@@ -1,0 +1,12 @@
+all_enty;teEs;all_in;CES_node;EDGE_top
+fepet;te_espet_pass_sm;entrp_pass_sm;fepet_p_sm;trn_pass
+fedie;te_esdie_pass_sm;entrp_pass_sm;fedie_p_sm;trn_pass
+feelt;te_eselt_pass_sm;entrp_pass_sm;feelt_p_sm;trn_pass
+fedie;te_esdie_pass_lo;entrp_pass_lo;fedie_p_lo;trn_aviation_intl
+fedie;te_esdie_frgt_sm;entrp_frgt_sm;fedie_f_sm;trn_freight
+feelt;te_eselt_frgt_sm;entrp_frgt_sm;feelt_f_sm;trn_freight
+fedie;te_esdie_frgt_lo;entrp_frgt_lo;fedie_f_lo;trn_shipping_intl
+feh2t;te_esh2t_pass_sm;entrp_pass_sm;feh2t_p_sm;trn_pass
+fegat;te_esgat_pass_sm;entrp_pass_sm;fegat_p_sm;trn_pass
+fegat;te_esgat_frgt_sm;entrp_frgt_sm;fegat_f_sm;trn_freight
+feh2t;te_esh2t_frgt_sm;entrp_frgt_sm;feh2t_f_sm;trn_freight
