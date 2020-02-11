@@ -8,9 +8,9 @@
 Parameter
   p35_cesdata_sigma(all_in)  "substitution elasticities"
   /
-    entrp           1.3
-      entrp_pass    1.1
-      entrp_frgt    1.1
+    entrp           0.8
+      entrp_pass    1.3
+      entrp_frgt    1.3
   /
 ;
 pm_cesdata_sigma(ttot,in)$p35_cesdata_sigma(in) = p35_cesdata_sigma(in);

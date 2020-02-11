@@ -67,7 +67,7 @@ In addition *R* (https://www.r-project.org/) is required for pre- and
 postprocessing and run management (needs to be added to the PATH variable
 as well).
 
-For R some packages are required to run REMIND. All except of one (`gdxrrw`) are
+Some R packages are required to run REMIND. All except of one (`gdxrrw`) are
 either distributed via the offical R CRAN or via a separate repository hosted at
 PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
 available repositories via:
@@ -114,20 +114,20 @@ Make sure that the config file has been set correctly before
 starting the model.
 
 ## HOW TO CONTRIBUTE
-We are interested in working with you! Just contact us through GitHub
-(https://github.com/remindmodel) or by mail (remind@pik-potsdam.de) if you have
+We are interested in working with you! Contact us through GitHub
+(https://github.com/remindmodel) or by E-mail (remind@pik-potsdam.de) if you have
 found and/or fixed a bug, developed a new model feature, have ideas for further
-model development, suggestions for improvements or anything else. We are open to
+model development or suggestions for improvements. We are open to
 any kind of contribution. Our aim is to develop an open, transparent and
-meaningful energy-economy-model to get a better
-understanding of the underlying processes and possible futures. Join us doing
+meaningful energy-economy-model, and to get a better
+understanding of the underlying processes and possible futures. Join us in doing
 so!
 
 ## DEPENDENCIES
 Model dependencies **must be publicly available** and should be Open Source.
 Development aim is to rather minimize than expand dependencies on non-free
 and/or non open source software. That means that besides currently existing
-dependencies on GAMS, the GDXRRW R package and the corresponding solvers there
+dependencies on GAMS, the `gdxrrw` R package and the corresponding solvers there
 should be no additional dependencies of this kind and that these existing
 dependencies should be resolved in the future if possible.
 

@@ -140,7 +140,7 @@ c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_startyear          "first optimized modelling time step"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen            "pure rate of time preference standard values"
@@ -227,7 +227,7 @@ cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-c_1stgen_phaseout  = 0;         !! def = 0
+cm_1stgen_phaseout  = 0;         !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
@@ -313,8 +313,6 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-
-$setglobal cm_compile_main       TRUE     !! this will be changed by submit.R
 $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0

@@ -74,7 +74,7 @@
 * 
 * Input data revision: 5.937
 * 
-* Last modification (input data): Wed Jan 15 14:19:35 2020
+* Last modification (input data): Wed Jan 29 14:50:17 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -120,7 +120,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  Base_Conservative_liquids
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -219,7 +219,7 @@ c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-c_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
@@ -312,7 +312,7 @@ cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-c_1stgen_phaseout  = 0;         !! def = 0
+cm_1stgen_phaseout  = 0;         !! def = 0
 cm_cprice_red_factor  = 0.5;         !! def = 0.5
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
@@ -344,7 +344,7 @@ cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage              = 0.005;     !! def = 0.005
+cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -361,14 +361,14 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1350;   !! def = 1300
+c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
 
 cm_trdadj            = 2;    !! def = 2.0
-cm_trdcst             = 1.5;  !! def = 1.5
+cm_trdcst            = 1.5;  !! def = 1.5
 c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
@@ -379,10 +379,10 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen = 0;!! def = 0
-cm_noReboundEffect = 0;
-$setGlobal cm_EsubGrowth  low  !! def = low
-$setGlobal c_scaleEmiHistorical  off  !! def = off
+cm_DiscRateScen        = 0;!! def = 0
+cm_noReboundEffect     = 0;
+$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal c_scaleEmiHistorical  on  !! def = on
 
 $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
@@ -394,8 +394,8 @@ $setGlobal c_regi_capturescen  all !! def = all
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode  parallel   !! def = parallel
-$setGlobal c_EARLYRETIRE        on         !! def = on
+$setGlobal cm_nash_mode  parallel      !! def = parallel
+$setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -411,8 +411,6 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-
-$setglobal cm_compile_main       TRUE     !! this will be changed by submit.R
 $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0

@@ -112,15 +112,10 @@ p_developmentState(tall,all_regi) = f_developmentState(tall,all_regi,"%c_GDPpcSc
 
 
 *** Load information from BAU run
-$ifthen.cm_compile_main %cm_compile_main% == "TRUE"
-pm_gdp_gdx(ttot,regi) = 0;
-p_inv_gdx(ttot,regi)  = 0;
-$else.cm_compile_main
 Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
-$endif.cm_compile_main
 
 *** permit price initilization
 pm_pricePerm(ttot) = 0;

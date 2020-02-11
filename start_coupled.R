@@ -52,10 +52,11 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     cat("### COUPLING ### Set working directory from",getwd());
     setwd(path_remind)
     cat(" to",getwd(),"\n")
-    source("scripts/start_functions.R") # provide source of "get_magpie_data" and "start_run"
+    source("scripts/start/submit.R") # provide source of "get_magpie_data" and "start_run"
     
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
+    cfg_rem$force_replace  <- TRUE # overwrite existing output folders
     #cfg_rem$gms$biomass    <- "magpie_linear"
 
     # define gdx paths
@@ -103,18 +104,17 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cfg_rem$gms$cm_MAgPIE_coupling <- "off"
       cat("### COUPLING ### No MAgPIE report for REMIND input provided.\n")
       cat("### COUPLING ### REMIND will be startet in stand-alone mode with\n    ",runname,"\n    ",cfg_rem$results_folder,"\n")
-      outfolder_rem <- start_run(cfg_rem,coupled=T,force=T)
+      outfolder_rem <- submit(cfg_rem)
     } else if (grepl(paste0("report.mif"),report)) { # if it is a MAgPIE report
       ######### S T A R T   R E M I N D   C O U P L E D ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "on"
       if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
-      rep <- read.report(report,as.list=FALSE)
-      sceninreport <- getNames(rep,dim="scenario") # report must only contain ONE scenario
-      cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Scenario used as input=",sceninreport,"\n    Folder=",cfg_rem$results_folder,"\n")
+      cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
       # Keep path to MAgPIE report in mind to have it availalbe after the coupling loop
       mag_report_keep_in_mind <- report
       ####### START REMIND #######
-      outfolder_rem <- start_run(cfg_rem, report=rep, sceninreport=sceninreport,coupled=T,force=T)
+      cfg_rem$pathToMagpieReport <- report
+      outfolder_rem <- submit(cfg_rem)
       ############################
     } else if (grepl("REMIND_generic_",report)) { # if it is a REMIND report
       ############### O M I T   R E M I N D  ###############################
@@ -201,10 +201,21 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   setwd(mainwd)
   cat(" to",getwd(),"\n")
   
-  #start subsequent runs via cmd scripts created at the end of start_bundle_coupled.R
+  # for the sbatch command of the subsequent runs below set the number of tasks per node
+  # this not clean, because we use the number of regions of the *current* run to set the number of tasks for the *subsequent* runs
+  # but it is sufficiently clean, since the number of regions should not differ between current and subsequent
+  if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
+    # for nash: set the number of CPUs per node to number of regions + 1
+    nr_of_regions <- length(levels(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1 
+  } else {
+    # for negishi: use only one CPU
+    nr_of_regions <- 1
+  }
+
+  #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    system(paste0("sbatch cluster_start_coupled_",run,".cmd"))
+    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
@@ -214,6 +225,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   runs <- findCoupledruns(resultsfolder=remindpath)
   ret  <- findIterations(runs,modelpath=c(remindpath,magpiepath),latest=FALSE)
   readRuntime(ret,plot=TRUE,coupled=TRUE)
+  unlink(c("runtime.log","runtime.out","runtime.rda"))
   
   # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
   report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
