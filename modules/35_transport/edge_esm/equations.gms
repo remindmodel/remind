@@ -6,10 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/equations.gms
 
-***---------------------------------------------------------------------------
-*** Share of biofuels in transport liquids
-***---------------------------------------------------------------------------
-
+*' Adjust the shares of biofuels in transport liquids.
 q35_shBioFe(t,regi)..
   sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) )
   * v35_shBioFe(t,regi)
@@ -17,10 +14,9 @@ q35_shBioFe(t,regi)..
   sum(se2fe("seliqbio",fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,se_with_bio_dyn35,fe_transport_liquids_dyn35,te) )
 ;
 
-***---------------------------------------------------------------------------
-*** Share of synfuels in transport liquids, only applicable if CCU module is used
-***---------------------------------------------------------------------------
 
+*' Adjust the shares of synfuels in transport liquids.
+*' This equation is only effective when CCU is switched on.
 $ifthen.ccu %CCU% == "on"
 q35_shSynSe(t,regi)..
     sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) ) * v35_shSynSe(t,regi)
