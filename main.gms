@@ -72,9 +72,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.937
+* Input data revision: 5.938
 * 
-* Last modification (input data): Wed Jan 29 14:50:17 2020
+* Last modification (input data): Fri Feb 14 10:03:25 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -120,7 +120,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Base_Conservative_liquids
+$setGlobal c_expname  default
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -163,7 +163,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  edge_esm         !! def = complex
+$setGlobal transport  complex         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -361,7 +361,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 0;   !! def = 1300
+c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
@@ -411,7 +411,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
