@@ -110,18 +110,7 @@ ces_transport_dyn35(all_in,all_in)   "CES tree structure - edge transport"
    entrp_frgt  . (entrp_frgt_sm, entrp_frgt_lo)
 /
 
-SSP_scenario_all     "SSP scenarios"
-/
-gdp_SSP1
-gdp_SSP2
-gdp_SSP3
-gdp_SSP4
-gdp_SSP5
-/
-
-SSP_scenario(SSP_scenario_all)
-
-EDGE_scenario_all    "EDGE scenarios"
+EDGE_scenario_all    "EDGE-T scenarios"
 /
 Conservative_liquids
 Hydrogen_push
@@ -129,40 +118,36 @@ Electricity_push
 Smart_lifestyles_Electricity_push
 /
 
-EDGE_scenario(EDGE_scenario_all)
+EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
 
 *** sets for the reporting, to be consistent with *complex* realisation
-FE_Transp_fety35(all_enty)   / fepet, fedie, feh2t, feelt /
-FE_Elec_fety35(all_enty)     / feels, feelt /
+FE_Transp_fety35(all_enty) "FEs used in the transport module"  / fepet, fedie, feh2t, feelt /
+FE_Elec_fety35(all_enty)   "FE electricity sets (should be moved to core/sets asap)"  / feels, feelt /
 
-se2fe_dyn35(all_enty,all_enty,all_te)
+*** nat. gas is not used in complex, that's why these elements have to be defined here and not in core
+se2fe_dyn35(all_enty,all_enty,all_te) "nat. gas techs for transport, missing in se2fe in core/sets"
 /
 segabio.fegat.tdbiogat
 segafos.fegat.tdfosgat
 /
 
-fe_transport_liquids_dyn35(all_enty)
+enty_dyn35(all_enty) "nat. gas FE used for transport, see comment above"
+/
+fegat        "final energy gas transport"
+/
+
+entyFeTrans_dyn35(all_enty) "nat. gas FE used for transport, see comment above"
+/
+fegat        "FE nat. gas transport"
+/
+
+fe_transport_liquids_dyn35(all_enty) "liquids used by the transport module"
 /
 fepet
 fedie
 /
 
-se_with_bio_dyn35(all_enty)
-/
-seliqbio
-/
-
-enty_dyn35(all_enty)
-/
-fegat        "final energy gas transport"
-/
-
-entyFeTrans_dyn35(all_enty)
-/
-fegat        "FE nat. gas transport"
-/
-
-emi2te_dyn35(all_enty,all_enty,all_te,all_enty)
+emi2te_dyn35(all_enty,all_enty,all_te,all_enty) "add. emission pathways: CH4 from nat. gas"
 /
 segabio.fegat.tdbiogat.ch4
 segafos.fegat.tdfosgat.ch4
@@ -190,6 +175,5 @@ cesOut2cesIn(ces_transport_dyn35)            = YES;
 
 
 EDGE_scenario("%cm_EDGEtr_scen%") = YES;
-SSP_scenario("%cm_GDPScen%") = YES;
 
 *** EOF ./modules/35_transport/edge_esm/sets.gms
