@@ -11,7 +11,7 @@ q35_shBioFe(t,regi)..
   sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) )
   * v35_shBioFe(t,regi)
   =e=
-  sum(se2fe("seliqbio",fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,se_with_bio_dyn35,fe_transport_liquids_dyn35,te) )
+  sum(se2fe("seliqbio",fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,"seliqbio",fe_transport_liquids_dyn35,te) )
 ;
 
 
