@@ -151,7 +151,7 @@ $include "./core/input/generisdata_tech_SSP1.prn"
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
+*JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
