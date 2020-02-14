@@ -17,6 +17,7 @@ Parameters
   p29_effGr(tall,all_regi,all_in)                                   "growth of factor efficiency from input.gdx"
   p29_fedemand(tall,all_regi,all_GDPscen,all_in)                  "final energy demand"
   p29_cesdata_price(tall,all_regi,all_in)                          "exogenous prices in case they are needed"
+  p29_trpdemand(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in) "transport demand for the edge_esm transport module, unit: trillion passenger/ton km"
   p29_esdemand(tall,all_regi,all_GDPscen,all_in)                  "energy service demand"
   p29_efficiency_growth(tall,all_regi,all_GDPscen,all_in)         "efficency level paths for ppf beyond calibration"
   p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in)            "capital quantities"

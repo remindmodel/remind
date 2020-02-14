@@ -20,7 +20,6 @@ p35_pass_FE_share_transp(all_regi)            "Share of 'non-LDV passenger FE' i
 p35_pass_nonLDV_ES_efficiency(ttot,all_regi)  "Non-LDV passenger energy service per non-LDV FE. Unit: bn pkm/EJ"
 p35_passLDV_ES_efficiency(ttot,all_regi)      "LDV passenger energy service per non-LDV FE. Only correct if applied to CES-input, as BEV and H2FCV have higher efficiencies. Unit: bn pkm/EJ"
 p35_freight_ES_efficiency(ttot,all_regi)      "Freight energy service per freight FE. Unit: bn tkm/EJ"
-pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
 
 p35_share_seliq_t(ttot,all_regi)                               "share of liquids used for transport sector (fedie + fepet). Unit 0..1"
 p35_share_seh2_t(ttot,all_regi)                                "share of hydrogen used for transport sector  (feh2t). Unit 0..1"

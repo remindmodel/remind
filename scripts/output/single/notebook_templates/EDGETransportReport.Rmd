@@ -1,0 +1,658 @@
+---
+title: "Compare scenarios Transport"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(ggplot2)
+require(moinput)
+require(data.table)
+require(dplyr)
+require(remind)
+require(gdxdt)
+require(gdx)
+require(rmndt)
+require(data.table)
+
+require(edgeTrpLib)
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+
+dem_shares <- list()
+intensity <- list()
+demand_km <- list()
+demand_ej <- list()
+sw_tech <- list()
+prices_FV <- list()
+
+datapath <- function(fname){
+  file.path("./input_EDGE/", fname)
+}
+
+mapspath <- function(fname, scenariopath=""){
+    file.path("../../modules/35_transport/edge_esm/input", fname)
+}
+
+## Load mappings
+EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
+
+REMIND2ISO_MAPPING <- fread("../../config/regionmappingH12.csv")[, .(iso = CountryCode,
+                                                                         region = RegionCode)]
+
+EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
+
+years <- c(1990,
+           seq(2005, 2060, by = 5),
+           seq(2070, 2110, by = 10),
+           2130, 2150)
+
+REMINDyears <- c(1990,
+           seq(2005, 2060, by = 5),
+           seq(2070, 2110, by = 10),
+           2130, 2150)
+
+## include the paths to the scenarios you want to compare
+output_folders <- "./"
+
+for(output_folder in output_folders){
+  ## load gdx for fuel prices and demand
+  gdx = file.path(output_folder, "fulldata.gdx")
+  ## load policy scenario
+  load(file.path(output_folder, "config.Rdata"))
+  REMIND_scenario <- cfg$gms$cm_GDPscen
+  EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+  policy_scenario <- cfg$gms$c_expname
+  
+  scen <- paste0(REMIND_scenario, "-", EDGE_scenario, "-", policy_scenario)
+  
+  ## load demand
+  ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, years)
+
+  ## load input data
+  int_dat <- readRDS(datapath("harmonized_intensities.RDS"))
+  nonfuel_costs <- readRDS(datapath("UCD_NEC_iso.RDS"))
+  sw_data <- readRDS(datapath("SW.RDS"))
+  vot_data <- readRDS(datapath("VOT_iso.RDS"))
+  logit_params <- readRDS(datapath("logit_exp.RDS"))
+  price_nonmot <- readRDS(datapath("price_nonmot.RDS"))
+  
+    ## FIXME: hotfix to make the (empty) vot_data$value_time_VS1 with the right column types. Probably there is another way to do that, did not look for it.
+  vot_data$value_time_VS1$iso = as.character(vot_data$value_time_VS1$iso)
+  vot_data$value_time_VS1$subsector_L1 = as.character(vot_data$value_time_VS1$subsector_L1)
+  vot_data$value_time_VS1$vehicle_type = as.character(vot_data$value_time_VS1$vehicle_type)
+  vot_data$value_time_VS1$year = as.numeric(vot_data$value_time_VS1$year)
+  vot_data$value_time_VS1$time_price = as.numeric(vot_data$value_time_VS1$time_price)
+  
+  ## calculate prices
+  REMIND_prices <- merge_prices(
+    gdx = gdx,
+    REMINDmapping = REMIND2ISO_MAPPING,
+    REMINDyears = REMINDyears,
+    intensity_data = int_dat,
+    nonfuel_costs = nonfuel_costs)
+
+  ## calculates logit
+  logit_data <- calculate_logit(
+    REMIND_prices[tot_price > 0],
+    REMIND2ISO_MAPPING,
+    vot_data = vot_data,
+    sw_data = sw_data,
+    logit_params = logit_params,
+    intensity_data = int_dat,
+    price_nonmot = price_nonmot)
+
+
+  shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
+  mj_km_data <- logit_data[["mj_km_data"]] ## energy intensity at a technology level
+  prices_FV[[scen]] <- REMIND_prices[, EDGE_scenario := scen] ## prices at each level of the logit function, 1990USD/pkm
+
+  ## calculate energy intensity and FE demand at a REMIND-region level for the desired level of aggregation
+  res <- shares_intensity_and_demand(
+    logit_shares=shares,
+    MJ_km_base=mj_km_data,
+    REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
+    EDGE2CESmap=EDGE2CESmap,
+    REMINDyears=REMINDyears,
+    demand_input=ES_demand)
+
+  dem_shares[[scen]] <- res$demand[, EDGE_scenario := scen]
+  intensity[[scen]] <- res$demandI[, EDGE_scenario := scen]
+  demand_km[[scen]] <- res$demandF_plot_pkm[, EDGE_scenario := scen]
+  demand_ej[[scen]] <- res$demandF_plot_EJ[, EDGE_scenario := scen]
+  sw_tech[[scen]] <- sw_data$FV_final_SW[, EDGE_scenario := scen]
+}
+
+dem_shares <- rbindlist(dem_shares)
+intensity <- rbindlist(intensity)
+demand_km <- rbindlist(demand_km)
+demand_ej <- rbindlist(demand_ej)
+sw_tech <- rbindlist(sw_tech)
+prices_FV <- rbindlist(prices_FV)
+```
+
+
+
+```{r, echo=FALSE}
+## plot settings
+years_plot = c(2010,2015,2020,2025,2030,2040,2050) ## in bar charts, these are the time steps that are represented
+year_single = 2050
+region_plot = "NEU" ## in case is a region specific plot, this region is represented
+sector_plot ="trn_pass" ## in case is a sector specific plot, this sector is represented
+
+
+##conversion rate 2005->1990 USD
+CONV_2005USD_1990USD=0.67
+
+# print(paste0("Scenario: ", REMIND_scenario))
+print(paste0("Regional plots are about ",region_plot))
+print(paste0("Sectoral plots are about ",sector_plot))
+
+## maps
+cesmap <- data.table(CES_parent=c("_p_sm", "_p_lo", "_f_lo", "_f_sm"),
+                     CES_label=c("Passenger, Short-to-Medium Distances",
+                                 "Passenger, Long Distances",
+                                 "Freight, Long Distances",
+                                 "Freight, Short-to-Medium Distances"))
+
+EDGE_sectormap <- data.table(sector=c("trn_pass", "trn_freight", "trn_aviation_intl", "trn_shipping_intl"),
+                     CES_label=c("Passenger, Short-to-Medium Distances",
+                                 "Passenger, Long Distances",
+                                 "Freight, Long Distances",
+                                 "Freight, Short-to-Medium Distances"))
+
+```
+
+
+```{r, echo=FALSE}
+## aggregate demands to REMIND regions
+demandF_plot_EJ <- demand_ej[,c("EDGE_scenario", "sector","subsector_L3","subsector_L2",
+                                "subsector_L1","vehicle_type","technology", "iso","year","demand_EJ")]
+demandF_plot_pkm <- demand_km[,c("EDGE_scenario", "sector","subsector_L3","subsector_L2",
+                                 "subsector_L1","vehicle_type","technology","iso","year","demand_F")]
+
+demandF_plot_EJ=aggregate_dt(demandF_plot_EJ,REMIND2ISO_MAPPING,
+                             datacols = c("EDGE_scenario", "sector", "subsector_L3", "subsector_L2", "subsector_L1",
+                                          "vehicle_type", "technology"),
+                             valuecol = "demand_EJ")
+
+demandF_plot_pkm=aggregate_dt(demandF_plot_pkm,REMIND2ISO_MAPPING,
+                              datacol = c("EDGE_scenario", "sector","subsector_L3","subsector_L2",
+                                          "subsector_L1","vehicle_type","technology"),
+                              valuecol = "demand_F")
+## add GLO
+glo <- demandF_plot_pkm[,.(region="GLO", demand_F=sum(demand_F)),
+                        by=eval(names(demandF_plot_pkm)[2:9])]
+demandF_plot_pkm <- rbind(demandF_plot_pkm, glo)
+glo <- demandF_plot_EJ[,.(region="GLO", demand_EJ=sum(demand_EJ)),
+                        by=eval(names(demandF_plot_EJ)[2:9])]
+demandF_plot_EJ <- rbind(demandF_plot_EJ, glo)
+
+```
+
+## ES
+
+
+```{r, echo=FALSE}
+##chunk of code that plots the ES
+ES_modes_bar1=function(demandpkm){
+  #group by subsector_L3 and summarise the demand
+  df=demandpkm[, .(demand_F=sum(demand_F)
+                   ), by = c("EDGE_scenario", "region", "year","sector","subsector_L1")]
+  df[,demand_F:=demand_F   ## in millionkm
+     *1e-6                 ## in trillion km
+     ]
+  df=df[order(year)]
+  # #filter only 2020, 2050 and 2100
+  df=df[year %in% years_plot,]
+  #separate into passenger and freight categories
+  pass=c("trn_pass","trn_aviation_intl")
+  freight=c("trn_freight","trn_shipping_intl")
+  ## give proper names to the categories  
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  #plot
+  plot_p=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% pass, year %in% years_plot, region == region_plot),
+             aes(x=year,y=demand_F,group=mode,fill=mode),position=position_stack(),stat="identity")+
+    facet_wrap(~EDGE_scenario)+
+    ggtitle("Energy Services Demand - Passenger Transport Modes")+
+    theme_light()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    scale_x_continuous(breaks=years_plot)+
+    xlab("Year")+
+    ylab("Energy Services Demand (trillion pkm)")+ 
+    guides(fill=guide_legend(title="Transport mode"))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))
+  
+  plot_f=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% freight,year %in% years_plot, region == region_plot),
+             aes(x=year,y=demand_F,group=mode,fill=mode),position=position_stack(),stat="identity")+
+    facet_wrap(~EDGE_scenario)+
+    ggtitle("Energy Services Demand - Freight Transport Modes")+
+    theme_light()+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    scale_x_continuous(breaks=years_plot)+
+    xlab("Year")+
+    ylab("Energy Services Demand (trillion tkm)")+ 
+    guides(fill=guide_legend(title="Transport mode"))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))
+  
+  plot=list(plot_p,plot_f)
+  return(plot)
+}
+
+p=ES_modes_bar1(demandpkm=demandF_plot_pkm)
+p[[1]]
+p[[2]]
+
+```
+
+```{r, echo=FALSE}
+##chunk of code that plots the ES
+ES_modes_bar=function(demandpkm){
+  demandpkm[technology == "LA-BEV", technology := "BEV"]
+  ## use proper non-fuel mode names
+  demandpkm[technology %in% c("Cycle_tmp_technology", "Walk_tmp_technology"), technology := "Human Powered"]
+  #group by subsector_L3 and summarise the demand
+  df=demandpkm[, .(demand_F=sum(demand_F)),
+               by = c("EDGE_scenario", "region", "year","sector","subsector_L1", "technology")]
+  df[,demand_F:=demand_F   ## in millionkm
+     *1e-6                 ## in trillion km
+     ]
+  df=df[order(year)]
+  #separate into passenger and freight categories
+  pass=c("trn_pass","trn_aviation_intl")
+  freight=c("trn_freight","trn_shipping_intl")
+  ## give proper names to the categories
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  #plot
+  plot_p=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% pass,year %in% years_plot,region==region_plot),
+             aes(x=year,y=demand_F,group=technology,fill=technology),
+             position=position_stack(),stat="identity")+
+    ggtitle("Energy Services Demand by Technology, Passenger Transport, EUR")+
+    theme_light()+
+    facet_wrap(~EDGE_scenario)+
+    scale_x_continuous(breaks=years_plot)+
+    xlab("Year")+
+    ylab("Energy Services Demand (trillion pkm)")+ 
+    guides(fill=guide_legend(title="Technology"))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))
+  
+  plot_f=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% freight,year %in% years_plot, region==region_plot),
+             aes(x=year,y=demand_F, group=technology, fill=technology),
+             position=position_stack(),stat="identity")+
+    ggtitle(paste0("Energy Services Demand by Technology, Freight Transport, ", region_plot))+
+    facet_wrap(~EDGE_scenario) +
+    theme_light()+
+    scale_x_continuous(breaks=years_plot)+
+    xlab("Year")+
+    ylab("Energy Services Demand (trllion tkm)")+ 
+    guides(fill=guide_legend(title="Technology"))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))
+  
+  plot=list(plot_p,plot_f)
+  return(plot)
+}
+
+p=ES_modes_bar(demandpkm=demandF_plot_pkm)
+p[[1]]
+p[[2]]
+
+```
+
+```{r, echo=FALSE}
+## plot ES for LDVs only divided by fuel
+ES_modes_LDV_bar=function(demandpkm){
+  demandpkm[technology == "LA-BEV", technology := "BEV"]
+  ## use proper non-fuel mode names
+  demandpkm[technology %in% c("Cycle_tmp_technology", "Walk_tmp_technology"), technology := "Human Powered"]
+  #group by subsector_L3 and summarise the demand
+  df=demandpkm[, .(demand_F=sum(demand_F)),
+               by = c("EDGE_scenario", "region", "year","sector","subsector_L1", "technology")]
+  df[,demand_F:=demand_F   ## in millionkm
+     *1e-6                 ## in trillion km
+     ]
+  df=df[order(year)]
+  ## give proper names to the categories
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  
+  
+  ## select order of facets
+  df$technology = factor(df$technology, levels=c("Liquids","Hybrid Liquids","NG","BEV","FCEV"))
+  
+  #plot
+  plot_LDV=ggplot()+
+    geom_bar(data=df%>%filter(year %in% years_plot,region==region_plot, mode %in% c("4W","2W")),
+             aes(x=year,y=demand_F,group=technology,fill=technology), alpha = 0.9,
+             position=position_stack(),stat="identity")+
+    ggtitle(paste0("Energy Services Demand by Technology, LDVs", region_plot))+
+    theme_light()+
+    facet_wrap(~EDGE_scenario)+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))+
+    xlab("Year")+
+    ylab("Energy Services Demand (trillion pkm)")+ 
+    guides(fill=guide_legend(title="Technology"))+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13),
+          strip.text.x = element_text(size = 13, color = "black"),
+          strip.background=element_rect(fill="white"))+
+    scale_x_continuous(breaks=years_plot)+
+    scale_fill_brewer(palette = "Set1")
+    
+  
+  return(plot_LDV)
+}
+
+p=ES_modes_LDV_bar(demandpkm=demandF_plot_pkm)
+
+p
+
+```
+
+## FE
+
+```{r, echo=FALSE}
+FE_modes_bar=function(demandEJ){
+  #group by subsector_L1 and summarise the demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","subsector_L1","subsector_L3","sector")]
+  df=df[order(year)]
+  df=df[year %in% years_plot,]
+  #separate into passenger and freight categories
+  pass=c("trn_pass","trn_aviation_intl")
+  freight=c("trn_freight","trn_shipping_intl")
+  ## give proper names to the categories
+  df <- merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  #plot
+  plot_p=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% pass, region==region_plot),
+             aes(x=year,y=demand_EJ,group=mode,fill=mode),position=position_stack(),stat="identity",color="black")+
+    facet_wrap(~EDGE_scenario)+
+    ylab("Energy (EJ)") +
+    ggtitle(paste0("Final Energy Demand by Mode, Passenger, ", region_plot))+
+    theme(axis.text.x = element_text(angle = 90))+
+    scale_x_continuous(breaks=years_plot)
+  
+  plot_f=ggplot()+
+    geom_bar(data=df%>%filter(sector %in% freight,region==region_plot),
+             aes(x=year,y=demand_EJ,group=mode,fill=mode),position=position_stack(),stat="identity",color="black")+
+    facet_wrap(~EDGE_scenario) +
+    ggtitle(paste0("Final Energy Demand by Mode, Freight, ", region_plot))+
+    ylab("Energy (EJ)") +
+    theme(axis.text.x = element_text(angle = 90))+
+    scale_x_continuous(breaks=years_plot)
+  
+  plot=list(plot_p,plot_f)
+  return(plot)
+}
+
+p=FE_modes_bar(demandEJ = demandF_plot_EJ)
+p[[1]]
+p[[2]]
+```
+
+```{r, echo=FALSE}
+## function that calculates FE split and splits out the liquids by source
+FE_modes_bar_oilcomponent=function(demandEJ, msect="trn_pass", region_plot){
+  if(msect == "trn_pass")
+    sector_display = "Passenger"
+  if(msect == "trn_freight")
+    sector_display = "Freight"
+    
+  #group by subsector_L1 and summarise the demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","subsector_L1","subsector_L3","sector","technology")]
+  df=df[order(year)]
+  df=df[year %in% years_plot,]
+  ## give proper names to the categories
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  
+  df[,technology := ifelse(technology == "LA-BEV", "BEV", technology)]
+  df[,technology := ifelse(technology == "Electric", "El. Trains", technology)]
+  ## select order of facerts
+  df$technology = factor(df$technology, levels=c("BEV","FCEV","Hybrid Liquids", "El. Trains", "NG","Liquids", "Coal"))
+
+  #plot
+  plot_psm = ggplot()+
+    geom_bar(data=df%>%filter(sector == msect, region == region_plot),
+             aes(x=year,y=demand_EJ,group=technology,fill=technology),
+             position=position_stack(),stat="identity", alpha = 0.9)+
+    theme_light()+
+    ggtitle(paste0("Final Energy Demand by Tech, ", sector_display, ", ", region_plot))+
+    theme(axis.text.x = element_text(angle = 90),
+        strip.text.x = element_text(size = 13, color = "black"))+
+    scale_x_continuous(breaks=years_plot)+
+    scale_fill_brewer(palette = "Set1")+
+    xlab("Year")+
+    ylab("Final energy demand [EJ]")+ 
+    facet_wrap(~EDGE_scenario) +
+    guides(fill=guide_legend(title="Technology"))
+  
+    plot_psm_LDV = ggplot()+
+    geom_bar(data=df%>%filter(sector == msect, region == region_plot, mode == "4W"),
+             aes(x=year,y=demand_EJ,group=technology,fill=technology),
+             position=position_stack(),stat="identity", alpha = 0.9)+
+    theme_light()+
+    ggtitle(paste0("Final Energy Demand by Tech, LDVs, ", region_plot))+
+    theme(axis.text.x = element_text(angle = 90),
+          strip.text.x = element_text(size = 13, color = "black"),
+          strip.background=element_rect(fill="white"),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))+
+    scale_x_continuous(breaks=years_plot)+
+    scale_fill_brewer(palette = "Set1")+
+    xlab("Year")+
+    ylab("Final energy demand [EJ]")+ 
+    facet_wrap(~EDGE_scenario) +
+    guides(fill=guide_legend(title="Technology"))  
+  
+    plot_list = list(plot_psm, plot_psm_LDV)
+  return(plot_list)
+}
+
+
+
+FE_modes_bar_oilcomponent(demandEJ = demandF_plot_EJ, msect="trn_pass", region=region_plot)
+FE_modes_bar_oilcomponent(demandEJ = demandF_plot_EJ, msect="trn_pass", region="GLO")
+
+```
+
+
+```{r, echo=FALSE}
+FE_modes_bar1=function(demandEJ, msect="trn_pass", region_plot){
+  if(msect == "trn_pass")
+    sector_display = "Passenger"
+  if(msect == "trn_freight")
+    sector_display = "Freight"
+
+  ## group by subsector_L1 and summarise the demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","subsector_L1","sector")]
+  df=df[order(year) & year %in% years_plot]
+  ## give proper names to the categories
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  #plot
+  plot_p=ggplot()+
+    geom_bar(data=df%>%filter(sector == msect, region == region_plot),
+             aes(x=year,y=demand_EJ,group=mode,fill=mode),
+             position=position_stack(),stat="identity",color="black")+
+    facet_wrap(~EDGE_scenario) +
+    ylab("Energy (EJ)") +
+    ggtitle(paste0("Final Energy Demand by Mode, ", sector_display, ", ", region_plot))+
+    theme(axis.text.x = element_text(angle = 90))+
+    scale_x_continuous(breaks=years_plot)
+  
+  return(plot_p)
+}
+
+FE_modes_bar1(demandEJ = demandF_plot_EJ, region_plot = region_plot)
+```
+
+
+
+```{r, echo=FALSE}
+FE_modes_bar_oilVSelec=function(demandEJ, region_plot){
+  sector_display = "Total transport"
+  ## group by subsector_L1 and summarise the demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","subsector_L1","sector","technology")]
+  df[, tech_plot := ifelse(technology %in% c("BEV","Electric"), "Electriciy", NA)]
+  df[, tech_plot := ifelse(technology %in% c("Liquids", "Hybrid Liquids"), "Liquids", tech_plot)]
+  df=df[!is.na(tech_plot),] ## only liquids and electric driven entries interesting
+  df=df[order(year) & year %in% years_plot]
+  ## give proper names to the categories
+  df=merge(df, edgeTrpLib::L1mapping, all.x=TRUE, by="subsector_L1")
+  df[,short_names:=ifelse(mode %in% c("Buses","Rail Passenger","High Speed Rail"),"Other Passenger",NA)]
+  df[,short_names:=ifelse(mode %in% c("2W","4W","Three Wheelers"),"LDV",short_names)]
+  df[,short_names:=ifelse(mode %in% c("Domestic Aviation","International Aviation"),"Aviation",short_names)]
+  df[,short_names:=ifelse(mode %in% c("International Shipping","Domestic Shipping"),"Shipping",short_names)]
+  df[,short_names:=ifelse(mode %in% c("Road Freight","Rail Freight"),"Road and Rail Freight",short_names)]
+  
+  #plot
+  plot_p=ggplot()+
+    geom_bar(data=df%>%filter(region == region_plot, year ==2050),
+             aes(x=tech_plot,y=demand_EJ,group=short_names,fill=short_names),
+             position=position_stack(),stat="identity",alpha=0.95)+
+    facet_wrap(~EDGE_scenario) +
+    ylab("Energy (EJ)") +
+    ggtitle(paste0("Final Energy Demand by Mode in 2050, total transport ", region_plot))+
+    theme_light()+
+    theme(axis.text.x = element_text(angle = 90),
+          axis.title.x = element_blank(),
+          strip.text.x = element_text(size = 13, color = "black"),
+          strip.background=element_rect(fill="white"),
+          axis.text = element_text(size=13),
+          title = element_text(size=13),
+          legend.text = element_text(size=13))+
+    scale_fill_brewer(palette = "Set2")+
+    guides(fill=guide_legend(title="Transport mode"))
+  
+  return(plot_p)
+}
+
+FE_modes_bar_oilVSelec(demandEJ = demandF_plot_EJ, region_plot = region_plot)
+```
+
+
+## FE composition
+
+```{r, echo=FALSE}
+
+FE_modeshares_area=function(demandEJ){
+  #group by subsector_L3 and summarise the demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","subsector_L3")]
+  #order by year
+  df=df[order(year)]
+  df=df[year>=2005,]
+  #plot
+  plot=ggplot()+
+    geom_area(data=df %>% filter(year <= max(years_plot), region == region_plot),
+              aes(x=year,y=demand_EJ,group=subsector_L3,fill=subsector_L3),
+              color="black")+
+    facet_wrap(~EDGE_scenario)+
+    ylab("Energy (EJ)") +
+    ggtitle("Final Energy Demand, Mode composition")+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  
+  return(plot)
+}
+
+p=FE_modeshares_area(demandEJ = demandF_plot_EJ)
+p
+## ggsave("FE_modeshares.png")
+```
+
+
+
+```{r, echo=FALSE}
+## fuel use by sector
+fuel_shares_area=function(demandEJ, msect="trn_pass", region_plot){
+  if(msect == "trn_pass")
+    sector_display = "Passenger"
+  if(msect == "trn_freight")
+    sector_display = "Freight"
+  ##group by sector and technology and summarise demand
+  df=demandEJ[, .(demand_EJ=sum(demand_EJ)),
+              by = c("EDGE_scenario", "region", "year","technology","sector")]
+
+  df=df[order(year) & year>=2005,]
+  #plot
+  plot1=ggplot()+
+    geom_area(data=df%>%filter(sector == msect, year <= max(years_plot), region == region_plot),
+              aes(x=year,y=demand_EJ,group=technology,fill=technology),position="fill")+
+    facet_wrap(~EDGE_scenario)+
+    ggtitle(paste0("Final Energy Demand, ", sector_display, ", Fuel Composition"))+
+    ylab("Share")
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    
+  return(plot1)
+}
+
+p=fuel_shares_area(demandEJ = demandF_plot_EJ, region_plot = region_plot)
+p
+
+```
+
+
+```{r, echo=FALSE}
+
+SW_trend_plot = function(FV_SW,sector_plot){
+  if (sector_plot == "trn_pass") {
+  FV_SW=FV_SW[iso=="DEU" & vehicle_type =="Large Car and SUV",]
+  } else if (sector_plot =="trn_freight"){
+  FV_SW=FV_SW[iso=="DEU" & vehicle_type =="Truck (16-32t)",]
+  } else if (sector_plot =="trn_aviation_intl"){
+  FV_SW=FV_SW[iso=="DEU" & subsector_L3 =="International Aviation",]
+  } else if (sector_plot =="trn_shipping_intl"){
+  FV_SW=FV_SW[iso=="DEU" & subsector_L3 =="International Ship",]
+  }
+  FV_SW[,type:=ifelse(technology=="Liquids", "Conventional ICE (Liquid fuels)",NA)]
+  FV_SW[,type:=ifelse(technology=="NG", "Natural Gas ICE",type)]
+  FV_SW[,type:=ifelse(technology=="BEV", "Alternative fuels: BEV",type)]
+  FV_SW[,type:=ifelse(technology=="FCEV", "Alternative fuels: FCEV",type)]
+  FV_SW[,type:=ifelse(technology=="Hybrid Liquids", "Unconventional ICE (Hybrid)",type)]
+  
+  p=ggplot()+
+    geom_line(data=FV_SW%>%filter(year>= min(years_plot), year<=max(years_plot)),aes(x=year,y=sw,group=type,color=type),alpha = 0.8,size=1.5)+
+    theme_light()+
+    facet_wrap(~EDGE_scenario)+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(size=13),
+          title = element_text(size=14),
+          legend.text = element_text(size=13))+
+    scale_x_continuous(breaks=years_plot)+
+    xlab("Year")+
+    ylab ("Preference factors tech. types [-]")+
+    ggtitle(paste0("Preference factors trend for tech. types for ", sector_plot, " [-]"))+
+    theme(strip.text.x = element_text(size=13,color="black"),
+          strip.background = element_rect(fill="white",color = "black"))+
+    scale_color_discrete(name="Technology type")
+  return(p)
+  }
+
+p=SW_trend_plot(FV_SW=sw_tech,sector_plot)
+p
+```
+
+

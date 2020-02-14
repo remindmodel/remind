@@ -407,10 +407,10 @@ all_esty "energy services"
 	esdie_frgt_lo
 	esdie_frgt_sm
 	eselt_frgt_sm
-*    esh2t_pass_sm
-*    esgat_pass_sm
-*    esh2t_frgt_sm
-*    esgat_frgt_sm
+        esh2t_pass_sm
+        esgat_pass_sm
+        esh2t_frgt_sm
+        esgat_frgt_sm
 
 *** Buildings module: Energy services (useful energy)
     ueshheb  "buildings space heating district heat"
@@ -601,13 +601,13 @@ all_teEs                 "energy service technologies"
     te_espet_pass_sm "short-to-medium distance passenger transport CES node"
     te_esdie_pass_sm "short-to-medium distance passenger transport CES node"
     te_eselt_pass_sm "short-to-medium distance passenger transport CES node"
-*    te_esh2t_pass_sm "short-to-medium distance passenger transport CES node"
-*    te_esgat_pass_sm "short-to-medium distance passenger transport CES node"
+    te_esh2t_pass_sm "short-to-medium distance passenger transport CES node"
+    te_esgat_pass_sm "short-to-medium distance passenger transport CES node"
     te_esdie_pass_lo "long distance passenger transport (aviation) CES node"
     te_esdie_frgt_sm "short-to-medium distance freight transport CES node"
     te_eselt_frgt_sm "short-to-medium distance freight transport CES node"
-*    te_esh2t_frgt_sm "short-to-medium distance freight transport CES node"
-*    te_esgat_frgt_sm "short-to-medium distance freight transport CES node"
+    te_esh2t_frgt_sm "short-to-medium distance freight transport CES node"
+    te_esgat_frgt_sm "short-to-medium distance freight transport CES node"
     te_esdie_frgt_lo "long distance freight transport CES node" 
 
 *** Buildings module
@@ -1058,8 +1058,10 @@ $endif
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
         tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
-        tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
-        tdfoshos        "transmission and distribution for heating oil from fossil origin to transportation"
+        tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
+        tdfosgat        "transmission and distribution for gas from biomass origin to transportation"
+        tdbiohos        "transmission and distribution for heating oil from biomass origin to stationary users"
+        tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
         tdh2t           "transmission and distribution for hydrogen to transportation"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
@@ -1410,6 +1412,7 @@ enty(all_enty)       "all types of quantities"
 	feelt         "final energy electricity for transport"
         fetf          "final energy transport fuels"
         feh2t         "final energy hydrogen transport"
+        fegat         "final energy nat. gas for transport"
         co2          "carbon dioxide emissions"  
         ch4          "methane emissions"
         n2o          "n2o emissions from the energy system"
@@ -2082,18 +2085,18 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
 /
         seel.feels.tdels
         segabio.fegas.tdbiogas
-		segafos.fegas.tdfosgas
+        segafos.fegas.tdfosgas
         seliqbio.fehos.tdbiohos
-		seliqfos.fehos.tdfoshos
+	seliqfos.fehos.tdfoshos
         sesobio.fesos.tdbiosos
-		sesofos.fesos.tdfossos
+	sesofos.fesos.tdfossos
         seh2.feh2s.tdh2s
         sehe.fehes.tdhes
         seel.feelt.tdelt
         seliqbio.fepet.tdbiopet
-		seliqfos.fepet.tdfospet
+	seliqfos.fepet.tdfospet
         seliqbio.fedie.tdbiodie
-		seliqfos.fedie.tdfosdie
+	seliqfos.fedie.tdfosdie
         seh2.feh2t.tdh2t
 /
 
@@ -2358,7 +2361,7 @@ teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 
 teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
 /
-      (tdels,tdelt,tdbiogas,tdfosgas,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
+      (tdels,tdelt,tdbiogas,tdfosgas,tdbiogat,tdfosgat,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"
