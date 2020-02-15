@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(lucode)
 
 source("scripts/start/submit.R")

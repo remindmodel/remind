@@ -72,9 +72,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.937
+* Input data revision: 5.938
 * 
-* Last modification (input data): Thu Jan 16 14:11:39 2020
+* Last modification (input data): Fri Feb 14 10:03:25 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -328,8 +328,8 @@ cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
 cm_limit_peur_scen  = 1;         !! def = 1
-$setGlobal cm_oil_scen   medOil         !! def = medOil
-$setGlobal cm_gas_scen   medGas         !! def = medGas
+$setGlobal cm_oil_scen  medOil         !! def = medOil
+$setGlobal cm_gas_scen  medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
 cm_rentdiscoil      = 0.2;       !! def 0.2
 cm_rentdiscoil2     = 0.9;       !! def 0.9
@@ -384,6 +384,7 @@ cm_noReboundEffect     = 0;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
+$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -393,15 +394,15 @@ $setGlobal c_regi_capturescen  all !! def = all
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode        debug      !! def = parallel
+$setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE        off        !! def = off
-$setglobal cm_INCONV_PENALTY   on         !! def = on
-$setGlobal cm_so2_out_of_opt   on         !! def = on
-$setGlobal c_skip_output       off        !! def = off
-$setGlobal cm_MOFEX            off        !! def = off
-$setGlobal cm_conoptv          conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall        off        !! def = off
+$setGlobal cm_OILRETIRE  off        !! def = off
+$setglobal cm_INCONV_PENALTY  on         !! def = on
+$setGlobal cm_so2_out_of_opt  on         !! def = on
+$setGlobal c_skip_output  off        !! def = off
+$setGlobal cm_MOFEX  off        !! def = off
+$setGlobal cm_conoptv  conopt3    !! def = conopt3
+$setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
