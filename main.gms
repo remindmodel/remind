@@ -313,7 +313,7 @@ cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
-cm_cprice_red_factor  = 0.5;         !! def = 0.5
+cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
