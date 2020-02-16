@@ -61,7 +61,7 @@ ssh-key and use ssh to connect to GitHub.
 
 ## 2.3 Push (to your personal repository)
 
-<img src="figures/git-2-pushing.png" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-2-pushing.PNG" width="100%" style="display: block; margin: auto;" />
 
 When you start making your first changes to the code at your local copy,
 we strongly recommend to do a tutorial to get familiar with the basic
@@ -77,8 +77,8 @@ the GitHub interface. Via `Compare` you are able to check, if the
 upstream is some commits ahead. If so merge these new changes into
 your fork. 
 
-<img src="figures/git-3-add-main.png" width="100%" style="display: block; margin: auto;" />
-<img src="figures/git-4-pull-main.png" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-3-add-main.PNG" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-4-pull-main.PNG" width="100%" style="display: block; margin: auto;" />
 
 You can also do this merging procedure in your local copy by adding 
 both your fork and the upstream repository as so called 'remotes' to 
@@ -96,16 +96,16 @@ into the remote main repository. Insted of pushing them directly into the remote
 pull requests. Pull requests are proposed changes to a repository submitted by you and accepted or rejected by a 
 repository's collaborators. Like issues, pull requests each have their own discussion forum.
 
-<img src="figures/git-5-pull-request.png" width="100%" style="display: block; margin: auto;" />
-<img src="figures/git-7-pull-request-github-1.png" width="100%" style="display: block; margin: auto;" />
-<img src="figures/git-8-pull-request-github-2.png" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-5-pull-request.PNG" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-7-pull-request-github-1.PNG" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-8-pull-request-github-2.PNG" width="100%" style="display: block; margin: auto;" />
 
 ## 2.6 All steps in one figure
 
-<img src="figures/git-6-all-in-one.png" width="100%" style="display: block; margin: auto;" />
-<img src="figures/git-11-rules.png" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-6-all-in-one.PNG" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-11-rules.PNG" width="100%" style="display: block; margin: auto;" />
 
 # 3 Incorporate your code changes by using branches
 
-<img src="figures/git-9-branching.png" width="100%" style="display: block; margin: auto;" />
-<img src="figures/git-10-branching-advanced.png" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-9-branching.PNG" width="100%" style="display: block; margin: auto;" />
+<img src="figures/git-10-branching-advanced.PNG" width="100%" style="display: block; margin: auto;" />
