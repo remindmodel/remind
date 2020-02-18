@@ -1,4 +1,4 @@
-title;start;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;climate;optimization;cm_emiscen;cm_startyear;path_gdx;path_gdx_ref
-BAU_Nash;1;none;0;none;-1;off;nash;1;2005;./config/input.gdx;
-RCP37;1;rcp37;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash
-RCP26;1;rcp26;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash
+title;start;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;climate;optimization;cm_emiscen;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
+BAU_Nash;1;none;0;none;-1;off;nash;1;2005;./config/input.gdx;;
+RCP37;1;rcp37;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;
+RCP26;1;rcp26;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;

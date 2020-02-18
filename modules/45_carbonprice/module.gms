@@ -20,6 +20,7 @@ $Ifi "%carbonprice%" == "ExogSameAsPrevious" $include "./modules/45_carbonprice/
 $Ifi "%carbonprice%" == "NDC2018" $include "./modules/45_carbonprice/NDC2018/realization.gms"
 $Ifi "%carbonprice%" == "NDC2constant" $include "./modules/45_carbonprice/NDC2constant/realization.gms"
 $Ifi "%carbonprice%" == "NPi2018" $include "./modules/45_carbonprice/NPi2018/realization.gms"
+$Ifi "%carbonprice%" == "diffCurvPhaseIn2Lin" $include "./modules/45_carbonprice/diffCurvPhaseIn2Lin/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseIn2Constant" $include "./modules/45_carbonprice/diffPhaseIn2Constant/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseIn2Lin" $include "./modules/45_carbonprice/diffPhaseIn2Lin/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseIn2LinFlex" $include "./modules/45_carbonprice/diffPhaseIn2LinFlex/realization.gms"

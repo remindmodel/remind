@@ -151,7 +151,7 @@ $include "./core/input/generisdata_tech_SSP1.prn"
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
+*JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
@@ -1108,14 +1108,14 @@ $offdelim
 ;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
-*GL* demand side emission factor of final energy carriers in MtCO2/EJ
-*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
+*AD* Updated Demand Side Emission Factors
+*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
 p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 69.3;
-p_ef_dem("fehos") = 69.3;
-p_ef_dem("fepet") = 68.5;
-p_ef_dem("fegas") = 50.3;
-p_ef_dem("fesos") = 90.5;
+p_ef_dem("fedie") = 74;
+p_ef_dem("fehos") = 73;
+p_ef_dem("fepet") = 73;
+p_ef_dem("fegas") = 55;
+p_ef_dem("fesos") = 96;
 
 
 *** some balances are not matching by small amounts;

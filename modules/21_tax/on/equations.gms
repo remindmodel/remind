@@ -96,10 +96,14 @@ v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t
 ***---------------------------------------------------------------------------
 q21_taxrevFEtrans(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevFEtrans(t,regi) 
-=g=  SUM(feForUe(enty),
+=g=  SUM(feForEs(enty),
+        (p21_tau_fe_tax_transport(t,regi,feForEs) + p21_tau_fe_sub_transport(t,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe(t,regi,enty2,enty,te))
+      ) +
+     SUM(feForUe(enty),
         (p21_tau_fe_tax_transport(t,regi,feForUe) + p21_tau_fe_sub_transport(t,regi,feForUe) ) * SUM(se2fe(enty2,enty,te), vm_prodFe(t,regi,enty2,enty,te))
       )
-	  - p21_taxrevFEtrans0(t,regi) ;
+  - p21_taxrevFEtrans0(t,regi) ;
+
 
 ***---------------------------------------------------------------------------
 *'  Calculation of final Energy taxes in Buildings_Industry or Stationary: effective tax rate (tax - subsidy) times FE use in sector
@@ -163,7 +167,7 @@ v21_taxrevSO2(t,regi) =g= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevBio(t,regi) =g= v21_tau_bio(t) * vm_fuExtr(t,regi,"pebiolc","1") * vm_pebiolc_price(t,regi) 
+v21_taxrevBio(t,regi) =g= v21_tau_bio(t) * vm_fuExtr(t,regi,"pebiolc","1") * vm_pebiolc_price(t,regi)
                           - p21_taxrevBio0(t,regi);
 						  
 ***---------------------------------------------------------------------------

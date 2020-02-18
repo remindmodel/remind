@@ -1,53 +1,64 @@
-This guide will give you a brief technical introduction in how to run and use the model REMIND.
+Install the REMIND model and all software/data required
 ================
-Felix Schreyer (<felix.schreyer@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>)
-30 April, 2019
+Anastasis Giannousakis (<giannou@pik-potsdam.de>), Felix Schreyer (<felix.schreyer@pik-potsdam.de>)
+16 February, 2020
 
-Introduction
+HOW TO INSTALL
 --------------
 
-As normal runs with REMIND take quite a while (from a couple of hours to several days), you normally don't want to run them locally (i.e., on your own machine) but on the cluster provided by the IT-services. The first step is to access the Cluster. In general, there are three ways how to access the Cluster:
-	
-1. Putty console 
-2. WinSCP 
-3. Windows Explorer, click on network drive (only possible if you are in PIK LAN)
+To get the REMIND code you need to have git installed and then clone the model from <https://github.com/remindmodel/remind.git>.
 
-They all have their upsides and downsides. Don't worry! If they are new to you, you will figure out what is best for which kind of task after some time and get more famliar just by your practice. Using either Putty or the network drive in Windows Explorer, the first step is:
+REMIND requires *GAMS* (<https://www.gams.com/>) including licenses for the solvers *CONOPT* and (optionally) *CPLEX* for its core calculations. As the model benefits significantly from recent improvements in *GAMS* and *CONOPT4* it is recommended to work with the most recent versions of both. Please make sure that the GAMS installation path is added to the PATH variable of the system:
 
-adjust .Rprofile
------------------
-First, log onto the Cluster via WinSCP and open the file `/home/username/.profile` in a text editor. Add these two lines and save the file.
+-   the easiest way to add is by simply checking the "Use advanced installation mode" box at the beginning of the installation. At a later step you have to tick again a checkbox that adds the GAMS path to your PATH variable
+-   you can also edit your computer's advanced settings and add the GAMS path to the PATH variable manually (applies also if GAMS is installed but not included in PATH).
 
-``` bash
-module load piam 
-umask 0002
-```
-This loads the piam environment once you log onto the Cluster via Putty the next time. This envrionment will enable you to manage the runs that you do on the Cluster. Next, you need to specify the kind of run you would like to do. 
-   	
-Find a Place to Start
------------------------
+This tutorial shows how to check and add variables to your PATH variable: <https://www.youtube.com/watch?v=5P9EDJwfXBo>
 
-Create a folder on the Cluster where you want to store REMIND. It is recommended not to use the `home` directory. For your first experiments you can use the /p/tmp/YourPIKName/ directory (only stored for 3 months) and create a following folder:
+Please add the GAMS training license you have been provided (gamslice.txt) by saving the file to your GAMS local folder. Under Windows something like `C:\Program Files (x86)\GAMS\28.2`
 
-``` bash
-p/tmp/YourPIKName/REMIND
-```
-(in case you are using Putty and are not familiar with unix commands, google a list of basic unix commands, you will need `mkdir` to create a folder). Go inside this folder.
+In addition *R* (<https://www.r-project.org/>) is required for pre- and postprocessing and run management (needs to be added to the user's PATH variable as well). It is recommended to install also RSudio (<https://www.rstudio.com>).
 
-Now, you need to download REMIND into this folder. The download works via git. In this way, different people can develop the model simultaneously and changes can be traced back and undone in case the merged code does not work as it is supposed to. Cloning a new REMIND version via git is always possible. However, before pushing your changes to the common version for the first time, please talk to the research software engineering group. They are happy to give you an introduction.
+For R, some packages are required to run REMIND. All are either distributed via the offical R CRAN or via a separate repository hosted at PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of available repositories via:
 
-Cloning REMIND
---------------------
-
-To clone REMIND via Windows Explorer: Right-click in your REMIND folder and choose `git clone` (if not availble, install tortoise git or ask the RSE group). Insert <https://gitlab.pik-potsdam.de/REMIND/REMIND}>
-as `URL of repository`. On command line use
-
-``` bash
-			git clone git@gitlab.pik-potsdam.de:REMIND/REMIND.git
+``` r
+options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
 ```
 
-and hit enter. This will download the REMIND version in the current folder.
+After that all remaining packages can be installed via `install.packages`
 
+``` r
+pkgs <- c("gdxrrw",
+          "ggplot2",
+          "curl",
+          "gdx",
+          "magclass",
+          "madrat",
+          "mip",
+          "lucode",
+          "remind",
+          "lusweave",
+          "luscale",
+          "goxygen",
+          "luplot",
+          "shinyresults")
+install.packages(pkgs)
+```
 
-Great, you now have REMIND!
+For post-processing model outputs *Latex* is required (<https://www.latex-project.org/get/>). To be seen by the model it also needs to be added to the PATH variable of your system.
 
+If the following lines of code are executed withour error, then you are all set!
+
+``` r
+system("gams")
+library(gdxrrw)
+library(remind)
+print("")
+if(.Platform$OS.type == "unix") {
+  system("which pdflatex")
+} else {
+  system("where pdflatex")
+}
+```
+
+NOTE: If the model fails to start from the Windows console, try starting it from within RStudio.
