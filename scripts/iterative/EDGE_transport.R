@@ -18,12 +18,14 @@ library(moinput)
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
 
+data_folder <- "EDGE-T"
+
 mapspath <- function(fname){
     file.path("../../modules/35_transport/edge_esm/input", fname)
 }
 
 datapath <- function(fname){
-    file.path("input_EDGE", fname)
+    file.path(data_folder, fname)
 }
 
 REMINDpath <- function(fname){
@@ -76,9 +78,16 @@ EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
 
 
 ## input data loading
-input_path = paste0("../../modules/35_transport/edge_esm/input/")
+input_folder = paste0("../../modules/35_transport/edge_esm/input/")
 
-inputdata = createRDS(input_path, SSP_scenario = scenario, EDGE_scenario = EDGE_scenario)
+if (length(list.files(path = data_folder, pattern = "RDS")) < 8) {
+  createRDS(input_folder, data_folder,
+            SSP_scenario = scenario,
+            EDGE_scenario = EDGE_scenario)
+}
+inputdata <- loadInputData(data_folder)
+
+
 vot_data = inputdata$vot_data
 sw_data = inputdata$sw_data
 inco_data = inputdata$inco_data
@@ -120,6 +129,7 @@ REMIND_prices <- merge_prices(
     REMINDyears = REMINDyears,
     intensity_data = int_dat,
     nonfuel_costs = nonfuel_costs)
+
 
 ## save prices
 ## read last iteration count
