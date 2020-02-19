@@ -8,6 +8,7 @@ doc/documentation.*
 doc/goxygen_pdflatex.log
 doc/html/
 doc/markdown/
+doc/images/
 Rplots.pdf
 core/input/f_cf.cs3r
 core/input/f_dataRegiSolar.cs3r
