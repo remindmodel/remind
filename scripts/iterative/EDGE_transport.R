@@ -1,12 +1,22 @@
-require(data.table)
-require(gdx)
-require(gdxdt)
-require(edgeTrpLib)
-require(rmndt)
-## use cached input data for speed purpose
-require(moinput)
-setConfig(forcecache=T)
+library(optparse)
 
+opt_parser = OptionParser(
+  description = "Coupled version of EDGE-T, to be run within a REMIND output folder.",
+  option_list = list(
+    make_option(
+      "--reporting", action="store_true",
+      help="Store output files in subfolder EDGE-T")));
+opt = parse_args(opt_parser);
+
+library(data.table)
+library(gdx)
+library(gdxdt)
+library(edgeTrpLib)
+library(rmndt)
+library(moinput)
+
+## use cached input data for speed purpose
+setConfig(forcecache=T)
 
 mapspath <- function(fname){
     file.path("../../modules/35_transport/edge_esm/input", fname)
@@ -56,7 +66,7 @@ if (EDGE_scenario == "Conservative_liquids") {
 endogeff <<- EDGEscenarios[options== "endogeff", switch]
 enhancedtech <<- EDGEscenarios[options== "enhancedtech", switch]
 rebates_febates <<- EDGEscenarios[options== "rebates_febates", switch] ##NB THEY ARE ONLY IN PSI! ONLY WORKING IN EUROPE
-savetmpinput <<- FALSE
+savetmpinput <<- opt$reporting
 smartlifestyle <<- EDGEscenarios[options== "smartlifestyle", switch]
 
 
