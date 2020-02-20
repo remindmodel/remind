@@ -70,6 +70,19 @@ pm_vintage_in(regi,"1",te) = pm_vintage_in(regi,"1",te) * max((pm_histfegrowth(r
 pm_vintage_in(regi,"6",te) = pm_vintage_in(regi,"6",te) * max(((pm_histfegrowth(regi,entyFe)- 0.005 + 1/fm_dataglob("lifetime",te))/(1/fm_dataglob("lifetime",te)) + 1) * 0.75,0.2);
 );
 
+*RP
+*** First adjustment of CO2 price path for peakBudget runs (set by cm_iterative_target_adj eq 9)
+if(cm_iterative_target_adj eq 9,
+*** Save the original functional form of the CO2 price trajectory so values for all times can be accessed even if the peakBudgYr is shifted. 
+*** Then change to linear increasing CO2 price after peaking time 
+  p_taxCO2eq_until2150(t,regi) = pm_taxCO2eq(t,regi);
+  loop(t2$(t2.val eq cm_peakBudgYr),
+    pm_taxCO2eq(t,regi)$(t.val gt cm_peakBudgYr) = p_taxCO2eq_until2150(t2,regi) + (t.val - t2.val) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year
+  );
+);
+
+display p_taxCO2eq_until2150, pm_taxCO2eq;
+
 $ifthen setGlobal c_scaleEmiHistorical
 *re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
 display p_macBaseMagpie;

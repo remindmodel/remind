@@ -1,0 +1,404 @@
+---
+title: "Analysis of the transport module for a run with resolved iteration domain"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(ggplot2)
+require(lusweave)
+require(rmndt)
+
+
+knitr::opts_chunk$set(fig.width=12, fig.height=12) 
+
+folder <- "./"
+files <- list.files(path = folder, pattern = "fulldata_[0-9]+\\.gdx")
+
+year_toplot = 2050
+iter_toplot = 25
+maxiter = 100
+
+print(paste0("Year: ", year_toplot))
+print(paste0("Iteration: ", iter_toplot))
+
+```
+
+```{r, echo=FALSE}
+addyrs <- function(dt, yrcol="ttot"){
+    dt[, year := as.numeric(get(yrcol))][, (yrcol) := NULL]
+    return(dt)
+}
+
+get_trp_shares <- function(gdx){
+    tes <- readGDX(gdx, "teEs_dyn35")
+    
+    shares_data <- readgdx(gdx, "pm_shFeCes")[all_teEs %in% tes]
+    shares_data <- addyrs(shares_data)
+    
+    setnames(shares_data, "value", "tech_share")
+    return(shares_data)
+}
+
+get_fuel_prices <- function(gdx){
+  REMINDyears <- c(1990,
+                   seq(2005, 2060, by = 5),
+                   seq(2070, 2110, by = 10),
+                   2130, 2150)
+  ## report prices from REMIND gdx in 2005$/MJ
+  
+  tdptwyr2dpgj <- 31.71  #TerraDollar per TWyear to Dollar per GJ
+  CONV_2005USD_1990USD <- 0.67
+  startyear <- 2020
+  
+  ## load entries from the gdx
+  fety <- readGDX(gdx, c("entyFe", "fety"), format = "first_found")
+  
+  budget.m <- readGDX(gdx, name = "qm_budget", types = "equations", field = "m",
+                      format = "first_found")[, REMINDyears[REMINDyears >= startyear],]  # Alternative: calcPrice
+  
+  interpolate_first_timesteps <- function(obj){
+    ## interpolate values for 1990, 2005 and 2010
+    obj = time_interpolate(obj, c(1990, seq(2005, startyear, 5)),
+                           integrate_interpolated_years=T,
+                           extrapolation_type = "constant")
+    return(obj)
+  }
+  
+  budget.m <- interpolate_first_timesteps(budget.m)
+  budget.m <- lowpass(budget.m)
+  
+  
+  bal_eq <- "qm_balFeForCesAndEs"
+  febal.m <- readGDX(gdx, name = bal_eq, types = "equations",
+                      field = "m", format = "first_found")[, REMINDyears[REMINDyears>=startyear], fety]
+    
+  if(any(febal.m > 0)){
+    sprintf("Found positive marginals on %s. We correct this, but the issue should be adressed.", bal_eq)
+    febal.m[febal.m > 0] <- -1e-10
+  }
+    
+  febal.m <- interpolate_first_timesteps(febal.m)
+    
+  ## in some regions and time steps, 0 final energy demand for an entry could give problems
+  tmp <- magclass::setNames(lowpass(lowpass(febal.m[, , "fegat"]))/(budget.m + 1e-10) * tdptwyr2dpgj, "fegat")
+    
+    
+  tmp <- mbind(tmp, magclass::setNames(lowpass(lowpass(febal.m[, , "feelt"]))/(budget.m + 1e-10) * tdptwyr2dpgj, "feelt"))
+    
+  tmp <- mbind(tmp, magclass::setNames(lowpass(lowpass(febal.m[, , "feh2t"]))/(budget.m + 1e-10) * tdptwyr2dpgj, "feh2t"))
+    
+  tmp <- mbind(tmp, magclass::setNames(lowpass(lowpass(febal.m[, , "fedie"]))/(budget.m + 1e-10) * tdptwyr2dpgj, "fedie"))
+    
+  tmp <- mbind(tmp, magclass::setNames(lowpass(lowpass(febal.m[, , "fepet"]))/(budget.m + 1e-10) * tdptwyr2dpgj, "fepet"))
+                              
+  tmp <- magpie2dt(tmp, regioncol = "all_regi", yearcol = "year", datacols = "all_enty")
+
+  setnames(tmp, old = "value", new = "fe_price")
+  return(tmp)
+}
+
+get_demand <- function(gdx){
+    ces_nodes <- readGDX(gdx, "ppfen_dyn35")
+    demand <- readgdx(gdx, "vm_cesIO")[all_in %in% ces_nodes]
+    demand <- addyrs(demand, "tall")
+    setnames(demand, "value", "CES_demand")
+    return(demand)
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+sorted_files <- paste0(folder, "fulldata_", 1:length(files), ".gdx")
+
+shares <- lapply(sorted_files, get_trp_shares)
+prices <- lapply(sorted_files, get_fuel_prices)
+demand <- lapply(sorted_files, get_demand)
+
+library(stringr)
+# lapply(files, function(fname){str_extract(fname, "[0-9]+")})
+
+for(fname in files){
+    idx <- as.numeric(str_extract(fname, "[0-9]+"))
+    shares[[idx]][, iter := idx]
+    prices[[idx]][, iter := idx]
+    demand[[idx]][, iter := idx]
+}
+
+shares <- rbindlist(shares)
+prices <- rbindlist(prices)
+demand <- rbindlist(demand)
+
+## we are interested only in years up to 2100
+shares = shares[year <= 2100]
+prices = prices[year <= 2100]
+demand = demand[year <= 2100]
+```
+
+##Prices and shares in the iteration domain
+
+```{r, echo=FALSE}
+toplot <- prices[year == year_toplot  & iter < maxiter]
+
+ggplot(aes(iter, fe_price, group=all_enty, color=all_enty), data=toplot) +
+    geom_line() +
+    labs(x = "iteration #", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("Fuel Prices in the Iteration Domain, in ", year_toplot)) +
+    facet_wrap(~ all_regi, ncol=2, scales = "free" )
+# +
+#   ylim(c(0,50))
+```
+
+```{r, echo=FALSE}
+# toplot <- prices[year %in% c(year_toplot-5,year_toplot,year_toplot+5)]
+# toplot <- toplot[,.(fe_price=mean(fe_price)), by=c("all_regi","all_enty","iter")]
+# 
+# ggplot(aes(iter, fe_price, group=all_enty, color=all_enty), data=toplot) +
+#     geom_line() +
+#     labs(x = "iteration #", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("Fuel Prices in the Iteration Domain, average of ", year_toplot-5, ", ", year_toplot, ", ", year_toplot+5)) +
+#     facet_wrap(~ all_regi, ncol=2, scales = "free")
+
+
+```
+
+
+```{r, echo=FALSE}
+# toplot <- prices[year %in% c(year_toplot-5,year_toplot)]
+# toplot <- toplot[,.(fe_price=mean(fe_price)), by=c("all_regi","all_enty","iter")]
+# 
+# ggplot(aes(iter, fe_price, group=all_enty, color=all_enty), data=toplot) +
+#     geom_line() +
+#     labs(x = "iteration #", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("Fuel Prices in the Iteration Domain, average of ", year_toplot-5, ", ", year_toplot)) +
+#     facet_wrap(~ all_regi, ncol=2, scales = "free")
+
+
+```
+
+
+
+```{r, echo=FALSE}
+# toplot <- prices[year %in% c(year_toplot-10,year_toplot-5,year_toplot)]
+# toplot <- toplot[,.(fe_price=mean(fe_price)), by=c("all_regi","all_enty","iter")]
+# 
+# ggplot(aes(iter, fe_price, group=all_enty, color=all_enty), data=toplot) +
+#     geom_line() +
+#     labs(x = "iteration #", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("Fuel Prices in the Iteration Domain, average of ", year_toplot-10, ", ", year_toplot-5, ", ", year_toplot)) +
+#     facet_wrap(~ all_regi, ncol=2, scales = "free")
+
+
+```
+
+
+```{r, echo=FALSE}
+# toplot <- prices[year == year_toplot & all_regi == "EUR"]
+# 
+# ggplot(aes(iter, fe_price, group=all_enty, color=all_enty), data=toplot) +
+#     geom_line(size = 2) +
+#     labs(x = "iteration #", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("European Fuel Prices in the Iteration Domain, in ", year_toplot)) +
+#    # facet_wrap(~ all_regi, ncol=2)+
+#   theme_light()+
+#   scale_color_brewer(palette = "Set1") 
+```
+
+
+```{r, echo =FALSE}
+# toplot <- shares[year == year_toplot & iter < maxiter]
+# 
+# ggplot(aes(iter, tech_share, colour=all_teEs, shares=all_teEs), data=toplot) +
+#     geom_line() +
+#     labs(x = "iteration #", y = "Tech Share", color = "LDV Tech Type", title=paste0("Tech Shares in the Iteration Domain, in ", year_toplot)) +
+#     facet_wrap(~ all_regi, ncol=2)
+```
+
+```{r, echo=FALSE}
+
+toplot <- demand[year == year_toplot & all_in %in% c("entrp_pass_sm", "entrp_pass_lo")  & iter < maxiter]
+
+ggplot(aes(iter, CES_demand, colour=all_in, shares=all_in), data=toplot) +
+    geom_line() +
+    labs(x = "iteration #", y = "CES node aggr. pass. demand (trillion pkm)", color = "CES category", title=paste0("Aggregated Passenger Tranport Demand in the Iteration Domain, in ", year_toplot)) +
+    facet_wrap(~ all_regi, ncol=2)
+```
+
+
+```{r, echo=FALSE}
+
+# toplot <- demand[year == year_toplot & all_in %in% c("entrp_pass_sm", "entrp_pass_lo") & all_regi == "EUR"]
+# 
+# ggplot(aes(iter, CES_demand, colour=all_in, shares=all_in), data=toplot) +
+#     geom_line(size = 2) +
+#     labs(x = "iteration #", y = "CES node aggr. pass. demand (trillion pkm)", color = "CES category", title=paste0("Europe: aggregated Passenger Tranport Demand in the Iteration Domain, in ", year_toplot)) +
+#    # facet_wrap(~ all_regi, ncol=2)+
+#   theme_light()
+```
+
+
+```{r, echo=FALSE}
+toplot <- demand[year == year_toplot & all_in %in% c("entrp_frgt_sm", "entrp_frgt_lo")  & iter < maxiter]
+ggplot(aes(iter, CES_demand, colour=all_in, shares=all_in), data=toplot) +
+    geom_line() +
+    labs(x = "iteration #", y = "CES node aggr. freight demand (trillion tkm)", color = "CES category", title= paste0("Aggregated Freight Transport Demand in the Iteration Domain, in ", year_toplot)) +
+    facet_wrap(~ all_regi, ncol=2)
+```
+
+##Prices in the time domain
+
+```{r, echo=FALSE}
+# toplot <- prices[iter == iter_toplot]
+# 
+# ggplot(aes(year, fe_price, group=all_enty, color=all_enty), data=toplot) +
+#     geom_line() +
+#     labs(x = "Year", y = "US$ 2015/GJ", color = "Fuel Type", title=paste0("Fuel Prices in the Time Domain, in iteration ", iter_toplot)) +
+#     facet_wrap(~ all_regi, ncol=2)
+# +
+#   ylim(c(0,50))
+```
+
+```{r, echo=FALSE}
+
+enties = c("fegat", "fepet", "fedie", "feelt", "feh2t")
+
+for (enty in enties) {
+  toplot <- prices[all_enty == enty  & iter < maxiter]
+  toplot[, iter := as.numeric(iter)]
+
+  plot=ggplot(aes(year, fe_price, group=interaction(iter, all_enty), color=iter), data=toplot) +
+    geom_line() +
+    labs(x = "Year", y = "US$ 2015/GJ", color = "Iteration number", title=paste0("Fuel Prices in the Time Domain, across iterations, for ", enty)) +
+    facet_wrap(~ all_regi, scales = "free", ncol = 2)
+
+  print(plot)
+}
+
+```
+
+```{r, echo =FALSE}
+
+
+enty_vals = unique(prices$all_enty)
+toplot <- prices[year>=2005 & iter < maxiter]
+toplot[, iter := as.numeric(iter)]
+toplot[, min := min(fe_price), by = c("all_regi", "all_enty", "year")]
+toplot[, max := max(fe_price), by = c("all_regi", "all_enty", "year")]
+
+plot= ggplot()+
+  geom_ribbon(data = toplot, aes(x=year, group = all_enty, fill = all_enty, ymin = min, ymax = max), alpha = 0.5)+
+  facet_wrap(~ all_regi, scales = "free", ncol = 2)+
+  theme_minimal() +
+  facet_wrap(~ all_regi,ncol = 2) +
+  geom_line(data = toplot[iter == max(iter)], aes(year, fe_price, group=all_enty, color = all_enty), linetype = "dashed")+
+    labs(x = "Year", y = "US$ 2015/GJ", fill = "Fuel Type", color = "Final iteration", title=paste0("Fuel Prices in the Time Domain, across iterations"))
+
+
+print(plot)
+```
+
+
+## Shares in the time domain
+
+```{r, echo =FALSE}
+
+
+in_vals = unique(shares$all_in)
+
+for (in_val in in_vals) {
+  toplot <- shares[year>=2005 & all_in == in_val  & iter < maxiter]
+  toplot[, iter := as.numeric(iter)]
+
+  plot=ggplot() +
+    geom_line(aes(year, tech_share, group=interaction(iter, all_teEs), color=all_teEs, alpha = iter, linetype ="Intermediate Iter." ), data=toplot) +
+    geom_line(data = toplot[iter == max(iter)], aes(year, tech_share, group=all_teEs, linetype ="Last Iter.", color ="Last Iter."), color="black")+
+    scale_linetype_manual("Iteration Status",values=c("Intermediate Iter." = 1, "Last Iter."=2))+
+    labs(x = "Year", y = "[-]", color = "Fuel Type", title=paste0("Tech shares in the Time Domain, across iterations, for ", in_val)) +
+    facet_wrap(~ all_regi, scales = "free", ncol = 2)+
+    theme_minimal() +
+    facet_wrap(~ all_regi,ncol = 2)
+
+  print(plot)
+  
+}
+```
+
+
+
+
+```{r, echo =FALSE}
+
+
+in_vals = unique(shares$all_in)
+
+for (in_val in in_vals) {
+  toplot <- shares[year>=2005 & all_in == in_val  & iter < maxiter]
+  toplot[, iter := as.numeric(iter)]
+  toplot[, min := min(tech_share), by = c("all_regi", "all_teEs", "year")]
+  toplot[, max := max(tech_share), by = c("all_regi", "all_teEs", "year")]
+
+ plot= ggplot()+
+  geom_ribbon(data = toplot, aes(x=year, group = all_teEs, fill = all_teEs, ymin = min, ymax = max), alpha = 0.5)+
+  facet_wrap(~ all_regi, scales = "free", ncol = 2)+
+  theme_minimal() +
+  facet_wrap(~ all_regi,ncol = 2) +
+  geom_line(data = toplot[iter == max(iter)], aes(year, tech_share, group=all_teEs, color = all_teEs), linetype = "dashed")+
+    labs(x = "Year", y = "[-]", color = "Fuel Type", title=paste0("Tech shares in the Time Domain, across iterations, for ", in_val))
+
+
+  print(plot)
+  
+}
+```
+
+
+
+```{r, echo =FALSE}
+
+
+in_vals = unique(shares$all_in)
+
+for (in_val in in_vals) {
+  toplot <- demand[year>=2005 & all_in == in_val  & iter < maxiter]
+  toplot[, iter := as.numeric(iter)]
+  if (in_val %in% c("entrp_pass_sm","entrp_pass_lo")) {
+    ylabel = "[billion pkm]"
+  } else {
+    ylabel = "[billion tkm]"
+  }
+
+ plot= ggplot()+
+   geom_line(data = toplot, aes(x=year, y = CES_demand, group = iter, color = all_in, alpha = iter, linetype ="Intermediate Iter." ))+
+   geom_line(data = toplot[iter == max(iter)], aes(year, CES_demand, group=all_in, linetype ="Last Iter.", color ="Last Iter."), color="black")+
+   facet_wrap(~ all_regi, scales = "free", ncol = 2)+
+   theme_minimal() +
+   facet_wrap(~ all_regi,ncol = 2) +
+   scale_linetype_manual("Iteration Status",values=c("Intermediate Iter." = 1, "Last Iter."=2))+
+    labs(x = "Year", y = ylabel, color = "Transport Type", title=paste0("CES node value in Time Domain, across iterations, for ", in_val))
+
+
+  print(plot)
+  
+}
+```
+## A quality measure of convergence
+
+For starters, let us implement something rather simple:
+
+$$Q{r,s}=\sum_{t}\frac{\sum_{i=m}^N [s_{t,i}-Avg_i(s_{t,i})]^2}{Avg^2_i(s_{t,i})}$$
+
+
+for a variable $s$ over times $t$ with iteration index $i$ (first m iterations being ignored) and where $Avg_i$ denotes the average over the iteration index dimension. The region index $r$ is omitted on the right hand side.
+
+
+```{r, echo =FALSE}
+quality <- function(arr, m=3){
+    # we ignore the first m iterations
+    sum((arr[-(1:m)] - ave(arr[-(1:m)]))^2/ave(arr[-(1:m)])^2)
+}
+
+shares[, quality := quality(.SD$tech_share), by=c("all_regi", "all_teEs", "year")]
+top <- head(shares[order(-quality), max(quality), by=c("all_regi", "all_teEs", "year")], 15)
+top
+
+```
+
+```{r, echo=FALSE}
+ggplot(aes(iter, tech_share), data=shares[all_regi == top[1]$all_regi & all_teEs == top[1]$all_teEs & year == top[1]$year]) +
+    geom_line() +
+    labs(x = "iteration #", y = "Tech Share", color = "year", title=paste(top[1]$all_te, "Shares in", top[1]$all_regi, "in the Iteration Domain, in ", top[1]$year))
+```
+
