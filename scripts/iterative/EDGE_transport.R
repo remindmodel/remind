@@ -68,7 +68,7 @@ if (EDGE_scenario == "Conservative_liquids") {
 endogeff <<- EDGEscenarios[options== "endogeff", switch]
 enhancedtech <<- EDGEscenarios[options== "enhancedtech", switch]
 rebates_febates <<- EDGEscenarios[options== "rebates_febates", switch] ##NB THEY ARE ONLY IN PSI! ONLY WORKING IN EUROPE
-savetmpinput <<- opt$reporting
+
 smartlifestyle <<- EDGEscenarios[options== "smartlifestyle", switch]
 
 
@@ -96,27 +96,22 @@ int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
 price_nonmot = inputdata$price_nonmot
 
-## add learning optional
-setlearning = TRUE
-## add optional vintages
-addvintages = TRUE
 ## optional average of prices
 average_prices = FALSE
 ## inconvenience costs instead of preference factors
 inconvenience = TRUE
 
-if (setlearning | addvintages){
-  ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
-  ## select from total demand only the passenger sm
-  ES_demand = ES_demand[sector == "trn_pass",]
-}
+ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
+## select from total demand only the passenger sm
+ES_demand = ES_demand[sector == "trn_pass",]
 
 
-if (setlearning & file.exists("demand_previousiter.RDS")) {
+
+if (file.exists("demand_previousiter.RDS")) {
   ## load previous iteration number of cars
-  demand_BEVtmp = readRDS("demand_BEV.RDS")
+  demand_BEVtmp = readRDS(datapath("demand_BEV.RDS"))
   ## load previous iteration demand
-  ES_demandpr = readRDS("demand_previousiter.RDS")
+  ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## calculate non fuel costs and
   nonfuel_costs = applylearning(gdx,REMINDmapping,EDGE2teESmap, demand_BEVtmp, ES_demandpr)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
@@ -142,13 +137,13 @@ iter <- as.vector(gdxrrw::rgdx(gdx, list(name="o_iterationNumber"))$val)
 REMIND_prices[, iternum := iter]
 
 ## save REMIND prices (before dampening)
-saveRDS(REMIND_prices, paste0("REMINDprices", iter, ".RDS"))
+saveRDS(REMIND_prices, datapath(paste0("REMINDprices", iter, ".RDS")))
 
 
 if(average_prices){
 
   if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30){
-    old_prices <- readRDS(pfile)
+    old_prices <- readRDS(datapath(pfile))
     all_prices <- rbind(old_prices, REMIND_prices)
     setkeyv(all_prices, keys)
     ## apply moving avg
@@ -158,10 +153,10 @@ if(average_prices){
   }else{
     all_prices <- REMIND_prices
   }
-  saveRDS(all_prices, pfile)
+  saveRDS(all_prices, datapath(pfile))
 
   ## save REMIND prices (after dampening)
-  saveRDS(REMIND_prices,paste0("REMINDpricesDampened", iter, ".RDS"))
+  saveRDS(REMIND_prices, datapath(paste0("REMINDpricesDampened", iter, ".RDS")))
 
 }
 
@@ -197,46 +192,66 @@ shares <- logit_data[["share_list"]] ## shares of alternatives for each level of
 mj_km_data <- logit_data[["mj_km_data"]] ## energy intensity at a technology level
 prices <- logit_data[["prices_list"]] ## prices at each level of the logit function, 1990USD/pkm
 
-if(addvintages){
-  ## calculate vintages (new shares, prices, intensity)
-  vintages = calcVint(shares = shares,
-                      totdem_regr = ES_demand,
-                      prices = prices,
-                      mj_km_data = mj_km_data,
-                      years = REMINDyears)
 
-  shares$FV_shares = vintages[["shares"]]$FV_shares
-  prices = vintages[["prices"]]
-  mj_km_data = vintages[["mj_km_data"]]
-}
+## calculate vintages (new shares, prices, intensity)
+vintages = calcVint(shares = shares,
+                    totdem_regr = ES_demand,
+                    prices = prices,
+                    mj_km_data = mj_km_data,
+                    years = REMINDyears)
+
+shares$FV_shares = vintages[["shares"]]$FV_shares
+prices = vintages[["prices"]]
+mj_km_data = vintages[["mj_km_data"]]
+
 
 ## use logit to calculate shares and intensities (on tech level)
 EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
 
+
 shares_intensity_demand <- shares_intensity_and_demand(
-    logit_shares=shares,
-    MJ_km_base=mj_km_data,
-    EDGE2CESmap=EDGE2CESmap,
-    REMINDyears=REMINDyears,
-    scenario=scenario,
-    REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
+  logit_shares=shares,
+  MJ_km_base=mj_km_data,
+  EDGE2CESmap=EDGE2CESmap,
+  REMINDyears=REMINDyears,
+  scenario=scenario,
+  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
+  demand_input = if (opt$reporting) ES_demand)
 
 demByTech <- shares_intensity_demand[["demand"]] ##in [-]
 intensity <- shares_intensity_demand[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_intensity_demand$demandF_plot_pkm ## total demand is 1, required for costs
 
-if (setlearning) {
-  demand_BEV=calc_num_vehicles( norm_dem_BEV = norm_demand[technology == "BEV" & ## battery vehicles
-                                                           subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
-                                                           c("iso", "year", "sector", "vehicle_type", "demand_F") ],
-                                ES_demand = ES_demand)
+if (opt$reporting) {
+  saveRDS(vintages, file=datapath("vintages.RDS"))
 
-  ## save number of vehicles for next iteration
-  saveRDS(demand_BEV, "demand_BEV.RDS")
-  ## save the demand for next iteration renaming the column
-  setnames(ES_demand, old ="demand", new = "demandpr")
-  saveRDS(ES_demand, "demand_previousiter.RDS")
+  saveRDS(logit_data$share_list, file = datapath("share_newvehicles.RDS"))
+  saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
+  saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
+  saveRDS(nonfuel_costs, file=datapath("nonfuel_costs.RDS"))
+  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
+
+  saveRDS(shares_intensity_and_demand$demandF_plot_EJ,
+          file=datapath("demandF_plot_EJ.RDS"))
+  saveRDS(shares_intensity_and_demand$demandF_plot_pkm,
+          file=datapath("demandF_plot_pkm.RDS"))
+
 }
+
+
+demand_BEV=calc_num_vehicles(
+  norm_dem_BEV = norm_demand[
+    technology == "BEV" & ## battery vehicles
+    subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
+    c("iso", "year", "sector", "vehicle_type", "demand_F") ],
+  ES_demand = ES_demand)
+
+## save number of vehicles for next iteration
+saveRDS(demand_BEV, datapath("demand_BEV.RDS"))
+## save the demand for next iteration renaming the column
+setnames(ES_demand, old ="demand", new = "demandpr")
+saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
+
 
 
 ## use logit to calculate costs
