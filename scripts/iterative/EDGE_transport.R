@@ -47,12 +47,9 @@ EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 
 EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
-merge_traccs <<- EDGEscenarios[options == "merge_traccs", switch]
-addvintages <<- EDGEscenarios[options == "addvintages", switch]
-inconvenience <<- EDGEscenarios[options == "inconvenience", switch]
-selfmarket_taxes <<- EDGEscenarios[options == "selfmarket_taxes", switch]
-selfmarket_policypush <<- EDGEscenarios[options == "selfmarket_policypush", switch]
-selfmarket_acceptancy <<- EDGEscenarios[options == "selfmarket_acceptancy", switch]
+inconvenience <- EDGEscenarios[options == "inconvenience", switch]
+selfmarket_policypush <- EDGEscenarios[options == "selfmarket_policypush", switch]
+selfmarket_acceptancy <- EDGEscenarios[options == "selfmarket_acceptancy", switch]
 
 if (EDGE_scenario == "Conservative_liquids") {
   techswitch <<- "Liquids"
@@ -64,13 +61,6 @@ if (EDGE_scenario == "Conservative_liquids") {
   print("You selected a not allowed scenario. Scenarios allowed are: Conservative_liquids, Hydrogen_push, Electricity_push, Smart_lifestyles_Electricity_push")
   exit()
 }
-
-endogeff <<- EDGEscenarios[options== "endogeff", switch]
-enhancedtech <<- EDGEscenarios[options== "enhancedtech", switch]
-rebates_febates <<- EDGEscenarios[options== "rebates_febates", switch] ##NB THEY ARE ONLY IN PSI! ONLY WORKING IN EUROPE
-
-smartlifestyle <<- EDGEscenarios[options== "smartlifestyle", switch]
-
 
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
@@ -98,8 +88,7 @@ price_nonmot = inputdata$price_nonmot
 
 ## optional average of prices
 average_prices = FALSE
-## inconvenience costs instead of preference factors
-inconvenience = TRUE
+
 
 ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
 ## select from total demand only the passenger sm
@@ -172,7 +161,9 @@ if (inconvenience) {
     inco_data = inco_data,
     logit_params = logit_params,
     intensity_data = int_dat,
-    price_nonmot = price_nonmot)
+    price_nonmot = price_nonmot,
+    selfmarket_policypush = selfmarket_policypush,
+    selfmarket_acceptancy = selfmarket_acceptancy)
 
 } else{
 
