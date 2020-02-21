@@ -240,7 +240,7 @@ if (opt$reporting) {
           file=datapath("demandF_plot_EJ.RDS"))
   saveRDS(shares_intensity_demand$demandF_plot_pkm,
           file=datapath("demandF_plot_pkm.RDS"))
-  stop()
+  quit()
 }
 
 
