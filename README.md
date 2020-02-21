@@ -18,7 +18,7 @@ The model documentation for version 2.1 can be found at XXX.
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T))`
+package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, use_advanced_interfacePlot_function=T))`
 in the main folder of the model.
 The resulting documentation can be found in the folder "doc".
 
