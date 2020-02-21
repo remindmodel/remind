@@ -200,7 +200,7 @@ mj_km_data = vintages[["mj_km_data"]]
 EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
 
 
-shares_intensity_demand <- shares_intensity_and_demand(
+shares_int_dem <- shares_intensity_and_demand(
   logit_shares=shares,
   MJ_km_base=mj_km_data,
   EDGE2CESmap=EDGE2CESmap,
@@ -209,9 +209,24 @@ shares_intensity_demand <- shares_intensity_and_demand(
   REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
   demand_input = if (opt$reporting) ES_demand)
 
-demByTech <- shares_intensity_demand[["demand"]] ##in [-]
-intensity <- shares_intensity_demand[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_intensity_demand$demandF_plot_pkm ## total demand is 1, required for costs
+demByTech <- shares_int_dem[["demand"]] ##in [-]
+intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
+norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
+
+
+if (opt$reporting) {
+  saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
+  saveRDS(vintages[["newcomp"]], file = datapath("newcomp.RDS"))
+  saveRDS(shares, file = datapath("shares.RDS"))
+  saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
+  saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
+  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
+  saveRDS(shares_int_dem$demandF_plot_EJ,
+          file=datapath("demandF_plot_EJ.RDS"))
+  saveRDS(shares_int_dem$demandF_plot_pkm,
+          datapath("demandF_plot_pkm.RDS"))
+  saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
+}
 
 demand_BEV=calc_num_vehicles(
   norm_dem_BEV = norm_demand[

@@ -34,7 +34,7 @@ cols <- c("NG" = "#d11141",
           "FCEV" = "#00aedb")
 
 datapath <- function(fname){
-  file.path("./input_EDGE/", fname)
+  file.path("./EDGE-T/", fname)
 }
 
 mapspath <- function(fname, scenariopath=""){
@@ -43,143 +43,23 @@ mapspath <- function(fname, scenariopath=""){
 
 
 ## Load mappings
-EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
-
-REMIND2ISO_MAPPING <- fread("../../config/regionmappingH12.csv")[, .(iso = CountryCode,
-                                                                         region = RegionCode)]
-
+REMIND2ISO_MAPPING <- fread("../../config/regionmappingH12.csv")[, .(iso = CountryCode, region = RegionCode)]
 EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
 
-REMINDyears <- c(1990,
-           seq(2005, 2060, by = 5),
-           seq(2070, 2110, by = 10),
-           2130, 2150)
+## load input data from last EDGE run
+demand_km <- readRDS(datapath(fname = "demandF_plot_pkm.RDS")) ## detailed energy services demand, million km
+demand_ej <- readRDS(datapath(fname = "demandF_plot_EJ.RDS")) ## detailed final energy demand, EJ
+vintcomp <- readRDS(datapath(fname = "vintcomp.RDS"))
+newcomp <- readRDS(datapath(fname = "newcomp.RDS"))
+shares <- readRDS(datapath(fname = "shares.RDS"))
+inco_tech <- readRDS(datapath(fname = "inco_costs.RDS"))
+EF_shares <- readRDS(datapath(fname = "EF_shares.RDS"))
+annual_sales <- readRDS(datapath(fname = "annual_sales.RDS"))
+mj_km_data <- readRDS(datapath(fname = "mj_km_data.RDS"))
 
-years <- c(1990,
-           seq(2005, 2060, by = 5),
-           seq(2070, 2110, by = 10),
-           2130, 2150)
-
-load("config.Rdata")
-
-EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
-
-## load EDGE settings and apply them
-settingsEDGE = readRDS(paste0(output_folder, "settingsEDGE.RDS"))
-
-selfmarket_taxes <<- as.logical(settingsEDGE[settings == "selfmarket_taxes", value])
-selfmarket_policypush <<- as.logical(settingsEDGE[settings == "selfmarket_policypush", value])
-selfmarket_acceptancy <<- as.logical(settingsEDGE[settings == "selfmarket_acceptancy", value])
-techswitch <<- settingsEDGE[settings == "techswitch", value]
-enhancedtech <<- as.logical(settingsEDGE[settings == "enhancedtech", value])
-rebates_febates <<- as.logical(settingsEDGE[settings == "rebates_febates", value])
-
-## models of ICE are available to consumers?
-endogeff <<-TRUE
-
-## save intermediate input for plotting purposes
-savetmpinput <<- TRUE
-
-## is learning applied?
-setlearning <<- TRUE
-
-## load input data from REMIND
-gdx = paste0("fulldata.gdx") ## gdx file
 name_mif = list.files(pattern = "REMIND_generic", full.names = F)
 name_mif = name_mif[!grepl("withoutPlu", name_mif)]
 miffile <- as.data.table(read.quitte(name_mif))
-
-## load input data from EDGE
-input_path = paste0("../../modules/35_transport/edge_esm/input/")
-
-inputdata = createRDS(input_path, SSP_scenario = scenario, EDGE_scenario = EDGE_scenario)
-vot_data = inputdata$vot_data
-sw_data = inputdata$sw_data
-inco_data = inputdata$inco_data
-logit_params = inputdata$logit_params
-int_dat = inputdata$int_dat
-nonfuel_costs = inputdata$nonfuel_costs
-price_nonmot = inputdata$price_nonmot
-
-## load total energy services demand
-ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
-
-if (setlearning) {
-  ## load non fuel costs based on learning
-  nonfuel_costs = readRDS(paste0("nonfuel_costs_learning.RDS"))
-}
-
-## calculate prices
-REMIND_prices <- merge_prices(
-  gdx = gdx,
-  REMINDmapping = REMIND2ISO_MAPPING,
-  REMINDyears = REMINDyears,
-  intensity_data = int_dat,
-  nonfuel_costs = nonfuel_costs)
-
-## calculate logit
-logit_data <- calculate_logit_inconv_endog(
-  prices= REMIND_prices[tot_price > 0],
-  vot_data = vot_data,
-  inco_data = inco_data,
-  logit_params = logit_params,
-  intensity_data = int_dat,
-  price_nonmot = price_nonmot)
-
-shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
-mj_km_data <- logit_data[["mj_km_data"]] ## energy intensity at a technology level
-prices <- logit_data[["prices_list"]] ## prices at each level of the logit function, 1990USD/pkm
-sales_LDV <- logit_data[["annual_sales"]] ## annual sales composition of LDVs, %
-inco_tech <- logit_data$inconv_cost ## inconvenience cost, 1990USD/pkm
-
-if(savetmpinput){
-  saveRDS(logit_data$share_list, file = paste0(output_folder, "/share_newvehicles.RDS"))
-  saveRDS(logit_data$EF_shares, file = paste0(output_folder, "EF_shares.RDS"))
-  saveRDS(logit_data$mj_km_data, file= paste0(output_folder, "mj_km_data.RDS"))
-  saveRDS(nonfuel_costs, file=paste0(output_folder, "nonfuel_costs.RDS"))
-  saveRDS(inco_tech, file=paste0(output_folder, "inco_costs.RDS"))
-  saveRDS(REMIND_prices, file=paste0(output_folder, "fuel_prices.RDS"))
-}
-
-## calculate vintages (new shares, prices, intensity)
-vintages = calcVint(shares = shares,
-                    totdem_regr = ES_demand[sector == "trn_pass"],
-                    prices = prices,
-                    mj_km_data = mj_km_data,
-                    years = years)
-
-shares$FV_shares = vintages[["shares"]]$FV_shares  ## the shares need to be updated with the vintages calculations
-prices = vintages[["prices"]] ## prices as well
-mj_km_data = vintages[["mj_km_data"]] ## ... and energy intensity as well
-vintcomp = vintages[["vintcomp"]]  ## composition of vintages
-newcomp = vintages[["newcomp"]] ## composition of new additions
-
-
-if (savetmpinput) {
-  saveRDS(vintages, file=paste0(output_folder, fname = "vintages.RDS"))
-}
-
-## calculate energy intensity and FE demand at a REMIND-region level for the desired level of aggregation
-res <- shares_intensity_and_demand(
-  logit_shares=shares,
-  MJ_km_base=mj_km_data,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
-  EDGE2CESmap=EDGE2CESmap,
-  REMINDyears=REMINDyears,
-  demand_input = ES_demand)
-
-
-if(savetmpinput){
-  saveRDS(res$demandF_plot_EJ, file=paste0(output_folder, "demandF_plot_EJ.RDS"))
-  saveRDS(res$demandF_plot_pkm, file=paste0(output_folder, "demandF_plot_pkm.RDS"))
-  }
-
-
-demand_km <- res$demandF_plot_pkm ## detailed energy services demand, million km
-demand_ej <- res$demandF_plot_EJ ## detailed final energy demand, EJ
-sharesVS1 <- shares$VS1_shares ## shares at vehicle type level
-sharesFV <- shares$FV_shares ## shares at fuel type level
-
 ```
 
 # LDVs vintages
@@ -187,15 +67,15 @@ sharesFV <- shares$FV_shares ## shares at fuel type level
 ```{r, echo=FALSE, warning=FALSE}
 
 plotVint = function(vintcomp, newcomp, sharesVS1){
-  vintcomp = vintcomp[,.(totdem, iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint, EDGE_scenario)]
-  newcomp = newcomp[,.(iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_new, EDGE_scenario)]
+  vintcomp = vintcomp[,.(totdem, iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
+  newcomp = newcomp[,.(iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
-  allfleet = merge(newcomp, vintcomp, all =TRUE, by = c("iso", "sector", "subsector_L1", "vehicle_type", "technology",  "year", "EDGE_scenario"))
+  allfleet = merge(newcomp, vintcomp, all =TRUE, by = c("iso", "sector", "subsector_L1", "vehicle_type", "technology",  "year"))
   allfleet = merge(allfleet, sharesVS1[,.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)], all.x=TRUE, by = c("iso", "year", "vehicle_type", "subsector_L1"))
   allfleet[,vintdem:=totdem*sharetech_vint*shareVS1]
   allfleet[,newdem:=totdem*sharetech_new*shareVS1]
   allfleet=melt(allfleet, id.vars = c("iso", "sector", "subsector_L1", "vehicle_type", "technology",
-                                      "year", "EDGE_scenario"), measure.vars = c("vintdem", "newdem"))
+                                      "year"), measure.vars = c("vintdem", "newdem"))
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
   load_factor = 2
@@ -232,7 +112,7 @@ plotVint = function(vintcomp, newcomp, sharesVS1){
   }
 
 
-p = plotVint(vintcomp, newcomp, sharesVS1)
+p = plotVint(vintcomp, newcomp, shares$VS1_shares)
 
 p
 
@@ -290,18 +170,18 @@ intcompplotf = function(EF_shares, FV_shares, VS1_shares){
 
 }
 
-intcompplotf(logit_data$EF_shares, sharesFV, sharesVS1)
+intcompplotf(EF_shares, shares$FV_shares, shares$VS1_shares)
 ```
 
 # Sales of LDVs
 
 ```{r, echo=FALSE, warning=FALSE}
-salesplot = function(sales_LDV){
-  sales_LDV = unique(sales_LDV[,c("iso","year", "technology", "shareFS1")])
-  sales_LDV <- sales_LDV[,.(shareFS1=sum(shareFS1)),by=c("iso","technology","year")]
+salesplot = function(annual_sales){
+  annual_sales = unique(annual_sales[,c("iso","year", "technology", "shareFS1")])
+  annual_sales <- annual_sales[,.(shareFS1=sum(shareFS1)),by=c("iso","technology","year")]
 
   p = ggplot()+
-    geom_bar(data = sales_LDV[year<=2050  & year>=2015 & iso == iso_plot], aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
+    geom_bar(data = annual_sales[year<=2050  & year>=2015 & iso == iso_plot], aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
     theme_minimal()+
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
@@ -315,7 +195,7 @@ salesplot = function(sales_LDV){
 }
 
 
-salesplot(sales_LDV)
+salesplot(annual_sales)
 ```
 
 # Final energy demand
@@ -491,7 +371,7 @@ demandpkmplotf(demand_km)
 
 ```{r, echo=FALSE, warning=FALSE}
 
-CO2km_intensity_newsalesplotf = function(shares_LDV, mj_km_data, sharesVS1, shares_source_liquids){
+CO2km_intensity_newsalesplotf = function(annual_sales, mj_km_data, sharesVS1, shares_source_liquids){
   shares_source_liquids[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Oil", "FE|Transport|Liquids|Coal"), "Oil", "Biodiesel")]
   shares_source_liquids = shares_source_liquids[,.(value = sum(value)), by = c("model","scenario","region", "period", "unit","technology")]
   shares_source_liquids = shares_source_liquids[region != "World"]
@@ -525,7 +405,7 @@ CO2km_intensity_newsalesplotf = function(shares_LDV, mj_km_data, sharesVS1, shar
   emi_fuel[is.na(gCO2_MJ) & !technology %in% c("Liquids", "NG"), gCO2_MJ := 0]
   emi_fuel[, gCO2_km := MJ_km * gCO2_MJ]
 
-  totalemi = merge(emi_fuel, shares_LDV, all.y = TRUE, by = c("iso", "year", "technology", "vehicle_type", "subsector_L1"), all.x = TRUE)
+  totalemi = merge(emi_fuel, annual_sales, all.y = TRUE, by = c("iso", "year", "technology", "vehicle_type", "subsector_L1"), all.x = TRUE)
   totalemi = totalemi[!is.na(share) & !is.na(gCO2_km)]
   totalemi[, gCO2_km_ave := gCO2_km*share]
 
@@ -555,5 +435,5 @@ CO2km_intensity_newsalesplotf = function(shares_LDV, mj_km_data, sharesVS1, shar
 }
 
 shares_source_liquids = miffile[variable %in% c("FE|Transport|Liquids|Biomass", "FE|Transport|Liquids|Coal", "FE|Transport|Liquids|Oil"),]
-CO2km_intensity_newsalesplotf(sales_LDV, mj_km_data, sharesVS1 = vintages$shares$VS1_shares, shares_source_liquids)
+CO2km_intensity_newsalesplotf(annual_sales, mj_km_data, sharesVS1 = shares$VS1_shares, shares_source_liquids)
 ```
