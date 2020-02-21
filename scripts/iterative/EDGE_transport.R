@@ -70,7 +70,7 @@ EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
 ## input data loading
 input_folder = paste0("../../modules/35_transport/edge_esm/input/")
 
-if (length(list.files(path = data_folder, pattern = "RDS")) < 8) {
+if (length(list.files(path = data_folder, pattern = "RDS")) < 7) {
   createRDS(input_folder, data_folder,
             SSP_scenario = scenario,
             EDGE_scenario = EDGE_scenario)
@@ -213,23 +213,6 @@ demByTech <- shares_intensity_demand[["demand"]] ##in [-]
 intensity <- shares_intensity_demand[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_intensity_demand$demandF_plot_pkm ## total demand is 1, required for costs
 
-if (opt$reporting) {
-  saveRDS(vintages, file=datapath("vintages.RDS"))
-
-  saveRDS(logit_data$share_list, file = datapath("share_newvehicles.RDS"))
-  saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
-  saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
-  saveRDS(nonfuel_costs, file=datapath("nonfuel_costs.RDS"))
-  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
-
-  saveRDS(shares_intensity_and_demand$demandF_plot_EJ,
-          file=datapath("demandF_plot_EJ.RDS"))
-  saveRDS(shares_intensity_and_demand$demandF_plot_pkm,
-          file=datapath("demandF_plot_pkm.RDS"))
-
-}
-
-
 demand_BEV=calc_num_vehicles(
   norm_dem_BEV = norm_demand[
     technology == "BEV" & ## battery vehicles
@@ -242,6 +225,23 @@ saveRDS(demand_BEV, datapath("demand_BEV.RDS"))
 ## save the demand for next iteration renaming the column
 setnames(ES_demand, old ="demand", new = "demandpr")
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
+
+
+if (opt$reporting) {
+  saveRDS(vintages, file=datapath("vintages.RDS"))
+
+  saveRDS(logit_data$share_list, file = datapath("share_newvehicles.RDS"))
+  saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
+  saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
+  saveRDS(nonfuel_costs, file=datapath("nonfuel_costs.RDS"))
+  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
+
+  saveRDS(shares_intensity_demand$demandF_plot_EJ,
+          file=datapath("demandF_plot_EJ.RDS"))
+  saveRDS(shares_intensity_demand$demandF_plot_pkm,
+          file=datapath("demandF_plot_pkm.RDS"))
+  return()
+}
 
 
 
