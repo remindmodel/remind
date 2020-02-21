@@ -4,7 +4,7 @@ opt_parser = OptionParser(
   description = "Coupled version of EDGE-T, to be run within a REMIND output folder.",
   option_list = list(
     make_option(
-      "--reporting", action="store_true",
+      "--reporting", action="store_true", default=FALSE,
       help="Store output files in subfolder EDGE-T")));
 opt = parse_args(opt_parser);
 
