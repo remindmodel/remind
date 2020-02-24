@@ -226,6 +226,7 @@ if (opt$reporting) {
   saveRDS(shares_int_dem$demandF_plot_pkm,
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
+  quit()
 }
 
 demand_BEV=calc_num_vehicles(
@@ -240,24 +241,6 @@ saveRDS(demand_BEV, datapath("demand_BEV.RDS"))
 ## save the demand for next iteration renaming the column
 setnames(ES_demand, old ="demand", new = "demandpr")
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
-
-
-if (opt$reporting) {
-  saveRDS(vintages, file=datapath("vintages.RDS"))
-
-  saveRDS(logit_data$share_list, file = datapath("share_newvehicles.RDS"))
-  saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
-  saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
-  saveRDS(nonfuel_costs, file=datapath("nonfuel_costs.RDS"))
-  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
-
-  saveRDS(shares_intensity_demand$demandF_plot_EJ,
-          file=datapath("demandF_plot_EJ.RDS"))
-  saveRDS(shares_intensity_demand$demandF_plot_pkm,
-          file=datapath("demandF_plot_pkm.RDS"))
-  quit()
-}
-
 
 
 ## use logit to calculate costs
