@@ -23,7 +23,6 @@ $Ifi "%carbonprice%" == "NPi2018" $include "./modules/45_carbonprice/NPi2018/rea
 $Ifi "%carbonprice%" == "diffCurvPhaseIn2Lin" $include "./modules/45_carbonprice/diffCurvPhaseIn2Lin/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseIn2Constant" $include "./modules/45_carbonprice/diffPhaseIn2Constant/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseIn2Lin" $include "./modules/45_carbonprice/diffPhaseIn2Lin/realization.gms"
-$Ifi "%carbonprice%" == "diffPhaseIn2LinFlex" $include "./modules/45_carbonprice/diffPhaseIn2LinFlex/realization.gms"
 $Ifi "%carbonprice%" == "diffPhaseInLin2LinFlex" $include "./modules/45_carbonprice/diffPhaseInLin2LinFlex/realization.gms"
 $Ifi "%carbonprice%" == "diffPriceSameCost" $include "./modules/45_carbonprice/diffPriceSameCost/realization.gms"
 $Ifi "%carbonprice%" == "exogenous" $include "./modules/45_carbonprice/exogenous/realization.gms"
