@@ -96,7 +96,7 @@ ES_demand = ES_demand[sector == "trn_pass",]
 
 
 
-if (file.exists("demand_previousiter.RDS")) {
+if (file.exists(datapath("demand_previousiter.RDS"))) {
   ## load previous iteration number of cars
   demand_BEVtmp = readRDS(datapath("demand_BEV.RDS"))
   ## load previous iteration demand
