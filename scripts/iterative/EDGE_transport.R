@@ -90,9 +90,9 @@ price_nonmot = inputdata$price_nonmot
 average_prices = FALSE
 
 
-ES_demand = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
+ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
 ## select from total demand only the passenger sm
-ES_demand = ES_demand[sector == "trn_pass",]
+ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 
@@ -207,7 +207,7 @@ shares_int_dem <- shares_intensity_and_demand(
   REMINDyears=REMINDyears,
   scenario=scenario,
   REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
-  demand_input = if (opt$reporting) ES_demand)
+  demand_input = if (opt$reporting) ES_demand_all)
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
