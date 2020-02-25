@@ -1,4 +1,12 @@
 require(rmarkdown)
+require(lucode)
+
+if(!exists("source_include")) {
+  ## Define arguments that can be read from command line
+  readArgs("outputdir","gdx_name","gdx_ref_name")
+}
+
+load(file.path(outputdir, "config.Rdata"))
 
 ## run EDGE transport validation output if required
 if(cfg$gms$transport == "edge_esm"){
