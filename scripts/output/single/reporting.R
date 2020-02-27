@@ -51,6 +51,8 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 }
 
 ## generate EDGE-T reporting if it is needed
+## the reporting is appended to REMIND_generic_<scenario>.MIF
+## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 if(file.exists(file.path(outputdir, "EDGE-T"))){
   reportEDGETransport(outputdir)
 }
