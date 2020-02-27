@@ -50,6 +50,11 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
              sep = ""))
 }
 
+## generate EDGE-T reporting if it is needed
+if(file.exists(file.path(outputdir, "EDGE-T"))){
+  reportEDGETransport(outputdir)
+}
+
 # produce REMIND LCOE reporting *.mif based on gdx information
 tmp <- try(convGDX2MIF_LCOE(gdx,gdx_ref,file=LCOE_reporting_file,scenario=scenario)) # execute convGDX2MIF_LCOE
 
