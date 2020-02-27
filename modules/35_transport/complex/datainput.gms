@@ -13,6 +13,8 @@ Parameter
         entrp   1.5
           fetf  0.8
   /
+
+  p35_valconv                "temporary parameter used to set convergence between regions"
 ;
 pm_cesdata_sigma(ttot,in)$p35_cesdata_sigma(in) = p35_cesdata_sigma(in);
 
@@ -28,6 +30,25 @@ p35_pass_FE_share_transp(regi)                               = f35_transp_eff(re
 p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)  = f35_transp_eff(regi,"Eff_Pass_nonLDV");   
 p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Pass_LDV");
 p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Freight");
+
+
+p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Pass_nonLDV"));
+
+p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_pass_nonLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+
+p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Pass_LDV"));
+
+p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_passLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+
+p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Freight"));
+
+p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_freight_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+
+
+display p35_pass_nonLDV_ES_efficiency;
+display p35_passLDV_ES_efficiency;
+display p35_freight_ES_efficiency;
+
 
 *CB* read-in of bunker share in non-LDV transport, i.e. fedie. Based on regional linear regional aggregation, but limited to 50% (binding in EU, OAS, RUS)
 Parameter  pm_bunker_share_in_nonldv_fe(tall,all_regi)       "share of bunkers in non-LDV transport, i.e. fedie"
