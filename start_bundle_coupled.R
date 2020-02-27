@@ -12,17 +12,17 @@
 path_remind <- paste0(getwd(),"/")   # provide path to REMIND. Default: the actual path which the script is started from
 path_magpie <- "/p/projects/piam/runs/coupled-magpie/"
 
-# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path and name prefix here. 
-# Note: the sceanrio names have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
-# file that you read in below to path_settings_coupled
-path_remind_oldruns <- paste0(path_remind,"output-20200129/")
-path_magpie_oldruns <- paste0(path_magpie,"output-20200129/")
+# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path here and the name prefix below. 
+# Note: the sceanrio names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
+# file that you read in below to path_settings_coupled (scenario_config_coupled_xxx.csv).
+path_remind_oldruns <- paste0(path_remind,"output/")
+path_magpie_oldruns <- paste0(path_magpie,"output/")
 
 # The scripts automatically adds a prefix (name of your remind path) to the scenario names. This is useful because it enables 
 # using the same MAgPIE and REMIND output folders to store results of coupled runs from multiple REMIND revisions (prevents double names)
 # If you want the script to find gdxs or reports of older runs as starting point for new runs please 
 # provide the prefix of the old run names so the script can find them.
-prefix_oldruns <-  "C_" # "REMIND_" # "coupled-remind_" # 
+prefix_oldruns <-  "C_"
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
