@@ -144,6 +144,8 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
 
 prepare_and_run <- function() {
   
+  start_time <- Sys.time()
+  
   # Load libraries
   require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
@@ -798,6 +800,13 @@ prepare_and_run <- function() {
   ###########################################################################################################################################################
   ###########################################################################################################################################################
   ###########################################################################################################################################################
+  
+  end_time <- Sys.time()
+  # Save run statistics to local file
+  cat("Saving start_time and end_time to runstatistics.rda\n")
+  lucode::runstatistics(file      = paste0(cfg$results_folder,"/runstatistics.rda"),
+                        starttime = start_time,
+                        endtime   = end_time)
   
   return(cfg$results_folder)
   
