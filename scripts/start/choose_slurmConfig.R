@@ -19,19 +19,19 @@ choose_slurmConfig <- function() {
   
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
   if (slurm) {
-    modes <- c(" SLURM standby  - task per node: 12 (nash H12) [recommended]",
-               " SLURM standby  - task per node: 13 (nash H12 coupled)",
-               " SLURM standby  - task per node: 16 (nash H12+)",
-               " SLURM standby  - task per node:  1 (nash debug, testOneRegi, reporting)",
-               " SLURM priority - task per node: 12 (nash H12) [recommended]",
-               " SLURM priority - task per node: 13 (nash H12 coupled)",
-               " SLURM priority - task per node: 16 (nash H12+)",
-               " SLURM priority - task per node:  1 (nash debug, testOneRegi, reporting)",
-               " SLURM short    - task per node: 12 (nash H12)",
-               "SLURM short    - task per node: 16 (nash H12+)",
-               "SLURM short    - task per node:  1 (nash debug, testOneRegi, reporting)",
-               "SLURM medium   - task per node:  1 (negishi)",
-               "SLURM long     - task per node:  1 (negishi)")
+    modes <- c(" SLURM standby  - task per node: 12 (recommended for: nash H12) [recommended]",
+               " SLURM standby  - task per node: 13 (recommended for: nash H12 coupled)",
+               " SLURM standby  - task per node: 16 (recommended for: nash H12+)",
+               " SLURM standby  - task per node:  1 (recommended for: nash debug, testOneRegi, reporting)",
+               " SLURM priority - task per node: 12 (recommended for: nash H12) [recommended]",
+               " SLURM priority - task per node: 13 (recommended for: nash H12 coupled)",
+               " SLURM priority - task per node: 16 (recommended for: nash H12+)",
+               " SLURM priority - task per node:  1 (recommended for: nash debug, testOneRegi, reporting)",
+               " SLURM short    - task per node: 12 (recommended for: nash H12)",
+               "SLURM short    - task per node: 16 (recommended for: nash H12+)",
+               "SLURM short    - task per node:  1 (recommended for: nash debug, testOneRegi, reporting)",
+               "SLURM medium   - task per node:  1 (recommended for: negishi)",
+               "SLURM long     - task per node:  1 (recommended for: negishi)")
 
     cat("\nCurrent cluster utilization:\n")
     system("sclass")
