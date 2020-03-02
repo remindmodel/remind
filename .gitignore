@@ -1,5 +1,6 @@
 .*.un~
 .*.swp
+.Rhistory
 input/
 output/*
 main.lst
