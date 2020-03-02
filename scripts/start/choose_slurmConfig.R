@@ -18,27 +18,32 @@ get_line <- function(){
 choose_slurmConfig <- function() {
   
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
-  if (slurm) {
-    modes <- c(" SLURM standby  - task per node: 12 (nash H12) [recommended]",
-               " SLURM standby  - task per node: 13 (nash H12 coupled)",
-               " SLURM standby  - task per node: 16 (nash H12+)",
-               " SLURM standby  - task per node:  1 (nash debug, testOneRegi, reporting)",
-               " SLURM priority - task per node: 12 (nash H12) [recommended]",
-               " SLURM priority - task per node: 13 (nash H12 coupled)",
-               " SLURM priority - task per node: 16 (nash H12+)",
-               " SLURM priority - task per node:  1 (nash debug, testOneRegi, reporting)",
-               " SLURM short    - task per node: 12 (nash H12)",
-               "SLURM short    - task per node: 16 (nash H12+)",
-               "SLURM short    - task per node:  1 (nash debug, testOneRegi, reporting)",
-               "SLURM medium   - task per node:  1 (negishi)",
-               "SLURM long     - task per node:  1 (negishi)")
+  if (slurm) { 
+    modes <- c(" 1: SLURM standby               12   nash H12             [recommended]",
+               " 2: SLURM standby               13   nash H12 coupled",
+               " 3: SLURM standby               16   nash H12+",
+               " 4: SLURM standby                1   nash debug, testOneRegi, reporting",
+               "-----------------------------------------------------------------------",
+               " 5: SLURM priority              12   nash H12             [recommended]",
+               " 6: SLURM priority              13   nash H12 coupled",
+               " 7: SLURM priority              16   nash H12+",
+               " 8: SLURM priority               1   nash debug, testOneRegi, reporting",
+               "-----------------------------------------------------------------------",
+               " 9: SLURM short                 12   nash H12",
+               "10: SLURM short                 16   nash H12+",
+               "11: SLURM short                  1   nash debug, testOneRegi, reporting",
+               "12: SLURM medium                 1   negishi",
+               "13: SLURM long                   1   negishi")
 
     cat("\nCurrent cluster utilization:\n")
     system("sclass")
     cat("\n")
 
-    cat("\nPlease choose run submission type:\n")
-    cat(paste(1:length(modes), modes, sep=": " ),sep="\n")
+    cat("\nPlease choose the SLURM configuration for your submission:\n")
+    cat("    QOS             tasks per node   suitable for\n=======================================================================\n")
+    #cat(paste(1:length(modes), modes, sep=": " ),sep="\n")
+    cat(modes,sep="\n")
+    cat("=======================================================================\n")
     cat("Number: ")
     identifier <- get_line()
     identifier <- as.numeric(strsplit(identifier,",")[[1]])
