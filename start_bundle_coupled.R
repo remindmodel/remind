@@ -269,9 +269,6 @@ for(scen in common){
       }
   }
 
-  # set start year of GHG emission pricing phase-in (only used in price_jan19)
-  cfg_mag$gms$s56_ghgprice_start <- cfg_rem$gms$cm_startyear
-  
   save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,file=paste0(runname,".RData"))
 
   # Define colors for output
