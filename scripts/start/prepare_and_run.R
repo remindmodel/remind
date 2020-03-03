@@ -176,8 +176,46 @@ prepare_and_run <- function() {
   # Check configuration for consistency
   cfg <- check_config(cfg, reference_file="config/default.cfg", settings_config = "config/settings_config.csv")
   
+  # Check for compatibility with subsidizeLearning
+  if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
+    cat("Only optimization='nash' is compatible with subsudizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now. \n")
+    cfg$gms$subsidizeLearning = 'off'
+  }
   
-  ###-------- do update of input files based on previous runs if applicable ------###
+  # reportCEScalib only works with the calibrate module
+  if ( cfg$gms$CES_parameters != "calibrate" ) cfg$output <- setdiff(cfg$output,"reportCEScalib")
+  
+  #AJS quit if title is too long - GAMS can't handle that
+  if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
+      stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
+  }
+
+  # adjust GDPpcScen based on GDPscen
+  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
+
+  # Is the run performed on the cluster?
+  on_cluster    <- file.exists('/p')
+  
+  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
+  if (on_cluster)
+    system("find ./core/magicc/ -type f | xargs dos2unix -q")
+  
+  # Set source_include so that loaded scripts know they are included as 
+  # source (instead of being executed from the command line)
+  source_include <- TRUE
+   
+  ################## M O D E L   L O C K ###################################
+  # Lock the directory for other instances of the start scritps
+  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
+  on.exit(model_unlock(lock_id, oncluster=on_cluster))  
+  ################## M O D E L   L O C K ###################################
+
+  ###########################################################
+  ### PROCESSING INPUT DATA ###################### START ####
+  ###########################################################
+   
+  # update input files based on previous runs if applicable 
+  # ATTENTION: modifying gms files
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_ref.gdx"]))
@@ -189,19 +227,6 @@ prepare_and_run <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}  
   
-  #AJS
-  if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
-    cat("Only optimization='nash' is compatible with subsudizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now. \n")
-    cfg$gms$subsidizeLearning = 'off'
-  }
-  # reportCEScalib only works with the calibrate module
-  if ( cfg$gms$CES_parameters != "calibrate" ) cfg$output <- setdiff(cfg$output,"reportCEScalib")
-  
-  #AJS quit if title is too long - GAMS can't handle that
-  if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
-      stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
-  }
-
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
                                          "indu_",cfg$gms$industry,"-",
@@ -217,28 +242,8 @@ prepare_and_run <- function() {
                   content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
                   subject = "CES INPUT")
  
-  # adjust GDPpcScen based on GDPscen
-  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
-
-  # Is the run performed on the cluster?
-  on_cluster    <- file.exists('/p')
-  
-  # Make sure all MAGICC files have LF line endings, so Fortran won't crash
-  if (on_cluster)
-    system("find ./core/magicc/ -type f | xargs dos2unix -q")
-  
-  # Set source_include so that loaded scripts know they are included as 
-  # source (instead a load from command line)
-  source_include <- TRUE
-   
-  ################## M O D E L   L O C K ###################################
-  # Lock the directory for other instances of the start scritps
-  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
-  on.exit(model_unlock(lock_id, oncluster=on_cluster))  
-  ################## M O D E L   L O C K ###################################
-
-  # If report and scenname are supplied the data of this scenario in the report will be converted to REMIND input
-  # Used for REMIND-MAgPIE coupling
+  # If a path to a MAgPIE report is supplied use it as REMIND intput (used for REMIND-MAgPIE coupling)
+  # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
     getReportData(path_to_report = cfg$pathToMagpieReport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
   }
@@ -255,12 +260,7 @@ prepare_and_run <- function() {
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
   
-  ###########################################################################################################
-  ############# PROCESSING INPUT DATA ###################### START ##########################################
-  ###########################################################################################################
-  
-   
-  ########## declare functions for updating information ################ 
+  ######## declare functions for updating information ####
   update_info <- function(regionscode,revision) {
     
     subject <- 'VERSION INFO'
@@ -324,7 +324,7 @@ prepare_and_run <- function() {
     replace_in_file('core/sets.gms',content,"SETS",comment="***")
   }
   
-  ############### download and distribute input data ################### 
+  ############ download and distribute input data ########
   # check wheather the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
       input_old <- readLines("input/source_files.log")[1]
@@ -341,7 +341,7 @@ prepare_and_run <- function() {
                           debug        = FALSE)
   }
   
-  ##################### update information #############################
+  ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$revision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
@@ -349,11 +349,11 @@ prepare_and_run <- function() {
   map <- read.csv(cfg$regionmapping,sep=";")  
   update_sets(map)
   
-  ###########################################################################################################
-  ############# PROCESSING INPUT DATA ###################### END ############################################
-  ###########################################################################################################
+  ########################################################
+  ### PROCESSING INPUT DATA ###################### END ###
+  ########################################################
 
-  ############# ADD MODULE INFO IN SETS  ###################### START #######################################
+  ### ADD MODULE INFO IN SETS  ############# START #######
   content <- NULL
   modification_warning <- c(
     '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
@@ -366,7 +366,7 @@ prepare_and_run <- function() {
   content <- c(content,paste0("       ",getModules("modules/")[,"name"]," . %",getModules("modules/")[,"name"],"%"))
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
-  ############# ADD MODULE INFO IN SETS  ###################### END #########################################
+  ### ADD MODULE INFO IN SETS  ############# END #########
       
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
@@ -400,9 +400,6 @@ prepare_and_run <- function() {
   ################## M O D E L   U N L O C K ###################################
   
   setwd(cfg$results_folder)
-  ###########################################################################################################################################################
-  #################################################### Copied from submit.R #################################################################################
-  ###########################################################################################################################################################
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in 
   # delay scenarios.
@@ -797,10 +794,6 @@ prepare_and_run <- function() {
   outputdir <- cfg$results_folder
   sys.source("output.R",envir=new.env())
     
-  ###########################################################################################################################################################
-  ###########################################################################################################################################################
-  ###########################################################################################################################################################
-  
   end_time <- Sys.time()
   # Save run statistics to local file
   cat("Saving start_time and end_time to runstatistics.rda\n")
