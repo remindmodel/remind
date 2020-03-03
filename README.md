@@ -58,7 +58,7 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 ## HOW TO INSTALL
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
 solvers *CONOPT* for its core calculations. As the model
-benefits significantly of recent improvements in *GAMS* and *CONOPT4* it is
+benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
 recommended to work with the most recent versions of both.
 Please make sure that the GAMS installation path is added to the PATH variable
 of the system.
