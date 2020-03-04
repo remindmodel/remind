@@ -32,15 +32,15 @@ p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(re
 p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Freight");
 
 
-p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Pass_nonLDV"));
+p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Pass_nonLDV"))/ card(regi);
 
 p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_pass_nonLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
 
-p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Pass_LDV"));
+p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Pass_LDV"))/ card(regi);
 
 p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_passLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
 
-p35_valconv = smin((regi),f35_transp_eff(regi,"Eff_Freight"));
+p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Freight"))/ card(regi);
 
 p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_freight_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
 
