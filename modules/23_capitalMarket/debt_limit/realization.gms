@@ -16,8 +16,9 @@
 *' but not as well as with imperfect market realization.
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/23_capitalMarket/perfect/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/23_capitalMarket/perfect/datainput.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/23_capitalMarket/debt_limit/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/23_capitalMarket/debt_limit/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/23_capitalMarket/debt_limit/equations.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./module/23_capitalMarket/perfect.gms
