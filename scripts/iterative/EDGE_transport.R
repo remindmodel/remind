@@ -48,15 +48,13 @@ EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
-selfmarket_policypush <- EDGEscenarios[options == "selfmarket_policypush", switch]
-selfmarket_acceptancy <- EDGEscenarios[options == "selfmarket_acceptancy", switch]
 
 if (EDGE_scenario == "Conservative_liquids") {
-  techswitch <<- "Liquids"
+  techswitch <- "Liquids"
 } else if (EDGE_scenario %in% c("Electricity_push", "Smart_lifestyles_Electricity_push")) {
-  techswitch <<- "BEV"
+  techswitch <- "BEV"
 } else if (EDGE_scenario == "Hydrogen_push") {
-  techswitch <<- "FCEV"
+  techswitch <- "FCEV"
 } else {
   print("You selected a not allowed scenario. Scenarios allowed are: Conservative_liquids, Hydrogen_push, Electricity_push, Smart_lifestyles_Electricity_push")
   exit()
@@ -79,12 +77,15 @@ inputdata <- loadInputData(data_folder)
 
 
 vot_data = inputdata$vot_data
-sw_data = inputdata$sw_data
-inco_data = inputdata$inco_data
 logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
 price_nonmot = inputdata$price_nonmot
+pref_data = inputdata$pref_data
+
+## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
+int_dat = int_dat[EJ_Mpkm_final>0]
+pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
 
 ## optional average of prices
 average_prices = FALSE
@@ -101,9 +102,13 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
   demand_BEVtmp = readRDS(datapath("demand_BEV.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
+  ## load previus iteration number of stations
+  stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs and
   nonfuel_costs = applylearning(gdx,REMINDmapping,EDGE2teESmap, demand_BEVtmp, ES_demandpr)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+} else {
+  stations = NULL
 }
 
 ## load price
@@ -158,12 +163,11 @@ if (inconvenience) {
   logit_data <- calculate_logit_inconv_endog(
     prices= REMIND_prices[tot_price > 0],
     vot_data = vot_data,
-    inco_data = inco_data,
+    pref_data = pref_data,
     logit_params = logit_params,
     intensity_data = int_dat,
     price_nonmot = price_nonmot,
-    selfmarket_policypush = selfmarket_policypush,
-    selfmarket_acceptancy = selfmarket_acceptancy)
+    stations = if (!is.null(stations)) stations)
 
 } else{
 
@@ -211,7 +215,7 @@ shares_int_dem <- shares_intensity_and_demand(
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
+norm_demand <- shares_int_dem[["demandF_plot_EJ"]] ## total demand is 1, required for costs
 
 
 if (opt$reporting) {
@@ -229,15 +233,15 @@ if (opt$reporting) {
   quit()
 }
 
-demand_BEV=calc_num_vehicles(
-  norm_dem_BEV = norm_demand[
-    technology == "BEV" & ## battery vehicles
+num_veh_stations = calc_num_vehicles_stations(
+  norm_dem = norm_demand[
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
-    c("iso", "year", "sector", "vehicle_type", "demand_F") ],
-  ES_demand = ES_demand)
+    c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
+    ES_demand_all = ES_demand_all)
 
 ## save number of vehicles for next iteration
-saveRDS(demand_BEV, datapath("demand_BEV.RDS"))
+saveRDS(num_veh_stations$BEVdem, datapath("demand_BEV.RDS"))
+saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
 ## save the demand for next iteration renaming the column
 setnames(ES_demand, old ="demand", new = "demandpr")
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
