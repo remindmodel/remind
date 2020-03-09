@@ -211,7 +211,7 @@ shares_int_dem <- shares_intensity_and_demand(
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
+norm_demand <- shares_int_dem[["demandF_plot_EJ"]] ## total demand is 1, required for costs
 
 
 if (opt$reporting) {
