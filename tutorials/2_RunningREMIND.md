@@ -104,7 +104,7 @@ Rscript start.R config/scenario_config_XYZ.csv
 
 Note: Please do not make changes to the REMIND code until the last run has stared running GAMS (including subsequent runs).
 
-A message similar to following confirms that your runs has been submitted to the cluster: `The job "cwsa.iplex.pik-potsdam.de.65539" has been submitted.`
+A message similar to following confirms that your runs has been submitted to the cluster: `Submitted batch job 15489230`
 
 You can check if the run has been accepted by the cluster just by using the command 
 
@@ -113,7 +113,7 @@ sq
 ```
 in the terminal.
 
-To see how far your run is or whether it was stopped due to some problems, go to the `Output` folder and type 
+To see how far your run is or whether it was stopped due to some problems, go to the `output` folder and type 
 
 ``` bash
 rs
@@ -125,6 +125,16 @@ NOTE: A few words on the scripts that we currently use to start runs. The script
 - they create the full.gms file and compile the needed files to start a run in a subfolder of the output folder
 
 
+Restarting runs
+-----------------------
+
+Sometimes you want to restart a run in its already existing results folder whithout creating a new results folder and without compiling a new full.gms., e.g. you want a nash run to perform additional nash iterations because you are not satisfied with the convergence so far. Adding the parameter `--restart` displays a list of existing runs and lets you choose the run(s) you want to restart:
+
+``` bash
+Rscript start.R --restart
+```
+
+This will use the result of the previous optimization (fulldata.gdx) as input for the restart.
 
 
 2. What happens during a REMIND run?
