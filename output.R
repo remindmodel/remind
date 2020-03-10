@@ -241,13 +241,6 @@ if (comp==TRUE) {
     #included as source (instead of a load from command line)
     source_include <- TRUE
    
-    if (file.exists(path(outputdir,"output.RData"))) {
-      data_workspace<-path(outputdir,"output.RData")
-    } else {
-      tmp<-strsplit(outputdir,"/")[[1]]
-      data_workspace<-paste0(outputdir,"/",tmp[length(tmp)],".RData")
-    }
-    print(data_workspace)
     cat(paste("\nStarting output generation for",outputdir,"\n\n"))
     
     ###################################################################################
