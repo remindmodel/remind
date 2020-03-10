@@ -2,6 +2,10 @@ library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
 
+################################################################################################## 
+#                             function: getReportData                                            #
+##################################################################################################
+
 getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
 	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
@@ -138,13 +142,13 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
   #.agriculture_tradebal(mag)
 }
 
-###############################################################################
-###############################################################################
-###############################################################################
+################################################################################################## 
+#                             function: prepare                                                  #
+##################################################################################################
 
-prepare_and_run <- function() {
-  
-  start_time <- Sys.time()
+prepare <- function() {
+
+  timePrepareStart <- Sys.time()
   
   # Load libraries
   require(lucode, quietly = TRUE,warn.conflicts =FALSE)
@@ -200,10 +204,6 @@ prepare_and_run <- function() {
   if (on_cluster)
     system("find ./core/magicc/ -type f | xargs dos2unix -q")
   
-  # Set source_include so that loaded scripts know they are included as 
-  # source (instead of being executed from the command line)
-  source_include <- TRUE
-   
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scritps
   lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
@@ -393,10 +393,9 @@ prepare_and_run <- function() {
   ################## M O D E L   U N L O C K ###################################
   # After full.gms was produced remind folders have to be unlocked to allow setting up the next run
   model_unlock(lock_id, oncluster=on_cluster)
-  # Prevent model_unlock from being executed again at the end
+  # Reset on.exit: Prevent model_unlock from being executed again at the end
+  # and remove "setwd(cfg$results_folder)" from on.exit, becaue we change to it in the next line
   on.exit()
-  # Repeat command since on.exit was cleared
-  on.exit(setwd(cfg$results_folder))
   ################## M O D E L   U N L O C K ###################################
   
   setwd(cfg$results_folder)
@@ -563,14 +562,6 @@ prepare_and_run <- function() {
     manipulateFile("full.gms", full_manipulateThis)
   }
 
-
-  # Set value source_include so that loaded scripts know, that they are 
-  # included as source (instead a load from command line)
-  source_include <- TRUE
-
-  # unzip all .gz files
-  system("gzip -d -f *.gz")
-
   #AJS set MAGCFG file
   magcfgFile = paste0('./magicc/MAGCFG_STORE/','MAGCFG_USER_',toupper(cfg$gms$cm_magicc_config),'.CFG')
   if(!file.exists(magcfgFile)){
@@ -582,12 +573,32 @@ prepare_and_run <- function() {
   if (  cfg$gms$cm_startyear > 2005  & (!file.exists("levs.gms.gz") | !file.exists("levs.gms"))) {
     create_fixing_files(cfg = cfg, input_ref_file = "input_ref.gdx")
   }
-   
+  
+  timePrepareEnd <- Sys.time()
+  # Save run statistics to local file
+  cat("Saving timePrepareStart and timePrepareEnd to runstatistics.rda\n")
+  lucode::runstatistics(file           = paste0("runstatistics.rda"),
+                      timePrepareStart = timePrepareStart,
+                      timePrepareEnd   = timePrepareEnd)
+  
+  # on.exit sets working directory to results folder
+  
+} # end of function "prepare"
+
+################################################################################################## 
+#                                function: run                                                   #
+##################################################################################################
+
+run <- function(start_subsequent_runs = TRUE) {
+  
+  load("config.Rdata")
+  on.exit(setwd(cfg$results_folder))
+  
+  # Save start time
+  timeGAMSStart <- Sys.time()
+  
   # Print message
   cat("\nStarting REMIND...\n")
-
-  # Save start time
-  begin <- Sys.time()
 
   # Call GAMS
   if (cfg$gms$CES_parameters == "load") {
@@ -669,8 +680,10 @@ prepare_and_run <- function() {
     stop("unknown realisation of 29_CES_parameters")
   }
 
-  # Calculate run time
-  gams_runtime <- Sys.time() - begin
+  # Calculate run time statistics
+  timeGAMSEnd  <- Sys.time()
+  gams_runtime <- timeGAMSEnd - timeGAMSStart
+  timeOutputStart <- Sys.time() 
 
   # If REMIND actually did run
   if (cfg$action == "ce" && cfg$gms$c_skip_output != "on") {
@@ -701,111 +714,137 @@ prepare_and_run <- function() {
   if (cfg$gms$cm_startyear > 2005) 
     system("gzip -f levs.gms margs.gms fixings.gms")
 
-  # go up to the main folder, where the cfg files for subsequent runs are stored
+  # go up to the main folder, where the cfg files for subsequent runs are stored and the output scripts are executed from
   setwd(cfg$remind_folder)
 
   #====================== Subsequent runs ===========================
+  if (start_subsequent_runs) {
+    # 1. Save the path to the fulldata.gdx of the current run to the cfg files 
+    # of the runs that use it as 'input_bau.gdx'
 
-  # 1. Save the path to the fulldata.gdx of the current run to the cfg files 
-  # of the runs that use it as 'input_bau.gdx'
+    # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
+    coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
 
-  # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
-  coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
+    no_ref_runs <- identical(cfg$RunsUsingTHISgdxAsBAU,character(0)) | all(is.na(cfg$RunsUsingTHISgdxAsBAU)) | coupled_run
 
-  no_ref_runs <- identical(cfg$RunsUsingTHISgdxAsBAU,character(0)) | all(is.na(cfg$RunsUsingTHISgdxAsBAU)) | coupled_run
-
-  if(!no_ref_runs) {
-    source("scripts/start/submit.R")
-    # Save the current cfg settings into a different data object, so that they are not overwritten
-    cfg_main <- cfg
-    
-    for(run in seq(1,length(cfg_main$RunsUsingTHISgdxAsBAU))){
-      # for each of the runs that use this gdx as bau, read in the cfg, ...
-      cat("Writing the path for input_bau.gdx to ",paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"),"\n")
-      load(paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"))
-      # ...change the path_gdx_bau field of the subsequent run to the fulldata gdx of the current run ...
-      cfg$files2export$start['input_bau.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-      save(cfg, file = paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"))
-    }
-    # Set cfg back to original
-    cfg <- cfg_main
-  }
-
-  # 2. Save the path to the fulldata.gdx of the current run to the cfg files 
-  # of the subsequent runs that use it as 'input_ref.gdx' and start these runs 
-
-  no_subsequent_runs <- identical(cfg$subsequentruns,character(0)) | identical(cfg$subsequentruns,NULL) | coupled_run
-
-  if(no_subsequent_runs){
-    cat('\nNo subsequent run was set for this scenario\n')
-  } else {
-    # Save the current cfg settings into a different data object, so that they are not overwritten
-    cfg_main <- cfg
-    source("scripts/start/submit.R")
-    
-    for(run in seq(1,length(cfg_main$subsequentruns))){
-      # for each of the subsequent runs, read in the cfg, ...
-      cat("Writing the path for input_ref.gdx to ",paste0(cfg_main$subsequentruns[run],".RData"),"\n")
-      load(paste0(cfg_main$subsequentruns[run],".RData"))
-      # ...change the path_gdx_ref field of the subsequent run to the fulldata gdx of the current (preceding) run ...
-      cfg$files2export$start['input_ref.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-      save(cfg, file = paste0(cfg_main$subsequentruns[run],".RData"))
+    if(!no_ref_runs) {
+      source("scripts/start/submit.R")
+      # Save the current cfg settings into a different data object, so that they are not overwritten
+      cfg_main <- cfg
       
-      # Subsequent runs will be started in submit.R using the RData files written above 
-      # after the current run has finished.
-      cat("Starting subsequent run ",cfg_main$subsequentruns[run],"\n")
-      submit(cfg)
+      for(run in seq(1,length(cfg_main$RunsUsingTHISgdxAsBAU))){
+        # for each of the runs that use this gdx as bau, read in the cfg, ...
+        cat("Writing the path for input_bau.gdx to ",paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"),"\n")
+        load(paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"))
+        # ...change the path_gdx_bau field of the subsequent run to the fulldata gdx of the current run ...
+        cfg$files2export$start['input_bau.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
+        save(cfg, file = paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"))
+      }
+      # Set cfg back to original
+      cfg <- cfg_main
     }
-    # Set cfg back to original
-    cfg <- cfg_main
-  }
 
-  # 3. Create script file that can be used later to restart the subsequent runs manually.
-  # In case there are no subsequent runs (or it's coupled runs), the file contains only 
-  # a small message.
+    # 2. Save the path to the fulldata.gdx of the current run to the cfg files 
+    # of the subsequent runs that use it as 'input_ref.gdx' and start these runs 
 
-  subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns_manually.R")
+    no_subsequent_runs <- identical(cfg$subsequentruns,character(0)) | identical(cfg$subsequentruns,NULL) | coupled_run
 
-  if(no_subsequent_runs){
-    write("cat('\nNo subsequent run was set for this scenario\n')",file=subseq_start_file)
-  } else {
-    #  go up to the main folder, where the cfg. files for subsequent runs are stored
-    filetext <- paste0("setwd('",cfg$remind_folder,"')\n")
-    filetext <- paste0(filetext,"source('scripts/start/submit.R')\n")
-    for(run in seq(1,length(cfg$subsequentruns))){
-      filetext <- paste0(filetext,"\n")
-      filetext <- paste0(filetext,"load('",cfg$subsequentruns[run],".RData')\n")
-      #filetext <- paste0(filetext,"cfg$results_folder <- 'output/:title::date:'\n")
-      filetext <- paste0(filetext,"cat('",cfg$subsequentruns[run],"')\n")
-      filetext <- paste0(filetext,"submit(cfg)\n")
+    if(no_subsequent_runs){
+      cat('\nNo subsequent run was set for this scenario\n')
+    } else {
+      # Save the current cfg settings into a different data object, so that they are not overwritten
+      cfg_main <- cfg
+      source("scripts/start/submit.R")
+      
+      for(run in seq(1,length(cfg_main$subsequentruns))){
+        # for each of the subsequent runs, read in the cfg, ...
+        cat("Writing the path for input_ref.gdx to ",paste0(cfg_main$subsequentruns[run],".RData"),"\n")
+        load(paste0(cfg_main$subsequentruns[run],".RData"))
+        # ...change the path_gdx_ref field of the subsequent run to the fulldata gdx of the current (preceding) run ...
+        cfg$files2export$start['input_ref.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
+        save(cfg, file = paste0(cfg_main$subsequentruns[run],".RData"))
+        
+        # Subsequent runs will be started in submit.R using the RData files written above 
+        # after the current run has finished.
+        cat("Starting subsequent run ",cfg_main$subsequentruns[run],"\n")
+        submit(cfg)
+      }
+      # Set cfg back to original
+      cfg <- cfg_main
     }
-    # Write the text to the file
-    write(filetext,file=subseq_start_file)
-  }
 
+    # 3. Create script file that can be used later to restart the subsequent runs manually.
+    # In case there are no subsequent runs (or it's coupled runs), the file contains only 
+    # a small message.
+
+    subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns_manually.R")
+
+    if(no_subsequent_runs){
+      write("cat('\nNo subsequent run was set for this scenario\n')",file=subseq_start_file)
+    } else {
+      #  go up to the main folder, where the cfg. files for subsequent runs are stored
+      filetext <- paste0("setwd('",cfg$remind_folder,"')\n")
+      filetext <- paste0(filetext,"source('scripts/start/submit.R')\n")
+      for(run in seq(1,length(cfg$subsequentruns))){
+        filetext <- paste0(filetext,"\n")
+        filetext <- paste0(filetext,"load('",cfg$subsequentruns[run],".RData')\n")
+        #filetext <- paste0(filetext,"cfg$results_folder <- 'output/:title::date:'\n")
+        filetext <- paste0(filetext,"cat('",cfg$subsequentruns[run],"')\n")
+        filetext <- paste0(filetext,"submit(cfg)\n")
+      }
+      # Write the text to the file
+      write(filetext,file=subseq_start_file)
+    }
+  }
   #=================== END - Subsequent runs ========================
-    
+  
   # Copy important files into output_folder (after REMIND execution)
   for (file in cfg$files2export$end)
     file.copy(file, cfg$results_folder, overwrite = TRUE)
 
+  # Set source_include so that loaded scripts know they are included as 
+  # source (instead of being executed from the command line)
+  source_include <- TRUE
+   
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
   sys.source("output.R",envir=new.env())
-    
-  end_time <- Sys.time()
+  # get runtime for output
+  timeOutputEnd <- Sys.time()
+  
   # Save run statistics to local file
-  cat("Saving start_time and end_time to runstatistics.rda\n")
-  lucode::runstatistics(file      = paste0(cfg$results_folder,"/runstatistics.rda"),
-                        starttime = start_time,
-                        endtime   = end_time)
+  cat("Saving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
+  lucode::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
+                       timeGAMSStart   = timeGAMSStart,
+                       timeGAMSEnd     = timeGAMSEnd,
+                       timeOutputStart = timeOutputStart,
+                       timeOutputEnd   = timeOutputEnd)
   
   return(cfg$results_folder)
-  
   # on.exit sets working directory back to results folder
   
+} # end of function "run"
+
+
+################################################################################################## 
+#                                    script                                                      #
+##################################################################################################
+
+# Call prepare and run without cfg, because cfg is read from results folder, where it has been 
+# copied to by submit(cfg)
+
+if (!file.exists("fulldata.gdx")) {
+  # If no "fulldata.gdx" exists, the script assumes that REMIND did not run before and 
+  # prepares all inputs before starting the run.
+  prepare()
+  start_subsequent_runs <- TRUE
+} else {
+  # If "fulldata.gdx" exists, the script assumes that REMIND did run before and you want 
+  # to restart REMIND in the same folder using the gdx that it previously produced.
+  file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+  start_subsequent_runs <- FALSE
 }
 
-# call prepare and run (always without cfg, because cfg is always read from results folder, where it has been copied by submit(cfg))
-prepare_and_run()
+# Run REMIND, start subsequent runs (if applicable), and produce output.
+run(start_subsequent_runs)
