@@ -43,7 +43,8 @@ submit <- function(cfg, restart = FALSE) {
     save(cfg,file=filename)
     
     # Copy files required to confiugre and start a run
-    filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R")
+    filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
+                  ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)
     
     # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
