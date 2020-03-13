@@ -26,7 +26,8 @@ p02_inconvpen_lap(ttot,regi,te)$(ttot.val ge 2005) = p02_inconvpen_lap(ttot,regi
 display p02_inconvpen_lap;
 $ENDIF.INCONV
 
-*BS* 2020-03-12: inequality data
+*BS* 2020-03-12: additional inputs for inequality
+* To Do: rename file, then also in "files" and moinput::fullREMIND.R
 parameter f_ineqTheil(tall,all_regi,all_GDPscen)        "Gini data"
 /
 $ondelim
@@ -34,7 +35,31 @@ $include "./modules/02_welfare/ineqLognormal/input/f_ineqTheil.cs4r"
 $offdelim
 /
 ;
-pm_ineqTheil(tall,all_regi) = f_ineqTheil(tall,all_regi,"%cm_GDPscen%");
-display pm_ineqTheil;
+p02_ineqTheil(t,regi) = f_ineqTheil(t,regi,"%cm_GDPscen%");
+display p02_ineqTheil;
+
+* consumption path from base run
+* Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
+Execute_Loadpoint 'input_ref' p02_cons_ref = vm_cons.l;
+* per capita consumption in reference run ($ MER 2005)
+p02_consPcap_ref(t,regi) = p02_cons_ref(t,regi)/pm_pop(t,regi) * 1e3;
+display p02_consPcap_ref;
+
+* parameters of initial lognormal distribution
+p02_distrMu(t,regi) = log(p02_cons_ref(t,regi)) - p02_ineqTheil(t,regi);
+display p02_distrMu;
+* To Do: this is unused and only for checking, remove later
+p02_distrSigma(t,regi) = sqrt(2*p02_ineqTheil(t,regi));
+display p02_distrSigma;
+
+* income elasticity of mitigation costs. fixing this to some number for now
+p02_distrAlpha(t,regi) = 0.5;
+display p02_distrAlpha;
+
+*expectation value of y^alpha
+* p02_distrEVyAlpha(t,regi) = exp(p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi));
+* display p02_distrEVyAlpha;
+
+
 
 *** EOF ./modules/02_welfare/utilitarian/datainput.gms
