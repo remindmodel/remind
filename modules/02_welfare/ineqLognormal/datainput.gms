@@ -35,31 +35,38 @@ $include "./modules/02_welfare/ineqLognormal/input/f_ineqTheil.cs4r"
 $offdelim
 /
 ;
-p02_ineqTheil(t,regi) = f_ineqTheil(t,regi,"%cm_GDPscen%");
+p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f_ineqTheil(ttot,regi,"%cm_GDPscen%");
 display p02_ineqTheil;
 
 * consumption path from base run
 * Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
 Execute_Loadpoint 'input_ref' p02_cons_ref = vm_cons.l;
 * per capita consumption in reference run ($ MER 2005)
-p02_consPcap_ref(t,regi) = p02_cons_ref(t,regi)/pm_pop(t,regi) * 1e3;
+p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi) * 1e3;
 display p02_consPcap_ref;
 
 * parameters of initial lognormal distribution
-p02_distrMu(t,regi) = log(p02_cons_ref(t,regi)) - p02_ineqTheil(t,regi);
+p02_distrMu(ttot,regi)$(ttot.val ge 2005) = log(p02_cons_ref(ttot,regi)) - p02_ineqTheil(ttot,regi);
 display p02_distrMu;
 * To Do: this is unused and only for checking, remove later
-p02_distrSigma(t,regi) = sqrt(2*p02_ineqTheil(t,regi));
+p02_distrSigma(ttot,regi)$(ttot.val ge 2005) = sqrt(2*p02_ineqTheil(ttot,regi));
 display p02_distrSigma;
 
 * income elasticity of mitigation costs. fixing this to some number for now
-p02_distrAlpha(t,regi) = 0.5;
+p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 0.5;
 display p02_distrAlpha;
 
 *expectation value of y^alpha
 * p02_distrEVyAlpha(t,regi) = exp(p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi));
 * display p02_distrEVyAlpha;
 
+* set start values for variables because they are not contained in the gdx
+v02_consPcap.l(ttot,regi)$(ttot.val ge 2005) = 1e3;
+v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 8;
+v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 1;
+v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 
 *** EOF ./modules/02_welfare/utilitarian/datainput.gms

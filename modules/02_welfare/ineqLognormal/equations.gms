@@ -35,7 +35,7 @@ q02_welfare(regi)..
 *                       + (log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)) - pm_ineqTheil(ttot,regi))$(pm_ies(regi) eq 1)
 * now with coupling to mitigation costs
                         + ( log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi))
-                              - 0.5*v02_distrNew_sigma2(ttot,regi)**2 )$(pm_ies(regi) eq 1)
+                              - 0.5*v02_distrNew_sigmaSq(ttot,regi) )$(pm_ies(regi) eq 1)
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
@@ -48,50 +48,50 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
 * here I distribute the consumption loss according to my lognormal approach
 
 * per capita consumption [$]
-q02_consPcap(t,regi)..
-    v02_consPcap(t,regi)
+q02_consPcap(ttot,regi)$(ttot.val ge 2005)..
+    v02_consPcap(ttot,regi)
   =e=
-    vm_cons(t,regi) / pm_pop(t,regi) * 1e3
+    vm_cons(ttot,regi) / pm_pop(ttot,regi) * 1e3
 ;
 
 * relative consumption loss
-q02_relConsLoss(t,regi)..
-    v02_relConsLoss(t,regi)
+q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
+    v02_relConsLoss(ttot,regi)
   =e=
-    (p02_cons_ref(t,regi)-vm_cons(t,regi))/p02_cons_ref(t,regi)
+    (p02_cons_ref(ttot,regi)-vm_cons(ttot,regi))/p02_cons_ref(ttot,regi)
 ;
 
 * normalization of cost distribution
-q02_distrNormalization(t,regi)..
-    v02_distrNormalization(t,regi)
+q02_distrNormalization(ttot,regi)$(ttot.val ge 2005)..
+    v02_distrNormalization(ttot,regi)
   =e=
-    v02_relConsLoss(t,regi) * p02_consPcap_ref(t,regi)**p02_distrAlpha(t,regi)
-      * exp( - p02_distrAlpha(t,regi)*p02_distrMu(t,regi) - p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi))
+    v02_relConsLoss(ttot,regi) * p02_consPcap_ref(ttot,regi)**p02_distrAlpha(ttot,regi)
+      * exp( - p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) - p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
 ;
 
 * second moment of distribution after subtraction of costs
-q02_distrNew_SecondMom(t,regi)..
-    v02_distrNew_SecondMom(t,regi)
+q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
+    v02_distrNew_SecondMom(ttot,regi)
   =e=
-    exp(2*p02_distrMu(t,regi) + 4*p02_ineqTheil(t,regi))
-    - 2*v02_distrNormalization(t,regi)/(p02_consPcap_ref(t,regi)**(p02_distrAlpha(t,regi)-1))
-      * exp((p02_distrAlpha(t,regi)+1)*p02_distrMu(t,regi) + (p02_distrAlpha(t,regi)+1)**2 * p02_ineqTheil(t,regi))
-    + v02_distrNormalization(t,regi)**2/(p02_consPcap_ref(t,regi)**(2*(p02_distrAlpha(t,regi)-1)))
-      * exp(2*p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + 4*p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi))
+    exp(2*p02_distrMu(ttot,regi) + 4*p02_ineqTheil(ttot,regi))
+    - 2*v02_distrNormalization(ttot,regi)/(p02_consPcap_ref(ttot,regi)**(p02_distrAlpha(ttot,regi)-1))
+      * exp((p02_distrAlpha(ttot,regi)+1)*p02_distrMu(ttot,regi) + (p02_distrAlpha(ttot,regi)+1)**2 * p02_ineqTheil(ttot,regi))
+    + power(v02_distrNormalization(ttot,regi),2)/(p02_consPcap_ref(ttot,regi)**(2*(p02_distrAlpha(ttot,regi)-1)))
+      * exp(2*p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) + 4*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
 ;
 
 * moment matching: approximating distribution with new lognormal with changed mu and sigma
 * mu
-q02_distrNew_mu(t,regi)..
-    v02_distrNew_SecondMom(t,regi)
+q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
+    v02_distrNew_SecondMom(ttot,regi)
   =e=
-    2*log(vm_cons(t,regi)) - 0.5*log(v02_distrNew_SecondMom(t,regi))
+    2*log(vm_cons(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
 ;
 * sigma^2: this finally enters the welfare function to account for the change in the income distribution
-q02_distrNew_sigma2(t,regi)..
-    v02_distrNew_sigma2(t,regi)
+q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
+    v02_distrNew_sigmaSq(ttot,regi)
   =e=
-    log(v02_distrNew_SecondMom(t,regi)) - 2*log(vm_cons(t,regi))
+    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(vm_cons(ttot,regi))
 ;
 
 
