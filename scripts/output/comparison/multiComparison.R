@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-## require(remind)
+
 require(parallel)
 ## load local reporting
 ## require(devtools)
@@ -12,7 +12,44 @@ require(parallel)
 require(remind)
 require(data.table)
 
+#' Run a multi-dimensional parallel compareScenario computation.
+#'
+#' From the list of runs given by the `output.R` infrastructure,
+#' select and align runs according to a matrix defined in the SDP/SSP
+#' and mitigation scenario space, given in
+#' `config/multi_comparison_matrix.csv`.
+#'
+#' The columns in `config/multi_comparison_matrix.csv` denote:
+#'
+#' policy: the mitigation policy in place
+#' scenario: the scenario in the SSP/SDP dimension
+#' short: the run should run only on a time range up to 2060
+#' coupled: A prefix has to be added to correctly identify scenarios
+#'   in coupled runs
+#'
+#' The list of runs is compiled by this script and
+#' stored in `multi_comparison.csv` in the root folder.
+#'
+#' The columns in `multi_comparison.csv` denote:
+#' policy: the mitigation policy in place
+#' scenario: the scenario in the SSP/SDP dimension
+#' mif: the output file corresponding to the two dimensions
+#' comparison_id: id to label comparison runs, i.e., runs with the
+#'   same IDs are compared
+#' coupled: A prefix has to be added to correctly identify scenarios
+#'   in coupled runs
+#' short: the run should run only on a time range up to 2060
+#'
+#' The number of cores to be used in parallel on the cluster is
+#' determined by the variable CORES at the top of the function body.
+#'
+#' @param listofruns a list of output folders, as given by the
+#'     `output.R` infrastructure
+
+
 compareScenTable <- function(listofruns){
+  CORES = 12
+  COUPLED_PREFIX = "C_"
 
   scendt <- fread("config/multi_comparison_matrix.csv")
   scendt[
@@ -26,7 +63,7 @@ compareScenTable <- function(listofruns){
                        scenario=unlist(scenario),
                        coupled, short), by=comparison_id]
 
-  scendt[coupled == T, scenario := paste0("remind-coupled_", scenario)]
+  scendt[coupled == T, scenario := paste0(COUPLED_PREFIX, scenario)]
 
   unique_scens <- unique(scendt[, .(policy, scenario)])
 
@@ -51,7 +88,7 @@ compareScenTable <- function(listofruns){
       warning(sprintf("No output found for scenario %s and budget %s", sc, budg))
       return(NA)
     }
-    mif <- file.path(choice, paste0("REMIND_generic_", sc, "-", budg, ".mif"))
+    mif <- file.path(choice, paste0("REMIND_generic_", basename(choice), ".mif"))
     return(mif)
   }
 
@@ -66,10 +103,10 @@ compareScenTable <- function(listofruns){
 
   if(system("hash sbatch 2>/dev/null") == 0){
     cat("Submitting comparison Jobs:\n")
-     system(paste0("sbatch --job-name=rem-compare --output=log-%j.out --mail-type=END --cpus-per-task=2 --qos=priority --wrap=\"Rscript scripts/utils/compareParallel.R \""))
+    system(sprintf("sbatch --job-name=rem-compare --output=log-%%j.out --mail-type=END --cpus-per-task=%i --qos=priority --wrap=\"Rscript scripts/utils/compareParallel.R \"", CORES))
   }else{
     source("scripts/utils/compareParallel.R")
   }
 }
 
-compareScenTable(outputdirs)
+compareScenTable(outputdirs, CORES)
