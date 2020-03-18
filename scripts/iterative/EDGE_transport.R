@@ -11,7 +11,9 @@ opt = parse_args(opt_parser);
 library(data.table)
 library(gdx)
 library(gdxdt)
-library(edgeTrpLib)
+#library(edgeTrpLib)
+require(devtools)
+load_all("../../../../../../edgetrplib/") ## this library has to be on the inconv_comp branch
 library(rmndt)
 library(moinput)
 
@@ -86,6 +88,14 @@ pref_data = inputdata$pref_data
 ## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
 pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "iso")]
+pref_data$FV_final_pref = pref_data$FV_final_pref[check>0]
+pref_data$FV_final_pref[, check := NULL]
+
+pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "iso")]
+pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
+pref_data$VS1_final_pref[, check := NULL]
 
 ## optional average of prices
 average_prices = FALSE
@@ -104,8 +114,9 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
-  ## calculate non fuel costs and
-  nonfuel_costs = applylearning(gdx,REMINDmapping,EDGE2teESmap, demand_BEVtmp, ES_demandpr)
+  ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_BEVtmp, ES_demandpr)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
 } else {
   stations = NULL
