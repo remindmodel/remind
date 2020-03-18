@@ -85,13 +85,13 @@ q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
 q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
     v02_distrNew_mu(ttot,regi)
   =e=
-    2*log(vm_cons(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
+    2*log(v02_consPcap(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
 ;
 * sigma^2: this finally enters the welfare function to account for the change in the income distribution
 q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
     v02_distrNew_sigmaSq(ttot,regi)
   =e=
-    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(vm_cons(ttot,regi))
+    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
 ;
 
 
