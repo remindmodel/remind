@@ -83,7 +83,7 @@ q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
 * moment matching: approximating distribution with new lognormal with changed mu and sigma
 * mu
 q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
-    v02_distrNew_SecondMom(ttot,regi)
+    v02_distrNew_mu(ttot,regi)
   =e=
     2*log(vm_cons(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
 ;
