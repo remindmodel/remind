@@ -8,7 +8,13 @@ require(data.table)
 require(parallel)
 require(remind)
 
-plotfldr <- "multi_comparison_plots/"
+args = commandArgs(trailingOnly=TRUE)
+if (length(args)==0) {
+  plotfldr <- "multi_comparison_plots"
+} else {
+  plotfldr <- args[1]
+}
+
 dir.create(plotfldr, showWarnings = F)
 
 NUM_OF_CPUS_LOCAL <- 2

@@ -40,8 +40,17 @@ require(data.table)
 #'   in coupled runs
 #' short: the run should run only on a time range up to 2060
 #'
+#' Eventually, `scripts/utils/compareParallel.R` reads the file
+#' `multi_comparison.csv` and executes `compareScenarios` locally or on the cluster
+#' (depending on the presence of the `sbatch` slurm utils).
+#'
 #' The number of cores to be used in parallel on the cluster is
 #' determined by the variable CORES at the top of the function body.
+#'
+#' The prefix for coupled runs is also defined at the top (COUPLED_PREFIX).
+#'
+#' The scenarioComparison plots are stored in the subfolder
+#' OUTPUT_FOLDER.
 #'
 #' @param listofruns a list of output folders, as given by the
 #'     `output.R` infrastructure
@@ -50,6 +59,7 @@ require(data.table)
 compareScenTable <- function(listofruns){
   CORES = 12
   COUPLED_PREFIX = "C_"
+  OUTPUT_FOLDER = "multi_comparison_plots"
 
   scendt <- fread("config/multi_comparison_matrix.csv")
   scendt[
@@ -103,10 +113,11 @@ compareScenTable <- function(listofruns){
 
   if(system("hash sbatch 2>/dev/null") == 0){
     cat("Submitting comparison Jobs:\n")
-    system(sprintf("sbatch --job-name=rem-compare --output=log-%%j.out --mail-type=END --cpus-per-task=%i --qos=priority --wrap=\"Rscript scripts/utils/compareParallel.R \"", CORES))
+    system(sprintf("sbatch --job-name=rem-compare --output=log-%%j.out --mail-type=END --cpus-per-task=%i --qos=priority --wrap=\"Rscript scripts/utils/compareParallel.R %s\"",
+    CORES, OUTPUT_FOLDER))
   }else{
     source("scripts/utils/compareParallel.R")
   }
 }
 
-compareScenTable(outputdirs, CORES)
+compareScenTable(outputdirs)
