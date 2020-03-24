@@ -116,7 +116,8 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
   stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
   nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_BEVtmp, ES_demandpr)
+  rebates_febates = EDGEscenarios[options== "rebates_febates", switch]
+  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_BEVtmp, ES_demandpr, rebates_febates = rebates_febates)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
 } else {
   stations = NULL
@@ -178,7 +179,8 @@ if (inconvenience) {
     logit_params = logit_params,
     intensity_data = int_dat,
     price_nonmot = price_nonmot,
-    stations = if (!is.null(stations)) stations)
+    stations = if (!is.null(stations)) stations,
+    techswitch = techswitch)
 
 } else{
 
