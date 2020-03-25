@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/02_welfare/utilitarian/datainput.gms
+*** SOF ./modules/02_welfare/ineqLognormal/datainput.gms
 
 pm_welf(ttot)$(ttot.val ge 2005) = 1;
 $if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
@@ -41,16 +41,17 @@ display p02_ineqTheil;
 * consumption path from base run
 * Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
 Execute_Loadpoint 'input_ref' p02_cons_ref = vm_cons.l;
-* per capita consumption in reference run ($ MER 2005)
-p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi) * 1e3;
-display p02_consPcap_ref;
+* per capita consumption in reference run (1e3 $ MER 2005)
+* p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi);
+* display p02_consPcap_ref;
 
 * parameters of initial lognormal distribution
-p02_distrMu(ttot,regi)$(ttot.val ge 2005) = log(p02_cons_ref(ttot,regi)) - p02_ineqTheil(ttot,regi);
-display p02_distrMu;
+* this is not required anymore
+*p02_distrMu(ttot,regi)$(ttot.val ge 2005) = log(p02_cons_ref(ttot,regi)) - p02_ineqTheil(ttot,regi);
+* display p02_distrMu;
 * To Do: this is unused and only for checking, remove later
-p02_distrSigma(ttot,regi)$(ttot.val ge 2005) = sqrt(2*p02_ineqTheil(ttot,regi));
-display p02_distrSigma;
+* p02_distrSigma(ttot,regi)$(ttot.val ge 2005) = sqrt(2*p02_ineqTheil(ttot,regi));
+* display p02_distrSigma;
 
 * income elasticity of mitigation costs. fixing this to some number for now
 p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 0.5;
@@ -61,12 +62,13 @@ display p02_distrAlpha;
 * display p02_distrEVyAlpha;
 
 * set start values for variables because they are not contained in the gdx
-v02_consPcap.l(ttot,regi)$(ttot.val ge 2005) = 1e3;
+* trying to get correct order of magnitude here
+* v02_consPcap.l(ttot,regi)$(ttot.val ge 2005) = 10;
 v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 8;
-v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 1;
+* v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+* v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 1;
+* v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 100;
 v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 
-*** EOF ./modules/02_welfare/utilitarian/datainput.gms
+*** EOF ./modules/02_welfare/ineqLognormal/datainput.gms
