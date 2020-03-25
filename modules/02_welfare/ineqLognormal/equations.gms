@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/02_welfare/utilitarian/equations.gms
+*** SOF ./modules/02_welfare/ineqLognormal/equations.gms
 
 ***---------------------------------------------------------------------------
 *' The objective of the optimization is to maximize the total discounted intertemporal utility.
@@ -47,12 +47,15 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
 *BS 2020-03-12: internalization of income distribution effects
 * here I distribute the consumption loss according to my lognormal approach
 
-* per capita consumption [$]
-q02_consPcap(ttot,regi)$(ttot.val ge 2005)..
-    v02_consPcap(ttot,regi)
-  =e=
-    vm_cons(ttot,regi) / pm_pop(ttot,regi) * 1e3
-;
+*BS 2020-03-25 analytical simplification greatly reduces the number of additional equations and variables
+
+* per capita consumption [1000 $]
+* not needed any more, simplified equations are completely independent of the per capita values
+* q02_consPcap(ttot,regi)$(ttot.val ge 2005)..
+*    v02_consPcap(ttot,regi)
+*  =e=
+*    vm_cons(ttot,regi) / pm_pop(ttot,regi)
+*;
 
 * relative consumption loss
 q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
@@ -62,36 +65,55 @@ q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
 ;
 
 * normalization of cost distribution
-q02_distrNormalization(ttot,regi)$(ttot.val ge 2005)..
-    v02_distrNormalization(ttot,regi)
-  =e=
-    v02_relConsLoss(ttot,regi) * p02_consPcap_ref(ttot,regi)**p02_distrAlpha(ttot,regi)
-      * exp( - p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) - p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
-;
+* with the simplified equations this can be removed
+*q02_distrNormalization(ttot,regi)$(ttot.val ge 2005)..
+*    v02_distrNormalization(ttot,regi)
+*  =e=
+* simplified equation
+*  v02_relConsLoss(ttot,regi) * exp( (p02_distrAlpha(ttot,regi) - p02_distrAlpha(ttot,regi)**2) * p02_ineqTheil(ttot,regi) )
+* original equation
+*    v02_relConsLoss(ttot,regi) * p02_consPcap_ref(ttot,regi)**p02_distrAlpha(ttot,regi)
+*      * exp( - p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) - p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
+*;
 
 * second moment of distribution after subtraction of costs
-q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
-    v02_distrNew_SecondMom(ttot,regi)
-  =e=
-    exp(2*p02_distrMu(ttot,regi) + 4*p02_ineqTheil(ttot,regi))
-    - 2*v02_distrNormalization(ttot,regi)/(p02_consPcap_ref(ttot,regi)**(p02_distrAlpha(ttot,regi)-1))
-      * exp((p02_distrAlpha(ttot,regi)+1)*p02_distrMu(ttot,regi) + (p02_distrAlpha(ttot,regi)+1)**2 * p02_ineqTheil(ttot,regi))
-    + power(v02_distrNormalization(ttot,regi),2)/(p02_consPcap_ref(ttot,regi)**(2*(p02_distrAlpha(ttot,regi)-1)))
-      * exp(2*p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) + 4*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
-;
+* this is now redundant as well
+*q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
+*    v02_distrNew_SecondMom(ttot,regi)
+*  =e=
+* simplified equations
+*    p02_consPcap_ref(ttot,regi)**2 * (
+*      exp(2*p02_ineqTheil(ttot,regi))
+*      - 2* v02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
+*      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) )
+*    )
+* orignal equation
+*    exp(2*p02_distrMu(ttot,regi) + 4*p02_ineqTheil(ttot,regi))
+*    - 2*v02_distrNormalization(ttot,regi)/(p02_consPcap_ref(ttot,regi)**(p02_distrAlpha(ttot,regi)-1))
+*      * exp((p02_distrAlpha(ttot,regi)+1)*p02_distrMu(ttot,regi) + (p02_distrAlpha(ttot,regi)+1)**2 * p02_ineqTheil(ttot,regi))
+*    + power(v02_distrNormalization(ttot,regi),2)/(p02_consPcap_ref(ttot,regi)**(2*(p02_distrAlpha(ttot,regi)-1)))
+*      * exp(2*p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) + 4*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
+*;
 
 * moment matching: approximating distribution with new lognormal with changed mu and sigma
-* mu
-q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
-    v02_distrNew_mu(ttot,regi)
-  =e=
-    2*log(v02_consPcap(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
-;
+* mu (currently unused, could remove this)
+*q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
+*    v02_distrNew_mu(ttot,regi)
+*  =e=
+*    2*log(v02_consPcap(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
+*;
 * sigma^2: this finally enters the welfare function to account for the change in the income distribution
+* with the simplified equation everything enters directly here
 q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
     v02_distrNew_sigmaSq(ttot,regi)
   =e=
-    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
+* simplified equation
+  log( exp(2*p02_ineqTheil(ttot,regi))
+      - 2* v02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
+      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+  - 2*log((1-v02_relConsLoss(ttot,regi)))
+* original equation
+*    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
 ;
 
 
@@ -118,4 +140,4 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
 ;
 $ENDIF.INCONV
 
-*** EOF ./modules/02_welfare/utilitarian/equations.gms
+*** EOF ./modules/02_welfare/ineqLognormal/equations.gms

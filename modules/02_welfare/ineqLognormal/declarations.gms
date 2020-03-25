@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/02_welfare/utilitarian/declarations.gms
+*** SOF ./modules/02_welfare/ineqLognormal/declarations.gms
 
 ***-------------------------------------------------------------------------------
 ***                                   PARAMETERS
@@ -34,9 +34,9 @@ variables
 v02_welfare(all_regi)                             "Regional welfare"
 vm_welfareGlob                                    "Global welfare"
 * BS 2020-03-13 additions for distributional module
-v02_consPcap(ttot,all_regi)                       "per capita consumption"
+* v02_consPcap(ttot,all_regi)                       "per capita consumption"
 v02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
-v02_distrNormalization(ttot,all_regi)             "normalization parameter for lognormal distribution of costs"
+* v02_distrNormalization(ttot,all_regi)             "normalization parameter for lognormal distribution of costs"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
@@ -48,8 +48,8 @@ $endif.inconv
 positive variables
 vm_forcOs(ttot)                                   "Forcing overshoot"
 * BS 2020-03-13 additions for distributional module
-v02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
-v02_distrNew_mu(ttot,all_regi)                        "mu parameter of lognormal distribution after costs"
+* v02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
+* v02_distrNew_mu(ttot,all_regi)                        "mu parameter of lognormal distribution after costs"
 v02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs"
 ;
 
@@ -60,12 +60,12 @@ equations
 q02_welfareGlob                                   "Global welfare"
 q02_welfare                                       "Regional welfare"
 * BS 2020-03-13 additions for distributional module
-q02_consPcap(ttot,all_regi)                       "per capita consumption"
+* q02_consPcap(ttot,all_regi)                       "per capita consumption"
 q02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
-q02_distrNormalization(ttot,all_regi)             "normalization parameter for distribution of costs"
-q02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
-q02_distrNew_mu(ttot,all_regi)                        "mu parameter of lognormal distribution after costs"
-q02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs"
+* q02_distrNormalization(ttot,all_regi)             "normalization parameter for distribution of costs"
+* q02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
+* q02_distrNew_mu(ttot,all_regi)                    "mu parameter of lognormal distribution after costs"
+q02_distrNew_sigmaSq(ttot,all_regi)               "sigma^2 parameter of lognormal distribution after costs"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience penalty v02_inconvPen"
@@ -73,4 +73,4 @@ q02_inconvPenCoalSolids(ttot,all_regi)            "Calculate the inconvenience p
 $endif.inconv
 ;
 
-*** EOF ./modules/02_welfare/utilitarian/declarations.gms
+*** EOF ./modules/02_welfare/ineqLognormal/declarations.gms
