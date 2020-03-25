@@ -120,7 +120,7 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
 ***   emissions - it comes from biomass
-  + ( 0.001638 
+  + ( sm_MtCH4_2_TWa
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
