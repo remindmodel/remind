@@ -110,7 +110,8 @@ q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
 * simplified equation
   log( exp(2*p02_ineqTheil(ttot,regi))
       - 2* v02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
-      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+      + power(v02_relConsLoss(ttot,regi),2) * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+*      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
   - 2*log((1-v02_relConsLoss(ttot,regi)))
 * original equation
 *    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
