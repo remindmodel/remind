@@ -2,147 +2,147 @@ cff-version: 1.0.3
 message: If you use this model, please cite it as below.
 authors:
 
-    - family-names:	Aboumahboub	    
-      given-names: 	Tino	    
-      
-    - family-names:	Auer	    
-      given-names: 	Cornelia	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Bauer	    
-      given-names: 	Nico	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Baumstark	    
-      given-names: 	Lavinia	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Bertram	    
-      given-names: 	Christoph	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Dietrich	    
-      given-names: 	Jan	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Dirnaichner	    
-      given-names: 	Alois
-      orcid: https://orcid.org/0000-0002-3240-2608
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Giannousakis	    
-      given-names: 	Anastasis	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Haller	    
-      given-names: 	Markus	    
-      
-    - family-names:	Hilaire	    
-      given-names: 	Jerome	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Klein	    
-      given-names: 	David	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Körner	    
-      given-names: 	Alexander	    
-      
-    - family-names:	Kriegler	    
-      given-names: 	Elmar	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Leimbach	    
-      given-names: 	Marian	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Levesque	    
-      given-names: 	Antoine	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Lorenz	    
-      given-names: 	Alexander	    
-      
-    - family-names:	Luderer	    
-      given-names: 	Gunnar	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Ludig	    
-      given-names: 	Sylvie	    
-      
-    - family-names:	Lüken	    
-      given-names: 	Michael	    
-      
-    - family-names:	Malik	    
-      given-names: 	Aman	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Manger	    
-      given-names: 	Susanne	    
-      
-    - family-names:	Mouratiadou	    
-      given-names: 	Ioanna	    
-      
-    - family-names:	Pehl	    
-      given-names: 	Michaja	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Pietzker	    
-      given-names: 	Robert	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Piontek	    
-      given-names: 	Franziska	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Popin	    
-      given-names: 	Laura	    
-      
-    - family-names:	Rauner	    
-      given-names: 	Sebastian	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Rodrigues	    
-      given-names: 	Renato	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Roming	    
-      given-names: 	Niklas	    
-      
-    - family-names:	Rottoli	    
-      given-names: 	Marianna	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Schmidt	    
-      given-names: 	Eva	    
-      
-    - family-names:	Schreyer	    
-      given-names: 	Felix	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Schultes	    
-      given-names: 	Anselm	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Sörgel	    
-      given-names: 	Björn	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Strefler	    
-      given-names: 	Jessica	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
-      
-    - family-names:	Ueckerdt	    
-      given-names: 	Falko	    
-      affiliation: "Potsdam Institute for Climate Impact Research"
+- family-names: Aboumahboub
+  given-names:  Tino
+
+- family-names: Auer
+  given-names:  Cornelia
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Bauer
+  given-names:  Nico
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Baumstark
+  given-names:  Lavinia
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Bertram
+  given-names:  Christoph
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Dietrich
+  given-names:  Jan
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Dirnaichner
+  given-names:  Alois
+  orcid: https://orcid.org/0000-0002-3240-2608
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Giannousakis
+  given-names:  Anastasis
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Haller
+  given-names:  Markus
+
+- family-names: Hilaire
+  given-names:  Jerome
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Klein
+  given-names:  David
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Körner
+  given-names:  Alexander
+
+- family-names: Kriegler
+  given-names:  Elmar
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Leimbach
+  given-names:  Marian
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Levesque
+  given-names:  Antoine
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Lorenz
+  given-names:  Alexander
+
+- family-names: Luderer
+  given-names:  Gunnar
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Ludig
+  given-names:  Sylvie
+
+- family-names: Lüken
+  given-names:  Michael
+
+- family-names: Malik
+  given-names:  Aman
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Manger
+  given-names:  Susanne
+
+- family-names: Mouratiadou
+  given-names:  Ioanna
+
+- family-names: Pehl
+  given-names:  Michaja
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Pietzker
+  given-names:  Robert
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Piontek
+  given-names:  Franziska
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Popin
+  given-names:  Laura
+
+- family-names: Rauner
+  given-names:  Sebastian
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Rodrigues
+  given-names:  Renato
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Roming
+  given-names:  Niklas
+
+- family-names: Rottoli
+  given-names:  Marianna
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Schmidt
+  given-names:  Eva
+
+- family-names: Schreyer
+  given-names:  Felix
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Schultes
+  given-names:  Anselm
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Sörgel
+  given-names:  Björn
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Strefler
+  given-names:  Jessica
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Ueckerdt
+  given-names:  Falko
+  affiliation: "Potsdam Institute for Climate Impact Research"
 
 
 title: REMIND - REgional Model of INvestments and Development
-version: 4.0
+version: "4.0"
 date-released: 2019-05-02
 repository-code: https://github.com/remindmodel/remind
 keywords:
-  - energy 
+  - energy
   - economy
   - modeling
 license: AGPL-3.0-or-later

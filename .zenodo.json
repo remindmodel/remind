@@ -1,0 +1,149 @@
+{
+    "creators": [
+        {
+            "name": "Aboumahboub, Tino"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Auer, Cornelia"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Bauer, Nico"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Baumstark, Lavinia"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Bertram, Christoph"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Dietrich, Jan"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Dirnaichner, Alois",
+            "orcid": "0000-0002-3240-2608"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Giannousakis, Anastasis"
+        },
+        {
+            "name": "Haller, Markus"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Hilaire, Jerome"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Klein, David"
+        },
+        {
+            "name": "Körner, Alexander"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Kriegler, Elmar"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Leimbach, Marian"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Levesque, Antoine"
+        },
+        {
+            "name": "Lorenz, Alexander"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Luderer, Gunnar"
+        },
+        {
+            "name": "Ludig, Sylvie"
+        },
+        {
+            "name": "Lüken, Michael"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Malik, Aman"
+        },
+        {
+            "name": "Manger, Susanne"
+        },
+        {
+            "name": "Mouratiadou, Ioanna"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Pehl, Michaja"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Pietzker, Robert"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Piontek, Franziska"
+        },
+        {
+            "name": "Popin, Laura"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Rauner, Sebastian"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Rodrigues, Renato"
+        },
+        {
+            "name": "Roming, Niklas"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Rottoli, Marianna"
+        },
+        {
+            "name": "Schmidt, Eva"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Schreyer, Felix"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Schultes, Anselm"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Sörgel, Björn"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Strefler, Jessica"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Ueckerdt, Falko"
+        }
+    ],
+    "keywords": [
+        "energy",
+        "economy",
+        "modeling"
+    ],
+    "license": {
+        "id": "AGPL-3.0-or-later"
+    },
+    "publication_date": "2019-05-02",
+    "title": "REMIND - REgional Model of INvestments and Development",
+    "version": "4.0"
+}
