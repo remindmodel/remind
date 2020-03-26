@@ -1,6 +1,26 @@
 #!/usr/bin/env Rscript
 library(lucode)
 
+#' Usage:
+#' Rscript start.R [options]
+#' Rscript start.R file
+#'
+#' Without additional arguments this starts a single REMIND runs using the settings
+#' from `config/default.cfg`.
+#'
+#' Control the script's behavior by providing additional arguments:
+#'
+#' --testOneRegi: Starting a single REMIND run in OneRegi mode using the
+#'   settings from `config/default.cfg`
+#'
+#' --restart: Restart a run.
+#'
+#' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
+#'
+#'   Rscript start.R config/scenario_config_XYZ.csv
+#'
+
+
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
