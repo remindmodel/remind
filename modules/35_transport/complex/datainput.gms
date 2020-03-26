@@ -26,6 +26,7 @@ $include "./modules/35_transport/complex/input/f35_transp_eff.cs3r"
 $offdelim
 ;
 
+*** Choosing EU share as target. Developed regions all have around 1/3 so it should not matter too much.
 p35_pass_FE_target_share = f35_transp_eff("EUR","share_Pass_nonLDV");
 p35_harmonizing_year = 2150;
 
