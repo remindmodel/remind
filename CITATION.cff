@@ -21,6 +21,10 @@ authors:
   given-names:  Christoph
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: Bi
+  given-names:  Stephen
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: Dietrich
   given-names:  Jan
   affiliation: "Potsdam Institute for Climate Impact Research"
@@ -43,6 +47,10 @@ authors:
 
 - family-names: Klein
   given-names:  David
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Koch
+  given-names:  Johannes
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Körner
@@ -79,6 +87,10 @@ authors:
 
 - family-names: Manger
   given-names:  Susanne
+
+- family-names: Merfort
+  given-names:  Leon
+  affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Mouratiadou
   given-names:  Ioanna
