@@ -29,7 +29,7 @@ $offdelim
 p35_pass_FE_target_share = f35_transp_eff("EUR","share_Pass_nonLDV");
 p35_harmonizing_year = 2150;
 
-p35_pass_FE_share_transp(ttot,regi)$(ttot.val ge 2005) = (f35_transp_eff(regi, "share_Pass_nonLDV")*(p35_harmonizing_year-ttot.val)+p35_pass_FE_target_share*(ttot.val-2005))/(p35_harmonizing_year-2005);
+p35_pass_FE_share_transp(ttot,regi)$(ttot.val ge 2005) = (f35_transp_eff(regi, "share_Pass_nonLDV")*(p35_harmonizing_year-ttot.val)**2+p35_pass_FE_target_share*(ttot.val-2005)**2)/(p35_harmonizing_year-2005)**2;
 
 p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)  = f35_transp_eff(regi,"Eff_Pass_nonLDV");   
 p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Pass_LDV");
