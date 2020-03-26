@@ -3,19 +3,19 @@ Start running REMIND with default settings
 Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), David Klein (<dklein@pik-potsdam.de>)
 30 April, 2019
 
--   [1. Your first run](#1._Your_first_run)
-    -   [Default configurations](#Default_Configurations)
-    -   [Configuration with scenario_config.csv](#configuration_with_scenario_config)
-    -   [Starting the run](#Starting_the_Run)
--   [2. What happens during a REMIND run?](#2._What_happens_during_a_REMIND_run?)
--   [3. What happens once you start REMIND on the cluster? ](#3._What_happens_once_you_start_REMIND_on_the_cluster?)
-    -   [a) Input data preparation](#Input_Data_Preparation)
-    -   [b) Optimization](#Optimization)
-    -   [c) Output processing](#Output_Processing)
+-   [1. Your first run](#1-your-first-run)
+    -   [Default configurations](#default-configurations)
+    -   [Configuration with scenario_config.csv](#configuration-with-scenario-config)
+    -   [Starting the run](#starting-the-run)
+-   [2. What happens during a REMIND run?](#2-what-happens-during-a-remind-run?)
+-   [3. What happens once you start REMIND on the cluster? ](#3-what-happens-once-you-start-remind-on-the-cluster?)
+    -   [a) Input data preparation](#a-input-data-preparation)
+    -   [b) Optimization](#b-optimization)
+    -   [c) Output processing](#c-output-processing)
 
 
 1. Your first run
-==================
+=================
    
 
 This section will explain how you start your first run in REMIND.
