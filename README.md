@@ -13,8 +13,7 @@ The macro-economic core of REMIND is a Ramsey-type optimal growth model
 in which intertemporal global welfare is optimized subject to equilibrium constraints.
 
 ## DOCUMENTATION
-The model documentation for version 2.1 can be found at XXX.
-
+<!-- The model documentation for version 2.1 can be found at XXX.-->
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
@@ -26,6 +25,12 @@ Please pay attention to the REMIND Coding Etiquette when you modify the code
 (if you plan on contributing to the REMIND official repository).
 The Coding Etiquette is found in the documentation section of the file main.gms.
 It explains also the used name conventions and other structural characteristics.
+
+## TUTORIALS
+
+Tutorials can be found in the form of markdown files in the repository:
+
+https://github.com/remindmodel/remind/tree/develop/tutorials
 
 ## COPYRIGHT
 Copyright 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
