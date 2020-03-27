@@ -239,18 +239,6 @@ display pm_fuExtrOwnCons, p04_aux_data, pm_data;
 ***mix0sum(regi,enty2) = sum(en2en(enty,enty2,te),pm_data(regi,"mix0",te));
 ***display mix0sum;
 
-*LB* write a preliminary reporting for disgnostics
-file data_check / data_check.csv /;
-put data_check;
-put "regi;char;te;value";
-put /;
-loop((regi,char,te),
-  put regi.tl, ";" , char.tl, ";" ,te.tl, ";" ;
-  put pm_data(regi,char,te):10:3 ; 
-  put /;
-);
-putclose data_check;
-
 *LB* preliminary bug fix for all eta > 1 and all eta = 0
 loop(regi,
    loop(te,
