@@ -155,7 +155,7 @@
     "license": {
         "id": "AGPL-3.0-or-later"
     },
-    "publication_date": "2019-05-02",
+    "publication_date": "2020-03-27",
     "title": "REMIND - REgional Model of INvestments and Development",
-    "version": "4.0"
+    "version": "2.1.0"
 }
