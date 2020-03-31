@@ -37,8 +37,10 @@ pkgs <- c("gdxrrw",
           "mip",
           "lucode",
           "remind",
+          "remulator",
           "lusweave",
           "luscale",
+          "magpie4",
           "goxygen",
           "luplot",
           "shinyresults")
@@ -47,7 +49,7 @@ install.packages(pkgs)
 
 For post-processing model outputs *Latex* is required (<https://www.latex-project.org/get/>). To be seen by the model it also needs to be added to the PATH variable of your system.
 
-If the following lines of code are executed withour error, then you are all set!
+If the following lines of code are executed without error, then you are all set!
 
 ``` r
 system("gams")
@@ -55,7 +57,7 @@ library(gdxrrw)
 library(remind)
 print("")
 if(.Platform$OS.type == "unix") {
-  system("which pdflatex")
+  system('pdflatex -version')
 } else {
   system("where pdflatex")
 }
