@@ -28,26 +28,30 @@ options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"
 After that all remaining packages can be installed via `install.packages`
 
 ``` r
-pkgs <- c("gdxrrw",
-          "ggplot2",
-          "curl",
+pkgs <- c("curl",
           "gdx",
-          "magclass",
-          "madrat",
-          "mip",
-          "lucode",
-          "remind",
-          "lusweave",
-          "luscale",
+          "gdxrrw",
+          "ggplot2",
           "goxygen",
+          "lucode",
           "luplot",
+          "luscale",
+          "lusweave",
+          "madrat",
+          "magclass",
+          "magpie4",
+          "mip",
+          "moinput",
+          "remind",
+          "remulator",
+          "rhdf5",
           "shinyresults")
 install.packages(pkgs)
 ```
 
 For post-processing model outputs *Latex* is required (<https://www.latex-project.org/get/>). To be seen by the model it also needs to be added to the PATH variable of your system.
 
-If the following lines of code are executed withour error, then you are all set!
+If the following lines of code are executed without error, then you are all set!
 
 ``` r
 system("gams")
@@ -55,7 +59,7 @@ library(gdxrrw)
 library(remind)
 print("")
 if(.Platform$OS.type == "unix") {
-  system("which pdflatex")
+  system('pdflatex -version')
 } else {
   system("where pdflatex")
 }
