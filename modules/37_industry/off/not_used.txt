@@ -24,3 +24,4 @@ cm_startyear,input,questionnaire
 fm_dataemiglob,input,questionnaire
 pm_delta_kap,input,questionnaire
 pm_macCostSwitch,input,questionnaire
+sm_MtCH4_2_TWa,input,questionnaire

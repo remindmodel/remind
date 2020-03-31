@@ -13,40 +13,43 @@
 
 ############## Define function: runsubmit #########################
 
-submit <- function(cfg) {
+submit <- function(cfg, restart = FALSE) {
   
-  # Generate name of output folder and create the folder
-  date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
-  cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
-  cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
-  # Create output folder
-  cat("   Creating results folder",cfg$results_folder,"\n")
-  if (!file.exists(cfg$results_folder)) {
-    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-  } else if (!cfg$force_replace) {
-    stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
-  } else {
-    cat("    Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
-    unlink(cfg$results_folder, recursive = TRUE)
-    dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
+  if(!restart) {
+    # Generate name of output folder and create the folder
+    date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
+    cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
+    cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
+    # Create output folder
+    cat("   Creating results folder",cfg$results_folder,"\n")
+    if (!file.exists(cfg$results_folder)) {
+      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
+    } else if (!cfg$force_replace) {
+      stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
+    } else {
+      cat("    Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
+      unlink(cfg$results_folder, recursive = TRUE)
+      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
+    }
+    
+    # remember main folder
+    cfg$remind_folder <- getwd()
+    
+    # Save the cfg (with the updated name of the result folder) into the results folder. 
+    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+    # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
+    filename <- paste0(cfg$results_folder,"/config.Rdata")
+    cat("   Writing cfg to file",filename,"\n")
+    save(cfg,file=filename)
+    
+    # Copy files required to confiugre and start a run
+    filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
+                  ".Rprofile" = ".Rprofile")
+    .copy.fromlist(filelist,cfg$results_folder)
+    
+    # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
   }
   
-  # remember main folder
-  cfg$remind_folder <- getwd()
-  
-  # Save the cfg (with the updated name of the result folder) into the results folder. 
-  # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
-  # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
-  filename <- paste0(cfg$results_folder,"/config.Rdata")
-  cat("   Writing cfg to file",filename,"\n")
-  save(cfg,file=filename)
-  
-  # Copy files required to confiugre and start a run
-  filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R")
-  .copy.fromlist(filelist,cfg$results_folder)
-  
-  # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
-
   # Change to run folder
   setwd(cfg$results_folder)
   on.exit(setwd(cfg$remind_folder))

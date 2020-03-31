@@ -30,7 +30,7 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
               vm_prodSE.l(ttot,regi,entyPE2,entySE,te2)
             )
             !! SE CH4 from waste bypass
-          + ( 0.001638
+          + ( sm_MtCH4_2_TWa
             * ( vm_macBase.l(ttot,regi,"ch4wstl")
               - vm_emiMacSector.l(ttot,regi,"ch4wstl")
               )

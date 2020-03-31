@@ -26,7 +26,12 @@ $include "./modules/35_transport/complex/input/f35_transp_eff.cs3r"
 $offdelim
 ;
 
-p35_pass_FE_share_transp(regi)                               = f35_transp_eff(regi,"share_Pass_nonLDV");
+*** Developed regions: EU 2.6, US 3.1, CAZ 3.4
+p35_pass_FE_target_share = 0.3;
+p35_harmonizing_year = 2150;
+
+p35_pass_FE_share_transp(ttot,regi)$(ttot.val ge 2005) = (f35_transp_eff(regi, "share_Pass_nonLDV")*(p35_harmonizing_year-ttot.val)**2+p35_pass_FE_target_share*(ttot.val-2005)**2)/(p35_harmonizing_year-2005)**2;
+
 p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)  = f35_transp_eff(regi,"Eff_Pass_nonLDV");   
 p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Pass_LDV");
 p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(regi,"Eff_Freight");
@@ -34,15 +39,15 @@ p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005)      = f35_transp_eff(re
 
 p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Pass_nonLDV"))/ card(regi);
 
-p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_pass_nonLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+p35_pass_nonLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_pass_nonLDV_ES_efficiency(ttot,regi)*(p35_harmonizing_year-ttot.val)+p35_valconv*(ttot.val-2005))/(p35_harmonizing_year-2005);
 
 p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Pass_LDV"))/ card(regi);
 
-p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_passLDV_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+p35_passLDV_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_passLDV_ES_efficiency(ttot,regi)*(p35_harmonizing_year-ttot.val)+p35_valconv*(ttot.val-2005))/(p35_harmonizing_year-2005);
 
 p35_valconv = sum((regi),f35_transp_eff(regi,"Eff_Freight"))/ card(regi);
 
-p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_freight_ES_efficiency(ttot,regi)*(2200-ttot.val)+p35_valconv*(ttot.val-2005))/(2200-2005);
+p35_freight_ES_efficiency(ttot,regi)$(ttot.val ge 2005) = (p35_freight_ES_efficiency(ttot,regi)*(p35_harmonizing_year-ttot.val)+p35_valconv*(ttot.val-2005))/(p35_harmonizing_year-2005);
 
 
 display p35_pass_nonLDV_ES_efficiency;
