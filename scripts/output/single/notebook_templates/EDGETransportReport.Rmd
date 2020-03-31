@@ -205,26 +205,61 @@ intcompplotf(EF_shares, shares$FV_shares, shares$VS1_shares)
 # Sales of LDVs
 
 ```{r, echo=FALSE, warning=FALSE}
-salesplot = function(annual_sales){
-  annual_sales = unique(annual_sales[,c("iso","year", "technology", "shareFS1")])
-  annual_sales <- annual_sales[,.(shareFS1=sum(shareFS1)),by=c("iso","technology","year")]
+salesplot= function(shares_LDV, newcomp, sharesVS1){
+  ## I need the total demand for each region to get the average composition in Europe (sales are on a country level)
+  ## First I calculate the total demand for new sales using the shares on FV level (in newcomp) and on VS1 level
+  newcomp = merge(newcomp, sharesVS1[,.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)], all.x=TRUE, by = c("iso", "year", "vehicle_type", "subsector_L1"))
+  newcomp[, newdem := totdem*sharetech_new*shareVS1]
+  newcomp = newcomp[,.(value = sum(newdem)), by = c("iso", "year", "subsector_L1")]
+  ## I have to interpolate in time the sales nto to loose the sales composition annual values
+  newcomp=approx_dt(dt=newcomp, unique(shares_LDV$year),
+                    xcol= "year",
+                    ycol = "value",
+                    idxcols=c("iso","subsector_L1"),
+                    extrapolate=T)
 
-  p = ggplot()+
-    geom_bar(data = annual_sales[year <= 2100  & year >= 2020 & iso == iso_plot], aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
+  setnames(newcomp, new = "newdem", old = "value")
+
+  ## I calculate the sales composition (disrespective to the vehicle type)
+  shares_LDV = unique(shares_LDV[,c("iso","year", "technology", "shareFS1")])
+  shares_LDV <- shares_LDV[,.(shareFS1=sum(shareFS1)),by=c("iso","technology","year")]
+
+  ## I calculate the weighted regional sales (depending on the total volume of sales per country in each region)
+  shares_LDV = merge(shares_LDV, newcomp)
+  shares_LDV = merge(shares_LDV, REMIND2ISO_MAPPING, by = "iso")
+  shares_LDV[, demfuel := shareFS1*newdem, by = c("year", "iso", "technology")]
+  shares_LDV = shares_LDV[, .(demfuel = sum(demfuel)), by = c("year", "region", "technology")]
+  shares_LDV[, shareFS1 := demfuel/sum(demfuel), by = c("year", "region")]
+
+  ## plot features
+  shares_LDV[, technology := factor(technology, levels = c("BEV", "Hybrid Electric", "FCEV", "Hybrid Liquids", "Liquids", "NG"))]
+
+
+    plot = ggplot()+
+    geom_bar(data = shares_LDV, aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
     theme_minimal()+
+    facet_grid(~ region )+
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, vjust = +0.1),
-          strip.background = element_rect(color = "grey"),
-          legend.position = "none")+
-    labs(x = "", y = "Market share on LDVs [%]", title = paste0("Sales composition, example of ", iso_plot))
-
-  return(p)
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+#+
+    theme(
+axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 12),
+        axis.text.y = element_text(size=8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+            axis.title = element_text(size = 12),
+          title = element_text(size = 12),
+         # legend.text = element_text(12),
+          #legend.title = element_text(size = 12),
+          strip.text = element_text(size=12),
+          strip.background = element_rect(color = "grey")
+)+
+    labs(x = "", y = "[%]", title = "Market share of new LDV sales")
+  return(plot)
 }
 
+salesplot(annual_sales, newcomp, shares$VS1_shares)
 
-salesplot(annual_sales)
 ```
 
 # Final energy demand

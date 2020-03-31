@@ -1,0 +1,218 @@
+---
+title: "Compare scenarios Transport"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(ggplot2)
+require(moinput)
+require(rmndt)
+require(quitte)
+library(lucode)
+library(magpie)
+library(quitte)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Set mif path
+EJmode_all = readRDS("EJmode_all.RDS")
+EJLDV_all = readRDS("EJLDV_all.RDS")
+fleet_all = readRDS("fleet_all.RDS")
+salescomp_all = readRDS("salescomp_all.RDS")
+
+iso_plot = c("DEU", "USA", "IND", "CHN")
+
+setConfig(forcecache=T)
+
+cols <- c("NG" = "#d11141",
+          "Liquids" = "#8c8c8c",
+          "Hybrid Liquids" = "#ffc425",
+          "Hybrid Electric" = "#f37735",
+          "BEV" = "#00b159",
+          "Electricity" = "#00b159",
+          "FCEV" = "#00aedb",
+          "Hydrogen" = "#00aedb",
+          "Biodiesel" = "#66a182",
+          "Oil" = "#2e4057",
+          "fuel price pkm" = "#edae49",
+          "Operating costs registration and insurance" = "#8d96a3",
+          "Operating costs maintenance" = "#00798c",
+          "Capital cost" = "#d1495b",
+          "International Aviation" = "#9acd32",
+          "Domestic Aviation" = "#7cfc00",
+          "Bus" = "#32cd32",
+          "Passenger Rail" = "#2e8b57",
+          "Freight Rail" = "#ee4000",
+          "Trucks" = "#ff6a6a",
+          "International Shipping" = "#cd2626",
+          "Domestic Shipping" = "#ff4040",
+          "Trucks (<3.5t)" = "#ff7f50",
+          "Trucks (3.5t-16)" = "#8b0000",
+          "Trucks (>16)" = "#fa8072",
+          "Motorbikes" = "#1874cd", #"dodgerblue3",
+          "Small Cars" = "#87cefa",
+          "Large Cars" = "#6495ed",
+          "Van" = " 	#40e0d0",
+          "LDV" = "#00bfff",
+          "Non motorized" = "#da70d6",
+          "Freight"="#ff0000",
+          "Freight (Inland)" = "#cd5555",
+          "Pass non LDV" = "#6b8e23", 
+          "Pass" = "#66cdaa",
+          "Pass non LDV (Domestic)" = "#54ff9f",
+          "refined liquids enduse" = "#8c8c8c",
+          "FE|Transport|Hydrogen" = "#00aedb", 
+          "FE|Transport|NG" = "#d11141",
+          "FE|Transport|Liquids" = "#8c8c8c", 
+          "FE|Transport|Electricity" = "#00b159",
+          "FE|Transport" = "#1e90ff", 
+          "FE|Buildings" = "#d2b48c",
+          "FE|Industry" = "#919191",
+          "Electricity_push" = "#00b159",
+          "Hydrogen_push" = "#00aedb",
+          "Smart_lifestyles_Electricity_push" = "#68c6a4",
+          # "Smart_lyfestiles_Electricity_push" = "#03878f", ##maybe "#o3878f"
+          "Conservative_liquids" = "#113245",
+          "Emi|CO2|Transport|Demand" = "#113245",
+          "Emi|CO2|Industry|Gross" = "#919191",
+          "Emi|CO2|Buildings|Direct" = "#d2b48c",
+          "Emi|CO2|Energy|Supply|Gross" = "#f2b531",
+          "Emi|CO2|CDR|BECCS" = "#ed5958",
+          "Emi|CO2|Land-Use Change" = "#66a182",
+          "Cons. + Synfuels" = "orchid",
+          "Ctax_Conservative" = "#d11141")
+
+legend_ord_modes <- c("Freight Rail", "Trucks (<3.5t)", "Trucks (3.5t-16)", "Trucks (>16)", "International Shipping","Domestic Shipping",  "Trucks",
+                "Motorbikes", "Small Cars", "Large Cars", "Van",
+                "International Aviation", "Domestic Aviation","Bus", "Passenger Rail",
+                "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Pass non LDV (Domestic)", "Non motorized")
+
+legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "NG")
+
+legend_ord_costs <- c("fuel price pkm", "Operating costs registration and insurance", "Operating costs maintenance", "Capital cost")
+
+legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", "Emi|CO2|Transport|Demand", "Emi|CO2|Energy|Supply|Gross", "Emi|CO2|Land-Use Change","Emi|CO2|CDR|BECCS")
+
+legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
+
+
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## Vintages
+vintcomparisonpf = function(dt){
+  dt = dt[year %in% c(2015, 2050, 2100)]
+  plot = ggplot()+
+    geom_bar(data = dt,
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
+    geom_bar(data = dt,
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black")+
+    guides(fill = guide_legend(reverse=TRUE))+
+    theme_minimal()+
+    facet_grid(year~region)+
+    theme(axis.text.x = element_text(angle = 90, size=8, vjust=0.5, hjust=1),
+          title = element_text(size=8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          # legend.text = element_text(size=8),
+          strip.text = element_text(size=8),
+          strip.background = element_rect(color = "grey"))+
+    scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
+    guides(linetype=FALSE,
+           fill=guide_legend(reverse=FALSE, title="Transport mode"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "[million Veh]", x="", title = "LDV fleet")
+    return(plot)
+}
+
+vintcomparisonpf(fleet_all)
+## Sales composition
+
+
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+salescompf = function(dt){
+
+  plot = ggplot()+
+    geom_bar(data = dt, aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
+    theme_minimal()+
+    facet_grid(region ~ scenario)+
+    scale_fill_manual("Technology", values = cols)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 8),
+          axis.text.y = element_text(size=8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          # legend.text = element_text(8),
+          # legend.title = element_text(size = 8),
+          strip.text = element_text(size=8),
+          strip.background = element_rect(color = "grey"))+
+    labs(x = "", y = "[%]", title = "Market share of new LDV sales")
+  return(plot)
+}
+
+salescompf(salescomp_all)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+EJLDVpf = function(dt){
+  dt[, technology := factor(technology, levels = legend_ord)]
+  plot = ggplot()+
+    geom_area(data = dt, aes(x=year, y=demand_EJ, group = technology, fill = technology), color="black",position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "LDV Final Energy demand")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
+    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          title = element_text(size = 8),
+          # legend.text = element_text(size =8),
+          # legend.title = element_text(size = 8),
+          strip.text = element_text(size=8),
+          strip.background = element_rect(color = "grey"))
+  return(plot)
+}
+
+EJLDVpf(EJLDV_all)
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+EJmodeFUn = function(dt){
+  plot = ggplot()+
+    geom_area(data = dt, aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Total transport final energy demand")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          # legend.text = element_text(size = 8),
+          # legend.title = element_text(size =8),
+          strip.text = element_text(size=8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          strip.background = element_rect(color = "grey"))
+  return(plot)
+}
+
+EJmodeFUn(EJmode_all)
+
+```
