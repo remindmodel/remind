@@ -108,5 +108,12 @@ q30_limitXpBio(t,regi)..
          vm_Xport(t,regi,"pebiolc")
          =l=
          vm_fuExtr(t,regi,"pebiolc","1");
+         
+*** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
+q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
+        sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
+        =l=
+        max (0.35 * p30_pedem_BAU(t,regi), 1.30 * p30_pedemBio_BAU(t,regi));
+         
 		 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms
