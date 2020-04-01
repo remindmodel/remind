@@ -25,7 +25,9 @@ p21_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eq(ttot,regi) * v
 p21_emiALLco2neg0(ttot,regi)  = v21_emiALLco2neg.l(ttot,regi);		
 p21_taxrevFEtrans0(ttot,regi) = SUM(feForUe(enty),
                                       (p21_tau_fe_tax_transport(ttot,regi,feForUe) + p21_tau_fe_sub_transport(ttot,regi,feForUe) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
-                                    );
+                                      )+
+				      SUM(feForEs(enty), (p21_tau_fe_tax_transport(ttot,regi,feForEs) + p21_tau_fe_sub_transport(ttot,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
+				    );
 p21_taxrevFEBuildInd0(ttot,regi) = SUM(ppfen(in)$( NOT ppfenFromUe(in)),
                                          (p21_tau_fe_tax_bit_st(ttot,regi,ppfen) + p21_tau_fe_sub_bit_st(ttot,regi,ppfen) ) * vm_cesIO.l(ttot,regi,ppfen)
                                        );

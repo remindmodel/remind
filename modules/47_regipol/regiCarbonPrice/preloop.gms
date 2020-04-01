@@ -25,12 +25,13 @@ $ENDIF.regicarbonprice
 ***--------------------------------------------------
 
 *** Intialize parameters
-p47_emiRescaleCo2TaxETS(ttot,ETS_mkt) = 0;
+p47_emiRescaleCo2TaxETS(ETS_mkt) = 0;
 p47_emiRescaleCo2TaxES(ttot,regi) = 0;
 
 *** Initialize tax path
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
+$ontext
 *** Removing the economy wide co2 tax parameters for regions within the ETS
 $IFTHEN.ETSprice not "%cm_emiMktETS%" == "off" 
 	loop(ETS_mkt,
@@ -46,6 +47,6 @@ $IFTHEN.ESprice not "%cm_emiMktES%" == "off"
 		pm_taxCO2eqHist(t,regi)$(t.val ge cm_startyear) = 0;
   );
 $ENDIF.ESprice
-
+$offtext
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 

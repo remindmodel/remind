@@ -31,7 +31,9 @@ choose_slurmConfig <- function() {
                "SLURM short    - task per node: 16 (nash H12+)",
                "SLURM short    - task per node:  1 (nash debug, testOneRegi, reporting)",
                "SLURM medium   - task per node:  1 (negishi)",
-               "SLURM long     - task per node:  1 (negishi)")
+               "SLURM long     - task per node:  1 (negishi)",
+               "SLURM medium   - task per node: 12 (nash long calibration)",
+               "SLURM medium   - task per node: 16 (nash long calibration)")
 
     cat("\nCurrent cluster utilization:\n")
     system("sclass")
@@ -55,7 +57,10 @@ choose_slurmConfig <- function() {
                   "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
                   "11" = "--qos=short --nodes=1 --tasks-per-node=1"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
                   "12" = "--qos=medium --nodes=1 --tasks-per-node=1"    , # SLURM medium   - task per node:  1 (negishi)
-                  "13" = "--qos=long --nodes=1 --tasks-per-node=1"      ) # SLURM long     - task per node:  1 (negishi)
+                  "13" = "--qos=long --nodes=1 --tasks-per-node=1"      , # SLURM long     - task per node:  1 (negishi)
+                  "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node:  12 (nash long calibration)
+                  "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   ) # SLURM medium   - task per node:  16 (nash long calibration)
+                  
                   
     if(is.null(comp)) stop("This type is invalid. Please choose a valid type")
   } else {

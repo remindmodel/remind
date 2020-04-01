@@ -11,9 +11,11 @@ if(!exists("source_include")) {
   readArgs("outputdirs")
   readArgs("shortTerm")
   readArgs("outfilename")
+  readArgs("regions")
+  readArgs("mainReg")
 }
 
-wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename) {
+wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename,regions,mainReg) {
   # Set mif path
   scenNames <- getScenNames(outputdirs)
   # Note: add '../' infront of the paths because the compareScenario functions will be run in individual temporary subfolders (see below for explanation)
@@ -23,8 +25,10 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename) {
   # Create temporary folder. This is necessary because each compareScenario creates a folder names 'figure'.
   # If multiple compareScenario run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenario creates its own figure folder.
+  outfilename <- if(mainReg!="GLO") paste0(outfilename, "-" , mainReg)
   system(paste0("mkdir ",outfilename))
   merke <- getwd()
+  paste(merke)
   setwd(outfilename)
   # remove temporary folder
   on.exit(system(paste0("mv ",outfilename,".pdf ..")))
@@ -33,10 +37,10 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename) {
 
   
   if (!shortTerm) {
-      try(compareScenarios(mif=mif_path, hist=hist_path, reg="all_reg",fileName = paste0(outfilename,".pdf")))
-    } else {
-      try(compareScenarios(mif=mif_path, hist=hist_path, reg="all_reg", y=c(seq(2005,2050,5)), y_hist=c(seq(1990,2015,1)), y_bar=c(2010,2030,2050), fileName=paste0(outfilename,".pdf")))
+    try(compareScenarios(mif=mif_path, hist=hist_path, reg=regions, mainReg=mainReg, fileName = paste0(outfilename,".pdf")))
+  } else {
+    try(compareScenarios(mif=mif_path, hist=hist_path, reg=regions, mainReg=mainReg, y=c(seq(2005,2050,5)), y_hist=c(seq(1990,2015,1)), y_bar=c(2010,2030,2050), fileName=paste0(outfilename,".pdf")))
   }
 }
 
-wrap_to_have_a_clean_exit(outputdirs,shortTerm,outfilename)
+wrap_to_have_a_clean_exit(outputdirs,shortTerm,outfilename,regions,mainReg)

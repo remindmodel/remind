@@ -47,12 +47,14 @@ for (i in 1:length(listofruns)) {
 
 # ---- Start compareScenarios either on the cluster or locally ----
 
-start_comp <- function(outputdirs,shortTerm,outfilename) {
-  jobname <- paste0("compScen",ifelse(outfilename=="","","-"),outfilename,ifelse(shortTerm, "-shortTerm", ""))
+start_comp <- function(outputdirs,shortTerm,outfilename,regions=F,mainReg=F) {
+  jobname <- paste0("compScen",ifelse(outfilename=="","","-"),outfilename,ifelse(shortTerm, "-shortTerm", ""),ifelse((mainReg!=F), paste0("-",mainReg), ""))
   cat("Starting ",jobname,"\n")
+  if(mainReg==F) mainReg <- "GLO"
+  if(regions==F) regions <- c("GLO","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
   on_cluster <- file.exists("/p/projects/")
   if (on_cluster) {
-    clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname,"\"")
+    clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regions=",regions," mainReg=",mainReg,"\"")
     system(clcom)
   } else {
     outfilename    <- jobname
@@ -70,3 +72,14 @@ for (r in listofruns) {
   if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = r$set)
   if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = r$set)
 }
+
+# ---- For each list entry call start script that starts region specific compare scenarios ----
+
+for (r in listofruns) {
+	regionSubsetList <- remind::toolRegionSubsets(lucode::path(outputdirs[1],"fulldata.gdx"))
+	invisible(sapply(names(regionSubsetList),function(reg){
+		if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = r$set, regions=regionSubsetList[[reg]], mainReg=reg)
+		if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = r$set, regions=regionSubsetList[[reg]], mainReg=reg)
+	}))
+}
+

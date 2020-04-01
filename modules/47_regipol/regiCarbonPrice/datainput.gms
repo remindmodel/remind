@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
+
+*** if the bau or ref gdx has been run with a carbon tax  
+if ( (cm_startyear gt 2005),
+  Execute_Loadpoint 'input_ref' p47_taxCO2eqBeforeStartYear = pm_taxCO2eq;
+  p47_taxCO2eqBeforeStartYear(ttot,regi)$((ttot.val ge cm_startyear)) = 0;
+);
+
+$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
+if ( (cm_startyear gt 2005),
+  Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
+  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
+);
+$ENDIF.emiMktETS
+
 parameter p47_emiAllowances(tall,ETS_mkt)       "emission allowances (without national aviation)"
 /
 $ondelim
@@ -21,10 +35,8 @@ p47_emiAllowances("2018","EU_ETS") = p47_emiAllowances("2018","EU_ETS") - 1.5;
 p47_emiAllowances("2019","EU_ETS") = p47_emiAllowances("2019","EU_ETS") - 1.5; 
 
 *removing Norway, Iceland and Liechtenstein from the allowances as they are not accounted for now in the REMIND ETS. They account for approximately 1.2% of the total allocated allowances according EEA data (European Environment Agency) 
-*p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123); 
-
 *adding allowances corresponding to Switzerland emissions in the ETS (5 mtCO2) vs total EU (2 Gt CO2) equal to 0.25%
-p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1+0.0025);
+p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123+0.0025); 
 
 * ETS 2005 reference emissions
 * 2368.8517 Mt CO2-equiv/yr, verified stationary emissions from EEA
@@ -33,11 +45,32 @@ p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1+0.0025);
 * 2633.49473 Mt CO2/yr, from REMIND 2005 (should be using this one, but the ETS prices would be too low)
 p47_emiAllowances("2005","EU_ETS") = 2.3688517;
 
+$ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
+*removing Norway, Iceland and Liechtenstein from the ETS budget as they are not accounted for now in the REMIND ETS. They account for approximately 1.2% of the total allocated allowances according EEA data (European Environment Agency) 
+*removing Switzerland emissions in the ETS (5 mtCO2) vs total EU (2 Gt CO2) equal to 0.25%
+p47_regiCO2ETStarget(ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type) = p47_regiCO2ETStarget(ttot,target_type,emi_type)*(1-0.0123-0.0025);
+$endIf.emiMktETS  
+
+$ontext
+
 * Calculating 2030 to 2050 allowances based on 2005 ETS emissions
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 
 * budget target
 $IFTHEN.ETS_budget "%cm_emiMktETS_type%" == "budget" 
+	loop(tall$((tall.val gt 2030) AND (tall.val le 2050)),
+		p47_emiAllowances(tall,"EU_ETS")$p47_emiAllowances("2030","EU_ETS") = 
+			p47_emiAllowances("2030","EU_ETS") + 
+			( tall.val - 2030 )* (
+				( ((( p47_emiAllowances("2005","EU_ETS") ) * (%cm_emiMktETS%))) - p47_emiAllowances("2030","EU_ETS") ) / (2050 - 2030)
+			)
+	);
+
+	p47_emiTargetETS("2050","EU_ETS") = sum(tall$((tall.val ge 2013) AND (tall.val le 2050)), p47_emiAllowances(tall,"EU_ETS"))/sm_c_2_co2; !! emissions from 2013 to 2050
+$ENDIF.ETS_budget
+
+* linear target
+$IFTHEN.ETS_budget "%cm_emiMktETS_type%" == "linear" 
 	loop(tall$((tall.val gt 2030) AND (tall.val le 2050)),
 		p47_emiAllowances(tall,"EU_ETS")$p47_emiAllowances("2030","EU_ETS") = 
 			p47_emiAllowances("2030","EU_ETS") + 
@@ -59,7 +92,7 @@ display p47_emiAllowances, p47_emiTargetETS;
 
 $ENDIF.emiMktETS
 
-
+$offtext
 
 $IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 
 
@@ -101,14 +134,20 @@ $IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off"
 	p_earlyreti_adjRate(regi,"tnrs")$(sameas(regi,"DEU")) = 0.2;
 $ENDIF.NucRegiPol
 
-***$IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
-***	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_INNOPATHS_CCS_markup%;
-***$ENDIF.CCScostMarkup
+$IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
+	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_INNOPATHS_CCS_markup%;
+$ENDIF.CCScostMarkup
 
-***$IFTHEN.renewablesFloorCost not "%cm_INNOPATHS_renewables_floor_cost%" == "off" 
-***	parameter p_new_renewables_floor_cost(all_te) / %cm_INNOPATHS_renewables_floor_cost% /;
-***	pm_data(regi,"floorcost",te)$((regi_group("EUR_regi",regi)) AND (p_new_renewables_floor_cost(te))) = pm_data(regi,"floorcost",te)  + p_new_renewables_floor_cost(te);
-***$ENDIF.renewablesFloorCost
+$IFTHEN.renewablesFloorCost not "%cm_INNOPATHS_renewables_floor_cost%" == "off" 
+	parameter p_new_renewables_floor_cost(all_te) / %cm_INNOPATHS_renewables_floor_cost% /;
+	pm_data(regi,"floorcost",te)$((regi_group("EUR_regi",regi)) AND (p_new_renewables_floor_cost(te))) = pm_data(regi,"floorcost",te)  + p_new_renewables_floor_cost(te);
+$ENDIF.renewablesFloorCost
 
+
+$ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
+loop((ttot,ext_regi,emi_type)$p47_quantity_regiCO2target(ttot,ext_regi,emi_type),
+	p47_quantity_regiCO2target(t,ext_regi,emi_type)$(t.val ge ttot.val) = p47_quantity_regiCO2target(ttot,ext_regi,emi_type); 
+);
+$ENDIF.quantity_regiCO2target
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

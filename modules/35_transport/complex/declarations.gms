@@ -29,6 +29,10 @@ pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV trans
 p35_share_seliq_t(ttot,all_regi)                               "share of liquids used for transport sector (fedie + fepet). Unit 0..1"
 p35_share_seh2_t(ttot,all_regi)                                "share of hydrogen used for transport sector  (feh2t). Unit 0..1"
 p35_share_seel_t(ttot,all_regi)                                "Share of electricity used for transport sector (feelt). Unit 0..1"
+
+$ifthen not "%cm_INNOPATHS_LDV_mkt_share%" == "off"
+    new_bound(all_te,bound_type) / %cm_INNOPATHS_LDV_mkt_share% /
+$endif    
 ;
 
 *** EOF ./modules/35_transport/complex/declarations.gms

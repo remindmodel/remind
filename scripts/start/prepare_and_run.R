@@ -1,4 +1,5 @@
 library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
 
@@ -208,7 +209,7 @@ prepare_and_run <- function() {
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
-                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0("INNOP_", cfg$gms$cm_calibration_string, "-"),
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
   
   # write name of corresponding CES file to datainput.gms
@@ -537,7 +538,14 @@ prepare_and_run <- function() {
                                 list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
-    
+
+    levs_manipulateThis <- c(levs_manipulateThis, 
+                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
+    fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
+    margs_manipulateThis <- c(margs_manipulateThis, 
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis, 

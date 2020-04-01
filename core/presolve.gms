@@ -124,12 +124,9 @@ else
 *** Define co2 price for entities that are used in MAC. 
 p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
 
-*$ontext
 *** Redefine the MAC price for sectors and regions within the ETS
-$IFTHEN.macPriceETS "%regipol%" == "regiCarbonPrice"
-p_priceCO2forMAC(ttot,regi,enty) = 0;
-*$IFTHEN.macPriceETS not "%cm_emiMktETS%" == "off" 
-	loop(ETS_mkt,
+$IFTHEN.macPriceETS not "%cm_emiMktETS%" == "off" 
+  loop(ETS_mkt,
     loop(enty$(macSector2emiMkt(enty,"ETS")),
       p_priceCO2forMAC(t,regi,enty2)$(ETS_regi(ETS_mkt,regi) AND emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ETS")* 1000;
     );
@@ -145,7 +142,6 @@ $IFTHEN.macPriceES not "%cm_emiMktES%" == "off"
     p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
   );
 $ENDIF.macPriceES
-*$offtext
 
 *** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
 *** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!

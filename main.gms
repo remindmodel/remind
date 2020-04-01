@@ -392,6 +392,7 @@ cm_noReboundEffect     = 0;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
+$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids									   
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -433,6 +434,28 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
+
+*** INNOPATHS switches
+$setglobal cm_calibration_FE  off      !! def = off
+
+$setglobal cm_INNOPATHS_eni  off!! def = off
+$setglobal cm_INNOPATHS_enb  off!! def = off
+
+$setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
+
+$setglobal cm_INNOPATHS_incolearn  off !! def = off
+$setglobal cm_INNOPATHS_storageFactor  off !! def = off
+
+$setglobal cm_INNOPATHS_adj_seed  off
+$setglobal cm_INNOPATHS_adj_seed_cont  off
+$setglobal cm_INNOPATHS_adj_coeff  off
+$setglobal cm_INNOPATHS_adj_coeff_cont  off
+
+$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+
+$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
+
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
