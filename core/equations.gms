@@ -120,7 +120,7 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
 ***   emissions - it comes from biomass
-  + ( sm_MtCH4_2_TWa
+  + ( 0.001638 
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
@@ -172,11 +172,10 @@ $endif
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
 ***---------------------------------------------------------------------------
-q_transSe2fe(t,regi,se2fe(entySE,entyFE,te)) .. 
-    pm_eta_conv(t,regi,te)
-  * vm_demSE(t,regi,entySE,entyFE,te)
-  =e=
-  vm_prodFE(t,regi,entySE,entyFE,te) 
+q_transSe2fe(t,regi,se2fe(enty,enty2,te))..
+         pm_eta_conv(t,regi,te) * vm_demSe(t,regi,enty,enty2,te)
+         =e=
+         vm_prodFe(t,regi,enty,enty2,te) 
 ;
 
 
@@ -422,35 +421,35 @@ q_costTeCapital(t,regi,teLearn) ..
         ** fm_dataglob("learnExp_wFC",teLearn)
       )
     )$( t.val le 2005 )
-***  special treatment for 2010, 2015: start divergence of regional values by using a
-***  t-split of global 2005 to regional 2020 in order to phase-in the observed 2020 regional 
+***  special treatment for 2010: start divergence of regional values by using a
+***  50/50-split global 2005 to regional 2015 in order to phase-in the observed 2015 regional 
 ***  variation from input-data
-  + ( (2020 - t.val)/15 * fm_dataglob("learnMult_wFC",teLearn) 
-      * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
-        + pm_capCumForeign(t,regi,teLearn)
+  + ( 0.5 * fm_dataglob("learnMult_wFC",teLearn) 
+      * ( sum(regi2, vm_capCum("2005",regi2,teLearn)) 
+        + pm_capCumForeign("2005",regi,teLearn)
         )
         ** fm_dataglob("learnExp_wFC",teLearn)
   	  
-    + (t.val - 2005)/15 * pm_data(regi,"learnMult_wFC",teLearn)
-      * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
-        + pm_capCumForeign(t,regi,teLearn)
+    + 0.5 * pm_data(regi,"learnMult_wFC",teLearn)
+      * ( sum(regi2, vm_capCum("2015",regi2,teLearn)) 
+        + pm_capCumForeign("2015",regi,teLearn)
         )
   	  ** pm_data(regi,"learnExp_wFC",teLearn) 
-    )$( (t.val gt 2005) AND (t.val lt 2020) )
+    )$( t.val eq 2010 )
   
 ***  assuming linear convergence of regional learning curves to global values until 2050
-  + ( (pm_ttot_val(t) - 2020) / 30 * fm_dataglob("learnMult_wFC",teLearn) 
+  + ( (pm_ttot_val(t) - 2015) / 35 * fm_dataglob("learnMult_wFC",teLearn) 
     * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
       + pm_capCumForeign(t,regi,teLearn)
       )
       ** fm_dataglob("learnExp_wFC",teLearn)
 	  
-    + (2050 - pm_ttot_val(t)) / 30 * pm_data(regi,"learnMult_wFC",teLearn)
+    + (2050 - pm_ttot_val(t)) / 35 * pm_data(regi,"learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
       + pm_capCumForeign(t,regi,teLearn)
       )
 	  ** pm_data(regi,"learnExp_wFC",teLearn) 
-    )$( t.val ge 2020 AND t.val le 2050 )
+    )$( t.val ge 2015 AND t.val le 2050 )
 	
 *** globally harmonized costs after 2050
   + ( fm_dataglob("learnMult_wFC",teLearn) 
@@ -507,35 +506,34 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(   emi2te(enty,enty2,te,enty3)
 *' Total energy-emissions:
 ***--------------------------------------------------
 *mh calculate total energy system emissions for each region and timestep:
-q_emiTe(t,regi,emiTe(enty)) .. 
+q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-    !! emissions from fuel combustion
+***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
       vm_emiTeDetail(t,regi,enty2,enty3,te,enty)
     )
-    !! emissions from non-conventional fuel extraction
+***   emissions from non-conventional fuel extraction
   + sum(emi2fuelMine(enty,enty2,rlf),       
       p_cint(regi,enty,enty2,rlf)
     * vm_fuExtr(t,regi,enty2,rlf)
     )$( c_cint_scen eq 1 )
-    !! emissions from conventional fuel extraction
-  + sum((pe2rlf(enty3,rlf2),enty2)$( pm_fuExtrOwnCons(regi,enty,enty2) gt 0 ),
-      p_cintraw(enty2)
-    * pm_fuExtrOwnCons(regi,enty2,enty3) 
-    * vm_fuExtr(t,regi,enty3,rlf2)
-    )
-    !! Industry CCS emissions
+***   emissions from conventional fuel extraction
+  + sum(pe2rlf(enty3,rlf2),sum(enty2,       
+     (p_cintraw(enty2)
+      * pm_fuExtrOwnCons(regi, enty2, enty3) 
+      * vm_fuExtr(t,regi,enty3,rlf2)
+     )$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)    
+    ))
+***   Industry CCS emissions
   - sum(emiMac2mac(emiInd37_fuel,enty2),
       vm_emiIndCCS(t,regi,emiInd37_fuel)
     )$( sameas(enty,"co2") )
-    !! Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS 
-    !! capacity don't have the same lifetime
+	
+***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + v_co2capturevalve(t,regi)$( sameas(enty,"co2") )
-    !! CO2 from short-term CCU
-  + sum(teCCU2rlf(te2,rlf), 
-      vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)
-    )
+***  JS CO2 from short-term CCU
+  + sum(teCCU2rlf(te2,rlf), vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf) )
 ;
 
 ***------------------------------------------------------

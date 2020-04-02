@@ -8,27 +8,18 @@ require(data.table)
 require(parallel)
 require(remind)
 
-args = commandArgs(trailingOnly=TRUE)
-if (length(args)==0) {
-  plotfldr <- "multi_comparison_plots"
-} else {
-  plotfldr <- args[1]
-}
-
+plotfldr <- "multi_comparison_plots/"
 dir.create(plotfldr, showWarnings = F)
 
-NUM_OF_CPUS_LOCAL <- 2
+NUM_OF_CPUS <- 2
 
 run_compare <- function(scens, policies, mifs, short){
 
   RCP_MAP <- list(
     Base="Baseline",
-    NPi="Baseline",
     NDC="Baseline",
-    PkBudg900="26",
-    PkBudg1000="45",
-    PkBudg1100="45",
-    PkBudg1300="45"
+    Budg600="26",
+    Budg950="45"
   )
 
   short <- short[1]
@@ -39,8 +30,8 @@ run_compare <- function(scens, policies, mifs, short){
   short_y <- seq(2005,2060,5)
   short_ybar <- c(2010,2030,2050)
 
-  print(sprintf("[%s] Compare scenarios for scenarios %s and budgets %s, short-term: %s",
-                Sys.time(), paste(scens, collapse=","), paste(policies, collapse=","), short))
+  print(sprintf("Compare scenarios for scenarios %s and budgets %s, short-term: %s",
+                paste(scens, collapse=","), paste(policies, collapse=","), short))
 
   fname <- paste0(paste(scens, collapse="-"), "_",
                   paste(policies, collapse="-"), "_",
@@ -73,11 +64,11 @@ run_compare <- function(scens, policies, mifs, short){
 
 table <- fread("multi_comparison.csv", header = T)
 
-CORES <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", NUM_OF_CPUS_LOCAL))
+CORES <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", NUM_OF_CPUS))
 cat(sprintf("Using %i CPUs.\n", CORES))
 
 mclapply(1:max(table$comparison_id), function(id){
   args <- table[comparison_id == id]
   run_compare(args$scenario, args$policy, args$mif, args$short)
-}, mc.cores=CORES)
+})
 # table[, run_compare(scenario, policy, mif, short), by=comparison_id]

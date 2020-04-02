@@ -13,11 +13,12 @@ The macro-economic core of REMIND is a Ramsey-type optimal growth model
 in which intertemporal global welfare is optimized subject to equilibrium constraints.
 
 ## DOCUMENTATION
-<!-- The model documentation for version 2.1 can be found at XXX.-->
+The model documentation for version 2.1 can be found at XXX.
+
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, use_advanced_interfacePlot_function=T))`
+package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T))`
 in the main folder of the model.
 The resulting documentation can be found in the folder "doc".
 
@@ -26,14 +27,8 @@ Please pay attention to the REMIND Coding Etiquette when you modify the code
 The Coding Etiquette is found in the documentation section of the file main.gms.
 It explains also the used name conventions and other structural characteristics.
 
-## TUTORIALS
-
-Tutorials can be found in the form of markdown files in the repository:
-
-https://github.com/remindmodel/remind/tree/develop/tutorials
-
 ## COPYRIGHT
-Copyright 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+Copyright 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 
 ## LICENSE
 This program is free software: you can redistribute it and/or modify
@@ -63,7 +58,7 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 ## HOW TO INSTALL
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
 solvers *CONOPT* for its core calculations. As the model
-benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
+benefits significantly of recent improvements in *GAMS* and *CONOPT4* it is
 recommended to work with the most recent versions of both.
 Please make sure that the GAMS installation path is added to the PATH variable
 of the system.
@@ -182,8 +177,6 @@ Please contact remind@pik-potsdam.de
 ## CITATION
 See file CITATION.cff or the documentation of the model for information how
 to cite the model.
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3730919.svg)](https://doi.org/10.5281/zenodo.3730919)
 
 ## AUTHORS
 See list of authors in CITATION.cff

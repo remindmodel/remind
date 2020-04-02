@@ -17,12 +17,6 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
           * p37_shIndFE(regi,in,secInd37)
           )
         * p37_fctEmi(entyFE)
-        !! share of SE in FE production
-        * ( vm_prodFE.l(ttot,regi,entySE,entyFE,te2)
-          / sum(se2fe2(entySE2,entyFE,te3),
-              vm_prodFE.l(ttot,regi,entySE2,entyFE,te3)
-            )
-          )
         )
         !! share of PE in SE production
       * ( vm_prodSE.l(ttot,regi,entyPE,entySE,te)
@@ -30,7 +24,7 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
               vm_prodSE.l(ttot,regi,entyPE2,entySE,te2)
             )
             !! SE CH4 from waste bypass
-          + ( sm_MtCH4_2_TWa
+          + ( 0.001638
             * ( vm_macBase.l(ttot,regi,"ch4wstl")
               - vm_emiMacSector.l(ttot,regi,"ch4wstl")
               )
