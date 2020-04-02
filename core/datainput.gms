@@ -633,7 +633,7 @@ pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","s
 
 table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGeothermal_up.cs3r"
+$include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
