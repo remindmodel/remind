@@ -5,6 +5,10 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/preloop.gms
+
+***initialize co2 market taxes
+pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+
 *LB* set CO2 tax in 2005 and 2010 to 0
 pm_taxCO2eq("2005",regi)=0;
 pm_taxCO2eq("2010",regi)=0;

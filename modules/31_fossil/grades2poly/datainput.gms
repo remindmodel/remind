@@ -34,7 +34,7 @@ p31_ffPolyRent(all_regi,"pegas",polyCoeffRent)  = f31_ffPolyRent(all_regi,"pegas
 parameter f31_ffPolyCumEx(all_regi,all_enty,char,all_fossilScen)   "Linear rent approx (e.g. Price - average extraction cost) (Oil, Gas and Coal)"
 /
 $ondelim
-$include "./modules/31_fossil/grades2poly/input/f31_ffPolyCumEx_up.cs4r"
+$include "./modules/31_fossil/grades2poly/input/f31_ffPolyCumEx.cs4r"
 $offdelim
 /
 ;

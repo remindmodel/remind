@@ -35,24 +35,25 @@ Please put effort into choosing intelligible names.
 #### Prefixes:
 Use the following *prefixes*:
 
-* q_ eQuations
-* v_ Variables
-* s_ Scalars
-* f_ File parameters - these parameters contain data as it was read from file
-* o_ Output parameters - only being influenced by optimization but without effect on the optimization
-* c_ switches from the Config.gms - parameters, that are switches to choose different scenarios
+* "q_" to designate equations,
+* "v_" to designate variables,
+* "s_" to designate scalars,
+* "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
+* "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
+* "c_" to designate switches (parameters that enable different configuration choices),
+* "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
+                             through multiplication, e.g. s_GWh_2_EJ.
 
-The prefixes are extended in some cases by a second letter:
+These prefixes are extended in some cases by a second letter:
 
-* ?m_ module-relevant object - This object is used by at least one module and the core code. Changes related to this object have to be performed carefully.
-* ?00_ (a 2-digit number) module-only object - This 2-digit number defines the module the object belongs to. The number is used here to make sure that different modules cannot have the same object.
+* "?m_" to designate objects used in the core and in at least one module.
+* "?00_" to designate objects used in a single module, exclusively, with the 2-digit number corresponding 
+         to the module number.
 
-Sets are treated slightly different: Instead of adding a prefix sets should get a 2-digit number suffix giving the number of the module in which the set is exclusively used. If the set is used in more than one module no suffix should be given. For specific sets also prefixes exist:
-
-* s_FIRSTUNIT_2_SECONDUNIT unit conversion scalar - a scalar that is used to convert from FIRSTUNIT to SECONDUNIT by multiplying - example: s_GWh_2_EJ.
-* c_@ - configuration switch, must be defined and assigned in the config.gms file. It's practically the former switches we had (emiscen, climscen, etc).
-
-The **units** of varialbles and parameters are documented at the location of the variable and parameter declaration like [UNIT] (e.g. [TWa], [EJ], [GtC], [GtCO2], ...).
+Sets are treated differently: instead of a prefix, sets exclusively used within a module get that module's 
+number added as a suffix. If the set is used in more than one module no suffix is given. 
+ 
+The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
 
 #### Commenting:
 

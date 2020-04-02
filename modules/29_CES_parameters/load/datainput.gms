@@ -8,7 +8,7 @@
 *** Load CES parameters based on current model configuration
 *** ATTENTION the file name is replaced by the function start_run()
 *##################### R SECTION START (CES INPUT) ##########################
-$include "./modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1.inc"
+$include "./modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
 

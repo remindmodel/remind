@@ -619,12 +619,6 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWind(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"wind")     = f_maxProdGradeRegiWind(all_regi,"nur",rlf);
 
-table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
-$ondelim
-$include "./core/input/f_maxProdGeothermal_up.cs3r"
-$offdelim
-;
-
 table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
 $ondelim
 $include "./core/input/f_dataRegiSolar.cs3r"
@@ -637,6 +631,11 @@ pm_dataren(all_regi,"nur",rlf,"spv")        = f_dataRegiSolar(all_regi,"nur","sp
 p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitGeopot","spv",rlf);
 pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
 
+table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
+$ondelim
+$include "./core/input/f_maxProdGeothermal_up.cs3r"
+$offdelim
+;
 pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 
@@ -768,7 +767,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.05;
+  p_adj_coeff(ttot,regi,"spv")             = 0.1;
   p_adj_coeff(ttot,regi,"wind")            = 0.1;
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
@@ -906,6 +905,10 @@ pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
+loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
+$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
+);
+
 $if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
 
 
@@ -921,12 +924,19 @@ Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
 
 *** in case the technologies did not exist in the gdx, set to a non-zero value
 p_capCum(t,regi,te)$( NOT p_capCum(t,regi,te)) = sm_eps;
+display p_capCum;
+*RP overwrite p_capCum by exogenous values for 2020
+p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
+display p_capCum;
 
 pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
 *RP* adjust parameter learnMult_woFC to take floor costs into account
 $if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,pm_data(regi2,"ccap0",te))**pm_data(regi,"learnExp_wFC",te));
 *NB* this is the correction of the original parameter calibration
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
+loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
+$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2020",regi2,te))**pm_data(regi,"learnExp_wFC",te));
+);
 ***parameter calculation for global level, that regional values can gradually converge to
 fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te) **fm_dataglob("learnExp_wFC", te));
 
@@ -1067,8 +1077,9 @@ $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch("co2luc") = 0;
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
+*** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
@@ -1140,14 +1151,8 @@ $offdelim
 ;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
-*GL* demand side emission factor of final energy carriers in MtCO2/EJ
-*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
-p_ef_dem("fegas") = 50.3;
-p_ef_dem("fesos") = 90.5;
-p_ef_dem("fehos") = 69.3;
-p_ef_dem("fepet") = 68.5;
-p_ef_dem("fedie") = 69.3;
-
+*AD* Updated Demand Side Emission Factors
+*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
 p_ef_dem(entyFe) = 0;
 p_ef_dem("fedie") = 74;
 p_ef_dem("fehos") = 73;
@@ -1155,11 +1160,6 @@ p_ef_dem("fepet") = 73;
 p_ef_dem("fegas") = 55;
 p_ef_dem("fesos") = 96;
 
-pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

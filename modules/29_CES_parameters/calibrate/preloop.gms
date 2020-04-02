@@ -356,7 +356,7 @@ display "after entrp_frgt_lo smoothening", pm_cesdata;
     );
   );
 
-
+display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
 *** Smooth prices for the whole period for elements in or below the putty-clay structure
 ***Problem if there are several ppfIO_putty below each other, prices are then smoothed twice

@@ -28,7 +28,7 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename,regions,m
   outfilename <- if(mainReg!="GLO") paste0(outfilename, "-" , mainReg)
   system(paste0("mkdir ",outfilename))
   merke <- getwd()
-  paste(merke)
+
   setwd(outfilename)
   # remove temporary folder
   on.exit(system(paste0("mv ",outfilename,".pdf ..")))

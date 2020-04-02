@@ -116,6 +116,15 @@ ces_transport_dyn35(all_in,all_in)   "CES tree structure - edge transport"
    entrp_frgt  . (entrp_frgt_sm, entrp_frgt_lo)
 /
 
+EDGE_scenario_all    "EDGE-T scenarios"
+/
+Conservative_liquids
+Hydrogen_push
+Electricity_push
+Smart_lifestyles_Electricity_push
+/
+
+EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
 
 *** sets for the reporting, to be consistent with *complex* realisation
 FE_Transp_fety35(all_enty) "FEs used in the transport module"  / fepet, fedie, feh2t, feelt /

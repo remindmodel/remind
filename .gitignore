@@ -92,6 +92,7 @@ modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r
 modules/29_CES_parameters/calibrate/input/p29_efficiency_growth.cs4r
 modules/29_CES_parameters/calibrate/input/pm_es_demand.cs4r
 modules/29_CES_parameters/calibrate/input/pm_fe_demand.cs4r
+modules/29_CES_parameters/calibrate/input/pm_trp_demand.cs4r
 modules/29_CES_parameters/calibrate/input/p29_cesdata_price.cs4r
 modules/29_CES_parameters/calibrate/input/f29_capitalUnitProjections.cs4r
 modules/29_CES_parameters/calibrate/input/
@@ -118,6 +119,15 @@ modules/33_CDR/weathering/input/f33_maxProdGradeRegiWeathering.cs3r
 modules/35_transport/complex/input/f35_factorVintages.cs3r
 modules/35_transport/complex/input/f35_transp_eff.cs3r
 modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r
+modules/35_transport/edge_esm/input/SW.cs4r
+modules/35_transport/edge_esm/input/UCD_NEC_iso.cs4r
+modules/35_transport/edge_esm/input/esCapCost.cs4r
+modules/35_transport/edge_esm/input/fe2es.cs4r
+modules/35_transport/edge_esm/input/fe_demand_tech.cs4r
+modules/35_transport/edge_esm/input/harmonized_intensities.cs4r
+modules/35_transport/edge_esm/input/logit_exponent.cs4r
+modules/35_transport/edge_esm/input/price_nonmot.cs4r
+modules/35_transport/edge_esm/input/value_time.cs4r
 modules/36_buildings/services_putty/input/p36_floorspace_scen.cs4r
 modules/36_buildings/services_putty/input/p36_serviceInputs.cs4r
 modules/36_buildings/services_putty/input/p36_serviceOutputs.cs4r
