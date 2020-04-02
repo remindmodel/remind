@@ -638,6 +638,7 @@ EDGE_scenario_all    "EDGE scenarios"
 Conservative_liquids
 Hydrogen_push
 Electricity_push
+Smart_lifestyles
 Smart_lifestyles_Electricity_push
 /
 
