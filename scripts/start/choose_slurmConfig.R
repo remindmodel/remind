@@ -34,6 +34,7 @@ choose_slurmConfig <- function() {
                "11: SLURM short                  1   nash debug, testOneRegi, reporting",
                "12: SLURM medium                 1   negishi",
                "13: SLURM long                   1   negishi",
+			   "-----------------------------------------------------------------------",
                "14: SLURM medium                12   nash - long calibration",
                "15: SLURM medium                16   nash - long calibration")
 
