@@ -172,11 +172,10 @@ $endif
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
 ***---------------------------------------------------------------------------
-q_transSe2fe(t,regi,se2fe(entySE,entyFE,te)) .. 
-    pm_eta_conv(t,regi,te)
-  * vm_demSE(t,regi,entySE,entyFE,te)
-  =e=
-  vm_prodFE(t,regi,entySE,entyFE,te) 
+q_transSe2fe(t,regi,se2fe(enty,enty2,te))..
+         pm_eta_conv(t,regi,te) * vm_demSe(t,regi,enty,enty2,te)
+         =e=
+         vm_prodFe(t,regi,enty,enty2,te) 
 ;
 
 

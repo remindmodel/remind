@@ -171,9 +171,15 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
      cfg_mag$files2export$start <- .setgdxcopy(".gdx",cfg_mag$files2export$start,gdxlist)
     }
     
-    cat("### COUPLING ### MAgPIE will be startet with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
+    # delete "+" and "++" from variable names
+    rep <- read.report(report)
+    names(rep[[1]]) <- "MAgPIE"
+    rep[[1]][[1]] <- deletePlus(report[[1]][[1]])
+    #write.report(rep,"report.mif")
+    sceninreport <- names(rep) # report must only contain ONE scenario
+    cat("### COUPLING ### MAgPIE will be startet with\n    Report = ",report,"\n    Scenario used as input = ",sceninreport,"\n    Folder=",cfg_mag$results_folder,"\n")
     ########### START MAGPIE #############
-    outfolder_mag <- start_run(cfg_mag,path_to_report=report,LU_pricing=LU_pricing,codeCheck=FALSE)
+    outfolder_mag <- start_run(cfg_mag,report=rep,sceninreport=sceninreport,LU_pricing=LU_pricing,codeCheck=FALSE)
     ######################################
     cat("### COUPLING ### MAgPIE output was stored in ",outfolder_mag,"\n")
     report <- paste0(path_magpie,outfolder_mag,"/report.mif")
@@ -209,7 +215,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    system(paste0("sbatch --qos=priority --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+    system(paste0("sbatch --qos=standby --job-name=",run," --output=",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
