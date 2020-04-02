@@ -76,6 +76,13 @@ $offdelim
   p21_tau_fe_tax_transport(ttot,all_regi,feForUe) = f21_tau_fe_tax_transport(ttot,all_regi,feForUe);
   p21_tau_fe_sub_transport(ttot,all_regi,feForUe) = f21_tau_fe_sub_transport(ttot,all_regi,feForUe);
   
+
+  p21_tau_fe_tax_transport(ttot,all_regi,feForEs) = f21_tau_fe_tax_transport(ttot,all_regi,feForEs);
+  p21_tau_fe_sub_transport(ttot,all_regi,feForEs) = f21_tau_fe_sub_transport(ttot,all_regi,feForEs);
+
+  p21_tau_fe_tax_transport(ttot,all_regi,"fegat") = p21_tau_fe_tax_transport(ttot,all_regi,"fedie");
+  p21_tau_fe_sub_transport(ttot,all_regi,"fegat") = p21_tau_fe_sub_transport(ttot,all_regi,"fedie");
+
 loop ( fe_tax_sub_sbi(all_in, in), !! Pathways I from FE to the CES
   p21_tau_fe_tax_bit_st(ttot,all_regi,in) = f21_tau_fe_tax_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
   p21_tau_fe_sub_bit_st(ttot,all_regi,in) = f21_tau_fe_sub_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen

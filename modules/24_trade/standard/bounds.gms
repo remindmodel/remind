@@ -92,6 +92,36 @@ vm_Xport.up("2010",regi,"peoil") = 1.05 * pm_IO_trade("2010",regi,"peoil","Xport
 vm_Xport.lo("2015",regi,"peoil") = 0.95 * pm_IO_trade("2015",regi,"peoil","Xport");
 vm_Xport.up("2015",regi,"peoil") = 1.05 * pm_IO_trade("2015",regi,"peoil","Xport");
 
+*** bounds on oil imports in 2010 and 2015
+vm_Mport.lo("2010",regi,"peoil") = 0.95 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Mport.up("2010",regi,"peoil") = 1.05 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Mport.lo("2015",regi,"peoil") = 0.95 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Mport.up("2015",regi,"peoil") = 1.05 * pm_IO_trade("2015",regi,"peoil","Mport");
+
+*** bounds on gas exports in 2010 and 2015
+vm_Xport.lo("2010",regi,"pegas") = 0.95 * pm_IO_trade("2010",regi,"pegas","Xport");
+vm_Xport.up("2010",regi,"pegas") = 1.05 * pm_IO_trade("2010",regi,"pegas","Xport");
+vm_Xport.lo("2015",regi,"pegas") = 0.95 * pm_IO_trade("2015",regi,"pegas","Xport");
+vm_Xport.up("2015",regi,"pegas") = 1.05 * pm_IO_trade("2015",regi,"pegas","Xport");
+
+*** bounds on gas imports in 2010 and 2015
+vm_Mport.lo("2010",regi,"pegas") = 0.95 * pm_IO_trade("2010",regi,"pegas","Mport");
+vm_Mport.up("2010",regi,"pegas") = 1.05 * pm_IO_trade("2010",regi,"pegas","Mport");
+vm_Mport.lo("2015",regi,"pegas") = 0.95 * pm_IO_trade("2015",regi,"pegas","Mport");
+vm_Mport.up("2015",regi,"pegas") = 1.05 * pm_IO_trade("2015",regi,"pegas","Mport");
+
+*** bounds on coal exports in 2010 and 2015
+vm_Xport.lo("2010",regi,"pecoal") = 0.95 * pm_IO_trade("2010",regi,"pecoal","Xport");
+vm_Xport.up("2010",regi,"pecoal") = 1.05 * pm_IO_trade("2010",regi,"pecoal","Xport");
+vm_Xport.lo("2015",regi,"pecoal") = 0.95 * pm_IO_trade("2015",regi,"pecoal","Xport");
+vm_Xport.up("2015",regi,"pecoal") = 1.05 * pm_IO_trade("2015",regi,"pecoal","Xport");
+
+*** bounds on coal imports in 2010 and 2015
+vm_Mport.lo("2010",regi,"pecoal") = 0.95 * pm_IO_trade("2010",regi,"pecoal","Mport");
+vm_Mport.up("2010",regi,"pecoal") = 1.05 * pm_IO_trade("2010",regi,"pecoal","Mport");
+vm_Mport.lo("2015",regi,"pecoal") = 0.95 * pm_IO_trade("2015",regi,"pecoal","Mport");
+vm_Mport.up("2015",regi,"pecoal") = 1.05 * pm_IO_trade("2015",regi,"pecoal","Mport");
+
 *** upper bounds ( 1% yearly growth rate) on all big oil exporters (more than 15EJ in 2010) in 2020, 2025 and 2030
 loop(regi,
       if( (pm_IO_trade("2010",regi,"peoil","Xport") ge (15*sm_EJ_2_TWa)),

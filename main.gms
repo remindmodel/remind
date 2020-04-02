@@ -7,64 +7,74 @@
 *** SOF ./main.gms
 *' @title REMIND - REgional Model of INvestments and Development
 *'
-*' @description REMIND is a global multi-regional model incorporating the economy, the climate system and a detailed representation of the energy sector. 
-*' It solves for an inter-temporal Pareto optimum in economic and energy investments in the model regions, fully accounting for interregional trade in goods, 
-*' energy carriers and emissions allowances. REMIND allows for the analysis of technology options and policy proposals for climate mitigation.
+*' @description REMIND is a global multi-regional model incorporating the economy, the climate system 
+*' and a detailed representation of the energy sector. It solves for an intertemporal Pareto optimum 
+*' in economic and energy investments in the model regions, fully accounting for interregional trade in 
+*' goods, energy carriers and emissions allowances. REMIND enables analyses of technology options and 
+*' policy proposals for climate change mitigation.
 *'
-*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global welfare is optimized subject to equilibrium constraints ([02_welfare]).
-*' Intertemporal optimization ([80_optimization]) with perfect foresight is subject to market clearing. The model explicitly represents trade in final goods, primary energy carriers, 
-*' and in the case of climate policy, emissions allowances. Macro-economic production factors are capital, labor, and final energy. 
-*' The production function with constant elasticity of substitution (nested CES production function) determines the final energy demand ([29_CES_parameters]).
-*' REMIND uses economic output for investments in the macro-economic capital stock as well as consumption, trade, and energy system expenditures. 
+*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global 
+*' welfare is optimized subject to equilibrium constraints ([02_welfare]). Intertemporal optimization 
+*' ([80_optimization]) with perfect foresight is subject to market clearing. The model explicitly represents 
+*' trade in final goods, primary energy carriers, and when certain climate policies are enabled, emissions 
+*' allowances ([24_trade]). The macro-economic production factors are capital, labor, and final energy. 
+*' A nested production function with constant elasticity of substitution determines the final energy demand 
+*' ([01_macro], [29_CES_parameters]). REMIND uses economic output for investments in the macro-economic 
+*' capital stock as well as for consumption, trade, and energy system expenditures. 
 *' 
-*' The macro-economic core and the energy system part are hard-linked via the final energy demand and costs incurred by the energy system. 
-*' Economic activity results in demand for final energy in different sectors such as transport energy ([35_transport]), electricity ([32_power]), 
-*' and non-electric energy for stationary end uses ([38_stationary]) splitted into an industy ([37_industry]) and buildings ([36_buildings]) sector. 
- 
-*' The primary energy carriers in REMIND include both exhaustible and renewable resources. Exhaustible resources comprise uranium as well as three fossil resources ([31_fossil]), namely coal, oil, and gas. 
-*' Renewable resources include hydro, wind, solar, geothermal, and biomass ([30_biomass]). 
-*' More than 50 technologies are available for the conversion of primary energy into secondary energy carriers as well as for the distribution of secondary energy carriers into final energy.
+*' The macro-economic core and the energy system part are hard-linked via the final energy demand and the 
+*' costs incurred by the energy system. Economic activity results in demand for final energy in different 
+*' sectors (transport ([35_transport]), industry ([37_industry]), buildings ([36_buildings])...) and of 
+*' different type (electric ([32_power]) and non-electric). The primary energy carriers in REMIND include 
+*' both exhaustible and renewable resources. Exhaustible resources comprise uranium as well as three fossil 
+*' resources ([31_fossil]), namely coal, oil, and gas. Renewable resources include hydro, wind, solar, 
+*' geothermal, and biomass ([30_biomass]). More than 50 technologies are available for the conversion of 
+*' primary energy into secondary energy carriers as well as for the distribution of secondary energy carriers 
+*' into final energy.
 *'
-*' The model accounts for the full range of anthropogenic greenhouse gas (GHG) emissions, most of which are represented by source. 
-*' REMIND simulates emissions from long-lived GHGs (CO2, CH4, N2O), short-lived GHGs (CO, NOx, VOC) and aerosols (SO2, BC, OC). 
-*' It accounts for these emissions with different levels of detail depending on the types and sources of emissions. 
-*' It calculates CO2 emissions from fuel combustion, CH4 emissions from fossil fuel extraction and residential energy use and N2O emissions from energy supply based on sources. 
+*' The model accounts for the full range of anthropogenic greenhouse gas (GHG) emissions, most of which are 
+*' represented by source. REMIND simulates emissions from long-lived GHGs (CO2, CH4, N2O), short-lived GHGs 
+*' (CO, NOx, VOC) and aerosols (SO2, BC, OC). It accounts for these emissions with different levels of detail 
+*' depending on the types and sources of emissions. It calculates CO2 emissions from fuel combustion, CH4 
+*' emissions from fossil fuel extraction and residential energy use, and N2O emissions from energy supply 
+*' based on sources. 
 *'
-*' The numerical code is structured in a modular way. The technical structure looky as follows: At the top level you find the folders config, core, modules and scripts. 
-*' The overall structure is build in the file main.gms. All settings and configuration information is given in the config folder. 
-*' The core folder contains all files that are part of the core of the REMIND model. For each module there exists a sub-folder in the modules folder. 
-*' Helpful scripts for e.g. starting a run or analysing results you find in the scripts folder.
+*' The code is structured in a modular way, with code belonging either to the model's core, or to one of the 
+*' modules. The folder structure is as follows: at the top level are the folders config, core, modules and 
+*' scripts. The config folder contains the REMIND settings and configuration information. The core folder 
+*' contains all the files that are part of the core. The modules folder holds all the files that belong to 
+*' the modules, with numbered sub-folders for every module. The scripts folder contains helpful scripts for 
+*' starting a model run and analysing results.
 *' 
-*' In the main.gms the technical structure of REMIND can be found. 
-*' First, the *.gms files from the core folder are included and afterward the *.gms files from the activated module realization, 
-*' beginning with the one with the smallest module-number. The technical structure of REMIND looks as follows:
+*' REMIND is run by executing the main.gms file, which loads the configuration information and builds the model, 
+*' by concatenating all necessary files from the core and modules folders into a single file called full.gms. 
+*' The concatenation process starts with files from the core and continues with files from activated modules, 
+*' in increasing order of module-number. It observes the following structure:
 *'
 *' ![Technical Structure of REMIND](technical_structure.png){ width=100% }
 *'
-*' In general, the .gms-files in each module realization can be the same as in the core. 
-*' For each module it has to be clearly defined what kind of interfaces it has with the core part of the model.
 *'
-*' The REMIND GAMS code folllows a coding etiquette including the following prefixes:
+*' The GAMS code follows a naming etiquette based on the following prefixes:
 *'
-*' * q_ eQuations
-*' * v_ Variables
-*' * s_ Scalars
-*' * f_ File parameters - these parameters contain data as it was read from file
-*' * o_ Output parameters - only being influenced by optimization but without effect on the optimization
-*' * c_ switches from the Config.gms - parameters, that are switches to choose different scenarios
+*' * "q_" to designate equations,
+*' * "v_" to designate variables,
+*' * "s_" to designate scalars,
+*' * "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
+*' * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
+*' * "c_" to designate switches (parameters that enable different configuration choices),
+*' * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
+*'                              through multiplication, e.g. s_GWh_2_EJ.
 *'
-*' The prefixes are extended in some cases by a second letter:
+*' These prefixes are extended in some cases by a second letter:
 *'
-*' * ?m_ module-relevant object - This object is used by at least one module and the core code. Changes related to this object have to be performed carefully.
-*' * ?00_ (a 2-digit number) module-only object - This 2-digit number defines the module the object belongs to. The number is used here to make sure that different modules cannot have the same object.
+*' * "?m_" to designate objects used in the core and in at least one module.
+*' * "?00_" to designate objects used in a single module, exclusively, with the 2-digit number corresponding 
+*'          to the module number.
 *'
-*' Sets are treated slightly different: Instead of adding a prefix sets should get a 2-digit number suffix giving the number of the module in which the set is exclusively used. 
-*' If the set is used in more than one module no suffix should be given. For specific sets also prefixes exist:
-*'
-*' * s_FIRSTUNIT_2_SECONDUNIT unit conversion scalar - a scalar that is used to convert from FIRSTUNIT to SECONDUNIT by multiplying - example: s_GWh_2_EJ.
-*' * c_@ - configuration switch, must be defined and assigned in the config.gms file. It's practically the former switches we had (emiscen, climscen, etc).
+*' Sets are treated differently: instead of a prefix, sets exclusively used within a module get that module's 
+*' number added as a suffix. If the set is used in more than one module no suffix is given. 
 *' 
-*' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of varialbles and parameters are documented at the location of the variable and parameter declaration in \[ \].
+*' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
 
 
 
@@ -72,9 +82,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.937
+* Input data revision: 5.94
 * 
-* Last modification (input data): Thu Jan 16 14:11:39 2020
+* Last modification (input data): Thu Mar 19 16:15:13 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -147,7 +157,7 @@ $setGlobal tax  on                    !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
-$setGlobal capitalMarket  perfect     !! def = perfect
+$setGlobal capitalMarket  debt_limit     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
 $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
@@ -313,7 +323,7 @@ cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
-cm_cprice_red_factor  = 0.5;         !! def = 0.5
+cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
@@ -328,8 +338,8 @@ cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
 cm_limit_peur_scen  = 1;         !! def = 1
-$setGlobal cm_oil_scen   medOil         !! def = medOil
-$setGlobal cm_gas_scen   medGas         !! def = medGas
+$setGlobal cm_oil_scen  medOil         !! def = medOil
+$setGlobal cm_gas_scen  medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
 cm_rentdiscoil      = 0.2;       !! def 0.2
 cm_rentdiscoil2     = 0.9;       !! def 0.9
@@ -384,6 +394,7 @@ cm_noReboundEffect     = 0;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
+$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -393,15 +404,15 @@ $setGlobal c_regi_capturescen  all !! def = all
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
-$setGlobal cm_nash_mode        debug      !! def = parallel
+$setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE        off        !! def = off
-$setglobal cm_INCONV_PENALTY   on         !! def = on
-$setGlobal cm_so2_out_of_opt   on         !! def = on
-$setGlobal c_skip_output       off        !! def = off
-$setGlobal cm_MOFEX            off        !! def = off
-$setGlobal cm_conoptv          conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall        off        !! def = off
+$setGlobal cm_OILRETIRE  off        !! def = off
+$setglobal cm_INCONV_PENALTY  on         !! def = on
+$setGlobal cm_so2_out_of_opt  on         !! def = on
+$setGlobal c_skip_output  off        !! def = off
+$setGlobal cm_MOFEX  off        !! def = off
+$setGlobal cm_conoptv  conopt3    !! def = conopt3
+$setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
@@ -410,7 +421,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10

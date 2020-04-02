@@ -309,9 +309,35 @@ pm_cesdata(t,regi,in_29,"price") $ (( not ((ord(t) le 1) or (ord(t) eq card(t)))
 
   Display p29_alpha, p29_beta;
 
+*** for entrp_frgt_lo
 *** pass on to pm_cesdata and ensure the resulting price is positive
   loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
-    pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29))
+    pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
+    = max(
+    1e-3,
+    ( pm_cesdata(ttot,regi,"entrp_frgt_lo","price")
+      + p29_alpha(regi,"entrp_frgt_lo") + p29_beta(regi,"entrp_frgt_lo") * ttot.val
+      )
+    / 2
+    );
+  );
+
+*** Set minimal price for all periods
+  loop (ttot$( ttot.val ge 2005),
+    pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
+    = max(
+    1e-3,
+    pm_cesdata(ttot,regi,"entrp_frgt_lo","price")
+    );
+  );
+
+display "after entrp_frgt_lo smoothening", pm_cesdata;
+
+
+*** for all other modes
+*** pass on to pm_cesdata and ensure the resulting price is positive
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
+    pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29) AND (NOT sameas(in_29, "entrp_frgt_lo")))
     = max(
     1e-2,
     ( pm_cesdata(ttot,regi,in_29,"price")
@@ -323,14 +349,14 @@ pm_cesdata(t,regi,in_29,"price") $ (( not ((ord(t) le 1) or (ord(t) eq card(t)))
 
 *** Set minimal price for all periods
   loop (ttot$( ttot.val ge 2005),
-    pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29))
+    pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$(ppf_29(in_29) AND (NOT sameas(in_29, "entrp_frgt_lo")))
     = max(
     1e-2,
     pm_cesdata(ttot,regi,in_29,"price")
     );
   );
 
-
+display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
 *** Smooth prices for the whole period for elements in or below the putty-clay structure
 ***Problem if there are several ppfIO_putty below each other, prices are then smoothed twice

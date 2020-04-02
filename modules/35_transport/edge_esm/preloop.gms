@@ -5,5 +5,4 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/preloop.gms
-
 *** EOF ./modules/35_transport/edge_esm/preloop.gms

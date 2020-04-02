@@ -151,7 +151,7 @@ $include "./core/input/generisdata_tech_SSP1.prn"
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
+*JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
@@ -753,7 +753,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.05;
+  p_adj_coeff(ttot,regi,"spv")             = 0.1;
   p_adj_coeff(ttot,regi,"wind")            = 0.1;
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
@@ -874,6 +874,10 @@ pm_data(regi,"floorcost",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,
 
 *** In case regionally differentiated investment costs should be used the corresponding entries are revised:
 $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2015",regi,teRegTechCosts);
+loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
+$if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("2020",regi,teRegTechCosts);
+);
+
 $if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
 
 
@@ -889,12 +893,19 @@ Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
 
 *** in case the technologies did not exist in the gdx, set to a non-zero value
 p_capCum(t,regi,te)$( NOT p_capCum(t,regi,te)) = sm_eps;
+display p_capCum;
+*RP overwrite p_capCum by exogenous values for 2020
+p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
+display p_capCum;
 
 pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
 *RP* adjust parameter learnMult_woFC to take floor costs into account
 $if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,pm_data(regi2,"ccap0",te))**pm_data(regi,"learnExp_wFC",te));
 *NB* this is the correction of the original parameter calibration
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
+loop(teRegTechCosts$(sameas(teRegTechCosts,"spv") ),
+$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2020",regi2,te))**pm_data(regi,"learnExp_wFC",te));
+);
 ***parameter calculation for global level, that regional values can gradually converge to
 fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te) **fm_dataglob("learnExp_wFC", te));
 
@@ -1035,8 +1046,9 @@ $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
 *** An alternative to the approach below could be to introduce a new value for c_macswitch that only deactivates the LU MACs
-$if %cm_MAgPIE_coupling% == "on"  pm_macSwitch("co2luc") = 0;
 $if %cm_MAgPIE_coupling% == "on"  pm_macSwitch(enty)$emiMacMagpie(enty) = 0;
+*** As long as there is hardly any CO2 LUC reduction in MAgPIE we dont need MACs in REMIND
+$if %cm_MAgPIE_coupling% == "off"  pm_macSwitch("co2luc") = 0;
 
 pm_macCostSwitch(enty)=pm_macSwitch(enty);
 pm_macSwitch("co2cement_process") =0 ;
@@ -1108,14 +1120,14 @@ $offdelim
 ;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
-*GL* demand side emission factor of final energy carriers in MtCO2/EJ
-*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
+*AD* Updated Demand Side Emission Factors
+*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
 p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 69.3;
-p_ef_dem("fehos") = 69.3;
-p_ef_dem("fepet") = 68.5;
-p_ef_dem("fegas") = 50.3;
-p_ef_dem("fesos") = 90.5;
+p_ef_dem("fedie") = 74;
+p_ef_dem("fehos") = 73;
+p_ef_dem("fepet") = 73;
+p_ef_dem("fegas") = 55;
+p_ef_dem("fesos") = 96;
 
 
 *** some balances are not matching by small amounts;

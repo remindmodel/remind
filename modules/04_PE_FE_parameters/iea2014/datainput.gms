@@ -129,9 +129,9 @@ display pm_prodCouple;
 ***p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")          = -0.05;             
 ***p04_prodCoupleGlob("pegeo","sehe","geohe","seel")          = -0.3;                       
 ***p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")         = -0.005; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffT","seel")   = -0.1; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","seel") = -0.2; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","seh2") = -0.1;                                 
+p04_prodCoupleGlob("fedie","uedit","apcardiEffT","feelt")   = -0.1; 
+p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feelt") = -0.2; 
+p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feh2t") = -0.1;                                 
 *** use global data for coule products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,
@@ -238,18 +238,6 @@ display pm_fuExtrOwnCons, p04_aux_data, pm_data;
 ***parameter mix0sum(all_regi,all_enty);
 ***mix0sum(regi,enty2) = sum(en2en(enty,enty2,te),pm_data(regi,"mix0",te));
 ***display mix0sum;
-
-*LB* write a preliminary reporting for disgnostics
-file data_check / data_check.csv /;
-put data_check;
-put "regi;char;te;value";
-put /;
-loop((regi,char,te),
-  put regi.tl, ";" , char.tl, ";" ,te.tl, ";" ;
-  put pm_data(regi,char,te):10:3 ; 
-  put /;
-);
-putclose data_check;
 
 *LB* preliminary bug fix for all eta > 1 and all eta = 0
 loop(regi,

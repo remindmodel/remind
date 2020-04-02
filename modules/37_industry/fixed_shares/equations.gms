@@ -60,9 +60,42 @@ q37_cementCCS(ttot,regi)$( ttot.val ge cm_startyear
 
 *' Industry CCS costs (by subsector) are equal to the integral below the MAC 
 *' cost curve.
-*' $$C_j = E_{\text{base},j} p \sum_{i = 1}^{n} \left(q_{n,j} - q_{i,j}\right)$$
-*' with $E_\text{base}$ the baseline emissions, $p$ the price step, and $q_i$ 
-*' the abatement fraction at step $i$ on the MAC.
+*' For the calculation, consider this figure:
+*' ![MAC curve example](MAC_costs.png)
+*' To make the calculations involving MAC curves leaner, they are discretised 
+*' into 5 $/tC steps (parameter `sm_dmac`) and transformed into step-wise 
+*' curves.  The parameter `pm_macStep` holds the current step on the MAC curve
+*' the model is on (given the CO~2~ price of the last iteration), and 
+*' `pm_macAbat` holds the abatement level (as a fraction) on that step.  The 
+*' emission abatement equals the area under the MAC curve (turqoise area in the 
+*' figure).  To calculate it, `pm_macStep` is multiplied by `pm_macAbat` (the 
+*' horizontal and vertical lines enclosing the coloured rectangle in the 
+*' figure).  The `sum(steps$( ord(steps) eq pm_macStep ... )` part simply 
+*' selects the right step within the MAC curve.  From this product (rectangle),
+*' the area above the MAC curve (pink) is subtractad.  To calculate it, the 
+*' abatement level at each MAC step up to and including the current step is 
+*' summed up.  The area is subdivided into `pm_macStep` rectangles of height 
+*' `1 sm_dmac` and width `pm_macAbat(steps)` (which is zero for the first $n$ 
+*' steps at which price level no abatement is available). 
+*' Multiplying the area under the curve with the step width `sm_dmac` and the 
+*' baseline emissions (before mitigation) converts the units to $/tC and GtC.
+*'
+*' Example:  The carbon price is 43.6 $/tCO~2~, which translates to step 32 on 
+*' the discrete MAC curve (43.6 $/tCO~2~ * (44/12 tCO~2~/tC) / (5 $/step)). 
+*' The calculation then is:
+*' ```
+*' vm_emiIndCCS = 
+*'     0.001
+*'   * vm_macBaseInd
+*'   * sm_dmac
+*'   * ( 32 * 0.3
+*'     - ( 15 * 0
+*'       + 14 * 0.2
+*'       +  3 * 0.3
+*'       )
+*'     )
+*'
+
 q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=

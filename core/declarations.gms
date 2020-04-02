@@ -116,7 +116,6 @@ pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from fin
 
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes"
 
-
 p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coeff"
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
@@ -432,6 +431,8 @@ sm_dmac                                               "step in MAC functions [US
 s_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. Unit: 0..1"      /0.05/
 s_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 s_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
+
+sm_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
 sm_D2015_2_D2005                                      "Convert $2015 to $2005 by dividing by 1.2: 1/1.2 = 0.8333"      /0.8333/
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/ 
