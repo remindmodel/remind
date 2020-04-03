@@ -167,8 +167,11 @@ p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ p36_shUeCesDelta(
 *** The calibration factors are reduced towards 80% in the long term to represent the enhanced flexibility of the system
 *** Long lasting non-price barriers should preferably be represented through price mark-ups
 if ( t36_hist_last(ttot),
- p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
+
+ p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( fe2es_dyn36(entyFe,esty,teEs)
+                                                                 AND NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
   = 5;
+
 loop ( t36_scen(t2),
    
   p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ fe2es_dyn36(entyFe,esty,teEs)
