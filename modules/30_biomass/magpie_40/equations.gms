@@ -113,7 +113,7 @@ q30_limitXpBio(t,regi)..
 q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
         sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
         =l=
-        max (0.35 * p30_pedem_BAU(t,regi), 1.30 * p30_pedemBio_BAU(t,regi));
+        0.5 * p30_demPe(t,regi);
          
 		 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms
