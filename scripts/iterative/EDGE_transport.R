@@ -51,15 +51,15 @@ EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_d
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
-if (EDGE_scenario == "Conservative_liquids") {
+if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
   techswitch <- "Liquids"
-} else if (EDGE_scenario %in% c("Electricity_push", "Smart_lifestyles_Electricity_push")) {
+} else if (EDGE_scenario %in% c("ElecEra", "ElecEraWise")) {
   techswitch <- "BEV"
-} else if (EDGE_scenario == "Hydrogen_push") {
+} else if (EDGE_scenario %in% c("HydrHype", "HydrHypeWise")) {
   techswitch <- "FCEV"
 } else {
-  print("You selected a not allowed scenario. Scenarios allowed are: Conservative_liquids, Hydrogen_push, Electricity_push, Smart_lifestyles_Electricity_push")
-  exit()
+ print("You selected a not allowed scenario. Scenarios allowed are: ConvCase, ConvCaseWise, ElecEra, ElecEraWise, HydrHype, HydrHypeWise")
+ quit()
 }
 
 
@@ -82,20 +82,25 @@ vot_data = inputdata$vot_data
 logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
+
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
 
 ## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
+prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
 pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
 pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "iso")]
 pref_data$FV_final_pref = pref_data$FV_final_pref[check>0]
 pref_data$FV_final_pref[, check := NULL]
+pref_data$FV_final_pref = rbind(prefdata_nonmot, pref_data$FV_final_pref)
 
+prefdata_nonmotV = pref_data$VS1_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
 pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
 pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "iso")]
 pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
+pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
 ## optional average of prices
 average_prices = FALSE
@@ -109,17 +114,26 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 if (file.exists(datapath("demand_previousiter.RDS"))) {
   ## load previous iteration number of cars
-  demand_BEVtmp = readRDS(datapath("demand_BEV.RDS"))
+  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
   nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-  rebates_febates = EDGEscenarios[options== "rebates_febates", switch]
-  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_BEVtmp, ES_demandpr, rebates_febates = rebates_febates)
-  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-} else {
+  if (techswitch == "BEV"){
+  rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
+  rebates_febatesFCEV = FALSE
+  } else if (techswitch == "FCEV") {  
+    rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesBEV = FALSE
+  } else {
+    rebates_febatesFCEV = FALSE
+    rebates_febatesBEV = FALSE
+  }
+  
+  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")} else {
   stations = NULL
 }
 
@@ -129,7 +143,7 @@ REMIND_prices <- merge_prices(
     REMINDmapping = REMIND2ISO_MAPPING,
     REMINDyears = REMINDyears,
     intensity_data = int_dat,
-    nonfuel_costs = nonfuel_costs)
+    nonfuel_costs = nonfuel_costs[type == "normal"][, type := NULL])
 
 
 ## save prices
@@ -179,6 +193,7 @@ if (inconvenience) {
     logit_params = logit_params,
     intensity_data = int_dat,
     price_nonmot = price_nonmot,
+    nfprices_advanced = nonfuel_costs[type %in% c("advanced", "middle")],
     stations = if (!is.null(stations)) stations,
     techswitch = techswitch)
 
@@ -253,7 +268,7 @@ num_veh_stations = calc_num_vehicles_stations(
     ES_demand_all = ES_demand_all)
 
 ## save number of vehicles for next iteration
-saveRDS(num_veh_stations$BEVdem, datapath("demand_BEV.RDS"))
+saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
 saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
 ## save the demand for next iteration renaming the column
 setnames(ES_demand, old ="demand", new = "demandpr")
