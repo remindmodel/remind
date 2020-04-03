@@ -183,7 +183,7 @@ accepted <- c('--restart','--testOneRegi')
 known <-  argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown paramter provided: ",paste(argv[!known][!file_exists]," "))
+  if (!all(file_exists)) stop("Unknown argument provided: ",paste(argv[!known][!file_exists]," \nAccepted arguments are '--testOneRegi', '--restart' or a path to an existing scenario_config.csv"))
 }
 
 ###################### Choose submission type #########################

@@ -9,12 +9,6 @@
 *** Bounds on pedem
 *** -------------------------------------------------------------
 
-*** To prevent RUS and MEA from demanding high amounts of biomass 
-*** just because of their capacity to store negative emissions a
-*** general rule for all regions is applied that limits the PE 
-*** demand of BECCS technologies in policy runs to 30% of the total 
-*** PE of the baseline scenario (see q30_limitTeBio)
-
 *** -------------------------------------------------------------
 *** Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
