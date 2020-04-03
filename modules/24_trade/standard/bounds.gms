@@ -98,6 +98,9 @@ vm_Mport.up("2010",regi,"peoil") = 1.05 * pm_IO_trade("2010",regi,"peoil","Mport
 vm_Mport.lo("2015",regi,"peoil") = 0.95 * pm_IO_trade("2015",regi,"peoil","Mport");
 vm_Mport.up("2015",regi,"peoil") = 1.05 * pm_IO_trade("2015",regi,"peoil","Mport");
 
+*** upper bound causes a infeasibility in REMIND-EU for ESW that I could not solve with the adjustment to vm_fuExtr maximum bound
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"ESW")) = 1.15 * pm_IO_trade("2015",regi,"peoil","Mport");
+
 *** bounds on gas exports in 2010 and 2015
 vm_Xport.lo("2010",regi,"pegas") = 0.95 * pm_IO_trade("2010",regi,"pegas","Xport");
 vm_Xport.up("2010",regi,"pegas") = 1.05 * pm_IO_trade("2010",regi,"pegas","Xport");
