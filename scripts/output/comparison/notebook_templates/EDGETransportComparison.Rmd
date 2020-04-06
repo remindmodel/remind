@@ -48,6 +48,7 @@ cols <- c("NG" = "#d11141",
           "Trucks" = "#ff6a6a",
           "International Shipping" = "#cd2626",
           "Domestic Shipping" = "#ff4040",
+          "Truck" = "#ff7f50";
           "Trucks (<3.5t)" = "#ff7f50",
           "Trucks (3.5t-16)" = "#8b0000",
           "Trucks (>16)" = "#fa8072",
@@ -84,7 +85,7 @@ cols <- c("NG" = "#d11141",
           "Cons. + Synfuels" = "orchid",
           "Ctax_Conservative" = "#d11141")
 
-legend_ord_modes <- c("Freight Rail", "Trucks (<3.5t)", "Trucks (3.5t-16)", "Trucks (>16)", "International Shipping","Domestic Shipping",  "Trucks",
+legend_ord_modes <- c("Freight Rail", "Truck", "Trucks (<3.5t)", "Trucks (3.5t-16)", "Trucks (>16)", "International Shipping","Domestic Shipping",  "Trucks",
                 "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation","Bus", "Passenger Rail",
                 "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Pass non LDV (Domestic)", "Non motorized")
@@ -116,7 +117,7 @@ vintcomparisonpf = function(dt){
                  fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
     geom_bar(data = dt,
              aes(x=scenario, y=value, group=interaction(variable, technology),
-                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black")+
+                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black", size=0.05)+
     guides(fill = guide_legend(reverse=TRUE))+
     theme_minimal()+
     facet_grid(year~region)+

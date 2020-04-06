@@ -92,12 +92,12 @@ plotVint = function(vintcomp, newcomp, sharesVS1){
 
 
   p = ggplot()+
-  geom_bar(data = allfleet[year %in% c(2015,2030,2050)],
+  geom_bar(data = allfleet[year %in% c(2015, 2030, 2050, 2100)],
   aes(x=as.character(year),y=value, group=interaction(variable, technology),
   fill = technology), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
-  geom_bar(data = allfleet[year %in% c(2015,2030,2050)],
+  geom_bar(data = allfleet[year %in% c(2015, 2030, 2050, 2100)],
   aes(x=as.character(year),y=value, group=interaction(variable, technology),
-  fill = technology, alpha = factor(alphaval)), position="stack", stat = "identity", width = 0.5, color = "black")+
+  fill = technology, alpha = factor(alphaval)), position="stack", stat = "identity", width = 0.5, color = "black", size = 0.05)+
   guides(fill = guide_legend(reverse=TRUE))+
   theme_minimal()+
     facet_wrap(~region, nrow = 4)+
@@ -105,7 +105,7 @@ plotVint = function(vintcomp, newcomp, sharesVS1){
         axis.text = element_text(size=7),
         title = element_text(size=8),
         legend.text = element_text(size=8))+
-      scale_x_discrete(breaks = c(2015,2030,2050))+
+      scale_x_discrete(breaks = c(2015, 2030, 2050, 2100))+
   scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
   guides(linetype=FALSE,
          fill=guide_legend(reverse=FALSE, title="Transport mode"))+
@@ -188,7 +188,6 @@ intcompplotf = function(EF_shares, FV_shares, VS1_shares){
   p = ggplot()+
     geom_bar(data = shares_LDV[year<=2100  & year>=2025], aes(x=year,y=shareIS1, group = technology, fill = technology), alpha = 0.5, position = position_fill(), stat = "identity")+
     geom_bar(data = shares_LDV[year<=2100  & year>=2025], aes(x=year,y=shareIS1, group = technology, fill = technology, alpha = type), position = position_fill(), stat = "identity")+
-    facet_wrap("technology")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
     scale_fill_manual("technology", values = cols)+
