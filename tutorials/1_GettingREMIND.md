@@ -6,7 +6,7 @@ Anastasis Giannousakis (<giannou@pik-potsdam.de>), Felix Schreyer (<felix.schrey
 HOW TO INSTALL
 --------------
 
-To get the REMIND code you need to have git installed and then clone the model from <https://github.com/remindmodel/remind.git>. To get a specific release (e.g. 2.1.0) branch you have to type 
+To get the REMIND code you need to have git installed and then clone the model from <https://github.com/remindmodel/remind.git>. To get a specific release (e.g. 2.1.0) please type 
 
 ``` bash
 git clone -b v2.1.0 https://github.com/remindmodel/remind.git 
