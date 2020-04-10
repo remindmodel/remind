@@ -89,12 +89,14 @@ variable. After that you can run the following lines of code:
 All packages can be installed via `install.packages`
 
 ```
-pkgs <- c("gdxrrw",
+pkgs <- c("dplyr",
+          "gdxrrw",
           "ggplot2",
           "curl",
           "gdx",
           "magclass",
           "madrat",
+          "backports",
           "mip",
           "lucode",
           "remind",
