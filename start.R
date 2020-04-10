@@ -196,6 +196,7 @@ if ('--restart' %in% argv) {
   for (outputdir in outputdirs) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    cfg$slurmConfig <- slurmConfig # update the slurmConfig setting to what the user just chose (it was being ignored before)
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
