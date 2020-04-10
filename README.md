@@ -78,7 +78,7 @@ either distributed via the offical R CRAN or via a separate repository hosted at
 PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
 available repositories via:
 ```
-options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
+options(repos = c(CRAN = getOption("repos")["CRAN"], pik = "https://rse.pik-potsdam.de/r/packages"))
 ```
 
 On Windows you need to install Rtools
