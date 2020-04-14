@@ -23,13 +23,13 @@ $ENDIF.NucRegiPol
 $IFTHEN.proNucRegiPol not "%cm_proNucRegiPol%" == "off" 
 ***Pro nuclear countries tend to keep nuclear production by political decision
 ***assuming France would keep at least 80% of its 2015 nuclear capacity in the future
-vm_cap.lo(t,"FRA","tnrs","1")$(t ge cm_startyear) = 0.8*p_histCap("2015","FRA","tnrs");
+vm_cap.lo(t,"FRA","tnrs","1")$(t.val ge cm_startyear) = 0.8*p_histCap("2015","FRA","tnrs");
 ***assuming Czech Republic would keep at least its 2015 nuclear capacity in the future (CZE corresponds to 61.8% of nuclear capacity of ECE in 2015)
-vm_cap.lo(t,"ECE","tnrs","1")$(t ge cm_startyear) = 0.618*p_histCap("2015","ECE","tnrs");
+vm_cap.lo(t,"ECE","tnrs","1")$(t.val ge cm_startyear) = 0.618*p_histCap("2015","ECE","tnrs");
 ***assuming Finland would keep at least its 2015 nuclear capacity in the future (FIN corresponds to 21.6% of nuclear capacity of ENC in 2015)
-vm_cap.lo(t,"ENC","tnrs","1")$(t ge cm_startyear) = 0.216*p_histCap("2015","ENC","tnrs");
+vm_cap.lo(t,"ENC","tnrs","1")$(t.val ge cm_startyear) = 0.216*p_histCap("2015","ENC","tnrs");
 ***assuming Romania would keep at least its 2015 nuclear capacity in the future (ROU corresponds to 22.1% of nuclear capacity of ECS in 2015)
-vm_cap.lo(t,"ECS","tnrs","1")$(t ge cm_startyear) = 0.221*p_histCap("2015","ECS","tnrs");
+vm_cap.lo(t,"ECS","tnrs","1")$(t.val ge cm_startyear) = 0.221*p_histCap("2015","ECS","tnrs");
 $ENDIF.proNucRegiPol 
 
 $IFTHEN.CCSinvestment not "%cm_CCSRegiPol%" == "off" 
