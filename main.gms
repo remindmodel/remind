@@ -384,6 +384,7 @@ $setGlobal cm_emiMktES_type  netGHG !! def = netGHG
 $setGlobal cm_emiMktEScoop  off   !! def = off	
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
+$setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
 
 cm_trdadj            = 2;    !! def = 2.0
