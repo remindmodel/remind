@@ -1,8 +1,10 @@
 ---
 title: "Compare scenarios Transport"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
+classoption: landscape
 ---
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -16,13 +18,15 @@ library(quitte)
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# Set mif path
+# Set RDS files path
 EJmode_all = readRDS("EJmode_all.RDS")
 EJLDV_all = readRDS("EJLDV_all.RDS")
 fleet_all = readRDS("fleet_all.RDS")
 salescomp_all = readRDS("salescomp_all.RDS")
-
-iso_plot = c("DEU", "USA", "IND", "CHN")
+ESmodecap_all = readRDS("ESmodecap_all.RDS")
+CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
+EJfuels_all = readRDS("EJfuels_all.RDS")
+emidem_all = readRDS("emidem_all.RDS")
 
 setConfig(forcecache=T)
 
@@ -35,6 +39,7 @@ cols <- c("NG" = "#d11141",
           "FCEV" = "#00aedb",
           "Hydrogen" = "#00aedb",
           "Biodiesel" = "#66a182",
+          "Synfuel" = "orchid",
           "Oil" = "#2e4057",
           "fuel price pkm" = "#edae49",
           "Operating costs registration and insurance" = "#8d96a3",
@@ -48,7 +53,8 @@ cols <- c("NG" = "#d11141",
           "Trucks" = "#ff6a6a",
           "International Shipping" = "#cd2626",
           "Domestic Shipping" = "#ff4040",
-          "Truck" = "#ff7f50";
+          "Shipping" = "#ff4040",
+          "Truck" = "#ff7f50",
           "Trucks (<3.5t)" = "#ff7f50",
           "Trucks (3.5t-16)" = "#8b0000",
           "Trucks (>16)" = "#fa8072",
@@ -72,10 +78,16 @@ cols <- c("NG" = "#d11141",
           "FE|Buildings" = "#d2b48c",
           "FE|Industry" = "#919191",
           "Electricity_push" = "#00b159",
+          "ElecEra" = "#00b159",
+          "ElecEraWise" = "#68c6a4",
+          "HydrHype" = "#00aedb",
+          "HydrHypeWise" = "#o3878f",
           "Hydrogen_push" = "#00aedb",
           "Smart_lifestyles_Electricity_push" = "#68c6a4",
           # "Smart_lyfestiles_Electricity_push" = "#03878f", ##maybe "#o3878f"
           "Conservative_liquids" = "#113245",
+          "ConvCase" = "#113245",
+          "ConvCaseWise" = "#d11141",
           "Emi|CO2|Transport|Demand" = "#113245",
           "Emi|CO2|Industry|Gross" = "#919191",
           "Emi|CO2|Buildings|Direct" = "#d2b48c",
@@ -85,12 +97,12 @@ cols <- c("NG" = "#d11141",
           "Cons. + Synfuels" = "orchid",
           "Ctax_Conservative" = "#d11141")
 
-legend_ord_modes <- c("Freight Rail", "Truck", "Trucks (<3.5t)", "Trucks (3.5t-16)", "Trucks (>16)", "International Shipping","Domestic Shipping",  "Trucks",
+legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
                 "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation","Bus", "Passenger Rail",
                 "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Pass non LDV (Domestic)", "Non motorized")
 
-legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "NG")
+legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "NG")
 
 legend_ord_costs <- c("fuel price pkm", "Operating costs registration and insurance", "Operating costs maintenance", "Capital cost")
 
@@ -178,6 +190,8 @@ EJLDVpf = function(dt){
     theme_minimal()+
     facet_grid(scenario~region)+
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -195,13 +209,15 @@ EJLDVpf(EJLDV_all)
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-EJmodeFUn = function(dt){
+EJmodepf = function(dt){
   plot = ggplot()+
     geom_area(data = dt, aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+
     labs(x = "", y = "[EJ]", title = "Total transport final energy demand")+
     theme_minimal()+
     facet_grid(scenario~region)+
     scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size=8),
           axis.title = element_text(size = 8),
@@ -214,6 +230,133 @@ EJmodeFUn = function(dt){
   return(plot)
 }
 
-EJmodeFUn(EJmode_all)
+EJmodepf(EJmode_all)
 
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+ESmodecappf = function(dt){
+  dt[, vehicle_type_plot := factor(vehicle_type_plot, levels = legend_ord)]
+  plot_frgt = ggplot()+
+    geom_area(data = dt[mode == "freight"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black",position= position_stack())+
+    labs(x = "", y = "Energy Services demand [tkm/cap]")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 8),
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+
+  
+  plot_pass = ggplot()+
+    geom_area(data = dt[mode == "pass"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black",position= position_stack())+
+    labs(x = "", y = "Energy Services demand [pkm/cap]")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 8),
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+
+
+    return(list(plot_pass = plot_pass, plot_frgt = plot_frgt))
+}
+
+
+ESmodecappf(ESmodecap_all)
+
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+CO2km_int_newsalespf = function(dt){
+  dt = dt[!is.na(gCO2_km_ave)]
+  plot = ggplot()+
+    geom_line(data = dt[year >=2020], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario))+
+    labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    theme_minimal()+
+    facet_grid(~region)+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 8),
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+    guides(linetype = FALSE)
+  return(plot)
+}
+
+CO2km_int_newsalespf(CO2km_int_newsales_all)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## LDV by fuel
+EJfuels_pf = function(dt){
+  plot = ggplot()+
+    geom_area(data = dt, aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Transport FE demand by fuel")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 8),
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+  return(plot)
+}
+
+EJfuels_pf(EJfuels_all)
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+emidem_pf = function(dt){
+ 
+  plot = ggplot()+
+    geom_line(data = dt, aes(x = year, y = value, group = variable, color = variable))+
+    labs(x = "", y = "CO2 emissions [Mt/CO2]")+
+    theme_minimal()+
+    facet_grid(~region)+
+    theme(axis.text.x = element_text(size = 8),
+          axis.text.y = element_text(size=8),
+          axis.title = element_text(size = 9),
+          title = element_text(size = 9),
+          legend.position = "none",
+          strip.text = element_text(size=9))+
+    scale_color_manual("Scenario", values = cols)
+   
+  return(plot)
+}
+
+emidem_pf(emidem_all)
 ```
