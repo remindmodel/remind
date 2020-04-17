@@ -20,20 +20,20 @@
 
 suppressPackageStartupMessages(library(tidyverse))
 
-# TODO: Loading magclass shouldn't actually be necessary... but running on the 
-# cluster without doing so throws an error...
-suppressPackageStartupMessages(library(magclass)) 
-
 # Function defintions
-get_run_names <- function(filepaths) {
-  # The run names are found between a "/" and the time-stamp of the run.
-  run_names <- str_match(filepaths, pattern = "^.*\\/(.*)(_....-..-..*)$")[,2]
-  
-  # If for some reason there isn't a time-stamp, return the name of the folder
-  if (any(is.na(run_names))) {
-    run_names <- str_match(filepaths, pattern = "^.*\\/(.*)\\/.*$")[,2]
-  }
-  return(run_names)
+rm_timestamp <- function(strings,
+                         name_timestamp_seperator = "_",
+                         timestamp_format = "%Y-%m-%d_%H.%M.%S") {
+
+  # Get regex pattern of timestamp
+  regex_timestamp <- gsub("%[mdHMS]", "\\\\d{2}", timestamp_format)
+  regex_timestamp <- gsub("%Y", "\\\\d{4}", regex_timestamp)
+  regex_timestamp <- paste0(name_timestamp_seperator, regex_timestamp)
+
+  # Substitute timestamps with nothing (thereby removing them)
+  my_strings_wo_timeStamp <- sub(regex_timestamp, "", strings)
+
+  return(my_strings_wo_timeStamp)
 }
 
 policy_costs_pdf <- function(policy_costs,  fileName="PolicyCost.pdf") {
@@ -113,21 +113,21 @@ policy_costs_pdf <- function(policy_costs,  fileName="PolicyCost.pdf") {
 }
 
 # Check for an object called "source_include". If found, that means, this script
-# is being called from another (output.R most likely), and the input variables
-# are already in the environment. If not found, the input variables are given
-# default values, and made over-writable with command line values.
+# is being called from another (output.R most likely), and the input variable 
+# "outputdirs" is already in the environment. If not found, "outputdirs" is given
+# default values, and made over-writable with the command line.
 if(!exists("source_include")) {
   # Set default value
-  outputdirs <- c("../../femulator_hq/remind_runs_lab/base_allT_lab_0point7_2020-03-12_09.36.25",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point95_2020-03-16_15.35.20",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point7_2020-03-12_09.36.25",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point8_2020-03-12_09.36.24")   
+  outputdirs <- c("../../../output/default_2020-03-03_09.38.01",
+                  "../../../output/default_slim_2020-03-03_11.37.51",
+                  "../../../output/sa_emu_3_2_2020-03-13_16.41.08",
+                  "../../../output/sa_emu_1_posYIntercept_posSlope_2020-04-14_11.08.07")   
   # Make over-writtable from command line
   lucode::readArgs("outputdirs")
   
 }
 
-# Check that the input variable "outputdirs" has an even number of entries.
+# Check that "outputdirs" has an even number of entries.
 if (length(outputdirs) %% 2!=0) {
   cat(paste0(crayon::red("\nERROR: "), "The number of directories is not even!\n"))
   cat("Remember, the order in which you choose the directories should be:\n")
@@ -141,14 +141,14 @@ pol_gdxs <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/fulldata.gdx")
 ref_gdxs <- paste0(outputdirs[seq(2,length(outputdirs),2)], "/fulldata.gdx")
 
 # Get run names
-pol_names <- get_run_names(pol_gdxs)
-ref_names <- get_run_names(ref_gdxs)
+pol_names <- rm_timestamp(basename(dirname(pol_gdxs)))
+ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
 
 # Define pol-ref, policyCost pair names
 pc_pairs <- paste0(pol_names, "_w.r.t_",ref_names)
 
-# If scrpit was called from output.R, check with user if the pol-ref pairs are the 
-# ones he wanted. 
+# If this scrpit was called from output.R, check with user if the pol-ref pairs 
+# are the ones he wanted. 
 if(exists("source_include")) {
   cat(crayon::blue("\nPlease confirm the set-up:\n"))
   cat("From the order with which you selected the directories, the following policy-cost curves will be created:\n")
