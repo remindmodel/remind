@@ -104,6 +104,8 @@ pkgs <- c("gdxrrw",
           "luplot")
 install.packages(pkgs)
 ```
+Updating R is recommended if problems arise at package installation, please write
+us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
 For post-processing model outputs *Latex* is required
 (https://www.latex-project.org/get/). To be seen by the model it also needs to
 added to the PATH variable of your system.
