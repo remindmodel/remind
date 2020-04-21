@@ -108,10 +108,11 @@ col <- c("#fc0000", "#000000",
          "#bc80bd"#,
          #"#808080"
          )
-
+names(col) <- c("origin", "target", seq(1,length(itr_num)))
 
 
 lns <- c(rep("solid", 2), rep("longdash", length(itr_num)))
+names(lns) <-  c("origin", "target", seq(1,length(itr_num)))
 
 .pf <- list("TE" = c("gastr", "refliq", "biotr", "coaltr","hydro", "ngcc","ngt","pc", "apCarDiT","apCarPeT","apCarElT","dot","gaschp","wind","tnrs"))
 
@@ -202,8 +203,8 @@ for (s in levels(CES.cal.report$scenario)) {
       geom_line() + 
       facet_wrap(~ pf, scales = "free", as.table = FALSE) + 
       expand_limits(y = 0) + 
-      scale_colour_manual(values = col[-2]) + 
-      scale_linetype_manual(values = lns[-2]) + 
+      scale_colour_manual(values = col) + 
+      scale_linetype_manual(values = lns) + 
       ggtitle(paste("prices", r, s)) -> p
     plot(p)
     
@@ -212,17 +213,22 @@ for (s in levels(CES.cal.report$scenario)) {
       filter(scenario == s, 
              t        <= 2100, 
              regi     == r, 
-             variable == "total efficiency") %>% 
+             variable == "total efficiency",
+             iteration != "origin") %>% 
+      group_by(scenario,t,regi,pf,variable) %>%
+      mutate(value = value / value[as.character(iteration) == "1"]) %>% 
+      ungroup() %>% 
       order.levels(pf = getElement(.pf,"structure" )) %>% 
       ggplot(aes(x = t, y = value, colour = iteration, 
                  linetype = iteration)) + 
       geom_line() + 
       facet_wrap(~ pf, scales = "free", as.table = FALSE) + 
-      expand_limits(y = 0) + 
-      scale_colour_manual(values = col[-2]) + 
-      scale_linetype_manual(values = lns[-2]) + 
-      ggtitle(paste("total efficiency", r, s)) -> p
+      scale_colour_manual(values = col) + 
+      scale_linetype_manual(values = lns) + 
+      ggtitle(paste("total efficiency (1 = iteration 1)", r, s)) -> p
     plot(p)
+    
+    
     # plot Putty quantities
     if ( dim(CES.cal.report %>% filter(variable == "quantity_putty"))[1] > 0){
     CES.cal.report %>% 
@@ -254,8 +260,8 @@ for (s in levels(CES.cal.report$scenario)) {
       geom_line() + 
       facet_wrap(~ pf, scales = "free", as.table = FALSE) + 
       expand_limits(y = 0) + 
-      scale_colour_manual(values = col[-2]) + 
-      scale_linetype_manual(values = lns[-2]) + 
+      scale_colour_manual(values = col) + 
+      scale_linetype_manual(values = lns) + 
       ggtitle(paste("prices", r, s)) -> p
     plot(p)
     
@@ -264,16 +270,20 @@ for (s in levels(CES.cal.report$scenario)) {
       filter(scenario == s, 
              t        <= 2100, 
              regi     == r, 
-             variable == "total efficiency putty") %>% 
+             variable == "total efficiency putty",
+             iteration != "origin") %>% 
+      group_by(scenario,t,regi,pf,variable) %>%
+      mutate(value = value / value[as.character(iteration) == "1"]) %>% 
+      ungroup() %>% 
       order.levels(pf = getElement(.pf,"structure" )) %>% 
       ggplot(aes(x = t, y = value, colour = iteration, 
                  linetype = iteration)) + 
       geom_line() + 
       facet_wrap(~ pf, scales = "free", as.table = FALSE) + 
       expand_limits(y = 0) + 
-      scale_colour_manual(values = col[-2]) + 
-      scale_linetype_manual(values = lns[-2]) + 
-      ggtitle(paste("total efficiency", r, s)) -> p
+      scale_colour_manual(values = col) + 
+      scale_linetype_manual(values = lns) + 
+      ggtitle(paste("total efficiency (1 = iteration 1)", r, s)) -> p
     plot(p)
     
     }
@@ -297,8 +307,8 @@ for (s in levels(CES.cal.report$scenario)) {
       geom_line() + 
       facet_wrap(~ pf, scales = "free", as.table = FALSE) + 
       expand_limits(y = 0) + 
-      scale_colour_manual(values = col[-2]) + 
-      scale_linetype_manual(values = lns[-2]) + 
+      scale_colour_manual(values = col) + 
+      scale_linetype_manual(values = lns) + 
       geom_vline(xintercept = 2005) +
       ggtitle(paste("vm_deltaCap", r, s)) -> p
     plot(p)
