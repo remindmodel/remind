@@ -18,7 +18,7 @@ The model documentation for version 2.1.0 can be found at https://rse.pik-potsda
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, use_advanced_interfacePlot_function=T))`
+package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15))`
 in the main folder of the model.
 The resulting documentation can be found in the folder "doc".
 
