@@ -174,6 +174,10 @@ In case that these recommendations can not be followed we would be happy if you
 could discuss that issue with the REMIND development team
 (remind@pik-potsdam.de).
 
+## MODEL OUTPUT
+
+By default the results for a model run are written to an individual results folder within the "output/" folder of the model. The two most important output files are the fulldata.gdx and the REMIND_generic_*scenario-name*.mif. The fulldata.gdx is the technical output of the GAMS optimization and contains all quantities that were used during the optimization in unchanged form. The mif-file is a csv file of certain format and is synthetized from the fulldata.gdx by post-processing scripts. It can be read in any text editor or spreadsheet program and is well suited for a quick look at the results and for further analysis.
+
 ## CONTACT
 remind@pik-potsdam.de
 
