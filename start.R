@@ -47,7 +47,7 @@ choose_folder <- function(folder,title="Please choose a folder") {
   # Detect all output folders containing fulldata.gdx or non_optimal.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
+  dirs <- sub("/full.gms","",sub("./output/","",Sys.glob(file.path(folder,"*","full.gms"))))
 
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   #runs <- findCoupledruns(folder)
