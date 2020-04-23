@@ -169,6 +169,12 @@ prepare <- function() {
 	  }
   }
  
+  # Display git information
+  cat("\n===== git info =====\nLatest commit: ")
+  cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
+  cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
+  cat("\n====================\n")
+
   load("config.Rdata")
   
   # Store results folder of current scenario
