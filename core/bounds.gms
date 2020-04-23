@@ -496,4 +496,12 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
       vm_prodSe.up(t,regi,"pegas","sehe","gashp")   = 0;
 );
 );
+
+***----------------------------------------------------------------------------
+*** lower bound on share of green hydrogen starting from 2030 (c_greenH2)
+***----------------------------------------------------------------------------
+
+v_shGreenH2.lo(t,regi)$(t.val gt 2025) = %c_greenH2%;
+
+
 *** EOF ./core/bounds.gms

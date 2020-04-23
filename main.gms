@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.942
 * 
-* Last modification (input data): Tue Apr 21 12:02:34 2020
+* Last modification (input data): Thu Apr 23 11:28:04 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -309,6 +309,7 @@ cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
+$setglobal c_greenh2  0.1
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
