@@ -196,7 +196,7 @@ if ('--restart' %in% argv) {
   for (outputdir in outputdirs) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
-    cfg$slurmConfig <- slurmConfig # update the slurmConfig setting to what the user just chose (it was being ignored before)
+    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose (it was being ignored before)
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
@@ -238,7 +238,7 @@ if ('--restart' %in% argv) {
     source("config/default.cfg")
 
     # Have the log output written in a file (not on the screen)
-    cfg$slurmConfig <- slurmConfig
+    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig)
     cfg$logoption   <- 2
     start_now       <- TRUE
 
