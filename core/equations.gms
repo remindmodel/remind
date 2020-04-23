@@ -821,7 +821,10 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
 q_shGreenH2(t,regi)..
     sum(te, vm_prodSe(t,regi,"seel","seh2",te))
     =e=
-    sum(pe2se(enty,"seh2",te), vm_prodSe(t,regi,enty,"seh2",te)) * v_shGreenH2(t,regi)
+    (
+	sum(pe2se(entyPe,"seh2",te), vm_prodSe(t,regi,entyPe,"seh2",te))
+	+ sum(se2se(entySe,"seh2",te), vm_prodSe(t,regi,entySe,"seh2",te))
+    ) * v_shGreenH2(t,regi)
 ;
 
  
