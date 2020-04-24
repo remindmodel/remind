@@ -197,6 +197,7 @@ if ('--restart' %in% argv) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose (it was being ignored before)
+    cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
