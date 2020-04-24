@@ -9,7 +9,7 @@ require(magclass)
 require(rmndt)
 require(quitte)
 require(devtools)
-
+require(dplyr)
 setConfig(forcecache=T)
 
 ## Aestethics Options 
@@ -78,6 +78,10 @@ legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen
 
 legend_ord = c(legend_ord_modes, legend_ord_fuels)
 
+## customize ggplotly
+
+plotlyButtonsToHide <- list('sendDataToCloud', 'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian', 'zoom3d', 'pan3d', 'orbitRotation', 'tableRotation', 'resetCameraDefault3d', 'resetCameraLastSave3d', 'hoverClosest3d', 'zoomInGeo', 'zoomOutGeo', 'resetGeo', 'hoverClosestGeo', 'hoverClosestGl2d', 'hoverClosestPie', 'resetSankeyGroup', 'toggleHover', 'resetViews', 'toggleSpikelines', 'resetViewMapbox')
+
 ## Load files
 EJmode_all = readRDS("EJmode_all.RDS")
 EJLDV_all = readRDS("EJLDV_all.RDS")
@@ -94,22 +98,21 @@ scens = unique(EJmode_all$scenario)
 ## plot functions
 vintcomparisondash = function(dt, scen){
   
-  dt = dt[year %in% c(2015, 2050, 2100)]
+  dt = dt[year %in% c(2015, 2030, 2050)]
   dt[, year := as.character(year)]
   dt = dt[region == region_plot & scenario == scen]
-  
+  dt = dt[,.(value = sum(value)), by = c("region", "technology", "year")]
+  dt[, details := paste0("Vehicles: ", round(value, 0), " [million]", "<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   plot = ggplot()+
     geom_bar(data = dt,
-             aes(x=year, y=value, group=interaction(variable, technology),
-                 fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
-    geom_bar(data = dt,
-             aes(x=year, y=value, group=interaction(variable, technology),
-                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black", size=0.05)+
+             aes(x = year, y = value, group = technology, text = details, fill = technology, width=.75), position="stack", stat = "identity", width = 0.5)+
     guides(fill = guide_legend(reverse=TRUE))+
     theme_minimal()+
-    theme(axis.text.x = element_text(angle = 90, size=8, vjust=0.5, hjust=1),
-          title = element_text(size=8),
+    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 8),
+          axis.text.y = element_text(size=8),
           axis.line = element_line(size = 0.5, colour = "grey"),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
           strip.text = element_text(size=8),
           strip.background = element_rect(color = "grey"),
           legend.position = "none")+
@@ -120,7 +123,9 @@ vintcomparisondash = function(dt, scen){
     labs(x = "", y = "")
   
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE)%>%
+    layout(yaxis=list(title='[million veh]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$technology))
   
@@ -130,14 +135,15 @@ vintcomparisondash = function(dt, scen){
 
 salescomdash = function(dt, scen){
   
-  dt = dt[region == region_plot & scenario == scen]
-  
+  dt = dt[region == region_plot & scenario == scen & year <=2050]
+  dt[, year := as.numeric(as.character(year))]
+  dt[, details := paste0("Share: ", round(shareFS1*100, digits = 0), " %", "<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   plot = ggplot()+
-    geom_bar(data = dt, aes(x=as.numeric(as.character(year)),y = shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
+    geom_bar(data = dt, aes(x = year,y = round(shareFS1*100, digits = 0), group = technology, fill = technology, text = details), position = position_stack(), stat = "identity")+
     theme_minimal()+
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2015, 2030, 2050, 2100))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 8),
           axis.text.y = element_text(size=8),
           axis.line = element_line(size = 0.5, colour = "grey"),
@@ -148,7 +154,9 @@ salescomdash = function(dt, scen){
           legend.position = "none")+
     labs(x = "", y = "")
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE)%>%
+    layout(yaxis=list(title='[%]', titlefont = list(size = 10)))
   
   ## vars used for creating the legend in the dashboard
   vars = as.character(unique(dt$technology))
@@ -160,16 +168,16 @@ salescomdash = function(dt, scen){
 }
 
 ESmodecapdash = function(dt, scen){
-  
-  dt = dt[region == region_plot & scenario == scen]
+  dt = dt[region == region_plot & scenario == scen & year <= 2050]
+  dt[, details := paste0("Demand: ", round(cap_dem, digits = 0), ifelse(mode == "pass", " [pkm/cap]",  " [tkm/cap]"), "<br>", "Vehicle: ", vehicle_type_plot, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   
   plot_pass = ggplot()+
-    geom_area(data = dt[mode == "pass"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black", size=0.05, position= position_stack())+
+    geom_area(data = dt[mode == "pass"], aes(x = year, y = cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot, text = details), position= position_stack())+
     labs(x = "", y = "")+
     theme_minimal()+
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -180,12 +188,12 @@ ESmodecapdash = function(dt, scen){
           axis.line = element_line(size = 0.5, colour = "grey"))
   
   plot_frgt = ggplot()+
-    geom_area(data = dt[mode == "freight"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black", size=0.05, position= position_stack())+
+    geom_area(data = dt[mode == "freight"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot, text = details), position= position_stack())+
     labs(x = "", y = "")+
     theme_minimal()+
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -195,8 +203,13 @@ ESmodecapdash = function(dt, scen){
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey")) 
   
-  plot_pass = ggplotly(plot_pass)
-  plot_frgt = ggplotly(plot_frgt)
+  plot_pass = ggplotly(plot_pass, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[pkm/cap]', titlefont = list(size = 10)))
+  plot_frgt = ggplotly(plot_frgt, tooltip = c("text")) %>% 
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[tkm/cap]', titlefont = list(size = 10)))
+  
   vars_pass = as.character(unique(dt[mode == "pass"]$vehicle_type_plot))
   vars_frgt = as.character(unique(dt[mode == "freight"]$vehicle_type_plot))
   
@@ -208,14 +221,16 @@ ESmodecapdash = function(dt, scen){
 }
 
 EJfuels_dash = function(dt, scen){
-  dt = dt[region == region_plot & scenario == scen & year >= 2015]
+  dt = dt[region == region_plot & scenario == scen & year >= 2015  & year <= 2050]
+  dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
+  
   plot = ggplot()+
-    geom_area(data = dt, aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    geom_area(data = dt, aes(x = year, y = demand_EJ, group = subtech, fill = subtech, text = details), position= position_stack())+
     theme_minimal()+
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     labs(x = "", y = "")+
-    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -225,7 +240,9 @@ EJfuels_dash = function(dt, scen){
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>% 
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[EJ]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$subtech))
   
@@ -237,18 +254,20 @@ EJfuels_dash = function(dt, scen){
 
 CO2km_intensity_newsalesdash = function(dt, scen){
   historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
+  historical_values[, details := "Historical values"]
   targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
+  targets[, details := paste0("Policy target")] 
   
-  dt = dt[!is.na(gCO2_km_ave) & region == region_plot & scenario == scen]
-  
+  targets[, details_blank := ""]
+  dt = dt[!is.na(gCO2_km_ave) & region == region_plot & scenario == scen  & year <= 2050]
   plot = ggplot()+
     geom_line(data = dt[year >=2020], aes(x = year, y = gCO2_km_ave))+
-    geom_point(data = historical_values, aes(x = year, y= emi), color = "grey20")+
-    geom_hline(data = targets, aes(yintercept = value, linetype = name), color = "grey20", size=0.1)+
-    geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name), size = 3)+
+    geom_point(data = historical_values, aes(x = year, y = emi, text = details), color = "grey20")+
+    geom_hline(data = targets, aes(yintercept = value, linetype = name, text = details), color = "grey20", size=0.1)+
+    geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name, text = details_blank), size = 3)+
     expand_limits(y = c(0,1))+
     labs(x = "", y = "")+
-    scale_x_continuous(breaks = c(2015, 2030, 2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -260,7 +279,9 @@ CO2km_intensity_newsalesdash = function(dt, scen){
           axis.line = element_line(size = 0.5, colour = "grey"))+
     guides(linetype = FALSE)
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[gCO<sub>2</sub>/km]', titlefont = list(size = 10)))
   
   return(plot)
 }
@@ -268,15 +289,16 @@ CO2km_intensity_newsalesdash = function(dt, scen){
 EJLDVdash <- function(dt, scen){
   
   dt[, technology := factor(technology, levels = legend_ord)]
-  dt = dt[region == region_plot & scenario == scen & year >= 2015]
+  dt = dt[region == region_plot & scenario == scen & year >= 2015 & year <= 2050]
+  dt[, details := paste0("Demand: ", round(demand_EJ, digits = 1), " [EJ]","<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   
   plot = ggplot()+
-    geom_area(data = dt, aes(x=year, y=demand_EJ, group = technology, fill = technology), color="black", size=0.05, position= position_stack())+
+    geom_area(data = dt, aes(x=year, y=demand_EJ, group = technology, fill = technology, text = details), position= position_stack())+
     labs(x = "", y = "")+
     theme_minimal()+
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -286,7 +308,9 @@ EJLDVdash <- function(dt, scen){
           strip.text = element_text(size=8),
           strip.background = element_rect(color = "grey"))
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>% 
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[EJ]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$technology))
   
@@ -298,14 +322,14 @@ EJLDVdash <- function(dt, scen){
 }
 
 emidem_dash = function(dt, scen){
-  dt = dt[region == region_plot & scenario == scen]
+  dt = dt[region == region_plot & scenario == scen & year <= 2050]
   
   plot = ggplot()+
-    geom_line(data = dt, aes(x = year, y = value))+
+    geom_line(data = dt, aes(x = year, y = value, text = ""))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2015, 2030, 2050, 2100))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -315,7 +339,9 @@ emidem_dash = function(dt, scen){
           strip.text = element_text(size=8),
           strip.background = element_rect(color = "grey"))
   
-  plot = ggplotly(plot)
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
   return(plot)
   

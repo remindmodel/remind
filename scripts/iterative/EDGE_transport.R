@@ -258,6 +258,7 @@ if (opt$reporting) {
   saveRDS(shares_int_dem$demandF_plot_pkm,
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
+  saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
   quit()
 }
 
