@@ -813,6 +813,19 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     =g=
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
 ;
- 
+
+
+***---------------------------------------------------------------------------
+*' Share of green hydrogen in all hydrogen.
+***---------------------------------------------------------------------------
+q_shGreenH2(t,regi)..
+    sum(se2se("seel","seh2",te), vm_prodSe(t,regi,"seel","seh2",te))
+    =e=
+    (
+	sum(pe2se(entyPe,"seh2",te), vm_prodSe(t,regi,entyPe,"seh2",te))
+	+ sum(se2se(entySe,"seh2",te), vm_prodSe(t,regi,entySe,"seh2",te))
+    ) * v_shGreenH2(t,regi)
+;
+
  
 *** EOF ./core/equations.gms
