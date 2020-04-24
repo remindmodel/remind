@@ -15,16 +15,16 @@ if (exists("outputdirs")) {
 } else {
   # This is the case if this script was called directly via Rscript
   listofruns <- list( 
-      #list(period = "both",  set = "cpl-Base",       dirs = c("C_SDP-Base-rem-5",       "C_SSP1-Base-rem-5",       "C_SSP2-Base-rem-5",       "C_SSP5-Base-rem-5")),
-      #list(period = "both",  set = "cpl-PkBudg900",  dirs = c("C_SDP-PkBudg900-rem-5",  "C_SSP1-PkBudg900-rem-5",  "C_SSP2-PkBudg900-rem-5",  "C_SSP5-PkBudg900-rem-5")),
-      #list(period = "both",  set = "cpl-PkBudg1100", dirs = c("C_SDP-PkBudg1100-rem-5", "C_SSP1-PkBudg1100-rem-5", "C_SSP2-PkBudg1100-rem-5", "C_SSP5-PkBudg1100-rem-5")),
-      #list(period = "both",  set = "cpl-PkBudg1300", dirs = c("C_SDP-PkBudg1300-rem-5", "C_SSP1-PkBudg1300-rem-5", "C_SSP2-PkBudg1300-rem-5", "C_SSP5-PkBudg1300-rem-5")),
-      #list(period = "both",  set = "cpl-NPi",        dirs = c("C_SDP-NPi-rem-5",        "C_SSP1-NPi-rem-5",        "C_SSP2-NPi-rem-5",        "C_SSP5-NPi-rem-5")),
+      list(period = "both",  set = "cpl-Base",       dirs = c("C_SDP-Base-rem-5",       "C_SSP1-Base-rem-5",       "C_SSP2-Base-rem-5",       "C_SSP5-Base-rem-5")),
+      list(period = "both",  set = "cpl-PkBudg900",  dirs = c("C_SDP-PkBudg900-rem-5",  "C_SSP1-PkBudg900-rem-5",  "C_SSP2-PkBudg900-rem-5",  "C_SSP5-PkBudg900-rem-5")),
+      list(period = "both",  set = "cpl-PkBudg1100", dirs = c("C_SDP-PkBudg1100-rem-5", "C_SSP1-PkBudg1100-rem-5", "C_SSP2-PkBudg1100-rem-5", "C_SSP5-PkBudg1100-rem-5")),
+      list(period = "both",  set = "cpl-PkBudg1300", dirs = c("C_SDP-PkBudg1300-rem-5", "C_SSP1-PkBudg1300-rem-5", "C_SSP2-PkBudg1300-rem-5", "C_SSP5-PkBudg1300-rem-5")),
+      list(period = "both",  set = "cpl-NPi",        dirs = c("C_SDP-NPi-rem-5",        "C_SSP1-NPi-rem-5",        "C_SSP2-NPi-rem-5",        "C_SSP5-NPi-rem-5")),
       
-      #list(period = "both",  set = "cpl-SDP",  dirs = c("C_SDP-Base-rem-5",  "C_SDP-NPi-rem-5",  "C_SDP-PkBudg1300-rem-5",  "C_SDP-PkBudg1100-rem-5",  "C_SDP-PkBudg1000-rem-5")),
-      #list(period = "both",  set = "cpl-SSP1", dirs = c("C_SSP1-Base-rem-5", "C_SSP1-NPi-rem-5", "C_SSP1-PkBudg1300-rem-5", "C_SSP1-PkBudg1100-rem-5", "C_SSP1-PkBudg900-rem-5")),
-      list(period = "both",  set = "cpl-SSP2", dirs = c("C_SSP2-Base-rem-5", "C_SSP2-NPi-rem-5", "C_SSP2-PkBudg1300-rem-5", "C_SSP2-PkBudg1100-rem-5", "C_SSP2-PkBudg900-rem-5")), #, "C_SSP2-NDC-rem-5"
-      #list(period = "both",  set = "cpl-SSP5", dirs = c("C_SSP5-Base-rem-5", "C_SSP5-NPi-rem-5", "C_SSP5-PkBudg1300-rem-5", "C_SSP5-PkBudg1100-rem-5", "C_SSP5-PkBudg900-rem-5")),
+      list(period = "both",  set = "cpl-SDP",  dirs = c("C_SDP-Base-rem-5",  "C_SDP-NPi-rem-5",  "C_SDP-PkBudg1300-rem-5",  "C_SDP-PkBudg1100-rem-5",  "C_SDP-PkBudg1000-rem-5")),
+      list(period = "both",  set = "cpl-SSP1", dirs = c("C_SSP1-Base-rem-5", "C_SSP1-NPi-rem-5", "C_SSP1-PkBudg1300-rem-5", "C_SSP1-PkBudg1100-rem-5", "C_SSP1-PkBudg900-rem-5")),
+      list(period = "both",  set = "cpl-SSP2", dirs = c("C_SSP2-Base-rem-5", "C_SSP2-NPi-rem-5", "C_SSP2-PkBudg1300-rem-5", "C_SSP2-PkBudg1100-rem-5", "C_SSP2-PkBudg900-rem-5", "C_SSP2-NDC-rem-5")), #
+      list(period = "both",  set = "cpl-SSP5", dirs = c("C_SSP5-Base-rem-5", "C_SSP5-NPi-rem-5", "C_SSP5-PkBudg1300-rem-5", "C_SSP5-PkBudg1100-rem-5", "C_SSP5-PkBudg900-rem-5")),
       
       #list(period = "both",  set = "cpl-PkBudg900-plant-vgl",  dirs = c("C_SDP-PkBudg900-plant-rem-5", "C_SDP-PkBudg900-rem-5", "C_SSP2-PkBudg900-plant-rem-5", "C_SSP2-PkBudg900-rem-5")),
       #list(period = "both",  set = "cpl-PkBudg900-plant",      dirs = c("C_SDP-PkBudg900-plant-rem-5",  "C_SSP1-PkBudg900-plant-rem-5",  "C_SSP2-PkBudg900-plant-rem-5",  "C_SSP5-PkBudg900-plant-rem-5")),

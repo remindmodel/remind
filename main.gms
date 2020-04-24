@@ -82,9 +82,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.94
+* Input data revision: 5.942
 * 
-* Last modification (input data): Thu Mar 19 16:15:13 2020
+* Last modification (input data): Thu Apr 23 11:28:04 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -220,6 +220,7 @@ cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
+c_shGreenH2           "share of green hydrogen in all hydrogen by 2030"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -309,6 +310,7 @@ cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
+c_shGreenH2      = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1

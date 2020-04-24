@@ -300,6 +300,8 @@ vm_otherFEdemand(ttot,all_regi,all_enty)             "final energy demand from n
 vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"	
 
+v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
+
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
@@ -388,6 +390,7 @@ q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs)    "Conversion from final
 q_es2ppfen(ttot,all_regi,all_in)                          "Energy services are handed to the CES tree."
 q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energies in production factors."
 *q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
+q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------

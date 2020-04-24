@@ -44,10 +44,10 @@ get_line <- function(){
 choose_folder <- function(folder,title="Please choose a folder") {
   dirs <- NULL
   
-  # Detect all output folders containing fulldata.gdx
+  # Detect all output folders containing fulldata.gdx or non_optimal.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/fulldata.gdx","",sub("./output/","",Sys.glob(file.path(folder,"*","fulldata.gdx"))))
+  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
 
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   #runs <- findCoupledruns(folder)
@@ -183,7 +183,7 @@ accepted <- c('--restart','--testOneRegi')
 known <-  argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown paramter provided: ",paste(argv[!known][!file_exists]," "))
+  if (!all(file_exists)) stop("Unknown argument provided: ",paste(argv[!known][!file_exists]," \nAccepted arguments are '--testOneRegi', '--restart' or a path to an existing scenario_config.csv"))
 }
 
 ###################### Choose submission type #########################
@@ -196,6 +196,7 @@ if ('--restart' %in% argv) {
   for (outputdir in outputdirs) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    cfg$slurmConfig <- slurmConfig # update the slurmConfig setting to what the user just chose (it was being ignored before)
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
