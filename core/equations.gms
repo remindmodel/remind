@@ -120,7 +120,7 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
 ***   emissions - it comes from biomass
-  + ( 0.001638 
+  + ( sm_MtCH4_2_TWa
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
@@ -422,35 +422,35 @@ q_costTeCapital(t,regi,teLearn) ..
         ** fm_dataglob("learnExp_wFC",teLearn)
       )
     )$( t.val le 2005 )
-***  special treatment for 2010: start divergence of regional values by using a
-***  50/50-split global 2005 to regional 2015 in order to phase-in the observed 2015 regional 
+***  special treatment for 2010, 2015: start divergence of regional values by using a
+***  t-split of global 2005 to regional 2020 in order to phase-in the observed 2020 regional 
 ***  variation from input-data
-  + ( 0.5 * fm_dataglob("learnMult_wFC",teLearn) 
-      * ( sum(regi2, vm_capCum("2005",regi2,teLearn)) 
-        + pm_capCumForeign("2005",regi,teLearn)
+  + ( (2020 - t.val)/15 * fm_dataglob("learnMult_wFC",teLearn) 
+      * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
+        + pm_capCumForeign(t,regi,teLearn)
         )
         ** fm_dataglob("learnExp_wFC",teLearn)
   	  
-    + 0.5 * pm_data(regi,"learnMult_wFC",teLearn)
-      * ( sum(regi2, vm_capCum("2015",regi2,teLearn)) 
-        + pm_capCumForeign("2015",regi,teLearn)
+    + (t.val - 2005)/15 * pm_data(regi,"learnMult_wFC",teLearn)
+      * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
+        + pm_capCumForeign(t,regi,teLearn)
         )
   	  ** pm_data(regi,"learnExp_wFC",teLearn) 
-    )$( t.val eq 2010 )
+    )$( (t.val gt 2005) AND (t.val lt 2020) )
   
 ***  assuming linear convergence of regional learning curves to global values until 2050
-  + ( (pm_ttot_val(t) - 2015) / 35 * fm_dataglob("learnMult_wFC",teLearn) 
+  + ( (pm_ttot_val(t) - 2020) / 30 * fm_dataglob("learnMult_wFC",teLearn) 
     * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
       + pm_capCumForeign(t,regi,teLearn)
       )
       ** fm_dataglob("learnExp_wFC",teLearn)
 	  
-    + (2050 - pm_ttot_val(t)) / 35 * pm_data(regi,"learnMult_wFC",teLearn)
+    + (2050 - pm_ttot_val(t)) / 30 * pm_data(regi,"learnMult_wFC",teLearn)
     * ( sum(regi2, vm_capCum(t,regi2,teLearn)) 
       + pm_capCumForeign(t,regi,teLearn)
       )
 	  ** pm_data(regi,"learnExp_wFC",teLearn) 
-    )$( t.val ge 2015 AND t.val le 2050 )
+    )$( t.val ge 2020 AND t.val le 2050 )
 	
 *** globally harmonized costs after 2050
   + ( fm_dataglob("learnMult_wFC",teLearn) 

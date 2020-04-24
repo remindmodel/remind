@@ -287,12 +287,12 @@ loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
 *additional bound on 2020 expansion: at least yearly as much as in 2016,2017 average
-  vm_deltaCap.lo("2020",regi,te,"1") = (p_histCap("2017",regi,te)-p_histCap("2015",regi,te))/2;
+  vm_deltaCap.lo("2020",regi,te,"1") = (p_histCap("2018",regi,te)-p_histCap("2015",regi,te))/3;
 );
 vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"); !! allow offset of 10MW even for countries with no CSP installations to help the solver
 
-*RR* set lower bounds to spv installed capacity in 2020 to reflect the massive deployment in recent years to 2017 historical values plus a conservative estimation of expected additional deployment until 2020 (+10% per year).
-vm_cap.lo("2020",regi,"spv","1")$(p_histCap("2017",regi,"spv")) = p_histCap("2017",regi,"spv")*(1+0.1)**3;
+*RR* set lower bounds to spv installed capacity in 2020 to reflect the massive deployment in recent years to 2018 historical values plus a conservative estimation of expected additional deployment until 2020 (+10% per year).
+vm_cap.lo("2020",regi,"spv","1")$(p_histCap("2018",regi,"spv")) = p_histCap("2018",regi,"spv")*(1+0.1)**2;
 
 *CB* additional upper bound on 2020 deployment: doubling of historic rate plus 2 GW for solar and wind, and 500 MW for CSP
 loop(regi,

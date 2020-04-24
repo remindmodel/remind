@@ -226,7 +226,7 @@ if(cm_iterative_target_adj eq 7,
 p_actualbudgetco2(t) =           sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
                               + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
                               + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
-s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr),p_actualbudgetco2(t));
+s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr AND t.val le 2100),p_actualbudgetco2(t));
 							
 
   o_peakBudgYr_Itr(iteration) = cm_peakBudgYr;
@@ -330,8 +330,8 @@ display p_actualbudgetco2;
 
 if(cm_iterative_target_adj eq 9,
 *RP* Update tax levels/ multigasbudget values to reach the peak CO2 budget, with a linear increase afterwards given by cm_taxCO2inc_after_peakBudgYr
-*** The PeakBudgYr is found automatically by the algorithm (within the time window 204-2100)
- 
+*** The PeakBudgYr is found automatically by the algorithm (within the time window 2040-2100)
+
   p_actualbudgetco2(t) =  sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
                           + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
                           + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
@@ -342,7 +342,11 @@ if(cm_iterative_target_adj eq 9,
   display s_actualbudgetco2;  
   display p_actualbudgetco2;
 
+
   if(cm_emiscen eq 9,
+  
+*** --------A: calculate the new CO2 price path,  the CO2 tax rescale factor----------------------------------------------------------  
+  
     if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
       display pm_taxCO2eq;
 
@@ -356,8 +360,7 @@ if(cm_iterative_target_adj eq 9,
         cm_peakBudgYr = 2100;
       );
 
-*** --------new convergence----------------------------------------------------------
-***  calculating the CO2 tax rescale factor
+*** --------A1: for that, calculate the CO2 tax rescale factor---
 
       if(iteration.val lt 10,
         p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2) ) ** 3;
@@ -388,29 +391,35 @@ if(cm_iterative_target_adj eq 9,
   
     else !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 ))
       if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
-          p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi); !! nothing changes
+        p_factorRescale_taxCO2(iteration)          = 1;
+        p_factorRescale_taxCO2_Funneled(iteration) = 1;
+        p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi); !! nothing changes
       else
 *** if budget has turned negative, reduce CO2 price by 20%
-      p_taxCO2eq_until2150(t,regi) = 0.8*p_taxCO2eq_until2150(t,regi);
-      pm_taxCO2eq(t,regi) = 0.8*pm_taxCO2eq(t,regi);
+      p_factorRescale_taxCO2(iteration) = 0.8;
+	  p_factorRescale_taxCO2_Funneled(iteration) = p_factorRescale_taxCO2(iteration);
+	  
+      p_taxCO2eq_until2150(t,regi) = p_factorRescale_taxCO2(iteration) * p_taxCO2eq_until2150(t,regi);
+      pm_taxCO2eq(t,regi) = p_factorRescale_taxCO2(iteration) * pm_taxCO2eq(t,regi);
       );  
     ); !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,
     
     display pm_taxCO2eq, p_taxCO2eq_until2150;
 
 	
-***-----------------------------------------------  
-
+*** -------B: checking the peak timing, if cm_peakBudgYr is still correct or needs to be shifted-----------------------
 
     o_diff_to_Budg(iteration) = (c_budgetCO2 - s_actualbudgetco2);
     o_totCO2emi_peakBudgYr(iteration) = sum(t$(t.val = cm_peakBudgYr), sum(regi2, vm_emiAll.l(t,regi2,"co2")) );
     o_totCO2emi_allYrs(t,iteration) = sum(regi2, vm_emiAll.l(t,regi2,"co2") );
+	
+*RP* calculate how fast emissions are changing around the peaking time to get an idea how close it is possible to get to 0 due to the 5(10) year time steps 	
     o_change_totCO2emi_peakBudgYr(iteration) = sum(ttot$(ttot.val = cm_peakBudgYr), (o_totCO2emi_allYrs(ttot-1,iteration) - o_totCO2emi_allYrs(ttot+1,iteration) )/4 );  !! Only gives a tolerance range, exact value not important. Division by 4 somewhat arbitrary - could be 3 or 5 as well. 
 
     display cm_peakBudgYr, o_diff_to_Budg, o_peakBudgYr_Itr, o_totCO2emi_allYrs, o_totCO2emi_peakBudgYr, o_change_totCO2emi_peakBudgYr;
 
 
-*** check if cm_peakBudgYr is correct: if global emissions are already negative, move cm_peakBudgYr forward
+*** ----B1: check if cm_peakBudgYr should be shifted left or right: 
     if( abs(o_diff_to_Budg(iteration)) < 20,                      !! only think about shifting peakBudgYr if the budget is close enough to target budget
       display "close enough to target budget to check timing of peak year";
       loop(ttot$(ttot.val = cm_peakBudgYr),                               !! look at the peak timing
@@ -432,7 +441,7 @@ if(cm_iterative_target_adj eq 9,
             );
 		  );
         
-		else   !! don't do anything if the peakBudgYr is already at the corner values (2040, 2100) or if the emissions in the peakBudgYr are close to 0
+		else   !! don't do anything if the peakBudgYr is already at the corner values (2040, 2100) or if the emissions in the peakBudgYr are close enough to 0 (within the range of +/- o_change_totCO2emi_peakBudgYr)
           o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration)
         );
       );
@@ -442,7 +451,8 @@ if(cm_iterative_target_adj eq 9,
         
     pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = p_taxCO2eq_until2150(t,regi); !! until peakBudgYr, take the contiuous price trajectory
     
-    if (o_delay_increase_peakBudgYear(iteration) = 1,   !! if there was a flip-floping in the previous iterations, try to solve this
+*** -----B2: if there was a flip-floping of cm_peakBudgYr in the previous iterations, try to overome this by adjusting the CO2 price path after the peaking year	
+    if (o_delay_increase_peakBudgYear(iteration) = 1,   
       display "not shifting peakBudgYr right, instead adjusting CO2 price for following year";
       loop(ttot$(ttot.val eq cm_peakBudgYr),  !! set ttot to the current peakBudgYr 
         loop(t2$(t2.val eq pm_ttot_val(ttot+1)),  !! set t2 to the following time step

@@ -13,12 +13,12 @@ The macro-economic core of REMIND is a Ramsey-type optimal growth model
 in which intertemporal global welfare is optimized subject to equilibrium constraints.
 
 ## DOCUMENTATION
-The model documentation for version 2.1 can be found at XXX.
+The model documentation for version 2.1.0 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.0.
 
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T))`
+package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15))`
 in the main folder of the model.
 The resulting documentation can be found in the folder "doc".
 
@@ -27,8 +27,14 @@ Please pay attention to the REMIND Coding Etiquette when you modify the code
 The Coding Etiquette is found in the documentation section of the file main.gms.
 It explains also the used name conventions and other structural characteristics.
 
+## TUTORIALS
+
+Tutorials can be found in the form of markdown files in the repository:
+
+https://github.com/remindmodel/remind/tree/develop/tutorials
+
 ## COPYRIGHT
-Copyright 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+Copyright 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 
 ## LICENSE
 This program is free software: you can redistribute it and/or modify
@@ -58,7 +64,7 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 ## HOW TO INSTALL
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
 solvers *CONOPT* for its core calculations. As the model
-benefits significantly of recent improvements in *GAMS* and *CONOPT4* it is
+benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
 recommended to work with the most recent versions of both.
 Please make sure that the GAMS installation path is added to the PATH variable
 of the system.
@@ -98,6 +104,8 @@ pkgs <- c("gdxrrw",
           "luplot")
 install.packages(pkgs)
 ```
+Updating R is recommended if problems arise at package installation, please write
+us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
 For post-processing model outputs *Latex* is required
 (https://www.latex-project.org/get/). To be seen by the model it also needs to
 added to the PATH variable of your system.
@@ -166,6 +174,10 @@ In case that these recommendations can not be followed we would be happy if you
 could discuss that issue with the REMIND development team
 (remind@pik-potsdam.de).
 
+## MODEL OUTPUT
+
+By default the results for a model run are written to an individual results folder within the "output/" folder of the model. The two most important output files are the fulldata.gdx and the REMIND_generic_*scenario-name*.mif. The fulldata.gdx is the technical output of the GAMS optimization and contains all quantities that were used during the optimization in unchanged form. The mif-file is a csv file of certain format and is synthetized from the fulldata.gdx by post-processing scripts. It can be read in any text editor or spreadsheet program and is well suited for a quick look at the results and for further analysis.
+
 ## CONTACT
 remind@pik-potsdam.de
 
@@ -177,6 +189,8 @@ Please contact remind@pik-potsdam.de
 ## CITATION
 See file CITATION.cff or the documentation of the model for information how
 to cite the model.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3730919.svg)](https://doi.org/10.5281/zenodo.3730919)
 
 ## AUTHORS
 See list of authors in CITATION.cff
