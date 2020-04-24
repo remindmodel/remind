@@ -8,6 +8,7 @@
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/29_CES_parameters/load/sets.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/29_CES_parameters/load/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/29_CES_parameters/load/datainput.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/29_CES_parameters/load/preloop.gms"
 *######################## R SECTION END (PHASES) ###############################
