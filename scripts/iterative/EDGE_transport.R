@@ -132,7 +132,7 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
   
-  nonfuel_costs = applylearning(non_fuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs = applylearning(nonfuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")} else {
   stations = NULL
 }
@@ -266,7 +266,8 @@ num_veh_stations = calc_num_vehicles_stations(
   norm_dem = norm_demand[
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
     c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
-    ES_demand_all = ES_demand_all)
+    ES_demand_all = ES_demand_all,
+    techswitch = techswitch)
 
 ## save number of vehicles for next iteration
 saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
