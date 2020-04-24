@@ -501,7 +501,7 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
 *** lower bound on share of green hydrogen starting from 2030 (c_greenH2)
 ***----------------------------------------------------------------------------
 
-v_shGreenH2.lo(t,regi)$(t.val eq 2025) = %c_greenh2%/2;
+v_shGreenH2.lo(t,regi)$(t.val eq 2025) = %c_greenh2% * 2/3;
 v_shGreenH2.lo(t,regi)$(t.val gt 2025) = %c_greenh2%;
 
 
