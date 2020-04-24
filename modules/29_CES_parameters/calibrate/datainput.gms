@@ -147,6 +147,8 @@ p29_fedemand       "final energy demand"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand.cs4r"
+*** FIXME include with moinput 
+$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_industry.cs4r"
 $offdelim
 /
 

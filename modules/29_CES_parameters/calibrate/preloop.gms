@@ -1013,9 +1013,10 @@ loop ((t_29,regi_dyn29(regi),ces_29(out,in),t0),
 
 pm_cesdata(t_29,regi_dyn29(regi),"inco","effgr") = 1;
 
-*** (b) for items beyond calibration, whose growth beyond t_29hist is treated below
-loop ((t_29, t0, cesOut2cesIn(out,in), regi_dyn29(regi)) $ (ces_beyondcalib_29(out,in) AND t_29hist(t_29)),
-
+*** (b) for items beyond calibration, whose growth beyond t_29hist is treated 
+*** below
+loop ((t_29,t0,cesOut2cesIn(out,in),regi_dyn29(regi))$(
+                                ces_beyondcalib_29(out,in) AND t_29hist(t_29) ),
   pm_cesdata(t_29,regi,in,"effgr")$( pm_cesdata(t_29,regi,in,"quantity") gt 0 )
   = (pm_cesdata(t_29,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
   * (pm_cesdata(t_29,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
@@ -1025,9 +1026,9 @@ loop ((t_29, t0, cesOut2cesIn(out,in), regi_dyn29(regi)) $ (ces_beyondcalib_29(o
   pm_cesdata(t_29,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
 );
 
-loop ((t0, in_beyond_calib_29_excludeRoot),
-         pm_cesdata(t_29,regi_dyn29, in, "eff") = pm_cesdata(t0,regi_dyn29, in, "eff");
-         pm_cesdata(t_29,regi_dyn29,in,"xi") = pm_cesdata(t0,regi_dyn29, in, "xi");
+loop ((t0,in_beyond_calib_29_excludeRoot),
+  pm_cesdata(t_29,regi_dyn29,in,"eff") = pm_cesdata(t0,regi_dyn29,in,"eff");
+  pm_cesdata(t_29,regi_dyn29,in,"xi")  = pm_cesdata(t0,regi_dyn29,in,"xi");
 );
 
 
@@ -1039,7 +1040,6 @@ loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
   pm_cesdata(t_29,regi,in, "effGr")$( pm_ttot_val(t_29) gt pm_ttot_val(t2) )
   = pm_cesdata(t2,regi,in, "effGr");
 );
-
 
 *** Second, change efficiencies for the variables which have exogenous pathways 
 *** in case UE = f(FE,K)
