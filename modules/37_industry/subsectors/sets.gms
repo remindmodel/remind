@@ -130,6 +130,11 @@ Sets
     ue_cement, ue_chemicals, ue_steel_primary, ue_steel_secondary, ue_otherInd
   /
 
+  industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
+  /
+    ue_cement, ue_chemicals, ue_steel_primary, ue_steel_secondary, ue_otherInd
+  /
+
   fe2ppfen37(all_enty,all_in)   "match ESM entyFE to ppfen"
   /
     fesos . (feso_cement, feso_chemicals, feso_steel, feso_otherInd)

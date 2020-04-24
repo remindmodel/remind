@@ -51,49 +51,46 @@ ppf_29("lab") = YES;
 
 *** Useful energy
 ue_29(all_in) 
-  = ue_dyn36(all_in) !! Buildings
-  ;
+  = ue_dyn36(all_in)                               !! Buildings
+  + industry_ue_calibration_target_dyn37(all_in)   !! Industry
+;
   
 *** Fill the sets that need special treatment of efficiencies beyond calib
 ue_fe_kap_29(in) = NO;
 
-loop (ue_29(out)$ppf_29(out),
-    sm_tmp = 0;
-    sm_tmp2 = 0;
+loop (ue_29(ppf_29(out)),
+  sm_tmp  = 0;
+  sm_tmp2 = 0;
     
-    loop (cesOut2cesIn(out,in),
-        if (ppfKap(in) ,sm_tmp = sm_tmp + 1);
-        if (ppfen(in), sm_tmp2 = sm_tmp2 +1);
-    );
+  loop (cesOut2cesIn(out,in),
+    if (ppfKap(in), sm_tmp  = sm_tmp  + 1);
+    if (ppfen(in),  sm_tmp2 = sm_tmp2 + 1);
+  );
     
-    if (sm_tmp eq 1 AND sm_tmp2 eq 1,  !! in case one input is ppfen/FE and the other Kap
-        ue_fe_kap_29(out) = YES;
-     else               
+  !! in case one input is ppfen/FE and the other Kap
+  if (sm_tmp eq 1 AND sm_tmp2 eq 1,
+    ue_fe_kap_29(out) = YES;
+  else               
      sm_tmp = 0;
      loop (cesOut2cesIn(out,in),
-     sm_tmp = sm_tmp +1;
+       sm_tmp = sm_tmp +1;
      );
-    
-    );
-        
-    
+  );
 );
  
 
-***Compute the internal sets for the calibration of the CES
+*** Compute the internal sets for the calibration of the CES
 
 *** First, take the maximum level of ppf_29
 sm_tmp = 0
- loop(cesLevel2cesIO(counter,in)$ppf_29(in),
-if (counter.val gt sm_tmp,
-      sm_tmp = counter.val;
-    )
+loop(cesLevel2cesIO(counter,ppf_29(in)),
+  if (counter.val gt sm_tmp, 
+    sm_tmp = counter.val;
+  );
 );
 
 *** Second, all ppf_29 are part of in_29
-loop(ppf,
- in_29(ppf_29) = YES
-);
+in_29(ppf_29) = YES
 
 *** Third, include recursively all "out" of ppf_29 in in_29
 for (sm_tmp = sm_tmp downto 0,

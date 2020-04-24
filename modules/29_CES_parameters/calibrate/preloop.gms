@@ -1034,25 +1034,24 @@ loop ((t0, in_beyond_calib_29_excludeRoot),
 *** For beyond calib: treatment of effGr after historical periods
 
 *** First, initialize effGr to the last value of the historical period
-loop ( (t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(in_beyond_calib_29_excludeRoot(in) AND ( NOT ue_fe_kap_29(out))),
-pm_cesdata(t_29,regi,in, "effGr")$ ( pm_ttot_val(t_29) gt pm_ttot_val(t2))
-           = pm_cesdata(t2,regi,in, "effGr");
+loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
+              in_beyond_calib_29_excludeRoot(in) AND ( NOT ue_fe_kap_29(out)) ),
+  pm_cesdata(t_29,regi,in, "effGr")$( pm_ttot_val(t_29) gt pm_ttot_val(t2) )
+  = pm_cesdata(t2,regi,in, "effGr");
 );
 
 
-*** Second, change efficiencies for the variables which have exogenous pathways in case UE = f(FE,K)
-loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(ue_fe_kap_29(out)),
-pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29))
-                                                   = pm_cesdata(t2,regi,in, "effGr")
-                                                   * p29_efficiency_growth(t_29,regi,"%cm_GDPscen%",in)
-                                                   /p29_efficiency_growth(t2,regi,"%cm_GDPscen%",in);
-
+*** Second, change efficiencies for the variables which have exogenous pathways 
+*** in case UE = f(FE,K)
+loop ((t_29hist_last(t2),cesOut2cesIn(ue_fe_kap_29(out),in)),
+  pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
+  = pm_cesdata(t2,regi,in, "effGr")
+  * p29_efficiency_growth(t_29,regi,"%cm_GDPscen%",in)
+  / p29_efficiency_growth(t2,regi,"%cm_GDPscen%",in);
 );
-
 
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
-
 
 ***_______________________ COMPLEMENTARY CONSTRAINTS _____________________________
 *** Compute the coefficients for the complementarity constraints
