@@ -14,16 +14,17 @@ library(quitte)
 require(lucode)
 require(colorspace)
 
+gdx_name     <- "fulldata.gdx"        # name of the gdx  
+gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
-  output_folder <- "dummy"
-  readArgs("output_folder")
-  scenario<-"remind17_6013_SSP2-tax20-Noaff-CT-rem-5"
-  output_folder <- "remind17_6013_SSP2-tax20-Noaff-CT-rem-5"
-} else {
-  output_folder <- outputdir
-}
+   outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
+   readArgs("outputdir","gdx_name","gdx_ref_name")
+} 
+gdx      <- path(outputdir,gdx_name)
+gdx_ref  <- path(outputdir,gdx_ref_name)
+if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 
 #---------------------------------------------------------------------------
@@ -83,9 +84,9 @@ cat("Reading CES calibration output from ",filename,"\n")
 if (file.exists(filename)) {
   CES.cal.report <- read.table(filename, header = TRUE, sep = ",", quote = "\"") %>% 
     as.data.frame()
-} else if (file.exists(path(output_folder,filename))) {
+} else if (file.exists(path(outputdir,filename))) {
   
-  CES.cal.report <- read.table(path(output_folder,filename), header = TRUE, sep = ",", quote = "\"") %>% 
+  CES.cal.report <- read.table(path(outputdir,filename), header = TRUE, sep = ",", quote = "\"") %>% 
     as.data.frame() 
 } else {
   stop("No CES_calibration.csv file found. CES_calibration.csv is normally produced during calibration runs")
@@ -97,7 +98,7 @@ if (file.exists(filename)) {
 #---------------------------------------------------------------------------
 
 
-in_set = readGDX(path(outputdir,"fulldata.gdx"), "in", "sets")
+in_set = readGDX(gdx, "in", "sets")
 
 itr <- getColValues(CES.cal.report,"iteration")
 itr_num <- sort(as.double(setdiff(itr, c("origin","target"))))
