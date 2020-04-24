@@ -38,8 +38,8 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Per capita Freight Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition", "CO2 intensity", "Emissions transport demand"),
-    placement=c("right", "left", "right", "left", "left", "left", "right", "right"))
+    title=c("Per capita Passenger Transport Energy Services Demand", "Per capita Freight Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition"),
+    placement=c("right", "left", "right", "left", "left", "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -381,7 +381,7 @@ plotlist$ConvCase$plot$salescomp
 ```
 
 
-### CO2 intensity of new sales {data-width=250}
+### CO~2~ intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$ConvCase$plot$CO2km_int_newsales
@@ -446,7 +446,7 @@ plotlist$HydrHype$plot$salescomp
 ```
 
 
-### CO2 intensity of new sales {data-width=250}
+### CO~2~ intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$HydrHype$plot$CO2km_int_newsales
@@ -512,7 +512,7 @@ plotlist$ElecEra$plot$salescomp
 ```
 
 
-### CO2 intensity of new sales {data-width=250}
+### CO~2~ intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$ElecEra$plot$CO2km_int_newsales
@@ -577,7 +577,7 @@ plotlist$SynSurge$plot$salescomp
 ```
 
 
-### CO2 intensity of new sales {data-width=250}
+### CO~2~ intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$SynSurge$plot$CO2km_int_newsales
