@@ -70,7 +70,7 @@ choose_slurmConfig <- function() {
   return(comp)
 }
 
-# combine_slurmconfig takes two strings with SLURM parameters (e.g. "--qos=priority --time=40000") 
+# combine_slurmconfig takes two strings with SLURM parameters (e.g. "--qos=priority --time=03:30:00") 
 # and combines them into one sting of SLURM parameters overwriting the parameters in "original" 
 # if they also exist in "update_with".
  

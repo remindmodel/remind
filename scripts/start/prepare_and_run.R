@@ -852,15 +852,15 @@ run <- function(start_subsequent_runs = TRUE) {
 # Call prepare and run without cfg, because cfg is read from results folder, where it has been 
 # copied to by submit(cfg)
 
-if (!file.exists("fulldata.gdx")) {
-  # If no "fulldata.gdx" exists, the script assumes that REMIND did not run before and 
+if (!file.exists("full.gms")) {
+  # If no "full.gms" exists, the script assumes that REMIND did not run before and 
   # prepares all inputs before starting the run.
   prepare()
   start_subsequent_runs <- TRUE
 } else {
-  # If "fulldata.gdx" exists, the script assumes that REMIND did run before and you want 
-  # to restart REMIND in the same folder using the gdx that it previously produced.
-  file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+  # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want 
+  # to restart REMIND in the same folder using the gdx that it eventually previously produced.
+  if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   start_subsequent_runs <- FALSE
 }
 
