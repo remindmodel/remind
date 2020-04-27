@@ -11,9 +11,8 @@ opt = parse_args(opt_parser);
 library(data.table)
 library(gdx)
 library(gdxdt)
-#library(edgeTrpLib)
+library(edgeTrpLib)
 require(devtools)
-load_all("../../../../../../edgetrplib/") ## this library has to be on the inconv_comp branch
 library(rmndt)
 library(moinput)
 
@@ -106,7 +105,7 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 average_prices = FALSE
 
 
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
+ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
@@ -132,7 +131,7 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
   
-  nonfuel_costs = applylearning(nonfuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs = applylearning(nonfuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")} else {
   stations = NULL
 }
