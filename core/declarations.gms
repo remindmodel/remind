@@ -341,7 +341,7 @@ q_costTeCapital(tall,all_regi,all_te)                "calculation of investment 
 
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
-q_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
+qm_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
 
 q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
 q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"

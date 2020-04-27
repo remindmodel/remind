@@ -9,11 +9,11 @@
 
 *** Take average price over previous iterations
 if (ord(iteration) ge 5,
-p36_fePrice(t,regi_dyn36(regi),entyFe) = 
-            ( p36_fePrice_iter(iteration - 1,t,regi,entyFe)
-            + p36_fePrice_iter(iteration - 2,t,regi,entyFe)
-            + p36_fePrice_iter(iteration - 3,t,regi,entyFe)
-            + p36_fePrice_iter(iteration - 4,t,regi,entyFe)
+p36_fePrice(t,regi_dyn36(regi),fete(entyFe,te)) = 
+            ( p36_fePrice_iter(iteration - 1,t,regi,entyFe,te)
+            + p36_fePrice_iter(iteration - 2,t,regi,entyFe,te)
+            + p36_fePrice_iter(iteration - 3,t,regi,entyFe,te)
+            + p36_fePrice_iter(iteration - 4,t,regi,entyFe,te)
             )
             / 4;
 );
@@ -28,9 +28,9 @@ p36_kapPrice(t,regi_dyn36(regi))$(ord(t) eq 1)
     )
   / 3;
 
-p36_fePrice(t,regi_dyn36(regi),entyFe)$(ord(t) eq 1)
-  = ( p36_fePrice(t+1,regi,entyFe) * 2
-    + p36_fePrice(t+2,regi,entyFe)
+p36_fePrice(t,regi_dyn36(regi),fete(entyFe,te))$(ord(t) eq 1)
+  = ( p36_fePrice(t+1,regi,entyFe,te) * 2
+    + p36_fePrice(t+2,regi,entyFe,te)
     )
   / 3;
 $onOrder  
@@ -43,10 +43,10 @@ p36_kapPrice(t,regi_dyn36(regi))  =
                            + p36_kapPrice(t+1,regi)
                             ) / 3  ;
 
-p36_fePrice(t,regi_dyn36(regi),entyFe)  =
-                             (p36_fePrice(t-1,regi,entyFe)
-                             + p36_fePrice(t,regi,entyFe)                             
-                             + p36_fePrice(t+1,regi,entyFe)
+p36_fePrice(t,regi_dyn36(regi),fete(entyFe,te))  =
+                             (p36_fePrice(t-1,regi,entyFe,te)
+                             + p36_fePrice(t,regi,entyFe,te)                             
+                             + p36_fePrice(t+1,regi,entyFe,te)
                              ) / 3;
 
 );
@@ -83,11 +83,11 @@ p36_inconvpen(t,regi_dyn36(regi),teEs)$f36_inconvpen(teEs) =
     )
     * f36_inconvpen(teEs) ;
 
-loop ( fe2es_dyn36(entyFe,esty,teEs),
+loop ( (fe2es_dyn36(entyFe,esty,teEs),te)$fete(entyFe,te),
 p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
        p36_esCapCostImplicit(t,regi,teEs)
        +
-      (p36_fePrice(t,regi,entyFe)
+      (p36_fePrice(t,regi,entyFe,te)
       + p36_inconvpen(t,regi,teEs)
       + pm_tau_fe_tax_ES_st(t,regi,esty) 
       + pm_tau_fe_sub_ES_st(t,regi,esty)
@@ -282,20 +282,20 @@ put "scenario", "iteration", "period", "region", "variable", "tech", "ces_out", 
            );
          );
 
-loop ((t,regi_dyn36(regi),fe2ces_dyn36(entyFe,esty,teEs,in)),
+loop ((t,regi_dyn36(regi),fe2ces_dyn36(entyFe,esty,teEs,in),te)$fete(entyFe,te),
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "shareFE", teEs.tl, in.tl, p36_shFeCes(t,regi,entyFe,in,teEs) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "shareUE", teEs.tl, in.tl, p36_shUeCes(t,regi,entyFe,in,teEs) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "cost", teEs.tl, in.tl, (p36_techCosts(t,regi,entyFe,esty,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "calibfactor", teEs.tl, in.tl, (p36_logitCalibration(t,regi,entyFe,esty,teEs)* 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceWoTax", teEs.tl, in.tl, (p36_fePrice(t,regi,entyFe) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM", teEs.tl, in.tl, ((p36_fePrice(t,regi,entyFe)
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceWoTax", teEs.tl, in.tl, te.tl, (p36_fePrice(t,regi,entyFe,te) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM", teEs.tl, in.tl, te.tl, ((p36_fePrice(t,regi,entyFe,te)
                                                                          + p36_inconvpen(t,regi,teEs)
                                                                          + pm_tau_fe_tax_ES_st(t,regi,esty) 
                                                                          + pm_tau_fe_sub_ES_st(t,regi,esty)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_FEpriceWtax", teEs.tl, in.tl, (
-                                                                         (p36_fePrice(t,regi,entyFe)
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_FEpriceWtax", teEs.tl, in.tl, te.tl, (
+                                                                         (p36_fePrice(t,regi,entyFe,te)
                                                                          + pm_tau_fe_tax_ES_st(t,regi,esty) 
                                                                          + pm_tau_fe_sub_ES_st(t,regi,esty)
                                                                          )
@@ -304,7 +304,7 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_inconvenience", teEs.tl, in.t
                                                                           p36_inconvpen(t,regi,teEs)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceTax", teEs.tl, in.tl, ((p36_fePrice(t,regi,entyFe)
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceTax", teEs.tl, in.tl, te.tl, ((p36_fePrice(t,regi,entyFe,te)
                                                                          + pm_tau_fe_tax_ES_st(t,regi,esty) 
                                                                          + pm_tau_fe_sub_ES_st(t,regi,esty)
                                                                          )

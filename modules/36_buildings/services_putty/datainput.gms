@@ -172,17 +172,22 @@ Execute_Loadpoint 'input'  p36_marginalUtility = qm_budget.m;
     );
 );
 if ( execError = 0,
-Execute_Loadpoint 'input' p36_fePrice = qm_balFeForCesAndEs.m;
+Execute_Loadpoint 'input' p36_fePrice_load = qm_balFe.m;
+loop (se2fe(entySe,entyFe,te),
+ p36_fePrice(ttot,regi,entyFe,te) = p36_fePrice_load(ttot,regi,entySe,entyFe,te);
+ );
 if (execError gt 0,
     execError = 0;
-    p36_fePrice(ttot,regi,entyFe) = 1;
+    p36_fePrice(ttot,regi,fete(entyFe,te)) = 1;
     );
 );
-p36_marginalUtility(ttot,regi)$( abs (p36_marginalUtility(ttot,regi)) lt sm_eps) = 1;
-p36_fePrice(ttot,regi,entyFe) = abs (p36_fePrice(ttot,regi,entyFe)) / abs (p36_marginalUtility(ttot,regi));
-p36_fePrice(ttot,regi,entyFe)$ ( NOT p36_fePrice(ttot,regi,entyFe)) = 0.01; !! give a default value in case the relevant information is not available in the input.gdx
 
-p36_fePrice_iter(iteration,ttot,regi,entyFe) = 0;
+p36_marginalUtility(ttot,regi)$( abs (p36_marginalUtility(ttot,regi)) lt sm_eps) = 1;
+
+p36_fePrice(ttot,regi,fete(entyFe,te)) = abs (p36_fePrice(ttot,regi,entyFe,te)) / abs (p36_marginalUtility(ttot,regi));
+p36_fePrice(ttot,regi,fete(entyFe,te))$ ( NOT p36_fePrice(ttot,regi,entyFe,te)) = 0.01; !! give a default value in case the relevant information is not available in the input.gdx
+
+p36_fePrice_iter(iteration,ttot,regi,fete(entyFe,te)) = 0;
 
 if ((cm_noReboundEffect eq 1 ),
 Execute_Load 'input_ref'  p36_cesIONoRebound = vm_cesIO.L;
