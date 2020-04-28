@@ -26,7 +26,10 @@ q39_emiCCU(t,regi) ..
 *' Adjust the shares of synfuels in transport liquids.
 *' This equation is only effective when CCU is switched on.
 q39_shSynTrans(t,regi)..
-    sum(se2fe(entySe,entyFeTrans,te)$seAgg2se("all_seliq",entySe), vm_prodFe(t,regi,entySe,entyFeTrans,te) ) * v39_shSynTrans(t,regi)
+    (
+	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_seliq",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
+	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
+    ) * v39_shSynTrans(t,regi)
     =e=
     vm_prodSe(t,regi,"seh2","seliqfos","MeOH")
 ;
