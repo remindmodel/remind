@@ -53,14 +53,16 @@ o_diff_to_Budg(iteration)                             "Difference between actual
 o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
 o_peakBudgYr_Itr(iteration)                           "Year in which the CO2 budget is supposed to peak. Is changed in iterative_target_adjust = 9"
 o_factorRescale_taxCO2_afterPeakBudgYr(iteration)     "Multiplicative factor for rescaling the CO2 price in the year after peakBudgYr - only needed if flip-flopping of peakBudgYr occurs"
-o_delay_increase_peakBudgYear(iteration)              "Switch that tracks if flip-flopping of peakBudgYr happened. Starts an inner loop to try and overcome this"
-o_reached_until2150pricepath(iteration)               "Switch that tracks if the inner loop of increasing the CO2 price AFTER peakBudgYr goes beyond the initial trajectory"
-p_taxCO2eq_until2150(ttot,all_regi)                  "CO2 price trajectory continued until 2150 - as if there was no change in trajectory after peakBudgYr. Needed to recalculate CO2 price trajectory after peakBudgYr was shifted right"
+o_delay_increase_peakBudgYear(iteration)              "Counter that tracks if flip-flopping of peakBudgYr happened. Starts an inner loop to try and overcome this"
+o_reached_until2150pricepath(iteration)               "Counter that tracks if the inner loop of increasing the CO2 price AFTER peakBudgYr goes beyond the initial trajectory"
+p_taxCO2eq_until2150(ttot,all_regi)                   "CO2 price trajectory continued until 2150 - as if there was no change in trajectory after peakBudgYr. Needed to recalculate CO2 price trajectory after peakBudgYr was shifted right"
 o_totCO2emi_allYrs(ttot,iteration)                    "Global CO2 emissions over time and iterations. Needed to check the procedure to find the peakBudgYr"
 o_change_totCO2emi_peakBudgYr                         "Measure for how much the CO2 emissions change around the peakBudgYr"
 p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging" 
+o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
+o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
