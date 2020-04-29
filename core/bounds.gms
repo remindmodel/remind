@@ -504,5 +504,10 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
 v_shGreenH2.lo(t,regi)$(t.val eq 2025) = c_shGreenH2 * 2/3;
 v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
 
+***----------------------------------------------------------------------------
+*** upper bound on bioliquids as a share of transport liquids
+***----------------------------------------------------------------------------
+
+v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
 
 *** EOF ./core/bounds.gms
