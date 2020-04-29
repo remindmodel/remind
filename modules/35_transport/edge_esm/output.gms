@@ -6,5 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/output.gms
 
-Execute "Rscript EDGE_transport.R --reporting";
+$ifthen.calibrate %CES_parameters% == "load"
+  Execute "Rscript EDGE_transport.R --reporting";
+$endif.calibrate
+
 *** EOF ./modules/35_transport/edge_esm/output.gms

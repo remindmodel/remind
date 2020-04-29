@@ -2,3 +2,4 @@ name,type,reason
 vm_prodSe,input,questionnaire
 vm_co2capture,input,questionnaire
 fm_dataemiglob,input,questionnaire
+cm_shSynTrans,input,questionnaire

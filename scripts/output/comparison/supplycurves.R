@@ -14,22 +14,23 @@ x <- readSupplycurveBio(outputdirs)
 years <- getYears(x$supplycurve)
 years <- years[years>="y2005" & years<="y2100"]
 
-years <- "y2080"
+#years <- "y2080"
 regions <- sort(getRegions(x$supplycurve))
 
 out<-swopen(template="david")
 
-  title <- paste0(years) 
-  dat <- gginput(x$supplycurve[regions,years,],scatter="type")
+for (year in years) {
+  title <- paste0(year) 
+  dat <- gginput(x$supplycurve[regions,year,],scatter="type")
   dat$year<-factor(dat$year)
 
   p <- ggplot(dat, aes(x=.value.x,y=.value.y)) +
     geom_line(aes(colour=scenario, linetype=curve)) + #geom_line(size=0.5) + 
-    geom_point(data=gginput(x$rem_point[regions,years,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
-    geom_point(data=gginput(x$mag_point[regions,years,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
+    geom_point(data=gginput(x$rem_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
+    geom_point(data=gginput(x$mag_point[regions,year,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
     facet_wrap(~region) +
     ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,80),ylim=c(0,30))
 
   swfigure(out,print,p,sw_option="height=9,width=12")
-
+}
 swclose(out,outfile=paste0("supplycurves.pdf"),clean_output=TRUE,save_stream=FALSE)

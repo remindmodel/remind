@@ -1,0 +1,732 @@
+---
+title: "Transport decarbonization dashboard"
+author: ""
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: fill
+    orientation: rows
+runtime: flexdashboard
+---
+
+
+
+```{r loading_required_libraries, include=FALSE}
+  #Loading required libraries
+  library(flexdashboard)
+  library(ggplot2)
+  library(plotly)
+  library(magclass)
+  library(mip)
+  library(data.table)
+```
+
+
+
+```{r creating_charts, include=FALSE}
+source("helper_dashboard.R")
+
+legend=plotlist$legend
+
+```
+
+```{r global_options, include=FALSE}
+  # setting global R chunk options (https://yihui.name/knitr/options/#chunk_options)
+  knitr::opts_chunk$set(dev='svg', fig.asp = 1 ) # fig.asp = default aspect ratio
+```
+
+```{r creating_info_tooltips, include=FALSE}
+  #data frame with help tooltips
+
+  helpTooltip_df <- data.frame(
+    title=c("Per capita Passenger Transport Energy Services Demand", "Per capita Freight Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition"),
+    placement=c("right", "left", "right", "left", "left", "left"))
+
+
+helpTooltip = function(tooltipdf){
+  
+  title <- as.character(tooltipdf$title) 
+  placement <- as.character(tooltipdf$placement) 
+  
+  contents <- gsub('\n', '',gsub('"', '&quot;',paste0('
+<div class="tooltipContainer">
+  <div class="tooltipDescription">',
+    legend[[title]]$description,'
+  </div>
+  <div class="legendContainer">
+  	<table class="legendTable">
+  		<tbody>
+  			<tr>',
+	      do.call(paste,lapply(names(legend[[title]]$contents),function(x){
+        paste0('<tr><td>',
+          ifelse(is.null(legend[[title]]$contents[[x]]$linetype),
+                  paste0('<div class="square"><div class="circle" style="background-color:',legend[[title]]$contents[[x]]$fill,';"></div></div>'),
+  				        paste0('<div class="line" style="border-color:',legend[[title]]$contents[[x]]$fill,'; border-style: ',legend[[title]]$contents[[x]]$linetype,';"></div>')
+  				        ),'
+            </td><td class="legendText">',x,'</td></tr>'
+           )
+  	    })),'
+  		</tbody>
+  	</table>
+  </div>
+</div>')))
+  
+  result = ""
+  result = paste0(result,"<script type='text/javascript'>\n");
+  result = paste0(result,"$(window).load(function () {\n");
+  result = paste0(result,"  $('.chart-title').filter(function() { return $(this).clone().children().remove().end().text() == '", title, "' }).each(function(){\n");
+  if(!(placement == "none"))
+    result = paste0(result,"  	$(this).append('<i class=\"glyphicon glyphicon-info-sign infoIcon\" data-toggle=\"tooltip\" data-html=\"true\" data-placement=\"right\" title=\"",contents,"\"></i>');\n");
+  result = paste0(result,"  	$(this).find('[data-toggle=\"tooltip\"]').tooltip({ placement:'",placement,"'});\n");
+  result = paste0(result,"	})\n");
+  result = paste0(result,"})\n");
+  result = paste0(result,"</script>");
+
+  return(result)
+}
+
+```
+
+<!--############################# -->
+<!--#### START OF MENUS CODE #### -->
+<!--############################# -->
+
+<!-- ### Creating main emissions menu ### -->
+
+<!--Creating First Page - LDV Page-->
+Overview {data-icon="glyphicon glyphicon-scale"}
+===================================== 
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#overview){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case", icon = "glyphicon-oil")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Conventional patterns.
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Per capita Passenger Transport Energy Services Demand
+```{r}
+plotlist$ConvCase$plot$ESmodecap_pass
+```
+
+### Per capita Freight Transport Energy Services Demand
+```{r}
+plotlist$ConvCase$plot$ESmodecap_frgt
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Final Energy Demand
+
+```{r}
+plotlist$ConvCase$plot$EJfuels
+```
+
+### Emissions transport demand
+
+```{r}
+plotlist$ConvCase$plot$emidem
+```
+
+Overview FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
+[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Hydrogen Hype", icon = "glyphicon-tint")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for hydrogen vehicles.
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Per capita Passenger Transport Energy Services Demand
+```{r}
+plotlist$HydrHype$plot$ESmodecap_pass
+```
+
+### Per capita Freight Transport Energy Services Demand
+```{r}
+plotlist$HydrHype$plot$ESmodecap_frgt
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Final Energy Demand
+
+```{r}
+plotlist$HydrHype$plot$EJfuels
+```
+
+### Emissions transport demand
+
+```{r}
+plotlist$HydrHype$plot$emidem
+```
+
+Overview BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+===================================== 
+
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
+[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Electric Era", icon = "glyphicon-flash")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for battery electric vehicles.
+
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Per capita Passenger Transport Energy Services Demand
+```{r}
+plotlist$ElecEra$plot$ESmodecap_pass
+```
+
+### Per capita Freight Transport Energy Services Demand
+```{r}
+plotlist$ElecEra$plot$ESmodecap_frgt
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Final Energy Demand
+
+```{r}
+plotlist$ElecEra$plot$EJfuels
+```
+
+### Emissions transport demand
+
+```{r}
+plotlist$ElecEra$plot$emidem
+```
+
+Overview Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Synfuel Surge", icon = "glyphicon-random")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for synthetic fuels.
+
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Per capita Passenger Transport Energy Services Demand
+```{r}
+plotlist$SynSurge$plot$ESmodecap_pass
+```
+
+### Per capita Freight Transport Energy Services Demand
+```{r}
+plotlist$SynSurge$plot$ESmodecap_frgt
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Final Energy Demand
+
+```{r}
+plotlist$SynSurge$plot$EJfuels
+```
+
+### Emissions transport demand
+
+```{r}
+plotlist$SynSurge$plot$emidem
+```
+
+
+LDVs {data-icon="fa-car"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#ldvs){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case", icon = "glyphicon-oil")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Conventional patterns.
+
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Sales composition {data-width=250}
+```{r}
+plotlist$ConvCase$plot$salescomp
+```
+
+
+### CO~2~ intensity of new sales {data-width=250}
+
+```{r}
+plotlist$ConvCase$plot$CO2km_int_newsales
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Final energy LDVs by fuel
+```{r}
+plotlist$ConvCase$plot$EJLDV
+```
+
+
+### Fleet composition
+```{r}
+plotlist$ConvCase$plot$vintcomp
+```
+
+
+
+LDVs FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
+[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Hydrogen Hype", icon = "glyphicon-tint")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for hydrogen vehicles.
+
+<!-- Dividing the page in two rows-->
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Sales composition {data-width=250}
+```{r}
+plotlist$HydrHype$plot$salescomp
+```
+
+
+### CO~2~ intensity of new sales {data-width=250}
+
+```{r}
+plotlist$HydrHype$plot$CO2km_int_newsales
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Final energy LDVs by fuel
+```{r}
+plotlist$HydrHype$plot$EJLDV
+```
+
+
+### Fleet composition
+```{r}
+plotlist$HydrHype$plot$vintcomp
+```
+
+
+LDVs BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+===================================== 
+
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
+[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Electric Era", icon = "glyphicon-flash")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for battery electric vehicles.
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Sales composition {data-width=250}
+```{r}
+plotlist$ElecEra$plot$salescomp
+```
+
+
+### CO~2~ intensity of new sales {data-width=250}
+
+```{r}
+plotlist$ElecEra$plot$CO2km_int_newsales
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Final energy LDVs by fuel
+```{r}
+plotlist$ElecEra$plot$EJLDV
+```
+
+
+### Fleet composition
+```{r}
+plotlist$ElecEra$plot$vintcomp
+```
+
+
+LDVs Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Synfuel Surge", icon = "glyphicon-random")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Increased preference for synthetic fuels.
+
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Sales composition {data-width=250}
+```{r}
+plotlist$SynSurge$plot$salescomp
+```
+
+
+### CO~2~ intensity of new sales {data-width=250}
+
+```{r}
+plotlist$SynSurge$plot$CO2km_int_newsales
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Final energy LDVs by fuel
+```{r}
+plotlist$SynSurge$plot$EJLDV
+```
+
+
+### Fleet composition
+```{r}
+plotlist$SynSurge$plot$vintcomp
+```
+
+
+<!-- creating information tooltip -->
+```{r, results='asis'}
+for(i in 1:nrow(helpTooltip_df)){
+  cat(helpTooltip(helpTooltip_df[i,]))
+}
+```
+
+
+<!-- ADVANCED: using CSS to define the appearance of the side bar --> 
+
+<!-- CSS -->
+<style type="text/css">
+
+  .sidebar-button {  /* sidebar size  */
+     display: inline-block;
+     font-size: 40px;
+     height: 80px;
+     padding-top: 20px
+  }
+  
+  .sidebar-button, .sidebar-button:hover {
+    text-decoration: none;
+  }
+  
+  .sidebar-button.selected, .sidebar-button.selected:hover {
+    opacity: 1;
+  }
+  
+  .sidebar-button {
+    opacity: 0.7;
+  }
+  
+  .sidebar-button:hover {
+    opacity: 0.4;
+  }
+  
+  /*legend*/
+  .tooltipContainer {
+    padding: 5px;
+  }
+  
+  .tooltipDescription {
+    width: fit-content;
+    margin: 5px auto;
+  }
+  
+  .legendContainer {
+	}
+
+  .legendTable {
+    margin:auto;
+    text-align: left;
+    border-collapse: separate;
+    border-spacing: 2px;
+	}
+
+  .legendText {
+    padding: 4px 20px;
+  }
+
+  .legendTable tr:nth-child(odd) {
+	  background-color: #1d1e1f; /* Background-color of odd rows */
+  }
+
+  .legendTable tr:nth-child(even) {
+	  background-color: #32353a; /* Background-color of even rows */
+  }
+
+  .square {
+    height: 16px; 
+    width: 16px; 
+    margin: 4px 12px;
+  }
+
+  .circle {
+    height: 100%; 
+    width: 100%; 
+    border-radius: 50%; 
+    display: inline-block;
+  }
+  
+  .line{
+    width: 80%; 
+    min-width: 22px;
+    border: 1px solid #fff;
+    margin: auto;
+  }
+  
+  .units {
+    float: right;
+    margin: -2px 5px 0 5px;
+    color: #b7b7b7;
+  }
+  
+  .infoIcon {
+    float: right;
+    margin: 0 5px;
+    color: #b7b7b7;
+  }
+  
+  .modalIcon {
+    float: right;
+    margin: 0 5px;
+    color: #b7b7b7;
+  }
+  
+  .expandIcon {
+    float: right;
+    margin: 0 5px;
+    color: #b7b7b7;
+  }
+  
+  .modalIcon:hover, .infoIcon:hover, .expandIcon:hover {
+    color: #7c7c7c;
+  }
+  
+  .unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+</style>
+
+
+
+
+
