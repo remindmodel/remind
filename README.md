@@ -112,7 +112,7 @@ added to the PATH variable of your system.
 
 ## HOW TO CONFIGURE
 Model run settings are set in `config/default.cfg` (or another config file of
-the same structure). New model scenarios can be created by adding a column to
+the same structure). New model scenarios can be created by adding a row to
 `config/scenario_config.csv`
 
 ## HOW TO RUN

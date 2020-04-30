@@ -100,7 +100,9 @@ for(scen in common){
   
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
-  LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # indicates whether GHG prices should be used by MAgPIE or not
+  LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # set the GHG prices to zero up to and including the year specified here
+  qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
+  if(is.null(qos)) qos <- "short"                        # if qos could not be found in scenarios_coupled use short
   
   start_iter <- 1 # iteration to start the coupling with
   
@@ -269,7 +271,7 @@ for(scen in common){
       }
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"
@@ -281,6 +283,7 @@ for(scen in common){
   
   cat("\nSUMMARY\n")
   cat("runname     :",runname,"\n")
+  cat("QOS         :",qos,"\n")
   cat("start_iter  :",start_iter,"\n")
   cat("path_remind : ",ifelse(dir.exists(path_remind),green,red), path_remind, NC, "\n",sep="")
   cat("path_magpie : ",ifelse(dir.exists(path_magpie),green,red), path_magpie, NC, "\n",sep="")
@@ -300,7 +303,7 @@ for(scen in common){
 
   if (start_now){
       # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
-      qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
+      #qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
       if (!exists("test")) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
       else cat("Test mode: run NOT submitted to the cluster\n")
   } else {

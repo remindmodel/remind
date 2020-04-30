@@ -7,7 +7,7 @@
 ##################################################################
 ################# D E F I N E  start_coupled #####################
 ##################################################################
-start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE) {
+start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE,qos) {
   
   require(lucode)
   require(magclass)
@@ -26,7 +26,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   
   # retrieve REMIND settings
   cfg_rem <- check_config(cfg_rem,paste0(path_remind,"config/default.cfg"),paste0(path_remind,"modules")) 
-  cfg_rem$sequential   <- TRUE
+  cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
   cfg_rem_original <- cfg_rem$output
 
@@ -210,7 +210,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
     # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
-    qos <- ifelse(grepl("SSP2-(NDC|Base)",run),"priority","short")
+    #qos <- ifelse(grepl("SSP2-(NDC|Base)",run),"priority","short")
     system(paste0("sbatch --qos=",qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
@@ -257,7 +257,7 @@ require(lucode)
 
 readArgs("coupled_config")
 load(coupled_config)
-start_coupled(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing)
+start_coupled(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos)
 
 # Manual call:
 # Rscript start_coupled.R coupled_config=runname

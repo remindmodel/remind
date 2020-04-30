@@ -169,6 +169,12 @@ prepare <- function() {
 	  }
   }
  
+  # Display git information
+  cat("\n===== git info =====\nLatest commit: ")
+  cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
+  cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
+  cat("\n====================\n")
+
   load("config.Rdata")
   
   # Store results folder of current scenario
@@ -227,15 +233,13 @@ prepare <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}  
   
-  # select demand pathway for transportation when using the EDGE-T model: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
-  if(transport == "edge_esm"){
-
+  # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
+  if(cfg$gms$transport == "edge_esm"){
     if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
        demTrsp = "wise"
     } else {
        demTrsp = "conv"
     }
-
   }
 
   # Calculate CES configuration string
@@ -246,7 +250,7 @@ prepare <- function() {
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
-                                         ifelse(transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
+                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
   
   # write name of corresponding CES file to datainput.gms
@@ -858,15 +862,15 @@ run <- function(start_subsequent_runs = TRUE) {
 # Call prepare and run without cfg, because cfg is read from results folder, where it has been 
 # copied to by submit(cfg)
 
-if (!file.exists("fulldata.gdx")) {
-  # If no "fulldata.gdx" exists, the script assumes that REMIND did not run before and 
+if (!file.exists("full.gms")) {
+  # If no "full.gms" exists, the script assumes that REMIND did not run before and 
   # prepares all inputs before starting the run.
   prepare()
   start_subsequent_runs <- TRUE
 } else {
-  # If "fulldata.gdx" exists, the script assumes that REMIND did run before and you want 
-  # to restart REMIND in the same folder using the gdx that it previously produced.
-  file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+  # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want 
+  # to restart REMIND in the same folder using the gdx that it eventually previously produced.
+  if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   start_subsequent_runs <- FALSE
 }
 
