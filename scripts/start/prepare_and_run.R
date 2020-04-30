@@ -737,6 +737,9 @@ run <- function(start_subsequent_runs = TRUE) {
 
   #====================== Subsequent runs ===========================
   if (start_subsequent_runs) {
+    # Note: step 1. and 2. below write to the same .RData file but are usually executed by different runs.
+    # Step 1. is usually only executed by BASE runs, step 2 by every run that preceeds another run.
+    
     # 1. Save the path to the fulldata.gdx of the current run to the cfg files 
     # of the runs that use it as 'input_bau.gdx'
 
