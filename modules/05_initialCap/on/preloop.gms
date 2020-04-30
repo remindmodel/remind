@@ -381,10 +381,13 @@ loop(regi,
 pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP)
 
 *** FS: synfuel scenario 1
-*** assume electrolysis optimized with VRE input from 2030s onwards ~ reduces H2 price by half
+*** assume electrolysis optimized with VRE input from 2030s onwards 
+*** double conversion efficiency, decrease capacity factor to 0.5, 
+*** i.e. electrolysis runs half of the year with half of average electricity price
 
 if ( cm_synfuelscen eq 1,
-	pm_eta_conv(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 1.6; !! double efficiency, halves electricity input cost
+	pm_eta_conv(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 2 * pm_eta_conv(t,regi_synfuelscen,"elh2")$(t.val ge 2030); 
+	vm_capFac.fx(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 0.5;
 );
 
 
