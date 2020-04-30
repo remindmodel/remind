@@ -103,7 +103,7 @@ The meta scripts for coupled runs that configure the models, start the runs and 
   * reads config files and updates model settings accordingly
   * saves all settings to individual `runname.RData` files in the REMIND main folder
   * sends a job to the cluster for each scenario specified. This job executed `start_coupled.R`
-* 'start_coupled.R`
+* `start_coupled.R`
   * tries to detect if there are runs that crashed and can be continued
   * reads the `runname.RData` and starts REMIND and MAgPIE iteratively
   * saves the output from one model into specific intput folders of the other model
