@@ -16,6 +16,7 @@ David Klein (<dklein@pik-potsdam.de>)
 - [Technical concept](#technical-concept)
     + [Dynamic](#dynamic)
     + [Static](#static)
+    + [The coupling scripts](#the-coupling-scripts)
     
 # How to start coupled runs
 
