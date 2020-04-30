@@ -10,7 +10,12 @@
 q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"build")) AND (sameas(emiMkt,"ES"))) .. 
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(ttot,regi,entySe,entyFe,"build",emiMkt)) 
   =e=
-  sum(fe2es(entyFe,esty,teEs), vm_demFeForEs(ttot,regi,entyFe,esty,teEs) ) 
+  sum(fe2ppfEn36(entyFe,in),
+    vm_cesIO(ttot,regi,in)
+    + pm_cesdata(ttot,regi,in,"offset_quantity")
+  )
+  +
+  sum(fe2es_dyn36(entyFe,esty,teEs), vm_demFeForEs(ttot,regi,entyFe,esty,teEs) ) 
 ;
 
 

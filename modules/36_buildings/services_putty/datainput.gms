@@ -174,7 +174,7 @@ Execute_Loadpoint 'input'  p36_marginalUtility = qm_budget.m;
 if ( execError = 0,
 Execute_Loadpoint 'input' p36_fePrice_load = qm_balFe.m;
 loop (se2fe(entySe,entyFe,te),
- p36_fePrice(ttot,regi,entyFe,te) = p36_fePrice_load(ttot,regi,entySe,entyFe,te);
+ p36_fePrice(ttot,regi,entyFe) = p36_fePrice_load(ttot,regi,entySe,entyFe,te);
  );
 if (execError gt 0,
     execError = 0;
