@@ -197,7 +197,7 @@ p
 plotinconv = function(inco_tech, iso_plot, vehicle_type){
   p=ggplot()+
   geom_bar(data = inco_tech[iso == iso_plot & subsector_L1 == "trn_pass_road_LDV_4W" & vehicle_type == vehicle_type & year<=2100 & year>=2010], aes(x = as.character(year), y = value, group = logit_type, fill = logit_type), position = position_stack(), stat = "identity")+
-  facet_grid(~technology)+
+  facet_wrap(~technology, norw = 3)+
   theme_minimal()+
   # scale_fill_manual(values = cols)+
   expand_limits(y = c(0,0.8))+
@@ -383,10 +383,10 @@ demandEJplotf = function(demandEJ, POP){
                            1e-6]          ## in people/millionpeople=GJ/person
 
 
-  p=ggplot()+
-    geom_area(data = demandEJ[year > 2010], aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+
+  ppass=ggplot()+
+    geom_area(data = demandEJ[year > 2010 & aggr_mode %in% c("LDV", "Pass non LDV")], aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+
     facet_wrap(~region, nrow = 4)+
-    labs(x = "", y = "Final Energy demand [EJ]")+
+    labs(x = "", y = "Passenger final Energy demand [EJ]")+
     theme_minimal()+
     scale_fill_manual(values = cols)+
     # scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
@@ -397,6 +397,22 @@ demandEJplotf = function(demandEJ, POP){
           legend.text = element_text(size = 9),
           legend.title = element_text(size =9),
           strip.text = element_text(size=9))
+
+  pfreight=ggplot()+
+    geom_area(data = demandEJ[year > 2010 & aggr_mode %in% c("Freight")], aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+
+    facet_wrap(~region, nrow = 4)+
+    labs(x = "", y = "Freight final Energy demand [EJ]")+
+    theme_minimal()+
+    scale_fill_manual(values = cols)+
+    # scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    theme(axis.text.x = element_text(size = 8),
+          axis.text.y = element_text(size=8),
+          axis.title = element_text(size = 9),
+          title = element_text(size = 9),
+          legend.text = element_text(size = 9),
+          legend.title = element_text(size =9),
+          strip.text = element_text(size=9))
+
 
   pcap=ggplot()+
     geom_area(data = demandEJcap[year > 2020], aes(x=year, y=cap_dem, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", position= position_stack())+

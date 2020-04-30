@@ -35,7 +35,7 @@ gdx_name = "fulldata.gdx"
 emi_all = NULL
 salescomp_all = NULL
 fleet_all = NULL
-EJLDV_all = NULL
+EJroad_all = NULL
 EJmode_all = NULL
 ESmodecap_all = NULL
 CO2km_int_newsales_all = NULL
@@ -112,15 +112,15 @@ fleetFun = function(vintcomp, newcomp, sharesVS1){
 }
 
 
-EJLDVFun <- function(demandEJ){
-  demandEJ = demandEJ[subsector_L1 == "trn_pass_road_LDV_4W",]
+EJroadFun <- function(demandEJ){
+  demandEJ = demandEJ[subsector_L3 %in% c("trn_pass_road", "trn_freight_road"),]
   demandEJ <- demandEJ[, c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vehicle_type", "technology", "iso", "year", "demand_EJ")]
-  
   demandEJ = merge(demandEJ, REMIND2ISO_MAPPING, by = "iso")
   demandEJ[technology == "Hybrid Liquids", technology := "Liquids"]
   demandEJ[technology == "FCEV", technology := "Hydrogen"]
-  demandEJ[technology == "BEV", technology := "Electricity"]
-  demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year", "technology")]
+  demandEJ[technology %in% c("BEV", "Electric"), technology := "Electricity"]
+  demandEJ[subsector_L1 %in% c("trn_pass_road_bus_tmp_subsector_L1", "Bus_tmp_subsector_L1"), subsector_L1 := "Bus_tmp_subsector_L1"]
+  demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year", "technology", "subsector_L1")]
   return(demandEJ)
   
 }
@@ -351,7 +351,7 @@ for (outputdir in outputdirs) {
   ## calculate fleet compositons
   fleet = fleetFun(vintcomp, newcomp, sharesVS1)
   ## calculate EJ from LDVs by technology
-  EJLDV = EJLDVFun(demandEJ)
+  EJroad = EJroadFun(demandEJ)
   ## calculate FE demand by mode
   EJmode = EJmodeFun(demandEJ)
   ## calculate ES demand per capita
@@ -366,7 +366,7 @@ for (outputdir in outputdirs) {
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
-  EJLDV[, scenario := as.character(unique(miffile$scenario))]
+  EJroad[, scenario := as.character(unique(miffile$scenario))]
   EJmode[, scenario := as.character(unique(miffile$scenario))]
   ESmodecap[, scenario := as.character(unique(miffile$scenario))]
   CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
@@ -376,7 +376,7 @@ for (outputdir in outputdirs) {
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
-  EJLDV_all = rbind(EJLDV_all, EJLDV)
+  EJroad_all = rbind(EJroad_all, EJroad)
   EJmode_all = rbind(EJmode_all, EJmode)
   ESmodecap_all = rbind(ESmodecap_all, ESmodecap)
   CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
@@ -392,7 +392,7 @@ dash_template = "EDGEdashboard.Rmd"
 saveRDS(EJmode_all, paste0(outdir, "/EJmode_all.RDS"))
 saveRDS(salescomp_all, paste0(outdir, "/salescomp_all.RDS"))
 saveRDS(fleet_all, paste0(outdir, "/fleet_all.RDS"))
-saveRDS(EJLDV_all, paste0(outdir, "/EJLDV_all.RDS"))
+saveRDS(EJroad_all, paste0(outdir, "/EJroad_all.RDS"))
 saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
 saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(EJfuels_all, paste0(outdir, "/EJfuels_all.RDS"))

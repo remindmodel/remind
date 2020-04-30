@@ -84,7 +84,7 @@ plotlyButtonsToHide <- list('sendDataToCloud', 'zoom2d', 'pan2d', 'select2d', 'l
 
 ## Load files
 EJmode_all = readRDS("EJmode_all.RDS")
-EJLDV_all = readRDS("EJLDV_all.RDS")
+EJroad_all = readRDS("EJroad_all.RDS")
 fleet_all = readRDS("fleet_all.RDS")
 salescomp_all = readRDS("salescomp_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
@@ -287,7 +287,7 @@ CO2km_intensity_newsalesdash = function(dt, scen){
 }
 
 EJLDVdash <- function(dt, scen){
-  
+  dt = dt[subsector_L1 == "trn_pass_road_LDV_4W"]
   dt[, technology := factor(technology, levels = legend_ord)]
   dt = dt[region == region_plot & scenario == scen & year >= 2015 & year <= 2050]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 1), " [EJ]","<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
@@ -378,7 +378,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     ## CO2 intensity new sales LDVs
     CO2km_int_newsales = CO2km_intensity_newsalesdash(CO2km_int_newsales_all, scen)
     ## final energy LDVs by fuel
-    EJLDV = EJLDVdash(EJLDV_all, scen)
+    EJLDV = EJLDVdash(EJroad_all, scen)
     ## emissions transport demand
     emidem = emidem_dash(emidem_all, scen)
 
