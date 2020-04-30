@@ -112,10 +112,12 @@ ces_transport_dyn35(all_in,all_in)   "CES tree structure - edge transport"
 
 EDGE_scenario_all    "EDGE-T scenarios"
 /
-Conservative_liquids
-Hydrogen_push
-Electricity_push
-Smart_lifestyles_Electricity_push
+ConvCase
+ConvCaseWise
+ElecEra
+ElecEraWise
+HydrHype
+HydrHypeWise
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
