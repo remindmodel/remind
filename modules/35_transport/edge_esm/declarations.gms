@@ -9,10 +9,4 @@ Parameters
 pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
 ;
 
-Positive variables
-;
-
-Equations
-;
-
 *** EOF ./modules/35_transport/edge_esm/declarations.gms
