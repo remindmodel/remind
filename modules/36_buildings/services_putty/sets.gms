@@ -123,6 +123,9 @@ uecwsob
  
  fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) "map FE carriers to CES via appliances"
 // 
+feteces_dyn36(all_enty,all_teEs,all_in) "map FE carriers to CES without esty"
+//
+
 
 inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
 
@@ -231,11 +234,14 @@ loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
     loop ( es2ppfen_dyn36(all_esty,all_in),
     fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) = YES;
     inViaEs_dyn36(all_in) = YES;
+    feteces_dyn36(all_enty,all_teEs,all_in) = YES;
     )
     );
 
+
  alias (fe2ces_dyn36,fe2ces_dyn36_2);
  alias (fe2es_dyn36, fe2es_dyn36_2);
+ alias (feteces_dyn36, feteces_dyn36_2);
 
  
 t36_hist(ttot) = NO;

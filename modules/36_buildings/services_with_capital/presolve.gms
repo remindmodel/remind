@@ -235,9 +235,24 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) =  (p36_prodUEintern(ttot,regi
                                           / p36_demUEtotal(ttot,regi,in);
 );
 );
+
+*** Set 1e-3 as a lower bound for shares
+p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
+                                                      AND p36_shUeCes(ttot,regi,entyFe,in,teEs) lt 1e-3)
+                                                      = 0
+                                                      ;
+p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
+                                                     AND feteces_dyn36(entyFe,teEs,in)
+                                                     )
+                                                     = p36_shUeCes(ttot,regi,entyFe,in,teEs)
+                                                    / sum( feteces_dyn36_2(entyFe2,teEs2,in),
+                                                    p36_shUeCes(ttot,regi,entyFe2,in,teEs2))
+                                                    ;
+
+
 *** Compute FE shares
 
-p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$p36_shUeCes(t,regi,entyFe,in,teEs) 
+p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                 = (1 / p36_fe2es(t,regi,teEs))
                                                  / sum ( (fe2ces_dyn36(entyFe2,esty2,teEs2,in)), (1 / p36_fe2es(t,regi,teEs2))
                                                                          * p36_shUeCes(t,regi,entyFe2,in,teEs2))
