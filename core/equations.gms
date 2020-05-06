@@ -837,7 +837,7 @@ q_shBioliq(t,regi)..
     (
 	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_seliq",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
-    ) * v_shGreenH2(t,regi)
+    ) * v_shBioliq(t,regi)
 ;
 
  
