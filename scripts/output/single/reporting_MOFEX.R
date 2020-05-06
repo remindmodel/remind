@@ -6,7 +6,12 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind)
+slurm <- suppressWarnings(ifelse(system2('srun',stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
+  if (slurm) { 
+    library('remind',lib.loc = '/p/projects/innopaths/reporting_library/lib/')  
+  } else {
+    library(remind)
+  }
 library(lucode)
 library(methods)
 library(tidyverse)
