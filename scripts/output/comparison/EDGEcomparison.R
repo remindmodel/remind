@@ -38,6 +38,7 @@ fleet_all = NULL
 EJroad_all = NULL
 EJmode_all = NULL
 ESmodecap_all = NULL
+ESmodeabs_all = NULL
 CO2km_int_newsales_all = NULL
 EJfuels_all = NULL
 emidem_all = NULL
@@ -159,7 +160,7 @@ EJmodeFun = function(demandEJ){
 }
 
 
-ESmodecapFun = function(demandkm, POP){
+ESmodeFun = function(demandkm, POP){
   ## REMIND-EDGE results
   demandkm <- demandkm[,c("sector","subsector_L3","subsector_L2",
                             "subsector_L1","vehicle_type","technology", "iso","year","demand_F")]
@@ -201,6 +202,12 @@ ESmodecapFun = function(demandkm, POP){
   demandkm = merge(demandkm, REMIND2ISO_MAPPING, by = "iso")
   demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
   
+  ## save separately the total demand
+  demandkm_abs = copy(demandkm)
+  demandkm_abs = demandkm_abs[year >= 2015 & year <= 2100]
+  demandkm_abs[, demand_F := demand_F/    ## in million km
+                             1e6]         ## in trillion km
+  ## calculate per capita demand
   demandkm = merge(demandkm, POP, all.x = TRUE, by =c("year", "region"))
   
   ## calculate per capita values
@@ -210,7 +217,7 @@ ESmodecapFun = function(demandkm, POP){
   
   demandkm = demandkm[year >= 2015 & year <= 2100]
   
-  return(demandkm)
+  return(list(demandkm = demandkm, demandkm_abs = demandkm_abs))
   
 }
 
@@ -355,7 +362,9 @@ for (outputdir in outputdirs) {
   ## calculate FE demand by mode
   EJmode = EJmodeFun(demandEJ)
   ## calculate ES demand per capita
-  ESmodecap = ESmodecapFun(demandkm, POP)
+  ESmode = ESmodeFun(demandkm, POP)
+  ESmodecap = ESmode[["demandkm"]]
+  ESmodeabs = ESmode[["demandkm_abs"]]
   ## calculate average emissions intensity from the LDVs fleet
   CO2km_int_newsales = CO2km_int_newsales_Fun(shares_LDV, mj_km_data, sharesVS1, FEliq_source$FEliq_sourceISO, gdp)
   ## calculate FE for all transport sectors by fuel, dividng Oil into Biofuels and Synfuels
@@ -369,6 +378,7 @@ for (outputdir in outputdirs) {
   EJroad[, scenario := as.character(unique(miffile$scenario))]
   EJmode[, scenario := as.character(unique(miffile$scenario))]
   ESmodecap[, scenario := as.character(unique(miffile$scenario))]
+  ESmodeabs[, scenario := as.character(unique(miffile$scenario))]
   CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
   EJfuels[, scenario := as.character(unique(miffile$scenario))]
   emidem[, scenario := as.character(unique(miffile$scenario))]
@@ -379,6 +389,7 @@ for (outputdir in outputdirs) {
   EJroad_all = rbind(EJroad_all, EJroad)
   EJmode_all = rbind(EJmode_all, EJmode)
   ESmodecap_all = rbind(ESmodecap_all, ESmodecap)
+  ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
   CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
   EJfuels_all = rbind(EJfuels_all, EJfuels)
   emidem_all = rbind(emidem_all, emidem)
@@ -394,18 +405,20 @@ saveRDS(salescomp_all, paste0(outdir, "/salescomp_all.RDS"))
 saveRDS(fleet_all, paste0(outdir, "/fleet_all.RDS"))
 saveRDS(EJroad_all, paste0(outdir, "/EJroad_all.RDS"))
 saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
+saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
 saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(EJfuels_all, paste0(outdir, "/EJfuels_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
-## if it's a 4 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype. run the dashboard
-if (length(outputdirs) == 4 &
-    isTRUE(any(grepl("SynSurge", outputdirs))) &
-    isTRUE(any(grepl("ConvCase", outputdirs))) &
-    isTRUE(any(grepl("ElecEra", outputdirs))) &
-    isTRUE(any(grepl("HydrHype", outputdirs))) ){
+## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
+if (length(outputdirs) == 5 &
+    isTRUE(any(grepl("Budg1100_SynSurge", outputdirs))) &
+    isTRUE(any(grepl("Budg1100_ConvCase", outputdirs))) &
+    isTRUE(any(grepl("Budg1100_ElecEra", outputdirs))) &
+    isTRUE(any(grepl("Budg1100_HydrHype", outputdirs))) &
+    isTRUE(any(grepl("Base_ConvCase", outputdirs)))){
  file.copy(file.path("./scripts/output/comparison/notebook_templates/helper_dashboard.R"), outdir)
  file.copy(file.path("./scripts/output/comparison/notebook_templates", dash_template), outdir)
  rmarkdown::render(path(outdir, dash_template))

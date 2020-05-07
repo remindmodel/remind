@@ -67,7 +67,9 @@ cols <- c("NG" = "#d11141",
           "Hydrogen_push" = "#00aedb",
           "Conservative_liquids" = "#113245",
           "ConvCase" = "#113245",
-          "ConvCaseWise" = "#d11141")
+          "ConvCaseNoTax" = "#d11141",
+          "ConvCaseWise" = "#d11141",
+          "SynSurge" = "orchid")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
                       "Motorbikes", "Small Cars", "Large Cars", "Van",
@@ -88,6 +90,7 @@ EJroad_all = readRDS("EJroad_all.RDS")
 fleet_all = readRDS("fleet_all.RDS")
 salescomp_all = readRDS("salescomp_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
+ESmodeabs_all = readRDS("ESmodeabs_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJfuels_all = readRDS("EJfuels_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
@@ -120,6 +123,7 @@ vintcomparisondash = function(dt, scen){
     guides(linetype=FALSE,
            fill=guide_legend(reverse=FALSE, title="Transport mode"))+
     scale_fill_manual(values = cols)+
+    ylim(0, 650)+
     labs(x = "", y = "")
   
   
@@ -132,6 +136,50 @@ vintcomparisondash = function(dt, scen){
   output = list(plot = plot,
                 vars = vars)
 }
+
+
+vintscen_dash = function(dt){
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt = dt[year %in% c(2015, 2030, 2050)]
+  dt[, year := as.character(year)]
+  dt = dt[region == region_plot]
+  dt = dt[,.(value = sum(value)), by = c("region", "technology", "year", "scenario")]
+  dt[, scenario := gsub(".*_", "", scenario)]
+  dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
+  dt[, details := paste0("Vehicles: ", round(value, 0), " [million]", "<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
+  plot = ggplot()+
+    geom_bar(data = dt,
+             aes(x = scenario, y = value, group = technology, text = details, fill = technology, width=.75), position="stack", stat = "identity", width = 0.5)+
+    guides(fill = guide_legend(reverse=TRUE))+
+    facet_wrap(~year, nrow = 1)+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 8),
+          axis.text.y = element_text(size=8),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          strip.text = element_text(size=8),
+          strip.background = element_rect(color = "grey"),
+          legend.position = "none")+
+    scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
+    guides(linetype=FALSE,
+           fill=guide_legend(reverse=FALSE, title="Transport mode"))+
+    scale_fill_manual(values = cols)+
+    ylim(0, 650)+
+    labs(x = "", y = "")
+  
+  
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE)%>%
+    layout(yaxis=list(title='[million veh]', titlefont = list(size = 10)))
+  
+  vars = as.character(unique(dt$technology))
+  
+  output = list(plot = plot,
+                vars = vars)
+}
+
+
 
 salescomdash = function(dt, scen){
   
@@ -177,6 +225,7 @@ ESmodecapdash = function(dt, scen){
     theme_minimal()+
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
+    ylim(0,32000)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -193,6 +242,7 @@ ESmodecapdash = function(dt, scen){
     theme_minimal()+
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
+    ylim(0,64000)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -220,6 +270,43 @@ ESmodecapdash = function(dt, scen){
   
 }
 
+
+
+ESmodeabs_dash = function(dt, scen){
+  dt = dt[region == region_plot & scenario == scen & year <= 2050]
+  dt[, details := paste0("Demand: ", round(demand_F, digits = 1), ifelse(mode == "pass", " [trillion pkm]",  " [trillion tkm]"), "<br>", "Vehicle: ", vehicle_type_plot, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
+  
+  plot_pass = ggplot()+
+    geom_area(data = dt[mode == "pass"], aes(x = year, y = demand_F, group = vehicle_type_plot, fill = vehicle_type_plot, text = details), position= position_stack())+
+    labs(x = "", y = "")+
+    theme_minimal()+
+    scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    ylim(0, 17)+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.position = "none",
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+  
+  plot_pass = ggplotly(plot_pass, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[trillion pkm]', titlefont = list(size = 10)))
+
+  vars_pass = as.character(unique(dt[mode == "pass"]$vehicle_type_plot))
+  
+  output = list(plot = plot_pass,
+                vars = vars_pass)
+  
+  return(output)
+  
+}
+
+
 EJfuels_dash = function(dt, scen){
   dt = dt[region == region_plot & scenario == scen & year >= 2015  & year <= 2050]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
@@ -229,8 +316,48 @@ EJfuels_dash = function(dt, scen){
     theme_minimal()+
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
+    ylim(0, 25)+
     labs(x = "", y = "")+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.position = "none",
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+  
+  plot = ggplotly(plot, tooltip = c("text")) %>% 
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[EJ]', titlefont = list(size = 10)))
+  
+  vars = as.character(unique(dt$subtech))
+  
+  output = list(plot = plot,
+                vars = vars)
+  
+  return(output)
+}
+
+EJfuels_scen_dash = function(dt){
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt = dt[region == region_plot & year %in% c(2015, 2030, 2050)]
+  dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
+  dt[, scenario := gsub(".*_", "", scenario)]
+  dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
+  
+  plot = ggplot()+
+    geom_bar(data = dt, aes(x = scenario, y = demand_EJ, group = subtech,
+                            fill = subtech, 
+                            text = details, width=.75), 
+             position="stack", stat = "identity", width = 0.5)+
+    facet_wrap(~year, nrow = 1)+
+    theme_minimal()+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    ylim(0, 25)+
+    labs(x = "", y = "")+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -286,6 +413,52 @@ CO2km_intensity_newsalesdash = function(dt, scen){
   return(plot)
 }
 
+
+CO2km_intensity_newsales_scen_dash = function(dt){
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
+  historical_values[, details := "Historical values"]
+  targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
+  targets[, details := paste0("Policy target")] 
+  
+  targets[, details_blank := ""]
+  dt = dt[!is.na(gCO2_km_ave) & region == region_plot & year <= 2050]
+  dt[, scenario := gsub(".*_", "", scenario)]
+  dt[, details := paste0(scenario)]
+  
+  plot = ggplot()+
+    geom_line(data = dt[year >=2020], aes(x = year, y = gCO2_km_ave, color = scenario, text = details))+
+    geom_point(data = historical_values, aes(x = year, y = emi, text = details), color = "grey20")+
+    geom_hline(data = targets, aes(yintercept = value, linetype = name, text = details), color = "grey20", size=0.1)+
+    geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name, text = details_blank), size = 3)+
+    expand_limits(y = c(0,1))+
+    labs(x = "", y = "")+
+    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 8),
+          axis.title = element_text(size = 8),
+          title = element_text(size = 8),
+          legend.position = "none",
+          strip.text = element_text(size = 8),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+    guides(linetype = FALSE)+
+    scale_color_manual(values = cols)
+  
+  plot = ggplotly(plot, tooltip = c("text")) %>%
+    config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
+    layout(yaxis=list(title='[gCO<sub>2</sub>/km]', titlefont = list(size = 10)))
+  
+  vars = as.character(unique(dt$scenario))
+  
+  output = list(plot = plot,
+                vars = vars)
+  
+  return(output)
+}
+
+
 EJLDVdash <- function(dt, scen){
   dt = dt[subsector_L1 == "trn_pass_road_LDV_4W"]
   dt[, technology := factor(technology, levels = legend_ord)]
@@ -298,6 +471,7 @@ EJLDVdash <- function(dt, scen){
     theme_minimal()+
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
+    ylim(0, 13)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -329,6 +503,7 @@ emidem_dash = function(dt, scen){
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
+    ylim(0,1250)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -351,28 +526,37 @@ legend = list()
 
 create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfuels_all, CO2km_int_newsales_all, EJLDV_all){
   output = NULL
+  
+  ## for loop to produce scenario specific results
   for (scen in scens) {
     
     ## attribute scenario name
-    if (grepl("ConvCase", scen)) {
+    if (grepl("Budg1100_ConvCase", scen)) {
       scenname = "ConvCase"
-    } else if (grepl("ElecEra", scen)) {
+    } else if (grepl("Budg1100_ElecEra", scen)) {
       scenname = "ElecEra"
-    } else if (grepl("HydrHype", scen)) {
+    } else if (grepl("Budg1100_HydrHype", scen)) {
       scenname = "HydrHype"
-    } else if (grepl("SynSurge", scen)) {
+    } else if (grepl("Budg1100_SynSurge", scen)) {
       scenname = "SynSurge"
+    } else if (grepl("Base_ConvCase", scen)) {
+      scenname = "ConvCase NoTax"
     }
     
     ## CO2 tax pathway
     emiscen = gsub("_.*", "", scen)
+    emiscen_names = c("Budg1100" = "2 degrees target",
+                      "Base" = "Baseline")
+    emiscen = unname(emiscen_names[emiscen])
     
     ## sales
     salescomp = salescomdash(salescomp_all, scen)
     ## vintages
     vintcomp = vintcomparisondash(fleet_all, scen)
-    ## energy services demand
+    ## energy services demand per capita
     ESmodecap = ESmodecapdash(ESmodecap_all, scen)
+    ## energy services demand, total
+    ESmodeabs = ESmodeabs_dash(ESmodeabs_all, scen)
     ## final energy demand
     EJfuels = EJfuels_dash(EJfuels_all, scen) ## Final Energy demand all modes, passenger and freight
     ## CO2 intensity new sales LDVs
@@ -387,18 +571,34 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     output[[scenname]]$plot$salescomp = salescomp$plot
     output[[scenname]]$plot$ESmodecap_pass = ESmodecap$plot$plot_pass
     output[[scenname]]$plot$ESmodecap_frgt = ESmodecap$plot$plot_frgt
+    output[[scenname]]$plot$ESmodeabs = ESmodeabs$plot
     output[[scenname]]$plot$EJfuels = EJfuels$plot
     output[[scenname]]$plot$CO2km_int_newsales = CO2km_int_newsales
     output[[scenname]]$plot$EJLDV = EJLDV$plot
     output[[scenname]]$plot$emidem = emidem
     output[[scenname]]$emiscen = emiscen
   }
-    
+  
+  ## for loop to produce the comparison plots
+  ## vintages
+  vintscen = vintscen_dash(fleet_all)
+  ## CO2 intensity of new sales
+  CO2km_intensity_newsales_scen = CO2km_intensity_newsales_scen_dash(CO2km_int_newsales_all)
+  ## Final energy demand
+  EJfuels_scen = EJfuels_scen_dash(EJfuels_all)
+  
+  
+  output[["comparison"]]$plot$vintscen = vintscen$plot
+  output[["comparison"]]$plot$CO2km_intensity_newsales_scen = CO2km_intensity_newsales_scen$plot
+  output[["comparison"]]$plot$EJfuels_scen = EJfuels_scen$plot
+  
   
   legend$'Sales composition'$contents <- lapply(salescomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Sales composition'$contents) <- salescomp$vars
   legend$'Per capita Passenger Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_pass, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Passenger Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_pass
+  legend$'Total Passenger Transport Energy Services Demand'$contents <- lapply(ESmodeabs$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Total Passenger Transport Energy Services Demand'$contents) <- ESmodeabs$vars
   legend$'Per capita Freight Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_frgt, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Freight Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_frgt
   legend$'Final energy LDVs by fuel'$contents <- lapply(EJLDV$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
@@ -407,7 +607,15 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Transport Final Energy Demand'$contents) <- EJfuels$vars
   legend$'Fleet composition'$contents <- lapply(vintcomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition'$contents) <- vintcomp$vars
-
+  
+  
+  legend$'Fleet composition comparison'$contents <- lapply(vintscen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Fleet composition comparison'$contents) <- vintscen$vars
+  legend$'Emission intensity, new sales comparison'$contents <- lapply(CO2km_intensity_newsales_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Emission intensity, new sales comparison'$contents) <- CO2km_intensity_newsales_scen$vars
+  legend$'Comparison of final energy demand'$contents <- lapply(EJfuels_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of final energy demand'$contents) <- EJfuels_scen$vars
+  
   output$legend = legend
   return(output)
   

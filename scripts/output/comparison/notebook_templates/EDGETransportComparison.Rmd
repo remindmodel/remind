@@ -7,6 +7,10 @@ output:
 classoption: landscape
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf')
+```
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 require(ggplot2)
 require(moinput)
@@ -119,7 +123,7 @@ legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 ## Vintages
 vintcomparisonpf = function(dt){
   dt = dt[year %in% c(2015, 2050, 2100)]
@@ -133,11 +137,13 @@ vintcomparisonpf = function(dt){
     guides(fill = guide_legend(reverse=TRUE))+
     theme_minimal()+
     facet_grid(year~region)+
-    theme(axis.text.x = element_text(angle = 90, size=8, vjust=0.5, hjust=1),
-          title = element_text(size=8),
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
           axis.line = element_line(size = 0.5, colour = "grey"),
-          # legend.text = element_text(size=8),
-          strip.text = element_text(size=8),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
           strip.background = element_rect(color = "grey"))+
     scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
     guides(linetype=FALSE,
@@ -154,7 +160,7 @@ vintcomparisonpf(fleet_all)
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 salescompf = function(dt){
 
   plot = ggplot()+
@@ -164,14 +170,14 @@ salescompf = function(dt){
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 8),
-          axis.text.y = element_text(size=8),
+    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 14),
+          axis.text.y = element_text(size = 14),
           axis.line = element_line(size = 0.5, colour = "grey"),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          # legend.text = element_text(8),
-          # legend.title = element_text(size = 8),
-          strip.text = element_text(size=8),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"))+
     labs(x = "", y = "[%]", title = "Market share of new LDV sales")
   return(plot)
@@ -181,7 +187,7 @@ salescompf(salescomp_all)
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 EJroadpf = function(dt){
   dt[, technology := factor(technology, levels = legend_ord)]
   dt = dt[year >= 2020]
@@ -193,14 +199,14 @@ EJroadpf = function(dt){
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
           axis.line = element_line(size = 0.5, colour = "grey"),
-          title = element_text(size = 8),
-          # legend.text = element_text(size =8),
-          # legend.title = element_text(size = 8),
-          strip.text = element_text(size=8),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"))
 
 
@@ -212,14 +218,14 @@ EJroadpf = function(dt){
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
           axis.line = element_line(size = 0.5, colour = "grey"),
-          title = element_text(size = 8),
-          # legend.text = element_text(size =8),
-          # legend.title = element_text(size = 8),
-          strip.text = element_text(size=8),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"))
 
 
@@ -231,14 +237,14 @@ EJroadpf = function(dt){
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
           axis.line = element_line(size = 0.5, colour = "grey"),
-          title = element_text(size = 8),
-          # legend.text = element_text(size =8),
-          # legend.title = element_text(size = 8),
-          strip.text = element_text(size=8),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"))
 
   return(plotlist = list(plotLDV = plotLDV, plotBus = plotBus, plotTrucks = plotTrucks))
@@ -248,7 +254,7 @@ EJroadpf(EJroad_all)
 
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 EJmodepf = function(dt){
   dt = dt[year >= 2020]
   plot = ggplot()+
@@ -259,13 +265,13 @@ EJmodepf = function(dt){
     scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size=8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          # legend.text = element_text(size = 8),
-          # legend.title = element_text(size =8),
-          strip.text = element_text(size=8),
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           axis.line = element_line(size = 0.5, colour = "grey"),
           strip.background = element_rect(color = "grey"))
   return(plot)
@@ -276,7 +282,7 @@ EJmodepf(EJmode_all)
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 ESmodecappf = function(dt){
   dt[, vehicle_type_plot := factor(vehicle_type_plot, levels = legend_ord)]
   plot_frgt = ggplot()+
@@ -287,13 +293,13 @@ ESmodecappf = function(dt){
     scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          strip.text = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
 
@@ -306,13 +312,13 @@ ESmodecappf = function(dt){
     scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          strip.text = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
 
@@ -326,7 +332,7 @@ ESmodecappf(ESmodecap_all)
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 CO2km_int_newsalespf = function(dt){
   dt = dt[!is.na(gCO2_km_ave)]
   plot = ggplot()+
@@ -336,13 +342,13 @@ CO2km_int_newsalespf = function(dt){
     scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
     theme_minimal()+
     facet_grid(~region)+
-    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          strip.text = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))+
     guides(linetype = FALSE)
@@ -353,7 +359,7 @@ CO2km_int_newsalespf(CO2km_int_newsales_all)
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 ## LDV by fuel
 EJfuels_pf = function(dt){
   dt = dt[year >= 2020]
@@ -365,13 +371,13 @@ EJfuels_pf = function(dt){
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
-    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          strip.text = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
   return(plot)
@@ -381,7 +387,7 @@ EJfuels_pf(EJfuels_all)
 ```
 
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 emidem_pf = function(dt){
  dt[, scenario := as.character(scenario)]
   plot = ggplot()+
@@ -389,13 +395,13 @@ emidem_pf = function(dt){
     labs(x = "", y = "CO2 emissions [Mt/CO2]", title = "Emissions from transport demand")+
     theme_minimal()+
     facet_grid(~region)+
-    theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
-          axis.text.y = element_text(size = 8),
-          axis.title = element_text(size = 8),
-          title = element_text(size = 8),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 8),
-          strip.text = element_text(size = 8),
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
  

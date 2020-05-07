@@ -1,5 +1,5 @@
 ---
-title: "Transport decarbonization dashboard"
+title: "Transport decarbonization pathways in Europe"
 author: ""
 output: 
   flexdashboard::flex_dashboard:
@@ -38,8 +38,8 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Per capita Freight Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition"),
-    placement=c("right", "left", "right", "left", "left", "left"))
+    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of final energy demand"),
+    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -98,11 +98,75 @@ Overview {data-icon="glyphicon glyphicon-scale"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#overview){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#overview){class="fas fa-thermometer-three-quarters sidebar-button selected"}
+[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
 
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case NoTax", icon = "fa-thermometer-three-quarters")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Per capita Passenger Transport Energy Services Demand
+```{r}
+plotlist$`ConvCase NoTax`$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$`ConvCase NoTax`$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Final Energy Demand
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$EJfuels
+```
+
+### Emissions transport demand
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$emidem
+```
+
+Overview Conv scenario {.hidden data-icon="glyphicon glyphicon-tint"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
 Row {data-height=300}
 -----------------------------------------------------------------------
 
@@ -120,7 +184,7 @@ valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Conventional patterns.
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -131,9 +195,9 @@ Row {data-heigth=500}
 plotlist$ConvCase$plot$ESmodecap_pass
 ```
 
-### Per capita Freight Transport Energy Services Demand
+### Total Passenger Transport Energy Services Demand
 ```{r}
-plotlist$ConvCase$plot$ESmodecap_frgt
+plotlist$ConvCase$plot$ESmodeabs
 ```
 
 
@@ -152,13 +216,15 @@ plotlist$ConvCase$plot$EJfuels
 plotlist$ConvCase$plot$emidem
 ```
 
+
 Overview FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
 ===================================== 
 
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
 [](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
@@ -182,7 +248,7 @@ valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for hydrogen vehicles.
+Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -193,9 +259,9 @@ Row {data-heigth=500}
 plotlist$HydrHype$plot$ESmodecap_pass
 ```
 
-### Per capita Freight Transport Energy Services Demand
+### Total Passenger Transport Energy Services Demand
 ```{r}
-plotlist$HydrHype$plot$ESmodecap_frgt
+plotlist$HydrHype$plot$ESmodeabs
 ```
 
 
@@ -221,7 +287,8 @@ Overview BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
 [](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
@@ -243,7 +310,7 @@ valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for battery electric vehicles.
+Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
 
 
 <!-- Dividing the page in two columns-->
@@ -255,9 +322,9 @@ Row {data-heigth=500}
 plotlist$ElecEra$plot$ESmodecap_pass
 ```
 
-### Per capita Freight Transport Energy Services Demand
+### Total Passenger Transport Energy Services Demand
 ```{r}
-plotlist$ElecEra$plot$ESmodecap_frgt
+plotlist$ElecEra$plot$ESmodeabs
 ```
 
 
@@ -282,7 +349,8 @@ Overview Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#overview){class="glyphicon glyphicon-oil sidebar-button"}
+[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
@@ -304,8 +372,7 @@ valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for synthetic fuels.
-
+Synthetic fuels gain great importance in the liquid fuels production. Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -316,9 +383,9 @@ Row {data-heigth=500}
 plotlist$SynSurge$plot$ESmodecap_pass
 ```
 
-### Per capita Freight Transport Energy Services Demand
+### Total Passenger Transport Energy Services Demand
 ```{r}
-plotlist$SynSurge$plot$ESmodecap_frgt
+plotlist$SynSurge$plot$ESmodeabs
 ```
 
 
@@ -344,10 +411,76 @@ LDVs {data-icon="fa-car"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#ldvs){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button selected"}
+[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case NoTax", icon = "fa-thermometer-three-quarters")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+
+<!-- Dividing the page in two rows-->
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Sales composition {data-width=250}
+```{r}
+plotlist$`ConvCase NoTax`$plot$salescomp
+```
+
+
+### CO~2~ intensity of new sales {data-width=250}
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$CO2km_int_newsales
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
+### Final energy LDVs by fuel
+```{r}
+plotlist$`ConvCase NoTax`$plot$EJLDV
+```
+
+
+### Fleet composition
+```{r}
+plotlist$`ConvCase NoTax`$plot$vintcomp
+```
+
+LDVs Conv scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+===================================== 
+
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button selected"}
+[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
+[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
+[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+
 
 <!-- Dividing the page in two rows-->
 Row {data-height=300}
@@ -367,9 +500,7 @@ valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Conventional patterns.
-
-
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
 
 <!-- Dividing the page in two rows-->
 Row {data-height= 450}
@@ -403,14 +534,14 @@ plotlist$ConvCase$plot$vintcomp
 ```
 
 
-
 LDVs FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
 ===================================== 
 
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
 [](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
@@ -434,7 +565,8 @@ valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for hydrogen vehicles.
+Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+
 
 <!-- Dividing the page in two rows-->
 Row {data-height= 450}
@@ -475,7 +607,8 @@ LDVs BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
 [](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
@@ -499,7 +632,7 @@ valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for battery electric vehicles.
+Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
 
 
 <!-- Dividing the page in two rows-->
@@ -540,7 +673,8 @@ LDVs Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
 Side Navigation {.sidebar data-width=60}
 -------------------------------------
 
-[](#ldvs){class="glyphicon glyphicon-oil sidebar-button"}
+[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
+[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
 [](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
 [](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
 [](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
@@ -563,7 +697,7 @@ valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Increased preference for synthetic fuels.
+Synthetic fuels gain great importance in the liquid fuels production. Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
 
 
 
@@ -598,6 +732,58 @@ plotlist$SynSurge$plot$EJLDV
 plotlist$SynSurge$plot$vintcomp
 ```
 
+Comparison {data-icon="fa-exchange-alt"}
+=====================================
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Fleet composition comparison
+```{r}
+plotlist$comparison$plot$vintscen
+```
+
+### Emission intensity, new sales comparison
+```{r}
+plotlist$comparison$plot$CO2km_intensity_newsales_scen
+```
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Comparison of final energy demand
+```{r}
+plotlist$comparison$plot$EJfuels_scen
+```
+
+Assumptions {data-icon="fa-comment"}
+=====================================
+
+### Conventional Case {data-height=200}
+
+* Conventional consumers patterns
+* No policies to promote alternative vehicles
+* Learning rate on BEVs and FCEVs
+* Market-driven behavior of light duty vehicles powertrain choice
+
+### Hydrogen Hype {data-height=200}
+
+* Learning rate on BEVs and FCEVs
+* Optimistic trend of hydrogen refuelling stations
+* Rebates-feebates scheme: 5000 € subsidies starting in 2020 on FCEVs, phasing out by 2035. 1000 € mark-up cost on internal combustion engines
+* Market-driven behavior of light duty vehicles powertrain choice
+* Policy push of FCEVs
+
+### Electric Era {data-height=200}
+
+* Learning rate on BEVs and FCEVs
+* Rebates-feebates scheme: 5000 € subsidies starting in 2020 on BEVs, phasing out by 2035. 1000 € mark-up cost on internal combustion engines
+* Market-driven behavior of light duty vehicles powertrain choice
+
+### Synfuel Surge {data-height=200}
+
+* Conventional consumers patterns
+* Learning rate on BEVs and FCEVs
+* Market-driven behavior of light duty vehicles powertrain choice
+* Synfuels are forced in the liquids mix reaching 10% in 2035
 
 <!-- creating information tooltip -->
 ```{r, results='asis'}
