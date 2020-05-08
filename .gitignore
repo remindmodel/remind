@@ -1,6 +1,6 @@
 .*.un~
 .*.swp
-input/
+/input/
 output/*
 main.lst
 doc/doc.rds
@@ -15,6 +15,7 @@ core/input/f_emiFgas.cs4r
 core/input/f_gdp.cs3r
 core/input/f_lab.cs3r
 core/input/f_macBaseMagpie.cs4r
+core/input/f_maxProdGeothermal.cs3r
 core/input/f_maxProdGradeRegiHydro.cs3r
 core/input/f_maxProdGradeRegiWind.cs3r
 core/input/f_pop.cs3r
@@ -25,12 +26,13 @@ core/input/p_abatparam_CO2.cs4r
 core/input/p_adj_deltacapoffset.cs4r
 core/input/p_boundEmi.cs4r
 core/input/pm_NuclearConstraint.cs4r
-core/input/pm_costsPEtradeMp.cs4r
 core/input/pm_dataccs.cs3r
 core/input/p_earlyRetirementAdjFactor.cs3r
 core/input/p_emiFossilFuelExtr.cs4r
 core/input/p_emineg_econometric.cs3r
 core/input/p_histCap.cs3r
+core/input/p_histEmiMac.cs4r
+core/input/p_histEmiSector.cs4r
 core/input/p_PE_histCap.cs3r
 core/input/p_macBase1990.cs4r
 core/input/p_macBase2005.cs4r
@@ -50,8 +52,6 @@ core/input/p_histCapFac.cs4r
 core/input/f_macBaseExo.cs4r
 core/input/f_developmentState.cs3r
 core/input/
-core/input/core/input/p_NuclearConstraint.cs4r
-core/input/core/input/pm_inco0.cs4r
 core/input/historical/historical.mif
 modules/01_macro/singleSectorGr/input/p01_boundInvMacro.cs4r
 modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r
@@ -119,15 +119,6 @@ modules/33_CDR/weathering/input/f33_maxProdGradeRegiWeathering.cs3r
 modules/35_transport/complex/input/f35_factorVintages.cs3r
 modules/35_transport/complex/input/f35_transp_eff.cs3r
 modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r
-modules/35_transport/edge_esm/input/SW.cs4r
-modules/35_transport/edge_esm/input/UCD_NEC_iso.cs4r
-modules/35_transport/edge_esm/input/esCapCost.cs4r
-modules/35_transport/edge_esm/input/fe2es.cs4r
-modules/35_transport/edge_esm/input/fe_demand_tech.cs4r
-modules/35_transport/edge_esm/input/harmonized_intensities.cs4r
-modules/35_transport/edge_esm/input/logit_exponent.cs4r
-modules/35_transport/edge_esm/input/price_nonmot.cs4r
-modules/35_transport/edge_esm/input/value_time.cs4r
 modules/36_buildings/services_putty/input/p36_floorspace_scen.cs4r
 modules/36_buildings/services_putty/input/p36_serviceInputs.cs4r
 modules/36_buildings/services_putty/input/p36_serviceOutputs.cs4r
@@ -151,6 +142,9 @@ modules/40_techpol/NPi2018/input/f40_REN21.cs4r
 modules/45_carbonprice/NDC2018/input/p45_2005share_target.cs4r
 modules/45_carbonprice/NDC2018/input/p45_factor_targetyear.cs4r
 modules/45_carbonprice/NDC2018/input/p45_hist_share.cs4r
+modules/47_regipol/regiCarbonPrice/input/p47_EStarget.cs4r
+modules/47_regipol/regiCarbonPrice/input/p47_ES_GHG_referenceEmissions.cs4r
+modules/47_regipol/regiCarbonPrice/input/p47_ES_CO2_referenceEmissions.cs4r
 modules/70_water/heat/input/CoolingShares_time.cs4r
 modules/70_water/heat/input/WaterConsCoef.cs4r
 modules/70_water/heat/input/WaterWithCoef.cs4r
