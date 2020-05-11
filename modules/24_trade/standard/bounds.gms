@@ -138,7 +138,7 @@ loop(regi,
 );
 
 *** FS: scenario 2: switch off biomass imports after 2030 for synfuel scenarios
-if ( cm_synfuelscen eq 2,
+if ( cm_synfuelscen ge 2,
 	vm_Mport.up(t,regi_synfuelscen,"pebiolc")$(t.val ge 2030) = 0;
 );
 
