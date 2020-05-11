@@ -81,6 +81,7 @@ vot_data = inputdata$vot_data
 logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
+capcost4W = inputdata$capcost4W
 
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
@@ -131,8 +132,11 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
   
-  nonfuel_costs = applylearning(nonfuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
-  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")} else {
+  nonfuel_costs_list = applylearning(nonfuel_costs, capcost4W, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+  capcost4W = nonfuel_costs_list$capcost4W
+  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+  saveRDS(capcost4W, "capcost_learning.RDS")} else {
   stations = NULL
 }
 
