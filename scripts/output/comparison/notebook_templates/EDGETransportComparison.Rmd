@@ -29,7 +29,8 @@ fleet_all = readRDS("fleet_all.RDS")
 salescomp_all = readRDS("salescomp_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
-EJfuels_all = readRDS("EJfuels_all.RDS")
+EJpass_all = readRDS("EJfuelsPass_all.RDS")
+EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
 
 setConfig(forcecache=T)
@@ -360,12 +361,13 @@ CO2km_int_newsalespf(CO2km_int_newsales_all)
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-## LDV by fuel
-EJfuels_pf = function(dt){
-  dt = dt[year >= 2020]
-  plot = ggplot()+
-    geom_area(data = dt, aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
-    labs(x = "", y = "[EJ]", title = "Transport FE demand by fuel")+
+## passenger by fuel
+EJfuels_pf = function(dt_p, dt_f){
+  dt_p = dt_p[year >= 2020]
+  dt_p = dt_p[, .(demand_EJ = sum(demand_EJ)), by = c("subtech", "year", "region", "scenario")]
+  plotp = ggplot()+
+    geom_area(data = dt_p, aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Passenger transport FE demand by fuel")+
     theme_minimal()+
     facet_grid(scenario~region)+
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
@@ -380,10 +382,50 @@ EJfuels_pf = function(dt){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
+  
+    dt_f = dt_f[year >= 2020]
+    
+  plotf_lo = ggplot()+
+    geom_area(data = dt_f[sector == "trn_shipping_intl"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "International freight FE demand by fuel")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+  
+  plotf_sm = ggplot()+
+    geom_area(data = dt_f[sector == "trn_freight"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Short-medium freight FE demand by fuel")+
+    theme_minimal()+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+  
+  plot = list(plotf_lo = plotf_lo, plotf_sm = plotf_sm, plotp = plotp)
   return(plot)
 }
 
-EJfuels_pf(EJfuels_all)
+EJfuels_pf(dt_p = EJpass_all, dt_f = EJfrgt_all)
 ```
 
 

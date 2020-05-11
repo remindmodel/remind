@@ -40,8 +40,10 @@ EJmode_all = NULL
 ESmodecap_all = NULL
 ESmodeabs_all = NULL
 CO2km_int_newsales_all = NULL
-EJfuels_all = NULL
 emidem_all = NULL
+EJfuelsPass_all = NULL
+EJfuelsFrgt_all = NULL
+emidemPass_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -300,17 +302,22 @@ EJfuelsFun = function(demandEJ, FEliq_source){
   demandEJ[, technology := ifelse(technology %in% c("BEV", "LA-BEV", "Electric"), "Electricity", technology)]
   demandEJ[, technology := ifelse(technology %in% c("FCEV"), "Hydrogen", technology)]  
   ## aggregate
-  demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year","technology")]
+  demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year","technology", "sector")]
   ## merge with liquids composition
   demandEJ = merge(demandEJ, FEliq_source, all = TRUE, by = c("region", "year", "technology"), allow.cartesian=TRUE)
   ## fuels that are not Liquids need a 1 as a share, otherwie would have an NA
   demandEJ[, shareliq := ifelse(is.na(shareliq), 1, shareliq)]
   demandEJ[, subtech := ifelse(is.na(subtech), technology, subtech)]
   ## calculate demand by fuel including oil types
-  demandEJ = demandEJ[,.(demand_EJ = demand_EJ*shareliq), by = c("region", "year", "subtech")]
+  demandEJ = demandEJ[,.(demand_EJ = demand_EJ*shareliq), by = c("region", "year", "subtech", "sector")]
   ## filter out years
   demandEJ = demandEJ[year >= 2015 & year <= 2100]
   
+  ## save separately passenger and freight
+  demandEJpass = demandEJ[sector %in% c("trn_pass", "trn_aviation_intl")]
+  demandEJfrgt = demandEJ[sector %in% c("trn_freight", "trn_shipping_intl")]
+  
+  demandEJ = list(demandEJpass = demandEJpass, demandEJfrgt = demandEJfrgt)
   return(demandEJ)
 }
 
@@ -320,6 +327,12 @@ emidemFun = function(emidem){
   return(emidem)
 }
 
+
+emidemPassFun = function(emidemPass){
+  emidemPass = emidemPass[region!="World" & year >= 2015 & year <= 2100]
+  emidemPass[, variable := as.character(variable)]
+  return(emidemPass)
+}
 
 for (outputdir in outputdirs) {
   ## load mif file
@@ -349,6 +362,7 @@ for (outputdir in outputdirs) {
   ## select useful entries from mif file
   FEliq_source = miffile[variable %in% c("FE|Transport|Liquids|Biomass", "FE|Transport|Liquids|Hydrogen", "FE|Transport|Liquids|Coal", "FE|Transport|Liquids|Oil"),]
   emidem = miffile[variable %in% c("Emi|CO2|Transport|Demand"),]
+  emidemPass = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand"),]
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source, gdp)
 
@@ -369,9 +383,12 @@ for (outputdir in outputdirs) {
   CO2km_int_newsales = CO2km_int_newsales_Fun(shares_LDV, mj_km_data, sharesVS1, FEliq_source$FEliq_sourceISO, gdp)
   ## calculate FE for all transport sectors by fuel, dividng Oil into Biofuels and Synfuels
   EJfuels = EJfuelsFun(demandEJ, FEliq_source$FEliq_sourceR)
+  EJfuelsPass = EJfuels[["demandEJpass"]]
+  EJfuelsFrgt = EJfuels[["demandEJfrgt"]]
   ## calculate demand emissions
   emidem = emidemFun(emidem)
-  
+  ## calculate emissions from passenger demand SM
+  emidemPass =  emidemPassFun(emidemPass)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -380,9 +397,10 @@ for (outputdir in outputdirs) {
   ESmodecap[, scenario := as.character(unique(miffile$scenario))]
   ESmodeabs[, scenario := as.character(unique(miffile$scenario))]
   CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
-  EJfuels[, scenario := as.character(unique(miffile$scenario))]
   emidem[, scenario := as.character(unique(miffile$scenario))]
-
+  EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
+  EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
+  emidemPass[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -391,8 +409,10 @@ for (outputdir in outputdirs) {
   ESmodecap_all = rbind(ESmodecap_all, ESmodecap)
   ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
   CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
-  EJfuels_all = rbind(EJfuels_all, EJfuels)
   emidem_all = rbind(emidem_all, emidem)
+  EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
+  EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
+  emidemPass_all = rbind(emidemPass_all, emidemPass)
 }
 
 outdir = paste0("output/comparerunEDGE", gsub(" | ^([[:alpha:]]*).*","", Sys.time()))
@@ -407,8 +427,10 @@ saveRDS(EJroad_all, paste0(outdir, "/EJroad_all.RDS"))
 saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
 saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
 saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
-saveRDS(EJfuels_all, paste0(outdir, "/EJfuels_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
+saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
+saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
+saveRDS(emidemPass_all, paste0(outdir, "/emidemPass_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 

@@ -38,7 +38,7 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of final energy demand"),
+    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand"),
     placement=c("right", "left", "right", "left", "left", "left", "right", "left", "left"))
 
 
@@ -95,7 +95,7 @@ helpTooltip = function(tooltipdf){
 <!--Creating First Page - LDV Page-->
 Overview {data-icon="glyphicon glyphicon-scale"}
 ===================================== 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=60}
 -------------------------------------
 
 [](#overview){class="fas fa-thermometer-three-quarters sidebar-button selected"}
@@ -141,22 +141,22 @@ plotlist$`ConvCase NoTax`$plot$ESmodeabs
 Row {data-heigth=500}
 -----------------------------------------------------------------------
 
-### Transport Final Energy Demand
+### Transport Passenger Final Energy Demand
 
 ```{r}
-plotlist$`ConvCase NoTax`$plot$EJfuels
+plotlist$`ConvCase NoTax`$plot$EJpassfuels
 ```
 
-### Emissions transport demand
+### Emissions passenger transport demand
 
 ```{r}
-plotlist$`ConvCase NoTax`$plot$emidem
+plotlist$`ConvCase NoTax`$plot$emipdem
 ```
 
 Overview Conv scenario {.hidden data-icon="glyphicon glyphicon-tint"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=60}
 -------------------------------------
 
 [](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -204,23 +204,23 @@ plotlist$ConvCase$plot$ESmodeabs
 Row {data-heigth=500}
 -----------------------------------------------------------------------
 
-### Transport Final Energy Demand
+### Transport Passenger Final Energy Demand
 
 ```{r}
-plotlist$ConvCase$plot$EJfuels
+plotlist$ConvCase$plot$EJpassfuels
 ```
 
-### Emissions transport demand
+### Emissions passenger transport demand
 
 ```{r}
-plotlist$ConvCase$plot$emidem
+plotlist$ConvCase$plot$emipdem
 ```
 
 
 Overview FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=60}
 -------------------------------------
 
 [](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -268,23 +268,22 @@ plotlist$HydrHype$plot$ESmodeabs
 Row {data-heigth=500}
 -----------------------------------------------------------------------
 
-### Transport Final Energy Demand
+### Transport Passenger Final Energy Demand
 
 ```{r}
-plotlist$HydrHype$plot$EJfuels
+plotlist$HydrHype$plot$EJpassfuels
 ```
 
-### Emissions transport demand
+### Emissions passenger transport demand
 
 ```{r}
-plotlist$HydrHype$plot$emidem
+plotlist$HydrHype$plot$emipdem
 ```
 
 Overview BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
 ===================================== 
 
-
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=60}
 -------------------------------------
 
 [](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -331,22 +330,22 @@ plotlist$ElecEra$plot$ESmodeabs
 Row {data-heigth=500}
 -----------------------------------------------------------------------
 
-### Transport Final Energy Demand
+### Transport Passenger Final Energy Demand
 
 ```{r}
-plotlist$ElecEra$plot$EJfuels
+plotlist$ElecEra$plot$EJpassfuels
 ```
 
-### Emissions transport demand
+### Emissions passenger transport demand
 
 ```{r}
-plotlist$ElecEra$plot$emidem
+plotlist$ElecEra$plot$emipdem
 ```
 
 Overview Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=60}
 -------------------------------------
 
 [](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -392,23 +391,23 @@ plotlist$SynSurge$plot$ESmodeabs
 Row {data-heigth=500}
 -----------------------------------------------------------------------
 
-### Transport Final Energy Demand
+### Transport Passenger Final Energy Demand
 
 ```{r}
-plotlist$SynSurge$plot$EJfuels
+plotlist$SynSurge$plot$EJpassfuels
 ```
 
-### Emissions transport demand
+### Emissions passenger transport demand
 
 ```{r}
-plotlist$SynSurge$plot$emidem
+plotlist$SynSurge$plot$emipdem
 ```
 
 
 LDVs {data-icon="fa-car"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=60}
 -------------------------------------
 
 [](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button selected"}
@@ -471,8 +470,7 @@ plotlist$`ConvCase NoTax`$plot$vintcomp
 LDVs Conv scenario { .hidden data-icon="glyphicon glyphicon-flash"}
 ===================================== 
 
-
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=60}
 -------------------------------------
 
 [](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -537,7 +535,7 @@ plotlist$ConvCase$plot$vintcomp
 LDVs FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=60}
 -------------------------------------
 
 [](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -604,7 +602,7 @@ LDVs BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
 ===================================== 
 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=60}
 -------------------------------------
 
 [](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -670,7 +668,7 @@ plotlist$ElecEra$plot$vintcomp
 LDVs Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
 ===================================== 
 
-Side Navigation {.sidebar data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=60}
 -------------------------------------
 
 [](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
@@ -749,13 +747,16 @@ plotlist$comparison$plot$CO2km_intensity_newsales_scen
 Row {data-height=300}
 -----------------------------------------------------------------------
 
-### Comparison of final energy demand
+### Comparison of passenger final energy demand
 ```{r}
-plotlist$comparison$plot$EJfuels_scen
+plotlist$comparison$plot$EJpassfuels_scen
 ```
 
 Assumptions {data-icon="fa-comment"}
 =====================================
+
+Column {data-width= 450}
+-----------------------------------------------------------------------
 
 ### Conventional Case {data-height=200}
 
@@ -768,14 +769,15 @@ Assumptions {data-icon="fa-comment"}
 
 * Learning rate on BEVs and FCEVs
 * Optimistic trend of hydrogen refuelling stations
-* Rebates-feebates scheme: 5000 € subsidies starting in 2020 on FCEVs, phasing out by 2035. 1000 € mark-up cost on internal combustion engines
+* Rebates-feebates scheme: 5000 ? subsidies starting in 2020 on FCEVs, phasing out by 2035. 1000 ? mark-up cost on internal combustion engines
 * Market-driven behavior of light duty vehicles powertrain choice
 * Policy push of FCEVs
+* Hydrogen from renewable resources (green hydrogen) is set to be above 95\% of the total hydrogen
 
 ### Electric Era {data-height=200}
 
 * Learning rate on BEVs and FCEVs
-* Rebates-feebates scheme: 5000 € subsidies starting in 2020 on BEVs, phasing out by 2035. 1000 € mark-up cost on internal combustion engines
+* Rebates-feebates scheme: 5000 ? subsidies starting in 2020 on BEVs, phasing out by 2035. 1000 ? mark-up cost on internal combustion engines
 * Market-driven behavior of light duty vehicles powertrain choice
 
 ### Synfuel Surge {data-height=200}
@@ -783,7 +785,9 @@ Assumptions {data-icon="fa-comment"}
 * Conventional consumers patterns
 * Learning rate on BEVs and FCEVs
 * Market-driven behavior of light duty vehicles powertrain choice
-* Synfuels are forced in the liquids mix reaching 10% in 2035
+* Synfuels are forced in the liquids mix reaching 10\% in 2035
+* Hydrogen from renewable resources (green hydrogen) is set to be above 95% of the total hydrogen
+
 
 <!-- creating information tooltip -->
 ```{r, results='asis'}
@@ -792,6 +796,39 @@ for(i in 1:nrow(helpTooltip_df)){
 }
 ```
 
+<!-- #### additional html, js and CSS #### -->
+
+<!-- js -->
+
+<script type="text/javascript">
+  var is_chrome = (typeof window.chrome === "object" && navigator.appVersion.indexOf('Edge') === -1);
+</script>
+
+
+<!-- Adding js function to add "memory" to the nav bar navigation   -->
+```{r}
+navBarMemory = function(topMenuLabel, sideBarClass){
+  result = ""
+  result = paste0(result,"<script type='text/javascript'>\n");
+  result = paste0(result,"$(document).ready(function () {\n");
+  result = paste0(result,"	$(\"",sideBarClass," a\").click(function(){\n");
+  result = paste0(result,"	console.log($(this).attr('href'));\n");  
+  result = paste0(result,"	console.log($(\".nav.navbar-nav.navbar-left a:contains('",topMenuLabel,"')\").attr('href'));\n"); 
+  result = paste0(result,"	  $(\".nav.navbar-nav.navbar-left a:contains('",topMenuLabel,"')\").attr('href', $(this).attr('href'));\n");
+  result = paste0(result,"	  if(!is_chrome){\n");
+  result = paste0(result,"	    window.FlexDashboardUtils.showPage($(this).attr('href'));\n");
+  result = paste0(result,"	  }\n"); 
+  result = paste0(result,"	})\n");
+  result = paste0(result,"})\n");
+  result = paste0(result,"</script>");
+  return(result)
+}
+```
+
+```{r, results='asis'}
+  cat(navBarMemory("Overview",".sidebarOverview"))
+  cat(navBarMemory("LDVs",".sidebarLDV"))
+```
 
 <!-- ADVANCED: using CSS to define the appearance of the side bar --> 
 

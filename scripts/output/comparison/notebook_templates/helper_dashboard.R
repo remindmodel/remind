@@ -92,8 +92,8 @@ salescomp_all = readRDS("salescomp_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
 ESmodeabs_all = readRDS("ESmodeabs_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
-EJfuels_all = readRDS("EJfuels_all.RDS")
-emidem_all = readRDS("emidem_all.RDS")
+EJpass_all = readRDS("EJfuelsPass_all.RDS")
+emipdem_all = readRDS("emidemPass_all.RDS")
 
 ## scenarios
 scens = unique(EJmode_all$scenario)
@@ -307,8 +307,8 @@ ESmodeabs_dash = function(dt, scen){
 }
 
 
-EJfuels_dash = function(dt, scen){
-  dt = dt[region == region_plot & scenario == scen & year >= 2015  & year <= 2050]
+EJpass_dash = function(dt, scen){
+  dt = dt[region == region_plot & scenario == scen & year >= 2015  & year <= 2050 & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   
   plot = ggplot()+
@@ -316,7 +316,7 @@ EJfuels_dash = function(dt, scen){
     theme_minimal()+
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
-    ylim(0, 25)+
+    ylim(0, 20)+
     labs(x = "", y = "")+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
@@ -340,9 +340,9 @@ EJfuels_dash = function(dt, scen){
   return(output)
 }
 
-EJfuels_scen_dash = function(dt){
+EJpass_scen_dash = function(dt){
   dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
-  dt = dt[region == region_plot & year %in% c(2015, 2030, 2050)]
+  dt = dt[region == region_plot & year %in% c(2015, 2030, 2050) & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   dt[, scenario := gsub(".*_", "", scenario)]
   dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
@@ -495,7 +495,7 @@ EJLDVdash <- function(dt, scen){
   
 }
 
-emidem_dash = function(dt, scen){
+emipdem_dash = function(dt, scen){
   dt = dt[region == region_plot & scenario == scen & year <= 2050]
   
   plot = ggplot()+
@@ -558,13 +558,13 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     ## energy services demand, total
     ESmodeabs = ESmodeabs_dash(ESmodeabs_all, scen)
     ## final energy demand
-    EJfuels = EJfuels_dash(EJfuels_all, scen) ## Final Energy demand all modes, passenger and freight
+    EJpassfuels = EJpass_dash(EJpass_all, scen) ## Final Energy demand all modes, passenger
     ## CO2 intensity new sales LDVs
     CO2km_int_newsales = CO2km_intensity_newsalesdash(CO2km_int_newsales_all, scen)
     ## final energy LDVs by fuel
     EJLDV = EJLDVdash(EJroad_all, scen)
-    ## emissions transport demand
-    emidem = emidem_dash(emidem_all, scen)
+    ## emissions passenger transport demand
+    emipdem = emipdem_dash(emipdem_all, scen)
 
     ## collect plots
     output[[scenname]]$plot$vintcomp = vintcomp$plot
@@ -572,10 +572,10 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     output[[scenname]]$plot$ESmodecap_pass = ESmodecap$plot$plot_pass
     output[[scenname]]$plot$ESmodecap_frgt = ESmodecap$plot$plot_frgt
     output[[scenname]]$plot$ESmodeabs = ESmodeabs$plot
-    output[[scenname]]$plot$EJfuels = EJfuels$plot
+    output[[scenname]]$plot$EJpassfuels = EJpassfuels$plot
     output[[scenname]]$plot$CO2km_int_newsales = CO2km_int_newsales
     output[[scenname]]$plot$EJLDV = EJLDV$plot
-    output[[scenname]]$plot$emidem = emidem
+    output[[scenname]]$plot$emipdem = emipdem
     output[[scenname]]$emiscen = emiscen
   }
   
@@ -585,12 +585,12 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   ## CO2 intensity of new sales
   CO2km_intensity_newsales_scen = CO2km_intensity_newsales_scen_dash(CO2km_int_newsales_all)
   ## Final energy demand
-  EJfuels_scen = EJfuels_scen_dash(EJfuels_all)
+  EJpassfuels_scen = EJpass_scen_dash(EJpass_all)
   
   
   output[["comparison"]]$plot$vintscen = vintscen$plot
   output[["comparison"]]$plot$CO2km_intensity_newsales_scen = CO2km_intensity_newsales_scen$plot
-  output[["comparison"]]$plot$EJfuels_scen = EJfuels_scen$plot
+  output[["comparison"]]$plot$EJpassfuels_scen = EJpassfuels_scen$plot
   
   
   legend$'Sales composition'$contents <- lapply(salescomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
@@ -603,8 +603,8 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Per capita Freight Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_frgt
   legend$'Final energy LDVs by fuel'$contents <- lapply(EJLDV$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Final energy LDVs by fuel'$contents) <- EJLDV$vars
-  legend$'Transport Final Energy Demand'$contents <- lapply(EJfuels$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Transport Final Energy Demand'$contents) <- EJfuels$vars
+  legend$'Transport Passenger Final Energy Demand'$contents <- lapply(EJpassfuels$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Transport Passenger Final Energy Demand'$contents) <- EJpassfuels$vars
   legend$'Fleet composition'$contents <- lapply(vintcomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition'$contents) <- vintcomp$vars
   
@@ -613,8 +613,8 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Fleet composition comparison'$contents) <- vintscen$vars
   legend$'Emission intensity, new sales comparison'$contents <- lapply(CO2km_intensity_newsales_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Emission intensity, new sales comparison'$contents) <- CO2km_intensity_newsales_scen$vars
-  legend$'Comparison of final energy demand'$contents <- lapply(EJfuels_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Comparison of final energy demand'$contents) <- EJfuels_scen$vars
+  legend$'Comparison of passenger final energy demand'$contents <- lapply(EJpassfuels_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of passenger final energy demand'$contents) <- EJpassfuels_scen$vars
   
   output$legend = legend
   return(output)
