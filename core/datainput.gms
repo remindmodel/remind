@@ -1160,6 +1160,12 @@ p_ef_dem("fepet") = 73;
 p_ef_dem("fegas") = 55;
 p_ef_dem("fesos") = 96;
 
+pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
