@@ -595,26 +595,49 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   
   legend$'Sales composition'$contents <- lapply(salescomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Sales composition'$contents) <- salescomp$vars
+  legend$'Sales composition'$description <- "<p>Composition of sales of light duty vehicles, in percentage</p>"
+  
   legend$'Per capita Passenger Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_pass, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Passenger Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_pass
+  legend$'Per capita Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand in the passenger transport sector, in per capita kilometers driven</p>"
+  
   legend$'Total Passenger Transport Energy Services Demand'$contents <- lapply(ESmodeabs$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Total Passenger Transport Energy Services Demand'$contents) <- ESmodeabs$vars
+  legend$'Total Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand in the passenger transport sector, in kilometers driven</p>"
+  
+  
+  legend$'Emissions passenger transport demand'$description <- "<p>Emissions from the passenger transport sector, including international aviation<p>"
+  legend$'Emission intensity of new sales'$description <- "CO<sub>2</sub> intensity of new light duty vehicles"
+  
   legend$'Per capita Freight Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_frgt, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Freight Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_frgt
+  
   legend$'Final energy LDVs by fuel'$contents <- lapply(EJLDV$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Final energy LDVs by fuel'$contents) <- EJLDV$vars
+  legend$'Final energy LDVs by fuel'$description <- "<p>Final energy demand for light duty vehicles, divided by fuel used, in EJ</p>"
+  
+  
   legend$'Transport Passenger Final Energy Demand'$contents <- lapply(EJpassfuels$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Transport Passenger Final Energy Demand'$contents) <- EJpassfuels$vars
+  legend$'Transport Passenger Final Energy Demand'$description <- "<p>Final energy demand in the passenger transport sector, in EJ (bunkers excluded)</p>"
+  
   legend$'Fleet composition'$contents <- lapply(vintcomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition'$contents) <- vintcomp$vars
+  legend$'Fleet composition'$description <- "<p>Composition of the light duty vehicles fleet in selected years</p>"
   
   
   legend$'Fleet composition comparison'$contents <- lapply(vintscen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition comparison'$contents) <- vintscen$vars
+  legend$'Fleet composition comparison'$description <- "<p>Composition of the light duty vehicles fleet in selected years, compared across scenarios</p>"
+  
+  
   legend$'Emission intensity, new sales comparison'$contents <- lapply(CO2km_intensity_newsales_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Emission intensity, new sales comparison'$contents) <- CO2km_intensity_newsales_scen$vars
+  legend$'Emission intensity, new sales comparison'$description <- "<p>Emissions intensity of new light duty vehicles, compared across scenarios</p>"
+  
   legend$'Comparison of passenger final energy demand'$contents <- lapply(EJpassfuels_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Comparison of passenger final energy demand'$contents) <- EJpassfuels_scen$vars
+  legend$'Comparison of passenger final energy demand'$description <- "<p>Final energy demand for the passenger transport sector (bunkers excluded), compared across scenarios</p>"
   
   output$legend = legend
   return(output)

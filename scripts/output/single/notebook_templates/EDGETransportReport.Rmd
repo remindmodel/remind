@@ -194,12 +194,11 @@ p
 
 ```{r, echo=FALSE, warning=FALSE}
 
-plotinconv = function(inco_tech, iso_plot, vehicle_type){
+plotinconv = function(inco_tech, iso_plot, vt){
   p=ggplot()+
-  geom_bar(data = inco_tech[iso == iso_plot & subsector_L1 == "trn_pass_road_LDV_4W" & vehicle_type == vehicle_type & year<=2100 & year>=2010], aes(x = as.character(year), y = value, group = logit_type, fill = logit_type), position = position_stack(), stat = "identity")+
-  facet_wrap(~technology, nrow = 3)+
+  geom_bar(data = inco_tech[iso == iso_plot & subsector_L1 == "trn_pass_road_LDV_4W" & vehicle_type == vt & year<=2100 & year>=2010], aes(x = as.character(year), y = value, group = logit_type, fill = logit_type), position = position_stack(), stat = "identity")+
+  facet_wrap(~technology, nrow = 4)+
   theme_minimal()+
-  # scale_fill_manual(values = cols)+
   expand_limits(y = c(0,0.8))+
   scale_x_discrete(breaks = c(2015,2050,2100))+
   theme(axis.text.x = element_text(angle = 90, vjust = +0.1),
@@ -210,11 +209,11 @@ plotinconv = function(inco_tech, iso_plot, vehicle_type){
 return(p)
 }
 
-plotinconv(inco_tech = pref$FV_final_pref[subsector_L1 == "trn_pass_road_LDV_4W"], iso_plot = "DEU", vehicle_type = "Large Car and SUV")
-plotinconv(inco_tech = pref$FV_final_pref[subsector_L1 == "trn_pass_road_LDV_4W"], iso_plot = "USA", vehicle_type = "Large Car")
-plotinconv(inco_tech = pref$FV_final_pref[subsector_L1 == "trn_pass_road_LDV_4W"], iso_plot = "JPN", vehicle_type = "Large Car")
-plotinconv(inco_tech = pref$FV_final_pref[subsector_L1 == "trn_pass_road_LDV_4W"], iso_plot = "CHN", vehicle_type = "Large Car")
-plotinconv(inco_tech = pref$FV_final_pref[subsector_L1 == "trn_pass_road_LDV_4W"], iso_plot = "IND", vehicle_type = "Large Car")
+plotinconv(inco_tech = pref$FV_final_pref, iso_plot = "DEU", vt = "Large Car and SUV")
+plotinconv(inco_tech = pref$FV_final_pref, iso_plot = "USA", vt = "Large Car")
+plotinconv(inco_tech = pref$FV_final_pref, iso_plot = "JPN", vt = "Large Car and SUV")
+plotinconv(inco_tech = pref$FV_final_pref, iso_plot = "CHN", vt = "Large Car and SUV")
+plotinconv(inco_tech = pref$FV_final_pref, iso_plot = "IND", vt = "Compact Car")
 
 ```
 
@@ -306,7 +305,7 @@ salesplot= function(shares_LDV, newcomp, sharesVS1){
     plot = ggplot()+
     geom_bar(data = shares_LDV, aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
     theme_minimal()+
-    facet_grid(~ region )+
+    facet_wrap(~ region, nrow = 3 )+
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2015,2030,2050, 2100))+

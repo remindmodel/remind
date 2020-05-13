@@ -38,8 +38,8 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand"),
-    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "left"))
+    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport demand", "Emission intensity of new sales"),
+    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "left", "left", "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -122,6 +122,7 @@ valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -249,6 +250,7 @@ valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -310,6 +312,7 @@ valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+More information can be found in the [Assumptions].
 
 
 <!-- Dividing the page in two columns-->
@@ -371,7 +374,8 @@ valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Synthetic fuels gain great importance in the liquid fuels production. Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+Synthetic fuels gain importance in the liquid fuels production. Absence of policies oriented to promote electric and hydrogen vehicles, while internal combustion engines lead the market.
+More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -435,6 +439,7 @@ valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two rows-->
 Row {data-height= 450}
@@ -446,7 +451,7 @@ plotlist$`ConvCase NoTax`$plot$salescomp
 ```
 
 
-### CO~2~ intensity of new sales {data-width=250}
+### Emission intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$`ConvCase NoTax`$plot$CO2km_int_newsales
@@ -499,6 +504,7 @@ valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two rows-->
 Row {data-height= 450}
@@ -510,7 +516,7 @@ plotlist$ConvCase$plot$salescomp
 ```
 
 
-### CO~2~ intensity of new sales {data-width=250}
+### Emission intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$ConvCase$plot$CO2km_int_newsales
@@ -564,6 +570,7 @@ valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+More information can be found in the [Assumptions].
 
 
 <!-- Dividing the page in two rows-->
@@ -576,7 +583,7 @@ plotlist$HydrHype$plot$salescomp
 ```
 
 
-### CO~2~ intensity of new sales {data-width=250}
+### Emission intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$HydrHype$plot$CO2km_int_newsales
@@ -643,7 +650,7 @@ plotlist$ElecEra$plot$salescomp
 ```
 
 
-### CO~2~ intensity of new sales {data-width=250}
+### Emission intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$ElecEra$plot$CO2km_int_newsales
@@ -696,6 +703,7 @@ valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
 ### Scenario description {data-width=200}
 
 Synthetic fuels gain great importance in the liquid fuels production. Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+More information can be found in the [Assumptions].
 
 
 
@@ -709,7 +717,7 @@ plotlist$SynSurge$plot$salescomp
 ```
 
 
-### CO~2~ intensity of new sales {data-width=250}
+### Emission intensity of new sales {data-width=250}
 
 ```{r}
 plotlist$SynSurge$plot$CO2km_int_newsales
@@ -744,8 +752,6 @@ plotlist$comparison$plot$vintscen
 ```{r}
 plotlist$comparison$plot$CO2km_intensity_newsales_scen
 ```
-Row {data-height=300}
------------------------------------------------------------------------
 
 ### Comparison of passenger final energy demand
 ```{r}
@@ -758,6 +764,18 @@ Assumptions {data-icon="fa-comment"}
 Column {data-width= 450}
 -----------------------------------------------------------------------
 
+### Conventional Case (NoTax) {data-height=200}
+
+<!--An overview of the passenger transport sector is provided in [Overview], while a detailed results about light duty vehicles projections are in [LDVs]. -->
+
+Main scenario assumptions:
+
+* Conventional consumers patterns
+* No policies to promote alternative vehicles
+* Learning rate on BEVs and FCEVs
+* Market-driven behavior of light duty vehicles powertrain choice
+
+
 ### Conventional Case {data-height=200}
 
 * Conventional consumers patterns
@@ -769,15 +787,15 @@ Column {data-width= 450}
 
 * Learning rate on BEVs and FCEVs
 * Optimistic trend of hydrogen refuelling stations
-* Rebates-feebates scheme: 5000 ? subsidies starting in 2020 on FCEVs, phasing out by 2035. 1000 ? mark-up cost on internal combustion engines
+* Rebates-feebates scheme: FCEVs receive 5000\euro subsidies for purchases in 2020, around 3300\euro in 2025 and 1700\euro in 2030. 1000\euro mark-up cost on internal combustion engines are applied in 2020, 700\euro in 2025 and 300\euro in 2030
 * Market-driven behavior of light duty vehicles powertrain choice
-* Policy push of FCEVs
-* Hydrogen from renewable resources (green hydrogen) is set to be above 95\% of the total hydrogen
+* Policy push of FCEVs: policy-driven decrease of the perceived inconvenience cost associated to the purchase of hydrogen vehicles
+* Hydrogen from renewable resources (green hydrogen) is at least 95\% of the total hydrogen
 
 ### Electric Era {data-height=200}
 
 * Learning rate on BEVs and FCEVs
-* Rebates-feebates scheme: 5000 ? subsidies starting in 2020 on BEVs, phasing out by 2035. 1000 ? mark-up cost on internal combustion engines
+* Rebates-feebates scheme: FCEVs receive 5000\euro subsidies for purchases in 2020, around 3300\euro in 2025 and 1700\euro in 2030. 1000\euro mark-up cost on internal combustion engines are applied in 2020, 700\euro in 2025 and 300\euro in 2030
 * Market-driven behavior of light duty vehicles powertrain choice
 
 ### Synfuel Surge {data-height=200}
@@ -785,8 +803,8 @@ Column {data-width= 450}
 * Conventional consumers patterns
 * Learning rate on BEVs and FCEVs
 * Market-driven behavior of light duty vehicles powertrain choice
-* Synfuels are forced in the liquids mix reaching 10\% in 2035
-* Hydrogen from renewable resources (green hydrogen) is set to be above 95% of the total hydrogen
+* Synfuels are forced in the liquids mix reaching 10\% of liquids fuels in transportation by 2035
+* Hydrogen from renewable resources (green hydrogen) is at least 95% of the total hydrogen
 
 
 <!-- creating information tooltip -->
