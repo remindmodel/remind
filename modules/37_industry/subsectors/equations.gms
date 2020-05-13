@@ -6,9 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
-q37_energy_limits(ttot,regi,energy_limits37(out,in))$( ttot.val ge cm_startyear ) .. 
-    vm_cesIO(ttot,regi,in)
-  * p37_energy_limit(out,in)
+q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
+                        ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
+    sum(ces_eff_target_dyn37(out,in), 
+      vm_cesIO(ttot,regi,in)
+    )
+  * p37_energy_limit(out)
   =g=
   vm_cesIO(ttot,regi,out)
 ;

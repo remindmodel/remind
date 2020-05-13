@@ -173,6 +173,22 @@ Sets
     feelhth_otherInd, feelwlth_otherInd
   /
 
+  !! Calibration Sets
+  pf_eff_target_dyn37(all_in)    "production factors with efficiency target"
+  pf_quan_target_dyn37(all_in)   "production factors with quantity target"
+
+  pf_quantity_shares_37(all_in,all_in)   "quantities for the calibration defined as a percentage of another pf"
+  /
+    feh2_cement    . fega_cement
+    feh2_chemicals . fega_chemicals
+    feh2_steel     . fega_steel
+    feh2_otherInd  . fega_otherInd
+
+    feelhth_chemicals . feelwlth_chemicals
+    feelhth_otherInd  . feelwlth_otherInd
+  /
+
+
   secInd37_2_pf(secInd37,all_in)   "link industry sub-sectors to energy to production factors"
   /
     cement . (ue_cement, en_cement, kap_cement, en_cement_non_electric, 
@@ -246,6 +262,12 @@ fe2ppfen(fe2ppfen37)                          = YES;
 fe_tax_sub_sbi(fe_tax_sub37) = YES;
 cal_ppf_industry_dyn37(ppfen_industry_dyn37)  = YES;
 cal_ppf_industry_dyn37(ppfkap_industry_dyn37) = YES;
+
+pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
+pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
+
+pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;
+pf_quan_target_dyn29(pf_quan_target_dyn37) = YES;
 
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);

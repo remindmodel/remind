@@ -58,9 +58,9 @@ if (cm_IndCCSscen eq 1,
 pm_delta_kap(regi,ppfKap_industry_dyn37) = -log(1 / 4) / 50;
 
 *** FIXME: this is temporary data, insert meaningful figures!
-p37_energy_limit("ue_cement","en_cement")                     = 10000;
-p37_energy_limit("ue_steel_primary","en_steel_primary")       = 10000;
-p37_energy_limit("ue_steel_secondary","feel_steel_secondary") = 100000;
+p37_energy_limit("ue_cement")          =  10000;
+p37_energy_limit("ue_steel_primary")   =  10000;
+p37_energy_limit("ue_steel_secondary") = 100000;
 
 *' Emission factors for calculating industry emissions
 p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
@@ -177,6 +177,12 @@ pm_calibrate_eff_scale("feh2_steel",    "fega_steel",    "width")     = 22;
 pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "level")     = 1.4;
 pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "midperiod") = 2030;
 pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "width")     = 22;
+
+pm_ue_eff_target("ue_cement")           = 0.0075;
+pm_ue_eff_target("ue_chemicals")        = 0.001;
+pm_ue_eff_target("ue_steel_primary")    = 0.0075;
+pm_ue_eff_target("ue_steel_secondary")  = 0.005;
+pm_ue_eff_target("ue_otherInd")         = 0.0075;
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

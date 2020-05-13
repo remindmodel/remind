@@ -41,9 +41,10 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "en")) = 0
 
 *** Specify the ces structure on which the calibration will run.
 ppf_29(all_in)
+*** FIXME should include set of "stationary" module, too
   = ppfen_dyn35(all_in)
   + cal_ppf_buildings_dyn36(all_in)
-  + cal_ppf_industry_dyn37(all_in)
+  + industry_ue_calibration_target_dyn37(all_in)
 ;
 
 ppf_29("kap") = YES;
@@ -77,7 +78,12 @@ loop (ue_29(ppf_29(out)),
      );
   );
 );
- 
+
+*** Remove sets from ue_fe_kap_29 that receive special treatment
+loop (cesOut2cesIn(out,in)$(   pf_eff_target_dyn29(in) 
+                            OR pf_quan_target_dyn29(in) ),
+  ue_fe_kap_29(out) = NO;
+); 
 
 *** Compute the internal sets for the calibration of the CES
 
@@ -95,23 +101,19 @@ in_29(ppf_29) = YES
 *** Third, include recursively all "out" of ppf_29 in in_29
 for (sm_tmp = sm_tmp downto 0,
   loop ((counter,cesOut2cesIn(out,in))$( counter.val eq sm_tmp AND in_29(in)),
-          in_29(out) = YES;
-
+    in_29(out) = YES;
   )
 );
 
 *** Fourth, calculate intermediate production factors
 ipf_29(all_in) = in_29(all_in) - ppf_29(all_in);
 
-
 ces_29(out,in_29) = cesOut2cesIn(out,in_29);
 
 ppf_beyondcalib_29(all_in) = NO;
 ipf_beyond_29(all_in) = NO;
 
-
 ppf_beyondcalib_29(all_in) = in(all_in) - in_29(all_in);
-
 
 loop (cesOut2cesIn(out,ppf_beyondcalib_29(in)),
   ipf_beyond_29(out) = YES;
@@ -119,7 +121,10 @@ loop (cesOut2cesIn(out,ppf_beyondcalib_29(in)),
 ipf_beyond_29_excludeRoot(ipf_beyond_29) = YES;
 ipf_beyond_29_excludeRoot(ppf_29) = NO;
 
-in_beyond_calib_29(all_in) = ipf_beyond_29(all_in) + ppf_beyondcalib_29(all_in);
+in_beyond_calib_29(all_in) 
+  = ipf_beyond_29(all_in) 
+  + ppf_beyondcalib_29(all_in);
+  
 in_beyond_calib_29_excludeRoot(in_beyond_calib_29) = YES;
 in_beyond_calib_29_excludeRoot(ppf_29) = NO;
 
@@ -181,6 +186,7 @@ p29_efficiency_growth       "efficency growth for ppf beyond calibration"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth.cs4r"
+$include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth_industry.cs4r"
 $offdelim
 
 /
@@ -200,6 +206,7 @@ p29_capitalQuantity                    "capital quantities"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r"
+$include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity_industry.cs4r"
 $offdelim
 /
 ;
@@ -217,25 +224,32 @@ p29_capitalUnitProjections(all_regi,all_in,index_Nr)$(p29_capitalUnitProjections
 );                                                        
   
 *** Change PPP for MER.
-p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in) = p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in) * pm_shPPPMER(all_regi);
-p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) = p29_capitalUnitProjections(all_regi,all_in,index_Nr) * pm_shPPPMER(all_regi);
+p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in) 
+ = p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in) 
+ * pm_shPPPMER(all_regi);
 
-p29_capitalQuantity(tall,all_regi,all_GDPscen,"kap") = p29_capitalQuantity(tall,all_regi,all_GDPscen,"kap") 
-                                                       - sum(ppfKap(in)$( NOT sameAs(in,"kap")), p29_capitalQuantity(tall,all_regi,all_GDPscen,in) );
+p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) 
+  = p29_capitalUnitProjections(all_regi,all_in,index_Nr) 
+  * pm_shPPPMER(all_regi);
+
+*** Subtract "special" capital stocks from gross economy capital stock
+p29_capitalQuantity(tall,all_regi,all_GDPscen,"kap") 
+  = p29_capitalQuantity(tall,all_regi,all_GDPscen,"kap") 
+  - sum(ppfKap(in)$( NOT sameAs(in,"kap")), 
+      p29_capitalQuantity(tall,all_regi,all_GDPscen,in)
+    );
+
 *** Substract the end-use capital quantities from the aggregate capital
 
 *** Change EJ to TWa
 $ifthen.industry_subsectors "%industry%" == "subsectors"
-  p29_fedemand(tall,all_regi,all_GDPscen,all_in)$( NOT cal_ppf_industry_dyn37(all_in))
-    = sm_EJ_2_TWa * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
+  p29_fedemand(tall,all_regi,all_GDPscen,all_in)$( 
+                              NOT industry_ue_calibration_target_dyn37(all_in) )
+  = sm_EJ_2_TWa * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
 $else.industry_subsectors
   p29_fedemand(tall,all_regi,all_GDPscen,all_in)
     = sm_EJ_2_TWa * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
 $endif.industry_subsectors
-
-p29_fedemand(tall,all_regi,all_GDPscen,all_in)$( sameas(all_in,"ue_steel_primary")
-                                                OR sameas(all_in,"ue_steel_secondary") )
-  = 1e-3 * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
 
 *** Change million m2.C to trillion m2.C
 p29_esdemand(tall,all_regi,all_GDPscen,all_in) = p29_esdemand(tall,all_regi,all_GDPscen,all_in)/sm_mega_2_non *1;
@@ -262,8 +276,8 @@ Execute_Loadpoint 'input' vm_deltacap;
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
 pm_cesdata(t,regi,"lab","quantity") = pm_lab(t,regi);
 *** Load exogenous FE trajectories
-pm_cesdata(t,regi,in,"quantity") $ p29_fedemand(t,regi,"%cm_GDPscen%",in) 
-           = p29_fedemand(t,regi,"%cm_GDPscen%",in);
+pm_cesdata(t,regi,in,"quantity")$( p29_fedemand(t,regi,"%cm_GDPscen%",in) )
+  = p29_fedemand(t,regi,"%cm_GDPscen%",in);
 
 *** Load exogenous ES trajectories
 pm_cesdata(t,regi,in,"quantity") $ p29_esdemand(t,regi,"%cm_GDPscen%",in) 
@@ -276,13 +290,42 @@ pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%",in)
 $endif.edgesm
 
 *** Load capital quantities
-pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
+pm_cesdata(t,regi,ppfKap,"quantity") 
+  = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
-*** Add an epsilon to the values which are 0 so that they can fit in the CES function. And withdraw this epsilon when going to the ESM side
+*** Split steel electricity demand between primary and secondary steel, based 
+*** on the assumption that the specific electricity (not energy) use of 
+*** secondary steel production is nine times higher than that for primary 
+*** steel production. 
+pm_cesdata(t,regi_dyn29(regi),"feel_steel_secondary","quantity")
+  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
+  * 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
+  / ( 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
+    /     pm_cesdata(t,regi,"ue_steel_primary","quantity")
+    );
 
-loop((t,regi,in)$ ((ppf(in) OR ppf_29(in) ) AND pm_cesdata(t,regi,in,"quantity") lt 1e-5),
-pm_cesdata(t,regi,in,"offset_quantity")  = -1e-5 + pm_cesdata(t,regi,in,"quantity");
-pm_cesdata(t,regi,in,"quantity") = 1e-5;
+pm_cesdata(t,regi_dyn29(regi),"feel_steel_primary","quantity")$(
+                            pm_cesdata(t,regi,"feel_steel_primary","quantity") )
+  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
+  - pm_cesdata(t,regi,"feel_steel_secondary","quantity");
+
+*** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
+loop (pf_quantity_shares_37(in,in2),
+  pm_cesdata(t,regi_dyn29(regi),in,"quantity")
+  = 1e-4
+  * pm_cesdata(t,regi,in2,"quantity");
+);
+
+*** Add an epsilon to the values which are 0 so that they can fit in the CES 
+*** function. And withdraw this epsilon when going to the ESM side
+loop((t,regi,in)$(    (ppf(in) OR ppf_29(in)) 
+                  AND pm_cesdata(t,regi,in,"quantity") lt 1e-5 
+                  AND NOT ppfen_industry_dyn37(in)
+                  AND NOT ppfkap_industry_dyn37(in)            ),
+  pm_cesdata(t,regi,in,"offset_quantity")
+  = pm_cesdata(t,regi,in,"quantity")
+  - 1e-5;
+  pm_cesdata(t,regi,in,"quantity") = 1e-5;
 );
 
 *** Capital price assumption

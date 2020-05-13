@@ -2,10 +2,12 @@
 
 *** FIXME
 !! $include "./modules/37_industry/subsectors/input/vm_cesIO_scales.inc";
+$ontext
 vm_cesIO.scale(ttot(t2),regi,in_industry_dyn37(in))$(
                                         NOT tsu(t2) AND vm_cesIO.l(t2,regi,in) )
   = sum(tttot(t)$( NOT tsu(t) ), vm_cesIO.l(t,regi,in))
   / (card(ttot) - card(tsu));
+$offtext
 
 *** Include upper bounds on secondary steel production, due to scarcity of
 *** steel scrap.
@@ -38,9 +40,23 @@ else
 );
 $endif.secondary_steel_bound
 
-vm_cesIO.lo(t,regi,in_industry_dyn37(in))$( vm_cesIO.lo(t,regi,in) ne 0 )
+$ontext
+loop ((t,in_industry_dyn37(in))$( 
+                      NOT (t0(t) OR industry_ue_calibration_target_dyn37(in)) ),
+  vm_cesIO.lo(t,regi,in)$(    vm_cesIO.lo(t,regi,in) ne 0 
+                          AND vm_cesIO.lo(t,regi,in) ne vm_cesIO.up(t,regi,in) )
   = 1e-12$( NOT pm_cesdata(t,regi,in,"offset_quantity") )
   - pm_cesdata(t,regi,in,"offset_quantity")$(
                                       pm_cesdata(t,regi,in,"offset_quantity") );
+);
+$offtext
+
+vm_cesIO.lo(t,regi,in_industry_dyn37(in))$( 
+               NOT (t0(t) OR vm_cesIO.lo(t,regi,in) eq vm_cesIO.up(t,regi,in)) )
+  = 1e-12$( NOT pm_cesdata(t,regi,in,"offset_quantity") )
+  - pm_cesdata(t,regi,in,"offset_quantity");
+
+vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
+  = pm_cesdata("2005",regi,in,"quantity");
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms
