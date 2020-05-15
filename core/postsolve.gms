@@ -621,6 +621,7 @@ $endif.CO2priceDependent_AdjCosts
 
 
 
+
 *** INNOPATHS emissions reporting
 o_emissions(ttot,regi,emi)$(ttot.val ge 2005) = sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emi,emiMkt))*emi_conv(emi);
 
