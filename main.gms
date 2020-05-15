@@ -80,12 +80,12 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
-* Regionscode: 690d3718e151be1b450b394c1064b1c5
+* Regionscode: 8201ae1fc68ef9eaca4339dd91556375
 * 
-* Input data revision: 5.94
+* Input data revision: 5.941
 * 
-* Last modification (input data): Thu Mar 19 16:15:13 2020
-*  
+* Last modification (input data): Fri May 15 17:30:45 2020
+* 
 *###################### R SECTION END (VERSION INFO) ###########################
 
 *----------------------------------------------------------------------
@@ -163,7 +163,7 @@ $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
-$setglobal CES_parameters  load       !! def = load
+$setglobal CES_parameters  calibrate       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
 $setGlobal biomass  magpie_40 !! def = magpie_40
 ***---------------------    31_fossil    ----------------------------------------
@@ -175,7 +175,7 @@ $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  complex         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
-$setglobal buildings  simple          !! def = simple
+$setglobal buildings  services_putty          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
@@ -199,7 +199,7 @@ $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
-$setGlobal optimization  nash         !! def = nash
+$setGlobal optimization  testOneRegi         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 $setGlobal codePerformance  off       !! def = off
 
@@ -282,6 +282,7 @@ cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as 
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
+cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
@@ -399,10 +400,13 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen        = 0;!! def = 0
+cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
+cm_priceSensiBuild     = -4;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
+$setGlobal cm_pushCalib  hydrogen !! def = none
+$setGlobal cm_reducCostB  hydrogen !! def = none
 
 $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
@@ -418,7 +422,7 @@ $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
-$setglobal cm_INCONV_PENALTY_bioSwitch off !! def = off
+$setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
@@ -432,14 +436,14 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_8201ae1fc6   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure  0    !! def =  0
-$setglobal c_CES_calibration_iterations  10    !! def = 10
+$setglobal c_CES_calibration_new_structure  1    !! def =  0
+$setglobal c_CES_calibration_iterations  1    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
-$setglobal cm_calibration_string off      !! def = off
+$setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 

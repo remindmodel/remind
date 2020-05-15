@@ -54,6 +54,9 @@ p36_kapPrice(tall,all_regi)                             "Macroeconomic capital p
 p36_kapPriceImplicit(tall,all_regi,all_teEs)         "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
 p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
 
+p36_pushCalib(tall,all_teEs)                             "degree to which the calibration parameter should be reduced/increased for these technologies"
+p36_costReduc(tall,all_teEs)                             "Reduction of costs for some technologies"
+
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
 ;

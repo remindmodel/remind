@@ -79,7 +79,7 @@ p36_prodEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_prodE
 ***_____________________________Information for the ES layer  and the multinomial logit function _____________________________
 
 *** Price sensitivity of the logit function
-p36_logitLambda(regi,in)$inViaEs_dyn36(in) = -3;
+p36_logitLambda(regi,in)$inViaEs_dyn36(in) = cm_priceSensiBuild;
 
 *** Compute efficiencies of technologies producing ES(UE) from FE
 loop ( fe2es_dyn36(entyFe,esty,teEs),
@@ -244,6 +244,37 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
+*** Define which technologies will have a faster reduction of their calibration parameter
+p36_pushCalib(ttot,teEs) = 0;
+
+$ifthen "%cm_pushCalib%" == "none" 
+$elseif "%cm_pushCalib%" == "hydrogen"
+teEs_pushCalib_dyn36("te_ueshh2b") = YES;
+teEs_pushCalib_dyn36("te_uecwh2b") = YES;
+p36_pushCalib(ttot,"te_ueshh2b") = 0;
+p36_pushCalib(ttot,"te_ueshh2b") = 0.5;
+
+p36_pushCalib(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_pushCalib(ttot,teEs))
+      + p36_pushCalib(ttot,teEs) ;
+$endif
+
+
+*** Define for which technologies the investment costs will evolve
+p36_costReduc(ttot,teEs_dyn36) = 1;
+
+$ifthen "%cm_reducCostB%" == "none" 
+$elseif "%cm_reducCostB%" == "hydrogen"
+
+p36_costReduc(ttot,"te_ueshh2b") = 0.2;
+p36_costReduc(ttot,"te_ueshh2b") = 0.5;
+
+p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_costReduc(ttot,teEs))
+      + p36_costReduc(ttot,teEs) ;
+$endif
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
