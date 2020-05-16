@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.941
 * 
-* Last modification (input data): Fri May 15 17:30:45 2020
+* Last modification (input data): Sat May 16 13:45:45 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -402,11 +402,12 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_priceSensiBuild     = -4;
+cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_pushCalib  hydrogen !! def = none
-$setGlobal cm_reducCostB  hydrogen !! def = none
+$setGlobal cm_pushCalib  none !! def = none
+$setGlobal cm_reducCostB  none !! def = none
+$setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
@@ -436,16 +437,16 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_8201ae1fc6   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Esub_middle-Reg_8201ae1fc6   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure  1    !! def =  0
-$setglobal c_CES_calibration_iterations  1    !! def = 10
+$setglobal c_CES_calibration_new_structure  0    !! def =  0
+$setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
 $setglobal cm_calibration_string  off      !! def = off
 
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  USA       !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
