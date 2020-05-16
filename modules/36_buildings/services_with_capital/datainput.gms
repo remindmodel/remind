@@ -252,7 +252,7 @@ $elseif "%cm_pushCalib%" == "hydrogen"
 teEs_pushCalib_dyn36("te_ueshh2b") = YES;
 teEs_pushCalib_dyn36("te_uecwh2b") = YES;
 p36_pushCalib(ttot,"te_ueshh2b") = 0;
-p36_pushCalib(ttot,"te_ueshh2b") = 0.5;
+p36_pushCalib(ttot,"te_uecwh2b") = 0.5;
 
 p36_pushCalib(ttot,teEs_pushCalib_dyn36(teEs)) = 
       min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
@@ -268,13 +268,25 @@ $ifthen "%cm_reducCostB%" == "none"
 $elseif "%cm_reducCostB%" == "hydrogen"
 
 p36_costReduc(ttot,"te_ueshh2b") = 0.2;
-p36_costReduc(ttot,"te_ueshh2b") = 0.5;
+p36_costReduc(ttot,"te_uecwh2b") = 0.5;
+
+p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_costReduc(ttot,teEs))
+      + p36_costReduc(ttot,teEs) ;
+      
+$elseif "%cm_reducCostB%" == "heatpumps"
+p36_costReduc(ttot,"te_ueshhpb") = 0.8;
+p36_costReduc(ttot,"te_uecwhpb") = 0.8;
 
 p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
       min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
       * ( 1 - p36_costReduc(ttot,teEs))
       + p36_costReduc(ttot,teEs) ;
 $endif
+
+
+
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
