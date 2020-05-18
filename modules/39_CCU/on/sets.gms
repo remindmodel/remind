@@ -32,14 +32,14 @@ te_ccu39(all_te)                               "CCU technologies"
 
 se2se_ccu39(all_enty,all_enty,all_te)  			"map secondary energy to secondary energy using a CCU-technology"
 /
-		seh2.segafos.h22ch4
-		seh2.seliqfos.MeOH
+		seh2.segabio.h22ch4
+		seh2.seliqbio.MeOH
 /
 
 emi2teCCU(all_enty,all_enty,all_te,all_enty)    "map emissions to CCU-technologies"
 /
-	   seh2.segafos.h22ch4.CtoH
-	   seh2.seliqfos.MeOH.CtoH
+	   seh2.segabio.h22ch4.CtoH
+	   seh2.seliqbio.MeOH.CtoH
 /
 
 teCCU2rlf(all_te,rlf)     "mapping for CCU technologies to grades"

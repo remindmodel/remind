@@ -46,7 +46,7 @@ pebiolc.sesobio.biotrmod                        0.12614
 pebiolc.segabio.biogas                          0.12614
 peoil.seliqfos.refliq          18.4               
 peoil.seel.dot                 18.4             0.01892
-seh2.segafos.h22ch4                                              0.395
-seh2.seliqfos.MeOH                                               0.53
+seh2.segabio.h22ch4                                              0.395
+seh2.seliqbio.MeOH                                               0.53
 
 *** EOF ./core/input/generisdata_emi.prn
