@@ -654,13 +654,13 @@ o_emissions_energy_demand_sector(ttot,regi,emi,sector)$(ttot.val ge 2005) =
 	;
 
 o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
-	sum(pe2se(entyPe,entySe,te),
+	sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
 		pm_emifac(ttot,regi,entyPe,entySe,te,emi)
 		* vm_demPE.l(ttot,regi,entyPe,entySe,te)
 	)*emi_conv(emi);
 	
 o_emissions_energy_supply_gross_carrier(ttot,regi,emi,entySe)$(ttot.val ge 2005) =
-	sum(pe2se(entyPe,entySe,te),
+	sum((entyPe,te)$(pe2se(entyPe,entySe,te) AND (pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0)),
 		pm_emifac(ttot,regi,entyPe,entySe,te,emi)
 		* vm_demPE.l(ttot,regi,entyPe,entySe,te)
 	)*emi_conv(emi);
@@ -701,6 +701,11 @@ o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
 
 o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
 	(
+	sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)<0),
+		pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+		* vm_demPE.l(ttot,regi,entyPe,entySe,te)
+	)
+	+	
 	sum((ccs2Leak(enty,enty2,te,emi),teCCS2rlf(te,rlf)),
 		    pm_emifac(ttot,regi,enty,enty2,te,emi)
 		    * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
