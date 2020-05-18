@@ -6,6 +6,13 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on.gms
 
+*' @description Standard CCU realization including the possibility to produce synthetic gas and synthetic liquids 
+*' from hydrogen and captured CO2.  
+
+*' @limitations Produces secondary energy liquids and gases without differentiating, for example, 
+*' between the type of liquids (petrol, diesel, kerosene). Assumes that you need to capture only as much CO2
+*' as ends up in the final product, so no CCU leakage emisssions. 
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/39_CCU/on/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/39_CCU/on/declarations.gms"
