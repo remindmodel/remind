@@ -125,11 +125,4 @@ if(cm_bioenergymaxscen>0,
 vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
 );
 
-
-*** FS: synfuel scenario 2: phase-out energy crop production after 2040
-if ( cm_synfuelscen ge 2,
-	vm_fuExtr.up(t,regi_synfuelscen,"pebiolc","1")$(t.val ge 2040) = 0;
-);
-
-
 *** EOF ./modules/30_biomass/magpie_4/bounds.gms
