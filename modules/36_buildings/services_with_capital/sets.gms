@@ -125,6 +125,9 @@ uecwsob
 fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) "map FE carriers to CES via appliances"
 // 
 
+feteces_dyn36(all_enty,all_teEs,all_in) "map FE carriers to CES without esty"
+//
+
 inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
 
   in_putty_dyn36(all_in) "putty in for buildings"
@@ -209,6 +212,9 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   t36_hist(ttot) "historic time steps"
   t36_hist_last(ttot) "last historic time step"
   t36_scen(ttot) "non historical scenario time step"
+  
+  teEs_pushCalib_dyn36(all_teEs) "technologies for which the Logit parameter should be modified"
+  
 ;   
 
 
@@ -216,11 +222,14 @@ loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
     loop ( es2ppfen_dyn36(all_esty,all_in),
     fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) = YES;
     inViaEs_dyn36(all_in) = YES;
+    feteces_dyn36(all_enty,all_teEs,all_in) = YES;
     )
     );
 
+
  alias (fe2ces_dyn36,fe2ces_dyn36_2);
  alias (fe2es_dyn36, fe2es_dyn36_2);
+ alias (feteces_dyn36, feteces_dyn36_2);
  
 t36_hist(ttot) = NO;
 t36_hist(ttot)$(sameAs(ttot,"2005") OR sameAs(ttot,"2010") OR sameAs(ttot,"2015")) = YES;
@@ -233,6 +242,8 @@ $offOrder
  t36_hist_last(ttot) = NO;
  t36_hist_last(t36_hist)$(ord(t36_hist) eq card(t36_hist)) = YES;
 $offOrder
+
+teEs_pushCalib_dyn36(all_teEs) = NO;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------

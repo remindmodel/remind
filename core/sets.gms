@@ -2224,7 +2224,7 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seliqfos.fedie.tdfosdie
         seh2.feh2t.tdh2t
 /
-
+fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 

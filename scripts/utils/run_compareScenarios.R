@@ -5,7 +5,12 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(lucode) # getScenNames
-library(remind) # compareScenarios
+slurm <- suppressWarnings(ifelse(system2('srun',stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
+  if (slurm) { 
+    library('remind',lib.loc = '/p/projects/innopaths/reporting_library/lib/')  
+  } else {
+    library(remind)
+  } # compareScenarios
 
 if(!exists("source_include")) {
   readArgs("outputdirs")

@@ -341,7 +341,7 @@ q_costTeCapital(tall,all_regi,all_te)                "calculation of investment 
 
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
-q_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
+qm_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
 
 q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
 q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
@@ -488,5 +488,39 @@ magicc_scenario.pw = 3000;
 file magicc_sed_script /                                 "./magicc/modify_MAGCFG_USER_CFG.sed" /;
 
 magicc_sed_script.ap = 0;
+
+
+
+*** INNOPATHS emissions reporting
+
+Parameter 
+o_emissions(ttot,all_regi,all_enty) 
+o_emissions_energy(ttot,all_regi,all_enty)
+o_emissions_energy_demand(ttot,all_regi,all_enty)
+o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors)
+o_emissions_energy_supply_gross(ttot,all_regi,all_enty)
+o_emissions_energy_supply_gross_carrier(ttot,all_regi,all_enty,all_enty)
+o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty)
+o_emissions_energy_negative(ttot,all_regi,all_enty)
+o_emissions_industrial_processes(ttot,all_regi,all_enty)
+o_emissions_AFOLU(ttot,all_regi,all_enty)
+o_emissions_DACCS(ttot,all_regi,all_enty)
+o_emissions_other(ttot,all_regi,all_enty)
+
+o_capture(ttot,all_regi,all_enty)
+o_capture_energy(ttot,all_regi,all_enty)
+o_capture_energy_elec(ttot,all_regi,all_enty)
+o_capture_energy_other(ttot,all_regi,all_enty)
+o_capture_cdr(ttot,all_regi,all_enty)
+o_capture_industry(ttot,all_regi,all_enty)
+o_capture_energy_bio(ttot,all_regi,all_enty)
+o_capture_energy_fos(ttot,all_regi,all_enty)
+o_carbon_CCU(ttot,all_regi,all_enty)
+o_carbon_LandUse(ttot,all_regi,all_enty)
+o_carbon_underground(ttot,all_regi,all_enty)
+o_carbon_reemitted(ttot,all_regi,all_enty)
+
+emi_conv(all_enty) / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
+;
 
 *** EOF ./core/declarations.gms
