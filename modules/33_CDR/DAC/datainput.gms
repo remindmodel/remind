@@ -7,3 +7,7 @@
 p33_dac_fedem("feels") = 7.333;
 p33_dac_fedem("fegas") = 36.667;
 p33_dac_fedem("feh2s") = 36.667;
+
+*** FS: INNOPATHS sensitivity on DAC efficiency
+$if not "%cm_INNOPATHS_DAC_eff%" == "off" parameter p33_dac_fedem_fac(entyFeStat) / %cm_INNOPATHS_DAC_eff% /;
+$if not "%cm_INNOPATHS_DAC_eff%" == "off" p33_dac_fedem(entyFeStat) = p33_dac_fedem(entyFeStat) * p33_dac_fedem_fac(entyFeStat);

@@ -1166,6 +1166,7 @@ pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
+
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
 pm_cesdata(ttot,regi,in,"offset_quantity")$(ttot.val ge 2005)       = 0;

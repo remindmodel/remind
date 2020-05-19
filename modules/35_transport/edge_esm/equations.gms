@@ -34,7 +34,7 @@ $ifthen.ccu %CCU% == "on"
 q35_shSynSe(t,regi)..
     sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) ) * v35_shSynSe(t,regi)
     =e=
-    vm_prodSe(t,regi,"seh2","seliqfos","MeOH")
+    vm_prodSe(t,regi,"seh2","seliqbio","MeOH")
 ;
 $endif.ccu
 
