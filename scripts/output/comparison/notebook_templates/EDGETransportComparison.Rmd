@@ -117,7 +117,7 @@ legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 
 
 
-
+regionplot = "EUR"
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -155,11 +155,10 @@ vintcomparisonpf = function(dt){
 }
 
 vintcomparisonpf(fleet_all)
-## Sales composition
-
 
 ```
 
+## Sales composition
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 salescompf = function(dt){
@@ -230,7 +229,7 @@ EJroadpf = function(dt){
           strip.background = element_rect(color = "grey"))
 
 
-   plotTrucks = ggplot()+
+   plotTruck = ggplot()+
     geom_area(data = dt[subsector_L1 %in% c("trn_freight_road_tmp_subsector_L1")], aes(x=year, y=demand_EJ, group = technology, fill = technology), color = "black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "Trucks Final Energy demand")+
     theme_minimal()+
@@ -248,7 +247,7 @@ EJroadpf = function(dt){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"))
 
-  return(plotlist = list(plotLDV = plotLDV, plotBus = plotBus, plotTrucks = plotTrucks))
+  return(plotlist = list(plotLDV = plotLDV, plotBus = plotBus, plotTruck = plotTruck))
 }
 
 EJroadpf(EJroad_all)
@@ -452,3 +451,229 @@ emidem_pf = function(dt){
 
 emidem_pf(emidem_all)
 ```
+
+
+
+## Focus on slected region
+
+## vintages
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+
+vintcomparison_regi_pf = function(dt, rp){
+  dt = dt[year %in% c(2015, 2030, 2050, 2100) & region == rp]
+  plot = ggplot()+
+    geom_bar(data = dt,
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
+    geom_bar(data = dt,
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black", size=0.05)+
+    guides(fill = guide_legend(reverse=TRUE))+
+    theme_minimal()+
+    facet_wrap(~ year, nrow = 1)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
+    guides(linetype=FALSE,
+           fill=guide_legend(reverse=FALSE, title="Transport mode"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "[million Veh]", x="", title = "LDV fleet")
+    return(plot)
+}
+
+p = vintcomparison_regi_pf(fleet_all, rp = regionplot)
+
+p
+
+aspect_ratio <- 1.5
+height <- 6
+ggsave("pvint.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+
+## Sales composition
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+salescom_regi_pf = function(dt, rp){
+
+  plot = ggplot()+
+    geom_area(data = dt[region == rp], aes(x=as.numeric(as.character(year)), y = shareFS1, group = technology, fill = technology), position = position_fill())+
+    theme_minimal()+
+    facet_wrap( ~ scenario, nrow = 1)+
+    scale_fill_manual("Technology", values = cols)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015,2030,2050, 2100))+
+    scale_y_continuous(labels = scales::percent)+
+    theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust=1, size = 14),
+          axis.text.y = element_text(size = 14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"))+
+    labs(x = "", y = "[%]", title = "Market share of new LDV sales")
+  return(plot)
+}
+
+p = salescom_regi_pf(salescomp_all, rp = regionplot)
+
+p
+
+aspect_ratio <- 2
+height <- 5
+ggsave("psales.png", p, dpi=500, height = height , width = height * aspect_ratio)
+
+
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+CO2km_int_regi_newsalespf = function(dt, rp){
+  dt = dt[!is.na(gCO2_km_ave)]
+  if (rp == "EUR"){
+   ## add historical values
+  historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
+  
+  targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
+  
+   plot = ggplot()+
+    geom_line(data = dt[year >= 2020 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario))+
+    geom_point(data = historical_values, aes(x = year, y = emi), color = "grey20")+
+    geom_hline(data = targets, aes(yintercept = value, linetype = name), color = "grey20", size=0.1)+
+    geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name), size = 5)+
+    labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+    guides(linetype = FALSE)
+  
+  } else {
+  ## historical values are not available
+  plot = ggplot()+
+    geom_line(data = dt[year >= 2020 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario))+
+    labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+    guides(linetype = FALSE)
+
+   }
+  return(plot)
+}
+
+p = CO2km_int_regi_newsalespf(CO2km_int_newsales_all, rp = regionplot)
+
+p
+
+aspect_ratio <- 1.5
+height <- 6
+ggsave("pCO2int.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+EJroad_regi_pf = function(dt, rp){
+  dt[, technology := factor(technology, levels = legend_ord)]
+  dt = dt[year >= 2020]
+  plotLDV = ggplot()+
+    geom_area(data = dt[subsector_L1 == "trn_pass_road_LDV_4W" & region == rp], aes(x=year, y=demand_EJ, group = technology, fill = technology), color = "black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "LDV Final Energy demand")+
+    theme_minimal()+
+    facet_wrap(~scenario, nrow = 1)+
+    scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"))
+
+
+   plotBus = ggplot()+
+    geom_area(data = dt[subsector_L1 %in% c("trn_pass_road_bus_tmp_subsector_L1", "Bus_tmp_subsector_L1") & region == rp], aes(x=year, y=demand_EJ, group = technology, fill = technology), color = "black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Buses Final Energy demand")+
+    theme_minimal()+
+    facet_wrap(~scenario, nrow = 1)+
+    scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"))
+
+
+   plotTruck = ggplot()+
+    geom_area(data = dt[subsector_L1 %in% c("trn_freight_road_tmp_subsector_L1") & region == rp], aes(x=year, y=demand_EJ, group = technology, fill = technology), color = "black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Trucks Final Energy demand")+
+    theme_minimal()+
+    facet_wrap(~scenario, nrow = 1)+
+    scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90, size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"))
+
+  return(plotlist = list(plotLDV = plotLDV, plotBus = plotBus, plotTruck = plotTruck))
+}
+
+plist = EJroad_regi_pf(EJroad_all, rp = regionplot)
+
+plist
+
+pLDV = plist[["plotLDV"]]
+
+pBus = plist[["plotBus"]]
+
+pTruck = plist[["plotTruck"]]
+
+aspect_ratio <- 1.5
+height <- 6
+ggsave("pLDV.png", pLDV, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("pBus.png", pBus, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("pTruck.png", pTruck, dpi=500, height = height , width = height * aspect_ratio)
+
+```
+
+

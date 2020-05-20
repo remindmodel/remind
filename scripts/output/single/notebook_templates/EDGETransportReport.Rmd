@@ -123,7 +123,7 @@ EF_shares <- readRDS(datapath(fname = "EF_shares.RDS"))
 annual_sales <- readRDS(datapath(fname = "annual_sales.RDS"))
 mj_km_data <- readRDS(datapath(fname = "mj_km_data.RDS"))
 stations <- readRDS(datapath(fname = "stations.RDS"))
-
+loadFactor <- readRDS(datapath(fname = "loadFactor.RDS"))
 ## Load population to calculate per capita values
 POP_country=calcOutput("Population", aggregate = F)[,, "pop_SSP2"]
   POP <- magpie2dt(POP_country, regioncol = "iso",
@@ -138,7 +138,7 @@ miffile <- as.data.table(read.quitte(name_mif))
 
 ```{r, echo=FALSE, warning=FALSE}
 
-plotVint = function(vintcomp, newcomp, sharesVS1){
+plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
   vintcomp = vintcomp[,.(totdem, iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
   newcomp = newcomp[,.(iso, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
@@ -150,9 +150,9 @@ plotVint = function(vintcomp, newcomp, sharesVS1){
                                       "year"), measure.vars = c("vintdem", "newdem"))
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
-  load_factor = 2
+  allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("iso", "vehicle_type", "year"))
   annual_mileage = 15000
-  allfleet = allfleet[,.(value = sum(value/load_factor/annual_mileage)), by = c("iso", "technology", "variable", "year")]
+  allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("iso", "technology", "variable", "year")]
 
   allfleet = merge(allfleet, REMIND2ISO_MAPPING, by = "iso")
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
@@ -184,7 +184,7 @@ plotVint = function(vintcomp, newcomp, sharesVS1){
   }
 
 
-p = plotVint(vintcomp, newcomp, shares$VS1_shares)
+p = plotVint(vintcomp, newcomp, shares$VS1_shares, loadFactor)
 
 p
 

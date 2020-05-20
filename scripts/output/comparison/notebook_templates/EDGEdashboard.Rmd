@@ -38,8 +38,8 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport demand", "Emission intensity of new sales"),
-    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "left", "left", "left"))
+    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger demand emissions", "Comparison of passenger upstream emissions"),
+    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "right", "left", "left", "left", "left", "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -95,21 +95,21 @@ helpTooltip = function(tooltipdf){
 <!--Creating First Page - LDV Page-->
 Overview {data-icon="glyphicon glyphicon-scale"}
 ===================================== 
-Side Navigation {.sidebar .sidebarOverview data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=160}
 -------------------------------------
 
-[](#overview){class="fas fa-thermometer-three-quarters sidebar-button selected"}
-[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#overview){class="sidebar-button selected"}
+[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
 
 Row {data-height=300}
 -----------------------------------------------------------------------
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case NoTax", icon = "fa-thermometer-three-quarters")
+valueBox("Conventional Case NoTax")
 ```
 
 
@@ -148,23 +148,23 @@ Row {data-heigth=500}
 plotlist$`ConvCase NoTax`$plot$EJpassfuels
 ```
 
-### Emissions passenger transport demand
+### Emissions passenger transport
 
 ```{r}
-plotlist$`ConvCase NoTax`$plot$emipdem
+plotlist$`ConvCase NoTax`$plot$emip
 ```
 
-Overview Conv scenario {.hidden data-icon="glyphicon glyphicon-tint"}
-===================================== 
+Overview Conv scenario {.hidden}
+=====================================
 
-Side Navigation {.sidebar .sidebarOverview data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=160}
 -------------------------------------
 
-[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button selected"}
-[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#overview){class="sidebar-button"}
+[Conventional Case](#overview-conv-scenario){class="sidebar-button selected"}
+[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
 
 
 <!-- Dividing the page in two rows-->
@@ -173,7 +173,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case", icon = "glyphicon-oil")
+valueBox("Conventional Case")
 ```
 
 
@@ -185,7 +185,7 @@ valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market. More information can be found in the [Assumptions].
 
 <!-- Dividing the page in two columns-->
 Row {data-heigth=500}
@@ -211,24 +211,24 @@ Row {data-heigth=500}
 plotlist$ConvCase$plot$EJpassfuels
 ```
 
-### Emissions passenger transport demand
+### Emissions passenger transport
 
 ```{r}
-plotlist$ConvCase$plot$emipdem
+plotlist$ConvCase$plot$emip
 ```
 
 
-Overview FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
+Overview FCEV scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarOverview data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=160}
 -------------------------------------
 
-[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
-[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#overview){class="sidebar-button"}
+[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button selected"}
+[Electric Era](#overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
 
 
 <!-- Dividing the page in two rows-->
@@ -237,7 +237,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Hydrogen Hype", icon = "glyphicon-tint")
+valueBox("Hydrogen Hype")
 ```
 
 
@@ -276,30 +276,30 @@ Row {data-heigth=500}
 plotlist$HydrHype$plot$EJpassfuels
 ```
 
-### Emissions passenger transport demand
+### Emissions passenger transport
 
 ```{r}
-plotlist$HydrHype$plot$emipdem
+plotlist$HydrHype$plot$emip
 ```
 
-Overview BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+Overview BEV scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarOverview data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=160}
 -------------------------------------
 
-[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
-[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#overview){class="sidebar-button"}
+[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#overview-bev-scenario){class="sidebar-button selected"}
+[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
 
 Row {data-height=300}
 -----------------------------------------------------------------------
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Electric Era", icon = "glyphicon-flash")
+valueBox("Electric Era")
 ```
 
 
@@ -339,30 +339,30 @@ Row {data-heigth=500}
 plotlist$ElecEra$plot$EJpassfuels
 ```
 
-### Emissions passenger transport demand
+### Emissions passenger transport
 
 ```{r}
-plotlist$ElecEra$plot$emipdem
+plotlist$ElecEra$plot$emip
 ```
 
-Overview Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
+Overview Synfuel scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarOverview data-width=60}
+Side Navigation {.sidebar .sidebarOverview data-width=160}
 -------------------------------------
 
-[](#overview){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#overview-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#overview-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#overview-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#overview-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
+[Baseline](#overview){class="sidebar-button"}
+[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button selected"}
 
 Row {data-height=300}
 -----------------------------------------------------------------------
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Synfuel Surge", icon = "glyphicon-random")
+valueBox("Synfuel Surge")
 ```
 
 
@@ -401,24 +401,23 @@ Row {data-heigth=500}
 plotlist$SynSurge$plot$EJpassfuels
 ```
 
-### Emissions passenger transport demand
+### Emissions passenger transport
 
 ```{r}
-plotlist$SynSurge$plot$emipdem
+plotlist$SynSurge$plot$emip
 ```
 
-
 LDVs {data-icon="fa-car"}
-===================================== 
+=====================================
 
-Side Navigation {.sidebar .sidebarLDV data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=160}
 -------------------------------------
 
-[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button selected"}
-[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#ldvs){class="sidebar-button selected"}
+[Conventional Case](#ldvs-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#ldvs-fcev-scenario){class="sidebar-button"}
+[Electric Era](#ldvs-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#ldvs-synfuel-scenario){class="sidebar-button"}
 
 <!-- Dividing the page in two rows-->
 Row {data-height=300}
@@ -426,7 +425,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case NoTax", icon = "fa-thermometer-three-quarters")
+valueBox("Conventional Case NoTax")
 ```
 
 
@@ -472,17 +471,17 @@ plotlist$`ConvCase NoTax`$plot$EJLDV
 plotlist$`ConvCase NoTax`$plot$vintcomp
 ```
 
-LDVs Conv scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+LDVs Conv scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarLDV data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=160}
 -------------------------------------
 
-[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button selected"}
-[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#ldvs){class="sidebar-button"}
+[Conventional Case](#ldvs-conv-scenario){class="sidebar-button selected"}
+[Hydrogen Hype](#ldvs-fcev-scenario){class="sidebar-button"}
+[Electric Era](#ldvs-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#ldvs-synfuel-scenario){class="sidebar-button"}
 
 
 <!-- Dividing the page in two rows-->
@@ -491,7 +490,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case", icon = "glyphicon-oil")
+valueBox("Conventional Case")
 ```
 
 
@@ -538,17 +537,18 @@ plotlist$ConvCase$plot$vintcomp
 ```
 
 
-LDVs FCEV scenario {.hidden data-icon="glyphicon glyphicon-tint"}
+LDVs FCEV scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarLDV data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=160}
 -------------------------------------
 
-[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button selected"}
-[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#ldvs){class="sidebar-button"}
+[Conventional Case](#ldvs-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#ldvs-fcev-scenario){class="sidebar-button selected"}
+[Electric Era](#ldvs-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#ldvs-synfuel-scenario){class="sidebar-button"}
+
 
 
 <!-- Dividing the page in two rows-->
@@ -557,7 +557,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Hydrogen Hype", icon = "glyphicon-tint")
+valueBox("Hydrogen Hype")
 ```
 
 
@@ -605,18 +605,19 @@ plotlist$HydrHype$plot$vintcomp
 ```
 
 
-LDVs BEV scenario { .hidden data-icon="glyphicon glyphicon-flash"}
+LDVs BEV scenario {.hidden}
 ===================================== 
 
 
-Side Navigation {.sidebar .sidebarLDV data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=160}
 -------------------------------------
 
-[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button selected"}
-[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button"}
+[Baseline](#ldvs){class="sidebar-button"}
+[Conventional Case](#ldvs-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#ldvs-fcev-scenario){class="sidebar-button"}
+[Electric Era](#ldvs-bev-scenario){class="sidebar-button selected"}
+[Synfuel Surge](#ldvs-synfuel-scenario){class="sidebar-button"}
+
 
 
 <!-- Dividing the page in two rows-->
@@ -625,7 +626,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Electric Era", icon = "glyphicon-flash")
+valueBox("Electric Era")
 ```
 
 
@@ -637,7 +638,7 @@ valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
 
 ### Scenario description {data-width=200}
 
-Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them. More information can be found in the [Assumptions].
 
 
 <!-- Dividing the page in two rows-->
@@ -672,17 +673,18 @@ plotlist$ElecEra$plot$vintcomp
 ```
 
 
-LDVs Synfuel scenario {.hidden data-icon="glyphicon glyphicon-random"}
+LDVs Synfuel scenario {.hidden}
 ===================================== 
 
-Side Navigation {.sidebar .sidebarLDV data-width=60}
+Side Navigation {.sidebar .sidebarLDV data-width=160}
 -------------------------------------
 
-[](#ldvs){class="fas fa-thermometer-three-quarters sidebar-button"}
-[](#ldvs-conv-scenario){class="glyphicon glyphicon-oil sidebar-button"}
-[](#ldvs-fcev-scenario){class="glyphicon glyphicon-tint sidebar-button"}
-[](#ldvs-bev-scenario){class="glyphicon glyphicon-flash sidebar-button"}
-[](#ldvs-synfuel-scenario){class="glyphicon glyphicon-random sidebar-button selected"}
+[Baseline](#ldvs){class="sidebar-button"}
+[Conventional Case](#ldvs-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#ldvs-fcev-scenario){class="sidebar-button"}
+[Electric Era](#ldvs-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#ldvs-synfuel-scenario){class="sidebar-button selected"}
+
 
 <!-- Dividing the page in two rows-->
 Row {data-height=300}
@@ -690,7 +692,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Synfuel Surge", icon = "glyphicon-random")
+valueBox("Synfuel Surge")
 ```
 
 
@@ -740,7 +742,8 @@ plotlist$SynSurge$plot$vintcomp
 
 Comparison {data-icon="fa-exchange-alt"}
 =====================================
-Row {data-height=300}
+
+Row {data-height = 450}
 -----------------------------------------------------------------------
 
 ### Fleet composition comparison
@@ -753,12 +756,32 @@ plotlist$comparison$plot$vintscen
 plotlist$comparison$plot$CO2km_intensity_newsales_scen
 ```
 
+### Comparison of passenger demand emissions
+
+```{r}
+plotlist$comparison$plot$emipdem_scen
+```
+
+Row {data-height = 450}
+-----------------------------------------------------------------------
+
 ### Comparison of passenger final energy demand
 ```{r}
 plotlist$comparison$plot$EJpassfuels_scen
 ```
 
-Assumptions {data-icon="fa-comment"}
+### Comparison of sales composition
+```{r}
+plotlist$comparison$plot$salescom_scen
+```
+
+### Comparison of passenger upstream emissions
+```{r}
+plotlist$comparison$plot$emipup_scen
+```
+
+
+Assumptions {data-icon="glyphicon glyphicon-th-list"}
 =====================================
 
 Column {data-width= 450}
@@ -768,11 +791,10 @@ Column {data-width= 450}
 
 <!--An overview of the passenger transport sector is provided in [Overview], while a detailed results about light duty vehicles projections are in [LDVs]. -->
 
-Main scenario assumptions:
-
 * Conventional consumers patterns
 * No policies to promote alternative vehicles
-* Learning rate on BEVs and FCEVs
+* Pessimistic trend of electric recharging stations
+* Learning-by-doing on BEVs and FCEVs
 * Market-driven behavior of light duty vehicles powertrain choice
 
 
@@ -780,28 +802,31 @@ Main scenario assumptions:
 
 * Conventional consumers patterns
 * No policies to promote alternative vehicles
-* Learning rate on BEVs and FCEVs
+* Pessimistic trend of electric recharging stations
+* Learning-by-doing on BEVs and FCEVs
 * Market-driven behavior of light duty vehicles powertrain choice
 
 ### Hydrogen Hype {data-height=200}
 
-* Learning rate on BEVs and FCEVs
+* Learning-by-doing on BEVs and FCEVs
 * Optimistic trend of hydrogen refuelling stations
-* Rebates-feebates scheme: FCEVs receive 5000\euro subsidies for purchases in 2020, around 3300\euro in 2025 and 1700\euro in 2030. 1000\euro mark-up cost on internal combustion engines are applied in 2020, 700\euro in 2025 and 300\euro in 2030
+* Rebates-feebates scheme: FCEVs receive 5000&euro subsidies for purchases in 2020, around 3300&euro in 2025 and 1700&euro in 2030. 1000&euro mark-up cost on internal combustion engines are applied in 2020, 700&euro in 2025 and 300&euro in 2030
+* Mark-up costs applied to internal combustion engines (both conventional and hybrid)
 * Market-driven behavior of light duty vehicles powertrain choice
 * Policy push of FCEVs: policy-driven decrease of the perceived inconvenience cost associated to the purchase of hydrogen vehicles
 * Hydrogen from renewable resources (green hydrogen) is at least 95\% of the total hydrogen
 
 ### Electric Era {data-height=200}
 
-* Learning rate on BEVs and FCEVs
-* Rebates-feebates scheme: FCEVs receive 5000\euro subsidies for purchases in 2020, around 3300\euro in 2025 and 1700\euro in 2030. 1000\euro mark-up cost on internal combustion engines are applied in 2020, 700\euro in 2025 and 300\euro in 2030
+* Learning-by-doing on BEVs and FCEVs
+* Rebates-feebates scheme: BEVs receive 5000&euro subsidies for purchases in 2020, around 3300&euro in 2025 and 1700&euro in 2030. 1000&euro mark-up cost on internal combustion engines are applied in 2020, 700&euro in 2025 and 300&euro in 2030
+* Mark-up costs applied to internal combustion engines (both conventional and hybrid)
 * Market-driven behavior of light duty vehicles powertrain choice
 
 ### Synfuel Surge {data-height=200}
 
 * Conventional consumers patterns
-* Learning rate on BEVs and FCEVs
+* Learning-by-doing on BEVs and FCEVs
 * Market-driven behavior of light duty vehicles powertrain choice
 * Synfuels are forced in the liquids mix reaching 10\% of liquids fuels in transportation by 2035
 * Hydrogen from renewable resources (green hydrogen) is at least 95% of the total hydrogen
@@ -855,8 +880,8 @@ navBarMemory = function(topMenuLabel, sideBarClass){
 
   .sidebar-button {  /* sidebar size  */
      display: inline-block;
-     font-size: 40px;
-     height: 80px;
+     font-size: 20px;
+     height: 30px;
      padding-top: 20px
   }
   
@@ -964,10 +989,6 @@ navBarMemory = function(topMenuLabel, sideBarClass){
     -ms-user-select: none;
     user-select: none;
   }
+  
 
 </style>
-
-
-
-
-
