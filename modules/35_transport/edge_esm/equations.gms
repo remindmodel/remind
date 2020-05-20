@@ -29,9 +29,9 @@ q35_shBioFe(t,regi)..
 
 
 *' Adjust the shares of synfuels in transport liquids.
-*' This equation is only effective when CCU is switched on.
+*' This equation is only effective when CCU is switched on and the switch cm_synfuel_trp == 1
 $ifthen.ccu %CCU% == "on"
-q35_shSynSe(t,regi)..
+q35_shSynSe(t,regi)$(cm_synfuel_trp eq 1)..
     sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) ) * v35_shSynSe(t,regi)
     =e=
     vm_prodSe(t,regi,"seh2","seliqbio","MeOH")
