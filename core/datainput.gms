@@ -311,8 +311,8 @@ pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * f
 *** oil 0.6 kg/TJ = 0.01892 Mt/TWa
 *** biomass 4 kg/TJ = 0.12614 Mt/TWa;
 *** EF for N2O are in generisdata_emi.prn
-pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
-pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
+pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
+pm_emifac(ttot,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
 
 display pm_emifac;
 
@@ -605,7 +605,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiHydro_up.cs3r"
+$include "./core/input/f_maxProdGradeRegiHydro.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
@@ -1160,11 +1160,11 @@ p_ef_dem("fepet") = 73;
 p_ef_dem("fegas") = 55;
 p_ef_dem("fesos") = 96;
 
-pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

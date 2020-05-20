@@ -58,5 +58,6 @@ q30_pebiolc_costs(ttot,all_regi)   "MAgPIE emulator: calculates the costs of peb
 q30_priceshift                     "Calculates shift factor by minimizing least squares of price differences between MAgPIE output and MAgPIE emulator"
 q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported, no residues"
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
+q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production, only active in cm_synfuelscen >= 2"
 ;
 *** EOF ./modules/30_biomass/magpie_4/declarations.gms

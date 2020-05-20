@@ -18,6 +18,8 @@ if(cm_nucscen eq 7,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$((t.val gt 2025) and (t.val ge cm_startyear)) = 0;
 );
 
+* FS: temporary quick fix for ECE 2030 hydro infeasibility, current 2030 capcaity target is larger than hydro potential of region, set to 6 GW for now
+vm_cap.lo(t,"ECE","hydro","1")$(t.val ge cm_startyear) = 6 * 0.001;
 
 display vm_cap.lo;
 

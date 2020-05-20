@@ -11,6 +11,14 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+
+*** FS: synfuelscen 1 or larger, for RE H2 production: 
+*** double efficiency of elh2 (see module 05)
+*** decrease CapFac to 0.5
+if ( cm_synfuelscen ge 1,
+	vm_capFac.fx(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 0.5;
+);
+
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
   loop(te$(teVRE(te)),

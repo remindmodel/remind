@@ -794,6 +794,13 @@ $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
 
+$IFTHEN.RegScenSyn "%c_regi_synfuelscen%" == "all"
+  set regi_synfuelscen(all_regi) "regions which synfuelscen applies to";
+  regi_synfuelscen(all_regi)=YES;
+$ELSE.RegScenSyn
+  set regi_synfuelscen(all_regi) "regions which synfuelscen applies to" / %c_regi_synfuelscen% /;
+$ENDIF.RegScenSyn
+
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
