@@ -716,15 +716,15 @@ o_emissions_energy_supply_gross_carrier(ttot,regi,emi,entySe)$(ttot.val ge 2005)
 	+
 	(	
 		o_emissions_energy_extraction(ttot,regi,emi,"pecoal")
-	)$(sameas(entySe,"sesofos")
+	)$(sameas(entySe,"sesofos"))
 	+
 	(	
 		o_emissions_energy_extraction(ttot,regi,emi,"pegas")
-	)$(sameas(entySe,"segafos")
+	)$(sameas(entySe,"segafos"))
 	+
 	(	
 		o_emissions_energy_extraction(ttot,regi,emi,"peoil")
-	)$(sameas(entySe,"seliqfos")
+	)$(sameas(entySe,"seliqfos"))
 	;
 
 o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
