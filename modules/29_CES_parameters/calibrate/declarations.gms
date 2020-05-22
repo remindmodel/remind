@@ -35,6 +35,7 @@ $endif.edgesm
 p29_esubGrowth         "long term growth of the elasticity of substitution"
 
   pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
+  p29_t_tmp(tall)                                       "tmp value for calculations over t"
 ;
 
 *** in case of a putty formulation, the model putty_paths will try to 

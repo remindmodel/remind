@@ -1,58 +1,3 @@
-$macro DEBUG(x) \
-  put logfile, ">>> DEBUG ", x, " <<<" /; \
-  loop ((t,regi_dyn29(regi),out)$(  \
-                      t.val eq 2020 \
-                  AND (sameas(out,"ue_industry") OR sameas(out,"ue_steel")) ), \
-    put pm_cesdata.tn(t,regi,out,"quantity"), " = "; \
-    put pm_cesdata(t,regi,out,"quantity"); \
-    put "   (rho = ", pm_cesdata(t,regi,out,"rho"), ")" /; \
-    loop (cesOut2cesIn(out,in), \
-      put in.tl, @15 pm_cesdata(t,regi,in,"xi"); \
-      put "  (", pm_cesdata(t,regi,in,"eff"), "  "; \
-      put ( 1$( NOT pm_cesdata(t,regi,in,"effGr") ) \
-          + pm_cesdata(t,regi,in,"effGr") \
-          ); \
-      put "  ", pm_cesdata(t,regi,in,"quantity"); \
-      put ")  = ", ( pm_cesdata(t,regi,in,"xi") \
-                   * ( pm_cesdata(t,regi,in,"eff") \
-                     * ( 1$( NOT pm_cesdata(t,regi,in,"effGr") ) \
-                       + pm_cesdata(t,regi,in,"effGr") \
-                       ) \
-                     * pm_cesdata(t,regi,in,"quantity") \
-                     ) \
-                  ** pm_cesdata(t,regi,out,"rho") \
-                   ) /; \
-    ); \
-    put " = ", ( sum(cesOut2cesIn(out,in), \
-                   pm_cesdata(t,regi,in,"xi") \
-                 * ( pm_cesdata(t,regi,in,"eff") \
-                   * ( 1$( NOT pm_cesdata(t,regi,in,"effGr") ) \
-                     + pm_cesdata(t,regi,in,"effGr") \
-                     ) \
-                   * pm_cesdata(t,regi,in,"quantity") \
-                   ) \
-                ** pm_cesdata(t,regi,out,"rho") \
-                 ) \
-              ** (1 / pm_cesdata(t,regi,out,"rho")) \
-               ):20:15 /; \
-  ); \
-  put " " /; \
-  putclose logfile;
-
-Parameter foo(tall,all_regi,all_in,cesParameter);
-
-$macro CHECK(x) \
-  put logfile, ">>> CHECK ", x, " <<<" /; \
-  loop ((t,regi_dyn29(regi),cesOut2cesIn_below("ue_industry",in),cesParameter), \
-    if (pm_cesdata(t,regi,in,cesParameter) ne foo(t,regi,in,cesParameter), \
-      put pm_cesdata.tn(t,regi,in,cesParameter); \
-      put " = ", pm_cesdata(t,regi,in,cesParameter); \
-      put "  [", foo(t,regi,in,cesParameter), "]" /; \
-      foo(t,regi,in,cesParameter) = pm_cesdata(t,regi,in,cesParameter); \
-    ); \
-  ); \
-  putclose logfile;
-
 *** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
@@ -435,6 +380,27 @@ file_parcalc_industry.lw = 0;
 file_parcalc_industry.nr = 2;
 file_parcalc_industry.nd = 3;
 file_parcalc_industry.nw = 0;
+file_parcalc_industry.nz = 0;
+
+*** ----- Reset ue/ppf Prices -------------------------------------------------
+$ifthen "%c_CES_calibration_prices%" == "derive" !! c_CES_calibration_prices
+loop (industry_ue_calibration_target_dyn37(out),
+  !! Prices of industry quantity targets are kept at the dY/dV level, instead 
+  !! of being set to 1, like the other ipf.
+  pm_cesdata(t,regi_dyn29(regi),out,"price")
+  = p29_CESderivative(t,regi,"inco",out);
+
+  !! Prices of ppf to the industry quantity targets are adjusted to compensate 
+  !! for the up-stream price change.
+  pm_cesdata(t,regi_dyn29(regi),ppf(in),"price")$( cesOut2cesIn_below(out,in) )
+  = pm_cesdata(t,regi,in,"price")
+  / p29_CESderivative(t,regi,"inco",out);
+);
+$endif
+
+*** ----- Minimum Prices ------------------------------------------------------
+pm_cesdata(t,regi_dyn29(regi),in_industry_dyn37(in),"price")
+= max(1e-4, pm_cesdata(t,regi,in,"price"));
 
 put file_parcalc_industry;
 *** ----- Historic Periods ----------------------------------------------------
@@ -449,37 +415,21 @@ loop ((t_29hist(t),regi_dyn29(regi)),
   );
   put " " /;
 
-  !! adjust historic prices to meet Euler identity
-  put "--- price adjustments to meet Euler identity ---" /;
-  loop (industry_ue_calibration_target_dyn37(out),
+  !! - adjust ppf prices for UEs with only ppf inputs
+  loop (industry_ue_calibration_target_dyn37(out)$(
+                                           sum(cesOut2cesIn(out,ipf), 1) eq 0 ),
     sm_tmp
     = pm_cesdata(t,regi,out,"quantity")
-!!     / p29_cesIO_load(t,regi,out);
-    / sum(cesOut2cesIn_below(out,ppf(in)),
-        pm_cesdata(t,regi,in,"price") * pm_cesdata(t,regi,in,"quantity")
+    / sum(cesOut2cesIn(out,in),
+        pm_cesdata(t,regi,in,"price")
+      * pm_cesdata(t,regi,in,"quantity")
       );
 
-    if (sm_tmp ne 1,
-      put t.tl, "   ", regi.tl, "   ", out.tl, "   ";
-      put pm_cesdata(t,regi,out,"quantity"), " / ";
-      put sum(cesOut2cesIn_below(out,ppf(in)),
-            pm_cesdata(t,regi,in,"price")
-          * pm_cesdata(t,regi,in,"quantity")
-          );
-      put " = ", sm_tmp /;
-      loop (cesOut2cesIn_below(out,ppf(in)),
-        put pm_cesdata.tn(t,regi,in,"price"), " = ";
-        put pm_cesdata(t,regi,in,"price"), " -> ";
-        put (pm_cesdata(t,regi,in,"price") * sm_tmp) /;
-      );
-      put " " /;
-  
-      pm_cesdata(t,regi,ppf(in),"price")$( cesOut2cesIn_below(out,in) )
-      = pm_cesdata(t,regi,in,"price")
-      * sm_tmp;
-    );
+    pm_cesdata(t,regi,in,"price")$( cesOut2cesIn(out,in) )
+    = pm_cesdata(t,regi,in,"price")
+    * sm_tmp;
   );
-  put " " /;
+
 
   !! - [x] replace ppf quantities (from datainput)
   !! - calculate ipf quantities
@@ -497,21 +447,63 @@ loop ((t_29hist(t),regi_dyn29(regi)),
   );
   put " " /;
 
+  !! - adjust ipf prices below UE target
+  put "--- adjust ipf prices ---" /;
+  loop (industry_ue_calibration_target_dyn37(out)$(
+                                           !! only if ipf leaves
+                                           sum(cesOut2cesIn(out,ipf), 1) ne 0 ),
+    put t.tl, "   ", regi.tl, "   ", out.tl /;
+    loop (cesOut2cesIn(out,ipf),
+      put @3 pm_cesdata.tn(t,regi,ipf,"price"), "   ";
+      put pm_cesdata(t,regi,ipf,"price"), " -> ";
+    );
+
+    sm_tmp
+    = ( pm_cesdata(t,regi,out,"quantity")
+      - sum(cesOut2cesIn(out,ppf),
+          pm_cesdata(t,regi,ppf,"price")
+        * pm_cesdata(t,regi,ppf,"quantity")
+        )
+      )
+    / sum(cesOut2cesIn(out,ipf),
+        pm_cesdata(t,regi,ipf,"price")
+      * pm_cesdata(t,regi,ipf,"quantity")
+      );
+
+    pm_cesdata(t,regi,ipf,"price")$( cesOut2cesIn(out,ipf) )
+    = pm_cesdata(t,regi,ipf,"price")
+    * sm_tmp;
+
+    loop (cesOut2cesIn(out,ipf),
+      put pm_cesdata(t,regi,ipf,"price") /;
+    );
+  );
+  put " " /;
+
   !! - calculate efficiency parameters
   put "--- calculate efficiency parameters ---" /;
-  loop ((cesOut2cesIn(out,in),cesOut2cesIn_below("ue_industry",in)),
-    pm_cesdata(t,regi,in,"xi")
-    = (pm_cesdata(t,regi,in,"price")  * pm_cesdata(t,regi,in,"quantity"))
-    / (pm_cesdata(t,regi,out,"price") * pm_cesdata(t,regi,out,"quantity"));
+  loop ((cesOut2cesIn(out,in),cesOut2cesIn_below("ue_industry",in))$( 
+                                 NOT industry_ue_calibration_target_dyn37(in) ),
+    put "pm_cesdata('", t.tl, "','", regi.tl, "','", in.tl, "')" /;
 
-    put pm_cesdata.tn(t,regi,in,"xi"), " = ";
+    pm_cesdata(t,regi,in,"xi")
+    = pm_cesdata(t,regi,in,"price")
+    * pm_cesdata(t,regi,in,"quantity")
+    / pm_cesdata(t,regi,out,"quantity");
+
+    put "   xi: ";
+    put pm_cesdata(t,regi,in,"price"), " * ";
+    put pm_cesdata(t,regi,in,"quantity"), " / ";
+    put pm_cesdata(t,regi,out,"quantity"), " = ";
     put pm_cesdata(t,regi,in,"xi") /;
 
     pm_cesdata(t,regi,in,"eff")
     = pm_cesdata(t,regi,out,"quantity")
     / pm_cesdata(t,regi,in,"quantity");
 
-    put pm_cesdata.tn(t,regi,in,"eff"), " = ";
+    put "  eff: ";
+    put pm_cesdata(t,regi,out,"quantity"), " / ";
+    put pm_cesdata(t,regi,in,"quantity"), " = ";
     put pm_cesdata(t,regi,in,"eff") /;
 
     loop (t0,
@@ -524,8 +516,8 @@ loop ((t_29hist(t),regi_dyn29(regi)),
       pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
     );
 
-    put pm_cesdata.tn(t,regi,in,"effGr"), " = ";
-    put pm_cesdata(t,regi,in,"effGr") /;
+    put "effGr: ", pm_cesdata(t,regi,in,"effGr") /;
+    put " " /;
   );
   put " " /;
 
@@ -535,6 +527,7 @@ loop ((t_29hist(t),regi_dyn29(regi)),
                sum(cesOut2cesIn(out,industry_ue_calibration_target_dyn37), 1) ),
     put cesRev2cesIO.tn(counter,out) /;
     
+$ontext
     if (%c_CES_calibration_iteration% gt 1, !! c_CES_calibration_iteration gt 1
       put "--- adjust prices ---" /;
       loop (cesOut2cesIn(out,in),
@@ -562,6 +555,7 @@ loop ((t_29hist(t),regi_dyn29(regi)),
       );
       put " " /;
     );
+$offtext
 
     put "--- calculate parameters ---" /;
     pm_cesdata(t,regi,out,"quantity")
@@ -616,7 +610,7 @@ loop ((regi_dyn29(regi),cesOut2cesIn2(out,in2))$(
       !! specific energy use in last historic period
     * (pm_cesdata(t2,regi,in,"quantity") / pm_cesdata(t2,regi,out,"quantity"))
       !! efficiency growth trajectory
-    * ((1 + pm_ue_eff_target(out)) ** (t.val - pm_ttot_val(t2)));
+    * ((1 + pm_ue_eff_target(out)) ** (pm_ttot_val(t2) - t.val));
   );
 
   !! constant quantities after 2100
@@ -663,6 +657,7 @@ loop ((regi_dyn29(regi),cesOut2cesIn2(out,in2))$(
 );
 
 *** ----- Remaining Cases Efficiency Growth Targets ---------------------------
+put ">>> Efficiency Growth Targets <<<" /;
 !! - [x] derive prices
 
 !! - keep ppf quantities
@@ -699,25 +694,80 @@ loop (in_industry_dyn37(ppf(in))$(
 );
 
 !! fill efficiency parameters for ppfen and ipf, except ipf directly below UE
-loop ((t2(t_29hist),cesOut2cesIn(out,in_industry_dyn37(in)))$( 
+loop ((t2(t_29hist),cesOut2cesIn(in_industry_dyn37(out),in))$( 
                               ord(t_29hist) eq card(t_29hist)
                           AND (ppfen(in) OR ipf(in))
                           AND NOT industry_ue_calibration_target_dyn37(out)
                           AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
+
   pm_cesdata(t,regi_dyn29(regi),in,"xi")$( NOT t_29hist(t) )
   = pm_cesdata(t2,regi,in,"xi");
 
   pm_cesdata(t,regi_dyn29(regi),in,"eff")$( NOT t_29hist(t) )
   = pm_cesdata(t2,regi,in,"eff");
-
-  pm_cesdata(t,regi_dyn29(regi),in,"effGr")$( NOT t_29hist(t) )
-  = pm_cesdata(t2,regi,in,"effGr");
 );
 
-!! - calculate ipf from input quantites and efficiency parameters
+!! - adjust efficiency parameters for feelhth_X and feh2_X
+loop (cesOut2cesIn(in_industry_dyn37(out),in)$( 
+                              (ppfen(in) OR ipf(in))
+                          AND NOT industry_ue_calibration_target_dyn37(out)
+                          AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
+
+  loop (in2$( pm_calibrate_eff_scale(in,in2,"level") ),
+    p29_t_tmp(t)$( NOT t_29hist(t) )
+    = pm_calibrate_eff_scale(in,in2,"level")
+    / ( 1
+      + exp((pm_calibrate_eff_scale(in,in2,"midperiod") - t.val)
+          / pm_calibrate_eff_scale(in,in2,"width")
+          )
+      );
+
+    p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
+
+    pm_cesdata(t,regi_dyn29(regi),in,"eff")$( NOT t_29hist(t) )
+    = ( ( ( ( pm_cesdata(t,regi,in,"xi")
+            * pm_cesdata(t,regi,in,"eff")
+           ** pm_cesdata(t,regi,out,"rho")
+            )
+          * max(0, (1 - p29_t_tmp(t)))
+          )
+        + ( ( pm_cesdata(t,regi,in2,"xi")
+            * pm_cesdata(t,regi,in2,"eff")
+           ** pm_cesdata(t,regi,out,"rho")
+            )
+          * min(1, p29_t_tmp(t))
+          )
+        )
+      / pm_cesdata(t,regi,in,"xi")
+      )
+   ** (1 / pm_cesdata(t,regi,out,"rho"));
+  );
+);
+
+loop ((t0,cesOut2cesIn(in_industry_dyn37(out),in))$( 
+                              (ppfen(in) OR ipf(in))
+                          AND NOT industry_ue_calibration_target_dyn37(out)
+                          AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
+
+  !! transfer time-variant components to effGr
+  pm_cesdata(t,regi_dyn29(regi),in,"effGr")$( NOT t_29hist(t) )
+  = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
+  * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
+ ** (1 / pm_cesdata(t,regi,out,"rho"));
+
+  !! keep xi and eff fixed
+  pm_cesdata(t,regi_dyn29(regi),in,"xi")$( NOT t_29hist(t) )
+  = pm_cesdata(t0,regi,in,"xi");
+
+  pm_cesdata(t,regi_dyn29(regi),in,"eff")$( NOT t_29hist(t) )
+  = pm_cesdata(t0,regi,in,"eff");
+);
+
+!! - calculate ipf from input quantities and efficiency parameters
 loop ((cesRev2cesIO(counter,ipf(out)),
        cesOut2cesIn_below(industry_ue_calibration_target_dyn37,out))$(
                              NOT cesOut2cesIn_below("ue_steel_secondary",out) ),
+
   pm_cesdata(t,regi_dyn29(regi),out,"quantity")$( NOT t_29hist(t) )
   = sum(cesOut2cesIn2(out,in),
       pm_cesdata(t,regi,in,"xi")
@@ -799,6 +849,7 @@ loop (cesOut2cesIn(industry_ue_calibration_target_dyn37(out),in)$(
 
 *** ----- Efficiency Parameters Above Industry UE Targets ---------------------
 put logfile, ">>> UE quantities <<<" /;
+$ontext
 loop (cesRev2cesIO(counter,out)$(
          sum(cesOut2cesIn2(out,industry_ue_calibration_target_dyn37(in2)), 1) ),
   loop ((t,regi_dyn29(regi))$( NOT t_29hist(t) ),
@@ -846,6 +897,18 @@ put pm_cesdata(t,regi,in,"price") /;
       );
   );
 );  
+$offtext
+
+!! Calculate ipf quantities
+loop (cesRev2cesIO(counter,out)$( 
+           sum(cesOut2cesIn(out,industry_ue_calibration_target_dyn37(in)), 1) ),
+
+  pm_cesdata(t,regi,out,"quantity")
+  = sum(cesOut2cesIn(out,in),
+      pm_cesdata(t,regi,in,"price")
+    * pm_cesdata(t,regi,in,"quantity")
+    );
+);
 putclose logfile;
 
 put logfile, ">>> UE efficiencies <<<" /;
@@ -904,9 +967,6 @@ loop (t_29_last,
 );
 
 *** Exclude Industry from all Calculations Hereafter
-loop ((t,regi_dyn29(regi),cesOut2cesIn_below("ue_industry",in),cesParameter),
-  foo(t,regi,in,cesParameter) = pm_cesdata(t,regi,in,cesParameter);
-);
 
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
@@ -921,6 +981,7 @@ loop (in$(    industry_ue_calibration_target_dyn37(in)
 );
 
 
+execute_unload "debug.gdx";
 *** ===== E N D   I N D U S T R Y   C A L C U L A T I O N ====================
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
 
@@ -947,7 +1008,6 @@ loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out)
     * pm_cesdata(t_29,regi_dyn29,in,"quantity")
     );
 );
-CHECK("622");
 display "compute putty" , pm_cesdata;
 
 v29_cesdata_putty.lo(t_29,regi_dyn29(regi),in)$putty_compute_in(in) = 1e-6;
@@ -1032,8 +1092,6 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 );
 
 
-CHECK("706");
-
 ***(B)
 loop  ((t_29,cesRev2cesIO(counter,out),ipf_29(out))$( NOT (sameas(out,"inco") OR in_below_putty(out) OR ppf_putty(out)) ),
 
@@ -1059,7 +1117,6 @@ pm_cesdata(t_29,regi_dyn29,out,"quantity")$ (( NOT t0(t_29)) AND ppfIO_putty(out
 
 );
 
-CHECK("733");
 *** Ensure that the share of labour is higher than 20% for historical periods
 *** Otherwise rescale prices and produce a message in the logfile
         loop ((t_29hist(t),regi_dyn29),
@@ -1138,7 +1195,6 @@ CHECK("733");
         
         );
 
-CHECK("811");
 *** Check if some quantities are negative.
 if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,in,"quantity")) lt 0,
   put logfile;
@@ -1179,7 +1235,6 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
 );
 display "after change up to en consistency", pm_cesdata;
 
-CHECK("851");
 *** Then, we consider the bottom level of the CES tree, where capital and labor have specific restrictions
 *** Capital works as for the other ppfen, Labour will be the adjustment variable to meet inco
 *** xi will not be equal to the income share of capital (from equation price=derivative)
@@ -1194,7 +1249,6 @@ pm_cesdata(t_29,regi_dyn29,"kap","eff")
 
 display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 
-CHECK("866");
 *** Second, adjust the price of labour, so that, whithout changing the price of
 *** energy, the Euler equation holds.
 pm_cesdata(t_29, regi_dyn29,"lab","price")
@@ -1207,7 +1261,6 @@ pm_cesdata(t_29, regi_dyn29,"lab","price")
   / pm_cesdata(t_29,regi_dyn29,"lab","quantity")
 ;
 
-CHECK("879");
 *** Fourth, adjust eff and xi  of labour and energy so that the price matches the derivative.
 loop ((ces_29("inco",in))$( Not sameas(in, "kap")),
 pm_cesdata(t_29, regi_dyn29,in,"xi") = pm_cesdata(t_29, regi_dyn29,in,"price")*pm_cesdata(t_29, regi_dyn29,in,"quantity")
@@ -1224,7 +1277,6 @@ loop ((t_29,regi_dyn29(regi),in_29)$(    pm_cesdata(t_29,regi,in_29,"xi")       
   sm_tmp = 1;
 );
 
-CHECK("896");
 if (sm_tmp,
   put logfile;
   loop ((t_29,regi_dyn29(regi),in_29)$(    pm_cesdata(t_29,regi,in_29,"xi")       le 0
@@ -1252,7 +1304,6 @@ if (sm_tmp,
   abort "assertion xi gt 0 failed, see .log file for details";
 );
 
-CHECK("923");
 display " end consistency", pm_cesdata;
 *** End of the part ensuring consistency given the ppfEn prices and quantities, the ipf prices,
 *** the labor quantities, and the capital efficiency growth.
@@ -1504,7 +1555,6 @@ $endif.repEsubs
   );
 );
 
-CHECK("1175");
 
 !! recursively calculate all ipf quantities
 loop ((cesRev2cesIO(counter,out),cesOut2cesIn_below("ue_industry",ipf(out)))$( 
@@ -1526,7 +1576,6 @@ loop ((cesRev2cesIO(counter,out),cesOut2cesIn_below("ue_industry",ipf(out)))$(
 
 );
 
-CHECK("1197");
 
 ***_____________________________ END OF BEYOND CALIB ________________________________________
 
@@ -1545,7 +1594,6 @@ loop (cesOut2cesIn(out,in) $  (pm_cesdata_sigma("2015",out) eq INF ),
       );
       );
 
-CHECK("1215");
 
 *** For the estimation of Esubs: set the CES out to 1 if the CES inputs are in the data
 loop (cesOut2cesIn(out,in) $ (pm_cesdata_sigma("2015",out) eq -1),
@@ -1563,7 +1611,6 @@ v29_rho.L(regi,out)$( pm_cesdata_sigma("2015",out) eq -1) = 0.5;
 v29_rho.up(regi,out) = 0.8; !! corresponds to sigma = 5
 v29_rho.lo(regi,out) = -9; !! corresponds to sigma = 0.1
 
-CHECK("1233");
 loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1) AND ppfKap(in)),
 
  p29_output_estimation(regi_dyn29(regi),out) = ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out))
@@ -1577,7 +1624,6 @@ loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1)
 );
 solve esubs minimizing v29_esub_err using nlp;
 
-CHECK("1247");
 if ( NOT ( esubs.solvestat eq 1  AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
   execute_unload "abort.gdx";
 abort "model esubs is infeasible";
@@ -1592,7 +1638,6 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1) =
  / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),p29_esubGrowth))    !! lambda = 1 in 2015 and 2 in 2050;
 ;
 
-CHECK("1261");
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") lt 0) = min(pm_cesdata(t,regi,in,"rho"), 1 - 1/0.8); !! If complementary factors, sigma should be below 0.8
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") ge 0) = max(pm_cesdata(t,regi,in,"rho"), 1 - 1/1.2); !! If substitution factors, sigma should be above 1.2
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = max ( v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
@@ -1601,7 +1646,6 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min (
 ***_________ END COMPUTATION OF ELASTICITIES OF SUBSTITUTION _________
 
 
-CHECK("1270");
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
 *** (a) for items in ces_29
 loop ((t_29,regi_dyn29(regi),ces_29(out,in),t0)$(
@@ -1615,7 +1659,6 @@ loop ((t_29,regi_dyn29(regi),ces_29(out,in),t0)$(
   pm_cesdata(t_29,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
 );
 
-CHECK("1284");
 pm_cesdata(t_29,regi_dyn29(regi),"inco","effgr") = 1;
 
 *** (b) for items beyond calibration, whose growth beyond t_29hist is treated 
@@ -1634,13 +1677,11 @@ loop ((t_29,t0,cesOut2cesIn(out,in),regi_dyn29(regi))$(
   pm_cesdata(t_29,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
 );
 
-CHECK("1303");
 loop ((t0,in_beyond_calib_29_excludeRoot)$( NOT in_industry_dyn37(in_beyond_calib_29_excludeRoot) ),
   pm_cesdata(t_29,regi_dyn29,in,"eff") = pm_cesdata(t0,regi_dyn29,in,"eff");
   pm_cesdata(t_29,regi_dyn29,in,"xi")  = pm_cesdata(t0,regi_dyn29,in,"xi");
 );
 
-CHECK("1309");
 
 *** For beyond calib: treatment of effGr after historical periods
 
@@ -1664,7 +1705,6 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out)
   / p29_efficiency_growth(t2,regi,"%cm_GDPscen%",in);
 );
 
-CHECK("1333");
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 
@@ -1683,7 +1723,6 @@ loop (complements_ref(in, in2),
 );
 ***_______________________ END COMPLEMENTARY CONSTRAINTS _____________________________
 
-CHECK("1352");
 
 *** All efficiences after t_29_last are set to their t_29_last values. This is 
 *** done in order to avoid xi negative in the latest periods. Should not be 
@@ -1697,7 +1736,6 @@ pm_cesdata(t,regi_dyn29(regi),in,"xi")$(t.val gt pm_ttot_val(t_29_last)) = pm_ce
 ***_______________________ REPORTING FOR THE ELASTICITIES OF SUBSTITUTION_______________
 *** it has been separated from the esubs model results since the PDF reporting needs the CES efficiencies after 2015 as well
 
-CHECK("1366");
 put capital_unit;
 
 loop (regi_dyn29(regi),
@@ -1735,8 +1773,6 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
 );
 putclose;
 
-CHECK("1404");
-CHECK("1405");
 
 ***_____________________________ END OF ESUBS REPORTING ________________________________________
 
@@ -1758,7 +1794,6 @@ p29_test_CES_putty_recursive(t_29hist,regi_dyn29,ppf_putty(in))$(
                                                                 NOT ppf_29(in) )
 = pm_cesdata_putty(t_29hist,regi_dyn29,in,"quantity");
 
-CHECK("1427");
 display "consistency beyond 1", p29_test_CES_recursive, 
         p29_test_CES_putty_recursive;
 
@@ -1921,18 +1956,45 @@ if (sm_tmp,
   abort "something is wrong with the consistency of pm_cesdata, see logfile";
 );
 
-put logfile;
 sm_tmp = 0;
-loop ((t_29(t),regi_dyn29(regi),in)$( 
-            NOT sameas(in,"inco")  AND pm_cesdata(t,regi,in,"effGr") lt 1e-10 ),
-  put pm_cesdata.tn(t,regi,in,"effGr"), " = ", pm_cesdata(t,regi,in,"effGr") /;
-  sm_tmp = 1;
+loop ((t_29(t),regi_dyn29(regi),cesOut2cesIn(out,in))$( NOT sameas(in,"inco") ),
+  if (   pm_cesdata(t,regi,in,"effGr") lt 1e-10
+     AND ( pm_cesdata(t,regi,in,"xi")
+         * ( pm_cesdata(t,regi,in,"eff")
+           * pm_cesdata(t,regi,in,"effGr")
+           )
+        ** pm_cesdata(t,regi,out,"rho")
+         ) lt 1e-10,
+
+    put logfile;
+    if (sm_tmp eq 0,
+      put ">>> Too low efficiency growth and total efficiency parameters <<<" /;
+    );
+
+    put t.tl, ",", regi.tl, ",", in.tl, ": ";
+    put @30 pm_cesdata(t,regi,in,"xi"), " * (";
+    put pm_cesdata(t,regi,in,"eff"), " * ";
+    put pm_cesdata(t,regi,in,"effGr"), ") ^ ";
+    put pm_cesdata(t,regi,out,"rho"), " = ";
+    put ( pm_cesdata(t,regi,in,"xi")
+        * exp(
+            log( pm_cesdata(t,regi,in,"eff")
+               * pm_cesdata(t,regi,in,"effGr")
+               )
+          * pm_cesdata(t,regi,out,"rho")
+          )
+        ) /;
+    sm_tmp = 1;
+  );
+);
+
+if (sm_tmp,
+  put " " /;
+  putclose logfile;
+  execute_unload "abort.gdx";
+  abort "some total efficiencies are too low, see logfile for details";
 );
 putclose logfile;
-if (sm_tmp eq 1,
-  Execute_unload "abort.gdx";
-  abort "some efficiency growth parameters are too low. See logfile for more details";
-);
 
 ***_____________________________ END OF CONSISTENCY CHECKS ________________________________________
 
@@ -1954,4 +2016,3 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 
 $ONorder
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms
-CHECK("1611");
