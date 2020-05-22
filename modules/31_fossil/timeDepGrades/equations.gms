@@ -179,7 +179,7 @@ q31_fuExtrInc(ttot+1,regi,enty2rlf_inc(enty,rlf))$((p31_grades(ttot,regi,"xi3",e
          =l=
          (1 + p31_datafosdyn(regi,enty,rlf,"inc"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (vm_fuExtr(ttot,regi,enty,rlf) + p31_datafosdyn(regi,enty,rlf,"incoffset"))
 $ifthen.cm_oil_scen %cm_oil_scen% == "highOil"	  +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
-                                                  +(10)$(cm_startyear eq 2015 AND cm_oil_scen eq 6 AND pm_ttot_val(ttot+1) eq 2015 AND (sameas(enty,"peoil") AND sameas(rlf,"1") AND sameas(regi,"REF")));
+                                                  +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND (sameas(enty,"peoil") AND sameas(rlf,"1") AND sameas(regi,"REF")));
 $elseif.cm_oil_scen %cm_oil_scen% == "4"          +(10)$(cm_startyear eq 2015 AND pm_ttot_val(ttot+1) eq 2015 AND ((sameas(enty,"peoil") AND sameas(rlf,"7")) OR (sameas(enty,"pegas") AND sameas(rlf,"6"))))
 $endif.cm_oil_scen
 ;

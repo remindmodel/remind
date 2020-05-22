@@ -39,64 +39,69 @@ p31_costExPoly(regi,"xi2","peur") = 0;
 p31_costExPoly(regi,"xi3","peur")= ( (300/1000)* 3 ** 1.8) / ((p31_costExPoly(regi,"xi3","peur")* 14 /4.154) * 3) ** 2;
 p31_costExPoly(regi,"xi4","peur") = 0;
 
+
+***----------------------------------------------------------------------
+*** Get oil gas & coal extraction cost grade data
+***----------------------------------------------------------------------
+parameter f31_grades_oil(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about oil according to the grade structure concept. Unit: TWa"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/p31_grades_oil.cs4r"
+$offdelim
+/
+;
+
+parameter f31_grades_gas(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about gas according to the grade structure concept. Unit: TWa"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/p31_grades_gas.cs4r"
+$offdelim
+/
+;
+
+parameter f31_grades_coal(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about coal according to the grade structure concept. Unit: TWa"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/p31_grades_coal.cs4r"
+$offdelim
+/
+;
+
 ***----------------------------------------------------------------------
 *** Oil
 ***----------------------------------------------------------------------
-*SSP1
 $ifthen.cm_oil_scen %cm_oil_scen% == "lowOil"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_looil.inc"
-$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdec_lo.inc"
-*SSP2
+*SSP1
+p31_datafosdyn(all_regi,"peoil",rlf,"dec") = f31_grades_oil("2005",all_regi,"SSP1","dec",rlf);
+p31_grades(tall,regi,xirog,"peoil",rlf) = f31_grades_oil(tall,regi,"SSP1",xirog,rlf)$(not sameas(xirog,"dec"));
+
 $elseif.cm_oil_scen %cm_oil_scen% == "medOil"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_medoil.inc"
-$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdec_med.inc"
-*SSP5
+*SSP2
+p31_datafosdyn(all_regi,"peoil",rlf,"dec") = f31_grades_oil("2005",all_regi,"SSP2","dec",rlf);
+p31_grades(tall,regi,xirog,"peoil",rlf) = f31_grades_oil(tall,regi,"SSP2",xirog,rlf)$(not sameas(xirog,"dec"));
+
 $elseif.cm_oil_scen %cm_oil_scen% == "highOil"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_hioil.inc"
-$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdec_hi.inc"
+*SSP5
+p31_datafosdyn(all_regi,"peoil",rlf,"dec") = f31_grades_oil("2005",all_regi,"SSP5","dec",rlf);
+p31_grades(tall,regi,xirog,"peoil",rlf) = f31_grades_oil(tall,regi,"SSP5",xirog,rlf)$(not sameas(xirog,"dec"));
 $endif.cm_oil_scen
-* There is no specific data for cm_oil_scen in this module (use same as in 3)
-*if(cm_oil_scen eq 4,
-*abort "Error in module 31_fossil -> timeDepGrades: This oil scenario does not exist." ;
-*);
-*SSP3
-*if(cm_oil_scen eq 5,
-*$include "./modules/31_fossil/timeDepGrades/input/p31_grades_hioil_learn.inc";
-*$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdec_hi.inc";
-*);
-*SSP4
-*if(cm_oil_scen eq 6,
-*$include "./modules/31_fossil/timeDepGrades/input/p31_grades_looil_learn.inc";
-*$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdec_lo.inc";
-*);
-*if(cm_oil_scen ge 7,
-*abort "Error in module 31_fossil -> timeDepGrades: This oil scenario does not exist." ;
-*);
 
 ***----------------------------------------------------------------------
 *** Gas
 ***----------------------------------------------------------------------
-* There is no specific data for cm_gas_scen in this module (use same as in 1)
-*if(cm_gas_scen eq 0,
-*$include "./modules/31_fossil/timeDepGrades/input/p31_grades_logas_SSP1.inc";
-*abort "Error in module 31_fossil -> timeDepGrades: This gas scenario exists under the grades realisation only" ;
-*);
 *SSP1
 $ifthen.cm_gas_scen %cm_gas_scen% == "lowGas"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_logas.inc"
+p31_datafosdyn(all_regi,"pegas",rlf,"dec") = f31_grades_gas("2005",all_regi,"SSP1","dec",rlf);
+p31_grades(tall,regi,xirog,"pegas",rlf) = f31_grades_gas(tall,regi,"SSP1",xirog,rlf)$(not sameas(xirog,"dec"));
 *SSP2
 $elseif.cm_gas_scen %cm_gas_scen% == "medGas"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_medgas.inc"
-
+p31_datafosdyn(all_regi,"pegas",rlf,"dec") = f31_grades_gas("2005",all_regi,"SSP2","dec",rlf);
+p31_grades(tall,regi,xirog,"pegas",rlf) = f31_grades_gas(tall,regi,"SSP2",xirog,rlf)$(not sameas(xirog,"dec"));
 *SSP5
 $elseif.cm_gas_scen %cm_gas_scen% == "highGas"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_higas.inc"
+p31_datafosdyn(all_regi,"pegas",rlf,"dec") = f31_grades_gas("2005",all_regi,"SSP5","dec",rlf);
+p31_grades(tall,regi,xirog,"pegas",rlf) = f31_grades_gas(tall,regi,"SSP5",xirog,rlf)$(not sameas(xirog,"dec"));
 $endif.cm_gas_scen
-
-*if(cm_gas_scen ge 4,
-*$include "./modules/31_fossil/timeDepGrades/input/p31_grades_medgas.inc";
-*abort "Error in module 31_fossil -> timeDepGrades: This gas scenario does not exist." ;
-*);
 
 
 ***----------------------------------------------------------------------
@@ -106,13 +111,11 @@ $endif.cm_gas_scen
 *$include "./modules/31_fossil/timeDepGrades/input/p31_grades_vlocoal.inc";
 *);
 $ifthen.cm_coal_scen %cm_coal_scen% == "lowCoal"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_locoal.inc"
-
+p31_grades(tall,regi,xirog,"pecoal",rlf) = f31_grades_coal(tall,regi,"SSP1",xirog,rlf)$(not sameas(xirog,"dec"));
 $elseif.cm_coal_scen %cm_coal_scen% == "medCoal"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_medcoal.inc"
-
+p31_grades(tall,regi,xirog,"pecoal",rlf) = f31_grades_coal(tall,regi,"SSP2",xirog,rlf)$(not sameas(xirog,"dec"));
 $elseif.cm_coal_scen %cm_coal_scen% == "highCoal"
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_hicoal.inc"
+p31_grades(tall,regi,xirog,"pecoal",rlf) = f31_grades_coal(tall,regi,"SSP5",xirog,rlf)$(not sameas(xirog,"dec"));
 $endif.cm_coal_scen
 
 ***----------------------------------------------------------------------
@@ -141,6 +144,31 @@ p31_datafosdyn(regi,"pegas",rlf,"alph") = cm_trdadj * p31_datafosdyn(regi,"pegas
 
 p31_extraseed(ttot,regi,enty,rlf) = 0;
 *NB* extra seed value for the US gas sector to reduce initial price in EJ/yr
-p31_extraseed("2010","USA","pegas","2") = sm_EJ_2_TWa * 2;
+*SB 04/15/2020* Moved this parameter definition to moinput
+parameter p31_extraseed(tall,all_regi,all_enty,rlf)  "extra seed value that scales up the ramp-up potential"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/f31_extraseed.cs4r"
+$offdelim
+/
+;
+
+*------------------------------------
+*** Upper bound on oil extraction in MEA
+*------------------------------------
+*** Otherwise the model extracts everything from this cheap region
+*** vm_XpRes in 2005 should be equal to 1.4876897061 TWa (46.86 EJ)
+*** BP statistics, 2012 says that MEA produced 1.980321 TWa in 2005 and 1.955456 TWa in 2010, however
+*** there a linear fit with an average increase of 1.5% per year was found e.g 7% per 5-year period
+*** Low and medium resource cases
+
+parameter f31_Xport(ttot,all_regi,all_enty,all_LU_emi_scen) "Upper bounds on exports from MEA in early timesteps [TWyr]"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/f31_Xport.cs4r"
+$offdelim
+/
+;
+
 
 *** EOF ./modules/31_fossil/timeDepGrades/datainput.gms
