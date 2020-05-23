@@ -97,7 +97,8 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
 *** above the perfect substitutes if they are ppf_29.
 loop (cesOut2cesIn(in2,in)$(   
                     (NOT (ppf_29(in) AND in_complements(in)) AND ipf_29(in2))
-                 OR (in_industry_dyn37(in2) AND ipf(in2))                     ),
+                 OR (    in_industry_dyn37(in2) AND ipf(in2)
+                     AND NOT industry_ue_calibration_target_dyn37(in2))       ),
   p29_CESderivative(t,regi_dyn29(regi),out,in2)$(
                                              p29_CESderivative(t,regi,out,in2) )
   = 1;
@@ -382,9 +383,23 @@ file_parcalc_industry.nd = 3;
 file_parcalc_industry.nw = 0;
 file_parcalc_industry.nz = 0;
 
+put file_parcalc_industry;
 *** ----- Reset ue/ppf Prices -------------------------------------------------
 $ifthen "%c_CES_calibration_prices%" == "derive" !! c_CES_calibration_prices
+put ">>> Reset Prices <<<" /;
 loop (industry_ue_calibration_target_dyn37(out),
+  loop ((t,regi_dyn29(regi)),
+    put pm_cesdata.tn(t,regi,out,"price"), ": ";
+    put pm_cesdata(t,regi,out,"price"), " -> ";
+    put p29_CESderivative(t,regi,"inco",out) /;
+    loop (cesOut2cesIn_below(out,ppf(in)),
+      put "  ", pm_cesdata.tn(t,regi,in,"price"), ": ";
+      put pm_cesdata(t,regi,in,"price"), " -> ";
+      put ( pm_cesdata(t,regi,in,"price") 
+          / p29_CESderivative(t,regi,"inco",out)) /;
+    );
+  );
+
   !! Prices of industry quantity targets are kept at the dY/dV level, instead 
   !! of being set to 1, like the other ipf.
   pm_cesdata(t,regi_dyn29(regi),out,"price")
@@ -396,204 +411,92 @@ loop (industry_ue_calibration_target_dyn37(out),
   = pm_cesdata(t,regi,in,"price")
   / p29_CESderivative(t,regi,"inco",out);
 );
+put " " /;
 $endif
 
 *** ----- Minimum Prices ------------------------------------------------------
 pm_cesdata(t,regi_dyn29(regi),in_industry_dyn37(in),"price")
 = max(1e-4, pm_cesdata(t,regi,in,"price"));
 
-put file_parcalc_industry;
 *** ----- Historic Periods ----------------------------------------------------
 put ">>> Historic Periods Calculations <<<" /;
-loop ((t_29hist(t),regi_dyn29(regi)),
-
-  !! - [x] derive prices
-  put "--- derive prices ---" /;
-  loop (in_industry_dyn37(in),
-    put pm_cesdata.tn(t,regi,in,"price"), " = ";
-    put pm_cesdata(t,regi,in,"price") /;
-  );
-  put " " /;
-
-  !! - adjust ppf prices for UEs with only ppf inputs
-  loop (industry_ue_calibration_target_dyn37(out)$(
-                                           sum(cesOut2cesIn(out,ipf), 1) eq 0 ),
-    sm_tmp
-    = pm_cesdata(t,regi,out,"quantity")
-    / sum(cesOut2cesIn(out,in),
-        pm_cesdata(t,regi,in,"price")
-      * pm_cesdata(t,regi,in,"quantity")
-      );
-
-    pm_cesdata(t,regi,in,"price")$( cesOut2cesIn(out,in) )
-    = pm_cesdata(t,regi,in,"price")
-    * sm_tmp;
-  );
-
-
-  !! - [x] replace ppf quantities (from datainput)
-  !! - calculate ipf quantities
-  put "--- calculate ipf quantities ---" /;
-  loop (cesRev2cesIO(counter,ipf(in_industry_dyn37(out)))$(
-                                NOT industry_ue_calibration_target_dyn37(out) ),
-    pm_cesdata(t,regi,out,"quantity")
-    = sum(cesOut2cesIn(out,in),
-        pm_cesdata(t,regi,in,"price")
-      * pm_cesdata(t,regi,in,"quantity")
-      );
-
-    put pm_cesdata.tn(t,regi,out,"quantity"), " = ";
-    put pm_cesdata(t,regi,out,"quantity") /;
-  );
-  put " " /;
-
-  !! - adjust ipf prices below UE target
-  put "--- adjust ipf prices ---" /;
-  loop (industry_ue_calibration_target_dyn37(out)$(
-                                           !! only if ipf leaves
-                                           sum(cesOut2cesIn(out,ipf), 1) ne 0 ),
-    put t.tl, "   ", regi.tl, "   ", out.tl /;
-    loop (cesOut2cesIn(out,ipf),
-      put @3 pm_cesdata.tn(t,regi,ipf,"price"), "   ";
-      put pm_cesdata(t,regi,ipf,"price"), " -> ";
-    );
-
-    sm_tmp
-    = ( pm_cesdata(t,regi,out,"quantity")
-      - sum(cesOut2cesIn(out,ppf),
-          pm_cesdata(t,regi,ppf,"price")
-        * pm_cesdata(t,regi,ppf,"quantity")
-        )
-      )
-    / sum(cesOut2cesIn(out,ipf),
-        pm_cesdata(t,regi,ipf,"price")
-      * pm_cesdata(t,regi,ipf,"quantity")
-      );
-
-    pm_cesdata(t,regi,ipf,"price")$( cesOut2cesIn(out,ipf) )
-    = pm_cesdata(t,regi,ipf,"price")
-    * sm_tmp;
-
-    loop (cesOut2cesIn(out,ipf),
-      put pm_cesdata(t,regi,ipf,"price") /;
-    );
-  );
-  put " " /;
-
-  !! - calculate efficiency parameters
-  put "--- calculate efficiency parameters ---" /;
-  loop ((cesOut2cesIn(out,in),cesOut2cesIn_below("ue_industry",in))$( 
-                                 NOT industry_ue_calibration_target_dyn37(in) ),
-    put "pm_cesdata('", t.tl, "','", regi.tl, "','", in.tl, "')" /;
-
-    pm_cesdata(t,regi,in,"xi")
-    = pm_cesdata(t,regi,in,"price")
+!! - get prices
+!! - replace quantities
+!! - scale prices
+loop ((industry_ue_calibration_target_dyn37(out),regi_dyn29(regi),t(t_29hist)),
+  sm_tmp 
+  = pm_cesdata(t,regi,out,"quantity")
+  / sum(cesOut2cesIn_below(out,ppf(in)),
+      pm_cesdata(t,regi,in,"price")
     * pm_cesdata(t,regi,in,"quantity")
-    / pm_cesdata(t,regi,out,"quantity");
-
-    put "   xi: ";
-    put pm_cesdata(t,regi,in,"price"), " * ";
-    put pm_cesdata(t,regi,in,"quantity"), " / ";
-    put pm_cesdata(t,regi,out,"quantity"), " = ";
-    put pm_cesdata(t,regi,in,"xi") /;
-
-    pm_cesdata(t,regi,in,"eff")
-    = pm_cesdata(t,regi,out,"quantity")
-    / pm_cesdata(t,regi,in,"quantity");
-
-    put "  eff: ";
-    put pm_cesdata(t,regi,out,"quantity"), " / ";
-    put pm_cesdata(t,regi,in,"quantity"), " = ";
-    put pm_cesdata(t,regi,in,"eff") /;
-
-    loop (t0,
-      pm_cesdata(t,regi,in,"effGr")
-      = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
-      * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
-     ** (1 / pm_cesdata(t,regi,out,"rho"));
-
-      pm_cesdata(t,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
-      pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
     );
 
-    put "effGr: ", pm_cesdata(t,regi,in,"effGr") /;
-    put " " /;
-  );
-  put " " /;
-
-  !! above UE targets
-  put "=== above UE targets ===" /;
-  loop (cesRev2cesIO(counter,out)$( 
-               sum(cesOut2cesIn(out,industry_ue_calibration_target_dyn37), 1) ),
-    put cesRev2cesIO.tn(counter,out) /;
-    
-$ontext
-    if (%c_CES_calibration_iteration% gt 1, !! c_CES_calibration_iteration gt 1
-      put "--- adjust prices ---" /;
-      loop (cesOut2cesIn(out,in),
-        sm_tmp
-        = ( ( p29_cesIO_load(t,regi,in)
-            / pm_cesdata(t,regi,in,"quantity")
-            )
-         ** sign(pm_cesdata(t,regi,out,"rho"))
-          );
-
-        put t.tl, "   ", regi.tl, "   ", in.tl, "   (";
-        put p29_cesIO_load(t,regi,in), " / ";
-        put pm_cesdata(t,regi,in,"quantity"), ") ^ ";
-        if (sign(pm_cesdata(t,regi,out,"rho")) eq 1, put "1"; else put "-1");
-        put " = ", sm_tmp /;
-        if (sm_tmp ne 1,
-          put "   ", pm_cesdata(t,regi,in,"price"), " -> ";
-          
-          pm_cesdata(t,regi,in,"price")
-          = pm_cesdata(t,regi,in,"price")
-          * sm_tmp;
-
-          put pm_cesdata(t,regi,in,"price") /;
-        );
-      );
-      put " " /;
-    );
-$offtext
-
-    put "--- calculate parameters ---" /;
-    pm_cesdata(t,regi,out,"quantity")
-    = sum(cesOut2cesIn(out,in),
-        pm_cesdata(t,regi,in,"price")
-      * pm_cesdata(t,regi,in,"quantity")
-      );
-    put pm_cesdata.tn(t,regi,out,"quantity"), " = ";
-    put pm_cesdata(t,regi,out,"quantity") /;
-
-    loop (cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-      = pm_cesdata(t,regi,in,"price")
-      * pm_cesdata(t,regi,in,"quantity")
-      / pm_cesdata(t,regi,out,"quantity");
-
-      pm_cesdata(t,regi,in,"eff")
-      = pm_cesdata(t,regi,out,"quantity")
-      / pm_cesdata(t,regi,in,"quantity");
-
-      put pm_cesdata.tn(t,regi,in,"xi"),  " = ", pm_cesdata(t,regi,in,"xi") /;
-      put pm_cesdata.tn(t,regi,in,"eff"), " = ", pm_cesdata(t,regi,in,"eff") /;
-
-      loop (t0,
-        pm_cesdata(t,regi,in,"effGr")
-        = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
-        * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
-       ** (1 / pm_cesdata(t,regi,out,"rho"));
-       
-        pm_cesdata(t,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
-        pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
-      );
-      put pm_cesdata.tn(t,regi,in,"effGr"), " = ";
-      put pm_cesdata(t,regi,in,"effGr") /;
-    );
-  );
-  put " " /;
+loop (cesOut2cesIn_below(out,ppf(in)),
+  put pm_cesdata.tn(t,regi,in,"price"), " = ";
+  put pm_cesdata(t,regi,in,"price"), " -> ";
+  put (pm_cesdata(t,regi,in,"price") * sm_tmp) /;
 );
+
+  pm_cesdata(t,regi,ppf(in),"price")$( cesOut2cesIn_below(out,in) )
+  = pm_cesdata(t,regi,in,"price")
+  * sm_tmp;
+);
+put " " /;
+
+!! calculate ipf quantities, except industry quantitiy targets
+loop ((cesRev2cesIO(counter,in_industry_dyn37(ipf(out))),regi_dyn29(Regi),
+       t(t_29hist))$( NOT industry_ue_calibration_target_dyn37(out) ),
+  pm_cesdata(t,regi,out,"quantity")
+  = sum(cesOut2cesIn(out,in),
+      pm_cesdata(t,regi,in,"price")
+    * pm_cesdata(t,regi,in,"quantity")
+    );
+
+put pm_cesdata.tn(t,regi,out,"quantity"), " = ";
+put pm_cesdata(t,regi,out,"quantity") /;
+loop (cesOut2cesIn(out,in),
+  put @4 in.tl, @25 pm_cesdata(t,regi,in,"quantity");
+  put " @ ", pm_cesdata(t,regi,in,"price"), " = ";
+  put (pm_cesdata(t,regi,in,"price") * pm_cesdata(t,regi,in,"quantity")) /;
+);
+
+);
+put " " /;
+
+!! calculate efficiency parameters
+loop ((cesOut2cesIn_below("ue_industry",in),cesOut2cesIn(out,in),
+       regi_dyn29(regi),t(t_29hist),t0),
+  pm_cesdata(t,regi,in,"xi")
+  = pm_cesdata(t,regi,in,"price")
+  * pm_cesdata(t,regi,in,"quantity")
+  / pm_cesdata(t,regi,out,"quantity");
+
+  pm_cesdata(t,regi,in,"eff")
+  = pm_cesdata(t,regi,out,"quantity")
+  / pm_cesdata(t,regi,in,"quantity");
+
+  pm_cesdata(t,regi,in,"effGr")
+  = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
+  * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
+ ** (1 / pm_cesdata(t,regi,out,"rho"));
+
+ put pm_cesdata.tn(t,regi,in,"xi"), " = ";
+ put pm_cesdata(t,regi,in,"price"), " * ", pm_cesdata(t,regi,in,"quantity");
+ put " / ", pm_cesdata(t,regi,out,"quantity"), " = ";
+ put pm_cesdata(t,regi,in,"xi") /;
+
+ put pm_cesdata.tn(t,regi,in,"eff"), " = ";
+ put pm_cesdata(t,regi,out,"quantity"), " / ", pm_cesdata(t,regi,in,"quantity");
+ put " = ", pm_cesdata(t,regi,in,"eff") /;
+
+ put pm_cesdata.tn(t,regi,in,"effGr"), " = ", pm_cesdata(t,regi,in,"effGr") /;
+
+ pm_cesdata(t,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
+ pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
+);
+put " " /;
+
+execute_unload "historic_done.gdx";
 
 *** ----- Special Case Secondary Steel ----------------------------------------
 !! FIXME replace with proper set
@@ -764,11 +667,15 @@ loop ((t0,cesOut2cesIn(in_industry_dyn37(out),in))$(
 );
 
 !! - calculate ipf from input quantities and efficiency parameters
+sm_tmp = 0;
 loop ((cesRev2cesIO(counter,ipf(out)),
        cesOut2cesIn_below(industry_ue_calibration_target_dyn37,out))$(
                              NOT cesOut2cesIn_below("ue_steel_secondary",out) ),
 
-  pm_cesdata(t,regi_dyn29(regi),out,"quantity")$( NOT t_29hist(t) )
+loop ((t,regi_dyn29(regi))$( NOT t_29hist(t) ),
+
+  !! pm_cesdata(t,regi_dyn29(regi),out,"quantity")$( NOT t_29hist(t) )
+  pm_cesdata(t,regi,out,"quantity")
   = sum(cesOut2cesIn2(out,in),
       pm_cesdata(t,regi,in,"xi")
     * ( pm_cesdata(t,regi,in,"eff")
@@ -778,6 +685,19 @@ loop ((cesRev2cesIO(counter,ipf(out)),
    ** pm_cesdata(t,regi,out,"rho")
     )
  ** (1 / pm_cesdata(t,regi,out,"rho"));
+
+ if (sm_tmp lt execerror,
+   put pm_cesdata.tn(t,regi,out,"quantity") /;
+   loop (cesOut2cesIn2(out,in),
+     put in.tl, @25 pm_cesdata(t,regi,in,"xi");
+     put "   ", pm_cesdata(t,regi,in,"eff");
+     put "   ", pm_cesdata(t,regi,in,"effGr");
+     put "   ", pm_cesdata(t,regi,in,"quantity") /;
+  );
+  put pm_cesdata(t,regi,out,"quantity") /;
+   sm_tmp = execerror;
+);
+);
 );
 
 !! - adjust ipf quantity directly below UE to match energy efficiency trajectory
@@ -849,55 +769,6 @@ loop (cesOut2cesIn(industry_ue_calibration_target_dyn37(out),in)$(
 
 *** ----- Efficiency Parameters Above Industry UE Targets ---------------------
 put logfile, ">>> UE quantities <<<" /;
-$ontext
-loop (cesRev2cesIO(counter,out)$(
-         sum(cesOut2cesIn2(out,industry_ue_calibration_target_dyn37(in2)), 1) ),
-  loop ((t,regi_dyn29(regi))$( NOT t_29hist(t) ),
-    !! Adjust UE prices in order to meet target quantities
-    !! - if result quantity (last iteration) is larger than the target,
-    !!   the result quantity (next iteration) should go down, therefore
-    !! - efficiency should go up (down) for rho > 0 (rho < 0), therefore
-    !! - xi should go up (down), as eff is fixed by quantities, therefore
-    !! - adjusted prices should go up (down), therefore
-    !! - the scaling parameter should go up (down), therefore
-    !! - the numerator should be larger (smaller) than the denominator, 
-    !!   therefore
-    !! - the result quantity is in the numerator, the target quantity is in the
-    !!   denominator, and the quotient is raised to the power of sign(rho),
-    !!   inverting it when rho < 0
-
-    !! exclude first iteration, since no data from previous iteration is 
-    !! available
-    if (%c_CES_calibration_iteration% gt 1, !! c_CES_calibration_iteration gt 1
-      loop (cesOut2cesIn(out,in),
-
-put pm_cesdata.tn(t,regi,in,"price"), ":  ";
-put pm_cesdata(t,regi,in,"price"), " * (", p29_cesIO_load(t,regi,in), " / ";
-put pm_cesdata(t,regi,in,"quantity"), ") ^ ";
-if (sign(pm_cesdata(t,regi,out,"rho")) eq 1, put "1"; else put "-1");
-put " = ";
-
-        pm_cesdata(t,regi,in,"price")
-        = pm_cesdata(t,regi,in,"price")
-        * ( ( p29_cesIO_load(t,regi,in)
-            / pm_cesdata(t,regi,in,"quantity")
-            )
-         ** sign(pm_cesdata(t,regi,out,"rho"))
-          );
-
-put pm_cesdata(t,regi,in,"price") /;
-      );
-    );
-
-    !! Calculate ipf quantities
-    pm_cesdata(t,regi,out,"quantity")
-    = sum(cesOut2cesIn(out,in),
-        pm_cesdata(t,regi,in,"price")
-      * pm_cesdata(t,regi,in,"quantity")
-      );
-  );
-);  
-$offtext
 
 !! Calculate ipf quantities
 loop (cesRev2cesIO(counter,out)$( 
