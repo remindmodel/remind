@@ -70,9 +70,9 @@ cols <- c("NG" = "#d11141",
           "ConvCaseNoTax" = "#d11141",
           "ConvCaseWise" = "#d11141",
           "SynSurge" = "orchid",
-          "Tailpipe" = "#113245",
-          "Tailpipe+Energy system" = "#f37735",
-          "Energy system" = "#6495ed")
+          "Fossil fuels" = "#113245",
+          "Fossil fuels + Electricity production" = "#f37735",
+          "Electricity production" = "#6495ed")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
                       "Motorbikes", "Small Cars", "Large Cars", "Van",
@@ -96,8 +96,8 @@ ESmodecap_all = readRDS("ESmodecap_all.RDS")
 ESmodeabs_all = readRDS("ESmodeabs_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJpass_all = readRDS("EJfuelsPass_all.RDS")
-emipdem_all = readRDS("emipdem_all.RDS")
-emipUp_all = readRDS("emipUp_all.RDS")
+emipfos_all = readRDS("emipfos_all.RDS")
+emipFosEl_all = readRDS("emipFosEl_all.RDS")
 
 ## scenarios
 scens = unique(EJmode_all$scenario)
@@ -551,33 +551,32 @@ EJLDVdash <- function(dt, scen){
   
 }
 
-emip_dash = function(dt1, dt_upstr1, scen){
-    dt = copy(dt1)
-  dt_upstr = copy(dt_upstr1)
+emip_dash = function(dt1, dt_tot1, scen){
+  dt = copy(dt1)
+  dt_tot = copy(dt_tot1)
   setnames(dt, old = "emi_sum", new = "value")
-  setnames(dt_upstr, old = "emi_upstr", new = "value")
-  dt = rbind(dt, dt_upstr)
+  setnames(dt_tot, old = "emi_tot", new = "value")
+  dt = rbind(dt, dt_tot)
   dt[, year:= as.numeric(year)]
   dt = dt[region == region_plot & scenario == scen & year <= 2050 & year >= 2020]
   dt = dcast(dt, region + year + scenario  ~ type, value.var = "value")
   
-  dt[, diff := Upstream - Demand]
+  dt[, diff := Total - `Fossil fuels`]
   dt = melt(dt, id.vars = c("region", "year", "scenario"))
   setnames(dt, old = "variable", new = "type")
-  dt[type == "diff", type := "Energy system"]
-  dt[type == "Upstream", type := "Tailpipe+Energy system"]
-  dt[type == "Demand", type := "Tailpipe"]
+  dt[type == "diff", type := "Electricity production"]
+  dt[type == "Total", type := "Fossil fuels + Electricity production"]
   
   dt[, details := paste0("Emissions: ", round(value, digits = 0), " [MtCO<sub>2</sub>]", "<br>", "Type: ", type, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   
   
   plot = ggplot()+
-    geom_area(data = dt[year >= 2020 & type == "Tailpipe+Energy system"], aes(x = year, y = value, text = details, fill =type, group = type), alpha = 0.4, position = position_stack())+
-    geom_line(data = dt[year >= 2020 & type != "Tailpipe+Energy system"], aes(x = year, y = value, text = details, group = type, color = type))+
+    geom_area(data = dt[year >= 2020 & type == "Fossil fuels + Electricity production"], aes(x = year, y = value, text = details, fill =type, group = type), alpha = 0.4, position = position_stack())+
+    geom_line(data = dt[year >= 2020 & type != "Fossil fuels + Electricity production"], aes(x = year, y = value, text = details, group = type, color = type))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    # ylim(0,1400)+
+    ylim(0,1800)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -600,29 +599,36 @@ emip_dash = function(dt1, dt_upstr1, scen){
   
 }
 
-emipcom_dash = function(dt1, dt_upstr1){
+emipscen_dash = function(dt1, dt_tot1){
   dt = copy(dt1)
-  dt_upstr = copy(dt_upstr1)
+  dt_tot = copy(dt_tot1)
   setnames(dt, old = "emi_sum", new = "value")
-  setnames(dt_upstr, old = "emi_upstr", new = "value")
-  dt = rbind(dt, dt_upstr)
-
+  setnames(dt_tot, old = "emi_tot", new = "value")
+  dt = rbind(dt, dt_tot)
+  
   dt = dt[region == region_plot & year <= 2050 & year >= 2020]
   dt[, year := as.numeric(year)]
   
   dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
   dt[, scenario := gsub(".*_", "", scenario)]
   
+  
+  
+  dt = dcast(dt, region + year + scenario  ~ type, value.var = "value")
+  
+  dt[, diff := Total - `Fossil fuels`]
+  dt = melt(dt, id.vars = c("region", "year", "scenario"))
+  setnames(dt, old = "variable", new = "type")
+  dt[type == "diff", type := "Electricity production"]
+  dt[type == "Total", type := "Fossil fuels + Electricity production"]
   dt[, details := scenario ] 
   
-  
-  
-  pdem = ggplot()+
-    geom_line(data = dt[type == "Demand"], aes(x = year, y = value, text = details, group = scenario, color = scenario))+
+  pfos = ggplot()+
+    geom_line(data = dt[type == "Fossil fuels"], aes(x = year, y = value, text = details, group = scenario, color = scenario))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    ylim(0,1400)+
+    ylim(0,1800)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -634,19 +640,19 @@ emipcom_dash = function(dt1, dt_upstr1){
           strip.background = element_rect(color = "grey"))+
     scale_color_manual(values = cols)
   
-  pdem = ggplotly(pdem, tooltip = c("text")) %>%
+  pfos = ggplotly(pfos, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$scenario))
   
   
-  pup = ggplot()+
-    geom_line(data = dt[type == "Upstream"], aes(x = year, y = value, text = scenario, group = scenario, color = scenario))+
+  pel = ggplot()+
+    geom_line(data = dt[type == "Electricity production"], aes(x = year, y = value, text = scenario, group = scenario, color = scenario))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    # ylim(0,1400)+
+    ylim(0, 1000)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -658,11 +664,11 @@ emipcom_dash = function(dt1, dt_upstr1){
           strip.background = element_rect(color = "grey"))+
     scale_color_manual(values = cols)
   
-  pup = ggplotly(pup, tooltip = c("text")) %>%
+  pel = ggplotly(pel, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
-  plot = list(pdem = pdem, pup = pup, vars = vars)
+  plot = list(pfos = pfos, pel = pel, vars = vars)
   
   return(plot)
   
@@ -771,7 +777,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     ## final energy LDVs by fuel
     EJLDV = EJLDVdash(EJroad_all, scen)
     ## emissions passenger transport demand and upstream emissions
-    emip = emip_dash(emipdem_all, emipUp_all, scen)
+    emip = emip_dash(emipfos_all, emipFosEl_all, scen)
     
     ## collect plots
     output[[scenname]]$plot$vintcomp = vintcomp$plot
@@ -796,15 +802,15 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   ## sales
   salescom_scen = salescom_scen_dash(salescomp_all)
   ## emissions
-  emip_scen = emipcom_dash(emipdem_all, emipUp_all)
+  emip_scen = emipscen_dash(emipfos_all, emipFosEl_all)
   
   
   output[["comparison"]]$plot$vintscen = vintscen$plot
   output[["comparison"]]$plot$CO2km_intensity_newsales_scen = CO2km_intensity_newsales_scen$plot
   output[["comparison"]]$plot$EJpassfuels_scen = EJpassfuels_scen$plot
   output[["comparison"]]$plot$salescom_scen = salescom_scen$plot
-  output[["comparison"]]$plot$emipdem_scen = emip_scen$pdem
-  output[["comparison"]]$plot$emipup_scen = emip_scen$pup
+  output[["comparison"]]$plot$emipfos_scen = emip_scen$pfos
+  output[["comparison"]]$plot$emipel_scen = emip_scen$pel
   
   
   
@@ -861,13 +867,13 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Comparison of sales composition'$contents) <- salescom_scen$vars
   legend$'Comparison of sales composition'$description <- "<p>Composition of sales of light duty vehicles in selected years, in percentage</p>"
   
-  legend$'Comparison of passenger demand emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Comparison of passenger demand emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger demand emissions'$description <- "<p>Comparison of emissions from passenger transport demand across scenarios</p>"
+  legend$'Comparison of passenger transport fossil fuels emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of passenger transport fossil fuels emissions'$contents) <- emip_scen$vars
+  legend$'Comparison of passenger transport fossil fuels emissions'$description <- "<p>Comparison of emissions from passenger transport fossil fuels across scenarios</p>"
   
-  legend$'Comparison of passenger upstream emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Comparison of passenger upstream emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger upstream emissions'$description <- "<p>Comparison of emissions from passenger transport upstream across scenarios</p>"
+  legend$'Comparison of passenger electricity production emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of passenger electricity production emissions'$contents) <- emip_scen$vars
+  legend$'Comparison of passenger electricity production emissions'$description <- "<p>Comparison of emissions from passenger transport electricity production across scenarios</p>"
   
   output$legend = legend
   return(output)

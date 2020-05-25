@@ -38,7 +38,7 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger demand emissions", "Comparison of passenger upstream emissions"),
+    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger transport fossil fuels emissions", "Comparison of passenger electricity production emissions"),
     placement=c("right", "left", "right", "left", "left", "left", "right", "left", "right", "left", "left", "left", "left", "left"))
 
 
@@ -756,10 +756,10 @@ plotlist$comparison$plot$vintscen
 plotlist$comparison$plot$CO2km_intensity_newsales_scen
 ```
 
-### Comparison of passenger demand emissions
+### Comparison of passenger transport fossil fuels emissions
 
 ```{r}
-plotlist$comparison$plot$emipdem_scen
+plotlist$comparison$plot$emipfos_scen
 ```
 
 Row {data-height = 450}
@@ -775,9 +775,9 @@ plotlist$comparison$plot$EJpassfuels_scen
 plotlist$comparison$plot$salescom_scen
 ```
 
-### Comparison of passenger upstream emissions
+### Comparison of passenger electricity production emissions
 ```{r}
-plotlist$comparison$plot$emipup_scen
+plotlist$comparison$plot$emipel_scen
 ```
 
 
@@ -788,8 +788,6 @@ Column {data-width= 450}
 -----------------------------------------------------------------------
 
 ### Conventional Case (NoTax) {data-height=200}
-
-<!--An overview of the passenger transport sector is provided in [Overview], while a detailed results about light duty vehicles projections are in [LDVs]. -->
 
 * Conventional consumers patterns
 * No policies to promote alternative vehicles
@@ -830,6 +828,7 @@ Column {data-width= 450}
 * Market-driven behavior of light duty vehicles powertrain choice
 * Synfuels are forced in the liquids mix reaching 10\% of liquids fuels in transportation by 2035
 * Hydrogen from renewable resources (green hydrogen) is at least 95% of the total hydrogen
+* Emissions of CO~2~ are captured and reused to produce syntethic fuels (Carbon Capture and Utilization)
 
 
 <!-- creating information tooltip -->
