@@ -57,8 +57,15 @@ pm_cesdata(t,regi,in,"price")$(    (ppf(in) OR ppf_29(in))
                                AND p29_cesdata_price(t,regi,in) )
   = p29_cesdata_price(t,regi,in);
 
-pm_cesdata(t,regi,ipf,"price") = 1;
-pm_cesdata(t,regi,in,"price") $ in_complements(in) = 1;
+pm_cesdata(t,regi,ipf,"price")$( NOT industry_ue_calibration_target_dyn37(ipf) )
+  = 1;
+pm_cesdata(t,regi,in_complements(in),"price") = 1;
+
+if (%cm_CES_calibration_default_prices% ne 0, 
+  pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
+                                            pm_cesdata(t,regi,in,"price") eq 1 )
+  = %cm_CES_calibration_default_prices%;
+);
 
 *** If not first iteration or known CES structure, compute ppf prices
 $else.get_prices
@@ -964,61 +971,73 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 
 
 ***(B)
-loop  ((t_29,cesRev2cesIO(counter,out),ipf_29(out))$( NOT (sameas(out,"inco") OR in_below_putty(out) OR ppf_putty(out)) ),
+loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco") 
+                                                      OR in_below_putty(out) 
+                                                      OR ppf_putty(out))     ),
+  pm_cesdata(t,regi_dyn29,out,"quantity")$( NOT ipf_putty(out) ) 
+  = sum(cesOut2cesIn(out,in), 
+      pm_cesdata(t,regi_dyn29,in,"price")
+    * pm_cesdata(t,regi_dyn29,in,"quantity")
+    );
 
-pm_cesdata(t_29,regi_dyn29,out, "quantity")$( NOT ipf_putty(out)) = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
-                              * pm_cesdata(t_29,regi_dyn29,in, "quantity"));
-pm_cesdata_putty(t_29,regi_dyn29,out, "quantity")$( ipf_putty(out)) = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
-                              * pm_cesdata_putty(t_29,regi_dyn29,in, "quantity"));
+  pm_cesdata_putty(t,regi_dyn29,out,"quantity")$( ipf_putty(out) )
+  = sum(cesOut2cesIn(out,in), 
+      pm_cesdata(t,regi_dyn29,in,"price")
+    * pm_cesdata_putty(t,regi_dyn29,in,"quantity")
+    );
 
+  !! compute the total for factors that are ppf in the CES and ipf in the 
+  !! putty. For the first period, we assume that pm_cesdata stays constant
+  pm_cesdata(t,regi_dyn29,out,"quantity")$( t0(t) AND ppfIO_putty(out) )
+  = pm_cesdata_putty(t,regi_dyn29,out,"quantity")
+  / pm_delta_kap(regi_dyn29,out);
 
-
-pm_cesdata(t_29,regi_dyn29,out,"quantity")$ (( t0(t_29)) AND ppfIO_putty(out))
-                  =              !!compute the total for factors that are ppf in the CES and ipf in the putty. For the first period, we assume that pm_cesdata stays constant
-                    pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-                    / pm_delta_kap(regi_dyn29,out)
-;
-
-pm_cesdata(t_29,regi_dyn29,out,"quantity")$ (( NOT t0(t_29)) AND ppfIO_putty(out))
-                  =              !!compute the total for factors that are ppf in the CES and ipf in the putty
-                    pm_cesdata(t_29-1,regi_dyn29,out,"quantity")*(1- pm_delta_kap(regi_dyn29,out))**pm_dt(t_29)
-	                 +  pm_cumDeprecFactor_old(t_29,regi_dyn29,out) * pm_cesdata_putty(t_29-1,regi_dyn29,out,"quantity")
-                     +  pm_cumDeprecFactor_new(t_29,regi_dyn29,out) * pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-;
-
+  !! compute the total for factors that are ppf in the CES and ipf in the putty
+  pm_cesdata(t,regi_dyn29,out,"quantity")$( 
+                                             NOT t0(t) AND ppfIO_putty(out) )
+  = ( pm_cesdata(t-1,regi_dyn29,out,"quantity")
+    * (1 - pm_delta_kap(regi_dyn29,out)) ** pm_dt(t)
+    )
+  + ( pm_cumDeprecFactor_old(t,regi_dyn29,out) 
+    * pm_cesdata_putty(t-1,regi_dyn29,out,"quantity")
+    )
+  + ( pm_cumDeprecFactor_new(t,regi_dyn29,out) 
+    * pm_cesdata_putty(t,regi_dyn29,out,"quantity")
+    );
 );
 
 *** Ensure that the share of labour is higher than 20% for historical periods
 *** Otherwise rescale prices and produce a message in the logfile
-        loop ((t_29hist(t),regi_dyn29),
-          sm_tmp =   sum (in$ (sameAs(in, "kap") OR sameAs(in,"en")),
-                          pm_cesdata(t,regi_dyn29,in,"quantity")
-                          * pm_cesdata(t,regi_dyn29,in,"price")
-                         )
-                      ;
-          if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
-            pm_cesdata(t,regi_dyn29,ppf_29(in),"price")$( NOT (sameAs(in, "lab") OR in_complements(in)))
-              = pm_cesdata(t,regi_dyn29,in,"price")
-               * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-               / sm_tmp;
-        
-            loop ( cesOut2cesIn(in2,in) $ (  ppf_29(in) AND in_complements(in)),
-              pm_cesdata(t,regi_dyn29,in2,"price")
-              = pm_cesdata(t,regi_dyn29,in2,"price")
-               * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-               / sm_tmp;
-              );  
-        
-           put logfile;
-           put "---" /;
-           put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
-           put "ratio (en + kap) / inco = ", sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity") /;
-           put "---" /;
-           putclose;
-        
-          
-          );
-        );
+loop ((t_29hist(t),regi_dyn29),
+  sm_tmp 
+  = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
+      pm_cesdata(t,regi_dyn29,in,"quantity")
+    * pm_cesdata(t,regi_dyn29,in,"price")
+    );
+
+  if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
+    pm_cesdata(t,regi_dyn29,ppf_29(in),"price")$( NOT (  sameAs(in, "lab") 
+                                                      OR in_complements(in)) )
+    = pm_cesdata(t,regi_dyn29,in,"price")
+    * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+    / sm_tmp;
+      
+    loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
+      pm_cesdata(t,regi_dyn29,in2,"price")
+      = pm_cesdata(t,regi_dyn29,in2,"price")
+      * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+      / sm_tmp;
+    );  
+      
+    put logfile;
+    put "---" /;
+    put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
+    put "ratio (en + kap) / inco = ";
+    put (sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity")) /;
+    put "---" /;
+    putclose;
+  );
+);
         !! Repeat previous steps with new prices
         loop ( (ipf_29(out), cesRev2cesIO(counter,out)) $ (in_below_putty(out) OR ppf_putty(out)),
         pm_cesdata(t_29,regi_dyn29,out, "quantity") = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
@@ -1887,3 +1906,4 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 
 $ONorder
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms
+
