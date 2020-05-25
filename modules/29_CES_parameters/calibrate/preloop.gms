@@ -1015,6 +1015,7 @@ loop ((t_29hist(t),regi_dyn29),
     * pm_cesdata(t,regi_dyn29,in,"price")
     );
 
+$ontext
   if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
     pm_cesdata(t,regi_dyn29,ppf_29(in),"price")$( NOT (  sameAs(in, "lab") 
                                                       OR in_complements(in)) )
@@ -1037,6 +1038,7 @@ loop ((t_29hist(t),regi_dyn29),
     put "---" /;
     putclose;
   );
+$offtext
 );
         !! Repeat previous steps with new prices
         loop ( (ipf_29(out), cesRev2cesIO(counter,out)) $ (in_below_putty(out) OR ppf_putty(out)),
