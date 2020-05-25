@@ -16,6 +16,13 @@ $offdelim
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
+*** FS: if cm_synfuelscen >= 2 -> biomass limited after 2030, 
+*** switch-off biomass capacity bounds to avoid infeasibility
+
+if (cm_synfuelscen ge 2,
+  p40_ElecBioBound(t,regi) = 0;
+  );
+
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model
 *** to add further targets, include both the respective parameter value below, and extend the equation domain in equations.gms

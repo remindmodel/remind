@@ -11,6 +11,13 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+*** FS: synfuel scenario 2 or larger, biomass production limited
+*** to avoid infeasibilities with vintage biomass capacities
+*** allow bio techs to reduce capacity factor
+if ( cm_synfuelscen ge 2,
+	vm_capFac.lo(t,regi_synfuelscen,teBioPebiolc)$(t.val ge 2030) = 0;
+);
+
 
 *** FS: synfuelscen 1 or larger, for RE H2 production: 
 *** double efficiency of elh2 (see module 05)
