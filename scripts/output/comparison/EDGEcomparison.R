@@ -45,7 +45,6 @@ CO2km_int_newsales_all = NULL
 emidem_all = NULL
 EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
-emipfos_all = NULL
 emipFosEl_all = NULL
 
 scenNames <- getScenNames(outputdirs)
@@ -332,65 +331,33 @@ emidemFun = function(emidem){
 }
 
 
-emipfosFun = function(emipfos){
-  emipfos = emipfos[region!="World" & year >= 2015 & year <= 2100]
-  emipfos[, variable := as.character(variable)]
-  emipfos[, c("model", "scenario", "variable", "unit") := NULL]
-  setnames(emipfos, old = "value", new = "emi_sum")
-  emipfos[, type := "Fossil fuels"]
-  return(emipfos)
-}
-
-emipFosElFun = function(prodSe, prodFe, vemi, pemi, pass_sm_el_emi){
+emipfosElFun = function(miffile, gdx){
+  minyr <- 2015
+  maxyr <- 2100
   
-  prodFefos <- prodFe[all_te %in% c("tdfosdie", "tdfospet")]
   TWa_2_EJ <- 31.536
   GtC_2_MtCO2 <- 44 / 12 * 1000
   
-  prodSe[, value := value*TWa_2_EJ]
-  prodFe[, value := value*TWa_2_EJ]
-  
-  setnames(prodFe, c("year", "region", "se", "fe", "te", "value"))
-  setnames(prodFefos, c("year", "region", "se", "fe", "te", "value"))
+  prodSe <- readgdx(gdx, "vm_prodSe")[
+    tall >= minyr & tall <= maxyr][, value := value*TWa_2_EJ]
   setnames(prodSe, c("year", "region", "pe", "se", "te", "value"))
   
-  ## Fe 
-
-  prodFe <- prodFe[fe %in% c("fepet", "fedie")]
-  prodFe[, all_liq := sum(value), by=.(year, region)]
-  prodFe[, liq_val := sum(value), by=.(year, region, se)]
-  
-  prodFe[, c("fe", "te", "value") := NULL]
-  prodFe <- unique(prodFe)
   
   prodSyn <- prodSe[te == "MeOH"]
   
   prodSyn[, se := "synliq"]
   prodSyn[, c("pe", "te") := NULL]
   setnames(prodSyn, "value", "syn_val")
-  prodSyn <- rbind(prodSyn,
-                   CJ(year=c(2020), region = unique(prodFe$region), se="synliq", syn_val=0))
+  prodSyn <- rbind(prodSyn, CJ(year=c(2015, 2020),
+                               region=prodSyn$region,
+                               se="synliq", syn_val=0,
+                               unique=T))
   
-  
-  allLiq <- merge(prodSyn, prodFe, all=T)
-  allLiq[is.na(syn_val), syn_val := 0]
-  allLiq[, all_liq := max(all_liq, na.rm=T), by=.(year, region)]
-  allLiq[, syn_val := max(syn_val, na.rm=T), by=.(year, region)]
-  ## separate synthetic fuels
-  allLiq[se == "synliq", liq_val := syn_val]
-  allLiq[se == "seliqfos", liq_val := liq_val - syn_val]
-  
-  allLiq <- allLiq[
-    data.table(se=c("seliqbio", "seliqfos", "synliq"),
-               lname=c("biofuels", "fossil fuels", "synfuels")),
-    on="se"]
-  
-  ## Electricity production
-  prodEl <- prodSe[se == "seel"]
   
   ## Electricity consumption for H2 production
+  prodEl <- prodSe[se == "seel"]
   prodEl[, allEl := sum(value), by=.(year, region)][
-    , c("pe", "se", "te", "value") := NULL
+    , c("pe", "se", "te", "value", "tenames") := NULL
     ]
   prodEl <- unique(prodEl)
   
@@ -401,12 +368,8 @@ emipFosElFun = function(prodSe, prodFe, vemi, pemi, pass_sm_el_emi){
   
   prodShare <- merge(prodEl, prodElH2, all=T)
   prodShare[, netProd := allEl - elh2]
-  prodVert <- melt(prodShare, id.vars = c("year", "region"))[
-    data.table(variable=c("elh2", "netProd"),
-               label=c("Electricity for H2", "Other Demands")),
-    on="variable"
-    ]
-  
+  ## CO2 emission for electricity
+  vemi <- readgdx(gdx, "vm_emiTeDetail")[ttot >= minyr & ttot <= maxyr]
   setnames(vemi, c("year", "region", "pe", "se", "te", "emi", "val"))
   emico2 <- vemi[se == "seel" & emi == "co2"][
     , co2val := sum(val) * GtC_2_MtCO2, by=.(year, region)][
@@ -416,39 +379,40 @@ emipFosElFun = function(prodSe, prodFe, vemi, pemi, pass_sm_el_emi){
   
   emico2 <- merge(emico2, prodShare, by=c("year", "region"))
   emico2[, int := co2val/allEl] # MtCO2/EJ -> tCO2/MJ
+  
   ## emissions from electricity for hydrogen production
   emisyn <- emico2[, .(se="seh2", co2 = int * elh2), by=.(year, region)] # MtCO2
   
-  ## synfuel share
-  syn_fos <- allLiq[se != "seliqbio"][
-    , .(syn_share = syn_val/sum(liq_val)), by=.(year, region)]
-  syn_fos <- unique(syn_fos)
-  
-  ## final energy from prodFefos
-  setnames(prodFefos, c("year", "region", "se", "fe", "te", "prodFE"))
-  prodFefos <- prodFefos[syn_fos, on=.(year, region)]
-  ## substract synfuels
-  prodFefos[, no_syn := prodFE * (1-syn_share)]
+  ## add electric cars upstream emissions
+  bevemi = miffile[
+    variable == "Emi|CO2|Transport|Pass|Short-Medium Distance|Electricity" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, se="bevs", co2=value)]
   
   
-  setnames(pemi, c("fe", "emi_fac"))
+  ## fossil emissions
+  fosemi = miffile[
+    variable == "Emi|CO2|Transport|Pass|Short-Medium Distance|Liquids" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, se="fos", co2=value)]
   
-  prodFefos <- pemi[prodFefos, on="fe"]
-  prodFefos[, co2 := emi_fac * no_syn * TWa_2_EJ]
+  
+  ## combine all
+  emi_all <- rbindlist(list(
+    emisyn,
+    bevemi,
+    fosemi))
+  
+  ## sum bev and hydrogen upstream emissions
+  emi_wide <- dcast(emi_all, year+region ~ se)[, all_el := bevs + seh2]
+  
+  emi_result <- melt(emi_wide,
+                     value.name="co2",
+                     id.vars = c("year", "region"),
+                     variable.name = "tech")[tech %in% c("all_el", "fos")]
   
   
-  ## add synthetic fuel/ upstream emissions
-  emi_all <- merge(emisyn, prodFefos[, .(year, region, se=fe, co2)], by=c("year", "region", "se", "co2"), all=T)
-  
-  ## add emissions from electricity
-  pass_sm_el_emi[, c("model", "scenario", "variable", "unit") := NULL]
-  pass_sm_el_emi[, se := "electricity"]
-  pass_sm_el_emi = pass_sm_el_emi[year %in% unique(emi_all$year)]
-  setnames(pass_sm_el_emi, c("region", "co2", "year", "se"))
-  emi_all = rbind(emi_all, pass_sm_el_emi)
-  emi_all = emi_all[, .(emi_tot = sum(co2)), by=.(year, region)]
-  emi_all[, type := "Total"]
-  return(emi_all)
+  return(emi_result)
 }
 
 for (outputdir in outputdirs) {
@@ -473,14 +437,6 @@ for (outputdir in outputdirs) {
   demandkm = readRDS(paste0(outputdir, "/EDGE-T/", "demandF_plot_pkm.RDS"))
   mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/", "mj_km_data.RDS"))
   loadFactor = readRDS(paste0(outputdir, "/EDGE-T/", "loadFactor.RDS"))
-  
-  ## load data from gdx file
-  minyr <- 2020
-  maxyr <- 2100
-  prodSe <- readgdx(gdx, "vm_prodSe")[tall >= minyr & tall <= maxyr]
-  prodFe <- readgdx(gdx, "vm_prodFe")[ttot >= minyr & ttot <= maxyr]
-  vemi <- readgdx(gdx, "vm_emiTeDetail")[ttot >= minyr & ttot <= maxyr]
-  pemi <- readgdx(gdx, "p_ef_dem")  ## emission factors
   ## load population and GDP
   POP_country=calcOutput("Population", aggregate = F)[,, "pop_SSP2"]
   POP <- magpie2dt(POP_country, regioncol = "iso",
@@ -490,8 +446,6 @@ for (outputdir in outputdirs) {
   ## select useful entries from mif file
   FEliq_source = miffile[variable %in% c("FE|Transport|Liquids|Biomass", "FE|Transport|Liquids|Hydrogen", "FE|Transport|Liquids|Coal", "FE|Transport|Liquids|Oil"),]
   emidem = miffile[variable %in% c("Emi|CO2|Transport|Demand"),]
-  emipassfos = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Liquids"),]
-  pass_sm_el_emi = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Electricity")]
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source, gdp)
   
@@ -517,9 +471,7 @@ for (outputdir in outputdirs) {
   ## calculate demand emissions
   emidem = emidemFun(emidem)
   ## calculate emissions from passenger SM fossil fuels (liquids)
-  emipfos =  emipfosFun(emipassfos)
-  ## calculate upstream emissions (accounting for fossils, synfuels, hydrogen and electricity production)
-  emipFosEl = emipFosElFun(prodSe, prodFe, vemi, pemi, pass_sm_el_emi)
+  emipFosEl =  emipfosElFun(miffile, gdx)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -531,7 +483,6 @@ for (outputdir in outputdirs) {
   emidem[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
-  emipfos[, scenario := as.character(unique(miffile$scenario))]
   emipFosEl[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
@@ -544,7 +495,6 @@ for (outputdir in outputdirs) {
   emidem_all = rbind(emidem_all, emidem)
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
-  emipfos_all = rbind(emipfos_all, emipfos)
   emipFosEl_all = rbind(emipFosEl_all, emipFosEl)
 }
 
@@ -563,7 +513,6 @@ saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
-saveRDS(emipfos_all, paste0(outdir, "/emipfos_all.RDS"))
 saveRDS(emipFosEl_all, paste0(outdir, "/emipFosEl_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")

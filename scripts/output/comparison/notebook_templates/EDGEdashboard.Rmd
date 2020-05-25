@@ -788,47 +788,61 @@ Column {data-width= 450}
 -----------------------------------------------------------------------
 
 ### Conventional Case (NoTax) {data-height=200}
-
-* Conventional consumers patterns
-* No policies to promote alternative vehicles
-* Pessimistic trend of electric recharging stations
-* Learning-by-doing on BEVs and FCEVs
-* Market-driven behavior of light duty vehicles powertrain choice
+</ul> 
+  <li> Conventional consumers patterns </li>
+  <li> No policies to promote alternative vehicles </li>
+  <li> Pessimistic trend of electric recharging stations </li>
+  <li> Learning-by-doing on BEVs and FCEVs </li>
+  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+</ul>
 
 
 ### Conventional Case {data-height=200}
 
-* Conventional consumers patterns
-* No policies to promote alternative vehicles
-* Pessimistic trend of electric recharging stations
-* Learning-by-doing on BEVs and FCEVs
-* Market-driven behavior of light duty vehicles powertrain choice
+</ul>
+  <li> Conventional consumers patterns </li>
+  <li> No policies to promote alternative vehicles </li>
+  <li> Pessimistic trend of electric recharging stations </li>
+  <li> Learning-by-doing on BEVs and FCEVs </li>
+  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+</ul>
+
 
 ### Hydrogen Hype {data-height=200}
 
-* Learning-by-doing on BEVs and FCEVs
-* Optimistic trend of hydrogen refuelling stations
-* Rebates-feebates scheme: FCEVs receive 5000&euro subsidies for purchases in 2020, around 3300&euro in 2025 and 1700&euro in 2030. 1000&euro mark-up cost on internal combustion engines are applied in 2020, 700&euro in 2025 and 300&euro in 2030
-* Mark-up costs applied to internal combustion engines (both conventional and hybrid)
-* Market-driven behavior of light duty vehicles powertrain choice
-* Policy push of FCEVs: policy-driven decrease of the perceived inconvenience cost associated to the purchase of hydrogen vehicles
-* Hydrogen from renewable resources (green hydrogen) is at least 95\% of the total hydrogen
+</ul>
+  <li> Learning-by-doing on BEVs and FCEVs </li>
+  <li> Optimistic trend of hydrogen refuelling stations </li>
+  <li> Rebates-feebates scheme: FCEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
+  <li> Mark-up costs applied to internal combustion engines (both conventional and hybrid) </li>
+  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+  <li> Policy push of FCEVs: policy-driven decrease of the perceived inconvenience cost associated to the purchase of hydrogen vehicles </li>
+  <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
+</ul>
+
 
 ### Electric Era {data-height=200}
 
-* Learning-by-doing on BEVs and FCEVs
-* Rebates-feebates scheme: BEVs receive 5000&euro subsidies for purchases in 2020, around 3300&euro in 2025 and 1700&euro in 2030. 1000&euro mark-up cost on internal combustion engines are applied in 2020, 700&euro in 2025 and 300&euro in 2030
-* Mark-up costs applied to internal combustion engines (both conventional and hybrid)
-* Market-driven behavior of light duty vehicles powertrain choice
+</ul>
+  <li> Learning-by-doing on BEVs and FCEVs </li>
+  <li> Rebates-feebates scheme: BEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
+  <li> Mark-up costs applied to internal combustion engines (both conventional and hybrid) </li>
+  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+</ul>
+
 
 ### Synfuel Surge {data-height=200}
 
-* Conventional consumers patterns
-* Learning-by-doing on BEVs and FCEVs
-* Market-driven behavior of light duty vehicles powertrain choice
-* Synfuels are forced in the liquids mix reaching 10\% of liquids fuels in transportation by 2035
-* Hydrogen from renewable resources (green hydrogen) is at least 95% of the total hydrogen
-* Emissions of CO~2~ are captured and reused to produce syntethic fuels (Carbon Capture and Utilization)
+</ul>
+  <li> Conventional consumers patterns </li>
+  <li> Learning-by-doing on BEVs and FCEVs </li>
+  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+  <li> Synfuels are forced in the liquids mix reaching 10&#37; of liquids fuels in transportation by 2035 </li>
+  <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
+  <li> Emissions of CO<sub>2</sub> are captured and reused to produce syntethic fuels (Carbon Capture and Utilization) </li>
+</ul>
+
+
 
 
 <!-- creating information tooltip -->
@@ -988,6 +1002,8 @@ navBarMemory = function(topMenuLabel, sideBarClass){
     -ms-user-select: none;
     user-select: none;
   }
-  
-
+<!-- indentation for bullet points list -->  
+  li{
+    margin-left:10px;
+  }
 </style>

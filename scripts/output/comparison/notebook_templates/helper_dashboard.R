@@ -96,7 +96,6 @@ ESmodecap_all = readRDS("ESmodecap_all.RDS")
 ESmodeabs_all = readRDS("ESmodeabs_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJpass_all = readRDS("EJfuelsPass_all.RDS")
-emipfos_all = readRDS("emipfos_all.RDS")
 emipFosEl_all = readRDS("emipFosEl_all.RDS")
 
 ## scenarios
@@ -551,21 +550,16 @@ EJLDVdash <- function(dt, scen){
   
 }
 
-emip_dash = function(dt1, dt_tot1, scen){
-  dt = copy(dt1)
-  dt_tot = copy(dt_tot1)
-  setnames(dt, old = "emi_sum", new = "value")
-  setnames(dt_tot, old = "emi_tot", new = "value")
-  dt = rbind(dt, dt_tot)
+emip_dash = function(dt, scen){
   dt[, year:= as.numeric(year)]
   dt = dt[region == region_plot & scenario == scen & year <= 2050 & year >= 2020]
-  dt = dcast(dt, region + year + scenario  ~ type, value.var = "value")
+  dt = dcast(dt, region + year + scenario  ~ tech, value.var = "co2")
   
-  dt[, diff := Total - `Fossil fuels`]
+  dt[, tot := fos + all_el]
   dt = melt(dt, id.vars = c("region", "year", "scenario"))
-  setnames(dt, old = "variable", new = "type")
-  dt[type == "diff", type := "Electricity production"]
-  dt[type == "Total", type := "Fossil fuels + Electricity production"]
+  dt[variable == "tot", type := "Fossil fuels + Electricity production"]
+  dt[variable == "all_el", type := "Electricity production"]
+  dt[variable == "fos", type := "Fossil fuels"]
   
   dt[, details := paste0("Emissions: ", round(value, digits = 0), " [MtCO<sub>2</sub>]", "<br>", "Type: ", type, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   
@@ -576,7 +570,7 @@ emip_dash = function(dt1, dt_tot1, scen){
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    ylim(0,1800)+
+    ylim(-80,1800)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -588,39 +582,35 @@ emip_dash = function(dt1, dt_tot1, scen){
           strip.background = element_rect(color = "grey"))+
     scale_color_manual(values = cols)+
     scale_fill_manual(values = cols)
- 
+  
   plot = ggplotly(plot, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$type))
   
-  return(plot)
+  
+  output = list(plot = plot,
+                vars = vars)
+  return(output)
   
 }
 
-emipscen_dash = function(dt1, dt_tot1){
-  dt = copy(dt1)
-  dt_tot = copy(dt_tot1)
-  setnames(dt, old = "emi_sum", new = "value")
-  setnames(dt_tot, old = "emi_tot", new = "value")
-  dt = rbind(dt, dt_tot)
-  
+emipscen_dash = function(dt){
   dt = dt[region == region_plot & year <= 2050 & year >= 2020]
   dt[, year := as.numeric(year)]
   
   dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
   dt[, scenario := gsub(".*_", "", scenario)]
   
+  dt = dcast(dt, region + year + scenario  ~ tech, value.var = "co2")
   
-  
-  dt = dcast(dt, region + year + scenario  ~ type, value.var = "value")
-  
-  dt[, diff := Total - `Fossil fuels`]
+  dt[, tot := fos + all_el]
   dt = melt(dt, id.vars = c("region", "year", "scenario"))
-  setnames(dt, old = "variable", new = "type")
-  dt[type == "diff", type := "Electricity production"]
-  dt[type == "Total", type := "Fossil fuels + Electricity production"]
+  dt[variable == "tot", type := "Fossil fuels + Electricity production"]
+  dt[variable == "all_el", type := "Electricity production"]
+  dt[variable == "fos", type := "Fossil fuels"]
+  
   dt[, details := scenario ] 
   
   pfos = ggplot()+
@@ -652,7 +642,7 @@ emipscen_dash = function(dt1, dt_tot1){
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    ylim(0, 1000)+
+    ylim(-80, 140)+
     scale_x_continuous(breaks = c(2015, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -777,7 +767,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     ## final energy LDVs by fuel
     EJLDV = EJLDVdash(EJroad_all, scen)
     ## emissions passenger transport demand and upstream emissions
-    emip = emip_dash(emipfos_all, emipFosEl_all, scen)
+    emip = emip_dash(emipFosEl_all, scen)
     
     ## collect plots
     output[[scenname]]$plot$vintcomp = vintcomp$plot
@@ -788,7 +778,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     output[[scenname]]$plot$EJpassfuels = EJpassfuels$plot
     output[[scenname]]$plot$CO2km_int_newsales = CO2km_int_newsales
     output[[scenname]]$plot$EJLDV = EJLDV$plot
-    output[[scenname]]$plot$emip = emip
+    output[[scenname]]$plot$emip = emip$plot
     output[[scenname]]$emiscen = emiscen
   }
   
@@ -802,7 +792,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   ## sales
   salescom_scen = salescom_scen_dash(salescomp_all)
   ## emissions
-  emip_scen = emipscen_dash(emipfos_all, emipFosEl_all)
+  emip_scen = emipscen_dash(emipFosEl_all)
   
   
   output[["comparison"]]$plot$vintscen = vintscen$plot
@@ -816,64 +806,64 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   
   legend$'Sales composition'$contents <- lapply(salescomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Sales composition'$contents) <- salescomp$vars
-  legend$'Sales composition'$description <- "<p>Composition of sales of light duty vehicles, in percentage</p>"
+  legend$'Sales composition'$description <- "<p>Composition of sales of light duty vehicles</p>"
   
   legend$'Per capita Passenger Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_pass, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Passenger Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_pass
-  legend$'Per capita Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand in the passenger transport sector, in per capita kilometers driven</p>"
+  legend$'Per capita Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand, passenger transport</p>"
   
   legend$'Total Passenger Transport Energy Services Demand'$contents <- lapply(ESmodeabs$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Total Passenger Transport Energy Services Demand'$contents) <- ESmodeabs$vars
-  legend$'Total Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand in the passenger transport sector, in kilometers driven</p>"
+  legend$'Total Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand, passenger transport</p>"
   
   legend$'Emissions passenger transport'$contents <- lapply(emip$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Emissions passenger transport'$contents) <- emip$vars
-  legend$'Emissions passenger transport'$description <- "<p>Emissions from the passenger transport sector, excluding international aviation<p>"
+  legend$'Emissions passenger transport'$description <- "<p>Emissions from fossil fuels and electricity production and use, passenger transport (international aviation excluded)<p>"
   
   
-  legend$'Emission intensity of new sales'$description <- "CO<sub>2</sub> intensity of new light duty vehicles"
+  legend$'Emission intensity of new sales'$description <- "CO<sub>2</sub> intensity of light duty vehicles sales, historical and projected values"
   
   legend$'Per capita Freight Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_frgt, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Per capita Freight Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_frgt
   
   legend$'Final energy LDVs by fuel'$contents <- lapply(EJLDV$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Final energy LDVs by fuel'$contents) <- EJLDV$vars
-  legend$'Final energy LDVs by fuel'$description <- "<p>Final energy demand for light duty vehicles, divided by fuel used, in EJ</p>"
+  legend$'Final energy LDVs by fuel'$description <- "<p>Final energy demand, light duty vehicles, by fuel</p>"
   
   
   legend$'Transport Passenger Final Energy Demand'$contents <- lapply(EJpassfuels$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Transport Passenger Final Energy Demand'$contents) <- EJpassfuels$vars
-  legend$'Transport Passenger Final Energy Demand'$description <- "<p>Final energy demand in the passenger transport sector, in EJ (bunkers excluded)</p>"
+  legend$'Transport Passenger Final Energy Demand'$description <- "<p>Final energy demand, passenger transport (international aviation excluded)</p>"
   
   legend$'Fleet composition'$contents <- lapply(vintcomp$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition'$contents) <- vintcomp$vars
-  legend$'Fleet composition'$description <- "<p>Composition of the light duty vehicles fleet in selected years</p>"
+  legend$'Fleet composition'$description <- "<p>Composition of light duty vehicles fleet in selected years</p>"
   
   
   legend$'Fleet composition comparison'$contents <- lapply(vintscen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Fleet composition comparison'$contents) <- vintscen$vars
-  legend$'Fleet composition comparison'$description <- "<p>Composition of the light duty vehicles fleet in selected years, compared across scenarios</p>"
+  legend$'Fleet composition comparison'$description <- "<p>Composition of light duty vehicles fleet in selected years</p>"
   
   
   legend$'Emission intensity, new sales comparison'$contents <- lapply(CO2km_intensity_newsales_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Emission intensity, new sales comparison'$contents) <- CO2km_intensity_newsales_scen$vars
-  legend$'Emission intensity, new sales comparison'$description <- "<p>Emissions intensity of new light duty vehicles, compared across scenarios</p>"
+  legend$'Emission intensity, new sales comparison'$description <- "<p>CO<sub>2</sub> intensity of light duty vehicles sales, historical and projected values</p>"
   
   legend$'Comparison of passenger final energy demand'$contents <- lapply(EJpassfuels_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Comparison of passenger final energy demand'$contents) <- EJpassfuels_scen$vars
-  legend$'Comparison of passenger final energy demand'$description <- "<p>Final energy demand for the passenger transport sector (bunkers excluded), compared across scenarios</p>"
+  legend$'Comparison of passenger final energy demand'$description <- "<p>Final energy demand, passenger transport (international aviation excluded)</p>"
   
   legend$'Comparison of sales composition'$contents <- lapply(salescom_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Comparison of sales composition'$contents) <- salescom_scen$vars
-  legend$'Comparison of sales composition'$description <- "<p>Composition of sales of light duty vehicles in selected years, in percentage</p>"
+  legend$'Comparison of sales composition'$description <- "<p>Composition of sales of light duty vehicles in selected years</p>"
   
   legend$'Comparison of passenger transport fossil fuels emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Comparison of passenger transport fossil fuels emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger transport fossil fuels emissions'$description <- "<p>Comparison of emissions from passenger transport fossil fuels across scenarios</p>"
+  legend$'Comparison of passenger transport fossil fuels emissions'$description <- "<p>Emissions from fossil fuels production and use in passenger transport</p>"
   
   legend$'Comparison of passenger electricity production emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Comparison of passenger electricity production emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger electricity production emissions'$description <- "<p>Comparison of emissions from passenger transport electricity production across scenarios</p>"
+  legend$'Comparison of passenger electricity production emissions'$description <- "<p>Emissions from electricity production and consumption in passenger transport</p>"
   
   output$legend = legend
   return(output)
