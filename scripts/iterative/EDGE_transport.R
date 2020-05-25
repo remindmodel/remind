@@ -82,7 +82,7 @@ logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
 capcost4W = inputdata$capcost4W
-
+loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
 
@@ -270,7 +270,8 @@ num_veh_stations = calc_num_vehicles_stations(
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
     c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
     ES_demand_all = ES_demand_all,
-    techswitch = techswitch)
+    techswitch = techswitch,
+    loadFactor = loadFactor)
 
 ## save number of vehicles for next iteration
 saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
