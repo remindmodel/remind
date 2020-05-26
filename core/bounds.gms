@@ -496,4 +496,11 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
       vm_prodSe.up(t,regi,"pegas","sehe","gashp")   = 0;
 );
 );
+
+*limit secondary energy district heating and heat pumps
+$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+  vm_demFeSector.up(t,regi,"sehe","fehes",sector,emiMkt) = %cm_INNOPATHS_sehe_upper%*vm_demFeSector("2020",regi,"sehe","fehes",sector,emiMkt);
+$ENDIF.sehe_upper
+
+
 *** EOF ./core/bounds.gms
