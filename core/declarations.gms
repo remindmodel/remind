@@ -397,6 +397,10 @@ q_es2ppfen(ttot,all_regi,all_in)                          "Energy services are h
 q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energies in production factors."
 *q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
 
+$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+q_heat_limit(ttot,all_regi,emi_sectors,all_emiMkt)
+$ENDIF.sehe_upper
+
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 

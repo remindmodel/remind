@@ -815,5 +815,15 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
 ;
  
- 
+
+*limit secondary energy district heating and heat pumps
+$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+q_heat_limit(t,regi,sector,emiMkt)..
+    vm_demFeSector("2020",regi,"sehe","fehes",sector,emiMkt)
+    =l=
+    %cm_INNOPATHS_sehe_upper%*vm_demFeSector(t,regi,"sehe","fehes",sector,emiMkt);
+;
+$ENDIF.sehe_upper
+
+
 *** EOF ./core/equations.gms
