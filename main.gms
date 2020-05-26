@@ -475,6 +475,7 @@ $setglobal cm_INNOPATHS_adj_coeff_cont  off
 $setglobal cm_INNOPATHS_inco0Factor  off !! def = off
 
 $setglobal cm_INNOPATHS_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
 $setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
 
 $setglobal cm_INNOPATHS_DAC_eff  off !! def = off 

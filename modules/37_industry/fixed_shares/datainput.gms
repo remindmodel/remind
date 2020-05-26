@@ -55,6 +55,10 @@ $offdelim
 
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
+$IFTHEN.Industry_CCS_markup not "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+	pm_abatparam_Ind(ttot,all_regi,all_enty,steps) = (1/%cm_INNOPATHS_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,all_regi,all_enty,steps);
+$ENDIF.Industry_CCS_markup
+
 *** fill in share of other industry sector
 p37_shIndFE(regi,"feh2i",secInd37) = p37_shIndFE(regi,"fegai",secInd37);
 
