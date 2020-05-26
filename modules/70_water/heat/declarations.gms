@@ -24,6 +24,8 @@ p70_water_wtd(all_regi, all_te, coolte70)                       "water withdrawa
 o70_se_production(ttot,all_regi,all_te)                         "secondary energy production. Unit: EJ/yr"
 o70_water_consumption(ttot, all_regi, all_te)                   "water consumption per technology. Unit: km3/yr"
 o70_water_withdrawal(ttot, all_regi, all_te)                    "water withdrawal per technology. Unit: km3/yr"
+
+p_dummy(ttot,all_regi,descr_water_ext)                          "dummy output"
 ;
 
 *** EOF ./modules/70_water/heat/declarations.gms

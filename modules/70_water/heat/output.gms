@@ -531,17 +531,7 @@ p_dummy(ttot,regi,"Water Withdrawal|Electricity|Dry Cooling; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-***Global***----------------------------------------------------------------------
-loop((descr_water_ext,ttot)$(ttot.val ge 2005),
-  p_dummy(ttot,"glob",descr_water_ext) = sum(regi, p_dummy(ttot,regi,descr_water_ext));
-);
 
-loop(descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd),
-  loop(ttot$(ttot.val ge 2005),
-    p_dummy(ttot,"glob",descr_water_int) =
-        sum(regi, p_dummy(ttot,regi,descr_water_extn)) / sum(regi, p_dummy(ttot,regi,descr_water_extd))
-  );
-);
 
 ***------------Write output-------------------------------------------------------
 *---------------------------------------------------------------------------------
