@@ -38,8 +38,8 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Per capita Passenger Transport Energy Services Demand", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger transport fossil fuels emissions", "Comparison of passenger electricity production emissions"),
-    placement=c("right", "left", "right", "left", "left", "left", "right", "left", "right", "left", "left", "left", "left", "left"))
+    title=c("Distance traveled per capita", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger transport fossil fuels emissions", "Comparison of passenger electricity production emissions"),
+    placement=c("right", "left", "right", "left", "right", "right", "right", "right", "right", "left", "left", "right", "left", "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -75,7 +75,7 @@ helpTooltip = function(tooltipdf){
   result = paste0(result,"$(window).load(function () {\n");
   result = paste0(result,"  $('.chart-title').filter(function() { return $(this).clone().children().remove().end().text() == '", title, "' }).each(function(){\n");
   if(!(placement == "none"))
-    result = paste0(result,"  	$(this).append('<i class=\"glyphicon glyphicon-info-sign infoIcon\" data-toggle=\"tooltip\" data-html=\"true\" data-placement=\"right\" title=\"",contents,"\"></i>');\n");
+    result = paste0(result,"  	$(this).append('<i data-toggle=\"tooltip\" data-html=\"true\" data-placement=\"right\" class = rightal title=\"",contents,"\">Legend</i>');\n");
   result = paste0(result,"  	$(this).find('[data-toggle=\"tooltip\"]').tooltip({ placement:'",placement,"'});\n");
   result = paste0(result,"	})\n");
   result = paste0(result,"})\n");
@@ -92,320 +92,7 @@ helpTooltip = function(tooltipdf){
 
 <!-- ### Creating main emissions menu ### -->
 
-<!--Creating First Page - LDV Page-->
-Overview {data-icon="glyphicon glyphicon-scale"}
-===================================== 
-Side Navigation {.sidebar .sidebarOverview data-width=160}
--------------------------------------
-
-[Baseline](#overview){class="sidebar-button selected"}
-[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
-[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
-[Electric Era](#overview-bev-scenario){class="sidebar-button"}
-[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
-
-Row {data-height=300}
------------------------------------------------------------------------
-
-### Transport scenario {data-width=100}
-```{r}
-valueBox("Conventional Case NoTax")
-```
-
-
-### Emissions {data-width=100}
-```{r}
-valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
-```
-
-
-### Scenario description {data-width=200}
-
-Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
-More information can be found in the [Assumptions].
-
-<!-- Dividing the page in two columns-->
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Per capita Passenger Transport Energy Services Demand
-```{r}
-plotlist$`ConvCase NoTax`$plot$ESmodecap_pass
-```
-
-### Total Passenger Transport Energy Services Demand
-```{r}
-plotlist$`ConvCase NoTax`$plot$ESmodeabs
-```
-
-
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Transport Passenger Final Energy Demand
-
-```{r}
-plotlist$`ConvCase NoTax`$plot$EJpassfuels
-```
-
-### Emissions passenger transport
-
-```{r}
-plotlist$`ConvCase NoTax`$plot$emip
-```
-
-Overview Conv scenario {.hidden}
-=====================================
-
-Side Navigation {.sidebar .sidebarOverview data-width=160}
--------------------------------------
-
-[Baseline](#overview){class="sidebar-button"}
-[Conventional Case](#overview-conv-scenario){class="sidebar-button selected"}
-[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
-[Electric Era](#overview-bev-scenario){class="sidebar-button"}
-[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
-
-
-<!-- Dividing the page in two rows-->
-Row {data-height=300}
------------------------------------------------------------------------
-
-### Transport scenario {data-width=100}
-```{r}
-valueBox("Conventional Case")
-```
-
-
-### Emissions {data-width=100}
-```{r}
-valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
-```
-
-
-### Scenario description {data-width=200}
-
-Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market. More information can be found in the [Assumptions].
-
-<!-- Dividing the page in two columns-->
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Per capita Passenger Transport Energy Services Demand
-```{r}
-plotlist$ConvCase$plot$ESmodecap_pass
-```
-
-### Total Passenger Transport Energy Services Demand
-```{r}
-plotlist$ConvCase$plot$ESmodeabs
-```
-
-
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Transport Passenger Final Energy Demand
-
-```{r}
-plotlist$ConvCase$plot$EJpassfuels
-```
-
-### Emissions passenger transport
-
-```{r}
-plotlist$ConvCase$plot$emip
-```
-
-
-Overview FCEV scenario {.hidden}
-===================================== 
-
-Side Navigation {.sidebar .sidebarOverview data-width=160}
--------------------------------------
-
-[Baseline](#overview){class="sidebar-button"}
-[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
-[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button selected"}
-[Electric Era](#overview-bev-scenario){class="sidebar-button"}
-[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
-
-
-<!-- Dividing the page in two rows-->
-Row {data-height=300}
------------------------------------------------------------------------
-
-### Transport scenario {data-width=100}
-```{r}
-valueBox("Hydrogen Hype")
-```
-
-
-### Emissions {data-width=100}
-```{r}
-valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
-```
-
-
-### Scenario description {data-width=200}
-
-Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
-More information can be found in the [Assumptions].
-
-<!-- Dividing the page in two columns-->
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Per capita Passenger Transport Energy Services Demand
-```{r}
-plotlist$HydrHype$plot$ESmodecap_pass
-```
-
-### Total Passenger Transport Energy Services Demand
-```{r}
-plotlist$HydrHype$plot$ESmodeabs
-```
-
-
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Transport Passenger Final Energy Demand
-
-```{r}
-plotlist$HydrHype$plot$EJpassfuels
-```
-
-### Emissions passenger transport
-
-```{r}
-plotlist$HydrHype$plot$emip
-```
-
-Overview BEV scenario {.hidden}
-===================================== 
-
-Side Navigation {.sidebar .sidebarOverview data-width=160}
--------------------------------------
-
-[Baseline](#overview){class="sidebar-button"}
-[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
-[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
-[Electric Era](#overview-bev-scenario){class="sidebar-button selected"}
-[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button"}
-
-Row {data-height=300}
------------------------------------------------------------------------
-
-### Transport scenario {data-width=100}
-```{r}
-valueBox("Electric Era")
-```
-
-
-### Emissions {data-width=100}
-```{r}
-valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
-```
-
-
-### Scenario description {data-width=200}
-
-Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
-More information can be found in the [Assumptions].
-
-
-<!-- Dividing the page in two columns-->
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Per capita Passenger Transport Energy Services Demand
-```{r}
-plotlist$ElecEra$plot$ESmodecap_pass
-```
-
-### Total Passenger Transport Energy Services Demand
-```{r}
-plotlist$ElecEra$plot$ESmodeabs
-```
-
-
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Transport Passenger Final Energy Demand
-
-```{r}
-plotlist$ElecEra$plot$EJpassfuels
-```
-
-### Emissions passenger transport
-
-```{r}
-plotlist$ElecEra$plot$emip
-```
-
-Overview Synfuel scenario {.hidden}
-===================================== 
-
-Side Navigation {.sidebar .sidebarOverview data-width=160}
--------------------------------------
-
-[Baseline](#overview){class="sidebar-button"}
-[Conventional Case](#overview-conv-scenario){class="sidebar-button"}
-[Hydrogen Hype](#overview-fcev-scenario){class="sidebar-button"}
-[Electric Era](#overview-bev-scenario){class="sidebar-button"}
-[Synfuel Surge](#overview-synfuel-scenario){class="sidebar-button selected"}
-
-Row {data-height=300}
------------------------------------------------------------------------
-
-### Transport scenario {data-width=100}
-```{r}
-valueBox("Synfuel Surge")
-```
-
-
-### Emissions {data-width=100}
-```{r}
-valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
-```
-
-
-### Scenario description {data-width=200}
-
-Synthetic fuels gain importance in the liquid fuels production. Absence of policies oriented to promote electric and hydrogen vehicles, while internal combustion engines lead the market.
-More information can be found in the [Assumptions].
-
-<!-- Dividing the page in two columns-->
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Per capita Passenger Transport Energy Services Demand
-```{r}
-plotlist$SynSurge$plot$ESmodecap_pass
-```
-
-### Total Passenger Transport Energy Services Demand
-```{r}
-plotlist$SynSurge$plot$ESmodeabs
-```
-
-
-Row {data-heigth=500}
------------------------------------------------------------------------
-
-### Transport Passenger Final Energy Demand
-
-```{r}
-plotlist$SynSurge$plot$EJpassfuels
-```
-
-### Emissions passenger transport
-
-```{r}
-plotlist$SynSurge$plot$emip
-```
+<!--Creating First Page - overview Page-->
 
 LDVs {data-icon="fa-car"}
 =====================================
@@ -444,6 +131,23 @@ More information can be found in the [Assumptions].
 Row {data-height= 450}
 -----------------------------------------------------------------------
 
+
+### Fleet composition {data-width=250}
+```{r}
+plotlist$`ConvCase NoTax`$plot$vintcomp
+```
+
+
+### Final energy LDVs by fuel {data-width=250}
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$EJLDV
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
 ### Sales composition {data-width=250}
 ```{r}
 plotlist$`ConvCase NoTax`$plot$salescomp
@@ -451,24 +155,8 @@ plotlist$`ConvCase NoTax`$plot$salescomp
 
 
 ### Emission intensity of new sales {data-width=250}
-
 ```{r}
 plotlist$`ConvCase NoTax`$plot$CO2km_int_newsales
-```
-
-
-Row {data-height= 450}
------------------------------------------------------------------------
-
-### Final energy LDVs by fuel
-```{r}
-plotlist$`ConvCase NoTax`$plot$EJLDV
-```
-
-
-### Fleet composition
-```{r}
-plotlist$`ConvCase NoTax`$plot$vintcomp
 ```
 
 LDVs Conv scenario {.hidden}
@@ -509,6 +197,22 @@ More information can be found in the [Assumptions].
 Row {data-height= 450}
 -----------------------------------------------------------------------
 
+### Fleet composition {data-width=250}
+```{r}
+plotlist$ConvCase$plot$vintcomp
+```
+
+
+### Final energy LDVs by fuel {data-width=250}
+
+```{r}
+plotlist$ConvCase$plot$EJLDV
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
 ### Sales composition {data-width=250}
 ```{r}
 plotlist$ConvCase$plot$salescomp
@@ -516,24 +220,8 @@ plotlist$ConvCase$plot$salescomp
 
 
 ### Emission intensity of new sales {data-width=250}
-
 ```{r}
 plotlist$ConvCase$plot$CO2km_int_newsales
-```
-
-
-Row {data-height= 450}
------------------------------------------------------------------------
-
-### Final energy LDVs by fuel
-```{r}
-plotlist$ConvCase$plot$EJLDV
-```
-
-
-### Fleet composition
-```{r}
-plotlist$ConvCase$plot$vintcomp
 ```
 
 
@@ -577,6 +265,22 @@ More information can be found in the [Assumptions].
 Row {data-height= 450}
 -----------------------------------------------------------------------
 
+### Fleet composition {data-width=250}
+```{r}
+plotlist$HydrHype$plot$vintcomp
+```
+
+
+### Final energy LDVs by fuel {data-width=250}
+
+```{r}
+plotlist$HydrHype$plot$EJLDV
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
 ### Sales composition {data-width=250}
 ```{r}
 plotlist$HydrHype$plot$salescomp
@@ -584,24 +288,8 @@ plotlist$HydrHype$plot$salescomp
 
 
 ### Emission intensity of new sales {data-width=250}
-
 ```{r}
 plotlist$HydrHype$plot$CO2km_int_newsales
-```
-
-
-Row {data-height= 450}
------------------------------------------------------------------------
-
-### Final energy LDVs by fuel
-```{r}
-plotlist$HydrHype$plot$EJLDV
-```
-
-
-### Fleet composition
-```{r}
-plotlist$HydrHype$plot$vintcomp
 ```
 
 
@@ -645,6 +333,22 @@ Electric vehicles gain an important share of the mix thanks to policies oriented
 Row {data-height= 450}
 -----------------------------------------------------------------------
 
+### Fleet composition {data-width=250}
+```{r}
+plotlist$ElecEra$plot$vintcomp
+```
+
+
+### Final energy LDVs by fuel {data-width=250}
+
+```{r}
+plotlist$ElecEra$plot$EJLDV
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
 ### Sales composition {data-width=250}
 ```{r}
 plotlist$ElecEra$plot$salescomp
@@ -652,24 +356,8 @@ plotlist$ElecEra$plot$salescomp
 
 
 ### Emission intensity of new sales {data-width=250}
-
 ```{r}
 plotlist$ElecEra$plot$CO2km_int_newsales
-```
-
-
-Row {data-height= 450}
------------------------------------------------------------------------
-
-### Final energy LDVs by fuel
-```{r}
-plotlist$ElecEra$plot$EJLDV
-```
-
-
-### Fleet composition
-```{r}
-plotlist$ElecEra$plot$vintcomp
 ```
 
 
@@ -713,6 +401,22 @@ More information can be found in the [Assumptions].
 Row {data-height= 450}
 -----------------------------------------------------------------------
 
+### Fleet composition {data-width=250}
+```{r}
+plotlist$SynSurge$plot$vintcomp
+```
+
+
+### Final energy LDVs by fuel {data-width=250}
+
+```{r}
+plotlist$SynSurge$plot$EJLDV
+```
+
+
+Row {data-height= 450}
+-----------------------------------------------------------------------
+
 ### Sales composition {data-width=250}
 ```{r}
 plotlist$SynSurge$plot$salescomp
@@ -720,24 +424,8 @@ plotlist$SynSurge$plot$salescomp
 
 
 ### Emission intensity of new sales {data-width=250}
-
 ```{r}
 plotlist$SynSurge$plot$CO2km_int_newsales
-```
-
-
-Row {data-height= 450}
------------------------------------------------------------------------
-
-### Final energy LDVs by fuel
-```{r}
-plotlist$SynSurge$plot$EJLDV
-```
-
-
-### Fleet composition
-```{r}
-plotlist$SynSurge$plot$vintcomp
 ```
 
 Comparison {data-icon="fa-exchange-alt"}
@@ -751,9 +439,9 @@ Row {data-height = 450}
 plotlist$comparison$plot$vintscen
 ```
 
-### Emission intensity, new sales comparison
+### Comparison of passenger final energy demand
 ```{r}
-plotlist$comparison$plot$CO2km_intensity_newsales_scen
+plotlist$comparison$plot$EJpassfuels_scen
 ```
 
 ### Comparison of passenger transport fossil fuels emissions
@@ -765,19 +453,333 @@ plotlist$comparison$plot$emipfos_scen
 Row {data-height = 450}
 -----------------------------------------------------------------------
 
-### Comparison of passenger final energy demand
-```{r}
-plotlist$comparison$plot$EJpassfuels_scen
-```
-
 ### Comparison of sales composition
 ```{r}
 plotlist$comparison$plot$salescom_scen
 ```
 
+### Emission intensity, new sales comparison
+```{r}
+plotlist$comparison$plot$CO2km_intensity_newsales_scen
+```
+
 ### Comparison of passenger electricity production emissions
 ```{r}
 plotlist$comparison$plot$emipel_scen
+```
+
+Passenger transport overview {data-icon="glyphicon glyphicon-scale"}
+===================================== 
+Side Navigation {.sidebar .sidebarOverview data-width=160}
+-------------------------------------
+
+[Baseline](#passenger-transport-overview){class="sidebar-button selected"}
+[Conventional Case](#passenger-transport-overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#passenger-transport-overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#passenger-transport-overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#passenger-transport-overview-synfuel-scenario){class="sidebar-button"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case NoTax")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$`ConvCase NoTax`$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market.
+More information can be found in the [Assumptions].
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Distance traveled per capita
+```{r}
+plotlist$`ConvCase NoTax`$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$`ConvCase NoTax`$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Passenger Final Energy Demand
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$EJpassfuels
+```
+
+### Emissions passenger transport
+
+```{r}
+plotlist$`ConvCase NoTax`$plot$emip
+```
+
+Passenger transport overview Conv scenario {.hidden}
+=====================================
+
+Side Navigation {.sidebar .sidebarOverview data-width=160}
+-------------------------------------
+
+[Baseline](#passenger-transport-overview){class="sidebar-button"}
+[Conventional Case](#passenger-transport-overview-conv-scenario){class="sidebar-button selected"}
+[Hydrogen Hype](#passenger-transport-overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#passenger-transport-overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#passenger-transport-overview-synfuel-scenario){class="sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Conventional Case")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ConvCase$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Absence of policies oriented to promote alternative vehicles. Internal combustion engines lead the market. More information can be found in the [Assumptions].
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Distance traveled per capita
+```{r}
+plotlist$ConvCase$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$ConvCase$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Passenger Final Energy Demand
+
+```{r}
+plotlist$ConvCase$plot$EJpassfuels
+```
+
+### Emissions passenger transport
+
+```{r}
+plotlist$ConvCase$plot$emip
+```
+
+
+Passenger transport overview FCEV scenario {.hidden}
+===================================== 
+
+Side Navigation {.sidebar .sidebarOverview data-width=160}
+-------------------------------------
+
+[Baseline](#passenger-transport-overview){class="sidebar-button"}
+[Conventional Case](#passenger-transport-overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#passenger-transport-overview-fcev-scenario){class="sidebar-button selected"}
+[Electric Era](#passenger-transport-overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#passenger-transport-overview-synfuel-scenario){class="sidebar-button"}
+
+
+<!-- Dividing the page in two rows-->
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Hydrogen Hype")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$HydrHype$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Hydrogen vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+More information can be found in the [Assumptions].
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Distance traveled per capita
+```{r}
+plotlist$HydrHype$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$HydrHype$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Passenger Final Energy Demand
+
+```{r}
+plotlist$HydrHype$plot$EJpassfuels
+```
+
+### Emissions passenger transport
+
+```{r}
+plotlist$HydrHype$plot$emip
+```
+
+Passenger transport overview BEV scenario {.hidden}
+===================================== 
+
+Side Navigation {.sidebar .sidebarOverview data-width=160}
+-------------------------------------
+
+[Baseline](#passenger-transport-overview){class="sidebar-button"}
+[Conventional Case](#passenger-transport-overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#passenger-transport-overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#passenger-transport-overview-bev-scenario){class="sidebar-button selected"}
+[Synfuel Surge](#passenger-transport-overview-synfuel-scenario){class="sidebar-button"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Electric Era")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$ElecEra$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Electric vehicles gain an important share of the mix thanks to policies oriented at promoting them.
+More information can be found in the [Assumptions].
+
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Distance traveled per capita
+```{r}
+plotlist$ElecEra$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$ElecEra$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Passenger Final Energy Demand
+
+```{r}
+plotlist$ElecEra$plot$EJpassfuels
+```
+
+### Emissions passenger transport
+
+```{r}
+plotlist$ElecEra$plot$emip
+```
+
+Passenger transport overview Synfuel scenario {.hidden}
+===================================== 
+
+Side Navigation {.sidebar .sidebarOverview data-width=160}
+-------------------------------------
+
+[Baseline](#passenger-transport-overview){class="sidebar-button"}
+[Conventional Case](#passenger-transport-overview-conv-scenario){class="sidebar-button"}
+[Hydrogen Hype](#passenger-transport-overview-fcev-scenario){class="sidebar-button"}
+[Electric Era](#passenger-transport-overview-bev-scenario){class="sidebar-button"}
+[Synfuel Surge](#passenger-transport-overview-synfuel-scenario){class="sidebar-button selected"}
+
+Row {data-height=300}
+-----------------------------------------------------------------------
+
+### Transport scenario {data-width=100}
+```{r}
+valueBox("Synfuel Surge")
+```
+
+
+### Emissions {data-width=100}
+```{r}
+valueBox(plotlist$SynSurge$emiscen, icon = "fa-cloud")
+```
+
+
+### Scenario description {data-width=200}
+
+Synthetic fuels gain importance in the liquid fuels production. Absence of policies oriented to promote electric and hydrogen vehicles, while internal combustion engines lead the market.
+More information can be found in the [Assumptions].
+
+<!-- Dividing the page in two columns-->
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Distance traveled per capita
+```{r}
+plotlist$SynSurge$plot$ESmodecap_pass
+```
+
+### Total Passenger Transport Energy Services Demand
+```{r}
+plotlist$SynSurge$plot$ESmodeabs
+```
+
+
+Row {data-heigth=500}
+-----------------------------------------------------------------------
+
+### Transport Passenger Final Energy Demand
+
+```{r}
+plotlist$SynSurge$plot$EJpassfuels
+```
+
+### Emissions passenger transport
+
+```{r}
+plotlist$SynSurge$plot$emip
 ```
 
 
@@ -787,59 +789,50 @@ Assumptions {data-icon="glyphicon glyphicon-th-list"}
 Column {data-width= 450}
 -----------------------------------------------------------------------
 
-### Conventional Case (NoTax) {data-height=200}
+### Baseline (No Carbon Pricing) {data-height=200}
 </ul> 
-  <li> Conventional consumers patterns </li>
+  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars. </li>
   <li> No policies to promote alternative vehicles </li>
-  <li> Pessimistic trend of electric recharging stations </li>
-  <li> Learning-by-doing on BEVs and FCEVs </li>
-  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+  <li> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Conventional Case {data-height=200}
 
 </ul>
-  <li> Conventional consumers patterns </li>
+  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
   <li> No policies to promote alternative vehicles </li>
-  <li> Pessimistic trend of electric recharging stations </li>
-  <li> Learning-by-doing on BEVs and FCEVs </li>
-  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+  <li> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Hydrogen Hype {data-height=200}
 
 </ul>
-  <li> Learning-by-doing on BEVs and FCEVs </li>
-  <li> Optimistic trend of hydrogen refuelling stations </li>
+  <li> Fast build-up of hydrogen refuelling stations </li>
   <li> Rebates-feebates scheme: FCEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
-  <li> Mark-up costs applied to internal combustion engines (both conventional and hybrid) </li>
-  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
-  <li> Policy push of FCEVs: policy-driven decrease of the perceived inconvenience cost associated to the purchase of hydrogen vehicles </li>
+  <li> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
+  <li> Policy push for FCEVs: Support policies induce a shift from dis-preference to preference of hydrogen vehicles, e.g. incentives to carmakers and car retailers to provide hidrogen vehicles </li>
   <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
+  <li> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Electric Era {data-height=200}
 
 </ul>
-  <li> Learning-by-doing on BEVs and FCEVs </li>
   <li> Rebates-feebates scheme: BEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
-  <li> Mark-up costs applied to internal combustion engines (both conventional and hybrid) </li>
-  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
+  <li> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
 </ul>
 
 
 ### Synfuel Surge {data-height=200}
 
 </ul>
-  <li> Conventional consumers patterns </li>
-  <li> Learning-by-doing on BEVs and FCEVs </li>
-  <li> Market-driven behavior of light duty vehicles powertrain choice </li>
-  <li> Synfuels are forced in the liquids mix reaching 10&#37; of liquids fuels in transportation by 2035 </li>
+  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
+  <li> Synfuels are forced in the liquids mix  blending mandates reaching 10&#37; of liquids fuels in transportation by 2035 </li>
   <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
-  <li> Emissions of CO<sub>2</sub> are captured and reused to produce syntethic fuels (Carbon Capture and Utilization) </li>
+  <li> CO<sub>2</sub> emissions from other sources (e.g., industrial installations) are captured and reused to produce syntethic fuels (Carbon Capture and Utilization) </li>
 </ul>
 
 
@@ -882,7 +875,7 @@ navBarMemory = function(topMenuLabel, sideBarClass){
 ```
 
 ```{r, results='asis'}
-  cat(navBarMemory("Overview",".sidebarOverview"))
+  cat(navBarMemory("Passenger transport overview",".sidebarOverview"))
   cat(navBarMemory("LDVs",".sidebarLDV"))
 ```
 
@@ -890,7 +883,12 @@ navBarMemory = function(topMenuLabel, sideBarClass){
 
 <!-- CSS -->
 <style type="text/css">
-
+  <!-- title font of panels -->  
+  .chart-title {  /* chart_title  */
+   font-size: 30px;
+   font-family: Algerian;
+  }
+   
   .sidebar-button {  /* sidebar size  */
      display: inline-block;
      font-size: 20px;
@@ -1002,8 +1000,20 @@ navBarMemory = function(topMenuLabel, sideBarClass){
     -ms-user-select: none;
     user-select: none;
   }
+
+<!-- element "legend" of panels -->
+  .rightal {
+  float: right;
+  font-weight: bold;
+  background-color: #e8e4e1;
+  color: #7c7c7c;
+  padding: 5px 10px;
+  }
+
 <!-- indentation for bullet points list -->  
   li{
-    margin-left:10px;
+    margin-left:20px;
   }
+  
+  
 </style>

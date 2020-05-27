@@ -104,7 +104,7 @@ scens = unique(EJmode_all$scenario)
 ## plot functions
 vintcomparisondash = function(dt, scen){
   
-  dt = dt[year %in% c(2015, 2030, 2050)]
+  dt = dt[year %in% seq(2020, 2050, 5)]
   dt[, year := as.character(year)]
   dt = dt[region == region_plot & scenario == scen]
   dt = dt[,.(value = sum(value)), by = c("region", "technology", "year")]
@@ -143,7 +143,7 @@ vintcomparisondash = function(dt, scen){
 
 vintscen_dash = function(dt){
   dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
-  dt = dt[year %in% c(2015, 2030, 2050)]
+  dt = dt[year %in% c(2020, 2030, 2050)]
   dt[, year := as.character(year)]
   dt = dt[region == region_plot]
   dt = dt[,.(value = sum(value)), by = c("region", "technology", "year", "scenario")]
@@ -172,7 +172,7 @@ vintscen_dash = function(dt){
     labs(x = "", y = "")
   
   g2 = ggplot()+
-    geom_bar(data = dt[year == 2015 & scenario == "ConvCase"][, scenario := "Historical"],
+    geom_bar(data = dt[year == 2020 & scenario == "ConvCase"][, scenario := "Historical"],
              aes(x = scenario, y = value, group = technology, text = details, fill = technology, width=.75), position="stack", stat = "identity", width = 0.5)+
     guides(fill = guide_legend(reverse=TRUE))+
     facet_wrap(~year, nrow = 1)+
@@ -210,14 +210,14 @@ vintscen_dash = function(dt){
 
 salescomdash = function(dt, scen){
   
-  dt = dt[region == region_plot & scenario == scen & year <=2050]
+  dt = dt[region == region_plot & scenario == scen & year %in% seq(2020, 2050, 5)]
   dt[, year := as.numeric(as.character(year))]
   dt[, details := paste0("Share: ", round(shareFS1*100, digits = 0), " %", "<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   ## normalize shares so to have sum to 1
   dt[, shareFS1 := round(shareFS1*100, digits = 0)]
   dt[, shareFS1 := shareFS1/sum(shareFS1), by = c("region", "year")]
   plot = ggplot()+
-    geom_bar(data = dt, aes(x = year,y = shareFS1, group = technology, fill = technology, text = details), position = position_stack(), stat = "identity")+
+    geom_bar(data = dt, aes(x = year,y = round(shareFS1*100,0), group = technology, fill = technology, text = details), position = position_stack(), stat = "identity")+
     theme_minimal()+
     scale_fill_manual("Technology", values = cols)+
     expand_limits(y = c(0,1))+
@@ -256,7 +256,7 @@ ESmodecapdash = function(dt, scen){
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     ylim(0,32000)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -273,7 +273,7 @@ ESmodecapdash = function(dt, scen){
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     ylim(0,64000)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -285,7 +285,7 @@ ESmodecapdash = function(dt, scen){
   
   plot_pass = ggplotly(plot_pass, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
-    layout(yaxis=list(title='[pkm/cap]', titlefont = list(size = 10)))
+    layout(yaxis=list(title='[km]', titlefont = list(size = 10)))
   plot_frgt = ggplotly(plot_frgt, tooltip = c("text")) %>% 
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[tkm/cap]', titlefont = list(size = 10)))
@@ -313,7 +313,7 @@ ESmodeabs_dash = function(dt, scen){
     scale_fill_manual("Vehicle Type", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     ylim(0, 17)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -338,7 +338,7 @@ ESmodeabs_dash = function(dt, scen){
 
 
 EJpass_dash = function(dt, scen){
-  dt = dt[region == region_plot & scenario == scen & year >= 2015  & year <= 2050 & sector == "trn_pass"]
+  dt = dt[region == region_plot & scenario == scen & year >= 2020  & year <= 2050 & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   
   plot = ggplot()+
@@ -348,7 +348,7 @@ EJpass_dash = function(dt, scen){
     expand_limits(y = c(0,1))+
     ylim(0, 20)+
     labs(x = "", y = "")+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -373,15 +373,15 @@ EJpass_dash = function(dt, scen){
 EJpass_scen_dash = function(dt){
   dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
   dt[, subtech := factor(subtech, levels = legend_ord)]
-  dt = dt[region == region_plot & year %in% c(2015, 2030, 2050) & sector == "trn_pass"]
+  dt = dt[region == region_plot & year %in% c(2020, 2030, 2050) & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   dt[, scenario := gsub(".*_", "", scenario)]
   dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
   
   g1 = ggplot()+
     geom_bar(data = dt[year %in% c(2030, 2050)], aes(x = scenario, y = demand_EJ, group = subtech,
-                            fill = subtech, 
-                            text = details, width=.75), 
+                                                     fill = subtech, 
+                                                     text = details, width=.75), 
              position="stack", stat = "identity", width = 0.5)+
     facet_wrap(~year, nrow = 1)+
     theme_minimal()+
@@ -400,9 +400,9 @@ EJpass_scen_dash = function(dt){
   
   
   g2 = ggplot()+
-    geom_bar(data = dt[year == 2015 & scenario == "ConvCase"][, scenario := "Historical"], aes(x = scenario, y = demand_EJ, group = subtech,
-                                                     fill = subtech, 
-                                                     text = details, width=.75), 
+    geom_bar(data = dt[year == 2020 & scenario == "ConvCase"][, scenario := "Historical"], aes(x = scenario, y = demand_EJ, group = subtech,
+                                                                                               fill = subtech, 
+                                                                                               text = details, width=.75), 
              position="stack", stat = "identity", width = 0.5)+
     facet_wrap(~year, nrow = 1)+
     theme_minimal()+
@@ -449,7 +449,7 @@ CO2km_intensity_newsalesdash = function(dt, scen){
     geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name, text = details_blank), size = 3)+
     expand_limits(y = c(0,1))+
     labs(x = "", y = "")+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -488,7 +488,7 @@ CO2km_intensity_newsales_scen_dash = function(dt){
     geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name, text = details_blank), size = 3)+
     expand_limits(y = c(0,1))+
     labs(x = "", y = "")+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90,  size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -517,7 +517,7 @@ CO2km_intensity_newsales_scen_dash = function(dt){
 EJLDVdash <- function(dt, scen){
   dt = dt[subsector_L1 == "trn_pass_road_LDV_4W"]
   dt[, technology := factor(technology, levels = legend_ord)]
-  dt = dt[region == region_plot & scenario == scen & year >= 2015 & year <= 2050]
+  dt = dt[region == region_plot & scenario == scen & year >= 2020 & year <= 2050]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 1), " [EJ]","<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   
   plot = ggplot()+
@@ -527,7 +527,7 @@ EJLDVdash <- function(dt, scen){
     scale_fill_manual("Technology", values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     ylim(0, 16)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -571,7 +571,7 @@ emip_dash = function(dt, scen){
     theme_minimal()+
     expand_limits(y = c(0,1))+
     ylim(-80,1800)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -619,7 +619,7 @@ emipscen_dash = function(dt){
     theme_minimal()+
     expand_limits(y = c(0,1))+
     ylim(0,1800)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -643,7 +643,7 @@ emipscen_dash = function(dt){
     theme_minimal()+
     expand_limits(y = c(0,1))+
     ylim(-80, 140)+
-    scale_x_continuous(breaks = c(2015, 2030, 2050))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
           axis.title = element_text(size = 8),
@@ -808,9 +808,9 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Sales composition'$contents) <- salescomp$vars
   legend$'Sales composition'$description <- "<p>Composition of sales of light duty vehicles</p>"
   
-  legend$'Per capita Passenger Transport Energy Services Demand'$contents <- lapply(ESmodecap$vars$vars_pass, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Per capita Passenger Transport Energy Services Demand'$contents) <- ESmodecap$vars$vars_pass
-  legend$'Per capita Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand, passenger transport</p>"
+  legend$'Distance traveled per capita'$contents <- lapply(ESmodecap$vars$vars_pass, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Distance traveled per capita'$contents) <- ESmodecap$vars$vars_pass
+  legend$'Distance traveled per capita'$description <- "<p>Average distance traveled per capita by transport mode</p>"
   
   legend$'Total Passenger Transport Energy Services Demand'$contents <- lapply(ESmodeabs$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
   names(legend$'Total Passenger Transport Energy Services Demand'$contents) <- ESmodeabs$vars
