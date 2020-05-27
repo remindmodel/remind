@@ -75,7 +75,11 @@ display p45_factorRescaleCO2TaxTrack;
 ***pm_taxCO2eq(t,"LAM")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"LAM"),0.5*pm_taxCO2eq(t,"EUR"));
 ***pm_taxCO2eq(t,"MEA")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"MEA"),0.5*pm_taxCO2eq(t,"EUR"));
 ***pm_taxCO2eq(t,"OAS")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"OAS"),0.5*pm_taxCO2eq(t,"EUR"));
-
+***new hard-coded safety valve for SSA: 7.5$ in 2005, 30 in 2025, 45 in 2030
+*CB* special case SSA: maximum carbon price at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
+pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")),7.5 * sm_DptCO2_2_TDpGtC);
+pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")),30 * sm_DptCO2_2_TDpGtC);
+pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")),45 * sm_DptCO2_2_TDpGtC);
 
 *#' convergence scheme post 2030: exponential increase with 1.25% AND regional convergence
 pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = (pm_taxCO2eq("2030",regi)*1.0125**(ttot.val-2030)*max(70-ttot.val+2030,0) + 30 * sm_DptCO2_2_TDpGtC * 1.0125**(ttot.val-2030)*min(ttot.val-2030,70))/70;
