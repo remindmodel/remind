@@ -398,7 +398,7 @@ q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energ
 *q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
 
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
-q_heat_limit(ttot,all_regi,emi_sectors,all_emiMkt)
+q_heat_limit(ttot,all_regi)
 $ENDIF.sehe_upper
 
 ***----------------------------------------------------------------------------------------
