@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.941
 * 
-* Last modification (input data): Wed May 20 10:09:09 2020
+* Last modification (input data): Mon May 25 15:50:15 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -130,7 +130,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Incumb_Ref_noCCS
+$setGlobal c_expname  Incumb_1p5_noCCS_CheapH2_LimBio
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -189,7 +189,7 @@ $setglobal emicapregi  none           !! def = none
 ***---------------------    42_banking  -----------------------------------------
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
-$setglobal carbonprice  none          !! def = none
+$setglobal carbonprice  expoLinear          !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  regiCarbonPrice              !! def = none
 ***---------------------    50_damages    ---------------------------------------
@@ -289,8 +289,11 @@ cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in modu
 cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
-c_regi_synfuelscen			"region to apply synfuelscen to"
+c_regi_sensscen				"regions which regional sensitivity parameters apply to"
 cm_synfuel_trp              "switch for forcing synfuels in transport"
+cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
+cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
+cm_capex_markdown_flex      "switch for emulating flexibility benefits of certain electricity-based technologies (elh2,dac...) by capex reductions"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -303,9 +306,9 @@ c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 1;         !! def = 1
-$setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
+cm_emiscen        = 9;         !! def = 1
+$setglobal cm_rcp_scen  rcp20   !! def = "none"
+cm_co2_tax_2020   = 30;        !! def = -1
 cm_co2_tax_growth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
@@ -334,7 +337,7 @@ $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
-cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
+cm_startyear      = 2025;      !! def = 2005 for a BAU, 2015 for policy runs
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
@@ -364,7 +367,7 @@ c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 0;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
-cm_iterative_target_adj  = 0;      !! def = 0
+cm_iterative_target_adj  = 5;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 $setglobal c_delayPolicy  SPA0           !! def = SPA0
@@ -375,8 +378,8 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 0;   !! def = 1300
-$setGlobal cm_regiCO2target  off       !! def = off
+c_budgetCO2              = 600;   !! def = 1300
+$setGlobal cm_regiCO2target  2050.EUR_regi.budget.netCO2 43       !! def = off
 $setGlobal cm_quantity_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
@@ -405,7 +408,7 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_synfuelscen		   = 0; !! def = 0
+cm_synfuelscen		   = 2; !! def = 0
 cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
@@ -416,10 +419,14 @@ $setGlobal cm_effHP  5 !! def = 5
 $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
-$setGlobal c_regi_capturescen  all !! def = all
-$setGlobal c_regi_synfuelscen  all !! def = all
+$setGlobal c_regi_capturescen  ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW !! def = all
+$setGlobal c_regi_sensscen  ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW !! def = all
 
 cm_synfuel_trp      = 0; !! def = 0
+
+cm_biotrade_phaseout = 0; !! def 0
+cm_bioprod_histlim = -1; !! def -1	
+cm_capex_markdown_flex = 0; !! def 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -472,13 +479,13 @@ $setglobal cm_INNOPATHS_storageFactor  off !! def = off
 
 $setglobal cm_INNOPATHS_adj_seed  tnrs 1,gasftrec 1,gasftcrec 1,coalftrec 1,coalftcrec 1,apCarH2T 0.25,apCarElT 0.25,apCarDiEffT 0.125,apCarDiEffH2T 0.125,dac 1,ngccc 1,gash2c 1,igccc 1,pcc 1,pco 1,coalh2c 1,bioigccc 1,bioftcrec 1,bioh2c 1
 $setglobal cm_INNOPATHS_adj_seed_cont  off
-$setglobal cm_INNOPATHS_adj_coeff  tnrs 0.5,gasftrec 0.2,gasftcrec 0.4,coalftrec 0.3,coalftcrec 0.5,spv 0.1,wind 0.2,dac 0.4,apCarH2T 2,apCarElT 0.5,apCarDiEffT 4,apCarDiEffH2T 4
-$setglobal cm_INNOPATHS_adj_coeff_cont  gridspv 2,gridcsp 2,gridwind 2,storspv 0.1,storwind 0.1,storcsp 0.1,ngccc 0.5,gash2c 0.5,igccc 0.5,pcc 0.5,pco 0.5,coalh2c 0.5,bioftcrec 0.5,bioh2c 0.5,bioigccc 0.5
+$setglobal cm_INNOPATHS_adj_coeff  tnrs 0.5,gasftrec 0.2,gasftcrec 0.4,coalftrec 0.3,coalftcrec 0.5,spv 0.1,wind 0.2,dac 0.4,apCarH2T 2,apCarElT 0.5,apCarDiEffT 4,apCarDiEffH2T 6
+$setglobal cm_INNOPATHS_adj_coeff_cont  gridspv 2,gridcsp 2,gridwind 2,storspv 0.1,storwind 0.1,storcsp 0.1,ngccc 0.5,gash2c 0.5,igccc 0.5,pcc 0.5,pco 0.5,coalh2c 0.5,bioftcrec 0.5,bioh2c 0.5,bioigccc 0.7
 
-$setglobal cm_INNOPATHS_inco0Factor  ccsinje 0.5,bioigccc 0.66,bioh2c 0.66,biogas 0.66,bioftrec 0.66,bioftcrec 0.66,igccc 0.66,coalh2c 0.66,coalgas 0.66,coalftrec 0.66,coalftcrec 0.66,ngccc 0.66,gash2c 0.66,gasftrec 0.66,gasftcrec 0.66,tnrs 0.66 !! def = off
+$setglobal cm_INNOPATHS_inco0Factor  ccsinje 0.5,bioigccc 0.66,bioh2c 0.66,biogas 0.66,bioftrec 0.66,bioftcrec 0.66,igccc 0.66,coalh2c 0.66,coalgas 0.66,coalftrec 0.66,coalftcrec 0.66,ngccc 0.66,gash2c 0.66,gasftrec 0.66,gasftcrec 0.66,tnrs 0.68 !! def = off
 
 $setglobal cm_INNOPATHS_CCS_markup  0.75 !! def = off
-$setglobal cm_INNOPATHS_renewables_floor_cost  spv 0.1,wind 0.3 !! def = off 
+$setglobal cm_INNOPATHS_renewables_floor_cost  spv 0.1,wind 0.5 !! def = off 
 
 $setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
 
