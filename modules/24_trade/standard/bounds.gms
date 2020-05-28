@@ -137,9 +137,9 @@ loop(regi,
       );
 );
 
-*** FS: scenario 2: switch off biomass imports after 2040 for synfuel scenarios with limited biomass
-if ( cm_synfuelscen ge 2,
-	vm_Mport.up(t,regi_synfuelscen,"pebiolc")$(t.val ge 2040) = 0;
+*** FS: scenario 2: switch off biomass imports after 2030 for regionally limited biomass scenarios
+if ( cm_biotrade_phaseout eq 1,
+	vm_Mport.up(t,regi_sensscen,"pebiolc")$(t.val ge 2030) = 0;
 );
 
 *** EOF ./modules/24_trade/standard/bounds.gms

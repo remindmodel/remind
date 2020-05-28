@@ -119,7 +119,7 @@ $endif
 *** FS: synfuel scenario 3
 *** assume, in addition, that always 25% ICE have have to be used
 if ( cm_synfuelscen eq 3,
-  vm_shUePeT.lo(t,regi_synfuelscen,"apCarPeT") = 25;
+  vm_shUePeT.lo(t,regi_sensscen,"apCarPeT") = 25;
 );
 
 *** Limit phase-in of electric vehicles to historic values (1Mio cars = 	1/650 cap = 0.00154)

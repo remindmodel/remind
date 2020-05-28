@@ -386,7 +386,7 @@ pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP)
 *** i.e. electrolysis runs half of the year with half of average electricity price
 
 if ( cm_synfuelscen ge 1,
-	pm_eta_conv(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 2 * pm_eta_conv(t,regi_synfuelscen,"elh2")$(t.val ge 2030); 
+	pm_eta_conv(t,regi_sensscen,"elh2")$(t.val ge 2030) = 2 * pm_eta_conv(t,regi_sensscen,"elh2")$(t.val ge 2030); 
 );
 
 

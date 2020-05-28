@@ -110,11 +110,11 @@ q30_limitXpBio(t,regi)..
          vm_fuExtr(t,regi,"pebiolc","1")
 ;
 
-*** FS: synfuel scenario 2: limit energy crop production from 2040 onwards to 2 * 2015-level
-q30_limitProdtoHist(t,regi_synfuelscen)$(cm_synfuelscen ge 2)..
-         vm_fuExtr(t,regi_synfuelscen,"pebiolc","1")$(t.val ge 2040)
+*** FS: limit energy crop production after 2030 to cm_bioprod_histlim * 2015-level in a region in regi_sensscen
+q30_limitProdtoHist(t,regi_sensscen)$(cm_bioprod_histlim ge 0)..
+         vm_fuExtr(t,regi_sensscen,"pebiolc","1")$(t.val ge 2030)
          =l=
-         2*vm_fuExtr("2015",regi_synfuelscen,"pebiolc","1")
+         cm_bioprod_histlim*vm_fuExtr("2015",regi_sensscen,"pebiolc","1")
 ;
 
 		 
