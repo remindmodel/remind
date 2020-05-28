@@ -2,7 +2,7 @@ title;start;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;clim
 BAU_Nash;0;none;0;none;-1;off;nash;1;2005;load;fixed_shares;2;0;EUR;./config/input.gdx;;
 RCP37;0;rcp37;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;0;EUR;./config/input.gdx;BAU_Nash;
 RCP26;0;rcp26;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;0;EUR;./config/input.gdx;BAU_Nash;
-cal_test;1;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;1;EUR;./config/input.gdx;;
+cal_test;0;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;1;EUR;./config/input.gdx;;
 cal_test_CAZ;1;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;1;CAZ;./config/input.gdx;;
 cal_test_CHA;1;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;1;CHA;./config/input.gdx;;
 cal_test_EUR;1;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;1;EUR;./config/input.gdx;;

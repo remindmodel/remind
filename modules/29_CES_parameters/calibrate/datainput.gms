@@ -293,6 +293,7 @@ $endif.edgesm
 pm_cesdata(t,regi,ppfKap,"quantity") 
   = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
+$ifthen.subsectors "%industry%" == "subsectors"
 *** Split steel electricity demand between primary and secondary steel, based 
 *** on the assumption that the specific electricity (not energy) use of 
 *** secondary steel production is nine times higher than that for primary 
@@ -312,9 +313,20 @@ pm_cesdata(t,regi_dyn29(regi),"feel_steel_primary","quantity")$(
 *** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t,regi_dyn29(regi),in,"quantity")
-  = 1e-4
-  * pm_cesdata(t,regi,in2,"quantity");
+  = 1e-4 * pm_cesdata(t,regi,in2,"quantity");
 );
+
+*** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero 
+*** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
+loop ((t_29hist(t),regi_dyn29(regi))$( 
+                           pm_cesdata(t,regi,"fehe_otherInd","quantity") eq 0 ),
+  pm_cesdata(t,regi,"fehe_otherInd","quantity")
+  = 1e-4 * pm_cesdata(t,regi,"fega_otherInd","quantity");
+
+  pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
+  = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
+);
+$endif.subsectors
 
 *** Add an epsilon to the values which are 0 so that they can fit in the CES 
 *** function. And withdraw this epsilon when going to the ESM side

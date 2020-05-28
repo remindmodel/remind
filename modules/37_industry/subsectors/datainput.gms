@@ -168,27 +168,6 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
     feh2_steel        . fega_steel       1.4     2030        22
     feh2_otherInd     . fega_otherInd    1.4     2030        22
 ;
-$ontext
-pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","level")     = 1.5;
-pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","midperiod") = 2030;
-pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","width")     = 15;
-pm_calibrate_eff_scale("feelhth_otherInd", "fega_otherInd", "level")     = 1.5;
-pm_calibrate_eff_scale("feelhth_otherInd", "fega_otherInd", "midperiod") = 2030;
-pm_calibrate_eff_scale("feelhth_otherInd", "fega_otherInd", "width")     = 15;
-
-pm_calibrate_eff_scale("feh2_cement",   "fega_cement",   "level")     = 1.4;
-pm_calibrate_eff_scale("feh2_cement",   "fega_cement",   "midperiod") = 2030;
-pm_calibrate_eff_scale("feh2_cement",   "fega_cement",   "width")     = 22;
-pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")     = 1.4;
-pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod") = 2030;
-pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")     = 22;
-pm_calibrate_eff_scale("feh2_steel",    "fega_steel",    "level")     = 1.4;
-pm_calibrate_eff_scale("feh2_steel",    "fega_steel",    "midperiod") = 2030;
-pm_calibrate_eff_scale("feh2_steel",    "fega_steel",    "width")     = 22;
-pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "level")     = 1.4;
-pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "midperiod") = 2030;
-pm_calibrate_eff_scale("feh2_otherInd", "fega_otherInd", "width")     = 22;
-$offtext
 
 pm_ue_eff_target("ue_cement")           = 0.0075;
 pm_ue_eff_target("ue_chemicals")        = 0.001;

@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.941
 * 
-* Last modification (input data): Wed May 13 13:54:01 2020
+* Last modification (input data): Thu May 28 09:41:41 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -303,7 +303,7 @@ c_regi_capturescen			"region to apply ccapturescen to"
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-c_solver_try_max       = 10;     !! def = 2
+c_solver_try_max       = 5;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
@@ -326,7 +326,7 @@ cm_CCS_cement          = 1;        !! def = 1
 cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
-$setglobal c37_secondary_steel_bound   scenario   !! def = "scenario"
+$setglobal c37_secondary_steel_bound  none   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
@@ -437,9 +437,9 @@ $setglobal c_CES_calibration_new_structure  1    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal cm_CES_calibration_default_prices  0.1    !! def = 0
 
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  IND       !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
