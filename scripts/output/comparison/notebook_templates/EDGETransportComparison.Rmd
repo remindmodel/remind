@@ -19,6 +19,7 @@ require(quitte)
 library(lucode)
 library(magpie)
 library(quitte)
+library(cowplot)
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -460,16 +461,32 @@ emidem_pf(emidem_all)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 
 vintcomparison_regi_pf = function(dt, rp){
-  dt = dt[year %in% c(2015, 2030, 2050, 2100) & region == rp]
-  plot = ggplot()+
-    geom_bar(data = dt,
-             aes(x=scenario, y=value, group=interaction(variable, technology),
-                 fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
-    geom_bar(data = dt,
-             aes(x=scenario, y=value, group=interaction(variable, technology),
-                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black", size=0.05)+
-    guides(fill = guide_legend(reverse=TRUE))+
+  dt = dt[year %in% c(2020, 2030, 2050) & region == rp]
+  p1 = ggplot()+
+    geom_bar(data = dt[year == 2020 & scenario == unique(dt$scenario)[1]][, scenario := "Historical"],
+             aes(x=scenario, y=value, group= technology,
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5)+
     theme_minimal()+
+    ylim(0,500)+
+    facet_wrap(~ year, nrow = 1)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"),
+          legend.position = "none")+
+    scale_fill_manual(values = cols)+
+    labs(y = "[million Veh]", x="")
+  
+  p2 = ggplot()+
+    geom_bar(data = dt[year != 2020],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5)+
+    theme_minimal()+
+        ylim(0,500)+
     facet_wrap(~ year, nrow = 1)+
     theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
           axis.text.y = element_text(size=14),
@@ -479,12 +496,13 @@ vintcomparison_regi_pf = function(dt, rp){
           legend.text = element_text(size=14),
           strip.text = element_text(size=14),
           strip.background = element_rect(color = "grey"))+
-    scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
-    guides(linetype=FALSE,
-           fill=guide_legend(reverse=FALSE, title="Transport mode"))+
+    guides(fill=guide_legend(title="Transport mode"))+
     scale_fill_manual(values = cols)+
-    labs(y = "[million Veh]", x="", title = "LDV fleet")
-    return(plot)
+    labs(y = "", x="")
+  
+  plot = plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(0.15,0.85))
+
+  return(plot)
 }
 
 p = vintcomparison_regi_pf(fleet_all, rp = regionplot)

@@ -484,11 +484,15 @@ for (outputdir in outputdirs) {
   emipSource_all = rbind(emipSource_all, emipSource)
 }
 
-outdir = paste0("output/comparerunEDGE", gsub(" | ^([[:alpha:]]*).*","", Sys.time()))
+## create string with date and time
+time = gsub(":",".",gsub(" ","_",Sys.time()))
+## create output folder
+outdir = paste0("output/comparerunEDGE", time)
 dir.create(outdir)
+## names of the output files
 md_template = "EDGETransportComparison.Rmd"
 dash_template = "EDGEdashboard.Rmd"
-
+## save RDS files
 saveRDS(EJmode_all, paste0(outdir, "/EJmode_all.RDS"))
 saveRDS(salescomp_all, paste0(outdir, "/salescomp_all.RDS"))
 saveRDS(fleet_all, paste0(outdir, "/fleet_all.RDS"))
@@ -502,6 +506,10 @@ saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+
+## create a txt file containing the run names
+write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = " ", quote = FALSE,
+            row.names = FALSE, col.names = FALSE)
 
 ## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
 if (length(outputdirs) == 5 &
