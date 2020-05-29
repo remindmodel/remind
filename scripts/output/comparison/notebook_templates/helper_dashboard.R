@@ -67,12 +67,10 @@ cols <- c("NG" = "#d11141",
           "Hydrogen_push" = "#00aedb",
           "Conservative_liquids" = "#113245",
           "ConvCase" = "#113245",
-          "ConvCaseNoTax" = "#d11141",
+          "Baseline" = "#d11141",
           "ConvCaseWise" = "#d11141",
           "SynSurge" = "orchid",
-          "Fossil fuels" = "#113245",
-          "Fossil fuels + Electricity production" = "#f37735",
-          "Electricity production" = "#6495ed")
+          "Fossil fuels" = "#113245")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
                       "Motorbikes", "Small Cars", "Large Cars", "Van",
@@ -96,7 +94,7 @@ ESmodecap_all = readRDS("ESmodecap_all.RDS")
 ESmodeabs_all = readRDS("ESmodeabs_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJpass_all = readRDS("EJfuelsPass_all.RDS")
-emipFosEl_all = readRDS("emipFosEl_all.RDS")
+emipSource_all = readRDS("emipSource_all.RDS")
 
 ## scenarios
 scens = unique(EJmode_all$scenario)
@@ -142,13 +140,13 @@ vintcomparisondash = function(dt, scen){
 
 
 vintscen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
   dt = dt[year %in% c(2020, 2030, 2050)]
   dt[, year := as.character(year)]
   dt = dt[region == region_plot]
   dt = dt[,.(value = sum(value)), by = c("region", "technology", "year", "scenario")]
   dt[, scenario := gsub(".*_", "", scenario)]
-  dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
+  dt[, scenario := factor(scenario, levels = c("Baseline", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
   dt[, details := paste0("Vehicles: ", round(value, 0), " [million]", "<br>", "Technology: ", technology, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   g1 = ggplot()+
     geom_bar(data = dt[year %in% c(2030, 2050)],
@@ -247,7 +245,7 @@ salescomdash = function(dt, scen){
 
 ESmodecapdash = function(dt, scen){
   dt = dt[region == region_plot & scenario == scen & year <= 2050]
-  dt[, details := paste0("Demand: ", round(cap_dem, digits = 0), ifelse(mode == "pass", " [pkm/cap]",  " [tkm/cap]"), "<br>", "Vehicle: ", vehicle_type_plot, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
+  dt[, details := paste0("Demand: ", round(cap_dem, digits = 0), ifelse(mode == "pass", " [km]",  " [tkm/cap]"), "<br>", "Vehicle: ", vehicle_type_plot, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   
   plot_pass = ggplot()+
     geom_area(data = dt[mode == "pass"], aes(x = year, y = cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot, text = details), position= position_stack())+
@@ -371,12 +369,12 @@ EJpass_dash = function(dt, scen){
 }
 
 EJpass_scen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
   dt[, subtech := factor(subtech, levels = legend_ord)]
   dt = dt[region == region_plot & year %in% c(2020, 2030, 2050) & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
   dt[, scenario := gsub(".*_", "", scenario)]
-  dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
+  dt[, scenario := factor(scenario, levels = c("Baseline", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
   
   g1 = ggplot()+
     geom_bar(data = dt[year %in% c(2030, 2050)], aes(x = scenario, y = demand_EJ, group = subtech,
@@ -470,7 +468,7 @@ CO2km_intensity_newsalesdash = function(dt, scen){
 
 
 CO2km_intensity_newsales_scen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
   historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
   historical_values[, details := "Historical values"]
   targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
@@ -553,20 +551,20 @@ EJLDVdash <- function(dt, scen){
 emip_dash = function(dt, scen){
   dt[, year:= as.numeric(year)]
   dt = dt[region == region_plot & scenario == scen & year <= 2050 & year >= 2020]
-  dt = dcast(dt, region + year + scenario  ~ tech, value.var = "co2")
+  dt = dcast(dt, region + year + scenario  ~ source, value.var = "emi")
   
-  dt[, tot := fos + all_el]
   dt = melt(dt, id.vars = c("region", "year", "scenario"))
-  dt[variable == "tot", type := "Fossil fuels + Electricity production"]
-  dt[variable == "all_el", type := "Electricity production"]
-  dt[variable == "fos", type := "Fossil fuels"]
+  dt[variable == "synf", type := "Synfuel"]
+  dt[variable == "h2", type := "Hydrogen"]
+  dt[variable == "elp", type := "Electricity"]
+  dt[variable == "liq", type := "Fossil fuels"]
+  dt[variable == "synf" & value <0, value := 0]
   
   dt[, details := paste0("Emissions: ", round(value, digits = 0), " [MtCO<sub>2</sub>]", "<br>", "Type: ", type, "<br>", "Region: ", region," <br>", "Year: ", year) ] 
   
   
   plot = ggplot()+
-    geom_area(data = dt[year >= 2020 & type == "Fossil fuels + Electricity production"], aes(x = year, y = value, text = details, fill =type, group = type), alpha = 0.4, position = position_stack())+
-    geom_line(data = dt[year >= 2020 & type != "Fossil fuels + Electricity production"], aes(x = year, y = value, text = details, group = type, color = type))+
+    geom_bar(data = dt[year >= 2020], aes(x = year, y = value, text = details, fill = type, group = type), position = position_stack(), stat = "identity")+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
@@ -597,24 +595,26 @@ emip_dash = function(dt, scen){
 }
 
 emipscen_dash = function(dt){
-  dt = dt[region == region_plot & year <= 2050 & year >= 2020]
+  dt = dt[region == region_plot & year <= 2050 & year >= 2015]
   dt[, year := as.numeric(year)]
   
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
   dt[, scenario := gsub(".*_", "", scenario)]
+  dt = dt[scenario != "Baseline"]
+  dt = dcast(dt, region + year + scenario  ~ source, value.var = "emi")
   
-  dt = dcast(dt, region + year + scenario  ~ tech, value.var = "co2")
-  
-  dt[, tot := fos + all_el]
+  dt[, tot := h2 + synf + elp + liq]
   dt = melt(dt, id.vars = c("region", "year", "scenario"))
-  dt[variable == "tot", type := "Fossil fuels + Electricity production"]
-  dt[variable == "all_el", type := "Electricity production"]
-  dt[variable == "fos", type := "Fossil fuels"]
-  
+  dt[variable == "tot", type := "Passenger transport emissions, supply and demand"]
+  dt[variable == "synf", type := "Synfuels"]
+  dt[variable == "h2", type := "Hydrogen"]
+  dt[variable == "elp", type := "Electricity"]
+  dt[variable == "liq", type := "Fossil fuels"]
+
   dt[, details := scenario ] 
   
-  pfos = ggplot()+
-    geom_line(data = dt[type == "Fossil fuels"], aes(x = year, y = value, text = details, group = scenario, color = scenario))+
+  ptot = ggplot()+
+    geom_line(data = dt[variable == "tot"], aes(x = year, y = value, text = details, group = scenario, color = scenario))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
@@ -630,19 +630,19 @@ emipscen_dash = function(dt){
           strip.background = element_rect(color = "grey"))+
     scale_color_manual(values = cols)
   
-  pfos = ggplotly(pfos, tooltip = c("text")) %>%
+  ptot = ggplotly(ptot, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
   vars = as.character(unique(dt$scenario))
   
   
-  pel = ggplot()+
-    geom_line(data = dt[type == "Electricity production"], aes(x = year, y = value, text = scenario, group = scenario, color = scenario))+
+  pfos = ggplot()+
+    geom_line(data = dt[variable == "liq"], aes(x = year, y = value, text = scenario, group = scenario, color = scenario))+
     labs(x = "", y = "")+
     theme_minimal()+
     expand_limits(y = c(0,1))+
-    ylim(-80, 140)+
+    ylim(0, 1800)+
     scale_x_continuous(breaks = c(2020, 2030, 2050))+
     theme(axis.text.x = element_text(angle = 90, size = 8, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 8),
@@ -654,11 +654,11 @@ emipscen_dash = function(dt){
           strip.background = element_rect(color = "grey"))+
     scale_color_manual(values = cols)
   
-  pel = ggplotly(pel, tooltip = c("text")) %>%
+  pfos = ggplotly(pfos, tooltip = c("text")) %>%
     config(modeBarButtonsToRemove=plotlyButtonsToHide, displaylogo=FALSE) %>%
     layout(yaxis=list(title='[MtCO<sub>2</sub>]', titlefont = list(size = 10)))
   
-  plot = list(pfos = pfos, pel = pel, vars = vars)
+  plot = list(pfos = pfos, ptot = ptot, vars = vars)
   
   return(plot)
   
@@ -667,11 +667,11 @@ emipscen_dash = function(dt){
 
 salescom_scen_dash = function(dt){
   dt[, scenario := as.character(scenario)]
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "ConvCaseNoTax", scenario)]
+  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
   dt = dt[region == region_plot & year %in% c(2020, 2030, 2050)]
   dt[, year := as.numeric(as.character(year))]
   dt[, scenario := gsub(".*_", "", scenario)]
-  dt[, scenario := factor(scenario, levels = c("ConvCaseNoTax", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
+  dt[, scenario := factor(scenario, levels = c("Baseline", "ConvCase", "HydrHype", "ElecEra", "SynSurge"))]
   ## normalize shares so to have sum to 1
   dt[, shareFS1 := round(shareFS1*100, digits = 0)]
   dt[, shareFS1 := shareFS1/sum(shareFS1), by = c("region", "year", "scenario")]
@@ -767,7 +767,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
     ## final energy LDVs by fuel
     EJLDV = EJLDVdash(EJroad_all, scen)
     ## emissions passenger transport demand and upstream emissions
-    emip = emip_dash(emipFosEl_all, scen)
+    emip = emip_dash(emipSource_all, scen)
     
     ## collect plots
     output[[scenname]]$plot$vintcomp = vintcomp$plot
@@ -792,7 +792,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   ## sales
   salescom_scen = salescom_scen_dash(salescomp_all)
   ## emissions
-  emip_scen = emipscen_dash(emipFosEl_all)
+  emip_scen = emipscen_dash(emipSource_all)
   
   
   output[["comparison"]]$plot$vintscen = vintscen$plot
@@ -800,7 +800,7 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   output[["comparison"]]$plot$EJpassfuels_scen = EJpassfuels_scen$plot
   output[["comparison"]]$plot$salescom_scen = salescom_scen$plot
   output[["comparison"]]$plot$emipfos_scen = emip_scen$pfos
-  output[["comparison"]]$plot$emipel_scen = emip_scen$pel
+  output[["comparison"]]$plot$emiptot_scen = emip_scen$ptot
   
   
   
@@ -816,9 +816,9 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Total Passenger Transport Energy Services Demand'$contents) <- ESmodeabs$vars
   legend$'Total Passenger Transport Energy Services Demand'$description <- "<p>Energy services demand, passenger transport</p>"
   
-  legend$'Emissions passenger transport'$contents <- lapply(emip$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Emissions passenger transport'$contents) <- emip$vars
-  legend$'Emissions passenger transport'$description <- "<p>Emissions from fossil fuels and electricity production and use, passenger transport (international aviation excluded)<p>"
+  legend$'Passenger transport emissions supply and demand'$contents <- lapply(emip$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Passenger transport emissions supply and demand'$contents) <- emip$vars
+  legend$'Passenger transport emissions supply and demand'$description <- "<p>Passenger transport emissions supply and demand<p>"
   
   
   legend$'Emission intensity of new sales'$description <- "CO<sub>2</sub> intensity of light duty vehicles sales, historical and projected values"
@@ -857,13 +857,13 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
   names(legend$'Comparison of sales composition'$contents) <- salescom_scen$vars
   legend$'Comparison of sales composition'$description <- "<p>Composition of sales of light duty vehicles in selected years</p>"
   
-  legend$'Comparison of passenger transport fossil fuels emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Comparison of passenger transport fossil fuels emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger transport fossil fuels emissions'$description <- "<p>Emissions from fossil fuels production and use in passenger transport</p>"
+  legend$'Comparison of passenger transport emissions supply and demand'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of passenger transport emissions supply and demand'$contents) <- emip_scen$vars
+  legend$'Comparison of passenger transport emissions supply and demand'$description <- "<p>Emissions from supply and demand, passenger transport  (includes electricity-related, hydrogen-related, synfuels-related emissions)</p>"
   
-  legend$'Comparison of passenger electricity production emissions'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
-  names(legend$'Comparison of passenger electricity production emissions'$contents) <- emip_scen$vars
-  legend$'Comparison of passenger electricity production emissions'$description <- "<p>Emissions from electricity production and consumption in passenger transport</p>"
+  legend$'Comparison of passenger tailpipe emissions from fossil fuels'$contents <- lapply(emip_scen$vars, function(var) { return(list("fill"=toString(cols[var]),"linetype"=NULL)) })
+  names(legend$'Comparison of passenger tailpipe emissions from fossil fuels'$contents) <- emip_scen$vars
+  legend$'Comparison of passenger tailpipe emissions from fossil fuels'$description <- "<p>Tailpipe emissions of passenger transport, derived from fossil fuels consumption</p>"
   
   output$legend = legend
   return(output)

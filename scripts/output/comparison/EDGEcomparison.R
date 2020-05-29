@@ -45,7 +45,7 @@ CO2km_int_newsales_all = NULL
 emidem_all = NULL
 EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
-emipFosEl_all = NULL
+emipSource_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -331,88 +331,74 @@ emidemFun = function(emidem){
 }
 
 
-emipfosElFun = function(miffile, gdx){
+emipSourceFun = function(miffile){
+  
   minyr <- 2015
   maxyr <- 2100
   
-  TWa_2_EJ <- 31.536
-  GtC_2_MtCO2 <- 44 / 12 * 1000
-  
-  prodSe <- readgdx(gdx, "vm_prodSe")[
-    tall >= minyr & tall <= maxyr][, value := value*TWa_2_EJ]
-  setnames(prodSe, c("year", "region", "pe", "se", "te", "value"))
-  
-  
-  prodSyn <- prodSe[te == "MeOH"]
-  
-  prodSyn[, se := "synliq"]
-  prodSyn[, c("pe", "te") := NULL]
-  setnames(prodSyn, "value", "syn_val")
-  prodSyn <- rbind(prodSyn, CJ(year=c(2015, 2020),
-                               region=prodSyn$region,
-                               se="synliq", syn_val=0,
-                               unique=T))
-  
-  
-  ## Electricity consumption for H2 production
-  prodEl <- prodSe[se == "seel"]
-  prodEl[, allEl := sum(value), by=.(year, region)][
-    , c("pe", "se", "te", "value", "tenames") := NULL
-    ]
-  prodEl <- unique(prodEl)
-  
-  prodElH2 <- prodSe[pe == "seel" & se == "seh2"]
-  prodElH2[, elh2 := sum(value), by=.(year, region)]
-  prodElH2[, c("pe", "se", "te", "value") := NULL]
-  prodElH2 <- unique(prodElH2)
-  
-  prodShare <- merge(prodEl, prodElH2, all=T)
-  prodShare[, netProd := allEl - elh2]
-  ## CO2 emission for electricity
-  vemi <- readgdx(gdx, "vm_emiTeDetail")[ttot >= minyr & ttot <= maxyr]
-  setnames(vemi, c("year", "region", "pe", "se", "te", "emi", "val"))
-  emico2 <- vemi[se == "seel" & emi == "co2"][
-    , co2val := sum(val) * GtC_2_MtCO2, by=.(year, region)][
-      , c("pe", "se", "te", "emi", "val") := NULL
-      ]
-  emico2 <- unique(emico2)
-  
-  emico2 <- merge(emico2, prodShare, by=c("year", "region"))
-  emico2[, int := co2val/allEl] # MtCO2/EJ -> tCO2/MJ
-  
-  ## emissions from electricity for hydrogen production
-  emisyn <- emico2[, .(se="seh2", co2 = int * elh2), by=.(year, region)] # MtCO2
-  
-  ## add electric cars upstream emissions
-  bevemi = miffile[
-    variable == "Emi|CO2|Transport|Pass|Short-Medium Distance|Electricity" &
+  ## fe hydrogen used for liquids consumption in passenger transport
+  h2liqp = miffile[
+    variable == "FE|Transport|Pass|Liquids|Hydrogen" &
       year >= minyr & year <= maxyr][
-        , .(year, region, se="bevs", co2=value)]
+        , .(year, region, fes="feh2l", fe=value)]
   
+  ## fe hydrogen used in passenger transport 
+  h2p = miffile[
+    variable == "FE|Transport|Pass|Hydrogen" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, fes="feh2", fe=value)]
   
-  ## fossil emissions
-  fosemi = miffile[
+  ## elec used in passenger transport
+  elp = miffile[
+    variable == "FE|Transport|Pass|Electricity" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, fes="el", fe=value)]
+  
+  ## final energy electricity 
+  el = miffile[
+    variable == "FE|+|Electricity" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, fes="el", fe=value)]
+  
+  ## emission supply side from electricity
+  emiel = miffile[
+    variable == "Emi|CO2|Energy|Supply|Electricity|Gross" &
+      year >= minyr & year <= maxyr][
+        , .(year, region, emis="el", emi=value)]
+  
+  ## emissions from transport passenger
+  emip = miffile[
     variable == "Emi|CO2|Transport|Pass|Short-Medium Distance|Liquids" &
       year >= minyr & year <= maxyr][
-        , .(year, region, se="fos", co2=value)]
+        , .(year, region, source="liq", emi=value)]
   
+  ## calculate fossil electricity carbon intensity
+  elint = merge(el, emiel, by = c("year", "region"))
+  elint[, int := emi/fe]
+  elint = elint[,.(year, region, int)]
   
-  ## combine all
-  emi_all <- rbindlist(list(
-    emisyn,
-    bevemi,
-    fosemi))
+  ## calculate emissions from electricity of electrified transport
+  emielp = merge(elint, elp, by = c("year", "region"))
+  emielp[, emi := int*fe]
+  emielp = emielp[,.(year, region, emi, source = "elp")]
+  ## estimate the secondary energy from electricity based synfuels in passenger transport 
+  sesynp = h2liqp[][, se := fe/0.55][, fe := NULL]
   
-  ## sum bev and hydrogen upstream emissions
-  emi_wide <- dcast(emi_all, year+region ~ se)[, all_el := bevs + seh2]
+  ## estimate the secondary energy from hydrogen in passenger transport
+  seh2np = h2p[][, se := fe/0.7][, fe := NULL]
   
-  emi_result <- melt(emi_wide,
-                     value.name="co2",
-                     id.vars = c("year", "region"),
-                     variable.name = "tech")[tech %in% c("all_el", "fos")]
-  
-  
-  return(emi_result)
+  ## emissions CO2 derived from synfuels in passenger transport
+  emisynp = merge(sesynp, elint, by = c("year", "region"))
+  emisynp[, emi := se*int]
+  emisynp = emisynp[,.(year, region, emi, source = "synf")]
+  ## emissions CO2 derived from hydrogen
+  emih2p = merge(seh2np, elint, by = c("year", "region"))
+  emih2p[, emi := se*int]
+  emih2p = emih2p[,.(year, region, emi, source = "h2")] 
+  ## summarize emissions
+  emi_all = rbindlist(list(emih2p, emisynp, emielp, emip), use.names=TRUE)
+
+  return(emi_all)
 }
 
 for (outputdir in outputdirs) {
@@ -471,7 +457,7 @@ for (outputdir in outputdirs) {
   ## calculate demand emissions
   emidem = emidemFun(emidem)
   ## calculate emissions from passenger SM fossil fuels (liquids)
-  emipFosEl =  emipfosElFun(miffile, gdx)
+  emipSource =  emipSourceFun(miffile)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -483,7 +469,7 @@ for (outputdir in outputdirs) {
   emidem[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
-  emipFosEl[, scenario := as.character(unique(miffile$scenario))]
+  emipSource[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -495,7 +481,7 @@ for (outputdir in outputdirs) {
   emidem_all = rbind(emidem_all, emidem)
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
-  emipFosEl_all = rbind(emipFosEl_all, emipFosEl)
+  emipSource_all = rbind(emipSource_all, emipSource)
 }
 
 outdir = paste0("output/comparerunEDGE", gsub(" | ^([[:alpha:]]*).*","", Sys.time()))
@@ -513,7 +499,7 @@ saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
-saveRDS(emipFosEl_all, paste0(outdir, "/emipFosEl_all.RDS"))
+saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 

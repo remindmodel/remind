@@ -38,8 +38,34 @@ legend=plotlist$legend
   #data frame with help tooltips
 
   helpTooltip_df <- data.frame(
-    title=c("Distance traveled per capita", "Total Passenger Transport Energy Services Demand", "Sales composition", "Final energy LDVs by fuel","Transport Passenger Final Energy Demand", "Fleet composition", "Fleet composition comparison", "Emission intensity, new sales comparison", "Comparison of passenger final energy demand", "Emissions passenger transport", "Emission intensity of new sales", "Comparison of sales composition", "Comparison of passenger transport fossil fuels emissions", "Comparison of passenger electricity production emissions"),
-    placement=c("right", "left", "right", "left", "right", "right", "right", "right", "right", "left", "left", "right", "left", "left"))
+    title=c("Distance traveled per capita", 
+            "Total Passenger Transport Energy Services Demand", 
+            "Sales composition", 
+            "Final energy LDVs by fuel",
+            "Transport Passenger Final Energy Demand", 
+            "Fleet composition", 
+            "Fleet composition comparison", 
+            "Emission intensity, new sales comparison", 
+            "Comparison of passenger final energy demand", 
+            "Passenger transport emissions supply and demand", 
+            "Emission intensity of new sales", 
+            "Comparison of sales composition", 
+            "Comparison of passenger transport emissions supply and demand", 
+            "Comparison of passenger tailpipe emissions from fossil fuels"),
+    placement=c("right", 
+                "left",
+                "right", 
+                "left",
+                "right", 
+                "right",
+                "right",
+                "left",
+                "right",
+                "left",
+                "left",
+                "right", 
+                "right",
+                "left"))
 
 
 helpTooltip = function(tooltipdf){
@@ -112,7 +138,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case NoTax")
+valueBox("Baseline")
 ```
 
 
@@ -439,20 +465,6 @@ Row {data-height = 450}
 plotlist$comparison$plot$vintscen
 ```
 
-### Comparison of passenger final energy demand
-```{r}
-plotlist$comparison$plot$EJpassfuels_scen
-```
-
-### Comparison of passenger transport fossil fuels emissions
-
-```{r}
-plotlist$comparison$plot$emipfos_scen
-```
-
-Row {data-height = 450}
------------------------------------------------------------------------
-
 ### Comparison of sales composition
 ```{r}
 plotlist$comparison$plot$salescom_scen
@@ -463,9 +475,27 @@ plotlist$comparison$plot$salescom_scen
 plotlist$comparison$plot$CO2km_intensity_newsales_scen
 ```
 
-### Comparison of passenger electricity production emissions
+Row {data-height = 450}
+-----------------------------------------------------------------------
+
+### Comparison of passenger final energy demand
+
 ```{r}
-plotlist$comparison$plot$emipel_scen
+plotlist$comparison$plot$EJpassfuels_scen
+```
+
+
+### Comparison of passenger transport emissions supply and demand
+
+```{r}
+plotlist$comparison$plot$emiptot_scen
+```
+
+
+### Comparison of passenger tailpipe emissions from fossil fuels
+
+```{r}
+plotlist$comparison$plot$emipfos_scen
 ```
 
 Passenger transport overview {data-icon="glyphicon glyphicon-scale"}
@@ -484,7 +514,7 @@ Row {data-height=300}
 
 ### Transport scenario {data-width=100}
 ```{r}
-valueBox("Conventional Case NoTax")
+valueBox("Baseline")
 ```
 
 
@@ -523,7 +553,7 @@ Row {data-heigth=500}
 plotlist$`ConvCase NoTax`$plot$EJpassfuels
 ```
 
-### Emissions passenger transport
+### Passenger transport emissions supply and demand
 
 ```{r}
 plotlist$`ConvCase NoTax`$plot$emip
@@ -586,7 +616,7 @@ Row {data-heigth=500}
 plotlist$ConvCase$plot$EJpassfuels
 ```
 
-### Emissions passenger transport
+### Passenger transport emissions supply and demand
 
 ```{r}
 plotlist$ConvCase$plot$emip
@@ -651,7 +681,7 @@ Row {data-heigth=500}
 plotlist$HydrHype$plot$EJpassfuels
 ```
 
-### Emissions passenger transport
+### Passenger transport emissions supply and demand
 
 ```{r}
 plotlist$HydrHype$plot$emip
@@ -714,7 +744,7 @@ Row {data-heigth=500}
 plotlist$ElecEra$plot$EJpassfuels
 ```
 
-### Emissions passenger transport
+### Passenger transport emissions supply and demand
 
 ```{r}
 plotlist$ElecEra$plot$emip
@@ -776,7 +806,7 @@ Row {data-heigth=500}
 plotlist$SynSurge$plot$EJpassfuels
 ```
 
-### Emissions passenger transport
+### Passenger transport emissions supply and demand
 
 ```{r}
 plotlist$SynSurge$plot$emip
@@ -790,49 +820,53 @@ Column {data-width= 450}
 -----------------------------------------------------------------------
 
 ### Baseline (No Carbon Pricing) {data-height=200}
-</ul> 
-  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars. </li>
-  <li> No policies to promote alternative vehicles </li>
-  <li> Slow build-up of electric recharging stations </li>
+</ul style="padding-left:20px"> 
+  <li class="shift"> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars. </li>
+  <li class="shift"> No policies to promote alternative vehicles </li>
+  <li class="shift"> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Conventional Case {data-height=200}
 
-</ul>
-  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
-  <li> No policies to promote alternative vehicles </li>
-  <li> Slow build-up of electric recharging stations </li>
+</ul style="padding-left:20px">
+  <li class="shift"> Carbon pricing </li>
+  <li class="shift"> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
+  <li class="shift"> No policies to promote alternative vehicles </li>
+  <li class="shift"> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Hydrogen Hype {data-height=200}
 
-</ul>
-  <li> Fast build-up of hydrogen refuelling stations </li>
-  <li> Rebates-feebates scheme: FCEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
-  <li> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
-  <li> Policy push for FCEVs: Support policies induce a shift from dis-preference to preference of hydrogen vehicles, e.g. incentives to carmakers and car retailers to provide hidrogen vehicles </li>
-  <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
-  <li> Slow build-up of electric recharging stations </li>
+</ul style="padding-left:20px">
+  <li class="shift"> Carbon pricing </li>
+  <li class="shift"> Fast build-up of hydrogen refuelling stations </li>
+  <li class="shift"> Rebates-feebates scheme: FCEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
+  <li class="shift"> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
+  <li class="shift"> Policy push for FCEVs: Support policies induce a shift from dis-preference to preference of hydrogen vehicles, e.g. incentives to carmakers and car retailers to provide hidrogen vehicles </li>
+  <li class="shift"> Hydrogen from electricity is at least 95&#37; of the total hydrogen, with electricity from renewable resources reaching around 90&#37; of the electricity production in 2050 </li>
+  <li class="shift"> Slow build-up of electric recharging stations </li>
 </ul>
 
 
 ### Electric Era {data-height=200}
 
-</ul>
-  <li> Rebates-feebates scheme: BEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
-  <li> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
+</ul style="padding-left:20px">
+  <li class="shift"> Carbon pricing </li>
+  <li class="shift"> Rebates-feebates scheme: BEVs receive 5000&euro; subsidies for purchases in 2020, around 3300&euro; in 2025 and 1700&euro; in 2030. 1000&euro; mark-up cost on internal combustion engines are applied in 2020, 700&euro; in 2025 and 300&euro; in 2030 </li>
+  <li class="shift"> Increasing dis-preference for internal combustion engines due to tightening regulation </li>
 </ul>
 
 
 ### Synfuel Surge {data-height=200}
 
-</ul>
-  <li> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
-  <li> Synfuels are forced in the liquids mix  blending mandates reaching 10&#37; of liquids fuels in transportation by 2035 </li>
-  <li> Hydrogen from renewable resources (green hydrogen) is at least 95&#37; of the total hydrogen </li>
-  <li> CO<sub>2</sub> emissions from other sources (e.g., industrial installations) are captured and reused to produce syntethic fuels (Carbon Capture and Utilization) </li>
+</ul style="padding-left:20px">
+  <li class="shift"> Carbon pricing </li>
+  <li class="shift"> Structurally conservative: continuation of historic consumer preferences for conventional combustion engine cars </li>
+  <li class="shift"> Synfuels are forced in the liquids mix  blending mandates reaching 20&#37; of liquids fuels in transportation by 2035 </li>
+  <li class="shift"> Hydrogen from electricity is at least 95&#37; of the total hydrogen, with electricity from renewable resources reaching around 90&#37; of the electricity production in 2050</li>
+  <li class="shift"> CO<sub>2</sub> emissions from other sources (e.g., industrial installations) are captured and reused to produce syntethic fuels (Carbon Capture and Utilization) </li>
 </ul>
 
 
@@ -1001,7 +1035,7 @@ navBarMemory = function(topMenuLabel, sideBarClass){
     user-select: none;
   }
 
-<!-- element "legend" of panels -->
+/*legend element with tooltip*/
   .rightal {
   float: right;
   font-weight: bold;
@@ -1009,11 +1043,13 @@ navBarMemory = function(topMenuLabel, sideBarClass){
   color: #7c7c7c;
   padding: 5px 10px;
   }
+  
+ul{
+     list-tyle:none;
+}
 
-<!-- indentation for bullet points list -->  
-  li{
+.shift{
     margin-left:20px;
-  }
-  
-  
+}
+
 </style>
