@@ -4,18 +4,22 @@ authors:
 
 - family-names: Luderer
   given-names:  Gunnar
+  orcid: https://orcid.org/0000-0002-9057-6155
   affiliation: "Potsdam Institute for Climate Impact Research"
   
 - family-names: Bauer
   given-names:  Nico
+  orcid: https://orcid.org/0000-0002-0211-4162
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Baumstark
   given-names:  Lavinia
+  orcid: https://orcid.org/0000-0002-6979-6671
   affiliation: "Potsdam Institute for Climate Impact Research"
   
 - family-names: Bertram
   given-names:  Christoph
+  orcid: https://orcid.org/0000-0002-0933-4395
   affiliation: "Potsdam Institute for Climate Impact Research"
   
 - family-names: Leimbach
@@ -24,10 +28,12 @@ authors:
   
 - family-names: Pietzcker
   given-names:  Robert
+  orcid: https://orcid.org/0000-0002-9403-6711
   affiliation: "Potsdam Institute for Climate Impact Research"
   
 - family-names: Strefler
   given-names:  Jessica
+  orcid: https://orcid.org/0000-0002-5279-4629
   affiliation: "Potsdam Institute for Climate Impact Research"  
 
 - family-names: Aboumahboub
@@ -43,6 +49,7 @@ authors:
 
 - family-names: Dietrich
   given-names:  Jan
+  orcid: https://orcid.org/0000-0002-4309-6431
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Dirnaichner
@@ -52,6 +59,7 @@ authors:
 
 - family-names: Giannousakis
   given-names:  Anastasis
+  orcid: https://orcid.org/0000-0002-4225-0011
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Haller
@@ -59,6 +67,7 @@ authors:
 
 - family-names: Hilaire
   given-names:  Jerome
+  orcid: https://orcid.org/0000-0002-9879-6339
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Klein
