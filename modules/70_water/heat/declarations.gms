@@ -21,9 +21,13 @@ p70_heat(ttot,all_regi,all_enty,all_enty,all_te)                "excess heat. Un
 p70_water_con(all_regi, all_te, coolte70)                       "water consumption coefficients per excess heat. Unit: m3/MWh"
 p70_water_wtd(all_regi, all_te, coolte70)                       "water withdrawal coefficients per excess heat. Unit: m3/MWh)"
 
+p70_water_output(ttot,all_regi,descr_water_ext)                          "output"
+
 o70_se_production(ttot,all_regi,all_te)                         "secondary energy production. Unit: EJ/yr"
 o70_water_consumption(ttot, all_regi, all_te)                   "water consumption per technology. Unit: km3/yr"
 o70_water_withdrawal(ttot, all_regi, all_te)                    "water withdrawal per technology. Unit: km3/yr"
+
+
 ;
 
 *** EOF ./modules/70_water/heat/declarations.gms
