@@ -8,6 +8,10 @@ vm_cesIO.scale(ttot(t2),regi,in_industry_dyn37(in))$(
   = sum(tttot(t)$( NOT tsu(t) ), vm_cesIO.l(t,regi,in))
   / (card(ttot) - card(tsu));
 $offtext
+$ifthen.CES_parameters "%CES_parameters%" eq "calibrate"
+  vm_cesIO.scale(t,regi_dyn29(regi),in_industry_dyn37(in))
+  = pm_cesdata(t,regi,in,"quantity");
+$endif.CES_parameters
 
 *** Include upper bounds on secondary steel production, due to scarcity of
 *** steel scrap.
