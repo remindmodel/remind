@@ -3,7 +3,6 @@ Running REMIND and MAgPIE in coupled mode
 David Klein (<dklein@pik-potsdam.de>)
 27 April, 2020
 
-- [Running REMIND and MAgPIE in coupled mode](#running-remind-and-magpie-in-coupled-mode)
 - [How to start coupled runs](#how-to-start-coupled-runs)
     + [Clone the models](#clone-the-models)
     + [Switch to relevant branchs](#switch-to-relevant-branchs)
@@ -47,7 +46,7 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by editing .Rprofile in the model's main folder respectively. Uncomment these lines:
+Direct the models to the snapshot you just created above by editing .Rprofile in both REMIND's and MAgPIE's main folder respectively. Uncomment these lines:
 
 ```bash
 # snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2019_02_26"
@@ -96,19 +95,27 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 * GHG emission baselines for SSPs/RCPs (updated in coupled runs)
 * total agricultural production costs (fixed for standalone and coupled)
 
+### Assumptions
+
+* Biomass trade takes place in REMIND, i.e. biomass demand is prescribed to MAgPIE on regional level (not global).
+* CH4 and N2O prices in MAgPIE are limited to the upper end of the MAC curve to avoid infeasibilities
+* demand dependent bioenery tax in REMIND
+* afforestation assumptions (reward for negative emissions, investment decisions (planing horizon, 20% insurance))
+
 ### The coupling scripts
 
-The meta scripts for coupled runs that configure the models, start the runs and performs the iteration loop are located in the REMIND main folder.
+The meta scripts for coupled runs that configure the models, start the runs, and perform the iteration loop are located in the REMIND main folder.
 
 * `start_bundle_coupled.R`
-  * reads config files and updates model settings accordingly
-  * saves all settings to individual `runname.RData` files in the REMIND main folder
-  * sends a job to the cluster for each scenario specified. This job executed `start_coupled.R`
+  * reads scenario_config_coupled.csv and scenario_config.csv files and updates model cfgs accordingly
+  * saves all settings (including cfgs) to individual `runname.RData` files in the REMIND main folder
+  * sends a job to the cluster for each scenario specified in the csvs. Each job executes `start_coupled.R`.
 * `start_coupled.R`
-  * tries to detect if there are runs that crashed and can be continued
+  * tries to detect runs that crashed and that can be continued
   * reads the `runname.RData` and starts REMIND and MAgPIE iteratively
-  * saves the output from one model into specific intput folders of the other model
+  * saves the output of one model into the specific intput folder of the other model
   * the models read these inputs as part of their individual start scripts:
     * MAgPIE: getReprotData in magpie/startfunctions.R
     * REMIND: getReportData in remind/scripts/start/prepare_and_run.R
+  * REMIND runs last
   * after last coupling iteration generate combined reporting file by binding REMIND and MAgPIE mifs together
