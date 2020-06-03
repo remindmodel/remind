@@ -396,7 +396,7 @@ qm_fuel2pe(t,regi,peRicardian(enty))..
 ***---------------------------------------------------------------------------
 *ml* assuming maxprod to be technical potential
 q_limitProd(t,regi,teRe2rlfDetail(teReNoBio(te),rlf))..
-  pm_dataren(regi,"maxprod",rlf,te)
+  pm_dataren(regi,"maxprod",rlf,te)+vm_dummyGeot(t, regi, te, rlf)
   =g=
   ( 1$teRLDCDisp(te) +  pm_dataren(regi,"nur",rlf,te)$(NOT teRLDCDisp(te)) ) * vm_capFac(t,regi,te) * vm_capDistr(t,regi,te,rlf);
   

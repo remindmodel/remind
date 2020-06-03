@@ -24,7 +24,10 @@ AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
 );
 
-
+*** define bounds for dummy variable
+vm_dummyGeot.fx(ttot, all_regi, all_te, rlf) = 0;
+vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2025")) = 0.002;
+vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2025")) = -0.002;
 
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
