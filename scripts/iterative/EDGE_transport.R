@@ -102,9 +102,13 @@ pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
+pref_data$FV_final_pref[technology %in% "NG" & year >= 2020 & logit_type == "sw",
+                    value := value[year==2020] + (1-value[year==2020]) * (year-2020) / (2200-2020),
+                    by=c("iso","vehicle_type","technology", "logit_type")]
+
+
 ## optional average of prices
 average_prices = FALSE
-
 
 ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
