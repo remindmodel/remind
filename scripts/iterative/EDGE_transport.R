@@ -255,7 +255,6 @@ if (opt$reporting) {
   saveRDS(shares, file = datapath("shares.RDS"))
   saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
   saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
-  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
   saveRDS(shares_int_dem$demandF_plot_EJ,
           file=datapath("demandF_plot_EJ.RDS"))
   saveRDS(shares_int_dem$demandF_plot_pkm,
@@ -317,7 +316,16 @@ for (i in names(finalInputs)) {
 
 ## calculate shares
 finalInputs$shFeCes = finalInputs$demByTech[, value := value/sum(value), by = c("tall", "all_regi", "all_in")]
+## 7 decimals the lowest accepted value
+finalInputs$shFeCes[, value := round(value, digits = 7)]
+finalInputs$shFeCes[, value := ifelse(value == 0, 1e-7, value)]
+finalInputs$shFeCes[, sumvalue := sum(value), by = c("tall", "all_regi", "all_in")]
+finalInputs$shFeCes[, maxtech := ifelse(value == max(value), TRUE, FALSE), by =c("tall", "all_regi", "all_in")]
 
+## attribute the variation to the maximum share value
+finalInputs$shFeCes[sumvalue!=1 & maxtech==TRUE, value := value + (1-sumvalue), by = c("tall", "all_regi")]
+## remove temporary columns
+finalInputs$shFeCes[, c("sumvalue", "maxtech") := NULL]
 
 ## CapCosts
 writegdx.parameter("p35_esCapCost.gdx", finalInputs$capCost, "p35_esCapCost",
