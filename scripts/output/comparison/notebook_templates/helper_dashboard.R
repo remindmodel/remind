@@ -140,7 +140,7 @@ vintcomparisondash = function(dt, scen){
 
 
 vintscen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
+  dt[, scenario := ifelse(scenario == "NDC_ConvCase", "Baseline", scenario)]
   dt = dt[year %in% c(2020, 2030, 2050)]
   dt[, year := as.character(year)]
   dt = dt[region == region_plot]
@@ -369,7 +369,7 @@ EJpass_dash = function(dt, scen){
 }
 
 EJpass_scen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
+  dt[, scenario := ifelse(scenario == "NDC_ConvCase", "Baseline", scenario)]
   dt[, subtech := factor(subtech, levels = legend_ord)]
   dt = dt[region == region_plot & year %in% c(2020, 2030, 2050) & sector == "trn_pass"]
   dt[, details := paste0("Demand: ", round(demand_EJ, digits = 0), " [EJ]","<br>", "Technology: ", subtech, "<br>", "Region: ", region," <br>", "Year: ", year) ]
@@ -468,7 +468,7 @@ CO2km_intensity_newsalesdash = function(dt, scen){
 
 
 CO2km_intensity_newsales_scen_dash = function(dt){
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
+  dt[, scenario := ifelse(scenario == "NDC_ConvCase", "Baseline", scenario)]
   historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
   historical_values[, details := "Historical values"]
   targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
@@ -598,9 +598,9 @@ emipscen_dash = function(dt){
   dt = dt[region == region_plot & year <= 2050 & year >= 2015]
   dt[, year := as.numeric(year)]
   
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
+  dt[, scenario := ifelse(scenario == "NDC_ConvCase", "Baseline", scenario)]
   dt[, scenario := gsub(".*_", "", scenario)]
-  dt = dt[scenario != "Baseline"]
+ 
   dt = dcast(dt, region + year + scenario  ~ source, value.var = "emi")
   
   dt[, tot := h2 + synf + elp + liq]
@@ -667,7 +667,7 @@ emipscen_dash = function(dt){
 
 salescom_scen_dash = function(dt){
   dt[, scenario := as.character(scenario)]
-  dt[, scenario := ifelse(scenario == "Base_ConvCase", "Baseline", scenario)]
+  dt[, scenario := ifelse(scenario == "NDC_ConvCase", "Baseline", scenario)]
   dt = dt[region == region_plot & year %in% c(2020, 2030, 2050)]
   dt[, year := as.numeric(as.character(year))]
   dt[, scenario := gsub(".*_", "", scenario)]
@@ -742,14 +742,14 @@ create_plotlist = function(scens, salescomp_all, fleet_all, ESmodecap_all, EJfue
       scenname = "HydrHype"
     } else if (grepl("Budg1100_SynSurge", scen)) {
       scenname = "SynSurge"
-    } else if (grepl("Base_ConvCase", scen)) {
+    } else if (grepl("NDC_ConvCase", scen)) {
       scenname = "ConvCase NoTax"
     }
     
     ## CO2 tax pathway
     emiscen = gsub("_.*", "", scen)
     emiscen_names = c("Budg1100" = "2 degrees target",
-                      "Base" = "Baseline")
+                      "NDC" = "Baseline")
     emiscen = unname(emiscen_names[emiscen])
     
     ## sales

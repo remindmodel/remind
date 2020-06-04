@@ -623,7 +623,7 @@ if (length(outputdirs) == 5 &
     isTRUE(any(grepl("Budg1100_ConvCase", outputdirs))) &
     isTRUE(any(grepl("Budg1100_ElecEra", outputdirs))) &
     isTRUE(any(grepl("Budg1100_HydrHype", outputdirs))) &
-    isTRUE(any(grepl("Base_ConvCase", outputdirs)))){
+    isTRUE(any(grepl("NDC_ConvCase", outputdirs)))){
   file.copy(file.path("./scripts/output/comparison/notebook_templates/helper_dashboard.R"), outdir)
   file.copy(file.path("./scripts/output/comparison/notebook_templates", dash_template), outdir)
   rmarkdown::render(path(outdir, dash_template))
