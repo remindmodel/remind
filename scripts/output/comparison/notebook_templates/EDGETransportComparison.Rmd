@@ -33,7 +33,7 @@ CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJpass_all = readRDS("EJfuelsPass_all.RDS")
 EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
-
+costs_all = readRDS("costs_all.RDS")
 setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
@@ -47,10 +47,16 @@ cols <- c("NG" = "#d11141",
           "Biodiesel" = "#66a182",
           "Synfuel" = "orchid",
           "Oil" = "#2e4057",
-          "fuel price pkm" = "#edae49",
-          "Operating costs registration and insurance" = "#8d96a3",
-          "Operating costs maintenance" = "#00798c",
-          "Capital cost" = "#d1495b",
+          "Operating and maintenance" = "#edae49",
+          "Range anxiety" = "#e43f5a",
+          "Refuel availability" = "#f79071",
+          "Purchase" = "#d1495b",
+          "Model availability" = "#58b4ae",
+          "Inconvenience cost" = "#58b4ae",
+          "Charging" = "#007892",
+          "Policy induced inconvenience" = "#2e4057",
+          "Risk" = "#feb72b",
+          "Fuel" = "#035aa6",
           "International Aviation" = "#9acd32",
           "Domestic Aviation" = "#7cfc00",
           "Bus" = "#32cd32",
@@ -110,7 +116,7 @@ legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shippi
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "NG")
 
-legend_ord_costs <- c("fuel price pkm", "Operating costs registration and insurance", "Operating costs maintenance", "Capital cost")
+legend_ord_costs <- c("Inconvenience cost", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "Operating and maintenance")
 
 legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", "Emi|CO2|Transport|Demand", "Emi|CO2|Energy|Supply|Gross", "Emi|CO2|Land-Use Change","Emi|CO2|CDR|BECCS")
 
@@ -523,6 +529,60 @@ height <- 6
 ggsave("pvint.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
+## Costs of LDVs by technology
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+costspf = function(dt, rp){  
+  dt = dt[region == rp]
+  map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "Operating and maintenance"),
+                   logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
+                   type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
+  dt = merge(dt, map, by = "logit_type")
+  dt_inc = dt[type == "inc"]
+  dt_inc = dt_inc[,.(cost = sum(cost)), by = c("region", "year", "type", "technology", "scenario")]
+  dt_tot = rbind(dt_inc[, c("name", "logit_type") := list("Inconvenience cost", "pinc")], dt[type == "real"]) 
+  dt[, technology := factor(technology, levels = legend_ord)]
+  dt_tot[, technology := factor(technology, levels = legend_ord)]
+
+  plot1 = ggplot()+
+         geom_bar(data = dt[type == "inc"], aes(x = year, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
+theme_minimal()+
+facet_grid(scenario~technology)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Cost component"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "Costs [$/pkm]", x="")
+
+  plot2 = ggplot()+
+         geom_bar(data = dt_tot, aes(x = year, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
+theme_minimal()+
+facet_grid(scenario~technology)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Cost component"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "Costs [$/pkm]", x="")
+
+plot = list(plot1, plot2)
+
+return(plot)
+}
+
+costspf(costs_all, rp = regionplot)
+```
 
 ## Sales composition
 

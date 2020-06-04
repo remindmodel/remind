@@ -46,6 +46,7 @@ emidem_all = NULL
 EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 emipSource_all = NULL
+costs_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -401,6 +402,91 @@ emipSourceFun = function(miffile){
   return(emi_all)
 }
 
+costscompFun = function(newcomp, sharesVS1,  EF_shares, pref_FV, capcost4Wall, capcost4W_BEVFCEV, nonf, totp, REMIND2ISO_MAPPING){
+  
+  ## weight of each ISO within region
+  
+  ## First I calculate the total demand for new sales using the shares on FV level (in newcomp) and on VS1 level
+  newcomp = merge(newcomp, sharesVS1[,.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)], all.x=TRUE, by = c("iso", "year", "vehicle_type", "subsector_L1"))
+  newcomp[, newdem := totdem*sharetech_new*shareVS1]
+  newcomp = newcomp[,.(value = sum(newdem)), by = c("iso", "year", "subsector_L1")]
+  
+  ## merge with region mapping
+  newcomp = merge(newcomp, REMIND2ISO_MAPPING, by = "iso")
+  ## weight of each country within the region
+  newcomp[, weightiso := value/sum(value), by = c("year", "region")]
+
+  ## inconvenience components
+  
+  ## I calculate the inconvenience cost value (disrespective to the vehicle type)
+  inc = sharesVS1[subsector_L1 == "trn_pass_road_LDV_4W",.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)]  
+  inc = merge(inc, pref_FV, by = c("iso", "year", "vehicle_type"))
+  ## average car (lost small, large dimension) in each ISO
+  inc = inc[,.(cost = sum(value*shareVS1)), by = c("iso", "technology", "year", "logit_type")]
+  ## I calculate the weighted regional values
+  inc = merge(inc, newcomp, allow.cartesian = TRUE,by = c("iso", "year"))
+  ## average cost is given by the costs weighted for the ISO importance in the region
+  inc[, costave := cost*weightiso]
+  inc = inc[,.(cost=sum(costave)), by = c("year", "technology", "region", "logit_type")]
+  
+  ##  fuel prices
+  
+  ## fuel prices are only available in the total price dt
+  fp = totp[subsector_L1 == "trn_pass_road_LDV_4W", c("iso", "year", "technology","vehicle_type", "fuel_price_pkm")]
+  ## I calculate the fuel price value (disrespective to the vehicle type)
+  fp = merge(fp, sharesVS1[subsector_L1 == "trn_pass_road_LDV_4W",.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)], all.y = TRUE, by = c("iso", "year", "vehicle_type"))
+  
+  ## average car (lost small, large dimension) in each ISO
+  fp = fp[,.(fp = sum(fuel_price_pkm*shareVS1)), by = c("iso", "technology", "year")]
+  fp[, variable := "fuel_price"]
+  ## average cost is given by the costs weighted for the ISO importance in the region
+  fp = merge(fp, newcomp, allow.cartesian = TRUE,by = c("iso", "year"))
+  fp[, fp_priceave := fp*weightiso]
+  fp=fp[,.(cost = sum(fp_priceave)), by = c("year", "technology", "region", "variable")]
+  setnames(fp, old = "variable", new = "logit_type")
+  
+  
+  ## average on fuel efficiency for total non fuel price
+  nonf = merge(nonf, EF_shares[,c("iso", "type", "year", "technology", "vehicle_type", "share")], all.x = TRUE, by = c("iso", "type", "year", "technology", "vehicle_type"))
+  nonf[is.na(share) & technology == "Liquids" & type %in% c("middle", "advanced"), share := 0] ## Liquids don't have differentiation before 2020: a 0 has to be applied to "middle" and "advanced" technologies
+  nonf[is.na(share), share := 1] ## all technologies but Liquids don't have the differentiation; a 1 is applied
+  nonf = nonf[, .(non_fuel_price = sum(non_fuel_price*share)), by = c("iso", "year", "technology", "vehicle_type")]
+  
+  ## merge capital cost for BEVs and FCEVs with technologies without learning
+  capc = rbind(capcost4Wall, capcost4W_BEVFCEV[, c("iso", "year", "technology", "type", "price_component", "vehicle_type", "non_fuel_price")])
+  ## for capital cost, fuel efficiency
+  capc = merge(capc, EF_shares[,c("iso", "type", "year", "technology", "vehicle_type", "share")], all.x = TRUE, by = c("iso", "type", "year", "technology", "vehicle_type"))
+  capc[is.na(share) & technology == "Liquids" & type %in% c("middle", "advanced"), share := 0] ## Liquids don't have differentiation before 2020: a 0 has to be applied to "middle" and "advanced" technologies
+  capc[is.na(share), share := 1] ## all technologies but Liquids don't have the differentiation; a 1 is applied
+  capc = capc[, .(purchase = sum(non_fuel_price*share)), by = c("iso", "year", "technology", "vehicle_type")]
+  
+  ## find non-capital component as a difference between total and purchase
+  nonf = merge(nonf, capc, by = c("iso", "year", "vehicle_type", "technology"))
+  nonf[, other := non_fuel_price-purchase]
+  nonf[, non_fuel_price := NULL]
+  nonf= melt(nonf, id.vars = c("iso", "year", "technology", "vehicle_type"))
+  
+  ## I calculate the non fuel costs value (disrespective to the vehicle type)
+  nonf = merge(nonf, sharesVS1[subsector_L1 == "trn_pass_road_LDV_4W",.(shareVS1 = share, iso, year, vehicle_type, subsector_L1)], by = c("iso", "year", "vehicle_type"))
+
+  ## average car in ISO
+  nonf = nonf[,.(nonf = sum(value*shareVS1)), by = c("iso", "technology", "year", "variable")]
+  ## average cost is given by the costs weighted for the ISO importance in the region
+  nonf = merge(nonf, newcomp, allow.cartesian = TRUE,by = c("iso", "year"))
+  nonf[, non_fuel_priceave := nonf*weightiso]
+  nonf=nonf[,.(cost = sum(non_fuel_priceave)), by = c("year", "technology", "region", "variable")]
+  setnames(nonf, old = "variable", new = "logit_type")
+  
+  ## dt containing all cost components
+  tmp = rbindlist(list(nonf, inc, fp))
+  
+  ## attribute factors
+  tmp[, technology := factor(technology, levels = c("BEV", "Hybrid Electric", "FCEV", "Hybrid Liquids", "Liquids", "NG"))]
+  
+  return(tmp)
+}
+
+
 for (outputdir in outputdirs) {
   ## load mif file
   name_mif = list.files(path = outputdir, pattern = "REMIND_generic", full.names = F)
@@ -410,19 +496,34 @@ for (outputdir in outputdirs) {
   miffile[, year := period]
   miffile[, period := NULL]
   miffile = miffile[region != "World"]
-
+  
   ## load gdx file
   gdx = paste0(outputdir, "/fulldata.gdx")
   
   ## load RDS files
-  sharesVS1 = readRDS(paste0(outputdir, "/EDGE-T/", "shares.RDS"))[["VS1_shares"]]
-  newcomp = readRDS(paste0(outputdir, "/EDGE-T/", "newcomp.RDS"))
-  vintcomp = readRDS(paste0(outputdir, "/EDGE-T/", "vintcomp.RDS"))
-  shares_LDV = readRDS(paste0(outputdir, "/EDGE-T/", "annual_sales.RDS"))
-  demandEJ = readRDS(paste0(outputdir, "/EDGE-T/", "demandF_plot_EJ.RDS"))
-  demandkm = readRDS(paste0(outputdir, "/EDGE-T/", "demandF_plot_pkm.RDS"))
-  mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/", "mj_km_data.RDS"))
-  loadFactor = readRDS(paste0(outputdir, "/EDGE-T/", "loadFactor.RDS"))
+  sharesVS1 = readRDS(paste0(outputdir, "/EDGE-T/shares.RDS"))[["VS1_shares"]]
+  newcomp = readRDS(paste0(outputdir, "/EDGE-T/newcomp.RDS"))
+  vintcomp = readRDS(paste0(outputdir, "/EDGE-T/vintcomp.RDS"))
+  shares_LDV = readRDS(paste0(outputdir, "/EDGE-T/annual_sales.RDS"))
+  demandEJ = readRDS(paste0(outputdir, "/EDGE-T/demandF_plot_EJ.RDS"))
+  demandkm = readRDS(paste0(outputdir, "/EDGE-T/demandF_plot_pkm.RDS"))
+  mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/mj_km_data.RDS"))
+  loadFactor = readRDS(paste0(outputdir, "/EDGE-T/loadFactor.RDS"))
+  EF_shares = readRDS(paste0(outputdir, "/EDGE-T/EF_shares.RDS"))
+  pref_FV = readRDS(paste0(outputdir, "/EDGE-T/pref_output.RDS"))[["FV_final_pref"]]
+  nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
+  capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[(price_component == "Capital_costs_purchase") & ((!technology %in% c("BEV", "FCEV"))|(technology %in% c("BEV", "FCEV") & year < 2020))]
+  capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
+
+  ## read in fuel prices
+  files<- list.files(path = paste0(outputdir, "/EDGE-T"), pattern = "REMINDprices")
+  ## only the last iteration is to be used
+  file = files[grepl(max(as.numeric(gsub("\\D", "", files))), files)]
+  if (length(file)>1){
+    file = file[grepl("Dampened", file)]
+  }
+  totp = readRDS(paste0(outputdir, "/EDGE-T/", file))
+
   ## load population and GDP
   POP_country=calcOutput("Population", aggregate = F)[,, "pop_SSP2"]
   POP <- magpie2dt(POP_country, regioncol = "iso",
@@ -458,6 +559,8 @@ for (outputdir in outputdirs) {
   emidem = emidemFun(emidem)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
+  ## calculate costs by component
+  costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, EF_shares = EF_shares, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -470,6 +573,7 @@ for (outputdir in outputdirs) {
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   emipSource[, scenario := as.character(unique(miffile$scenario))]
+  costs[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -482,6 +586,7 @@ for (outputdir in outputdirs) {
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   emipSource_all = rbind(emipSource_all, emipSource)
+  costs_all = rbind(costs_all, costs)
 }
 
 ## create string with date and time
@@ -504,6 +609,7 @@ saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
+saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
