@@ -190,7 +190,7 @@ Please contact remind@pik-potsdam.de
 See file CITATION.cff or the documentation of the model for information how
 to cite the model.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3730919.svg)](https://doi.org/10.5281/zenodo.3730919)
+[![DOI](https://zenodo.org/badge/226360184.svg)](https://zenodo.org/badge/latestdoi/226360184)
 
 ## AUTHORS
 See list of authors in CITATION.cff

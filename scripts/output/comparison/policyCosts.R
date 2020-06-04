@@ -148,7 +148,7 @@ ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
 pc_pairs <- paste0(pol_names, "_w.r.t_",ref_names)
 
 # If this scrpit was called from output.R, check with user if the pol-ref pairs 
-# are the ones he wanted. 
+# are the ones she wanted. 
 if(exists("source_include")) {
   cat(crayon::blue("\nPlease confirm the set-up:\n"))
   cat("From the order with which you selected the directories, the following policy-cost curves will be created:\n")
@@ -165,7 +165,7 @@ if(exists("source_include")) {
   } else cat(crayon::green("Great!\n"))
 }
 
-# Tell the user what's going on
+# Tell the user what is going on
 cat(crayon::blue("\nPolicy cost computations:\n"))
 
 # Get Policy costs for every policy-reference pair
@@ -187,7 +187,7 @@ policy_costs <- policy_costs %>%
   pivot_longer(cols = matches(".*w\\.r\\.t.*"), names_to = "Model Output") %>% 
   pivot_wider(names_from = data)
 
-# Tell the user what's going on
+# Tell the user what is going on
 cat(crayon::green("Done!\n"))
 
 # Create Pdf

@@ -123,20 +123,7 @@ else
 
 *** Define co2 price for entities that are used in MAC. 
 p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
-*** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
-*** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
-*** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * cm_cprice_red_factor;
-*** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+5)  = 0.2 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+10) = 0.4 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+15) = 0.8 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
-*** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
-*** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
+*** Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
 p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
 p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
 

@@ -13,16 +13,16 @@ library(lusweave)
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
-  outputdirs <- c("C:/work/REMIND_tests/Trunk_latest/output/BAU_Nash_2019-02-13_12.27.58");   
+  outputdir <- c("C:/work/REMIND_tests/Trunk_latest/output/BAU_Nash_2019-02-13_12.27.58");   
   # path to the output folder
-   readArgs("outputdirs")
+   lucode::readArgs("outputdir")
 } 
 
 ###############################################################################
 
 # Set mif path
-scenNames <- getScenNames(outputdirs)
-mif_path  <- path(outputdirs,paste("REMIND_LCOE_",scenNames,".mif",sep=""))
+scenNames <- getScenNames(outputdir)
+mif_path  <- path(outputdir,paste("REMIND_LCOE_",scenNames,".mif",sep=""))
 
 
 # run plot LCOE function

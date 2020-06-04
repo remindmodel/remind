@@ -1,7 +1,24 @@
 Running REMIND and MAgPIE in coupled mode
 ================
 David Klein (<dklein@pik-potsdam.de>)
-16 February, 2020
+27 April, 2020
+
+- [Running REMIND and MAgPIE in coupled mode](#running-remind-and-magpie-in-coupled-mode)
+- [How to start coupled runs](#how-to-start-coupled-runs)
+    + [Clone the models](#clone-the-models)
+    + [Switch to relevant branchs](#switch-to-relevant-branchs)
+    + [Create snapshot of R libraries](#create-snapshot-of-r-libraries)
+    + [Activate snapshot for REMIND and MAgPIE](#activate-snapshot-for-remind-and-magpie)
+    + [Configure start_bundle_coupled.R](#configure-start-bundle-coupledr)
+    + [Configure the scenario_config_coupled.csv of your choice](#configure-the-scenario-config-coupledcsv-of-your-choice)
+    + [Perform test start before actually submitting runs](#perform-test-start-before-actually-submitting-runs)
+    + [After checking that coupling scripts finds all gdxes and mifs start runs](#after-checking-that-coupling-scripts-finds-all-gdxes-and-mifs-start-runs)
+- [Technical concept](#technical-concept)
+    + [Dynamic](#dynamic)
+    + [Static](#static)
+    + [The coupling scripts](#the-coupling-scripts)
+    
+# How to start coupled runs
 
 ### Clone the models
 
@@ -50,14 +67,6 @@ See comments in the head section of the file. Most importantly you need to provi
 By default these are (A) `scenario_config_coupled_SSPSDP.csv` and (B) `scenario_config_SSPSDP.csv`. A provides some extra information
 for coupled runs (e.g. which run should be started). All other settings are taken from B. Thus every scenario in A must also be present in B.
 
-### Use the latest GAMS version
-
-This step is optional. If you want to use the latest GAMS version type this into the same command line you will start the runs from:
-
-```bash
-module load gams/30.2.0
-```
-
 ### Perform test start before actually submitting runs
 
 ```bash
@@ -69,3 +78,37 @@ Rscript start_bundle_coupled.R test
 ```bash
 Rscript start_bundle_coupled.R
 ```
+
+# Technical concept
+
+There are two components of the REMIND-MAgPIE coupling: the prominent dynamic part (models solve iteratively and exchange data via coupling script), the more hidden static part (exogenous assumptions derived from the other model, updated manually from time to time via moinput).
+
+### Dynamic part
+
+* bioenergy demand, GHG prices from REMIND to MAgPIE (technical: getReprotData in magpie/startfunctions.R)
+* bioenergy prices, GHG emissions from MAgPIE to REMIND (technical: getReportData in remind/scripts/start/prepare_and_run.R)
+
+### Static part
+
+* bioenergy supply curves in REMIND derived from MAgPIE (vignette remulator package)
+* CO2 MAC: currently deactivated due to negligible differences in CO2 LUC emissions across RCPs
+* CH4/N2O MAC (turned on in REMIND standalone, turned off in REMIND coupled because abatement is part of MAgPIE)
+* GHG emission baselines for SSPs/RCPs (updated in coupled runs)
+* total agricultural production costs (fixed for standalone and coupled)
+
+### The coupling scripts
+
+The meta scripts for coupled runs that configure the models, start the runs and performs the iteration loop are located in the REMIND main folder.
+
+* `start_bundle_coupled.R`
+  * reads config files and updates model settings accordingly
+  * saves all settings to individual `runname.RData` files in the REMIND main folder
+  * sends a job to the cluster for each scenario specified. This job executed `start_coupled.R`
+* `start_coupled.R`
+  * tries to detect if there are runs that crashed and can be continued
+  * reads the `runname.RData` and starts REMIND and MAgPIE iteratively
+  * saves the output from one model into specific intput folders of the other model
+  * the models read these inputs as part of their individual start scripts:
+    * MAgPIE: getReprotData in magpie/startfunctions.R
+    * REMIND: getReportData in remind/scripts/start/prepare_and_run.R
+  * after last coupling iteration generate combined reporting file by binding REMIND and MAgPIE mifs together

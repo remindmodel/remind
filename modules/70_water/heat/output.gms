@@ -123,139 +123,139 @@ o70_water_withdrawal(ttot,regi,te_elcool70)
 ;
 
 ***Totals***----------------------------------------------------------------------
-p_dummy(ttot,regi,"Secondary Energy|Electricity|Full; EJ/yr;") = 	
+p70_water_output(ttot,regi,"Secondary Energy|Electricity|Full; EJ/yr;") = 	
       (sum(pe2se(enty,"seel",te), 
         vm_prodSe.l(ttot,regi,enty,"seel",te))
         + sum(se2se(enty,"seel",te), vm_prodSe.l(ttot,regi,enty,"seel",te))
         + sum(pc2te(enty,entySe(enty3),te,"seel"), max(0, pm_prodCouple(regi,enty,enty3,te,"seel")) * vm_prodSe.l(ttot,regi,enty,enty3,te))
 			) * pm_conv_TWa_EJ
 ;
-p_dummy(ttot,regi,"Secondary Energy|Electricity|Part; EJ/yr;") = sum(te_elcool70, o70_se_production(ttot,regi,te_elcool70));
-p_dummy(ttot,regi,"Water Consumption|Electricity; km3/yr;") = sum(te_elcool70, o70_water_consumption(ttot,regi,te_elcool70));
-p_dummy(ttot,regi,"Water Withdrawal|Electricity; km3/yr;") = sum(te_elcool70, o70_water_withdrawal(ttot,regi,te_elcool70));
-p_dummy(ttot,regi,"Secondary Energy|Electricity|wo/h; EJ/yr;") = sum(te_elcool70$(NOT sameas (te_elcool70,"hydro")), o70_se_production(ttot,regi,te_elcool70)); 
-p_dummy(ttot,regi,"Water Consumption|Electricity|wo/h; km3/yr;") = sum(te_elcool70$(NOT sameas (te_elcool70,"hydro")), o70_water_consumption(ttot,regi,te_elcool70));
+p70_water_output(ttot,regi,"Secondary Energy|Electricity|Part; EJ/yr;") = sum(te_elcool70, o70_se_production(ttot,regi,te_elcool70));
+p70_water_output(ttot,regi,"Water Consumption|Electricity; km3/yr;") = sum(te_elcool70, o70_water_consumption(ttot,regi,te_elcool70));
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity; km3/yr;") = sum(te_elcool70, o70_water_withdrawal(ttot,regi,te_elcool70));
+p70_water_output(ttot,regi,"Secondary Energy|Electricity|wo/h; EJ/yr;") = sum(te_elcool70$(NOT sameas (te_elcool70,"hydro")), o70_se_production(ttot,regi,te_elcool70)); 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|wo/h; km3/yr;") = sum(te_elcool70$(NOT sameas (te_elcool70,"hydro")), o70_water_consumption(ttot,regi,te_elcool70));
 
 ***Intensities***-----------------------------------------------------------------
 loop(descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd),
   loop(ttot$(ttot.val ge 2005),
-    p_dummy(ttot,regi,descr_water_int) = 
-        p_dummy(ttot,regi,descr_water_extn) * sm_giga_2_non 
-      / p_dummy(ttot,regi,descr_water_extd) / sm_EJ_2_TWa / sm_TWa_2_MWh
+    p70_water_output(ttot,regi,descr_water_int) = 
+        p70_water_output(ttot,regi,descr_water_extn) * sm_giga_2_non 
+      / p70_water_output(ttot,regi,descr_water_extd) / sm_EJ_2_TWa / sm_TWa_2_MWh
   );
 );
 
 ***Aggregated categories***-------------------------------------------------------
-p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"igcc") OR sameas(te_elcool70,"pc") OR sameas(te_elcool70,"coalchp")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Coal; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;")
 ;  
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"dot")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Oil; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Oil; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"ngccc")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"ngcc") OR sameas(te_elcool70,"ngt") OR sameas(te_elcool70,"gaschp")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Gas; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Fossil; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Coal; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Gas; km3/yr;")
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Oil; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Fossil; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Oil; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Fossil|w/ CCS; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Fossil|w/ CCS; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/ CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Fossil|w/o CCS; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;")
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Fossil|w/o CCS; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/o CCS; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Gas|w/o CCS; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Oil|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Biomass|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Biomass|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"bioigccc")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Biomass|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Biomass|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"bioigcc") OR sameas(te_elcool70,"biochp")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Biomass; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Biomass|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Consumption|Electricity|Biomass|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Biomass; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Biomass|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Consumption|Electricity|Biomass|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Nuclear; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Nuclear; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"tnrs")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Hydro; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Hydro; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"hydro")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Solar|PV; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar|PV; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"spv")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Solar|CSP; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar|CSP; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"csp")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Solar|PV; km3/yr;") + p_dummy(ttot,regi,"Water Consumption|Electricity|Solar|CSP; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar|PV; km3/yr;") + p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar|CSP; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"wind")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Geothermal; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Geothermal; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"geohdr")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Non-Biomass Renewables; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Consumption|Electricity|Hydro; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;")
-  + p_dummy(ttot,regi,"Water Consumption|Electricity|Geothermal; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Non-Biomass Renewables; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Consumption|Electricity|Hydro; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Solar; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Wind; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Consumption|Electricity|Geothermal; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Once Through; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Once Through; km3/yr;")
   =
     (sum(ttot2,
       sum(enty,
@@ -276,7 +276,7 @@ p_dummy(ttot,regi,"Water Consumption|Electricity|Once Through; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Wet Tower; km3/yr;")
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Wet Tower; km3/yr;")
   =
     (sum(ttot2,
       sum(enty,
@@ -297,7 +297,7 @@ p_dummy(ttot,regi,"Water Consumption|Electricity|Wet Tower; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Cooling Pond; km3/yr;") 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Cooling Pond; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -318,7 +318,7 @@ p_dummy(ttot,regi,"Water Consumption|Electricity|Cooling Pond; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Consumption|Electricity|Dry Cooling; km3/yr;") 
+p70_water_output(ttot,regi,"Water Consumption|Electricity|Dry Cooling; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -338,116 +338,116 @@ p_dummy(ttot,regi,"Water Consumption|Electricity|Dry Cooling; km3/yr;")
       )  
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"igcc") OR sameas(te_elcool70,"pc") OR sameas(te_elcool70,"coalchp")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;")
 ;  
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"dot")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Oil; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Oil; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"ngccc")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"ngcc") OR sameas(te_elcool70,"ngt") OR sameas(te_elcool70,"gaschp")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Fossil; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas; km3/yr;")
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Oil; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Fossil; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Oil; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Fossil|w/ CCS; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Fossil|w/ CCS; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/ CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Fossil|w/o CCS; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;")
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Fossil|w/o CCS; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/o CCS; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Gas|w/o CCS; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Oil|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/ CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/ CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"bioigccc")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/o CCS; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/o CCS; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"bioigcc") OR sameas(te_elcool70,"biochp")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Biomass; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/ CCS; km3/yr;") + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/o CCS; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Biomass; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/ CCS; km3/yr;") + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Biomass|w/o CCS; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Nuclear; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Nuclear; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"tnrs")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Hydro; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Hydro; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"hydro")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar|PV; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar|PV; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"spv")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar|CSP; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar|CSP; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"csp")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar|PV; km3/yr;") + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar|CSP; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar|PV; km3/yr;") + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar|CSP; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"wind")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Geothermal; km3/yr;") = 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Geothermal; km3/yr;") = 
   sum(te_elcool70$(sameas(te_elcool70,"geohdr")), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Non-Biomass Renewables; km3/yr;") = 
-  p_dummy(ttot,regi,"Water Withdrawal|Electricity|Hydro; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") 
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;")
-  + p_dummy(ttot,regi,"Water Withdrawal|Electricity|Geothermal; km3/yr;")
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Non-Biomass Renewables; km3/yr;") = 
+  p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Hydro; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Solar; km3/yr;") 
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Wind; km3/yr;")
+  + p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Geothermal; km3/yr;")
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Once Through; km3/yr;") 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Once Through; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -468,7 +468,7 @@ p_dummy(ttot,regi,"Water Withdrawal|Electricity|Once Through; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Wet Tower; km3/yr;") 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Wet Tower; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -489,7 +489,7 @@ p_dummy(ttot,regi,"Water Withdrawal|Electricity|Wet Tower; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Cooling Pond; km3/yr;") 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Cooling Pond; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -510,7 +510,7 @@ p_dummy(ttot,regi,"Water Withdrawal|Electricity|Cooling Pond; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-p_dummy(ttot,regi,"Water Withdrawal|Electricity|Dry Cooling; km3/yr;") 
+p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Dry Cooling; km3/yr;") 
   =
     (sum(ttot2,
       sum(enty,
@@ -531,17 +531,7 @@ p_dummy(ttot,regi,"Water Withdrawal|Electricity|Dry Cooling; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 
-***Global***----------------------------------------------------------------------
-loop((descr_water_ext,ttot)$(ttot.val ge 2005),
-  p_dummy(ttot,"glob",descr_water_ext) = sum(regi, p_dummy(ttot,regi,descr_water_ext));
-);
 
-loop(descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd),
-  loop(ttot$(ttot.val ge 2005),
-    p_dummy(ttot,"glob",descr_water_int) =
-        sum(regi, p_dummy(ttot,regi,descr_water_extn)) / sum(regi, p_dummy(ttot,regi,descr_water_extd))
-  );
-);
 
 ***------------Write output-------------------------------------------------------
 *---------------------------------------------------------------------------------
@@ -616,7 +606,7 @@ loop(all_regi,
     put "REMIND;%c_expname%;", all_regi.tl, ";";
     put descr_water_ext.tl:64 ;
       loop(ttot$(ttot.val ge 2005),
-        put p_dummy(ttot,all_regi,descr_water_ext):10:3 ";";
+        put p70_water_output(ttot,all_regi,descr_water_ext):10:3 ";";
       );
       put /;
   );
@@ -628,7 +618,7 @@ loop(all_regi,
     put "REMIND;%c_expname%;", all_regi.tl, ";";
     put descr_water_int.tl:64 ;
       loop(ttot$(ttot.val ge 2005),
-        put p_dummy(ttot,all_regi,descr_water_int):10:3 ";";
+        put p70_water_output(ttot,all_regi,descr_water_int):10:3 ";";
       );
       put /;
   );

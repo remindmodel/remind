@@ -25,3 +25,6 @@ doc/
 
 # Ignore "main.lst" files
 main.lst
+
+# Ignore .RData files only in the root folder
+/*.RData
