@@ -38,15 +38,19 @@ q_costInv(t,regi)..
   )
 ;
 
-*RP* 2010-05-10 adjustment costs
+
+*** investment costs
 q_costInvTeDir(t,regi,te)..
   v_costInvTeDir(t,regi,te)
   =e=
   vm_costTeCapital(t,regi,te) * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf) )
 ;
+
+
 *RP* 2011-12-01 remove global adjustment costs to decrease runtime, only keep regional adjustment costs. Maybe change in the future.
 v_adjFactorGlob.fx(t,regi,te) = 0;
 
+*RP* 2010-05-10 adjustment costs
 q_costInvTeAdj(t,regi,teAdj)..
   v_costInvTeAdj(t,regi,teAdj)
   =e=
