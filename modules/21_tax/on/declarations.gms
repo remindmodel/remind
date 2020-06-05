@@ -85,6 +85,7 @@ v21_taxrevPE2SE(ttot,all_regi)               "tax on pe2se technologies (?)"
 v21_taxrevXport(ttot,all_regi)               "tax on exports (?)"
 v21_taxrevSO2(ttot,all_regi)                 "tax on SO2 (to reflect health impacts)"
 v21_taxrevBio(ttot,all_regi)                 "tax on bioenergy (to reflect sustainability constraints on bioenergy production)"
+v21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
 v21_implicitDiscRate(ttot,all_regi)           "implicit tax on energy efficient capital"
 v21_taxemiMkt(ttot,all_regi,all_emiMkt)      "tax on greenhouse gas emissions"
 ;
@@ -109,7 +110,8 @@ q21_taxrevPE2SE(ttot,all_regi)               "calculation of tax on pe2se techno
 q21_taxrevXport(ttot,all_regi)               "calculation of tax on exports"
 q21_taxrevSO2(ttot,all_regi)                 "calculation of tax on SO2"
 q21_taxrevBio(ttot,all_regi)                 "calculation of tax on bioenergy"
-q21_implicitDiscRate(ttot,all_regi)           "calculation of the implicit discount rate on energy efficiency capital"
+q21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
+q21_implicitDiscRate(ttot,all_regi)          "calculation of the implicit discount rate on energy efficiency capital"
 q21_taxemiMkt(ttot,all_regi,all_emiMkt)      "calculation of specific emission market tax on CO2 emissions"
 ;   
 

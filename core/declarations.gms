@@ -258,6 +258,7 @@ vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single 
 v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
+vm_flexAdj(tall,all_regi,all_te)			         "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -306,6 +307,7 @@ vm_otherFEdemand(ttot,all_regi,all_enty)             "final energy demand from n
 
 vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from certain technologies, have to calculated in additional equations [TWa]"
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"	
+
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."

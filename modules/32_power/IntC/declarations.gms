@@ -13,6 +13,7 @@ parameters
     p32_factorStorage(all_regi,all_te)      		"multiplicative factor that scales total curtailment and storage requirements up or down in different regions for different technologies (e.g. down for PV in regions where high solar radiation coincides with high electricity demand)"
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
+    p32_flex_maxdiscount(all_regi,all_te)           "maximum electricity price discount for flexible technologies reached at high VRE shares [unit: trUSD/TWa]"
 ;
 
 scalars
@@ -39,4 +40,6 @@ equations
     q32_limitSolarWind(tall,all_regi)           	"limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 	q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
     q32_elh2VREcapfromTestor(tall,all_regi)         "calculate capacities of dummy seel-->h2 technology from storXXX technologies"
+    q32_flexAdj(tall,all_regi,all_te)               "calculate flexibility used in flexibility tax for technologies with electricity input"
 ;
+

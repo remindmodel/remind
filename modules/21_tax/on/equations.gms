@@ -42,7 +42,8 @@
     + v21_taxrevBio(t,regi)
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
-    + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))      
+    + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
+    + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)    
  ;
 
 
@@ -193,5 +194,22 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
   pm_taxemiMkt(t,regi,emiMkt) * vm_co2eqMkt(t,regi,emiMkt)
   - p21_taxemiMkt0(t,regi,emiMkt); 
 ; 
+
+***---------------------------------------------------------------------------
+*'  Calculation of tax/subsidy on technologies with inflexible/flexible electricity input
+*'  calculation is done via additional budget emission contraints defined in regiplo module
+***---------------------------------------------------------------------------
+q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevFlex(t,regi)
+  =g=
+  sum(teFlex,
+    sum(en2en(enty,enty2,teFlex),
+*** vm_flexAdj (benefit of flexible technologies per unit output), change sign to make it a subsidy for flexible technologies
+           -vm_flexAdj(t,regi,teFlex) *
+                   (  vm_prodSe(t,regi,enty,enty2,teFlex)$entySe(enty2)
+                   +  vm_prodFe(t,regi,enty,enty2,teFlex)$entyFe(enty2))
+    )
+  )
+;
 
 *** EOF ./modules/21_tax/on/equations.gms

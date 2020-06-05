@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.941
 * 
-* Last modification (input data): Mon May 25 15:50:15 2020
+* Last modification (input data): Fri Jun  5 18:59:41 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -130,7 +130,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Incumb_1p5_noCCS_CheapH2_LimBio
+$setGlobal c_expname  Incumb_1p5_noCCS_flexOn
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -293,7 +293,7 @@ c_regi_sensscen				"regions which regional sensitivity parameters apply to"
 cm_synfuel_trp              "switch for forcing synfuels in transport"
 cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
-cm_capex_markdown_flex      "switch for emulating flexibility benefits of certain electricity-based technologies (elh2,dac...) by capex reductions"
+cm_flex_tax                 "switch for flexibility tax"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_synfuelscen		   = 2; !! def = 0
+cm_synfuelscen		   = 0; !! def = 0
 cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
@@ -420,13 +420,13 @@ $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW !! def = all
-$setGlobal c_regi_sensscen  ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW !! def = all
+$setGlobal c_regi_sensscen  all !! def = all
 
 cm_synfuel_trp      = 0; !! def = 0
 
 cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
-cm_capex_markdown_flex = 0; !! def 0
+cm_flex_tax = 1; !! def 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -435,7 +435,7 @@ cm_capex_markdown_flex = 0; !! def 0
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
+$setGlobal cm_OILRETIRE  on        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  on !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
