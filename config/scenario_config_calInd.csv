@@ -2,7 +2,7 @@ title;start;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;clim
 BAU_Nash;0;none;0;none;-1;off;nash;1;2005;load;fixed_shares;2;0;EUR;./config/input.gdx;;
 RCP37;0;rcp37;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;0;EUR;./config/input.gdx;BAU_Nash;
 RCP26;0;rcp26;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;0;EUR;./config/input.gdx;BAU_Nash;
-cal_test;1;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;0;EUR;./config/input.gdx;;
+cal_test;1;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;1;EUR;./config/input.gdx;;
 cal_test_CAZ;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;CAZ;./config/input.gdx;;
 cal_test_CHA;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;CHA;./config/input.gdx;;
 cal_test_EUR;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;EUR;./config/input.gdx;;
@@ -10,7 +10,7 @@ cal_test_IND;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;IN
 cal_test_JPN;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;JPN;./config/input.gdx;;
 cal_test_LAM;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;LAM;./config/input.gdx;;
 cal_test_MEA;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;MEA;./config/input.gdx;;
-cal_test_NEU;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;NEU;./config/input.gdx;;
+cal_test_NEU;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;1;NEU;./config/input.gdx;;
 cal_test_OAS;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;OAS;./config/input.gdx;;
 cal_test_REF;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;REF;./config/input.gdx;;
 cal_test_SSA;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;0;SSA;./config/input.gdx;;

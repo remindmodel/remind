@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.941
 * 
-* Last modification (input data): Thu May 28 09:41:41 2020
+* Last modification (input data): Wed Jun  3 11:42:34 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -139,7 +139,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  testOneRegi
+$setGlobal c_expname  cal_test
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -208,7 +208,7 @@ $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
-$setGlobal optimization  testOneRegi         !! def = nash
+$setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 $setGlobal codePerformance  off       !! def = off
 
@@ -439,7 +439,7 @@ $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0.1    !! def = 0
 
-$setglobal c_testOneRegi_region  IND       !! def = EUR
+$setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
