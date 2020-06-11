@@ -34,6 +34,8 @@ EJpass_all = readRDS("EJfuelsPass_all.RDS")
 EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
 costs_all = readRDS("costs_all.RDS")
+pref_FV_all = readRDS("pref_FV_all.RDS")
+
 setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
@@ -42,6 +44,7 @@ cols <- c("NG" = "#d11141",
           "Hybrid Electric" = "#f37735",
           "BEV" = "#00b159",
           "Electricity" = "#00b159",
+          "Electric" = "#00b159",
           "FCEV" = "#00aedb",
           "Hydrogen" = "#00aedb",
           "Biodiesel" = "#66a182",
@@ -762,5 +765,38 @@ ggsave("pBus.png", pBus, dpi=500, height = height , width = height * aspect_rati
 ggsave("pTruck.png", pTruck, dpi=500, height = height , width = height * aspect_ratio)
 
 ```
+
+
+
+## Trend of preference factors for Buses and Trucks
+
+```{r, echo=FALSE, warning=FALSE}
+
+prefBusTrucksplotf = function(pref){
+pref = pref[iso=="DEU" & technology %in% c("Electric", "FCEV") & vehicle_type %in% c("Bus_tmp_vehicletype")]
+pref = pref[year >= 2020 & year <= 2100 & vehicle_type == "Bus_tmp_vehicletype"]
+pref[, vehicle_type := "Buses and Trucks"]
+
+p = ggplot()+
+  geom_line(data = pref, aes(x = year, y = value, group = technology, color = technology))+
+  facet_wrap(~scenario)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size=7),
+        title = element_text(size=7),
+        legend.text = element_text(size=7),
+        strip.text = element_text(size=7))+
+  labs(y = "Preference factor [-]", x="")+
+  scale_color_manual("Technology", values = cols)
+
+return(p)
+}
+
+p = prefBusTrucksplotf(pref_FV_all)
+aspect_ratio <- 1
+height <- 3
+ggsave("buses_trucks_SW.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
 
 

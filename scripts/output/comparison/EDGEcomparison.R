@@ -47,6 +47,7 @@ EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 emipSource_all = NULL
 costs_all = NULL
+pref_FV_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -574,6 +575,7 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   emipSource[, scenario := as.character(unique(miffile$scenario))]
   costs[, scenario := as.character(unique(miffile$scenario))]
+  pref_FV[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -587,6 +589,7 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   emipSource_all = rbind(emipSource_all, emipSource)
   costs_all = rbind(costs_all, costs)
+  pref_FV_all = rbind(pref_FV_all, pref_FV)
 }
 
 ## create string with date and time
@@ -610,6 +613,7 @@ saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
+saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
