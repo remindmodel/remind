@@ -24,10 +24,13 @@ AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
 );
 
-*** define bounds for dummy variable
+*** FIXME: temporarily define bounds for dummy variable to relax the bounds on geohdr, due to infeasibilities in NDC runs with edge_esm
 vm_dummyGeot.fx(ttot, all_regi, all_te, rlf) = 0;
-vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2025")) = 0.002;
-vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2025")) = -0.002;
+vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND (ttot.val ge 2025 OR ttot.val le 2030)) = 0.002;
+vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND (ttot.val ge 2025 OR ttot.val le 2030)) = -0.002;
+
+*vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2030")) = 0.002;
+*vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2030")) = -0.002;
 
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
@@ -510,7 +513,8 @@ v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
 ***----------------------------------------------------------------------------
 *** upper bound on bioliquids as a share of transport liquids
 ***----------------------------------------------------------------------------
-
-v_shBioliq.up(t,regi)$(t.val > 2020) = c_shBioliq;
+** relax the bound for the years 2020 to 2025
+v_shBioliq.up(t, regi)$(t.val > 2020) = 2 * c_shBioliq;
+v_shBioliq.up(t,regi)$(t.val ge 2025) = c_shBioliq;
 
 *** EOF ./core/bounds.gms

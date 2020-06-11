@@ -22,6 +22,7 @@ cm_iteration_max = 100;
  if(cm_nash_autoconverge eq 1,
 ***convergences thresholds - coarse 
   p80_surplusMaxTolerance(tradePe) = 1.5 * sm_EJ_2_TWa;          !! convert EJ/yr into internal unit TWa
+  p80_surplusMaxTolerance("pebiolc") = 4 * sm_EJ_2_TWa;         !! FIXME: temporarily use less refined value for pebiolc
   p80_surplusMaxTolerance("good") = 100/1000;                  !! in internal unit, trillion Dollar
   p80_surplusMaxTolerance("perm") = 300 * 12/44 / 1000;                !! convert MtCO2eq into internal unit GtC
    );

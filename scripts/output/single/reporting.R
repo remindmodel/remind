@@ -35,20 +35,20 @@ tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)
 if(class(tmp)=="try-error") convGDX2MIF_fallback_for_coupling(gdx,file=remind_reporting_file,scenario=scenario)
 
 # generate MAGICC reporting and append to REMIND reporting
-if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
-  warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
-} else {
-  system(paste("cd ",outputdir ,"/magicc; ",
-             "pwd;",
-             "sed -f modify_MAGCFG_USER_CFG.sed -i MAGCFG_USER.CFG; ",
-             Sys.getenv('MAGICC_BINARY'), '; ',
-             "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
-             " < climate_reporting_template.txt ",
-             " > ","../../../", magicc_reporting_file,"; ",
-             "sed -i 's/glob/World/g' ","../../../", magicc_reporting_file, "; ",
-             "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
-             sep = ""))
-}
+## if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
+##   warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
+## } else {
+##   system(paste("cd ",outputdir ,"/magicc; ",
+##              "pwd;",
+##              "sed -f modify_MAGCFG_USER_CFG.sed -i MAGCFG_USER.CFG; ",
+##              Sys.getenv('MAGICC_BINARY'), '; ',
+##              "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
+##              " < climate_reporting_template.txt ",
+##              " > ","../../../", magicc_reporting_file,"; ",
+##              "sed -i 's/glob/World/g' ","../../../", magicc_reporting_file, "; ",
+##              "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
+##              sep = ""))
+## }
 
 ## generate EDGE-T reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
@@ -58,5 +58,6 @@ if(file.exists(file.path(outputdir, "EDGE-T"))){
 }
 
 # produce REMIND LCOE reporting *.mif based on gdx information
-tmp <- try(convGDX2MIF_LCOE(gdx,gdx_ref,file=LCOE_reporting_file,scenario=scenario)) # execute convGDX2MIF_LCOE
+## tmp <- try(convGDX2MIF_LCOE(gdx,gdx_ref,file=LCOE_reporting_file,scenario=scenario)) # execute convGDX2MIF_LCOE
+
 

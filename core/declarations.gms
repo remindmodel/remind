@@ -254,7 +254,7 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
-vm_dummyGeot(ttot, all_regi, all_te, rlf)                 "dummy variable."
+vm_dummyGeot(ttot, all_regi, all_te, rlf)            "dummy variable to relax the bounds on geothermal electric energy"
 ;
 
 ***----------------------------------------------------------------------------------------
