@@ -508,6 +508,6 @@ v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
 *** upper bound on bioliquids as a share of transport liquids
 ***----------------------------------------------------------------------------
 
-v_shBioliq.up(t,regi)$(t.val > 2020) = c_shBioliq;
+v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
 
 *** EOF ./core/bounds.gms
