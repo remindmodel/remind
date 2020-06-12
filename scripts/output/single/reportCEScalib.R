@@ -10,7 +10,7 @@
 library(tidyverse)
 slurm <- suppressWarnings(ifelse(system2('srun',stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
   if (slurm) { 
-    library('remind',lib.loc = '/p/projects/innopaths/reporting_library/lib/')  
+    library('remind',lib.loc = '/p/tmp/renatoro/REMIND-EU/reporting_library/lib/')  
   } else {
     library(remind)
   }
