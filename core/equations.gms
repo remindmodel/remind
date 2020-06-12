@@ -832,7 +832,7 @@ q_shGreenH2(t,regi)..
 *' Share of biofuels in transport liquids
 ***---------------------------------------------------------------------------
 q_shBioliq(t,regi)..
-    sum(se2se(entyPe,"seliqbio",te), vm_prodSe(t,regi,entyPe,"seliqbio",te))
+    sum(pe2se(entyPe,"seliqbio",te), vm_prodSe(t,regi,entyPe,"seliqbio",te))
     =e=
     (
 	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_seliq",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
