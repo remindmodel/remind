@@ -28,7 +28,7 @@ scenario <- getScenNames(outputdir)
 # paths of the reporting files
 remind_reporting_file <- path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
 magicc_reporting_file <- path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
-LCOE_reporting_file   <- path(outputdir,paste0("REMIND_LCOE_", scenario, ".mif"))
+LCOE_reporting_file   <- path(outputdir,paste0("REMIND_LCOE_", scenario, ".csv"))
 
 # produce REMIND reporting *.mif based on gdx information
 tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF
@@ -57,6 +57,6 @@ if(file.exists(file.path(outputdir, "EDGE-T"))){
   reportEDGETransport(outputdir)
 }
 
-# produce REMIND LCOE reporting *.mif based on gdx information
-tmp <- try(convGDX2MIF_LCOE(gdx,gdx_ref,file=LCOE_reporting_file,scenario=scenario)) # execute convGDX2MIF_LCOE
+# produce REMIND LCOE reporting *.csv based on gdx information
+tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
 
