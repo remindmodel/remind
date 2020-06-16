@@ -9,22 +9,27 @@ library(lucode)
 library(remind)
 library(lusweave)
 
+
+
 ############################# BASIC CONFIGURATION #############################
+gdx_name     <- "fulldata.gdx"        # name of the gdx  
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
-  outputdirs <- c("C:/work/REMIND_tests/Trunk_latest/output/BAU_Nash_2019-02-13_12.27.58");   
+  outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder 
   # path to the output folder
-   readArgs("outputdirs")
+  lucode::readArgs("outputdir","gdx_name")
 } 
 
+gdx <- path(outputdir,gdx_name)
 ###############################################################################
 
 # Set mif path
-scenNames <- getScenNames(outputdirs)
-mif_path  <- path(outputdirs,paste("REMIND_LCOE_",scenNames,".mif",sep=""))
+scenNames <- getScenNames(outputdir)
+LCOE_path  <- path(outputdir,paste("REMIND_LCOE_",scenNames,".csv",sep=""))
+reportFile <- path(outputdir, paste("LCOE_Plot_",scenNames,".pdf",sep=""))
 
 
 # run plot LCOE function
-plotLCOE(mif_path)
+plotLCOE(LCOE_path, gdx, fileName = reportFile)
 

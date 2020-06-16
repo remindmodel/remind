@@ -2,23 +2,45 @@ cff-version: 1.0.3
 message: If you use this model, please cite it as below.
 authors:
 
+- family-names: Luderer
+  given-names:  Gunnar
+  orcid: https://orcid.org/0000-0002-9057-6155
+  affiliation: "Potsdam Institute for Climate Impact Research"
+  
+- family-names: Bauer
+  given-names:  Nico
+  orcid: https://orcid.org/0000-0002-0211-4162
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: Baumstark
+  given-names:  Lavinia
+  orcid: https://orcid.org/0000-0002-6979-6671
+  affiliation: "Potsdam Institute for Climate Impact Research"
+  
+- family-names: Bertram
+  given-names:  Christoph
+  orcid: https://orcid.org/0000-0002-0933-4395
+  affiliation: "Potsdam Institute for Climate Impact Research"
+  
+- family-names: Leimbach
+  given-names:  Marian
+  affiliation: "Potsdam Institute for Climate Impact Research"
+  
+- family-names: Pietzcker
+  given-names:  Robert
+  orcid: https://orcid.org/0000-0002-9403-6711
+  affiliation: "Potsdam Institute for Climate Impact Research"
+  
+- family-names: Strefler
+  given-names:  Jessica
+  orcid: https://orcid.org/0000-0002-5279-4629
+  affiliation: "Potsdam Institute for Climate Impact Research"  
+
 - family-names: Aboumahboub
   given-names:  Tino
 
 - family-names: Auer
   given-names:  Cornelia
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
-- family-names: Bauer
-  given-names:  Nico
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
-- family-names: Baumstark
-  given-names:  Lavinia
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
-- family-names: Bertram
-  given-names:  Christoph
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Bi
@@ -27,6 +49,7 @@ authors:
 
 - family-names: Dietrich
   given-names:  Jan
+  orcid: https://orcid.org/0000-0002-4309-6431
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Dirnaichner
@@ -36,6 +59,7 @@ authors:
 
 - family-names: Giannousakis
   given-names:  Anastasis
+  orcid: https://orcid.org/0000-0002-4225-0011
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Haller
@@ -43,6 +67,7 @@ authors:
 
 - family-names: Hilaire
   given-names:  Jerome
+  orcid: https://orcid.org/0000-0002-9879-6339
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Klein
@@ -60,20 +85,12 @@ authors:
   given-names:  Elmar
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Leimbach
-  given-names:  Marian
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
 - family-names: Levesque
   given-names:  Antoine
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Lorenz
   given-names:  Alexander
-
-- family-names: Luderer
-  given-names:  Gunnar
-  affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Ludig
   given-names:  Sylvie
@@ -97,10 +114,6 @@ authors:
 
 - family-names: Pehl
   given-names:  Michaja
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
-- family-names: Pietzker
-  given-names:  Robert
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: Piontek
@@ -140,18 +153,14 @@ authors:
   given-names:  Björn
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Strefler
-  given-names:  Jessica
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
 - family-names: Ueckerdt
   given-names:  Falko
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 
 title: REMIND - REgional Model of INvestments and Development
-version: "2.1.0"
-date-released: 2020-03-27
+version: "2.1.1"
+date-released: 2020-05-08
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
