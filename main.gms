@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.944
 * 
-* Last modification (input data): Tue Apr 28 10:13:23 2020
+* Last modification (input data): Wed Jun 17 14:10:58 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -400,7 +400,7 @@ cm_noReboundEffect     = 0;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
-$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
+$setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
