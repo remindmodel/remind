@@ -24,14 +24,6 @@ AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
 );
 
-*** FIXME: temporarily define bounds for dummy variable to relax the bounds on geohdr, due to infeasibilities in NDC runs with edge_esm
-vm_dummyGeot.fx(ttot, all_regi, all_te, rlf) = 0;
-vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND (ttot.val ge 2025 OR ttot.val le 2030)) = 0.002;
-vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND (ttot.val ge 2025 OR ttot.val le 2030)) = -0.002;
-
-*vm_dummyGeot.up(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2030")) = 0.002;
-*vm_dummyGeot.lo(ttot, all_regi, all_te, rlf)$(sameas(all_te, "geohdr") AND sameas(ttot, "2030")) = -0.002;
-
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
