@@ -119,7 +119,7 @@ legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shippi
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "NG")
 
-legend_ord_costs <- c("Inconvenience cost", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "Operating and maintenance")
+legend_ord_costs <- c("Inconvenience cost", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy induced inconvenience","Fuel", "Purchase", "Operating and maintenance")
 
 legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", "Emi|CO2|Transport|Demand", "Emi|CO2|Energy|Supply|Gross", "Emi|CO2|Land-Use Change","Emi|CO2|CDR|BECCS")
 
@@ -557,7 +557,7 @@ facet_grid(scenario~technology)+
           title = element_text(size=14),
           axis.line = element_line(size = 0.5, colour = "grey"),
           legend.text = element_text(size=14),
-          strip.text = element_text(size=14),
+          strip.text = element_text(size=12),
           strip.background = element_rect(color = "grey"))+
     guides(fill=guide_legend(title="Cost component"))+
     scale_fill_manual(values = cols)+
@@ -573,18 +573,27 @@ facet_grid(scenario~technology)+
           title = element_text(size=14),
           axis.line = element_line(size = 0.5, colour = "grey"),
           legend.text = element_text(size=14),
-          strip.text = element_text(size=14),
+          strip.text = element_text(size=12),
           strip.background = element_rect(color = "grey"))+
     guides(fill=guide_legend(title="Cost component"))+
     scale_fill_manual(values = cols)+
     labs(y = "Costs [$/pkm]", x="")
 
-plot = list(plot1, plot2)
+plot = list(plot1 = plot1, plot2 = plot2)
 
 return(plot)
 }
 
-costspf(costs_all, rp = regionplot)
+p = costspf(costs_all, rp = regionplot)
+
+p
+
+aspect_ratio <- 1.5
+height <- 8
+ggsave("LDVinccost.png", p$plot1, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("LDVtotcost.png", p$plot2, dpi=500, height = height , width = height * aspect_ratio)
+
+
 ```
 
 ## Sales composition
@@ -778,8 +787,8 @@ pref = pref[year >= 2020 & year <= 2100 & vehicle_type == "Bus_tmp_vehicletype"]
 pref[, vehicle_type := "Buses and Trucks"]
 
 p = ggplot()+
-  geom_line(data = pref, aes(x = year, y = value, group = technology, color = technology))+
-  facet_wrap(~scenario)+
+  geom_line(data = pref, aes(x = year, y = value, group = technology, color = technology, linetype = technology))+
+  facet_wrap(~scenario, ncol = 1)+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
         axis.text = element_text(size=7),
@@ -787,15 +796,17 @@ p = ggplot()+
         legend.text = element_text(size=7),
         strip.text = element_text(size=7))+
   labs(y = "Preference factor [-]", x="")+
-  scale_color_manual("Technology", values = cols)
-
+  scale_color_manual("Technology", values = cols,labels = c("Electric", "FCEV")) +
+  scale_linetype_manual("Technology", values = c(1,2),
+                        labels = c("Electric", "FCEV"))
 return(p)
 }
-
 p = prefBusTrucksplotf(pref_FV_all)
+p
 aspect_ratio <- 1
-height <- 3
+height <- 4
 ggsave("buses_trucks_SW.png", p, dpi=500, height = height , width = height * aspect_ratio)
+
 ```
 
 
