@@ -200,6 +200,7 @@ prepare <- function() {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
+
   # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
 
@@ -251,6 +252,9 @@ prepare <- function() {
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
+                                         if(cfg$sufficiency == "on") "Suff-" else "",
+                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
   
   # write name of corresponding CES file to datainput.gms
@@ -550,7 +554,14 @@ prepare <- function() {
                                 list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
-    
+
+    levs_manipulateThis <- c(levs_manipulateThis, 
+                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
+    fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
+    margs_manipulateThis <- c(margs_manipulateThis, 
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis, 
@@ -827,6 +838,7 @@ run <- function(start_subsequent_runs = TRUE) {
       write(filetext,file=subseq_start_file)
     }
   }
+
   #=================== END - Subsequent runs ========================
   
   # Copy important files into output_folder (after REMIND execution)

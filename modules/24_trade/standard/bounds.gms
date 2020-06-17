@@ -98,6 +98,12 @@ vm_Mport.up("2010",regi,"peoil") = 1.05 * pm_IO_trade("2010",regi,"peoil","Mport
 vm_Mport.lo("2015",regi,"peoil") = 0.95 * pm_IO_trade("2015",regi,"peoil","Mport");
 vm_Mport.up("2015",regi,"peoil") = 1.05 * pm_IO_trade("2015",regi,"peoil","Mport");
 
+*** upper bound causes a infeasibility in REMIND-EU for ESW that I could not solve with the adjustment to vm_fuExtr maximum bound 
+vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"ESW")) = 1.15 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"ESW")) = 0.85 * pm_IO_trade("2010",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"ESW")) = 1.2 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"ESW")) = 0.8 * pm_IO_trade("2015",regi,"peoil","Xport");
+
 *** bounds on gas exports in 2010 and 2015
 vm_Xport.lo("2010",regi,"pegas") = 0.95 * pm_IO_trade("2010",regi,"pegas","Xport");
 vm_Xport.up("2010",regi,"pegas") = 1.05 * pm_IO_trade("2010",regi,"pegas","Xport");
@@ -131,5 +137,9 @@ loop(regi,
       );
 );
 
+*** FS: scenario 2: switch off biomass imports after 2030 for synfuel scenarios
+if ( cm_synfuelscen ge 2,
+	vm_Mport.up(t,regi_synfuelscen,"pebiolc")$(t.val ge 2030) = 0;
+);
 
 *** EOF ./modules/24_trade/standard/bounds.gms

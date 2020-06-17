@@ -155,6 +155,14 @@ ue2ppfen_dyn35(all_enty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 /
 ;
 
+sets
+ bound_type
+  /
+  upper
+  lower
+  /
+ ;
+
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------

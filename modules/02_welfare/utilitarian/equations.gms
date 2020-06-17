@@ -33,6 +33,7 @@ q02_welfare(regi)..
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
+$if "%cm_INCONV_PENALTY_bioSwitch%" == "on"  - sum((entySe,entyFe,sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,"ES") AND (entySeBio(entySe)) AND (sameas(emiMkt,"ES"))), v_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
             )
         )
 ;
@@ -59,5 +60,17 @@ q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
   + v02_sesoInconvPenSlack(t,regi)
 ;
 $ENDIF.INCONV
+
+
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
+q_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)$((ttot.val ge cm_startyear) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,"ES") AND (entySeBio(entySe)) AND (sameas(emiMkt,"ES")))..
+  vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
+  + v_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  - v_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  0
+;
+$ENDIF.INCONV_bioSwitch
+
 
 *** EOF ./modules/02_welfare/utilitarian/equations.gms

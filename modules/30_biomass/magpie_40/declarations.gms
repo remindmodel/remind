@@ -65,5 +65,7 @@ q30_priceshift                     "Calculates shift factor by minimizing least 
 q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported, no residues"
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
+q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production, only active in cm_synfuelscen >= 2"
+
 ;
 *** EOF ./modules/30_biomass/magpie_4/declarations.gms

@@ -42,7 +42,7 @@
     + v21_taxrevBio(t,regi)
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
-    
+    + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))      
  ;
 
 
@@ -182,5 +182,16 @@ q21_implicitDiscRate(t,regi)$(t.val ge max(2010,cm_startyear))..
         * vm_cesIO(t,regi,in)
         ) - p21_implicitDiscRate0(t,regi);
 ;        
- 
+						  
+***---------------------------------------------------------------------------
+*'  Calculation of specific emission market taxes
+*'  calculation is done via additional budget emission contraints defined in regiplo module
+***---------------------------------------------------------------------------
+q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
+  v21_taxemiMkt(t,regi,emiMkt) 
+  =g=
+  pm_taxemiMkt(t,regi,emiMkt) * vm_co2eqMkt(t,regi,emiMkt)
+  - p21_taxemiMkt0(t,regi,emiMkt); 
+; 
+
 *** EOF ./modules/21_tax/on/equations.gms

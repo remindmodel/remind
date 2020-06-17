@@ -8,7 +8,12 @@ library(luplot)
 library(lucode)
 library(gdx)
 library(magpie)
-library(remind)
+slurm <- suppressWarnings(ifelse(system2('srun',stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
+  if (slurm) { 
+    library('remind',lib.loc = '/p/tmp/renatoro/REMIND-EU/reporting_library/lib/')  
+  } else {
+    library(remind)
+  }
 library(ggplot2)
 
 ############################# BASIC CONFIGURATION #############################

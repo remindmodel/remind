@@ -107,13 +107,15 @@ q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
 q30_limitXpBio(t,regi)..
          vm_Xport(t,regi,"pebiolc")
          =l=
-         vm_fuExtr(t,regi,"pebiolc","1");
-         
-*** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
-q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
-        sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
-        =l=
-        0.5 * p30_demPe(t,regi);
-         
+         vm_fuExtr(t,regi,"pebiolc","1")
+;
+
+
+*** FS: synfuel scenario 2: limit energy crop production to 2 * 2015-level
+q30_limitProdtoHist(t,regi_synfuelscen)$(cm_synfuelscen ge 2)..
+         vm_fuExtr(t,regi_synfuelscen,"pebiolc","1")$(t.val ge 2030)
+         =l=
+         2*vm_fuExtr("2015",regi_synfuelscen,"pebiolc","1")
+;
 		 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms

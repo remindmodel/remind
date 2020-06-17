@@ -6,11 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/equations.gms
 
-
-***---------------------------------------------------------------------------
-*' Managing the C/H ratio in CCU-Technologies
-*' amount of C temporary used in CCU-products in relation to the amount of hydrogen necessary [GtC/y]
-***---------------------------------------------------------------------------
+*** ---------------------------------------------------------
+*** calculate CCU emissions (= CO2 demand of CCU technologies)
+*** ---------------------------------------------------------
 
 q39_emiCCU(t,regi) .. 
   sum(teCCU2rlf(te,rlf),
@@ -18,10 +16,11 @@ q39_emiCCU(t,regi) ..
   )
   =e=
   sum(se2se_ccu39(enty,enty2,te), 
-    p39_ratioCtoH(t,regi,enty,enty2,te,"CtoH") 
+    p39_co2_dem(t,regi,enty,enty2,te) 
   * vm_prodSe(t,regi,enty,enty2,te)
   )
 ;
+
 
 *' Adjust the shares of synfuels in transport liquids.
 *' This equation is only effective when CCU is switched on.

@@ -29,6 +29,12 @@ q33_emicdrregi(t,regi)..
 *'  Calculation of energy demand of direct air capture. Heat can be provided by gas or H2; 
 *'  vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat minus what is already covered by h2, i.e. vm_otherFEdemand(t,regi,"feh2s") and vice versa.
 ***---------------------------------------------------------------------------
+q33_demFeCDR(t,regi,entyFe,emiMkt)$((entyFe2Sector(entyFe,"cdr")) AND (sameas(emiMkt,"ETS"))) .. 
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr",emiMkt)) 
+  =e=
+  vm_otherFEdemand(t,regi,entyFe)
+;
+
 q33_otherFEdemand(t,regi,entyFe)..
     vm_otherFEdemand(t,regi,entyFe)
     =e=

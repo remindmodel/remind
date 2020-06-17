@@ -32,6 +32,12 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2035  AND sameAs(in, "enhi")) =
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2040  AND sameAs(in, "enhi")) = 1.3;
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "enhi")) = 2.0;
 
+$IFTHEN.cm_INNOPATHS_eni not "%cm_INNOPATHS_eni%" == "off" 
+  pm_cesdata_sigma(ttot,"eni")$pm_cesdata_sigma(ttot,"eni") = pm_cesdata_sigma(ttot,"eni") * %cm_INNOPATHS_eni%;
+  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") gt 0.8) AND (pm_cesdata_sigma(ttot,"eni") lt 1)) = 0.8; !! If complementary factors, sigma should be below 0.8
+  pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") ge 1) AND (pm_cesdata_sigma(ttot,"eni") lt 1.2)) = 1.2; !! If substitution factors, sigma should be above 1.2
+$ENDIF.cm_INNOPATHS_eni
+
 *** Don't use more than 25/50% H2/district heat in industry
 pm_ppfen_shares("enhi","feh2i") = 0.25;
 
@@ -49,9 +55,16 @@ $offdelim
 
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
+$IFTHEN.Industry_CCS_markup not "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+	pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_INNOPATHS_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
+$ENDIF.Industry_CCS_markup
+
 *** fill in share of other industry sector
-loop ((all_regi,all_in)$(    sameas(all_in,"fesoi") OR sameas(all_in,"fehoi")
-                          OR sameas(all_in,"fegai") ),
+p37_shIndFE(regi,"feh2i",secInd37) = p37_shIndFE(regi,"fegai",secInd37);
+
+***loop ((all_regi,all_in)$(    sameas(all_in,"fesoi") OR sameas(all_in,"fehoi")
+***                          OR sameas(all_in,"fegai") ),
+loop ((all_regi,ppfen_industry_dyn37(all_in)),
   p37_shIndFE(all_regi,all_in,"otherInd")
   = 1
   - sum(secInd37$( NOT sameas(secInd37,"otherInd") ),

@@ -212,6 +212,9 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   t36_hist(ttot) "historic time steps"
   t36_hist_last(ttot) "last historic time step"
   t36_scen(ttot) "non historical scenario time step"
+  
+  teEs_pushCalib_dyn36(all_teEs) "technologies for which the Logit parameter should be modified"
+  
 ;   
 
 
@@ -239,6 +242,8 @@ $offOrder
  t36_hist_last(ttot) = NO;
  t36_hist_last(t36_hist)$(ord(t36_hist) eq card(t36_hist)) = YES;
 $offOrder
+
+teEs_pushCalib_dyn36(all_teEs) = NO;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------

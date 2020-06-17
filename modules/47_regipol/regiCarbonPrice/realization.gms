@@ -19,7 +19,10 @@
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/47_regipol/regiCarbonPrice/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/47_regipol/regiCarbonPrice/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/47_regipol/regiCarbonPrice/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/47_regipol/regiCarbonPrice/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/47_regipol/regiCarbonPrice/preloop.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/47_regipol/regiCarbonPrice/bounds.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/47_regipol/regiCarbonPrice/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 

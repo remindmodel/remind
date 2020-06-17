@@ -27,6 +27,7 @@ Equations
   q37_indCCS(ttot,all_regi,all_enty)                "calculate industry CCS emissions"
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"
   q37_cementCCS(ttot,all_regi)                      "equal abatement levels for cement fuel and process emissions"
+  q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/declarations.gms

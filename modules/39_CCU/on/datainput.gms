@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/datainput.gms
 
-*LP 
-p39_ratioCtoH(ttot,regi,enty,enty2,te,"CtoH")$emi2teCCU(enty,enty2,te,"CtoH") = fm_dataemiglob(enty,enty2,te,"CtoH");
-display p39_ratioCtoH;
+*** FS: set CO2 demand of CCU technologies to se2fe emission factor of liquids and gases
+*** such that synfuels have the same emission factors as fossil fuels
+p39_co2_dem(t,regi,"seh2","segabio","h22ch4") = pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2");
+p39_co2_dem(t,regi,"seh2","seliqbio","MeOH") = pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2"); !! choose diesel as fuel for HDVt where synfuels most relevant
 
 *** EOF ./modules/39_CCU/on/datainput.gms

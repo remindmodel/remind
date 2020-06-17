@@ -7,8 +7,19 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 
 SETS
-	target_type "CO2 policy target type" / budget , year/
-	emi_type "emission type used in regional target" / netCO2, grossFFaI /
+	target_type "CO2 policy target type" / budget , year /
+	emi_type "emission type used in regional target" / netCO2, netGHG, grossFFaI /
+
+	ETS_mkt "ETS market"
+	/
+		EU_ETS
+	/ 
+
+	ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market"
+      /
+	  	EU_ETS.(ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW)  !!,NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
+      /
 ;
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
+

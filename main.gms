@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -80,11 +80,11 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
-* Regionscode: 690d3718e151be1b450b394c1064b1c5
+* Regionscode: 8201ae1fc68ef9eaca4339dd91556375
 * 
-* Input data revision: 5.944
+* Input data revision: 5.941
 * 
-* Last modification (input data): Tue Apr 28 10:13:23 2020
+* Last modification (input data): Sat May 16 13:45:45 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -163,7 +163,7 @@ $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
-$setglobal CES_parameters  load       !! def = load
+$setglobal CES_parameters  calibrate       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
 $setGlobal biomass  magpie_40 !! def = magpie_40
 ***---------------------    31_fossil    ----------------------------------------
@@ -175,7 +175,7 @@ $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  complex         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
-$setglobal buildings  simple          !! def = simple
+$setglobal buildings  services_putty          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
@@ -199,7 +199,7 @@ $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
-$setGlobal optimization  nash         !! def = nash
+$setGlobal optimization  testOneRegi         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 $setGlobal codePerformance  off       !! def = off
 
@@ -220,9 +220,6 @@ cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
-c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
-c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
-cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -285,11 +282,14 @@ cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as 
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
+cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
+c_regi_synfuelscen			"region to apply synfuelscen to"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -312,9 +312,6 @@ cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
-c_shGreenH2      = 0;        !! def = 0
-c_shBioTrans     = 1;        !! def = 1
-cm_shSynTrans    = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
@@ -379,9 +376,19 @@ c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiCO2target  off       !! def = off
+$setGlobal cm_quantity_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
 cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
+$setGlobal cm_emiMktETS  off       !! def = off
+$setGlobal cm_emiMktETS_type  off   !! def = off
+$setGlobal cm_emiMktES  off       !! def = off	
+$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
+$setGlobal cm_emiMktEScoop  off   !! def = off	
+$setGlobal cm_emiMktES2050	 off   !! def = off	
+$setGlobal cm_NucRegiPol	 off   !! def = off		
+$setGlobal cm_proNucRegiPol	 off   !! def = off
+$setGlobal cm_CCSRegiPol	 off   !! def = off	
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
@@ -395,15 +402,21 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen        = 0;!! def = 0
+cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
+cm_synfuelscen		   = 0; !! def = 0
+cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
+$setGlobal cm_pushCalib  none !! def = none
+$setGlobal cm_reducCostB  none !! def = none
+$setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
+$setGlobal c_regi_synfuelscen  all !! def = all
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -414,6 +427,7 @@ $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
+$setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
@@ -427,19 +441,46 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Esub_middle-Reg_8201ae1fc6   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal cm_calibration_string  off      !! def = off
 
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  USA       !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
+
+*** INNOPATHS switches
+$setglobal cm_calibration_FE  off      !! def = off
+
+$setglobal cm_INNOPATHS_eni  off!! def = off
+$setglobal cm_INNOPATHS_enb  off!! def = off
+
+$setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
+
+$setglobal cm_INNOPATHS_incolearn  off !! def = off
+$setglobal cm_INNOPATHS_storageFactor  off !! def = off
+
+$setglobal cm_INNOPATHS_adj_seed  off
+$setglobal cm_INNOPATHS_adj_seed_cont  off
+$setglobal cm_INNOPATHS_adj_coeff  off
+$setglobal cm_INNOPATHS_adj_coeff_cont  off
+
+$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+
+$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
+
+$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
+
+$setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
