@@ -44,6 +44,12 @@ p21_taxrevSO20(ttot,regi) = p21_tau_so2_tax(ttot,regi) * vm_emiTe.l(ttot,regi,"s
 p21_taxrevBio0(ttot,regi) = v21_tau_bio.l(ttot) * vm_fuExtr.l(ttot,regi,"pebiolc","1") * vm_pebiolc_price.l(ttot,regi);
 p21_implicitDiscRate0(ttot,regi) = sum(ppfKap(in),  p21_implicitDiscRateMarg(ttot,regi,in)  * vm_cesIO.l(ttot,regi,in) );
 p21_taxemiMkt0(ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt);
+p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,teFlex),
+                                        -vm_flexAdj.l(ttot,regi,teFlex) *
+                                        (  vm_prodSe.l(ttot,regi,enty,enty2,teFlex)$entySe(enty2)
+                                        +  vm_prodFe.l(ttot,regi,enty,enty2,teFlex)$entyFe(enty2)));
+    
+
 
 ***DK: for reporting only
 p21_tau_bioenergy_tax(t) = v21_tau_bio.l(t);
@@ -62,4 +68,8 @@ p21_taxrevXport_iter(iteration+1,ttot,regi) = v21_taxrevXport.l(ttot,regi);
 p21_taxrevSO2_iter(iteration+1,ttot,regi) = v21_taxrevSO2.l(ttot,regi);
 p21_taxrevBio_iter(iteration+1,ttot,regi) = v21_taxrevBio.l(ttot,regi);
 p21_implicitDiscRate_iter(iteration+1,ttot,regi) = v21_implicitDiscRate.l(ttot,regi);
+p21_taxrevFlex_iter(iteration+1,ttot,regi) = v21_taxrevFlex.l(ttot,regi);
+
+
+
 *** EOF ./modules/21_tax/on/postsolve.gms
