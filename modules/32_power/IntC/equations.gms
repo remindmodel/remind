@@ -166,8 +166,9 @@ q32_flexAdj(t,regi,teFlex)..
 *** linearly increase/decrease electricity price that inflexible/flexible technology sees with increasing VRE share up to p32_flex_maxdiscount
 *** p32_flex_maxdiscount positive -> lower-than-average electricity price (flexible demand), 
 *** p32_flex_maxdiscount negative -> higher-than-average electricity price (inflexible demand)	
-	p32_flex_maxdiscount(regi,teFlex) * sum(teVRE, v32_shSeEl(t,regi,teVRE)) / 100 
+	p32_flex_maxdiscount(regi,teFlex) * p_priceSeel(t,regi) * sum(teVRE, v32_shSeEl(t,regi,teVRE)) / 100 
 *** convert to fuel cost for flexible technology (converts to cost per unit output)
 	/ pm_eta_conv(t,regi,teFlex)
 ;
 
+*** EOF ./modules/32_power/IntC/equations.gms

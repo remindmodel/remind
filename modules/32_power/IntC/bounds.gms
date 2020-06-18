@@ -51,9 +51,6 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
 );
 
-*** FS: to ensure that flexibility adjustment is only applied to flexible/inflexible technologies
-vm_flexAdj.fx(t,regi,te) = 0;
-vm_flexAdj.up(t,regi,teFlex) = 5;
-vm_flexAdj.lo(t,regi,teFlex) = -5;
+
 
 
