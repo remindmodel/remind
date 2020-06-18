@@ -26,6 +26,13 @@ if ( cm_synfuelscen ge 1,
 	vm_capFac.fx(t,regi_sensscen,"elh2")$(t.val ge 2030) = 0.5;
 );
 
+*** FS: if flexibility tax on
+*** decrease capacity factor of electrolysis to 0.5
+*** as capacities run on lower-than-average electricity price
+if ( cm_flex_tax eq 1,
+	vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = 0.5;
+);
+
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
   loop(te$(teVRE(te)),
