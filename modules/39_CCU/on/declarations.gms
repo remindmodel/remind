@@ -12,6 +12,7 @@ p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU techn
 
 positive variables
 vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
+v39_shSynTrans(ttot,all_regi)   "Share of synthetic liquids in all fossil liquids. Value between 0 and 1."
 ;
 
 equations
