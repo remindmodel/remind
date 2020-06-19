@@ -610,7 +610,7 @@ $endif.edgesm
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiHydro.cs3r"
+$include "./core/input/f_maxProdGradeRegiHydro_up.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
