@@ -633,16 +633,6 @@ all_teEs                 "energy service technologies"
 teEs(all_teEs)           "ES technologies which are actually used (to be filled by module realizations)."
 //
 
-EDGE_scenario_all    "EDGE scenarios"
-/
-Conservative_liquids
-Hydrogen_push
-Electricity_push
-Smart_lifestyles
-Smart_lifestyles_Electricity_push
-/
-
-EDGE_scenario(EDGE_scenario_all)
 ;
 
 ***-----------------------------------------------------------------------------

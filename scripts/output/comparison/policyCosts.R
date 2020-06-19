@@ -20,25 +20,26 @@
 
 suppressPackageStartupMessages(library(tidyverse))
 
-# TODO: Loading magclass shouldn't actually be necessary... but running on the 
-# cluster without doing so throws an error...
-suppressPackageStartupMessages(library(magclass)) 
-
 # Function defintions
-get_run_names <- function(filepaths) {
-  # The run names are found between a "/" and the time-stamp of the run.
-  run_names <- str_match(filepaths, pattern = "^.*\\/(.*)(_....-..-..*)$")[,2]
-  
-  # If for some reason there isn't a time-stamp, return the name of the folder
-  if (any(is.na(run_names))) {
-    run_names <- str_match(filepaths, pattern = "^.*\\/(.*)\\/.*$")[,2]
-  }
-  return(run_names)
+rm_timestamp <- function(strings,
+                         name_timestamp_seperator = "_",
+                         timestamp_format = "%Y-%m-%d_%H.%M.%S") {
+
+  # Get regex pattern of timestamp
+  regex_timestamp <- gsub("%[mdHMS]", "\\\\d{2}", timestamp_format)
+  regex_timestamp <- gsub("%Y", "\\\\d{4}", regex_timestamp)
+  regex_timestamp <- paste0(name_timestamp_seperator, regex_timestamp)
+
+  # Substitute timestamps with nothing (thereby removing them)
+  my_strings_wo_timeStamp <- sub(regex_timestamp, "", strings)
+
+  return(my_strings_wo_timeStamp)
 }
 
-policy_costs_pdf <- function(policy_costs,  fileName="PolicyCost.pdf") {
+policy_costs_pdf <- function(policy_costs, 
+                             fileName="PolicyCost.pdf") {
   
-  cat(paste0("A pdf with the name ",crayon::green(fileName)," is being created.\n"))
+  cat(paste0("A pdf with the name ",crayon::green(fileName)," is being created in the main remind folder.\n"))
   
   template <-  c("\\documentclass[a4paper,landscape,twocolumn]{article}",
                  "\\setlength{\\oddsidemargin}{-0.8in}",
@@ -112,64 +113,115 @@ policy_costs_pdf <- function(policy_costs,  fileName="PolicyCost.pdf") {
   
 }
 
+write_new_reporting <- function(mif_path, 
+                                scen_name, 
+                                new_polCost_data) {
+  
+  new_mif_path <- paste0(substr(mif_path,1,nchar(mif_path)-4),"_adjustedPolicyCosts.mif")
+  
+  cat(paste0("A mif file with the name ",crayon::green(paste0("REMIND_generic_",scen_name,"_adjustedPolicyCosts.mif"))," is being created in the ",scen_name," outputfolder.\n"))
+  
+  my_data <- magclass::read.report(mif_path) 
+  my_variables <- grep("Policy Cost", magclass::getNames(my_data[[1]][[1]]), value = TRUE, invert = T)
+  
+  magclass::getSets(new_polCost_data)[1] <- "region"
+  magclass::getSets(new_polCost_data)[2] <- "year"
+  magclass::getSets(new_polCost_data)[3] <- "variable"
+  
+  my_data <- magclass::mbind(my_data[[1]][[1]][,,my_variables], new_polCost_data)
+  my_data <- magclass::add_dimension(my_data,dim=3.1,add = "model",nm = "REMIND")
+  my_data <- magclass::add_dimension(my_data,dim=3.1,add = "scenario",nm = scen_name)
+  
+  magclass::write.report(my_data, file = new_mif_path, ndigit = 7, skipempty = FALSE)
+  
+  #magclass::write.report2(my_data, file=new_mif_path, ndigit=7, skipempty = FALSE)
+}
+
+
 # Check for an object called "source_include". If found, that means, this script
-# is being called from another (output.R most likely), and the input variables
-# are already in the environment. If not found, the input variables are given
-# default values, and made over-writable with command line values.
+# is being called from another (output.R most likely), and the input variable 
+# "outputdirs" is already in the environment. If not found, "outputdirs" is given
+# default values, and made over-writable with the command line.
 if(!exists("source_include")) {
   # Set default value
-  outputdirs <- c("../../femulator_hq/remind_runs_lab/base_allT_lab_0point7_2020-03-12_09.36.25",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point95_2020-03-16_15.35.20",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point7_2020-03-12_09.36.25",
-                  "../../femulator_hq/remind_runs_lab/base_allT_lab_0point8_2020-03-12_09.36.24")   
+  outputdirs <- c("../../../output/default_2020-03-03_09.38.01",
+                  "../../../output/default_slim_2020-03-03_11.37.51",
+                  "../../../output/default_slim_2020-03-03_11.37.51",
+                  "../../../output/default_2020-03-03_09.38.01")   
   # Make over-writtable from command line
   lucode::readArgs("outputdirs")
   
 }
 
-# Check that the input variable "outputdirs" has an even number of entries.
-if (length(outputdirs) %% 2!=0) {
-  cat(paste0(crayon::red("\nERROR: "), "The number of directories is not even!\n"))
-  cat("Remember, the order in which you choose the directories should be:\n")
-  cat("\t1: policy run 1\n\t2: reference run 1\n\t3: policy run 2\n\t4: reference run 2\nand so on...\n")
-  cat(crayon::red("\nStopping execution now.\n\n"))
-  stop("Number of directories is not even!")
-}
 
-# Get gdx paths
-pol_gdxs <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/fulldata.gdx")
-ref_gdxs <- paste0(outputdirs[seq(2,length(outputdirs),2)], "/fulldata.gdx")
 
-# Get run names
-pol_names <- get_run_names(pol_gdxs)
-ref_names <- get_run_names(ref_gdxs)
-
-# Define pol-ref, policyCost pair names
-pc_pairs <- paste0(pol_names, "_w.r.t_",ref_names)
-
-# If scrpit was called from output.R, check with user if the pol-ref pairs are the 
-# ones he wanted. 
-if(exists("source_include")) {
-  cat(crayon::blue("\nPlease confirm the set-up:\n"))
-  cat("From the order with which you selected the directories, the following policy-cost curves will be created:\n")
-  cat(crayon::green(paste0("\t", pc_pairs ,"\n")))
-  cat("Is that what you intended?\n")
-  cat(paste0("Type '",crayon::green("y"),"' to continue, '",crayon::red("n"),"' to abort: "))
-  user_input <- get_line()
-  if(!user_input %in% c("y","Y","yes")) {
-    cat(crayon::red("\nShame... \n"))
-    cat("Remember, the order in which you choose the directories should be:\n")
+# Go into a while loop, until the user is happy with his input, or gives up and exits
+happy_with_input <- FALSE
+while (!happy_with_input) {
+  # Check that "outputdirs" has an even number of entries.
+  if (length(outputdirs) %% 2!=0) {
+    cat(paste0(crayon::red("\nERROR: "), "The number of directories is not even!\n"))
+    cat("Remember, your choice of directories should be made in the follwing manner:\n")
     cat("\t1: policy run 1\n\t2: reference run 1\n\t3: policy run 2\n\t4: reference run 2\nand so on...\n")
-    cat(crayon::red("\nStopping execution now.\n\n"))
-    stop("Wrong set up.")
-  } else cat(crayon::green("Great!\n"))
+    if (exists("choose_folder")) {
+      outputdirs <- choose_folder("./output",crayon::blue("Please reselect your ouput folders"))
+      outputdirs <- paste0("output/",outputdirs)
+    } else {
+      cat(crayon::red("\nStopping execution now.\n\n"))
+      stop("Number of directories is not even!")
+    }
+    next()
+  }
+  
+  # Get gdx paths
+  pol_gdxs <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/fulldata.gdx")
+  ref_gdxs <- paste0(outputdirs[seq(2,length(outputdirs),2)], "/fulldata.gdx")
+  
+  # Get run names
+  pol_names <- rm_timestamp(basename(dirname(pol_gdxs)))
+  ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
+  
+  # Define pol-ref, policyCost pair names
+  pc_pairs <- paste0(pol_names, "_w.r.t_",ref_names)
+  
+  # If this scrpit was called from output.R, check with user if the pol-ref pairs 
+  # are the ones she wanted. 
+  if(exists("source_include")) {
+    cat(crayon::blue("\nPlease confirm the set-up:\n"))
+    cat("From the order with which you selected the directories, the following policy costs will be computed:\n")
+    cat(crayon::green(paste0("\t", pc_pairs ,"\n")))
+    cat("Is that what you intended?\n")
+    cat(paste0("Type '",crayon::green("y"),"' to continue, '",crayon::blue("r"),"' to reselect output directories, '",crayon::red("n"),"' to abort: "))
+    user_input <- get_line()
+    if(user_input %in% c("y","Y","yes")) {
+      happy_with_input <- TRUE
+      cat(crayon::green("Great!\n"))
+    } else if(user_input %in% c("r","R","reselect")) {
+      if (exists("choose_folder")) {
+        cat("Remember, the order in which you choose the directories should be:\n")
+        cat("\t1: policy run 1\n\t2: reference run 1\n\t3: policy run 2\n\t4: reference run 2\nand so on...\n")
+        outputdirs <- choose_folder("./output",crayon::blue("Reselect your ouput folders now"))
+        outputdirs <- paste0("output/",outputdirs)
+      } else {
+        cat(crayon::red("\nStopping execution now.\n\n"))
+        stop("Couldn't find choosefolder() function")
+      }
+    } else {
+      cat(crayon::red("\nGood-bye (windows xp shutting down music)... \n"))
+      cat(crayon::red("\nStopping execution now.\n\n"))
+      stop("I can't figure this **** out. I give up. ")
+    }
+  }
 }
 
-# Tell the user what's going on
+
+# Tell the user what is going on
 cat(crayon::blue("\nPolicy cost computations:\n"))
 
 # Get Policy costs for every policy-reference pair
-tmp_policy_costs <- mapply(remind::reportPolicyCosts, pol_gdxs, ref_gdxs, SIMPLIFY = FALSE) %>% 
+tmp_policy_costs_magpie <- mapply(remind::reportPolicyCosts, pol_gdxs, ref_gdxs, SIMPLIFY = FALSE) 
+
+tmp_policy_costs <- tmp_policy_costs_magpie %>% 
   lapply(quitte::as.quitte) %>% 
   lapply(select, region, period, data, value)
 
@@ -187,11 +239,17 @@ policy_costs <- policy_costs %>%
   pivot_longer(cols = matches(".*w\\.r\\.t.*"), names_to = "Model Output") %>% 
   pivot_wider(names_from = data)
 
-# Tell the user what's going on
 cat(crayon::green("Done!\n"))
 
 # Create Pdf
 cat(crayon::blue("\nPdf creation:\n"))
 time_stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 policy_costs_pdf(policy_costs, fileName = paste0("PolicyCost",time_stamp,".pdf"))
+cat(crayon::green("Done!\n"))
+
+
+# Create new reporting file
+cat(crayon::blue("\nMif creation:\n"))
+pol_mifs <- paste0(dirname(pol_gdxs), "/REMIND_generic_", pol_names, ".mif")
+return_check <- mapply(write_new_reporting, pol_mifs, pol_names, tmp_policy_costs_magpie)
 cat(crayon::green("Done!\n\n"))

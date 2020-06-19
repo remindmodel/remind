@@ -24,8 +24,6 @@ library(lucode)
 if(!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command line arguments and let the user choose the slurm options
   readArgs("outputdir","output","comp","remind_dir")
-  #source("scripts/utils/choose_slurmConfig.R")
-  #slurmConfig <- choose_slurmConfig()
 } 
 
 #Setting relevant paths

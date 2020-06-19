@@ -9,16 +9,4 @@ Parameters
 pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
 ;
 
-Positive variables
-v35_shBioFe(ttot,all_regi)   "Share of biofuels in all final energies used for transportation. Value between 0 and 1."
-v35_shSynSe(ttot,all_regi)   "Share of synthetic liquids in all fossil liquids. Value between 0 and 1."
-;
-
-Equations
-q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt)       "Transportation final energy demand"
-q35_shBioFe(ttot,all_regi)  "Define the share of biofuels in all final energies for transportation."
-$ifthen.ccu %CCU% == "on"
-q35_shSynSe(ttot,all_regi)  "Define share of synthetic liquids in all fossil liquids."
-$endif.ccu
-;
 *** EOF ./modules/35_transport/edge_esm/declarations.gms

@@ -814,6 +814,29 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     =g=
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
 ;
+
+***---------------------------------------------------------------------------
+*' Share of green hydrogen in all hydrogen.
+***---------------------------------------------------------------------------
+q_shGreenH2(t,regi)..
+    sum(se2se("seel","seh2",te), vm_prodSe(t,regi,"seel","seh2",te))
+    =e=
+    (
+	sum(pe2se(entyPe,"seh2",te), vm_prodSe(t,regi,entyPe,"seh2",te))
+	+ sum(se2se(entySe,"seh2",te), vm_prodSe(t,regi,entySe,"seh2",te))
+    ) * v_shGreenH2(t,regi)
+;
+
+
+***---------------------------------------------------------------------------
+*' Share of biofuels in transport liquids
+***---------------------------------------------------------------------------
+q_shBioTrans(t,regi)..
+  sum(se2fe(entySe,entyFeTrans,te)$seAgg2se("all_seliq",entySe), vm_prodFe(t,regi,entySe,entyFeTrans,te) )
+  * v_shBioTrans(t,regi)
+  =e=
+  sum(se2fe("seliqbio",entyFeTrans,te), vm_prodFe(t,regi,"seliqbio",entyFeTrans,te) )
+;
  
 
 *limit secondary energy district heating and heat pumps
@@ -824,6 +847,5 @@ q_heat_limit(t,regi)$(t.val gt 2020)..
     %cm_INNOPATHS_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
 ;
 $ENDIF.sehe_upper
-
 
 *** EOF ./core/equations.gms

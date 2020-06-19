@@ -9,7 +9,7 @@ pandoc: false
 sudo: false
 install:
   - Rscript -e "if(!requireNamespace('devtools')) install.packages('devtools')"
-  - Rscript -e "if(!requireNamespace('lucode')) devtools::install_github('pik-piam/lucode')"
+  - Rscript -e "if(!requireNamespace('gms')) devtools::install_github('pik-piam/gms')"
 script:
-  - Rscript -e "null <- lucode::codeCheck(strict=TRUE)"
+  - Rscript -e "null <- gms::codeCheck(strict=TRUE)"
 

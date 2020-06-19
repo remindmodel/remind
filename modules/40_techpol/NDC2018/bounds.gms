@@ -11,8 +11,8 @@ vm_cap.lo(t,regi,"spv","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"spv"
 vm_cap.lo(t,regi,"wind","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"wind")*0.001; 
 vm_cap.lo(t,regi,"tnrs","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"tnrs")*0.001;
 vm_cap.lo(t,regi,"hydro","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"hydro")*0.001;
-vm_cap.lo(t,regi,"apCarElT","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"apCarElT");
-vm_cap.lo(t,regi,"tnrs","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"tnrs")*0.001;
+
+
 * FS: in case of a nuclear phase-out scenario (nucscen 7), nuclear lower bound from p40_techBound only up to 2025
 if(cm_nucscen eq 7,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$((t.val gt 2025) and (t.val ge cm_startyear)) = 0;
@@ -21,9 +21,10 @@ if(cm_nucscen eq 7,
 * FS: temporary quick fix for ECE 2030 hydro infeasibility, current 2030 capcaity target is larger than hydro potential of region, set to 6 GW for now
 vm_cap.lo(t,"ECE","hydro","1")$(t.val ge cm_startyear) = 6 * 0.001;
 
-display vm_cap.lo;
-
 $ifthen.complex_transport "%transport%" == "complex"
+
+vm_cap.lo(t,regi,"apCarElT","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"apCarElT");
+
 *** additional target for electro mobility, overwriting the general bounds in 35_transport/complex/bounds.gms
 *** requiring higher EV and FC vehicle shares, to mirror efficiency mandates and EV legislation in many countries
  loop(regi,
@@ -55,5 +56,7 @@ $ifthen.complex_transport "%transport%" == "complex"
    );
  );
 $endif.complex_transport
+
+display vm_cap.lo;
 
 *** EOF ./modules/40_techpol/NDC2018/bounds.gms

@@ -12,6 +12,7 @@ library(data.table)
 library(gdx)
 library(gdxdt)
 library(edgeTrpLib)
+require(devtools)
 library(rmndt)
 library(moinput)
 
@@ -48,18 +49,16 @@ EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
-selfmarket_policypush <- EDGEscenarios[options == "selfmarket_policypush", switch]
-selfmarket_acceptancy <- EDGEscenarios[options == "selfmarket_acceptancy", switch]
 
-if (EDGE_scenario == "Conservative_liquids") {
-  techswitch <<- "Liquids"
-} else if (EDGE_scenario %in% c("Electricity_push", "Smart_lifestyles_Electricity_push")) {
-  techswitch <<- "BEV"
-} else if (EDGE_scenario == "Hydrogen_push") {
-  techswitch <<- "FCEV"
+if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
+  techswitch <- "Liquids"
+} else if (EDGE_scenario %in% c("ElecEra", "ElecEraWise")) {
+  techswitch <- "BEV"
+} else if (EDGE_scenario %in% c("HydrHype", "HydrHypeWise")) {
+  techswitch <- "FCEV"
 } else {
-  print("You selected a not allowed scenario. Scenarios allowed are: Conservative_liquids, Hydrogen_push, Electricity_push, Smart_lifestyles_Electricity_push")
-  exit()
+ print("You selected a not allowed scenario. Scenarios allowed are: ConvCase, ConvCaseWise, ElecEra, ElecEraWise, HydrHype, HydrHypeWise")
+ quit()
 }
 
 
@@ -79,18 +78,39 @@ inputdata <- loadInputData(data_folder)
 
 
 vot_data = inputdata$vot_data
-sw_data = inputdata$sw_data
-inco_data = inputdata$inco_data
 logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
+capcost4W = inputdata$capcost4W
+loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
+pref_data = inputdata$pref_data
+
+## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
+int_dat = int_dat[EJ_Mpkm_final>0]
+prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
+pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "iso")]
+pref_data$FV_final_pref = pref_data$FV_final_pref[check>0]
+pref_data$FV_final_pref[, check := NULL]
+pref_data$FV_final_pref = rbind(prefdata_nonmot, pref_data$FV_final_pref)
+
+prefdata_nonmotV = pref_data$VS1_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
+pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "iso")]
+pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
+pref_data$VS1_final_pref[, check := NULL]
+pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
+
+pref_data$FV_final_pref[technology %in% "NG" & year >= 2020 & logit_type == "sw",
+                    value := value[year==2020] + (1-value[year==2020]) * (year-2020) / (2200-2020),
+                    by=c("iso","vehicle_type","technology", "logit_type")]
+
 
 ## optional average of prices
 average_prices = FALSE
 
-
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears)
+ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
@@ -98,12 +118,30 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 if (file.exists(datapath("demand_previousiter.RDS"))) {
   ## load previous iteration number of cars
-  demand_BEVtmp = readRDS(datapath("demand_BEV.RDS"))
+  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
-  ## calculate non fuel costs and
-  nonfuel_costs = applylearning(gdx,REMINDmapping,EDGE2teESmap, demand_BEVtmp, ES_demandpr)
+  ## load previus iteration number of stations
+  stations = readRDS(datapath("stations.RDS"))
+  ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+  if (techswitch == "BEV"){
+  rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
+  rebates_febatesFCEV = FALSE
+  } else if (techswitch == "FCEV") {  
+    rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesBEV = FALSE
+  } else {
+    rebates_febatesFCEV = FALSE
+    rebates_febatesBEV = FALSE
+  }
+  
+  nonfuel_costs_list = applylearning(nonfuel_costs, capcost4W, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+  capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+  saveRDS(capcost4W, "capcost_learning.RDS")} else {
+  stations = NULL
 }
 
 ## load price
@@ -112,7 +150,7 @@ REMIND_prices <- merge_prices(
     REMINDmapping = REMIND2ISO_MAPPING,
     REMINDyears = REMINDyears,
     intensity_data = int_dat,
-    nonfuel_costs = nonfuel_costs)
+    nonfuel_costs = nonfuel_costs[type == "normal"][, type := NULL])
 
 
 ## save prices
@@ -158,12 +196,13 @@ if (inconvenience) {
   logit_data <- calculate_logit_inconv_endog(
     prices= REMIND_prices[tot_price > 0],
     vot_data = vot_data,
-    inco_data = inco_data,
+    pref_data = pref_data,
     logit_params = logit_params,
     intensity_data = int_dat,
     price_nonmot = price_nonmot,
-    selfmarket_policypush = selfmarket_policypush,
-    selfmarket_acceptancy = selfmarket_acceptancy)
+    nfprices_advanced = nonfuel_costs[type %in% c("advanced", "middle")],
+    stations = if (!is.null(stations)) stations,
+    techswitch = techswitch)
 
 } else{
 
@@ -220,24 +259,26 @@ if (opt$reporting) {
   saveRDS(shares, file = datapath("shares.RDS"))
   saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
   saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
-  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
   saveRDS(shares_int_dem$demandF_plot_EJ,
           file=datapath("demandF_plot_EJ.RDS"))
   saveRDS(shares_int_dem$demandF_plot_pkm,
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
+  saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
   quit()
 }
 
-demand_BEV=calc_num_vehicles(
-  norm_dem_BEV = norm_demand[
-    technology == "BEV" & ## battery vehicles
+num_veh_stations = calc_num_vehicles_stations(
+  norm_dem = norm_demand[
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
-    c("iso", "year", "sector", "vehicle_type", "demand_F") ],
-  ES_demand = ES_demand)
+    c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
+    ES_demand_all = ES_demand_all,
+    techswitch = techswitch,
+    loadFactor = loadFactor)
 
 ## save number of vehicles for next iteration
-saveRDS(demand_BEV, datapath("demand_BEV.RDS"))
+saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
+saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
 ## save the demand for next iteration renaming the column
 setnames(ES_demand, old ="demand", new = "demandpr")
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
@@ -279,7 +320,16 @@ for (i in names(finalInputs)) {
 
 ## calculate shares
 finalInputs$shFeCes = finalInputs$demByTech[, value := value/sum(value), by = c("tall", "all_regi", "all_in")]
+## 7 decimals the lowest accepted value
+finalInputs$shFeCes[, value := round(value, digits = 7)]
+finalInputs$shFeCes[, value := ifelse(value == 0, 1e-7, value)]
+finalInputs$shFeCes[, sumvalue := sum(value), by = c("tall", "all_regi", "all_in")]
+finalInputs$shFeCes[, maxtech := ifelse(value == max(value), TRUE, FALSE), by =c("tall", "all_regi", "all_in")]
 
+## attribute the variation to the maximum share value
+finalInputs$shFeCes[sumvalue!=1 & maxtech==TRUE, value := value + (1-sumvalue), by = c("tall", "all_regi")]
+## remove temporary columns
+finalInputs$shFeCes[, c("sumvalue", "maxtech") := NULL]
 
 ## CapCosts
 writegdx.parameter("p35_esCapCost.gdx", finalInputs$capCost, "p35_esCapCost",

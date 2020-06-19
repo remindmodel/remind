@@ -6,36 +6,4 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/equations.gms
 
-*'  Transportation Final Energy Balance
-q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans")) AND (sameas(emiMkt,"ES") OR sameas(emiMkt,"other"))) ..
-  sum((entySe,te)$se2fe(entySe,entyFe,te), 
-    vm_demFeSector(ttot,regi,entySe,entyFe,"trans",emiMkt)
-  ) 
-  =e=
-  sum(fe2es(entyFe,esty,teEs)$(NOT (es_lo35(esty))), vm_demFeForEs(ttot,regi,entyFe,esty,teEs) ) $ (sameas(emiMkt,"ES"))
-  + sum(fe2es(entyFe,esty,teEs)$es_lo35(esty), vm_demFeForEs(ttot,regi,entyFe,esty,teEs) ) $ (sameas(emiMkt,"other"))
-;
-
-***---------------------------------------------------------------------------
-*** Share of biofuels in transport liquids
-***---------------------------------------------------------------------------
-
-q35_shBioFe(t,regi)..
-  sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) )
-  * v35_shBioFe(t,regi)
-  =e=
-  sum(se2fe("seliqbio",fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,"seliqbio",fe_transport_liquids_dyn35,te) )
-;
-
-
-*' Adjust the shares of synfuels in transport liquids.
-*' This equation is only effective when CCU is switched on.
-$ifthen.ccu %CCU% == "on"
-q35_shSynSe(t,regi)..
-    sum(se2fe(entySe,fe_transport_liquids_dyn35,te), vm_prodFe(t,regi,entySe,fe_transport_liquids_dyn35,te) ) * v35_shSynSe(t,regi)
-    =e=
-    vm_prodSe(t,regi,"seh2","seliqbio","MeOH")
-;
-$endif.ccu
-
 *** EOF ./modules/35_transport/edge_esm/equations.gms

@@ -169,6 +169,12 @@ prepare <- function() {
 	  }
   }
  
+  # Display git information
+  cat("\n===== git info =====\nLatest commit: ")
+  cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
+  cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
+  cat("\n====================\n")
+
   load("config.Rdata")
   
   # Store results folder of current scenario
@@ -228,6 +234,15 @@ prepare <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}  
   
+  # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
+  if(cfg$gms$transport == "edge_esm"){
+    if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
+       demTrsp = "wise"
+    } else {
+       demTrsp = "conv"
+    }
+  }
+
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
                                          "indu_",cfg$gms$industry,"-",
@@ -236,6 +251,7 @@ prepare <- function() {
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
+                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          if(cfg$sufficiency == "on") "Suff-" else "",
                                          if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
@@ -608,6 +624,18 @@ run <- function(start_subsequent_runs = TRUE) {
   # Save start time
   timeGAMSStart <- Sys.time()
   
+  # De-compress finxing files if they have already been zipped (only valid if run is restarted)
+  if (cfg$gms$cm_startyear > 2005) {
+      if (file.exists("levs.gms.gz")) {
+        cat("Unzip fixing files\n")
+        system("gzip -d -f levs.gms.gz margs.gms.gz fixings.gms.gz")
+      } else if (file.exists("levs.gms")) {
+        cat("Found unzipped fixing files. Using them.\n")
+      } else {
+        stop("cm_startyear > 2005 but no fixing files found, neither zipped or unzipped.")
+      }
+  }
+
   # Print message
   cat("\nStarting REMIND...\n")
 
@@ -730,6 +758,9 @@ run <- function(start_subsequent_runs = TRUE) {
 
   #====================== Subsequent runs ===========================
   if (start_subsequent_runs) {
+    # Note: step 1. and 2. below write to the same .RData file but are usually executed by different runs.
+    # Step 1. is usually only executed by BASE runs, step 2 by every run that preceeds another run.
+    
     # 1. Save the path to the fulldata.gdx of the current run to the cfg files 
     # of the runs that use it as 'input_bau.gdx'
 
@@ -846,15 +877,15 @@ run <- function(start_subsequent_runs = TRUE) {
 # Call prepare and run without cfg, because cfg is read from results folder, where it has been 
 # copied to by submit(cfg)
 
-if (!file.exists("fulldata.gdx")) {
-  # If no "fulldata.gdx" exists, the script assumes that REMIND did not run before and 
+if (!file.exists("full.gms")) {
+  # If no "full.gms" exists, the script assumes that REMIND did not run before and 
   # prepares all inputs before starting the run.
   prepare()
   start_subsequent_runs <- TRUE
 } else {
-  # If "fulldata.gdx" exists, the script assumes that REMIND did run before and you want 
-  # to restart REMIND in the same folder using the gdx that it previously produced.
-  file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+  # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want 
+  # to restart REMIND in the same folder using the gdx that it eventually previously produced.
+  if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   start_subsequent_runs <- FALSE
 }
 

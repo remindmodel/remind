@@ -9,20 +9,18 @@
 *** Bounds on pedem
 *** -------------------------------------------------------------
 
-*** To prevent RUS and MEA from demanding high amounts of biomass 
-*** just because of their capacity to store negative emissions a
-*** general rule for all regions is applied that limits the PE 
-*** demand of BECCS technologies in policy runs to 30% of the total 
-*** PE of the baseline scenario (see q30_limitTeBio)
-
 *** -------------------------------------------------------------
 *** Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
 
 *** Prescribe upper and lower limit for first generation biomass from 2030/45 on, so REMIND has freedom before.
 *** To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths.
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
+
+*** Slightly relaxed extraction bounds for biofuels.
+vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4*p30_datapebio(regi,"pebios","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 1.5*p30_datapebio(regi,"pebioil","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
 if(cm_1stgen_phaseout=0,
     vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;

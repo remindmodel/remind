@@ -220,6 +220,9 @@ cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
+c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
+c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
+cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -312,6 +315,9 @@ cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
+c_shGreenH2      = 0;        !! def = 0
+c_shBioTrans     = 1;        !! def = 1
+cm_shSynTrans    = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
@@ -412,7 +418,7 @@ $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
+$setGlobal cm_EDGEtr_scen  ConvCase  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
