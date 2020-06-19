@@ -16,6 +16,7 @@ vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captur
 
 equations
 q39_emiCCU(ttot,all_regi)                                               "calculate CCU emissions"
+q39_shSynTrans(ttot,all_regi)  "Define share of synthetic liquids in all fossil liquids."
 ;
 
 *** EOF ./modules/39_CCU/on/declarations.gms
