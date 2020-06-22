@@ -54,7 +54,7 @@ q_costInvTeAdj(t,regi,teAdj)..
 ;
 
 ***---------------------------------------------------------------------------
-*' Operation and maintenance resut form costs maintenance of existing facilities according to their capacity and
+*' Operation and maintenance costs from maintenance of existing facilities according to their capacity and
 *' operation of energy transformations according to the amount of produced secondary and final energy.
 ***---------------------------------------------------------------------------
 q_costOM(t,regi)..
