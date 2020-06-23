@@ -32,56 +32,73 @@ display p05_vintage;
 *** the following model calculates the initial capacities that are needed 
 *** to satisfy the internal and external energy demand at time t0.
 s05_inic_switch = 1;
-*** energy demand = external demand + sum of all (direct + indirect) transformation pathways that consume this enty - sum of the indirect transformation pathways that produce this enty
+
+*** energy demand = external demand + sum of all (direct + indirect) 
+*** transformation pathways that consume this enty - sum of the indirect 
+*** transformation pathways that produce this enty
 q05_eedemini(regi,enty)..
   v05_INIdemEn0(regi,enty)
   =e=
-*** Pathway I: FE to ppfEn.
-  sum(fe2ppfEn(enty,in),  pm_cesdata("2005",regi,in,"quantity") +pm_cesdata("2005",regi,in,"offset_quantity")) * s05_inic_switch
-  +
-*** Pathway II: FE via UE to ppfEn
-  sum(ue2ppfen(enty,in), pm_cesdata("2005",regi,in,"quantity") +pm_cesdata("2005",regi,in,"offset_quantity")) * s05_inic_switch
-  +
-*** Pathway III: FE via ES to ppfEn
-*** *AD* For the ES layer, we have to be consistent with conversion and share parameters
-***      when providing FE demands from CES node values.
-  sum(feViaEs2ppfen(enty,in,teEs),
-     pm_shFeCes("2005",regi,enty,in,teEs) * 
-     (pm_cesdata("2005",regi,in,"quantity") + pm_cesdata("2005",regi,in,"offset_quantity"))
-     / (sum(fe2es(enty2,esty,teEs2)$es2ppfen(esty,in), pm_fe2es("2005", regi, teEs2) * pm_shFeCes("2005",regi,enty2,in,teEs2))) 
+    !! Pathway I: FE to ppfEn.
+    sum(fe2ppfEn(enty,in),
+      pm_cesdata("2005",regi,in,"quantity") 
+    + pm_cesdata("2005",regi,in,"offset_quantity")
   ) * s05_inic_switch
-  +
-*** Transformation pathways that consume this enty:
-  sum(en2en(enty,enty2,te),
-    1/(pm_data(regi,"eta",te)) * pm_cf("2005",regi,te) * v05_INIcap0(regi,te)
-  )
-  -
-*** subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
-  sum(pc2te(enty3,enty4,te2,enty),
-    pm_prodCouple(regi,enty3,enty4,te2,enty) * pm_cf("2005",regi,te2) * v05_INIcap0(regi,te2)
-  )
+    !! Pathway II: FE via UE to ppfEn
+  + sum(ue2ppfen(enty,in), 
+      pm_cesdata("2005",regi,in,"quantity") 
+    + pm_cesdata("2005",regi,in,"offset_quantity")
+    ) * s05_inic_switch
+    !! Pathway III: FE via ES to ppfEn
+    !! For the ES layer, we have to be consistent with conversion and share 
+    !! parameters when providing FE demands from CES node values.
+  + sum(feViaEs2ppfen(enty,in,teEs),
+      pm_shFeCes("2005",regi,enty,in,teEs)
+    * ( pm_cesdata("2005",regi,in,"quantity") 
+      + pm_cesdata("2005",regi,in,"offset_quantity")
+      )
+    / ( sum(fe2es(enty2,esty,teEs2)$es2ppfen(esty,in), 
+          pm_fe2es("2005",regi,teEs2) 
+        * pm_shFeCes("2005",regi,enty2,in,teEs2)
+        )
+      ) 
+    ) * s05_inic_switch
+    !! Transformation pathways that consume this enty:
+  + sum(en2en(enty,enty2,te),
+      pm_cf("2005",regi,te) 
+    / pm_data(regi,"eta",te)
+    * v05_INIcap0(regi,te)
+    )
+    !! subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
+  - sum(pc2te(enty3,enty4,te2,enty),
+      pm_prodCouple(regi,enty3,enty4,te2,enty) 
+    * pm_cf("2005",regi,te2) 
+    * v05_INIcap0(regi,te2)
+    )
 ;
+
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en(enty,enty2,te))..
-  pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te) * v05_INIcap0(regi,te)
+q05_ccapini(regi,en2en(enty,enty2,te)) .. 
+    pm_cf("2005",regi,te) 
+  * pm_dataren(regi,"nur","1",te) 
+  * v05_INIcap0(regi,te)
   =e=
-  pm_data(regi,"mix0",te) * v05_INIdemEn0(regi,enty2)
+    pm_data(regi,"mix0",te) 
+  * v05_INIdemEn0(regi,enty2)
 ;
+
 display pm_data;
 
 *** model definition
-model initialcap2
-/
-q05_eedemini,
-q05_ccapini
-/;
+model initialcap2 / q05_eedemini, q05_ccapini /;
+
 option limcol = 70;
 option limrow = 70;
 
 *** solve statement
 solve initialcap2 using cns;
 
-display v05_INIdemEn0.l,v05_INIcap0.l;
+display v05_INIdemEn0.l, v05_INIcap0.l;
 
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 
@@ -127,11 +144,21 @@ vm_deltaCap.fx("2005",regi,te,rlf)$(te2rlf(te,rlf)) = 0;
 
 loop(regi,
   loop(teReNoBio(te),
-    s05_aux_tot_prod       = pm_cap0(regi,te) * pm_cf("2005",regi,te) * pm_dataren(regi,"nur","1",te);
-    loop(pe2se(entyPe,entySe,te), o_INI_DirProdSeTe(regi,entySe,te) = s05_aux_tot_prod  );
+    s05_aux_tot_prod
+    = pm_cap0(regi,te) 
+    * pm_cf("2005",regi,te) 
+    * pm_dataren(regi,"nur","1",te);
+
+    loop (pe2se(entyPe,entySe,te), 
+      o_INI_DirProdSeTe(regi,entySe,te) = s05_aux_tot_prod  
+    );
     s05_aux_prod_remaining = s05_aux_tot_prod;
 
-    loop(pe2se(entyPe,entySe,te), vm_prodSe.fx("2005",regi,entyPe,entySe,te) = s05_aux_tot_prod; );  !! ensure that the production in 2005 is the same as in initialcap2
+    !! ensure that the production in 2005 is the same as in initialcap2
+    loop (pe2se(entyPe,entySe,te), 
+      vm_prodSe.fx("2005",regi,entyPe,entySe,te) 
+      = s05_aux_tot_prod; 
+    );
 
     loop(teRe2rlfDetail(te,rlf),      !! fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2  
         if(s05_aux_prod_remaining > 0,

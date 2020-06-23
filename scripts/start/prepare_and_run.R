@@ -632,7 +632,7 @@ run <- function(start_subsequent_runs = TRUE) {
   if (cfg$gms$CES_parameters == "load") {
 
     system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action, 
-                  " -ps=0 -pw=185 -gdxcompress=1 -logoption=", cfg$logoption))
+                  " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
 
   } else if (cfg$gms$CES_parameters == "calibrate") {
 
@@ -651,7 +651,7 @@ run <- function(start_subsequent_runs = TRUE) {
                     "\\).*/\\1", cal_itr, "/' full.gms"))
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action, 
-                    " -ps=0 -pw=185 -gdxcompress=1 -logoption=", cfg$logoption))
+                    " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
 
       # If GAMS found a solution
       if (   file.exists("fulldata.gdx")

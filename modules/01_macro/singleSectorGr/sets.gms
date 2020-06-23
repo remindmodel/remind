@@ -47,7 +47,7 @@ ppf_putty(all_in)   = NO;
 ipf_putty(all_in)   = NO; 
 ppfIO_putty(all_in) = NO;  
 
-alias(cesOut2cesIn,cesOut2cesIn2);
+alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);
 alias(in,out);
 alias(in,in2,in3);
 alias(ipf,ipf2);

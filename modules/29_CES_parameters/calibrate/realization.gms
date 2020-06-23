@@ -228,6 +228,7 @@ $Ifi "%phase%" == "declarations" $include "./modules/29_CES_parameters/calibrate
 $Ifi "%phase%" == "datainput" $include "./modules/29_CES_parameters/calibrate/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/29_CES_parameters/calibrate/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/29_CES_parameters/calibrate/preloop.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/29_CES_parameters/calibrate/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/29_CES_parameters/calibrate/output.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/29_CES_parameters/calibrate.gms
