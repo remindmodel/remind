@@ -1579,8 +1579,7 @@ loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
 
 *** Second, change efficiencies for the variables which have exogenous pathways 
 *** in case UE = f(FE,K)
-loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) 
-                                                OR  pf_eff_target_dyn29(in) ),
+loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
   = pm_cesdata(t2,regi,in, "effGr")
   * p29_efficiency_growth(t_29,regi,"%cm_GDPscen%",in)
