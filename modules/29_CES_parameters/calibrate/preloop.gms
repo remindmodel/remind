@@ -103,7 +103,7 @@ loop ((cesLevel2cesIO(counter,in),ces_29(in,in2),ces2_29(in2,in3)),
 loop ( cesOut2cesIn(in2,in) $ ( 
                     NOT ( ppf_29(in) AND in_complements(in))
                     ),
-  p29_CESderivative(t,regi_dyn29(regi),out,in2)$(
+  p29_CESderivative(t,regi_dyn29(regi),out,ipf_29(in2))$(
                                              p29_CESderivative(t,regi,out,in2) )
   = 1;
 );
