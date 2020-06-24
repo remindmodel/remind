@@ -1346,11 +1346,14 @@ $endif.repEsubs
     );
   
     loop (cesOut2cesIn_below(out,ppf(in)),
-      pm_cesdata(t,regi,in,"price")
+     !! adjust the price for historical periods
+      pm_cesdata(t,regi,in,"price") $ (
+                                t_29hist(t)) 
       = pm_cesdata(t,regi,in,"price") 
       / sm_tmp;
-    
-      pm_cesdata(t,regi,in,"quantity")
+     !! adjust the quantity for scenario periods
+      pm_cesdata(t,regi,in,"quantity") $ (
+                                t_29scen(t))
       = pm_cesdata(t,regi,in,"quantity") 
       / sm_tmp;
     );
