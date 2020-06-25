@@ -1589,6 +1589,18 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   / p29_efficiency_growth(t2,regi,"%cm_GDPscen%",in);
 );
 
+
+loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
+                                            industry_ue_calibration_target_dyn37(out) 
+                                            AND ppf_beyondcalib_29(in)),
+  pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
+  = pm_cesdata(t2,regi,in, "effGr")
+  * * ((1 + pm_ue_eff_target(out)) ** (t_29.val - pm_ttot_val(t2)))
+  ;
+);
+
+
+
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 
