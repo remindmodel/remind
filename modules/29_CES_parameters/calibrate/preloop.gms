@@ -1608,7 +1608,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
   !! in2 is the reference energy input (gas if 'in' is H2)
   loop (in2$( pm_calibrate_eff_scale(in,in2,"level") ),
     !! compute the parameter describing the speed of convergence towards in2
-    p29_t_tmp(t)$( NOT t_29hist(t) )
+    p29_t_tmp(t)$( t_29scen(t) )
     = pm_calibrate_eff_scale(in,in2,"level")
     / ( 1
       + exp((pm_calibrate_eff_scale(in,in2,"midperiod") - t.val)
@@ -1619,7 +1619,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
     p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
     p29_t_tmp(t) = min(1, max(0, p29_t_tmp(t)));
 
-    pm_cesdata(t,regi_dyn29(regi),in,"effGr")$( NOT t_29hist(t) )
+    pm_cesdata(t_29scen(t),regi_dyn29(regi),in,"effGr")
     =  1 
        / ( pm_cesdata(t,regi,in,"eff")
           * pm_cesdata(t,regi,in,"xi")
@@ -1644,8 +1644,8 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
              * pm_cesdata(t,regi,in2,"eff")
              * pm_cesdata(t,regi,in2,"effGr")
              )
-  );
-);
+         );
+   );
 );
 
 option p29_efficiency_growth:4:3:1;
