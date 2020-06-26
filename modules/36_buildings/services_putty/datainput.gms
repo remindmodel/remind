@@ -204,6 +204,19 @@ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  
  p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
  p36_implicitDiscRateMarg(ttot,regi,"uecwb") = 0.05;  !! 5% for the choice of cooking and water heating technology
+ 
+ p36_implicitDiscRateMarg(ttot,regi,in)$( pm_ttot_val(ttot) ge cm_startyear
+                                         AND (sameAs(in,"ueshb") 
+                                              OR sameAs(in,"uecwb")
+                                             )
+                                         )
+                                     = 0.25 * p36_implicitDiscRateMarg(ttot,regi,in) ; 
+ 
+ elseif (cm_DiscRateScen eq 4),
+ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
+ 
+ p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
+ p36_implicitDiscRateMarg(ttot,regi,"uecwb") = 0.05;  !! 5% for the choice of cooking and water heating technology
 
  p36_implicitDiscRateMarg(ttot,regi,"ueshb") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
                                                *  0.75 * p36_implicitDiscRateMarg(ttot,regi,"ueshb")
@@ -226,6 +239,22 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
+
+***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
+*** Define for which technologies the investment costs will evolve
+p36_costReduc(ttot,teEs_dyn36) = 1;
+
+$ifthen "%cm_buildings_scen%" == "none" 
+
+$elseif "%cm_buildings_scen%" == "electrification"
+p36_costReduc(ttot,"te_ueshhpb") = 0.66;
+p36_costReduc(ttot,"te_uecwhpb") = 0.66;
+
+p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_costReduc(ttot,teEs))
+      + p36_costReduc(ttot,teEs) ;
+$endif
 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 

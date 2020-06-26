@@ -59,6 +59,7 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 
  p36_esCapCost(t,regi_dyn36(regi),teEs_dyn36(teEs)) =
    (f36_datafecostsglob("inco0",teEs) 
+    * p36_costReduc(t,teEs)
    *   p36_kapPrice(t,regi) / (1 - (1 + p36_kapPrice(t,regi))** (-f36_datafecostsglob("lifetime",teEs))) !! annualised initial capital costs
    + f36_datafecostsglob("omf",teEs)   
    )
@@ -68,6 +69,7 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 
  p36_esCapCostImplicit(t,regi_dyn36(regi),teEs_dyn36(teEs)) =
    (f36_datafecostsglob("inco0",teEs) 
+    * p36_costReduc(t,teEs)
    *   p36_kapPriceImplicit(t,regi,teEs) / (1 - (1 + p36_kapPriceImplicit(t,regi,teEs))** (-f36_datafecostsglob("lifetime",teEs))) !! annualised initial capital costs
    + f36_datafecostsglob("omf",teEs)   
    )

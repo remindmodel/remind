@@ -399,7 +399,8 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
-$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal cm_esubGrowth         low  !! def = low
+$setGlobal cm_buildings_scen     none  !! def = none
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase

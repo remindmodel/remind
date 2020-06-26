@@ -202,6 +202,19 @@ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  
  p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
  p36_implicitDiscRateMarg(ttot,regi,"uecwb") = 0.05;  !! 5% for the choice of cooking and water heating technology
+ 
+ p36_implicitDiscRateMarg(ttot,regi,in)$( pm_ttot_val(ttot) ge cm_startyear
+                                         AND (sameAs(in,"ueshb") 
+                                              OR sameAs(in,"uecwb")
+                                             )
+                                         )
+                                     = 0.25 * p36_implicitDiscRateMarg(ttot,regi,in) ; 
+ 
+ elseif (cm_DiscRateScen eq 4),
+ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
+ 
+ p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
+ p36_implicitDiscRateMarg(ttot,regi,"uecwb") = 0.05;  !! 5% for the choice of cooking and water heating technology
 
  p36_implicitDiscRateMarg(ttot,regi,"ueshb") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
                                                *  0.75 * p36_implicitDiscRateMarg(ttot,regi,"ueshb")

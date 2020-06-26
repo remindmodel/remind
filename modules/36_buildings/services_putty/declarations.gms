@@ -53,6 +53,8 @@ p36_kapPrice(tall,all_regi)                             "Macroeconomic capital p
 p36_kapPriceImplicit(tall,all_regi,all_teEs)         "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
 p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
 
+p36_costReduc(tall,all_teEs)                             "Reduction of costs for some technologies"
+
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
 ;
@@ -74,11 +76,7 @@ q36_enerCoolAdj(tall,all_regi,all_in) "adjustment costs for energy cooling servi
 q36_pathConstraint(tall,all_regi)  "equation describing the relation between a variable and its variation"
 q36_putty_obj                              "objective function"
 
-$ontext
-q36_logitProba(tall,all_regi,all_enty,all_esty,all_teEs,all_in) "computes the probability of technology teEs being chosen"
-q36_optimCondition(tall,all_regi,all_in) "condition following the maximization of the likelihood, ensuring v36_beta maximises the likelihood"
-q36_dummy                     "dummy equation"
-$offtext
+
 ;
 
 
