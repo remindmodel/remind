@@ -4,7 +4,7 @@ RCP37;0;rcp37;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;5.941;0;10;EU
 RCP26;0;rcp26;5;exponential;30;off;nash;9;2015;load;fixed_shares;2;5.941;0;10;EUR;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;BAU_Nash;
 cal_test_40;0;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;5.941;0;40;EUR;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
 cal_test_10;0;none;0;none;-1;off;nash;1;2005;calibrate;subsectors;5;5.941;0;10;EUR;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
-cal_test_CAZ;1;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;5.941;0;10;CAZ;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
+cal_test_CAZ;1;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;9;5.941;0;10;CAZ;/p/tmp/levesque/Remind/github/output/cal_test_CAZ_2020-06-25_12.09.50/fulldata.gdx;;
 cal_test_CHA;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;5.941;0;10;CHA;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
 cal_test_EUR;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;5.941;0;10;EUR;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
 cal_test_IND;0;none;0;none;-1;off;testOneRegi;1;2005;calibrate;subsectors;5;5.941;0;10;IND;/p/tmp/pehl/Remind/output/cal_test_2020-06-03_11.42.22/fulldata.gdx;;
