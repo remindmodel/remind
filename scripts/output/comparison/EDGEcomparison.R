@@ -48,6 +48,7 @@ EJfuelsFrgt_all = NULL
 emipSource_all = NULL
 costs_all = NULL
 pref_FV_all = NULL
+demgdpcap_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -488,6 +489,25 @@ costscompFun = function(newcomp, sharesVS1,  EF_shares, pref_FV, capcost4Wall, c
 }
 
 
+demgdpcap_Fun = function(demkm, REMIND2ISO_MAPPING) {
+GDP_POP = getRMNDGDPcap()
+GDP_POP = merge(GDP_POP, REMIND2ISO_MAPPING, by = "iso")
+GDP_POP = merge(GDP_POP, REMIND2ISO_MAPPING, by = "iso")
+
+demcap_gdp = merge(demkm, GDP_POP, by = c("iso", "year"))
+demcap_gdp = merge(demcap_gdp, REMIND2ISO_MAPPING, by = "iso")
+demcap_gdp = demcap_gdp[,.(dem = sum(demand_F), gdp = sum(weight), pop = sum(POP_val)), by = .(region, sector, year)]
+demcap_gdp[, GDP_cap := gdp/pop]
+demcap_gdp[, demcap := dem*    ## in trillion km
+                  1e+6/   ## in million km
+                  pop]    ## in million km/million people=pkm/person
+
+return(demcap_gdp)
+}
+
+
+
+
 for (outputdir in outputdirs) {
   ## load mif file
   name_mif = list.files(path = outputdir, pattern = "REMIND_generic", full.names = F)
@@ -562,6 +582,8 @@ for (outputdir in outputdirs) {
   emipSource =  emipSourceFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, EF_shares = EF_shares, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
+  ## per capita demand-gdp per capita
+  demgdpcap = demgdpcap_Fun(demkm = demandkm, REMIND2ISO_MAPPING)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -576,6 +598,7 @@ for (outputdir in outputdirs) {
   emipSource[, scenario := as.character(unique(miffile$scenario))]
   costs[, scenario := as.character(unique(miffile$scenario))]
   pref_FV[, scenario := as.character(unique(miffile$scenario))]
+  demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -590,6 +613,7 @@ for (outputdir in outputdirs) {
   emipSource_all = rbind(emipSource_all, emipSource)
   costs_all = rbind(costs_all, costs)
   pref_FV_all = rbind(pref_FV_all, pref_FV)
+  demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
 }
 
 ## create string with date and time
@@ -614,6 +638,7 @@ saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
 saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
+saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 

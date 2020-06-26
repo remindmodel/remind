@@ -35,7 +35,7 @@ EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
-
+dempkm_cap_all = readRDS("demgdpcap_all.RDS")
 setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
@@ -463,7 +463,64 @@ emidem_pf = function(dt){
 emidem_pf(emidem_all)
 ```
 
+## demand per capita VS gdp per capita
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+demcapgdpcap_pf = function(dt) {
 
+dt = dt[year >= 2005]
+dt = dt[, year := as.character(year)]
+ppass_sm = ggplot()+
+  geom_line(data = dt[sector == "trn_pass"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
+  geom_point(data = dt[sector == "trn_pass" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+  theme_minimal()+
+  facet_grid(scenario~sector)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size=7),
+        title = element_text(size=8),
+        legend.text = element_text(size=8))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "Passenger short-medium")
+
+pfreigt_sm = ggplot()+
+  geom_line(data = dt[sector == "trn_freight"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
+  geom_point(data = dt[sector == "trn_freight" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+  theme_minimal()+
+  facet_grid(scenario~sector)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size=7),
+        title = element_text(size=8),
+        legend.text = element_text(size=8))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "Freight short-medium")
+
+
+ppass_lo = ggplot()+
+  geom_line(data = dt[sector == "trn_aviation_intl"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
+  geom_point(data = dt[sector == "trn_aviation_intl" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+  theme_minimal()+
+  facet_grid(scenario~sector)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size=7),
+        title = element_text(size=8),
+        legend.text = element_text(size=8))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "International aviation")
+
+pfreigt_lo = ggplot()+
+  geom_line(data = dt[sector == "trn_shipping_intl"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
+  geom_point(data = dt[sector == "trn_shipping_intl" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+  theme_minimal()+
+  facet_grid(scenario~sector)+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size=7),
+        title = element_text(size=8),
+        legend.text = element_text(size=8))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "International shipping")
+
+p = list(pfreigt_lo = pfreigt_lo, ppass_lo = ppass_lo, pfreigt_sm = pfreigt_sm, ppass_sm = ppass_sm)
+
+return(p)
+}
+
+demcapgdpcap_pf(dempkm_cap_all)
+```
 
 ## Focus on slected region
 
@@ -544,9 +601,9 @@ costspf = function(dt, rp){
   dt_inc = dt[type == "inc"]
   dt_inc = dt_inc[,.(cost = sum(cost)), by = c("region", "year", "type", "technology", "scenario")]
   dt_tot = rbind(dt_inc[, c("name", "logit_type") := list("Inconvenience cost", "pinc")], dt[type == "real"]) 
-  dt[, technology := factor(technology, levels = legend_ord)]
-  dt_tot[, technology := factor(technology, levels = legend_ord)]
-
+  dt[, name := factor(name, levels = legend_ord)]
+  dt_tot[, name := factor(name, levels = legend_ord)]
+  dt_tot[, alph := ifelse(logit_type=="pinc", 0.6, 1)]
   plot1 = ggplot()+
          geom_bar(data = dt[type == "inc"], aes(x = year, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
 theme_minimal()+
@@ -564,7 +621,7 @@ facet_grid(scenario~technology)+
     labs(y = "Costs [$/pkm]", x="")
 
   plot2 = ggplot()+
-         geom_bar(data = dt_tot, aes(x = year, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
+         geom_bar(data = dt_tot, aes(x = year, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
 theme_minimal()+
 facet_grid(scenario~technology)+
     theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
@@ -575,9 +632,11 @@ facet_grid(scenario~technology)+
           legend.text = element_text(size=14),
           strip.text = element_text(size=12),
           strip.background = element_rect(color = "grey"))+
-    guides(fill=guide_legend(title="Cost component"))+
     scale_fill_manual(values = cols)+
-    labs(y = "Costs [$/pkm]", x="")
+    labs(y = "Costs [$/pkm]", x="")+
+      scale_alpha(range=c(0.4,1)) + 
+  guides(alpha=FALSE, linetype=FALSE,
+         fill=guide_legend(reverse=TRUE, title="Cost component"))
 
 plot = list(plot1 = plot1, plot2 = plot2)
 
@@ -782,12 +841,12 @@ ggsave("pTruck.png", pTruck, dpi=500, height = height , width = height * aspect_
 ```{r, echo=FALSE, warning=FALSE}
 
 prefBusTrucksplotf = function(pref){
-pref = pref[iso=="DEU" & technology %in% c("Electric", "FCEV") & vehicle_type %in% c("Bus_tmp_vehicletype")]
-pref = pref[year >= 2020 & year <= 2100 & vehicle_type == "Bus_tmp_vehicletype"]
-pref[, vehicle_type := "Buses and Trucks"]
+pref = pref[iso=="USA" & technology %in% c("Electric", "FCEV") & vehicle_type %in% c("Bus_tmp_vehicletype", "Truck (0-2.7t)")]
+pref = pref[year >= 2020 & year <= 2050]
+pref[, vehicle_type := ifelse(vehicle_type == "Bus_tmp_vehicletype", "Large Trucks and Buses", "Small Trucks")]
 
 p = ggplot()+
-  geom_line(data = pref, aes(x = year, y = value, group = technology, color = technology, linetype = technology))+
+  geom_line(data = pref, aes(x = year, y = value, group = interaction(technology, vehicle_type), color = technology, linetype = vehicle_type))+
   facet_wrap(~scenario, ncol = 1)+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
@@ -796,9 +855,9 @@ p = ggplot()+
         legend.text = element_text(size=7),
         strip.text = element_text(size=7))+
   labs(y = "Preference factor [-]", x="")+
-  scale_color_manual("Technology", values = cols,labels = c("Electric", "FCEV")) +
-  scale_linetype_manual("Technology", values = c(1,2),
-                        labels = c("Electric", "FCEV"))
+  scale_color_manual("Technology", values = cols,labels = c("Electric", "FCEV")) 
+  scale_linetype_manual("Vehicle", values = c(1,2),
+                        labels = c("Large Trucks and Buses", "Small Trucks"))
 return(p)
 }
 p = prefBusTrucksplotf(pref_FV_all)
