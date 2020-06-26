@@ -1596,7 +1596,7 @@ loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
                                             AND ppf_beyondcalib_29(in)),
   pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
   = pm_cesdata(t2,regi,in, "effGr")
-  * * ((1 + pm_ue_eff_target(out)) ** (t_29.val - pm_ttot_val(t2)))
+  * ((1 + pm_ue_eff_target(out)) ** (t_29.val - pm_ttot_val(t2)))
   ;
 );
 
