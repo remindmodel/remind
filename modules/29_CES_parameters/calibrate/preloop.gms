@@ -1617,7 +1617,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
       );
 
     p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
-    p29_t_tmp(t) = min(1, max(0, (1 - p29_t_tmp(t))))
+    p29_t_tmp(t) = min(1, max(0, p29_t_tmp(t)));
 
     pm_cesdata(t,regi_dyn29(regi),in,"effGr")$( NOT t_29hist(t) )
     =  1 
@@ -1630,19 +1630,22 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
        * (
           (1 - p29_t_tmp(t))
            * ( pm_cesdata(t,regi,in,"xi")
-             * (pm_cesdata(t,regi,in,"eff")
-               * pm_cesdata(t,regi,in,"effGr")
-               )
-             ** pm_cesdata(t,regi,out,"rho")
-              )
+               ** ( 1
+                     / pm_cesdata(t,regi,out,"rho")
+                   )
+             * pm_cesdata(t,regi,in,"eff")
+             * pm_cesdata(t,regi,in,"effGr")
+             )
           + p29_t_tmp(t)
-            * ( pm_cesdata(t,regi,in2,"xi")
-             * (pm_cesdata(t,regi,in2,"eff")
-               * pm_cesdata(t,regi,in2,"effGr")
-               )
-             ** pm_cesdata(t,regi,out,"rho")
-              )
+           * ( pm_cesdata(t,regi,in2,"xi")
+               ** ( 1
+                     / pm_cesdata(t,regi,out,"rho")
+                   )
+             * pm_cesdata(t,regi,in2,"eff")
+             * pm_cesdata(t,regi,in2,"effGr")
+             )
   );
+);
 );
 
 option p29_efficiency_growth:4:3:1;
