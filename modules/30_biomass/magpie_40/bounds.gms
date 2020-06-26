@@ -22,7 +22,7 @@ $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** Slightly relaxed extraction bounds for biofuels.
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4*p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 1.5*p30_datapebio(regi,"pebioil","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 2*p30_datapebio(regi,"pebioil","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 $endif.edge_esm_transport
 
