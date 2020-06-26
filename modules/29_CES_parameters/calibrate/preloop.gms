@@ -1590,6 +1590,7 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
 );
 
 
+*** Apply efficiency improvements assumptions to industrial final energy and capital inputs
 loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
                                             industry_ue_calibration_target_dyn37(out) 
                                             AND ppf_beyondcalib_29(in)),
@@ -1599,7 +1600,50 @@ loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
   ;
 );
 
+!! - adjust efficiency parameters for feelhth_X and feh2_X
+loop (cesOut2cesIn(in_industry_dyn37(out),in)$( 
+                              (ppfen(in) OR ipf(in))
+                          AND NOT industry_ue_calibration_target_dyn37(out)
+                          AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
+  !! in2 is the reference energy input (gas if 'in' is H2)
+  loop (in2$( pm_calibrate_eff_scale(in,in2,"level") ),
+    !! compute the parameter describing the speed of convergence towards in2
+    p29_t_tmp(t)$( NOT t_29hist(t) )
+    = pm_calibrate_eff_scale(in,in2,"level")
+    / ( 1
+      + exp((pm_calibrate_eff_scale(in,in2,"midperiod") - t.val)
+          / pm_calibrate_eff_scale(in,in2,"width")
+          )
+      );
 
+    p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
+    p29_t_tmp(t) = min(1, max(0, (1 - p29_t_tmp(t))))
+
+    pm_cesdata(t,regi_dyn29(regi),in,"effGr")$( NOT t_29hist(t) )
+    =  1 
+       / ( pm_cesdata(t,regi,in,"eff")
+          * pm_cesdata(t,regi,in,"xi")
+          ** (1
+              / pm_cesdata(t,regi,out,"rho")
+              )
+          )
+       * (
+          (1 - p29_t_tmp(t))
+           * ( pm_cesdata(t,regi,in,"xi")
+             * (pm_cesdata(t,regi,in,"eff")
+               * pm_cesdata(t,regi,in,"effGr")
+               )
+             ** pm_cesdata(t,regi,out,"rho")
+              )
+          + p29_t_tmp(t)
+            * ( pm_cesdata(t,regi,in2,"xi")
+             * (pm_cesdata(t,regi,in2,"eff")
+               * pm_cesdata(t,regi,in2,"effGr")
+               )
+             ** pm_cesdata(t,regi,out,"rho")
+              )
+  );
+);
 
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
