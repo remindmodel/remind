@@ -46,6 +46,7 @@ emidem_all = NULL
 EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 emipSource_all = NULL
+elecdem_all = NULL
 costs_all = NULL
 pref_FV_all = NULL
 demgdpcap_all = NULL
@@ -334,6 +335,14 @@ emidemFun = function(emidem){
 }
 
 
+elecdemFun = function(miffile){
+  elecdem = miffile[variable == "SE|Electricity"]
+  elecdem = elecdem[region!="World" & year >= 2015 & year <= 2100]
+  elecdem[, variable := as.character(variable)]
+  return(elecdem)
+
+}
+
 emipSourceFun = function(miffile){
   
   minyr <- 2015
@@ -580,6 +589,8 @@ for (outputdir in outputdirs) {
   emidem = emidemFun(emidem)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
+  ## secondary energy electricity demand
+  elecdem = elecdemFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, EF_shares = EF_shares, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## per capita demand-gdp per capita
@@ -596,6 +607,7 @@ for (outputdir in outputdirs) {
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   emipSource[, scenario := as.character(unique(miffile$scenario))]
+  elecdem[, scenario := as.character(unique(miffile$scenario))]
   costs[, scenario := as.character(unique(miffile$scenario))]
   pref_FV[, scenario := as.character(unique(miffile$scenario))]
   demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
@@ -611,6 +623,7 @@ for (outputdir in outputdirs) {
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   emipSource_all = rbind(emipSource_all, emipSource)
+  elecdem_all = rbind(elecdem_all, elecdem)
   costs_all = rbind(costs_all, costs)
   pref_FV_all = rbind(pref_FV_all, pref_FV)
   demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
@@ -636,6 +649,7 @@ saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
+saveRDS(elecdem_all, paste0(outdir, "/elecdem_all.RDS"))
 saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
 saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
 saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))

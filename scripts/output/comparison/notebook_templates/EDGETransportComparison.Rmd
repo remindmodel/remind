@@ -33,6 +33,7 @@ CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 EJpass_all = readRDS("EJfuelsPass_all.RDS")
 EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
+elecdem_all = readRDS("elecdem_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 dempkm_cap_all = readRDS("demgdpcap_all.RDS")
@@ -103,6 +104,8 @@ cols <- c("NG" = "#d11141",
           "Conservative_liquids" = "#113245",
           "ConvCase" = "#113245",
           "ConvCaseWise" = "#d11141",
+          "NDC" = "#d11141",
+          "SynSurge" = "#orchid",
           "Emi|CO2|Transport|Demand" = "#113245",
           "Emi|CO2|Industry|Gross" = "#919191",
           "Emi|CO2|Buildings|Direct" = "#d2b48c",
@@ -168,6 +171,64 @@ vintcomparisonpf = function(dt){
 vintcomparisonpf(fleet_all)
 
 ```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+## Vintages as line plot, useful to compare the totals (e.g. normal VS WiseWays)
+
+vintcomparisontotpf = function(dt, rp){
+    dt = dt[,.(value = sum(value)), by = .(region, scenario, year)]
+    
+    dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+    dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+    dt[, scenario := gsub(".*_", "", scenario)]
+    dt[, scenario := gsub("Wise", "", scenario)]
+
+    plot_all = ggplot()+
+    geom_line(data = dt,
+             aes(x=year, y=value, group=scenario,
+                 color = scenario, linetype = type))+
+    theme_minimal()+
+    facet_wrap(~region)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    labs(y = "[million Veh]", x="", title = "LDV fleet")+
+      scale_color_manual("Scenario", values = cols)
+    
+    
+    plot_reg = ggplot()+
+    geom_line(data = dt[region == rp & year <= 2050],
+             aes(x=year, y=value, group=scenario,
+                 color = scenario, linetype = type))+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90, size=7, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=7),
+          axis.title.y = element_text(size=7),
+          title = element_text(size=7),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=7),
+          strip.text = element_text(size=7),
+          strip.background = element_rect(color = "grey"))+
+    labs(y = "[million Veh]", x="")+
+      scale_color_manual("Scenario", values = cols)+
+      scale_linetype_manual("", values = c(1,2))
+    return(plot = list(plot_all = plot_all, plot_reg = plot_reg))
+}
+
+p=vintcomparisontotpf(dt = fleet_all, rp = regionplot)
+p
+aspect_ratio <- 1
+height <- 3.5
+ggsave("numvehicles.png", p$plot_reg, dpi=500, height = height , width = height * aspect_ratio)
+
+```
+
 
 ## Sales composition
 
@@ -462,6 +523,57 @@ emidem_pf = function(dt){
 
 emidem_pf(emidem_all)
 ```
+## Electricity demand
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+elecdem_pf = function(dt, rp){
+ dt[, scenario := as.character(scenario)]
+ dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+ dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+ dt[, scenario := gsub(".*_", "", scenario)]
+ dt[, scenario := gsub("Wise", "", scenario)]
+
+  plot_all = ggplot()+
+    geom_line(data = dt, aes(x = year, y = value, group = scenario, color = scenario, linetype = type))+
+    labs(x = "", y = "Secondary electricity [EJ]")+
+    theme_minimal()+
+    facet_grid(~region)+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+     scale_linetype_manual("", values = c(1,2))+
+     scale_color_manual("Scenario", values = cols) 	
+   
+   plot_regi = ggplot()+
+    geom_line(data = dt[region == rp & year <= 2050], aes(x = year, y = value, group = scenario, color = scenario, linetype = type))+
+    labs(x = "", y = "Secondary electricity [EJ]")+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))+
+     scale_linetype_manual("", values = c(1,2))+
+     scale_color_manual("Scenario", values = cols)
+
+  plot = list(plot_all = plot_all, plot_regi = plot_regi)
+  return(plot)
+}
+
+elecdem_pf(elecdem_all, rp = regionplot)
+```
+
+
 
 ## demand per capita VS gdp per capita
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
@@ -696,16 +808,21 @@ ggsave("psales.png", p, dpi=500, height = height , width = height * aspect_ratio
 CO2km_int_regi_newsalespf = function(dt, rp){
   dt = dt[!is.na(gCO2_km_ave)]
   if (rp == "EUR"){
-   ## add historical values
+    ## add historical values
   historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
   
   targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
   
+  dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+    dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+    dt[, scenario := gsub(".*_", "", scenario)]
+    dt[, scenario := gsub("Wise", "", scenario)]
+  
    plot = ggplot()+
-    geom_line(data = dt[year >= 2020 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario))+
+    geom_line(data = dt[year >= 2020 & year <= 2050 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario, linetype = type))+
     geom_point(data = historical_values, aes(x = year, y = emi), color = "grey20")+
-    geom_hline(data = targets, aes(yintercept = value, linetype = name), color = "grey20", size=0.1)+
-    geom_text(data = targets, aes(y = value+5, x = c(2025, 2030, 2035), label = name), size = 5)+
+    geom_point(data = targets, aes(x = c(2021, 2025, 2030), y = value, shape = name), color = "grey20", alpha = 0.5, size = 2)+
+    geom_text(data = targets, aes(y = value+5, x = c(2021, 2025, 2030), label = name), size = 5)+
     labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
@@ -719,7 +836,9 @@ CO2km_int_regi_newsalespf = function(dt, rp){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))+
-    guides(linetype = FALSE)
+    guides(shape = FALSE)+
+    scale_color_manual("Scenario", values = cols)+
+    scale_linetype_manual("", values = c(1,2))
   
   } else {
   ## historical values are not available
@@ -844,6 +963,10 @@ prefBusTrucksplotf = function(pref){
 pref = pref[iso=="USA" & technology %in% c("Electric", "FCEV") & vehicle_type %in% c("Bus_tmp_vehicletype", "Truck (0-2.7t)")]
 pref = pref[year >= 2020 & year <= 2050]
 pref[, vehicle_type := ifelse(vehicle_type == "Bus_tmp_vehicletype", "Large Trucks and Buses", "Small Trucks")]
+
+pref[, scenario := ifelse(grepl(scenario, "NDC"), "NDC", scenario), by = c("iso", "year", "scenario", "vehicle_type")]
+pref[, scenario := gsub(".*_", "", scenario)]
+pref[, scenario := gsub("Wise", "", scenario)]
 
 p = ggplot()+
   geom_line(data = pref, aes(x = year, y = value, group = interaction(technology, vehicle_type), color = technology, linetype = vehicle_type))+
