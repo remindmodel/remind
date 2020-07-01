@@ -98,12 +98,6 @@ vm_Mport.up("2010",regi,"peoil") = 1.05 * pm_IO_trade("2010",regi,"peoil","Mport
 vm_Mport.lo("2015",regi,"peoil") = 0.95 * pm_IO_trade("2015",regi,"peoil","Mport");
 vm_Mport.up("2015",regi,"peoil") = 1.05 * pm_IO_trade("2015",regi,"peoil","Mport");
 
-*** upper bound causes a infeasibility in REMIND-EU for ESW that I could not solve with the adjustment to vm_fuExtr maximum bound 
-vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"ESW")) = 1.15 * pm_IO_trade("2010",regi,"peoil","Mport");
-vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"ESW")) = 0.85 * pm_IO_trade("2010",regi,"peoil","Xport");
-vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"ESW")) = 1.2 * pm_IO_trade("2015",regi,"peoil","Mport");
-vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"ESW")) = 0.8 * pm_IO_trade("2015",regi,"peoil","Xport");
-
 *** bounds on gas exports in 2010 and 2015
 vm_Xport.lo("2010",regi,"pegas") = 0.95 * pm_IO_trade("2010",regi,"pegas","Xport");
 vm_Xport.up("2010",regi,"pegas") = 1.05 * pm_IO_trade("2010",regi,"pegas","Xport");
@@ -127,6 +121,32 @@ vm_Mport.lo("2010",regi,"pecoal") = 0.95 * pm_IO_trade("2010",regi,"pecoal","Mpo
 vm_Mport.up("2010",regi,"pecoal") = 1.05 * pm_IO_trade("2010",regi,"pecoal","Mport");
 vm_Mport.lo("2015",regi,"pecoal") = 0.95 * pm_IO_trade("2015",regi,"pecoal","Mport");
 vm_Mport.up("2015",regi,"pecoal") = 1.05 * pm_IO_trade("2015",regi,"pecoal","Mport");
+
+*** upper bound causes a infeasibility in REMIND-EU. Using national pe is impossible due to the lack of reserves (vm_fuExtr maximum bound). Relaxing trade to allow more imports. Alternatively we could increase national reserves (could cause high prices due to moving to a high slope part of the supply cost extraction curve), and/or lower the historical bounds for related capacities: dot and refliq for oil; ... for coal (maybe better solution using either capacity or capacity factors?).
+vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"DEU")) = 1.1 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"DEU")) = 0.9 * pm_IO_trade("2010",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"DEU")) = 1.1 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"DEU")) = 0.9 * pm_IO_trade("2015",regi,"peoil","Xport");
+
+vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"FRA")) = 1.2 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"FRA")) = 0.8 * pm_IO_trade("2010",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"FRA")) = 1.2 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"FRA")) = 0.8 * pm_IO_trade("2015",regi,"peoil","Xport");
+
+vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"ESW")) = 1.15 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"ESW")) = 0.85 * pm_IO_trade("2010",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"ESW")) = 1.2 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"ESW")) = 0.8 * pm_IO_trade("2015",regi,"peoil","Xport");
+
+vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"EWN")) = 1.1 * pm_IO_trade("2010",regi,"peoil","Mport");
+vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"EWN")) = 0.9 * pm_IO_trade("2010",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"EWN")) = 1.1 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"EWN")) = 0.9 * pm_IO_trade("2015",regi,"peoil","Xport");
+
+vm_Mport.up("2010",regi,"pecoal")$(sameas(regi,"ENC")) = 1.2 * pm_IO_trade("2010",regi,"pecoal","Mport");
+vm_Xport.lo("2010",regi,"pecoal")$(sameas(regi,"ENC")) = 0.8 * pm_IO_trade("2010",regi,"pecoal","Xport");
+vm_Mport.up("2015",regi,"pecoal")$(sameas(regi,"ENC")) = 1.2 * pm_IO_trade("2015",regi,"pecoal","Mport");
+vm_Xport.lo("2015",regi,"pecoal")$(sameas(regi,"ENC")) = 0.8 * pm_IO_trade("2015",regi,"pecoal","Xport");
 
 *** upper bounds ( 1% yearly growth rate) on all big oil exporters (more than 15EJ in 2010) in 2020, 2025 and 2030
 loop(regi,

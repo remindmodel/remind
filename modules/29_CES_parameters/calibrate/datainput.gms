@@ -168,13 +168,14 @@ $include "./modules/29_CES_parameters/calibrate/input/pm_es_demand.cs4r"
 $offdelim
 /
 
+$ifthen.transpmodule "%transport%" == "edge_esm"
 p29_trpdemand       "transport demand"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/pm_trp_demand.cs4r"
 $offdelim
 /
-
+$endif.transpmodule
 
 p29_efficiency_growth       "efficency growth for ppf beyond calibration"
 /
