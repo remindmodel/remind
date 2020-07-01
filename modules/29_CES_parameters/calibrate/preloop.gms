@@ -837,6 +837,7 @@ loop (t_29_last,
 
 *** Exclude Industry from all Calculations Hereafter
 
+$offtext
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
           AND %c_CES_calibration_iteration% eq 1 ),
@@ -852,8 +853,6 @@ loop (in$(    industry_ue_calibration_target_dyn37(in)
 
 execute_unload "debug.gdx";
 *** ===== E N D   I N D U S T R Y   C A L C U L A T I O N ====================
-$offtext
-
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
 
 display "start consistency", pm_cesdata;
