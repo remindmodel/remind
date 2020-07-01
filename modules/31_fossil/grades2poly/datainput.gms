@@ -45,7 +45,8 @@ pm_ffPolyCumEx(all_regi,"pegas",char)  = f31_ffPolyCumEx(all_regi,"pegas",char,"
 
 table f31_ffPolyCoeffs(all_regi,all_fossilScen,polyCoeffCost)  "3rd-order polynomial coefficients (oil|gas|coal)"  
 $ondelim
-$include "./modules/31_fossil/grades2poly/input/f31_ffPolyCoeffs.cs3r"
+***$include "./modules/31_fossil/grades2poly/input/f31_ffPolyCoeffs.cs3r"
+$include "./modules/31_fossil/grades2poly/input/f31_ffPolyCoeffs_up.cs3r"
 $offdelim
 ;
 p31_ffPolyCoeffs(regi,"pecoal",polyCoeffCost) = f31_ffPolyCoeffs(regi,"%cm_coal_scen%",polyCoeffCost);
