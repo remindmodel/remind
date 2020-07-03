@@ -200,24 +200,24 @@ for(scen in common){
   #cfg_rem$gms$biomass <- "magpie_linear"
 
   # Configure Afforestation in MAgPIE
-   if (grepl("-aff760",scen)) {
-      cat("Setting MAgPIE max_aff_area to 760\n")
-      cfg_mag$gms$s32_max_aff_area <- 760
-  } else if (grepl("-aff900",scen)) {
-      cat("Setting MAgPIE max_aff_area to 900\n")
-      cfg_mag$gms$s32_max_aff_area <- 900
-  } else if (grepl("-affInf",scen)) {
-      cat("Setting MAgPIE max_aff_area to Inf\n")
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost2",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.2\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.2
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost3",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.3\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.3
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  }
+  # if (grepl("-aff760",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 760\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 760
+  #} else if (grepl("-aff900",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 900\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 900
+  #} else if (grepl("-affInf",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to Inf\n")
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost2",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.2\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.2
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost3",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.3\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.3
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #}
 
   #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
 
