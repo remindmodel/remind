@@ -81,7 +81,8 @@ vot_data = inputdata$vot_data
 logit_params = inputdata$logit_params
 int_dat = inputdata$int_dat
 nonfuel_costs = inputdata$nonfuel_costs
-
+capcost4W = inputdata$capcost4W
+loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
 
@@ -103,7 +104,6 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
 ## optional average of prices
 average_prices = FALSE
-
 
 ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
@@ -131,8 +131,11 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
   
-  nonfuel_costs = applylearning(nonfuel_costs, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
-  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")} else {
+  nonfuel_costs_list = applylearning(nonfuel_costs, capcost4W, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+  capcost4W = nonfuel_costs_list$capcost4W
+  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+  saveRDS(capcost4W, "capcost_learning.RDS")} else {
   stations = NULL
 }
 
@@ -251,7 +254,6 @@ if (opt$reporting) {
   saveRDS(shares, file = datapath("shares.RDS"))
   saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
   saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
-  saveRDS(logit_data$inconv_cost, file=datapath("inco_costs.RDS"))
   saveRDS(shares_int_dem$demandF_plot_EJ,
           file=datapath("demandF_plot_EJ.RDS"))
   saveRDS(shares_int_dem$demandF_plot_pkm,
@@ -266,7 +268,8 @@ num_veh_stations = calc_num_vehicles_stations(
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
     c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
     ES_demand_all = ES_demand_all,
-    techswitch = techswitch)
+    techswitch = techswitch,
+    loadFactor = loadFactor)
 
 ## save number of vehicles for next iteration
 saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
@@ -312,7 +315,16 @@ for (i in names(finalInputs)) {
 
 ## calculate shares
 finalInputs$shFeCes = finalInputs$demByTech[, value := value/sum(value), by = c("tall", "all_regi", "all_in")]
+## 7 decimals the lowest accepted value
+finalInputs$shFeCes[, value := round(value, digits = 7)]
+finalInputs$shFeCes[, value := ifelse(value == 0, 1e-7, value)]
+finalInputs$shFeCes[, sumvalue := sum(value), by = c("tall", "all_regi", "all_in")]
+finalInputs$shFeCes[, maxtech := ifelse(value == max(value), TRUE, FALSE), by =c("tall", "all_regi", "all_in")]
 
+## attribute the variation to the maximum share value
+finalInputs$shFeCes[sumvalue!=1 & maxtech==TRUE, value := value + (1-sumvalue), by = c("tall", "all_regi")]
+## remove temporary columns
+finalInputs$shFeCes[, c("sumvalue", "maxtech") := NULL]
 
 ## CapCosts
 writegdx.parameter("p35_esCapCost.gdx", finalInputs$capCost, "p35_esCapCost",

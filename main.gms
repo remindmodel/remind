@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.944
 * 
-* Last modification (input data): Tue Apr 28 10:13:23 2020
+* Last modification (input data): Wed Jun 17 14:10:58 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -208,7 +208,7 @@ $setGlobal codePerformance  off       !! def = off
 ***-----------------------------------------------------------------------------
 ***--------------- declaration of parameters for switches ----------------------
 parameters
-cm_iteration_max      "number of Negishi iterations (up to 49)"
+cm_iteration_max      "number of Negishi iterations"
 c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
@@ -221,7 +221,7 @@ cm_ccapturescen       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
-c_shBioliq            "upper bound on share of bioliquids in SE liquids from 2025 onwards"
+c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
 cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
@@ -290,6 +290,7 @@ cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budge
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
+cm_GDPcovid                  "GDP correction for covid"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -313,7 +314,7 @@ cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
-c_shBioliq       = 1;        !! def = 1
+c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
@@ -334,6 +335,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -400,7 +402,7 @@ cm_noReboundEffect     = 0;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
-$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
+$setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
