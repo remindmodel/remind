@@ -214,7 +214,7 @@ $offdelim
 *** FIXME debug SSA secondary steel
 p29_capitalQuantity(t,"SSA",all_GDPscen,"kap_steel_secondary")
   = p29_capitalQuantity(t,"SSA",all_GDPscen,"kap_steel_secondary")
-  * 100;
+  * 1e4;
 *** FIXME end debug SSA secondary steel
 
 *** Attribute technological data to p29_capitalUnitProjections according to putty-clay
