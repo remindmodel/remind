@@ -34,12 +34,16 @@ EJpass_all = readRDS("EJfuelsPass_all.RDS")
 EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
 elecdem_all = readRDS("elecdem_all.RDS")
+emisys_all = readRDS("emisys_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 dempkm_cap_all = readRDS("demgdpcap_all.RDS")
+invest_all = readRDS("invest_all.RDS")
+
 setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
+          "Gases" = "#d11141",
           "Liquids" = "#8c8c8c",
           "Hybrid Liquids" = "#ffc425",
           "Hybrid Electric" = "#f37735",
@@ -50,6 +54,7 @@ cols <- c("NG" = "#d11141",
           "Hydrogen" = "#00aedb",
           "Biodiesel" = "#66a182",
           "Synfuel" = "orchid",
+          "Synfuels" = "orchid",
           "Oil" = "#2e4057",
           "Operating and maintenance" = "#edae49",
           "Range anxiety" = "#e43f5a",
@@ -82,45 +87,32 @@ cols <- c("NG" = "#d11141",
           "Non motorized" = "#da70d6",
           "Freight"="#ff0000",
           "Freight (Inland)" = "#cd5555",
-          "Pass non LDV" = "#6b8e23", 
+          "Pass non LDV" = "#6b8e23",
           "Pass" = "#66cdaa",
           "Pass non LDV (Domestic)" = "#54ff9f",
           "refined liquids enduse" = "#8c8c8c",
-          "FE|Transport|Hydrogen" = "#00aedb", 
+          "FE|Transport|Hydrogen" = "#00aedb",
           "FE|Transport|NG" = "#d11141",
-          "FE|Transport|Liquids" = "#8c8c8c", 
+          "FE|Transport|Liquids" = "#8c8c8c",
           "FE|Transport|Electricity" = "#00b159",
-          "FE|Transport" = "#1e90ff", 
+          "FE|Transport" = "#1e90ff",
           "FE|Buildings" = "#d2b48c",
           "FE|Industry" = "#919191",
-          "Electricity_push" = "#00b159",
           "ElecEra" = "#00b159",
           "ElecEraWise" = "#68c6a4",
           "HydrHype" = "#00aedb",
           "HydrHypeWise" = "#o3878f",
-          "Hydrogen_push" = "#00aedb",
-          "Smart_lifestyles_Electricity_push" = "#68c6a4",
-          # "Smart_lyfestiles_Electricity_push" = "#03878f", ##maybe "#o3878f"
-          "Conservative_liquids" = "#113245",
           "ConvCase" = "#113245",
           "ConvCaseWise" = "#d11141",
           "NDC" = "#d11141",
-          "SynSurge" = "#orchid",
-          "Emi|CO2|Transport|Demand" = "#113245",
-          "Emi|CO2|Industry|Gross" = "#919191",
-          "Emi|CO2|Buildings|Direct" = "#d2b48c",
-          "Emi|CO2|Energy|Supply|Gross" = "#f2b531",
-          "Emi|CO2|CDR|BECCS" = "#ed5958",
-          "Emi|CO2|Land-Use Change" = "#66a182",
-          "Cons. + Synfuels" = "orchid",
-          "Ctax_Conservative" = "#d11141")
+          "SynSurge" = "orchid")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
                 "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation","Bus", "Passenger Rail",
                 "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Pass non LDV (Domestic)", "Non motorized")
 
-legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "NG")
+legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
 legend_ord_costs <- c("Inconvenience cost", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy induced inconvenience","Fuel", "Purchase", "Operating and maintenance")
 
@@ -129,14 +121,11 @@ legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", 
 legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 
 ## mapping for scenario names
-mapping_scens = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise", "Budg1100_HydrHypeWise", "Budg1100_SynSurgeWise", "NDC_ConvCaseWise"), scen_name = c("ConvCase", "ElecEra", "HydrHype", "SynSurge", "Baseline", "ConvCaseWise", "ElecEraWise", "HydrHypeWise", "SynSurgeWise", "BaselineWise"))
+mapping_scens = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise", "Budg1100_HydrHypeWise", "Budg1100_SynSurgeWise", "NDC_ConvCaseWise"), scen_name = c("ConvCase", "ElecEra", "HydrHype", "SynSurge", "NDC", "ConvCaseWise", "ElecEraWise", "HydrHypeWise", "SynSurgeWise", "NDCWise"))
 
 regionplot = "EUR"
 ```
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 ## Vintages
@@ -178,15 +167,15 @@ vintcomparisonpf(fleet_all)
 
 vintcomparisontotpf = function(dt, rp){
     dt = dt[,.(value = sum(value)), by = .(region, scenario, year)]
-    
-    dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+
+    dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
     dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
     dt[, scenario := gsub(".*_", "", scenario)]
     dt[, scenario := gsub("Wise", "", scenario)]
 
     plot_all = ggplot()+
     geom_line(data = dt,
-             aes(x=year, y=value, group=scenario,
+             aes(x=year, y=value, group = interaction(scenario, type),
                  color = scenario, linetype = type))+
     theme_minimal()+
     facet_wrap(~region)+
@@ -200,11 +189,11 @@ vintcomparisontotpf = function(dt, rp){
           strip.background = element_rect(color = "grey"))+
     labs(y = "[million Veh]", x="", title = "LDV fleet")+
       scale_color_manual("Scenario", values = cols)
-    
-    
+
+
     plot_reg = ggplot()+
     geom_line(data = dt[region == rp & year <= 2050],
-             aes(x=year, y=value, group=scenario,
+             aes(x=year, y=value, group=interaction(scenario, type),
                  color = scenario, linetype = type))+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90, size=7, vjust=0.5, hjust=1),
@@ -217,14 +206,14 @@ vintcomparisontotpf = function(dt, rp){
           strip.background = element_rect(color = "grey"))+
     labs(y = "[million Veh]", x="")+
       scale_color_manual("Scenario", values = cols)+
-      scale_linetype_manual("", values = c(1,2))
+      scale_linetype_manual("Lifestyle", values = c(1,2))
     return(plot = list(plot_all = plot_all, plot_reg = plot_reg))
 }
 
 p=vintcomparisontotpf(dt = fleet_all, rp = regionplot)
 p
-aspect_ratio <- 1
-height <- 3.5
+aspect_ratio <- 1.5
+height <- 3
 ggsave("numvehicles.png", p$plot_reg, dpi=500, height = height , width = height * aspect_ratio)
 
 ```
@@ -355,7 +344,7 @@ EJmodepf(EJmode_all)
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-ESmodecappf = function(dt){
+ESmodecappf = function(dt, rp){
   dt[, vehicle_type_plot := factor(vehicle_type_plot, levels = legend_ord)]
   plot_frgt = ggplot()+
     geom_area(data = dt[mode == "freight" & year >= 2020], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black", size=0.05, position= position_stack())+
@@ -375,7 +364,7 @@ ESmodecappf = function(dt){
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
 
-  
+
   plot_pass = ggplot()+
     geom_area(data = dt[mode == "pass" & year >= 2020], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "Energy Services demand [pkm/cap]")+
@@ -394,13 +383,46 @@ ESmodecappf = function(dt){
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
 
+      dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
+    dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+    dt[, scenario := gsub(".*_", "", scenario)]
+    dt[, scenario := gsub("Wise", "", scenario)]
 
-    return(list(plot_pass = plot_pass, plot_frgt = plot_frgt))
+  plot_pass_regi = ggplot()+
+    geom_area(data = dt[mode == "pass" & year >= 2020 & year <= 2050 & region == rp & scenario == "NDC"], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), alpha = 0.9, color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "Energy Services demand [pkm/cap]")+
+    theme_minimal()+
+    facet_grid(~type)+
+    scale_fill_manual("Transport mode",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020,2030,2050, 2100))+
+    theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size = 14),
+          axis.title = element_text(size = 14),
+          title = element_text(size = 14),
+          legend.text = element_text(size = 14),
+          legend.title = element_text(size = 14),
+          strip.text = element_text(size = 14),
+          strip.background = element_rect(color = "grey"),
+          axis.line = element_line(size = 0.5, colour = "grey"))
+
+
+    return(list(plot_pass = plot_pass, plot_frgt = plot_frgt, plot_pass_regi = plot_pass_regi))
 }
 
 
-ESmodecappf(ESmodecap_all)
+p = ESmodecappf(ESmodecap_all, rp = regionplot)
 
+p$plot_frgt
+p$plot_pass
+
+print(paste0("Focus on ", regionplot, " in NDC"))
+
+p$plot_pass_regi
+
+aspect_ratio <- 1.5
+height <- 6
+ggsave("demmod_wisenormal.png", p$plot_pass_regi, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
 
@@ -453,9 +475,9 @@ EJfuels_pf = function(dt_p, dt_f){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
-  
+
     dt_f = dt_f[year >= 2020]
-    
+
   plotf_lo = ggplot()+
     geom_area(data = dt_f[sector == "trn_shipping_intl"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "International freight FE demand by fuel")+
@@ -473,7 +495,7 @@ EJfuels_pf = function(dt_p, dt_f){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
-  
+
   plotf_sm = ggplot()+
     geom_area(data = dt_f[sector == "trn_freight"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "Short-medium freight FE demand by fuel")+
@@ -491,7 +513,7 @@ EJfuels_pf = function(dt_p, dt_f){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
-  
+
   plot = list(plotf_lo = plotf_lo, plotf_sm = plotf_sm, plotp = plotp)
   return(plot)
 }
@@ -517,7 +539,7 @@ emidem_pf = function(dt){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))
- 
+
   return(plot)
 }
 
@@ -528,13 +550,13 @@ emidem_pf(emidem_all)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 elecdem_pf = function(dt, rp){
  dt[, scenario := as.character(scenario)]
- dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+ dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
  dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
  dt[, scenario := gsub(".*_", "", scenario)]
  dt[, scenario := gsub("Wise", "", scenario)]
 
   plot_all = ggplot()+
-    geom_line(data = dt, aes(x = year, y = value, group = scenario, color = scenario, linetype = type))+
+    geom_line(data = dt, aes(x = year, y = value, group = interaction(scenario, type), color = scenario, linetype = type))+
     labs(x = "", y = "Secondary electricity [EJ]")+
     theme_minimal()+
     facet_grid(~region)+
@@ -548,10 +570,10 @@ elecdem_pf = function(dt, rp){
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))+
      scale_linetype_manual("", values = c(1,2))+
-     scale_color_manual("Scenario", values = cols) 	
-   
+     scale_color_manual("Scenario", values = cols)
+
    plot_regi = ggplot()+
-    geom_line(data = dt[region == rp & year <= 2050], aes(x = year, y = value, group = scenario, color = scenario, linetype = type))+
+    geom_line(data = dt[region == rp & year <= 2050], aes(x = year, y = value, group = interaction(scenario, type), color = scenario, linetype = type))+
     labs(x = "", y = "Secondary electricity [EJ]")+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
@@ -563,14 +585,27 @@ elecdem_pf = function(dt, rp){
           strip.text = element_text(size = 14),
           strip.background = element_rect(color = "grey"),
           axis.line = element_line(size = 0.5, colour = "grey"))+
-     scale_linetype_manual("", values = c(1,2))+
+     scale_linetype_manual("Lifestyle", values = c(1,2))+
      scale_color_manual("Scenario", values = cols)
 
   plot = list(plot_all = plot_all, plot_regi = plot_regi)
   return(plot)
 }
 
-elecdem_pf(elecdem_all, rp = regionplot)
+p = elecdem_pf(elecdem_all, rp = regionplot)
+
+p$plot_all
+
+print(paste0("Focus on ", regionplot))
+
+p$plot_regi
+
+aspect_ratio <- 1.5
+height <- 6
+ggsave("elecdemand.png", p$plot_regi, dpi=500, height = height , width = height * aspect_ratio)
+
+
+
 ```
 
 
@@ -634,13 +669,137 @@ return(p)
 demcapgdpcap_pf(dempkm_cap_all)
 ```
 
-## Focus on slected region
+## Focus on selected region
 
-## vintages
+
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 
-vintcomparison_regi_pf = function(dt, mapping_scens, rp){
+## only in case there are 10 scenarios (5 scenarios for each lifestyle realization) the following chunk of code is to be run
+if (length(unique(fleet_all$scenario)) == 10 & any(grepl("Wise", unique(fleet_all$scenario)))) {
+
+vintcomparison_regi_pf = function(dt, rp){
   dt = dt[year %in% c(2020, 2030, 2050) & region == rp]
+
+  ## define the maximum on the y-axis depending on the maximum value across scenarios
+  dt[, sum := sum(value), by = c("year", "scenario")]
+  dt[, maxval := max(sum)]
+  dthist = dt[year == 2020 & scenario == unique(dt$scenario)[1]][, scenario := "Historical"]
+  ## attribute "type" WiseWays and UsualUse and simplify scenario names
+  dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
+  dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+  dt[, scenario := gsub(".*_", "", scenario)]
+  dt[, scenario := gsub("Wise", "", scenario)]
+
+  ## select a random scenario for 2020 and attribute the label "Historical" (no value on the x axis)
+  phist_no_name = ggplot()+
+    geom_bar(data = dthist,
+             aes(x=scenario, y=value, group= technology,
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(dt[, maxval]))+
+    facet_wrap(~ year, nrow = 1)+
+    theme(axis.text.x = element_blank(),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"),
+          legend.position = "none")+
+    scale_fill_manual(values = cols)+
+    labs(y = "[million Veh]", x="")
+
+  ## historical plot, with name on the x axis
+  phist = phist_no_name+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1))
+
+
+  ## Usual Use scenarios (no names on the x-axis, as it's going to be the top row)
+  pnormal = ggplot()+
+    geom_bar(data = dt[year != 2020 & !grepl("Wise", type)],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(dt[, maxval]))+
+    facet_grid(type ~ year)+
+    theme(axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Powertrain"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "", x="")
+
+    ## WiseWays scenarios (names on the x-axis)
+    pwise = ggplot()+
+    geom_bar(data = dt[year != 2020 & grepl("Wise", type)],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(dt[, maxval]))+
+    facet_grid(type ~ year)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_blank(),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Powertrain"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "", x="")
+
+   ## get legend of plots
+   techlegend <- get_legend(pwise)
+
+   ## remove legend from plots
+   pwise = pwise +
+   theme(legend.position = "none")
+
+   pnormal = pnormal +
+   theme(legend.position = "none")
+
+   ## first row
+   plot1 = plot_grid(phist_no_name, pnormal, align = "h", ncol = 2, rel_widths = c(0.16,0.84))
+   ## second row
+   plot2 = plot_grid(phist, pwise, align = "h", ncol = 2, rel_widths = c(0.16,0.84))
+   ## both bar plots
+   plot3 = plot_grid(plot1, plot2, align = "v", ncol = 1, rel_heights = c(0.45,0.55))
+   ## create legend stacked with blank sqares to have it centered
+   blank <- grid.rect(gp=gpar(col="white"))
+   techlegend = plot_grid(blank, techlegend, blank, align = "h", ncol = 1, rel_heights  = c(0.05, 0.7,0.25))
+   ## combine all elements in final plot
+   plotvint = plot_grid(plot3, techlegend, align = "h", ncol = 2, rel_widths  = c(0.8,0.2))
+
+   return(plotvint)
+}
+
+p = vintcomparison_regi_pf(fleet_all, rp = regionplot)
+
+p
+
+
+aspect_ratio <- 1.5
+height <- 8
+ggsave("pvint.png", p, dpi=500, height = height , width = height * aspect_ratio)
+
+}
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+
+emisystemcomparison_regi_pf = function(dt, mapping_scens, rp){
+  dt = dt[year %in% c(2020, 2030, 2050) & region == rp]
+  ## calculate "liquids" without synfuels
+  dt_liq = dt[variable %in% c("Emi|CO2|Transport|Liquids|WithSynfuels", "Emi|CO2|Transport|Synfuels")]
+  dt_liq[, value := value[variable == "Emi|CO2|Transport|Liquids|WithSynfuels"]-value[variable == "Emi|CO2|Transport|Synfuels"], by = c("region", "year", "scenario")]
+  dt = rbind(dt[variable != "Emi|CO2|Transport|Liquids|WithSynfuels"], dt_liq[variable == "Emi|CO2|Transport|Liquids|WithSynfuels"][, variable := "Emi|CO2|Transport|Liquids"])
   ## apply more esthetic scenario names
   dt = merge(dt, mapping_scens, by = "scenario")
   ## if scenario name not available in the mapping, apply scenario extended name (e.g. NPi, Budget950... are not recorded in the mapping)
@@ -648,11 +807,14 @@ vintcomparison_regi_pf = function(dt, mapping_scens, rp){
   ## define the maximum on the y-axis depending on the maximum value across scenarios
   dt[, sum := sum(value), by = c("year", "scenario")]
   dt[, maxval := max(sum)]
+
+  ## attribute more synthetic names
+  dt[, variable := sub('.*\\|', '', variable)]
   ## select a random scenario for 2020 and attribute the label "Historical"
   p1 = ggplot()+
     geom_bar(data = dt[year == 2020 & scenario == unique(dt$scenario)[1]][, scen_name := "Historical"],
-             aes(x=scen_name, y=value, group= technology,
-                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+             aes(x=scen_name, y=value, group= variable,
+                 fill = variable, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
     theme_minimal()+
     ylim(0,unique(dt[, maxval]))+
     facet_wrap(~ year, nrow = 1)+
@@ -666,12 +828,12 @@ vintcomparison_regi_pf = function(dt, mapping_scens, rp){
           strip.background = element_rect(color = "grey"),
           legend.position = "none")+
     scale_fill_manual(values = cols)+
-    labs(y = "[million Veh]", x="")
-  
-  p2 = ggplot()+
+    labs(y = "[MtCO2]", x="")
+
+ p2 = ggplot()+
     geom_bar(data = dt[year != 2020],
-             aes(x=scen_name, y=value, group=interaction(variable, technology),
-                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+             aes(x=scen_name, y=value, group= variable,
+                 fill = variable, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
     theme_minimal()+
     ylim(0,unique(dt[, maxval]))+
     facet_wrap(~ year, nrow = 1)+
@@ -683,28 +845,32 @@ vintcomparison_regi_pf = function(dt, mapping_scens, rp){
           legend.text = element_text(size=14),
           strip.text = element_text(size=14),
           strip.background = element_rect(color = "grey"))+
-    guides(fill=guide_legend(title="Powertrain"))+
+    guides(fill=guide_legend(title="Emissions source"))+
     scale_fill_manual(values = cols)+
     labs(y = "", x="")
-  
+
   plot = plot_grid(p1, p2, align = "h", ncol = 2, rel_widths = c(0.15,0.85))
 
   return(plot)
+
 }
 
-p = vintcomparison_regi_pf(fleet_all, mapping_scens, rp = regionplot)
 
+
+p = emisystemcomparison_regi_pf(emisys_all, mapping_scens, rp = regionplot)
 p
-
 aspect_ratio <- 1.5
 height <- 6
-ggsave("pvint.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("emisys.png", p, dpi=500, height = height , width = height * aspect_ratio)
+
+
 ```
+
 
 ## Costs of LDVs by technology
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-costspf = function(dt, rp){  
+costspf = function(dt, rp, mapping_scens){
   dt = dt[region == rp]
   map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "Operating and maintenance"),
                    logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
@@ -712,14 +878,21 @@ costspf = function(dt, rp){
   dt = merge(dt, map, by = "logit_type")
   dt_inc = dt[type == "inc"]
   dt_inc = dt_inc[,.(cost = sum(cost)), by = c("region", "year", "type", "technology", "scenario")]
-  dt_tot = rbind(dt_inc[, c("name", "logit_type") := list("Inconvenience cost", "pinc")], dt[type == "real"]) 
+  dt_tot = rbind(dt_inc[, c("name", "logit_type") := list("Inconvenience cost", "pinc")], dt[type == "real"])
   dt[, name := factor(name, levels = legend_ord)]
   dt_tot[, name := factor(name, levels = legend_ord)]
-  dt_tot[, alph := ifelse(logit_type=="pinc", 0.6, 1)]
+  dt_tot[, alph := ifelse(logit_type=="pinc", 0.6, 0.9)]
+
+  dt = merge(dt, mapping_scens, by = "scenario")
+  dt[, scen_name := ifelse(is.na(scen_name), scenario, scen_name)]
+
+  dt_tot = merge(dt_tot, mapping_scens, by = "scenario")
+  dt_tot[, scen_name := ifelse(is.na(scen_name), scenario, scen_name)]
+
   plot1 = ggplot()+
          geom_bar(data = dt[type == "inc"], aes(x = year, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
 theme_minimal()+
-facet_grid(scenario~technology)+
+facet_grid(scen_name~technology)+
     theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
           axis.text.y = element_text(size=14),
           axis.title.y = element_text(size=14),
@@ -735,7 +908,7 @@ facet_grid(scenario~technology)+
   plot2 = ggplot()+
          geom_bar(data = dt_tot, aes(x = year, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
 theme_minimal()+
-facet_grid(scenario~technology)+
+facet_grid(scen_name~technology)+
     theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
           axis.text.y = element_text(size=14),
           axis.title.y = element_text(size=14),
@@ -746,23 +919,77 @@ facet_grid(scenario~technology)+
           strip.background = element_rect(color = "grey"))+
     scale_fill_manual(values = cols)+
     labs(y = "Costs [$/pkm]", x="")+
-      scale_alpha(range=c(0.4,1)) + 
+      scale_alpha(range=c(0.4,1)) +
   guides(alpha=FALSE, linetype=FALSE,
          fill=guide_legend(reverse=TRUE, title="Cost component"))
 
-plot = list(plot1 = plot1, plot2 = plot2)
+  if (length(unique(dt$scenario)) == 10) {
+    ## plot only UsualUse
+    plot3 = ggplot()+
+         geom_bar(data = dt[type == "inc" & year %in% c(2020, 2050)& !grepl(pattern = "Wise", scen_name)], aes(x = as.character(year), y = cost, group = name, fill = name), alpha = 0.9, position = "stack", stat = "identity")+
+theme_minimal()+
+facet_grid(scen_name~technology)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=12),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Cost component"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "Costs [$/pkm]", x="")
+
+  plot4 = ggplot()+
+         geom_bar(data = dt_tot[year %in% c(2020, 2050) & !grepl(pattern = "Wise",scen_name)], aes(x = as.character(year), y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
+theme_minimal()+
+facet_grid(scen_name~technology)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=12),
+          strip.background = element_rect(color = "grey"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "Costs [$/pkm]", x="")+
+      scale_alpha(range=c(0.4,1)) +
+  guides(alpha=FALSE, linetype=FALSE,
+         fill=guide_legend(reverse=TRUE, title="Cost component"))
+
+
+  plot = list(plot1 = plot1, plot2 = plot2, plot3 = plot3, plot4 = plot4)
+
+  }
+  else{
+    plot = list(plot1 = plot1, plot2 = plot2)
+  }
+
 
 return(plot)
 }
 
-p = costspf(costs_all, rp = regionplot)
+p = costspf(costs_all, rp = regionplot, mapping_scens)
 
-p
+p$plot1
+p$plot2
 
-aspect_ratio <- 1.5
-height <- 8
-ggsave("LDVinccost.png", p$plot1, dpi=500, height = height , width = height * aspect_ratio)
-ggsave("LDVtotcost.png", p$plot2, dpi=500, height = height , width = height * aspect_ratio)
+if (!is.null(p$plot3)) {
+
+  print(paste0("Focus on ", regionplot, " for Usual Use"))
+  p$plot3
+  p$plot4
+
+  aspect_ratio <- 2
+  height <- 6
+
+  ggsave("LDVinccost.png", p$plot3, dpi=500, height = height , width = height * aspect_ratio)
+  ggsave("LDVtotcost.png", p$plot4, dpi=500, height = height , width = height * aspect_ratio)
+
+}
+
 
 
 ```
@@ -810,22 +1037,22 @@ CO2km_int_regi_newsalespf = function(dt, rp){
   if (rp == "EUR"){
     ## add historical values
   historical_values = data.table(year = c(2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018), emi = c(159, 157, 145, 140, 137, 132, 128, 124, 120, 119, 119, 120))
-  
+
   targets = data.table(name = c("2021 target", "2025 target", "2030 target"), value = c(95, 95*(1-0.15), 95*(1-0.37)))
-  
-  dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "Normal"), by = c("region", "year", "scenario")]
+
+  dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
     dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
     dt[, scenario := gsub(".*_", "", scenario)]
     dt[, scenario := gsub("Wise", "", scenario)]
-  
+
    plot = ggplot()+
-    geom_line(data = dt[year >= 2020 & year <= 2050 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario, linetype = type))+
+    geom_line(data = dt[year >= 2020 & year <= 2050 & region == rp], aes(x = year, y = gCO2_km_ave, group = interaction(scenario, type), color = scenario, linetype = type))+
     geom_point(data = historical_values, aes(x = year, y = emi), color = "grey20")+
     geom_point(data = targets, aes(x = c(2021, 2025, 2030), y = value, shape = name), color = "grey20", alpha = 0.5, size = 2)+
     geom_text(data = targets, aes(y = value+5, x = c(2021, 2025, 2030), label = name), size = 5)+
-    labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
+    labs(y = expression(paste("[", gCO["2"], "/km]")), x = "")+
     expand_limits(y = c(0,1))+
-    scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
+    scale_x_continuous(breaks = c(2010, 2020, 2030, 2050, 2100))+
     theme_minimal()+
     theme(axis.text.x = element_text(angle = 90,  size = 14, vjust=0.5, hjust=1),
           axis.text.y = element_text(size = 14),
@@ -838,13 +1065,13 @@ CO2km_int_regi_newsalespf = function(dt, rp){
           axis.line = element_line(size = 0.5, colour = "grey"))+
     guides(shape = FALSE)+
     scale_color_manual("Scenario", values = cols)+
-    scale_linetype_manual("", values = c(1,2))
-  
+    scale_linetype_manual("Lifestyle", values = c(1,2))
+
   } else {
   ## historical values are not available
   plot = ggplot()+
     geom_line(data = dt[year >= 2020 & region == rp], aes(x = year, y = gCO2_km_ave, group = scenario, color = scenario))+
-    labs(title = expression(paste(CO["2"], " intensity of LDVs new additions")), y = expression(paste("[", gCO["2"], "/km]")), x = "")+
+    labs(y = expression(paste("[", gCO["2"], "/km]")), x = "")+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030, 2050, 2100))+
     theme_minimal()+
@@ -945,12 +1172,6 @@ pBus = plist[["plotBus"]]
 
 pTruck = plist[["plotTruck"]]
 
-aspect_ratio <- 1.5
-height <- 6
-ggsave("pLDV.png", pLDV, dpi=500, height = height , width = height * aspect_ratio)
-ggsave("pBus.png", pBus, dpi=500, height = height , width = height * aspect_ratio)
-ggsave("pTruck.png", pTruck, dpi=500, height = height , width = height * aspect_ratio)
-
 ```
 
 
@@ -978,7 +1199,7 @@ p = ggplot()+
         legend.text = element_text(size=7),
         strip.text = element_text(size=7))+
   labs(y = "Preference factor [-]", x="")+
-  scale_color_manual("Technology", values = cols,labels = c("Electric", "FCEV")) 
+  scale_color_manual("Technology", values = cols,labels = c("Electric", "FCEV"))+
   scale_linetype_manual("Vehicle", values = c(1,2),
                         labels = c("Large Trucks and Buses", "Small Trucks"))
 return(p)
@@ -991,5 +1212,184 @@ ggsave("buses_trucks_SW.png", p, dpi=500, height = height , width = height * asp
 
 ```
 
+## Investments in energy sources and energy costs
+
+```{r, echo=FALSE, warning=FALSE}
+investpf = function(dt, rp){
+## clean up scenario names
+  dt[, scenario := as.character(scenario)]
+dt[, type := ifelse(grepl("Wise",scenario), "WiseWays", "UsualUse"), by = c("region", "year", "scenario")]
+dt[, scenario := ifelse(grepl("NDC", scenario), "NDC", scenario)]
+dt[, scenario := gsub(".*_", "", scenario)]
+dt[, scenario := gsub("Wise", "", scenario)]
+
+inv = dt[variable %in% c("Energy Investments|Hydrogen", "Energy Investments|Electricity", "Energy Investments|Liquids", "Energy Investments|Gases")]
+## write fuel explicitly for investments
+inv[, technology := sub('.*\\|', '', variable)]
+encosts = dt[variable %in% c("Energy system costs")]
+
+plotinv = ggplot()+
+         geom_bar(data = inv[year %in% c(2020, 2030, 2050)], aes(x = as.character(year), y = value, group = technology, fill = technology), position = "stack", stat = "identity")+
+theme_minimal()+
+facet_grid(scenario~region)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=12),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Energy source"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "Investment [billion US$]", x="")
+
+plotencostregi = ggplot()+
+    geom_line(data = encosts[region == rp & year <= 2050 & year > 2020],
+             aes(x=year, y=value, group=interaction(scenario, type),
+                 color = scenario, linetype = type))+
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90, size=7, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=7),
+          axis.title.y = element_text(size=7),
+          title = element_text(size=7),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=7),
+          strip.text = element_text(size=7),
+          strip.background = element_rect(color = "grey"))+
+    labs(y = "Energy system costs [billion US$]", x="")+
+      scale_color_manual("Scenario", values = cols)+
+      scale_linetype_manual("Lifestyle", values = c(1,2))
 
 
+## only in case there are 10 scenarios (5 scenarios for each lifestyle realization) the following chunk of code is to be run
+if (length(unique(dt$scenario)) == 5 & length(unique(dt$type)) == 2){
+  ## filter only selected region and time step
+  inv = inv[region == rp & year %in% c(2020, 2030, 2050)]
+  ## define the maximum on the y-axis depending on the maximum value across scenarios
+  inv[, sum := sum(value), by = c("year", "scenario", "type")]
+  inv[, maxval := max(sum)]
+  invhist = inv[year == 2020 & scenario == unique(inv$scenario)[1] & type == unique(inv$type)[1]][, scenario := "Historical"]
+
+  ## select a random scenario for 2020 and attribute the label "Historical" (no value on the x axis)
+  phist_no_name = ggplot()+
+    geom_bar(data = invhist,
+             aes(x=scenario, y=value, group= technology,
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(inv[, maxval]))+
+    facet_wrap(~ year, nrow = 1)+
+    theme(axis.text.x = element_blank(),
+          axis.text.y = element_text(size=14),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"),
+          legend.position = "none")+
+    scale_fill_manual(values = cols)+
+    labs(y = "[billion US$]", x="")
+
+  ## historical plot, with name on the x axis
+  phist = phist_no_name+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1))
+
+
+  ## Usual Use scenarios (no names on the x-axis, as it's going to be the top row)
+  pnormal = ggplot()+
+    geom_bar(data = inv[year %in% c(2030, 2050) & !grepl("Wise", type)],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(inv[, maxval]))+
+    facet_grid(type ~ year)+
+    theme(axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Energy source"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "", x="")
+
+    ## WiseWays scenarios (names on the x-axis)
+    pwise = ggplot()+
+    geom_bar(data = inv[year %in% c(2030, 2050) & grepl("Wise", type)],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
+    theme_minimal()+
+    ylim(0,unique(inv[, maxval]))+
+    facet_grid(type ~ year)+
+    theme(axis.text.x = element_text(angle = 90, size=14, vjust=0.5, hjust=1),
+          axis.text.y = element_blank(),
+          axis.title.y = element_text(size=14),
+          title = element_text(size=14),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=14),
+          strip.text = element_text(size=14),
+          strip.background = element_rect(color = "grey"))+
+    guides(fill=guide_legend(title="Energy source"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "", x="")
+
+   ## get legend of plots
+   techlegend <- get_legend(pwise)
+
+   ## remove legend from plots
+   pwise = pwise +
+   theme(legend.position = "none")
+
+   pnormal = pnormal +
+   theme(legend.position = "none")
+
+   ## first row
+   plot1 = plot_grid(phist_no_name, pnormal, align = "h", ncol = 2, rel_widths = c(0.16,0.84))
+   ## second row
+   plot2 = plot_grid(phist, pwise, align = "h", ncol = 2, rel_widths = c(0.16,0.84))
+   ## both bar plots
+   plot3 = plot_grid(plot1, plot2, align = "v", ncol = 1, rel_heights = c(0.43,0.57))
+   ## create legend stacked with blank sqares to have it centered
+   blank <- grid.rect(gp=gpar(col="white"))
+   techlegend = plot_grid(blank, techlegend, blank, align = "h", ncol = 1, rel_heights  = c(0.05, 0.7,0.25))
+   ## combine all elements in final plot
+   plotinvreg = plot_grid(plot3, techlegend, align = "h", ncol = 2, rel_widths  = c(0.8,0.2))
+   plotlist = list(plotinvreg = plotinvreg, plotencostregi = plotencostregi, plotinv = plotinv)
+
+} else {
+ plotlist = list(plotencostregi = plotencostregi, plotinv = plotinv)
+}
+
+return(plotlist)
+
+}
+
+p = investpf(dt = invest_all, rp = regionplot)
+
+p$plotinv
+
+print(paste0("Focus on ", regionplot))
+p$plotencostregi
+
+aspect_ratio <- 2
+height <- 6
+
+ggsave("energycosts.png", p$plotencostregi, dpi=500, height = height , width = height * aspect_ratio)
+
+
+if (!is.null(p$plotinvreg)) {
+
+  p$plotinvreg
+
+  aspect_ratio <- 2
+  height <- 6
+
+  ggsave("invcosts.png", p$plotinvreg, dpi=500, height = height , width = height * aspect_ratio)
+
+}
+
+
+```

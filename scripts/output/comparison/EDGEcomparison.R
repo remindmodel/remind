@@ -47,9 +47,11 @@ EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 emipSource_all = NULL
 elecdem_all = NULL
+emisys_all = NULL
 costs_all = NULL
 pref_FV_all = NULL
 demgdpcap_all = NULL
+invest_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -343,6 +345,20 @@ elecdemFun = function(miffile){
 
 }
 
+emisystemFun = function(miffile){
+  emisys = miffile[variable %in% c("Emi|CO2|Transport|Synfuels", "Emi|CO2|Transport|Liquids|WithSynfuels", "Emi|CO2|Transport|Hydrogen", "Emi|CO2|Transport|Electricity", "Emi|CO2|Transport|Gases")]
+  emisys = emisys[region!="World" & year >= 2015 & year <= 2100]
+  emisys[, variable := as.character(variable)]
+  return(emisys)
+}
+
+investFun = function(miffile){
+  invest = miffile[variable %in% c("Energy Investments|Hydrogen", "Energy Investments|Electricity", "Energy Investments|Liquids", "Energy Investments|Gases", "Energy system costs")]
+  invest = invest[region!="World" & year >= 2015 & year <= 2100]
+  invest[, variable := as.character(variable)]
+  return(invest)
+}
+
 emipSourceFun = function(miffile){
   
   minyr <- 2015
@@ -591,10 +607,14 @@ for (outputdir in outputdirs) {
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
   elecdem = elecdemFun(miffile)
+  ## emissions from system
+  emisys = emisystemFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, EF_shares = EF_shares, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## per capita demand-gdp per capita
   demgdpcap = demgdpcap_Fun(demkm = demandkm, REMIND2ISO_MAPPING)
+  ## investments in different energy carriers
+  invest = investFun(miffile)
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
   salescomp[, scenario := unique(miffile$scenario)]
@@ -608,9 +628,11 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   emipSource[, scenario := as.character(unique(miffile$scenario))]
   elecdem[, scenario := as.character(unique(miffile$scenario))]
+  emisys[, scenario := as.character(unique(miffile$scenario))]
   costs[, scenario := as.character(unique(miffile$scenario))]
   pref_FV[, scenario := as.character(unique(miffile$scenario))]
   demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
+  invest[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
   fleet_all = rbind(fleet_all, fleet)
@@ -624,9 +646,11 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   emipSource_all = rbind(emipSource_all, emipSource)
   elecdem_all = rbind(elecdem_all, elecdem)
+  emisys_all = rbind(emisys_all, emisys)
   costs_all = rbind(costs_all, costs)
   pref_FV_all = rbind(pref_FV_all, pref_FV)
   demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
+  invest_all = rbind(invest_all, invest)
 }
 
 ## create string with date and time
@@ -650,9 +674,11 @@ saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 saveRDS(elecdem_all, paste0(outdir, "/elecdem_all.RDS"))
+saveRDS(emisys_all, paste0(outdir, "/emisys_all.RDS"))
 saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
 saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
 saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
+saveRDS(invest_all, paste0(outdir, "/invest_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
