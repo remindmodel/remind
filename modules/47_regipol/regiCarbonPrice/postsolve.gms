@@ -33,11 +33,11 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 			if(sameas(target_type,"budget"), !! budget total CO2 target
 				p47_emiCurrentETS(ETS_mkt) = 
 					sum(regi$ETS_regi(ETS_mkt,regi),
-						sum(t$((t.val ge 2020) AND (t.val le ttot.val)),
-							pm_ts(t)
+						sum(ttot2$((ttot2.val ge 2020) AND (ttot2.val le ttot.val)),
+							pm_ts(ttot2)
 ***						sum(t$((t.val ge 2020) AND (t.val le ttot.val)),
 ***							pm_ts(t) * (1 -0.5$(t.val eq 2020 OR t.val eq ttot.val))
-							*(v47_emiTargetMkt.l(t, regi,"ETS",emi_type)*sm_c_2_co2)
+							*(v47_emiTargetMkt.l(ttot2, regi,"ETS",emi_type)*sm_c_2_co2)
 					));		
 			elseif sameas(target_type,"year"), !! year total CO2 target
 				p47_emiCurrentETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), v47_emiTargetMkt.l(ttot, regi,"ETS", emi_type)*sm_c_2_co2);
@@ -236,9 +236,9 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 	if(sameas(target_type,"budget"), !! budget total CO2 target
 		p47_emissionsCurrent(ext_regi) =
 			sum(all_regi$regi_group(ext_regi,all_regi),
-				sum(t$((t.val ge 2020) AND (t.val le ttot.val)),
-					pm_ts(t) * (1 -0.5$(t.val eq 2020 OR t.val eq ttot.val))
-					*(v47_emiTarget.l(t, all_regi,emi_type)*sm_c_2_co2)
+				sum(ttot2$((ttot2.val ge 2020) AND (ttot2.val le ttot.val)),
+					pm_ts(tttot2) * (1 -0.5$(ttot2.val eq 2020 OR ttot2.val eq ttot.val))
+					*(v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2)
 			));		
 	elseif sameas(target_type,"year"), !! year total CO2 target
 		p47_emissionsCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l(ttot, all_regi,emi_type)*sm_c_2_co2);
@@ -251,9 +251,9 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 	if(sameas(target_type,"budget"), !! budget target
 		p47_emissionsCurrent(ext_regi) =
 			sum(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-				sum(t$((t.val ge 2020) AND (t.val le ttot.val)),
-					pm_ts(t) * (1 -0.5$(t.val eq 2020 OR t.val eq ttot.val))
-					*(v47_emiTarget.l(t, all_regi,emi_type)*sm_c_2_co2)
+				sum(ttot2$((ttot2.val ge 2020) AND (ttot2.val le ttot.val)),
+					pm_ts(ttot2) * (1 -0.5$(ttot2.val eq 2020 OR ttot2.val eq ttot.val))
+					*(v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2)
 			));
 	elseif sameas(target_type,"year"),
 		p47_emissionsCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l(ttot, all_regi,emi_type)*sm_c_2_co2); 
