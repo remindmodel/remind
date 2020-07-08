@@ -9,8 +9,8 @@
 *--------------------------------------------------------------------------
 ***         solveoptions
 *--------------------------------------------------------------------------
-option limcol    = 0;
-option limrow    = 0;
+option limcol    = 2147483647;
+option limrow    = 2147483647;
 hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;
