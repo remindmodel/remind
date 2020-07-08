@@ -237,7 +237,7 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 		p47_emissionsCurrent(ext_regi) =
 			sum(all_regi$regi_group(ext_regi,all_regi),
 				sum(ttot2$((ttot2.val ge 2020) AND (ttot2.val le ttot.val)),
-					pm_ts(tttot2) * (1 -0.5$(ttot2.val eq 2020 OR ttot2.val eq ttot.val))
+					pm_ts(ttot2) * (1 -0.5$(ttot2.val eq 2020 OR ttot2.val eq ttot.val))
 					*(v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2)
 			));		
 	elseif sameas(target_type,"year"), !! year total CO2 target
