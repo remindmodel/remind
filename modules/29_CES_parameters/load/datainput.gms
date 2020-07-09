@@ -19,6 +19,9 @@ $offdelim
   /
 ;
 
+if (cm_GDPcovid eq 1,
+   pm_cesdata("2020",all_regi,"lab","effgr") = 0.5 * (pm_cesdata ("2015",all_regi,"lab","effgr") + pm_cesdata ("2020",all_regi,"lab","effgr"));
+);
 
 option pm_cesdata:8:3:1;
 display "loaded pm_cesdata", pm_cesdata;

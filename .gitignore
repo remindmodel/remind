@@ -13,7 +13,7 @@
 
 # Ignore everything in "input" folders
 input/
-
+!modules/29_CES_parameters/load/input
 # Ignore everything in "output" folders
 output/
 
