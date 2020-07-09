@@ -11,6 +11,7 @@
 *--------------------------------------------------------------------------
 option limcol    = 2147483647;
 option limrow    = 2147483647;
+hybrid.tolinfeas = 1e-14;
 hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;

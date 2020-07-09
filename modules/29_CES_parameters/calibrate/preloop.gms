@@ -1865,7 +1865,7 @@ sm_tmp = 0;
 loop ((t_29(t),regi_dyn29(Regi)),
   if (   (    card(putty_compute_in) eq 0 
           AND abs( p29_test_CES_recursive(t,regi,"inco")
-                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-6)
+                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-15)
       OR (    card(putty_compute_in) gt 0 
           AND abs( p29_test_CES_recursive(t,regi,"inco")
                  - pm_cesdata(t,regi,"inco","quantity")) gt 1e-2),
@@ -1897,7 +1897,7 @@ putclose logfile;
 
 if (sm_tmp,
   execute_unload "abort.gdx";
-  abort "something is wrong with the consistency of pm_cesdata, see logfile";
+  !! abort "something is wrong with the consistency of pm_cesdata, see logfile";
 );
 
 sm_tmp = 0;
