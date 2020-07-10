@@ -11,7 +11,6 @@
 *--------------------------------------------------------------------------
 option limcol    = 2147483647;
 option limrow    = 2147483647;
-hybrid.tolinfeas = 1e-14;
 hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;
@@ -22,6 +21,14 @@ $IFI %optimization% == 'nash' option reslim = 7200;
 option iterlim   = 1.e+6;
 option solprint  = off ;
 o_modelstat      = 100;
+
+$ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
+$ifthen.subsectors "%industry%" == "subsectors"       !! industry
+!! Calibrating industry/subsectors lead to random infeasibilities on the order
+!! of 1e-15.  Relaxing this attribute a little solves this problem.
+hybrid.tolinfeas = 1e-14;
+$endif.subsectors
+$endif.calibrate
 
 ***-------------------------------------------------------------------
 ***                     read GDX

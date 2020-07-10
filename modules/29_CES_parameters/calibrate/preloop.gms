@@ -1441,28 +1441,6 @@ $endif.repEsubs
   );
 );
 
-$ontext
-!! recursively calculate all ipf quantities
-loop ((cesRev2cesIO(counter,out),cesOut2cesIn_below("ue_industry",ipf(out)))$( 
-                                                   NOT in_industry_dyn37(out) ),
-  pm_cesdata(t,regi_dyn29(regi),out,"quantity")
-  = sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"price")
-    * pm_cesdata(t,regi,in,"quantity")
-    );
-
-  !! extend parameters beyond t_29 at constant levels
-  loop ((t,t2(t_29hist))$( NOT t_29(t) AND ord(t_29hist) eq card(t_29hist) ),
-    pm_cesdata(t,regi_dyn29(regi),in,"xi")
-    = pm_cesdata(t2,regi,in,"xi");
-
-    pm_cesdata(t,regi_dyn29(regi),in,"eff")
-    = pm_cesdata(t2,regi,in,"eff");
-  );
-
-);
-$offtext
-
 ***_____________________________ END OF BEYOND CALIB ________________________________________
 
 ***_________ COMPUTE ELASTICITIES OF SUBSTITUTION _________
@@ -1870,12 +1848,12 @@ sm_tmp = 0;
 loop ((t_29(t),regi_dyn29(Regi)),
   if (   (    card(putty_compute_in) eq 0 
           AND abs( p29_test_CES_recursive(t,regi,"inco")
-                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-15)
+                 - pm_cesdata(t,regi,"inco","quantity")) gt 1e-6)
       OR (    card(putty_compute_in) gt 0 
           AND abs( p29_test_CES_recursive(t,regi,"inco")
                  - pm_cesdata(t,regi,"inco","quantity")) gt 1e-2),
 
-    put "consistency error failed for ", t.tl, ", ", regi.tl /;
+    put "consistency check failed for ", t.tl, ", ", regi.tl /;
     sm_tmp = 0;
     loop (cesLevel2cesIO(counter,ipf)$(    pm_cesdata(t,regi,ipf,"quantity") 
                                         ne p29_test_CES_recursive(t,regi,ipf) ),
