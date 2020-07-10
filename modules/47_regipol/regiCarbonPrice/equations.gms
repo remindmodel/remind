@@ -21,8 +21,8 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 	vm_emiAll(t,regi,"co2")
 	-
 	sum(se2fe(enty,enty2,te),
-		pm_emifac(ttot,regi,enty,enty2,te,"co2")
-		* vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
+		pm_emifac(t,regi,enty,enty2,te,"co2")
+		* vm_demFeSector(t,regi,enty,enty2,"trans","other")
 	)
 ;
 
