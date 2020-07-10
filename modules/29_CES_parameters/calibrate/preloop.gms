@@ -13,12 +13,6 @@ display "check sets production function 29", ces_29, in_29, ppf_29, ipf_29,
         ppf_beyondcalib_29, ipf_beyond_29;
 display "check starting pm_cesdata", pm_cesdata;
 
-file logfile /""/;
-
-logfile.lw =  0;
-logfile.nw = 15;
-logfile.nd =  9;
-
 *** Check if new structure flag is not set but should be
 $ifthen.check_structure %c_CES_calibration_new_structure% == "0"
 Execute_Load 'input'  ces2_29=cesOut2cesIn;
