@@ -8,7 +8,8 @@
 
 SETS
 	target_type "CO2 policy target type" / budget , year /
-	emi_type "emission type used in regional target" / netCO2, netGHG, grossFFaI /
+	
+	emi_type "emission type used in regional target" / netCO2, netCO2_noBunkers, netGHG, grossFFaI /
 
 	ETS_mkt "ETS market"
 	/

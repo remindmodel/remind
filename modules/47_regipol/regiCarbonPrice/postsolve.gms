@@ -63,7 +63,7 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 ***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2015) AND (t.val ge cm_startyear) AND (t.val le ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.05**(t.val-ttot.val); !! 2018 to 2055: increase at 5% p.a.
 			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2015) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) = pm_taxemiMkt("2015",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2015",regi,"ETS"))/(ttot.val-2015))*(t.val-2015); !!linear price between 2020 and ttot (ex. 2055)
 ***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.0125**(t.val-ttot.val); !! post 2055: increase at 1.25% p.a.
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS") + (2*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS") + (cm_ETS_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
 		);
 
 	);		
@@ -186,7 +186,7 @@ $IFTHEN.emiMktES2050 "%cm_emiMktES2050%" == "linear"
 
 ***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND (p47_emiTargetES("2030",regi) AND (t.val le 2050)) )  = pm_taxemiMkt("2030",regi,"ES") + (4*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
 ***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2050) AND (p47_emiTargetES("2030",regi)) ) = pm_taxemiMkt("2050",regi,"ES")*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
-		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) )  = pm_taxemiMkt("2030",regi,"ES") + (4*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) )  = pm_taxemiMkt("2030",regi,"ES") + (cm_ESD_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
 
 $ELSEIF.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 		
@@ -285,7 +285,7 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 			pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2050)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq("2050",all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(2050-ttot2.val))*(t.val-ttot2.val); !!linear price between first free year and 2050
 			);
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2050)  = p_pvpRegiBeforeStartYear("2015",all_regi,"perm") + ((pm_taxCO2eq("2050",all_regi) - p_pvpRegiBeforeStartYear("2015",all_regi,"perm"))/(2050-2015))*(t.val-2015); !!linear price between 2020 and 2050
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi) + (2*sm_DptCO2_2_TDpGtC)*(t.val-2050); !! post 2050: 2 €/tCO2 increase per year
+		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2050); !! post 2050: 2 €/tCO2 increase per year
 
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2051)  = pm_taxCO2eq("2050",all_regi)*1.05**(t.val-2050); !! 2020 to 2050: increase at 5% p.a.
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
@@ -305,7 +305,7 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 			pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2050)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq("2050",all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(2050-ttot2.val))*(t.val-ttot2.val); !!linear price between first free year and 2050
 			);
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2050)  = p_pvpRegiBeforeStartYear("2015",all_regi,"perm") + ((pm_taxCO2eq("2050",all_regi) - p_pvpRegiBeforeStartYear("2015",all_regi,"perm"))/(2050-2015))*(t.val-2015); !!linear price between 2020 and 2050
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi) + (2*sm_DptCO2_2_TDpGtC)*(t.val-2050); !! post 2050: 2 €/tCO2 increase per year
+		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2050); !! post 2050: 2 €/tCO2 increase per year
 
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2051)  = pm_taxCO2eq("2050",all_regi)*1.05**(t.val-2050); !! 2020 to 2050: increase at 5% p.a.
 ***		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.

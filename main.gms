@@ -274,6 +274,10 @@ c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
+cm_postTargetIncrease     "carbon price increase per year after target is reached (€/tCO2)"
+cm_ETS_postTargetIncrease "ETS carbon price increase per year after target is reached (€/tCO2)"
+cm_ESD_postTargetIncrease "ESD carbon price increase per year after target is reached (€/tCO2)"
+
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
@@ -381,16 +385,19 @@ c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
-$setGlobal cm_regiCO2target  off       !! def = off
-$setGlobal cm_quantity_regiCO2target  off       !! def = off
-cm_peakBudgYr                 = 2050;    !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
-cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
+$setGlobal cm_regiCO2target  off   !! def = off
+cm_postTargetIncrease    = 2;      !! def = 2
+$setGlobal cm_quantity_regiCO2target  off !! def = off
+cm_peakBudgYr            = 2050;   !! def = 2050
+cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
-$setGlobal cm_emiMktETS_type  off   !! def = off
-$setGlobal cm_emiMktES  off       !! def = off	
-$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
-$setGlobal cm_emiMktEScoop  off   !! def = off	
+$setGlobal cm_emiMktETS_type  off  !! def = off
+cm_ETS_postTargetIncrease = 2;     !! def = 2
+$setGlobal cm_emiMktES  off        !! def = off	
+$setGlobal cm_emiMktES_type netGHG !! def = netGHG	
+cm_ESD_postTargetIncrease = 4;     !! def = 4
+$setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
