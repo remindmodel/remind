@@ -42,6 +42,19 @@ q47_emiTarget_netGHG(t, regi)..
 	vm_co2eq(t,regi)
 ;
 
+q47_emiTarget_netGHG_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netGHG_noBunkers")
+	=e=
+	vm_co2eq(t,regi)
+	-
+	sum(se2fe(enty,enty2,te),
+		(
+		pm_emifac(t,regi,enty,enty2,te,"co2")
+		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*s_tgn_2_pgc
+		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*s_tgch4_2_pgc
+		) * vm_demFeSector(t,regi,enty,enty2,"trans","other")
+	)
+;
 
 ***$endIf.regicarbonprice
 
