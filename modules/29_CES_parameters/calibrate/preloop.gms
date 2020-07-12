@@ -345,7 +345,9 @@ loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020),
 loop (ttot$( ttot.val ge 2005),
   pm_cesdata(ttot,regi_dyn29(regi),in_29,"price")$( ppf_29(in_29) AND (NOT sameas(in_29,"entrp_frgt_lo")) )
   = max(
-    1e-2,
+    ( 1e-2$( NOT in_industry_dyn37(in_29) )
+    + 1e-4$(     in_industry_dyn37(in_29) )
+    ),
     pm_cesdata(ttot,regi,in_29,"price")
   );
 );
