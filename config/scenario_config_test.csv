@@ -1,0 +1,2 @@
+title;start;CES_parameters;c_CES_calibration_new_structure;regionmapping;cm_techcosts;cm_rcp_scen;cm_iterative_target_adj;c_budgetCO2;carbonprice;cm_co2_tax_2020;climate;optimization;c_testOneRegi_region;capitalMarket;buildings;cm_co2_tax_growth;cm_emiscen;techpol;cm_multigasscen;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
+test_EUR;1;load;0;./config/regionmappingH12.csv;REG;none;0;0;none;-1;off;testOneRegi;EUR;perfect;services_putty;1.05;1;none;2;2005;/p/tmp/levesque/Remind/github/output/Base_middle_lambda3_2020-03-23_16.52.32/fulldata.gdx;;
