@@ -250,11 +250,15 @@ $elseif "%cm_buildings_scen%" == "electrification"
 p36_costReduc(ttot,"te_ueshhpb") = 0.66;
 p36_costReduc(ttot,"te_uecwhpb") = 0.66;
 
-p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+$endif
+p36_costReduc(ttot,teEs) $ (
+                sameAs(teEs, "te_ueshhpb")
+                OR sameAs(teEs, "te_uecwhpb")
+                )
+      = 
       min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
       * ( 1 - p36_costReduc(ttot,teEs))
       + p36_costReduc(ttot,teEs) ;
-$endif
 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
