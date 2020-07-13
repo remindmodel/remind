@@ -55,6 +55,9 @@ p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for
 
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
+
+p36_aux_lifetime(all_te)                             "auxiliary parameter for calculating life times"
+p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 ;
 
 
@@ -62,23 +65,17 @@ Variables
 v36_floorspace_delta(tall,all_regi) "increase in floorspace, million m2"
 v36_putty_obj                       "index of the step by step variation of v36_floorspace_delta"
 
-$ontext
-v36_logitproba(tall,all_regi,all_enty,all_esty,all_teEs,all_in)  "Probability from the logit model that technology all_teEs will be taken (equivalent to share)"
-v36_beta(all_regi,all_in)          "logit parameter for homogeneity"
-v36_dummy                           "dummy variable"
-$offtext
+v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
+v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
 ;
 Equations
-q36_enerSerAdj(tall,all_regi,all_in) "adjustment costs for energy services" 
-q36_enerCoolAdj(tall,all_regi,all_in) "adjustment costs for energy cooling services" 
-q36_pathConstraint(tall,all_regi)  "equation describing the relation between a variable and its variation"
+q36_enerSerAdj(tall,all_regi,all_in)       "adjustment costs for energy services" 
+q36_enerCoolAdj(tall,all_regi,all_in)      "adjustment costs for energy cooling services" 
+q36_pathConstraint(tall,all_regi)          "equation describing the relation between a variable and its variation"
 q36_putty_obj                              "objective function"
 
-$ontext
-q36_logitProba(tall,all_regi,all_enty,all_esty,all_teEs,all_in) "computes the probability of technology teEs being chosen"
-q36_optimCondition(tall,all_regi,all_in) "condition following the maximization of the likelihood, ensuring v36_beta maximises the likelihood"
-q36_dummy                     "dummy equation"
-$offtext
+q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
+q36_cap(tall,all_regi,all_enty,all_esty,all_teEs,all_in)     "definition of available capacities"
 ;
 
 
