@@ -56,7 +56,7 @@ p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
 
-p36_aux_lifetime(all_te)                             "auxiliary parameter for calculating life times"
+p36_aux_lifetime(all_teEs)                             "auxiliary parameter for calculating life times"
 p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 ;
 
