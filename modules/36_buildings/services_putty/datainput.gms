@@ -227,6 +227,24 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
+*** Computation of omegs and opTimeYr2teEs for technology vintages
+p36_omegEs(regi,opTimeYr,teEs_dyn36(teEs)) = 0;
+
+loop(regi,
+        p36_aux_lifetime(teEs_dyn36(teEs)) = 5/4 * f36_datafecostsglob("lifetime",teEs);
+        loop(teEs_dyn36(teEs),
+
+                loop(opTimeYr,
+                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p_aux_lifetime(regi,teEs))**4 ;
+                        opTimeYr2teEs(teEs,opTimeYr)$(p36_omegEs(regi,opTimeYr,teEs) > 0 ) =  yes;
+                        if( p36_omegEs(regi,opTimeYr,teEs) <= 0,
+                                p36_omegEs(regi,opTimeYr,teEs) = 0;
+                                opTimeYr2teEs(teEs,opTimeYr) =  no;
+                        );
+                )
+        );
+);
+display opTimeYr2teEs, p36_omegEs , 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 

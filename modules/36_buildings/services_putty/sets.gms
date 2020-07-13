@@ -229,6 +229,8 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
  t36_hist(ttot) "historic time steps"
   t36_hist_last(ttot) "last historic time step"
   t36_scen(ttot) "non historical scenario time step"
+  
+  opTimeYr2teEs(all_teEs,opTimeYr)   "mapping for technologies to yearly lifetime - is filled automatically from the lifetime values of technologies"
 ;
 
 loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
