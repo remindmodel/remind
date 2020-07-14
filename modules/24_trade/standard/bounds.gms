@@ -96,8 +96,8 @@ loop( ttot$(ttot.val eq 2010 OR ttot.val eq 2015),
 );
 
 *** upper bound causes a infeasibility in REMIND-EU. Using national pe (even after Mports adjustment in trade module) is impossible due to the lack of reserves (vm_fuExtr maximum bound). The below lines relax the historical trade bounds to allow more imports fixing the issue. Alternatively, the model should approximate better national fossil reserves (compatibility of other sources with IEA data), adjust capacity factor variation between years (dot and refliq for oil; ... for coal), and/or better approximate historical capacities in 2005, 2010 and 2015.
-vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"FRA")) = 1.2 * pm_IO_trade("2015",regi,"peoil","Mport");
-vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"FRA")) = 0.8 * pm_IO_trade("2015",regi,"peoil","Xport");
+vm_Mport.up("2015",regi,"peoil")$(sameas(regi,"FRA")) = 1.3 * pm_IO_trade("2015",regi,"peoil","Mport");
+vm_Xport.lo("2015",regi,"peoil")$(sameas(regi,"FRA")) = 0.7 * pm_IO_trade("2015",regi,"peoil","Xport");
 
 vm_Mport.up("2010",regi,"peoil")$(sameas(regi,"ESW")) = 1.3 * pm_IO_trade("2010",regi,"peoil","Mport");
 vm_Xport.lo("2010",regi,"peoil")$(sameas(regi,"ESW")) = 0.7 * pm_IO_trade("2010",regi,"peoil","Xport");
