@@ -333,7 +333,7 @@ cm_CCS_cement          = 1;        !! def = 1
 cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
-$setglobal c37_secondary_steel_bound  none   !! def = "scenario"
+$setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0

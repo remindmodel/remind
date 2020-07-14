@@ -15,13 +15,13 @@ $endif.CES_parameters
 
 *** Include upper bounds on secondary steel production, due to scarcity of
 *** steel scrap.
-$ifthen.secondary_steel_bound "%c37_secondary_steel_bound%" == "yearly"
+$ifthen.secondary_steel_bound "%cm_secondary_steel_bound%" == "yearly"
 vm_cesIO.up(ttot,regi,"ue_steel_secondary")
   = min(
       vm_cesIO.up(ttot,regi,"ue_steel_secondary"),
       p37_cesIO_up_steel_secondary(ttot,regi,"%cm_GDPscen%")
     );
-$elseif.secondary_steel_bound "%c37_secondary_steel_bound%" == "scenario"
+$elseif.secondary_steel_bound "%cm_secondary_steel_bound%" == "scenario"
 if (1 eq cm_emiscen,
   !! In no-policy scenarios, tight bounds representing usual scrap recycling 
   !! rates apply.  Only 10% of the difference between projected secondary 

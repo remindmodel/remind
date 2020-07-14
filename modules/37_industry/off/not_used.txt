@@ -25,3 +25,7 @@ fm_dataemiglob,input,questionnaire
 pm_delta_kap,input,questionnaire
 pm_macCostSwitch,input,questionnaire
 sm_MtCH4_2_TWa,input,questionnaire
+cm_emiscen,switch,not needed
+pm_calibrate_eff_scale,parameter,not needed
+pm_ue_eff_target,parameter,not needed
+
