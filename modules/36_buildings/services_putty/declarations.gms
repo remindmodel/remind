@@ -77,7 +77,7 @@ q36_pathConstraint(tall,all_regi)          "equation describing the relation bet
 q36_putty_obj                              "objective function"
 
 q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
-q36_cap(tall,all_regi,all_enty,all_esty,all_teEs,all_in)     "definition of available capacities"
+q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"
 q36_vintage_obj                                              "objective function for vintage model"
 ;
 
