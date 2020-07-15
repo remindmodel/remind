@@ -44,6 +44,7 @@ ppf_29(all_in)
 *** FIXME should include set of "stationary" module, too
   = ppfen_dyn35(all_in)
   + cal_ppf_buildings_dyn36(all_in)
+  + cal_ppf_industry_dyn37(all_in)
   + industry_ue_calibration_target_dyn37(all_in)
 ;
 

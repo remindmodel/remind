@@ -209,9 +209,7 @@ Sets
   /
 
   cal_ppf_industry_dyn37(all_in)   "primary production factors for calibration - industry"
-  /
-!!    ue_cement, ue_chemicals, ue_steel_primary, ue_steel_secondary, ue_otherInd
-  /
+  /   /
 
   industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
   /
@@ -260,8 +258,6 @@ ppfen(ppfen_industry_dyn37)                   = YES;
 cesOut2cesIn(ces_industry_dyn37)              = YES;
 fe2ppfen(fe2ppfen37)                          = YES;
 fe_tax_sub_sbi(fe_tax_sub37) = YES;
-cal_ppf_industry_dyn37(ppfen_industry_dyn37)  = YES;
-cal_ppf_industry_dyn37(ppfkap_industry_dyn37) = YES;
 
 pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
 pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
