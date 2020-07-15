@@ -235,7 +235,7 @@ loop(regi,
         loop(teEs_dyn36(teEs),
 
                 loop(opTimeYr,
-                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p36_aux_lifetime(regi,teEs))**4 ;
+                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p36_aux_lifetime(teEs))**4 ;
                         opTimeYr2teEs(teEs,opTimeYr)$(p36_omegEs(regi,opTimeYr,teEs) > 0 ) =  yes;
                         if( p36_omegEs(regi,opTimeYr,teEs) <= 0,
                                 p36_omegEs(regi,opTimeYr,teEs) = 0;

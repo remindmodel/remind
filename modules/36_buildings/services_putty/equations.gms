@@ -67,12 +67,14 @@ q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
       
 q36_cap(ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)) $
                                   (t36_hist(ttot) ) ..
-   v36_prodEs(ttot,regi,enty,esty,teEs)
+   !!v36_prodEs(ttot,regi,enty,esty,teEs)
+   p36_prodEs(ttot,regi,enty,esty,teEs)
    =e=
    sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
                   pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
                 * p36_omegEs(regi,opTimeYr+1,teEs)
-                * v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
+                * (v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
+                   - v36_vintageInfes(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
             )
  !! half of the last time step ttot
         +  pm_dt(ttot)/2 
@@ -82,8 +84,8 @@ q36_cap(ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)) $
 q36_vintage_obj..
    v36_vintage_obj
    =e=
-   sum((ttot,regi,fe2ces_dyn36(enty,esty,teEs,in))$(
-                                t0(ttot)
+   sum((ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in))$(
+                                t36_hist(ttot)
                                 ),
                  sum(opTimeYr2teEs(teEs,opTimeYr)$(
                                           tsu2opTimeYr(ttot,opTimeYr)
@@ -94,7 +96,12 @@ q36_vintage_obj..
                      ,2
                      )
                  )
-       )          
+       )
+    + 
+    sum((ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)),
+       1000
+       * v36_vintageInfes(ttot,regi,enty,esty,teEs)
+       )    
    ;
 
 
