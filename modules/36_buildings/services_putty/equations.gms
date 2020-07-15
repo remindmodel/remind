@@ -82,8 +82,10 @@ q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
  !! half of the last time step ttot
         +  pm_dt(ttot)/2 
          * p36_omegEs(regi,"2",teEs)
-         * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
-   ;
+         * (v36_deltaProdEs(ttot,regi,enty,esty,teEs)
+            - v36_vintageInfes(ttot,regi,enty,esty,teEs)
+         )
+   ; 
 q36_vintage_obj..
    v36_vintage_obj
    =e=
@@ -99,11 +101,13 @@ q36_vintage_obj..
                      - v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
                      ,2
                      )
-                 )
-                 
-                 + 
+                     
+                     +
                      1000
-                     * v36_vintageInfes(ttot,regi,enty,esty,teEs)
+                     * v36_vintageInfes(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)),regi,enty,esty,teEs)
+                 )
+                 +   1000
+                     * v36_vintageInfes(ttot,regi,enty,esty,teEs)               
        )
       
    ;
