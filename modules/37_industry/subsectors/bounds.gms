@@ -29,13 +29,13 @@ if (1 eq cm_emiscen,
   !! available for increased production. 
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
-        / p29_fedemand(t,regi,"%cm_GDPscen%","ue_steel_secondary")
+        / pm_fedemand(t,regi,"%cm_GDPscen%","ue_steel_secondary")
         - 1
         )
       / 10
       + 1
       )
-    * p29_fedemand(t,regi,"%cm_GDPscen%","ue_steel_secondary");
+    * pm_fedemand(t,regi,"%cm_GDPscen%","ue_steel_secondary");
 else
   !! In policy scenarios, secondary steel production can be increased up to the 
   !! limit of theoretical scrap availability.

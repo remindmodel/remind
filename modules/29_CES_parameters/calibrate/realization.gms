@@ -58,7 +58,7 @@
 *'Strictly speaking, the price only have to be larger than 0, but the closer the prices are to the "real" ones, the faster the calibration will converge.
 *'It is therefore advisable to use the prices of some substitute energy carrier/service. The prices give the indication of the marginal cost of each input, and thus represent the economical constraint.
 *'
-*'The information on final energy quantities is stored in `./modules/29_CES_parameters/calibration/input/`, read in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `p29_fedemand` and loaded in `./modules/29_CES_parameters/calibration/input/` and transfered to `pm_cesdata(,,,"quantity")` in `./modules/29_CES_parameters/calibration/datainput.gms`
+*'The information on final energy quantities is stored in `./modules/29_CES_parameters/calibration/input/`, read in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `pm_fedemand` and loaded in `./modules/29_CES_parameters/calibration/input/` and transfered to `pm_cesdata(,,,"quantity")` in `./modules/29_CES_parameters/calibration/datainput.gms`
 *'The information on labour and GDP is stored and read somewhere else in the model in the parameters `p_lab` and `pm_gdp`, respectively.
 *'The information on capital quantities is stored in `./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r` and loaded in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `p29_capitalQuantity`.
 *'

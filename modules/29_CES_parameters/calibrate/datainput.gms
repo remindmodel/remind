@@ -148,7 +148,7 @@ putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
 
 *** End of Sets calculation
 Parameter
-p29_fedemand       "final energy demand"
+pm_fedemand       "final energy demand"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand.cs4r"
@@ -244,12 +244,12 @@ p29_capitalQuantity(tall,all_regi,all_GDPscen,"kap")
 
 *** Change EJ to TWa
 $ifthen.industry_subsectors "%industry%" == "subsectors"
-  p29_fedemand(tall,all_regi,all_GDPscen,all_in)$( 
+  pm_fedemand(tall,all_regi,all_GDPscen,all_in)$( 
                               NOT industry_ue_calibration_target_dyn37(all_in) )
-  = sm_EJ_2_TWa * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
+  = sm_EJ_2_TWa * pm_fedemand(tall,all_regi,all_GDPscen,all_in);
 $else.industry_subsectors
-  p29_fedemand(tall,all_regi,all_GDPscen,all_in)
-    = sm_EJ_2_TWa * p29_fedemand(tall,all_regi,all_GDPscen,all_in);
+  pm_fedemand(tall,all_regi,all_GDPscen,all_in)
+    = sm_EJ_2_TWa * pm_fedemand(tall,all_regi,all_GDPscen,all_in);
 $endif.industry_subsectors
 
 *** Change million m2.C to trillion m2.C
@@ -277,8 +277,8 @@ Execute_Loadpoint 'input' vm_deltacap;
 pm_cesdata(t,regi,"inco","quantity") = pm_gdp(t,regi);
 pm_cesdata(t,regi,"lab","quantity") = pm_lab(t,regi);
 *** Load exogenous FE trajectories
-pm_cesdata(t,regi,in,"quantity")$( p29_fedemand(t,regi,"%cm_GDPscen%",in) )
-  = p29_fedemand(t,regi,"%cm_GDPscen%",in);
+pm_cesdata(t,regi,in,"quantity")$( pm_fedemand(t,regi,"%cm_GDPscen%",in) )
+  = pm_fedemand(t,regi,"%cm_GDPscen%",in);
 
 *** Load exogenous ES trajectories
 pm_cesdata(t,regi,in,"quantity") $ p29_esdemand(t,regi,"%cm_GDPscen%",in) 

@@ -11,7 +11,7 @@
 $include "./modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
-Parameter p29_fedemand(tall,all_regi,all_GDPscen,all_in)   "final energy demand"
+Parameter pm_fedemand(tall,all_regi,all_GDPscen,all_in)   "final energy demand"
   /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_steel.cs4r"
