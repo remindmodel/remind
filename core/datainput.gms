@@ -721,7 +721,8 @@ display teEtaIncr;
 *** import regionalized CCS constraints:
 table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
 $ondelim
-$include "./core/input/pm_dataccs.cs3r"
+***$include "./core/input/pm_dataccs.cs3r"
+$include "./core/input/pm_dataccs_up.cs3r"
 $offdelim
 ;
 
