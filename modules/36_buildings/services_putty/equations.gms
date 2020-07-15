@@ -57,14 +57,16 @@ q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb") AND ttot.val ge max(2015, 
            )        
 ;         
 
-q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) ..
+q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
+                                  (t36_hist(ttot) ) ..
       p36_demUEtotal(ttot,regi,in)
       =e= 
       sum (fe2ces_dyn36(enty,esty,teEs,in),
         v36_prodEs(ttot,regi,enty,esty,teEs) 
       );
       
-q36_cap(ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)) ..
+q36_cap(ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)) $
+                                  (t36_hist(ttot) ) ..
    v36_prodEs(ttot,regi,enty,esty,teEs)
    =e=
    sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
@@ -77,4 +79,23 @@ q36_cap(ttot,regi_dyn36(regi),fe2ces_dyn36(enty,esty,teEs,in)) ..
          * p36_omegEs(regi,"2",teEs)
          * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
    ;
+q36_vintage_obj..
+   v36_vintage_obj
+   =e=
+   sum((ttot,regi,fe2ces_dyn36(enty,esty,teEs,in))$(
+                                t0(ttot)
+                                ),
+                 sum(opTimeYr2teEs(teEs,opTimeYr)$(
+                                          tsu2opTimeYr(ttot,opTimeYr)
+                                          ),
+                     power ( 
+                     v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)),regi,enty,esty,teEs)
+                     - v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
+                     ,2
+                     )
+                 )
+       )          
+   ;
+
+
 *** EOF ./modules/36_buildings/services_putty/equations.gms

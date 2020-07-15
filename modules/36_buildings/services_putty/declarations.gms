@@ -67,6 +67,7 @@ v36_putty_obj                       "index of the step by step variation of v36_
 
 v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
 v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
+v36_vintage_obj                                                           "objective variable for vintage model"
 ;
 Equations
 q36_enerSerAdj(tall,all_regi,all_in)       "adjustment costs for energy services" 
@@ -76,6 +77,7 @@ q36_putty_obj                              "objective function"
 
 q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
 q36_cap(tall,all_regi,all_enty,all_esty,all_teEs,all_in)     "definition of available capacities"
+q36_vintage_obj                                              "objective function for vintage model"
 ;
 
 
