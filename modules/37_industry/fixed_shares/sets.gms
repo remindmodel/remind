@@ -98,6 +98,10 @@ Sets
   fehei . fehei
   feeli . feeli
   /
+
+  !! empty sets from the subsectors realisation
+  industry_ue_calibration_target_dyn37(all_in)   /   /
+  ppfkap_industry_dyn37(all_in)   /   /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings

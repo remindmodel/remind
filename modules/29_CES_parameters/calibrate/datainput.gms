@@ -148,15 +148,6 @@ putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
 
 *** End of Sets calculation
 Parameter
-pm_fedemand       "final energy demand"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand.cs4r"
-*** FIXME include with moinput 
-$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_industry.cs4r"
-$offdelim
-/
-
 p29_cesdata_price   "exogenous final energy prices"
 /
 $ondelim
@@ -186,7 +177,9 @@ p29_efficiency_growth       "efficency growth for ppf beyond calibration"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth.cs4r"
+$ifthen "%industry%" == "subsectors"   !! industry
 $include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth_industry.cs4r"
+$endif
 $offdelim
 
 /
@@ -206,7 +199,9 @@ p29_capitalQuantity                    "capital quantities"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r"
+$ifthen "%industry%" == "subsectors"   !! industry
 $include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity_industry.cs4r"
+$endif
 $offdelim
 /
 ;

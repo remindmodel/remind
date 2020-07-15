@@ -161,6 +161,9 @@ p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capac
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
+/   /
+
+pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"

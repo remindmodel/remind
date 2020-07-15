@@ -266,8 +266,10 @@ cal_ppf_industry_dyn37(ppfkap_industry_dyn37) = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
 pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
 
+$ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
 pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37) = YES;
+$endif.calibrate
 
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);

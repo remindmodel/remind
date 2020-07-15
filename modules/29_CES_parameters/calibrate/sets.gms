@@ -36,7 +36,9 @@ Sets
   t_29_last(ttot) "last period of the calibration"
 
   pf_eff_target_dyn29(all_in)    "production factors with efficiency target"
+  /   /
   pf_quan_target_dyn29(all_in)   "production factors with quantity target"
+  /   /
   
   capUnitType  "Type of technological data: for investments or for the standing capital"
   /
