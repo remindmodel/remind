@@ -32,6 +32,21 @@ p36_floorspace_delta(ttot,regi_dyn36(regi)) $ v36_floorspace_delta.L(ttot,regi) 
 
 s36_switch_floor = 0;
 
+
+*** Vintage initialisation
+
+model vintage_36 /
+q36_ueTech2Total
+q36_cap
+q36_vintage_obj
+/;
+
+solve vintage_36 minimizing v36_vintage_obj using nlp;
+
+if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR pvintage_36.modelstat eq 2)),
+abort "model vintage_36 is infeasible";
+);
+
 *** The value of the capital price cannot be set in datainput as in calibration runs, pm_cesdata is computed in preloop.gms of module 29
 p36_kapPrice(t,regi_dyn36(regi)) = pm_cesdata(t,regi,"kap","price") - pm_delta_kap(regi,"kap"); 
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
