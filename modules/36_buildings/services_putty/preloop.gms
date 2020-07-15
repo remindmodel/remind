@@ -21,6 +21,11 @@ q36_putty_obj
 /;
 
 
+
+v36_prodEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs))      = 0;              
+v36_deltaProdEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
+v36_vintageInfes.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
+
 solve putty_paths_floor minimizing v36_putty_obj using nlp;
 
 if ( NOT ( putty_paths_floor.solvestat eq 1  AND (putty_paths_floor.modelstat eq 1 OR putty_paths_floor.modelstat eq 2)),
@@ -36,14 +41,14 @@ s36_switch_floor = 0;
 *** Vintage initialisation
 
 model vintage_36 /
-q36_ueTech2Total
+!!q36_ueTech2Total
 q36_cap
 q36_vintage_obj
 /;
 
 solve vintage_36 minimizing v36_vintage_obj using nlp;
 
-if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR pvintage_36.modelstat eq 2)),
+if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR vintage_36.modelstat eq 2)),
 abort "model vintage_36 is infeasible";
 );
 

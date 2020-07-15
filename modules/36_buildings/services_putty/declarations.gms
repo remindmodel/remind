@@ -67,6 +67,7 @@ v36_putty_obj                       "index of the step by step variation of v36_
 
 v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
 v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
+v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)               "slack variable to avoid infeasibilities in the initialisation of vintages"
 v36_vintage_obj                                                           "objective variable for vintage model"
 ;
 Equations
