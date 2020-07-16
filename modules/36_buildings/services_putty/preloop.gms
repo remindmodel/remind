@@ -51,6 +51,8 @@ if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR vintage_
 abort "model vintage_36 is infeasible";
 );
 
+p36_prodUEintern(t36_hist(ttot),regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
+
 *** The value of the capital price cannot be set in datainput as in calibration runs, pm_cesdata is computed in preloop.gms of module 29
 p36_kapPrice(t,regi_dyn36(regi)) = pm_cesdata(t,regi,"kap","price") - pm_delta_kap(regi,"kap"); 
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),

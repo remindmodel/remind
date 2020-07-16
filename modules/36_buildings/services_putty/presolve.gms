@@ -98,39 +98,15 @@ p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
       ;
 );      
 
-loop (ttot $ ( ( NOT t0(ttot)) AND pm_ttot_val(ttot) ge cm_startyear), 
 
-***Compute the production of UE from remaining from last period's equipment.
-p36_prodUEintern(ttot,regi_dyn36(regi),entyFe,esty,teEs) = (1 -p36_depreciationRate(teEs)) ** pm_dt(ttot) * p36_prodUEintern(ttot-1,regi,entyFe,esty,teEs);
-
-if (t36_hist(ttot),
-p36_prodUEintern(ttot,regi_dyn36(regi),entyFe,esty,teEs) = min (p36_prodUEintern(ttot,regi,entyFe,esty,teEs),
-                                                                 p36_prodEs(ttot,regi,entyFe,esty,teEs) );
-);
-*** Ensure for scenario periods that the some of the remaining equipment is lower than the demand in the next period
-if (t36_scen(ttot),
-    loop ((regi_dyn36(regi),inViaEs_dyn36(in)), 
-          if ( ( sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs)) gt (0.90 * p36_demUEtotal(ttot,regi,in))),
-              sm_tmp = 0.90 * p36_demUEtotal(ttot,regi,in)
-                       / sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs)) ;
-             loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-                   p36_prodUEintern(ttot,regi,entyFe,esty,teEs)  = sm_tmp * p36_prodUEintern(ttot,regi,entyFe,esty,teEs);
-             );
-          );
-    );
-);
-*** Compute the UE demand that is not covered by the remaining UE demand.
-p36_demUEdelta(ttot,regi_dyn36(regi),in) = p36_demUEtotal(ttot,regi,in) - sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs));
-
-*** For historical periods:
-if (t36_hist(ttot),
 *** Compute the share of UE for each technology that is needed to get the aggregate technological distribution observed
-loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) = (p36_prodEs(ttot,regi,entyFe,esty,teEs) 
-                                             - p36_prodUEintern(ttot,regi,entyFe,esty,teEs)
-                                             ) 
-                                             / (p36_demUEtotal(ttot,regi,in) 
-                                                 - sum ( fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),p36_prodUEintern(ttot,regi,entyFe2,esty2,teEs2)));
+loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
+p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) 
+               = p36_prodUEintern(ttot,regi,entyFe,esty,teEs)
+                 / sum ( fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),
+                         p36_prodUEintern(ttot,regi,entyFe2,esty2,teEs2)
+                        )
+                    ;
 
      loop (regi_dyn36(regi),
      if ( p36_shUeCesDelta(ttot,regi,entyFe,in,teEs) lt 0,
@@ -146,33 +122,36 @@ p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) = (p36_prodEs(ttot,regi,e
 );
 
 *** Compute the calibration factors for the historical periods
-loop (fe2ces_dyn36(entyFe,esty,teEs,in),
+loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
 p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ p36_shUeCesDelta(ttot,regi,entyFe,in,teEs) !! exclude shares which are zero
         =
-   (1/ (p36_logitLambda(regi,in))
+   (1 / (p36_logitLambda(regi,in))
     * log ( p36_shUeCesDelta(ttot,regi,entyFe,in,teEs))
     - p36_techCosts(ttot,regi,entyFe,esty,teEs)
    )
    -
-   (1 / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2),1) ) 
-   * sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2), !! exclude shares which are zero
-   1/ ( p36_logitLambda(regi,in))
-    * log ( p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2))
-    - p36_techCosts(ttot,regi,entyFe2,esty2,teEs2)
-   );
+   (1 
+   / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$ p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2),
+          1) 
+   ) 
+   * sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$ p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2), !! exclude shares which are zero
+          1 / ( p36_logitLambda(regi,in))
+           * log ( p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2))
+           - p36_techCosts(ttot,regi,entyFe2,esty2,teEs2)
+          );
 
 );
 
 *** For the last historical period, attribute the last historical value of the calibration parameter to the scenario periods
 *** The calibration factors are reduced towards 80% in the long term to represent the enhanced flexibility of the system
 *** Long lasting non-price barriers should preferably be represented through price mark-ups
-if ( t36_hist_last(ttot),
+loop ( t36_hist_last(ttot),
 
  p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( fe2es_dyn36(entyFe,esty,teEs)
                                                                  AND NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
   = 5;
 
-loop ( t36_scen(t2),
+  loop ( t36_scen(t2),
    
   p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ fe2es_dyn36(entyFe,esty,teEs)
    = min(max((2100 - pm_ttot_val(t2))/(2100 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2100
@@ -202,11 +181,10 @@ loop ( t36_scen(t2),
        ) 
      ;
      
-);
+  );
 ); 
-
-);
-
+abort "the end for now"
+$ontext
 *** Compute the UE shares delta based on the energy costs and calibration parameters.
 
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
@@ -248,7 +226,7 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
                                                     / sum( feteces_dyn36_2(entyFe2,teEs2,in),
                                                     p36_shUeCes(ttot,regi,entyFe2,in,teEs2))
                                                     ;
-
+$offtext
 
 *** Compute FE shares
 
@@ -258,6 +236,7 @@ p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                                          * p36_shUeCes(t,regi,entyFe2,in,teEs2))
                                                  * p36_shUeCes(t,regi,entyFe,in,teEs)
                                                  ;
+                                                 
 *** Pass on to core parameters
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 pm_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$( NOT t0(t)) = p36_shFeCes(t,regi,entyFe,in,teEs);
