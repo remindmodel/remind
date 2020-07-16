@@ -6,7 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_putty/declarations.gms
 Scalar
-s36_switch_floor "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid"
+s36_switch_floor  "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid"
+s36_vintage_calib "switch for the inclusion of vintage equations and restricting ttot to historical. It should exclude the equations from hybrid"
+s36_logit         "switch for the inclusion of vintage equations. It should exclude the equations from hybrid"
+
 ;
 Parameter
 p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2"
@@ -69,6 +72,7 @@ v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energ
 v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
 v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)               "slack variable to avoid infeasibilities in the initialisation of vintages"
 v36_vintage_obj                                                           "objective variable for vintage model"
+v36_shares_obj                                                            "objective variable for heterogeneity preferences"
 ;
 Equations
 q36_enerSerAdj(tall,all_regi,all_in)       "adjustment costs for energy services" 
@@ -79,6 +83,8 @@ q36_putty_obj                              "objective function"
 q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
 q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"
 q36_vintage_obj                                              "objective function for vintage model"
+
+q36_shares_obj                                         "objective function for logit shares: heterogeneity preferences"
 ;
 
 
