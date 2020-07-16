@@ -102,8 +102,65 @@ pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
+
+
+## hotfixes for WiseWays
+if(EDGE_scenario %in% c("ConvCaseWise", "ElecEraWise", "HydrHypeWise")){
+    #==== Create a dt with GDP, POP and GDP_cap with EDGE regions ====
+
+getRMNDGDPcap <- function(scenario="SSP2",
+                          yearcol="year",
+                          isocol="iso",
+                          valuecol="weight",
+                          usecache=F,
+                          gdpfile="GDPcache.rds"){
+
+  `.` <- iso <- value <- GDP_cap <- weight <- POP_val <- NULL
+
+  gdp <- getRMNDGDP(paste0("gdp_", scenario), usecache=T)
+  POP_country=calcOutput("Population", aggregate = F)[,, paste0("pop_", scenario)]
+  POP <- magpie2dt(POP_country, regioncol = "iso",
+                   yearcol = "year", datacols = "POP")
+  POP=POP[,.(iso,year,POP,POP_val=value)]
+  GDP_POP=merge(gdp,POP,all = TRUE,by=c("iso","year"))
+  GDP_POP[,GDP_cap:=weight/POP_val]
+
+  return(GDP_POP)
+}
+
+    GDP_POP = getRMNDGDPcap(usecache = TRUE)
+    #==== Load price and income elasticity ====
+    richcountries = unique(unique(GDP_POP[year == 2010 & GDP_cap > 25000, iso]))
+
+          ## Preference for Walking increases assuming that the infrastructure and the services are smarter closer etc.
+      pref_data$S3S_final_pref[subsector_L3 %in% c("Walk") & year >= 2020 & iso %in% richcountries,
+                               sw := sw[year==2020] + (10*sw[year==2020]-sw[year==2020]) * (year-2020) / (2100-2020), by = c("iso","subsector_L3")]
+      
+      ## Preference for Cycling sharply increases in rich countries assuming that the infrastructure and the services are smarter closer etc.
+      pref_data$S3S_final_pref[subsector_L3 %in% c("Cycle") & year >= 2020 & iso %in% richcountries,
+                               sw := sw[year==2020] + (50*sw[year==2020]-sw[year==2020]) * (year-2020) / (2100-2020), by = c("iso","subsector_L3")]
+      
+      ## Preference for Walking increases assuming that the infrastructure and the services are smarter closer etc.
+      pref_data$S3S_final_pref[subsector_L3 %in% c("Walk") & year >= 2020 & !(iso %in% richcountries),
+                           sw := sw[year==2020] + (2*sw[year==2020]-sw[year==2020]) * (year-2020) / (2100-2020), by = c("iso","subsector_L3")]
+      
+      ## Preference for Cycling sharply increases in rich countries assuming that the infrastructure and the services are smarter closer etc.
+      pref_data$S3S_final_pref[subsector_L3 %in% c("Cycle") & year >= 2020 & !(iso %in% richcountries),
+                           sw := sw[year==2020] + (10*sw[year==2020]-sw[year==2020]) * (year-2020) / (2100-2020), by = c("iso","subsector_L3")]
+      
+      ## IND has unstable market leading to very high domestic aviation:
+      ## Preference for domestic aviation halves by the end of the century for all countries
+      pref_data$S3S_final_pref[subsector_L3 %in% c("Domestic Aviation") & year >= 2020 & iso == "IND",
+                               sw := sw[year==2020] + (0.05*sw[year==2020]-sw[year==2020]) * (year-2020) / (2100-2020), by = c("iso","subsector_L3")]
+      
+      
+      ## The values of SWS have to be normalized again
+      pref_data$S3S_final_pref[, sw := sw/max(sw), 
+                         by = c("iso", "year", "sector")] 
+}
+
 ## optional average of prices
-average_prices = FALSE
+average_prices = TRUE
 
 ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
