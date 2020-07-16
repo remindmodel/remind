@@ -39,6 +39,7 @@ s36_switch_floor = 0;
 
 
 *** Vintage initialisation
+s36_vintage_calib = 1;
 
 model vintage_36 /
 !!q36_ueTech2Total
@@ -52,7 +53,18 @@ if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR vintage_
 abort "model vintage_36 is infeasible";
 );
 
-p36_prodUEintern(t36_hist(ttot),regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
+p36_prodUEintern(t36_hist(ttot),regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) 
+               = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
+
+s36_vintage_calib = 0;
+
+
+*** Define model for logit shares
+model logit_36 /
+q36_ueTech2Total
+q36_cap
+q36_shares_obj
+/
 
 *** The value of the capital price cannot be set in datainput as in calibration runs, pm_cesdata is computed in preloop.gms of module 29
 p36_kapPrice(t,regi_dyn36(regi)) = pm_cesdata(t,regi,"kap","price") - pm_delta_kap(regi,"kap"); 

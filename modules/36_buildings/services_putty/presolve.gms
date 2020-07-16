@@ -213,7 +213,11 @@ loop ( t36_hist_last(ttot),
      
   );
 ); 
-abort "the end for now"
+
+s36_logit = 1;
+solve logit_36 maximizing v36_shares_obj using nlp;
+s36_logit = 0;
+abort "the end for now" ;
 $ontext
 *** Compute the UE shares delta based on the energy costs and calibration parameters.
 
