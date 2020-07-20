@@ -245,7 +245,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     warning(msg)
   } else {
     # Replace REMIND and MAgPIE with REMIND-MAgPIE
-    gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
+    #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
     write.report(tmp3,file=paste0("output/",runname,".mif"))
   }
 }
