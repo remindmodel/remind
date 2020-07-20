@@ -64,7 +64,7 @@ q36_ueTech2Total
 q36_cap
 q36_shares_obj
 /
-
+;
 *** The value of the capital price cannot be set in datainput as in calibration runs, pm_cesdata is computed in preloop.gms of module 29
 p36_kapPrice(t,regi_dyn36(regi)) = pm_cesdata(t,regi,"kap","price") - pm_delta_kap(regi,"kap"); 
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),

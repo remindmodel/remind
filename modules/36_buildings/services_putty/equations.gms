@@ -66,8 +66,9 @@ q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
         v36_prodEs(ttot,regi,enty,esty,teEs) 
       );
       
+      
 q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
-                                  ( (s36_vintage_calib eq 1 AND t36_hist(ttot) )
+                            ( ((s36_vintage_calib eq 1) AND (t36_hist(ttot) ))
                                     OR (s36_logit eq 1) ) ..
    !!v36_prodEs(ttot,regi,enty,esty,teEs)
    p36_prodEs(ttot,regi,enty,esty,teEs)
@@ -118,11 +119,12 @@ q36_shares_obj $ (s36_logit eq 1)..
    =e=
    sum ((ttot,regi,in),
         sum ( fe2ces_dyn36(enty,esty,teEs,in),
-             - p36_logitCalibration(ttot,regi,entyFe,esty,teEs)
+             - p36_logitCalibration(ttot,regi,enty,esty,teEs)
              * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
              )
         + 1 / p36_logitLambda(regi,in)
-          * sum ( v36_deltaProdEs(ttot,regi,enty,esty,teEs)
+          * sum ( fe2ces_dyn36(enty,esty,teEs,in),
+                  v36_deltaProdEs(ttot,regi,enty,esty,teEs)
                   * log ( v36_deltaProdEs(ttot,regi,enty,esty,teEs)
                          / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),
                                 1)
