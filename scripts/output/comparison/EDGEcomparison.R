@@ -600,24 +600,30 @@ trspPEFun = function(gdx){
     fosSe[, valdem := valdem*sharetech/eff]
     fosSe = fosSe[,.(region, year, pe, value = valdem)]
 
-    ## electricity for transport in primary energy
-    elSe = merge(demElH2trpAll[,.(region, year, se = "seel", valdem = elh2)],
+    ## electricity for producing H2 for transport in primary energy
+    elH2Se = merge(demElH2trpAll[,.(region, year, se = "seel", valdem = elh2)],
                  prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-    elSe[, valdem := valdem*sharetech/eff]
-    elSe = elSe[,.(region, year, pe, value = valdem)]
+    elH2Se[, valdem := valdem*sharetech/eff]
+    elH2Se = elH2Se[,.(region, year, pe, value = valdem)]
 
     ## gases used directly to produce hydrogen
     shareH2TrspAll = shareH2Trsp[fe %in% c("feh2t", "fesynt")]
     shareH2TrspAll = shareH2TrspAll[,.(share=sum(share)), by = c("region", "year")]
     h2fosSe = merge(prodSe[se == "seh2" & pe != "seel"],
-                         shareH2TrspAll, by = c("region", "year"))
-    h2fosSe[, value :=value*share]
+                    shareH2TrspAll, by = c("region", "year"))
+    h2fosSe[, valuedem :=value*share/eff]
     h2fosSe = h2fosSe[,.(year,region, value, pe)]
+
+    ## electricity used in transport
+    elSe = merge(demSe[fe %in% c("feelt")][,.(region, year, valdem = value, fe, se)],
+                   prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
+    elSe[, valdem := valdem*sharetech/eff]
+    elSe = elSe[,.(region, year, pe, value = valdem)]
 
     ## missing: hydrogen to electricity to be used directly in transport
 
     ## merge all primary sources
-    allPE = rbind(h2fosSe, fosSe, elSe)
+    allPE = rbind(h2fosSe, fosSe, elH2Se, elSe)
 
     allPE[, pe_name := ifelse(pe == "pecoal", "Coal", NA)]
     allPE[, pe_name := ifelse(pe == "pegas", "Gas", pe_name)]
@@ -633,7 +639,7 @@ trspPEFun = function(gdx){
     ## summarise
     allPE = allPE[,.(value = sum(value)), by = .(region, year, pe_name)]
 
-return(allPE)
+    return(allPE)
 }
 
 
@@ -807,3 +813,12 @@ if (length(outputdirs) == 5 &
   rmarkdown::render(path(outdir, dash_template))
 }
 
+## If the scenarios are the 7 scenarios we would like to focus on, the paper-specific reporting is activated
+if (any(grepl("Budg1100_ElecEra$", unique(fleet_all$scenario))) &
+    any(grepl("Budg1100_ElecEraWise", unique(fleet_all$scenario))) &
+    any(grepl("Budg1100_ConvCase$", unique(fleet_all$scenario))) &
+    any(grepl("Budg1100_ConvCaseWise", unique(fleet_all$scenario))) &
+    any(grepl("NPi", unique(fleet_all$scenario)))) {
+  file.copy(file.path("./scripts/output/comparison/notebook_templates/PaperEDGE-Tplots.Rmd"), outdir)
+  rmarkdown::render(path(outdir, "PaperEDGE-Tplots.Rmd"), output_format="pdf_document")
+}

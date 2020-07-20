@@ -37,6 +37,7 @@ setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
           "Gases" = "#d11141",
+          "Gas" = "#d11141",
           "Coal" = "#113245",
           "Hydro" = "#87cefa",
           "Solar" = "#edae49",
@@ -416,7 +417,7 @@ trspPEpf = function(dt, rp, mapping){
    dt = dt[year >= 2020 & year <= 2050]
    dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_ICsyn", "Budg_FC", "Budg_BE", "Budg_IC-LS", "Budg_BE-LS"))]
    p = ggplot()+
-        geom_area(data = dt, aes(x = year, y = value, fill = fuel, group = fuel))+
+        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
   theme2use +
   labs(y = "Secondary energy [EJ]", x="")+
