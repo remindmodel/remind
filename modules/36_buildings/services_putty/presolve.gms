@@ -190,9 +190,10 @@ s36_logit = 0;
 
 
 *** Compute the aggregate UE shares
-p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ feteces_dyn36(entyFe,teEs,in) 
-                    =  v36_prodEs(ttot,regi,entyFe,esty,teEs)
-                        / p36_demUEtotal(ttot,regi,in);
+loop (fe2ces_dyn36(entyFe,esty,teEs,in),
+    p36_shUeCes(t,regi_dyn36(regi),entyFe,in,teEs)
+                        =  v36_prodEs.L(t,regi,entyFe,esty,teEs)
+                            / p36_demUEtotal(t,regi,in);
 );
 
 $ontext
