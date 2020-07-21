@@ -90,6 +90,15 @@ q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
          )
    ; 
    
+q36_budget(t36_scen(ttot),regi_dyn36(regi))..
+   v36_costs(ttot,regi)    
+   =e=
+   sum ( fe2ces_dyn36(enty,esty,teEs,in),
+        p36_techCosts(ttot,regi,entyFe,esty,teEs)
+        * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
+        )
+    ;    
+   
 q36_vintage_obj $  (s36_vintage_calib eq 1  ) ..
    v36_vintage_obj
    =e=
@@ -128,11 +137,21 @@ q36_shares_obj $ (s36_logit eq 1)..
           * sum ( fe2ces_dyn36(enty,esty,teEs,in),
                   v36_deltaProdEs(ttot,regi,enty,esty,teEs)
                   * log ( v36_deltaProdEs(ttot,regi,enty,esty,teEs)
-                         / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),
-                                1)
+                         / sum (fe2ces_dyn36_2(enty2,esty2,teEs2,in),
+                                v36_deltaProdEs(ttot,regi,enty2,esty2,teEs2))
                          )
                  )        
-        );  
+        )
+        
+      - sum ( (t36_scen(ttot),regi_dyn36(regi)),
+              v36_costs(ttot,regi)
+              ) 
+              
+      - sum ((ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs),
+             1000
+             * v36_vintageInfes(ttot,regi,enty,esty,teEs)
+            )
+    ;  
 
 
 *** EOF ./modules/36_buildings/services_putty/equations.gms

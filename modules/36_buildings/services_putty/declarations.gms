@@ -70,7 +70,8 @@ v36_putty_obj                       "index of the step by step variation of v36_
 
 v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
 v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
-v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)               "slack variable to avoid infeasibilities in the initialisation of vintages"
+v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)                "slack variable to avoid infeasibilities in the initialisation of vintages"
+v36_costs(ttot,all_regi)                                                  "technological costs"
 v36_vintage_obj                                                           "objective variable for vintage model"
 v36_shares_obj                                                            "objective variable for heterogeneity preferences"
 ;
@@ -82,6 +83,7 @@ q36_putty_obj                              "objective function"
 
 q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
 q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"
+q36_budget(tall,all_regi)                             "budget equation"
 q36_vintage_obj                                              "objective function for vintage model"
 
 q36_shares_obj                                         "objective function for logit shares: heterogeneity preferences"
