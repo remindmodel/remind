@@ -63,6 +63,7 @@ model logit_36 /
 q36_ueTech2Total
 q36_cap
 q36_shares_obj
+q36_budget
 /
 ;
 *** The value of the capital price cannot be set in datainput as in calibration runs, pm_cesdata is computed in preloop.gms of module 29

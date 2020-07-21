@@ -94,7 +94,7 @@ q36_budget(t36_scen(ttot),regi_dyn36(regi))..
    v36_costs(ttot,regi)    
    =e=
    sum ( fe2ces_dyn36(enty,esty,teEs,in),
-        p36_techCosts(ttot,regi,entyFe,esty,teEs)
+        p36_techCosts(ttot,regi,enty,esty,teEs)
         * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
         )
     ;    
@@ -147,7 +147,7 @@ q36_shares_obj $ (s36_logit eq 1)..
               v36_costs(ttot,regi)
               ) 
               
-      - sum ((ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs),
+      - sum ((ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)),
              1000
              * v36_vintageInfes(ttot,regi,enty,esty,teEs)
             )
