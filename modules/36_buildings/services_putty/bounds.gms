@@ -18,7 +18,9 @@ loop (t36_hist_last(ttot2) ,
 v36_deltaProdEs.fx(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $ (
              ttot.val le ttot2.val)  
              = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
-      );       
+      );
+v36_deltaProdEs.lo(t36_scen(ttot),regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) = 1e-9;  
+
 v36_vintageInfes.fx(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $(
   v36_vintageInfes.L(ttot,regi,enty,esty,teEs)) 
   = v36_vintageInfes.L(ttot,regi,enty,esty,teEs);

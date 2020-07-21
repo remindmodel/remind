@@ -59,7 +59,7 @@ q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb") AND ttot.val ge max(2015, 
 
 q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
                                   ( (s36_vintage_calib eq 1 AND t36_hist(ttot) )
-                                    OR (s36_logit eq 1) ) ..
+                                    OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
       p36_demUEtotal(ttot,regi,in)
       =e= 
       sum (fe2ces_dyn36(enty,esty,teEs,in),
@@ -69,9 +69,11 @@ q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
       
 q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
                             ( ((s36_vintage_calib eq 1) AND (t36_hist(ttot) ))
-                                    OR (s36_logit eq 1) ) ..
-   !!v36_prodEs(ttot,regi,enty,esty,teEs)
-   p36_prodEs(ttot,regi,enty,esty,teEs)
+                                    OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
+   
+   (v36_prodEs(ttot,regi,enty,esty,teEs) $ (s36_vintage_calib eq 0)
+   +  p36_prodEs(ttot,regi,enty,esty,teEs)$ (s36_vintage_calib eq 1)
+   )
    =e=
    sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
                   pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
@@ -117,7 +119,7 @@ q36_vintage_obj $  (s36_vintage_calib eq 1  ) ..
 q36_shares_obj $ (s36_logit eq 1)..
    v36_shares_obj
    =e=
-   sum ((ttot,regi,in),
+   sum ((t36_scen(ttot),regi_dyn36(regi),inViaEs_dyn36(in)),
         sum ( fe2ces_dyn36(enty,esty,teEs,in),
              - p36_logitCalibration(ttot,regi,enty,esty,teEs)
              * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
