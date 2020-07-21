@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_putty/declarations.gms
 Scalar
-s36_switch_floor  "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid"
-s36_vintage_calib "switch for the inclusion of vintage equations and restricting ttot to historical. It should exclude the equations from hybrid"
-s36_logit         "switch for the inclusion of vintage equations. It should exclude the equations from hybrid"
+s36_switch_floor  "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid" /0/,
+s36_vintage_calib "switch for the inclusion of vintage equations and restricting ttot to historical. It should exclude the equations from hybrid" /0/,
+s36_logit         "switch for the inclusion of vintage equations. It should exclude the equations from hybrid" /0/
 
 ;
 Parameter
