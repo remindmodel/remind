@@ -35,10 +35,21 @@ $ENDIF.proNucRegiPol
 $IFTHEN.CCSinvestment not "%cm_CCSRegiPol%" == "off" 
 
 * earliest investment in Europe, with one timestep split between countries currently exploring - Norway (NEN), Netherlands (EWN) and UK (UKI) - and others
-vm_deltaCap.up(t,regi,teCCS,rlf)$( (t.val le %cm_CCSRegiPol%) AND (sameas(regi,"NEN") OR sameas(regi,"EWN") OR sameas(regi,"UKI"))) = 1e-6; 
-vm_deltaCap.up(t,regi,teCCS,rlf)$( (t.val lt %cm_CCSRegiPol%) AND (regi_group("EUR_regi",regi)) AND (NOT(sameas(regi,"NEN") OR sameas(regi,"EWN") OR sameas(regi,"UKI")))) = 1e-6;
+vm_deltaCap.up(t,regi,teCCS,rlf)$( (t.val lt %cm_CCSRegiPol%) AND (sameas(regi,"NEN") OR sameas(regi,"EWN") OR sameas(regi,"UKI"))) = 1e-6; 
+vm_deltaCap.up(t,regi,teCCS,rlf)$( (t.val le %cm_CCSRegiPol%) AND (regi_group("EUR_regi",regi)) AND (NOT(sameas(regi,"NEN") OR sameas(regi,"EWN") OR sameas(regi,"UKI")))) = 1e-6;
 
 $ENDIF.CCSinvestment
+
+
+$IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off" 
+
+***UK Coal capacity phase-out
+    vm_capEarlyReti.up(ttot,regi,"pc")$(sameas(regi,"UKI")) = 1; !! allow early retirement for pc
+    vm_cap.fx("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
+    vm_cap.fx(t,regi,"pc","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"UKI"))) = 1E-6;
+
+$ENDIF.CoalRegiPol  
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
