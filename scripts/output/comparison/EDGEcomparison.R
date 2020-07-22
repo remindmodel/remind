@@ -567,24 +567,8 @@ trspPEFun = function(gdx){
     demSeLiqFos[, value := value*(1-sharesyn)]
     demSeLiqFos[, c("sec", "sharesyn") := NULL]
 
-    ## calculate the mix of production technologies to produce each secondary energy carrier
-    prodSe[, sharetech := value/sum(value), by = c("region", "year", "se")]
-    ## merge with conversion efficiency
-    prodSe = merge(prodSe, etaconv, by = c("region", "year", "te"))
-
-    ## "pure" hydrocarbons can come from liquids or be coal converted to liquids
-    demSeLiqFos = merge(demSeLiqFos[fe %in% c("fedie", "fepet")], prodSe[se == "seliqfos" & pe == "peoil"][, .(region, year, sharetech)], by = c("region", "year"))
-    demSeLiqFos[, value := value*sharetech]  ## liquids
-    demSeLiqFos = demSeLiqFos[,.(region, year, se, te, fe, value)]
-
-    demSeCoalFos = merge(demSeLiqFos[fe %in% c("fedie", "fepet")], prodSe[se == "seliqfos" & pe == "pecoal"][, .(region, year, sharetech)], by = c("region", "year"))
-    demSeCoalFos[, value := value*sharetech]  ## coal2liquids
-    demSeCoalFos[, fe := paste0(fe, "_coal")]
-    demSeCoalFos = demSeCoalFos[,.(region, year, se, te, fe, value)]
-
-
     ## substitute the aggregate seliqfos and the synfuels in hydrogen values from demSe with the newly calculated fesyn for transport and stationary and the fossil liquids
-    demSe = rbind(demSe[se != "seliqfos" & te != "MeOH"], demSeLiqFos, demSeCoalFos, demSeSyn[, c("sec", "te"):=list(NULL, "MeOH")])
+    demSe = rbind(demSe[se != "seliqfos" & te != "MeOH"], demSeLiqFos, demSeSyn[, c("sec", "te"):=list(NULL, "MeOH")])
 
     ## share of hydrogen used by sector (both directly and to produce synfuels, accounted for separately)
     shareH2Trsp = demSe[(se == "seh2" & fe %in% c("feh2s", "feh2t"))|(se == "seliqfos" & fe %in% c("fesynt",  "fesyns")), ]
@@ -603,6 +587,12 @@ trspPEFun = function(gdx){
     demElH2trp[, elh2 := elh2*share]
     demElH2trp[, c("share") := NULL]
     demElH2trpAll = demElH2trp[,.(elh2=sum(elh2)), by = c("region", "year")]
+
+
+    ## calculate the mix of production technologies to produce each secondary energy carrier
+    prodSe[, sharetech := value/sum(value), by = c("region", "year", "se")]
+    ## merge with conversion efficiency
+    prodSe = merge(prodSe, etaconv, by = c("region", "year", "te"))
 
     ## fossil SE carriers that follow a smooth path from primary fossils to fepet, fedie, fegat
     fosSe = merge(demSe[fe %in% c("fepet", "fedie", "fegat") & se != "seh2"][,.(region, year, fe, se, valdem = value)],
@@ -626,19 +616,14 @@ trspPEFun = function(gdx){
 
     ## electricity used in transport
     elSe = merge(demSe[fe %in% c("feelt")][,.(region, year, valdem = value, fe, se)],
-                 prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
+                   prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
     elSe[, valdem := valdem*sharetech/eff]
     elSe = elSe[,.(region, year, pe, value = valdem)]
-
-    ## coal2liquids
-    coalSe = merge(demSe[fe %in% c("fepet_coal", "fedie_coal")][,.(region, year, valdem = value, fe, se)], prodSe[pe == "pecoal" & te == "coalftrec"][,.(region, year, eff, pe)], by = c("region", "year"))
-    coalSe[, valdem := valdem/eff]
-    coalSe = coalSe[,.(region, year, pe, value = valdem)]
 
     ## missing: hydrogen to electricity to be used directly in transport
 
     ## merge all primary sources
-    allPE = rbind(h2fosSe, fosSe, elH2Se, elSe, coalSe)
+    allPE = rbind(h2fosSe, fosSe, elH2Se, elSe)
 
     allPE[, pe_name := ifelse(pe == "pecoal", "Coal", NA)]
     allPE[, pe_name := ifelse(pe == "pegas", "Gas", pe_name)]
