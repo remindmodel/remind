@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.944
 * 
-* Last modification (input data): Fri Jul 10 18:44:59 2020
+* Last modification (input data): Mon Jul 20 17:41:20 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -130,7 +130,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  EconWide-bdg50-DEU95
+$setGlobal c_expname  ref_FEmed
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -181,7 +181,7 @@ $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  on !! def = off
+$setglobal CCU  off !! def = off
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -189,7 +189,7 @@ $setglobal emicapregi  none           !! def = none
 ***---------------------    42_banking  -----------------------------------------
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
-$setglobal carbonprice  expoLinear          !! def = none
+$setglobal carbonprice  none          !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  regiCarbonPrice              !! def = none
 ***---------------------    50_damages    ---------------------------------------
@@ -309,9 +309,9 @@ c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 9;         !! def = 1
-$setglobal cm_rcp_scen  rcp26   !! def = "none"
-cm_co2_tax_2020   = 30;        !! def = -1
+cm_emiscen        = 1;         !! def = 1
+$setglobal cm_rcp_scen  none   !! def = "none"
+cm_co2_tax_2020   = -1;        !! def = -1
 cm_co2_tax_growth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
@@ -343,7 +343,7 @@ $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
-cm_startyear      = 2020;      !! def = 2005 for a BAU, 2015 for policy runs
+cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
@@ -373,7 +373,7 @@ c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
-cm_iterative_target_adj  = 5;      !! def = 0
+cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 $setglobal c_delayPolicy  SPA0           !! def = SPA0
@@ -384,8 +384,8 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 950;   !! def = 1300
-$setGlobal cm_regiCO2target  2050.EUR_regi.budget.netCO2 50, 2050.DEU.year.netGHG 0.06255   !! def = off
+c_budgetCO2              = 0;   !! def = 1300
+$setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
@@ -399,9 +399,10 @@ $setGlobal cm_emiMktES_type  off !! def = netGHG
 cm_ESD_postTargetIncrease = 4;     !! def = 4
 $setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2050	 off   !! def = off	
-$setGlobal cm_NucRegiPol	 on   !! def = off		
+$setGlobal cm_NucRegiPol	 on   !! def = off	
+$setGlobal cm_CoalRegiPol	 on   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
-$setGlobal cm_CCSRegiPol	 2020   !! def = off	
+$setGlobal cm_CCSRegiPol	 off   !! def = off	
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
