@@ -420,7 +420,7 @@ trspPEpf = function(dt, rp, mapping){
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
   theme2use +
-  labs(y = "Secondary energy [EJ]", x="")+
+  labs(y = "Primary energy [EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
   scale_x_continuous(breaks = c(2020, 2030, 2050))
 
