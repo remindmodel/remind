@@ -162,7 +162,8 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dtFE = dtFE[aggr_mode %in% c("LDV", "Pass non LDV")]
     dtFE = dtFE[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, scenario)]
     
-    dtEmi = dtEmi[region == rp & year >= 2015]
+    dtEmi = dtEmi[region == rp & year >= 2015 & variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand"),]
+    dtEmi = dtEmi[,.(value = sum(value)), by = c("region", "year", "scenario")]
     dtEmi = dtEmi[,.(year, region, scenario, emi = value)]
     
     dt = merge(dtFE, dtES, by = c("region", "year", "scenario"))

@@ -332,7 +332,7 @@ EJfuelsFun = function(demandEJ, FEliq_source){
 }
 
 emidemFun = function(miffile){
-  emidem = miffile[variable %in% c("Emi|CO2|Transport|Demand"),]
+  emidem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand","Emi|CO2|Transport|Freight|Short-Medium Distance|Demand", "Emi|CO2|Transport|Freight|Long Distance|Demand"),]
   return(emidem)
 }
 
@@ -666,11 +666,11 @@ for (outputdir in outputdirs) {
   miffile[, region := as.character(region)]
   miffile[, year := period]
   miffile[, period := NULL]
-  miffile = miffile[region != "World"]
-  
+  miffile = miffile[region != "World" & year >= 2015 & year <= 2100]
+  miffile[, variable := as.character(variable)]
   ## load gdx file
   gdx = paste0(outputdir, "/fulldata.gdx")
-  
+
   ## load RDS files
   sharesVS1 = readRDS(paste0(outputdir, "/EDGE-T/shares.RDS"))[["VS1_shares"]]
   newcomp = readRDS(paste0(outputdir, "/EDGE-T/newcomp.RDS"))
@@ -700,14 +700,13 @@ for (outputdir in outputdirs) {
   POP <- magpie2dt(POP_country, regioncol = "iso",
                    yearcol = "year", datacols = "POP")
   gdp <- getRMNDGDP(scenario = "gdp_SSP2", usecache = T)
-  
+
   ## select useful entries from mif file
   FEliq_source = miffile[variable %in% c("FE|Transport|Liquids|Biomass", "FE|Transport|Liquids|Hydrogen", "FE|Transport|Liquids|Coal", "FE|Transport|Liquids|Oil"),]
-  emidem = miffile[variable %in% c("Emi|CO2|Transport|Demand"),]
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source, gdp)
-  
-  
+
+
   ## calculate sales
   salescomp = SalesFun(shares_LDV, newcomp, sharesVS1)
   ## calculate fleet compositons
@@ -727,7 +726,7 @@ for (outputdir in outputdirs) {
   EJfuelsPass = EJfuels[["demandEJpass"]]
   EJfuelsFrgt = EJfuels[["demandEJfrgt"]]
   ## calculate demand emissions
-  emidem = emidemFun(emidem)
+  emidem = emidemFun(miffile)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
