@@ -1187,4 +1187,16 @@ loop(te,
 *** -------- initial declaration of parameters for iterative target adjustment
 o_reached_until2150pricepath(iteration) = 0;
 
+Parameter
+  pm_fedemand   "final energy demand"
+  /
+$ondelim
+$include "./core/input/pm_fe_demand.cs4r"
+$ifthen "%industry%" == "subsectors"   !! industry
+$include "./core/input/pm_fe_demand_industry.cs4r"
+$endif
+$offdelim
+  /
+;
+
 *** EOF ./core/datainput.gms
