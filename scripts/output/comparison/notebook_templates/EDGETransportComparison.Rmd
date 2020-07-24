@@ -443,9 +443,10 @@ EJfuels_pf(dt_p = EJpass_all, dt_f = EJfrgt_all)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 emidem_pf = function(dt){
  dt[, scenario := as.character(scenario)]
+ dt = dt[,.(value = sum(value)), by = c("region","year","scenario")]
   plot = ggplot()+
     geom_line(data = dt, aes(x = year, y = value, group = scenario, color = scenario))+
-    labs(x = "", y = "CO2 emissions [Mt/CO2]", title = "Emissions from transport demand")+
+    labs(x = "", y = "CO2 emissions [Mt/CO2]", title = "Emissions from transport demand (including biofuels)")+
     facet_grid(~region) +
     theme2use
 
