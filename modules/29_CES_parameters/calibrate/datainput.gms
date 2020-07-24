@@ -236,9 +236,9 @@ $endif
 ** Transport alternative FE trajectory 
 $ifthen.module "%transport%" == "complex"
 $if NOT "%cm_calibration_FE%" == "off" p29_fedemand(t,regi,"%cm_GDPscen%",ppfen_dyn35) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_dyn35);
-$elseif.module "%edge_esm%" == "high"
-$if "%cm_calibration_FE%" == "low"  p29_trpdemand(t,regi,"%cm_GDPscen%","Conservative_liquids",in) = p29_trpdemand(t,regi,"%cm_GDPscen%","Smart_lifestyles_Electricity_push",in);
-$if "%cm_calibration_FE%" == "high" p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in) = (1 + 0.1$(t.val ge 2025) + 0.2$(t.val ge 2030))*p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in);
+***$elseif.module "%edge_esm%" == "high"
+***$if "%cm_calibration_FE%" == "low"  p29_trpdemand(t,regi,"%cm_GDPscen%","Conservative_liquids",in) = p29_trpdemand(t,regi,"%cm_GDPscen%","Smart_lifestyles_Electricity_push",in);
+***$if "%cm_calibration_FE%" == "high" p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in) = (1 + 0.1$(t.val ge 2025) + 0.2$(t.val ge 2030))*p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in);
 $endif.module
 
 ** Industry alternative FE trajectory
