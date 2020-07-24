@@ -508,52 +508,80 @@ demcapgdpcap_pf = function(dt) {
 
 dt = dt[year >= 2005]
 dt = dt[, year := as.character(year)]
-ppass_sm = ggplot()+
-  geom_line(data = dt[sector == "trn_pass"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
-  geom_point(data = dt[sector == "trn_pass" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
-  facet_grid(scenario~sector) +
+dtsec = unique(dt[, c("region", "year", "demsec", "sector", "gdpcap", "scenario")])
+psec = ggplot()+
+  geom_line(data = dtsec, aes(x = gdpcap, y = demsec, color = region, group = region, linetype = scenario))+
+  geom_point(data = dtsec[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demsec, shape = year, group = region, color = region))+
+  facet_wrap(~sector, scales = "free") +
   theme2use +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size=7),
         title = element_text(size=8),
-        legend.text = element_text(size=8))+
-  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "Passenger short-medium")
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]")
 
-pfreigt_sm = ggplot()+
-  geom_line(data = dt[sector == "trn_freight"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
-  geom_point(data = dt[sector == "trn_freight" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+
+
+dtappl = unique(dt[, c("region", "year", "demappl", "appl", "gdpcap", "scenario")])
+pappl = ggplot()+
+  geom_line(data = dtappl, aes(x = gdpcap, y = demappl, color = region, group = region, linetype = scenario))+
+  geom_point(data = dtappl[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demappl, shape = year, group = region, color = region))+
+  facet_wrap(~appl, scales = "free") +
   theme2use +
-  facet_grid(scenario~sector)+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size=7),
         title = element_text(size=8),
-        legend.text = element_text(size=8))+
-  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "Freight short-medium")
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]")
 
 
-ppass_lo = ggplot()+
-  geom_line(data = dt[sector == "trn_aviation_intl"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
-  geom_point(data = dt[sector == "trn_aviation_intl" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+dttype = unique(dt[, c("region", "year", "demtype", "type", "gdpcap", "scenario")])
+ptype = ggplot()+
+  geom_line(data = dttype, aes(x = gdpcap, y = demtype, color = region, group = region, linetype = scenario))+
+  geom_point(data = dttype[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demtype, shape = year, group = region, color = region))+
+  facet_wrap(~type, scales = "free") +
   theme2use +
-  facet_grid(scenario~sector)+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size=7),
         title = element_text(size=8),
-        legend.text = element_text(size=8))+
-  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "International aviation")
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]")
 
-pfreigt_lo = ggplot()+
-  geom_line(data = dt[sector == "trn_shipping_intl"], aes(x = GDP_cap, y = demcap, color = region, group = region))+
-  geom_point(data = dt[sector == "trn_shipping_intl" & year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = GDP_cap, y = demcap, shape = year, group = region, color = region))+
+psectime = ggplot()+
+  geom_line(data = dtsec, aes(x = year, y = demsec, color = region, group = region, linetype = scenario))+
+  facet_wrap(~sector, scales = "free") +
   theme2use +
-  facet_grid(scenario~sector)+
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size=7),
         title = element_text(size=8),
-        legend.text = element_text(size=8))+
-  labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]", title = "International shipping")
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="")
 
-p = list(pfreigt_lo = pfreigt_lo, ppass_lo = ppass_lo, pfreigt_sm = pfreigt_sm, ppass_sm = ppass_sm)
+
+pappltime = ggplot()+
+  geom_line(data = dtappl, aes(x = year, y = demappl, color = region, group = region, linetype = scenario))+
+  facet_wrap(~appl, scales = "free") +
+  theme2use +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        title = element_text(size=8),
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="")
+
+
+ptypetime = ggplot()+
+  geom_line(data = dttype, aes(x = year, y = demtype, color = region, group = region, linetype = scenario))+
+  facet_wrap(~type, scales = "free") +
+  theme2use +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        title = element_text(size=8),
+        legend.title = element_text(size=10),
+        axis.title = element_text(size = 10))+
+  labs(y = "Per capita demand [km/capita]", x="")
+
+
+
+p = list(psec = psec, pappl = pappl, ptype = ptype, psectime = psectime, pappltime = pappltime, ptypetime = ptypetime)
 
 return(p)
 }

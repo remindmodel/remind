@@ -509,19 +509,51 @@ costscompFun = function(newcomp, sharesVS1,  EF_shares, pref_FV, capcost4Wall, c
 
 
 demgdpcap_Fun = function(demkm, REMIND2ISO_MAPPING) {
-GDP_POP = getRMNDGDPcap()
-GDP_POP = merge(GDP_POP, REMIND2ISO_MAPPING, by = "iso")
-GDP_POP = merge(GDP_POP, REMIND2ISO_MAPPING, by = "iso")
+  GDP_POP = getRMNDGDPcap()
+  GDP_POP = merge(GDP_POP, REMIND2ISO_MAPPING, by = "iso")
+  ## regional GDP cap
+  GDP_POP = GDP_POP[,.(GDP = sum(weight), POP = sum(POP_val)), by = c("region", "year")]
+  GDP_POP[, gdpcap := GDP/POP]
 
-demcap_gdp = merge(demkm, GDP_POP, by = c("iso", "year"))
-demcap_gdp = merge(demcap_gdp, REMIND2ISO_MAPPING, by = "iso")
-demcap_gdp = demcap_gdp[,.(dem = sum(demand_F), gdp = sum(weight), pop = sum(POP_val)), by = .(region, sector, year)]
-demcap_gdp[, GDP_cap := gdp/pop]
-demcap_gdp[, demcap := dem*    ## in trillion km
-                  1e+6/   ## in million km
-                  pop]    ## in million km/million people=pkm/person
 
-return(demcap_gdp)
+  demkm = merge(demkm, REMIND2ISO_MAPPING, by = "iso")
+  demkm = demkm[,.(demand_F = sum(demand_F)), by = c("region", "year", "sector", "subsector_L3", "subsector_L2", "subsector_L1")]
+  demcap_gdp = merge(demkm, GDP_POP, by = c("region", "year"))
+
+  ## define if land, water or air application
+  demcap_gdp[, appl := ifelse(subsector_L3 %in% c("Domestic Aviation", "International Aviation"), "Air", NA)]
+  demcap_gdp[, appl := ifelse(subsector_L3 %in% c("Domestic Ship", "International Ship"), "Marine", appl)]
+  demcap_gdp[, appl := ifelse(is.na(appl) & sector %in% c("trn_pass", "trn_aviation_intl"), "Land-Pass", appl)]
+  demcap_gdp[, appl := ifelse(is.na(appl) & sector %in% c("trn_freight", "trn_shipping_intl"), "Land-Freight", appl)]
+
+  ## define most disaggregated values to plot
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("Bus"), subsector_L2, NA)]
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("Domestic Aviation_tmp_subsector_L2", "International Aviation_tmp_subsector_L2"), "Aviation (international+domestic)", type)]
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("Domestic Ship_tmp_subsector_L2", "International Ship_tmp_subsector_L2"), "Shipping (international+domestic)", type)]
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("Passenger Rail_tmp_subsector_L2", "HSR_tmp_subsector_L2"), "Passenger Rail (normal+HSR)", type)]
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("trn_pass_road_bus"), "Bus", type)]
+  demcap_gdp[, type := ifelse(subsector_L2 %in% c("Freight Rail_tmp_subsector_L2", "Walk_tmp_subsector_L2", "Cycle_tmp_subsector_L2"), gsub("_tmp_subsector_L2","", subsector_L2), type)]
+  demcap_gdp[, type := ifelse(subsector_L2 == "trn_pass_road_LDV", "LDV", type)]
+  demcap_gdp[, type := ifelse(subsector_L2 == "trn_freight_road_tmp_subsector_L2", "Road freight", type)]
+
+  ## partial sums
+  demcap_gdp = demcap_gdp[, demsec := sum(demand_F), by = .(region, sector, year)]
+  demcap_gdp = demcap_gdp[, demappl := sum(demand_F), by = .(region, appl, year)]
+  demcap_gdp = demcap_gdp[, demtype := sum(demand_F), by = .(region, type, year)]
+
+  ## per capita values
+  demcap_gdp[, demsec := demsec/    ## in million km
+               POP]                 ## in million km/million people=pkm/person
+
+  demcap_gdp[, demappl := demappl/  ## in million km
+               POP]                 ## in million km/million people=pkm/person
+
+  demcap_gdp[, demtype := demtype/  ## in million km
+               POP]    ## in million km/million people=pkm/person
+
+  demcap_gdp = unique(demcap_gdp[, c("region", "year", "demsec", "demappl", "demtype", "appl", "type", "sector", "gdpcap")])
+
+  return(demcap_gdp)
 }
 
 
