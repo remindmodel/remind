@@ -109,6 +109,13 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+*** enable dumping information to the log
+file logfile /""/;
+
+logfile.lw =  0;
+logfile.nw = 15;
+logfile.nd =  9;
+
 *--------------------------------------------------------------------------
 ***           basic scenario choices
 *--------------------------------------------------------------------------
