@@ -8,5 +8,8 @@
 Parameters
 pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
 ;
+Equations
+q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
+;
 
 *** EOF ./modules/35_transport/edge_esm/declarations.gms
