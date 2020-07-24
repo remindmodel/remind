@@ -416,14 +416,27 @@ loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out)
 );
 display "compute putty" , pm_cesdata;
 
-v29_cesdata_putty.lo(t_29,regi_dyn29(regi),in)$putty_compute_in(in) = 1e-6;
-v29_cesdata_putty.L(t_29,regi_dyn29(regi),in)$putty_compute_in(in) =  pm_cesdata(t_29,regi,in,"quantity") / 30;
-v29_cesdata.l(t_29,regi_dyn29(regi),in)$putty_compute_in(in) =  pm_cesdata(t_29,regi,in,"quantity");
-v29_cesdata.lo(t_29,regi_dyn29(regi),in) = 0.90 * v29_cesdata.l(t_29,regi,in);
-v29_cesdata.up(t_29,regi_dyn29(regi),in) = 1.10 * v29_cesdata.l(t_29,regi,in);
-v29_cesdata.fx(t_29,regi_dyn29(regi),in)$(putty_compute_in(in) AND (sameAs(t_29,"2010") OR sameAs(t_29,"2005"))) =  pm_cesdata(t_29,regi,in,"quantity");
+v29_cesdata_putty.lo(t_29,regi_dyn29(regi),in) $ putty_compute_in(in) 
+   = 1e-6;
+v29_cesdata_putty.L(t_29,regi_dyn29(regi),in) $ putty_compute_in(in) 
+   =  pm_cesdata(t_29,regi,in,"quantity") 
+   / 30;
+v29_cesdata.l(t_29,regi_dyn29(regi),in) $ putty_compute_in(in) 
+   =  pm_cesdata(t_29,regi,in,"quantity");
+v29_cesdata.lo(t_29,regi_dyn29(regi),in) 
+   = 0.90 
+   * v29_cesdata.l(t_29,regi,in);
+v29_cesdata.up(t_29,regi_dyn29(regi),in) 
+   = 1.10 
+   * v29_cesdata.l(t_29,regi,in);
+v29_cesdata.fx(t_29,regi_dyn29(regi),in) $ (putty_compute_in(in) 
+                                            AND (sameAs(t_29,"2010") 
+                                                 OR sameAs(t_29,"2005")
+                                                 )
+                                            ) 
+   =  pm_cesdata(t_29,regi,in,"quantity");
 
-loop ((regi_dyn29(regi),cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(
+loop ((regi_dyn29(regi),cesOut2cesIn(out,in),cesOut2cesIn2(out,in2)) $ (
                                putty_compute_in(in) AND putty_compute_in(in2) ),
   v29_ratioTotalPutty.l(t_29,regi,out,in,in2)  =   1;
   v29_ratioTotalPutty.up(t_29,regi,out,in,in2) = 100;
@@ -438,37 +451,31 @@ q29_esubsConstraint
 
 solve putty_paths minimizing v29_putty_obj using nlp;
 
-if ( NOT (( putty_paths.solvestat eq 1  AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
-    OR   (putty_paths.solvestat eq 4    AND putty_paths.modelstat eq 7)),
+if ( NOT (( putty_paths.solvestat eq 1  
+            AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
+    OR   (putty_paths.solvestat eq 4    
+          AND putty_paths.modelstat eq 7)
+          ),
   execute_unload "abort.gdx";
   abort "model putty_paths is infeasible";
 );
 
-pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) = v29_cesdata_putty.L(t_29,regi,in);
+pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) 
+              = v29_cesdata_putty.L(t_29,regi,in);
 
 
 loop ( cesOut2cesIn_below(out,in)$putty_compute_in(out),
-pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") = v29_cesdata.L(t_29,regi,out)/pm_cesdata(t_29,regi,out,"quantity") * pm_cesdata(t_29,regi,in,"quantity");
-);
-pm_cesdata(t_29,regi_dyn29(regi),in,"quantity")$putty_compute_in(in) = v29_cesdata.L(t_29,regi,in);
-
-
-$ontext
-loop ((t,nests_putty(out,in))$ ( t0(t) AND putty_compute_in(in)),
-       pm_ratio_putty_quant(regi_dyn29(regi),out) = pm_cesdata_putty(t,regi,in,"quantity")
-                                        / pm_cesdata(t,regi,in,"quantity")
-       ;
+      pm_cesdata(t_29,regi_dyn29(regi),in,"quantity")
+               = v29_cesdata.L(t_29,regi,out)
+                / pm_cesdata(t_29,regi,out,"quantity") 
+                * pm_cesdata(t_29,regi,in,"quantity")
+                ;
 );
 
+pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in) 
+        = v29_cesdata.L(t_29,regi,in);
 
-loop (nests_putty(out,in),
-        pm_ratio_putty_quant(regi_dyn29(regi),in) = pm_ratio_putty_quant(regi,out)$pm_ratio_putty_quant(regi,out)
-                                 + pm_delta_kap(regi,in)$( NOT pm_ratio_putty_quant(regi,out))
-                                 ;
-);
 
-display "test ratio", pm_ratio_putty_quant;
-$offtext
 
 if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   put file_CES_calibration;
@@ -532,9 +539,13 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
     * pm_cesdata_putty(t,regi_dyn29,out,"quantity")
     );
 );
-
+--------------- BEGINNING OF SECTION ------------------
 *** Ensure that the share of labour is higher than 20% for historical periods
 *** Otherwise rescale prices and produce a message in the logfile
+
+sm_tmp  = 0;
+sm_tmp2 = 0;
+
 loop ((t_29hist(t),regi_dyn29),
   sm_tmp 
   = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
@@ -542,77 +553,109 @@ loop ((t_29hist(t),regi_dyn29),
     * pm_cesdata(t,regi_dyn29,in,"price")
     );
 
-$ontext
-  if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
-    pm_cesdata(t,regi_dyn29,ppf_29(in),"price")$( NOT (  sameAs(in, "lab") 
-                                                      OR in_complements(in)) )
-    = pm_cesdata(t,regi_dyn29,in,"price")
-    * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-    / sm_tmp;
-      
-    loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
-      pm_cesdata(t,regi_dyn29,in2,"price")
-      = pm_cesdata(t,regi_dyn29,in2,"price")
-      * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-      / sm_tmp;
-    );  
-      
-    put logfile;
-    put "---" /;
-    put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
-    put "ratio (en + kap) / inco = ";
-    put (sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity")) /;
-    put "---" /;
-    putclose;
-  );
-$offtext
+
+   if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
+     pm_cesdata(t,regi_dyn29,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
+                                                       OR in_complements(in)) )
+     = pm_cesdata(t,regi_dyn29,in,"price")
+     * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+     / sm_tmp;
+       
+     loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
+       pm_cesdata(t,regi_dyn29,in2,"price")
+       = pm_cesdata(t,regi_dyn29,in2,"price")
+       * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+       / sm_tmp;
+     );  
+       
+     put logfile;
+     put "---" /;
+     put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
+     put "ratio (en + kap) / inco = ";
+     put (sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity")) /;
+     put "---" /;
+     putclose;
+     
+     sm_tmp2 = sm_tmp2 + 1;
+     );
 );
-        !! Repeat previous steps with new prices
-        loop ( (ipf_29(out), cesRev2cesIO(counter,out)) $ (in_below_putty(out) OR ppf_putty(out)),
-        pm_cesdata(t_29,regi_dyn29,out, "quantity") = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
-                                      * pm_cesdata(t_29,regi_dyn29,in, "quantity"));
-        );
-        
-        solve putty_paths minimizing v29_putty_obj using nlp;
-        
-        if ( NOT (( putty_paths.solvestat eq 1  AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
-            OR   (putty_paths.solvestat eq 4    AND putty_paths.modelstat eq 7)),
-          execute_unload "abort.gdx";
-          abort "model putty_paths is infeasible";
-        );
-        
-        pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) = v29_cesdata_putty.L(t_29,regi,in);
-        
-        
-        loop ( cesOut2cesIn_below(out,in)$putty_compute_in(out),
-        pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") = v29_cesdata.L(t_29,regi,out)/pm_cesdata(t_29,regi,out,"quantity") * pm_cesdata(t_29,regi,in,"quantity");
-        );
-        pm_cesdata(t_29,regi_dyn29(regi),in,"quantity")$putty_compute_in(in) = v29_cesdata.L(t_29,regi,in);
-        
-        
-        loop  ((t_29,cesRev2cesIO(counter,out),ipf_29(out))$( NOT (sameas(out,"inco") OR in_below_putty(out) OR ppf_putty(out)) ),
-        
-        pm_cesdata(t_29,regi_dyn29,out, "quantity")$( NOT ipf_putty(out)) = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
-                                      * pm_cesdata(t_29,regi_dyn29,in, "quantity"));
-        pm_cesdata_putty(t_29,regi_dyn29,out, "quantity")$( ipf_putty(out)) = sum(cesOut2cesIn(out,in), pm_cesdata(t_29,regi_dyn29,in, "price")
-                                      * pm_cesdata_putty(t_29,regi_dyn29,in, "quantity"));
-        
-        
-        
-        pm_cesdata(t_29,regi_dyn29,out,"quantity")$ (( t0(t_29)) AND ppfIO_putty(out))
-                          =              !!compute the total for factors that are ppf in the CES and ipf in the putty. For the first period, we assume that pm_cesdata stays constant
-                            pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-                            / pm_delta_kap(regi_dyn29,out)
-        ;
-        
-        pm_cesdata(t_29,regi_dyn29,out,"quantity")$ (( NOT t0(t_29)) AND ppfIO_putty(out))
-                          =              !!compute the total for factors that are ppf in the CES and ipf in the putty
-                            pm_cesdata(t_29-1,regi_dyn29,out,"quantity")*(1- pm_delta_kap(regi_dyn29,out))**pm_dt(t_29)
-        	                 +  pm_cumDeprecFactor_old(t_29,regi_dyn29,out) * pm_cesdata_putty(t_29-1,regi_dyn29,out,"quantity")
-                             +  pm_cumDeprecFactor_new(t_29,regi_dyn29,out) * pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")
-        ;
-        
-        );
+
+  !! if there has been a rescaling for historical steps
+if ( sm_tmp2 lt 0,
+  !! Repeat previous steps with new prices
+  loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out) 
+                                      OR ppf_putty(out)      ),
+    pm_cesdata(t_29,regi_dyn29,out,"quantity") 
+    = sum(cesOut2cesIn(out,in),
+        pm_cesdata(t_29,regi_dyn29,in,"price")
+      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+      );
+  );
+   
+  solve putty_paths minimizing v29_putty_obj using nlp;
+
+
+  if ( NOT (( putty_paths.solvestat eq 1  
+              AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
+      OR   (putty_paths.solvestat eq 4    
+            AND putty_paths.modelstat eq 7)
+            ),
+    execute_unload "abort.gdx";
+    abort "model putty_paths is infeasible";
+  );
+
+  pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) 
+                = v29_cesdata_putty.L(t_29,regi,in);
+
+
+  loop ( cesOut2cesIn_below(out,in)$putty_compute_in(out),
+        pm_cesdata(t_29,regi_dyn29(regi),in,"quantity")
+                 = v29_cesdata.L(t_29,regi,out)
+                  / pm_cesdata(t_29,regi,out,"quantity") 
+                  * pm_cesdata(t_29,regi,in,"quantity")
+                  ;
+  );
+
+  pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in) 
+          = v29_cesdata.L(t_29,regi,in);
+   
+   
+  loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco") 
+                                                        OR in_below_putty(out) 
+                                                        OR ppf_putty(out))     ),
+    pm_cesdata(t,regi_dyn29,out,"quantity")$( NOT ipf_putty(out) ) 
+    = sum(cesOut2cesIn(out,in), 
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
+      );
+  
+    pm_cesdata_putty(t,regi_dyn29,out,"quantity")$( ipf_putty(out) )
+    = sum(cesOut2cesIn(out,in), 
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata_putty(t,regi_dyn29,in,"quantity")
+      );
+  
+    !! compute the total for factors that are ppf in the CES and ipf in the 
+    !! putty. For the first period, we assume that pm_cesdata stays constant
+    pm_cesdata(t,regi_dyn29,out,"quantity")$( t0(t) AND ppfIO_putty(out) )
+    = pm_cesdata_putty(t,regi_dyn29,out,"quantity")
+    / pm_delta_kap(regi_dyn29,out);
+  
+    !! compute the total for factors that are ppf in the CES and ipf in the putty
+    pm_cesdata(t,regi_dyn29,out,"quantity")$( 
+                                               NOT t0(t) AND ppfIO_putty(out) )
+    = ( pm_cesdata(t-1,regi_dyn29,out,"quantity")
+      * (1 - pm_delta_kap(regi_dyn29,out)) ** pm_dt(t)
+      )
+    + ( pm_cumDeprecFactor_old(t,regi_dyn29,out) 
+      * pm_cesdata_putty(t-1,regi_dyn29,out,"quantity")
+      )
+    + ( pm_cumDeprecFactor_new(t,regi_dyn29,out) 
+      * pm_cesdata_putty(t,regi_dyn29,out,"quantity")
+      );
+  );
+);
+
 
 *** Check if some quantities are negative.
 if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,in,"quantity")) lt 0,
