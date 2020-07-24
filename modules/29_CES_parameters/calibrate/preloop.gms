@@ -539,7 +539,7 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
     * pm_cesdata_putty(t,regi_dyn29,out,"quantity")
     );
 );
---------------- BEGINNING OF SECTION ------------------
+
 *** Ensure that the share of labour is higher than 20% for historical periods
 *** Otherwise rescale prices and produce a message in the logfile
 
@@ -724,7 +724,8 @@ pm_cesdata(t_29, regi_dyn29,"lab","price")
 
 *** Fourth, adjust eff and xi  of labour and energy so that the price matches the derivative.
 loop ((ces_29("inco",in))$( Not sameas(in, "kap")),
-pm_cesdata(t_29, regi_dyn29,in,"xi") = pm_cesdata(t_29, regi_dyn29,in,"price")*pm_cesdata(t_29, regi_dyn29,in,"quantity")
+pm_cesdata(t_29, regi_dyn29,in,"xi") = pm_cesdata(t_29, regi_dyn29,in,"price")
+                                       * pm_cesdata(t_29, regi_dyn29,in,"quantity")
                                     / pm_cesdata(t_29, regi_dyn29,"inco","quantity");
 pm_cesdata(t_29, regi_dyn29,in,"eff") = pm_cesdata(t_29, regi_dyn29,"inco","quantity")
                                      / pm_cesdata(t_29, regi_dyn29,in,"quantity");
@@ -1320,7 +1321,7 @@ loop ((t_29hist(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf(out))),
    ** pm_cesdata(t,regi,out,"rho")
     )
  ** (1 / pm_cesdata(t,regi,out,"rho"));
-);
+
 
 !! compute the total for factors that are ppf in the CES and ipf in the putty
 p29_test_CES_recursive(t0(t),regi,ppfIO_putty(out))
@@ -1352,6 +1353,7 @@ p29_test_CES_putty_recursive(t,regi_dyn29,ppf_putty(out))$( NOT t0(t) )
       * p29_test_CES_putty_recursive(t-1,regi_dyn29,out)
       )
     );
+);
 putclose logfile;
 
 display "consistency beyond 2", p29_test_CES_recursive, 
