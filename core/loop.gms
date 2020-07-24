@@ -154,18 +154,16 @@ if (o_modelstat le 2,
   !! retain gdxes of intermediate iterations by copying them using shell
   !! commands
   if (c_keep_iteration_gdxes eq 1,
-    put_utility logfile, "shell" / 
-      "printf '%03i\n'" iteration.val:0:0
-      "| sed 's/\(.*\)/fulldata.gdx fulldata_\1.gdx/'"
-      "| xargs -n 2 cp"
+    put_utility "shell" / "printf '%03i\n'" iteration.val:0:0
+                          "| sed 's/\(.*\)/fulldata.gdx fulldata_\1.gdx/'"
+                          "| xargs -n 2 cp"
   );
 else
   execute_unload 'non_optimal';
   if (c_keep_iteration_gdxes eq 1,
-    put_utility logfile, "shell" / 
-      "printf '%03i\n'" iteration.val:0:0
-      "| sed 's/\(.*\)/non_optimal.gdx non_optimal_\1.gdx/'"
-      "| xargs -n 2 cp"
+    put_utility "shell" / "printf '%03i\n'" iteration.val:0:0
+                          "| sed 's/\(.*\)/non_optimal.gdx non_optimal_\1.gdx/'"
+                          "| xargs -n 2 cp"
   );
 );
 
