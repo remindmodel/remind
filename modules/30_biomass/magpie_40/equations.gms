@@ -110,6 +110,12 @@ q30_limitXpBio(t,regi)..
          vm_fuExtr(t,regi,"pebiolc","1")
 ;
 
+*** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
+q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
+        sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
+        =l=
+        0.5 * p30_demPe(t,regi);
+
 *** FS: limit energy crop production after 2030 to cm_bioprod_histlim * 2015-level in a region in regi_sensscen
 q30_limitProdtoHist(t,regi_sensscen)$(cm_bioprod_histlim ge 0)..
          vm_fuExtr(t,regi_sensscen,"pebiolc","1")$(t.val ge 2030)

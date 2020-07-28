@@ -279,7 +279,7 @@ all_enty             "all types of quantities"
         all_sega	 "all to SE gas" 
 		segabio      "SE gas from biomass"
 		segafos      "SE gas from fossil pe"
-        sehe         "SE district heating nd heat pumps"
+        sehe         "SE district heating and heat pumps"
         fegas        "FE gas stationary"
         fegab
         fegai
@@ -633,16 +633,6 @@ all_teEs                 "energy service technologies"
 teEs(all_teEs)           "ES technologies which are actually used (to be filled by module realizations)."
 //
 
-EDGE_scenario_all    "EDGE scenarios"
-/
-Conservative_liquids
-Hydrogen_push
-Electricity_push
-Smart_lifestyles
-Smart_lifestyles_Electricity_push
-/
-
-EDGE_scenario(EDGE_scenario_all)
 ;
 
 ***-----------------------------------------------------------------------------
@@ -1431,7 +1421,7 @@ enty(all_enty)       "all types of quantities"
         seh2         "secondary energy hydrogen"
         segabio      "secondary energy gas from biomass"
 		segafos      "secondary energy gas from fossil primary energy"
-        sehe         "secondary energy district heating nd heat pumps"
+        sehe         "secondary energy district heating and heat pumps"
         fegas        "final energy gas stationary"
         fehos        "final energy heating oil stationary"
         fesos        "final energy solids stationary"

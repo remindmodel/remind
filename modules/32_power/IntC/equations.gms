@@ -55,20 +55,25 @@ q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
 		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
 ;
 
-*** build additional h2 to seel capacities to use stored hydrogen
-*** FS: switch off, if flexible technology discount on, as VRE benefit of H2 production is then emulated by a reduction of capital cost
-q32_h2turbVREcapfromTestor(t,regi)$(cm_flex_tax ne 1)..
-  vm_cap(t,regi,"h2turbVRE","1") 
-  =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
-;
+
+*** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
+*** represent H2 storage. This is implemented by automatically scaling up capacities of 
+*** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
+*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+
 
 *** build additional electrolysis capacities with stored VRE electricity
-*** FS: switch off, if flexible technology discount on, as VRE benefit of H2 production is then emulated by a reduction of capital cost
-q32_elh2VREcapfromTestor(t,regi)$(cm_flex_tax ne 1)..
+q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2VRE","1") 
   =e= 
   sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+;
+
+*** build additional h2 to seel capacities to use stored hydrogen
+q32_h2turbVREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"h2turbVRE","1") 
+  =e= 
+  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 

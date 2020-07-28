@@ -602,6 +602,11 @@ display p_efFossilFuelExtr;
 pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
 
+*** allow for slightly higher geothermal electricity to avoid INFES (EDGE_transport)
+$ifthen.edgesm %transport% ==  "edge_esm"
+  pm_dataren(regi,"maxprod","1","geohdr")$(regi_group("EUR_regi",regi)) = 1.01*pm_dataren(regi,"maxprod","1","geohdr");
+$endif.edgesm
+
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
@@ -716,7 +721,8 @@ display teEtaIncr;
 *** import regionalized CCS constraints:
 table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
 $ondelim
-$include "./core/input/pm_dataccs.cs3r"
+***$include "./core/input/pm_dataccs.cs3r"
+$include "./core/input/pm_dataccs_up.cs3r"
 $offdelim
 ;
 
@@ -1165,7 +1171,6 @@ pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (s
 pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

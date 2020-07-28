@@ -2,7 +2,7 @@ Documentation of the new procedure of starting REMIND runs (DK, LB, January 2020
 
 Why did we redesign the procedure?
 
-The old code was spread across more files, the user needed to edit files in order to provide the SLURM options, and a substantial part of the code was run on the login node before finally submiting the job to SLURM. The new structure lets the user choose the SLURM options interactively when starting the runs. The amount of code that is executed on the login node was minimized. Most of the work load that is required to set up a run is included in the SLURM batch job. Finally, the code is strucutred more clearly and spread across less files.
+The old code was spread across many files, the user needed to edit files in order to provide the SLURM options, and a substantial part of the code was run on the login node before finally submiting the job to SLURM. The new structure lets the user choose the SLURM options interactively when starting the runs. The amount of code that is executed on the login node was minimized. Most of the work load that is required to set up a run is included in the SLURM batch job. Finally, the code is strucutred more clearly and spread across less files.
 
 To start a run type in the main directory of REMIND:
 

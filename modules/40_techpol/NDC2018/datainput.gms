@@ -16,10 +16,9 @@ $offdelim
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
-*** FS: if cm_synfuelscen >= 2 -> biomass limited after 2030, 
-*** switch-off biomass capacity bounds to avoid infeasibility
-
-if (cm_synfuelscen ge 2,
+*** FS: in scenario with limited energy crop production, 
+*** switch-off biomass capacity targets of NDC 
+if (cm_bioprod_histlim ge 0,
   p40_ElecBioBound(t,regi) = 0;
   );
 

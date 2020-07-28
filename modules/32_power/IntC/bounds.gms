@@ -18,14 +18,6 @@ if ( cm_bioprod_histlim ge 0,
 	vm_capFac.lo(t,regi_sensscen,teBioPebiolc)$(t.val ge 2030) = 0;
 );
 
-
-*** FS: synfuelscen 1 or larger, for RE H2 production: 
-*** double efficiency of elh2 (see module 05)
-*** decrease CapFac to 0.5
-if ( cm_synfuelscen ge 1,
-	vm_capFac.fx(t,regi_sensscen,"elh2")$(t.val ge 2030) = 0.5;
-);
-
 *** FS: if flexibility tax on
 *** decrease capacity factor of electrolysis to 0.5
 *** as capacities run on lower-than-average electricity price

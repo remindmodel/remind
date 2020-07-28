@@ -6,12 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NDC2018plus/bounds.gms 
 
-*AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
-vm_cap.lo(t,regi,"spv","1") = p40_TechBound(t,regi,"spv")*0.001; 
-vm_cap.lo(t,regi,"wind","1") = p40_TechBound(t,regi,"wind")*0.001; 
+*AM the lowbound of solar and pv for 2025 and 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
+vm_cap.lo(t,regi,"spv","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"spv")*0.001; 
+vm_cap.lo(t,regi,"wind","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"wind")*0.001; 
 vm_cap.lo(t,regi,"tnrs","1")$(t.val lt 2031) = p40_TechBound(t,regi,"tnrs")*0.001;
-vm_cap.lo(t,regi,"hydro","1") = p40_TechBound(t,regi,"hydro")*0.001;
-vm_cap.lo(t,regi,"apCarElT","1") = p40_TechBound(t,regi,"apCarElT");
+vm_cap.lo(t,regi,"hydro","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"hydro")*0.001;
+vm_cap.lo(t,regi,"apCarElT","1")$(t.val lt 2041 AND t.val gt 2024) = p40_TechBound(t,regi,"apCarElT");
 
 display vm_cap.lo;
 

@@ -82,9 +82,9 @@
 * 
 * Regionscode: 8201ae1fc68ef9eaca4339dd91556375
 * 
-* Input data revision: 5.941
+* Input data revision: 5.946
 * 
-* Last modification (input data): Fri Jun  5 18:59:41 2020
+* Last modification (input data): Tue Jul 28 14:02:32 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -109,6 +109,13 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+*** enable dumping information to the log
+file logfile /""/;
+
+logfile.lw =  0;
+logfile.nw = 15;
+logfile.nd =  9;
+
 *--------------------------------------------------------------------------
 ***           basic scenario choices
 *--------------------------------------------------------------------------
@@ -130,7 +137,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Incumb_1p5_noCCS_flexOn
+$setGlobal c_expname  Incumb_Ref_esm
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -157,7 +164,7 @@ $setGlobal tax  on                    !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
-$setGlobal capitalMarket  perfect     !! def = debt_limit
+$setGlobal capitalMarket  debt_limit     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
 $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
@@ -173,7 +180,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -183,13 +190,13 @@ $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = off
 ***---------------------    40_techpol  -----------------------------------------
-$setglobal techpol  NDC2018              !! def = none
+$setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
 $setglobal emicapregi  none           !! def = none
 ***---------------------    42_banking  -----------------------------------------
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
-$setglobal carbonprice  expoLinear          !! def = none
+$setglobal carbonprice  none          !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  regiCarbonPrice              !! def = none
 ***---------------------    50_damages    ---------------------------------------
@@ -220,6 +227,9 @@ cm_nucscen            "nuclear option choice"
 cm_ccapturescen       "carbon capture option choice"
 c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
+c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
+c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
+cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -271,6 +281,10 @@ c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
+cm_postTargetIncrease       "carbon price increase per year after target is reached (euro per tCO2)"
+cm_ETS_postTargetIncrease   "ETS carbon price increase per year after target is reached (euro per tCO2)"
+cm_ESD_postTargetIncrease   "ESD carbon price increase per year after target is reached (euro per tCO2)"
+
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
@@ -290,10 +304,9 @@ cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
-cm_synfuel_trp              "switch for forcing synfuels in transport"
 cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
-cm_flex_tax                 "switch for flexibility tax"
+cm_flex_tax                 "switch for enabling flexibility tax"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -306,9 +319,9 @@ c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 9;         !! def = 1
-$setglobal cm_rcp_scen  rcp20   !! def = "none"
-cm_co2_tax_2020   = 30;        !! def = -1
+cm_emiscen        = 1;         !! def = 1
+$setglobal cm_rcp_scen  none   !! def = "none"
+cm_co2_tax_2020   = -1;        !! def = -1
 cm_co2_tax_growth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
@@ -316,6 +329,9 @@ cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
+c_shGreenH2      = 0;        !! def = 0
+c_shBioTrans     = 0.05;        !! def = 1
+cm_shSynTrans    = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
@@ -325,7 +341,7 @@ cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
 
-cm_bioenergy_tax    = 1.5;       !! def = 1.5
+cm_bioenergy_tax    = 2.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
@@ -337,7 +353,7 @@ $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
-cm_startyear      = 2025;      !! def = 2005 for a BAU, 2015 for policy runs
+cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
@@ -364,10 +380,10 @@ c_cint_scen           = 1;         !! def = 1
 cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
-c_ccsinjecratescen    = 0;         !! def = 1
+c_ccsinjecratescen    = 3;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
-cm_iterative_target_adj  = 5;      !! def = 0
+cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 $setglobal c_delayPolicy  SPA0           !! def = SPA0
@@ -378,19 +394,23 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 600;   !! def = 1300
-$setGlobal cm_regiCO2target  2050.EUR_regi.budget.netCO2 43       !! def = off
-$setGlobal cm_quantity_regiCO2target  off       !! def = off
-cm_peakBudgYr                 = 2050;    !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
-cm_CO2priceRegConvEndYr       = 2050;   !! def = 2050
+c_budgetCO2              = 0;   !! def = 1300
+$setGlobal cm_regiCO2target  off   !! def = off
+cm_postTargetIncrease    = 2;      !! def = 2
+$setGlobal cm_quantity_regiCO2target  off !! def = off
+cm_peakBudgYr            = 2050;   !! def = 2050
+cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
-$setGlobal cm_emiMktETS_type  off   !! def = off
-$setGlobal cm_emiMktES  off       !! def = off	
+$setGlobal cm_emiMktETS_type  off  !! def = off
+cm_ETS_postTargetIncrease = 2;     !! def = 2
+$setGlobal cm_emiMktES  off        !! def = off	
 $setGlobal cm_emiMktES_type  off !! def = netGHG	
-$setGlobal cm_emiMktEScoop  off   !! def = off	
+cm_ESD_postTargetIncrease = 4;     !! def = 4
+$setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2050	 off   !! def = off	
-$setGlobal cm_NucRegiPol	 on   !! def = off		
+$setGlobal cm_NucRegiPol	 on   !! def = off	
+$setGlobal cm_CoalRegiPol	 on   !! def = off		
 $setGlobal cm_proNucRegiPol	 on   !! def = off
 $setGlobal cm_CCSRegiPol	 2020   !! def = off	
 
@@ -416,17 +436,16 @@ $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
+$setGlobal cm_EDGEtr_scen  ConvCase  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
-$setGlobal c_regi_capturescen  ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW !! def = all
+$setGlobal c_regi_capturescen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
 
-cm_synfuel_trp      = 0; !! def = 0
 
 cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
-cm_flex_tax = 1; !! def 0
+cm_flex_tax = 0; !! def 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -435,7 +454,7 @@ cm_flex_tax = 1; !! def 0
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  on        !! def = off
+$setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  on !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -451,7 +470,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-FE_med-Reg_8201ae1fc6   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-demTrsp_conv-FE_med-Reg_8201ae1fc6   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -479,17 +498,21 @@ $setglobal cm_INNOPATHS_storageFactor  off !! def = off
 
 $setglobal cm_INNOPATHS_adj_seed  tnrs 1,gasftrec 1,gasftcrec 1,coalftrec 1,coalftcrec 1,apCarH2T 0.25,apCarElT 0.25,apCarDiEffT 0.125,apCarDiEffH2T 0.125,dac 1,ngccc 1,gash2c 1,igccc 1,pcc 1,pco 1,coalh2c 1,bioigccc 1,bioftcrec 1,bioh2c 1
 $setglobal cm_INNOPATHS_adj_seed_cont  off
-$setglobal cm_INNOPATHS_adj_coeff  tnrs 0.5,gasftrec 0.2,gasftcrec 0.4,coalftrec 0.3,coalftcrec 0.5,spv 0.1,wind 0.2,dac 0.4,apCarH2T 2,apCarElT 0.5,apCarDiEffT 4,apCarDiEffH2T 6
-$setglobal cm_INNOPATHS_adj_coeff_cont  gridspv 2,gridcsp 2,gridwind 2,storspv 0.1,storwind 0.1,storcsp 0.1,ngccc 0.5,gash2c 0.5,igccc 0.5,pcc 0.5,pco 0.5,coalh2c 0.5,bioftcrec 0.5,bioh2c 0.5,bioigccc 0.7
+$setglobal cm_INNOPATHS_adj_coeff  tnrs 0.5,gasftrec 0.2,gasftcrec 0.4,coalftrec 0.3,coalftcrec 0.5,spv 0.2,wind 0.2,dac 0.4,apCarH2T 2,apCarElT 0.5,apCarDiEffT 4,apCarDiEffH2T 4
+$setglobal cm_INNOPATHS_adj_coeff_cont  gridspv 2,gridcsp 2,gridwind 2,storspv 0.1,storwind 0.1,storcsp 0.1,ngccc 0.5,gash2c 0.5,igccc 0.5,pcc 0.5,pco 0.5,coalh2c 0.5,bioftcrec 0.5,bioh2c 0.5,bioigccc 0.5
 
-$setglobal cm_INNOPATHS_inco0Factor  ccsinje 0.5,bioigccc 0.66,bioh2c 0.66,biogas 0.66,bioftrec 0.66,bioftcrec 0.66,igccc 0.66,coalh2c 0.66,coalgas 0.66,coalftrec 0.66,coalftcrec 0.66,ngccc 0.66,gash2c 0.66,gasftrec 0.66,gasftcrec 0.66,tnrs 0.68 !! def = off
+$setglobal cm_INNOPATHS_inco0Factor  bioigccc 0.66,bioh2c 0.66,biogas 0.66,bioftrec 0.66,bioftcrec 0.66,igccc 0.66,coalh2c 0.66,coalgas 0.66,coalftrec 0.66,coalftcrec 0.66,ngccc 0.66,gash2c 0.66,gasftrec 0.66,gasftcrec 0.66,tnrs 0.66, tdhes 2 !! def = off
 
-$setglobal cm_INNOPATHS_CCS_markup  0.75 !! def = off
-$setglobal cm_INNOPATHS_renewables_floor_cost  spv 0.1,wind 0.5 !! def = off 
 
 $setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
 
+$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
+$setglobal cm_INNOPATHS_renewables_floor_cost  spv 0.1,wind 0.3 !! def = off 
 
+$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
+
+$setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

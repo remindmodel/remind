@@ -116,9 +116,12 @@ descr_water_ext    "additional quantities (all extensive) to be written out in w
   "Water Withdrawal|Electricity|Wet Tower; km3/yr;"
   "Water Withdrawal|Electricity|Cooling Pond; km3/yr;"
   "Water Withdrawal|Electricity|Dry Cooling; km3/yr;"  
-	"Secondary Energy|Electricity|Full; EJ/yr;"
-	"Secondary Energy|Electricity|Part; EJ/yr;"
-	"Secondary Energy|Electricity|wo/h; EJ/yr;"  
+  "Secondary Energy|Electricity|Full; EJ/yr;"
+  "Secondary Energy|Electricity|Part; EJ/yr;"
+  "Secondary Energy|Electricity|wo/h; EJ/yr;"  
+  "Water Consumption Intensity|Electricity; m3/MWh;"
+  "Water Consumption Intensity|Electricity|wo/h; m3/MWh;"  
+  "Water Withdrawal Intensity|Electricity; m3/MWh;"
 /
 
 descr_water_extn(descr_water_ext)   "additional quantities (extensive numerators) to be written out in water reporting"
@@ -187,7 +190,7 @@ descr_water_extd(descr_water_ext)   "additional quantities (extensive denominato
 	"Secondary Energy|Electricity|wo/h; EJ/yr;"  
 /
 
-descr_water_int   "additional quantities (intensive) to be written out in water reporting"
+descr_water_int(descr_water_ext)   "additional quantities (intensive) to be written out in water reporting"
 /
 	"Water Consumption Intensity|Electricity; m3/MWh;"
 	"Water Consumption Intensity|Electricity|wo/h; m3/MWh;"  
@@ -204,6 +207,8 @@ descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd)   "???"
 
 te_coolnoren70(te) = not te_coolren70(te);
 te_stack70(te) = te_elcool70(te) - te_coolren70(te) - te_elcool70(te)$(sameas (te,"tnrs"));
+
+
 
 display te_stack70;
 

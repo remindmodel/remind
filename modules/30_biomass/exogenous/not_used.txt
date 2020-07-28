@@ -16,3 +16,6 @@ sm_eps,scalar,???
 sm_EJ_2_TWa,input,questionnaire
 pm_ts,input,questionnaire
 cm_1stgen_phaseout,input,questionnaire
+vm_demPe,variable,not needed
+vm_prodSe,variable,not needed
+cm_emiscen,variable,not needed
