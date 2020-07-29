@@ -82,9 +82,9 @@
 * 
 * Regionscode: 8201ae1fc68ef9eaca4339dd91556375
 * 
-* Input data revision: 5.946
+* Input data revision: 5.944
 * 
-* Last modification (input data): Tue Jul 28 14:02:32 2020
+* Last modification (input data): Mon Jul 20 17:41:20 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -137,7 +137,7 @@ logfile.nd =  9;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Incumb_Ref_esm
+$setGlobal c_expname  ref_FEmed
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -300,7 +300,6 @@ cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
@@ -330,7 +329,7 @@ cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
-c_shBioTrans     = 0.05;        !! def = 1
+c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
@@ -411,8 +410,8 @@ $setGlobal cm_emiMktEScoop  off    !! def = off
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 on   !! def = off	
 $setGlobal cm_CoalRegiPol	 on   !! def = off		
-$setGlobal cm_proNucRegiPol	 on   !! def = off
-$setGlobal cm_CCSRegiPol	 2020   !! def = off	
+$setGlobal cm_proNucRegiPol	 off   !! def = off
+$setGlobal cm_CCSRegiPol	 off   !! def = off	
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
@@ -428,7 +427,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_synfuelscen		   = 0; !! def = 0
 cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
@@ -470,7 +468,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-demTrsp_conv-FE_med-Reg_8201ae1fc6   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-FE_med-Reg_8201ae1fc6   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -508,7 +506,7 @@ $setglobal cm_INNOPATHS_DAC_eff  off !! def = off
 
 $setglobal cm_INNOPATHS_CCS_markup  off !! def = off
 $setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
-$setglobal cm_INNOPATHS_renewables_floor_cost  spv 0.1,wind 0.3 !! def = off 
+$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
 
 $setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
 

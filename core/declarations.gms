@@ -313,7 +313,7 @@ vm_demSeOth(ttot,all_regi,all_enty,all_te)	         "other sety demand from cert
 vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from certain technologies, have to be calculated in additional equations [TWa]"	
 
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
-v_shBioTrans(ttot,all_regi)  "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
+v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
