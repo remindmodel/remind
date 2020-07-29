@@ -41,6 +41,8 @@ Execute_Loadpoint 'input' q_balPe.m = q_balPe.m;
 Execute_Loadpoint 'input' qm_budget.m = qm_budget.m;
 Execute_Loadpoint 'input' pm_pvpRegi = pm_pvpRegi;
 Execute_Loadpoint 'input' pm_pvp = pm_pvp;
+Execute_Loadpoint 'input' q32_balSe.m = q32_balSe.m;
+
 if (cm_gdximport_target eq 1,
   if ( ((p_emi_budget1_gdx < 1.5 * sm_budgetCO2eqGlob) AND (p_emi_budget1_gdx > 0.5 * sm_budgetCO2eqGlob)),
   sm_budgetCO2eqGlob=p_emi_budget1_gdx;

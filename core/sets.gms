@@ -784,12 +784,12 @@ $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
 
-$IFTHEN.RegScenSyn "%c_regi_synfuelscen%" == "all"
-  set regi_synfuelscen(all_regi) "regions which synfuelscen applies to";
-  regi_synfuelscen(all_regi)=YES;
-$ELSE.RegScenSyn
-  set regi_synfuelscen(all_regi) "regions which synfuelscen applies to" / %c_regi_synfuelscen% /;
-$ENDIF.RegScenSyn
+$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
+  regi_sensscen(all_regi)=YES;
+$ELSE.RegScenSens
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
+$ENDIF.RegScenSens
 
 
 ***###############################################################################
@@ -1380,6 +1380,13 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        csp
        wind      
 /
+
+teFlex(all_te)       "all technologies to which flexibibility tax/subsidy applies"
+/
+elh2
+***dac
+/
+
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
 ppfenFromUe(all_in)  "all ppfEn that are equivalent to UE - is filled automatically from the content of fe2ue"
 

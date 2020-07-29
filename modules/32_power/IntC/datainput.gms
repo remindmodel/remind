@@ -59,3 +59,22 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
+
+$ontext
+parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"
+/
+$ondelim
+$include "./modules/32_power/IntC/input/p32_flex_maxdiscount.cs4r"
+$offdelim
+/
+; 
+*** convert from USD2015/MWh to trUSD2005/TWa
+p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * sm_D2015_2_D2005 * 1e-12;
+display p32_flex_maxdiscount;
+$offtext
+
+*** p32_flex_maxdiscount refers to the maximum fraction by which 
+*** the input electricity price can be reduced/increased (positive/negative values) 
+*** for high VRE penetrations
+p32_flex_maxdiscount(regi,"elh2") = 0.6;
+

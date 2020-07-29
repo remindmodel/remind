@@ -123,4 +123,7 @@ if(cm_bioenergymaxscen>0,
 vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
 );
 
+*** FS: test regional bounds on pebiolc.1 production
+***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
+
 *** EOF ./modules/30_biomass/magpie_4/bounds.gms

@@ -116,11 +116,12 @@ q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
         =l=
         0.5 * p30_demPe(t,regi);
 
-*** FS: synfuel scenario 2: limit energy crop production to 2 * 2015-level
-q30_limitProdtoHist(t,regi_synfuelscen)$(cm_synfuelscen ge 2)..
-         vm_fuExtr(t,regi_synfuelscen,"pebiolc","1")$(t.val ge 2030)
+*** FS: limit energy crop production after 2030 to cm_bioprod_histlim * 2015-level in a region in regi_sensscen
+q30_limitProdtoHist(t,regi_sensscen)$(cm_bioprod_histlim ge 0)..
+         vm_fuExtr(t,regi_sensscen,"pebiolc","1")$(t.val ge 2030)
          =l=
-         2*vm_fuExtr("2015",regi_synfuelscen,"pebiolc","1")
+         cm_bioprod_histlim*vm_fuExtr("2015",regi_sensscen,"pebiolc","1")
 ;
+
 		 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms

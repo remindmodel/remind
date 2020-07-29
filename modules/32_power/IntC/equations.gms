@@ -55,15 +55,25 @@ q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
 		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
 ;
 
-q32_h2turbVREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"h2turbVRE","1") 
-  =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
-;
+
+*** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
+*** represent H2 storage. This is implemented by automatically scaling up capacities of 
+*** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
+*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+
+
+*** build additional electrolysis capacities with stored VRE electricity
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2VRE","1") 
   =e= 
   sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+;
+
+*** build additional h2 to seel capacities to use stored hydrogen
+q32_h2turbVREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"h2turbVRE","1") 
+  =e= 
+  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 
@@ -149,3 +159,21 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	=l=
 	0.2 * vm_usableSe(t,regi,"seel")
 ;
+
+***----------------------------------------------------------------------------
+*** FS: calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
+***----------------------------------------------------------------------------
+
+*** calculate flexibility benefit or cost per unit output of flexibile or inflexibly technology
+q32_flexAdj(t,regi,teFlex)..
+	vm_flexAdj(t,regi,teFlex) 
+	=e=
+*** linearly increase/decrease electricity price that inflexible/flexible technology sees with increasing VRE share up to p32_flex_maxdiscount
+*** p32_flex_maxdiscount positive -> lower-than-average electricity price (flexible demand), 
+*** p32_flex_maxdiscount negative -> higher-than-average electricity price (inflexible demand)	
+	p32_flex_maxdiscount(regi,teFlex) * p_priceSeel(t,regi) * sum(teVRE, v32_shSeEl(t,regi,teVRE)) / 100 
+*** convert to fuel cost for flexible technology (converts to cost per unit output)
+	/ pm_eta_conv(t,regi,teFlex)
+;
+
+*** EOF ./modules/32_power/IntC/equations.gms

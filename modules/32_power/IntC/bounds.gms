@@ -11,12 +11,18 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+*** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
+*** to avoid infeasibilities with vintage biomass capacities
+*** allow bio techs to reduce capacity factor
+if ( cm_bioprod_histlim ge 0,
+	vm_capFac.lo(t,regi_sensscen,teBioPebiolc)$(t.val ge 2030) = 0;
+);
 
-*** FS: synfuelscen 1 or larger, for RE H2 production: 
-*** double efficiency of elh2 (see module 05)
-*** decrease CapFac to 0.5
-if ( cm_synfuelscen ge 1,
-	vm_capFac.fx(t,regi_synfuelscen,"elh2")$(t.val ge 2030) = 0.5;
+*** FS: if flexibility tax on
+*** decrease capacity factor of electrolysis to 0.5
+*** as capacities run on lower-than-average electricity price
+if ( cm_flex_tax eq 1,
+	vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = 0.5;
 );
 
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
@@ -43,5 +49,7 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2050) = 1;
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
 );
+
+
 
 

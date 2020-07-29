@@ -180,7 +180,7 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
@@ -188,7 +188,7 @@ $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  off !! def = off
+$setglobal CCU  on !! def = off
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -300,10 +300,12 @@ cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
-c_regi_synfuelscen			"region to apply synfuelscen to"
+c_regi_sensscen				"regions which regional sensitivity parameters apply to"
+cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
+cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
+cm_flex_tax                 "switch for enabling flexibility tax"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,7 +340,7 @@ cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
 
-cm_bioenergy_tax    = 1.5;       !! def = 1.5
+cm_bioenergy_tax    = 2.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
@@ -377,7 +379,7 @@ c_cint_scen           = 1;         !! def = 1
 cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
-c_ccsinjecratescen    = 1;         !! def = 1
+c_ccsinjecratescen    = 3;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
@@ -425,7 +427,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_synfuelscen		   = 0; !! def = 0
 cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
@@ -433,11 +434,16 @@ $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
 $setGlobal cm_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  Conservative_liquids  !! def = Conservative_liquids
+$setGlobal cm_EDGEtr_scen  ConvCase  !! def = Conservative_liquids
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
-$setGlobal c_regi_synfuelscen  all !! def = all
+$setGlobal c_regi_sensscen  all !! def = all
+
+
+cm_biotrade_phaseout = 0; !! def 0
+cm_bioprod_histlim = -1; !! def -1	
+cm_flex_tax = 0; !! def 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -488,12 +494,15 @@ $setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
 $setglobal cm_INNOPATHS_incolearn  off !! def = off
 $setglobal cm_INNOPATHS_storageFactor  off !! def = off
 
-$setglobal cm_INNOPATHS_adj_seed  off
+$setglobal cm_INNOPATHS_adj_seed  tnrs 1,gasftrec 1,gasftcrec 1,coalftrec 1,coalftcrec 1,apCarH2T 0.25,apCarElT 0.25,apCarDiEffT 0.125,apCarDiEffH2T 0.125,dac 1,ngccc 1,gash2c 1,igccc 1,pcc 1,pco 1,coalh2c 1,bioigccc 1,bioftcrec 1,bioh2c 1
 $setglobal cm_INNOPATHS_adj_seed_cont  off
-$setglobal cm_INNOPATHS_adj_coeff  off
-$setglobal cm_INNOPATHS_adj_coeff_cont  off
+$setglobal cm_INNOPATHS_adj_coeff  tnrs 0.5,gasftrec 0.2,gasftcrec 0.4,coalftrec 0.3,coalftcrec 0.5,spv 0.2,wind 0.2,dac 0.4,apCarH2T 2,apCarElT 0.5,apCarDiEffT 4,apCarDiEffH2T 4
+$setglobal cm_INNOPATHS_adj_coeff_cont  gridspv 2,gridcsp 2,gridwind 2,storspv 0.1,storwind 0.1,storcsp 0.1,ngccc 0.5,gash2c 0.5,igccc 0.5,pcc 0.5,pco 0.5,coalh2c 0.5,bioftcrec 0.5,bioh2c 0.5,bioigccc 0.5
 
-$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+$setglobal cm_INNOPATHS_inco0Factor  bioigccc 0.66,bioh2c 0.66,biogas 0.66,bioftrec 0.66,bioftcrec 0.66,igccc 0.66,coalh2c 0.66,coalgas 0.66,coalftrec 0.66,coalftcrec 0.66,ngccc 0.66,gash2c 0.66,gasftrec 0.66,gasftcrec 0.66,tnrs 0.66, tdhes 2 !! def = off
+
+
+$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
 
 $setglobal cm_INNOPATHS_CCS_markup  off !! def = off
 $setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
