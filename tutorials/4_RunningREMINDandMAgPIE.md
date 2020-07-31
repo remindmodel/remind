@@ -46,7 +46,7 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by editing .Rprofile in both REMIND's and MAgPIE's main folder respectively. Uncomment these lines:
+Direct the models to the snapshot you just created above by editing .Rprofile in both REMIND's and MAgPIE's main folder respectively. Uncomment these lines and change the date to today:
 
 ```bash
 # snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2019_02_26"
@@ -55,7 +55,6 @@ Direct the models to the snapshot you just created above by editing .Rprofile in
 # .libPaths(snapshot)
 # }
 ```
-and change the date to today.
 
 ### Configure start_bundle_coupled.R 
 
@@ -105,6 +104,8 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 ### The coupling scripts
 
 The meta scripts for coupled runs that configure the models, start the runs, and perform the iteration loop are located in the REMIND main folder.
+
+<img src="figures/coupling-scripts.png" style="display: block; margin: auto;" />
 
 * `start_bundle_coupled.R`
   * reads scenario_config_coupled.csv and scenario_config.csv files and updates model cfgs accordingly
