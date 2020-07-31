@@ -305,6 +305,8 @@ Display p29_alpha, p29_beta;
 
 *** for entrp_frgt_lo
 *** pass on to pm_cesdata and ensure the resulting price is positive
+$ifthen.edge_esm %transport% == "edge_esm"
+
 loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020 ),
   pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
   = max(
@@ -327,6 +329,8 @@ loop (ttot$( ttot.val ge 2005),
 );
 
 display "after entrp_frgt_lo smoothening", pm_cesdata;
+
+$endif.edge_esm
 
 *** for all other modes
 *** pass on to pm_cesdata and ensure the resulting price is positive
