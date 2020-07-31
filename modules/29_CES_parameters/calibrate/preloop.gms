@@ -1455,7 +1455,7 @@ putclose logfile;
 
 if (sm_tmp,
   execute_unload "abort.gdx";
-  !! abort "something is wrong with the consistency of pm_cesdata, see logfile";
+  abort "something is wrong with the consistency of pm_cesdata, see logfile";
 );
 
 sm_tmp = 0;
