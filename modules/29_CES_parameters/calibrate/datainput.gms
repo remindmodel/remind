@@ -109,6 +109,15 @@ for (sm_tmp = sm_tmp downto 0,
 *** Fourth, calculate intermediate production factors
 ipf_29(all_in) = in_29(all_in) - ppf_29(all_in);
 
+*** CES items which are ipf_29 but have only ipf_29 or ppf_29 as inputs need an 
+*** extra step of rescaling
+pf_fixed_CES_nest(all_in) = NO;
+loop (ipf_29(out)$( 
+         sum(cesOut2cesIn(out,in)$( NOT (ipf_29(in) OR ppf_29(in)) ), 1) eq 0 ),
+  pf_fixed_CES_nest(out) = YES;
+);
+display pf_fixed_CES_nest;
+
 ces_29(out,in_29) = cesOut2cesIn(out,in_29);
 
 ppf_beyondcalib_29(all_in) = NO;

@@ -1,3 +1,45 @@
+$macro DEBUG(x) put logfile, ">>> DEBUG ", x, " <<<" /; \
+  loop ((t,regi_dyn29(regi),out)$( t.val eq 2005 AND sameas(out,"ue_industry") ), \
+    put pm_cesdata.tn(t,regi,out,"quantity"), " = "; \
+    put pm_cesdata(t,regi,out,"quantity") /; \
+    put "  = "; \
+    loop (cesOut2cesIn(out,in), \
+      put pm_cesdata(t,regi,in,"quantity"), " @ "; \
+      put pm_cesdata(t,regi,in,"price"), " = "; \
+      put (pm_cesdata(t,regi,in,"quantity") + pm_cesdata(t,regi,in,"price")) /;\
+    ); \
+    put "  = ", sum(cesOut2cesIn(out,in), \
+                  pm_cesdata(t,regi,in,"quantity") \
+                * pm_cesdata(t,regi,in,"price") \
+                ) /; \
+    put "  = "; \
+    loop (cesOut2cesIn(out,in), \
+      put pm_cesdata(t,regi,in,"xi"), " (", pm_cesdata(t,regi,in,"eff") ; \
+      put pm_cesdata(t,regi,in,"effGr"), pm_cesdata(t,regi,in,"quantity"); \
+      put ") ^ ", pm_cesdata(t,regi,out,"rho"); \
+      put " = ", ( pm_cesdata(t,regi,in,"xi") \
+                 * ( pm_cesdata(t,regi,in,"eff") \
+                   * pm_cesdata(t,regi,in,"effGr") \
+                   * pm_cesdata(t,regi,in,"quantity") \
+                   ) \
+                ** pm_cesdata(t,regi,out,"rho") \
+                 ) /; \
+    ); \
+    put "  = ", ( sum(cesOut2cesIn(out,in), \
+                    pm_cesdata(t,regi,in,"xi") \
+                  * ( pm_cesdata(t,regi,in,"eff") \
+                    * pm_cesdata(t,regi,in,"effGr") \
+                    * pm_cesdata(t,regi,in,"quantity") \
+                    ) \
+                 ** pm_cesdata(t,regi,out,"rho") \
+                  ) \
+               ** (1 / pm_cesdata(t,regi,out,"rho")) \
+                ) /; \
+    put " " /; \
+  ); \
+  execerror=0;
+                 
+    
 *** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
@@ -392,6 +434,26 @@ vm_cesIO.fx(t,regi_dyn29(regi),"ue_steel_secondary")
 
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
 
+***_________ COMPUTE ELASTICITIES OF SUBSTITUTION _________
+
+*** Compute the rho parameter from the elasticity of substitution
+pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005 
+                                      AND pm_cesdata_sigma(ttot,out) 
+                                      AND pm_cesdata_sigma(ttot,out) ne -1 )
+    !! Do not compute it if sigma = 0, because these should be estimated
+  = 1 - (1 / pm_cesdata_sigma(ttot,out));
+  
+*** Check whether all sigma = INF correspond to complementary factors
+*** while it seems contradictory, the model currently only supports
+*** complementary factors which add up to yield their output (therefore the perfect substituability).
+*** OUT = IN1 + IN2 + IN3 +...
+*** The complementarity is ensured by the production constraints on the relations between IN1, IN2, etc
+loop (cesOut2cesIn(out,in)$(    NOT in_complements(in)
+                            AND pm_cesdata_sigma("2015",out) eq INF ),
+  execute_unload "abort.gdx";
+  abort "the model only supports perfect substituability for complementary factors. Please read the comments in calibration/preloop.gms"
+);
+
 display "start consistency", pm_cesdata;
 
 *** All effGr, are set to one, so that we can focus on efficiencies
@@ -546,39 +608,60 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
 sm_tmp  = 0;
 sm_tmp2 = 0;
 
-loop ((t_29hist(t),regi_dyn29),
+DEBUG("A");
+loop ((t_29hist(t),regi_dyn29(regi)),
   sm_tmp 
   = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
-      pm_cesdata(t,regi_dyn29,in,"quantity")
-    * pm_cesdata(t,regi_dyn29,in,"price")
+      pm_cesdata(t,regi,in,"quantity")
+    * pm_cesdata(t,regi,in,"price")
     );
 
-
-   if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
-     pm_cesdata(t,regi_dyn29,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
+  if ( sm_tmp gt (0.80 * pm_cesdata(t,regi,"inco","quantity")),
+$ontext
+    pm_cesdata(t,regi,ppf_29(in),"price")$( NOT (   sameAs(in, "lab") 
                                                        OR in_complements(in)) )
-     = pm_cesdata(t,regi_dyn29,in,"price")
-     * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-     / sm_tmp;
+      = pm_cesdata(t,regi,in,"price")
+      * (0.80 * pm_cesdata(t,regi,"inco","quantity"))
+      / sm_tmp;
+$offtext
+
+      loop (cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+        pm_cesdata(t,regi,in,"price")
+        = pm_cesdata(t,regi,in,"price")
+        * (0.8 * pm_cesdata(t,regi,"inco","quantity"))
+        / sm_tmp;
+      );
+$ontext       
+    loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
+      pm_cesdata(t,regi,in2,"price")
+      = pm_cesdata(t,regi,in2,"price")
+      * (0.80 * pm_cesdata(t,regi,"inco","quantity"))
+      / sm_tmp;
+    );  
+
+    !! CES items which are ipf_29 but have only ipf_29 or ppf_29 as inputs need
+    !! an extra step of rescaling
+    loop (pf_fixed_CES_nest(out),
+      pm_cesdata(t,regi,out,"quantity")
+      = sum(cesOut2cesIn(out,in),
+          pm_cesdata(t,regi,in,"price")
+        * pm_cesdata(t,regi,in,"quantity")
+        );
+    );
+$offtext
        
-     loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
-       pm_cesdata(t,regi_dyn29,in2,"price")
-       = pm_cesdata(t,regi_dyn29,in2,"price")
-       * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
-       / sm_tmp;
-     );  
-       
-     put logfile;
-     put "---" /;
-     put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
-     put "ratio (en + kap) / inco = ";
-     put (sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity")) /;
-     put "---" /;
-     putclose;
+    put logfile;
+    put "---" /;
+    put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi.tl, ", ", t.tl /;
+    put "ratio (en + kap) / inco = ";
+    put (sm_tmp / pm_cesdata(t,regi,"inco","quantity")) /;
+    put "---" /;
+    putclose logfile;
      
-     sm_tmp2 = sm_tmp2 + 1;
-     );
+    sm_tmp2 = sm_tmp2 + 1;
+  );
 );
+DEBUG("B");
 
   !! if there has been a rescaling for historical steps
 if ( sm_tmp2 lt 0,
@@ -670,6 +753,7 @@ if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,i
 *** Then, we ensure that these prices correspond to the derivatives, because 
 *** the Euler equation holds for derivatives. Using prices makes only sense if 
 *** prices equal derivatives.
+DEBUG("C");
 loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$( 
                                                     NOT sameas(out,"inco") ),
   if (NOT ipf_putty(out),
@@ -694,6 +778,7 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
       / pm_cesdata_putty(t_29,regi_dyn29,in, "quantity");
   );
 );
+DEBUG("D");
 display "after change up to en consistency", pm_cesdata;
 
 *** Then, we consider the bottom level of the CES tree, where capital and labor have specific restrictions
@@ -883,7 +968,6 @@ $endif.repEsubs
   !! quantities and prices and we adjust the ppf prices so that it matches the 
   !! root quantity. The current formulation does not support putty in beyond 
   !! and complements.
-  
   loop ((t_29hist(t),regi_dyn29(regi),root_beyond_calib_29(out)),
     sm_tmp 
     = sum(cesOut2cesIn_below(out,ppf(in)),
@@ -1017,38 +1101,15 @@ $endif.repEsubs
 
 ***_____________________________ END OF BEYOND CALIB ________________________________________
 
-***_________ COMPUTE ELASTICITIES OF SUBSTITUTION _________
-
-*** Compute the rho parameter from the elasticity of substitution
-pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005 
-                                      AND pm_cesdata_sigma(ttot,out) 
-                                      AND pm_cesdata_sigma(ttot,out) ne -1 )
-    !! Do not compute it if sigma = 0, because these should be estimated
-  = 1 - (1 / pm_cesdata_sigma(ttot,out));
-  
-*** Check whether all sigma = INF correspond to complementary factors
-*** while it seems contradictory, the model currently only supports
-*** complementary factors which add up to yield their output (therefore the perfect substituability).
-*** OUT = IN1 + IN2 + IN3 +...
-*** The complementarity is ensured by the production constraints on the relations between IN1, IN2, etc
-
-loop (cesOut2cesIn(out,in) $  (pm_cesdata_sigma("2015",out) eq INF ),
-      if ( NOT in_complements(in),
-      execute_unload "abort.gdx";
-      abort "the model only supports perfect substituability for complementary factors. Please read the comments in calibration/preloop.gms"
-      );
-      );
-
-
-*** For the estimation of Esubs: set the CES out to 1 if the CES inputs are in the data
-loop (cesOut2cesIn(out,in) $ (pm_cesdata_sigma("2015",out) eq -1),
- p29_capitalUnitProjections(all_regi,out,index_Nr) $p29_capitalUnitProjections(all_regi,in,index_Nr) = 1;
+*** For the estimation of Esubs: set the CES out to 1 if the CES inputs are in 
+*** the data
+loop (cesOut2cesIn(out,in)$( pm_cesdata_sigma("2015",out) eq -1 ),
+  p29_capitalUnitProjections(all_regi,out,index_Nr)$(
+                              p29_capitalUnitProjections(all_regi,in,index_Nr) )
+  = 1;
 );
 
-      model esubs /
-q29_outputtech,
-q29_esub_obj,
-/;
+model esubs / q29_outputtech, q29_esub_obj /;
 
 v29_outputtech.L(regi_dyn29,ipf(out),index_Nr) = 1;
 v29_outputtech.lo(regi_dyn29,ipf(out),index_Nr) = 0;
@@ -1056,37 +1117,57 @@ v29_rho.L(regi,out)$( pm_cesdata_sigma("2015",out) eq -1) = 0.5;
 v29_rho.up(regi,out) = 0.8; !! corresponds to sigma = 5
 v29_rho.lo(regi,out) = -9; !! corresponds to sigma = 0.1
 
-loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1) AND ppfKap(in)),
-
- p29_output_estimation(regi_dyn29(regi),out) = ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out))
-                                                 + pm_cesdata_putty(t,regi,out,"quantity") $ (  ipf_putty(out))
-                                                 )
-                                               / ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out))
-                                                + pm_cesdata_putty(t,regi,in,"quantity") $ (  ipf_putty(out))
-                                               )
-                                               * p29_capitalUnitProjections(regi,in,"0") !! index = 0, is the typical technology
-
+loop ((cesOut2cesIn(out,in),t_29hist_last(t))$(
+                               (pm_cesdata_sigma(t,out) eq -1) AND ppfKap(in) ),
+  p29_output_estimation(regi_dyn29(regi),out) 
+  = ( pm_cesdata(t,regi,out,"quantity")$( NOT ipf_putty(out) )
+    + pm_cesdata_putty(t,regi,out,"quantity")$(  ipf_putty(out) )
+    )
+  / ( pm_cesdata(t,regi,in,"quantity")$( NOT ipf_putty(out) )
+    + pm_cesdata_putty(t,regi,in,"quantity")$(  ipf_putty(out) )
+    )
+    !! index = 0, is the typical technology
+  * p29_capitalUnitProjections(regi,in,"0") 
 );
+
 solve esubs minimizing v29_esub_err using nlp;
 
-if ( NOT ( esubs.solvestat eq 1  AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
+if (NOT (    esubs.solvestat eq 1  
+         AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
   execute_unload "abort.gdx";
   abort "model esubs is infeasible";
 );
 
 display "esubs results", p29_capitalUnitProjections;
 
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1)  = v29_rho.L(regi,in);
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 )
+  = v29_rho.L(regi,in);
 
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1) =
- 1 -  (1 - pm_cesdata(t,regi,in,"rho"))
- / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),p29_esubGrowth))    !! lambda = 1 in 2015 and 2 in 2050;
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 )
+  = 1 
+  - (1 - pm_cesdata(t,regi,in,"rho"))
+  / ( 1 
+    + min(max((pm_ttot_val(t) - 2015) / (2050 - 2015), 0), p29_esubGrowth)
+    )    !! lambda = 1 in 2015 and 2 in 2050;
 ;
 
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") lt 0) = min(pm_cesdata(t,regi,in,"rho"), 1 - 1/0.8); !! If complementary factors, sigma should be below 0.8
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") ge 0) = max(pm_cesdata(t,regi,in,"rho"), 1 - 1/1.2); !! If substitution factors, sigma should be above 1.2
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = max ( v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
-pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min ( v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
+!! If complementary factors, sigma should be below 0.8
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$(    pm_cesdata_sigma(t,in) eq -1 
+                                         AND pm_cesdata(t,regi,in,"rho") lt 0) 
+  = min(pm_cesdata(t,regi,in,"rho"), 1 - 1 / 0.8); 
+
+!! If substitution factors, sigma should be above 1.2
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$(    pm_cesdata_sigma(t,in) eq -1 
+                                         AND pm_cesdata(t,regi,in,"rho") ge 0) 
+  = max(pm_cesdata(t,regi,in,"rho"), 1 - 1 / 1.2); 
+
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) 
+  = max(v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
+
+pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) 
+  = min(v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
+
+DEBUG("E");
 
 ***_________ END COMPUTATION OF ELASTICITIES OF SUBSTITUTION _________
 

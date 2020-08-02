@@ -57,6 +57,8 @@ Sets
     midperiod
     width
   /
+
+  pf_fixed_CES_nest(all_in)   "ipf_29 members with only ppf_29 inputs"
 ;
 
 alias(cesOut2cesIn_below,cesOut2cesIn_below2);
@@ -83,4 +85,7 @@ $offOrder
  t_29_last(ttot) = NO;
  t_29_last(t_29)$(ord(t_29) eq card(t_29)) = YES;
 $onOrder
+
+
 *** EOF ./modules/29_CES_parameters/calibrate/sets.gms
+
