@@ -1192,11 +1192,9 @@ Parameter
   /
 $ondelim
 $include "./core/input/pm_fe_demand.cs4r"
-$ifthen "%industry%" == "subsectors"   !! industry
-$include "./core/input/pm_fe_demand_industry.cs4r"
-$endif
 $offdelim
   /
 ;
 
 *** EOF ./core/datainput.gms
+
