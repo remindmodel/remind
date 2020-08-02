@@ -323,7 +323,7 @@ loop ((t_29hist(t),regi_dyn29(regi))$(
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
 );
-$else
+$else.subsectors
 *** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet 
 *** needs an offset value for some regions under fixed_shares
 loop ((t,regi,in)$(    sameas(in,"fehei") 
