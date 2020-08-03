@@ -285,22 +285,6 @@ pm_cesdata(t,regi,ppfKap,"quantity")
   = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Split steel electricity demand between primary and secondary steel, based 
-*** on the assumption that the specific electricity (not energy) use of 
-*** secondary steel production is nine times higher than that for primary 
-*** steel production. 
-pm_cesdata(t,regi_dyn29(regi),"feel_steel_secondary","quantity")
-  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
-  * 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
-  / ( 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
-    /     pm_cesdata(t,regi,"ue_steel_primary","quantity")
-    );
-
-pm_cesdata(t,regi_dyn29(regi),"feel_steel_primary","quantity")$(
-                            pm_cesdata(t,regi,"feel_steel_primary","quantity") )
-  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
-  - pm_cesdata(t,regi,"feel_steel_secondary","quantity");
-
 *** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t,regi_dyn29(regi),in,"quantity")
