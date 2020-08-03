@@ -187,9 +187,6 @@ p29_efficiency_growth       "efficency growth for ppf beyond calibration"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth.cs4r"
-$ifthen "%industry%" == "subsectors"   !! industry
-$include "./modules/29_CES_parameters/calibrate/input/p29_efficiency_growth_industry.cs4r"
-$endif
 $offdelim
 
 /
@@ -209,9 +206,6 @@ p29_capitalQuantity                    "capital quantities"
 /
 $ondelim
 $include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r"
-$ifthen "%industry%" == "subsectors"   !! industry
-$include "./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity_industry.cs4r"
-$endif
 $offdelim
 /
 ;
@@ -300,22 +294,6 @@ pm_cesdata(t,regi,ppfKap,"quantity")
   = p29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Split steel electricity demand between primary and secondary steel, based 
-*** on the assumption that the specific electricity (not energy) use of 
-*** secondary steel production is nine times higher than that for primary 
-*** steel production. 
-pm_cesdata(t,regi_dyn29(regi),"feel_steel_secondary","quantity")
-  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
-  * 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
-  / ( 3 * pm_cesdata(t,regi,"ue_steel_secondary","quantity")
-    /     pm_cesdata(t,regi,"ue_steel_primary","quantity")
-    );
-
-pm_cesdata(t,regi_dyn29(regi),"feel_steel_primary","quantity")$(
-                            pm_cesdata(t,regi,"feel_steel_primary","quantity") )
-  = pm_cesdata(t,regi,"feel_steel_primary","quantity")
-  - pm_cesdata(t,regi,"feel_steel_secondary","quantity");
-
 *** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t,regi_dyn29(regi),in,"quantity")
@@ -331,6 +309,16 @@ loop ((t_29hist(t),regi_dyn29(regi))$(
 
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
+);
+$else.subsectors
+*** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet 
+*** needs an offset value for some regions under fixed_shares
+loop ((t,regi,in)$(    sameas(in,"fehei") 
+                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5 ),
+  pm_cesdata(t,regi,in,"offset_quantity")
+  = pm_cesdata(t,regi,in,"quantity")
+  - 1e-5;
+  pm_cesdata(t,regi,in,"quantity") = 1e-5;
 );
 $endif.subsectors
 
@@ -376,3 +364,4 @@ p29_esubGrowth = 1;
 $endif.growth
 ;
 *** EOF ./modules/29_CES_parameters/calibrate/datainput.gms
+
