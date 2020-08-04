@@ -44,14 +44,13 @@ for (i in 1:length(listofruns)) {
 
 # ---- Start compareScenarios either on the cluster or locally ----
 
-start_comp <- function(outputdirs,shortTerm,outfilename,regions=F,mainReg=F) {
-  jobname <- paste0("compScen",ifelse(outfilename=="","","-"),outfilename,ifelse(shortTerm, "-shortTerm", ""),ifelse((mainReg!=F), paste0("-",mainReg), ""))
+start_comp <- function(outputdirs,shortTerm,outfilename,regionList,mainReg) {
+  jobname <- paste0("compScen",ifelse(outfilename=="","","-"),outfilename,ifelse(shortTerm, "-shortTerm", ""))
   cat("Starting ",jobname,"\n")
-  if(mainReg==F) mainReg <- "GLO"
-  if(regions==F) regions <- c("GLO","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
   on_cluster <- file.exists("/p/projects/")
+  cat(paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regionList=",paste(regionList,collapse=",")," mainRegName=",mainReg,"\""))
   if (on_cluster) {
-    clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regions=",regions," mainReg=",mainReg,"\"")
+    clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regionList=",paste(regionList,collapse=",")," mainRegName=",mainReg,"\"")
     system(clcom)
   } else {
     outfilename    <- jobname
@@ -64,19 +63,20 @@ start_comp <- function(outputdirs,shortTerm,outfilename,regions=F,mainReg=F) {
 }
 
 # ---- For each list entry call start script that starts compareScenarios ----
-
+regionSubsetList <- remind::toolRegionSubsets(lucode::path(listofruns[[1]]$dirs,"fulldata.gdx"))
 for (r in listofruns) {
-  if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = r$set)
-  if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = r$set)
+  # Create multiple pdf files for H12 and subregions of H12
+  for (reg in c("H12",names(regionSubsetList))){
+    fileName <- paste0(r$set, "-" , reg)
+	if (reg=="H12")
+	  regionList <- c("GLO","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
+	else
+	  regionList <- c(reg,regionSubsetList[[reg]])
+	if (reg=="H12")
+	  mainRegName <- c("GLO")
+	else
+	  mainRegName <- c(reg)
+	if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = fileName, regionList=regionList, mainReg=mainRegName)
+	if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = fileName, regionList=regionList, mainReg=mainRegName)
+  }
 }
-
-# ---- For each list entry call start script that starts region specific compare scenarios ----
-
-for (r in listofruns) {
-	regionSubsetList <- remind::toolRegionSubsets(lucode::path(outputdirs[1],"fulldata.gdx"))
-	invisible(sapply(names(regionSubsetList),function(reg){
-		if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = r$set, regions=regionSubsetList[[reg]], mainReg=reg)
-		if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = r$set, regions=regionSubsetList[[reg]], mainReg=reg)
-	}))
-}
-
