@@ -39,18 +39,6 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename,regionLis
   on.exit(setwd(merke), add = TRUE)
   on.exit(system(paste0("rm -rf ",outfilename)), add = TRUE)
 
-cat("mif_path")
-cat(mif_path)
-cat("hist_path")
-cat(hist_path)
-cat("regionList")
-cat(regionList)
-cat("mainRegName")
-cat(mainRegName)
-cat("outfilename")
-cat(paste0(outfilename,".pdf"))
-
-
   if (!shortTerm) {
     try(compareScenarios(mif=mif_path, hist=hist_path, reg=regionList, mainReg=mainRegName, fileName = paste0(outfilename,".pdf")))
   } else {
