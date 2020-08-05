@@ -1,6 +1,7 @@
-title;start;CES_parameters;c_CES_calibration_new_structure;cm_CES_calibration_default_prices;c_solver_try_max;industry;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;climate;optimization;cm_emiscen;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
-BAU_Nash;0;load;0;0.1;2;fixed_shares;none;0;none;-1;off;nash;1;2005;./config/input.gdx;;
-RCP37;0;load;0;0.1;2;fixed_shares;rcp37;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;
-RCP26;0;load;0;0.1;2;fixed_shares;rcp26;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;
+title;start;CES_parameters;c_CES_calibration_new_structure;c_CES_calibration_iterations;c_solver_try_max;industry;cm_rcp_scen;cm_iterative_target_adj;carbonprice;cm_co2_tax_2020;climate;optimization;cm_emiscen;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
+BAU_Nash;0;load;0;10;2;fixed_shares;none;0;none;-1;off;nash;1;2005;./config/input.gdx;;
+RCP37;0;load;0;10;2;fixed_shares;rcp37;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;
+RCP26;0;load;0;10;2;fixed_shares;rcp26;5;exponential;30;off;nash;9;2015;./config/input.gdx;BAU_Nash;
 ___Calibration___;0;;;;;;;;;;;;;;;;
-calibrate_subsectors;1;calibrate;1;0.01;5;subsectors;none;0;none;-1;off;nash;1;2005;./config/input.gdx;;
+calibrate_subsectors;0;calibrate;1;10;5;subsectors;none;0;none;-1;off;nash;1;2005;./config/input.gdx;;
+calibrate_subsectors_B;1;calibrate;0;20;5;subsectors;none;0;none;-1;off;nash;1;2005;./output/calibrate_subsectors_2020-08-04_14.38.45/fulldata.gdx;;
