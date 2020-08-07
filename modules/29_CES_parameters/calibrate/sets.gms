@@ -57,8 +57,6 @@ Sets
     midperiod
     width
   /
-
-  pf_fixed_CES_nest(all_in)   "ipf_29 members with only ppf_29 inputs"
 ;
 
 alias(cesOut2cesIn_below,cesOut2cesIn_below2);

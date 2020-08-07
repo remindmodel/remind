@@ -1,45 +1,3 @@
-$macro DEBUG(x) put logfile, ">>> DEBUG ", x, " <<<" /; \
-  loop ((t,regi_dyn29(regi),out)$( t.val eq 2005 AND sameas(out,"ue_industry") ), \
-    put pm_cesdata.tn(t,regi,out,"quantity"), " = "; \
-    put pm_cesdata(t,regi,out,"quantity") /; \
-    put "  = "; \
-    loop (cesOut2cesIn(out,in), \
-      put pm_cesdata(t,regi,in,"quantity"), " @ "; \
-      put pm_cesdata(t,regi,in,"price"), " = "; \
-      put (pm_cesdata(t,regi,in,"quantity") + pm_cesdata(t,regi,in,"price")) /;\
-    ); \
-    put "  = ", sum(cesOut2cesIn(out,in), \
-                  pm_cesdata(t,regi,in,"quantity") \
-                * pm_cesdata(t,regi,in,"price") \
-                ) /; \
-    put "  = "; \
-    loop (cesOut2cesIn(out,in), \
-      put pm_cesdata(t,regi,in,"xi"), " (", pm_cesdata(t,regi,in,"eff") ; \
-      put pm_cesdata(t,regi,in,"effGr"), pm_cesdata(t,regi,in,"quantity"); \
-      put ") ^ ", pm_cesdata(t,regi,out,"rho"); \
-      put " = ", ( pm_cesdata(t,regi,in,"xi") \
-                 * ( pm_cesdata(t,regi,in,"eff") \
-                   * pm_cesdata(t,regi,in,"effGr") \
-                   * pm_cesdata(t,regi,in,"quantity") \
-                   ) \
-                ** pm_cesdata(t,regi,out,"rho") \
-                 ) /; \
-    ); \
-    put "  = ", ( sum(cesOut2cesIn(out,in), \
-                    pm_cesdata(t,regi,in,"xi") \
-                  * ( pm_cesdata(t,regi,in,"eff") \
-                    * pm_cesdata(t,regi,in,"effGr") \
-                    * pm_cesdata(t,regi,in,"quantity") \
-                    ) \
-                 ** pm_cesdata(t,regi,out,"rho") \
-                  ) \
-               ** (1 / pm_cesdata(t,regi,out,"rho")) \
-                ) /; \
-    put " " /; \
-  ); \
-  execerror=0;
-                 
-    
 *** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
@@ -634,7 +592,6 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
 sm_tmp  = 0;
 sm_tmp2 = 0;
 
-DEBUG("A");
 loop ((t_29hist(t),regi_dyn29(regi)),
   sm_tmp 
   = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
@@ -687,7 +644,6 @@ $offtext
     sm_tmp2 = sm_tmp2 + 1;
   );
 );
-DEBUG("B");
 
   !! if there has been a rescaling for historical steps
 if ( sm_tmp2 lt 0,
@@ -779,7 +735,6 @@ if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,i
 *** Then, we ensure that these prices correspond to the derivatives, because 
 *** the Euler equation holds for derivatives. Using prices makes only sense if 
 *** prices equal derivatives.
-DEBUG("C");
 loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$( 
                                                     NOT sameas(out,"inco") ),
   if (NOT ipf_putty(out),
@@ -804,7 +759,6 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
       / pm_cesdata_putty(t_29,regi_dyn29,in, "quantity");
   );
 );
-DEBUG("D");
 display "after change up to en consistency", pm_cesdata;
 
 *** Then, we consider the bottom level of the CES tree, where capital and labor have specific restrictions
@@ -1193,7 +1147,6 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 )
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) 
   = min(v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
 
-DEBUG("E");
 
 ***_________ END COMPUTATION OF ELASTICITIES OF SUBSTITUTION _________
 
