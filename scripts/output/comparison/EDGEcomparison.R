@@ -47,7 +47,6 @@ EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 emipSource_all = NULL
 elecdem_all = NULL
-emisys_all = NULL
 costs_all = NULL
 pref_FV_all = NULL
 demgdpcap_all = NULL
@@ -344,10 +343,6 @@ elecdemFun = function(miffile){
 
 }
 
-emisystemFun = function(miffile){
-  emisys = miffile[variable %in% c("Emi|CO2|Transport|Synfuels", "Emi|CO2|Transport|Liquids|WithSynfuels", "Emi|CO2|Transport|Hydrogen", "Emi|CO2|Transport|Electricity", "Emi|CO2|Transport|Gases")]
-  return(emisys)
-}
 
 investFun = function(miffile){
   invest = miffile[variable %in% c("Energy Investments|Hydrogen", "Energy Investments|Electricity", "Energy Investments|Liquids", "Energy Investments|Gases", "Energy system costs")]
@@ -901,8 +896,6 @@ for (outputdir in outputdirs) {
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
   elecdem = elecdemFun(miffile)
-  ## emissions from system
-  emisys = emisystemFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, EF_shares = EF_shares, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## per capita demand-gdp per capita
@@ -927,7 +920,6 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   emipSource[, scenario := as.character(unique(miffile$scenario))]
   elecdem[, scenario := as.character(unique(miffile$scenario))]
-  emisys[, scenario := as.character(unique(miffile$scenario))]
   costs[, scenario := as.character(unique(miffile$scenario))]
   pref_FV[, scenario := as.character(unique(miffile$scenario))]
   demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
@@ -947,7 +939,6 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   emipSource_all = rbind(emipSource_all, emipSource)
   elecdem_all = rbind(elecdem_all, elecdem)
-  emisys_all = rbind(emisys_all, emisys)
   costs_all = rbind(costs_all, costs)
   pref_FV_all = rbind(pref_FV_all, pref_FV)
   demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
@@ -977,7 +968,6 @@ saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
 saveRDS(elecdem_all, paste0(outdir, "/elecdem_all.RDS"))
-saveRDS(emisys_all, paste0(outdir, "/emisys_all.RDS"))
 saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
 saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
 saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
