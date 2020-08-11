@@ -32,6 +32,7 @@ emidem_all = readRDS("emidem_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 trspPE_all = readRDS("trspPE_all.RDS")
+LDV_PE_all = readRDS("LDV_PE_all.RDS")
 
 setConfig(forcecache=T)
 
@@ -152,20 +153,20 @@ theme2use <- theme_minimal()+
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 
- 
+
 kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dtES = dtES[region == rp & mode == "pass" & year >= 2015]
     dtES = dtES[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario)]
     dtES[, EScap := demand_F/pop]
-    
+
     dtFE = dtFE[region == rp & year >= 2015]
     dtFE = dtFE[aggr_mode %in% c("LDV", "Pass non LDV")]
     dtFE = dtFE[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, scenario)]
-    
+
     dtEmi = dtEmi[region == rp & year >= 2015 & variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand"),]
     dtEmi = dtEmi[,.(value = sum(value)), by = c("region", "year", "scenario")]
     dtEmi = dtEmi[,.(year, region, scenario, emi = value)]
-    
+
     dt = merge(dtFE, dtES, by = c("region", "year", "scenario"))
     dt = merge(dt, dtEmi, by = c("region", "year", "scenario"))
     dt[, FEcap := demand_EJ/pop]
@@ -173,16 +174,16 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dt[, FEcapindex := FEcap/FEcap[year == 2015], by = .(region, scenario)]
     dt[, EScapindex := EScap/EScap[year == 2015], by = .(region, scenario)]
     dt[, eintindex := eint/eint[year == 2015], by = .(region, scenario)]
-    
+
     dt = melt(dt[,c("region", "year", "scenario", "EScapindex", "FEcapindex", "eintindex")], id.vars = c("region", "year", "scenario"))
-    
+
     dt = merge(dt, mapping, by = "scenario")
     dt = dt[scen_name %in% c("Budg_IC", "Budg_IC-LS", "Budg_BE", "Budg_BE-LS", "Budg_FC", "Budg_ICsyn", "NPi_IC")]
     dt[, variable := as.character(variable)]
     dt[, variable := ifelse(variable == "FEcapindex", "FE per capita", variable)]
     dt[, variable := ifelse(variable == "EScapindex", "ES per capita", variable)]
     dt[, variable := ifelse(variable == "eintindex", "Emission intensity", variable)]
-    
+
     p = ggplot()+
       geom_line(data = dt[year <= 2050], aes(x = year, y = value, group = scen_name, color = scen_name))+
       facet_wrap(~variable)+
@@ -190,12 +191,14 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
       labs(x = "", y = "Index to 2015 [-]")+
       scale_x_continuous(breaks = c(2015, 2020, 2030, 2050)) +
       theme2use
-    
+
     return(p)
   }
-  
+
 p = kayapf(dtES = ESmodecap_all, dtFE = EJmode_all, dtEmi = emidem_all, rp = regionplot, mapping_scens_paper)
-   
+
+p
+
 aspect_ratio <- 2
 height <- 4
 ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspect_ratio)
@@ -207,16 +210,16 @@ ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspec
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 costspf = function(dt, rp, mapping_scens){
-    dt = dt[region == rp & scenario %in% c("Budg1100_ConvCase", "Budg1100_ElecEra","Budg1100_HydrHype", "NPi") & year %in% c(2020, 2030, 2050)]
+    dt = dt[region == rp & scenario %in% c("Budg1100_ConvCase", "Budg1100_ElecEra","Budg1100_HydrHype", "NPi") & year %in% c(2015, 2030, 2050)]
     map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "O&M"),
     logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
     dt = merge(dt, map, by = "logit_type")
-    
+
     dt_inc = dt[type == "inc"]
     dt_inc = dt_inc[,.(cost = sum(cost)), by = c("region", "year", "type", "technology", "scenario")]
     dt_inc = dt_inc[, c("name", "logit_type") := list("Inconvenience", "pinc")]
-    
+
     dt_tot = rbind(dt_inc, dt[type == "real"])
     dt_tot[, name := factor(name, levels = legend_ord)]
     dt_tot[, alph := ifelse(logit_type=="pinc", 0.6, 0.9)]
@@ -228,7 +231,7 @@ costspf = function(dt, rp, mapping_scens){
     dt_tot[, maxval := max(sum)]
 
     plot_hist = ggplot()+
-      geom_bar(data = dt_tot[year == 2020 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
+      geom_bar(data = dt_tot[year == 2015 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
       ylim(0, 1.01*unique(dt_tot[, maxval]))+
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
@@ -262,8 +265,8 @@ costspf = function(dt, rp, mapping_scens){
 
     ## combine all elements in final plot
     plot_allcosts = plot_grid(plot_hist, plot_proj, align = "h", ncol = 2, rel_widths  = c(0.2, 0.8))
-    
-    
+
+
     ## inconvenience costs only
     dt_inc = dt[type == "inc"]
     dt_inc[, name := factor(name, levels = legend_ord)]
@@ -272,10 +275,10 @@ costspf = function(dt, rp, mapping_scens){
     ## define the maximum on the y-axis depending on the maximum value across scenarios
     dt_inc = dt_inc[, sum := sum(cost), by = c("year", "scenario", "region", "technology")]
     dt_inc[, maxval := max(sum)]
-    
+
 
     plot_hist = ggplot()+
-      geom_bar(data = dt_inc[year == 2020 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
+      geom_bar(data = dt_inc[year == 2015 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
       ylim(0, 1.01*unique(dt_inc[, maxval]))+
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
@@ -308,18 +311,20 @@ costspf = function(dt, rp, mapping_scens){
 
     ## combine all elements in final plot
     plot_detailed = plot_grid(plot_hist, plot_proj, align = "h", ncol = 2, rel_widths  = c(0.2,0.8))
-    
+
     ## combine all costs and detailed
     plot = plot_grid(plot_allcosts, plot_detailed, align = "v", nrow = 2)
     legends = plot_grid(techlegend_allcosts, techlegend_detailed, align = "v", ncol = 1)
     plot = plot_grid(plot, legends, align = "h", ncol = 2, rel_widths  = c(0.75,0.25))
-    
-    
-    
+
+
+
     return(plot)
 }
 
 p = costspf(costs_all, rp = regionplot, mapping_scens_paper)
+
+p
 
 aspect_ratio <- 1
 height <- 12
@@ -335,7 +340,7 @@ vintcomparisonArea_regi_pf = function(dt, rp, mapping){
   dt = merge(dt, mapping)
   dt = dt[scen_name %in% c("NPi_IC", "Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "Budg_IC-LS", "Budg_BE-LS")]
   dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "Budg_IC-LS", "Budg_BE-LS"))]
-  
+
   parea = ggplot()+
     geom_area(data = dt[region == rp & year >= 2020 & year <= 2050], aes(x=year, y=value, fill = technology, group = technology), alpha = 0.9, color="black", size=0.05, position= position_stack())+
   facet_wrap(~scen_name, nrow = 1)+
@@ -345,7 +350,7 @@ vintcomparisonArea_regi_pf = function(dt, rp, mapping){
     scale_x_continuous(breaks = c(2020, 2030, 2050)) +
     theme2use+
     theme(legend.position = "none")
-  
+
   dt = dt[year %in% c(2030, 2050) & region == rp]
 
   ## define the maximum on the y-axis depending on the maximum value across scenarios
@@ -359,7 +364,7 @@ vintcomparisonArea_regi_pf = function(dt, rp, mapping){
     guides(fill=guide_legend(title="Powertrain"))+
     scale_fill_manual(values = cols)
 
-   plot = plot_grid(parea, pbar, align = "v", ncol = 1, rel_heights  = c(0.5, 0.5))  
+   plot = plot_grid(parea, pbar, align = "v", ncol = 1, rel_heights  = c(0.5, 0.5))
    return(plot)
 }
 
@@ -431,9 +436,40 @@ trspPEpf = function(dt, rp, mapping){
 
 p = trspPEpf(trspPE_all, rp = regionplot, mapping_scens_paper)
 
+p
+
 aspect_ratio <- 2.5
 height <- 5
 ggsave("trspPE.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+## PE in LDVs by fuel
+
+```{r, echo=FALSE, warning=FALSE}
+LDV_PEpf = function(dt, rp, mapping){
+   dt = dt[region == rp]
+   dt = merge(dt, mapping, by = "scenario")
+   dt[, year := as.numeric(year)]
+   dt = dt[year >= 2020 & year <= 2050]
+   dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_ICsyn", "Budg_FC", "Budg_BE", "Budg_IC-LS", "Budg_BE-LS"))]
+   p = ggplot()+
+        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
+        facet_wrap(~scen_name, nrow = 1)+
+  theme2use +
+  labs(y = "Primary energy [EJ]", x="")+
+  scale_fill_manual("Source", values = cols)+
+  scale_x_continuous(breaks = c(2020, 2030, 2050))
+
+  return(p)
+}
+
+
+p = LDV_PEpf(LDV_PE_all, rp = regionplot, mapping_scens_paper)
+
+p
+
+aspect_ratio <- 2.5
+height <- 5
+ggsave("LDV_PE.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
 ## CO2 intensity of LDV sales
