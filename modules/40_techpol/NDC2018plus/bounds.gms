@@ -65,8 +65,8 @@ display vm_cap.lo;
 vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("2020",regi,"tnrs") + 0.025 * (pm_NuclearConstraint("2025",regi,"tnrs")+pm_NuclearConstraint("2030",regi,"tnrs"));
 
 ***SR/BS/CB 2020-08-12: lower bound on early retirement for a faster coal phase-out in SDP (at least 90% retirement in 2020 and 95% in 2030)
-vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.95);
-vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
+vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.lo("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.95);
+vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.lo("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
 
 
 *** EOF ./modules/40_techpol/NDC2018plus/bounds.gms
