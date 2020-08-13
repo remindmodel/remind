@@ -1174,16 +1174,24 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
 );
 
 
-*** Apply efficiency improvements assumptions to industrial final energy and capital inputs
-loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
-                                            industry_ue_calibration_target_dyn37(out) 
-                                            AND ppf_beyondcalib_29(in)),
-  pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
-  = pm_cesdata(t2,regi,in, "effGr")
-  * ((1 + pm_ue_eff_target(out)) ** (t_29.val - pm_ttot_val(t2)))
-  ;
-);
+*** Apply efficiency improvements to industrial inputs
+loop ((t_29hist_last(t2),
+       industry_ue_calibration_target_dyn37(out),
+       cesOut2cesIn_below(out,in),
+       in_beyond_calib_29(in)                     ),
 
+  !! ppfen efficiencies grow with prescribed rates
+  pm_cesdata(t_29(t),regi_dyn29(regi),ppfen(in),"effGr")
+  = pm_cesdata(t2,regi,in,"effGr")
+  * ((1 + pm_ue_eff_target(out)) ** (t.val - pm_ttot_val(t2)));
+
+  !! ipf efficiencies stay constant
+  pm_cesdata(t_29(t),regi_dyn29(regi),ipf(in),"effGr")
+  = pm_cesdata(t2,regi,in,"effGr");
+
+  !! kap efficiencies are determined by quantity trajectories
+);
+  
 !! - adjust efficiency parameters for feelhth_X and feh2_X
 loop (cesOut2cesIn(in_industry_dyn37(out),in)$( 
                               (ppfen(in) OR ipf(in))
