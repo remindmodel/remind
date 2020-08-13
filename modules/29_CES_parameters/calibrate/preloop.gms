@@ -1181,12 +1181,12 @@ loop ((t_29hist_last(t2),
        in_beyond_calib_29(in)                     ),
 
   !! ppfen efficiencies grow with prescribed rates
-  pm_cesdata(t_29(t),regi_dyn29(regi),ppfen(in),"effGr")
+  pm_cesdata(t_29(t),regi_dyn29(regi),ppfen(in),"effGr")$( NOT t_29hist(t) )
   = pm_cesdata(t2,regi,in,"effGr")
   * ((1 + pm_ue_eff_target(out)) ** (t.val - pm_ttot_val(t2)));
 
   !! ipf efficiencies stay constant
-  pm_cesdata(t_29(t),regi_dyn29(regi),ipf(in),"effGr")
+  pm_cesdata(t_29(t),regi_dyn29(regi),ipf(in),"effGr")$( NOT t_29hist(t) )
   = pm_cesdata(t2,regi,in,"effGr");
 
   !! kap efficiencies are determined by quantity trajectories
