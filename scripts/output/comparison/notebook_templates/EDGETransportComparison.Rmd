@@ -510,8 +510,8 @@ dt = dt[year >= 2005]
 dt = dt[, year := as.character(year)]
 dtsec = unique(dt[, c("region", "year", "demsec", "sector", "gdpcap", "scenario")])
 psec = ggplot()+
-  geom_line(data = dtsec, aes(x = gdpcap, y = demsec, color = region, group = region, linetype = scenario))+
-  geom_point(data = dtsec[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demsec, shape = year, group = region, color = region))+
+ geom_line(data = dtsec, aes(x = gdpcap, y = demsec, color = region, group = interaction(region, scenario), linetype = scenario))+
+ geom_point(data = dtsec[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demsec, shape = year, group = interaction("region", "scenario"), color = region))+
   facet_wrap(~sector, scales = "free") +
   theme2use +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
@@ -524,7 +524,7 @@ psec = ggplot()+
 
 dtappl = unique(dt[, c("region", "year", "demappl", "appl", "gdpcap", "scenario")])
 pappl = ggplot()+
-  geom_line(data = dtappl, aes(x = gdpcap, y = demappl, color = region, group = region, linetype = scenario))+
+  geom_line(data = dtappl, aes(x = gdpcap, y = demappl, color = region, group = interaction(region, scenario), linetype = scenario))+
   geom_point(data = dtappl[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demappl, shape = year, group = region, color = region))+
   facet_wrap(~appl, scales = "free") +
   theme2use +
@@ -537,7 +537,7 @@ pappl = ggplot()+
 
 dttype = unique(dt[, c("region", "year", "demtype", "type", "gdpcap", "scenario")])
 ptype = ggplot()+
-  geom_line(data = dttype, aes(x = gdpcap, y = demtype, color = region, group = region, linetype = scenario))+
+  geom_line(data = dttype, aes(x = gdpcap, y = demtype, color = region, group = interaction(region, scenario), linetype = scenario))+
   geom_point(data = dttype[year %in% c("2020", "2030", "2050", "2070", "2100")], aes(x = gdpcap, y = demtype, shape = year, group = region, color = region))+
   facet_wrap(~type, scales = "free") +
   theme2use +
@@ -548,7 +548,7 @@ ptype = ggplot()+
   labs(y = "Per capita demand [km/capita]", x="GDP per capita [$/person]")
 
 psectime = ggplot()+
-  geom_line(data = dtsec, aes(x = year, y = demsec, color = region, group = region, linetype = scenario))+
+  geom_line(data = dtsec, aes(x = year, y = demsec, color = region, group = interaction(region, scenario), linetype = scenario))+
   facet_wrap(~sector, scales = "free") +
   theme2use +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
@@ -559,7 +559,7 @@ psectime = ggplot()+
 
 
 pappltime = ggplot()+
-  geom_line(data = dtappl, aes(x = year, y = demappl, color = region, group = region, linetype = scenario))+
+  geom_line(data = dtappl, aes(x = year, y = demappl, color = region, group = interaction(region, scenario), linetype = scenario))+
   facet_wrap(~appl, scales = "free") +
   theme2use +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
@@ -570,7 +570,7 @@ pappltime = ggplot()+
 
 
 ptypetime = ggplot()+
-  geom_line(data = dttype, aes(x = year, y = demtype, color = region, group = region, linetype = scenario))+
+  geom_line(data = dttype, aes(x = year, y = demtype, color = region, group = interaction(region, scenario), linetype = scenario))+
   facet_wrap(~type, scales = "free") +
   theme2use +
   theme(axis.text.x = element_text(angle = 90, hjust = 1),
