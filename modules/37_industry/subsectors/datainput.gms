@@ -15,21 +15,21 @@ Parameter
     ue_industry                      0.5   !! cement - chemicals - steel - other
 
       ue_cement                      1.7   !! energy, capital
-        en_cement                    0.7   !! non-electric, electric
+        en_cement                    0.3   i! non-electric, electric
           en_cement_non_electric     2.0   !! solids, liquids, gases, hydrogen
 
       ue_chemicals                   1.7   !! energy, capital
-        en_chemicals                 0.7   !! fuels and high-temperature heat, electricity
+        en_chemicals                 0.3   !! fuels and high-temperature heat, electricity
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
 
       ue_steel                       5     !! primary steel, secondary steel
         ue_steel_primary             1.7   !! energy, capital
-          en_steel_primary           0.7   !! furnace, electricity
+          en_steel_primary           0.3   !! furnace, electricity
             en_steel_furnace         2.0   !! solids, liquids, gases, hydrogen
         ue_steel_secondary           1.7   !! energy, capital
 
       ue_otherInd                    1.7   !! energy, capital
-        en_otherInd                  0.7   !! high-temperature heat, electricity
+        en_otherInd                  0.3   !! high-temperature heat, electricity
           en_otherInd_hth            2.0   !! solids, liquids, gases, hydrogen, heat
   /
 ;
