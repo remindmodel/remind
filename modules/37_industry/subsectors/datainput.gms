@@ -15,7 +15,7 @@ Parameter
     ue_industry                      0.5   !! cement - chemicals - steel - other
 
       ue_cement                      1.7   !! energy, capital
-        en_cement                    0.3   i! non-electric, electric
+        en_cement                    0.3   !! non-electric, electric
           en_cement_non_electric     2.0   !! solids, liquids, gases, hydrogen
 
       ue_chemicals                   1.7   !! energy, capital
