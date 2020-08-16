@@ -35,6 +35,7 @@ Parameter
 ;
 pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 
+$ontext
 *** converge substitution elasticities until 2105
 loop (cesOUt2cesIn(out,in)$(   sameas(in,"en_chemicals") 
                             OR sameas(in,"en_otherInd")  ),
@@ -43,6 +44,7 @@ loop (cesOUt2cesIn(out,in)$(   sameas(in,"en_chemicals")
   + (p37_cesdata_sigma(in) - p37_cesdata_sigma(out))
   * min(1, (ttot.val - 2005) / 100);
 );
+$offtext
 
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
