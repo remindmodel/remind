@@ -30,7 +30,7 @@ q39_shSynTrans(t,regi)..
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynTrans(t,regi)
     =e=
-    vm_prodSe(t,regi,"seh2","seliqfos","MeOH")
+    vm_prodSe(t,regi,"seh2","seliqbio","MeOH")
 ;
 
 
