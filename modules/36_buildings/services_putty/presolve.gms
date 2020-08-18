@@ -218,6 +218,9 @@ s36_logit = 1;
 solve logit_36 maximizing v36_shares_obj using nlp;
 s36_logit = 0;
 
+if ( NOT ( logit_36.solvestat eq 1  AND (logit_36.modelstat eq 1 OR logit_36.modelstat eq 2)),
+abort "model logit_36 is infeasible";
+);
 
 *** Compute the aggregate UE shares
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
