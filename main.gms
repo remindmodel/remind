@@ -296,7 +296,7 @@ cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as 
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
@@ -427,12 +427,12 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-cm_priceSensiBuild     = -3;
+cm_INNOPATHS_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_pushCalib  none !! def = none
-$setGlobal cm_reducCostB  none !! def = none
-$setGlobal cm_effHP  5 !! def = 5
+$setGlobal cm_INNOPATHS_pushCalib  none !! def = none
+$setGlobal cm_INNOPATHS_reducCostB  none !! def = none
+$setGlobal cm_INNOPATHS_effHP  5 !! def = 5
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = Conservative_liquids
 
