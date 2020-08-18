@@ -305,6 +305,8 @@ Display p29_alpha, p29_beta;
 
 *** for entrp_frgt_lo
 *** pass on to pm_cesdata and ensure the resulting price is positive
+$ifthen.edge_esm %transport% == "edge_esm"
+
 loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020 ),
   pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
   = max(
@@ -327,6 +329,8 @@ loop (ttot$( ttot.val ge 2005),
 );
 
 display "after entrp_frgt_lo smoothening", pm_cesdata;
+
+$endif.edge_esm
 
 *** for all other modes
 *** pass on to pm_cesdata and ensure the resulting price is positive
@@ -371,6 +375,30 @@ loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
 );
 
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
+
+*** Ensure that the labour share in GDP is at least 20 % for historical periods
+*** and 0.5 % for others.
+put logfile;
+loop ((t,regi_dyn29(regi)),
+  sm_tmp
+  = sum(ppf_29(in)$( NOT sameas(in,"lab") ),
+      pm_cesdata(t,regi,in,"quantity")
+    * pm_cesdata(t,regi,in,"price")
+    )
+  / pm_cesdata(t,regi,"inco","quantity");
+
+  if ((0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) )) lt sm_tmp,
+    put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
+
+    pm_cesdata(t,regi,ppf_29,"price")
+    = pm_cesdata(t,regi,ppf_29,"price")
+    / sm_tmp
+    * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ));
+    
+    put " -> ", (1 - (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))) /;
+  );
+);
+putclose logfile;
 
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
@@ -778,7 +806,7 @@ if (card(ppf_beyondcalib_29) >= 1,
   Display "  before computing xi in beyond", pm_cesdata;
   
 !! if "load", prices have already been loaded
-$ifthen.prices_beyond not %c_CES_calibration_prices% == "load"
+$ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
   
   !! Compute ppf prices from CES derivatives of previous run
   p29_CESderivative(t,regi_dyn29(regi),cesOut2cesIn(out,in))$( 
@@ -897,8 +925,8 @@ $endif.repEsubs
       put "sm_tmp   [", t.tl, ",", regi.tl, ",", out.tl, "]" /;
       put " = sum(cesOut2cesIn('", out.tl, "',in)," /;
       loop (cesOut2cesIn_below(out,in),
-        put "      ", in.tl, @30 pm_cesdata(t,regi,in,"price");
-        put " * ", pm_cesdata(t,regi,in,"quantity") /;
+        put "      ", in.tl, @30 pm_cesdata(t,regi,in,"quantity");
+        put " @ ", pm_cesdata(t,regi,in,"price") /;
       );
       put "   ) " /;
       put " / ", pm_cesdata(t,regi,out,"quantity") /;
@@ -1455,7 +1483,7 @@ putclose logfile;
 
 if (sm_tmp,
   execute_unload "abort.gdx";
-  !! abort "something is wrong with the consistency of pm_cesdata, see logfile";
+  abort "something is wrong with the consistency of pm_cesdata, see logfile";
 );
 
 sm_tmp = 0;

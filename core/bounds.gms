@@ -11,7 +11,7 @@
 
 *RP 20160126 set vm_costTeCapital to pm_inco0_t for all technologies that are non-learning
 vm_costTeCapital.fx(ttot,regi,teNoLearn)  = pm_inco0_t("2005",regi,teNoLearn);  !! use 2005 value for the past
-vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);       
+vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 
 *** ----------------------------------------------------------------------------------------------------------------------------------------
 *** CB 20120402 Set lower bounds on variables to prevent the problem that the conopt solver often doesn't see a benefit from changing variable value away from 0
@@ -19,7 +19,7 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** ----------------------------------------------------------------------------------------------------------------------------------------
 
 *** CB 20120402 Lower limit on all P2SE technologies capacities to 1 MW of all technologies and all time steps
-loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec")) 
+loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
 );
@@ -31,7 +31,7 @@ loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
 );
 
-*RP* Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades 
+*RP* Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades
 loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
@@ -55,20 +55,13 @@ vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
 *** -----------------------------------------------------------------------------------------------------------------
 *** Traditional biomass use is phased out on an exogeneous time path
 *** -----------------------------------------------------------------------------------------------------------------
+*** Note: make sure that this matches with the settings for residues in modules/05_initialCap/on/preloop.gms
+
+*BS/DK* Developed regions phase out quickly (no new capacities)
 vm_deltaCap.up(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
+*BS/DK* Developing regions (defined by GDP PPP threshold) phase out more slowly ( + varied by SSP)
 loop(regi,
-     if( ( pm_gdp("2005",regi)/pm_pop("2005",regi) ) > 10,
-           vm_deltaCap.fx("2010",regi,"biotr","1") = 0.80  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2015",regi,"biotr","1") = 0.45  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2020",regi,"biotr","1") = 0.35  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2025",regi,"biotr","1") = 0.25  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2030",regi,"biotr","1") = 0.20  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2035",regi,"biotr","1") = 0.15  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2040",regi,"biotr","1") = 0.10  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2045",regi,"biotr","1") = 0.075 * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2050",regi,"biotr","1") = 0.05  * vm_deltaCap.lo("2005",regi,"biotr","1");
-           vm_deltaCap.fx("2055",regi,"biotr","1") = 0.05  * vm_deltaCap.lo("2005",regi,"biotr","1");
-      else
+     if( ( pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi) ) < 4,
            vm_deltaCap.fx("2010",regi,"biotr","1") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
            vm_deltaCap.fx("2015",regi,"biotr","1") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
            vm_deltaCap.fx("2020",regi,"biotr","1") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
@@ -82,9 +75,11 @@ loop(regi,
         );
 );
 
-$if %cm_GDPscen% == "gdp_SDP"  vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.50 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.65 * vm_deltaCap.lo(t,regi,"biotr","1");
-$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.65 * vm_deltaCap.lo(t,regi,"biotr","1");
+* quickest phaseout in SDP (no new capacities allowed), quick phaseout in SSP1 und SSP5
+$if %cm_GDPscen% == "gdp_SDP"  vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0. * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+$if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
+
 
 *** ------------------------------------------------------------------------------------------
 *LP* implement switch for scenarios with or without carbon sequestration:
@@ -117,7 +112,7 @@ elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
   vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 4), !! no carbon capture in the electricity sector
-  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),  
+  loop(emi2te(enty,"seel",te,"cco2")$( sum(regi_capturescen,pm_emifac("2020",regi_capturescen,enty,"seel",te,"cco2")) > 0 ),
     loop(te2rlf(te,rlf),
       vm_cap.fx(t,regi_capturescen,te,rlf)        = 0;
     );
@@ -161,13 +156,13 @@ if(c_abtrdy gt 2010,
 );
 
 *NB* controlling for investment cost of advance bio-energy technologies (introduced for EMF33)
-pm_data(regi, "inco0","bioftrec")  = c_abtcst * pm_data(regi, "inco0","bioftrec"); 
-pm_data(regi, "inco0","bioh2")     = c_abtcst * pm_data(regi, "inco0","bioh2"); 
-pm_data(regi, "inco0","bioigcc")   = c_abtcst * pm_data(regi, "inco0","bioigcc"); 
-pm_data(regi, "inco0","bioftcrec") = c_abtcst * pm_data(regi, "inco0","bioftcrec"); 
-pm_data(regi, "inco0","bioh2c")    = c_abtcst * pm_data(regi, "inco0","bioh2c"); 
-pm_data(regi, "inco0","bioigccc")  = c_abtcst * pm_data(regi, "inco0","bioigccc"); 
-pm_data(regi, "inco0","bioethl")   = c_abtcst * pm_data(regi, "inco0","bioethl"); 
+pm_data(regi, "inco0","bioftrec")  = c_abtcst * pm_data(regi, "inco0","bioftrec");
+pm_data(regi, "inco0","bioh2")     = c_abtcst * pm_data(regi, "inco0","bioh2");
+pm_data(regi, "inco0","bioigcc")   = c_abtcst * pm_data(regi, "inco0","bioigcc");
+pm_data(regi, "inco0","bioftcrec") = c_abtcst * pm_data(regi, "inco0","bioftcrec");
+pm_data(regi, "inco0","bioh2c")    = c_abtcst * pm_data(regi, "inco0","bioh2c");
+pm_data(regi, "inco0","bioigccc")  = c_abtcst * pm_data(regi, "inco0","bioigccc");
+pm_data(regi, "inco0","bioethl")   = c_abtcst * pm_data(regi, "inco0","bioethl");
 
 ***--------------------------------------------------------------------
 *RP no CCS should be used in a BAU run, and no CCS at all in 2010
@@ -178,15 +173,15 @@ if(cm_emiscen = 1,
   vm_cap.fx(t,regi,teCCS,rlf) = 0;
 );
 
-*** ------------------------------------------------------------------------ 
+*** ------------------------------------------------------------------------
 *** Fix nuclear to historic values
 *** ------------------------------------------------------------------------
-if (cm_startyear le 2015,  
+if (cm_startyear le 2015,
   loop(regi,
     p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
-    p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  ) 
+    p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  )
                                       / 7.5;
-    p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  ) 
+    p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  )
                                       / 7.5;
     vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
   );
@@ -216,13 +211,13 @@ if (cm_nucscen gt 0 AND cm_nucscen ne 4,
 );
 
 *mh no tnrs:
-if (cm_nucscen eq 3,  
+if (cm_nucscen eq 3,
   vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
 );
 
 * no new nuclear investments after 2020, until then all currently planned plants are built
-if (cm_nucscen eq 5, 
+if (cm_nucscen eq 5,
   vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
@@ -271,7 +266,7 @@ v_adjFactor.fx("2005",regi,te)=0;
 
 
 
-vm_emiMacSector.lo(t,regi,enty)    =  0;    
+vm_emiMacSector.lo(t,regi,enty)    =  0;
 vm_emiMacSector.lo(t,regi,"co2luc")= -5.0;  !! afforestation can lead to negative emissions
 vm_emiMac.fx(t,regi,"so2") = 0;
 vm_emiMac.fx(t,regi,"bc") = 0;
@@ -355,7 +350,7 @@ vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 
 *** -----------------------------------------------------------------------------
-*DK 20100929 Bound on CCS injection rate 
+*DK 20100929 Bound on CCS injection rate
 *** -----------------------------------------------------------------------------
 *** default value (0.5%) is consistent with Interview Gerling (BGR)
 *** http://www.iz-klima.de/aktuelles/archiv/news-2010/mai/news-05052010-2/
@@ -365,11 +360,11 @@ vm_capEarlyReti.fx(ttot,regi,"dot")=0;
 
 if ( c_ccsinjecratescen gt 0,
 
-	loop(regi,	
+	loop(regi,
 ***vm_co2CCS.up(t,regi,"tco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1")*sm_ccsinjecrate
 		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * sm_ccsinjecrate;
-	);	
-	
+	);
+
 );
 
 *** fix 2010 emissions to historic projections when running a policy scenarios without fixing the 2010 time step to a BAU run. This way, the gdx are better suited for later runs that are based on baselines until 2010 or longer.
@@ -388,7 +383,7 @@ $endif
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP2"
 if(cm_emiscen gt 1,
   vm_prodSe.up(t,regi,"pecoal","seliqfos","coalftcrec")$(t.val gt 2010) = 0.00001;
-);  
+);
 $endif
 
 
@@ -416,7 +411,7 @@ loop(regi,
   );
 );
 
-*AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values. 
+*AL* fixing prodFE in 2005 to the value contained in pm_cesdata("2005",regi,in,"quantity"). This is done to ensure that the energy system will reproduce the 2005 calibration values.
 *** Fixing will produce clearly attributable errors (good for debugging) when using inconsistent data, as the GAMS accuracy when comparing fixed results is very high (< 1e-8).
 ***vm_prodFE.fx("2005",regi,se2fe(enty,enty2,te)) = sum(fe2ppfEn(enty2,in), pm_cesdata("2005",regi,in,"quantity") );
 
@@ -428,9 +423,9 @@ $ontext
 *** *RP* Chinese depoyment of coal power plants and coal use in industry was probably not only demand-driven, but also policy-driven (faster than demand). Therefore, we implement lower bounds on coal power plants and solid coal use:
 *** -------------------------------------------------------------
 if (cm_startyear le 2015,
-vm_cap.lo("2015","CHN","pc","1")            = 0.75;  !! WEO says 826GW in 2013, 980 in 2020 
-vm_cap.lo("2010","CHN","coaltr","1")        = 0.79;  !! IEA says ~27EJ in 2010. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 25*0.647/20.5 = 0.79 
-vm_cap.lo("2015","CHN","coaltr","1")        = 0.88;  !! IEA says ~29.7EJ in 2012. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 28*0.647/20.5 = 0.88 
+vm_cap.lo("2015","CHN","pc","1")            = 0.75;  !! WEO says 826GW in 2013, 980 in 2020
+vm_cap.lo("2010","CHN","coaltr","1")        = 0.79;  !! IEA says ~27EJ in 2010. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 25*0.647/20.5 = 0.79
+vm_cap.lo("2015","CHN","coaltr","1")        = 0.88;  !! IEA says ~29.7EJ in 2012. In REMIND, a coaltr cap of 0.647 is equivalent to an FE solids coal level of 20.5 EJ, thus 28*0.647/20.5 = 0.88
 );
 $offtext
 
@@ -441,7 +436,7 @@ $if  %c_SSP_forcing_adjust% == "forcing_SSP1"    vm_deltaCap.up(t,regi,"coalgas"
 *** -------------------------------------------------------------
 ***Fixing h2curt value to zero to avoid the model to generate SE out of nothing.
 ***Models that have additional se production channels should release this variable (eg. RLDC power module).
-loop(prodSeOth2te(enty,te),  
+loop(prodSeOth2te(enty,te),
   vm_prodSeOth.fx(t,regi,"seh2","h2curt") = 0;
 );
 
@@ -484,10 +479,10 @@ loop ((t, regi) $ ( (sameAs(t,"2010") OR sameAs(t,"2015"))
                     ((pm_cesdata(t,regi,in,"quantity") + pm_cesdata(t,regi,in,"offset_quantity")
                     + pm_cesdata(t,regi,in2,"quantity") + pm_cesdata(t,regi,in2,"offset_quantity")
                     ) eq 0)
-                    AND 
+                    AND
                     (sum(ttot$(ttot.val lt 2005), vm_deltacap.up(ttot,regi,"biochp","1")) eq 0)) ,
       vm_prodSe.up(t,regi,"pegas"  ,"seel","gaschp")  = 0;
-      vm_prodSe.up(t,regi,"pecoal" ,"seel","coalchp") = 0; 
+      vm_prodSe.up(t,regi,"pecoal" ,"seel","coalchp") = 0;
       vm_prodSe.up(t,regi,"pecoal" ,"sehe","coalhp")  = 0;
       vm_prodSe.up(t,regi,"pegeo"  ,"sehe","geohe")   = 0;
       vm_prodSe.up(t,regi,"pesol"  ,"sehe","solhe")   = 0;
