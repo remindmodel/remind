@@ -82,15 +82,24 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.944
+* Input data revision: 5.947
 * 
-* Last modification (input data): Wed Jun 17 14:10:58 2020
+* Last modification (input data): Thu Jul 30 13:06:59 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
 *----------------------------------------------------------------------
 *** main.gms: main file. welcome to remind!
 *----------------------------------------------------------------------
+
+file logfile /""/;
+
+logfile.lw = 0;
+logfile.nr = 2;
+logfile.nd = 3;
+logfile.nw = 0;
+logfile.nz = 0;
+
 *--------------------------------------------------------------------------
 *** preliminaries:
 *--------------------------------------------------------------------------
@@ -324,6 +333,7 @@ cm_CCS_cement          = 1;        !! def = 1
 cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
+$setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
@@ -431,13 +441,13 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 
 $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure  0    !! def =  0
-$setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
-$setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal c_CES_calibration_new_structure  0    !!  def  =  0
+$setglobal c_CES_calibration_iterations  10   !!  def  =  10
+$setglobal c_CES_calibration_iteration        1    !!  def  =  1
+$setglobal c_CES_calibration_write_prices  0    !!  def  =  0
+$setglobal cm_CES_calibration_default_prices  0.1  !!  def  =  0
 
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  EUR   !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
