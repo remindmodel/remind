@@ -76,5 +76,5 @@ $offtext
 *** p32_flex_maxdiscount refers to the maximum fraction by which 
 *** the input electricity price can be reduced/increased (positive/negative values) 
 *** for high VRE penetrations
-p32_flex_maxdiscount(regi,"elh2") = 0.6;
+p32_flex_maxdiscount(regi,"elh2") = cm_flexMax_elh2;
 
