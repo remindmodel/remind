@@ -12,4 +12,9 @@
 vm_co2capture.lo(t,regi,"cco2","ico2","ccsinje","1") = 0;
 vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 
+
+*** lower bound on synfuel share in all liquids from 2035 onwards
+*** forces a minimum share of synfuels, if cm_shSynTrans > 0
+v39_shSynTrans.lo(t,regi)$(t.val >= 2035) = cm_shSynTrans;
+
 *** EOF ./modules/39_CCU/39_CCU.gms
