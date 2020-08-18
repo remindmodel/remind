@@ -71,39 +71,9 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 *** forcing floor price for UKI (UK has a CO2 price floor of ~€20 €/tCO2e since 2013). The Carbon Price Floor was introduced in 2013 at a rate of £16 (€18.05) per tonne of carbon dioxide-equivalent (tCO2e), and was set to increase to £30 (€33.85) by 2020. However, the government more recently decided to cap the Carbon Price Floor at £18.08 (€20.40) till 2021.
 ***     	pm_taxemiMkt(t,regi,"ETS")$((t.val ge 2015) AND (sameas(regi,"UKI")) AND ETS_regi(ETS_mkt,regi)) = max(20*sm_DptCO2_2_TDpGtC, pm_taxemiMkt(t,regi,"ETS"));
 		
-	
-$ontext	
-***  calculating ETS CO2 tax rescale factor
-
-		if(iteration.val lt 15,
-
-$if "%cm_emiMktETS_type%" == "budget" p47_emiRescaleCo2TaxETS("2050",ETS_mkt) = max(0.1, sum(ttot$((ttot.val ge 2015) AND (ttot.val le 2050)), pm_ts(ttot) * (1-0.4$(ttot.val eq 2050))*(sum(regi$ETS_regi(ETS_mkt,regi),v47_emiTargetMkt.l(ttot,regi,"ETS","netCO2"))))/p47_emiTargetETS("2050",ETS_mkt) ) ** 2;
-$if "%cm_emiMktETS_type%" == "year"   p47_emiRescaleCo2TaxETS("2050",ETS_mkt) = max(0.1, sum(regi$ETS_regi(ETS_mkt,regi),v47_emiTargetMkt.l("2050",regi,"ETS","netCO2"))/p47_emiTargetETS("2050",ETS_mkt) ) ** 2;
-		else
-$if "%cm_emiMktETS_type%" == "budget" p47_emiRescaleCo2TaxETS("2050",ETS_mkt) = max(0.1, sum(ttot$((ttot.val ge 2015) AND (ttot.val le 2050)), pm_ts(ttot) * (1-0.4$(ttot.val eq 2050))*(sum(regi$ETS_regi(ETS_mkt,regi),v47_emiTargetMkt.l(ttot,regi,"ETS","netCO2"))) )/p47_emiTargetETS("2050",ETS_mkt) );
-$if "%cm_emiMktETS_type%" == "year"   p47_emiRescaleCo2TaxETS("2050",ETS_mkt) = max(0.1, sum(regi$ETS_regi(ETS_mkt,regi),v47_emiTargetMkt.l("2050",regi,"ETS","netCO2"))/p47_emiTargetETS("2050",ETS_mkt) );
-		);
-
-		p47_emiRescaleCo2TaxETS(t,ETS_mkt)$p47_emiRescaleCo2TaxETS(t,ETS_mkt) =
-		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxETS(t,ETS_mkt)),
-			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
-		);
-
-***	updating the ETS co2 tax
-*		pm_taxemiMkt("2005",regi,"ETS")$ETS_regi(ETS_mkt,regi) = 0;
-*		pm_taxemiMkt("2010",regi,"ETS")$ETS_regi(ETS_mkt,regi) = 15*sm_DptCO2_2_TDpGtC;
-*		pm_taxemiMkt("2015",regi,"ETS")$ETS_regi(ETS_mkt,regi) = 8*sm_DptCO2_2_TDpGtC;
-		pm_taxemiMkt("2050",regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2050",regi,"ETS") * p47_emiRescaleCo2TaxETS("2050",ETS_mkt));
-		pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2015) AND (t.val ge cm_startyear) AND (t.val le 2050)) = pm_taxemiMkt("2050",regi,"ETS")*1.05**(t.val-2050); !! 2013 to 2050: increase at 5% p.a.
-		pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2050)) = pm_taxemiMkt("2050",regi,"ETS")*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
-
-*** forcing floor price for UKI (UK has a CO2 price floor of ~€20 €/tCO2e since 2013). The Carbon Price Floor was introduced in 2013 at a rate of £16 (€18.05) per tonne of carbon dioxide-equivalent (tCO2e), and was set to increase to £30 (€33.85) by 2020. However, the government more recently decided to cap the Carbon Price Floor at £18.08 (€20.40) till 2021.
-***     	pm_taxemiMkt(t,regi,"ETS")$((t.val ge 2015) AND (sameas(regi,"UKI")) AND ETS_regi(ETS_mkt,regi)) = max(20*sm_DptCO2_2_TDpGtC, pm_taxemiMkt(t,regi,"ETS"));
-
-	);
-$offtext
-    display p47_emiRescaleCo2TaxETS;
+    display p47_regiCO2ETStarget, p47_emiCurrentETS, p47_emiRescaleCo2TaxETS;
     display pm_taxemiMkt;
+
 $ENDIF.emiMktETS
 
 
@@ -207,7 +177,7 @@ $ENDIF.emiMktES2050
 		
 	);
 		
-    display p47_emiRescaleCo2TaxES,vm_emiTeMkt.l;
+    display p47_emiTargetES,vm_emiTeMkt.l,p47_emiRescaleCo2TaxES;
     display pm_taxemiMkt;
 
 $ENDIF.emiMktES
@@ -284,8 +254,8 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 		pm_taxCO2eq(ttot,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot,all_regi) * p47_factorRescaleCO2Tax(ext_regi));
 ***	linear price between first free year and terminal year
 		loop(ttot2, 
-			break$(ttot2.val gt 2020 AND ttot2.val ge cm_startyear); !!initial free price year
-			pm_taxCO2eq(t,all_regi)$(t.val gt 2020 AND t.val ge cm_startyear AND t.val lt ttot.val)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq(ttot,all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(ttot.val-ttot2.val))*(t.val-ttot2.val); 
+			break$(ttot2.val ge cm_startyear); !!initial free price year
+			pm_taxCO2eq(t,all_regi)$(t.val ge cm_startyear AND t.val lt ttot.val)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq(ttot,all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(ttot.val-ttot2.val))*(t.val-ttot2.val); 
 			);
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot.val) = pm_taxCO2eq(ttot,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val);
@@ -298,8 +268,8 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 		pm_taxCO2eq(ttot,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot,all_regi) * p47_factorRescaleCO2Tax(ext_regi));
 ***	linear price between first free year and terminal year
 		loop(ttot2, 
-			break$(ttot2.val gt 2020 AND ttot2.val ge cm_startyear); !!initial free price year
-			pm_taxCO2eq(t,all_regi)$(t.val gt 2020 AND t.val ge cm_startyear AND t.val lt ttot.val)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq(ttot,all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(ttot.val-ttot2.val))*(t.val-ttot2.val);
+			break$(ttot2.val ge cm_startyear); !!initial free price year
+			pm_taxCO2eq(t,all_regi)$(t.val ge cm_startyear AND t.val lt ttot.val)  = ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)) + ((pm_taxCO2eq(ttot,all_regi) - ( pm_taxCO2eq(ttot2,all_regi) + pm_taxCO2eqHist(ttot2,all_regi)))/(ttot.val-ttot2.val))*(t.val-ttot2.val);
 			);
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot.val) = pm_taxCO2eq(ttot,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val);
