@@ -153,6 +153,21 @@ loop(en2en(enty,enty2,te),
     );
 );
 
+*** overwrite eta values due to bug in input data
+pm_data(regi,"eta","tdbiodie")$pm_data(regi,"eta","tdbiodie") = 1;
+pm_data(regi,"eta","tdfosdie")$pm_data(regi,"eta","tdbiodie") = 1;
+pm_data(regi,"eta","tdbiopet")$pm_data(regi,"eta","tdbiodie") = 1;
+pm_data(regi,"eta","tdfospet")$pm_data(regi,"eta","tdbiodie") = 1;
+
+pm_data(regi,"eta","tdbiogas")$pm_data(regi,"eta","tdbiogas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),pm_IO_input(regi,enty,enty2,te));
+
+pm_data(regi,"eta","tdfosgas")$pm_data(regi,"eta","tdfosgas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),pm_IO_input(regi,enty,enty2,te));
+
+pm_data(regi,"eta","tdbiosos")$pm_data(regi,"eta","tdbiogas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),pm_IO_input(regi,enty,enty2,te));
+
+pm_data(regi,"eta","tdfossos")$pm_data(regi,"eta","tdfossos") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),pm_IO_input(regi,enty,enty2,te));
+
+
 *** calculate mix0 - the share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production
 ***old calculation: mix0(enty, enty2, te) = output(enty, enty2, te) / sum( (enty3,te2), output(enty3, enty2, te2) $(enty2 is not joint product of a te2 that is technology with joint products, like CHP )
 loop(en2en(enty,enty2,te),  !! this sum does not include couple production, only direct transformation processes
