@@ -73,9 +73,7 @@ q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
                             ( ((s36_vintage_calib eq 1) AND (t36_hist(ttot) ))
                                     OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
    
-   (v36_prodEs(ttot,regi,enty,esty,teEs) $ (s36_vintage_calib eq 0)
-   +  p36_prodEs(ttot,regi,enty,esty,teEs)$ (s36_vintage_calib eq 1)
-   )
+    v36_prodEs(ttot,regi,enty,esty,teEs)
    =e=
    sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
                   pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
