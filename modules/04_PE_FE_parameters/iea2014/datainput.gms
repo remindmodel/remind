@@ -155,9 +155,9 @@ loop(en2en(enty,enty2,te),
 
 *** overwrite eta values due to bug in input data
 pm_data(regi,"eta","tdbiodie")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdfosdie")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdbiopet")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdfospet")$pm_data(regi,"eta","tdbiodie") = 1;
+pm_data(regi,"eta","tdfosdie")$pm_data(regi,"eta","tdfosdie") = 1;
+pm_data(regi,"eta","tdbiopet")$pm_data(regi,"eta","tdbiopet") = 1;
+pm_data(regi,"eta","tdfospet")$pm_data(regi,"eta","tdfospet") = 1;
 
 pm_data(regi,"eta","tdbiogas")$pm_data(regi,"eta","tdbiogas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),pm_IO_input(regi,enty,enty2,te));
 
