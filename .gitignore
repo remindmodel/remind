@@ -28,3 +28,7 @@ main.lst
 
 # Ignore .RData files only in the root folder
 /*.RData
+
+# ignore temporary libreoffice files
+.~lock.*#
+
