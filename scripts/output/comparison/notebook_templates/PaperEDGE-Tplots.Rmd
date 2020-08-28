@@ -33,6 +33,7 @@ costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 trspPE_all = readRDS("trspPE_all.RDS")
 LDV_PE_all = readRDS("LDV_PE_all.RDS")
+LDV_PEonlySyn_all = readRDS("LDV_PEonlySyn_all.RDS")
 
 setConfig(forcecache=T)
 
@@ -464,13 +465,19 @@ LDV_PEpf = function(dt, rp, mapping){
 
 
 p = LDV_PEpf(LDV_PE_all, rp = regionplot, mapping_scens_paper)
-
+print("LDVs have their share of synfuels")
 p
+
+p_onlySyn = LDV_PEpf(LDV_PEonlySyn_all, rp = regionplot, mapping_scens_paper)
+print("LDVs take over all synfuels")
+p_onlySyn
 
 aspect_ratio <- 2.5
 height <- 5
-ggsave("LDV_PE.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("LDV_PE.png", p_onlySyn, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("LDV_PEonlySyn.png", p_onlySyn, dpi=500, height = height , width = height * aspect_ratio)
 ```
+
 
 ## CO2 intensity of LDV sales
 

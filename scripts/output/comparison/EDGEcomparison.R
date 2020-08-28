@@ -52,6 +52,7 @@ pref_FV_all = NULL
 demgdpcap_all = NULL
 invest_all = NULL
 trspPE_all = NULL
+LDV_PEonlySyn_all = NULL
 LDV_PE_all = NULL
 
 scenNames <- getScenNames(outputdirs)
@@ -671,17 +672,25 @@ trspPEFun = function(gdx){
 }
 
 
-LDV_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING){
+LDV_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING, onlyLDVsyn){
   ## calculate the share of FE for LDVs only
   demFE = merge(demFE, REMIND2ISO_MAPPING, by = "iso")
   demFE[, fe := ifelse(technology %in% c("BEV", "Electric", "LA-BEV"), "feelt", NA)]
   demFE[, fe := ifelse(technology %in% c("FCEV"), "feh2t", fe)]
   demFE[, fe := ifelse(technology %in% c("NG"), "fegat", fe)]
-  demFE[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L1 == "trn_pass_road_LDV_4W", "fepet", fe)]
-  demFE[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L1 != "trn_pass_road_LDV_4W", "fedie", fe)]
+  ## create a copy of the dt, as the distinction between fepet and fedie is useful later
+  demFEsepLDV = copy(demFE)
+
+  demFE[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids"), "fossil", fe)] ## attribute a generic "fossil" name
   demFE = demFE[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
   demFE[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
   demFE[, year := as.character(year)]
+  ##  perform the same calculations with distinction between fedie and fepet
+  demFEsepLDV[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 == "trn_pass_road_LDV", "fepet", fe)]
+  demFEsepLDV[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 != "trn_pass_road_LDV", "fedie", fe)]
+  demFEsepLDV = demFEsepLDV[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
+  demFEsepLDV[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
+  demFEsepLDV[, year := as.character(year)]
 
   TWa_2_EJ <- 31.536
   ## demSe: secondary energy demand, secondary energy carrier units
@@ -738,9 +747,16 @@ LDV_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING){
   shareH2TrspDir[, share := share*sharemode]
   shareH2TrspDir[, c("EJ", "subsector_L1", "sharemode") := NULL]
 
-  shareH2TrspSyn = merge(shareH2Trsp[fe == "fesynt"], demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "fepet"][, fe := NULL], by = c("region", "year"))
+  shareH2TrspSyn = merge(shareH2Trsp[fe == "fesynt"], demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "fossil"][, fe := NULL], by = c("region", "year"))
+  if (onlyLDVsyn == TRUE) {
+    ## all synfuels have to be attributed to the LDVs (i.e. the other modes only run on fossils)
+    shareH2TrspSyn[, sharemode := 1]  ## overwrite the shares of modes with "1"
+  }
+
   shareH2TrspSyn[, share := share*sharemode]
   shareH2TrspSyn[, c("EJ", "subsector_L1", "sharemode") := NULL]
+
+
 
   ## reconstruct database with H2
   shareH2Trsp = rbind(shareH2Trsp[fe == "fesyns"], shareH2TrspSyn, shareH2TrspDir)
@@ -771,7 +787,7 @@ LDV_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING){
 
 
   ## only a part of it is for LDVs
-  fosSe = merge(fosSe, demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe %in% c("fepet", "fegat")], by = c("region", "year", "fe"))
+  fosSe = merge(fosSe, demFEsepLDV[subsector_L1 == "trn_pass_road_LDV_4W" & fe %in% c("fepet", "fegat")], by = c("region", "year", "fe"))
   fosSe[, valdem := valdem*sharemode]
 
   fosSe = fosSe[,.(region, year, pe, value = valdem)]
@@ -905,7 +921,8 @@ for (outputdir in outputdirs) {
   ## Primary energy used in transport divided by source
   trspPE = trspPEFun(gdx)
   ## Primary energy used in LDVs divided by source
-  LDV_PE = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING)
+  LDV_PEonlySyn = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = TRUE) ## synfuels all attributed to LDVs
+  LDV_PE = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = FALSE) ## synfuels consumed by whole transport sector
 
   ## add scenario dimension to the results
   fleet[, scenario := as.character(unique(miffile$scenario))]
@@ -925,6 +942,7 @@ for (outputdir in outputdirs) {
   demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
   invest[, scenario := as.character(unique(miffile$scenario))]
   trspPE[, scenario := as.character(unique(miffile$scenario))]
+  LDV_PEonlySyn[, scenario := as.character(unique(miffile$scenario))]
   LDV_PE[, scenario := as.character(unique(miffile$scenario))]
   ## rbind scenarios
   salescomp_all = rbind(salescomp_all, salescomp)
@@ -944,7 +962,9 @@ for (outputdir in outputdirs) {
   demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
   invest_all = rbind(invest_all, invest)
   trspPE_all = rbind(trspPE_all, trspPE)
+  LDV_PEonlySyn_all = rbind(LDV_PEonlySyn_all, LDV_PEonlySyn)
   LDV_PE_all = rbind(LDV_PE_all, LDV_PE)
+
 }
 
 ## create string with date and time
@@ -974,6 +994,7 @@ saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
 saveRDS(invest_all, paste0(outdir, "/invest_all.RDS"))
 saveRDS(trspPE_all, paste0(outdir, "/trspPE_all.RDS"))
 saveRDS(LDV_PE_all, paste0(outdir, "/LDV_PE_all.RDS"))
+saveRDS(LDV_PEonlySyn_all, paste0(outdir, "/LDV_PEonlySyn_all.RDS"))
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
