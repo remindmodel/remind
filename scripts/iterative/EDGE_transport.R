@@ -103,7 +103,7 @@ pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
 ## optional average of prices
-average_prices = FALSE
+average_prices = TRUE
 
 ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
 ## select from total demand only the passenger sm
