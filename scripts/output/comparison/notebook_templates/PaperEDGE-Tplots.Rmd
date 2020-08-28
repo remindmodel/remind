@@ -66,7 +66,7 @@ cols <- c("NG" = "#d11141",
           "Model availability" = "#58b4ae",
           "Inconvenience" = "#58b4ae",
           "Charging" = "#007892",
-          "Policy induced inconvenience" = "#2e4057",
+          "Policy-induced inconv." = "#2e4057",
           "Risk" = "#feb72b",
           "Fuel" = "#035aa6",
           "International Aviation" = "#9acd32",
@@ -108,13 +108,13 @@ cols <- c("NG" = "#d11141",
           "ConvCase" = "#113245",
           "ConvCaseWise" = "#d11141",
           "NDC" = "#d11141",
-          "NPi_IC" = "#f6ab6c",
-          "Budg_BE" = "#00b159",
-          "Budg_IC" = "#113245",
-          "Budg_ICsyn" = "orchid",
-          "Budg_FC" = "#00aedb",
-          "Budg_BE-LS" = "#68c6a4",
-          "Budg_IC-LS" = "#d11141",
+          "NPi_Conv" = "#f6ab6c",
+          "B1100_ElecPush" = "#00b159",
+          "B1100_Conv" = "#113245",
+          "B1100_ConvSyn" = "orchid",
+          "B1100_H2Push" = "#00aedb",
+          "B1100_ElecPush-LowD" = "#68c6a4",
+          "B1100_Conv-LowD" = "#d11141",
           "SynSurge" = "orchid")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
@@ -124,17 +124,14 @@ legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shippi
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
-legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy induced inconvenience","Fuel", "Purchase", "O&M")
+legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy-induced inconv.","Fuel", "Purchase", "O&M")
 
 legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", "Emi|CO2|Transport|Demand", "Emi|CO2|Energy|Supply|Gross", "Emi|CO2|Land-Use Change","Emi|CO2|CDR|BECCS")
 
 legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 
 ## mapping for scenario names
-mapping_scens = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise", "Budg1100_HydrHypeWise", "Budg1100_SynSurgeWise", "NDC_ConvCaseWise"), scen_name = c("ConvCase", "ElecEra", "HydrHype", "SynSurge", "NDC", "NPi", "ConvCaseWise", "ElecEraWise", "HydrHypeWise", "SynSurgeWise", "NDCWise"))
-
-mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "NDC_IC", "NPi_IC", "Budg_IC-LS", "Budg_BE-LS"))
-
+mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "NDC_IC", "NPi_Conv", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))
 
 regionplot = "EUR"
 
@@ -179,7 +176,7 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dt = melt(dt[,c("region", "year", "scenario", "EScapindex", "FEcapindex", "eintindex")], id.vars = c("region", "year", "scenario"))
 
     dt = merge(dt, mapping, by = "scenario")
-    dt = dt[scen_name %in% c("Budg_IC", "Budg_IC-LS", "Budg_BE", "Budg_BE-LS", "Budg_FC", "Budg_ICsyn", "NPi_IC")]
+    dt = dt[scen_name %in% c("B1100_Conv", "B1100_Conv-LowD", "B1100_ElecPush", "B1100_ElecPush-LowD", "B1100_H2Push", "B1100_ConvSyn", "NPi_Conv")]
     dt[, variable := as.character(variable)]
     dt[, variable := ifelse(variable == "FEcapindex", "FE per capita", variable)]
     dt[, variable := ifelse(variable == "EScapindex", "ES per capita", variable)]
@@ -212,7 +209,7 @@ ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspec
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 costspf = function(dt, rp, mapping_scens){
     dt = dt[region == rp & scenario %in% c("Budg1100_ConvCase", "Budg1100_ElecEra","Budg1100_HydrHype", "NPi") & year %in% c(2015, 2030, 2050)]
-    map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy induced inconvenience", "Purchase", "O&M"),
+    map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy-induced inconv.", "Purchase", "O&M"),
     logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
     dt = merge(dt, map, by = "logit_type")
@@ -232,7 +229,7 @@ costspf = function(dt, rp, mapping_scens){
     dt_tot[, maxval := max(sum)]
 
     plot_hist = ggplot()+
-      geom_bar(data = dt_tot[year == 2015 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
+      geom_bar(data = dt_tot[year == 2015 & scen_name == "NPi_Conv"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
       ylim(0, 1.01*unique(dt_tot[, maxval]))+
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
@@ -245,7 +242,7 @@ costspf = function(dt, rp, mapping_scens){
       theme(legend.position = "none")
 
     plot_proj = ggplot()+
-      geom_bar(data = dt_tot[year %in% c(2030, 2050) & scen_name != "NPi_IC"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity") +
+      geom_bar(data = dt_tot[year %in% c(2030, 2050) & scen_name != "NPi_Conv"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity") +
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
       ylim(0,1.01*unique(dt_tot[, maxval]))+
@@ -279,7 +276,7 @@ costspf = function(dt, rp, mapping_scens){
 
 
     plot_hist = ggplot()+
-      geom_bar(data = dt_inc[year == 2015 & scen_name == "NPi_IC"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
+      geom_bar(data = dt_inc[year == 2015 & scen_name == "NPi_Conv"][,scen_name := "Historical"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity")+
       ylim(0, 1.01*unique(dt_inc[, maxval]))+
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
@@ -291,7 +288,7 @@ costspf = function(dt, rp, mapping_scens){
       theme(legend.position = "none")
 
     plot_proj = ggplot()+
-      geom_bar(data = dt_inc[year %in% c(2030, 2050)& scen_name != "NPi_IC"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity") +
+      geom_bar(data = dt_inc[year %in% c(2030, 2050)& scen_name != "NPi_Conv"], aes(x = technology, y = cost, group = name, fill = name), position = "stack", stat = "identity") +
       facet_wrap(~year+scen_name, nrow = 1)+
       theme2use +
       ylim(0,1.01*unique(dt_inc[, maxval]))+
@@ -327,8 +324,8 @@ p = costspf(costs_all, rp = regionplot, mapping_scens_paper)
 
 p
 
-aspect_ratio <- 1
-height <- 12
+aspect_ratio <- 1.12
+height <- 14
 
 ggsave("LDVtotcost_selectedscen.png", p, dpi=300, height = height , width = height * aspect_ratio)
 ```
@@ -339,8 +336,8 @@ ggsave("LDVtotcost_selectedscen.png", p, dpi=300, height = height , width = heig
 vintcomparisonArea_regi_pf = function(dt, rp, mapping){
   dt = dt[,.(value = sum(value)), by = .(region, year, technology, scenario)]
   dt = merge(dt, mapping)
-  dt = dt[scen_name %in% c("NPi_IC", "Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "Budg_IC-LS", "Budg_BE-LS")]
-  dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "Budg_IC-LS", "Budg_BE-LS"))]
+  dt = dt[scen_name %in% c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD")]
+  dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
 
   parea = ggplot()+
     geom_area(data = dt[region == rp & year >= 2020 & year <= 2050], aes(x=year, y=value, fill = technology, group = technology), alpha = 0.9, color="black", size=0.05, position= position_stack())+
@@ -365,7 +362,7 @@ vintcomparisonArea_regi_pf = function(dt, rp, mapping){
     guides(fill=guide_legend(title="Powertrain"))+
     scale_fill_manual(values = cols)
 
-   plot = plot_grid(parea, pbar, align = "v", ncol = 1, rel_heights  = c(0.5, 0.5))
+   plot = plot_grid(parea, pbar, align = "v", ncol = 1, rel_heights  = c(0.4, 0.6))
    return(plot)
 }
 
@@ -375,7 +372,7 @@ p
 
 
 aspect_ratio <- 2
-height <- 6
+height <- 8
 ggsave("pvintArea.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
@@ -392,7 +389,7 @@ pref[, vehicle_type := ifelse(vehicle_type == "Bus_tmp_vehicletype", "Large Truc
 pref = merge(pref, mapping, by = "scenario")
 
 p = ggplot()+
-  geom_line(data = pref[scen_name %in% c("Budg_BE", "Budg_FC", "Budg_IC")], aes(x = year, y = value, group = interaction(technology, vehicle_type), color = technology, linetype = vehicle_type))+
+  geom_line(data = pref[scen_name %in% c("B1100_ElecPush", "B1100_H2Push", "B1100_Conv")], aes(x = year, y = value, group = interaction(technology, vehicle_type), color = technology, linetype = vehicle_type))+
   facet_wrap(~scen_name, ncol = 3)+
   theme2use +
   theme(axis.text.x = element_text(angle = 90, size=5, vjust=0.5, hjust=1),
@@ -422,7 +419,7 @@ trspPEpf = function(dt, rp, mapping){
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
-   dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_ICsyn", "Budg_FC", "Budg_BE", "Budg_IC-LS", "Budg_BE-LS"))]
+   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
@@ -451,14 +448,15 @@ LDV_PEpf = function(dt, rp, mapping){
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
-   dt[, scen_name := factor(scen_name, levels = c("NPi_IC", "Budg_IC", "Budg_ICsyn", "Budg_FC", "Budg_BE", "Budg_IC-LS", "Budg_BE-LS"))]
+   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
   theme2use +
   labs(y = "Primary energy [EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
-  scale_x_continuous(breaks = c(2020, 2030, 2050))
+  scale_x_continuous(breaks = c(2020, 2030, 2050))+
+  theme(strip.text = element_text(size = 12))
 
   return(p)
 }
