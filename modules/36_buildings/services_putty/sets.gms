@@ -7,6 +7,7 @@
 *** SOF ./modules/36_buildings/services_putty/sets.gms
 Sets
  regi_dyn36(all_regi)   "dynamic region set for compatibility with testOneRegi"
+ regi_dyn36_cooling(all_regi)   "regions with high cooling on which we impose efficiency constraint"
   teEs_dyn36(all_teEs)  "technologies - buildings module additions"
   /
     te_ueshheb  "buildings space heating district heat"
@@ -255,6 +256,8 @@ $offOrder
  t36_hist_last(ttot) = NO;
  t36_hist_last(t36_hist)$(ord(t36_hist) eq card(t36_hist)) = YES;
 $offOrder
+
+regi_dyn36_cooling(all_regi) = NO;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------

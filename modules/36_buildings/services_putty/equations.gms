@@ -40,7 +40,9 @@ q36_enerSerAdj(ttot,regi,in)$(sameas (in, "esswb") AND ttot.val ge max(2010, cm_
          ;
 
 
-q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb") AND ttot.val ge max(2015, cm_startyear)).. 
+q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb") 
+                               AND ttot.val ge max(2015, cm_startyear)
+                               AND regi_dyn36_cooling(regi) ).. 
          vm_enerSerAdj(ttot,regi,in) 
          =e=
          p36_adjFactor(ttot,regi)

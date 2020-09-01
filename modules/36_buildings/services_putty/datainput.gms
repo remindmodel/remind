@@ -234,6 +234,11 @@ p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) /
 *** Adjustement cost factor
 p36_adjFactor(ttot,regi) = 1;
 
+*** Set regions with high cooling demand, on which we impose a constraint on efficiency development
+loop(regi $ (pm_cesdata("2100",regi,"fescelb","quantity") gt 0.01),
+
+regi_dyn36_cooling(regi) = YES;
+);
 
 *** Set dynamic regional set depending on testOneRegi
 $ifthen "%optimization%" == "testOneRegi"
