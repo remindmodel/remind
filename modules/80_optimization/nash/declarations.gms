@@ -75,6 +75,7 @@ p80_count                                  "count regions with feasible solution
 p80_eoWeights_fix(all_regi)                "default and fallback weighting factors"
 
 p80_SolNonOpt(all_regi)                    "solve status"
+p80_taxrev_dev(ttot,all_regi)              "reports deviation of tax revenue normalized by GDP if taxes did not converge"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 ;
