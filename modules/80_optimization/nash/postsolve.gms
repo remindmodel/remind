@@ -183,6 +183,17 @@ loop(regi,
 if(sm_fadeoutPriceAnticip gt 1E-4, s80_bool = 0);
 **
 
+***additional criterion: did taxes converge?
+loop(regi,
+  loop(t,
+    if( (abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco")) gt 1E-2,
+     s80_bool = 0;
+     p80_messageShow("taxconv") = YES;
+    );
+  );
+);
+
+
 ***end with failure message if max number of iterations is reached w/o convergence:
 if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max number of iteration, still no convergence
      OPTION decimals = 3;
@@ -213,6 +224,10 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 		 display "#### We can't accept this solution, because it is non-optimal, and too far away from the last known optimal solution. ";
 		 display "#### Just trying a different gdx may help.";
 	     );	 
+	     if(sameas(convMessage80, "taxconv"),
+		 display "####";
+		 display "#### Taxes did not converge in all regions and time steps. Check the absolute level of tax revenue vm_taxrev, must be smaller than 1 percent of GDP";
+	     );	
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;

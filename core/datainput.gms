@@ -1187,4 +1187,57 @@ loop(te,
 *** -------- initial declaration of parameters for iterative target adjustment
 o_reached_until2150pricepath(iteration) = 0;
 
+*** ---- FE demand trajectories for calibration -------------------------------
+*** also used for limiting secondary steel demand in baseline and policy 
+*** scenarios
+Parameter
+  pm_fedemand   "final energy demand"
+  /
+$ondelim
+$include "./core/input/pm_fe_demand.cs4r"
+$offdelim
+  /
+;
+
+$ifthen.subsectors "%industry%" == "subsectors"   !! industry
+*** Limit secondary steel production to 90 %.  This might be slightly off due 
+*** to rounding in the mrremind package.
+if (9 lt smax((t,regi,all_GDPscen)$(
+                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ), 
+           pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+         / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+         ),
+  put logfile;
+  logfile.nd = 15;
+  put ">>> rescaling steel production figures because of mrremind rounding" /;
+
+  loop ((t,regi,all_GDPscen)$(
+                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
+    if (9 lt ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+             / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")),
+  
+      put t.tl, " ", regi.tl, " ", all_GDPscen.tl, ": ";
+      put @20 "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ") -> ";
+  
+      pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+      = 0.1
+      * ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+        + pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+        );
+  
+      pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+      = 9 * pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary");
+  
+      put "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ")" /;
+    );
+  );
+
+  logfile.nd = 3;
+  putclose logfile;
+);
+$endif.subsectors
+
 *** EOF ./core/datainput.gms
+

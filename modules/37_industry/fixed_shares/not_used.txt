@@ -6,3 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 pm_delta_kap,input,questionnaire
+cm_emiscen,switch,not needed
+pm_calibrate_eff_scale,parameter,not needed
+pm_fedemand,parameter,not needed
+

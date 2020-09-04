@@ -3,3 +3,5 @@ pm_ttot_val,parameter,???
 vm_deltaCap,input,questionnaire
 pm_NuclearConstraint,input,questionnaire
 cm_nucscen,input,questionnaire
+vm_capEarlyReti,input,questionnaire
+cm_earlyreti_rate,input,questionnaire
