@@ -18,16 +18,6 @@
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
-$ifthen.edge_esm_transport "%transport%" == "edge_esm"
-*** Slightly relaxed extraction bounds for biofuels.
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4 * p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) 
-  = 2 * p30_datapebio(regi,"pebioil","5","maxprod",t)
-  + (1.16559102075124e-6)$( t.val eq 2030 AND sameas(regi,"CHA") );
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
-$endif.edge_esm_transport
-
 if(cm_1stgen_phaseout=0,
     vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
     vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
