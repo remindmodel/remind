@@ -31,7 +31,9 @@ teCCU2rlf(all_te,rlf)				  "mapping for CCU technologies to grades"
       (h22ch4) . 1
       (MeOH) . 1
 /
+;
 
+alias(teCCU2rlf,teCCU2rlf2); 
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings

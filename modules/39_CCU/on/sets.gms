@@ -47,9 +47,9 @@ teSeCCU2rlf(all_te,rlf)     "mapping for secondary energy CCU technologies to gr
       (h22ch4) . 1
 	  (MeOH) . 1
 /
+;
 
-
-alias(teCCU2rlf,teCCU2rlf2); !! duplicate of teCCU2rlf, used to always list ccu-technologies in te2rlf
+alias(teCCU2rlf,teCCU2rlf2); 
 
 
 ***-------------------------------------------------------------------------
