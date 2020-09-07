@@ -7,15 +7,24 @@
 *** SOF ./modules/40_techpol/NDC2018/bounds.gms 
 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
-vm_cap.lo(t,regi,"spv","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"spv")*0.001; 
-vm_cap.lo(t,regi,"wind","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"wind")*0.001; 
-vm_cap.lo(t,regi,"tnrs","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"tnrs")*0.001;
-vm_cap.lo(t,regi,"hydro","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"hydro")*0.001;
+*** FS: activate capacity tarets only from 2025 on to be better in line with current trends
+vm_cap.lo(t,regi,"spv","1")$(t.val ge 2025) = p40_TechBound(t,regi,"spv")*0.001; 
+vm_cap.lo(t,regi,"wind","1")$(t.val ge 2025) = p40_TechBound(t,regi,"wind")*0.001; 
+vm_cap.lo(t,regi,"tnrs","1")$(t.val ge 2025) = p40_TechBound(t,regi,"tnrs")*0.001;
+vm_cap.lo(t,regi,"hydro","1")$(t.val ge 2025) = p40_TechBound(t,regi,"hydro")*0.001;
 
 
 * FS: in case of a nuclear phase-out scenario (nucscen 7), nuclear lower bound from p40_techBound only up to 2025
 if(cm_nucscen eq 7,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$((t.val gt 2025) and (t.val ge cm_startyear)) = 0;
+);
+
+*** FS: if cm_H2Targets on: include capacity targets for electrolysis following national Hydrogen Strategies
+*** multiply by conversion efficiency as targets are given in GW(electricity) but GW(H2) needed
+*** EU Hydrogen Strategy (2020): https://ec.europa.eu/energy/sites/ener/files/hydrogen_strategy.pdf
+*** German Hydrogen Strategy (2020): https://www.bmwi.de/Redaktion/DE/Publikationen/Energie/die-nationale-wasserstoffstrategie.html
+if(cm_H2targets eq 1,
+  vm_cap.lo(t,regi,"elh2","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"elh2")*0.001*pm_eta_conv(t,regi,"elh2");
 );
 
 $ifthen.complex_transport "%transport%" == "complex"
