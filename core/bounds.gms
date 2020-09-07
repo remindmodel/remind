@@ -86,7 +86,7 @@ $if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020
 *** ------------------------------------------------------------------------------------------
 
 if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
-		vm_co2CCS.fx(t,regi,"cco2","ico2","ccsinje","1") =0;
+		vm_co2CCS.fx(t,regi_capturescen,"cco2","ico2","ccsinje","1") =0;
 );
 
 *** ------------------------------------------------------------------------------------------
