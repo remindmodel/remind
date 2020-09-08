@@ -270,7 +270,7 @@ for(scen in common){
       }
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,scenarios_coupled[sub(prefix_runname,"",runname),"qos"],file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"
