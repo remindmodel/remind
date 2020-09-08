@@ -291,6 +291,15 @@ $offdelim
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
+
+*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
+s_co2pipe_leakage = 0.01;
+
+loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
+    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
+    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
+);
+
 *** Allocate emission factors to pm_emifac
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
@@ -309,14 +318,6 @@ pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fes
 pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
 
 display pm_emifac;
-
-*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
-s_co2pipe_leakage = 0.01;
-
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
-    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
-    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
-);
 
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
