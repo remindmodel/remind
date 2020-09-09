@@ -376,29 +376,6 @@ loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
 
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
-*** Ensure that the labour share in GDP is at least 20 % for historical periods
-*** and 0.5 % for others.
-put logfile;
-loop ((t,regi_dyn29(regi)),
-  sm_tmp
-  = sum(ppf_29(in)$( NOT sameas(in,"lab") ),
-      pm_cesdata(t,regi,in,"quantity")
-    * pm_cesdata(t,regi,in,"price")
-    )
-  / pm_cesdata(t,regi,"inco","quantity");
-
-  if ((0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) )) lt sm_tmp,
-    put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
-
-    pm_cesdata(t,regi,ppf_29,"price")
-    = pm_cesdata(t,regi,ppf_29,"price")
-    / sm_tmp
-    * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ));
-    
-    put " -> ", (1 - (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))) /;
-  );
-);
-putclose logfile;
 
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
@@ -568,48 +545,47 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
     );
 );
 
-*** Ensure that the share of labour is higher than 20% for historical periods
-*** Otherwise rescale prices and produce a message in the logfile
+*** Ensure that the labour share in GDP is at least 20 % for historical periods
+*** and 0.5 % for others.
 
 sm_tmp  = 0;
 sm_tmp2 = 0;
 
+put logfile;
 loop ((t_29hist(t),regi_dyn29),
   sm_tmp 
   = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
       pm_cesdata(t,regi_dyn29,in,"quantity")
     * pm_cesdata(t,regi_dyn29,in,"price")
-    );
+    )
+    / pm_cesdata(t,regi,"inco","quantity");
 
 
-   if ( sm_tmp gt (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity")),
+   if ( (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) )) lt sm_tmp,
+   
+   put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
+   
      pm_cesdata(t,regi_dyn29,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
                                                        OR in_complements(in)) )
      = pm_cesdata(t,regi_dyn29,in,"price")
-     * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+     * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
      / sm_tmp;
        
      loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
        pm_cesdata(t,regi_dyn29,in2,"price")
        = pm_cesdata(t,regi_dyn29,in2,"price")
-       * (0.80 * pm_cesdata(t,regi_dyn29,"inco","quantity"))
+       * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
        / sm_tmp;
      );  
-       
-     put logfile;
-     put "---" /;
-     put "WARNING: NON GAMS error: rescaled prices because xi lab lt 20% in ", regi_dyn29.tl, ", ", t.tl /;
-     put "ratio (en + kap) / inco = ";
-     put (sm_tmp / pm_cesdata(t,regi_dyn29,"inco","quantity")) /;
-     put "---" /;
-     putclose;
      
+     put " -> ", (1 - (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))) /;
      sm_tmp2 = sm_tmp2 + 1;
      );
 );
+putclose logfile;
 
   !! if there has been a rescaling for historical steps
-if ( sm_tmp2 lt 0,
+if ( sm_tmp2 gt 0,
   !! Repeat previous steps with new prices
   loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out) 
                                       OR ppf_putty(out)      ),
