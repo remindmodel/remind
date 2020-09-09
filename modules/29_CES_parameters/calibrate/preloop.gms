@@ -1108,7 +1108,9 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1)  = v29_r
 
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1) =
  1 -  (1 - pm_cesdata(t,regi,in,"rho"))
- / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),p29_esubGrowth))    !! lambda = 1 in 2015 and 2 in 2050;
+ / ( 1 + min(max((pm_ttot_val(t) - 2015)/(2050 -2015),0),1) 
+         * p29_esubGrowth
+    )    
 ;
 
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_cesdata(t,regi,in,"rho") lt 0) = min(pm_cesdata(t,regi,in,"rho"), 1 - 1/0.8); !! If complementary factors, sigma should be below 0.8
