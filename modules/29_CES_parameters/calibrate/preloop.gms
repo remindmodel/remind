@@ -552,11 +552,11 @@ sm_tmp  = 0;
 sm_tmp2 = 0;
 
 put logfile;
-loop ((t_29hist(t),regi_dyn29),
+loop ((t_29hist(t),regi_dyn29(regi)),
   sm_tmp 
   = sum(in$(sameAs(in, "kap") OR sameAs(in,"en")),
-      pm_cesdata(t,regi_dyn29,in,"quantity")
-    * pm_cesdata(t,regi_dyn29,in,"price")
+      pm_cesdata(t,regi,in,"quantity")
+    * pm_cesdata(t,regi,in,"price")
     )
     / pm_cesdata(t,regi,"inco","quantity");
 
@@ -565,15 +565,15 @@ loop ((t_29hist(t),regi_dyn29),
    
    put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
    
-     pm_cesdata(t,regi_dyn29,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
+     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
                                                        OR in_complements(in)) )
-     = pm_cesdata(t,regi_dyn29,in,"price")
+     = pm_cesdata(t,regi,in,"price")
      * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
      / sm_tmp;
        
      loop (cesOut2cesIn(in2,in)$( ppf_29(in) AND in_complements(in) ),
-       pm_cesdata(t,regi_dyn29,in2,"price")
-       = pm_cesdata(t,regi_dyn29,in2,"price")
+       pm_cesdata(t,regi,in2,"price")
+       = pm_cesdata(t,regi,in2,"price")
        * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
        / sm_tmp;
      );  
