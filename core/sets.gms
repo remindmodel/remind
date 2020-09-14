@@ -2062,6 +2062,7 @@ steps         "iterator for MAC steps"
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 alias(t,t2,t3);
+alias(iteration,iteration2);
 alias(tall,tall2,tall3);
 alias(ttot,ttot2);
 alias(opTimeYr,opTimeYr2);
