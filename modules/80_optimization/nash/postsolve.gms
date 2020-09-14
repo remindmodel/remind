@@ -188,10 +188,12 @@ p80_taxrev_dev(t,regi) = 0;
 if (cm_TaxConvCheck eq 1,
   loop(regi,
     loop(t,
-      if( (abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco")) gt 1E-4,
-      s80_bool = 0;
-      p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
-      p80_messageShow("taxconv") = YES;
+      if( abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco") gt 1E-4,
+        p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
+        if (t.val lt 2100,
+          s80_bool = 0;
+          p80_messageShow("taxconv") = YES;
+        );
       );
     );
   );
