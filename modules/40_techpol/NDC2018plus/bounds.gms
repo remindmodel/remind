@@ -11,10 +11,17 @@ vm_cap.lo(t,regi,"spv","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,
 vm_cap.lo(t,regi,"wind","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"wind")*0.001; 
 vm_cap.lo(t,regi,"tnrs","1")$(t.val lt 2031) = p40_TechBound(t,regi,"tnrs")*0.001;
 vm_cap.lo(t,regi,"hydro","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"hydro")*0.001;
+
+
+* FS: in case of a nuclear phase-out scenario (nucscen 7), nuclear lower bound from p40_techBound only up to 2025
+if(cm_nucscen eq 7,
+  vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2025) = 0;
+);
+
+
+$ifthen.complex_transport "%transport%" == "complex"
+
 vm_cap.lo(t,regi,"apCarElT","1")$(t.val lt 2041 AND t.val gt 2024) = p40_TechBound(t,regi,"apCarElT");
-
-display vm_cap.lo;
-
 
 *** additional target for electro mobility, overwriting the general bounds in 35_transport/complex/bounds.gms
 *** requiring higher EV and FC vehicle shares, to mirror efficiency mandates and EV legislation in many countries
@@ -58,8 +65,9 @@ display vm_cap.lo;
      );
    );
  );
+$endif.complex_transport
 
- 
+ display vm_cap.lo;
 ***NDC2018plus variant: additional bounds on nuclear policies:  no nuclear renaissance - no further ramping up of the industry, and focus on countries currently investing (mostly CHA, IND, RUS)
 ***nuclear yearly additions per year are max. 10% of total currently under construction and 2.5% of combined planned and proposed plants 
 vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("2020",regi,"tnrs") + 0.025 * (pm_NuclearConstraint("2025",regi,"tnrs")+pm_NuclearConstraint("2030",regi,"tnrs"));
