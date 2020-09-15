@@ -12,6 +12,13 @@
 vm_co2capture.lo(t,regi,"cco2","ico2","ccsinje","1") = 0;
 vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 
+***----------------------------------------------------------------------------
+*** lower bound on share of synthetic fuels in all transport fuels by 2035
+***----------------------------------------------------------------------------
+
+v39_shSynTrans.lo(t,regi)$(t.val eq 2025) = cm_shSynTrans / 4;
+v39_shSynTrans.lo(t,regi)$(t.val eq 2030) = cm_shSynTrans / 2;
+v39_shSynTrans.lo(t,regi)$(t.val gt 2030) = cm_shSynTrans;
 
 *** lower bound on synfuel share in all liquids from 2035 onwards
 *** forces a minimum share of synfuels, if cm_shSynTrans > 0

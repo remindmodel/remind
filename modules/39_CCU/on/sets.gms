@@ -17,10 +17,10 @@ enty_ccu39(all_enty)      						"all types of CCU-related quantities"
 /
 
 
-te_ccu39(all_te)                               "CCU technologies"
+te_ccu39(all_te)                            "CCU technologies"
 /
-        h22ch4         							"Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
-		MeOH									"Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
+    h22ch4         							"conversion technology of secondary energy hydrogen to secondary energy gas by methanation using captured CO2"
+	MeOH									"conversion technology of secondary energy hydrogen to secondary energy liquids by the H2-Fischer-Tropsch route/Methanol route using captured CO2"
 /
 
 ***-------------------------------------------------------------------------
@@ -29,17 +29,18 @@ te_ccu39(all_te)                               "CCU technologies"
 
 se2se_ccu39(all_enty,all_enty,all_te)  			"map secondary energy to secondary energy using a CCU-technology"
 /
-		seh2.segabio.h22ch4
-		seh2.seliqbio.MeOH
+		seh2.segafos.h22ch4
+		seh2.seliqfos.MeOH
 /
 
-teCCU2rlf(all_te,rlf)     "mapping for CCU technologies to grades"
+teSeCCU2rlf(all_te,rlf)     "mapping for secondary energy CCU technologies to grades"
 /
-      h22ch4.1
-	  MeOH.1
+      (h22ch4) . 1
+	  (MeOH) . 1
 /
+;
 
-alias(teCCU2rlf,teCCU2rlf2); !! duplicate of teCCU2rlf, used to always list ccu-technologies in te2rlf
+alias(teCCU2rlf,teCCU2rlf2); 
 
 
 ***-------------------------------------------------------------------------

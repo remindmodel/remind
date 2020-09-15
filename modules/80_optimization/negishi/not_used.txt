@@ -29,5 +29,6 @@ qm_co2eqCum, equation, ???
 sm_endBudgetCO2eq,scalar,???
 sm_fadeoutPriceAnticip,scalar,???
 vm_co2eq,variable,???
+vm_cesIO,variable,???
 
 pm_nfa_start,input,questionnaire

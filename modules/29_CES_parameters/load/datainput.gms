@@ -11,7 +11,9 @@
 $include "./modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-demTrsp_conv-FE_med-Reg_8201ae1fc6.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
-
+if (cm_GDPcovid eq 1,
+   pm_cesdata("2020",all_regi,"lab","effgr") = 0.5 * (pm_cesdata ("2015",all_regi,"lab","effgr") + pm_cesdata ("2020",all_regi,"lab","effgr"));
+);
 
 option pm_cesdata:8:3:1;
 display "loaded pm_cesdata", pm_cesdata;
