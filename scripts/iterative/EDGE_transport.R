@@ -343,3 +343,4 @@ writegdx.parameter("p35_fe2es.gdx", finalInputs$intensity, "p35_fe2es",
 writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
+
