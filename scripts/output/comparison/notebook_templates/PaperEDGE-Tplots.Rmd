@@ -25,10 +25,14 @@ library(cowplot)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # Set RDS files path
 EJmode_all = readRDS("EJmode_all.RDS")
+EJpass_all = readRDS("EJfuelsPass_all.RDS")
+EJfrgt_all = readRDS("EJfuelsFrgt_all.RDS")
+EJfuelsMode_all = readRDS("EJfuelsMode_all.RDS")
 fleet_all = readRDS("fleet_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
+emitail_all = readRDS("emitail_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 trspPE_all = readRDS("trspPE_all.RDS")
@@ -71,6 +75,7 @@ cols <- c("NG" = "#d11141",
           "Fuel" = "#035aa6",
           "International Aviation" = "#9acd32",
           "Domestic Aviation" = "#7cfc00",
+          "Aviation" = "#7cfc00",
           "Bus" = "#32cd32",
           "Passenger Rail" = "#2e8b57",
           "Freight Rail" = "#ee4000",
@@ -90,7 +95,10 @@ cols <- c("NG" = "#d11141",
           "Non motorized" = "#da70d6",
           "Freight"="#ff0000",
           "Freight (Inland)" = "#cd5555",
+          "Inland Freight" = "#cd5555",
+          "Freight Road" = "#fa8072",
           "Pass non LDV" = "#6b8e23",
+          "Inland non-LDV" = "#6b8e23",
           "Pass" = "#66cdaa",
           "Pass non LDV (Domestic)" = "#54ff9f",
           "refined liquids enduse" = "#8c8c8c",
@@ -117,10 +125,9 @@ cols <- c("NG" = "#d11141",
           "B1100_Conv-LowD" = "#d11141",
           "SynSurge" = "orchid")
 
-legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks",
-                "Motorbikes", "Small Cars", "Large Cars", "Van",
-                "International Aviation", "Domestic Aviation","Bus", "Passenger Rail",
-                "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Pass non LDV (Domestic)", "Non motorized")
+legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks", "Motorbikes", "Small Cars", "Large Cars", "Van",
+                "International Aviation", "Domestic Aviation", "Aviation", "Bus", "Passenger Rail",
+                "Freight", "LDV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Inland non-LDV", "Non motorized")
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
@@ -131,7 +138,7 @@ legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", 
 legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 
 ## mapping for scenario names
-mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "NDC_IC", "NPi_Conv", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))
+mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi_ConvCase", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "NDC_IC", "NPi_Conv", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))
 
 regionplot = "EUR"
 
@@ -150,55 +157,62 @@ theme2use <- theme_minimal()+
 ## Kaya decomposition
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-
-
 kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dtES = dtES[region == rp & mode == "pass" & year >= 2015]
-    dtES = dtES[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario)]
-    dtES[, EScap := demand_F/pop]
-
+    dtESshare = copy(dtES)
+    dtEScap = dtES[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario)]
+    dtESshare = dtESshare[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario, vehicle_type_plot)]
+    dtEScap = dtEScap[, EScap := demand_F/pop]
+    dtESshare = dtESshare[, type := ifelse(vehicle_type_plot %in% c("Small Cars", "Large Cars", "Motorbikes"), "4W", "other")]
+    dtESshare = dtESshare[,.(demand_F = sum(demand_F)), by = .(region, year, type, scenario)]
+    dtESshare[, share := demand_F/sum(demand_F), by = .(region, year, scenario)]
+    dtESshare = dtESshare[type == "4W"][, type := NULL]
     dtFE = dtFE[region == rp & year >= 2015]
     dtFE = dtFE[aggr_mode %in% c("LDV", "Pass non LDV")]
     dtFE = dtFE[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, scenario)]
-
+    
     dtEmi = dtEmi[region == rp & year >= 2015 & variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand"),]
     dtEmi = dtEmi[,.(value = sum(value)), by = c("region", "year", "scenario")]
     dtEmi = dtEmi[,.(year, region, scenario, emi = value)]
-
-    dt = merge(dtFE, dtES, by = c("region", "year", "scenario"))
+    
+    dt = merge(dtFE, dtEScap[, vehicle_type_plot := NULL], by = c("region", "year", "scenario"))
     dt = merge(dt, dtEmi, by = c("region", "year", "scenario"))
+    dt = merge(dt, dtESshare[, demand_F := NULL], by = c("region", "year", "scenario"))
     dt[, FEcap := demand_EJ/pop]
     dt[, eint := emi/demand_EJ]  ## MtCO2/EJ
     dt[, FEcapindex := FEcap/FEcap[year == 2015], by = .(region, scenario)]
     dt[, EScapindex := EScap/EScap[year == 2015], by = .(region, scenario)]
     dt[, eintindex := eint/eint[year == 2015], by = .(region, scenario)]
-
-    dt = melt(dt[,c("region", "year", "scenario", "EScapindex", "FEcapindex", "eintindex")], id.vars = c("region", "year", "scenario"))
-
+    dt[, shareindex := share/share[year == 2015], by = .(region, scenario)]
+    
+    dt = melt(dt[,c("region", "year", "scenario", "EScapindex", "FEcapindex", "eintindex", "shareindex")], id.vars = c("region", "year", "scenario"))
+    
     dt = merge(dt, mapping, by = "scenario")
     dt = dt[scen_name %in% c("B1100_Conv", "B1100_Conv-LowD", "B1100_ElecPush", "B1100_ElecPush-LowD", "B1100_H2Push", "B1100_ConvSyn", "NPi_Conv")]
     dt[, variable := as.character(variable)]
     dt[, variable := ifelse(variable == "FEcapindex", "FE per capita", variable)]
     dt[, variable := ifelse(variable == "EScapindex", "ES per capita", variable)]
     dt[, variable := ifelse(variable == "eintindex", "Emission intensity", variable)]
-
+    dt[, variable := ifelse(variable == "shareindex", "LDVs share", variable)]
+    
     p = ggplot()+
       geom_line(data = dt[year <= 2050], aes(x = year, y = value, group = scen_name, color = scen_name))+
-      facet_wrap(~variable)+
+      facet_wrap(~variable, nrow = 1)+
       scale_color_manual("Scenario", values = cols)+
       labs(x = "", y = "Index to 2015 [-]")+
       scale_x_continuous(breaks = c(2015, 2020, 2030, 2050)) +
       theme2use
-
+    
     return(p)
   }
-
+  
 p = kayapf(dtES = ESmodecap_all, dtFE = EJmode_all, dtEmi = emidem_all, rp = regionplot, mapping_scens_paper)
-
+  
 p
 
-aspect_ratio <- 2
+aspect_ratio <- 2.5
 height <- 4
+
 ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspect_ratio)
 
 
@@ -208,7 +222,7 @@ ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspec
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 costspf = function(dt, rp, mapping_scens){
-    dt = dt[region == rp & scenario %in% c("Budg1100_ConvCase", "Budg1100_ElecEra","Budg1100_HydrHype", "NPi") & year %in% c(2015, 2030, 2050)]
+    dt = dt[region == rp & scenario %in% c("Budg1100_ConvCase", "Budg1100_ElecEra","Budg1100_HydrHype", "NPi_ConvCase") & year %in% c(2015, 2030, 2050)]
     map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy-induced inconv.", "Purchase", "O&M"),
     logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
@@ -376,6 +390,31 @@ height <- 8
 ggsave("pvintArea.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
+## Sales composition
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+salescompf = function(dt, rp){
+  dt = dt[region == rp]
+  plot = ggplot()+
+    geom_bar(data = dt, aes(x=as.numeric(as.character(year)),y=shareFS1, group = technology, fill = technology), position = position_stack(), stat = "identity")+
+    facet_grid(region ~ scenario)+
+    theme2use +
+    scale_fill_manual("Technology", values = cols)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2015, 2030, 2050, 2100))+
+    labs(x = "", y = "[%]")
+  return(plot)
+}
+
+p = salescompf(salescomp_all, rp = regionplot)
+
+p
+
+aspect_ratio <- 2
+height <- 8
+ggsave("sales_composition.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
 
 
 ## Trend of preference factors for Buses and Trucks
@@ -409,6 +448,29 @@ p
 aspect_ratio <- 2
 height <- 2
 ggsave("buses_trucks_SW.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+## Final energy, by mode
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+EJmodepf = function(dt, rp){
+  dt = dt[region == rp]
+  plot = ggplot()+
+    geom_area(data = dt, aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]")+
+    facet_grid(scenario~region)+
+    scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020,2030,2050, 2100)) +
+    theme2use
+
+  return(plot)
+}
+
+p = EJmodepf(EJmode_all, rp = regionplot)
+aspect_ratio <- 2
+height <- 2
+ggsave("FEbymode.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
 ## PE in transport by fuel
@@ -476,6 +538,36 @@ ggsave("LDV_PE.png", p_onlySyn, dpi=500, height = height , width = height * aspe
 ggsave("LDV_PEonlySyn.png", p_onlySyn, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
+## PE in HDVs by fuel
+
+```{r, echo=FALSE, warning=FALSE}
+HDV_PEpf = function(dt, rp, mapping){
+   dt = dt[region == rp]
+   dt = merge(dt, mapping, by = "scenario")
+   dt[, year := as.numeric(year)]
+   dt = dt[year >= 2020 & year <= 2050]
+   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
+   p = ggplot()+
+        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
+        facet_wrap(~scen_name, nrow = 1)+
+  theme2use +
+  labs(y = "Primary energy [EJ]", x="", title = "HDVs")+
+  scale_fill_manual("Source", values = cols)+
+  scale_x_continuous(breaks = c(2020, 2030, 2050))+
+  theme(strip.text = element_text(size = 12))
+
+  return(p)
+}
+
+
+p = HDV_PEpf(HDV_PE_all, rp = regionplot, mapping_scens_paper)
+
+p
+
+aspect_ratio <- 2.5
+height <- 5
+ggsave("HDV_PE.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
 
 ## CO2 intensity of LDV sales
 
@@ -512,4 +604,118 @@ p
 aspect_ratio <- 1.5
 height <- 4
 ggsave("pCO2int.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+
+## Tailpipe emissions
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+emitail_pf = function(dt, rp){
+ dt = dt[year <= 2050 & region == rp]
+ dt[, scenario := as.character(scenario)]
+ dt = dt[variable %in% c("Emi|CO2|Transport|Pass|Road|LDV|Tailpipe", "Emi|CO2|Transport|Freight|Rail|Tailpipe", "Emi|CO2|Transport|Freight|Road|Tailpipe", "Emi|CO2|Transport|Pass|Aviation|Domestic|Tailpipe", "Emi|CO2|Transport|Pass|Aviation|International|Tailpipe", "Emi|CO2|Transport|Pass|Road|Bus|Tailpipe", "Emi|CO2|Transport|Pass|Rail|Tailpipe", "Emi|CO2|Transport|Freight|International Shipping|Tailpipe", "Emi|CO2|Transport|Freight|Navigation|Tailpipe")]
+ dt[, mode := "mode"]
+ dt[grepl("LDV", variable), mode := "LDV"]
+ dt[grepl("Freight\\|Road|Freight\\|Rail", variable), mode := "Inland Freight"]
+ dt[grepl("Bus|Pass\\|Rail", variable), mode := "Inland non-LDV"]
+ dt[grepl("Aviation", variable), mode := "Aviation"]
+ dt[grepl("Shipping|Navigation", variable), mode := "Shipping"]
+ dt = dt[,.(value = sum(value)), by = c("region","year","scenario", "mode")]
+ dt[, mode := factor(mode, levels = legend_ord)]
+  plot = ggplot()+
+    geom_area(data = dt, aes(x = year, y = value, group = mode, fill = mode), alpha = 0.9, color="black", size=0.05, position= position_stack())+
+    labs(y = expression(paste("[Mt", CO["2"], "]")), x = "")+
+    facet_grid(~scenario) +
+    scale_x_continuous(breaks = c(2010, 2020, 2030, 2050))+
+    theme2use +
+    guides(shape = FALSE)+
+    scale_fill_manual("Transport mode", values = cols)
+
+  return(plot)
+}
+
+p = emitail_pf(emitail_all, regionplot)
+
+p
+aspect_ratio <- 3
+height <- 4
+ggsave("emitail_mode.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+## Final energy, by mode
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+EJmodepf = function(dt, rp){
+  dt = dt[year >= 2020 & year <= 2050 & region == rp]
+  dt[, mode := "mode"]
+  dt[vehicle_type_plot %in% c("Small Cars", "Large Cars", "Motorbikes"), mode := "LDV"]
+  dt[vehicle_type_plot %in% c("International Shipping", "Domestic Shipping"), mode := "Shipping"]
+  dt[vehicle_type_plot %in% c("International Aviation", "Domestic Aviation"), mode := "Aviation"]
+  dt[vehicle_type_plot %in% c("Truck", "Freight Rail"), mode := "Inland Freight"]
+  dt[vehicle_type_plot %in% c("Bus", "Passenger Rail"), mode := "Inland non-LDV"]
+  dt = dt[,.(value = sum(demand_EJ)), by = c("region","year","scenario", "mode")]
+  dt[, mode := factor(mode, levels = legend_ord)]
+
+  plot = ggplot()+
+    geom_area(data = dt, aes(x=year, y=value, group = mode, fill = mode), color = "black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]", title = "Total transport final energy demand")+
+    facet_grid(~scenario)+
+    scale_fill_manual("Transport mode", values = cols, breaks = legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020,2030,2050, 2100)) +
+    theme2use
+
+  return(plot)
+}
+
+p = EJmodepf(EJmode_all, regionplot)
+aspect_ratio <- 3
+height <- 4
+ggsave("FEmode.png", p, dpi=500, height = height , width = height * aspect_ratio)
+```
+
+
+## Final energy, by fuel
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+## passenger by fuel
+EJfuelsMode_pf = function(dt, rp){
+  dt = dt[year >= 2020 & year <= 2050 & region == rp]
+
+  plotLDV = ggplot()+
+    geom_area(data = dt[subsec == "LDV", aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]")+
+    facet_grid(~scenario)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030, 2050)) +
+    theme2use
+
+  plotFreight = ggplot()+
+    geom_area(data = dt[subsec == "Freight"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]")+
+    facet_grid(~scenario)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050, 2100)) +
+    theme2use
+  
+  dt_all = dt[,.(demand_EJ = sum(demand_EJ)), by =.(region, year, subtech)]
+  plotAllT = ggplot()+
+    geom_area(data = dt_all, aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
+    labs(x = "", y = "[EJ]")+
+    facet_grid(~scenario)+
+    scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020, 2030,2050)) +
+    theme2use
+
+  plot = list(plotLDV = plotLDV, plotFreight = plotFreight, plotAllT = plotAllT)
+  return(plot)
+}
+
+p = EJfuels_pf(dt = EJfuelsMode_all, rp = regionplot)
+aspect_ratio <- 3
+height <- 4
+ggsave("FEfuelMode.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```

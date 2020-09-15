@@ -135,7 +135,7 @@ legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs)
 ## mapping for scenario names
 mapping_scens = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise", "Budg1100_HydrHypeWise", "Budg1100_SynSurgeWise", "NDC_ConvCaseWise"), scen_name = c("ConvCase", "ElecEra", "HydrHype", "SynSurge", "NDC", "NPi", "ConvCaseWise", "ElecEraWise", "HydrHypeWise", "SynSurgeWise", "NDCWise"))
 
-mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "NDC_IC", "NPi_IC", "Budg_IC-LS", "Budg_BE-LS"))
+mapping_scens_paper = data.table(scenario = c("Budg1100_ConvCase", "Budg1100_ElecEra", "Budg1100_HydrHype", "Budg1100_SynSurge", "NDC_ConvCase", "NPi_ConvCase", "Budg1100_ConvCaseWise", "Budg1100_ElecEraWise"), scen_name = c("Budg_IC", "Budg_BE", "Budg_FC", "Budg_ICsyn", "NDC_IC", "NPi_IC", "Budg_IC-LS", "Budg_BE-LS"))
 
 
 regionplot = "EUR"
