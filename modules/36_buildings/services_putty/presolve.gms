@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_putty/presolve.gms
 
+*** For the first iterations, avoid very high prices because of numerical reasons
+if (ord(iteration) le 8,
+
+   loop ((t,regi_dyn36(regi)),
+      sm_tmp = smax(fe2ces_dyn36(entyFe,esty,teEs,in), p36_fePrice(t,regi,entyFe));
+      if (sm_tmp gt 3,
+           p36_fePrice(t,regi,entyFe) = max(0.01,
+                                            p36_fePrice(t,regi,entyFe) / sm_tmp * 3
+                                            );
+      
+      
+      );
+   );
+);
 
 
 *** Take average price over previous iterations
@@ -18,7 +32,22 @@ p36_fePrice(t,regi_dyn36(regi),entyFe) =
             )
             / 4;
 );
+*** Beyond the 70th iteration, the prices are averaged over the prices since the 66th iteration
+if (ord(iteration) ge 70,
 
+p36_fePrice(t,regi_dyn36(regi),entyFe) =
+          sum(iteration2 $ (ord(iteration2) ge 66 
+                           AND ord(iteration2) lt ord(iteration)),
+             p36_fePrice_iter(iteration2,t,regi,entyFe)
+          )
+          / 
+          sum(iteration2 $ (ord(iteration2) ge 66 
+                           AND ord(iteration2) lt ord(iteration)),
+             1
+          )
+            ;
+
+);
 *** smooth the costs
 
 *** Smooth 2005 prices
