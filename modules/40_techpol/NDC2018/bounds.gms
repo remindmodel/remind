@@ -16,10 +16,11 @@ if(cm_nucscen eq 7,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2025) = 0;
 );
 
-*** RP in case nucscen = 5(no new builds after 2020), remove nuclear lower bound from p40_techBound
+*RP in case nucscen = 5(no new builds after 2020), remove nuclear lower bound from p40_techBound 
 if(cm_nucscen eq 5,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2020) = 0;
 );
+
 
 
 $ifthen.complex_transport "%transport%" == "complex"

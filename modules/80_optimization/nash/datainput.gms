@@ -7,6 +7,8 @@
 *** SOF ./modules/80_optimization/nash/datainput.gms
 pm_w(regi) = 1;
 
+o80_trackSurplusSign(ttot,trade,iteration) = 0;
+
 *MLB 20130920* initialization only
 pm_cumEff(t, regi, in) = 100;
 
