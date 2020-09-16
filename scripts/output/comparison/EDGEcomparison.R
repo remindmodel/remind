@@ -199,7 +199,7 @@ ESmodeFun = function(demandkm, POP){
   demandkm[, veh := ifelse(grepl("Passenger Rail|HSR", vehicle_type), "Passenger Rail", veh)]
   demandkm[, veh := ifelse(grepl("Ship", vehicle_type), "Shipping", veh)]
   demandkm[, veh := ifelse(grepl("Cycle|Walk", subsector_L3), "Non motorized", veh)]
-  demandkm = demandkm[,.(demand_F = sum(demand_F)), by = c("iso", "year", "aggr_mode", "veh")]
+  demandkm = demandkm[,.(demand_F = sum(demand_F)), by = c("iso", "year", "aggr_mode", "veh", "technology")]
   setnames(demandkm, old = "veh", new = "vehicle_type")
 
 
@@ -215,7 +215,7 @@ ESmodeFun = function(demandkm, POP){
   POP = merge(POP, REMIND2ISO_MAPPING, all.x = TRUE, by = c("iso"))
   POP = POP[, .(pop = sum(value)), by = c("region", "year")]
   demandkm = merge(demandkm, REMIND2ISO_MAPPING, by = "iso")
-  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
+  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode", "technology")]
 
   ## save separately the total demand
   demandkm_abs = copy(demandkm)
@@ -223,6 +223,7 @@ ESmodeFun = function(demandkm, POP){
   demandkm_abs[, demand_F := demand_F/    ## in million km
                  1e6]         ## in trillion km
   ## calculate per capita demand
+  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
   demandkm = merge(demandkm, POP, all.x = TRUE, by =c("year", "region"))
 
   ## calculate per capita values
@@ -351,11 +352,10 @@ EJfuelsModeFun = function(demandEJ, FEliq_source){
   demandEJ[, technology := ifelse(technology %in% c("BEV", "LA-BEV", "Electric"), "Electricity", technology)]
   demandEJ[, technology := ifelse(technology %in% c("FCEV"), "Hydrogen", technology)]
   ## attribute LDV, Freight and remove all other categories
-  demandEJ[, subsec := NA]
+  demandEJ[, subsec := "subsec"]
   demandEJ[subsector_L2 == "trn_pass_road_LDV", subsec := "LDV"]
   demandEJ[sector == "trn_freight", subsec := "Freight"]
-  demandEJ[is.na(sector), subsec := "Other"]
-  ## aggregate
+  demandEJ[subsec=="subsec", subsec := "Other"]  ## aggregate
   demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year","technology", "subsec")]
   ## merge with liquids composition
   demandEJ = merge(demandEJ, FEliq_source, all = TRUE, by = c("region", "year", "technology"), allow.cartesian=TRUE)
