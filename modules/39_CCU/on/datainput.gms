@@ -7,7 +7,7 @@
 *** SOF ./modules/39_CCU/on/datainput.gms
 
 *** FS: set CO2 demand of CCU technologies to emission factor of liquids and gases per unit SE
-p39_co2_dem(t,regi,"seh2","segafos","h22ch4") = pm_emifac(t,regi,"pegas","segafos","gastr","co2") / fm_dataglob("eta","gastr");
-p39_co2_dem(t,regi,"seh2","seliqfos","MeOH") = pm_emifac(t,regi,"peoil","seliqfos","refliq","co2") / fm_dataglob("eta","refliq"); 
+p39_co2_dem(t,regi,"seh2","segabio","h22ch4") = pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2");
+p39_co2_dem(t,regi,"seh2","seliqbio","MeOH") = pm_emifac(t,regi,"seliqfos","fedie","tdfosdie","co2"); !! choose diesel as fuel for HDVt where synfuels most relevant
 
 *** EOF ./modules/39_CCU/on/datainput.gms
