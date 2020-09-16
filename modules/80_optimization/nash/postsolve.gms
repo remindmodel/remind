@@ -61,6 +61,71 @@ p80_etaST_correct(ttot,trade,iteration)$(ttot.val ge 2005) =
          * p80_surplus(ttot,trade,iteration)
          / max(sm_eps , sum(regi, p80_normalize0(ttot,regi,trade)));
 
+*RP* add a stronger push to the price adjustment if convergence doesn't happen for an extended amount of iterations:
+p80_etaST_correct_safecopy(ttot,trade,iteration) = p80_etaST_correct(ttot,trade,iteration); !! first make a copy of the initial adjustment values
+
+*RP* track sign of the surplus
+if(iteration.val > 2, 
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
+      if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade),
+	    o80_SurplusOverTolerance(ttot,trade,iteration) = Sign(p80_surplus(ttot,trade,iteration) );
+	  );
+    );
+  );
+);	
+
+*RP* track continued surplusses with the same sign (to show where convergence is too slow)
+if(iteration.val > 2, 
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
+      if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
+	  ( p80_surplus(ttot,trade,iteration) gt p80_surplusMaxTolerance(trade) ) ,
+        o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
+	  else
+	    o80_trackSurplusSign(ttot,trade,iteration) = 0;
+	  );
+    );
+  );
+);
+
+if(iteration.val > 15,
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good")),
+	  if( p80_surplus(ttot,trade,iteration) gt p80_surplusMaxTolerance(trade) , 
+        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 4))),      
+                  p80_surplus(ttot,trade,iteration2)          !! this sum should ensure the additional price adjustment only happens if the surplus was always off the same sign
+                )
+              ) ge ( 5 * p80_surplusMaxTolerance(trade) ) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 5 ) , !! check if surplus was out of the target range for 5 consecutive iterations
+          p80_etaST_correct(ttot,trade,iteration) = 4 * p80_etaST_correct(ttot,trade,iteration);
+          o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 1;
+		  
+		  if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
+		    if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
+                         p80_surplus(ttot,trade,iteration2)
+                       )
+                  ) ge ( 10 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 10 ), !! check if surplus was out of the target range for 10 consecutive iterations
+              p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
+              o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 2;
+		      
+			  if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
+		        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
+                             p80_surplus(ttot,trade,iteration2)
+                           )
+                      ) ge ( 15 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 15 ), !! check if surplus was out of the target range for 15 consecutive iterations
+                  p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
+                  o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 3;
+                );
+              );
+			);
+          );
+		);
+      );
+    );
+  );
+);	 
+
+
 ***calculate prices for next iteration 
 p80_pvp_itr(ttot,trade,iteration+1)$(ttot.val ge cm_startyear) = 
  pm_pvp(ttot,trade)
@@ -114,7 +179,7 @@ p80_defic_sum("1") = 1;
 p80_defic_sum(iteration) = sum(trade,  p80_defic_trade(trade)); 
 p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeLT("good")/pm_pvp("2005","good"));
 
-display p80_defic_trade,p80_defic_sum,p80_defic_sum_rel;
+display p80_surplusMax2100, p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 
 ***adjust parameters for next iteration 
 ***Decide on when to fade out price anticipation terms (doing this too early leads to diverging markets)
@@ -186,7 +251,7 @@ if(sm_fadeoutPriceAnticip gt 1E-4, s80_bool = 0);
 ***additional criterion: did taxes converge?
 loop(regi,
   loop(t,
-    if( (abs(vm_taxrev.l(t,regi)) gt 1E-3),
+    if( (abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco")) gt 1E-2,
      s80_bool = 0;
      p80_messageShow("taxconv") = YES;
     );
@@ -226,7 +291,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### Taxes did not converge in all regions and time steps. Check the absolute level of vm_taxrev (gt 1e-3)!";
+		 display "#### Taxes did not converge in all regions and time steps. Check the absolute level of tax revenue vm_taxrev, must be smaller than 1 percent of GDP";
 	     );	
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
@@ -268,6 +333,10 @@ if(s80_bool eq 1,
      s80_converged = 1;         !! set machine-readable status parameter
 
 );
+
+*RP* display effect of additional convergence push
+display  o80_trackSurplusSign, o80_SurplusOverTolerance, o80_counter_iteration_trade_ttot, p80_etaST_correct_safecopy,p80_etaST_correct,p80_pvp_itr;
+
 
 
 ***Fade out LT correction terms, they should only be important in the first iterations and might interfere with ST corrections.
