@@ -72,9 +72,20 @@ $endif.complex_transport
 ***nuclear yearly additions per year are max. 10% of total currently under construction and 2.5% of combined planned and proposed plants 
 vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("2020",regi,"tnrs") + 0.025 * (pm_NuclearConstraint("2025",regi,"tnrs")+pm_NuclearConstraint("2030",regi,"tnrs"));
 
-***SR/BS/CB 2020-08-12: lower bound on early retirement for a faster coal phase-out in SDP (at least 90% retirement in 2020 and 95% in 2030)
-vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.95);
-vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
+***SR/BS/CB 2020-09-09
+*** -----------------------------------------------------------------------------------------------------------------
+*** Stringency of coal phase-out depends on GDP per capita, at least 80 and 90% for CHA and more rich, 80 and 50% for poorer countries
+*** -----------------------------------------------------------------------------------------------------------------
+
+loop(regi,
+       if( ( pm_gdp("2010",regi)/pm_pop("2010",regi) ) > 3,
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+        else
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.5);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+          );
+     );
 
 
 *** EOF ./modules/40_techpol/NDC2018plus/bounds.gms
