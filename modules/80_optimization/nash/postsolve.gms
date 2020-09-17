@@ -80,7 +80,7 @@ if(iteration.val > 2,
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
       if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
-	  ( p80_surplus(ttot,trade,iteration) gt p80_surplusMaxTolerance(trade) ) ,
+	  ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
         o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
 	  else
 	    o80_trackSurplusSign(ttot,trade,iteration) = 0;
@@ -92,7 +92,7 @@ if(iteration.val > 2,
 if(iteration.val > 15,
   loop(ttot$(ttot.val ge 2005),
     loop(trade$(tradePe(trade) OR sameas(trade,"good")),
-	  if( p80_surplus(ttot,trade,iteration) gt p80_surplusMaxTolerance(trade) , 
+	  if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
         if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 4))),      
                   p80_surplus(ttot,trade,iteration2)          !! this sum should ensure the additional price adjustment only happens if the surplus was always off the same sign
                 )
@@ -248,16 +248,22 @@ loop(regi,
 if(sm_fadeoutPriceAnticip gt 1E-4, s80_bool = 0);
 **
 
-***additional criterion: did taxes converge?
-loop(regi,
-  loop(t,
-    if( (abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco")) gt 1E-2,
-     s80_bool = 0;
-     p80_messageShow("taxconv") = YES;
+***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
+p80_taxrev_dev(t,regi) = 0;
+if (cm_TaxConvCheck eq 1,
+  loop(regi,
+    loop(t,
+      if( abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco") gt 1E-4,
+        p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
+        if (t.val lt 2100,
+          s80_bool = 0;
+          p80_messageShow("taxconv") = YES;
+        );
+      );
     );
   );
 );
-
+display p80_taxrev_dev;
 
 ***end with failure message if max number of iterations is reached w/o convergence:
 if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max number of iteration, still no convergence
@@ -291,7 +297,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     );	 
 	     if(sameas(convMessage80, "taxconv"),
 		 display "####";
-		 display "#### Taxes did not converge in all regions and time steps. Check the absolute level of tax revenue vm_taxrev, must be smaller than 1 percent of GDP";
+		 display "#### Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev.";
 	     );	
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
