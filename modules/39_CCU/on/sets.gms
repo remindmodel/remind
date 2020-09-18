@@ -33,6 +33,14 @@ se2se_ccu39(all_enty,all_enty,all_te)  			"map secondary energy to secondary ene
 		seh2.seliqbio.MeOH
 /
 
+
+teCCU2rlf(all_te,rlf)     "mapping for CCU technologies to grades"
+/
+      (h22ch4) . 1
+	  (MeOH) . 1
+/
+
+
 teSeCCU2rlf(all_te,rlf)     "mapping for secondary energy CCU technologies to grades"
 /
       (h22ch4) . 1
