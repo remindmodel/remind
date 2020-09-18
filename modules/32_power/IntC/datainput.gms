@@ -78,3 +78,6 @@ $offtext
 *** for high VRE penetrations
 p32_flex_maxdiscount(regi,"elh2") = cm_flexMax_elh2;
 
+
+*** initialize p32_PriceDurSlope
+p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;

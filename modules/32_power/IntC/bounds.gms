@@ -18,11 +18,11 @@ if ( cm_bioprod_histlim ge 0,
 	vm_capFac.lo(t,regi_sensscen,teBioPebiolc)$(t.val ge 2030) = 0;
 );
 
-*** FS: if flexibility tax on
-*** decrease capacity factor of electrolysis to 0.5
-*** as capacities run on lower-than-average electricity price
+*** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
+*** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,
-	vm_capFac.fx(t,regi,"elh2")$(t.val ge 2010) = 0.5;
+	vm_capFac.lo(t,regi,teFlexTax)$(t.val ge 2010) = 0.1;
+  vm_capFac.up(t,regi,teFlexTax)$(t.val ge 2010) = pm_cf(t,regi,teFlexTax);
 );
 
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
