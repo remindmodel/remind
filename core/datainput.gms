@@ -674,14 +674,23 @@ $offdelim
 
 *** RP rescale wind capacity factors in REMIND to account for very different real-world CF (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
 *** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs), only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
+
+*cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
 p_aux_capacityFactorHistOverREMIND(regi,"wind")$p_avCapFac2015(regi,"wind") =  p_histCapFac("2015",regi,"wind") / p_avCapFac2015(regi,"wind");
-loop(te$sameas(te,"wind"),
-  pm_dataren(regi,"maxprod",rlf,te) = pm_dataren(regi,"maxprod",rlf,te) * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
-  pm_dataren(regi,"nur",rlf,te)     = pm_dataren(regi,"nur",rlf,te)     * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
+
+loop(t$(t.val ge 2015 AND t.val le 2045 ),
+pm_cf(t,regi,"wind") =
+(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
++
+(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
+
+
 
 p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
 pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
+pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
+pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
 *** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup, while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod, as here no miscalculation of total energy yield takes place, in contrast to wind)
