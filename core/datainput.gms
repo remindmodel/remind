@@ -612,7 +612,7 @@ $endif.edge_esm_transport
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiHydro.cs3r"
+$include "./core/input/f_maxProdGradeRegiHydro_up.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
@@ -726,7 +726,7 @@ display teEtaIncr;
 *** import regionalized CCS constraints:
 table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
 $ondelim
-$include "./core/input/pm_dataccs.cs3r"
+$include "./core/input/pm_dataccs_up.cs3r"
 $offdelim
 ;
 
