@@ -40,6 +40,7 @@ s36_switch_floor = 0;
 
 *** Vintage initialisation
 s36_vintage_calib = 1;
+v36_logitInfes.fx(t36_hist(ttot),regi_dyn36(regi),inViaEs_dyn36(in)) = 0;
 v36_prodEs.fx(t36_hist(ttot),regi_dyn36(regi), fe2es_dyn36(entyFe,esty,teEs)) 
              = p36_prodEs(ttot,regi,entyFe,esty,teEs);
 
