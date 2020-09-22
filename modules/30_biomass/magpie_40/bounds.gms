@@ -18,13 +18,6 @@
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
-$ifthen.edge_esm_transport "%transport%" == "edge_esm"
-*** Slightly relaxed extraction bounds for biofuels.
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4*p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 2*p30_datapebio(regi,"pebioil","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
-$endif.edge_esm_transport
 
 if(cm_1stgen_phaseout=0,
     vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
@@ -34,8 +27,6 @@ else
     vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 );
 
-***NEN is infeasible in 2030 due to upper bound in REMIND-EU
-vm_fuExtr.up("2030",regi,"pebioil","5")$SAMEAS(regi,"NEN") = p30_datapebio(regi,"pebioil","5","maxprod","2030")*1.4;
 
 *** -------------------------------------------------------------
 *** Bounds on 2nd generation biomass annual production
