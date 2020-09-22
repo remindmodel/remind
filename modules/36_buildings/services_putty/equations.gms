@@ -61,6 +61,7 @@ q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
                                   ( (s36_vintage_calib eq 1 AND t36_hist(ttot) )
                                     OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
       p36_demUEtotal(ttot,regi,in)
+      + v36_logitInfes(ttot,regi,in)
       =e= 
       sum (fe2ces_dyn36(enty,esty,teEs,in),
         v36_prodEs(ttot,regi,enty,esty,teEs) 
@@ -148,6 +149,10 @@ q36_shares_obj $ (s36_logit eq 1)..
       - sum ((ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)),
              1000
              * v36_vintageInfes(ttot,regi,enty,esty,teEs)
+            )
+      - sum ((ttot,regi_dyn36(regi),inViaEs_dyn36(in)),
+            1000
+            *  v36_logitInfes(ttot,regi,in)
             )
     ;  
 

@@ -38,5 +38,6 @@ v36_vintageInfes.fx(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $(
   NOT v36_vintageInfes.L(ttot,regi,enty,esty,teEs)) 
   = 0;
 
-***v36_beta.L(regi_dyn36(regi),inViaEs_dyn36(in)) = -1;
+v36_logitInfes.up(t,regi_dyn36(regi),inViaEs_dyn36(in)) = + INF ;  
+  
 *** EOF ./modules/36_buildings/services_putty/bounds.gms
