@@ -58,7 +58,7 @@ q_costInvTeAdj(t,regi,teAdj)..
 ;
 
 ***---------------------------------------------------------------------------
-*' Operation and maintenance resut form costs maintenance of existing facilities according to their capacity and
+*' Operation and maintenance costs from maintenance of existing facilities according to their capacity and
 *' operation of energy transformations according to the amount of produced secondary and final energy.
 ***---------------------------------------------------------------------------
 q_costOM(t,regi)..
@@ -241,7 +241,7 @@ q_limitCapSe(t,regi,pe2se(enty,enty2,te))..
         sum(teRe2rlfDetail(te,rlf),
                ( 1$teRLDCDisp(te) +  pm_dataren(regi,"nur",rlf,te)$(NOT teRLDCDisp(te)) ) * vm_capFac(t,regi,te)  
                * vm_capDistr(t,regi,te,rlf)
-        )$(teReNoBio(te)) 
+        )$(teReNoBio(te))
 ;
 
 ***----------------------------------------------------------------------------
@@ -280,6 +280,7 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 *' after the implementation of stringent climate policies.
 *' Calculation of actual capacities (exponential and vintage growth TE):
 ***-----------------------------------------------------------------------------
+
 q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
          vm_cap(ttot,regi,te,rlf)
          =e=
@@ -300,13 +301,17 @@ $ifthen setGlobal END2110
              - (pm_ts(ttot)* pm_omeg(regi,"11",te)
                   * 0.5 * vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
 $endif
-        );
+);
+
+
 
 q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
     =e=
     vm_cap(t,regi,te,"1")
 ;
+
+
 
 ***---------------------------------------------------------------------------
 *' Technological change is an important driver of the evolution of energy systems.

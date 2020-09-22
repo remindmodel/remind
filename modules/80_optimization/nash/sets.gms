@@ -26,7 +26,7 @@ solvestat, modelstat, resusd, objval
 
 convMessage80   "contains possible reasons for failed convergence"
 /
-infes,surplus,nonopt
+infes,surplus,nonopt,taxconv
 /
 nash_sol_itr80  "nash iterations"
 /

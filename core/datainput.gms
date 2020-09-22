@@ -151,7 +151,7 @@ $include "./core/input/generisdata_tech_SSP1.prn"
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
 ;
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
+*JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   f_dataglob_SSP5("inco0","tnrs") = 6270; !! increased from 4000 to 6270 with the update of technology costs in REMIND 1.7 to keep the percentage increase between SSP2 and SSP5 constant
 );
@@ -169,6 +169,7 @@ $if not "%cm_INNOPATHS_incolearn%" == "off" parameter p_new_incolearn(all_te) / 
 $if not "%cm_INNOPATHS_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_INNOPATHS_inco0Factor% /;
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
+
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
 fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
@@ -297,6 +298,15 @@ $offdelim
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
+
+*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
+s_co2pipe_leakage = 0.01;
+
+loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
+    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
+    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
+);
+
 *** Allocate emission factors to pm_emifac
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
@@ -311,18 +321,10 @@ pm_emifac(ttot,regi,enty,enty2,te,"n2o")$emi2te(enty,enty2,te,"n2o") = 0.905 * f
 *** oil 0.6 kg/TJ = 0.01892 Mt/TWa
 *** biomass 4 kg/TJ = 0.12614 Mt/TWa;
 *** EF for N2O are in generisdata_emi.prn
-pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
-pm_emifac(ttot,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
+pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
+pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
 
 display pm_emifac;
-
-*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
-s_co2pipe_leakage = 0.01;
-
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
-    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
-    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
-);
 
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
@@ -602,10 +604,10 @@ display p_efFossilFuelExtr;
 pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
 
-*** allow for slightly higher geothermal electricity to avoid INFES (EDGE_transport)
-$ifthen.edgesm %transport% ==  "edge_esm"
-  pm_dataren(regi,"maxprod","1","geohdr")$(regi_group("EUR_regi",regi)) = 1.01*pm_dataren(regi,"maxprod","1","geohdr");
-$endif.edgesm
+$ifthen.edge_esm_transport "%transport%" == "edge_esm"
+*** allow for slightly higher geothermal electricity to avoid INFES
+pm_dataren(regi,"maxprod","1","geohdr")$(regi_group("EUR_regi",regi)) = 1.01*pm_dataren(regi,"maxprod","1","geohdr");
+$endif.edge_esm_transport
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
@@ -636,6 +638,8 @@ pm_dataren(all_regi,"nur",rlf,"spv")        = f_dataRegiSolar(all_regi,"nur","sp
 p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitGeopot","spv",rlf);
 pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
 
+
+
 table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGeothermal.cs3r"
@@ -643,6 +647,7 @@ $offdelim
 ;
 pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
+
 
 *mh* set 'nur' for all non renewable technologies to '1':
 pm_dataren(regi,"nur",rlf,teNoRe)    = 1;
@@ -721,7 +726,6 @@ display teEtaIncr;
 *** import regionalized CCS constraints:
 table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
 $ondelim
-***$include "./core/input/pm_dataccs.cs3r"
 $include "./core/input/pm_dataccs_up.cs3r"
 $offdelim
 ;
@@ -785,6 +789,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
+
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
   parameter p_new_adj_seed(all_te) / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
@@ -801,6 +806,7 @@ $elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   parameter p_new_adj_coeff(all_te) / %cm_INNOPATHS_adj_coeff% /;
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $endif
+
 
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
@@ -1224,4 +1230,57 @@ loop(te,
 *** -------- initial declaration of parameters for iterative target adjustment
 o_reached_until2150pricepath(iteration) = 0;
 
+*** ---- FE demand trajectories for calibration -------------------------------
+*** also used for limiting secondary steel demand in baseline and policy 
+*** scenarios
+Parameter
+  pm_fedemand   "final energy demand"
+  /
+$ondelim
+$include "./core/input/pm_fe_demand.cs4r"
+$offdelim
+  /
+;
+
+$ifthen.subsectors "%industry%" == "subsectors"   !! industry
+*** Limit secondary steel production to 90 %.  This might be slightly off due 
+*** to rounding in the mrremind package.
+if (9 lt smax((t,regi,all_GDPscen)$(
+                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ), 
+           pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+         / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+         ),
+  put logfile;
+  logfile.nd = 15;
+  put ">>> rescaling steel production figures because of mrremind rounding" /;
+
+  loop ((t,regi,all_GDPscen)$(
+                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
+    if (9 lt ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+             / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")),
+  
+      put t.tl, " ", regi.tl, " ", all_GDPscen.tl, ": ";
+      put @20 "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ") -> ";
+  
+      pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+      = 0.1
+      * ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+        + pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+        );
+  
+      pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+      = 9 * pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary");
+  
+      put "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ")" /;
+    );
+  );
+
+  logfile.nd = 3;
+  putclose logfile;
+);
+$endif.subsectors
+
 *** EOF ./core/datainput.gms
+

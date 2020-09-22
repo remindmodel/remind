@@ -302,6 +302,8 @@ cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budge
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
+cm_GDPcovid                  "GDP correction for covid"
+cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
 cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
@@ -352,6 +354,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs

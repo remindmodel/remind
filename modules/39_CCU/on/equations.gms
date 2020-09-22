@@ -10,7 +10,7 @@
 *** calculate CCU emissions (= CO2 demand of CCU technologies)
 *** ---------------------------------------------------------
 
-q39_emiCCU(t,regi) .. 
+q39_emiCCU(t,regi,te)$(te_ccu39(te)).. 
   sum(teCCU2rlf(te,rlf),
     vm_co2CCUshort(t,regi,"cco2","ccuco2short",te,rlf)
   )

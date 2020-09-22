@@ -126,9 +126,6 @@ if(iteration.val > 15,
 );
 
 
-
-
-
 ***calculate prices for next iteration 
 p80_pvp_itr(ttot,trade,iteration+1)$(ttot.val ge cm_startyear) = 
  pm_pvp(ttot,trade)
@@ -181,7 +178,6 @@ loop(trade,
 p80_defic_sum("1") = 1;
 p80_defic_sum(iteration) = sum(trade,  p80_defic_trade(trade)); 
 p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeLT("good")/pm_pvp("2005","good"));
-
 
 display p80_surplusMax2100, p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 
@@ -252,6 +248,17 @@ loop(regi,
 if(sm_fadeoutPriceAnticip gt 1E-4, s80_bool = 0);
 **
 
+***additional criterion: did taxes converge?
+loop(regi,
+  loop(t,
+    if( (abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco")) gt 1E-2,
+     s80_bool = 0;
+     p80_messageShow("taxconv") = YES;
+    );
+  );
+);
+
+
 ***end with failure message if max number of iterations is reached w/o convergence:
 if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max number of iteration, still no convergence
      OPTION decimals = 3;
@@ -282,6 +289,10 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 		 display "#### We can't accept this solution, because it is non-optimal, and too far away from the last known optimal solution. ";
 		 display "#### Just trying a different gdx may help.";
 	     );	 
+	     if(sameas(convMessage80, "taxconv"),
+		 display "####";
+		 display "#### Taxes did not converge in all regions and time steps. Check the absolute level of tax revenue vm_taxrev, must be smaller than 1 percent of GDP";
+	     );	
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;
@@ -322,7 +333,6 @@ if(s80_bool eq 1,
      s80_converged = 1;         !! set machine-readable status parameter
 
 );
-
 
 *RP* display effect of additional convergence push
 display  o80_trackSurplusSign, o80_SurplusOverTolerance, o80_counter_iteration_trade_ttot, p80_etaST_correct_safecopy,p80_etaST_correct,p80_pvp_itr;

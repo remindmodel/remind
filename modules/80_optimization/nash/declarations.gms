@@ -36,10 +36,10 @@ p80_defic_sum_rel(iteration)                "Surplus monetary value over all tim
 p80_etaLT_correct(all_enty,iteration)       "long term price correction factor in percent"
 p80_etaST_correct(tall,all_enty,iteration)  "short term price correction factor in percent"
 
-p80_etaST_correct_safecopy(tall,all_enty,iteration)  "short term price correction factor in percent, before new convergence adjustments"
+p80_etaST_correct_safecopy(tall,all_enty,iteration)       "auxiliary parameter to remember short term price correction factor in percent, before new convergence adjustments"
 o80_counter_iteration_trade_ttot(ttot,all_enty,iteration) "auxiliary parameter to display in which iteration and for which item (ttot, trade) additional convergence measures were taken"
-o80_trackSurplusSign(ttot,all_enty,iteration)    "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
-o80_SurplusOverTolerance(ttot,all_enty,iteration)  "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
+o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
+o80_SurplusOverTolerance(ttot,all_enty,iteration)         "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
 
 
 p80_surplusMax(all_enty,iteration,tall)    "Diagnostics for Nash: Worst residual market surplus until given year, absolute value. [Units: TWa, trillion Dollar, GtC]"
