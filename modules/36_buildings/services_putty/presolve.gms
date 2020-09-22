@@ -214,9 +214,21 @@ loop ( t36_hist_last(ttot),
   );
 ); 
 
+option
+  limrow = 10000000
+  limcol = 10000000
+  solprint = on
+;
+
 s36_logit = 1;
 solve logit_36 maximizing v36_shares_obj using nlp;
 s36_logit = 0;
+
+option
+  limrow = 0
+  limcol = 0
+  solprint = off
+;
 
 if ( NOT ( logit_36.solvestat eq 1  AND (logit_36.modelstat eq 1 OR logit_36.modelstat eq 2)),
 abort "model logit_36 is infeasible";
