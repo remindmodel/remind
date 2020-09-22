@@ -133,7 +133,7 @@ cols <- c("NG" = "#d11141",
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks", "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation", "Aviation", "Bus", "Passenger Rail",
-                "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV_ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Inland non-LDV", "Non motorized")
+                "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV-ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Inland non-LDV", "Non motorized")
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
@@ -158,6 +158,18 @@ theme2use <- theme_minimal()+
           legend.text = element_text(size=14),
           strip.text = element_text(size=14),
           strip.background = element_rect(color = "grey"))
+
+theme2useLargeChar <- theme_minimal()+
+  theme(axis.text.x = element_text(angle = 90, size=18, vjust=0.5, hjust=1),
+          axis.text.y = element_text(size=18),
+          axis.title.y = element_text(size=18),
+          title = element_text(size=18),
+          axis.line = element_line(size = 0.5, colour = "grey"),
+          legend.text = element_text(size=18),
+          strip.text = element_text(size=16),
+          strip.background = element_rect(color = "grey"))
+
+
 ```
 
 ## Kaya decomposition
@@ -196,18 +208,19 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dt = merge(dt, mapping, by = "scenario")
     dt = dt[scen_name %in% c("B1100_Conv", "B1100_Conv-LowD", "B1100_ElecPush", "B1100_ElecPush-LowD", "B1100_H2Push", "B1100_ConvSyn", "NPi_Conv")]
     dt[, variable := as.character(variable)]
-    dt[, variable := ifelse(variable == "FEcapindex", "FE per capita", variable)]
-    dt[, variable := ifelse(variable == "EScapindex", "ES per capita", variable)]
-    dt[, variable := ifelse(variable == "eintindex", "Emission intensity", variable)]
-    dt[, variable := ifelse(variable == "shareindex", "LDVs share", variable)]
-    
+    dt[, variable := ifelse(variable == "FEcapindex", "C) FE per capita", variable)]
+    dt[, variable := ifelse(variable == "EScapindex", "A) ES per capita", variable)]
+    dt[, variable := ifelse(variable == "eintindex", "B) Emission intensity", variable)]
+    dt[, variable := ifelse(variable == "shareindex", "D) LDVs share", variable)]
+    dt[, variable := factor(variable, levels = c("A) ES per capita", "B) Emission intensity", "C) FE per capita", "D) LDVs share"))] 
     p = ggplot()+
       geom_line(data = dt[year <= 2050], aes(x = year, y = value, group = scen_name, color = scen_name))+
       facet_wrap(~variable, nrow = 1)+
       scale_color_manual("Scenario", values = cols)+
       labs(x = "", y = "Index to 2015 [-]")+
       scale_x_continuous(breaks = c(2015, 2020, 2030, 2050)) +
-      theme2use
+      theme2use +
+      theme(strip.text = element_text(angle = 0, hjust = 0))
     
     return(p)
   }
@@ -216,7 +229,7 @@ p = kayapf(dtES = ESmodecap_all, dtFE = EJmode_all, dtEmi = emidem_all, rp = reg
   
 p
 
-aspect_ratio <- 2.5
+aspect_ratio <- 3
 height <- 4
 
 ggsave("kayatransport.png", p, dpi=500, height = height , width = height * aspect_ratio)
@@ -393,7 +406,7 @@ p
 
 aspect_ratio <- 2
 height <- 8
-ggsave("pvintArea.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("pvintArea.png", p, dpi=400, height = height , width = height * aspect_ratio)
 ```
 
 ## New additions to the LDV fleet: Sales 
@@ -439,7 +452,7 @@ p
 
 aspect_ratio <- 2
 height <- 8
-ggsave("psalesArea.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("psalesArea.png", p, dpi=350, height = height , width = height * aspect_ratio)
 ```
 
 
@@ -489,7 +502,7 @@ trspPEpf = function(dt, rp, mapping){
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
-  theme2use +
+  theme2useLargeChar +
   labs(y = "Primary energy [EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
   scale_x_continuous(breaks = c(2020, 2030, 2050))
@@ -518,11 +531,10 @@ LDV_PEpf = function(dt, rp, mapping){
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
-  theme2use +
   labs(y = "Primary energy [EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
   scale_x_continuous(breaks = c(2020, 2030, 2050))+
-  theme(strip.text = element_text(size = 12))
+  theme2useLargeChar
 
   return(p)
 }
@@ -554,11 +566,10 @@ HDV_PEpf = function(dt, rp, mapping){
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
         facet_wrap(~scen_name, nrow = 1)+
-  theme2use +
   labs(y = "Primary energy [EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
   scale_x_continuous(breaks = c(2020, 2030, 2050))+
-  theme(strip.text = element_text(size = 12))
+  theme2useLargeChar
 
   return(p)
 }
@@ -633,7 +644,7 @@ emitail_pf = function(dt, rp, mapping){
     labs(y = expression(paste("[Mt", CO["2"], "]")), x = "")+
     facet_grid(~scen_name) +
     scale_x_continuous(breaks = c(2010, 2020, 2030, 2050))+
-    theme2use +
+    theme2useLargeChar +
     guides(shape = FALSE)+
     scale_fill_manual("Transport mode", values = cols)
 
@@ -643,7 +654,7 @@ emitail_pf = function(dt, rp, mapping){
 p = emitail_pf(emitail_all, regionplot, mapping = mapping_scens_paper)
 
 p
-aspect_ratio <- 5
+aspect_ratio <- 5.05
 height <- 4
 ggsave("emitail_mode.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
@@ -665,12 +676,12 @@ EJmodepf = function(dt, rp,  mapping){
   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
   plot = ggplot()+
     geom_area(data = dt, aes(x=year, y=value, group = mode, fill = mode), color = "black", size=0.05, position= position_stack())+
-    labs(x = "", y = "[EJ]", title = "Total transport final energy demand")+
+    labs(x = "", y = "[EJ]")+
     facet_grid(~scen_name)+
     scale_fill_manual("Transport mode", values = cols, breaks = legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050, 2100)) +
-    theme2use
+    theme2useLargeChar
 
   return(plot)
 }
@@ -697,7 +708,7 @@ EJfuelsMode_pf = function(dt, rp, mapping){
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030, 2050)) +
-    theme2use
+    theme2useLargeChar
 
   plotFreight = ggplot()+
     geom_area(data = dt[subsec == "Freight"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
@@ -706,7 +717,7 @@ EJfuelsMode_pf = function(dt, rp, mapping){
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100)) +
-    theme2use
+    theme2useLargeChar
   
   dt_all = dt[,.(demand_EJ = sum(demand_EJ)), by =.(region, year, subtech, scen_name)]
   plotAllT = ggplot()+
@@ -716,7 +727,7 @@ EJfuelsMode_pf = function(dt, rp, mapping){
     scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050)) +
-    theme2use
+    theme2useLargeChar
 
   plot = list(plotLDV = plotLDV, plotFreight = plotFreight, plotAllT = plotAllT)
   return(plot)
@@ -750,7 +761,7 @@ ESmodepf = function(dt, rp, mapping){
     scale_fill_manual("Transport mode",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050))+
-    theme2use
+    theme2useLargeChar
 
   dt_pass = dt[mode == "pass"]
   dt_pass[technology %in% c("Hybrid Liquids", "Liquids"), technology := "ICE"]
@@ -768,7 +779,7 @@ ESmodepf = function(dt, rp, mapping){
     scale_fill_manual("Transport mode",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020,2030,2050))+
-    theme2use
+    theme2useLargeChar
 
 
     return(list(plot_pass = plot_pass, plot_frgt = plot_frgt))
