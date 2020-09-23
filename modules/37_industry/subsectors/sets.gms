@@ -175,5 +175,5 @@ fe_tax_sub_sbi(fe_tax_sub37) = YES;
 !! cal_ppf_industry_dyn37(ppfen_industry_dyn37)  = YES;
 !! cal_ppf_industry_dyn37(ppfkap_industry_dyn37) = YES;
 
-*** EOR ./modules/37_industry_four_sectors/sets.gms
+*** EOF ./modules/37_industry_four_sectors/sets.gms
 
