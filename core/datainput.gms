@@ -953,12 +953,12 @@ $if %c_techcosts% == "REG"      );
 $if %c_techcosts% == "REG"    );
 
 ***linear convergence of investment costs from 2025 on for non-learning technologies,
-***so that in 2050 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2050),
+***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
 $if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,teNoLearn(te)) = ((pm_ttot_val(ttot)-2020)*fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                            + (2050-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/30;
+$if %cm_techcosts% == "REG"                                            + (2070-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/50;
 $if %cm_techcosts% == "REG"   );
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2050),
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2070),
 $if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,teNoLearn(te)) = fm_dataglob("inco0",te);
 $if %cm_techcosts% == "REG"   );
 
