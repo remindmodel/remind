@@ -1,0 +1,1 @@
+/home/pehl/swap/magicc/scen2inc.awk

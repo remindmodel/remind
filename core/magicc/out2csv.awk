@@ -1,0 +1,1 @@
+/home/pehl/swap/magicc/out2csv.awk

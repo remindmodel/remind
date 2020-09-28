@@ -1,0 +1,1 @@
+/home/pehl/swap/magicc/mod_allcfgs.mod
