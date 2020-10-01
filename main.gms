@@ -301,6 +301,9 @@ c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 cm_GDPcovid                  "GDP correction for covid"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
+cm_flex_tax                 "switch for enabling flexibility tax"
+cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
+cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -419,6 +422,10 @@ $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
+
+cm_flex_tax = 1; !! def 0
+cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_FlexTaxFeedback = 0; !! def 0, off
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
