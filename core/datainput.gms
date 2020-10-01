@@ -733,6 +733,9 @@ $offdelim
 /
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
+***special case: BEV in USA in 2025
+p_adj_deltacapoffset("2025",regi,"apCarElT")$(sameas(regi,"USA"))=0.005; !! roughly 3 Mio EVs
+
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
