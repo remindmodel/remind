@@ -1232,6 +1232,68 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
    );
 );
 
+!! - adjust efficiency parameters for feh2 in the industry/fixed-shares and 
+!!   buildings/simple realisations
+loop ((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$( 
+                                      pm_eff_convergence(in,in2,"level") ne 0 ),
+
+  p29_t_tmp(t_29scen(t))
+  = pm_eff_convergence(in,in2,"level")
+  / ( 1
+    + exp(
+        (pm_eff_convergence(in,in2,"midperiod") - t.val)
+      / pm_eff_convergence(in,in2,"width")
+      )
+    );
+
+    p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
+    p29_t_tmp(t) 
+    = min(
+        pm_eff_convergence(in,in2,"ceiling"),
+        max(0, p29_t_tmp(t))
+      );
+
+  pm_cesdata(t_29scen(t),regi_dyn29(regi),in,"effGr")
+  = 1
+  / ( pm_cesdata(t,regi,in,"eff")
+    * pm_cesdata(t,regi,in,"xi")
+   ** (1 / pm_cesdata(t,regi,out,"rho"))
+    )
+  * ( ( (1 - p29_t_tmp(t))
+      * ( pm_cesdata(t,regi,in,"xi")
+       ** (1 / pm_cesdata(t,regi,out,"rho"))
+        * pm_cesdata(t,regi,in,"eff")
+        * pm_cesdata(t,regi,in,"effGr")
+        )
+      )
+    + ( p29_t_tmp(t)
+      * ( pm_cesdata(t,regi,in2,"xi")
+       ** (1 / pm_cesdata(t,regi,out,"rho"))
+        * pm_cesdata(t,regi,in2,"eff")
+        * pm_cesdata(t,regi,in2,"effGr")
+        )
+      )
+    );
+
+  !! fix quantities to preserve consistency
+  pm_cesdata(t_29scen(t),regi_dyn29(regi),in,"quantity")
+  = ( 1 / pm_cesdata(t,regi,in,"xi")
+    * ( pm_cesdata(t,regi,out,"quantity") ** pm_cesdata(t,regi,out,"rho")
+      - sum(cesOut2cesIn3(out,in3)$( NOT sameas(in3,in) ),
+          pm_cesdata(t,regi,in3,"xi")
+        * ( pm_cesdata(t,regi,in3,"eff")
+          * pm_cesdata(t,regi,in3,"effGr")
+          * pm_cesdata(t,regi,in3,"quantity")
+          )
+       ** pm_cesdata(t,regi,out,"rho")
+        )
+      )
+    )
+ ** (1 / pm_cesdata(t,regi,out,"rho"))
+  / pm_cesdata(t,regi,in,"eff")
+  / pm_cesdata(t,regi,in,"effGr");          
+);
+
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 

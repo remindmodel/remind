@@ -47,9 +47,9 @@ p_developmentState(tall,all_regi)                    "level of development based
 f_lab(tall,all_regi,all_POPscen)                     "labour data for all possible scenarios"
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
-
-
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
+pm_eff_convergence(all_in,all_in,eff_scale_par)      "sigmod parameters for convergence of ppfen efficiencies"
+/ /
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
@@ -543,3 +543,4 @@ emi_conv(all_enty) / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286
 ;
 
 *** EOF ./core/declarations.gms
+

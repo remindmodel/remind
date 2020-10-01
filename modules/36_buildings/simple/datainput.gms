@@ -41,4 +41,10 @@ pm_ppfen_shares("enhb","feheb") = 0.6;
 *** Don't use more H2 than gas in stationary
 pm_ppfen_ratios("feh2b","fegab") = 1;
 
+pm_eff_convergence("feh2b","fegab","level")     = 1.4;
+pm_eff_convergence("feh2b","fegab","midperiod") = 2030;
+pm_eff_convergence("feh2b","fegab","width")     = 15;
+pm_eff_convergence("feh2b","fegab","ceiling")   = 1;
+
 *** EOF ./modules/36_buildings/simple/datainput.gms
+
