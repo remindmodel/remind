@@ -116,9 +116,15 @@ loop(regi,
       );
 );
 
-*** FS: scenario 2: switch off biomass imports after 2030 for regionally limited biomass scenarios
+*** FS: switch off biomass imports after 2030 for regionally limited biomass scenarios
 if ( cm_biotrade_phaseout eq 1,
 	vm_Mport.up(t,regi_sensscen,"pebiolc")$(t.val ge 2030) = 0;
+);
+
+
+*** FS: switch off biomass imports after 2030 in EU subregions
+if ( cm_biotrade_phaseout_EU eq 1,
+	vm_Mport.up(t,regi,"pebiolc")$(t.val ge 2030 AND regi_group("EUR_regi",regi)) = 0;
 );
 
 *** EOF ./modules/24_trade/standard/bounds.gms
