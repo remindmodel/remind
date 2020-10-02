@@ -283,9 +283,7 @@ c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
-cm_postTargetIncrease       "carbon price increase per year after target is reached (euro per tCO2)"
-cm_ETS_postTargetIncrease   "ETS carbon price increase per year after target is reached (euro per tCO2)"
-cm_ESD_postTargetIncrease   "ESD carbon price increase per year after target is reached (euro per tCO2)"
+cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
 
 c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 
@@ -414,14 +412,17 @@ cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
 
-cm_ETS_postTargetIncrease = 2;     !! def = 2
+$setGlobal cm_ETS_postTargetIncrease linear !! def = linear
+$setGlobal cm_ETS_post2055Increase   2      !! def = 2
 
 $setGlobal cm_emiMktES  off        !! def = off	
 $setGlobal cm_emiMktES_type netGHG !! def = netGHG	
 
-cm_ESD_postTargetIncrease = 4;     !! def = 4
+$setGlobal cm_ESD_postTargetIncrease 8 !! def = 8
+$setGlobal cm_ESD_post2055Increase   2 !! def = 2
 
 $setGlobal cm_emiMktEScoop  off    !! def = off	
+$setGlobal cm_emiMktES2020price 30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		

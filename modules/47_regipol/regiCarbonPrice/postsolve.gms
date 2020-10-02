@@ -60,13 +60,25 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 
 ***	updating the ETS co2 tax
 		loop((ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type),		
-			pm_taxemiMkt(ttot,regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot,regi,"ETS") * p47_emiRescaleCo2TaxETS(ETS_mkt));
-***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2015) AND (t.val ge cm_startyear) AND (t.val le ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.05**(t.val-ttot.val); !! 2018 to 2055: increase at 5% p.a.
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) = pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2055)
-***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.0125**(t.val-ttot.val); !! post 2055: increase at 1.25% p.a.
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS") + (cm_ETS_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
-		);
 
+***			target year
+			pm_taxemiMkt(ttot,regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot,regi,"ETS") * p47_emiRescaleCo2TaxETS(ETS_mkt));
+
+***         2020 to target year
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) =  pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2030)
+
+***			target year to 2055			
+$IFTHEN.ETS_postTargetIncrease "%cm_ETS_postTargetIncrease%" == "linear"
+***			keep same slope as 2020 to target year variation
+            pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between ttot and 2055
+$ELSEIF.ETS_postTargetIncrease not "%cm_ETS_postTargetIncrease%" == "off"
+***			keep fixed per year increase
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt(ttot,regi,"ETS") + (%cm_ETS_postTargetIncrease% * sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. in between 2030 and 2055): 2 €/tCO2 increase per year
+$ENDIF.ETS_postTargetIncrease
+
+***			2055 onward
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2055)) = pm_taxemiMkt("2055",regi,"ETS") + (%cm_ETS_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
+		);
 	);		
 *** forcing floor price for UKI (UK has a CO2 price floor of ~€20 €/tCO2e since 2013). The Carbon Price Floor was introduced in 2013 at a rate of £16 (€18.05) per tonne of carbon dioxide-equivalent (tCO2e), and was set to increase to £30 (€33.85) by 2020. However, the government more recently decided to cap the Carbon Price Floor at £18.08 (€20.40) till 2021.
 ***     	pm_taxemiMkt(t,regi,"ETS")$((t.val ge 2015) AND (sameas(regi,"UKI")) AND ETS_regi(ETS_mkt,regi)) = max(20*sm_DptCO2_2_TDpGtC, pm_taxemiMkt(t,regi,"ETS"));
@@ -138,12 +150,17 @@ $ENDIF.emiMktEScoop
 			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
 		);
 
-
 ***	updating the ES co2 tax
 		pm_taxemiMkt("2005",regi,"ES") = 0;
 		pm_taxemiMkt("2010",regi,"ES") = 0;
 		pm_taxemiMkt("2015",regi,"ES") = 0;
+
+$IFTHEN.emiMktES2020price "%cm_emiMktES2020price%" == "target"
 		pm_taxemiMkt("2020",regi,"ES")$(p47_emiRescaleCo2TaxES("2020",regi) AND p47_emiTargetES("2020",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2020",regi,"ES") * p47_emiRescaleCo2TaxES("2020",regi));
+$ELSEIF.emiMktES2020price not "%cm_emiMktES2020price%" == "off"
+		pm_taxemiMkt("2020",regi,"ES") = %cm_emiMktES2020price%*sm_DptCO2_2_TDpGtC;
+$ENDIF.emiMktES2020price
+
 ***		pm_taxemiMkt(t,regi,"ES")$((t.val lt 2020) AND (t.val ge cm_startyear) AND (p47_emiTargetES("2020",regi))) = pm_taxemiMkt("2020",regi,"ES")*1.05**(t.val-2020); !! pre 2020: decrease at 5% p.a.
 ***		!! ES only until 2020 (for bau purposes)
 ***		pm_taxemiMkt(t,regi,"ES")$((t.val gt 2020) AND (NOT (p47_emiTargetES("2030",regi))))  = pm_taxemiMkt("2020",regi,"ES")*1.0125**(t.val-2020); !! post 2020 in case of 2020 only ES: increase at 1.25% p.a.
@@ -155,9 +172,8 @@ $ENDIF.emiMktEScoop
 
 $IFTHEN.emiMktES2050 "%cm_emiMktES2050%" == "linear"
 
-***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND (p47_emiTargetES("2030",regi) AND (t.val le 2050)) )  = pm_taxemiMkt("2030",regi,"ES") + (4*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
-***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2050) AND (p47_emiTargetES("2030",regi)) ) = pm_taxemiMkt("2050",regi,"ES")*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
-		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) )  = pm_taxemiMkt("2030",regi,"ES") + (cm_ESD_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND  (t.val le 2055))  = pm_taxemiMkt("2030",regi,"ES") + (%cm_ESD_postTargetIncrease%*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030 and before 2055: 8 €/tCO2 increase per year after 2030
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2055) )  = pm_taxemiMkt("2055",regi,"ES") + (%cm_ESD_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055) ; !! post 2055: 2 €/tCO2 increase per year after 2030
 
 $ELSEIF.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 		
