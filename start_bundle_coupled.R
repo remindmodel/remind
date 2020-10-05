@@ -22,7 +22,7 @@ path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
 prefix_runname <- "C_"
   
-# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path here and the name prefix below. 
+# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below. 
 # Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
 # file that you specified on path_settings_coupled (scenario_config_coupled_xxx.csv).
 path_remind_oldruns <- paste0(path_remind,"output/")
@@ -118,7 +118,7 @@ for(scen in common){
   if(identical(already_rem,character(0))) cat("Nothing found for",suche,"\n")
 
   if (!identical(already_rem, character(0))) {
-    # if there is an existing REMIND run use it's gdx for the run to be started
+    # if there is an existing REMIND run, use its gdx for the run to be started
 	  already_rem <- mixedsort(already_rem)[1]
 	  settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
     cat(paste0("\nFound gdx here: ",normalizePath(already_rem),"\n"))
@@ -270,7 +270,7 @@ for(scen in common){
       }
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,scenarios_coupled[sub(prefix_runname,"",runname),"qos"],file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"

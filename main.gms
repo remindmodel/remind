@@ -82,9 +82,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.957
+* Input data revision: 5.96
 * 
-* Last modification (input data): Tue Sep 15 11:40:15 2020
+* Last modification (input data): Sat Oct 03 14:08:53 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -427,7 +427,7 @@ cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off

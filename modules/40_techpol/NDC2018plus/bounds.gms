@@ -35,7 +35,7 @@ vm_cap.lo(t,regi,"apCarElT","1")$(t.val lt 2041 AND t.val gt 2024) = p40_TechBou
      );
      if( ( pm_gdp(t,regi)/pm_pop(t,regi) ) > 30,
         vm_shUePeT.lo(t,regi,"apCarElT") = 8;
-        vm_shUePeT.lo(t,regi,"apCarH2T") = 1;
+        vm_shUePeT.lo(t,regi,"apCarH2T") = 0.4;
      );
    );
    loop(t$(t.val ge 2030),

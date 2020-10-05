@@ -8,20 +8,26 @@
 ***--------------------------------------
 *** URANIUM BOUND
 ***--------------------------------------
-model m31_uran_bound_dummy /q31_mc_dummy, q31_totfuex_dummy/;
- if(cm_limit_peur_scen eq 1,
+model m31_uran_bound_dummy / q31_mc_dummy, q31_totfuex_dummy /;
+
+if (cm_limit_peur_scen eq 1,
 *** Small CNS model to initiate regional bounds on uranium extraction
-     v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.001;
- solve m31_uran_bound_dummy minimizing v31_squaredDiff using nlp;
- solve m31_uran_bound_dummy minimizing v31_squaredDiff using nlp;
-if(not (m31_uran_bound_dummy.modelstat eq 1 OR m31_uran_bound_dummy.modelstat eq 2),
-  abort "Uranium bound model m31_uran_bound_dummy could not be solved, aborting!";
-);
+  v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.001;
+  solve m31_uran_bound_dummy minimizing v31_squaredDiff using nlp;
+  solve m31_uran_bound_dummy minimizing v31_squaredDiff using nlp;
+
+  if (NOT (   m31_uran_bound_dummy.modelstat eq 1 
+           OR m31_uran_bound_dummy.modelstat eq 2),
+    execute_unload "abort.gdx";
+    abort "Uranium bound model m31_uran_bound_dummy could not be solved, aborting!";
+  );
 
 *AJS* use parameter to save the result of the CNS model
-     p31_fuExtrCumMaxBound(regi,"peur", "1") = v31_fuExtrCumMax.l(regi,"peur", "1");
+  p31_fuExtrCumMaxBound(regi,"peur","1") = v31_fuExtrCumMax.l(regi,"peur","1");
 );
 
-display v31_squaredDiff.l, p31_fuExtrCumMaxBound, v31_fuExtrMC.l, s31_max_disp_peur;
+display v31_squaredDiff.l, p31_fuExtrCumMaxBound, v31_fuExtrMC.l, 
+  s31_max_disp_peur;
 
 *** EOF ./modules/31_fossil/grades2poly/preloop.gms
+
