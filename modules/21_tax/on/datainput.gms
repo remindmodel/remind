@@ -245,5 +245,11 @@ elseif (cm_DiscRateScen eq 4),
                                                *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapal")
                                                +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapal");   !! Reduction of 75% of the Efficiency gap
 );
+
+
+*** FS: bioenergy import tax level
+*** EU subregions pay 25% of the world market price in addition after 2030 due to sustainability concerns in the Global South
+p21_tau_BioImport(t,regi) = 0;
+p21_tau_BioImport(t,regi)$(regi_group("EUR_regi",regi) AND t.val ge 2030) = cm_BioImportTax_EU;
  
 *** EOF ./modules/21_tax/on/datainput.gms
