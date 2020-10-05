@@ -733,6 +733,7 @@ o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
 	)$(sameas(entyPe,"peoil"))
 ;
 
+
 o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
 	sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
 		pm_emifac(ttot,regi,entyPe,entySe,te,emi)
@@ -772,17 +773,6 @@ o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
 		    pm_emifac(ttot,regi,enty,enty2,te,emi)
 		    * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
 		  )
-***   Industry CCS emissions
-	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
-		  vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
-		)$( sameas(emi,"co2") )
-	)
-***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve.l(ttot,regi)$( sameas(emi,"co2") ) )
-***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
-  + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort.l(ttot,regi,"cco2","ccuco2short",te2,rlf)$( sameas(emi,"co2") ) 
-	)
 	)*emi_conv(emi)
 ;	
 
