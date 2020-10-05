@@ -241,7 +241,7 @@ loop (fe2ces_dyn36(entyFe,esty,teEs,in),
                             / p36_demUEtotal(t,regi,in);
 );
 
-$ontext
+
 
 *** Set 1e-3 as a lower bound for shares
 p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
@@ -255,7 +255,7 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
                                                     / sum( feteces_dyn36_2(entyFe2,teEs2,in),
                                                     p36_shUeCes(ttot,regi,entyFe2,in,teEs2))
                                                     ;
-$offtext
+
 
 *** Compute FE shares
 
