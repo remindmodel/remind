@@ -7,10 +7,8 @@
 *** SOF ./modules/21_tax/on/declarations.gms
 Parameters
 p21_tau_so2_tax(tall,all_regi)               "so2 tax path"
-
 p21_tau_pe2se_tax(tall,all_regi,all_te)      "tax path for primary energy technologies"
 p21_tau_pe2se_inconv(tall,all_regi,all_te)   "inconvenience cost path for primary energy technologies"
-
 p21_tau_fe_tax_transport(tall,all_regi,all_enty) "tax path for transport final energy"
 p21_tau_fe_sub_transport(tall,all_regi,all_enty) "subsidy path for transport final energy"
 p21_tau_fe_tax_bit_st(tall,all_regi,all_in)      "tax path for stationary/buildings_industry final energy"
@@ -22,10 +20,10 @@ p21_max_fe_sub(tall,all_regi,all_in)           "maximum final energy subsidy lev
 p21_max_fe_subEs(tall,all_regi,all_esty)       "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
 p21_prop_fe_sub(tall,all_regi,all_in)          "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_prop_fe_subEs(tall,all_regi,all_esty)      "subsidy proportional cap to avoid liquids increasing dramatically"
+p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction"
+p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
+p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 
-p21_tau_fuEx_sub(tall,all_regi,all_enty)      "subsidy path for fuel extraction"
-
-p21_tau_bioenergy_tax(ttot)                  "linearly over time increasing tax on bioenergy emulator price"
 
 p21_taxrevGHG0(ttot,all_regi)                "reference level value of GHG emission tax"
 p21_taxrevCO2luc0(ttot,all_regi)             "reference level value of co2luc emission tax"
@@ -40,9 +38,12 @@ p21_taxrevPE2SE0(ttot,all_regi)              "reference level value of pe2se tec
 p21_taxrevXport0(ttot,all_regi)              "reference level value of exports tax"
 p21_taxrevSO20(ttot,all_regi)                "reference level value of SO2 tax"
 p21_taxrevBio0(ttot,all_regi)                "reference level value of bioenergy tax"
-p21_implicitDiscRate0(ttot,all_regi)           "reference level value of implicit tax on energy efficient capital"
+p21_implicitDiscRate0(ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)     "reference level value of pe2se technologies tax"
-p21_taxrevFlex0(ttot,all_regi)                  "reference level value of flexibility tax"
+p21_taxrevFlex0(ttot,all_regi)               "reference level value of flexibility tax"
+p21_taxrevBioImport0(ttot,all_regi)          "reference level value of bioenergy import tax"  
+
+
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
@@ -57,7 +58,7 @@ p21_taxrevSO2_iter(iteration,ttot,all_regi)                "reference level valu
 p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level value of bioenergy tax revenue"
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
-
+p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
 
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
@@ -92,6 +93,7 @@ v21_taxrevBio(ttot,all_regi)                 "tax on bioenergy (to reflect susta
 v21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
 v21_implicitDiscRate(ttot,all_regi)           "implicit tax on energy efficient capital"
 v21_taxemiMkt(ttot,all_regi,all_emiMkt)      "tax on greenhouse gas emissions"
+v21_taxrevBioImport(ttot,all_regi)           "bioenergy import tax"
 ;
 
 Positive Variable
@@ -117,6 +119,7 @@ q21_taxrevBio(ttot,all_regi)                 "calculation of tax on bioenergy"
 q21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
 q21_implicitDiscRate(ttot,all_regi)          "calculation of the implicit discount rate on energy efficiency capital"
 q21_taxemiMkt(ttot,all_regi,all_emiMkt)      "calculation of specific emission market tax on CO2 emissions"
+q21_taxrevBioImport(ttot,all_regi)           "calculation of bioenergy import tax"
 ;   
 
 *** EOF ./modules/21_tax/on/declarations.gms

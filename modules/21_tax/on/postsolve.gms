@@ -48,6 +48,8 @@ p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,teFlex),
                                         -vm_flexAdj.l(ttot,regi,teFlex) *
                                         (  vm_prodSe.l(ttot,regi,enty,enty2,teFlex)$entySe(enty2)
                                         +  vm_prodFe.l(ttot,regi,enty,enty2,teFlex)$entyFe(enty2)));
+p21_taxrevBioImport0(ttot,regi) = p21_tau_BioImport(ttot,regi) * pm_pvp(ttot,"pebiolc") / pm_pvp(ttot,"good") * vm_Mport.l(ttot,regi,"pebiolc");
+
     
 
 
@@ -69,6 +71,7 @@ p21_taxrevSO2_iter(iteration+1,ttot,regi) = v21_taxrevSO2.l(ttot,regi);
 p21_taxrevBio_iter(iteration+1,ttot,regi) = v21_taxrevBio.l(ttot,regi);
 p21_implicitDiscRate_iter(iteration+1,ttot,regi) = v21_implicitDiscRate.l(ttot,regi);
 p21_taxrevFlex_iter(iteration+1,ttot,regi) = v21_taxrevFlex.l(ttot,regi);
+p21_taxrevBioImport_iter(iteration+1,ttot,regi) = v21_taxrevBioImport.l(ttot,regi);
 
 
 
