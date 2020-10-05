@@ -22,10 +22,6 @@ q36_putty_obj
 
 
 
-v36_prodEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs))      = 0;              
-v36_deltaProdEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
-v36_vintageInfes.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
-
 solve putty_paths_floor minimizing v36_putty_obj using nlp;
 
 if ( NOT ( putty_paths_floor.solvestat eq 1  AND (putty_paths_floor.modelstat eq 1 OR putty_paths_floor.modelstat eq 2)),
@@ -39,6 +35,11 @@ s36_switch_floor = 0;
 
 
 *** Vintage initialisation
+v36_prodEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs))      = 0;              
+v36_deltaProdEs.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
+v36_vintageInfes.lo(ttot,regi,fe2es_dyn36(enty,esty,teEs)) = 0;
+
+
 s36_vintage_calib = 1;
 v36_logitInfes.fx(t36_hist(ttot),regi_dyn36(regi),inViaEs_dyn36(in)) = 0;
 v36_prodEs.fx(t36_hist(ttot),regi_dyn36(regi), fe2es_dyn36(entyFe,esty,teEs)) 
