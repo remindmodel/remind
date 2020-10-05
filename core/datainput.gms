@@ -734,6 +734,10 @@ $offdelim
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
+***additional deltacapoffset on electric vehicles, based on latest data
+p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
+p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
+
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
