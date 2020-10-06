@@ -742,8 +742,7 @@ q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
          ,2)
                 /( sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
                    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
-                   + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)       
-				);
+                  );
 
 ***---------------------------------------------------------------------------
 *' The use of early retirement is restricted by the following equations:
