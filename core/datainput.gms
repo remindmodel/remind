@@ -291,6 +291,15 @@ $offdelim
 ***---------------------------------------------------------------------------
 *** Import and set regional data
 ***---------------------------------------------------------------------------
+
+*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
+s_co2pipe_leakage = 0.01;
+
+loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
+    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
+    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
+);
+
 *** Allocate emission factors to pm_emifac
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
@@ -309,14 +318,6 @@ pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fes
 pm_emifac(t,regi,"pebiolc","sesobio","biotr","ch4") = 9.46 * (1-pm_share_ind_fesos_bio("2005",regi));
 
 display pm_emifac;
-
-*RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
-s_co2pipe_leakage = 0.01;
-
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
-    fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
-    fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
-);
 
 *MLB* initialization needed as include file represents only parameters that are different from zero
 p_boundtmp(ttot,all_regi,te,rlf)$(ttot.val ge 2005)       = 0;
@@ -673,14 +674,23 @@ $offdelim
 
 *** RP rescale wind capacity factors in REMIND to account for very different real-world CF (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
 *** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs), only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
+
+*cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
 p_aux_capacityFactorHistOverREMIND(regi,"wind")$p_avCapFac2015(regi,"wind") =  p_histCapFac("2015",regi,"wind") / p_avCapFac2015(regi,"wind");
-loop(te$sameas(te,"wind"),
-  pm_dataren(regi,"maxprod",rlf,te) = pm_dataren(regi,"maxprod",rlf,te) * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
-  pm_dataren(regi,"nur",rlf,te)     = pm_dataren(regi,"nur",rlf,te)     * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
+
+loop(t$(t.val ge 2015 AND t.val le 2045 ),
+pm_cf(t,regi,"wind") =
+(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
++
+(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
+
+
 
 p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
 pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
+pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
+pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
 *** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup, while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod, as here no miscalculation of total energy yield takes place, in contrast to wind)
@@ -723,6 +733,10 @@ $offdelim
 /
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
+
+***additional deltacapoffset on electric vehicles, based on latest data
+p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
+p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
@@ -953,12 +967,12 @@ $if %c_techcosts% == "REG"      );
 $if %c_techcosts% == "REG"    );
 
 ***linear convergence of investment costs from 2025 on for non-learning technologies,
-***so that in 2050 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2050),
+***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
 $if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,teNoLearn(te)) = ((pm_ttot_val(ttot)-2020)*fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                            + (2050-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/30;
+$if %cm_techcosts% == "REG"                                            + (2070-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/50;
 $if %cm_techcosts% == "REG"   );
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2050),
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2070),
 $if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,teNoLearn(te)) = fm_dataglob("inco0",te);
 $if %cm_techcosts% == "REG"   );
 

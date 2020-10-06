@@ -57,3 +57,6 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
+
+*** initialize p32_PriceDurSlope
+p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;

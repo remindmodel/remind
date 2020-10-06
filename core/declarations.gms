@@ -160,6 +160,9 @@ p_cintraw(all_enty)                                  "carbon intensity of fossil
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
+pm_priceSeel(ttot,all_regi)                           "parameter with electricity price from last iteration (unit: trUSD/TWa)"
+
+
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
 
@@ -259,6 +262,7 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
+vm_flexAdj(tall,all_regi,all_te)                     "level of flexibility tax which serves to adjust electricity prices for flexible and inflexible technologies that demand electricity"
 ;
 
 ***----------------------------------------------------------------------------------------

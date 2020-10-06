@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/off/bounds.gms
 
-vm_co2CCUshort.fx(t,regi,"cco2","ccuco2short",teCCU2rlf2(te2,rlf)) = 0;
+vm_co2CCUshort.fx(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = 0;
 
 
 *** EOF ./modules/39_CCU/39_CCU.gms
