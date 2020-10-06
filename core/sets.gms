@@ -1172,6 +1172,7 @@ teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
         storspv     "storage technology for spv"
         storwind    "storage technology for wind"
         storcsp     "storage technology for csp"
+        dac         "direct air capture"
 /
 
 teNoLearn(all_te)   "Technologies without learning effect"
