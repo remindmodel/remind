@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/29_CES_parameters.gms
 
+*' @title CES parameters
+*'
+*' @description The CES parameters module either loads CES parameters or calibrates new CES parameters. 
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%CES_parameters%" == "calibrate" $include "./modules/29_CES_parameters/calibrate/realization.gms"
 $Ifi "%CES_parameters%" == "load" $include "./modules/29_CES_parameters/load/realization.gms"
