@@ -43,7 +43,7 @@ ESmodecap_all = NULL
 ESmodeabs_all = NULL
 CO2km_int_newsales_all = NULL
 emidem_all = NULL
-emitail_all = NULL
+emiDemand_all = NULL
 EJfuelsPass_all = NULL
 EJfuelsFrgt_all = NULL
 EJfuelsMode_all = NULL
@@ -376,8 +376,8 @@ emidemFun = function(miffile){
 }
 
 
-emiTailpipeFun = function(miffile){
-  emitail = miffile[grepl("Tailpipe", variable)]
+emiDemandFun = function(miffile){
+  emitail = miffile[grepl("Demand", variable)]
   return(emitail)
 }
 
@@ -1088,11 +1088,11 @@ for (outputdir in outputdirs) {
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source, gdp)
 
-
+  newcompLDVs = newcomp[subsector_L1 == "trn_pass_road_LDV_4W"]
   ## calculate sales
-  salescomp = SalesFun(shares_LDV, newcomp, sharesVS1)
+  salescomp = SalesFun(shares_LDV, newcompLDVs, sharesVS1)
   ## calculate fleet compositons
-  fleet = fleetFun(vintcomp, newcomp, sharesVS1, loadFactor)
+  fleet = fleetFun(vintcomp, newcompLDVs, sharesVS1, loadFactor)
   ## calculate EJ from LDVs by technology
   EJroad = EJroadFun(demandEJ)
   ## calculate FE demand by mode
@@ -1112,13 +1112,13 @@ for (outputdir in outputdirs) {
   ## calculate demand emissions
   emidem = emidemFun(miffile)
   ## tailpipe emissions
-  emitail = emiTailpipeFun(miffile)
+  emiDemand = emiDemandFun(miffile)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
   elecdem = elecdemFun(miffile)
   ## calculate costs by component
-  costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
+  costs = costscompFun(newcomp = newcompLDVs, sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## per capita demand-gdp per capita
   demgdpcap = demgdpcap_Fun(demkm = demandkm, REMIND2ISO_MAPPING)
   ## investments in different energy carriers
@@ -1139,7 +1139,7 @@ for (outputdir in outputdirs) {
   ESmodeabs[, scenario := as.character(unique(miffile$scenario))]
   CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
   emidem[, scenario := as.character(unique(miffile$scenario))]
-  emitail[, scenario := as.character(unique(miffile$scenario))]
+  emiDemand[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsMode[, scenario := as.character(unique(miffile$scenario))]
@@ -1162,7 +1162,7 @@ for (outputdir in outputdirs) {
   ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
   CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
   emidem_all = rbind(emidem_all, emidem)
-  emitail_all = rbind(emitail_all, emitail)
+  emiDemand_all = rbind(emiDemand_all, emiDemand)
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
   EJfuelsMode_all = rbind(EJfuelsMode_all, EJfuelsMode)
@@ -1196,7 +1196,7 @@ saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
 saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
 saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
-saveRDS(emitail_all, paste0(outdir, "/emitail_all.RDS"))
+saveRDS(emiDemand_all, paste0(outdir, "/emiDemand_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
 saveRDS(EJfuelsMode_all, paste0(outdir, "/EJfuelsMode_all.RDS"))

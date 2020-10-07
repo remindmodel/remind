@@ -33,7 +33,7 @@ fleet_all = readRDS("fleet_all.RDS")
 ESmodecap_all = readRDS("ESmodecap_all.RDS")
 CO2km_int_newsales_all = readRDS("CO2km_int_newsales_all.RDS")
 emidem_all = readRDS("emidem_all.RDS")
-emitail_all = readRDS("emitail_all.RDS")
+emiDemand_all = readRDS("emiDemand_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
 trspPE_all = readRDS("trspPE_all.RDS")
@@ -45,13 +45,13 @@ setConfig(forcecache=T)
 
 cols <- c("NG" = "#d11141",
           "Gases" = "#d11141",
-          "Gas" = "#d11141",
-          "Coal" = "#113245",
-          "Hydro" = "#87cefa",
-          "Solar" = "#edae49",
-          "Geothermal" = "#58b4ae",
-          "Uranium" = "orchid",
-          "Wind" = "#e43f5a",
+          "Gas" = "#999959",
+          "Coal" = "#b2b2b2",
+          "Hydro" = "#319bb6",
+          "Solar" = "#ffcc00",
+          "Geothermal" = "#e51900",
+          "Uranium" = "#ff33ff",
+          "Wind" = "#337fff",
           "Liquids" = "#8c8c8c",
           "Hybrid Liquids" = "#ffc425",
           "Hybrid Electric" = "#f37735",
@@ -104,7 +104,7 @@ cols <- c("NG" = "#d11141",
           "Inland Freight" = "#cd5555",
           "Freight Road" = "#fa8072",
           "Pass non LDV" = "#6b8e23",
-          "Inland non-LDV" = "#6b8e23",
+          "Public land transport" = "#6b8e23",
           "Pass" = "#66cdaa",
           "Pass non LDV (Domestic)" = "#54ff9f",
           "refined liquids enduse" = "#8c8c8c",
@@ -133,7 +133,7 @@ cols <- c("NG" = "#d11141",
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks", "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation", "Aviation", "Bus", "Passenger Rail",
-                "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV-ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Inland non-LDV", "Non motorized")
+                "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV-ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Public land transport", "Non motorized")
 
 legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
@@ -177,42 +177,34 @@ theme2useLargeChar <- theme_minimal()+
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
 kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     dtES = dtES[region == rp & mode == "pass" & year >= 2015]
-    dtESshare = copy(dtES)
-    dtEScap = dtES[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario)]
-    dtESshare = dtESshare[,.(demand_F = sum(demand_F), pop = mean(pop)), by = .(region, year, scenario, vehicle_type_plot)]
-    dtEScap = dtEScap[, EScap := demand_F/pop]
-    dtESshare = dtESshare[, type := ifelse(vehicle_type_plot %in% c("Small Cars", "Large Cars", "Motorbikes"), "4W", "other")]
-    dtESshare = dtESshare[,.(demand_F = sum(demand_F)), by = .(region, year, type, scenario)]
-    dtESshare[, share := demand_F/sum(demand_F), by = .(region, year, scenario)]
-    dtESshare = dtESshare[type == "4W"][, type := NULL]
+    dtES = dtES[,.(demand_F = sum(demand_F)), by = .(region, year, scenario)]
     dtFE = dtFE[region == rp & year >= 2015]
     dtFE = dtFE[aggr_mode %in% c("LDV", "Pass non LDV")]
     dtFE = dtFE[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, scenario)]
     
-    dtEmi = dtEmi[region == rp & year >= 2015 & variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand"),]
+    dtEmi = dtEmi[region == rp & year >= 2015 & variable %in% c("Emi|CO2|Transport|Pass|Road|LDV|Demand", "Emi|CO2|Transport|Pass|Road|Bus|Demand", "Emi|CO2|Transport|Pass|Rail|Demand", "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand", "Emi|CO2|Transport|Pass|Aviation|International|Demand"),]
     dtEmi = dtEmi[,.(value = sum(value)), by = c("region", "year", "scenario")]
     dtEmi = dtEmi[,.(year, region, scenario, emi = value)]
     
-    dt = merge(dtFE, dtEScap, by = c("region", "year", "scenario"))
+    dt = merge(dtFE, dtES, by = c("region", "year", "scenario"))
+    dt[, FE_ES := demand_EJ/demand_F]
     dt = merge(dt, dtEmi, by = c("region", "year", "scenario"))
-    dt = merge(dt, dtESshare[, demand_F := NULL], by = c("region", "year", "scenario"))
-    dt[, FEcap := demand_EJ/pop]
     dt[, eint := emi/demand_EJ]  ## MtCO2/EJ
-    dt[, FEcapindex := FEcap/FEcap[year == 2015], by = .(region, scenario)]
-    dt[, EScapindex := EScap/EScap[year == 2015], by = .(region, scenario)]
+    dt[, FE_ESindex := FE_ES/FE_ES[year == 2015], by = .(region, scenario)]
+    dt[, ES_index := demand_F/demand_F[year == 2015], by = .(region, scenario)]
     dt[, eintindex := eint/eint[year == 2015], by = .(region, scenario)]
-    dt[, shareindex := share/share[year == 2015], by = .(region, scenario)]
+    dt[, emiindex := emi/emi[year == 2015], by = .(region, scenario)]
     
-    dt = melt(dt[,c("region", "year", "scenario", "EScapindex", "FEcapindex", "eintindex", "shareindex")], id.vars = c("region", "year", "scenario"))
+    dt = melt(dt[,c("region", "year", "scenario", "FE_ESindex", "ES_index", "eintindex", "emiindex")], id.vars = c("region", "year", "scenario"))
     
     dt = merge(dt, mapping, by = "scenario")
     dt = dt[scen_name %in% c("B1100_Conv", "B1100_Conv-LowD", "B1100_ElecPush", "B1100_ElecPush-LowD", "B1100_H2Push", "B1100_ConvSyn", "NPi_Conv")]
     dt[, variable := as.character(variable)]
-    dt[, variable := ifelse(variable == "FEcapindex", "C) FE per capita", variable)]
-    dt[, variable := ifelse(variable == "EScapindex", "A) ES per capita", variable)]
-    dt[, variable := ifelse(variable == "eintindex", "B) Emission intensity", variable)]
-    dt[, variable := ifelse(variable == "shareindex", "D) LDVs share", variable)]
-    dt[, variable := factor(variable, levels = c("A) ES per capita", "B) Emission intensity", "C) FE per capita", "D) LDVs share"))] 
+    dt[, variable := ifelse(variable == "FE_ESindex", "B) FE per ES", variable)]
+    dt[, variable := ifelse(variable == "ES_index", "A) ES", variable)]
+    dt[, variable := ifelse(variable == "eintindex", "C) Emission intensity", variable)]
+    dt[, variable := ifelse(variable == "emiindex", "D) Fossil emissions", variable)]
+    dt[, variable := factor(variable, levels = c("A) ES", "B) FE per ES", "C) Emission intensity", "D) Fossil emissions"))] 
     p = ggplot()+
       geom_line(data = dt[year <= 2050], aes(x = year, y = value, group = scen_name, color = scen_name))+
       facet_wrap(~variable, nrow = 1)+
@@ -225,7 +217,7 @@ kayapf = function(dtES, dtFE, dtEmi, rp, mapping){
     return(p)
   }
   
-p = kayapf(dtES = ESmodecap_all, dtFE = EJmode_all, dtEmi = emidem_all, rp = regionplot, mapping_scens_paper)
+p = kayapf(dtES = ESmodecap_all, dtFE = EJmode_all, dtEmi = emiDemand_all, rp = regionplot, mapping_scens_paper)
   
 p
 
@@ -622,17 +614,17 @@ ggsave("pCO2int.png", p, dpi=500, height = height , width = height * aspect_rati
 ```
 
 
-## Tailpipe emissions
+## Tailpipe (only fossil fuels) emissions
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-emitail_pf = function(dt, rp, mapping){
+emiDemand_pf = function(dt, rp, mapping){
  dt = dt[year <= 2050 & region == rp]
  dt[, scenario := as.character(scenario)]
- dt = dt[variable %in% c("Emi|CO2|Transport|Pass|Road|LDV|Tailpipe", "Emi|CO2|Transport|Freight|Rail|Tailpipe", "Emi|CO2|Transport|Freight|Road|Tailpipe", "Emi|CO2|Transport|Pass|Aviation|Domestic|Tailpipe", "Emi|CO2|Transport|Pass|Aviation|International|Tailpipe", "Emi|CO2|Transport|Pass|Road|Bus|Tailpipe", "Emi|CO2|Transport|Pass|Rail|Tailpipe", "Emi|CO2|Transport|Freight|International Shipping|Tailpipe", "Emi|CO2|Transport|Freight|Navigation|Tailpipe")]
+ dt = dt[variable %in% c("Emi|CO2|Transport|Pass|Road|LDV|Demand", "Emi|CO2|Transport|Freight|Rail|Demand", "Emi|CO2|Transport|Freight|Road|Demand", "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand", "Emi|CO2|Transport|Pass|Aviation|International|Demand", "Emi|CO2|Transport|Pass|Road|Bus|Demand", "Emi|CO2|Transport|Pass|Rail|Demand", "Emi|CO2|Transport|Freight|International Shipping|Demand", "Emi|CO2|Transport|Freight|Navigation|Demand")]
  dt[, mode := "mode"]
  dt[grepl("LDV", variable), mode := "LDV"]
  dt[grepl("Freight\\|Road|Freight\\|Rail", variable), mode := "Inland Freight"]
- dt[grepl("Bus|Pass\\|Rail", variable), mode := "Inland non-LDV"]
+ dt[grepl("Bus|Pass\\|Rail", variable), mode := "Public land transport"]
  dt[grepl("Aviation", variable), mode := "Aviation"]
  dt[grepl("Shipping|Navigation", variable), mode := "Shipping"]
  dt = dt[,.(value = sum(value)), by = c("region","year","scenario", "mode")]
@@ -651,12 +643,12 @@ emitail_pf = function(dt, rp, mapping){
   return(plot)
 }
 
-p = emitail_pf(emitail_all, regionplot, mapping = mapping_scens_paper)
+p = emiDemand_pf(emiDemand_all, regionplot, mapping = mapping_scens_paper)
 
 p
 aspect_ratio <- 5.05
 height <- 4
-ggsave("emitail_mode.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("emiDemand_mode.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
 ## Final energy, by mode
@@ -669,7 +661,7 @@ EJmodepf = function(dt, rp,  mapping){
   dt[vehicle_type_plot %in% c("International Shipping", "Domestic Shipping"), mode := "Shipping"]
   dt[vehicle_type_plot %in% c("International Aviation", "Domestic Aviation"), mode := "Aviation"]
   dt[vehicle_type_plot %in% c("Truck", "Freight Rail"), mode := "Inland Freight"]
-  dt[vehicle_type_plot %in% c("Bus", "Passenger Rail"), mode := "Inland non-LDV"]
+  dt[vehicle_type_plot %in% c("Bus", "Passenger Rail"), mode := "Public land transport"]
   dt = dt[,.(value = sum(demand_EJ)), by = c("region","year","scenario", "mode")]
   dt[, mode := factor(mode, levels = legend_ord)]
   dt = merge(dt, mapping, by = "scenario")
@@ -768,7 +760,7 @@ ESmodepf = function(dt, rp, mapping){
   dt_pass[technology %in% c("Hybrid Electric"), technology := "PHEV"]
   
   dt_pass[vehicle_type_plot %in% c("Large Cars", "Small Cars", "Motorbikes"), vehicle_type_plot := paste0("LDV-", technology)]
-  dt_pass[vehicle_type_plot %in% c("Bus", "Passenger Rail"), vehicle_type_plot := "Inland non-LDV"]
+  dt_pass[vehicle_type_plot %in% c("Bus", "Passenger Rail"), vehicle_type_plot := "Public land transport"]
   dt_pass[grepl("Aviation", vehicle_type_plot), vehicle_type_plot := "Aviation"]
   dt_pass = dt_pass[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "mode", "scen_name")]
 
