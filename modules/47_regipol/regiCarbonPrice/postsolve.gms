@@ -298,5 +298,72 @@ display pm_taxCO2eq;
 $ENDIF.regicarbonprice
 
 
+
+***---------------------------------------------------------------------------
+*** Non-market based Efficiency Targets:
+***---------------------------------------------------------------------------
+$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+
+*** saving previous iteration value for implicit tax
+p47_implicitFEEffTargetTax_prevIter(ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
+p47_implicitFEEffTargetTax0(ttot,regi) = p47_implicitFEEffTargetTax(ttot,regi)*sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot,regi,enty,enty2,te));
+
+***  Calculating current FE level
+***		for region groups
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+);
+***		for single regions (overwrites region groups)  
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+);
+***  calculating efficiency directive targets implicit tax rescale
+loop((ttot,ext_regi)$p47_implicitFEEffTarget(ttot,ext_regi),	
+  if(iteration.val lt 10,
+		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
+  else 
+		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 1;
+  );  
+***  p47_implicitFEEffTargetTax_Rescale(ext_regi) = 
+***    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 , p47_implicitFEEffTargetTax_Rescale(ext_regi)),
+***			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+***	  )
+***  ;
+);
+***	updating efficiency directive targets implicit tax
+***		for region groups
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+	loop(all_regi$regi_group(ext_regi,all_regi),
+    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
+	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
+***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+  );
+);
+***		for single regions (overwrites region groups)
+loop((ttot,ext_regi,target_type,emi_type)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
+	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
+***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+  );
+);
+
+*** saving iteration level for efficiency directive targets implicit tax
+p47_implicitFEEffTargetTax_iter(iteration,ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
+p47_implicitFEEffTargetTax_Rescale_iter(iteration,ext_regi) = p47_implicitFEEffTargetTax_Rescale(ext_regi);
+p47_implicitFEEffTargetCurrent_iter(iteration,ext_regi) = p47_implicitFEEffTargetCurrent(ext_regi);
+
+display p47_implicitFEEffTargetCurrent, p47_implicitFEEffTarget,
+	p47_implicitFEEffTargetTax_prevIter, p47_implicitFEEffTargetTax,
+	p47_implicitFEEffTargetTax_Rescale,
+	p47_implicitFEEffTargetTax_Rescale_iter,
+	p47_implicitFEEffTargetTax_iter,
+	p47_implicitFEEffTargetCurrent_iter,
+	p47_implicitFEEffTargetTax0;
+
+$endIf.implicitFEEffTarget
+
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
 

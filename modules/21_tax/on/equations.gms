@@ -45,6 +45,9 @@
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)  
     + v21_taxrevBioImport(t,regi)  
+$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+    + vm_taxrevimplicitFEEffTarget(t,regi)
+$endif.implicitFEEffTarget    
  ;
 
 
@@ -199,7 +202,7 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
 ***---------------------------------------------------------------------------
 *' FS: flexibility tax
 *' Calculation of tax/subsidy on technologies with inflexible/flexible electricity input
-*' calculation is done via additional budget emission contraints defined in regiplo module
+*' calculation is done via additional budget emission contraints defined in regipol module
 ***---------------------------------------------------------------------------
 
 q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..

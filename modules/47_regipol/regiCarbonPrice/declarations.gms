@@ -66,4 +66,23 @@ equations
 ;
 $endIf.quantity_regiCO2target    
 
+
+$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+Parameter
+	p47_implicitFEEffTarget(ttot,ext_regi)                    "region efficiency target [TWa]" / %cm_implicitFEEffTarget% /
+	p47_implicitFEEffTargetTax(ttot,all_regi)                 "tax/subsidy level to assure that the efficiency directive target is respected"
+	p47_implicitFEEffTargetCurrent(ext_regi)                  "current iteration total final energy"
+	p47_implicitFEEffTargetTax_Rescale(ext_regi)              "rescale factor for current implicit efficiency tax" 
+	p47_implicitFEEffTargetTax_iter(iteration,ttot,all_regi)  "iteration level of efficiency directive target implicit tax"
+	p47_implicitFEEffTargetTax_prevIter(ttot,all_regi)		  "previous iteration implicit final energy efficiency target tax"
+	p47_implicitFEEffTargetTax0(ttot,all_regi)			      "previous iteration implicit final energy efficiency target tax revenue"
+
+	p47_implicitFEEffTargetTax_Rescale_iter(iteration,ext_regi)    
+	p47_implicitFEEffTargetCurrent_iter(iteration,ext_regi)
+;
+equations
+	q21_implicitFEEffTargetTax(ttot,all_regi)      "calculation of the implicit tax to assure that the efficiency directive target is respected"
+;
+$endIf.implicitFEEffTarget
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms
