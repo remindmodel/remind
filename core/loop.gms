@@ -157,25 +157,23 @@ $batinclude "./modules/include.gms" postsolve
 *** write the fulldata.gdx file after each optimal iteration
 *AJS* in Nash status 7 is considered optimal in that respect (see definition of
 ***   o_modelstat in solve.gms)
+logfile.nr = 1;
 if (o_modelstat le 2,
   execute_unload 'fulldata';
   !! retain gdxes of intermediate iterations by copying them using shell
   !! commands
   if (c_keep_iteration_gdxes eq 1,
     put_utility logfile, "shell" / 
-      "printf '%03i\n'" iteration.val:0:0
-      "| sed 's/\(.*\)/fulldata.gdx fulldata_\1.gdx/'"
-      "| xargs -n 2 cp"
+    "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
 else
   execute_unload 'non_optimal';
   if (c_keep_iteration_gdxes eq 1,
     put_utility logfile, "shell" / 
-      "printf '%03i\n'" iteration.val:0:0
-      "| sed 's/\(.*\)/non_optimal.gdx non_optimal_\1.gdx/'"
-      "| xargs -n 2 cp"
+    "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
   );
 );
+logfile.nr = 2;
 
 );  !! close iteration loop
 
