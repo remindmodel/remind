@@ -150,4 +150,11 @@ loop((ttot,ext_regi,emi_type)$p47_quantity_regiCO2target(ttot,ext_regi,emi_type)
 );
 $ENDIF.quantity_regiCO2target
 
+*** intialize FE efficiency target parameter
+$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+	p47_implicitFEEffTargetTax(ttot,all_regi) = 0;
+	p47_implicitFEEffTargetTax_prevIter(ttot,all_regi) = 0;
+	p47_implicitFEEffTargetTax0(ttot,all_regi) = 0;
+$endIf.implicitFEEffTarget
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
