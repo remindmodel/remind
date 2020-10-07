@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/21_tax.gms
 
+*' @title Tax Module
+*'
+*' @description The tax module includes different types of taxes or ignores all taxes. 
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%tax%" == "off" $include "./modules/21_tax/off/realization.gms"
 $Ifi "%tax%" == "on" $include "./modules/21_tax/on/realization.gms"

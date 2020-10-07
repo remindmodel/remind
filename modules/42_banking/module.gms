@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/42_banking/42_banking.gms
 
+*' @title Banking 
+*'
+*' @description The Banking module allows for banking of emission permits. 
+
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%banking%" == "banking" $include "./modules/42_banking/banking/realization.gms"
 $Ifi "%banking%" == "off" $include "./modules/42_banking/off/realization.gms"

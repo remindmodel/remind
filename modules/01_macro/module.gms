@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/01_macro/module.gms
-*' @title Macro-Economic Growth Model
+*' @title Macro-Economic Growth Module
 *'
 *' @description The macro module allows for the implementation of different 
 *' macro-economic modules. 
