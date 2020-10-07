@@ -606,7 +606,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 
 $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** allow for slightly higher geothermal electricity to avoid INFES
-pm_dataren(regi,"maxprod","1","geohdr")$(regi_group("EUR_regi",regi)) = 1.01*pm_dataren(regi,"maxprod","1","geohdr");
+pm_dataren(regi,"maxprod","1","geohdr")$(regi_group("EUR_regi",regi)) = max(pm_dataren(regi,"maxprod","1","geohdr"),1e-6);
 $endif.edge_esm_transport
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
@@ -645,7 +645,14 @@ $ondelim
 $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
+
 pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
+
+$ifthen.edge_esm_transport "%transport%" == "edge_esm"
+*** allow for slightly higher geothermal electricity to avoid INFES
+*pm_dataren("ESW","maxprod","1","geohdr") = 1; !!minimal production potential for ESW
+$endif.edge_esm_transport
+
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 
 
@@ -807,6 +814,9 @@ $elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $endif
 
+***Rescaling adj seed and coeff
+$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
+$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
 
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
