@@ -50,13 +50,6 @@ Sets
   /
     0 * 62
   /
-
-  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
-  /
-    level
-    midperiod
-    width
-  /
 ;
 
 alias(cesOut2cesIn_below,cesOut2cesIn_below2);
@@ -84,3 +77,4 @@ $offOrder
  t_29_last(t_29)$(ord(t_29) eq card(t_29)) = YES;
 $onOrder
 *** EOF ./modules/29_CES_parameters/calibrate/sets.gms
+
