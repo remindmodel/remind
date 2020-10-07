@@ -733,6 +733,7 @@ o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
 	)$(sameas(entyPe,"peoil"))
 ;
 
+
 o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
 	sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
 		pm_emifac(ttot,regi,entyPe,entySe,te,emi)

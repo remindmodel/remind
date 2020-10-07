@@ -312,7 +312,8 @@ cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production
 cm_flex_tax                 "switch for enabling flexibility tax"
 cm_flexMax_elh2             "switch for setting the maximum relative reduction of the electricity price electrolysis sees when flex. tax is enabled"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
-
+cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
+cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -428,6 +429,7 @@ $setGlobal cm_NucRegiPol	 off   !! def = off
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
+$setGlobal cm_implicitFEEffTarget off   !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
@@ -465,7 +467,11 @@ cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
 cm_flex_tax = 0; !! def 0
 cm_flexMax_elh2 = 0.6; !! def 0.6
-cm_H2targets = 1; !! def 0
+cm_H2targets = 0; !! def 0
+
+cm_BioSupply_Adjust_EU = 2; !! def 1
+cm_BioImportTax_EU = 1; !! def 0.25
+
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
