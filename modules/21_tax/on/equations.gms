@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -42,7 +42,7 @@
     + v21_taxrevBio(t,regi)
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
-    
+    + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)   
  ;
 
 
@@ -181,6 +181,21 @@ q21_implicitDiscRate(t,regi)$(t.val ge max(2010,cm_startyear))..
         p21_implicitDiscRateMarg(t,regi,in) 
         * vm_cesIO(t,regi,in)
         ) - p21_implicitDiscRate0(t,regi);
-;        
+;    
+
+***---------------------------------------------------------------------------
+*'  FS: Calculation of tax/subsidy on technologies with inflexible/flexible electricity input
+***---------------------------------------------------------------------------
+
+q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevFlex(t,regi)
+  =e=
+  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
+*** vm_flexAdj is electricity price reduction/increases for flexible/inflexible technologies
+*** change sign such that flexible technologies get subsidy
+      -vm_flexAdj(t,regi,te) * vm_demSe(t,regi,enty,enty2,te))           
+  - p21_taxrevFlex0(t,regi)
+;
+
  
 *** EOF ./modules/21_tax/on/equations.gms

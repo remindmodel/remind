@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -82,9 +82,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.947
+* Input data revision: 5.96
 * 
-* Last modification (input data): Thu Jul 30 13:06:59 2020
+* Last modification (input data): Sat Oct 03 14:08:53 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -301,6 +301,9 @@ c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 cm_GDPcovid                  "GDP correction for covid"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
+cm_flex_tax                 "switch for enabling flexibility tax"
+cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
+cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -420,6 +423,10 @@ $setGlobal c_regi_capturescen  all !! def = all
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 
+cm_flex_tax = 1; !! def 0
+cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_FlexTaxFeedback = 0; !! def 0, off
+
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -427,7 +434,7 @@ cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off

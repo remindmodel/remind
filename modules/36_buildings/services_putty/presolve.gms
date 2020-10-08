@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -140,6 +140,7 @@ p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) = (p36_prodEs(ttot,regi,e
      put p36_prodEs.tn(ttot,regi,entyFe,esty,teEs) , " = ", p36_prodEs(ttot,regi,entyFe,esty,teEs) /;
      put p36_prodUEintern.tn(ttot,regi,entyFe,esty,teEs), " = ", p36_prodUEintern(ttot,regi,entyFe,esty,teEs) /;
      putclose;
+     execute_unload "abort.gdx";
      abort "some share was decreasing faster than planned. Look at the logfile for more information";
      );
      );                                        
@@ -337,3 +338,4 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "norm_diff", "NA" ,in.tl, p36_log
 putclose;
 
 *** EOF ./modules/36_buildings/services_putty/presolve.gms
+

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,7 +24,8 @@ q36_putty_obj
 solve putty_paths_floor minimizing v36_putty_obj using nlp;
 
 if ( NOT ( putty_paths_floor.solvestat eq 1  AND (putty_paths_floor.modelstat eq 1 OR putty_paths_floor.modelstat eq 2)),
-abort "model putty_paths_floor is infeasible";
+  execute_unload "abort.gdx";
+  abort "model putty_paths_floor is infeasible";
 );
 
 p36_floorspace_delta(ttot,regi_dyn36(regi)) $ v36_floorspace_delta.L(ttot,regi) = v36_floorspace_delta.L(ttot,regi);
@@ -38,3 +39,4 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 );
 
 *** EOF ./modules/36_buildings/services_putty/preloop.gms
+
