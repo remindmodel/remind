@@ -1,6 +1,12 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 
 insertheader <- function(maindir=".",
-                         header=c("(C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)",
+                         header=c("(C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)",
                                   "authors, and contributors see CITATION.cff file. This file is part",
                                   "of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of",
                                   "AGPL-3.0, you are granted additional permissions described in the",
@@ -86,7 +92,7 @@ insertheader <- function(maindir=".",
     # Write file only if it was modified
     if (writefile & !test_only) {
       if (line_endings == "win") {
-        lucode:::writeLinesDOS(f,file)
+        lucode2:::writeLinesDOS(f,file)
       } else {
         writeLines(f,file)
       }
