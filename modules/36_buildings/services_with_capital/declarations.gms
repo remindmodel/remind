@@ -59,7 +59,7 @@ p36_aux_lifetime(all_teEs)                             "auxiliary parameter for 
 p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 ;
 
-$ontext
+
 Variables
 
 v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
@@ -68,7 +68,7 @@ v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)                "slack
 v36_logitInfes(tall,all_regi,all_in)                                      "slack variable to avoid infeasibilities in case historical demand cannot be declined fast enough"
 v36_costs(ttot,all_regi)                                                  "technological costs"
 v36_vintage_obj                                                           "objective variable for vintage model"
-v36_shares_obj        
+v36_shares_obj                                                            "objective variable for heterogeneity preferences"
 ;
 
 Equations
