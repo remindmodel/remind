@@ -5,6 +5,20 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_with_capital/presolve.gms
+*** For the first iterations, avoid very high prices because of numerical reasons
+if (ord(iteration) le 8,
+
+   loop ((t,regi_dyn36(regi)),
+      sm_tmp = smax(fe2ces_dyn36(entyFe,esty,teEs,in), p36_fePrice(t,regi,entyFe));
+      if (sm_tmp gt 3,
+           p36_fePrice(t,regi,entyFe) = max(0.01,
+                                            p36_fePrice(t,regi,entyFe) / sm_tmp * 3
+                                            );
+      
+      
+      );
+   );
+);
 
 
 *** Take average price over previous iterations
@@ -17,7 +31,22 @@ p36_fePrice(t,regi_dyn36(regi),entyFe) =
             )
             / 4;
 );
+*** Beyond the 70th iteration, the prices are averaged over the prices since the 66th iteration
+if (ord(iteration) ge 70,
 
+p36_fePrice(t,regi_dyn36(regi),entyFe) =
+          sum(iteration2 $ (ord(iteration2) ge 66 
+                           AND ord(iteration2) lt ord(iteration)),
+             p36_fePrice_iter(iteration2,t,regi,entyFe)
+          )
+          / 
+          sum(iteration2 $ (ord(iteration2) ge 66 
+                           AND ord(iteration2) lt ord(iteration)),
+             1
+          )
+            ;
+
+);
 *** smooth the costs
 
 *** Smooth 2005 prices
@@ -97,41 +126,15 @@ p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
       ;
 );      
 
-loop (ttot $ ( ( NOT t0(ttot)) AND pm_ttot_val(ttot) ge cm_startyear), 
 
-***Compute the production of UE from remaining from last period's equipment.
-p36_prodUEintern(ttot,regi_dyn36(regi),entyFe,esty,teEs) = (1 -p36_depreciationRate(teEs)) ** pm_dt(ttot) * p36_prodUEintern(ttot-1,regi,entyFe,esty,teEs);
-
-if (t36_hist(ttot),
-p36_prodUEintern(ttot,regi_dyn36(regi),entyFe,esty,teEs) = min (p36_prodUEintern(ttot,regi,entyFe,esty,teEs),
-                                                                 p36_prodEs(ttot,regi,entyFe,esty,teEs) );
-);
-
-*** Ensure for scenario periods that the some of the remaining equipment is lower than the demand in the next period
-if (t36_scen(ttot),
-    loop ((regi_dyn36(regi),inViaEs_dyn36(in)), 
-          if ( ( sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs)) gt (0.90 * p36_demUEtotal(ttot,regi,in))),
-              sm_tmp = 0.90 * p36_demUEtotal(ttot,regi,in)
-                       / sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs)) ;
-             loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-                   p36_prodUEintern(ttot,regi,entyFe,esty,teEs)  = sm_tmp * p36_prodUEintern(ttot,regi,entyFe,esty,teEs);
-             );
-          );
-    );
-);
-
-*** Compute the UE demand that is not covered by the remaining UE demand.
-p36_demUEdelta(ttot,regi_dyn36(regi),in) = p36_demUEtotal(ttot,regi,in) - sum (fe2ces_dyn36(entyFe,esty,teEs,in),p36_prodUEintern(ttot,regi,entyFe,esty,teEs));
-
-*** For historical periods:
-if (t36_hist(ttot),
 *** Compute the share of UE for each technology that is needed to get the aggregate technological distribution observed
-loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) = (p36_prodEs(ttot,regi,entyFe,esty,teEs) 
-                                             - p36_prodUEintern(ttot,regi,entyFe,esty,teEs)
-                                             ) 
-                                             / (p36_demUEtotal(ttot,regi,in) 
-                                                 - sum ( fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),p36_prodUEintern(ttot,regi,entyFe2,esty2,teEs2)));
+loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
+p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) 
+               = p36_prodUEintern(ttot,regi,entyFe,esty,teEs)
+                 / sum ( fe2ces_dyn36_2(entyFe2,esty2,teEs2,in),
+                         p36_prodUEintern(ttot,regi,entyFe2,esty2,teEs2)
+                        )
+                    ;
 
      loop (regi_dyn36(regi),
      if ( p36_shUeCesDelta(ttot,regi,entyFe,in,teEs) lt 0,
@@ -148,31 +151,36 @@ p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs) = (p36_prodEs(ttot,regi,e
 );
 
 *** Compute the calibration factors for the historical periods
-loop (fe2ces_dyn36(entyFe,esty,teEs,in),
+loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
 p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ p36_shUeCesDelta(ttot,regi,entyFe,in,teEs) !! exclude shares which are zero
         =
-   (1/ (p36_logitLambda(regi,in))
+   (1 / (p36_logitLambda(regi,in))
     * log ( p36_shUeCesDelta(ttot,regi,entyFe,in,teEs))
     - p36_techCosts(ttot,regi,entyFe,esty,teEs)
    )
    -
-   (1 / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2),1) ) 
-   * sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2), !! exclude shares which are zero
-   1/ ( p36_logitLambda(regi,in))
-    * log ( p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2))
-    - p36_techCosts(ttot,regi,entyFe2,esty2,teEs2)
-   );
+   (1 
+   / sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$ p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2),
+          1) 
+   ) 
+   * sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in)$ p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2), !! exclude shares which are zero
+          1 / ( p36_logitLambda(regi,in))
+           * log ( p36_shUeCesDelta(ttot,regi,entyFe2,in,teEs2))
+           - p36_techCosts(ttot,regi,entyFe2,esty2,teEs2)
+          );
 
 );
 
 *** For the last historical period, attribute the last historical value of the calibration parameter to the scenario periods
 *** The calibration factors are reduced towards 80% in the long term to represent the enhanced flexibility of the system
 *** Long lasting non-price barriers should preferably be represented through price mark-ups
-if ( t36_hist_last(ttot),
- p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
+loop ( t36_hist_last(ttot),
+
+ p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( fe2es_dyn36(entyFe,esty,teEs)
+                                                                 AND NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
   = 5;
-  
-loop ( t36_scen(t2),
+
+  loop ( t36_scen(t2),
    
   p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ fe2es_dyn36(entyFe,esty,teEs)
    = min(max((2100 - pm_ttot_val(t2))/(2100 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2100
@@ -188,7 +196,7 @@ loop ( t36_scen(t2),
       * (5
        - 0.3 * 5)
      +  0.3 * 5;
-          
+     
      !! Decrease the calibration factor for some technologies, based on the difference between the 2015 (ttot) Income per capita and scenario (t2) income per capita.
      !! the calibration factor decreases by 90% when income reaches 30 k$ if income per capita was equal or below 5 k$ in 2015.
      !! the decrease is lower if the starting income was above 10k$ and is 0 if income was above 30k$
@@ -202,40 +210,37 @@ loop ( t36_scen(t2),
        ) 
      ;
      
-);
+  );
 ); 
 
+option
+  limrow = 10000000
+  limcol = 10000000
+  solprint = on
+;
+
+s36_logit = 1;
+solve logit_36 maximizing v36_shares_obj using nlp;
+s36_logit = 0;
+
+option
+  limrow = 0
+  limcol = 0
+  solprint = off
+;
+
+if ( NOT ( logit_36.solvestat eq 1  AND (logit_36.modelstat eq 1 OR logit_36.modelstat eq 2)),
+abort "model logit_36 is infeasible";
 );
-
-*** Compute the UE shares delta based on the energy costs and calibration parameters.
-
-loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-
-p36_shUeCesDelta(ttot,regi_dyn36(regi),entyFe,in,teEs)$t36_scen(ttot)
-   = exp ( p36_logitLambda(regi,in) 
-          *  ( p36_techCosts(ttot,regi,entyFe,esty,teEs)
-              + p36_logitCalibration(ttot,regi,entyFe,esty,teEs)
-              )
-           )
-     /
-     sum (fe2ces_dyn36_2(entyFe2,esty2,teEs2,in), 
-           exp ( p36_logitLambda(regi,in) 
-          *  ( p36_techCosts(ttot,regi,entyFe2,esty2,teEs2)
-              + p36_logitCalibration(ttot,regi,entyFe2,esty2,teEs2)
-              )
-           )
-     )
- ;
-
 
 *** Compute the aggregate UE shares
-p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) =  (p36_prodUEintern(ttot,regi,entyFe,esty,teEs) 
-                                          + p36_shUeCesDelta(ttot,regi,entyFe,in,teEs)
-                                            * p36_demUEdelta(ttot,regi,in)
-                                          )
-                                          / p36_demUEtotal(ttot,regi,in);
+loop (fe2ces_dyn36(entyFe,esty,teEs,in),
+    p36_shUeCes(t,regi_dyn36(regi),entyFe,in,teEs)
+                        =  v36_prodEs.L(t,regi,entyFe,esty,teEs)
+                            / p36_demUEtotal(t,regi,in);
 );
-);
+
+
 
 *** Set 1e-3 as a lower bound for shares
 p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
@@ -255,20 +260,26 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
 
 p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                 = (1 / p36_fe2es(t,regi,teEs))
-                                                 / sum ( (fe2ces_dyn36(entyFe2,esty2,teEs2,in)), (1 / p36_fe2es(t,regi,teEs2))
-                                                                         * p36_shUeCes(t,regi,entyFe2,in,teEs2))
+                                                 / sum ( (fe2ces_dyn36(entyFe2,esty2,teEs2,in)),
+                                                       (1 / p36_fe2es(t,regi,teEs2))
+                                                        * p36_shUeCes(t,regi,entyFe2,in,teEs2)
+                                                        )
                                                  * p36_shUeCes(t,regi,entyFe,in,teEs)
                                                  ;
+                                                 
 *** Pass on to core parameters
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
-pm_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$( NOT t0(t)) = p36_shFeCes(t,regi,entyFe,in,teEs);
+pm_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$( NOT t0(t)) 
+    = p36_shFeCes(t,regi,entyFe,in,teEs);
 );
-pm_esCapCost(t,regi_dyn36(regi),teEs_dyn36(teEs)) = p36_esCapCost(t,regi,teEs);
+pm_esCapCost(t,regi_dyn36(regi),teEs_dyn36(teEs)) 
+    = p36_esCapCost(t,regi,teEs);
 
 
 *** Diagnostics
 *** Compute the norm of the difference between the share vectors of two iterations
-p36_shUeCes_iter(iteration,t,regi,entyFe,in,teEs)  = p36_shUeCes(t,regi,entyFe,in,teEs) ;
+p36_shUeCes_iter(iteration,t,regi,entyFe,in,teEs)  
+       = p36_shUeCes(t,regi,entyFe,in,teEs) ;
 if ( ord(iteration) gt 1,
 loop ((t,regi_dyn36(regi),inViaEs_dyn36(in)),
 p36_logitNorm(iteration,t,regi,in) = sqrt ( 

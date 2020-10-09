@@ -139,7 +139,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  Calibration_middle
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -166,13 +166,13 @@ $setGlobal tax  on                    !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
-$setGlobal capitalMarket  debt_limit     !! def = debt_limit
+$setGlobal capitalMarket  perfect     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
 $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
-$setglobal CES_parameters  load       !! def = load
+$setglobal CES_parameters  calibrate       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
 $setGlobal biomass  magpie_40 !! def = magpie_40
 ***---------------------    31_fossil    ----------------------------------------
@@ -184,7 +184,7 @@ $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  complex         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
-$setglobal buildings  simple          !! def = simple
+$setglobal buildings  services_putty          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
@@ -393,7 +393,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1350;   !! def = 1300
+c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
@@ -411,9 +411,9 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen        = 0;!! def = 0
+cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal cm_esubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
@@ -449,10 +449,10 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !!  def  =  0
-$setglobal c_CES_calibration_iterations  10   !!  def  =  10
+$setglobal c_CES_calibration_iterations  7   !!  def  =  10
 $setglobal c_CES_calibration_iteration        1    !!  def  =  1
 $setglobal c_CES_calibration_write_prices  0    !!  def  =  0
 $setglobal cm_CES_calibration_default_prices  0.1  !!  def  =  0
