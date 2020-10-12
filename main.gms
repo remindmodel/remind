@@ -240,6 +240,7 @@ cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
+cm_regiBioenergymax   "choose regionally differentiated bounds on pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
@@ -300,6 +301,9 @@ cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in modu
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 cm_GDPcovid                  "GDP correction for covid"
+
+cm_regiNoBioImport        "Switch defining regions where biomass import is disabled"
+cm_regiFactorStorageMult  "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -337,6 +341,7 @@ $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
+$setGlobal cm_regiBioenergymax  off !! def = off
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
@@ -417,6 +422,9 @@ $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
+
+$setGlobal cm_regiNoBioImport  none        !! def = none
+$setGlobal cm_regiFactorStorageMult  none  !! def = none
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)

@@ -15,6 +15,15 @@ parameters
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
 ;
 
+$ifThen.regiFactorStorageMult not "%cm_regiFactorStorageMult%" == "none"
+*** Define parameter according to switch that contains regionally specific 
+*** mutliplicative factors for p32_factorStorage for each region as a proxy for
+*** more optimistic/pessimistic technological assumptions on renewables
+parameter
+    p32_factorStorageMult(all_regi)                 "Regional multitplicative factor for the scaling of curtailment and storage requirements for renewables" / %cm_regiFactorStorageMult% /
+;
+$endIf.regiFactorStorageMult
+
 scalars
 s32_storlink                                        "how strong is the influence of two similar renewable energies on each other's storage requirements (1= complete, 4= rather small)" /3/
 ;

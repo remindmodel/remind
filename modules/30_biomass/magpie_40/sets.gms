@@ -24,4 +24,9 @@ peren2cont30(all_enty,rlf)   "map biomass energy to grades with continous supply
 
 ;
 
+*LM* Define set with regions that do not import lignocellulosic biomass (only if switch is activated)
+$ifThen.regiNoBioImport not "%cm_regiNoBioImport%" == "none"
+Set regiNoBioImport30(all_regi)     "Set of regions that do not import biomass" / %cm_regiNoBioImport% /;
+$endIf.regiNoBioImport
+
 *** EOF ./modules/30_biomass/magpie_4/sets.gms

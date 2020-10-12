@@ -43,6 +43,13 @@ p30_max_pebiolc_dummy              "Dummy for bio energy supply at p30_pebiolc_p
 p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
 ;
 
+*** Define parameter to read in regionally specific bounds on lignocellulosic bioenergy
+$ifThen.regiBioenergymax not "%cm_regiBioenergymax%" == "off"
+parameter
+    p30_regiBioenergymax(all_regi) "auxiliary parameter to read in regionally specific bounds on lignocellulosic bioenergy. [EJ/yr]" / %cm_regiBioenergymax% /
+;
+$endIf.regiBioenergymax
+
 variables
 v30_pebiolc_costs(ttot,all_regi)   "Bioenergy costs according to MAgPIE supply curves [T$US]"
 v30_shift_r2                       "Least square to minimize during shift calculation"
