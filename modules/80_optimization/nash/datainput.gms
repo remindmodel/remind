@@ -19,7 +19,7 @@ pm_co2eqForeign(t, regi) = (1 - pm_shPerm(t,regi)) * pm_emicapglob(t);
 if(cm_nash_autoconverge gt 0,
 
 *** set max number of iterations
-cm_iteration_max = 300;
+cm_iteration_max = 200;
 
  if(cm_nash_autoconverge eq 1,
 ***convergences thresholds - coarse 
