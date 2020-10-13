@@ -354,6 +354,61 @@ height <- 14
 
 ggsave("LDVtotcost_selectedscen.png", p, dpi=300, height = height , width = height * aspect_ratio)
 ```
+## Costs for 2015
+
+```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+
+costs_detailed_pf = function(dt, rp, mapping_scens){
+    dt = dt[region == rp & scenario %in% c("NPi_ConvCase") & year %in% c(2015)]
+    map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy-induced inconv.", "Purchase", "O&M"),
+    logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
+    type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
+    dt_tot = merge(dt, map, by = "logit_type")
+
+    dt_tot[, alph := ifelse(type == "inc", 0.6, 0.9)]
+
+    dt_tot = merge(dt_tot, mapping_scens, by = "scenario")
+    dt_tot[, scen_name := ifelse(is.na(scen_name), scenario, scen_name)]
+    ## define the maximum on the y-axis depending on the maximum value across scenarios
+    dt_tot = dt_tot[, sum := sum(cost), by = c("year", "scenario", "region", "technology")]
+    ## remove policy induced inconvenience cost (this plot represents only calibrated values)
+    dt_tot = dt_tot[name != "Policy-induced inconv."]
+    dt_tot[, maxval := max(sum)]
+    dt_tot[, name := factor(name, levels = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Purchase", "O&M"))]
+    
+
+    plot = ggplot()+
+      geom_bar(data = dt_tot[year == 2015 & scen_name == "NPi_Conv"], aes(x = technology, y = cost, group = name, fill = name, alpha = alph), position = "stack", stat = "identity")+
+      facet_wrap(~year, nrow = 1)+
+      theme2use +
+      ylim(0,1.01*unique(dt_tot[, maxval]))+
+      scale_fill_manual(values = cols)+
+      labs(y = "Costs [$/pkm]", x="")+
+      scale_alpha(range=c(0.6,1)) +
+      guides(alpha=FALSE,
+             linetype=FALSE,
+             fill=guide_legend(reverse=FALSE, title="Cost component"))+
+      theme(axis.title.y = element_blank(),
+            axis.text.y = element_blank())
+
+     return(plot)
+}
+
+p = costs_detailed_pf(costs_all, rp = regionplot, mapping_scens_paper)
+
+p
+
+aspect_ratio <- 1
+height <- 5
+
+ggsave("LDVtotcost_histoverview.png", p, dpi=300, height = height , width = height * aspect_ratio)
+
+
+```
+
+
+
+
 
 ## LDVs fleet
 
