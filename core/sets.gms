@@ -2658,6 +2658,13 @@ ue2ppfen(all_enty,all_in)      "matching UE in ESM to ppfEn in MACRO"
 es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 //
 
+  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+  /
+    level
+    midperiod
+    width
+    ceiling
+  /
 ;
 
 ***-----------------------------------------------------------------------------
@@ -2671,3 +2678,4 @@ alias(pe2se,pe2se2);
 alias(se2fe,se2fe2);
 
 *** EOF ./core/sets.gms
+
