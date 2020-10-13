@@ -48,8 +48,6 @@ f_lab(tall,all_regi,all_POPscen)                     "labour data for all possib
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
-pm_eff_convergence(all_in,all_in,eff_scale_par)      "sigmod parameters for convergence of ppfen efficiencies"
-/ /
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"

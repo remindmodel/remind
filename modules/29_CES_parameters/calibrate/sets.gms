@@ -50,6 +50,13 @@ Sets
   /
     0 * 62
   /
+  
+  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+  /
+    level
+    midperiod
+    width
+  /
 ;
 
 alias(cesOut2cesIn_below,cesOut2cesIn_below2);

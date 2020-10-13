@@ -8,6 +8,13 @@
 
 Set 
   regi_dyn29(all_regi)   "dynamic region set for compatibility with testOneRegi"
+  
+  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+  /
+    level
+    midperiod
+    width
+  /
 ;
 *** EOF ./modules/29_CES_parameters/load/sets.gms
 

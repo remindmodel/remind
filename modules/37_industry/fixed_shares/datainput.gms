@@ -112,10 +112,6 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 pm_macCostSwitch(enty) = pm_macSwitch(enty);
 
-pm_eff_convergence("feh2i","fegai","level")     = 1.4;
-pm_eff_convergence("feh2i","fegai","midperiod") = 2030;
-pm_eff_convergence("feh2i","fegai","width")     = 15;
-pm_eff_convergence("feh2i","fegai","ceiling")   = 1;
 
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 
