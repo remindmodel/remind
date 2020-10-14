@@ -365,7 +365,7 @@ costs_detailed_pf = function(dt, rp, mapping_scens){
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
     dt_tot = merge(dt, map, by = "logit_type")
 
-    dt_tot[, alph := ifelse(type == "inc", 0.6, 0.9)]
+    dt_tot[, alph := ifelse(type == "inc", 0.5, 0.9)]
 
     dt_tot = merge(dt_tot, mapping_scens, by = "scenario")
     dt_tot[, scen_name := ifelse(is.na(scen_name), scenario, scen_name)]
@@ -387,9 +387,8 @@ costs_detailed_pf = function(dt, rp, mapping_scens){
       scale_alpha(range=c(0.6,1)) +
       guides(alpha=FALSE,
              linetype=FALSE,
-             fill=guide_legend(reverse=FALSE, title="Cost component"))+
-      theme(axis.title.y = element_blank(),
-            axis.text.y = element_blank())
+             fill=guide_legend(reverse=TRUE, title="Cost component"))+
+      coord_flip()
 
      return(plot)
 }
@@ -398,8 +397,8 @@ p = costs_detailed_pf(costs_all, rp = regionplot, mapping_scens_paper)
 
 p
 
-aspect_ratio <- 1
-height <- 5
+aspect_ratio <- 2
+height <- 3
 
 ggsave("LDVtotcost_histoverview.png", p, dpi=300, height = height , width = height * aspect_ratio)
 
