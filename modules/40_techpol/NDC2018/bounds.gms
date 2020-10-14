@@ -27,6 +27,13 @@ if(cm_H2targets eq 1,
   vm_cap.lo(t,regi,"elh2","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"elh2")*0.001*pm_eta_conv(t,regi,"elh2");
 );
 
+*RP in case nucscen = 5(no new builds after 2020), remove nuclear lower bound from p40_techBound 
+if(cm_nucscen eq 5,
+  vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2020) = 0;
+);
+
+
+
 $ifthen.complex_transport "%transport%" == "complex"
 
 vm_cap.lo(t,regi,"apCarElT","1")$(t.val ge cm_startyear) = p40_TechBound(t,regi,"apCarElT");

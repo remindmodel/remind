@@ -12,10 +12,11 @@
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 SETS
-c_expname "c_expname as set for use in GDX"
-/
-%c_expname%
-/
+* Save select compiler flags as sets, to make them accessible from the final gdx
+c_expname       "c_expname as set for use in GDX"       /%c_expname%/
+cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
+*
+
 all_POPscen     " all possible population scenarios"
 /
 pop_SDP         "SDP population scenario"
@@ -2069,6 +2070,7 @@ steps         "iterator for MAC steps"
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 alias(t,t2,t3);
+alias(iteration,iteration2);
 alias(tall,tall2,tall3);
 alias(ttot,ttot2);
 alias(opTimeYr,opTimeYr2);
@@ -2676,3 +2678,4 @@ alias(pe2se,pe2se2);
 alias(se2fe,se2fe2);
 
 *** EOF ./core/sets.gms
+

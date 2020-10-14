@@ -60,13 +60,25 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 
 ***	updating the ETS co2 tax
 		loop((ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type),		
-			pm_taxemiMkt(ttot,regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot,regi,"ETS") * p47_emiRescaleCo2TaxETS(ETS_mkt));
-***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2015) AND (t.val ge cm_startyear) AND (t.val le ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.05**(t.val-ttot.val); !! 2018 to 2055: increase at 5% p.a.
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) = pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2055)
-***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS")*1.0125**(t.val-ttot.val); !! post 2055: increase at 1.25% p.a.
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val)) = pm_taxemiMkt(ttot,regi,"ETS") + (cm_ETS_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
-		);
 
+***			target year
+			pm_taxemiMkt(ttot,regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot,regi,"ETS") * p47_emiRescaleCo2TaxETS(ETS_mkt));
+
+***         2020 to target year
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) =  pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2030)
+
+***			target year to 2055			
+$IFTHEN.ETS_postTargetIncrease "%cm_ETS_postTargetIncrease%" == "linear"
+***			keep same slope as 2020 to target year variation
+            pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between ttot and 2055
+$ELSEIF.ETS_postTargetIncrease not "%cm_ETS_postTargetIncrease%" == "off"
+***			keep fixed per year increase
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt(ttot,regi,"ETS") + (%cm_ETS_postTargetIncrease% * sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. in between 2030 and 2055): 2 €/tCO2 increase per year
+$ENDIF.ETS_postTargetIncrease
+
+***			2055 onward
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2055)) = pm_taxemiMkt("2055",regi,"ETS") + (%cm_ETS_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055); !! post ttot (ex. 2055): 2 €/tCO2 increase per year
+		);
 	);		
 *** forcing floor price for UKI (UK has a CO2 price floor of ~€20 €/tCO2e since 2013). The Carbon Price Floor was introduced in 2013 at a rate of £16 (€18.05) per tonne of carbon dioxide-equivalent (tCO2e), and was set to increase to £30 (€33.85) by 2020. However, the government more recently decided to cap the Carbon Price Floor at £18.08 (€20.40) till 2021.
 ***     	pm_taxemiMkt(t,regi,"ETS")$((t.val ge 2015) AND (sameas(regi,"UKI")) AND ETS_regi(ETS_mkt,regi)) = max(20*sm_DptCO2_2_TDpGtC, pm_taxemiMkt(t,regi,"ETS"));
@@ -138,12 +150,17 @@ $ENDIF.emiMktEScoop
 			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
 		);
 
-
 ***	updating the ES co2 tax
 		pm_taxemiMkt("2005",regi,"ES") = 0;
 		pm_taxemiMkt("2010",regi,"ES") = 0;
 		pm_taxemiMkt("2015",regi,"ES") = 0;
+
+$IFTHEN.emiMktES2020price "%cm_emiMktES2020price%" == "target"
 		pm_taxemiMkt("2020",regi,"ES")$(p47_emiRescaleCo2TaxES("2020",regi) AND p47_emiTargetES("2020",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2020",regi,"ES") * p47_emiRescaleCo2TaxES("2020",regi));
+$ELSEIF.emiMktES2020price not "%cm_emiMktES2020price%" == "off"
+		pm_taxemiMkt("2020",regi,"ES") = %cm_emiMktES2020price%*sm_DptCO2_2_TDpGtC;
+$ENDIF.emiMktES2020price
+
 ***		pm_taxemiMkt(t,regi,"ES")$((t.val lt 2020) AND (t.val ge cm_startyear) AND (p47_emiTargetES("2020",regi))) = pm_taxemiMkt("2020",regi,"ES")*1.05**(t.val-2020); !! pre 2020: decrease at 5% p.a.
 ***		!! ES only until 2020 (for bau purposes)
 ***		pm_taxemiMkt(t,regi,"ES")$((t.val gt 2020) AND (NOT (p47_emiTargetES("2030",regi))))  = pm_taxemiMkt("2020",regi,"ES")*1.0125**(t.val-2020); !! post 2020 in case of 2020 only ES: increase at 1.25% p.a.
@@ -155,9 +172,8 @@ $ENDIF.emiMktEScoop
 
 $IFTHEN.emiMktES2050 "%cm_emiMktES2050%" == "linear"
 
-***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND (p47_emiTargetES("2030",regi) AND (t.val le 2050)) )  = pm_taxemiMkt("2030",regi,"ES") + (4*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
-***		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2050) AND (p47_emiTargetES("2030",regi)) ) = pm_taxemiMkt("2050",regi,"ES")*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
-		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) )  = pm_taxemiMkt("2030",regi,"ES") + (cm_ESD_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030: 4 €/tCO2 increase per year after 2030
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND  (t.val le 2055))  = pm_taxemiMkt("2030",regi,"ES") + (%cm_ESD_postTargetIncrease%*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030 and before 2055: 8 €/tCO2 increase per year after 2030
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2055) )  = pm_taxemiMkt("2055",regi,"ES") + (%cm_ESD_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055) ; !! post 2055: 2 €/tCO2 increase per year after 2030
 
 $ELSEIF.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 		
@@ -280,6 +296,73 @@ display p47_regiCO2target,p47_emissionsCurrent,p47_factorRescaleCO2Tax;
 display pm_taxCO2eq;
 
 $ENDIF.regicarbonprice
+
+
+
+***---------------------------------------------------------------------------
+*** Non-market based Efficiency Targets:
+***---------------------------------------------------------------------------
+$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+
+*** saving previous iteration value for implicit tax
+p47_implicitFEEffTargetTax_prevIter(ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
+p47_implicitFEEffTargetTax0(ttot,regi) = p47_implicitFEEffTargetTax(ttot,regi)*sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot,regi,enty,enty2,te));
+
+***  Calculating current FE level
+***		for region groups
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+);
+***		for single regions (overwrites region groups)  
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+);
+***  calculating efficiency directive targets implicit tax rescale
+loop((ttot,ext_regi)$p47_implicitFEEffTarget(ttot,ext_regi),	
+  if(iteration.val lt 10,
+		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
+  else 
+		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 1;
+  );  
+***  p47_implicitFEEffTargetTax_Rescale(ext_regi) = 
+***    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 , p47_implicitFEEffTargetTax_Rescale(ext_regi)),
+***			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+***	  )
+***  ;
+);
+***	updating efficiency directive targets implicit tax
+***		for region groups
+loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+	loop(all_regi$regi_group(ext_regi,all_regi),
+    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
+	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
+***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+  );
+);
+***		for single regions (overwrites region groups)
+loop((ttot,ext_regi,target_type,emi_type)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
+	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
+***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+  );
+);
+
+*** saving iteration level for efficiency directive targets implicit tax
+p47_implicitFEEffTargetTax_iter(iteration,ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
+p47_implicitFEEffTargetTax_Rescale_iter(iteration,ext_regi) = p47_implicitFEEffTargetTax_Rescale(ext_regi);
+p47_implicitFEEffTargetCurrent_iter(iteration,ext_regi) = p47_implicitFEEffTargetCurrent(ext_regi);
+
+display p47_implicitFEEffTargetCurrent, p47_implicitFEEffTarget,
+	p47_implicitFEEffTargetTax_prevIter, p47_implicitFEEffTargetTax,
+	p47_implicitFEEffTargetTax_Rescale,
+	p47_implicitFEEffTargetTax_Rescale_iter,
+	p47_implicitFEEffTargetTax_iter,
+	p47_implicitFEEffTargetCurrent_iter,
+	p47_implicitFEEffTargetTax0;
+
+$endIf.implicitFEEffTarget
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms

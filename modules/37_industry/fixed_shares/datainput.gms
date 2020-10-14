@@ -112,5 +112,6 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 pm_macCostSwitch(enty) = pm_macSwitch(enty);
 
+
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

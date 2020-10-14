@@ -85,13 +85,12 @@ q01_balLab(t,regi)..
 *** Keep in mind to adjust the calculation of derivatives and shares 
 *** in ./core/reswrite.inc if you change the structure of this function.
 ***---------------------------------------------------------------------------
-q01_cesIO(t,regi,ipf(out))$ ( NOT ipf_putty(out)) ..
-    vm_cesIO(t,regi,out)
+q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) .. 
+  vm_cesIO(t,regi,out)
   =e=
     sum(cesOut2cesIn(out,in),
       pm_cesdata(t,regi,in,"xi")
-    * ( 
-        pm_cesdata(t,regi,in,"eff")
+    * ( pm_cesdata(t,regi,in,"eff")
       * vm_effGr(t,regi,in)
       * vm_cesIO(t,regi,in)
       )

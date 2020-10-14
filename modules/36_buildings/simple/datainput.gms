@@ -41,4 +41,6 @@ pm_ppfen_shares("enhb","feheb") = 0.6;
 *** Don't use more H2 than gas in stationary
 pm_ppfen_ratios("feh2b","fegab") = 1;
 
+
 *** EOF ./modules/36_buildings/simple/datainput.gms
+

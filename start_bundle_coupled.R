@@ -12,23 +12,25 @@
 path_remind <- paste0(getwd(),"/")   # provide path to REMIND. Default: the actual path which the script is started from
 path_magpie <- "/p/projects/piam/runs/coupled-magpie/"
 
+# Paths to the files where scenarios are defined
+# path_settings_remind contains the detailed configuration of the REMIND scenarios
+# path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
+path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
+path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
+
+# You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base". 
+# This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
+prefix_runname <- "C_"
+  
 # If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path here and the name prefix below. 
-# Note: the sceanrio names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
-# file that you read in below to path_settings_coupled (scenario_config_coupled_xxx.csv).
+# Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
+# file that you specified on path_settings_coupled (scenario_config_coupled_xxx.csv).
 path_remind_oldruns <- paste0(path_remind,"output/")
 path_magpie_oldruns <- paste0(path_magpie,"output/")
 
-# The scripts automatically adds a prefix (name of your remind path) to the scenario names. This is useful because it enables 
-# using the same MAgPIE and REMIND output folders to store results of coupled runs from multiple REMIND revisions (prevents double names)
 # If you want the script to find gdxs or reports of older runs as starting point for new runs please 
 # provide the prefix of the old run names so the script can find them.
 prefix_oldruns <-  "C_"
-
-# Paths to the files where scenarios are defined
-# path_settings_remind contains the detailed configuration of the REMIND scenarios
-# path_settings_coupled defines which runs will be started, coupling infos, and optinal gdx and report inforamtion that overrides path_settings_remind
-path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
-path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 
 # number of coupling iterations
 max_iterations <- 5
@@ -95,9 +97,6 @@ if (!identical(common,character(0))) {
 for(scen in common){
   cat(paste0("\n################################\nPreparing run ",scen,"\n"))
   
-  prefix_runname <- "C" #strsplit(path_remind,"/")[[1]][length(strsplit(path_remind,"/")[[1]])]
-  prefix_runname <- paste0(prefix_runname,"_")
-  
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # set the GHG prices to zero up to and including the year specified here
@@ -158,7 +157,7 @@ for(scen in common){
 
   cat(paste0("Set start iteration to: ",start_iter,"\n"))
 
-	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previouly found 
+	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previously found 
   if (!is.na(scenarios_coupled[scen, "path_gdx"])) {
     settings_remind[scen, "path_gdx"] <- scenarios_coupled[scen, "path_gdx"]
     cat("Using gdx specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx"],"\n")
@@ -200,24 +199,24 @@ for(scen in common){
   #cfg_rem$gms$biomass <- "magpie_linear"
 
   # Configure Afforestation in MAgPIE
-   if (grepl("-aff760",scen)) {
-      cat("Setting MAgPIE max_aff_area to 760\n")
-      cfg_mag$gms$s32_max_aff_area <- 760
-  } else if (grepl("-aff900",scen)) {
-      cat("Setting MAgPIE max_aff_area to 900\n")
-      cfg_mag$gms$s32_max_aff_area <- 900
-  } else if (grepl("-affInf",scen)) {
-      cat("Setting MAgPIE max_aff_area to Inf\n")
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost2",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.2\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.2
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost3",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.3\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.3
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  }
+  # if (grepl("-aff760",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 760\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 760
+  #} else if (grepl("-aff900",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 900\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 900
+  #} else if (grepl("-affInf",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to Inf\n")
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost2",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.2\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.2
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost3",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.3\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.3
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #}
 
   #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
 
@@ -271,7 +270,7 @@ for(scen in common){
       }
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,scenarios_coupled[sub(prefix_runname,"",runname),"qos"],file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"
