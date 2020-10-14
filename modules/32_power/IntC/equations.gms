@@ -169,11 +169,12 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 *** capacity factor of flexible technologies (teFlex) these technologies see lower electricity prices given that there is a high VRE share in the power system.
 
 *** On the derivation of the equation: 
-*** This formulation assumes a cubic price duration curve following price duration curve. The effective electricity price the flexible technologies sees
+*** The formulation assumes a cubic price duration curve. That is, the effective electricity price the flexible technologies sees
 *** depends on the capacity factor (CF) with a cubic function centered at (0.5,1): 
 *** p32_PriceDurSlope * (CF-0.5)^3 + 1, 
-*** This means that at CF = 0.5, the REMIND average price p_priceSeel is paid. 
-*** Integrating this function with respect to CF and dividing by CF gives the formulation below:
+*** Hence, at CF = 0.5, the REMIND average price pm_priceSeel is paid. 
+*** To get the average electricity price that a flexible technology sees at a certain CF, 
+*** we need to integrate this function with respect to CF and divide by CF. This gives the formulation below:
 *** v32_flexPriceShareMin = p32_PriceDurSlope * ((CF-0.5)^4-0.5^4) / (4*CF) + 1.
 *** This is the new average electricity price a technology sees if it runs on (a possibly lower than one) capacity factor CF 
 *** and deliberately uses hours of low-cost electricity.
@@ -196,8 +197,9 @@ q32_flexPriceShare(t,regi,te)$(teFlex(te))..
 *** This balance ensures that the lower electricity prices of flexible technologies are compensated 
 *** by higher electricity prices of inflexible technologies. Inflexible technologies are all technologies
 *** which are part of teFlexTax but not of teFlex. The weighted sum of 
-*** flexible/inflexible electricity prices (v32_flexPriceShare) and electricity demand must be one.  
-q32_flexPriceBalance(t,regi)..
+*** flexible/inflexible electricity prices (v32_flexPriceShare) and electricity demand must be one. 
+*** Note: this is only on if cm_FlexTaxFeedback = 1. Otherwise, there is no change in electricity prices for inflexible technologies. 
+q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
   sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
   	vm_demSe(t,regi,enty,enty2,te)) 
   =e=
@@ -208,14 +210,14 @@ q32_flexPriceBalance(t,regi)..
 
 *** This calculates the flexibility benefit or cost per unit electricity input 
 *** of flexibile or inflexibly technology. 
-*** vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation in the tax module. 
-*** Below, p_priceSeel is the (average) electricity price from the last iteration. The flexibility tax ensures that all teFlex technologies see 
-*** the electricity price v32_flexPriceShare * p_priceSeel. Flexible technologies benefit (v32_flexPriceShare < 1),
+*** In the tax module, vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation. 
+*** Below, pm_priceSeel is the (average) electricity price from the last iteration. 
+*** Flexible technologies benefit (v32_flexPriceShare < 1),
 *** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	(1-v32_flexPriceShare(t,regi,te)) * p_priceSeel(t,regi)
+	(1-v32_flexPriceShare(t,regi,te)) * pm_priceSeel(t,regi)
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms
