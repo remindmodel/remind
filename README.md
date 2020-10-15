@@ -13,7 +13,7 @@ The macro-economic core of REMIND is a Ramsey-type optimal growth model
 in which intertemporal global welfare is optimized subject to equilibrium constraints.
 
 ## DOCUMENTATION
-The model documentation for version 2.1.0 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.0.
+The model documentation for version 2.1.3 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.3.
 
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
