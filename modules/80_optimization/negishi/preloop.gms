@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,7 +28,8 @@ OPTION decimals =3;
 
 *AJS* Sanity check on Negishi weights: if not larger than 1E-3, smaller than 0.4, do not sum up to one -> abort
 if( ( smin(regi,pm_w(regi)) lt 1E-3 ) or ( smax(regi,pm_w(regi)) gt 0.4 ) or (abs(sum(regi,pm_w(regi)) - 1 ) gt 0.01 ) ,
-    abort "The Negishi weights look shabby, I won't start a run from those. Please choose a better gdx.";
+  execute_unload "abort.gdx";
+  abort "The Negishi weights look shabby, I won't start a run from those. Please choose a better gdx.";
 );
 
 
@@ -37,3 +38,4 @@ loop(regi,
     p80_nw("1",regi) = pm_w(regi);
 );
 *** EOF ./modules/80_optimization/negishi/preloop.gms
+

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -135,5 +135,8 @@ v21_emiALLco2neg.l(ttot,regi) =0;
 
 *DK initialize bioenergy tax
 v21_tau_bio.l(ttot) = 0;
+
+*** FS: initizalize flexibility tax
+vm_flexAdj.l(ttot,all_regi,all_te) = 0;
 
 *** EOF ./modules/21_tax/on/preloop.gms

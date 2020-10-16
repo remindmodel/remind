@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,7 @@
 *** Load CES parameters based on current model configuration
 *** ATTENTION the file name is replaced by the function start_run()
 *##################### R SECTION START (CES INPUT) ##########################
-$include "./modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1.inc"
+$include "./modules/29_CES_parameters/load/input/stat_off-indu_subsectors-buil_services_putty-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-demTrsp_conv-Reg_690d3718e1.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
 if (cm_GDPcovid eq 1,
