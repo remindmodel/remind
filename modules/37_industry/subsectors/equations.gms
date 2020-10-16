@@ -28,7 +28,7 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum(fe2ppfen(entyFE,ppfen_industry_dyn37(in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in)),
       vm_cesIO(ttot,regi,in)
     * p37_fctEmi(entyFE)
     )
@@ -98,28 +98,6 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
       )
     )
 ;
-
-*' FIXME testing
-*' Limit specific total energy use to that of the baseline run
-q37_limit_specific_total_energy(ttot,regi,in_industry_dyn37(out))$(
-                                                  ttot.val ge cm_startyear ) .. 
-    sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in)) 
-  * p37_cesIO_base(ttot,regi,out)
-  * (cm_emiscen ne 1)  !! not active in BAU run
-  =l=
-    sum(ces_eff_target_dyn37(out,in), p37_cesIO_base(ttot,regi,in))
-  * vm_cesIO(ttot,regi,out)
-;
-*' end FIXME testing
-
-*** FIXME calibration debug
-q37_arcane_FE_limits(ttot,regi,in,in2)$( p37_arcane_FE_limits(in,in2) ) ..
-  vm_cesIO(ttot,regi,in)
-  =g=
-    vm_cesIO(ttot,regi,in2)
-  * p37_arcane_FE_limits(in,in2)
-;
-*** end FIXME calibration debug
 
 *** EOF ./modules/37_industry/subsectors/equations.gms
 
