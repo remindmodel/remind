@@ -35,8 +35,8 @@ p36_kapPrice(t,regi_dyn36(regi)) =
 );    
 
 
+p36_demUEtotal(t,regi_dyn36(regi),in)$(p36_demUEtotal(t,regi,in) AND ( NOT t36_hist(t))) = vm_cesIO.L(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity") ;
 
-p36_demUEtotal(t,regi_dyn36(regi),in)$(p36_demUEtotal(t,regi,in) AND (NOT t36_hist(t))) = vm_cesIO.L(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity") ;
 
 
 *** EOF ./modules/36_buildings/services_with_capital/postsolve.gms
