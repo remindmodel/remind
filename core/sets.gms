@@ -1173,6 +1173,7 @@ teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
         storwind    "storage technology for wind"
         storcsp     "storage technology for csp"
         dac         "direct air capture"
+        elh2        "hydrogen elecrolysis"
 /
 
 teNoLearn(all_te)   "Technologies without learning effect"
