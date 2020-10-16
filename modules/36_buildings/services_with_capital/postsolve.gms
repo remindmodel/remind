@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -35,8 +35,8 @@ p36_kapPrice(t,regi_dyn36(regi)) =
 );    
 
 
+p36_demUEtotal(t,regi_dyn36(regi),in)$(p36_demUEtotal(t,regi,in) AND ( NOT t36_hist(t))) = vm_cesIO.L(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity") ;
 
-p36_demUEtotal(t,regi_dyn36(regi),in)$(p36_demUEtotal(t,regi,in) AND (NOT t36_hist(t))) = vm_cesIO.L(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity") ;
 
 
 *** EOF ./modules/36_buildings/services_with_capital/postsolve.gms
