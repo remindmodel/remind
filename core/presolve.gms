@@ -473,7 +473,7 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 $endif.CO2priceDependent_AdjCosts
 
 *** FS: calculate electricity price of last iteration in trUSD2005/TWa
-p_priceSeel(t,regi)=q32_balSe.m(t,regi,"seel")/(qm_budget.m(t,regi)+sm_eps);
+pm_priceSeel(t,regi)=q32_balSe.m(t,regi,"seel")/(qm_budget.m(t,regi)+sm_eps);
 
-Display "electricity price", p_priceSeel;
+Display "electricity price", pm_priceSeel;
 *** EOF ./core/presolve.gms

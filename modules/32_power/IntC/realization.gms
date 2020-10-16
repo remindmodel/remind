@@ -34,7 +34,9 @@
 $Ifi "%phase%" == "declarations" $include "./modules/32_power/IntC/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/32_power/IntC/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/32_power/IntC/equations.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/32_power/IntC/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/32_power/IntC/bounds.gms"
+$Ifi "%phase%" == "presolve" $include "./modules/32_power/IntC/presolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/32_power/IntC/realization.gms
