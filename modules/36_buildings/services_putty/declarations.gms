@@ -104,4 +104,32 @@ file_logit_buildings.lw =  0;
 file_logit_buildings.nw = 20;
 file_logit_buildings.nd = 15;
 
+$ifThen.regiPhaseOutFosBuil not "%cm_regiPhaseOutFosBuil%" == "none"
+*** Define parameter according to switch that contains regionally specific 
+*** start years, from which on the addition of new capacities of fossil 
+*** space heating technologies in buildings is prohibited.
+Parameter
+$ifThen.regiPhaseOutFosBuilReg "%cm_regiPhaseOutFosBuil%" == "all 2030"
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited";
+    p36_yearPhaseOutFosBuil(all_regi) = 2030;
+$elseif.regiPhaseOutFosBuilReg "%cm_regiPhaseOutFosBuil%" == "all 2035"
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited";
+    p36_yearPhaseOutFosBuil(all_regi) = 2035;
+$elseif.regiPhaseOutFosBuilReg "%cm_regiPhaseOutFosBuil%" == "all 2040"
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited";
+    p36_yearPhaseOutFosBuil(all_regi) = 2040;
+$elseif.regiPhaseOutFosBuilReg "%cm_regiPhaseOutFosBuil%" == "all 2045"
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited";
+    p36_yearPhaseOutFosBuil(all_regi) = 2045;
+$elseif.regiPhaseOutFosBuilReg "%cm_regiPhaseOutFosBuil%" == "all 2050"
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited";
+    p36_yearPhaseOutFosBuil(all_regi) = 2050;
+$else.regiPhaseOutFosBuilReg
+*** Set regionally specific phase out years
+    p36_yearPhaseOutFosBuil(all_regi) "Year in which new capacity additions for fossil space heating in buildings is prohibited" 
+    / %cm_regiPhaseOutFosBuil% /;
+$endif.regiPhaseOutFosBuilReg
+
+$endIf.regiPhaseOutFosBuil
+
 *** EOF ./modules/36_buildings/services_putty/declarations.gms

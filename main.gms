@@ -304,6 +304,7 @@ cm_GDPcovid                  "GDP correction for covid"
 
 cm_regiNoBioImport        "Switch defining regions where biomass import is disabled"
 cm_regiFactorStorageMult  "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
+cm_regiPhaseOutFosBuil    "Switch defining regions that phase out fossils in buildings from a given time step on"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 cm_flex_tax                 "switch for enabling flexibility tax"
 cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
@@ -427,6 +428,7 @@ $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
 
 $setGlobal cm_regiNoBioImport  none        !! def = none
+$setGlobal cm_regiPhaseOutFosBuil  none    !! def = none
 $setGlobal cm_regiFactorStorageMult  none  !! def = none
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
