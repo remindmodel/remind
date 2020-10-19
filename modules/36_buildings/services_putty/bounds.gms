@@ -48,10 +48,14 @@ $ifThen.regiPhaseOutFosBuil not "%cm_regiPhaseOutFosBuil%" == "none"
 *** Exogenous phase out of oil and gas in buildings according to switch.
 *** This sets the capacity additions to zero for all years greater equal
 *** the one defined by p36_yearPhaseOutFosBuil for each region
-  v36_deltaProdEs.up(t,regi,all_enty,all_esty,"te_ueshgab")$(p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi)) = 1e-9;
-  v36_deltaProdEs.up(t,regi,all_enty,all_esty,"te_ueshhob")$(p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi)) = 1e-9;
-  v36_deltaProdEs.up(t,regi,all_enty,all_esty,"te_uecwgab")$(p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi)) = 1e-9;
-  v36_deltaProdEs.up(t,regi,all_enty,all_esty,"te_uecwhob")$(p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi)) = 1e-9;
+  v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
+    sameas(teEs, "te_ueshgab") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+  v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
+    sameas(teEs, "te_ueshhob") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+  v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
+    sameas(teEs, "te_uecwgab") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+  v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
+    sameas(teEs, "te_uecwhob") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
 $endIf.regiPhaseOutFosBuil
 
 *** EOF ./modules/36_buildings/services_putty/bounds.gms
