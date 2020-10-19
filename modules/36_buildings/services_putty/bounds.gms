@@ -49,13 +49,13 @@ $ifThen.regiPhaseOutFosBuil not "%cm_regiPhaseOutFosBuil%" == "none"
 *** This sets the capacity additions to zero for all years greater equal
 *** the one defined by p36_yearPhaseOutFosBuil for each region
   v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
-    sameas(teEs, "te_ueshgab") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+    sameAs(teEs, "te_ueshgab") AND p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
   v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
-    sameas(teEs, "te_ueshhob") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+    sameAs(teEs, "te_ueshhob") AND p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
   v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
-    sameas(teEs, "te_uecwgab") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+    sameAs(teEs, "te_uecwgab") AND p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
   v36_deltaProdEs.up(t,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs))$(
-    sameas(teEs, "te_uecwhob") AND p36_yearPhaseOutFosBuil(regi_dyn36(regi)) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
+    sameAs(teEs, "te_uecwhob") AND p36_yearPhaseOutFosBuil(regi) AND t.val ge p36_yearPhaseOutFosBuil(regi_dyn36(regi))) = 1e-9;
 $endIf.regiPhaseOutFosBuil
 
 *** EOF ./modules/36_buildings/services_putty/bounds.gms
