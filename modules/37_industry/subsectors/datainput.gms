@@ -140,10 +140,6 @@ p37_clinker_cement_ratio(t,regi)
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
 
-if (cm_emiscen ne 1,
-  Execute_Loadpoint "input_ref.gdx" p37_cesIO_base = vm_cesIO.l;
-);
-
 *** FIXME calibration debug
 Parameter
   p37_arcane_FE_limits(all_in,all_in)   "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"

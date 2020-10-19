@@ -164,13 +164,13 @@ if (o_modelstat le 2,
   !! commands
   if (c_keep_iteration_gdxes eq 1,
     put_utility logfile, "shell" / 
-    "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
+      "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
 else
   execute_unload 'non_optimal';
   if (c_keep_iteration_gdxes eq 1,
     put_utility logfile, "shell" / 
-    "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
+      "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
   );
 );
 logfile.nr = 2;
