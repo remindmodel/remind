@@ -21,7 +21,7 @@ vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil
 
 $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** to avoid 1e-7 order of magnitude INFES, slightly relax bound for EU regions
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val eq 2030 AND regi_group("EUR_regi",regi)) = 1.01*p30_datapebio(regi,"pebioil","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val eq 2030 AND regi_group("EUR_regi",regi)) = 1.02*p30_datapebio(regi,"pebioil","5","maxprod",t);
 $endif.edge_esm_transport
 
 
