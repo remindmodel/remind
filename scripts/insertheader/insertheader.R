@@ -17,7 +17,7 @@ insertheader <- function(maindir=".",
                                       ".spam",".xlsx",".xls", ".sh","files",".md",".RData", ".jpg",
                                       ".png",".cff", ".rds", ".aux", ".log", ".out", ".pdf",
                                       ".tex", ".htm", ".css", ".bib", ".ref", ".mif", ".gmif", ".gdx",
-                                      ".lst", ".git-id", ".csv", ".gcsv", ".Rdata", ".prn", ".cmd", ".put", 
+                                      ".lst", ".git-id", ".csv", ".gcsv", ".Rdata", ".prn", ".cmd", ".put",
                                       ".IN", ".awk", ".MON", ".CFG", ".mod", ".SCEN", ".inc"),
                          comments=c(".R"="#", ".Rmd"="#",".gms"="***",".cfg"="#",".csv"="*",".cs2"="*",
                                     ".cs3r"="*",".cs4r"="*",".sh"="#",".txt"="#"),
@@ -85,7 +85,7 @@ insertheader <- function(maindir=".",
 
     # insert header after line 0
     withcomment <- paste(co,key,header)
-    f <- append(f,withcomment,after = 0)
+    f <- append(f,withcomment,after = ifelse(!length(tmp), 0, tmp[1] - 1))
     writefile <- TRUE
     done <- c(done,file)
 
