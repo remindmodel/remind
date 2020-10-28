@@ -314,6 +314,7 @@ cm_flexMax_elh2             "switch for setting the maximum relative reduction o
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
+cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -471,6 +472,8 @@ cm_H2targets = 0; !! def 0
 
 cm_BioSupply_Adjust_EU = 2; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
+
+$setGlobal cm_demTcomplex  fromEDGET !! def = temporary_trend
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
