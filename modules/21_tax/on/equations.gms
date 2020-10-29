@@ -200,19 +200,17 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
 ; 
 
 ***---------------------------------------------------------------------------
-*' FS: flexibility tax
-*' Calculation of tax/subsidy on technologies with inflexible/flexible electricity input
-*' calculation is done via additional budget emission contraints defined in regipol module
+*'  FS: Calculation of tax/subsidy on technologies with inflexible/flexible electricity input
 ***---------------------------------------------------------------------------
 
 q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevFlex(t,regi)
   =e=
-  sum(en2en(enty,enty2,teFlex),
-*** vm_flexAdj (benefit of flexible technologies per unit output), change sign to make it a subsidy for flexible technologies
-        -vm_flexAdj(t,regi,teFlex) *
-                (  vm_prodSe(t,regi,enty,enty2,teFlex)$entySe(enty2)
-                +  vm_prodFe(t,regi,enty,enty2,teFlex)$entyFe(enty2))) - p21_taxrevFlex0(t,regi);
+  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
+*** vm_flexAdj is electricity price reduction/increases for flexible/inflexible technologies
+*** change sign such that flexible technologies get subsidy
+      -vm_flexAdj(t,regi,te) * vm_demSe(t,regi,enty,enty2,te))           
+  - p21_taxrevFlex0(t,regi)
 ;
 
 

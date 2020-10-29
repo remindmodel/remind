@@ -26,6 +26,7 @@ vm_emiTe.l(ttot,regi,enty)      = 0;
 vm_emiCdr.l(ttot,regi,enty)	     = 0;
 vm_prodFe.l(ttot,regi,entyFe2,entyFe2,te) = 0;
 vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
+vm_demSe.l(ttot,regi,enty,enty2,te) = 0;
 vm_Xport.l(ttot,regi,tradePe)       = 0;
 vm_capDistr.l(t,regi,te,rlf)          = 0;
 vm_cap.l(t,regi,te,rlf)              = 0;

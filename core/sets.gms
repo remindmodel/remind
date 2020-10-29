@@ -1382,10 +1382,17 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        wind      
 /
 
-teFlex(all_te)       "all technologies to which flexibibility tax/subsidy applies"
+teFlex(all_te)       "all technologies which can benefit from flexibility tax"
 /
 elh2
 ***dac
+/
+
+
+teFlexTax(all_te)       "all technologies to which flexibility tax/subsidy applies"
+/
+elh2
+tdels
 /
 
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
