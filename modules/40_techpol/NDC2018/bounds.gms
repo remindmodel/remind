@@ -8,7 +8,7 @@
 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 *** FS: activate capacity tarets only from 2025 on to be better in line with current trends
-vm_cap.lo(t,regi,"spv","1")$(t.val ge 2025) = p40_TechBound(t,regi,"spv")*0.001; 
+vm_cap.lo(t,regi_techpol,"spv","1")$(t.val ge 2025) = p40_TechBound(t,regi,"spv")*0.001; 
 vm_cap.lo(t,regi,"wind","1")$(t.val ge 2025) = p40_TechBound(t,regi,"wind")*0.001; 
 vm_cap.lo(t,regi,"tnrs","1")$(t.val ge 2025) = p40_TechBound(t,regi,"tnrs")*0.001;
 vm_cap.lo(t,regi,"hydro","1")$(t.val ge 2025) = p40_TechBound(t,regi,"hydro")*0.001;
