@@ -116,9 +116,10 @@ loop(regi,
       );
 );
 
-*** FS: switch off biomass imports after 2030 for regionally limited biomass scenarios
+*** FS: constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
 if ( cm_biotrade_phaseout eq 1,
-	vm_Mport.up(t,regi_sensscen,"pebiolc")$(t.val ge 2030) = 0;
+	vm_Mport.up(t,regi,"pebiolc")$(t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi)) = 
+      pm_demPeBio("2015",regi)$(regi_group("EUR_regi",regi))/4;
 );
 
 *** EOF ./modules/24_trade/standard/bounds.gms

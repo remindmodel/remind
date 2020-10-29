@@ -109,6 +109,7 @@ p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_enty)                                          "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 p_bioshare(tall,all_regi,all_enty)                          "bioshare for each FE carrier"
+pm_demPeBio(tall,all_regi)                                  "Primary energy bioenergy demand from last iteration [TWyr]"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
 p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calculate p_avCapFac2015; The historic capacity in 2015"
