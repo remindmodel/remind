@@ -27,6 +27,7 @@ p35_harmonizing_year        "Year when full harmonization of shares and efficien
 p35_share_seliq_t(ttot,all_regi)                               "share of liquids used for transport sector (fedie + fepet). Unit 0..1"
 p35_share_seh2_t(ttot,all_regi)                                "share of hydrogen used for transport sector  (feh2t). Unit 0..1"
 p35_share_seel_t(ttot,all_regi)                                "Share of electricity used for transport sector (feelt). Unit 0..1"
+pm_bunker_share_in_nonldv_fe(tall,all_regi)                    "Share of bunkers in non-LDV transport - fedie"
 ;
 
 *** EOF ./modules/35_transport/complex/declarations.gms
