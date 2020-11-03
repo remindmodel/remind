@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,12 +15,17 @@ hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;
 option savepoint = 0;
-option reslim    = 1.e+6;
-*AJS* limit maximum time for one nash region to two hours.
-$IFI %optimization% == 'nash' option reslim = 7200;
-option iterlim   = 1.e+6;
-option solprint  = off ;
+option resLim    = 3e6;
+option solprint  = off;
 o_modelstat      = 100;
+
+$ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
+$ifthen.subsectors "%industry%" == "subsectors"       !! industry
+!! Calibrating industry/subsectors lead to random infeasibilities on the order
+!! of 1e-15.  Relaxing this attribute a little solves this problem.
+hybrid.tolinfeas = 1e-14;
+$endif.subsectors
+$endif.calibrate
 
 ***-------------------------------------------------------------------
 ***                     read GDX
@@ -154,16 +159,14 @@ if (o_modelstat le 2,
   !! retain gdxes of intermediate iterations by copying them using shell
   !! commands
   if (c_keep_iteration_gdxes eq 1,
-    put_utility "shell" / "printf '%03i\n'" iteration.val:0:0
-                          "| sed 's/\(.*\)/fulldata.gdx fulldata_\1.gdx/'"
-                          "| xargs -n 2 cp"
+    put_utility logfile, "shell" / 
+      "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
 else
   execute_unload 'non_optimal';
   if (c_keep_iteration_gdxes eq 1,
-    put_utility "shell" / "printf '%03i\n'" iteration.val:0:0
-                          "| sed 's/\(.*\)/non_optimal.gdx non_optimal_\1.gdx/'"
-                          "| xargs -n 2 cp"
+    put_utility logfile, "shell" / 
+      "cp non_optimal.gdx non_optimal_" iteration.val:0:0 ".gdx";
   );
 );
 

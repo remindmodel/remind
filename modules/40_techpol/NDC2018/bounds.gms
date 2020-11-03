@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,6 +15,12 @@ vm_cap.lo(t,regi,"hydro","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(
 if(cm_nucscen eq 7,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2025) = 0;
 );
+
+*RP in case nucscen = 5(no new builds after 2020), remove nuclear lower bound from p40_techBound 
+if(cm_nucscen eq 5,
+  vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2020) = 0;
+);
+
 
 
 $ifthen.complex_transport "%transport%" == "complex"

@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -168,18 +168,18 @@ report_transfers <- function(pol_mif, ref_mif) {
   delta_gdploss <- gdploss_rel[,,] - gdploss_rel["GLO",,]
   # Calculate transfer required to equalize rel gdploss across regions
   delta_transfer <- magclass::setNames(delta_gdploss * gdp_ref, 
-                                       "Policy Cost|Transfers (billion US$2005/yr)")
+                                       "Policy Cost|Transfers equal effort (billion US$2005/yr)")
   delta_transfer_rel <- 100*magclass::setNames(delta_transfer/gdp_ref, 
-                                               "Policy Cost|Transfers|Relative to Reference GDP (percent)")
+                                               "Policy Cost|Transfers equal effort|Relative to Reference GDP (percent)")
   
 
   # Calculate new gdp variables
   gdp_withtransfers <- magclass::setNames(gdp_policy + delta_transfer,
-                                          "GDP|MER|w/ transfers (billion US$2005/yr)")
+                                          "GDP|MER|w/ transfers equal effort (billion US$2005/yr)")
   gdploss_withtransfers <- magclass::setNames(gdp_ref - gdp_withtransfers, 
-                                              "Policy Cost|GDP Loss|w/ transfers (billion US$2005/yr)")
+                                              "Policy Cost|GDP Loss|w/ transfers equal effort (billion US$2005/yr)")
   gdploss_withtransfers_rel <- 100*magclass::setNames(gdploss_withtransfers/gdp_ref,
-                                                      "Policy Cost|GDP Loss|w/ transfers|Relative to Reference GDP (percent)")
+                                                      "Policy Cost|GDP Loss|w/ transfers equal effort|Relative to Reference GDP (percent)")
   
   # Correct sets
   magclass::getSets(delta_transfer, fulldim = F)[3] <- "variable"

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,8 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/39_CCU/on/datainput.gms
 
-*LP 
-p39_ratioCtoH(ttot,regi,enty,enty2,te,"CtoH")$emi2teCCU(enty,enty2,te,"CtoH") = fm_dataemiglob(enty,enty2,te,"CtoH");
-display p39_ratioCtoH;
+*** FS: set CO2 demand of CCU technologies to emission factor of liquids and gases per unit SE
+p39_co2_dem(t,regi,"seh2","segafos","h22ch4") = pm_emifac(t,regi,"pegas","segafos","gastr","co2") / fm_dataglob("eta","gastr");
+p39_co2_dem(t,regi,"seh2","seliqfos","MeOH") = pm_emifac(t,regi,"peoil","seliqfos","refliq","co2") / fm_dataglob("eta","refliq"); 
 
 *** EOF ./modules/39_CCU/on/datainput.gms

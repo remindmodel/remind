@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,7 +15,6 @@ Parameters
   p29_cesIO_load(tall,all_regi,all_in)                "production factor vm_cesIO from input.gdx"
   p29_cesIOdelta_load(tall,all_regi,all_in)                "production factor vm_cesIOdelta from input.gdx"
   p29_effGr(tall,all_regi,all_in)                                   "growth of factor efficiency from input.gdx"
-  p29_fedemand(tall,all_regi,all_GDPscen,all_in)                  "final energy demand"
   p29_cesdata_price(tall,all_regi,all_in)                          "exogenous prices in case they are needed"
 $ifthen.edgesm %transport% ==  "edge_esm"
   p29_trpdemand(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in) "transport demand for the edge_esm transport module, unit: trillion passenger/ton km"
@@ -33,6 +32,8 @@ $endif.edgesm
   p29_output_estimation(all_regi,all_in)       "scaling of the target quantity for comparability with technological data"                                          
 
 p29_esubGrowth         "long term growth of the elasticity of substitution"
+
+  p29_t_tmp(tall)                                       "tmp value for calculations over t"
 ;
 
 *** in case of a putty formulation, the model putty_paths will try to 

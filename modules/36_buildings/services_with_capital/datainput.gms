@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,12 +24,13 @@ pm_cesdata_sigma(ttot,in)$p36_cesdata_sigma(in) = p36_cesdata_sigma(in);
 pm_capital_lifetime_exp(all_regi,"kapsc") = 20;
 pm_capital_lifetime_exp(all_regi,"kapal") = 12;
 
-pm_capital_lifetime_exp(all_regi,"kaphc") = 30;
-pm_capital_lifetime_exp(all_regi,"esswb") = 30;
-pm_capital_lifetime_exp(all_regi,"ueswb") = 30;
+pm_capital_lifetime_exp(all_regi,"esswb") = log ( 0.25) / log ( 1 -0.02 );
 
-pm_delta_kap(regi,in)$(ppfKap_dyn36(in) OR in_putty_dyn36(in)) = - log (0.25) / pm_capital_lifetime_exp(regi,in);
-  
+pm_delta_kap(regi,in)$((ppfKap_dyn36(in) AND NOT in_putty(in)) OR nests_putty_dyn36(in,in)) = - log (0.25) / pm_capital_lifetime_exp(regi,in);
+
+loop (out,
+pm_delta_kap(regi,in)$nests_putty_dyn36(out,in) = pm_delta_kap(regi,out);
+);  
       
 parameter
 
@@ -225,11 +226,30 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
+*** Computation of omegs and opTimeYr2teEs for technology vintages
+p36_omegEs(regi,opTimeYr,teEs_dyn36(teEs)) = 0;
+
+loop(regi,
+        p36_aux_lifetime(teEs_dyn36(teEs)) = 5/4 * f36_datafecostsglob("lifetime",teEs);
+        loop(teEs_dyn36(teEs),
+
+                loop(opTimeYr,
+                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p36_aux_lifetime(teEs))**4 ;
+                        opTimeYr2teEs(teEs,opTimeYr)$(p36_omegEs(regi,opTimeYr,teEs) > 0 ) =  yes;
+                        if( p36_omegEs(regi,opTimeYr,teEs) <= 0,
+                                p36_omegEs(regi,opTimeYr,teEs) = 0;
+                                opTimeYr2teEs(teEs,opTimeYr) =  no;
+                        );
+                )
+        );
+);
+display p36_omegEs , opTimeYr2teEs ; 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
 *** Adjustement cost factor
 p36_adjFactor(ttot,regi) = 1;
+
 
 *** Set dynamic regional set depending on testOneRegi
 $ifthen "%optimization%" == "testOneRegi"

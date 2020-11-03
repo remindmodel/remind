@@ -1,4 +1,4 @@
-Changing inputs in MAgPIE model
+Changing inputs in REMIND model
 ================
 Miško Stevanović (<stevanovic@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>)
 

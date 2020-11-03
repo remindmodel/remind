@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -98,6 +98,12 @@ Sets
   fehei . fehei
   feeli . feeli
   /
+
+  !! empty sets from the subsectors realisation
+  industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
+  /   /
+  ppfKap_industry_dyn37(all_in)   "energy efficiency capital of industry"
+  /   /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings

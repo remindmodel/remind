@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/calibrate/sets.gms
 
-Set 
+Sets
   regi_dyn29(all_regi)   "dynamic region set for compatibility with testOneRegi"
   ces_29(all_in,all_in)   "calibration CES tree structure"
   ces2_29(all_in,all_in)   "calibration CES tree structure"
@@ -34,18 +34,33 @@ Set
   t_29hist_last(ttot) "last historical period"
   t_29scen(ttot) "non historical periods in t_29"
   t_29_last(ttot) "last period of the calibration"
+
+  pf_eff_target_dyn29(all_in)    "production factors with efficiency target"
+  /   /
+  pf_quan_target_dyn29(all_in)   "production factors with quantity target"
+  /   /
   
-capUnitType  "Type of technological data: for investments or for the standing capital"
-/
-cap "estimate for the standing capital (with some depreciation)"
-inv "estimate for new investments (without depreciation)" 
-/ 
+  capUnitType  "Type of technological data: for investments or for the standing capital"
+  /
+    cap   "estimate for the standing capital (with some depreciation)"
+    inv   "estimate for new investments (without depreciation)" 
+  / 
   
-index_Nr "index to differentiate data points with identical characteristics"
-/
-0*62
-/
-  ;
+  index_Nr "index to differentiate data points with identical characteristics"
+  /
+    0 * 62
+  /
+
+  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+  /
+    level
+    midperiod
+    width
+  /
+;
+
+alias(cesOut2cesIn_below,cesOut2cesIn_below2);
+
 t_29(ttot) = NO;
 t_29(t) = YES;
 t_29("2110") = NO;

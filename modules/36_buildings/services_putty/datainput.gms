@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -227,6 +227,24 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
+*** Computation of omegs and opTimeYr2teEs for technology vintages
+p36_omegEs(regi,opTimeYr,teEs_dyn36(teEs)) = 0;
+
+loop(regi,
+        p36_aux_lifetime(teEs_dyn36(teEs)) = 5/4 * f36_datafecostsglob("lifetime",teEs);
+        loop(teEs_dyn36(teEs),
+
+                loop(opTimeYr,
+                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p36_aux_lifetime(teEs))**4 ;
+                        opTimeYr2teEs(teEs,opTimeYr)$(p36_omegEs(regi,opTimeYr,teEs) > 0 ) =  yes;
+                        if( p36_omegEs(regi,opTimeYr,teEs) <= 0,
+                                p36_omegEs(regi,opTimeYr,teEs) = 0;
+                                opTimeYr2teEs(teEs,opTimeYr) =  no;
+                        );
+                )
+        );
+);
+display p36_omegEs , opTimeYr2teEs ; 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
@@ -234,6 +252,11 @@ p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) /
 *** Adjustement cost factor
 p36_adjFactor(ttot,regi) = 1;
 
+*** Set regions with high cooling demand, on which we impose a constraint on efficiency development
+loop(regi $ (pm_cesdata("2100",regi,"fescelb","quantity") gt 0.01),
+
+regi_dyn36_cooling(regi) = YES;
+);
 
 *** Set dynamic regional set depending on testOneRegi
 $ifthen "%optimization%" == "testOneRegi"

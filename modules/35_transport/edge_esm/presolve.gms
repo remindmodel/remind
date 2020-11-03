@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/presolve.gms
 $ifthen.calibrate %CES_parameters% == "load"
-if( ((ord(iteration) ge 5) and ( mod(ord(iteration), 5) eq 0)),
+if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) eq 0))
+    or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 5) eq 0))
+    or (ord(iteration)  gt 45 and  (mod(ord(iteration), 8) eq 0)),
+
     Execute "Rscript EDGE_transport.R";
 
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;

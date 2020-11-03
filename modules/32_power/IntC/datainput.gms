@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -57,3 +57,6 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
+
+*** initialize p32_PriceDurSlope
+p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;

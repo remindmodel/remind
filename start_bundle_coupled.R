@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -14,16 +14,16 @@ path_magpie <- "/p/projects/piam/runs/coupled-magpie/"
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
-# path_settings_coupled defines which runs will be started, coupling infos, and optinal gdx and report inforamtion that overrides path_settings_remind
+# path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
 path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 
-# You can put a prefix infront of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base". 
+# You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base". 
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
 prefix_runname <- "C_"
   
-# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path here and the name prefix below. 
-# Note: the sceanrio names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
+# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below. 
+# Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
 # file that you specified on path_settings_coupled (scenario_config_coupled_xxx.csv).
 path_remind_oldruns <- paste0(path_remind,"output/")
 path_magpie_oldruns <- paste0(path_magpie,"output/")
@@ -118,7 +118,7 @@ for(scen in common){
   if(identical(already_rem,character(0))) cat("Nothing found for",suche,"\n")
 
   if (!identical(already_rem, character(0))) {
-    # if there is an existing REMIND run use it's gdx for the run to be started
+    # if there is an existing REMIND run, use its gdx for the run to be started
 	  already_rem <- mixedsort(already_rem)[1]
 	  settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
     cat(paste0("\nFound gdx here: ",normalizePath(already_rem),"\n"))
@@ -157,7 +157,7 @@ for(scen in common){
 
   cat(paste0("Set start iteration to: ",start_iter,"\n"))
 
-	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previouly found 
+	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previously found 
   if (!is.na(scenarios_coupled[scen, "path_gdx"])) {
     settings_remind[scen, "path_gdx"] <- scenarios_coupled[scen, "path_gdx"]
     cat("Using gdx specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx"],"\n")

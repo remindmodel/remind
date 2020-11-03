@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -106,15 +106,14 @@ for (sm_tmp = sm_tmp downto 0,
 
 *** Compute all the elements of the CES below out, iteratively
 loop( cesOut2cesIn(out,ppf(in)),
-cesOut2cesIn_below(out,in) = YES;
+  cesOut2cesIn_below(out,in) = YES;
 );
 
 loop ((cesRev2cesIO(counter,in),cesOut2cesIn(in,in2)),
-
- loop(in3,
- cesOut2cesIn_below(in,in3)$ (cesOut2cesIn_below(in2,in3)) = YES;
-);
-cesOut2cesIn_below(in,in2) = YES;
+  loop(in3,
+     cesOut2cesIn_below(in,in3)$ (cesOut2cesIn_below(in2,in3) ) = YES;
+  );
+  cesOut2cesIn_below(in,in2) = YES;
 );
 
 in_below_putty(in) = NO;
