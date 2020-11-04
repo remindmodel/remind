@@ -34,7 +34,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag <- check_config(cfg_mag,paste0(path_magpie,"config/default.cfg"),paste0(path_magpie,"modules")) 
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  cfg_mag$output     <- c("report","rds_report","remind") # report: MAgPIE3 and MAgPIE4, remind: MAgPIE3 (glo.modelstat.csv)
+  cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
