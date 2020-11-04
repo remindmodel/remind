@@ -225,12 +225,11 @@ prepare <- function() {
   on_cluster    <- file.exists('/p')
   
   # Copy MAGICC
-  magicc_template <- "/p/projects/rd3mod/magicc/"
-  if(file.exists(magicc_template)) {
-      cat("Copying MAGICC files from",magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",magicc_template,"*.* ./core/magicc/"))
+  if(file.exists(cfg$magicc_template)) {
+      cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
+      system(paste0("cp -rp ",cfg$magicc_template,"*.* ./core/magicc/"))
     } else {
-      cat("Could not copy",magicc_template,"because it does not exist\n") 
+      cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
