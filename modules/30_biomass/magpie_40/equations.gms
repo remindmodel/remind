@@ -116,12 +116,24 @@ q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
         =l=
         0.5 * p30_demPe(t,regi);
 
-*** FS: limit energy crop production after 2030 to cm_bioprod_histlim * 2015-level in a region in regi_sensscen
-q30_limitProdtoHist(t,regi_sensscen)$(cm_bioprod_histlim ge 0)..
-         vm_fuExtr(t,regi_sensscen,"pebiolc","1")$(t.val ge 2030)
-         =l=
-         cm_bioprod_histlim*vm_fuExtr("2015",regi_sensscen,"pebiolc","1")
+*** FS: calculate total biomass production
+q30_BioPEProdTotal(t,regi)..
+        v30_BioPEProdTotal(t,regi)
+        =e=
+        sum(peren2rlf30(enty,rlf),
+          vm_fuExtr(t,regi,enty,rlf)) +
+        sum(peren2cont30(enty,rlf),
+          vm_fuExtr(t,regi,enty,rlf))
 ;
 
-		 
+
+*** FS: limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a region EU subregion
+q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi))..
+        v30_BioPEProdTotal(t,regi)
+        =l=
+        cm_bioprod_histlim*v30_BioPEProdTotal("2015",regi)
+;
+
+
+ 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms
