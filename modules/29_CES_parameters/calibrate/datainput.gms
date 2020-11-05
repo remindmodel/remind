@@ -217,6 +217,10 @@ $offdelim
 /
 ;
 
+Parameter
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+;
+
 ** Buildings alternative FE trajectory 
 $ifthen "%cm_calibration_FE%" == "low"
   pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_buildings_dyn36) = pm_fedemand(t,regi,"gdp_SSP1",ppfen_buildings_dyn36);
@@ -230,12 +234,48 @@ $elseif "%cm_calibration_FE%" == "high"
 $endif
 
 ** Transport alternative FE trajectory 
-***$ifthen.module "%transport%" == "complex"
-***$if NOT "%cm_calibration_FE%" == "off" pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_dyn35) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_dyn35);
-***$elseif.module "%edge_esm%" == "high"
-***$if "%cm_calibration_FE%" == "low"  p29_trpdemand(t,regi,"%cm_GDPscen%","Conservative_liquids",in) = p29_trpdemand(t,regi,"%cm_GDPscen%","Smart_lifestyles_Electricity_push",in);
-***$if "%cm_calibration_FE%" == "high" p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in) = (1 + 0.1$(t.val ge 2025) + 0.2$(t.val ge 2030))*p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in);
-***$endif.module
+$ifthen.module "%transport%" == "complex"
+$ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
+
+Parameter
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+;
+
+Parameter
+p29_fedemand_trasp "transport alternative demand for complex module based on EDGE-T"
+/
+$ondelim
+$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_EDGETbased.cs4r"
+$offdelim
+/
+;
+
+
+$ifthen "%cm_calibration_FE%" == "low"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCaseWise",in_dyn35);
+$elseif "%cm_calibration_FE%" == "medium"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCase",in_dyn35);
+$elseif "%cm_calibration_FE%" == "high"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCase",in_dyn35);
+$endif
+
+Parameter
+ p29_fedemand_trasp2005_2015(tall,all_regi,all_in)  "transport demand based on complex in 2005"
+;
+
+p29_fedemand_trasp2005_2015(t,regi,in_dyn35)$(t.val ge 2005 AND t.val le 2015)= pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2005 AND t.val le 2015);
+
+display p29_fedemand_trasp2005_2015;
+
+** Linear convergence to EDGE-T based values to avoid pre-triangular infeasibility due to IEA balances mismatches
+loop(ttot$(ttot.val ge 2005 AND ttot.val le 2015),
+       pm_fedemand(ttot,regi,"%cm_GDPscen%",in_dyn35) = p29_fedemand_trasp2005_2015("2005",regi,in_dyn35) + (ttot.val-2005)*(p29_fedemand_trasp2005_2015("2015",regi,in_dyn35)-p29_fedemand_trasp2005_2015("2005",regi,in_dyn35))/10;
+);
+
+$endif.demTtrend
+$endif.module
+
+display pm_fedemand;
 
 ** Industry alternative FE trajectory
 $if NOT "%cm_calibration_FE%" == "off" pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37);

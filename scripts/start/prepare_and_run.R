@@ -255,6 +255,12 @@ prepare <- function() {
     }
   }
 
+  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
+  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
+       demComplex = "fromEDGET"
+  }
+
+
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
                                          "indu_",cfg$gms$industry,"-",
@@ -264,6 +270,7 @@ prepare <- function() {
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
+                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          if(cfg$sufficiency == "on") "Suff-" else "",
                                          if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
