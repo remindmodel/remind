@@ -227,7 +227,7 @@ prices <- logit_data[["prices_list"]] ## prices at each level of the logit funct
 
 ## calculate vintages (new shares, prices, intensity)
 vintages = calcVint(shares = shares,
-                    totdem_regr = ES_demand,
+                    totdem_regr = ES_demand_all,
                     prices = prices,
                     mj_km_data = mj_km_data,
                     years = REMINDyears)
