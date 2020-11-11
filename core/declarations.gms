@@ -397,7 +397,7 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)    "phase-out constraint for 
 q_limitBiotrmod(ttot,all_regi)                        "limit the total amount of modern biomass use for solids to the amount of coal use for solids "
 q_limitShOil(ttot,all_regi)                           "requires minimum share of liquids from oil in total liquids of 15%"
 q_PE_histCap(ttot,all_regi,all_enty,all_enty)         "model capacity must be equal or greater than historical capacity"
-q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty)
+q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "gas capacity can only increase by 50% maximum from 2015 to 2020, plus 10 GW to account for extra flexibility in regions with small 2015 capacity"
 
 *** ES layer equations
 q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs)    "Conversion from final energy to energy service"
