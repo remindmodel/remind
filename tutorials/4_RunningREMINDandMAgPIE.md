@@ -1,7 +1,3 @@
----
-title: "Running REMIND and MAgPIE in coupled mode"
---- 
-
 Running REMIND and MAgPIE in coupled mode
 ================
 David Klein (<dklein@pik-potsdam.de>)
