@@ -1,8 +1,5 @@
 ---
 title: "Running REMIND and MAgPIE in coupled mode"
-output: 
-  html_document: 
-    toc: yes
 --- 
 
 Running REMIND and MAgPIE in coupled mode
