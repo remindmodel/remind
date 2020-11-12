@@ -1,3 +1,10 @@
+---
+title: "Running REMIND and MAgPIE in coupled mode"
+output: 
+  html_document: 
+    toc: yes
+--- 
+
 Running REMIND and MAgPIE in coupled mode
 ================
 David Klein (<dklein@pik-potsdam.de>)
@@ -11,7 +18,8 @@ David Klein (<dklein@pik-potsdam.de>)
     + [Configure start_bundle_coupled.R](#configure-start-bundle-coupledr)
     + [Configure the scenario_config_coupled.csv of your choice](#configure-the-scenario-config-coupledcsv-of-your-choice)
     + [Perform test start before actually submitting runs](#perform-test-start-before-actually-submitting-runs)
-    + [After checking that coupling scripts finds all gdxes and mifs start runs](#after-checking-that-coupling-scripts-finds-all-gdxes-and-mifs-start-runs)
+    + [Start runs after checking that coupling scripts finds all gdxes and mifs ](#Start-runs-after-checking-that-coupling-scripts-finds-all-gdxes-and-mifs)
+- [Check the convergence](#Check-the-convergence) 
 - [Technical concept](#technical-concept)
     + [Dynamic](#dynamic)
     + [Static](#static)
