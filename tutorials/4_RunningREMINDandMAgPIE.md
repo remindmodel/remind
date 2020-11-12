@@ -67,11 +67,13 @@ for coupled runs (e.g. which run should be started). All other settings are take
 
 ### Perform test start before actually submitting runs
 
+The test start shows if the scripts find all information that are crucial for starting the coupled runs, such as gdxes, mifs, model code. It also indicates if a run that crashed previously can be continuned and where (which model, which iteration).
+
 ```bash
 Rscript start_bundle_coupled.R test
 ```
 
-### After checking that coupling scripts finds all gdxes and mifs start runs
+### Start runs after checking that coupling scripts finds all gdxes and mifs
 
 ```bash
 Rscript start_bundle_coupled.R
