@@ -27,10 +27,6 @@ setConfig(forcecache=T)
 
 data_folder <- "EDGE-T"
 
-mapspath <- function(fname){
-  file.path("../../modules/35_transport/edge_esm/input", fname)
-}
-
 datapath <- function(fname){
   file.path(data_folder, fname)
 }
@@ -52,7 +48,7 @@ load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 
-EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
@@ -69,7 +65,7 @@ if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
 
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
-EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
+EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 
 ## input data loading
@@ -241,7 +237,7 @@ mj_km_data = vintages[["mj_km_data"]]
 
 
 ## use logit to calculate shares and intensities (on tech level)
-EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
+EDGE2CESmap <- fread("mapping_CESnodes_EDGE.csv")
 
 
 shares_int_dem <- shares_intensity_and_demand(
