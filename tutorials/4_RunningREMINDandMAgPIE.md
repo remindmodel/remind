@@ -82,7 +82,7 @@ Rscript start_bundle_coupled.R
 
 # Check the convergence
 
-There is no automatic abort criterion for the coupling iterations. The number of coupling iterations is given by the user (`max_iterations` in start_bundle_coupled.R) and will be performed regardless of the quality of convergence. The convergence can be checked, however, by tracking the changes of crucial coupling variables (such as bioenergy demand and prices, GHG emissions and prices) across coupling iterations. To create the pdf showing these changes *for each coupled scenario* please execute in the REMIND main folder:
+There is no automatic abort criterion for the coupling iterations. The number of coupling iterations is given by the user (`max_iterations` in start_bundle_coupled.R) and will be performed regardless of the quality of convergence. The convergence can be checked, however, by tracking the changes of crucial coupling variables (such as bioenergy demand and prices, GHG emissions and prices) across coupling iterations. To create the pdf showing these changes please execute in the REMIND main folder:
 
 ```bash
 Rscript scripts/output/comparison/plot_compare_iterations.R
@@ -93,6 +93,12 @@ This creates a pdf for each coupled scenario that can be found in the common `ou
 
 ```bash
 Rscript scripts/output/comparison/plot_compare_iterations.R runs=SSP1-Base,SSP2-Base,...
+```
+
+If the iterations you want to inspect are located in an output folder different from `output` please provide the path to this folder:
+
+```bash
+Rscript scripts/output/comparison/plot_compare_iterations.R folder=another-output-folder
 ```
 
 # Technical concept
