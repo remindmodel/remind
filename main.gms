@@ -231,7 +231,8 @@ c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
 c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
-cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
+cm_shSynTrans         "lower bound on share of synthetic liquids by 2045"
+cm_shSynGas           "lower bound on share of synthetic gases by 2045"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -300,7 +301,6 @@ cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in b
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-cm_synfuelscen				"synfuel scenario"
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
@@ -342,6 +342,7 @@ c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
 c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
+cm_shSynGas      = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
