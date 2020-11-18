@@ -1144,13 +1144,17 @@ $offdelim
 *** ----- Emission factor of final energy carriers -----------------------------------
 *AD* Updated Demand Side Emission Factors
 *** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
+*AD* Reverted to Gunnar's previous values due to inconsistencies in the reporting
+***  triggered by this update.
+*** Gunnar's original comment:
+*GL* demand side emission factor of final energy carriers in MtCO2/EJ
+*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
 p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 74;
-p_ef_dem("fehos") = 73;
-p_ef_dem("fepet") = 73;
-p_ef_dem("fegas") = 55;
-p_ef_dem("fesos") = 96;
-
+p_ef_dem("fedie") = 69.3;
+p_ef_dem("fehos") = 69.3;
+p_ef_dem("fepet") = 68.5;
+p_ef_dem("fegas") = 50.3;
+p_ef_dem("fesos") = 90.5;
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
