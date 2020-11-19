@@ -209,8 +209,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    load(paste0("C_",run,".RData")) # load the config of the subsequent run here to provide the correct qos setting
-    system(paste0("sbatch --qos=",qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+    # load the config of the subsequent run to provide the correct qos setting (use new environmet to not overwrite the cfg_rem of the current run)
+    subseq.env <- new.env()
+    load(paste0("C_",run,".RData"),envir=subseq.env)
+    system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
