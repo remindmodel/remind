@@ -34,7 +34,7 @@ rem_in_mo <- deletePlus(rem_in_mo)
 rem_in <- rem_in_mo
 
 # load GAINS emissions and emission factors
-ef_gains  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_gains.cs4r")
+ef_gains  <- read.magpie("../../ef_gains.cs4r")
 emi_gains <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_gains.cs4r")
 
 # ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
