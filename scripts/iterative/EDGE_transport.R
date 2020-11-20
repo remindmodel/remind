@@ -108,6 +108,9 @@ pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
+## temporary fix: three-wheelers growth is extremely fast
+pref_data$S1S2_final_pref[year>2010 & subsector_L1=="Three-Wheeler", sw := 0]
+
 ## optional average of prices
 average_prices = TRUE
 

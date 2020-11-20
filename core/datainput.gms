@@ -599,7 +599,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 
 $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** allow for slightly higher geothermal electricity to avoid INFES
-pm_dataren(regi,"maxprod","1","geohdr") = 1.2*pm_dataren(regi,"maxprod","1","geohdr");
+pm_dataren(regi,"maxprod","1","geohdr") = 1.5*pm_dataren(regi,"maxprod","1","geohdr");
 $endif.edge_esm_transport
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
@@ -764,6 +764,9 @@ loop(ttot$(ttot.val ge 2005),
 *** ==> 1TW power plant ~ 650 million LDV
   
   p_adj_coeff(ttot,regi,te)                = 0.2;
+  p_adj_coeff(ttot,regi,"pc")              = 0.5;
+  p_adj_coeff(ttot,regi,"ngcc")            = 0.5;
+  p_adj_coeff(ttot,regi,"igcc")            = 0.5;
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
   p_adj_coeff(ttot,regi,"hydro")           = 1.0;
@@ -772,15 +775,15 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.1;
-  p_adj_coeff(ttot,regi,"wind")            = 0.1;
+  p_adj_coeff(ttot,regi,"spv")             = 0.08;
+  p_adj_coeff(ttot,regi,"wind")            = 0.08;
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
   p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
-  p_adj_coeff(ttot,regi,teGrid)            = 1.0;
+  p_adj_coeff(ttot,regi,teGrid)            = 0.1;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
