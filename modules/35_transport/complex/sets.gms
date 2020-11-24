@@ -108,6 +108,16 @@ char35 "characteristics of transport technologies"
   Eff_Pass_LDV
   Eff_Freight
 /
+
+EDGE_scenario_all    "EDGE-T scenarios, used to get the bunkers share on total liquids demand."
+/
+ConvCase
+ConvCaseWise
+ElecEra
+ElecEraWise
+HydrHype
+HydrHypeWise
+/
 ;
 
 ***-----------------------------------------------------------

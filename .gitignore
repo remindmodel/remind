@@ -32,3 +32,5 @@ main.lst
 # ignore temporary libreoffice files
 .~lock.*#
 
+# ignore all those secret MAGICC files
+/core/magicc/
