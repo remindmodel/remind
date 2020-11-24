@@ -27,10 +27,11 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2035  AND sameAs(in, "ensh")) =
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2040  AND sameAs(in, "ensh")) = 1.3;
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "ensh")) = 2.0;
 *** Don't use more than 25/50% H2/district heat in stationary
-pm_ppfen_shares("ensh","feh2s") = 0.25;
+pm_ppfen_shares(t,regi,"ensh","feh2s") = 0.25;
 
-pm_ppfen_shares("ensh","fehes") = 0.5;
+pm_ppfen_shares(t,regi,"ensh","fehes") = 0.5;
 
 *** Don't use more H2 than gas in stationary
-pm_ppfen_ratios("feh2s","fegas") = 1;
+pm_ppfen_ratios(t,"feh2s","fegas") = 1;
+
 *** EOF ./modules/38_stationary/simple/datainput.gms

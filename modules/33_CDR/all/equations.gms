@@ -9,10 +9,11 @@
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance
 ***---------------------------------------------------------------------------
-q33_balFeCDR(t,regi,entyFe)..
-	vm_otherFEdemand(t,regi,entyFe)
-	=e=
-	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"));
+q33_demFeCDR(t,regi,entyFe,emiMkt)$(entyFe2Sector(entyFe,"cdr")) .. 
+  vm_otherFEdemand(t,regi,entyFe)
+  =e=
+  ( sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr",emiMkt)) )$(sameas(emiMkt,"ETS"))
+;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.

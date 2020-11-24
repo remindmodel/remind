@@ -33,6 +33,10 @@ q_costInv(t,regi)..
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
   )
   +
+  sum((te,sector),
+    vm_costAddTeInv(t,regi,te,sector)
+  )
+  +
   sum(teNoTransform,
     v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
@@ -431,7 +435,7 @@ q_costTeCapital(t,regi,teLearn) ..
 *** vm_cesIO(t,regi,"fesob") will be 0 in the stationary realization
 q_limitBiotrmod(t,regi)$(t.val > 2020).. 
     vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod") 
-   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in)) 
+   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")) 
    - sum (fe2es(entyFe,esty,teEs)$buildMoBio(esty), vm_demFeForEs(t,regi,entyFe,esty,teEs) )
     =l=
     (2 +  max(0,min(1,( 2100 - pm_ttot_val(t)) / ( 2100 - 2020 ))) * 3) !! 5 in 2020 and 2 in 2100

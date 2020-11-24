@@ -117,7 +117,7 @@ v21_taxrevFEtrans(t,regi)
 q21_taxrevFEBuildInd(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevFEBuildInd(t,regi) 
 =e= SUM(ppfen(in)$( NOT ppfenFromUe(in)),
-          (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen) ) * vm_cesIO(t,regi,ppfen)
+          (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen) ) * ( vm_cesIO(t,regi,ppfen) + pm_cesdata(t,regi,ppfen,"offset_quantity"))
         )
 	- p21_taxrevFEBuildInd0(t,regi) ;
 	
