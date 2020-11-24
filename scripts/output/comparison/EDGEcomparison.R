@@ -57,6 +57,7 @@ trspPE_all = NULL
 LDV_PEonlySyn_all = NULL
 LDV_PE_all = NULL
 HDV_PE_all = NULL
+emiSec_all = NULL
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -393,6 +394,27 @@ elecdemFun = function(miffile){
 investFun = function(miffile){
   invest = miffile[variable %in% c("Energy Investments|Hydrogen", "Energy Investments|Electricity", "Energy Investments|Liquids", "Energy Investments|Gases", "Energy system costs")]
   return(invest)
+}
+
+emiSecFun = function(miffile){
+   emiSec = miffile[variable %in% c("Emi|CO2|Fossil Fuels and Industry|Energy Supply",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass|Supply|w/ couple prod",
+                                      "Emi|CO2|Industry|Direct",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass|Energy|Demand|Industry",
+                                      "Emi|CO2|FFaI|Industry|Process",
+                                      "Emi|CO2|Transport|Demand",
+                                      "Emi|CO2|Buildings|Direct",
+                                      "Emi|CO2|Land-Use Change",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass"),]
+
+   emiSec[, variable := as.character(variable)]
+   emiSec[, varplot := ifelse(variable == "Emi|CO2|Carbon Capture and Storage|Biomass", "Emi|CO2|CDR|BECCS", NA)]
+   emiSec[varplot == "Emi|CO2|CDR|BECCS", value := -value]
+   emiSec[, varplot := ifelse(variable %in% c("Emi|CO2|Fossil Fuels and Industry|Energy Supply", "Emi|CO2|Carbon Capture and Storage|Biomass|Supply|w/ couple prod"), "Emi|CO2|Energy|Supply|Gross", varplot)]
+   emiSec[, varplot := ifelse(variable %in% c("Emi|CO2|Industry|Direct", "Emi|CO2|Carbon Capture and Storage|Biomass|Energy|Demand|Industry", "Emi|CO2|FFaI|Industry|Process"), "Emi|CO2|Industry|Gross", varplot)]
+   emiSec[is.na(varplot), varplot := variable]
+   emiSec = emiSec[,.(value = sum(value)), by = c("region", "year", "varplot")]
+   return(emiSec)
 }
 
 emipSourceFun = function(miffile){
@@ -1113,6 +1135,8 @@ for (outputdir in outputdirs) {
   emidem = emidemFun(miffile)
   ## tailpipe emissions
   emiDemand = emiDemandFun(miffile)
+  ## sectoral emissions
+  emiSec = emiSecFun(miffile)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
@@ -1140,6 +1164,7 @@ for (outputdir in outputdirs) {
   CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
   emidem[, scenario := as.character(unique(miffile$scenario))]
   emiDemand[, scenario := as.character(unique(miffile$scenario))]
+  emiSec[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
   EJfuelsMode[, scenario := as.character(unique(miffile$scenario))]
@@ -1162,6 +1187,7 @@ for (outputdir in outputdirs) {
   ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
   CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
   emidem_all = rbind(emidem_all, emidem)
+  emiSec_all = rbind(emiSec_all, emiSec)
   emiDemand_all = rbind(emiDemand_all, emiDemand)
   EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
   EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
@@ -1196,6 +1222,7 @@ saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
 saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
 saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
 saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
+saveRDS(emiSec_all, paste0(outdir, "/emiSec_all.RDS"))
 saveRDS(emiDemand_all, paste0(outdir, "/emiDemand_all.RDS"))
 saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
 saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
@@ -1210,12 +1237,15 @@ saveRDS(trspPE_all, paste0(outdir, "/trspPE_all.RDS"))
 saveRDS(LDV_PE_all, paste0(outdir, "/LDV_PE_all.RDS"))
 saveRDS(LDV_PEonlySyn_all, paste0(outdir, "/LDV_PEonlySyn_all.RDS"))
 saveRDS(HDV_PE_all, paste0(outdir, "/HDV_PE_all.RDS"))
-file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
 ## create a txt file containing the run names
 write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = " ", quote = FALSE,
             row.names = FALSE, col.names = FALSE)
+
+
+file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
+rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+
 
 ## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
 if (length(outputdirs) == 5 &
@@ -1229,12 +1259,13 @@ if (length(outputdirs) == 5 &
   rmarkdown::render(path(outdir, dash_template))
 }
 
-## If the scenarios are the 7 scenarios we would like to focus on, the paper-specific reporting is activated
+## If the scenarios are the 7 scenarios used in the paper, the paper-specific reporting is activated
 if (any(grepl("Budg1100_ElecEra$", unique(fleet_all$scenario))) &
     any(grepl("Budg1100_ElecEraWise", unique(fleet_all$scenario))) &
     any(grepl("Budg1100_ConvCase$", unique(fleet_all$scenario))) &
     any(grepl("Budg1100_ConvCaseWise", unique(fleet_all$scenario))) &
-    any(grepl("NPi", unique(fleet_all$scenario)))) {
+    any(grepl("NPi", unique(fleet_all$scenario))) $
+    any(grepl("Budg1100_HydrHype$", unique(fleet_all$scenario))))  {
   file.copy(file.path("./scripts/output/comparison/notebook_templates/PaperEDGE-Tplots.Rmd"), outdir)
   rmarkdown::render(path(outdir, "PaperEDGE-Tplots.Rmd"), output_format="pdf_document")
 }

@@ -40,6 +40,7 @@ trspPE_all = readRDS("trspPE_all.RDS")
 LDV_PE_all = readRDS("LDV_PE_all.RDS")
 HDV_PE_all = readRDS("HDV_PE_all.RDS")
 LDV_PEonlySyn_all = readRDS("LDV_PEonlySyn_all.RDS")
+emiSec_all = readRDS("emiSec_all.RDS")
 
 setConfig(forcecache=T)
 
@@ -55,6 +56,8 @@ cols <- c("NG" = "#d11141",
           "Liquids" = "#8c8c8c",
           "Hybrid Liquids" = "#ffc425",
           "Hybrid Electric" = "#f37735",
+          "Hybrids" = "#ffc425",
+          "PHEV" = "#f37735",
           "BEV" = "#00b159",
           "Electricity" = "#00b159",
           "Electric" = "#00b159",
@@ -129,13 +132,19 @@ cols <- c("NG" = "#d11141",
           "B1100_H2Push" = "#00aedb",
           "B1100_ElecPush-LowD" = "#68c6a4",
           "B1100_Conv-LowD" = "#d11141",
-          "SynSurge" = "orchid")
+          "SynSurge" = "orchid",
+          "Emi|CO2|Transport|Demand" = "#113245",
+          "Emi|CO2|Industry|Gross" = "#919191",
+          "Emi|CO2|Buildings|Direct" = "#d2b48c",
+          "Emi|CO2|Energy|Supply|Gross" = "#f2b531",
+          "Emi|CO2|CDR|BECCS" = "#ed5958",
+          "Emi|CO2|Land-Use Change" = "#66a182")
 
 legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shipping", "Domestic Shipping",  "Trucks", "Motorbikes", "Small Cars", "Large Cars", "Van",
                 "International Aviation", "Domestic Aviation", "Aviation", "Bus", "Passenger Rail",
                 "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV-ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Public land transport", "Non motorized")
 
-legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
+legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "PHEV", "FCEV", "Hydrogen", "Hybrid Liquids", "Hybrids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
 
 legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy-induced inconv.","Fuel", "Purchase", "O&M")
 
@@ -238,6 +247,10 @@ costspf = function(dt, rp, mapping_scens){
     logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
     dt = merge(dt, map, by = "logit_type")
+
+    dt[technology == "Hybrid Electric", technology := "PHEV"]
+    dt[technology == "Hybrid Liquids", technology := "Hybrids"]
+
 
     dt_inc = dt[type == "inc"]
     dt_inc = dt_inc[,.(cost = sum(cost)), by = c("region", "year", "type", "technology", "scenario")]
@@ -360,11 +373,13 @@ ggsave("LDVtotcost_selectedscen.png", p, dpi=300, height = height , width = heig
 
 costs_detailed_pf = function(dt, rp, mapping_scens){
     dt = dt[region == rp & scenario %in% c("NPi_ConvCase") & year %in% c(2015)]
+    dt[technology == "Hybrid Electric", technology := "PHEV"]
+    dt[technology == "Hybrid Liquids", technology := "Hybrids"]
+
     map = data.table(name = c("Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Fuel", "Policy-induced inconv.", "Purchase", "O&M"),
     logit_type = c("prisk", "pchar", "pmod_av", "prange", "pref", "fuel_price", "pinco_tot", "purchase", "other"),
     type = c("inc", "inc", "inc", "inc", "inc", "real", "inc", "real", "real"))
     dt_tot = merge(dt, map, by = "logit_type")
-
     dt_tot[, alph := ifelse(type == "inc", 0.5, 0.9)]
 
     dt_tot = merge(dt_tot, mapping_scens, by = "scenario")
@@ -412,47 +427,43 @@ ggsave("LDVtotcost_histoverview.png", p, dpi=300, height = height , width = heig
 ## LDVs fleet
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-vintcomparisonArea_regi_pf = function(dt, rp, mapping){
+fleetcomparisonArea_regi_pf = function(dt, rp, mapping){
+  dt_sales = dt[variable == "newdem"]
+  dt_sales = dt_sales[,.(value = sum(value)), by = .(region, year, technology, scenario)]
+  dt_sales[, variable := "Sales"]
   dt = dt[,.(value = sum(value)), by = .(region, year, technology, scenario)]
+  dt[, variable := "Stock"]
+  dt = rbind(dt_sales, dt)
   dt = merge(dt, mapping)
+  dt[technology == "Hybrid Electric", technology := "PHEV"]
+  dt[technology == "Hybrid Liquids", technology := "Hybrids"]
   dt = dt[scen_name %in% c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD")]
   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
+  dt[, technology := factor(technology, levels = c("BEV", "PHEV", "FCEV", "Hybrids", "NG", "Liquids"))]
+  dt[, variable := factor(variable, levels = c("Stock", "Sales"))]
 
   parea = ggplot()+
     geom_area(data = dt[region == rp & year >= 2020 & year <= 2050], aes(x=year, y=value, fill = technology, group = technology), alpha = 0.9, color="black", size=0.05, position= position_stack())+
-  facet_wrap(~scen_name, nrow = 1)+
+  facet_grid(variable ~ scen_name, scales = "free_y", switch = "y")+
         scale_fill_manual("Technology",values = cols, breaks=legend_ord)+
     expand_limits(y = c(0,1))+
     labs(x = "", y = "[million veh]")+
     scale_x_continuous(breaks = c(2020, 2030, 2050)) +
-    theme2use+
-    theme(legend.position = "none")
-
-  dt = dt[year %in% c(2030, 2050) & region == rp]
-
-  ## define the maximum on the y-axis depending on the maximum value across scenarios
-  pbar = ggplot()+
-    geom_bar(data = dt,
-             aes(x=scen_name, y=value, group=technology,
-                 fill = technology, width=.75), position="stack", stat = "identity", width = 0.5, alpha = 0.9)+
     theme2use +
-    labs(x = "", y = "[million veh]")+
-    facet_wrap(~ year)+
-    guides(fill=guide_legend(title="Powertrain"))+
-    scale_fill_manual(values = cols)
+    theme(strip.placement = "outside",
+    strip.background.y=element_rect(color = NA,  fill=NA))
 
-   plot = plot_grid(parea, pbar, align = "v", ncol = 1, rel_heights  = c(0.4, 0.6))
-   return(plot)
+   return(parea)
 }
 
-p = vintcomparisonArea_regi_pf(fleet_all, rp = regionplot, mapping = mapping_scens_paper)
+p = fleetcomparisonArea_regi_pf(fleet_all, rp = regionplot, mapping = mapping_scens_paper)
 
 p
 
 
-aspect_ratio <- 2
+aspect_ratio <- 2.5
 height <- 8
-ggsave("pvintArea.png", p, dpi=400, height = height , width = height * aspect_ratio)
+ggsave("pfleetArea.png", p, dpi=300, height = height , width = height * aspect_ratio)
 ```
 
 ## New additions to the LDV fleet: Sales 
@@ -464,6 +475,9 @@ salescomparisonArea_regi_pf = function(dt, rp, mapping){
   dt = merge(dt, mapping)
   dt = dt[scen_name %in% c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD")]
   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ElecPush", "B1100_H2Push", "B1100_ConvSyn", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
+  dt[technology == "Hybrid Electric", technology := "PHEV"]
+  dt[technology == "Hybrid Liquids", technology := "Hybrids"]
+  dt[, technology := factor(technology, levels = c("BEV", "PHEV", "FCEV", "Hybrids", "NG", "Liquids"))]
 
   parea = ggplot()+
     geom_area(data = dt[region == rp & year >= 2020 & year <= 2050], aes(x=year, y=value, fill = technology, group = technology), alpha = 0.9, color="black", size=0.05, position= position_stack())+
@@ -685,7 +699,7 @@ emiDemand_pf = function(dt, rp, mapping){
  dt[, mode := factor(mode, levels = legend_ord)]
  dt = merge(dt, mapping, by = "scenario")
  dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
-  plot = ggplot()+
+  plot1 = ggplot()+
     geom_area(data = dt, aes(x = year, y = value, group = mode, fill = mode), alpha = 0.9, color="black", size=0.05, position= position_stack())+
     labs(y = expression(paste("[Mt", CO["2"], "]")), x = "")+
     facet_grid(~scen_name) +
@@ -693,6 +707,19 @@ emiDemand_pf = function(dt, rp, mapping){
     theme2useLargeChar +
     guides(shape = FALSE)+
     scale_fill_manual("Transport mode", values = cols)
+
+
+ dt = dt[,.(value = sum(value)), by = .(scen_name, year)]
+ dt = dt[year>=2020]
+ plot2 = ggplot()+
+    geom_line(data = dt, aes(x = year, y = value, group = scen_name, color = scen_name), size=1)+
+    scale_x_continuous(breaks = c(2020, 2030, 2050))+
+    theme2use +
+    labs(x = "", y = expression(paste("[Mt", CO["2"], "]")), title = "Demand emissions, transport sector")+
+    guides(shape = FALSE) +
+    scale_color_manual("Scenario", values = cols)
+
+ plot = list(plot1 = plot1, plot2 = plot2)
 
   return(plot)
 }
@@ -702,7 +729,12 @@ p = emiDemand_pf(emiDemand_all, regionplot, mapping = mapping_scens_paper)
 p
 aspect_ratio <- 5.05
 height <- 4
-ggsave("emiDemand_mode.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("emiDemand_mode.png", p$plot1, dpi=500, height = height , width = height * aspect_ratio)
+
+aspect_ratio <- 1.5
+height <- 4
+
+ggsave("emiDemandLine.png", p$plot2, dpi = 200, height = height , width = height * aspect_ratio)
 ```
 
 ## Final energy, by mode
@@ -841,4 +873,37 @@ height <- 4
 ggsave("ESModePass.png", ppass, dpi=500, height = height , width = height * aspect_ratio)
 ggsave("ESModeFr.png", pfre, dpi=500, height = height , width = height * aspect_ratio)
 
+```
+## Emissions by sector
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
+emiSecpf = function(dt, rp, mapping){
+  dt = dt[region == rp & year >= 2020 & year <= 2050]
+  labels_components = c("Emi|CO2|CDR|BECCS" = "BECCS",
+                        "Emi|CO2|Land-Use Change" = "Landuse",
+                        "Emi|CO2|Energy|Supply|Gross" = "Supply",
+                        "Emi|CO2|Industry|Gross" = "Industry",
+                        "Emi|CO2|Transport|Demand" = "Transport",
+                        "Emi|CO2|Buildings|Direct" = "Buildings")
+  dt = merge(dt, mapping, by = "scenario")
+  dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
+
+  
+  plot = ggplot()+
+    geom_bar(data = dt[year>=2020], aes(x=year, y=value, fill = varplot, group=varplot), position="stack", stat = "identity")+
+    scale_fill_manual("Component", values = cols, breaks = legend_ord_emissions, labels = labels_components)+
+    facet_grid(~scen_name)+
+    labs(title = expression(paste(CO["2"], " emissions relevant sectors ")), y = expression(paste("[Mt", CO["2"], "/year]")), x = "")+
+    theme2use+
+    expand_limits(y = c(0,1))+
+    scale_x_continuous(breaks = c(2020,2030,2050))
+
+  return(plot)
+}
+
+p = emiSecpf(emiSec_all, regionplot, mapping = mapping_scens_paper)
+p
+aspect_ratio <- 5.05
+height <- 4
+ggsave("emiSec.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
