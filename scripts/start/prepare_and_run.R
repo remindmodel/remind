@@ -8,9 +8,6 @@ library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
 
-## print the libraries version
-installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "moinput", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
-
 ################################################################################################## 
 #                             function: getReportData                                            #
 ##################################################################################################
@@ -195,6 +192,10 @@ prepare <- function() {
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
   cat("\n====================\n")
+
+  ## print the libraries version
+  installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "moinput", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+
 
   load("config.Rdata")
   
