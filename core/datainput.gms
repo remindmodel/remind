@@ -642,7 +642,7 @@ $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 
-pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
+pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potential
 
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 
