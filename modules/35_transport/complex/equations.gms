@@ -7,7 +7,7 @@
 *** SOF ./modules/35_transport/complex/equations.gms
 
 *'  Transportation Final Energy Balance
-q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans")) AND (sameas(emiMkt,"ES") OR sameas(emiMkt,"other"))) ..
+q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans"))) ..
   sum((entySe,te)$se2fe(entySe,entyFe,te), 
     vm_demFeSector(ttot,regi,entySe,entyFe,"trans",emiMkt)
   ) 

@@ -57,6 +57,7 @@ Sets
   /
     eni     "industry energy use"
     enhi    "industry heat energy use"
+    enhgai  "industry heat gaseous energy use (fegab and feh2b)"
     fesoi   "industry use of solid energy carriers"
     fehoi   "industry use of liquid energy carriers"
     fegai   "industry use of gaseous energy carriers"
@@ -75,7 +76,8 @@ Sets
   /
     en    . eni
     eni   . (enhi, feeli)
-    enhi  . (fesoi, fehoi, fegai, feh2i, fehei)
+    enhi  . (fesoi, fehoi, fehei, enhgai)
+    enhgai . (fegai, feh2i)
   /
 
  

@@ -113,5 +113,11 @@ loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"
 display p_macBaseMagpie;
 $endif
 
+*** FS: calculate total bioenregy primary energy demand from last iteration
+pm_demPeBio(ttot,regi) = 
+  sum(en2en(enty,enty2,te)$(peBio(enty)), 
+    vm_demPe.l(ttot,regi,enty,enty2,te))
+;
+
 
 *** EOF ./core/preloop.gms

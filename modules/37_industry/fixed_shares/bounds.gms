@@ -16,5 +16,8 @@ loop ((secInd37,enty)$( NOT macBaseInd37(enty,secInd37) ),
 
 vm_cesIO.lo(t,regi,in_industry_dyn37(in)) = 1e-6;
 
+*** Upper bound for exponent to avoid exponential gams overflow (if > 20 -> 3^20 > 1e10 what would cause GAMS to get an overflow x**y error) 
+v37_costExponent.up(t,regi) = 20; 
+
 *** EOF ./modules/37_industry/fixed_shares/bounds.gms
 

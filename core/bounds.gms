@@ -338,6 +338,8 @@ $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** allow for slightly higher early retirement for geohdr in some EU regions due to issues in the first time steps
 vm_capEarlyReti.up(ttot,regi,"geohdr")$(sameas(regi,"ESW")) = 2e-6;
 vm_capEarlyReti.up(ttot,regi,"geohdr")$(sameas(regi,"EWN")) = 1e-5;
+vm_capEarlyReti.up(ttot,regi,"geohdr")$(sameas(regi,"ESC")) = 1e-5;
+vm_capEarlyReti.up(ttot,regi,"geohdr")$(sameas(regi,"CHA")) = 1e-4;
 $endif.edge_esm_transport
 
 

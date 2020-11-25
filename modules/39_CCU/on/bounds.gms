@@ -23,15 +23,21 @@ if(cm_emiscen = 1,
 );
 
 ***----------------------------------------------------------------------------
-*** lower bound on share of synthetic fuels in all transport fuels by 2035
+*** force synthetic liquids in as a share of total liquids
 ***----------------------------------------------------------------------------
 
-v39_shSynTrans.lo(t,regi)$(t.val eq 2025) = cm_shSynTrans / 4;
-v39_shSynTrans.lo(t,regi)$(t.val eq 2030) = cm_shSynTrans / 2;
-v39_shSynTrans.lo(t,regi)$(t.val gt 2030) = cm_shSynTrans;
+v39_shSynTrans.lo(t,regi)$(t.val eq 2030) = cm_shSynTrans / 4;
+v39_shSynTrans.lo(t,regi)$(t.val eq 2035) = cm_shSynTrans / 2;
+v39_shSynTrans.lo(t,regi)$(t.val gt 2040) = cm_shSynTrans;
 
-*** lower bound on synfuel share in all liquids from 2035 onwards
-*** forces a minimum share of synfuels, if cm_shSynTrans > 0
-v39_shSynTrans.lo(t,regi)$(t.val >= 2035) = cm_shSynTrans;
+***----------------------------------------------------------------------------
+*** force synthetic gas in as a share of total gases
+***----------------------------------------------------------------------------
+
+v39_shSynGas.lo(t,regi)$(t.val eq 2030) = cm_shSynGas / 4;
+v39_shSynGas.lo(t,regi)$(t.val eq 2035) = cm_shSynGas / 2;
+v39_shSynGas.lo(t,regi)$(t.val gt 2040) = cm_shSynGas;
+
+
 
 *** EOF ./modules/39_CCU/39_CCU.gms

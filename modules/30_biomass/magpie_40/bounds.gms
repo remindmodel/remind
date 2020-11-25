@@ -19,6 +19,12 @@ vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios"
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
 
+$ifthen.edge_esm_transport "%transport%" == "edge_esm"
+*** to avoid 1e-7 order of magnitude INFES, slightly relax bound for EU regions
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val eq 2030 AND regi_group("EUR_regi",regi)) = 1.02*p30_datapebio(regi,"pebioil","5","maxprod",t);
+$endif.edge_esm_transport
+
+
 if(cm_1stgen_phaseout=0,
     vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
     vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
