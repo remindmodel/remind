@@ -108,8 +108,20 @@ pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
-## temporary fix: three-wheelers growth is extremely fast
+## temporary fixes: three-wheelers growth is extremely fast
 pref_data$S1S2_final_pref[year>2010 & subsector_L1=="Three-Wheeler", sw := 0]
+pref_data$S1S2_final_pref[subsector_L1 %in% c("trn_pass_road_LDV_2W") & year >= 2010,
+                     sw := sw[year==2010] + (0.1*sw[year==2010]-sw[year==2010]) * (year-2010) / (2100-2010),
+                     by=c("iso", "subsector_L1")]
+
+
+## domestic aviation is constrained in MEA
+pref_data$S3S_final_pref[iso %in% c("ARE", "BHR", "DZA", "EGY", "ESH", "IRN", "IRQ", "ISR", "JOR", "KWT", "LBN",
+                                    "LBY", "MAR", "OMN", "PSE", "QAT", "SAU", "SDN", "SYR", "TUN", "YEM")
+                         & year >= 2010 & subsector_L3 == "Domestic Aviation",
+                         sw := sw[year==2010] + (0.1*sw[year==2020]-sw[year==2010]) * (year-2010) / (2100-2010),
+                         by=c("iso", "subsector_L3")]
+
 
 ## optional average of prices
 average_prices = TRUE
