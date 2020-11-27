@@ -116,8 +116,8 @@ fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
   allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("iso", "vehicle_type", "year"))
-  annual_mileage = 15000
-  allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("iso", "technology", "variable", "year")]
+  annual_mileage = 13000
+  allfleet = allfleet[,.(value = sum(value/1.5/annual_mileage)), by = c("iso", "technology", "variable", "year")]
 
   allfleet = merge(allfleet, REMIND2ISO_MAPPING, by = "iso")
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
