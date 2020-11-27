@@ -36,10 +36,8 @@ emidem_all = readRDS("emidem_all.RDS")
 emiDemand_all = readRDS("emiDemand_all.RDS")
 costs_all = readRDS("costs_all.RDS")
 pref_FV_all = readRDS("pref_FV_all.RDS")
-trspPE_all = readRDS("trspPE_all.RDS")
-LDV_PE_all = readRDS("LDV_PE_all.RDS")
-HDV_PE_all = readRDS("HDV_PE_all.RDS")
-LDV_PEonlySyn_all = readRDS("LDV_PEonlySyn_all.RDS")
+LDV_PEnew_all = readRDS("LDV_PEnew_all.RDS")
+trsp_PEnew_all = readRDS("trsp_PEnew_all.RDS")
 emiSec_all = readRDS("emiSec_all.RDS")
 
 setConfig(forcecache=T)
@@ -571,45 +569,17 @@ ggsave("buses_trucks_SW.png", p, dpi=500, height = height , width = height * asp
 
 
 ## PE in transport by fuel
+## LDV PE new version
 
 ```{r, echo=FALSE, warning=FALSE}
-trspPEpf = function(dt, rp, mapping){
+LDV_PEnewpf = function(dt, rp, mapping){
    dt = dt[region == rp]
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
    dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
-        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
-        facet_wrap(~scen_name, nrow = 1)+
-  theme2useLargeChar +
-  labs(y = "[EJ]", x="")+
-  scale_fill_manual("Source", values = cols)+
-  scale_x_continuous(breaks = c(2020, 2030, 2050))
-
-  return(p)
-}
-
-
-p = trspPEpf(trspPE_all, rp = regionplot, mapping_scens_paper)
-
-p
-
-aspect_ratio <- 5
-height <- 4
-ggsave("trspPE.png", p, dpi=500, height = height , width = height * aspect_ratio)
-```
-## PE in LDVs by fuel
-
-```{r, echo=FALSE, warning=FALSE}
-LDV_PEpf = function(dt, rp, mapping){
-   dt = dt[region == rp]
-   dt = merge(dt, mapping, by = "scenario")
-   dt[, year := as.numeric(year)]
-   dt = dt[year >= 2020 & year <= 2050]
-   dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
-   p = ggplot()+
-        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
+        geom_area(data = dt, aes(x = year, y = value, fill = technology, group = technology))+
         facet_wrap(~scen_name, nrow = 1)+
   labs(y = "[EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
@@ -620,31 +590,24 @@ LDV_PEpf = function(dt, rp, mapping){
 }
 
 
-p = LDV_PEpf(LDV_PE_all, rp = regionplot, mapping_scens_paper)
+p = LDV_PEnewpf(LDV_PEnew_all, rp = regionplot, mapping_scens_paper)
 print("LDVs have their share of synfuels")
-p
-
-p_onlySyn = LDV_PEpf(LDV_PEonlySyn_all, rp = regionplot, mapping_scens_paper)
-print("LDVs take over all synfuels")
-p_onlySyn
 
 aspect_ratio <- 5
 height <- 4
-ggsave("LDV_PE.png", p, dpi=500, height = height , width = height * aspect_ratio)
-ggsave("LDV_PEonlySyn.png", p_onlySyn, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("LDV_PEnew.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
 
-## PE in HDVs by fuel
 
 ```{r, echo=FALSE, warning=FALSE}
-HDV_PEpf = function(dt, rp, mapping){
+trsp_PEnewpf = function(dt, rp, mapping){
    dt = dt[region == rp]
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
    dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
-        geom_area(data = dt, aes(x = year, y = value, fill = pe_name, group = pe_name))+
+        geom_area(data = dt, aes(x = year, y = value, fill = technology, group = technology))+
         facet_wrap(~scen_name, nrow = 1)+
   labs(y = "[EJ]", x="")+
   scale_fill_manual("Source", values = cols)+
@@ -655,14 +618,14 @@ HDV_PEpf = function(dt, rp, mapping){
 }
 
 
-p = HDV_PEpf(HDV_PE_all, rp = regionplot, mapping_scens_paper)
-
-p
+p = trsp_PEnewpf(trsp_PEnew_all, rp = regionplot, mapping_scens_paper)
+print("LDVs have their share of synfuels")
 
 aspect_ratio <- 5
 height <- 4
-ggsave("HDV_PE.png", p, dpi=500, height = height , width = height * aspect_ratio)
+ggsave("trsp_PEnew.png", p, dpi=500, height = height , width = height * aspect_ratio)
 ```
+## PE in HDVs by fuel
 
 ## CO2 intensity of LDV sales
 
