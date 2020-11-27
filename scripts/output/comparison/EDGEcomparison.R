@@ -14,6 +14,7 @@ require(moinput)
 require(edgeTrpLib)
 require(gdx)
 require(gdxdt)
+require(stringr)
 setConfig(forcecache = TRUE)
 
 if(!exists("source_include")) {
@@ -34,30 +35,28 @@ for (outputdir in outputdirs) {
 gdx_name = "fulldata.gdx"
 
 
-emi_all = NULL
-salescomp_all = NULL
-fleet_all = NULL
-EJroad_all = NULL
-EJmode_all = NULL
-ESmodecap_all = NULL
-ESmodeabs_all = NULL
-CO2km_int_newsales_all = NULL
-emidem_all = NULL
-emiDemand_all = NULL
-EJfuelsPass_all = NULL
-EJfuelsFrgt_all = NULL
-EJfuelsMode_all = NULL
-emipSource_all = NULL
-elecdem_all = NULL
-costs_all = NULL
-pref_FV_all = NULL
-demgdpcap_all = NULL
-invest_all = NULL
-trspPE_all = NULL
-LDV_PEonlySyn_all = NULL
-LDV_PE_all = NULL
-HDV_PE_all = NULL
-emiSec_all = NULL
+## create list to save
+alltosave = list(fleet_all = NULL,
+                 salescomp_all = NULL,
+                 EJroad_all = NULL,
+                 EJmode_all = NULL,
+                 ESmodecap_all = NULL,
+                 ESmodeabs_all = NULL,
+                 CO2km_int_newsales_all = NULL,
+                 emidem_all = NULL,
+                 emiDemand_all = NULL,
+                 emiSec_all = NULL,
+                 EJfuelsPass_all = NULL,
+                 EJfuelsFrgt_all = NULL,
+                 EJfuelsMode_all = NULL,
+                 emipSource_all = NULL,
+                 elecdem_all = NULL,
+                 costs_all = NULL,
+                 pref_FV_all = NULL,
+                 demgdpcap_all = NULL,
+                 invest_all = NULL,
+                 LDV_PEnew_all = NULL,
+                 trsp_PEnew_all = NULL)
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -1147,61 +1146,40 @@ for (outputdir in outputdirs) {
   demgdpcap = demgdpcap_Fun(demkm = demandkm, REMIND2ISO_MAPPING)
   ## investments in different energy carriers
   invest = investFun(miffile)
-  ## Primary energy used in transport divided by source
-  trspPE = trspPEFun(gdx)
-  ## Primary energy used in LDVs divided by source
-  LDV_PEonlySyn = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = TRUE) ## synfuels all attributed to LDVs
-  LDV_PE = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = FALSE) ## synfuels consumed by whole transport sector
-  ## primary energy used in HDVs divided by source
-  HDV_PE = HeavyDuty_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING)
+  ## primary energy
+  LDV_PEnew = LDV_PEnewFun(demEJ = demandEJ, gdx, miffile, FEliq_source = FEliq_source$FEliq_sourceR, REMIND2ISO_MAPPING)
+  trsp_PEnew = trsp_PEnewFun(demEJ = demandEJ, gdx, miffile, feliq = FEliq_source_tot[, variable := NULL], REMIND2ISO_MAPPING)
   ## add scenario dimension to the results
-  fleet[, scenario := as.character(unique(miffile$scenario))]
-  salescomp[, scenario := unique(miffile$scenario)]
-  EJroad[, scenario := as.character(unique(miffile$scenario))]
-  EJmode[, scenario := as.character(unique(miffile$scenario))]
-  ESmodecap[, scenario := as.character(unique(miffile$scenario))]
-  ESmodeabs[, scenario := as.character(unique(miffile$scenario))]
-  CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
-  emidem[, scenario := as.character(unique(miffile$scenario))]
-  emiDemand[, scenario := as.character(unique(miffile$scenario))]
-  emiSec[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsMode[, scenario := as.character(unique(miffile$scenario))]
-  emipSource[, scenario := as.character(unique(miffile$scenario))]
-  elecdem[, scenario := as.character(unique(miffile$scenario))]
-  costs[, scenario := as.character(unique(miffile$scenario))]
-  pref_FV[, scenario := as.character(unique(miffile$scenario))]
-  demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
-  invest[, scenario := as.character(unique(miffile$scenario))]
-  trspPE[, scenario := as.character(unique(miffile$scenario))]
-  LDV_PEonlySyn[, scenario := as.character(unique(miffile$scenario))]
-  LDV_PE[, scenario := as.character(unique(miffile$scenario))]
-  HDV_PE[, scenario := as.character(unique(miffile$scenario))]
+  allentries = list(fleet = fleet,
+                    salescomp = salescomp,
+                    EJroad = EJroad,
+                    EJmode = EJmode,
+                    ESmodecap = ESmodecap,
+                    ESmodeabs = ESmodeabs,
+                    CO2km_int_newsales =CO2km_int_newsales,
+                    emidem = emidem,
+                    emiDemand = emiDemand,
+                    emiSec = emiSec,
+                    EJfuelsPass = EJfuelsPass,
+                    EJfuelsFrgt = EJfuelsFrgt,
+                    EJfuelsMode = EJfuelsMode,
+                    emipSource = emipSource,
+                    elecdem = elecdem,
+                    costs = costs,
+                    pref_FV = pref_FV,
+                    demgdpcap = demgdpcap,
+                    invest = invest,
+                    LDV_PEnew = LDV_PEnew,
+                    trsp_PEnew = trsp_PEnew)
+
+  allentries = lapply(allentries, function(x) x[,scenario := as.character(unique(miffile$scenario))])
+
   ## rbind scenarios
-  salescomp_all = rbind(salescomp_all, salescomp)
-  fleet_all = rbind(fleet_all, fleet)
-  EJroad_all = rbind(EJroad_all, EJroad)
-  EJmode_all = rbind(EJmode_all, EJmode)
-  ESmodecap_all = rbind(ESmodecap_all, ESmodecap)
-  ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
-  CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
-  emidem_all = rbind(emidem_all, emidem)
-  emiSec_all = rbind(emiSec_all, emiSec)
-  emiDemand_all = rbind(emiDemand_all, emiDemand)
-  EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
-  EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
-  EJfuelsMode_all = rbind(EJfuelsMode_all, EJfuelsMode)
-  emipSource_all = rbind(emipSource_all, emipSource)
-  elecdem_all = rbind(elecdem_all, elecdem)
-  costs_all = rbind(costs_all, costs)
-  pref_FV_all = rbind(pref_FV_all, pref_FV)
-  demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
-  invest_all = rbind(invest_all, invest)
-  trspPE_all = rbind(trspPE_all, trspPE)
-  LDV_PEonlySyn_all = rbind(LDV_PEonlySyn_all, LDV_PEonlySyn)
-  LDV_PE_all = rbind(LDV_PE_all, LDV_PE)
-  HDV_PE_all = rbind(HDV_PE_all, HDV_PE)
+
+for (i in names(allentries)) {
+  j = paste0(i, "_all")
+  alltosave[[j]] = rbind(alltosave[[j]], allentries[[i]])
+}
 
 }
 
@@ -1214,37 +1192,16 @@ dir.create(outdir)
 md_template = "EDGETransportComparison.Rmd"
 dash_template = "EDGEdashboard.Rmd"
 ## save RDS files
-saveRDS(EJmode_all, paste0(outdir, "/EJmode_all.RDS"))
-saveRDS(salescomp_all, paste0(outdir, "/salescomp_all.RDS"))
-saveRDS(fleet_all, paste0(outdir, "/fleet_all.RDS"))
-saveRDS(EJroad_all, paste0(outdir, "/EJroad_all.RDS"))
-saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
-saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
-saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
-saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
-saveRDS(emiSec_all, paste0(outdir, "/emiSec_all.RDS"))
-saveRDS(emiDemand_all, paste0(outdir, "/emiDemand_all.RDS"))
-saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
-saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
-saveRDS(EJfuelsMode_all, paste0(outdir, "/EJfuelsMode_all.RDS"))
-saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
-saveRDS(elecdem_all, paste0(outdir, "/elecdem_all.RDS"))
-saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
-saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
-saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
-saveRDS(invest_all, paste0(outdir, "/invest_all.RDS"))
-saveRDS(trspPE_all, paste0(outdir, "/trspPE_all.RDS"))
-saveRDS(LDV_PE_all, paste0(outdir, "/LDV_PE_all.RDS"))
-saveRDS(LDV_PEonlySyn_all, paste0(outdir, "/LDV_PEonlySyn_all.RDS"))
-saveRDS(HDV_PE_all, paste0(outdir, "/HDV_PE_all.RDS"))
+lapply(names(alltosave), function(nm)
+  saveRDS(alltosave[[nm]], paste0(outdir, "/",nm,".RDS")))
 
 ## create a txt file containing the run names
 write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = " ", quote = FALSE,
             row.names = FALSE, col.names = FALSE)
 
 
-file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+#file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
+#rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
 
 ## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
@@ -1260,12 +1217,14 @@ if (length(outputdirs) == 5 &
 }
 
 ## If the scenarios are the 7 scenarios used in the paper, the paper-specific reporting is activated
-if (any(grepl("Budg1100_ElecEra$", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ElecEraWise", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCase$", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCaseWise", unique(fleet_all$scenario))) &
-    any(grepl("NPi", unique(fleet_all$scenario))) $
-    any(grepl("Budg1100_HydrHype$", unique(fleet_all$scenario))))  {
+if (any(grepl("Budg1100_ElecEra$", unique(alltosave$fleet_all$scenario))) &
+    any(grepl("Budg1100_ElecEraWise", unique(alltosave$fleet_all$scenario))) &
+    any(grepl("Budg1100_ConvCase$", unique(alltosave$fleet_all$scenario))) &
+    any(grepl("Budg1100_ConvCaseWise", unique(alltosave$fleet_all$scenario))) &
+    any(grepl("NPi", unique(alltosave$fleet_all$scenario))) &
+    any(grepl("Budg1100_HydrHype$", unique(alltosave$fleet_all$scenario))))  {
   file.copy(file.path("./scripts/output/comparison/notebook_templates/PaperEDGE-Tplots.Rmd"), outdir)
   rmarkdown::render(path(outdir, "PaperEDGE-Tplots.Rmd"), output_format="pdf_document")
 }
+
+
