@@ -63,8 +63,11 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-**Please note: You can not run REMIND without the input data. At present, there are
-still legal issues with sharing this data, but we are working on it. Please bear with us.**
+**Please note: You can not run REMIND without input data. At present, there are
+still legal issues with sharing this data, so we can not publish them yet
+(but we are working on it, please bear with us). If you have access to the
+necessary data sources (IEA, etc.) you can generate the input data on your own,
+we are happy to assist you in doing so.**
 
 
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
