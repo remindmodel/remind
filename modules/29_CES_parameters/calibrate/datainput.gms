@@ -392,10 +392,10 @@ $endif.subsectors
 
 $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
 
-*** Assuming feh2i minimun levels as 5% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
-loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.05 * pm_cesdata(t,regi,"fegai","quantity"))),
-	pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.05 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
-  pm_cesdata(t,regi,"feh2i","quantity") = 0.05 * pm_cesdata(t,regi,"fegai","quantity");
+*** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
+loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
+	pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
+  pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
 );
 
 *** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet 

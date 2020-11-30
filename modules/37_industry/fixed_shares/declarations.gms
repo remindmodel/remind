@@ -8,9 +8,9 @@
 
 
 scalars
-  s37_costAddH2Inv   "additional h2 distribution costs for low diffusion levels. [3.25$/kg = 0.1$/kWh]" /0.1/
-  s37_costDecayStart "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"      /0.05/
-  s37_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"  /0.10/
+  s37_costAddH2Inv   "additional h2 distribution costs for low diffusion levels. [3.25$/kg = 0.1$/kWh]" /%cm_indst_H2costAddH2Inv%/
+  s37_costDecayStart "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"      /%cm_indst_costDecayStart%/
+  s37_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"  /%cm_indst_H2costDecayEnd%/
 ;
 
 Parameters
