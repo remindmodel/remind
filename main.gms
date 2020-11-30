@@ -480,13 +480,13 @@ cm_flex_tax = 1; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
-cm_build_H2costAddH2Inv = 0.2  !! def 6.5$/kg = 0.2 $/Kwh
-cm_build_costDecayStart = 0.05 !! def 5%
-cm_build_H2costDecayEnd = 0.1  !! def 10%
+cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
+cm_build_costDecayStart = 0.05; !! def 5%
+cm_build_H2costDecayEnd = 0.1;  !! def 10%
 
-cm_indst_H2costAddH2Inv = 0.1  !! def 6.5$/kg = 0.2 $/Kwh
-cm_indst_costDecayStart = 0.05 !! def 5%
-cm_indst_H2costDecayEnd = 0.1  !! def 10%
+cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
+cm_indst_costDecayStart = 0.05; !! def 5%
+cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 cm_BioSupply_Adjust_EU = 2; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
