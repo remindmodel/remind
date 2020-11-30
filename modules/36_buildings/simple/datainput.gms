@@ -44,5 +44,10 @@ $ENDIF.cm_INNOPATHS_enb
 *** Don't use more than 75% district heat in buildings
 pm_ppfen_shares(t,regi,"enhb","feheb") = 0.75;
 
+*** additional H2 cost parameters
+s36_costAddH2Inv = cm_build_H2costAddH2Inv;
+s36_costDecayStart = cm_build_costDecayStart;
+s36_costDecayEnd = cm_build_H2costDecayEnd;
+
 *** EOF ./modules/36_buildings/simple/datainput.gms
 
