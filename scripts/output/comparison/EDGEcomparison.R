@@ -238,6 +238,8 @@ ESmodeFun = function(demandkm, POP){
 }
 
 FEliq_sourceFun = function(FEliq_source, gdp){
+  FEliq_source = FEliq_source[variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting")]
+
   ## Attribute oil and biodiesel (TODO Coal2Liquids is accounted for as Oil!
   FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
   FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting"), "Biomass", technology)]
@@ -383,12 +385,11 @@ LDV_PEnewFun =function(demEJ, gdx, miffile, FEliq_source, REMIND2ISO_MAPPING) {
   FE_noliq[, variable := NULL]
   FE_all = rbind(FE_noliq, FEliq_source[, shareliq:=NULL])
 
-
   ## collect the effciencies from the gdx
-  refliq = 0.9
-  elh2 = 0.8
-  MeOH = 0.7
-  bioftcrec = 0.4
+  refliq = 0.9 ## refinery oil to SE liquids
+  elh2 = 0.8    ## convert electricity to H2
+  MeOH = 0.7    ## methanol production
+  biodiesel = 0.98  ## oil biomass to biodiesel
 
   ## calculate the shares of 4W and 2W in LDVs for each energy source(liquids->synfuels,biofuels,fossil,electricity,hydrogen)
   demand_EJ = merge(demEJ, REMIND2ISO_MAPPING, by = "iso")
@@ -410,16 +411,16 @@ LDV_PEnewFun =function(demEJ, gdx, miffile, FEliq_source, REMIND2ISO_MAPPING) {
   FE_all[technology == "Oil", value := value/refliq]
   FE_all[technology == "Hydrogen", value := value/elh2]
   FE_all[technology == "Synfuel", value := value/elh2/MeOH]
-  FE_all[technology == "Biomass", value := value/bioftcrec]
+  FE_all[technology == "Biomass", value := value/biodiesel]
   ## attribute electricity tag to h2 and syn
   FE_all[technology %in% c("Hydrogen", "Synfuel"), technology := "Electricity"]
   ## sum up on technology
   FE_all = FE_all[,.(value = sum(value)), by = c("region", "year", "technology")]
   ## collect efficiencies of fossil plants
-  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil", "SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal"), eff = c(0.5))
+  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Geothermal"), eff = c(0.57, 0.49, 0.38, 0.47, 0.41, 0.36, 0.42, 0.33, 0.3, 0.4))
 
   ## collect the shares of the different sources in the electricity production
-  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS",  "SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT",  "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
+  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
   SEcomp = merge(SEcomp, eff, by = "variable", all.x =TRUE)
   SEcomp[, share := value/sum(value), by = .(region, year)]
   SEcomp[, value:= NULL]
@@ -432,11 +433,11 @@ LDV_PEnewFun =function(demEJ, gdx, miffile, FEliq_source, REMIND2ISO_MAPPING) {
   PE_elec[variable == "SE|Electricity|Wind", technology := "Wind"]
   PE_elec[variable %in% c("SE|Electricity|Solar|PV", "SE|Electricity|Solar|CSP"), technology := "Solar"]
   PE_elec[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS"), technology := "Gas"]
-  PE_elec[variable %in% c("SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
-  PE_elec[variable %in% c("SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT"), technology := "Oil"]
-  PE_elec[variable %in% c( "SE|Electricity|Nuclear"), technology := "Uranium"]
-  PE_elec[variable %in% c( "SE|Electricity|Hydro"), technology := "Hydro"]
-  PE_elec[variable %in% c( "SE|Electricity|Geothermal"), technology := "Geothermal"]
+  PE_elec[variable %in% c("SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
+  PE_elec[variable %in% c("SE|Electricity|Oil|DOT"), technology := "Oil"]
+  PE_elec[variable %in% c("SE|Electricity|Nuclear"), technology := "Uranium"]
+  PE_elec[variable %in% c("SE|Electricity|Hydro"), technology := "Hydro"]
+  PE_elec[variable %in% c("SE|Electricity|Geothermal"), technology := "Geothermal"]
   PE_elec = PE_elec[,.(value =sum(value)), by = .(region, year, technology)]
   ## merge all PE
   PE_all = rbind(PE_elec, FE_all[technology != "Electricity"])
@@ -461,10 +462,11 @@ trsp_PEnewFun =function(demEJ, gdx, miffile, feliq, REMIND2ISO_MAPPING) {
 
 
   ## collect the effciencies from the gdx
-  refliq = 0.9
-  elh2 = 0.8
-  MeOH = 0.7
-  bioftcrec = 0.4
+  
+  refliq = 0.9 ## refinery oil to SE liquids
+  elh2 = 0.8    ## convert electricity to H2
+  MeOH = 0.7    ## methanol production
+  biodiesel = 0.98  ## oil biomass to biodiesel
 
   ## calculate the shares of 4W and 2W in LDVs for each energy source(liquids->synfuels,biofuels,fossil,electricity,hydrogen)
   demand_EJ = merge(demEJ, REMIND2ISO_MAPPING, by = "iso")
@@ -482,16 +484,16 @@ trsp_PEnewFun =function(demEJ, gdx, miffile, feliq, REMIND2ISO_MAPPING) {
   FE_all[technology == "Oil", value := value/refliq]
   FE_all[technology == "Hydrogen", value := value/elh2]
   FE_all[technology == "Synfuel", value := value/elh2/MeOH]
-  FE_all[technology == "Biomass", value := value/bioftcrec]
+  FE_all[technology == "Biomass", value := value/biodiesel]
   ## attribute electricity tag to h2 and syn
   FE_all[technology %in% c("Hydrogen", "Synfuel"), technology := "Electricity"]
   ## sum up on technology
   FE_all = FE_all[,.(value = sum(value)), by = c("region", "year", "technology")]
   ## collect efficiencies of fossil plants
-  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil", "SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal"), eff = c(0.5))
+  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Geothermal"), eff = c(0.57, 0.49, 0.38, 0.47, 0.41, 0.36, 0.42, 0.33, 0.3, 0.4))
 
   ## collect the shares of the different sources in the electricity production
-  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS",  "SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT",  "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
+  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
   SEcomp = merge(SEcomp, eff, by = "variable", all.x =TRUE)
   SEcomp[, share := value/sum(value), by = .(region, year)]
   SEcomp[, value:= NULL]
@@ -504,11 +506,11 @@ trsp_PEnewFun =function(demEJ, gdx, miffile, feliq, REMIND2ISO_MAPPING) {
   PE_elec[variable == "SE|Electricity|Wind", technology := "Wind"]
   PE_elec[variable %in% c("SE|Electricity|Solar|PV", "SE|Electricity|Solar|CSP"), technology := "Solar"]
   PE_elec[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS"), technology := "Gas"]
-  PE_elec[variable %in% c("SE|Electricity|Coal|w/ CCS", "SE|Electricity|Coal|w/o CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
-  PE_elec[variable %in% c("SE|Electricity|Oil|w/o CCS", "SE|Electricity|Oil|DOT"), technology := "Oil"]
-  PE_elec[variable %in% c( "SE|Electricity|Nuclear"), technology := "Uranium"]
-  PE_elec[variable %in% c( "SE|Electricity|Hydro"), technology := "Hydro"]
-  PE_elec[variable %in% c( "SE|Electricity|Geothermal"), technology := "Geothermal"]
+  PE_elec[variable %in% c("SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
+  PE_elec[variable %in% c("SE|Electricity|Oil|DOT"), technology := "Oil"]
+  PE_elec[variable %in% c("SE|Electricity|Nuclear"), technology := "Uranium"]
+  PE_elec[variable %in% c("SE|Electricity|Hydro"), technology := "Hydro"]
+  PE_elec[variable %in% c("SE|Electricity|Geothermal"), technology := "Geothermal"]
   PE_elec = PE_elec[,.(value =sum(value)), by = .(region, year, technology)]
   ## merge all PE
   PE_all = rbind(PE_elec, FE_all[technology != "Electricity"])

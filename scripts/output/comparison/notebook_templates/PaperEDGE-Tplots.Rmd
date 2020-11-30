@@ -142,7 +142,7 @@ legend_ord_modes <- c("Freight Rail", "Truck", "Shipping", "International Shippi
                 "International Aviation", "Domestic Aviation", "Aviation", "Bus", "Passenger Rail",
                 "Freight", "LDV", "LDV-BEV", "LDV-PHEV", "LDV-ICE", "LDV-FCEV", "Pass non LDV", "Freight (Inland)", "Inland Freight", "Pass non LDV (Domestic)", "Public land transport", "Non motorized")
 
-legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "PHEV", "FCEV", "Hydrogen", "Hybrid Liquids", "Hybrids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
+legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "PHEV", "FCEV", "Hydrogen", "Hybrid Liquids", "Hybrids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG", "Coal", "Gas", "Geothermal", "Uranium", "Biomass", "Hydro", "Solar", "Wind")
 
 legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy-induced inconv.","Fuel", "Purchase", "O&M")
 
@@ -577,6 +577,7 @@ LDV_PEnewpf = function(dt, rp, mapping){
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
+   dt[, technology := factor(technology, levels = legend_ord)]
    dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = technology, group = technology))+
@@ -605,6 +606,7 @@ trsp_PEnewpf = function(dt, rp, mapping){
    dt = merge(dt, mapping, by = "scenario")
    dt[, year := as.numeric(year)]
    dt = dt[year >= 2020 & year <= 2050]
+   dt[, technology := factor(technology, levels = legend_ord)]
    dt[, scen_name := factor(scen_name, levels = c("NPi_Conv", "B1100_Conv", "B1100_ConvSyn", "B1100_H2Push", "B1100_ElecPush", "B1100_Conv-LowD", "B1100_ElecPush-LowD"))]
    p = ggplot()+
         geom_area(data = dt, aes(x = year, y = value, fill = technology, group = technology))+
