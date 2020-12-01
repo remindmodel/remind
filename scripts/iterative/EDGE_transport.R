@@ -89,15 +89,15 @@ pref_data = inputdata$pref_data
 ## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
 prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
-pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "iso")]
+pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "region")]
 pref_data$FV_final_pref = pref_data$FV_final_pref[check>0]
 pref_data$FV_final_pref[, check := NULL]
 pref_data$FV_final_pref = rbind(prefdata_nonmot, pref_data$FV_final_pref)
 
 prefdata_nonmotV = pref_data$VS1_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
-pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "iso")]
+pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "region")]
 pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
@@ -119,7 +119,7 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
-  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
   if (techswitch == "BEV"){
     rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
     rebates_febatesFCEV = FALSE
@@ -151,7 +151,7 @@ REMIND_prices <- merge_prices(
 
 ## save prices
 ## read last iteration count
-keys <- c("iso", "year", "technology", "vehicle_type")
+keys <- c("region", "year", "technology", "vehicle_type")
 setkeyv(REMIND_prices, keys)
 
 pfile <- "EDGE_transport_prices.rds"
@@ -270,7 +270,7 @@ if (opt$reporting) {
 num_veh_stations = calc_num_vehicles_stations(
   norm_dem = norm_demand[
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
-    c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
+    c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
   techswitch = techswitch,
   loadFactor = loadFactor)
