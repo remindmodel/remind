@@ -127,7 +127,8 @@ plot_iterations <- function(runname) {
   getNames(price) <- gsub(".*rem-","",getNames(price))
 
 	v  <- paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n")
-	p_price_mag <- magpie2ggplot2(price[r,y,],scenario=1,
+  
+	p_price_mag <- magpie2ggplot2(price[r,years,],scenario=1,
 						 group=NULL,ylab="$/GJ",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
 						 scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
 						 legend_position="right")
@@ -150,15 +151,16 @@ plot_iterations <- function(runname) {
   getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
 
 	v  <- paste(runname,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)",sep="\n")
-	p_fuelex <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,
+
+	p_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,
 						 group=NULL,ylab="EJ/yr",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
 						 scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
 						 legend_position="right")
 
-  p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+  p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
-  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,y,]["GLO",,,invert=TRUE],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,years,]["GLO",,,invert=TRUE],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="fixed",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
                        
