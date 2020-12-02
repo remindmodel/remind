@@ -215,6 +215,28 @@ plot_iterations <- function(runname) {
                         scales='free_y',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price mult factor",sep="\n"))
              
+  
+  ### CO2 price ###
+  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
+  report_path <- report_path[!grepl("with|adj",report_path)]
+  
+  tmp <- NULL
+  for (r in report_path) tmp <- mbind(tmp, read.report(r,as.list=FALSE))
+  tmp <- tmp[,,"Price|Carbon (US$2005/t CO2)"]
+  getNames(tmp) <- gsub(".*rem-","",getNames(tmp))
+  
+  v  <- paste(runname,"Price|Carbon (US$2005/t CO2)",sep="\n")
+  
+  #p_price_carbon <- magpie2ggplot2(tmp,geom='line',group=NULL,
+  #               ylab='US$2005/t CO2',color='Data1',#linetype="Data2",
+  #               scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz+4,#ylim=y_limreg,
+  #               title=paste(runname,"Carbon price",sep="\n"))
+                 
+  p_it_price_carbon_1 <- magpie2ggplot2(tmp[,getYears(tmp)<"y2025",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
+  p_it_price_carbon_2 <- magpie2ggplot2(tmp[,getYears(tmp)>"y2020" & getYears(tmp)<="y2100",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
+
   ######################### PRINT TO PDF ################################
 	out<-swopen(template="david")
 	swfigure(out,print,p_price_mag,sw_option="height=9,width=16")
@@ -227,6 +249,8 @@ plot_iterations <- function(runname) {
 	swfigure(out,print,p_shift,sw_option="height=9,width=16")
 	swfigure(out,print,p_shift_2060,sw_option="height=9,width=16")
 	swfigure(out,print,p_mult,sw_option="height=9,width=16")
+  swfigure(out,print,p_it_price_carbon_1,sw_option="height=9,width=16")
+  swfigure(out,print,p_it_price_carbon_2,sw_option="height=9,width=16")
 	filename <- paste0(runname,"-",length(scenNames))
 	swclose(out,outfile=filename,clean_output=TRUE,save_stream=FALSE)
 	file.remove(paste0(filename,c(".log",".out")))
