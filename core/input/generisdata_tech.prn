@@ -74,7 +74,7 @@ omf                 0.04        0.06       0.025        0.02       0.020        
 lifetime              30          25         130          25          30          25          30
 incolearn                                               2000        5060                    8760
 ccap0                                                   0.06       0.005                  0.0002
-learn                                                   0.108      0.257                   0.103
+learn                                                   0.108      0.207                   0.103
 luse                                                                0.09                   0.021
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
@@ -135,14 +135,14 @@ omv                   36          76
 lifetime              40          40
 
 +                storspv    storwind     storcsp
-inco0               7000        3480        2760
+inco0               9000        3480        2760
 mix0                0.00        0.00        0.00
 eta                 0.74        0.85        0.79
 omf                 0.02        0.02        0.02
 lifetime              25          25          25
-incolearn           4240        2400        1920
+incolearn           6240        2400        1920
 ccap0            0.00005     0.00005     0.00005
-learn               0.12        0.10        0.10
+learn               0.10        0.10        0.10
 
 +                gridspv    gridwind     gridcsp
 inco0               2400         720        3120

@@ -292,18 +292,19 @@ cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree abov
 cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
 
-cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-c_regi_nucscen				"regions to apply nucscen to"
-c_regi_capturescen			"region to apply ccapturescen to"
-cm_GDPcovid                  "GDP correction for covid"
-cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
-cm_flex_tax                 "switch for enabling flexibility tax"
-cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
-cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
+cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
+cm_peakBudgYr                   "date of net-zero CO2 emissions for peak budget runs without overshoot"
+cm_taxCO2inc_after_peakBudgYr   "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_CO2priceRegConvEndYr         "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+c_regi_nucscen			"regions to apply nucscen to"
+c_regi_capturescen		"region to apply ccapturescen to"
+cm_GDPcovid                     "GDP correction for covid"
+cm_TaxConvCheck                 "switch for enabling tax convergence check in nash mode"
+cm_flex_tax                     "switch for enabling flexibility tax"
+cm_PriceDurSlope_elh2           "slope of price duration curve of electrolysis"
+cm_FlexTaxFeedback              "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+cm_optimistic_VRE_supply        "optimistic (1) or default (0) supply of VRE"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -426,6 +427,8 @@ cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 cm_flex_tax = 1; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
+
+cm_optimistic_VRE_supply = 0; !! 0 - default, 1 - optimistic
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)

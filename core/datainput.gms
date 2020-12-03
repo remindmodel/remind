@@ -135,7 +135,36 @@ pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 *** Import and set global data
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
-$include "./core/input/generisdata_tech.prn";
+$include "./core/input/generisdata_tech.prn"
+;
+
+!! Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_optimistic_VRE_supply eq 1,
+  if (fm_dataglob("learn","spv") ne 0.207,
+    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","spv") = 0.257;
+  );
+
+  if (fm_dataglob("inco0","storspv") ne 9000,
+    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("inco0","storspv") = 7000;
+  );
+
+  if (fm_dataglob("incolearn","storspv") ne 6240,
+    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","storspv") = 4240;
+  );
+
+  if (fm_dataglob("learn","storspv") ne 0.10,
+    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","storspv") = 0.12;
+  );
+);
+  
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
 $ondelim
