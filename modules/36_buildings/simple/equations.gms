@@ -46,16 +46,12 @@ q36_auxCostAddTeInv(t,regi)..
 *' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
 q36_H2Share(t,regi)..
   v36_H2share(t,regi) 
+  * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
+      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
   =e=
-  ( sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES") 
-    )
-  ) 
-  /
-  ( sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES")
-    )
-  )
+  sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
+      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
 ;
+
 
 *** EOF ./modules/36_buildings/simple/equations.gms

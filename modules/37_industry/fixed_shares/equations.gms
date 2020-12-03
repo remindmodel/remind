@@ -162,20 +162,13 @@ q37_auxCostAddTeInv(t,regi)..
 *' Hydrogen fe share in industry gases use (natural gas + hydrogen)
 q37_H2Share(t,regi)..
   v37_H2share(t,regi) 
-  =e=
-  ( sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt) 
-      )
-    )
-  ) 
-  /
-  ( sum(emiMkt, 
+  * sum(emiMkt, 
       sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)
-      )
-    )
-  )
+        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
+  =e=
+  sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),   
+        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
