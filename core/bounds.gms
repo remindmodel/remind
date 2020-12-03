@@ -28,7 +28,7 @@ AND (not sameas(te,"tnrs"))),
 
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-7;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-7;
 );
 
 *RP* Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades

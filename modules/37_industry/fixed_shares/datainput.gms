@@ -115,6 +115,11 @@ emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 pm_macCostSwitch(enty) = pm_macSwitch(enty);
 
+*** additional H2 cost parameters
+s37_costAddH2Inv = cm_indst_H2costAddH2Inv;
+s37_costDecayStart = cm_indst_costDecayStart;
+s37_costDecayEnd = cm_indst_H2costDecayEnd;
+
 
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 
