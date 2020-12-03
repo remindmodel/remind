@@ -642,9 +642,11 @@ $include "./core/input/f_maxProdGeothermal.cs3r"
 $offdelim
 ;
 
-pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-6; !!minimal production potential
+pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potential
 
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
+*** FS: temporary fix: set minimum geothermal potential across all regions to 10 PJ (still negligible even in small regions) to get rid of infeasibilities
+***pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
 
 
 *mh* set 'nur' for all non renewable technologies to '1':

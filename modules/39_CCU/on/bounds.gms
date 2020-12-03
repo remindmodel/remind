@@ -12,6 +12,16 @@
 vm_co2capture.lo(t,regi,"cco2","ico2","ccsinje","1") = 0;
 vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 
+*** FS: overwrite bounds of se2se technologies in core/bounds.gms and set synfuel lower bounds only from 2035 on
+*** (they are only there in case the solver misses to see the technologies)
+vm_cap.lo(t,regi,te_ccu39,"1")=0;
+vm_cap.lo(t,regi,te_ccu39,"1")$(t.val gt 2031)=1e-7;
+
+*** FS: switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
+if(cm_emiscen = 1,
+  vm_cap.fx(t,regi,te_ccu39,rlf) = 0;
+);
+
 ***----------------------------------------------------------------------------
 *** force synthetic liquids in as a share of total liquids
 ***----------------------------------------------------------------------------

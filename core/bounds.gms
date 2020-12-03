@@ -18,17 +18,17 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** These lower bounds are set so low that they do not restrict the results
 *** ----------------------------------------------------------------------------------------------------------------------------------------
 
-*** CB 20120402 Lower limit on all P2SE technologies capacities to 1 MW of all technologies and all time steps
+*** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-6;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021) = 1e-7;
 );
 
 
 
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-6;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-7;
 );
 
 *RP* Lower bound of 10 kW on each of the different grades for renewables with multiple resource grades
