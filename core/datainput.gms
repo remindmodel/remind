@@ -167,7 +167,7 @@ elseif cm_VRE_supply_assumptions eq 2,
   if (fm_dataglob("incolearn","spv") ne 5060,
     abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
   else
-    fm_dataglob("incolearn","spv") = 4860;
+    fm_dataglob("incolearn","spv") = 4960;
   );
 );
   
