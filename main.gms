@@ -304,7 +304,7 @@ cm_TaxConvCheck                 "switch for enabling tax convergence check in na
 cm_flex_tax                     "switch for enabling flexibility tax"
 cm_PriceDurSlope_elh2           "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback              "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-cm_VRE_supply_assumptions        "default (0), optimistic (1), or sombre (2) assumptions on VRE supply"
+cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -428,7 +428,7 @@ cm_flex_tax = 1; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
-cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre
+cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
