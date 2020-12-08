@@ -521,7 +521,7 @@ v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
 !! only small amount of co2 injection ccs until 2030
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
 !! no Pe2Se fossil CCS in Germany
-vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 5e-4;
+vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
 
 
 *** EOF ./core/bounds.gms
