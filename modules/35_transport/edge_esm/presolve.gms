@@ -13,13 +13,13 @@ if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) e
     Execute "Rscript EDGE_transport.R";
 
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;
-    pm_esCapCost(t,regi,teEs_dyn35)$(t.val ge cm_startyear) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
+    pm_esCapCost(t,regi,teEs_dyn35)$(t.val ge cm_startyear AND t.val gt 2010) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
 
     Execute_Loadpoint "p35_fe2es", p35_fe2es_aux = p35_fe2es;
-    pm_fe2es(t,regi,teEs_dyn35)$( t.val ge cm_startyear ) = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
+    pm_fe2es(t,regi,teEs_dyn35)$( t.val ge cm_startyear AND t.val gt 2010 ) = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
 
     Execute_Loadpoint 'p35_shFeCes' p35_shFeCes;
-    pm_shFeCes(t,regi,entyFe,ppfen_dyn35,teEs_dyn35)$(p35_shFeCes(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35) AND t.val ge cm_startyear) = p35_shFeCes(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35);
+    pm_shFeCes(t,regi,entyFe,ppfen_dyn35,teEs_dyn35)$(p35_shFeCes(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35) AND t.val ge cm_startyear AND t.val gt 2010) = p35_shFeCes(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35);
 );
 $endif.calibrate
 
