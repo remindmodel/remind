@@ -561,4 +561,13 @@ vm_demFeSector.up('2015','UKI','seh2','feh2s','indst','ES') = 5.76E-05         ;
 vm_demFeSector.up('2015','USA','seh2','feh2s','indst','ETS') = 0.001092341     ;
 vm_demFeSector.up('2015','USA','seh2','feh2s','indst','ES') = 0.001008315      ;
 
+***----------------------------------------------------------------------------
+*** CCS limitations in Germany (for ARIADNE)
+***----------------------------------------------------------------------------
+!! only small amount of co2 injection ccs until 2030
+vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
+!! no Pe2Se fossil CCS in Germany
+vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
+
+
 *** EOF ./core/bounds.gms

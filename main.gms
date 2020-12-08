@@ -322,7 +322,7 @@ cm_indst_H2costDecayEnd     "simplified logistic function start of null value (e
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
-
+c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -492,6 +492,8 @@ cm_BioSupply_Adjust_EU = 2; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  fromEDGET !! def = temporary_trend
+
+c_noPeFosCCDeu = 0; !! def 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
