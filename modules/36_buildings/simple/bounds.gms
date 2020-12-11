@@ -9,5 +9,13 @@
 *** Upper bound for exponent to avoid exponential gams overflow (if > 20 -> 3^20 > 1e10 what would cause GAMS to get an overflow x**y error) 
 v36_costExponent.up(t,regi) = 20; 
 
+
+*** FS: bounds on maximum heat and electricity share in buildings for DEU from 2035 onwards, used for some ariadne scenarios
+v36_Heatshare.up(t,regi)$(sameas(regi,"DEU") AND t.val gt 2030) = cm_HeatLim_b+0.05;
+v36_Heatshare.up(t,regi)$(sameas(regi,"DEU") AND t.val gt 2040) = cm_HeatLim_b;
+
+v36_Elshare.up(t,regi)$(sameas(regi,"DEU") AND t.val gt 2030) = cm_ElLim_b+0.05;
+v36_Elshare.up(t,regi)$(sameas(regi,"DEU") AND t.val gt 2040) = cm_ElLim_b;
+
 *** EOF ./modules/36_buildings/simple/bounds.gms
 
