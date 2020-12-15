@@ -293,24 +293,10 @@ cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree abov
 cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
 
-<<<<<<< HEAD
-cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-c_regi_nucscen				"regions to apply nucscen to"
-c_regi_capturescen			"region to apply ccapturescen to"
-cm_GDPcovid                  "GDP correction for covid"
+cm_regiNoBioImport              "Switch defining regions where biomass import is disabled"
+cm_regiFactorStorageMult        "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
+cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils in buildings from a given time step on"
 
-cm_regiNoBioImport        "Switch defining regions where biomass import is disabled"
-cm_regiFactorStorageMult  "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
-cm_regiPhaseOutFosBuil    "Switch defining regions that phase out fossils in buildings from a given time step on"
-cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
-cm_flex_tax                 "switch for enabling flexibility tax"
-cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
-cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-=======
 cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
 cm_peakBudgYr                   "date of net-zero CO2 emissions for peak budget runs without overshoot"
@@ -323,8 +309,7 @@ cm_TaxConvCheck                 "switch for enabling tax convergence check in na
 cm_flex_tax                     "switch for enabling flexibility tax"
 cm_PriceDurSlope_elh2           "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback              "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
->>>>>>> 7dfd21f009bb4e92d725c8f0fcc54596e98fb231
+cm_VRE_supply_assumptions       "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
