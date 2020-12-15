@@ -189,10 +189,10 @@ pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","midperiod")      = 2050;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","width")          = 22;
 
 pm_ue_eff_target("ue_cement")           = 0.00475;
-pm_ue_eff_target("ue_chemicals")        = 0.02;
+pm_ue_eff_target("ue_chemicals")        = 0.008;
 pm_ue_eff_target("ue_steel_primary")    = 0.005;
 pm_ue_eff_target("ue_steel_secondary")  = 0.005;
-pm_ue_eff_target("ue_otherInd")         = 0.0058;
+pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 
