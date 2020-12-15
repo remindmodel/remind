@@ -135,7 +135,48 @@ pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 *** Import and set global data
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
-$include "./core/input/generisdata_tech.prn";
+$include "./core/input/generisdata_tech.prn"
+;
+
+!! Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_VRE_supply_assumptions eq 1,
+  if (fm_dataglob("learn","spv") ne 0.207,
+    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","spv") = 0.257;
+  );
+
+  if (fm_dataglob("inco0","storspv") ne 9000,
+    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("inco0","storspv") = 7000;
+  );
+
+  if (fm_dataglob("incolearn","storspv") ne 6240,
+    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","storspv") = 4240;
+  );
+
+  if (fm_dataglob("learn","storspv") ne 0.10,
+    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","storspv") = 0.12;
+  );
+elseif cm_VRE_supply_assumptions eq 2,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 5010;
+  );
+elseif cm_VRE_supply_assumptions eq 3,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 4960;
+  );
+);
+  
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
 $ondelim
@@ -599,7 +640,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 
 $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** allow for slightly higher geothermal electricity to avoid INFES
-pm_dataren(regi,"maxprod","1","geohdr") = 1.07*pm_dataren(regi,"maxprod","1","geohdr");
+pm_dataren(regi,"maxprod","1","geohdr") = 1.5*pm_dataren(regi,"maxprod","1","geohdr");
 $endif.edge_esm_transport
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
@@ -764,6 +805,9 @@ loop(ttot$(ttot.val ge 2005),
 *** ==> 1TW power plant ~ 650 million LDV
   
   p_adj_coeff(ttot,regi,te)                = 0.2;
+  p_adj_coeff(ttot,regi,"pc")              = 0.5;
+  p_adj_coeff(ttot,regi,"ngcc")            = 0.5;
+  p_adj_coeff(ttot,regi,"igcc")            = 0.5;
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
   p_adj_coeff(ttot,regi,"hydro")           = 1.0;
@@ -772,15 +816,15 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.1;
-  p_adj_coeff(ttot,regi,"wind")            = 0.1;
+  p_adj_coeff(ttot,regi,"spv")             = 0.08;
+  p_adj_coeff(ttot,regi,"wind")            = 0.08;
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
   p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
-  p_adj_coeff(ttot,regi,teGrid)            = 1.0;
+  p_adj_coeff(ttot,regi,teGrid)            = 0.1;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 

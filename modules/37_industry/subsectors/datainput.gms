@@ -106,7 +106,7 @@ Parameter
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.inc";
+$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
 $offdelim
   /
 ;
@@ -190,8 +190,8 @@ pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","width")          = 22;
 
 pm_ue_eff_target("ue_cement")           = 0.00475;
 pm_ue_eff_target("ue_chemicals")        = 0.008;
-pm_ue_eff_target("ue_steel_primary")    = 0.005;
-pm_ue_eff_target("ue_steel_secondary")  = 0.005;
+pm_ue_eff_target("ue_steel_primary")    = 0.0015;
+pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

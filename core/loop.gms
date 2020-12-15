@@ -15,7 +15,8 @@ hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;
 option savepoint = 0;
-option solprint  = off ;
+option resLim    = 3e6;
+option solprint  = off;
 o_modelstat      = 100;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters

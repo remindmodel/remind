@@ -233,7 +233,8 @@ option
 ;
 
 if ( NOT ( logit_36.solvestat eq 1  AND (logit_36.modelstat eq 1 OR logit_36.modelstat eq 2)),
-abort "model logit_36 is infeasible";
+  execute_unload "abort.gdx";
+  abort "model logit_36 is infeasible";
 );
 
 *** Compute the aggregate UE shares

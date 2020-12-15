@@ -108,62 +108,19 @@ pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
-
-  apply_logistic_trends <- function(initial, yrs, ysymm, speed){
-    logistic_trend <- function(year){
-      a <- speed
-      b <- ysymm
-
-      exp(a * (year - b))/(exp(a * (year - b)) + 1)
-    }
-
-    scl <- sapply(yrs, logistic_trend)
-
-    initial + scl * (1 - initial)
-  }
-
-## hotfix on freight road
-## convergence year for FCEV Buses and Trucks is more optimistic in the HydrHype case
-  if (techswitch == "FCEV") {
-    convsymmFCEV = 2055
-  } else {
-    convsymmFCEV = 2075
-  }
-
-  ## convergence base year for electric Buses and Trucks is more optimistic in the ElecEra case
-  if (techswitch == "BEV") {
-    convsymmBEV = 2045
-    } else {
-    convsymmBEV = 2065
-  }
+## temporary fixes: three-wheelers growth is extremely fast
+pref_data$S1S2_final_pref[year>2010 & subsector_L1=="Three-Wheeler", sw := 0]
+pref_data$S1S2_final_pref[subsector_L1 %in% c("trn_pass_road_LDV_2W") & year >= 2010,
+                     sw := sw[year==2010] + (0.1*sw[year==2010]-sw[year==2010]) * (year-2010) / (2100-2010),
+                     by=c("iso", "subsector_L1")]
 
 
-
-
-## small trucks
-  smtruck = c("Truck (1-6t)", "Truck (0-6t)", "Truck (0-4.5t)", "Truck (0-2t)", "Truck (2-5t)", "Truck (0-3.5t)", "Truck (0-1t)", "Truck (0-2.7t)")
-
-  pref_data$FV_final_pref[technology == "FCEV" & year >= 2020 & vehicle_type %in% smtruck,
-                    value := apply_logistic_trends(value[year == 2020], year, ysymm = convsymmFCEV, speed = 0.1),
-                    by=c("iso","vehicle_type","technology")]
-
-  pref_data$FV_final_pref[technology == "FCEV" & year >= 2020 & (vehicle_type %in% c("Bus_tmp_vehicletype", "Light Bus", "Heavy Bus")|
-                                                             (!vehicle_type %in% smtruck & subsector_L1 == "trn_freight_road_tmp_subsector_L1")),
-                    value := apply_logistic_trends(value[year == 2020], year, ysymm = (convsymmFCEV + 10), speed = 0.1),
-                    by=c("iso","vehicle_type","technology")]
-
-  pref_data$FV_final_pref[technology == "Electric" & year >= 2020 & vehicle_type %in% smtruck,
-                    value := apply_logistic_trends(value[year == 2020], year, ysymm = convsymmBEV, speed = 0.1),
-                    by=c("iso","vehicle_type","technology")]
-
-  pref_data$FV_final_pref[technology == "Electric" & year >= 2020 & (vehicle_type %in% c("Bus_tmp_vehicletype", "Light Bus", "Heavy Bus")|
-                                                                 (! vehicle_type %in% smtruck & subsector_L1 == "trn_freight_road_tmp_subsector_L1")),
-                    value := apply_logistic_trends(value[year == 2020], year, ysymm = (convsymmBEV + 10), speed = 0.1),
-                    by=c("iso","vehicle_type","technology")]
-
-
-
-
+## domestic aviation is constrained in MEA
+pref_data$S3S_final_pref[iso %in% c("ARE", "BHR", "DZA", "EGY", "ESH", "IRN", "IRQ", "ISR", "JOR", "KWT", "LBN",
+                                    "LBY", "MAR", "OMN", "PSE", "QAT", "SAU", "SDN", "SYR", "TUN", "YEM")
+                         & year >= 2010 & subsector_L3 == "Domestic Aviation",
+                         sw := sw[year==2010] + (0.1*sw[year==2020]-sw[year==2010]) * (year-2010) / (2100-2010),
+                         by=c("iso", "subsector_L3")]
 
 
 ## optional average of prices
