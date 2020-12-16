@@ -82,6 +82,7 @@ p80_eoWeights_fix(all_regi)                "default and fallback weighting facto
 p80_SolNonOpt(all_regi)                    "solve status"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
+p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
 ;
 
 positive variable
