@@ -56,7 +56,7 @@ q36_H2Share(t,regi)..
 *** calculate district heat share in FE buildings
 q36_HeatShare(t,regi)..
   v36_Heatshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te),   
+  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
       vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
   =e=
   sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fehes")),
@@ -66,7 +66,7 @@ q36_HeatShare(t,regi)..
 *** calculate electricity share in FE buildings
 q36_ElShare(t,regi)..
   v36_Elshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te),   
+  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
       vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
   =e=
   sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feels")),

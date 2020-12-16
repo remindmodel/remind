@@ -176,7 +176,7 @@ q37_H2Share(t,regi)..
 q37_CFuelShare(t,regi)..
   v37_CFuelshare(t,regi) 
   * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te),   
+      sum(se2fe(entySe,entyFe,te)$( entyFe37(entyFe)),   
         vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
   =e=
   sum(emiMkt, 

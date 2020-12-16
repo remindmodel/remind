@@ -100,6 +100,16 @@ Sets
   fehei . fehei
   feeli . feeli
   /
+
+  entyFe37(all_enty)   "FE carriers used in industry"
+  /
+    fesos 
+    fehos 
+    fegas
+    feh2s
+    fehes
+    feels
+  /
   
   secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
   /
