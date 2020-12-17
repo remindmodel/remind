@@ -266,6 +266,7 @@ v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_flexAdj(tall,all_regi,all_te)			         "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
+vm_taxrevimplicitFEEffTarget(ttot,all_regi)          "implicit efficiency directive target tax"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -318,8 +319,6 @@ vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from
 
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
-
-vm_taxrevimplicitFEEffTarget(ttot,all_regi)          "implicit efficiency directive target tax"
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
