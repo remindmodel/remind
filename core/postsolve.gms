@@ -778,13 +778,6 @@ o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
 		  vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
 		)$( sameas(emi,"co2") )
 	)
-***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve.l(ttot,regi)$( sameas(emi,"co2") ) )
-***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
-  + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort.l(ttot,regi,"cco2","ccuco2short",te2,rlf)$( sameas(emi,"co2") )
-
-	)
 	)*emi_conv(emi)
 ;	
 
