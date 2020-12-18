@@ -439,7 +439,9 @@ $setGlobal cm_NucRegiPol	 off   !! def = off
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
-$setGlobal cm_implicitFEEffTarget off   !! def = off
+$setGlobal cm_implicitFE     off !! def = off
+$setGlobal cm_implFETarget   2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
+$setGlobal cm_implFEExoTax   off   !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5

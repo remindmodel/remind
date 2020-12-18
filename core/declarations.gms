@@ -266,7 +266,7 @@ v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_flexAdj(tall,all_regi,all_te)			         "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
-vm_taxrevimplicitFEEffTarget(ttot,all_regi)          "implicit efficiency directive target tax"
+vm_taxrevimplFETax(ttot,all_regi)          "implicit efficiency directive target tax"
 ;
 
 ***----------------------------------------------------------------------------------------
