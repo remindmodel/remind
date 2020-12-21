@@ -514,59 +514,12 @@ v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
 
 v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
 
-
-*** feh2b use limited to 0 in 2015? 
-vm_demFeSector.fx('2010',regi,'seh2','feh2s','build','ES') = 0;
-vm_demFeSector.fx('2015',regi,'seh2','feh2s','build','ES') = 0;
-vm_demFeSector.up('2015','CAZ','seh2','feh2s','indst','ETS') = 0.00012282      ;
-vm_demFeSector.up('2015','CAZ','seh2','feh2s','indst','ES') = 0.000286581      ;
-vm_demFeSector.up('2015','CHA','seh2','feh2s','indst','ETS') = 0.001081918     ;
-vm_demFeSector.up('2015','CHA','seh2','feh2s','indst','ES') = 0.000542584      ;
-vm_demFeSector.up('2015','DEU','seh2','feh2s','indst','ETS') = 0.000166658     ;
-vm_demFeSector.up('2015','DEU','seh2','feh2s','indst','ES') = 0.000166658      ;
-vm_demFeSector.up('2015','ECE','seh2','feh2s','indst','ETS') = 8.49E-05        ;
-vm_demFeSector.up('2015','ECE','seh2','feh2s','indst','ES') = 8.49E-05         ;
-vm_demFeSector.up('2015','ECS','seh2','feh2s','indst','ETS') = 4.82E-05        ;
-vm_demFeSector.up('2015','ECS','seh2','feh2s','indst','ES') = 5.29E-05         ;
-vm_demFeSector.up('2015','ENC','seh2','feh2s','indst','ETS') = 1.52E-05        ;
-vm_demFeSector.up('2015','ENC','seh2','feh2s','indst','ES') = 1.52E-05         ;
-vm_demFeSector.up('2015','ESC','seh2','feh2s','indst','ETS') = 6.86E-05        ;
-vm_demFeSector.up('2015','ESC','seh2','feh2s','indst','ES') = 6.86E-05         ;
-vm_demFeSector.up('2015','ESW','seh2','feh2s','indst','ETS') = 7.52E-05        ;
-vm_demFeSector.up('2015','ESW','seh2','feh2s','indst','ES') = 7.52E-05         ;
-vm_demFeSector.up('2015','EWN','seh2','feh2s','indst','ETS') = 0.000130251     ;
-vm_demFeSector.up('2015','EWN','seh2','feh2s','indst','ES') = 0.000130251      ;
-vm_demFeSector.up('2015','FRA','seh2','feh2s','indst','ETS') = 8.27E-05        ;
-vm_demFeSector.up('2015','FRA','seh2','feh2s','indst','ES') = 8.27E-05         ;
-vm_demFeSector.up('2015','IND','seh2','feh2s','indst','ETS') = 0.000454322     ;
-vm_demFeSector.up('2015','IND','seh2','feh2s','indst','ES') = 4.59E-06         ;
-vm_demFeSector.up('2015','JPN','seh2','feh2s','indst','ETS') = 9.19E-05        ;
-vm_demFeSector.up('2015','JPN','seh2','feh2s','indst','ES') = 0.000170742      ;
-vm_demFeSector.up('2015','LAM','seh2','feh2s','indst','ETS') = 0.000502973     ;
-vm_demFeSector.up('2015','LAM','seh2','feh2s','indst','ES') = 0.000395193      ;
-vm_demFeSector.up('2015','MEA','seh2','feh2s','indst','ETS') = 0.000949059     ;
-vm_demFeSector.up('2015','MEA','seh2','feh2s','indst','ES') = 0.001028148      ;
-vm_demFeSector.up('2015','NEN','seh2','feh2s','indst','ETS') = 7.33E-06        ;
-vm_demFeSector.up('2015','NEN','seh2','feh2s','indst','ES') = 1.71E-05         ;
-vm_demFeSector.up('2015','NES','seh2','feh2s','indst','ETS') = 4.51E-05        ;
-vm_demFeSector.up('2015','NES','seh2','feh2s','indst','ES') = 0.000105197      ;
-vm_demFeSector.up('2015','OAS','seh2','feh2s','indst','ETS') = 0.000153018     ;
-vm_demFeSector.up('2015','OAS','seh2','feh2s','indst','ES') = 0.000575639      ;
-vm_demFeSector.up('2015','REF','seh2','feh2s','indst','ETS') = 0.000876776     ;
-vm_demFeSector.up('2015','REF','seh2','feh2s','indst','ES') = 0.000406937      ;
-vm_demFeSector.up('2015','SSA','seh2','feh2s','indst','ETS') = 3.72E-05        ;
-vm_demFeSector.up('2015','SSA','seh2','feh2s','indst','ES') = 9.51E-05         ;
-vm_demFeSector.up('2015','UKI','seh2','feh2s','indst','ETS') = 5.76E-05        ;
-vm_demFeSector.up('2015','UKI','seh2','feh2s','indst','ES') = 5.76E-05         ;
-vm_demFeSector.up('2015','USA','seh2','feh2s','indst','ETS') = 0.001092341     ;
-vm_demFeSector.up('2015','USA','seh2','feh2s','indst','ES') = 0.001008315      ;
-
 ***----------------------------------------------------------------------------
 *** CCS limitations in Germany (for ARIADNE)
 ***----------------------------------------------------------------------------
-!! only small amount of co2 injection ccs until 2030
+*** only small amount of co2 injection ccs until 2030
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
-!! no Pe2Se fossil CCS in Germany
+*** no Pe2Se fossil CCS in Germany
 vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
 
 
