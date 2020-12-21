@@ -12,6 +12,6 @@ pandoc: false
 r_packages:
   - gms
 install:
-  - Rscript -e "if(!requireNamespace('gms')) devtools::install_github('pik-piam/gms')"
+  - Rscript -e "if(!requireNamespace('gms')) install.packages('gms')"
 script:
   - Rscript -e "null <- gms::codeCheck(strict=TRUE)"
