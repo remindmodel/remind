@@ -1,15 +1,18 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
+os: linux
+dist: xenial
 repos:
   CRAN: https://cloud.r-project.org
+  PIK:  https://rse.pik-potsdam.de/r/packages/
 cache: packages
 latex: false
 pandoc: false
-sudo: false
+r_packages:
+  - gms
 install:
   - Rscript -e "if(!requireNamespace('devtools')) install.packages('devtools')"
   - Rscript -e "if(!requireNamespace('gms')) devtools::install_github('pik-piam/gms')"
 script:
   - Rscript -e "null <- gms::codeCheck(strict=TRUE)"
-
