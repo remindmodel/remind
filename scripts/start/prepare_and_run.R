@@ -338,7 +338,7 @@ prepare <- function() {
     content <- c(modification_warning,'','sets')
     # write iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
-    regions <- unique(map$RegionCode)
+    regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- toolRegionSubsets(map=cfg$regionmapping)
@@ -356,14 +356,14 @@ prepare <- function() {
 	  content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
-    for(i in unique(map$RegionCode)) {
+    for(i in as.character(unique(map$RegionCode))) {
       content <- c(content, .tmp(map$CountryCode[map$RegionCode==i], prefix=paste0(i," . ("), suffix1=")", suffix2=")"))
     }
     content <- c(content,'      /')
     content <- c(content, 'iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" ','         /')
-    for(i in regions[regions %in% c("EUR","CHA",unique(map$CountryCode))]) {
+    for(i in regions[regions %in% c("EUR","CHA",as.character(unique(map$CountryCode)))]) {
       content <- c(content, .tmp(i, prefix=paste0(i," . "), suffix1="", suffix2=""))
     }
     content <- c(content,'      /',';')
