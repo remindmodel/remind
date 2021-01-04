@@ -597,11 +597,6 @@ display p_efFossilFuelExtr;
 pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
 
-$ifthen.edge_esm_transport "%transport%" == "edge_esm"
-*** allow for slightly higher geothermal electricity to avoid INFES
-pm_dataren(regi,"maxprod","1","geohdr") = 1.01*pm_dataren(regi,"maxprod","1","geohdr");
-$endif.edge_esm_transport
-
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim

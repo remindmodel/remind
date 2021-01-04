@@ -62,6 +62,14 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 16GB of memory and a Core i7 CPU or similar.
 
 ## HOW TO INSTALL
+
+**Please note: You need input data to run REMIND. At present, there are
+still legal issues with sharing this data, so we can not publish them yet
+(but we are working on it, please bear with us). If you have access to the
+necessary data sources (IEA, etc.) you can generate the input data on your own,
+we are happy to assist you in doing so.**
+
+
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
 solvers *CONOPT* for its core calculations. As the model
 benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
@@ -109,6 +117,7 @@ us at remind@pik-potsdam.de to discuss alternatives if this is not possible.
 For post-processing model outputs *Latex* is required
 (https://www.latex-project.org/get/). To be seen by the model it also needs to
 added to the PATH variable of your system.
+
 
 ## HOW TO CONFIGURE
 Model run settings are set in `config/default.cfg` (or another config file of
