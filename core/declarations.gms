@@ -320,6 +320,9 @@ vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
+vm_shSeel_fe(ttot,all_regi,emi_sectors)               "share of electricity in sector final energy [0..1]"
+vm_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
+
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
@@ -411,6 +414,9 @@ q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energ
 *q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
 q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
+
+q_shSeel_fe(ttot,all_regi,emi_sectors)                "share of gases and liquids in sector final energy"
+q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
 q_heat_limit(ttot,all_regi)

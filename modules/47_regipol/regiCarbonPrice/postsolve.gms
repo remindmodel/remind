@@ -314,14 +314,14 @@ $ifthen.cm_implicitFE "%cm_implicitFE%" == "exoTax"
 ***		for region groups
 	loop((ttot,ext_regi,FEtarget_sector)$(p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) AND (NOT(all_regi(ext_regi)))),
 		loop(all_regi$regi_group(ext_regi,all_regi),
-			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * 1.0e-12 / sm_GJ_2_TWa;
+			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * sm_DpGJ_2_TDpTWa;
 		);
 	);
 
 ***		for single regions
 	loop((ttot,ext_regi,FEtarget_sector)$(p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) AND (all_regi(ext_regi))),
 		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * 1.0e-12 / sm_GJ_2_TWa;
+			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * sm_DpGJ_2_TDpTWa;
 		);
 	);
 	
