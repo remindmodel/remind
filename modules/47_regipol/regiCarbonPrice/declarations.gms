@@ -71,7 +71,11 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 Parameter
 
 $ifthen.implicitFE_type "%cm_implicitFE%" == "exoTax"
-	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / %cm_implFEExoTax% /  
+***	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / %cm_implFEExoTax% /  
+	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / 
+		2025.EUR_regi.stat   1, 2030.EUR_regi.stat   2, 2035.EUR_regi.stat   3, 2040.EUR_regi.stat   4, 2045.EUR_regi.stat   5,  2050.EUR_regi.stat   7,
+		2025.EUR_regi.trans 10, 2030.EUR_regi.trans 20, 2035.EUR_regi.trans 30, 2040.EUR_regi.trans 40, 2045.EUR_regi.trans 50,  2050.EUR_regi.trans 60 
+	/  
 $elseif.implicitFE_type "%cm_implicitFE%" == "FEtarget"
 	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
 $endIf.implicitFE_type
