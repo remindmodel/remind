@@ -67,25 +67,9 @@ equations
 $endIf.quantity_regiCO2target    
 
 
+
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 Parameter
-
-$ifthen.implicitFE_type "%cm_implicitFE%" == "exoTax"
-
-$ifthen.implFEExoTax "%cm_implFEExoTax%" == "OFF"
-***	default p47_implFEExoTax value
-	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / 
-		2025.EUR_regi.stat   1, 2030.EUR_regi.stat   2, 2035.EUR_regi.stat   3, 2040.EUR_regi.stat   4, 2045.EUR_regi.stat   5,  2050.EUR_regi.stat   7,
-		2025.EUR_regi.trans 20, 2030.EUR_regi.trans 40, 2035.EUR_regi.trans 60, 2040.EUR_regi.trans 80, 2045.EUR_regi.trans 100,  2050.EUR_regi.trans 120 
-	/  
-$else.implFEExoTax
-***	p47_implFEExoTax defined by switch cm_implFEExoTax
-	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / %cm_implFEExoTax% /  
-$endIf.implFEExoTax	
-
-$elseif.implicitFE_type "%cm_implicitFE%" == "FEtarget"
-	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
-$endIf.implicitFE_type
 
 	p47_implFETax(ttot,all_regi,all_enty)            "tax/subsidy level on FE"
 	p47_implFETargetCurrent(ext_regi)                "current iteration total final energy"
@@ -97,6 +81,27 @@ $endIf.implicitFE_type
 	p47_implFETax_Rescale_iter(iteration,ext_regi)   "final energy implicit tax rescale factor per iteration"    
 	p47_implFETargetCurrent_iter(iteration,ext_regi) "total final energy level per iteration"    
 ;
+
+$ifthen.implicitFEtarget "%cm_implicitFE%" == "FEtarget"
+Parameter
+	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
+;
+$endIf.implicitFEtarget
+
+$IFTHEN.exoTax "%cm_implFEExoTax%" == "off"
+***	default p47_implFEExoTax value
+Parameter
+	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / 
+		2025.EUR_regi.stat   1, 2030.EUR_regi.stat   2, 2035.EUR_regi.stat   3, 2040.EUR_regi.stat   4, 2045.EUR_regi.stat   5,  2050.EUR_regi.stat   7,
+		2025.EUR_regi.trans 20, 2030.EUR_regi.trans 40, 2035.EUR_regi.trans 60, 2040.EUR_regi.trans 80, 2045.EUR_regi.trans 100,  2050.EUR_regi.trans 120 
+	/
+;
+$else.exoTax
+***	p47_implFEExoTax defined by switch cm_implFEExoTax
+Parameter
+	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / %cm_implFEExoTax% /
+;
+$ENDIF.exoTax
 
 equations
 	q21_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
