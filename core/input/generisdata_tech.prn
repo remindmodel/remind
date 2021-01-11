@@ -87,8 +87,8 @@ omf                 0.05        0.03        0.03        0.03        0.05        
 omv                    3          12          12          24           0                                 3           12
 lifetime              30          25          25          30          30           3        3            30          30
 incolearn           1000
-ccap0            0.00005 
-learn               0.10  
+ccap0             0.0005 
+learn               0.15  
 
 
 +                 tdels     tdbiogas    tdfosgas    tdbiohos    tdfoshos       tdh2s       tdh2t      
@@ -175,6 +175,6 @@ omf                 0.84       0.025
 omv                    0           0
 lifetime              20          20
 incolearn                      18000
-ccap0                        0.00005
-learn                           0.10   
+ccap0                       0.000005
+learn                           0.15   
 *** EOF ./core/input/generisdata_tech.prn
