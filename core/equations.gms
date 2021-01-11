@@ -250,7 +250,7 @@ q_limitCapUe(t,regi,fe2ue(entyFe,entyUe,te))..
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
 ***---------------------------------------------------------------------------
 
-*' Transformation from final energy to useful energy:
+*' Transformation from final energy to energy services:
 q_transFe2Es(t,regi,fe2es(entyFe,esty,teEs))..
     pm_fe2es(t,regi,teEs) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
     =e=
