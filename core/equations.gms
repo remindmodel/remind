@@ -822,6 +822,16 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
 ;
 
 
+
+q_PE_histCap_NGCC_2020_up(t,regi,entyPe,entySe)$( (p_PE_histCap("2015",regi,entyPe,entySe) gt 0.02) AND sameas(entyPe,"pegas") AND sameas(entySe,"seel") AND sameas(t,"2020") )..
+    sum(te$pe2se(entyPe,entySe,te),
+      sum(te2rlf(te,rlf), vm_cap(t,regi,te,rlf))
+    )
+    =l=
+    1.5 * p_PE_histCap("2015",regi,entyPe,entySe) + 0.01
+;
+
+
 ***---------------------------------------------------------------------------
 *' Share of green hydrogen in all hydrogen.
 ***---------------------------------------------------------------------------

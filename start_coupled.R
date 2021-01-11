@@ -34,7 +34,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag <- check_config(cfg_mag,paste0(path_magpie,"config/default.cfg"),paste0(path_magpie,"modules")) 
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  cfg_mag$output     <- c("report","rds_report","remind") # report: MAgPIE3 and MAgPIE4, remind: MAgPIE3 (glo.modelstat.csv)
+  cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
@@ -209,8 +209,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    load(paste0("C_",run,".RData")) # load the config of the subsequent run here to provide the correct qos setting
-    system(paste0("sbatch --qos=",qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+    # load the config of the subsequent run to provide the correct qos setting (use new environmet to not overwrite the cfg_rem of the current run)
+    subseq.env <- new.env()
+    load(paste0("C_",run,".RData"),envir=subseq.env)
+    system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
@@ -244,7 +246,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     warning(msg)
   } else {
     # Replace REMIND and MAgPIE with REMIND-MAgPIE
-    gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
+    #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
     write.report(tmp3,file=paste0("output/",runname,".mif"))
   }
 }

@@ -16,7 +16,9 @@ library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
 ############################# BASIC CONFIGURATION #############################
 runs <- NULL
-readArgs("runs")
+folder <- "./output"
+readArgs("runs","folder")
+
 ###############################################################################
 
 ############################# DEFINE FUNCTIONS ###########################
@@ -212,7 +214,7 @@ plot_iterations <- function(runname) {
                         title=paste(runname,"Price mult factor",sep="\n"))
              
   ######################### PRINT TO PDF ################################
-	out<-swopen(template="/home/dklein/scripts/template.tex")
+	out<-swopen(template="david")
 	swfigure(out,print,p_price_mag,sw_option="height=9,width=16")
 	swfigure(out,print,p_fuelex,sw_option="height=9,width=16")
   swfigure(out,print,p_it_fuelex,sw_option="height=9,width=16")
@@ -230,7 +232,7 @@ plot_iterations <- function(runname) {
 }
 
 wdnow <- getwd()
-setwd("../../../output/")
+setwd(folder)
 
 # Searching for runs to plot iterations for
 if (is.null(runs)) {
