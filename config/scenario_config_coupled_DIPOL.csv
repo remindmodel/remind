@@ -1,0 +1,9 @@
+title;start;qos;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt
+TraInd-Base-DIPOL;1;priority;;;SSP2,NPI;y2150;;;;
+TraInd-NDC-DIPOL;1;priority;;;SSP2,NDC;y2150;;;;
+TraInd-PkBudg1300-S1;1;short;;;SSP2,NDC;y2020;;;;
+TraInd-PkBudg1300-S2;1;short;;;SSP2,NDC;y2020;;;;
+TraInd-PkBudg1300-S3;1;short;;;SSP2,NDC;y2020;;;;
+TraInd-PkBudg1300-S4;1;short;;;SSP2,NDC;y2020;;;;
+TraInd-PkBudg1300-S5;1;short;;;SSP2,NDC;y2020;;;;
+TraInd-PkBudg1300-S6;1;short;;;SSP2,NDC;y2020;;;;
