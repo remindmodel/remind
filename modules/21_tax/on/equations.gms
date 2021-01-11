@@ -42,7 +42,7 @@
     + v21_taxrevBio(t,regi)
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
-    + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)   
+    + v21_taxrevFlex(t,regi)
  ;
 
 
