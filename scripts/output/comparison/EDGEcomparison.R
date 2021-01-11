@@ -967,7 +967,6 @@ outdir = paste0("output/comparerunEDGE", time)
 dir.create(outdir)
 ## names of the output files
 md_template = "EDGETransportComparison.Rmd"
-dash_template = "EDGEdashboard.Rmd"
 ## save RDS files
 lapply(names(alltosave), function(nm)
   saveRDS(alltosave[[nm]], paste0(outdir, "/",nm,".RDS")))
@@ -977,31 +976,8 @@ write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = 
             row.names = FALSE, col.names = FALSE)
 
 
-#file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-#rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
+rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
 
-
-## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
-if (length(outputdirs) == 5 &
-    isTRUE(any(grepl("Budg1100_SynSurge", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_ConvCase", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_ElecEra", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_HydrHype", outputdirs))) &
-    isTRUE(any(grepl("NDC_ConvCase", outputdirs)))){
-  file.copy(file.path("./scripts/output/comparison/notebook_templates/helper_dashboard.R"), outdir)
-  file.copy(file.path("./scripts/output/comparison/notebook_templates", dash_template), outdir)
-  rmarkdown::render(path(outdir, dash_template))
-}
-
-## If the scenarios are the 7 scenarios used in the paper, the paper-specific reporting is activated
-if (any(grepl("Budg1100_ElecEra$", unique(alltosave$fleet_all$scenario))) &
-    any(grepl("Budg1100_ElecEraWise", unique(alltosave$fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCase$", unique(alltosave$fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCaseWise", unique(alltosave$fleet_all$scenario))) &
-    any(grepl("NPi", unique(alltosave$fleet_all$scenario))) &
-    any(grepl("Budg1100_HydrHype$", unique(alltosave$fleet_all$scenario))))  {
-  file.copy(file.path("./scripts/output/comparison/notebook_templates/PaperEDGE-Tplots.Rmd"), outdir)
-  rmarkdown::render(path(outdir, "PaperEDGE-Tplots.Rmd"), output_format="pdf_document")
-}
 
 
