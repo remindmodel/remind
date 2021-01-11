@@ -45,9 +45,9 @@
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)  
     + v21_taxrevBioImport(t,regi)  
-$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
-    + vm_taxrevimplicitFEEffTarget(t,regi)
-$endif.implicitFEEffTarget    
+$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
+    + vm_taxrevimplFETax(t,regi)
+$endif.cm_implicitFE    
  ;
 
 

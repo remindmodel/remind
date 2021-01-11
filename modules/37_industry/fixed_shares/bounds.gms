@@ -25,5 +25,27 @@ v37_costExponent.up(t,regi) = 20;
 *** apply 35% only for DEU for now
 v37_CFuelshare.lo(t,regi)$(sameas(regi,"DEU"))=0.35;
 
+
+*** Upper bound for electricity share in industry
+$ifthen "%cm_feShareLimits%" == "electric"
+  vm_shSeel_fe.up(t,regi,"indst")$(t.val ge 2050) = 0.6;
+  vm_shSeel_fe.up("2045",regi,"indst") = 0.57;
+  vm_shSeel_fe.up("2040",regi,"indst") = 0.52;
+  vm_shSeel_fe.up("2035",regi,"indst") = 0.45;
+  vm_shSeel_fe.up("2030",regi,"indst") = 0.40;
+$elseif "%cm_feShareLimits%" == "incumbents"
+  vm_shSeel_fe.up(t,regi,"indst")$(t.val ge 2050) = 0.4;
+  vm_shSeel_fe.up("2045",regi,"indst") = 0.38;
+  vm_shSeel_fe.up("2040",regi,"indst") = 0.33;
+  vm_shSeel_fe.up("2035",regi,"indst") = 0.30;
+  vm_shSeel_fe.up("2030",regi,"indst") = 0.27;
+$elseif "%cm_feShareLimits%" == "efficiency"
+  vm_shSeel_fe.up(t,regi,"indst")$(t.val ge 2050) = 0.5;
+  vm_shSeel_fe.up("2045",regi,"indst") = 0.47;
+  vm_shSeel_fe.up("2040",regi,"indst") = 0.42;
+  vm_shSeel_fe.up("2035",regi,"indst") = 0.37;
+  vm_shSeel_fe.up("2030",regi,"indst") = 0.35;
+$endif
+
 *** EOF ./modules/37_industry/fixed_shares/bounds.gms
 

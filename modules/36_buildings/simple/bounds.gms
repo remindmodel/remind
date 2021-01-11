@@ -24,5 +24,12 @@ vm_demFeSector.up('2015',regi,'seh2','feh2s','build','ES') = 0;
 vm_demFeSector.up('2020',regi,'seh2','feh2s','build','ES') = 1e-5;
 vm_demFeSector.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
 
+
+*** lower bound for gases and liquids share in buildings for an incumbents scenario
+$ifthen "%cm_feShareLimits%" == "incumbents"
+ vm_shGasLiq_fe.lo(t,regi,"build")$(t.val ge 2050) = 0.25;
+ vm_shGasLiq_fe.lo(t,regi,"build")$(t.val ge 2030 AND t.val le 2045) = 0.15 + (0.10/20)*(t.val-2030);
+$endif
+
 *** EOF ./modules/36_buildings/simple/bounds.gms
 

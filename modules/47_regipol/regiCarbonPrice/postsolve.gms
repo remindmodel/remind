@@ -302,66 +302,79 @@ $ENDIF.regicarbonprice
 ***---------------------------------------------------------------------------
 *** Non-market based Efficiency Targets:
 ***---------------------------------------------------------------------------
-$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+
+
+$ifthen.cm_implicitFE "%cm_implicitFE%" == "exoTax"
+*** Exogenous FE implicit tax
+
+*** saving previous iteration value for implicit tax revenue
+	p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
+
+*** setting exogenous tax level
+***		for region groups
+	loop((ttot,ext_regi,FEtarget_sector)$(p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) AND (NOT(all_regi(ext_regi)))),
+		loop(all_regi$regi_group(ext_regi,all_regi),
+			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * sm_DpGJ_2_TDpTWa;
+		);
+	);
+
+***		for single regions
+	loop((ttot,ext_regi,FEtarget_sector)$(p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) AND (all_regi(ext_regi))),
+		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+			p47_implFETax(ttot2,all_regi,entyFe)$((ttot2.val ge ttot.val) AND FEtarget_sector2entyFe(FEtarget_sector,entyFe)) = p47_implFEExoTax(ttot,ext_regi,FEtarget_sector) * sm_DpGJ_2_TDpTWa;
+		);
+	);
+	
+	display p47_implFETax,p47_implFETax0;
+
+$elseif.cm_implicitFE "%cm_implicitFE%" == "FEtarget"
+*** Endogenous FE implicit tax calculate to reach total FE target
 
 *** saving previous iteration value for implicit tax
-p47_implicitFEEffTargetTax_prevIter(ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
-p47_implicitFEEffTargetTax0(ttot,regi) = p47_implicitFEEffTargetTax(ttot,regi)*sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot,regi,enty,enty2,te));
+p47_implFETax_prevIter(t,all_regi,entyFe) = p47_implFETax(t,all_regi,entyFe);
+p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
 
 ***  Calculating current FE level
 ***		for region groups
-loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
-  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+  p47_implFETargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
 );
 ***		for single regions (overwrites region groups)  
-loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
-  p47_implicitFEEffTargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,enty2,te), vm_prodFe.l(ttot2,all_regi,enty,enty2,te))));
+loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+  p47_implFETargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
 );
 ***  calculating efficiency directive targets implicit tax rescale
-loop((ttot,ext_regi)$p47_implicitFEEffTarget(ttot,ext_regi),	
+loop((ttot,ext_regi)$p47_implFETarget(ttot,ext_regi),	
   if(iteration.val lt 10,
-		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
+		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
   else 
-		p47_implicitFEEffTargetTax_Rescale(ext_regi) = max(0.1, ( p47_implicitFEEffTargetCurrent(ext_regi) / p47_implicitFEEffTarget(ttot,ext_regi) ) ) ** 1;
+		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget(ttot,ext_regi) ) ) ** 1;
   );  
-***  p47_implicitFEEffTargetTax_Rescale(ext_regi) = 
-***    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 , p47_implicitFEEffTargetTax_Rescale(ext_regi)),
-***			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
-***	  )
-***  ;
 );
 ***	updating efficiency directive targets implicit tax
 ***		for region groups
-loop((ttot,ext_regi)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
+loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
 	loop(all_regi$regi_group(ext_regi,all_regi),
-    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
-	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
-***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+    	p47_implFETax(t,all_regi,entyFe)$((t.val ge ttot.val)) = max(1, p47_implFETax_prevIter(t,all_regi,entyFe) * p47_implFETax_Rescale(ext_regi));
+		p47_implFETax(t,all_regi,entyFe)$((t.val eq ttot.val-5)) = p47_implFETax(ttot,all_regi,entyFe)/2;
   );
 );
 ***		for single regions (overwrites region groups)
-loop((ttot,ext_regi,target_type,emi_type)$(p47_implicitFEEffTarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+loop((ttot,ext_regi,target_type,emi_type)$(p47_implFETarget(ttot,ext_regi) AND (all_regi(ext_regi))),
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-    p47_implicitFEEffTargetTax(t,all_regi)$((t.val ge ttot.val)) = max(1, p47_implicitFEEffTargetTax_prevIter(t,all_regi) * p47_implicitFEEffTargetTax_Rescale(ext_regi));
-	p47_implicitFEEffTargetTax(t,all_regi)$((t.val eq ttot.val-5)) = p47_implicitFEEffTargetTax(ttot,all_regi)/2;
-***	 p47_implicitFEEffTargetTax(ttot,all_regi) + ( p47_implicitFEEffTargetTax(ttot,all_regi) - sum(se2fe(enty,enty2,te), vm_prodFe.l("2015",all_regi,enty,enty2,te)) ) / (ttot.val - 2015);
+    	p47_implFETax(t,all_regi,entyFe)$((t.val ge ttot.val)) = max(1, p47_implFETax_prevIter(t,all_regi,entyFe) * p47_implFETax_Rescale(ext_regi));
+		p47_implFETax(t,all_regi,entyFe)$((t.val eq ttot.val-5)) = p47_implFETax(ttot,all_regi,entyFe)/2;
   );
 );
 
-*** saving iteration level for efficiency directive targets implicit tax
-p47_implicitFEEffTargetTax_iter(iteration,ttot,all_regi) = p47_implicitFEEffTargetTax(ttot,all_regi);
-p47_implicitFEEffTargetTax_Rescale_iter(iteration,ext_regi) = p47_implicitFEEffTargetTax_Rescale(ext_regi);
-p47_implicitFEEffTargetCurrent_iter(iteration,ext_regi) = p47_implicitFEEffTargetCurrent(ext_regi);
+*** saving iteration level for efficiency directive targets implicit tax (for debugging purposes only)
+p47_implFETax_iter(iteration,ttot,all_regi,entyFe) = p47_implFETax(ttot,all_regi,entyFe);
+p47_implFETax_Rescale_iter(iteration,ext_regi) = p47_implFETax_Rescale(ext_regi);
+p47_implFETargetCurrent_iter(iteration,ext_regi) = p47_implFETargetCurrent(ext_regi);
 
-display p47_implicitFEEffTargetCurrent, p47_implicitFEEffTarget,
-	p47_implicitFEEffTargetTax_prevIter, p47_implicitFEEffTargetTax,
-	p47_implicitFEEffTargetTax_Rescale,
-	p47_implicitFEEffTargetTax_Rescale_iter,
-	p47_implicitFEEffTargetTax_iter,
-	p47_implicitFEEffTargetCurrent_iter,
-	p47_implicitFEEffTargetTax0;
+display p47_implFETargetCurrent, p47_implFETarget, p47_implFETax_prevIter, p47_implFETax, p47_implFETax_Rescale, p47_implFETax_Rescale_iter, p47_implFETax_iter, p47_implFETargetCurrent_iter, p47_implFETax0;
 
-$endIf.implicitFEEffTarget
+$endIf.cm_implicitFE
 
 
 

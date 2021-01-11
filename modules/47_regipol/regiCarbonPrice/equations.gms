@@ -89,15 +89,17 @@ $endIf.quantity_regiCO2target
 ***---------------------------------------------------------------------------
 *'  Calculation of tax/subsidy to reflect non carbon pricing driven efficency measures applied to reduce total final energy to comply with efficiency directive targets
 ***---------------------------------------------------------------------------
-$ifthen.implicitFEEffTarget not "%cm_implicitFEEffTarget%" == "off"
+$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
-q21_implicitFEEffTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
-  vm_taxrevimplicitFEEffTarget(t,regi)
+q21_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplFETax(t,regi)
   =e=
-  p47_implicitFEEffTargetTax(t,regi) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
-  - p47_implicitFEEffTargetTax0(t,regi) 
+  sum(enty2$entyFE(enty2),
+  	p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
+  )
+  - p47_implFETax0(t,regi) 
   ;
 
-$endIf.implicitFEEffTarget
+$endIf.cm_implicitFE
 
 *** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
