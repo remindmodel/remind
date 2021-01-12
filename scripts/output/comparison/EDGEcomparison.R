@@ -14,6 +14,7 @@ require(moinput)
 require(edgeTrpLib)
 require(gdx)
 require(gdxdt)
+require(stringr)
 setConfig(forcecache = TRUE)
 
 if(!exists("source_include")) {
@@ -34,29 +35,28 @@ for (outputdir in outputdirs) {
 gdx_name = "fulldata.gdx"
 
 
-emi_all = NULL
-salescomp_all = NULL
-fleet_all = NULL
-EJroad_all = NULL
-EJmode_all = NULL
-ESmodecap_all = NULL
-ESmodeabs_all = NULL
-CO2km_int_newsales_all = NULL
-emidem_all = NULL
-emitail_all = NULL
-EJfuelsPass_all = NULL
-EJfuelsFrgt_all = NULL
-EJfuelsMode_all = NULL
-emipSource_all = NULL
-elecdem_all = NULL
-costs_all = NULL
-pref_FV_all = NULL
-demgdpcap_all = NULL
-invest_all = NULL
-trspPE_all = NULL
-LDV_PEonlySyn_all = NULL
-LDV_PE_all = NULL
-HDV_PE_all = NULL
+## create list to save
+alltosave = list(fleet_all = NULL,
+                 salescomp_all = NULL,
+                 EJroad_all = NULL,
+                 EJmode_all = NULL,
+                 ESmodecap_all = NULL,
+                 ESmodeabs_all = NULL,
+                 CO2km_int_newsales_all = NULL,
+                 emidem_all = NULL,
+                 emiDemand_all = NULL,
+                 emiSec_all = NULL,
+                 EJfuelsPass_all = NULL,
+                 EJfuelsFrgt_all = NULL,
+                 EJfuelsMode_all = NULL,
+                 emipSource_all = NULL,
+                 elecdem_all = NULL,
+                 costs_all = NULL,
+                 pref_FV_all = NULL,
+                 demgdpcap_all = NULL,
+                 invest_all = NULL,
+                 LDV_PEnew_all = NULL,
+                 trsp_PEnew_all = NULL)
 
 scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
@@ -116,8 +116,8 @@ fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
   allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("iso", "vehicle_type", "year"))
-  annual_mileage = 15000
-  allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("iso", "technology", "variable", "year")]
+  annual_mileage = 13000
+  allfleet = allfleet[,.(value = sum(value/1.5/annual_mileage)), by = c("iso", "technology", "variable", "year")]
 
   allfleet = merge(allfleet, REMIND2ISO_MAPPING, by = "iso")
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
@@ -199,7 +199,7 @@ ESmodeFun = function(demandkm, POP){
   demandkm[, veh := ifelse(grepl("Passenger Rail|HSR", vehicle_type), "Passenger Rail", veh)]
   demandkm[, veh := ifelse(grepl("Ship", vehicle_type), "Shipping", veh)]
   demandkm[, veh := ifelse(grepl("Cycle|Walk", subsector_L3), "Non motorized", veh)]
-  demandkm = demandkm[,.(demand_F = sum(demand_F)), by = c("iso", "year", "aggr_mode", "veh")]
+  demandkm = demandkm[,.(demand_F = sum(demand_F)), by = c("iso", "year", "aggr_mode", "veh", "technology")]
   setnames(demandkm, old = "veh", new = "vehicle_type")
 
 
@@ -215,7 +215,7 @@ ESmodeFun = function(demandkm, POP){
   POP = merge(POP, REMIND2ISO_MAPPING, all.x = TRUE, by = c("iso"))
   POP = POP[, .(pop = sum(value)), by = c("region", "year")]
   demandkm = merge(demandkm, REMIND2ISO_MAPPING, by = "iso")
-  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
+  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode", "technology")]
 
   ## save separately the total demand
   demandkm_abs = copy(demandkm)
@@ -223,6 +223,7 @@ ESmodeFun = function(demandkm, POP){
   demandkm_abs[, demand_F := demand_F/    ## in million km
                  1e6]         ## in trillion km
   ## calculate per capita demand
+  demandkm = demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
   demandkm = merge(demandkm, POP, all.x = TRUE, by =c("year", "region"))
 
   ## calculate per capita values
@@ -237,13 +238,15 @@ ESmodeFun = function(demandkm, POP){
 }
 
 FEliq_sourceFun = function(FEliq_source, gdp){
-  ## Attribute oil and biodiesel (TODO Coal2Liquids is accounted for as Oil!
-  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Oil", "FE|Transport|Liquids|Coal"), "Oil", NA)]
-  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass"), "Biodiesel", technology)]
-  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Hydrogen"), "Synfuel", technology)]
-  FEliq_source = FEliq_source[,.(value = sum(value)), by = c("model", "scenario", "region", "year", "unit", "technology")]
+  FEliq_source = FEliq_source[variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting")]
 
-  FEliq_sourceR = FEliq_source[][, shareliq := value/sum(value),by=c("region", "year")]
+  ## Attribute oil and biodiesel (TODO Coal2Liquids is accounted for as Oil!
+  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
+  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting"), "Biomass", technology)]
+  FEliq_source[, technology := ifelse(variable %in% c("FE|Transport|Liquids|LDV|Synthetic|New Reporting"), "Synfuel", technology)]
+  FEliq_source = FEliq_source[,.(value = sum(value)), by = c("model", "scenario", "region", "year", "unit", "technology")]
+  FEliq_sourceR = FEliq_source[, shareliq := value/sum(value),by=c("region", "year")]
+
   ## to ISO level
   FEliq_sourceISO <- disaggregate_dt(FEliq_source, REMIND2ISO_MAPPING,
                                      valuecol="value",
@@ -351,11 +354,10 @@ EJfuelsModeFun = function(demandEJ, FEliq_source){
   demandEJ[, technology := ifelse(technology %in% c("BEV", "LA-BEV", "Electric"), "Electricity", technology)]
   demandEJ[, technology := ifelse(technology %in% c("FCEV"), "Hydrogen", technology)]
   ## attribute LDV, Freight and remove all other categories
-  demandEJ[, subsec := NA]
+  demandEJ[, subsec := "subsec"]
   demandEJ[subsector_L2 == "trn_pass_road_LDV", subsec := "LDV"]
   demandEJ[sector == "trn_freight", subsec := "Freight"]
-  demandEJ[is.na(sector), subsec := "Other"]
-  ## aggregate
+  demandEJ[subsec=="subsec", subsec := "Other"]  ## aggregate
   demandEJ = demandEJ[, .(demand_EJ = sum(demand_EJ)), by = c("region", "year","technology", "subsec")]
   ## merge with liquids composition
   demandEJ = merge(demandEJ, FEliq_source, all = TRUE, by = c("region", "year", "technology"), allow.cartesian=TRUE)
@@ -366,9 +368,159 @@ EJfuelsModeFun = function(demandEJ, FEliq_source){
   demandEJ = demandEJ[,.(demand_EJ = demand_EJ*shareliq), by = c("region", "year", "subtech", "subsec")]
   ## filter out years
   demandEJ = demandEJ[year >= 2015 & year <= 2100]
-  
+
   return(demandEJ)
 }
+
+
+
+LDV_PEnewFun =function(demEJ, gdx, miffile, FEliq_source, REMIND2ISO_MAPPING) {
+  ## Collect all the FEs
+  FE_noliq = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Electricity", "FE|Transport|Pass|Road|LDV|Gases", "FE|Transport|Pass|Road|LDV|Hydrogen")]
+
+  ## give short names to the FEs
+  FE_noliq[variable %in% c("FE|Transport|Pass|Road|LDV|Electricity"), technology := "Electricity"]
+  FE_noliq[variable %in% c("FE|Transport|Pass|Road|LDV|Gases"), technology := "Gases"]
+  FE_noliq[variable %in% c("FE|Transport|Pass|Road|LDV|Hydrogen"), technology := "Hydrogen"]
+  FE_noliq[, variable := NULL]
+  FE_all = rbind(FE_noliq, FEliq_source[, shareliq:=NULL])
+
+  ## collect the effciencies from the gdx
+  refliq = 0.9 ## refinery oil to SE liquids
+  elh2 = 0.8    ## convert electricity to H2
+  MeOH = 0.7    ## methanol production
+  biodiesel = 0.98  ## oil biomass to biodiesel
+
+  ## calculate the shares of 4W and 2W in LDVs for each energy source(liquids->synfuels,biofuels,fossil,electricity,hydrogen)
+  demand_EJ = merge(demEJ, REMIND2ISO_MAPPING, by = "iso")
+  demand_EJ = demand_EJ[subsector_L2 == "trn_pass_road_LDV"]
+  demand_EJ[technology %in% c("BEV", "LA-BEV", "Electricity"), technology := "Electricity"]
+  demand_EJ[technology %in% c("Liquids", "Hybrid Liquids"), technology := "Oil"]
+  demand_EJ[technology %in% c("FCEV"), technology := "Hydrogen"]
+  demand_EJ = demand_EJ[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, technology, subsector_L1)]
+  demand_EJ[, share_LDV := demand_EJ/sum(demand_EJ), by = .(region, year, technology)]
+  defos = demand_EJ[technology == "Oil"]
+  ## duplicate values for synfuels and biofuels
+  demand_EJ = rbind(demand_EJ, defos[, technology := "Synfuel"])
+  demand_EJ = rbind(demand_EJ, defos[, technology := "Biomass"])
+  ## reduce the FEs according to the shares of 2W and 4W
+  FE_all = merge(FE_all, demand_EJ[subsector_L1 == "trn_pass_road_LDV_4W"][, subsector_L1 := NULL], by = c("region", "year", "technology"))
+  FE_all[, value := value*share_LDV]
+  FE_all[, share_LDV := NULL]
+  ## calculate SE units
+  FE_all[technology == "Oil", value := value/refliq]
+  FE_all[technology == "Hydrogen", value := value/elh2]
+  FE_all[technology == "Synfuel", value := value/elh2/MeOH]
+  FE_all[technology == "Biomass", value := value/biodiesel]
+  ## attribute electricity tag to h2 and syn
+  FE_all[technology %in% c("Hydrogen", "Synfuel"), technology := "Electricity"]
+  ## sum up on technology
+  FE_all = FE_all[,.(value = sum(value)), by = c("region", "year", "technology")]
+  ## collect efficiencies of fossil plants
+  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Geothermal"), eff = c(0.57, 0.49, 0.38, 0.47, 0.41, 0.36, 0.42, 0.33, 0.3, 0.4))
+
+  ## collect the shares of the different sources in the electricity production
+  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
+  SEcomp = merge(SEcomp, eff, by = "variable", all.x =TRUE)
+  SEcomp[, share := value/sum(value), by = .(region, year)]
+  SEcomp[, value:= NULL]
+  ## calculate the PE by sources
+  PE_elec = merge(FE_all[technology == "Electricity"], SEcomp, by = c("region", "year"))
+  ## attribute efficiency 1 to RES
+  PE_elec[is.na(eff), eff := 1]
+  PE_elec[, value := value*share/eff]
+  PE_elec[, c("share", "eff"):= NULL]
+  PE_elec[variable == "SE|Electricity|Wind", technology := "Wind"]
+  PE_elec[variable %in% c("SE|Electricity|Solar|PV", "SE|Electricity|Solar|CSP"), technology := "Solar"]
+  PE_elec[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS"), technology := "Gas"]
+  PE_elec[variable %in% c("SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
+  PE_elec[variable %in% c("SE|Electricity|Oil|DOT"), technology := "Oil"]
+  PE_elec[variable %in% c("SE|Electricity|Nuclear"), technology := "Uranium"]
+  PE_elec[variable %in% c("SE|Electricity|Hydro"), technology := "Hydro"]
+  PE_elec[variable %in% c("SE|Electricity|Geothermal"), technology := "Geothermal"]
+  PE_elec = PE_elec[,.(value =sum(value)), by = .(region, year, technology)]
+  ## merge all PE
+  PE_all = rbind(PE_elec, FE_all[technology != "Electricity"])
+  ## summarise the technologies (e.g. fossil electricity production and fossil used directly)
+  PE_all = PE_all[,.(value = sum(value)), by = .(region, year, technology)]
+
+  return(PE_all)
+
+}
+
+
+trsp_PEnewFun =function(demEJ, gdx, miffile, feliq, REMIND2ISO_MAPPING) {
+  ## Collect all the FEs
+  FE_noliq = miffile[variable %in% c("FE|Transport|Electricity", "FE|Transport|Gases", "FE|Transport|Hydrogen")]
+
+  ## give short names to the FEs
+  FE_noliq[variable %in% c("FE|Transport|Electricity"), technology := "Electricity"]
+  FE_noliq[variable %in% c("FE|Transport|Gases"), technology := "Gases"]
+  FE_noliq[variable %in% c("FE|Transport|Hydrogen"), technology := "Hydrogen"]
+  FE_noliq[, variable := NULL]
+  FE_all = rbind(FE_noliq, feliq)
+
+
+  ## collect the effciencies from the gdx
+  
+  refliq = 0.9 ## refinery oil to SE liquids
+  elh2 = 0.8    ## convert electricity to H2
+  MeOH = 0.7    ## methanol production
+  biodiesel = 0.98  ## oil biomass to biodiesel
+
+  ## calculate the shares of 4W and 2W in LDVs for each energy source(liquids->synfuels,biofuels,fossil,electricity,hydrogen)
+  demand_EJ = merge(demEJ, REMIND2ISO_MAPPING, by = "iso")
+  demand_EJ[technology %in% c("BEV", "LA-BEV", "Electricity"), technology := "Electricity"]
+  demand_EJ[technology %in% c("Liquids", "Hybrid Liquids"), technology := "Oil"]
+  demand_EJ[technology %in% c("FCEV"), technology := "Hydrogen"]
+  demand_EJ = demand_EJ[,.(demand_EJ = sum(demand_EJ)), by = .(region, year, technology)]
+  defos = demand_EJ[technology == "Oil"]
+  ## duplicate values for synfuels and biofuels
+  demand_EJ = rbind(demand_EJ, defos[, technology := "Synfuel"])
+  demand_EJ = rbind(demand_EJ, defos[, technology := "Biomass"])
+  ## reduce the FEs according to the shares of 2W and 4W
+  FE_all = merge(FE_all, demand_EJ, by = c("region", "year", "technology"))
+  ## calculate SE units
+  FE_all[technology == "Oil", value := value/refliq]
+  FE_all[technology == "Hydrogen", value := value/elh2]
+  FE_all[technology == "Synfuel", value := value/elh2/MeOH]
+  FE_all[technology == "Biomass", value := value/biodiesel]
+  ## attribute electricity tag to h2 and syn
+  FE_all[technology %in% c("Hydrogen", "Synfuel"), technology := "Electricity"]
+  ## sum up on technology
+  FE_all = FE_all[,.(value = sum(value)), by = c("region", "year", "technology")]
+  ## collect efficiencies of fossil plants
+  eff = data.table(variable = c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Geothermal"), eff = c(0.57, 0.49, 0.38, 0.47, 0.41, 0.36, 0.42, 0.33, 0.3, 0.4))
+
+  ## collect the shares of the different sources in the electricity production
+  SEcomp = miffile[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS", "SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS", "SE|Electricity|Oil|DOT", "SE|Electricity|Nuclear", "SE|Electricity|Geothermal", "SE|Electricity|Hydro",  "SE|Electricity|Solar|CSP", "SE|Electricity|Solar|PV", "SE|Electricity|Wind")]
+  SEcomp = merge(SEcomp, eff, by = "variable", all.x =TRUE)
+  SEcomp[, share := value/sum(value), by = .(region, year)]
+  SEcomp[, value:= NULL]
+  ## calculate the PE by sources
+  PE_elec = merge(FE_all[technology == "Electricity"], SEcomp, by = c("region", "year"))
+  ## attribute efficiency 1 to RES
+  PE_elec[is.na(eff), eff := 1]
+  PE_elec[, value := value*share/eff]
+  PE_elec[, c("share", "eff"):= NULL]
+  PE_elec[variable == "SE|Electricity|Wind", technology := "Wind"]
+  PE_elec[variable %in% c("SE|Electricity|Solar|PV", "SE|Electricity|Solar|CSP"), technology := "Solar"]
+  PE_elec[variable %in% c("SE|Electricity|Gas|CC|w/o CCS", "SE|Electricity|Gas|CCC|w/ CCS", "SE|Electricity|Gas|GT", "SE|Electricity|Gas|CHP|w/o CCS"), technology := "Gas"]
+  PE_elec[variable %in% c("SE|Electricity|Coal|PC|w/o CCS", "SE|Electricity|Coal|PCC|w/ CCS", "SE|Electricity|Coal|IGCC|w/o CCS", "SE|Electricity|Coal|IGCCC|w/ CCS"), technology := "Coal"]
+  PE_elec[variable %in% c("SE|Electricity|Oil|DOT"), technology := "Oil"]
+  PE_elec[variable %in% c("SE|Electricity|Nuclear"), technology := "Uranium"]
+  PE_elec[variable %in% c("SE|Electricity|Hydro"), technology := "Hydro"]
+  PE_elec[variable %in% c("SE|Electricity|Geothermal"), technology := "Geothermal"]
+  PE_elec = PE_elec[,.(value =sum(value)), by = .(region, year, technology)]
+  ## merge all PE
+  PE_all = rbind(PE_elec, FE_all[technology != "Electricity"])
+  ## summarise the technologies (e.g. fossil electricity production and fossil used directly)
+  PE_all = PE_all[,.(value = sum(value)), by = .(region, year, technology)]
+
+  return(PE_all)
+
+}
+
 
 emidemFun = function(miffile){
   emidem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand","Emi|CO2|Transport|Freight|Short-Medium Distance|Demand", "Emi|CO2|Transport|Freight|Long Distance|Demand"),]
@@ -376,8 +528,8 @@ emidemFun = function(miffile){
 }
 
 
-emiTailpipeFun = function(miffile){
-  emitail = miffile[grepl("Tailpipe", variable)]
+emiDemandFun = function(miffile){
+  emitail = miffile[grepl("Demand", variable)]
   return(emitail)
 }
 
@@ -393,6 +545,27 @@ elecdemFun = function(miffile){
 investFun = function(miffile){
   invest = miffile[variable %in% c("Energy Investments|Hydrogen", "Energy Investments|Electricity", "Energy Investments|Liquids", "Energy Investments|Gases", "Energy system costs")]
   return(invest)
+}
+
+emiSecFun = function(miffile){
+   emiSec = miffile[variable %in% c("Emi|CO2|Fossil Fuels and Industry|Energy Supply",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass|Supply|w/ couple prod",
+                                      "Emi|CO2|Industry|Direct",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass|Energy|Demand|Industry",
+                                      "Emi|CO2|FFaI|Industry|Process",
+                                      "Emi|CO2|Transport|Demand",
+                                      "Emi|CO2|Buildings|Direct",
+                                      "Emi|CO2|Land-Use Change",
+                                      "Emi|CO2|Carbon Capture and Storage|Biomass"),]
+
+   emiSec[, variable := as.character(variable)]
+   emiSec[, varplot := ifelse(variable == "Emi|CO2|Carbon Capture and Storage|Biomass", "Emi|CO2|CDR|BECCS", NA)]
+   emiSec[varplot == "Emi|CO2|CDR|BECCS", value := -value]
+   emiSec[, varplot := ifelse(variable %in% c("Emi|CO2|Fossil Fuels and Industry|Energy Supply", "Emi|CO2|Carbon Capture and Storage|Biomass|Supply|w/ couple prod"), "Emi|CO2|Energy|Supply|Gross", varplot)]
+   emiSec[, varplot := ifelse(variable %in% c("Emi|CO2|Industry|Direct", "Emi|CO2|Carbon Capture and Storage|Biomass|Energy|Demand|Industry", "Emi|CO2|FFaI|Industry|Process"), "Emi|CO2|Industry|Gross", varplot)]
+   emiSec[is.na(varplot), varplot := variable]
+   emiSec = emiSec[,.(value = sum(value)), by = c("region", "year", "varplot")]
+   return(emiSec)
 }
 
 emipSourceFun = function(miffile){
@@ -590,455 +763,7 @@ demgdpcap_Fun = function(demkm, REMIND2ISO_MAPPING) {
 }
 
 
-trspPEFun = function(gdx){
 
-    TWa_2_EJ <- 31.536
-    ## demSe: secondary energy demand, secondary energy carrier units
-    demSe <- readgdx(gdx, "vm_demSe")[, value := value*TWa_2_EJ]
-    setnames(demSe, c("year", "region", "se", "fe", "te", "value"))
-    ## prodSe: secondary energy production, secondary energy carrier units
-    prodSe <- readgdx(gdx, "vm_prodSe")[, value := value*TWa_2_EJ]
-    setnames(prodSe, c("year", "region", "pe", "se", "te", "value"))
-    ## energy conversion for the different technologies
-    etaconv = readgdx(gdx, "pm_eta_conv")
-    setnames(etaconv, c("year", "region", "te", "eff"))
-    ## separately see MeOH conversion as will be used multiple times on her own
-    convMeOH = unique(etaconv[te == "MeOH", eff])
-
-    ## calculate the shares of seliqfos for the two sectors, transport and stationary (in seliqfos units)
-    shareLiqSec = demSe[se == "seliqfos"]
-    shareLiqSec[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-    shareLiqSec = shareLiqSec[, .(value = sum(value)), by = .(region, year, sec)]
-    shareLiqSec[, share := value/sum(value), by =.(region, year)]
-    shareLiqSec[, c("value") := NULL]
-
-    ## create pathway in demSe for synfuels to transport and synfuels to stationary
-    demSeSyn = merge(demSe[fe == "seliqfos" & te == "MeOH", .(year, region, value)], shareLiqSec, all = TRUE, by = c("region", "year"))
-    demSeSyn[is.na(value), value := 0]
-    demSeSyn[, value := share*value*convMeOH]  ## convert in seliqfos values
-    demSeSyn[, share := NULL]
-    demSeSyn[, fe := ifelse(sec == "trsp", "fesynt", "fesyns")]
-    demSeSyn[, se := "seliqfos"]
-
-    ## calculate the seliqfos from synfuels as a share of the total seliqfos
-    demSeLiq = demSe[se =="seliqfos"]
-    demSeLiq = demSeLiq[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-    demSeLiq = demSeLiq[,.(totseliq = sum(value)), by = c("year", "region", "sec")]
-    demSeLiq = merge(demSeLiq, demSeSyn, by = c("region", "year", "sec"))
-    demSeLiq[, sharesyn := value/(totseliq)]
-
-    ## "pure" hydrocarbons are classified as seliqfos->fepet,fedie, while synfuels are removed to avoid double counting
-    demSeLiqFos = merge(demSe[se =="seliqfos"][, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")], demSeLiq[,.(sharesyn, region, year, sec)], by = c("region", "year", "sec"))
-    demSeLiqFos[, value := value*(1-sharesyn)]
-    demSeLiqFos[, c("sec", "sharesyn") := NULL]
-
-    ## substitute the aggregate seliqfos and the synfuels in hydrogen values from demSe with the newly calculated fesyn for transport and stationary and the fossil liquids
-    demSe = rbind(demSe[se != "seliqfos" & te != "MeOH"], demSeLiqFos, demSeSyn[, c("sec", "te"):=list(NULL, "MeOH")])
-
-    ## share of hydrogen used by sector (both directly and to produce synfuels, accounted for separately)
-    shareH2Trsp = demSe[(se == "seh2" & fe %in% c("feh2s", "feh2t"))|(se == "seliqfos" & fe %in% c("fesynt",  "fesyns")), ]
-    shareH2Trsp[, value := ifelse(fe %in% c("fesyns", "fesynt"), value/convMeOH, value)]  ## convert to hydrogen values the synfuel
-    shareH2Trsp[, share := value/sum(value), by = c("region", "year")]
-    shareH2Trsp = shareH2Trsp[,.(year, region, share, fe)]
-
-    ## Electricity consumption for H2 production (in electricity units)
-    demElH2 <- demSe[se == "seel" & fe == "seh2" & !te %in% c("elh2VRE")]  ## the "dummy" variable needs to be removed
-    demElH2[, elh2 := sum(value), by = .(year, region)]
-    demElH2[, c("te", "value", "se", "fe") := NULL]
-    demElH2 <- unique(demElH2)
-
-    ## ... of which only a share is used in transport, directly and in synfuels (accounted for separately)
-    demElH2trp <- merge(demElH2, shareH2Trsp[fe %in% c("feh2t", "fesynt")], all.x = TRUE, by = c("year", "region"))
-    demElH2trp[, elh2 := elh2*share]
-    demElH2trp[, c("share") := NULL]
-    demElH2trpAll = demElH2trp[,.(elh2=sum(elh2)), by = c("region", "year")]
-
-
-    ## calculate the mix of production technologies to produce each secondary energy carrier
-    prodSe[, sharetech := value/sum(value), by = c("region", "year", "se")]
-    ## merge with conversion efficiency
-    prodSe = merge(prodSe, etaconv, by = c("region", "year", "te"))
-
-    ## fossil SE carriers that follow a smooth path from primary fossils to fepet, fedie, fegat
-    fosSe = merge(demSe[fe %in% c("fepet", "fedie", "fegat") & se != "seh2"][,.(region, year, fe, se, valdem = value)],
-                   prodSe[pe!="seh2"], by = c("region", "year", "se"))
-    fosSe[, valdem := valdem*sharetech/eff]
-    fosSe = fosSe[,.(region, year, pe, value = valdem)]
-
-    ## electricity for producing H2 for transport in primary energy
-    elH2Se = merge(demElH2trpAll[,.(region, year, se = "seel", valdem = elh2)],
-                 prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-    elH2Se[, valdem := valdem*sharetech/eff]
-    elH2Se = elH2Se[,.(region, year, pe, value = valdem)]
-
-    ## gases used directly to produce hydrogen
-    shareH2TrspAll = shareH2Trsp[fe %in% c("feh2t", "fesynt")]
-    shareH2TrspAll = shareH2TrspAll[,.(share=sum(share)), by = c("region", "year")]
-    h2fosSe = merge(prodSe[se == "seh2" & pe != "seel"],
-                    shareH2TrspAll, by = c("region", "year"))
-    h2fosSe[, valuedem :=value*share/eff]
-    h2fosSe = h2fosSe[,.(year,region, value, pe)]
-
-    ## electricity used in transport
-    elSe = merge(demSe[fe %in% c("feelt")][,.(region, year, valdem = value, fe, se)],
-                   prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-    elSe[, valdem := valdem*sharetech/eff]
-    elSe = elSe[,.(region, year, pe, value = valdem)]
-
-    ## missing: hydrogen to electricity to be used directly in transport
-
-    ## merge all primary sources
-    allPE = rbind(h2fosSe, fosSe, elH2Se, elSe)
-
-    allPE[, pe_name := ifelse(pe == "pecoal", "Coal", NA)]
-    allPE[, pe_name := ifelse(pe == "pegas", "Gas", pe_name)]
-    allPE[, pe_name := ifelse(pe %in% c("pebiolc", "pebioil", "pebios"), "Biomass", pe_name)]
-    allPE[, pe_name := ifelse(pe == "peoil", "Oil", pe_name)]
-    allPE[, pe_name := ifelse(pe == "pesol", "Solar", pe_name)]
-    allPE[, pe_name := ifelse(pe == "pegeo", "Geothermal", pe_name)]
-    allPE[, pe_name := ifelse(pe == "pehyd", "Hydro", pe_name)]
-    allPE[, pe_name := ifelse(pe == "peur", "Uranium", pe_name)]
-    allPE[, pe_name := ifelse(pe == "pewin", "Wind", pe_name)]
-
-
-    ## summarise
-    allPE = allPE[,.(value = sum(value)), by = .(region, year, pe_name)]
-
-    return(allPE)
-}
-
-
-LDV_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING, onlyLDVsyn){
-  ## calculate the share of FE for LDVs only
-  demFE = merge(demFE, REMIND2ISO_MAPPING, by = "iso")
-  demFE[, fe := ifelse(technology %in% c("BEV", "Electric", "LA-BEV"), "feelt", NA)]
-  demFE[, fe := ifelse(technology %in% c("FCEV"), "feh2t", fe)]
-  demFE[, fe := ifelse(technology %in% c("NG"), "fegat", fe)]
-  ## create a copy of the dt, as the distinction between fepet and fedie is useful later
-  demFEsepLDV = copy(demFE)
-
-  demFE[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids"), "fossil", fe)] ## attribute a generic "fossil" name
-  demFE = demFE[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
-  demFE[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
-  demFE[, year := as.character(year)]
-  ##  perform the same calculations with distinction between fedie and fepet
-  demFEsepLDV[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 == "trn_pass_road_LDV", "fepet", fe)]
-  demFEsepLDV[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 != "trn_pass_road_LDV", "fedie", fe)]
-  demFEsepLDV = demFEsepLDV[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
-  demFEsepLDV[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
-  demFEsepLDV[, year := as.character(year)]
-
-  TWa_2_EJ <- 31.536
-  ## demSe: secondary energy demand, secondary energy carrier units
-  demSe <- readgdx(gdx, "vm_demSe")[, value := value*TWa_2_EJ]
-  setnames(demSe, c("year", "region", "se", "fe", "te", "value"))
-  ## prodSe: secondary energy production, secondary energy carrier units
-  prodSe <- readgdx(gdx, "vm_prodSe")[, value := value*TWa_2_EJ]
-  setnames(prodSe, c("year", "region", "pe", "se", "te", "value"))
-  ## energy conversion for the different technologies
-  etaconv = readgdx(gdx, "pm_eta_conv")
-  setnames(etaconv, c("year", "region", "te", "eff"))
-  ## separately see MeOH conversion as will be used multiple times on her own
-  convMeOH = unique(etaconv[te == "MeOH", eff])
-
-  ## calculate the shares of seliqfos for the two sectors, transport and stationary (in seliqfos units)
-  shareLiqSec = demSe[se == "seliqfos"]
-  shareLiqSec[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-  shareLiqSec = shareLiqSec[, .(value = sum(value)), by = .(region, year, sec)]
-  shareLiqSec[, share := value/sum(value), by =.(region, year)]
-  shareLiqSec[, c("value") := NULL]
-
-
-  ## create pathway in demSe for synfuels to transport and synfuels to stationary
-  demSeSyn = merge(demSe[fe == "seliqfos" & te == "MeOH", .(year, region, value)], shareLiqSec, all = TRUE, by = c("region", "year"))
-  demSeSyn[is.na(value), value := 0]
-  demSeSyn[, value := share*value*convMeOH]  ## convert in seliqfos values
-  demSeSyn[, share := NULL]
-  demSeSyn[, fe := ifelse(sec == "trsp", "fesynt", "fesyns")]
-  demSeSyn[, se := "seliqfos"]
-
-  ## calculate the seliqfos from synfuels as a share of the total seliqfos
-  demSeLiq = demSe[se =="seliqfos"]
-  demSeLiq = demSeLiq[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-  demSeLiq = demSeLiq[,.(totseliq = sum(value)), by = c("year", "region", "sec")]
-  demSeLiq = merge(demSeLiq, demSeSyn, by = c("region", "year", "sec"))
-  demSeLiq[, sharesyn := value/(totseliq)]
-
-  ## "pure" hydrocarbons are classified as seliqfos->fepet,fedie, while synfuels are removed to avoid double counting
-  demSeLiqFos = merge(demSe[se =="seliqfos"][, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")], demSeLiq[,.(sharesyn, region, year, sec)], by = c("region", "year", "sec"))
-  demSeLiqFos[, value := value*(1-sharesyn)]
-  demSeLiqFos[, c("sec", "sharesyn") := NULL]
-
-  ## substitute the aggregate seliqfos and the synfuels in hydrogen values from demSe with the newly calculated fesyn for transport and stationary and the fossil liquids
-  demSe = rbind(demSe[se != "seliqfos" & te != "MeOH"], demSeLiqFos, demSeSyn[, c("sec", "te"):=list(NULL, "MeOH")])
-
-  ## share of hydrogen used by sector (both directly and to produce synfuels, accounted for separately)
-  shareH2Trsp = demSe[(se == "seh2" & fe %in% c("feh2s", "feh2t"))|(se == "seliqfos" & fe %in% c("fesynt",  "fesyns")), ]
-  shareH2Trsp[, value := ifelse(fe %in% c("fesyns", "fesynt"), value/convMeOH, value)]  ## convert to hydrogen values the synfuel
-  shareH2Trsp[, share := value/sum(value), by = c("region", "year")]
-  shareH2Trsp = shareH2Trsp[,.(year, region, share, fe)]
-
-  ## only a part of it is for LDVs
-  shareH2TrspDir = merge(shareH2Trsp[fe == "feh2t"], demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "feh2t"], by = c("region", "year", "fe"))
-  shareH2TrspDir[, share := share*sharemode]
-  shareH2TrspDir[, c("EJ", "subsector_L1", "sharemode") := NULL]
-
-  shareH2TrspSyn = merge(shareH2Trsp[fe == "fesynt"], demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "fossil"][, fe := NULL], by = c("region", "year"))
-  if (onlyLDVsyn == TRUE) {
-    ## all synfuels have to be attributed to the LDVs (i.e. the other modes only run on fossils)
-    shareH2TrspSyn[, sharemode := 1]  ## overwrite the shares of modes with "1"
-  }
-
-  shareH2TrspSyn[, share := share*sharemode]
-  shareH2TrspSyn[, c("EJ", "subsector_L1", "sharemode") := NULL]
-
-
-
-  ## reconstruct database with H2
-  shareH2Trsp = rbind(shareH2Trsp[fe == "fesyns"], shareH2TrspSyn, shareH2TrspDir)
-
-
-  ## Electricity consumption for H2 production (in electricity units)
-  demElH2 <- demSe[se == "seel" & fe == "seh2" & !te %in% c("elh2VRE")]  ## the "dummy" variable needs to be removed
-  demElH2[, elh2 := sum(value), by = .(year, region)]
-  demElH2[, c("te", "value", "se", "fe") := NULL]
-  demElH2 <- unique(demElH2)
-
-  ## ... of which only a share is used in transport, directly and in synfuels (accounted for separately)
-  demElH2trp <- merge(demElH2, shareH2Trsp[fe %in% c("feh2t", "fesynt")], all.x = TRUE, by = c("year", "region"))
-  demElH2trp[, elh2 := elh2*share]
-  demElH2trp[, c("share") := NULL]
-  demElH2trpAll = demElH2trp[,.(elh2=sum(elh2)), by = c("region", "year")]
-  ## demElH2trp and demElH2trpAll are for LDVs
-
-  ## calculate the mix of production technologies to produce each secondary energy carrier
-  prodSe[, sharetech := value/sum(value), by = c("region", "year", "se")]
-  ## merge with conversion efficiency
-  prodSe = merge(prodSe, etaconv, by = c("region", "year", "te"))
-
-  ## fossil SE carriers that follow a smooth path from primary fossils to fepet, fedie, fegat
-  fosSe = merge(demSe[fe %in% c("fepet", "fedie", "fegat") & se != "seh2"][,.(region, year, fe, se, valdem = value)],
-                prodSe[pe!="seh2"], by = c("region", "year", "se"))
-  fosSe[, valdem := valdem*sharetech/eff]
-
-
-  ## only a part of it is for LDVs
-  fosSe = merge(fosSe, demFEsepLDV[subsector_L1 == "trn_pass_road_LDV_4W" & fe %in% c("fepet", "fegat")], by = c("region", "year", "fe"))
-  fosSe[, valdem := valdem*sharemode]
-
-  fosSe = fosSe[,.(region, year, pe, value = valdem)]
-
-  ## electricity for producing H2 for transport in primary energy
-  elH2Se = merge(demElH2trpAll[,.(region, year, se = "seel", valdem = elh2)],
-                 prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-  elH2Se[, valdem := valdem*sharetech/eff]
-  elH2Se = elH2Se[,.(region, year, pe, value = valdem)] ## LDVs already
-
-  ## gases used directly to produce hydrogen
-  shareH2TrspAll = shareH2Trsp[fe %in% c("feh2t", "fesynt")]
-  shareH2TrspAll = shareH2TrspAll[,.(share=sum(share)), by = c("region", "year")]
-  h2fosSe = merge(prodSe[se == "seh2" & pe != "seel"],
-                  shareH2TrspAll, by = c("region", "year"))
-  h2fosSe[, valuedem :=value*share/eff]
-  h2fosSe = h2fosSe[,.(year,region, value, pe)]
-
-  ## electricity used in transport
-  elSe = merge(demSe[fe %in% c("feelt")][,.(region, year, valdem = value, fe, se)],
-               prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-  elSe[, valdem := valdem*sharetech/eff]
-  ## only a part of electricity is used in LDVs
-  elSe = merge(elSe, demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "feelt"], by = c("region", "year", "fe"))
-  elSe[, valdem := valdem*sharemode]
-
-
-  elSe = elSe[,.(region, year, pe, value = valdem)]
-
-  ## missing: hydrogen to electricity to be used directly in transport
-
-  ## merge all primary sources
-  allPE = rbind(h2fosSe, fosSe, elH2Se, elSe)
-
-  allPE[, pe_name := ifelse(pe == "pecoal", "Coal", NA)]
-  allPE[, pe_name := ifelse(pe == "pegas", "Gas", pe_name)]
-  allPE[, pe_name := ifelse(pe %in% c("pebiolc", "pebioil", "pebios"), "Biomass", pe_name)]
-  allPE[, pe_name := ifelse(pe == "peoil", "Oil", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pesol", "Solar", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pegeo", "Geothermal", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pehyd", "Hydro", pe_name)]
-  allPE[, pe_name := ifelse(pe == "peur", "Uranium", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pewin", "Wind", pe_name)]
-
-
-  ## summarise
-  allPE = allPE[,.(value = sum(value)), by = .(region, year, pe_name)]
-
-  return(allPE)
-}
-
-HeavyDuty_PEFun = function(gdx, demFE, REMIND2ISO_MAPPING){
-  ## calculate the share of FE for LDVs only
-  demFE = merge(demFE, REMIND2ISO_MAPPING, by = "iso")
-  demFE[, fe := ifelse(technology %in% c("BEV", "Electric", "LA-BEV"), "feelt", NA)]
-  demFE[, fe := ifelse(technology %in% c("FCEV"), "feh2t", fe)]
-  demFE[, fe := ifelse(technology %in% c("NG"), "fegat", fe)]
-  ## create a copy of the dt, as the distinction between fepet and fedie is useful later
-  demFEsep = copy(demFE)
-
-  demFE[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids"), "fossil", fe)] ## attribute a generic "fossil" name
-  demFE = demFE[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
-  demFE[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
-  demFE[, year := as.character(year)]
-  ##  perform the same calculations with distinction between fedie and fepet
-  demFEsep[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 == "trn_pass_road_LDV", "fepet", fe)]
-  demFEsep[, fe := ifelse(technology %in% c("Liquids", "Hybrid Liquids") & subsector_L2 != "trn_pass_road_LDV", "fedie", fe)]
-  demFEsep = demFEsep[,.(EJ = sum(demand_EJ)), by = c("region", "year", "subsector_L1", "fe")]
-  demFEsep[, sharemode := EJ/sum(EJ), by = .(region, year, fe)]
-  demFEsep[, year := as.character(year)]
-
-  TWa_2_EJ <- 31.536
-  ## demSe: secondary energy demand, secondary energy carrier units
-  demSe <- readgdx(gdx, "vm_demSe")[, value := value*TWa_2_EJ]
-  setnames(demSe, c("year", "region", "se", "fe", "te", "value"))
-  ## prodSe: secondary energy production, secondary energy carrier units
-  prodSe <- readgdx(gdx, "vm_prodSe")[, value := value*TWa_2_EJ]
-  setnames(prodSe, c("year", "region", "pe", "se", "te", "value"))
-  ## energy conversion for the different technologies
-  etaconv = readgdx(gdx, "pm_eta_conv")
-  setnames(etaconv, c("year", "region", "te", "eff"))
-  ## separately see MeOH conversion as will be used multiple times on her own
-  convMeOH = unique(etaconv[te == "MeOH", eff])
-
-  ## calculate the shares of seliqfos for the two sectors, transport and stationary (in seliqfos units)
-  shareLiqSec = demSe[se == "seliqfos"]
-  shareLiqSec[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-  shareLiqSec = shareLiqSec[, .(value = sum(value)), by = .(region, year, sec)]
-  shareLiqSec[, share := value/sum(value), by =.(region, year)]
-  shareLiqSec[, c("value") := NULL]
-
-
-  ## create pathway in demSe for synfuels to transport and synfuels to stationary
-  demSeSyn = merge(demSe[fe == "seliqfos" & te == "MeOH", .(year, region, value)], shareLiqSec, all = TRUE, by = c("region", "year"))
-  demSeSyn[is.na(value), value := 0]
-  demSeSyn[, value := share*value*convMeOH]  ## convert in seliqfos values
-  demSeSyn[, share := NULL]
-  demSeSyn[, fe := ifelse(sec == "trsp", "fesynt", "fesyns")]
-  demSeSyn[, se := "seliqfos"]
-
-  ## calculate the seliqfos from synfuels as a share of the total seliqfos
-  demSeLiq = demSe[se =="seliqfos"]
-  demSeLiq = demSeLiq[, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")]
-  demSeLiq = demSeLiq[,.(totseliq = sum(value)), by = c("year", "region", "sec")]
-  demSeLiq = merge(demSeLiq, demSeSyn, by = c("region", "year", "sec"))
-  demSeLiq[, sharesyn := value/(totseliq)]
-
-  ## "pure" hydrocarbons are classified as seliqfos->fepet,fedie, while synfuels are removed to avoid double counting
-  demSeLiqFos = merge(demSe[se =="seliqfos"][, sec := ifelse(fe %in% c("fepet", "fedie"), "trsp", "st")], demSeLiq[,.(sharesyn, region, year, sec)], by = c("region", "year", "sec"))
-  demSeLiqFos[, value := value*(1-sharesyn)]
-  demSeLiqFos[, c("sec", "sharesyn") := NULL]
-
-  ## substitute the aggregate seliqfos and the synfuels in hydrogen values from demSe with the newly calculated fesyn for transport and stationary and the fossil liquids
-  demSe = rbind(demSe[se != "seliqfos" & te != "MeOH"], demSeLiqFos, demSeSyn[, c("sec", "te"):=list(NULL, "MeOH")])
-
-  ## share of hydrogen used by sector (both directly and to produce synfuels, accounted for separately)
-  shareH2Trsp = demSe[(se == "seh2" & fe %in% c("feh2s", "feh2t"))|(se == "seliqfos" & fe %in% c("fesynt",  "fesyns")), ]
-  shareH2Trsp[, value := ifelse(fe %in% c("fesyns", "fesynt"), value/convMeOH, value)]  ## convert to hydrogen values the synfuel
-  shareH2Trsp[, share := value/sum(value), by = c("region", "year")]
-  shareH2Trsp = shareH2Trsp[,.(year, region, share, fe)]
-
-  ## only a part of it is for HDVs
-  demFEHDV = demFE[subsector_L1 != "trn_pass_road_LDV_4W" & fe %in% c("feh2t", "fossil")]
-  demFEHDV = demFEHDV[,.(EJ = sum(EJ), sharemode = sum(sharemode), subsector_L1 = "heavy_duty"), by = .(region, year, fe)]
-  shareH2TrspDir = merge(shareH2Trsp[fe == "feh2t"], demFEHDV[fe == "feh2t"], by = c("region", "year", "fe"))
-  shareH2TrspDir[, share := share*sharemode]
-  shareH2TrspDir[, c("EJ", "subsector_L1", "sharemode") := NULL]
-
-  shareH2TrspSyn = merge(shareH2Trsp[fe == "fesynt"], demFEHDV[fe == "fossil"][, fe := NULL], by = c("region", "year"))
-
-  shareH2TrspSyn[, share := share*sharemode]
-  shareH2TrspSyn[, c("EJ", "subsector_L1", "sharemode") := NULL]
-
-  ## reconstruct database with H2
-  shareH2Trsp = rbind(shareH2Trsp[fe == "fesyns"], shareH2TrspSyn, shareH2TrspDir)
-
-  ## Electricity consumption for H2 production (in electricity units)
-  demElH2 <- demSe[se == "seel" & fe == "seh2" & !te %in% c("elh2VRE")]  ## the "dummy" variable needs to be removed
-  demElH2[, elh2 := sum(value), by = .(year, region)]
-  demElH2[, c("te", "value", "se", "fe") := NULL]
-  demElH2 <- unique(demElH2)
-
-  ## ... of which only a share is used in transport, directly and in synfuels (accounted for separately)
-  demElH2trp <- merge(demElH2, shareH2Trsp[fe %in% c("feh2t", "fesynt")], all.x = TRUE, by = c("year", "region"))
-  demElH2trp[, elh2 := elh2*share]
-  demElH2trp[, c("share") := NULL]
-  demElH2trpAll = demElH2trp[,.(elh2=sum(elh2)), by = c("region", "year")]
-  ## demElH2trp and demElH2trpAll are for HDVs
-
-  ## calculate the mix of production technologies to produce each secondary energy carrier
-  prodSe[, sharetech := value/sum(value), by = c("region", "year", "se")]
-  ## merge with conversion efficiency
-  prodSe = merge(prodSe, etaconv, by = c("region", "year", "te"))
-
-  ## fossil SE carriers that follow a smooth path from primary fossils to fepet, fedie, fegat
-  fosSe = merge(demSe[fe %in% c("fepet", "fedie", "fegat") & se != "seh2"][,.(region, year, fe, se, valdem = value)],
-                prodSe[pe!="seh2"], by = c("region", "year", "se"))
-  fosSe[, valdem := valdem*sharetech/eff]
-
-
-  ## only a part of it is for HDVs
-  demFEsepHDV = demFEsep[subsector_L1 != "trn_pass_road_LDV_4W"]
-  demFEsepHDV = demFEsepHDV[,.(EJ = sum(EJ), sharemode = sum(sharemode), subsector_L1 = "heavy_duty"), by = .(region, year, fe)]
-  
-  fosSe = merge(fosSe, demFEsepHDV[fe %in% c("fedie", "fegat")], by = c("region", "year", "fe"))
-  fosSe[, valdem := valdem*sharemode]
-
-  fosSe = fosSe[,.(region, year, pe, value = valdem)]
-
-  ## electricity for producing H2 for transport in primary energy
-  elH2Se = merge(demElH2trpAll[,.(region, year, se = "seel", valdem = elh2)],
-                 prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-  elH2Se[, valdem := valdem*sharetech/eff]
-  elH2Se = elH2Se[,.(region, year, pe, value = valdem)] ## LDVs already
-
-  ## gases used directly to produce hydrogen
-  shareH2TrspAll = shareH2Trsp[fe %in% c("feh2t", "fesynt")]
-  shareH2TrspAll = shareH2TrspAll[,.(share=sum(share)), by = c("region", "year")]
-  h2fosSe = merge(prodSe[se == "seh2" & pe != "seel"],
-                  shareH2TrspAll, by = c("region", "year"))
-  h2fosSe[, valuedem :=value*share/eff]
-  h2fosSe = h2fosSe[,.(year,region, value, pe)]
-
-  ## electricity used in transport
-  elSe = merge(demSe[fe %in% c("feelt")][,.(region, year, valdem = value, fe, se)],
-               prodSe[se == "seel" & pe != "seh2",], by = c("region", "year", "se"))
-  elSe[, valdem := valdem*sharetech/eff]
-  ## only a part of electricity is used in LDVs
-  elSe = merge(elSe, demFE[subsector_L1 == "trn_pass_road_LDV_4W" & fe == "feelt"], by = c("region", "year", "fe"))
-  elSe[, valdem := valdem*sharemode]
-
-
-  elSe = elSe[,.(region, year, pe, value = valdem)]
-
-  ## missing: hydrogen to electricity to be used directly in transport
-
-  ## merge all primary sources
-  allPE = rbind(h2fosSe, fosSe, elH2Se, elSe)
-
-  allPE[, pe_name := ifelse(pe == "pecoal", "Coal", NA)]
-  allPE[, pe_name := ifelse(pe == "pegas", "Gas", pe_name)]
-  allPE[, pe_name := ifelse(pe %in% c("pebiolc", "pebioil", "pebios"), "Biomass", pe_name)]
-  allPE[, pe_name := ifelse(pe == "peoil", "Oil", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pesol", "Solar", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pegeo", "Geothermal", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pehyd", "Hydro", pe_name)]
-  allPE[, pe_name := ifelse(pe == "peur", "Uranium", pe_name)]
-  allPE[, pe_name := ifelse(pe == "pewin", "Wind", pe_name)]
-
-
-  ## summarise
-  allPE = allPE[,.(value = sum(value)), by = .(region, year, pe_name)]
-
-  return(allPE)
-}
 
 
 for (outputdir in outputdirs) {
@@ -1082,17 +807,90 @@ for (outputdir in outputdirs) {
   POP <- magpie2dt(POP_country, regioncol = "iso",
                    yearcol = "year", datacols = "POP")
   gdp <- getRMNDGDP(scenario = "gdp_SSP2", usecache = T)
+  #browser()
+  if (nrow(miffile[variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting")])==0) {
+    TWa_2_EJ     <- 31.536
+    prodFE  <- readGDX(gdx,name=c("vm_prodFe"),field="l",restore_zeros=FALSE,format="first_found")*TWa_2_EJ
+    tmp1=mbind(setNames(collapseNames(prodFE[,,"seliqbio.fepet.tdbiopet"]),
+                        "FE|Transport|Liquids|LDV|Biomass|New Reporting"),
+               setNames(collapseNames(prodFE[,,"seliqfos.fepet.tdfospet"]),
+                        "FE|Transport|Liquids|LDV|Fossil|New Reporting"),
+               setNames(collapseNames(prodFE[,,"seliqbio.fedie.tdbiodie"]),
+                        "FE|Transport|Liquids|HDV|Biomass|New Reporting"),
+               setNames(collapseNames(prodFE[,,"seliqfos.fedie.tdfosdie"]),
+                        "FE|Transport|Liquids|HDV|Fossil|New Reporting"))
 
-  ## select useful entries from mif file
-  FEliq_source = miffile[variable %in% c("FE|Transport|Liquids|Biomass", "FE|Transport|Liquids|Hydrogen", "FE|Transport|Liquids|Coal", "FE|Transport|Liquids|Oil"),]
+
+
+    tmp1=magpie2dt(tmp1)
+    setnames(tmp1, old = c("all_regi", "ttot", "data"), new = c("region", "year", "variable"))
+    tmp1[, model := unique(miffile$model)]
+    tmp1[, scenario := unique(miffile$scenario)]
+    tmp1[, unit := "EJ/yr"]
+    feliqsyn = tmp1[variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Liquids|HDV|Fossil|New Reporting")]
+    feliqsyn[, c("value", "variable") := list(0, gsub("Fossil", "Synfuel", variable ))]
+    FEliq_source=rbind(tmp1, feliqsyn)
+    ## add the totals
+    FEliq_source_tot = copy(FEliq_source)
+    FEliq_source_tot[, tech := str_extract(variable, "Biomass|Fossil|Synfuel")]
+    FEliq_source_tot = FEliq_source_tot[,.(value = sum(value)), by = .(region, year,model,scenario, unit, tech)]
+    FEliq_source_tot[, variable:= paste0("FE|Transport|Liquids|", tech, "|New Reporting")][, tech := NULL]
+    FEliq_source = rbind(FEliq_source, FEliq_source_tot)
+    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
+                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
+                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
+
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
+
+
+  } else {
+    ## select useful entries from mif file
+    FEliq_source = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Liquids",
+                                           "FE|Transport|Liquids|LDV|Biomass|New Reporting",
+                                           "FE|Transport|Liquids|LDV|Synthetic|New Reporting",
+                                           "FE|Transport|Liquids|LDV|Fossil|New Reporting",
+                                           "FE|Transport|Liquids",
+                                           "FE|Transport|Liquids|Biomass|New Reporting",
+                                           "FE|Transport|Liquids|Synthetic|New Reporting",
+                                           "FE|Transport|Liquids|Fossil|New Reporting",
+                                           "FE|Transport|Pass|Road|HDV|Liquids",
+                                           "FE|Transport|Liquids|HDV|Biomass|New Reporting",
+                                           "FE|Transport|Liquids|HDV|Synthetic|New Reporting",
+                                           "FE|Transport|Liquids|HDV|Fossil|New Reporting"),]
+
+    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|LDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|LDV|Liquids"],value), by = c("region", "year")]
+    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting"), value := 0]
+
+    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|HDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|HDV|Liquids"],value), by = c("region", "year")]
+    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|HDV|Biomass|New Reporting", "FE|Transport|Liquids|HDV|Synthetic|New Reporting"), value := 0]
+
+    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|Fossil|New Reporting", value[variable == "FE|Transport|Liquids"],value), by = c("region", "year")]
+    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|Biomass|New Reporting", "FE|Transport|Liquids|Synthetic|New Reporting"), value := 0]
+
+
+
+    ## remove the value that was used to repair the NAs
+    FEliq_source = FEliq_source[!variable %in% c("FE|Transport|Pass|Road|LDV|Liquids", "FE|Transport|Pass|Road|HDV|Liquids", "FE|Transport|Liquids")]
+    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
+                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
+                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
+
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
+    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
+
+  }
+
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source, gdp)
 
-
+  newcompLDVs = newcomp[subsector_L1 == "trn_pass_road_LDV_4W"]
   ## calculate sales
-  salescomp = SalesFun(shares_LDV, newcomp, sharesVS1)
+  salescomp = SalesFun(shares_LDV, newcompLDVs, sharesVS1)
   ## calculate fleet compositons
-  fleet = fleetFun(vintcomp, newcomp, sharesVS1, loadFactor)
+  fleet = fleetFun(vintcomp, newcompLDVs, sharesVS1, loadFactor)
   ## calculate EJ from LDVs by technology
   EJroad = EJroadFun(demandEJ)
   ## calculate FE demand by mode
@@ -1112,70 +910,53 @@ for (outputdir in outputdirs) {
   ## calculate demand emissions
   emidem = emidemFun(miffile)
   ## tailpipe emissions
-  emitail = emiTailpipeFun(miffile)
+  emiDemand = emiDemandFun(miffile)
+  ## sectoral emissions
+  emiSec = emiSecFun(miffile)
   ## calculate emissions from passenger SM fossil fuels (liquids)
   emipSource =  emipSourceFun(miffile)
   ## secondary energy electricity demand
   elecdem = elecdemFun(miffile)
   ## calculate costs by component
-  costs = costscompFun(newcomp = newcomp, sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
+  costs = costscompFun(newcomp = newcompLDVs, sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp, REMIND2ISO_MAPPING)
   ## per capita demand-gdp per capita
   demgdpcap = demgdpcap_Fun(demkm = demandkm, REMIND2ISO_MAPPING)
   ## investments in different energy carriers
   invest = investFun(miffile)
-  ## Primary energy used in transport divided by source
-  trspPE = trspPEFun(gdx)
-  ## Primary energy used in LDVs divided by source
-  LDV_PEonlySyn = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = TRUE) ## synfuels all attributed to LDVs
-  LDV_PE = LDV_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING, onlyLDVsyn = FALSE) ## synfuels consumed by whole transport sector
-  ## primary energy used in HDVs divided by source
-  HDV_PE = HeavyDuty_PEFun(gdx, demFE = demandEJ, REMIND2ISO_MAPPING)
+  ## primary energy
+  LDV_PEnew = LDV_PEnewFun(demEJ = demandEJ, gdx, miffile, FEliq_source = FEliq_source$FEliq_sourceR, REMIND2ISO_MAPPING)
+  trsp_PEnew = trsp_PEnewFun(demEJ = demandEJ, gdx, miffile, feliq = FEliq_source_tot[, variable := NULL], REMIND2ISO_MAPPING)
   ## add scenario dimension to the results
-  fleet[, scenario := as.character(unique(miffile$scenario))]
-  salescomp[, scenario := unique(miffile$scenario)]
-  EJroad[, scenario := as.character(unique(miffile$scenario))]
-  EJmode[, scenario := as.character(unique(miffile$scenario))]
-  ESmodecap[, scenario := as.character(unique(miffile$scenario))]
-  ESmodeabs[, scenario := as.character(unique(miffile$scenario))]
-  CO2km_int_newsales[, scenario := as.character(unique(miffile$scenario))]
-  emidem[, scenario := as.character(unique(miffile$scenario))]
-  emitail[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsPass[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsFrgt[, scenario := as.character(unique(miffile$scenario))]
-  EJfuelsMode[, scenario := as.character(unique(miffile$scenario))]
-  emipSource[, scenario := as.character(unique(miffile$scenario))]
-  elecdem[, scenario := as.character(unique(miffile$scenario))]
-  costs[, scenario := as.character(unique(miffile$scenario))]
-  pref_FV[, scenario := as.character(unique(miffile$scenario))]
-  demgdpcap[,  scenario := as.character(unique(miffile$scenario))]
-  invest[, scenario := as.character(unique(miffile$scenario))]
-  trspPE[, scenario := as.character(unique(miffile$scenario))]
-  LDV_PEonlySyn[, scenario := as.character(unique(miffile$scenario))]
-  LDV_PE[, scenario := as.character(unique(miffile$scenario))]
-  HDV_PE[, scenario := as.character(unique(miffile$scenario))]
+  allentries = list(fleet = fleet,
+                    salescomp = salescomp,
+                    EJroad = EJroad,
+                    EJmode = EJmode,
+                    ESmodecap = ESmodecap,
+                    ESmodeabs = ESmodeabs,
+                    CO2km_int_newsales =CO2km_int_newsales,
+                    emidem = emidem,
+                    emiDemand = emiDemand,
+                    emiSec = emiSec,
+                    EJfuelsPass = EJfuelsPass,
+                    EJfuelsFrgt = EJfuelsFrgt,
+                    EJfuelsMode = EJfuelsMode,
+                    emipSource = emipSource,
+                    elecdem = elecdem,
+                    costs = costs,
+                    pref_FV = pref_FV,
+                    demgdpcap = demgdpcap,
+                    invest = invest,
+                    LDV_PEnew = LDV_PEnew,
+                    trsp_PEnew = trsp_PEnew)
+
+  allentries = lapply(allentries, function(x) x[,scenario := as.character(unique(miffile$scenario))])
+
   ## rbind scenarios
-  salescomp_all = rbind(salescomp_all, salescomp)
-  fleet_all = rbind(fleet_all, fleet)
-  EJroad_all = rbind(EJroad_all, EJroad)
-  EJmode_all = rbind(EJmode_all, EJmode)
-  ESmodecap_all = rbind(ESmodecap_all, ESmodecap)
-  ESmodeabs_all = rbind(ESmodeabs_all, ESmodeabs)
-  CO2km_int_newsales_all = rbind(CO2km_int_newsales_all, CO2km_int_newsales)
-  emidem_all = rbind(emidem_all, emidem)
-  emitail_all = rbind(emitail_all, emitail)
-  EJfuelsPass_all = rbind(EJfuelsPass_all, EJfuelsPass)
-  EJfuelsFrgt_all = rbind(EJfuelsFrgt_all, EJfuelsFrgt)
-  EJfuelsMode_all = rbind(EJfuelsMode_all, EJfuelsMode)
-  emipSource_all = rbind(emipSource_all, emipSource)
-  elecdem_all = rbind(elecdem_all, elecdem)
-  costs_all = rbind(costs_all, costs)
-  pref_FV_all = rbind(pref_FV_all, pref_FV)
-  demgdpcap_all = rbind(demgdpcap_all, demgdpcap)
-  invest_all = rbind(invest_all, invest)
-  trspPE_all = rbind(trspPE_all, trspPE)
-  LDV_PEonlySyn_all = rbind(LDV_PEonlySyn_all, LDV_PEonlySyn)
-  LDV_PE_all = rbind(LDV_PE_all, LDV_PE)
-  HDV_PE_all = rbind(HDV_PE_all, HDV_PE)
+
+for (i in names(allentries)) {
+  j = paste0(i, "_all")
+  alltosave[[j]] = rbind(alltosave[[j]], allentries[[i]])
+}
 
 }
 
@@ -1186,55 +967,17 @@ outdir = paste0("output/comparerunEDGE", time)
 dir.create(outdir)
 ## names of the output files
 md_template = "EDGETransportComparison.Rmd"
-dash_template = "EDGEdashboard.Rmd"
 ## save RDS files
-saveRDS(EJmode_all, paste0(outdir, "/EJmode_all.RDS"))
-saveRDS(salescomp_all, paste0(outdir, "/salescomp_all.RDS"))
-saveRDS(fleet_all, paste0(outdir, "/fleet_all.RDS"))
-saveRDS(EJroad_all, paste0(outdir, "/EJroad_all.RDS"))
-saveRDS(ESmodecap_all, paste0(outdir, "/ESmodecap_all.RDS"))
-saveRDS(ESmodeabs_all, paste0(outdir, "/ESmodeabs_all.RDS"))
-saveRDS(CO2km_int_newsales_all, paste0(outdir, "/CO2km_int_newsales_all.RDS"))
-saveRDS(emidem_all, paste0(outdir, "/emidem_all.RDS"))
-saveRDS(emitail_all, paste0(outdir, "/emitail_all.RDS"))
-saveRDS(EJfuelsPass_all, paste0(outdir, "/EJfuelsPass_all.RDS"))
-saveRDS(EJfuelsFrgt_all, paste0(outdir, "/EJfuelsFrgt_all.RDS"))
-saveRDS(EJfuelsMode_all, paste0(outdir, "/EJfuelsMode_all.RDS"))
-saveRDS(emipSource_all, paste0(outdir, "/emipSource_all.RDS"))
-saveRDS(elecdem_all, paste0(outdir, "/elecdem_all.RDS"))
-saveRDS(costs_all, paste0(outdir, "/costs_all.RDS"))
-saveRDS(pref_FV_all, paste0(outdir, "/pref_FV_all.RDS"))
-saveRDS(demgdpcap_all, paste0(outdir, "/demgdpcap_all.RDS"))
-saveRDS(invest_all, paste0(outdir, "/invest_all.RDS"))
-saveRDS(trspPE_all, paste0(outdir, "/trspPE_all.RDS"))
-saveRDS(LDV_PE_all, paste0(outdir, "/LDV_PE_all.RDS"))
-saveRDS(LDV_PEonlySyn_all, paste0(outdir, "/LDV_PEonlySyn_all.RDS"))
-saveRDS(HDV_PE_all, paste0(outdir, "/HDV_PE_all.RDS"))
-file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+lapply(names(alltosave), function(nm)
+  saveRDS(alltosave[[nm]], paste0(outdir, "/",nm,".RDS")))
 
 ## create a txt file containing the run names
 write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = " ", quote = FALSE,
             row.names = FALSE, col.names = FALSE)
 
-## if it's a 5 scenarios comparison across ConvCase, SynSurge, ElecEra, and HydrHype (with an extra baseline for ConvCase and 4 budgets Budg1100). run the dashboard
-if (length(outputdirs) == 5 &
-    isTRUE(any(grepl("Budg1100_SynSurge", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_ConvCase", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_ElecEra", outputdirs))) &
-    isTRUE(any(grepl("Budg1100_HydrHype", outputdirs))) &
-    isTRUE(any(grepl("NDC_ConvCase", outputdirs)))){
-  file.copy(file.path("./scripts/output/comparison/notebook_templates/helper_dashboard.R"), outdir)
-  file.copy(file.path("./scripts/output/comparison/notebook_templates", dash_template), outdir)
-  rmarkdown::render(path(outdir, dash_template))
-}
 
-## If the scenarios are the 7 scenarios we would like to focus on, the paper-specific reporting is activated
-if (any(grepl("Budg1100_ElecEra$", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ElecEraWise", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCase$", unique(fleet_all$scenario))) &
-    any(grepl("Budg1100_ConvCaseWise", unique(fleet_all$scenario))) &
-    any(grepl("NPi", unique(fleet_all$scenario)))) {
-  file.copy(file.path("./scripts/output/comparison/notebook_templates/PaperEDGE-Tplots.Rmd"), outdir)
-  rmarkdown::render(path(outdir, "PaperEDGE-Tplots.Rmd"), output_format="pdf_document")
-}
+file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
+rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+
+
+
