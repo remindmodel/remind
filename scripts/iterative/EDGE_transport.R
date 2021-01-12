@@ -136,7 +136,11 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
 
-  nonfuel_costs_list = applylearning(non_fuel_costs = nonfuel_costs,capcost4W = capcost4W,gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp, ES_demandpr =  ES_demandpr, ES_demand =  ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs_list = applylearning(
+      non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
+      gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp, 
+      ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
+      rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
   nonfuel_costs = nonfuel_costs_list$nonfuel_costs
   capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
@@ -359,4 +363,3 @@ writegdx.parameter("p35_fe2es.gdx", finalInputs$intensity, "p35_fe2es",
 writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
-
