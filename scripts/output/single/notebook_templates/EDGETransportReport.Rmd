@@ -199,13 +199,11 @@ demandkmplotf = function(demandkm, POP){
   demandkm[, mode := ifelse(vehicle_type %in% c("Freight", "Freight Rail", "Truck", "Shipping"),"freight", "pass")]
 
   demandkm= demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
-  # browser()
   demandkmglob = demandkm[,.(demand_F = sum(demand_F)), by = .(year, vehicle_type_plot, aggr_mode, mode)][, region:= "World"]
 
   demandkm = rbind(demandkmglob,demandkm)
   ## calculate per capita demand
   POP = POP[, .(pop = sum(value)), by = c("region", "year")]
-  # browser()
   demandkmcap = merge(demandkm[region!="World"], POP, all.x = TRUE, by =c("year", "region"))
 
   demandkmcapglob = demandkmcap[,.(demand_F = sum(demand_F), pop = sum(pop)), by = .(year, vehicle_type_plot, aggr_mode, mode)][, region:= "World"]
@@ -367,7 +365,6 @@ demandEJplotf = function(demandEJ, POP){
   demandEJglob = demandEJ[,.(demand_EJ = sum(demand_EJ)), by = .(year, vehicle_type_plot, aggr_mode)][, region:= "World"]
 
   demandEJ = rbind(demandEJglob,demandEJ)
-  # browser()
   ## calculate per capita demand
   demandEJcap = merge(demandEJ , POP, all.x = TRUE, by =c("year", "region"))
   demandEJcapglob = demandEJcap[,.(demand_EJ = sum(demand_EJ), value = sum(value)), by = .(year, vehicle_type_plot, aggr_mode, POP)][, region:= "World"]
@@ -521,13 +518,11 @@ demandkmplotf = function(demandkm, POP){
   demandkm[, mode := ifelse(vehicle_type %in% c("Freight", "Freight Rail", "Truck", "Shipping"),"freight", "pass")]
 
   demandkm= demandkm[, .(demand_F = sum(demand_F)), by = c("region", "year", "vehicle_type_plot", "aggr_mode", "mode")]
-  # browser()
   demandkmglob = demandkm[,.(demand_F = sum(demand_F)), by = .(year, vehicle_type_plot, aggr_mode, mode)][, region:= "World"]
 
   demandkm = rbind(demandkmglob,demandkm)
   ## calculate per capita demand
   POP = POP[, .(pop = sum(value)), by = c("region", "year")]
-  # browser()
   demandkmcap = merge(demandkm[region!="World"], POP, all.x = TRUE, by =c("year", "region"))
 
   demandkmcapglob = demandkmcap[,.(demand_F = sum(demand_F), pop = sum(pop)), by = .(year, vehicle_type_plot, aggr_mode, mode)][, region:= "World"]
