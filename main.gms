@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -82,9 +82,9 @@
 * 
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
 * 
-* Input data revision: 5.947
+* Input data revision: 5.96
 * 
-* Last modification (input data): Thu Jul 30 13:06:59 2020
+* Last modification (input data): Sat Oct 03 14:08:53 2020
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -139,7 +139,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  Calibration_middle
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -166,13 +166,13 @@ $setGlobal tax  on                    !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
 $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
-$setGlobal capitalMarket  debt_limit     !! def = debt_limit
+$setGlobal capitalMarket  perfect     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
 $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
-$setglobal CES_parameters  load       !! def = load
+$setglobal CES_parameters  calibrate       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
 $setGlobal biomass  magpie_40 !! def = magpie_40
 ***---------------------    31_fossil    ----------------------------------------
@@ -184,7 +184,7 @@ $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
 $setGlobal transport  complex         !! def = complex
 ***---------------------    36_buildings    -------------------------------------
-$setglobal buildings  simple          !! def = simple
+$setglobal buildings  services_putty          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
@@ -231,7 +231,8 @@ c_bioliqscen          "bioenergy liquids technology choise"
 c_bioh2scen           "bioenergy hydrogen technology choice"
 c_shGreenH2           "lower bound on share of green hydrogen in all hydrogen by 2030"
 c_shBioTrans          "upper bound on share of bioliquids in transport from 2025 onwards"
-cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2035"
+cm_shSynTrans         "lower bound on share of synthetic fuels in all transport fuels by 2045"
+cm_shSynGas           "lower bound on share of synthetic gases by 2045"
 cm_IndCCSscen        "CCS for Industry"
 cm_optimisticMAC     "assume optimistic Industry MAC from AR5 Ch. 10?"
 cm_CCS_cement        "CCS for cement sub-sector"
@@ -300,6 +301,10 @@ cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in modu
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 cm_GDPcovid                  "GDP correction for covid"
+cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
+cm_flex_tax                 "switch for enabling flexibility tax"
+cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
+cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -325,6 +330,7 @@ c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
 c_shBioTrans     = 1;        !! def = 1
 cm_shSynTrans    = 0;        !! def = 0
+cm_shSynGas      = 0;        !! def = 0
 c_solscen        = 1;        !! def = 1
 
 cm_IndCCSscen          = 1;        !! def = 1
@@ -389,7 +395,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1350;   !! def = 1300
+c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiCO2target  off       !! def = off
 cm_peakBudgYr                 = 2050;    !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2;      !! def = 2
@@ -407,15 +413,21 @@ cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 
-cm_DiscRateScen        = 0;!! def = 0
+cm_DiscRateScen        = 1;!! def = 0
 cm_noReboundEffect     = 0;
-$setGlobal cm_EsubGrowth         low  !! def = low
+$setGlobal cm_esubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
+
+cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
+
+cm_flex_tax = 1; !! def 0
+cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_FlexTaxFeedback = 0; !! def 0, off
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -424,7 +436,7 @@ $setGlobal c_regi_capturescen  all !! def = all
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = off
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
@@ -439,10 +451,10 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_690d3718e1   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !!  def  =  0
-$setglobal c_CES_calibration_iterations  10   !!  def  =  10
+$setglobal c_CES_calibration_iterations  7   !!  def  =  10
 $setglobal c_CES_calibration_iteration        1    !!  def  =  1
 $setglobal c_CES_calibration_write_prices  0    !!  def  =  0
 $setglobal cm_CES_calibration_default_prices  0.1  !!  def  =  0

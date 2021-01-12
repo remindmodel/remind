@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,7 +22,7 @@ $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** Slightly relaxed extraction bounds for biofuels.
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4*p30_datapebio(regi,"pebios","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 3*p30_datapebio(regi,"pebioil","5","maxprod",t);
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 2*p30_datapebio(regi,"pebioil","5","maxprod",t);
 vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 $endif.edge_esm_transport
 

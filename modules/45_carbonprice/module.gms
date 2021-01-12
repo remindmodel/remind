@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,14 +6,14 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/45_carbonprice.gms
 
-*#' @title carbonprice
-*#'
-*#' @description
-*#' The carbonprice module sets (exogenously given price path or predefined 2020 level and linear/exponential increase afterwards) 
-*#' or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met. The carbon price is the main indicator
-*#' to reflect the increase in climate policy ambition over time. 
+*' @title Carbonprice
+*'
+*' @description
+*' The carbonprice module sets (exogenously given price path or predefined 2020 level and linear/exponential increase afterwards) 
+*' or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met. The carbon price is the main indicator
+*' to reflect the increase in climate policy ambition over time. 
 
-*#' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
+*' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%carbonprice%" == "ExogSameAsPrevious" $include "./modules/45_carbonprice/ExogSameAsPrevious/realization.gms"

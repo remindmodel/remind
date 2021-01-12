@@ -1,0 +1,230 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+---
+title: "Simple Dashboard"
+author: "Renato Rodrigues"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: fill
+---
+
+<!-- We are going to use the flexdashboard library to create a simple dashboard.
+     You can find more information in:
+     https://rmarkdown.rstudio.com/flexdashboard/
+-->
+
+
+```{r loading_required_libraries, include=FALSE}
+  #Loading required libraries
+  library(flexdashboard)
+  library(ggplot2)
+  library(plotly)
+  library(magclass)
+  library(mip)
+```
+
+# Download demonstration data
+
+Before starting the tutorial we need to download the input data we are going to use from PIK's RSE server.
+
+```{r}
+download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "REMIND_generic_BAU.mif")
+
+```
+
+
+```{r reading_data, include=FALSE}
+  #Reading a mif file
+  data <- read.report("REMIND_generic_BAU.mif",as.list=FALSE)
+
+  # Selecting years until 2100
+  data <- data[,getYears(data)<="y2100",]
+
+```
+
+
+
+```{r creating_charts, include=FALSE}
+  
+  plot <- NULL 
+  
+  # CO2 emissions per sector
+  vars <- c("Emi|CO2|Energy|Supply|Non-Elec (Mt CO2/yr)",
+            "Emi|CO2|Energy|Supply|Electricity|Gross (Mt CO2/yr)",
+            "Emi|CO2|Energy|Demand|Industry|Gross (Mt CO2/yr)",
+            "Emi|CO2|FFaI|Industry|Process (Mt CO2/yr)",
+            #"Emi|CO2|Industrial Processes (Mt CO2/yr)",
+            "Emi|CO2|Buildings|Direct (Mt CO2/yr)",
+            "Emi|CO2|Transport|Demand (Mt CO2/yr)",
+            "Emi|CO2|Carbon Capture and Storage|Biomass|Neg (Mt CO2/yr)",
+            "Emi|CO2|Land-Use Change (Mt CO2/yr)")
+
+  plot$CO2emi <- mipArea(data["EUR",,vars]) +
+    theme_minimal() +
+    ylab("Mt CO2/yr") 
+  
+  # CO2 price
+  plot$CO2price <- mipLineHistorical(data["EUR",,"Price|Carbon (US$2005/t CO2)"],x_hist=NULL,ylab='US$2005/t CO2') + 
+    theme_minimal()
+  
+  # Electricity mix
+  vars <- c("SE|Electricity|Coal|w/ CCS (EJ/yr)", 
+            "SE|Electricity|Coal|w/o CCS (EJ/yr)",
+            "SE|Electricity|Oil (EJ/yr)",
+            "SE|Electricity|Gas|w/ CCS (EJ/yr)", 
+            "SE|Electricity|Gas|w/o CCS (EJ/yr)",
+            "SE|Electricity|Biomass|w/ CCS (EJ/yr)",  
+            "SE|Electricity|Biomass|w/o CCS (EJ/yr)",
+            "SE|Electricity|Nuclear (EJ/yr)", 
+            "SE|Electricity|Hydrogen (EJ/yr)",
+            "SE|Electricity|Solar (EJ/yr)", 
+            "SE|Electricity|Wind (EJ/yr)",
+            "SE|Electricity|Geothermal (EJ/yr)", 
+            "SE|Electricity|Hydro (EJ/yr)")
+  
+  conversionFactor <- 1/0.0036 # from EJ/yr to TWh
+  
+  plot$electricityMix <- mipArea(data["EUR",,vars]*conversionFactor, total = F) + 
+    theme_minimal() +
+    ylab("Electricity Mix (TWh)")
+
+```
+
+
+<!--############################# -->
+<!--#### START OF MENUS CODE #### -->
+<!--############################# -->
+
+<!-- ### Creating main emissions menu ### -->
+
+<!--Creating First Page - Emissions Page-->
+
+Emissions {data-icon="glyphicon glyphicon-stats"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#emissions){class="glyphicon glyphicon-stats sidebar-button selected"}
+[](#emissions-prices){class="glyphicon glyphicon-eur sidebar-button"}
+
+<!-- Dividing the page in two columns-->
+Column
+-----------------------------------------------------------------------
+
+<!-- creating a container to show the emissions quantitites-->
+### Emissions quantity
+
+```{r}
+ggplotly(plot$CO2emi)
+```
+
+<!-- Second column-->
+Column
+-----------------------------------------------------------------------
+
+<!-- creating two additional containers in the second column to show extra information-->
+
+### Emissions quantities empty container 1
+```{r}
+
+```
+
+
+### Emissions quantities empty container 2
+```{r}
+
+```
+
+
+<!-- Creating second page with emissions prices-->
+
+Emissions Prices {.hidden data-icon="glyphicon glyphicon-eur"}
+===================================== 
+
+Side Navigation {.sidebar data-width=60}
+-------------------------------------
+
+[](#emissions){class="glyphicon glyphicon-stats sidebar-button"}
+[](#emissions-prices){class="glyphicon glyphicon-eur sidebar-button selected"}
+
+Column
+-----------------------------------------------------------------------
+
+<!-- dividing the page into two containers and showing prices chart in the second one-->
+
+### Emissions prices empty container 1
+
+```{r}
+```
+
+### Emissions prices
+
+```{r}
+ggplotly(plot$CO2price)
+```
+
+
+
+<!-- ### Creating electricity sector main menu ### -->
+
+Electricity sector {data-icon="glyphicon glyphicon-scale"}
+===================================== 
+
+<!-- dividing the page into two containers and showing the eelectricity sector chart in the first one -->
+
+<!-- creating a container to show the emissions quantitites-->
+### Electricity mix empty container 1
+
+```{r}
+```
+
+<!-- creating a container to show the emissions quantitites-->
+### Electricity mix 
+
+```{r}
+ggplotly(plot$electricityMix)
+```
+
+
+
+
+
+<!-- ADVANCED: using CSS to define the appearance of the side bar --> 
+
+<!-- CSS -->
+<style type="text/css">
+
+  .sidebar-button {  /* sidebar size  */
+     display: inline-block;
+     font-size: 40px;
+     height: 80px;
+     padding-top: 20px
+  }
+  
+  .sidebar-button, .sidebar-button:hover {
+    text-decoration: none;
+  }
+  
+  .sidebar-button.selected, .sidebar-button.selected:hover {
+    opacity: 1;
+  }
+  
+  .sidebar-button {
+    opacity: 0.7;
+  }
+  
+  .sidebar-button:hover {
+    opacity: 0.4;
+  }
+
+</style>
+
+
+
+
+

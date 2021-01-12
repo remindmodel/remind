@@ -6,9 +6,9 @@ fm_dataglob("flexibility","ngccc")  = 0.85;
 fm_dataglob("flexibility","ngt")    = 6;
 fm_dataglob("flexibility","h2turb") = 6;
 fm_dataglob("flexibility","dot")    = 6;
-fm_dataglob("flexibility","igcc")   = 0.8;
+fm_dataglob("flexibility","igcc")   = 0.85;
 fm_dataglob("flexibility","igccc")  = 0.7;
-fm_dataglob("flexibility","pc")     = 0.85;
+fm_dataglob("flexibility","pc")     = 0.90;
 $ifthen setGlobal cm_ccsfosall
 fm_dataglob("flexibility","pcc")    = 0.7;
 fm_dataglob("flexibility","pco")    = 0.7;

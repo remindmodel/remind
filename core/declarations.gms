@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -160,6 +160,9 @@ p_cintraw(all_enty)                                  "carbon intensity of fossil
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
+pm_priceSeel(ttot,all_regi)                           "parameter with electricity price from last iteration (unit: trUSD/TWa)"
+
+
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
 
@@ -259,6 +262,7 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
+vm_flexAdj(tall,all_regi,all_te)                     "level of flexibility tax which serves to adjust electricity prices for flexible and inflexible technologies that demand electricity"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -393,6 +397,8 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)    "phase-out constraint for 
 q_limitBiotrmod(ttot,all_regi)                        "limit the total amount of modern biomass use for solids to the amount of coal use for solids "
 q_limitShOil(ttot,all_regi)                           "requires minimum share of liquids from oil in total liquids of 15%"
 q_PE_histCap(ttot,all_regi,all_enty,all_enty)         "model capacity must be equal or greater than historical capacity"
+q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "gas capacity can only increase by 50% maximum from 2015 to 2020, plus 10 GW to account for extra flexibility in regions with small 2015 capacity"
+
 *** ES layer equations
 q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs)    "Conversion from final energy to energy service"
 q_es2ppfen(ttot,all_regi,all_in)                          "Energy services are handed to the CES tree."

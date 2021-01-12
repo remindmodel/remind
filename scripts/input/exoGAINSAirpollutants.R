@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -34,8 +34,8 @@ rem_in_mo <- deletePlus(rem_in_mo)
 rem_in <- rem_in_mo
 
 # load GAINS emissions and emission factors
-ef_gains  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_gains.cs4r")
-emi_gains <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_gains.cs4r")
+ef_gains  <- read.magpie("ef_gains.cs4r")
+emi_gains <- read.magpie("emi_gains.cs4r")
 
 # ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
 # ship_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_ship.cs4r")
@@ -48,7 +48,7 @@ emi_gains <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_gains.cs4
 ################### Load REMIND activities ###################
 ##############################################################
 
-map_GAINS2REMIND <- read.csv("../../modules/11_aerosols/exoGAINS/input/mappingGAINSmixedtoREMIND17activities.csv", stringsAsFactors=FALSE)
+map_GAINS2REMIND <- read.csv("mappingGAINSmixedtoREMIND17activities.csv", stringsAsFactors=FALSE)
 
 # End_Use_Services_Coal is mapped to an activity that is so far not existing in the REMIND reporting:
 # FE|Solids without BioTrad (EJ/yr) = Final Energy|Solids (EJ/yr) -  Final Energy|Solids|Biomass|Traditional (EJ/yr)
@@ -127,7 +127,7 @@ E <- mbind(E,dimSums(E,dim=1))
 
 # read mapping from GAINS sectors to REMIND sectors
 #map_GAINSsec2REMINDsec <- read.csv(madrat:::toolMappingFile("sectoral", "mappingGAINStoREMINDsectors.csv"), stringsAsFactors=FALSE,na.strings = "")
-map_GAINSsec2REMINDsec <- read.csv("../../modules/11_aerosols/exoGAINS/input/mappingGAINStoREMINDsectors.csv", stringsAsFactors=FALSE,na.strings = "")
+map_GAINSsec2REMINDsec <- read.csv("mappingGAINStoREMINDsectors.csv", stringsAsFactors=FALSE,na.strings = "")
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
