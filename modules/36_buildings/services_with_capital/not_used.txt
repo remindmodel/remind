@@ -10,3 +10,4 @@ pm_cumDeprecFactor_old,input,questionnaire
 pm_cumDeprecFactor_new,input,questionnaire
 pm_ppfen_ratios,input,questionnaire
 pm_ppfen_shares,input,questionnaire
+cm_regiPhaseOutFosBuil,input,questionnaire

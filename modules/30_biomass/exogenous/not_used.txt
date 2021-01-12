@@ -19,3 +19,6 @@ cm_1stgen_phaseout,input,questionnaire
 vm_demPe,variable,not needed
 vm_prodSe,variable,not needed
 cm_emiscen,variable,not needed
+cm_regiBioenergymax,switch,questionnaire
+cm_regiNoBioImport,switch,questionnaire
+vm_Mport,variable,not needed

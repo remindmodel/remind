@@ -38,3 +38,4 @@ sm_year_2_day,input,questionnaire
 sm_day_2_hour,input,questionnaire
 qm_balFeForCesAndEs,input,questionnaire
 pm_tsu2opTimeYr,input,questionnaire
+cm_regiPhaseOutFosBuil,input,questionnaire
