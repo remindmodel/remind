@@ -52,4 +52,3 @@ cm_cprice_red_factor,input,questionnaire
 vm_pebiolc_price,input,questionnaire
 vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
-cm_flex_tax,input,questionnaire
