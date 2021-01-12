@@ -131,7 +131,7 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
 
-  nonfuel_costs_list = applylearning(nonfuel_costs, capcost4W, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs_list = applylearning(non_fuel_costs = nonfuel_costs,capcost4W = capcost4W,gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp, ES_demandpr =  ES_demandpr, ES_demand =  ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
   nonfuel_costs = nonfuel_costs_list$nonfuel_costs
   capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
@@ -224,7 +224,7 @@ prices <- logit_data[["prices_list"]] ## prices at each level of the logit funct
 
 ## calculate vintages (new shares, prices, intensity)
 vintages = calcVint(shares = shares,
-                    totdem_regr = ES_demand,
+                    totdem_regr = ES_demand_all,
                     prices = prices,
                     mj_km_data = mj_km_data,
                     years = REMINDyears)
@@ -244,13 +244,11 @@ shares_int_dem <- shares_intensity_and_demand(
   EDGE2CESmap=EDGE2CESmap,
   REMINDyears=REMINDyears,
   scenario=scenario,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
   demand_input = if (opt$reporting) ES_demand_all)
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
-
 
 if (opt$reporting) {
   saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
@@ -287,12 +285,11 @@ saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 ## use logit to calculate costs
 budget <- calculate_capCosts(
   base_price=prices$base,
-  Fdemand_ES = norm_demand,
+  Fdemand_ES = shares_int_dem[["demandF_plot_pkm"]],
   EDGE2CESmap = EDGE2CESmap,
   EDGE2teESmap = EDGE2teESmap,
   REMINDyears = REMINDyears,
-  scenario = scenario,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
+  scenario = scenario)
 
 ## full REMIND time range for inputs
 REMINDtall <- c(seq(1900,1985,5),
@@ -306,8 +303,7 @@ finalInputs <- prepare4REMIND(
   intensity = intensity,
   capCost = budget,
   EDGE2teESmap = EDGE2teESmap,
-  REMINDtall = REMINDtall,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
+  REMINDtall = REMINDtall)
 
 
 
