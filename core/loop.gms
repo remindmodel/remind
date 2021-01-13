@@ -15,11 +15,8 @@ hybrid.optfile   = 1;
 hybrid.holdfixed = 1;
 hybrid.scaleopt  = 1;
 option savepoint = 0;
-option reslim    = 1.e+6;
-*AJS* limit maximum time for one nash region to two hours.
-$IFI %optimization% == 'nash' option reslim = 7200;
-option iterlim   = 1.e+6;
-option solprint  = off ;
+option resLim    = 3e6;
+option solprint  = off;
 o_modelstat      = 100;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters

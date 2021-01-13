@@ -250,7 +250,7 @@ q_limitCapUe(t,regi,fe2ue(entyFe,entyUe,te))..
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
 ***---------------------------------------------------------------------------
 
-*' Transformation from final energy to useful energy:
+*' Transformation from final energy to energy services:
 q_transFe2Es(t,regi,fe2es(entyFe,esty,teEs))..
     pm_fe2es(t,regi,teEs) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
     =e=
@@ -819,6 +819,16 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     )
     =g=
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
+;
+
+
+
+q_PE_histCap_NGCC_2020_up(t,regi,entyPe,entySe)$( (p_PE_histCap("2015",regi,entyPe,entySe) gt 0.02) AND sameas(entyPe,"pegas") AND sameas(entySe,"seel") AND sameas(t,"2020") )..
+    sum(te$pe2se(entyPe,entySe,te),
+      sum(te2rlf(te,rlf), vm_cap(t,regi,te,rlf))
+    )
+    =l=
+    1.5 * p_PE_histCap("2015",regi,entyPe,entySe) + 0.01
 ;
 
 
