@@ -19,6 +19,13 @@ vm_cesIO.lo(t,regi,in_industry_dyn37(in)) = 1e-6;
 *** Upper bound for exponent to avoid exponential gams overflow (if > 20 -> 3^20 > 1e10 what would cause GAMS to get an overflow x**y error) 
 v37_costExponent.up(t,regi) = 20; 
 
+
+*** FS: lower bound on share of carbonaceous fuels (solids, liquids, gases) in total industry FE 
+*** to ensure that there are always enough for feedstocks
+*** apply 35% only for DEU for now
+v37_CFuelshare.lo(t,regi)$(sameas(regi,"DEU"))=0.35;
+
+
 *** Upper bound for electricity share in industry
 $ifthen "%cm_feShareLimits%" == "electric"
   vm_shSeel_fe.up(t,regi,"indst")$(t.val ge 2050) = 0.6;

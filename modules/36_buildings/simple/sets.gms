@@ -34,6 +34,15 @@ Sets
   /
 
  
+  entyFe36(all_enty)   "FE carriers used in buildings"
+  /
+    fesos 
+    fehos 
+    fegas
+    feh2s
+    fehes
+    feels
+  /
 
   fe2ppfEn36(all_enty,all_in)   "match ESM entyFe to ppfEn"
   /

@@ -200,11 +200,11 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
 ; 
 
 ***---------------------------------------------------------------------------
-*'  FS: Calculation of tax/subsidy on technologies with inflexible/flexible electricity input from 2030 onwards
+*'  FS: Calculation of tax/subsidy on technologies with inflexible/flexible electricity input 
 *'  This is to emulate the effect of lower/higher electricity prices in high VRE systems on flexible/inflexible electricity demands. 
 ***---------------------------------------------------------------------------
 
-q21_taxrevFlex(t,regi)$(t.val ge 2030)..
+q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevFlex(t,regi)
   =e=
   sum(en2en(enty,enty2,te)$(teFlexTax(te)),
