@@ -55,17 +55,23 @@ display p35_passLDV_ES_efficiency;
 display p35_freight_ES_efficiency;
 
 
-*** bunker share in non-LDV transport
-Parameter  p35_bunker_share(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "share of bunkers in non-LDV transport"
+*CB* read-in of bunker share in non-LDV transport, i.e. fedie. Based on regional linear regional aggregation, but limited to 50% (binding in EU, OAS, RUS)
+Parameter  pm_bunker_share_in_nonldv_fe(tall,all_regi)       "share of bunkers in non-LDV transport, i.e. fedie"
 /
 $ondelim
 $include "./modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r"
 $offdelim
 /
 ;
-
-pm_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
-
+display pm_bunker_share_in_nonldv_fe;
+*** limit share to maximum 55%
+loop(regi,
+     loop(t,
+         if( pm_bunker_share_in_nonldv_fe(t,regi) > 0.55,
+             pm_bunker_share_in_nonldv_fe(t,regi) = 0.55;
+         ); 
+     ); 
+);
 display pm_bunker_share_in_nonldv_fe;
 
 

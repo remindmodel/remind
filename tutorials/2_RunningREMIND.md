@@ -63,7 +63,7 @@ As normal runs with REMIND take quite a while (from a couple of hours to several
 
 They all have their upsides and downsides. Don't worry! If they are new to you, you will figure out what is best for which kind of task after some time and get more famliar just by your practice. Using either Putty or the network drive in Windows Explorer, the first step is:
 
-## Adjust the .profile
+## Adjust the Rprofile
 
 First, log onto the cluster via WinSCP and open the file `/home/username/.profile` in a text editor. Add these two lines and save the file.
 
@@ -71,9 +71,8 @@ First, log onto the cluster via WinSCP and open the file `/home/username/.profil
 module load piam 
 umask 0002
 ```
-The first line loads the piam environment once you log onto the cluster via Putty the next time. This environment will enable you to manage the runs that you do on the cluster.   The second line makes sure the files you create on the cluster will be writable by your coworkers.  Next, you need to specify the kind of run you would like to do. 
+This loads the piam environment once you log onto the cluster via Putty the next time. This envrionment will enable you to manage the runs that you do on the cluster. Next, you need to specify the kind of run you would like to do. 
    	
-
 ## Starting the run
 
 Open a Putty session on the cluster and create a folder on the cluster where you want to store REMIND. It is recommended not to use the `home` directory. For your first experiments you can use the /p/tmp/YourPIKName/ directory (only stored for 3 months) and create a following folder: `p/tmp/YourPIKName/REMIND`
@@ -96,7 +95,7 @@ Rscript start.R --testOneRegi
 ```
 
 Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
-
+ 
 ``` bash
 Rscript start.R config/scenario_config_XYZ.csv
 ```
@@ -135,7 +134,7 @@ This will use the result of the previous optimization (fulldata.gdx) as input fo
 
 
 # 2. What happens during a REMIND run?
-
+	
 
 This section will give some technical introduction into what happens after you have started a run. It will not be a tutorial, but rather an explanation of the different parts in the modeling routine. The whole routine is illustrated in Figure 1. The core of the model is the optimization written in GAMS. However, there is some pre-processing of the input data and some post-processing of the output data using R scripts.
 

@@ -33,15 +33,5 @@ q39_shSynTrans(t,regi)..
     vm_prodSe(t,regi,"seh2","seliqfos","MeOH")
 ;
 
-*** share of synthetic gas in all SE gases
-q39_shSynGas(t,regi)..
-    (
-	sum(pe2se(entyPe,entySe,te)$seAgg2se("all_sega",entySe), vm_prodSe(t,regi,entyPe,entySe,te))
-	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_sega",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
-    ) * v39_shSynGas(t,regi)
-    =e=
-    vm_prodSe(t,regi,"seh2","segafos","h22ch4")
-;
-
 
 *** EOF ./modules/39_CCU/on/equations.gms
