@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/presolve.gms
 $ifthen.calibrate %CES_parameters% == "load"
-if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) eq 0))
+if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(iteration), 3) eq 0))
     or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 5) eq 0))
     or (ord(iteration)  gt 45 and  (mod(ord(iteration), 8) eq 0)),
 

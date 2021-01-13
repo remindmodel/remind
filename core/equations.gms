@@ -852,6 +852,31 @@ q_shBioTrans(t,regi)..
   sum(se2fe("seliqbio",entyFeTrans,te), vm_prodFe(t,regi,"seliqbio",entyFeTrans,te) )
 ;
  
+***---------------------------------------------------------------------------
+*' Share of final energy in stationary sector
+***---------------------------------------------------------------------------
+q_shSeel_fe(t,regi,sector)$(vm_shSeel_fe.up(t,regi,sector) OR vm_shSeel_fe.lo(t,regi,sector))..
+  vm_shSeel_fe(t,regi,sector) 
+  * sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+  =e=
+  sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feels"),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
+;
+
+q_shGasLiq_fe(t,regi,sector)$(vm_shGasLiq_fe.up(t,regi,sector) OR vm_shGasLiq_fe.lo(t,regi,sector))..
+  vm_shGasLiq_fe(t,regi,sector) 
+  * sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+  =e=
+  sum(emiMkt, 
+    sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fehos")),
+      vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
+;
+
 
 *limit secondary energy district heating and heat pumps
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 

@@ -313,23 +313,27 @@ cm_flex_tax                 "switch for enabling flexibility tax"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
 cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2$/Kwh)"
+cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
-cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/kg = 0.1$/kWh]"
+cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
 cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
 cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
+c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution capital cost for buildings and industry"
+cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
+cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
+cm_startIter_EDGET          "starting iteration of EDGE-T"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-cm_iteration_max       = 1;     !! def = 1
+cm_iteration_max       = 0;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
@@ -473,29 +477,36 @@ $setGlobal c_regi_sensscen  all !! def = all
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 																	  
-cm_biotrade_phaseout = 0; !! def 0
-cm_bioprod_histlim = -1; !! def -1	
+cm_biotrade_phaseout = 1; !! def 0
+cm_bioprod_histlim = 1.2; !! def -1	
 
 cm_H2targets = 0; !! def 0
 
-cm_flex_tax = 1; !! def 0
+cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_costDecayStart = 0.05; !! def 5%
-cm_build_H2costDecayEnd = 0.1;  !! def 10%
+cm_build_H2costDecayEnd = 0.3;  !! def 10%
 
 cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_indst_costDecayStart = 0.05; !! def 5%
-cm_indst_H2costDecayEnd = 0.1;  !! def 10%
+cm_indst_H2costDecayEnd = 0.3;  !! def 10%
 
-cm_BioSupply_Adjust_EU = 2; !! def 1
+cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
 
-$setGlobal cm_demTcomplex  fromEDGET !! def = temporary_trend
+$setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
-c_noPeFosCCDeu = 0; !! def 0
+c_noPeFosCCDeu = 1; !! def 0
+c_H2tdCapCost_stat = 4; !! def 1
+
+cm_HeatLim_b = 0.15; !! def 1
+cm_ElLim_b = 1; !! def 1
+
+cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
+
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -565,6 +576,8 @@ $setglobal cm_INNOPATHS_DAC_eff  off !! def = off
 $setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
 
 $setglobal cm_fixCO2price  off !! def = off
+
+$setglobal cm_feShareLimits  off  !! def = off
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1005,7 +1005,9 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-
+*** FS: scale H2 transmission and distribution cost in industry/buildings 
+*** for scenarios with different assumptions on the cost of building/upgrading H2 grid
+pm_inco0_t(ttot,regi,"tdh2s") = c_H2tdCapCost_stat * pm_inco0_t(ttot,regi,"tdh2s");
 
 
 
