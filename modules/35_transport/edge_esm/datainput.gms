@@ -54,7 +54,7 @@ p35_esCapCost(ttot,regi,"%cm_GDPscen%",EDGE_scenario,teEs_dyn35) = 0;
 );
 
 *** calculate shares for fuels by CES node
-p35_shFeCes(ttot,regi,"%cm_GDPscen%",EDGE_scenario,entyFe,ppfen_dyn35,teEs_dyn35)$fe2ces_dyn35(entyFe,ppfen_dyn35,teEs_dyn35) =
+p35_shFeCes(ttot,regi,"%cm_GDPscen%",EDGE_scenario,entyFe,ppfen_dyn35,teEs_dyn35)$(fe2ces_dyn35(entyFe,ppfen_dyn35,teEs_dyn35) AND (ttot.val ge 1995)) =
         p35_demByTech(ttot,regi,"%cm_GDPscen%",EDGE_scenario,entyFe,ppfen_dyn35,teEs_dyn35) / sum((entyFe2,teEs_dyn35_2)$fe2ces_dyn35(entyFe2,ppfen_dyn35,teEs_dyn35_2),p35_demByTech(ttot,regi,"%cm_GDPscen%",EDGE_scenario,entyFe2,ppfen_dyn35,teEs_dyn35_2));
 
 
