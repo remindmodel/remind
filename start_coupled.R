@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -34,7 +34,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag <- check_config(cfg_mag,paste0(path_magpie,"config/default.cfg"),paste0(path_magpie,"modules")) 
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  cfg_mag$output     <- c("report","rds_report","remind") # report: MAgPIE3 and MAgPIE4, remind: MAgPIE3 (glo.modelstat.csv)
+  cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
@@ -61,7 +61,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
 
     # define gdx paths
     if (i==start_iter) {
-      cat("### COUPLING ### gdx in first iteraion taken from files2export$start \n")
+      cat("### COUPLING ### gdx in first iteration taken from files2export$start \n")
     } else {
       cat("### COUPLING ### gdx taken from previous iteration\n")
       cfg_rem$files2export$start["input.gdx"]     <- paste0("output/",runname,"-rem-",i-1,"/fulldata.gdx")
@@ -72,7 +72,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     # Control Negishi iterations
     itr_offset <- 1 # Choose this if negishi iterations should only be adjusted for coupling iteration numbers below 3
     #itr_offset <- start_iter # Choose this if negishi iterations should be adjusted for the first three iterations (regardless of their number)
-                  #	This is the case after the oupling was restarted continuing from existing iterations.
+                  #	This is the case after the coupling was restarted continuing from existing iterations.
     
     double_iterations <- 1
     if (cfg_rem$gms$cm_SlowConvergence == "on") double_iterations <- 2 
@@ -103,14 +103,14 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       ######### S T A R T   R E M I N D   S T A N D A L O N E ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "off"
       cat("### COUPLING ### No MAgPIE report for REMIND input provided.\n")
-      cat("### COUPLING ### REMIND will be startet in stand-alone mode with\n    ",runname,"\n    ",cfg_rem$results_folder,"\n")
+      cat("### COUPLING ### REMIND will be started in stand-alone mode with\n    ",runname,"\n    ",cfg_rem$results_folder,"\n")
       outfolder_rem <- submit(cfg_rem)
     } else if (grepl(paste0("report.mif"),report)) { # if it is a MAgPIE report
       ######### S T A R T   R E M I N D   C O U P L E D ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "on"
       if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
       cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
-      # Keep path to MAgPIE report in mind to have it availalbe after the coupling loop
+      # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
       ####### START REMIND #######
       cfg_rem$pathToMagpieReport <- report
@@ -171,7 +171,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
      cfg_mag$files2export$start <- .setgdxcopy(".gdx",cfg_mag$files2export$start,gdxlist)
     }
     
-    cat("### COUPLING ### MAgPIE will be startet with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
+    cat("### COUPLING ### MAgPIE will be started with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
     ########### START MAGPIE #############
     outfolder_mag <- start_run(cfg_mag,path_to_report=report,LU_pricing=LU_pricing,codeCheck=FALSE)
     ######################################
@@ -209,9 +209,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
-    #qos <- ifelse(grepl("SSP2-(NDC|Base)",run),"priority","short")
-    system(paste0("sbatch --qos=",qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+    # load the config of the subsequent run to provide the correct qos setting (use new environmet to not overwrite the cfg_rem of the current run)
+    subseq.env <- new.env()
+    load(paste0("C_",run,".RData"),envir=subseq.env)
+    system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
@@ -245,7 +246,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     warning(msg)
   } else {
     # Replace REMIND and MAgPIE with REMIND-MAgPIE
-    gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
+    #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
     write.report(tmp3,file=paste0("output/",runname,".mif"))
   }
 }

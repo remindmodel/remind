@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -36,9 +36,17 @@ loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
         vm_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
+*cb* make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration
+       vm_capDistr.lo("2015",regi,te,rlf) = 0.99*p_aux_capThisGrade(regi,te,rlf);
+       vm_capDistr.lo("2020",regi,te,rlf) = 0.99*p_aux_capThisGrade(regi,te,rlf);
     );
   );
 );
+
+*cb* make sure no grades > 9 are used. Only cosmetic to avoid entries in lst file
+vm_capDistr.fx(t,regi,te,rlf)$(rlf.val gt 9) = 0;
+
+
 
 *RP* no battery storage in 2010:
 vm_cap.up("2010",regi,teStor,"1") = 0;
@@ -281,18 +289,20 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
-*additional bound on 2020 expansion: at least yearly as much as in 2016,2017 average
-  vm_deltaCap.lo("2020",regi,te,"1") = (p_histCap("2018",regi,te)-p_histCap("2015",regi,te))/3;
+*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2019 average
+  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(p_histCap("2019",regi,te)-p_histCap("2015",regi,te))/4;
 );
 vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"); !! allow offset of 10MW even for countries with no CSP installations to help the solver
 
-*RR* set lower bounds to spv installed capacity in 2020 to reflect the massive deployment in recent years to 2018 historical values plus a conservative estimation of expected additional deployment until 2020 (+10% per year).
-vm_cap.lo("2020",regi,"spv","1")$(p_histCap("2018",regi,"spv")) = p_histCap("2018",regi,"spv")*(1+0.1)**2;
+*RR* set lower bounds to spv installed capacity in 2020 to reflect the massive deployment in recent years to 90% of 2019 historical value
+vm_cap.lo("2020",regi,"spv","1")$(p_histCap("2019",regi,"spv")) = 0.9*p_histCap("2019",regi,"spv");
 
-*CB* additional upper bound on 2020 deployment: doubling of historic rate plus 2 GW for solar and wind, and 500 MW for CSP
+*CB* additional upper bound on 2020 deployment
 loop(regi,
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
-vm_deltaCap.up("2020",regi,te,"1") = max(2*(p_histCap("2018",regi,te)-p_histCap("2015",regi,te))/3,2*(p_histCap("2018",regi,te)-p_histCap("2017",regi,te)),0.006$(sameas(te,"spv")) + 0.0055$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));
+vm_deltaCap.up("2020",regi,te,"1") = max(1.2*(p_histCap("2019",regi,te)-p_histCap("2015",regi,te))/4,!!20% more than the 4 year average might be relevant for regions with low 2019 insta
+                                         1.25*(p_histCap("2019",regi,te)-p_histCap("2018",regi,te)),!!for most countries this will be binding
+										 0.005$(sameas(te,"spv")) + 0.0045$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));!! for small regions
 );
 );
 

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -115,18 +115,18 @@ fe2es_dyn36(all_enty,all_esty,all_teEs)    "map FE carriers to ES via appliances
         feels.uecwelb.te_uecwelb
         feels.uecwhpb.te_uecwhpb
 /
- 
+
 buildMoBio36 (all_esty)   "modern biomass in buildings"
 /
 ueshsob
 uecwsob
-/ 
+/
  
-fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) "map FE carriers to CES via appliances"
+ fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) "map FE carriers to CES via appliances"
 // 
-
 feteces_dyn36(all_enty,all_teEs,all_in) "map FE carriers to CES without esty"
 //
+
 
 inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
 
@@ -136,7 +136,7 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   ppf_putty_dyn36(all_in) "putty ppf for buildings"
   //
   
-  in_complements_dyn36(all_in)  "Complementary factors"
+  in_complements_dyn36(all_in)    "in complements"
   /
   uescb
   ueshb
@@ -182,7 +182,7 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
     feels . (fescelb,fealelb)
   /
   
-    fe_tax_subEs36(all_in,all_esty)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
+  fe_tax_subEs36(all_in,all_esty)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
     /
     fesob . (ueshsob,ueshstb,uecwsob,uecwstb)
     fehob . (ueshhob,uecwhob)
@@ -192,7 +192,7 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
     feelb . (ueshelb,ueshhpb, uecwelb,uecwhpb)  
     /
     
-    fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
+  fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
     /
      feelb . (fealelb,fescelb)  
     /
@@ -215,8 +215,8 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   
   teEs_pushCalib_dyn36(all_teEs) "technologies for which the Logit parameter should be modified"
   
-;   
-
+  opTimeYr2teEs(all_teEs,opTimeYr)   "mapping for technologies to yearly lifetime - is filled automatically from the lifetime values of technologies"
+;
 
 loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
     loop ( es2ppfen_dyn36(all_esty,all_in),
@@ -230,6 +230,7 @@ loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
  alias (fe2ces_dyn36,fe2ces_dyn36_2);
  alias (fe2es_dyn36, fe2es_dyn36_2);
  alias (feteces_dyn36, feteces_dyn36_2);
+
  
 t36_hist(ttot) = NO;
 t36_hist(ttot)$(sameAs(ttot,"2005") OR sameAs(ttot,"2010") OR sameAs(ttot,"2015")) = YES;
@@ -259,7 +260,7 @@ fe_tax_sub_sbi(fe_tax_sub36) = YES;
 fe_tax_subEs(fe_tax_subEs36) = YES;
 
 buildMoBio(buildMoBio36) = YES;
- 
+
 teEs(teEs_dyn36)         = YES;
 esty(esty_dyn36)     = YES;
 fe2es(fe2es_dyn36)       = YES;
