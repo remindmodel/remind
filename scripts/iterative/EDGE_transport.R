@@ -45,7 +45,7 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
-
+setConfig(regionmapping = gsub('config/', '', cfg$regionmapping))
 EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
