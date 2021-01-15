@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -604,7 +604,6 @@ display p_efFossilFuelExtr;
 pm_dataren(regi,"nur",rlf,te)     = f_datarenglob("nur",rlf,te);
 pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te);
 
-
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
@@ -692,14 +691,23 @@ $offdelim
 
 *** RP rescale wind capacity factors in REMIND to account for very different real-world CF (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
 *** Because of the lag effect (turbines in the 2000s were much smaller and thus yielded lower CFs), only implement half of the calculated ratio of historic to REMIND capFac as rescaling for the new CFs - realised as (x+1)/2
+
+*cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
 p_aux_capacityFactorHistOverREMIND(regi,"wind")$p_avCapFac2015(regi,"wind") =  p_histCapFac("2015",regi,"wind") / p_avCapFac2015(regi,"wind");
-loop(te$sameas(te,"wind"),
-  pm_dataren(regi,"maxprod",rlf,te) = pm_dataren(regi,"maxprod",rlf,te) * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
-  pm_dataren(regi,"nur",rlf,te)     = pm_dataren(regi,"nur",rlf,te)     * ( p_aux_capacityFactorHistOverREMIND(regi,te) + 1) / 2 ;
+
+loop(t$(t.val ge 2015 AND t.val le 2045 ),
+pm_cf(t,regi,"wind") =
+(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
++
+(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
+
+
 
 p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
 pm_cf("2015",regi,"spv") = pm_cf("2015",regi,"spv") * p_aux_capacityFactorHistOverREMIND(regi,"spv");
+pm_cf("2020",regi,"spv") = pm_cf("2020",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+1)/2;
+pm_cf("2025",regi,"spv") = pm_cf("2025",regi,"spv") * (p_aux_capacityFactorHistOverREMIND(regi,"spv")+3)/4;
 
 *** RP rescale CSP capacity factors in REMIND - in the DLR resource data input files, the numbers are based on a SM3/12h setup, while the cost data from IEA seems rather based on a SM2/6h setup (with 40% average CF)
 *** Accordingly, decrease CF in REMIND to 2/3 of the DLR values (no need to correct maxprod, as here no miscalculation of total energy yield takes place, in contrast to wind)
@@ -743,6 +751,10 @@ $offdelim
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
+***additional deltacapoffset on electric vehicles, based on latest data
+p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
+p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
+
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
@@ -769,6 +781,9 @@ loop(ttot$(ttot.val ge 2005),
 *** ==> 1TW power plant ~ 650 million LDV
   
   p_adj_coeff(ttot,regi,te)                = 0.2;
+  p_adj_coeff(ttot,regi,"pc")              = 0.5;
+  p_adj_coeff(ttot,regi,"ngcc")            = 0.5;
+  p_adj_coeff(ttot,regi,"igcc")            = 0.5;
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
   p_adj_coeff(ttot,regi,"hydro")           = 1.0;
@@ -777,15 +792,15 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.1;
-  p_adj_coeff(ttot,regi,"wind")            = 0.1;
+  p_adj_coeff(ttot,regi,"spv")             = 0.08;
+  p_adj_coeff(ttot,regi,"wind")            = 0.08;
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
   p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
-  p_adj_coeff(ttot,regi,teGrid)            = 1.0;
+  p_adj_coeff(ttot,regi,teGrid)            = 0.1;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
@@ -984,12 +999,12 @@ $if %c_techcosts% == "REG"      );
 $if %c_techcosts% == "REG"    );
 
 ***linear convergence of investment costs from 2025 on for non-learning technologies,
-***so that in 2050 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2050),
+***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
 $if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,teNoLearn(te)) = ((pm_ttot_val(ttot)-2020)*fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                            + (2050-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/30;
+$if %cm_techcosts% == "REG"                                            + (2070-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/50;
 $if %cm_techcosts% == "REG"   );
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2050),
+$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2070),
 $if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,teNoLearn(te)) = fm_dataglob("inco0",te);
 $if %cm_techcosts% == "REG"   );
 
@@ -1170,6 +1185,11 @@ $offdelim
 *** ----- Emission factor of final energy carriers -----------------------------------
 *AD* Updated Demand Side Emission Factors
 *** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
+*AD* Reverted to Gunnar's previous values due to inconsistencies in the reporting
+***  triggered by this update.
+*** Gunnar's original comment:
+*GL* demand side emission factor of final energy carriers in MtCO2/EJ
+*** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
 p_ef_dem(entyFe) = 0;
 p_ef_dem("fedie") = 74;
 p_ef_dem("fehos") = 73;

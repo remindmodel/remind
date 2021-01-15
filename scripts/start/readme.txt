@@ -1,3 +1,9 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 Documentation of the new procedure of starting REMIND runs (DK, LB, January 2020)
 
 Why did we redesign the procedure?
@@ -27,20 +33,20 @@ The procedure in detail:
 
 Rscript start.R -----> choose_slurmConfig()               [scripts/start/choose_slurmConfig.R] 
                        configure_cfg(cfg, scenario, ...)  [start.R]                            
+                       save cfg to runtitlte.RData (in REMIND's mainfolder)                                                                  
                        submit(cfg)                        [scripts/start/submit.R]               
                         - create output folder                                                                     
-                        - save cfg to runtitlte.RData                                                                     
                         - copy scripts/start/prepare_and_run.R into results folder                                                                     
-                        - move runtitle.RData into results folder                                                                     
+                        - save cfg to config.RData into results folder                                                                     
                         - change to results folder                                                                       
                         - send job to cluster: sbatch Rscript prepare_and_run.R ----->  prepare_and_run() [scripts/start/prepare_and_run.R]                                                                    
                         - change to main folder                                          - load config.RData
                                                                                          - cd mainfolder
+                                                                                         - LOCK model
                                                                                          - prepare NDC [scripts/input/prepareNDC2018.R]
                                                                                          - prepare calibration
-                                                                                         - LOCK model
-                                                                                         - download and distribute input data
                                                                                          - if coupled get MAgPIE data
+                                                                                         - download and distribute input data
                                                                                          - put together single GAMS file
                                                                                          - UNLOCK
                                                                                          - cd resultsfolder

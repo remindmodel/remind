@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -27,7 +27,8 @@ loop(all_regi,
 ***      -------------------------------------------------------------------
 
 if (execError > 0,
-abort "at least one execution error occured, possibly in the loop";
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, possibly in the loop";
 );
 
 solve hybrid using nlp maximizing vm_welfareGlob;
@@ -103,3 +104,4 @@ $endif.solprint
 p80_repy_iteration(all_regi,solveinfo80,iteration) = p80_repy(all_regi,solveinfo80);
 
 *** EOF ./modules/80_optimization/nash/solve.gms
+

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -56,7 +56,7 @@ display p35_freight_ES_efficiency;
 
 
 *** bunker share in non-LDV transport
-Parameter  pm_bunker_share(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "share of bunkers in non-LDV transport"
+Parameter  p35_bunker_share(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "share of bunkers in non-LDV transport"
 /
 $ondelim
 $include "./modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r"
@@ -64,7 +64,9 @@ $offdelim
 /
 ;
 
-pm_bunker_share_in_nonldv_fe(ttot,regi) = pm_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
+pm_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
+
+display pm_bunker_share_in_nonldv_fe;
 
 
 *** RP: to be able to better reproduce the 2010 decrease of liquids and solids demand in the US, additionally decrease the refineries build-up in 2005:
