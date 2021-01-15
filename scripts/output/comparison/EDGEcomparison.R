@@ -407,8 +407,8 @@ for (outputdir in outputdirs) {
   POP=calcOutput("Population", aggregate = T)[,, "pop_SSP2"]
   POP <- magpie2dt(POP, regioncol = "region",
                    yearcol = "year", datacols = "POP")
-  gdp <- getRMNDGDP(scenario = "gdp_SSP2", usecache = F, isolev = F, isocol = "region")
-  GDPcap <- getRMNDGDPcap(scenario = "gdp_SSP2", usecache = F, isolev = F, isocol = "region")
+  gdp <- getRMNDGDP(scenario = "gdp_SSP2", to_aggregate = T, isocol = "region", usecache = T, gdpfile = "GDPcache.RDS")
+  GDPcap <- getRMNDGDPcap(scenario = "gdp_SSP2", usecache = TRUE, isocol = "region", to_aggregate = T, gdpCapfile = "GDPcapCache.RDS")
   if (nrow(miffile[variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting")])==0) {
     TWa_2_EJ     <- 31.536
     prodFE  <- readGDX(gdx,name=c("vm_prodFe"),field="l",restore_zeros=FALSE,format="first_found")*TWa_2_EJ
