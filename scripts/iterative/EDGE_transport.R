@@ -47,8 +47,10 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+setConfig(regionmapping = gsub('config/', '', cfg$regionmapping))
 
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
@@ -136,11 +138,13 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
 
+
   nonfuel_costs_list = applylearning(
       non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
       gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp, 
       ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
       rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+
   nonfuel_costs = nonfuel_costs_list$nonfuel_costs
   capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
