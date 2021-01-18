@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -80,8 +80,10 @@ p80_count                                  "count regions with feasible solution
 p80_eoWeights_fix(all_regi)                "default and fallback weighting factors"
 
 p80_SolNonOpt(all_regi)                    "solve status"
+p80_taxrev_dev(ttot,all_regi)              "deviation of tax revenue normalized by GDP if taxes did not converge"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
+p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
 ;
 
 positive variable

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -13,18 +13,18 @@
 *** Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
 
-*** Prescribe upper and lower limit for first generation biomass from 2030/45 on, so REMIND has freedom before.
+*** Prescribe upper and lower limit for first generation biomass from 2045 on, so REMIND has freedom before.
 *** To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths.
+*** FS: changed the bounds to start only in 2045 in REMIND-EU to rule out some infeasibilities with EDGE-T
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
-
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
 if(cm_1stgen_phaseout=0,
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 else
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 );
 
 

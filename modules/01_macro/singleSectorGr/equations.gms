@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -154,19 +154,19 @@ q01_kapMo0(t0(t),regi,ppfKap(in))$(pm_cesdata(t,regi,in,"quantity") gt 0)..
     pm_cesdata(t,regi,in,"quantity");
 
 *' Limit the share of one ppfEn in total CES nest inputs:
-q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(out,in) ) ..
-    vm_cesIO(t,regi,in)
+q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(t,regi,out,in) ) ..
+    vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_shares(out,in)
-  * sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2))
+    pm_ppfen_shares(t,regi,out,in)
+  * (sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in2,"offset_quantity")))
 ;
 
 *' Limit the ratio of two ppfEn:
-q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(in,in2) ) ..
-    vm_cesIO(t,regi,in)
+q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(t,regi,in,in2) ) ..
+    vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_ratios(in,in2)
-  * vm_cesIO(t,regi,in2)
+    pm_ppfen_ratios(t,regi,in,in2)
+  * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 

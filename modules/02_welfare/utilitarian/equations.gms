@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -54,9 +54,9 @@ q02_inconvPen(t,regi)$(t.val > 2005)..
 q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
     v02_inconvPenCoalSolids(t,regi)
   =g=
-*' local air pollution for coal: inconvinienve penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
+*' local air pollution for coal: inconvinience penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
     p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
-  - vm_cesIO(t,regi,"fesoi"))
+  - (vm_cesIO(t,regi,"fesoi") + pm_cesdata(t,regi,"fesoi","offset_quantity")))
   + v02_sesoInconvPenSlack(t,regi)
 ;
 $ENDIF.INCONV

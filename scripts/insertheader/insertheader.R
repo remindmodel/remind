@@ -1,6 +1,12 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 
 insertheader <- function(maindir=".",
-                         header=c("(C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)",
+                         header=c("(C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)",
                                   "authors, and contributors see CITATION.cff file. This file is part",
                                   "of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of",
                                   "AGPL-3.0, you are granted additional permissions described in the",
@@ -11,7 +17,7 @@ insertheader <- function(maindir=".",
                                       ".spam",".xlsx",".xls", ".sh","files",".md",".RData", ".jpg",
                                       ".png",".cff", ".rds", ".aux", ".log", ".out", ".pdf",
                                       ".tex", ".htm", ".css", ".bib", ".ref", ".mif", ".gmif", ".gdx",
-                                      ".lst", ".git-id", ".csv", ".gcsv", ".Rdata", ".prn", ".cmd", ".put", 
+                                      ".lst", ".git-id", ".csv", ".gcsv", ".Rdata", ".prn", ".cmd", ".put",
                                       ".IN", ".awk", ".MON", ".CFG", ".mod", ".SCEN", ".inc"),
                          comments=c(".R"="#", ".Rmd"="#",".gms"="***",".cfg"="#",".csv"="*",".cs2"="*",
                                     ".cs3r"="*",".cs4r"="*",".sh"="#",".txt"="#"),
@@ -79,14 +85,14 @@ insertheader <- function(maindir=".",
 
     # insert header after line 0
     withcomment <- paste(co,key,header)
-    f <- append(f,withcomment,after = 0)
+    f <- append(f,withcomment,after = ifelse(!length(tmp), 0, tmp[1] - 1))
     writefile <- TRUE
     done <- c(done,file)
 
     # Write file only if it was modified
     if (writefile & !test_only) {
       if (line_endings == "win") {
-        lucode:::writeLinesDOS(f,file)
+        lucode2:::writeLinesDOS(f,file)
       } else {
         writeLines(f,file)
       }

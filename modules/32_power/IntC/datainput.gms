@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -73,8 +73,5 @@ p32_flex_maxdiscount(regi,te) = p32_flex_maxdiscount(regi,te) * sm_TWa_2_MWh * s
 display p32_flex_maxdiscount;
 $offtext
 
-*** p32_flex_maxdiscount refers to the maximum fraction by which 
-*** the input electricity price can be reduced/increased (positive/negative values) 
-*** for high VRE penetrations
-p32_flex_maxdiscount(regi,"elh2") = cm_flexMax_elh2;
-
+*** initialize p32_PriceDurSlope parameter
+p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;

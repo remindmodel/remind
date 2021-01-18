@@ -1,10 +1,19 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/DAC/equations.gms
+
+***---------------------------------------------------------------------------
+*'  CDR Final Energy Balance
+***---------------------------------------------------------------------------
+q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
+  vm_otherFEdemand(t,regi,entyFe)
+  =e=
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
+;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of (negative) CO2 emissions from direct air capture. The first part of the equation describes emissions captured from the ambient air, 
@@ -29,12 +38,6 @@ q33_emicdrregi(t,regi)..
 *'  Calculation of energy demand of direct air capture. Heat can be provided by gas or H2; 
 *'  vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat minus what is already covered by h2, i.e. vm_otherFEdemand(t,regi,"feh2s") and vice versa.
 ***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe,emiMkt)$((entyFe2Sector(entyFe,"cdr")) AND (sameas(emiMkt,"ETS"))) .. 
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr",emiMkt)) 
-  =e=
-  vm_otherFEdemand(t,regi,entyFe)
-;
-
 q33_otherFEdemand(t,regi,entyFe)..
     vm_otherFEdemand(t,regi,entyFe)
     =e=

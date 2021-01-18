@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -666,10 +666,12 @@ o_emissions(ttot,regi,emi)$(ttot.val ge 2005) =
 	sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emi,emiMkt))*emi_conv(emi)
 	- o_emissions_bunkers(ttot,regi,emi);
 
+*** note! this still excludes industry CCS and CCU. To fix. 
 o_emissions_energy(ttot,regi,emi)$(ttot.val ge 2005) = 
 	sum(emiMkt, vm_emiTeMkt.l(ttot,regi,emi,emiMkt))*emi_conv(emi)
 	- o_emissions_bunkers(ttot,regi,emi);
 
+*** note! this still excludes industry CCS. To fix. 
 o_emissions_energy_demand(ttot,regi,emi)$(ttot.val ge 2005) = 
 	sum(sector2emiMkt(sector,emiMkt),
 		sum(se2fe(enty,enty2,te),
@@ -680,6 +682,7 @@ o_emissions_energy_demand(ttot,regi,emi)$(ttot.val ge 2005) =
 	- o_emissions_bunkers(ttot,regi,emi)
 	;
 
+*** note! this still excludes industry CCS. To fix.
 o_emissions_energy_demand_sector(ttot,regi,emi,sector)$(ttot.val ge 2005) =
 	sum(emiMkt$sector2emiMkt(sector,emiMkt),
 		sum(se2fe(enty,enty2,te),
@@ -777,13 +780,6 @@ o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
 	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
 		  vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
 		)$( sameas(emi,"co2") )
-	)
-***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve.l(ttot,regi)$( sameas(emi,"co2") ) )
-***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
-  + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort.l(ttot,regi,"cco2","ccuco2short",te2,rlf)$( sameas(emi,"co2") )
-
 	)
 	)*emi_conv(emi)
 ;	

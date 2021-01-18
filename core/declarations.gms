@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -109,6 +109,7 @@ p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_enty)                                          "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 p_bioshare(tall,all_regi,all_enty)                          "bioshare for each FE carrier"
+pm_demPeBio(tall,all_regi)                                  "Primary energy bioenergy demand from last iteration [TWyr]"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
 p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calculate p_avCapFac2015; The historic capacity in 2015"
@@ -163,7 +164,8 @@ p_cintraw(all_enty)                                  "carbon intensity of fossil
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
-p_priceSeel(ttot,all_regi)                           "parameter with electricity price from last iteration (unit: trUSD/TWa)"
+pm_priceSeel(ttot,all_regi)                           "parameter with electricity price from last iteration (unit: trUSD/TWa)"
+
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
 
@@ -265,6 +267,7 @@ v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_flexAdj(tall,all_regi,all_te)			         "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
+vm_taxrevimplFETax(ttot,all_regi)                    "implicit efficiency directive target tax"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -299,6 +302,7 @@ vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
+vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "small diffusion additional sector specific investment cost"
                                                                  
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all differenct ccs. [GtC/a]"
 
@@ -317,7 +321,8 @@ vm_prodSeOth(ttot,all_regi,all_enty,all_te)	         "other sety production from
 v_shGreenH2(ttot,all_regi)   "share of green hydrogen in all hydrogen by 2030 [0..1]"
 v_shBioTrans(ttot,all_regi)    "Share of biofuels in transport liquids from 2025 onwards. Value between 0 and 1."
 
-vm_taxrevimplicitFEEffTarget(ttot,all_regi)          "implicit efficiency directive target tax"
+vm_shSeel_fe(ttot,all_regi,emi_sectors)               "share of electricity in sector final energy [0..1]"
+vm_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids in sector final energy [0..1]"
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
@@ -403,6 +408,8 @@ q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)    "phase-out constraint for 
 q_limitBiotrmod(ttot,all_regi)                        "limit the total amount of modern biomass use for solids to the amount of coal use for solids "
 q_limitShOil(ttot,all_regi)                           "requires minimum share of liquids from oil in total liquids of 15%"
 q_PE_histCap(ttot,all_regi,all_enty,all_enty)         "model capacity must be equal or greater than historical capacity"
+q_PE_histCap_NGCC_2020_up(ttot,all_regi,all_enty,all_enty) "gas capacity can only increase by 50% maximum from 2015 to 2020, plus 10 GW to account for extra flexibility in regions with small 2015 capacity"
+
 *** ES layer equations
 q_transFe2Es(ttot,all_regi,all_enty,all_esty,all_teEs)    "Conversion from final energy to energy service"
 q_es2ppfen(ttot,all_regi,all_in)                          "Energy services are handed to the CES tree."
@@ -410,6 +417,9 @@ q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energ
 *q_shFeCesNorm(ttot,all_regi,all_in)                      "Shares have to sum to 1."
 q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
+
+q_shSeel_fe(ttot,all_regi,emi_sectors)                "share of gases and liquids in sector final energy"
+q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
 q_heat_limit(ttot,all_regi)

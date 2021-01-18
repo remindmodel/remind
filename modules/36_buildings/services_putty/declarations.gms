@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,7 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_putty/declarations.gms
 Scalar
-s36_switch_floor "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid"
+s36_switch_floor  "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid" /0/,
+s36_vintage_calib "switch for the inclusion of vintage equations and restricting ttot to historical. It should exclude the equations from hybrid" /0/,
+s36_logit         "switch for the inclusion of vintage equations. It should exclude the equations from hybrid" /0/
+
 ;
 Parameter
 p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2"
@@ -59,6 +62,9 @@ p36_costReduc(tall,all_teEs)                             "Reduction of costs for
 
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
+
+p36_aux_lifetime(all_teEs)                             "auxiliary parameter for calculating life times"
+p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 ;
 
 
@@ -67,13 +73,19 @@ v36_floorspace_delta(tall,all_regi) "increase in floorspace, million m2"
 v36_putty_obj                       "index of the step by step variation of v36_floorspace_delta"
 ;
 Equations
-q36_enerSerAdj(tall,all_regi,all_in) "adjustment costs for energy services" 
-q36_enerCoolAdj(tall,all_regi,all_in) "adjustment costs for energy cooling services" 
-q36_pathConstraint(tall,all_regi)  "equation describing the relation between a variable and its variation"
+q36_enerSerAdj(tall,all_regi,all_in)       "adjustment costs for energy services" 
+q36_enerCoolAdj(tall,all_regi,all_in)      "adjustment costs for energy cooling services" 
+q36_pathConstraint(tall,all_regi)          "equation describing the relation between a variable and its variation"
 q36_putty_obj                              "objective function"
 
 q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
 
+q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
+q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"
+q36_budget(tall,all_regi)                             "budget equation"
+q36_vintage_obj                                              "objective function for vintage model"
+
+q36_shares_obj                                         "objective function for logit shares: heterogeneity preferences"
 ;
 
 

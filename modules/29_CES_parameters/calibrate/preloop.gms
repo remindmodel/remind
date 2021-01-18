@@ -82,13 +82,14 @@ p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(
     )
  ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
-  * ( p29_cesdata_load(t,regi,in,"eff")
-    * p29_effGr(t,regi,in)
-    * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-      + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
-      )
-    )
- ** (p29_cesdata_load(t,regi,out,"rho") - 1);
+  * exp(
+	  log(
+		p29_cesdata_load(t,regi,in,"eff")
+		* p29_effGr(t,regi,in)
+		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out)))
+		)
+		* (p29_cesdata_load(t,regi,out,"rho") - 1));
 
 *** Propagate price down the CES tree
 loop ((cesLevel2cesIO(counter,in),ces_29(in,in2),ces2_29(in2,in3)),
@@ -180,7 +181,8 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
                                   OR sameas(in,"inco") 
                                   OR ppf_beyondcalib_29(in) 
-                                  OR sameas(in,"enhb")      ),
+                                  OR sameas(in,"enhb")
+                                  OR sameas(in,"enhgab")       ),
     if (NOT in_putty(in) AND (ppf_29(in) OR sameas(in,"inco")),
       put "%c_expname%", "origin", t.tl, regi.tl, "quantity",   in.tl;
       put p29_cesIO_load(t,regi,in) /;
@@ -488,7 +490,8 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
                                   OR sameas(in,"inco") 
                                   OR ppf_beyondcalib_29(in) 
-                                  OR sameas(in,"enhb")      ),
+                                  OR sameas(in,"enhb")
+                                  OR sameas(in,"enhgab")       ),
     if (NOT in_putty(in) AND (ppf_29(in) OR sameas(in,"inco")),
       put "%c_expname%", "target", t.tl, regi.tl, "quantity",   in.tl;
       put pm_cesdata(t,regi,in,"quantity") /;
@@ -795,14 +798,16 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
       + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out) )
       )
    ** (1 - p29_cesdata_load(t,regi,out,"rho"))
-  
-    * ( p29_cesdata_load(t,regi,in,"eff")
-      * p29_effGr(t,regi,in)
-      * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-        + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
-        )
-      )
-   ** (p29_cesdata_load(t,regi,out,"rho") - 1);
+   
+   * exp(
+	  log(
+		p29_cesdata_load(t,regi,in,"eff")
+		* p29_effGr(t,regi,in)
+		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
+		  )
+		)
+		* (p29_cesdata_load(t,regi,out,"rho") - 1));
 
   !! Propagate price down the CES tree
   loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),

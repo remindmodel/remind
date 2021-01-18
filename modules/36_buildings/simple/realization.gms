@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,5 +21,6 @@ $Ifi "%phase%" == "sets" $include "./modules/36_buildings/simple/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/36_buildings/simple/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/36_buildings/simple/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/36_buildings/simple/equations.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/36_buildings/simple/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/36_buildings/simple.gms

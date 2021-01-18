@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,16 +12,22 @@
 vm_co2capture.lo(t,regi,"cco2","ico2","ccsinje","1") = 0;
 vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 
+*** FS: overwrite bounds of se2se technologies in core/bounds.gms and set synfuel lower bounds only from 2035 on
+*** (they are only there in case the solver misses to see the technologies)
+vm_cap.lo(t,regi,te_ccu39,"1")=0;
+vm_cap.lo(t,regi,te_ccu39,"1")$(t.val gt 2031)=1e-7;
+
+*** FS: switch off CCU in baseline runs (as CO2 capture technologies teCCS are also switched off)
+if(cm_emiscen = 1,
+  vm_cap.fx(t,regi,te_ccu39,rlf) = 0;
+);
+
 ***----------------------------------------------------------------------------
-*** lower bound on share of synthetic fuels in all transport fuels by 2035
+*** force synthetic liquids in as a share of total liquids
 ***----------------------------------------------------------------------------
 
-v39_shSynTrans.lo(t,regi)$(t.val eq 2025) = cm_shSynTrans / 4;
-v39_shSynTrans.lo(t,regi)$(t.val eq 2030) = cm_shSynTrans / 2;
-v39_shSynTrans.lo(t,regi)$(t.val gt 2030) = cm_shSynTrans;
-
-*** lower bound on synfuel share in all liquids from 2035 onwards
-*** forces a minimum share of synfuels, if cm_shSynTrans > 0
-v39_shSynTrans.lo(t,regi)$(t.val >= 2035) = cm_shSynTrans;
+v39_shSynTrans.lo(t,regi)$(t.val eq 2030) = cm_shSynTrans / 4;
+v39_shSynTrans.lo(t,regi)$(t.val eq 2035) = cm_shSynTrans / 2;
+v39_shSynTrans.lo(t,regi)$(t.val gt 2040) = cm_shSynTrans;
 
 *** EOF ./modules/39_CCU/39_CCU.gms

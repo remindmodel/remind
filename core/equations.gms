@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -31,6 +31,10 @@ q_costInv(t,regi)..
   =e=
   sum(en2en(enty,enty2,te),
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+  )
+  +
+  sum((te,sector),
+    vm_costAddTeInv(t,regi,te,sector)
   )
   +
   sum(teNoTransform,
@@ -206,7 +210,7 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
 ***---------------------------------------------------------------------------
 
-*' Transformation from final energy to useful energy:
+*' Transformation from final energy to energy services:
 q_transFe2Es(t,regi,fe2es(entyFe,esty,teEs))..
     pm_fe2es(t,regi,teEs) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
     =e=
@@ -431,7 +435,7 @@ q_costTeCapital(t,regi,teLearn) ..
 *** vm_cesIO(t,regi,"fesob") will be 0 in the stationary realization
 q_limitBiotrmod(t,regi)$(t.val > 2020).. 
     vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod") 
-   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in)) 
+   - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")) 
    - sum (fe2es(entyFe,esty,teEs)$buildMoBio(esty), vm_demFeForEs(t,regi,entyFe,esty,teEs) )
     =l=
     (2 +  max(0,min(1,( 2100 - pm_ttot_val(t)) / ( 2100 - 2020 ))) * 3) !! 5 in 2020 and 2 in 2100
@@ -531,13 +535,14 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
 	=e=
 	vm_emiTeMkt(t,regi,emi,emiMkt)
-	!! Non-energy sector emissions
+*** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
+*** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
 	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
    	vm_emiMacSector(t,regi,emiMacSector)
   )
-	!! CDR
+*** CDR from CDR module
 	+	vm_emiCdr(t,regi,emi)$(sameas(emiMkt,"ETS")) 
-	!! Exogenous emissions
+*** Exogenous emissions (F-Gases)
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
 ;
 
@@ -746,6 +751,7 @@ q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
          ,2)
                 /( sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
                    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+                   + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
                   );
 
 ***---------------------------------------------------------------------------
@@ -824,6 +830,15 @@ q_PE_histCap(t,regi,entyPe,entySe)$(p_PE_histCap(t,regi,entyPe,entySe))..
     0.9 * p_PE_histCap(t,regi,entyPe,entySe)
 ;
 
+q_PE_histCap_NGCC_2020_up(t,regi,entyPe,entySe)$( (p_PE_histCap("2015",regi,entyPe,entySe) gt 0.02) AND sameas(entyPe,"pegas") AND sameas(entySe,"seel") AND sameas(t,"2020") )..
+    sum(te$pe2se(entyPe,entySe,te),
+      sum(te2rlf(te,rlf), vm_cap(t,regi,te,rlf))
+    )
+    =l=
+    1.5 * p_PE_histCap("2015",regi,entyPe,entySe) + 0.01
+;
+
+
 ***---------------------------------------------------------------------------
 *' Share of green hydrogen in all hydrogen.
 ***---------------------------------------------------------------------------
@@ -847,6 +862,31 @@ q_shBioTrans(t,regi)..
   sum(se2fe("seliqbio",entyFeTrans,te), vm_prodFe(t,regi,"seliqbio",entyFeTrans,te) )
 ;
  
+***---------------------------------------------------------------------------
+*' Share of final energy in stationary sector
+***---------------------------------------------------------------------------
+q_shSeel_fe(t,regi,sector)$(vm_shSeel_fe.up(t,regi,sector) OR vm_shSeel_fe.lo(t,regi,sector))..
+  vm_shSeel_fe(t,regi,sector) 
+  * sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+  =e=
+  sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feels"),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
+;
+
+q_shGasLiq_fe(t,regi,sector)$(vm_shGasLiq_fe.up(t,regi,sector) OR vm_shGasLiq_fe.lo(t,regi,sector))..
+  vm_shGasLiq_fe(t,regi,sector) 
+  * sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+  =e=
+  sum(emiMkt, 
+    sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fehos")),
+      vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
+;
+
 
 *limit secondary energy district heating and heat pumps
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 

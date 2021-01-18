@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -472,6 +472,7 @@ all_in   "all inputs and outputs of the CES function"
 
   enb                     "buildings energy use"
   enhb                    "buildings heat energy use"
+  enhgab                  "buildings heat gaseous energy use (fegab and feh2b)"  
   fesob                   "buildings use of solid energy carriers"
   fehob                   "buildings use of liquid energy carriers"
   fegab                   "buildings use of gaseous energy carriers"
@@ -481,6 +482,7 @@ all_in   "all inputs and outputs of the CES function"
 
   eni                     "industry energy use"
   enhi                    "industry heat energy use"
+  enhgai                  "industry heat gaseous energy use (fegab and feh2b)" 
   fesoi                   "industry use of solid energy carriers"
   fehoi                   "industry use of liquid energy carriers"
   fegai                   "industry use of gaseous energy carriers"
@@ -1382,10 +1384,17 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        wind      
 /
 
-teFlex(all_te)       "all technologies to which flexibibility tax/subsidy applies"
+teFlex(all_te)       "all technologies which can benefit from flexibility tax"
 /
 elh2
 ***dac
+/
+
+
+teFlexTax(all_te)       "all technologies to which flexibility tax/subsidy applies, flexible technologies are those in teFlex, inflexible technologies those which are not in teFlex"
+/
+elh2
+tdels
 /
 
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"

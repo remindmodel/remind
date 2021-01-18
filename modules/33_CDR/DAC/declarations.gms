@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -27,7 +27,7 @@ q33_capconst_dac(ttot,all_regi)                     "calculates amount of carbon
 q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_H2bio_lim(ttot,all_regi,all_te)                 "limits H2 from bioenergy to FE - otherFEdemand, i.e. no H2 from bioenergy for DAC"
 q33_emicdrregi(ttot,all_regi)                       "calculates the (negative) emissions due to CDR technologies"
-q33_demFeCDR(ttot,all_regi,all_enty,all_emiMkt)
+q33_demFeCDR(ttot,all_regi,all_enty)                "CDR demand balance for final energy"
 ;
 
 *** EOF ./modules/33_CDR/DAC/declarations.gms

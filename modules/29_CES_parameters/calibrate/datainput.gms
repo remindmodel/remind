@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -217,7 +217,11 @@ $offdelim
 /
 ;
 
-** Buildings alternative FE trajectory 
+Parameter
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+;
+
+*** Buildings alternative FE trajectory 
 $ifthen "%cm_calibration_FE%" == "low"
   pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_buildings_dyn36) = pm_fedemand(t,regi,"gdp_SSP1",ppfen_buildings_dyn36);
 ***  p29_esdemand(t,regi,"%cm_GDPscen%",ppfen_buildings_dyn36) = p29_esdemand(t,regi,"gdp_SSP1",ppfen_buildings_dyn36);
@@ -229,16 +233,57 @@ $elseif "%cm_calibration_FE%" == "high"
 ***  p29_esdemand(t,regi,"%cm_GDPscen%",ppfen_buildings_dyn36) = p29_esdemand(t,regi,"gdp_SSP5",ppfen_buildings_dyn36);
 $endif
 
-** Transport alternative FE trajectory 
-***$ifthen.module "%transport%" == "complex"
-***$if NOT "%cm_calibration_FE%" == "off" pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_dyn35) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_dyn35);
-***$elseif.module "%edge_esm%" == "high"
-***$if "%cm_calibration_FE%" == "low"  p29_trpdemand(t,regi,"%cm_GDPscen%","Conservative_liquids",in) = p29_trpdemand(t,regi,"%cm_GDPscen%","Smart_lifestyles_Electricity_push",in);
-***$if "%cm_calibration_FE%" == "high" p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in) = (1 + 0.1$(t.val ge 2025) + 0.2$(t.val ge 2030))*p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",in);
-***$endif.module
+*** Transport alternative FE trajectory 
+$ifthen.module "%transport%" == "complex"
+$ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
-** Industry alternative FE trajectory
+Parameter
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+;
+
+Parameter
+p29_fedemand_trasp "transport alternative demand for complex module based on EDGE-T"
+/
+$ondelim
+$include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_EDGETbased.cs4r"
+$offdelim
+/
+;
+
+
+$ifthen "%cm_calibration_FE%" == "low"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCaseWise",in_dyn35);
+$elseif "%cm_calibration_FE%" == "medium"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCase",in_dyn35);
+$elseif "%cm_calibration_FE%" == "high"
+  pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","ConvCase",in_dyn35);
+$endif
+
+Parameter
+ p29_fedemand_trasp2005_2015(tall,all_regi,all_in)  "transport demand based on complex in 2005"
+;
+
+p29_fedemand_trasp2005_2015(t,regi,in_dyn35)$(t.val ge 2005 AND t.val le 2015)= pm_fedemand(t,regi,"%cm_GDPscen%",in_dyn35)$(t.val ge 2005 AND t.val le 2015);
+
+display p29_fedemand_trasp2005_2015;
+
+*** Linear convergence to EDGE-T based values to avoid pre-triangular infeasibility due to IEA balances mismatches
+loop(ttot$(ttot.val ge 2005 AND ttot.val le 2015),
+       pm_fedemand(ttot,regi,"%cm_GDPscen%",in_dyn35) = p29_fedemand_trasp2005_2015("2005",regi,in_dyn35) + (ttot.val-2005)*(p29_fedemand_trasp2005_2015("2015",regi,in_dyn35)-p29_fedemand_trasp2005_2015("2005",regi,in_dyn35))/10;
+);
+
+$endif.demTtrend
+$endif.module
+
+display pm_fedemand;
+
+*** Industry alternative FE trajectory
 $if NOT "%cm_calibration_FE%" == "off" pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37);
+
+*** setting feh2i equal to 1% of fegai
+$ifthen.indst_H2_penetration "%industry%" == "fixed_shares"
+pm_fedemand(t,regi,"%cm_GDPscen%","feh2i")$(t.val ge 2010) = 0.01*pm_fedemand(t,regi,"%cm_GDPscen%","fegai");
+$endif.indst_H2_penetration
 
 display pm_fedemand;
 
@@ -293,6 +338,11 @@ p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capit
 
 *** Load CES parameters parameters from the last run
 Execute_Load 'input'  p29_cesdata_load= pm_cesdata;
+*** FS: if some elasticities are 0 because they are not part of the input gdx, -> set them to 0.5 to avoid divsion by 0
+p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.5;
+
+
+
 *** Load quantities and efficiency growth from the last run
 Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
 
@@ -343,27 +393,41 @@ loop ((t_29hist(t),regi_dyn29(regi))$(
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
 );
-$else.subsectors
+$endif.subsectors
+
+$ifthen.indst_H2_offset "%industry%" == "fixed_shares"
+
+*** Assuming feh2i minimun levels as 1% of fegai to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
+loop ((t,regi)$(pm_cesdata(t,regi,"feh2i","quantity") lt (0.01 * pm_cesdata(t,regi,"fegai","quantity"))),
+	pm_cesdata(t,regi,"feh2i","offset_quantity") = - (0.01 * pm_cesdata(t,regi,"fegai","quantity") - pm_cesdata(t,regi,"feh2i","quantity"));
+  pm_cesdata(t,regi,"feh2i","quantity") = 0.01 * pm_cesdata(t,regi,"fegai","quantity");
+);
+
 *** Special treatment for fehei, which is part of ppfen_industry_dyn37, yet 
 *** needs an offset value for some regions under fixed_shares
-loop ((t,regi,in)$(    sameas(in,"fehei") 
-                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5 ),
-  pm_cesdata(t,regi,in,"offset_quantity")
-  = pm_cesdata(t,regi,in,"quantity")
-  - 1e-5;
-  pm_cesdata(t,regi,in,"quantity") = 1e-5;
+loop ((t,regi)$(pm_cesdata(t,regi,"fehei","quantity") lt 1e-5 ),
+  pm_cesdata(t,regi,"fehei","offset_quantity")  = pm_cesdata(t,regi,"fehei","quantity") - 1e-5;
+  pm_cesdata(t,regi,"fehei","quantity") = 1e-5;
 );
-$endif.subsectors
+$endif.indst_H2_offset
+
+$ifthen.build_H2_offset "%buildings%" == "simple"
+*** Assuming feh2b minimun levels as 5% of fegab to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
+loop ((t,regi)$(pm_cesdata(t,regi,"feh2b","quantity") lt (0.05 *pm_cesdata(t,regi,"fegab","quantity"))),
+	pm_cesdata(t,regi,"feh2b","offset_quantity") = - (0.05 * pm_cesdata(t,regi,"fegab","quantity") - pm_cesdata(t,regi,"feh2b","quantity"));
+	pm_cesdata(t,regi,"feh2b","quantity") = 0.05 * pm_cesdata(t,regi,"fegab","quantity");
+);
+$endif.build_H2_offset
 
 *** Add an epsilon to the values which are 0 so that they can fit in the CES 
 *** function. And withdraw this epsilon when going to the ESM side
 loop((t,regi,in)$(    (ppf(in) OR ppf_29(in)) 
                   AND pm_cesdata(t,regi,in,"quantity") lt 1e-5 
                   AND NOT ppfen_industry_dyn37(in)
-                  AND NOT ppfkap_industry_dyn37(in)            ),
-  pm_cesdata(t,regi,in,"offset_quantity")
-  = pm_cesdata(t,regi,in,"quantity")
-  - 1e-5;
+                  AND NOT ppfkap_industry_dyn37(in)  
+                  AND NOT SAMEAS(in,"feh2i")  
+                  AND NOT SAMEAS(in,"feh2b")        ),
+  pm_cesdata(t,regi,in,"offset_quantity")  = pm_cesdata(t,regi,in,"quantity")  - 1e-5;
   pm_cesdata(t,regi,in,"quantity") = 1e-5;
 );
 
