@@ -82,6 +82,8 @@ p36_fePrice(t,regi_dyn36(regi),entyFe)  =
 );
 $ONorder 
 
+*** Can you explain again the purpose of adding an implicit discount rate to the capital cost of fe2ue techs?
+*** Is p36_costReduc(t,teEs) assuming some exogenous learning?
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_implicitDiscRateMarg(t,regi,in);
 );

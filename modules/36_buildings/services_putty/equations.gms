@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_putty/equations.gms
 
+*** Can you please structure which equations belongs to which model?
+
 ***  Buildings Final Energy Balance
 q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"build"))) .. 
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(ttot,regi,entySe,entyFe,"build",emiMkt)) 
@@ -20,6 +22,7 @@ q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   )$(sameas(emiMkt,"ES"))
 ;
 
+*** Couldn't we also formulate an ES to ppfen handover function instead of pushing this to the postsolve.gms? It would be easier to follow.
 
 *AL* Start of Model solved in preloop for determining the floorspace delta projections
 q36_pathConstraint (ttot,regi) $((s36_switch_floor eq 1) AND (ord(ttot) lt card(ttot)) AND (ttot.val ge cm_startyear)) ..
@@ -74,6 +77,13 @@ q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb")
            )        
 ;         
 
+*******************************************
+*** Equations of the logit model **********
+*******************************************
+
+
+
+*** total UE buildings demand, based on the sum of demand by technology
 q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
                                   ( (s36_vintage_calib eq 1 AND t36_hist(ttot) )
                                     OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
@@ -84,7 +94,9 @@ q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
         v36_prodEs(ttot,regi,enty,esty,teEs) 
       );
       
-      
+*** In what sense is this calculating capacities? Are you referring to useful energy as capacities? That should be in energy units. 
+*** What is the difference between v36_prodEs and v36_deltaProdEs? 
+
 q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
                             ( ((s36_vintage_calib eq 1) AND (t36_hist(ttot) ))
                                     OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..
@@ -114,7 +126,8 @@ q36_budget(t36_scen(ttot),regi_dyn36(regi))..
         * v36_deltaProdEs(ttot,regi,enty,esty,teEs)
         )
     ;    
-   
+
+*** What is the purpose of the objetve function of the vintage model?   
 q36_vintage_obj $  (s36_vintage_calib eq 1  ) ..
    v36_vintage_obj
    =e=
@@ -140,7 +153,11 @@ q36_vintage_obj $  (s36_vintage_calib eq 1  ) ..
        )
       
    ;
-   
+
+*** Can you explain what this objective function is? 
+*** Why does its maximization give the output of the logit function
+*** which should (I guess) be the UE shares based on the cost of the fe2ue technology output.  
+*** Also I do not recognize the logit formulation from before. 
 q36_shares_obj $ (s36_logit eq 1)..
    v36_shares_obj
    =e=
