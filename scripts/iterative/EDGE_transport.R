@@ -267,20 +267,6 @@ if (opt$reporting) {
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
 
-  vint <- vintages[["vintcomp_startyear"]]
-  dem <- shares_int_dem$demandF_plot_pkm
-  vint <- dem[vint, on=c("iso", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
-  vint <- vint[!is.na(demand_F)][
-  , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
-  vint[, demand_F := demand_F * 1e6] # million pkm -> pkm
-
-  vint <- loadFactor[vint, on=c("year", "iso", "vehicle_type")]
-  vint[, full_demand_vkm := demand_F/loadFactor]
-  vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
-  vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
-
-  fwrite(vint, "vintcomp.csv")
-
   quit()
 }
 
