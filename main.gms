@@ -314,15 +314,17 @@ cm_flexMax_elh2             "switch for setting the maximum relative reduction o
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
+cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
+cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-cm_iteration_max       = 1;     !! def = 1
+cm_iteration_max       = 0;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
-c_keep_iteration_gdxes = 0;     !! def = 0
+c_keep_iteration_gdxes = 1;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
@@ -470,7 +472,11 @@ cm_flexMax_elh2 = 0.6; !! def 0.6
 cm_H2targets = 0; !! def 0
 
 cm_BioSupply_Adjust_EU = 2; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
+cm_BioImportTax_EU = 0.5; !! def 0.25
+
+*** buildings services_putty switches
+cm_logitCal_markup_conv_b = 0; !! def 0.8
+cm_logitCal_markup_newtech_conv_b = 0; !! def 0.3
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
