@@ -367,6 +367,10 @@ vm_capEarlyReti.lo(ttot,regi,"tnrs")$(ttot.val gt 2011 AND ttot.val lt 2111) = 0
 
 *cb 20120301 no early retirement for dot, they are used despite their economic non-competitiveness for various reasons.
 vm_capEarlyReti.fx(ttot,regi,"dot")=0;
+*rp 20210118 no investment into oil turbines in Europe
+vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",regi) )  = 1e-6;
+
+
 
 *** -----------------------------------------------------------------------------
 *DK 20100929 Bound on CCS injection rate
