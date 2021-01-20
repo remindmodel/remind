@@ -72,7 +72,7 @@ $offdelim
   
 
   
-*** transfer data to parameters only for the relevant items. Pathway II
+*** transfer data to parameters
   p21_tau_fe_tax_transport(ttot,all_regi,feForUe) = f21_tau_fe_tax_transport(ttot,all_regi,feForUe);
   p21_tau_fe_sub_transport(ttot,all_regi,feForUe) = f21_tau_fe_sub_transport(ttot,all_regi,feForUe);
   
@@ -83,27 +83,16 @@ $offdelim
   p21_tau_fe_tax_transport(ttot,all_regi,"fegat") = p21_tau_fe_tax_transport(ttot,all_regi,"fedie");
   p21_tau_fe_sub_transport(ttot,all_regi,"fegat") = p21_tau_fe_sub_transport(ttot,all_regi,"fedie");
 
-loop ( fe_tax_sub_sbi(all_in, in), !! Pathways I from FE to the CES
-  p21_tau_fe_tax_bit_st(ttot,all_regi,in) = f21_tau_fe_tax_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_tau_fe_sub_bit_st(ttot,all_regi,in) = f21_tau_fe_sub_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_max_fe_sub(ttot,all_regi,in) = f21_max_fe_sub(ttot,all_regi,all_in) ;
-  p21_prop_fe_sub(ttot,all_regi,in) = f21_prop_fe_sub(ttot,all_regi,all_in) ;
-);  
-
-loop ( fe_tax_subEs(all_in, esty), !! Pathways III from FE to the CES, via the ES layer
-  pm_tau_fe_tax_ES_st(ttot,all_regi,esty) = f21_tau_fe_tax_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  pm_tau_fe_sub_ES_st(ttot,all_regi,esty) = f21_tau_fe_sub_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_max_fe_subEs(ttot,all_regi,esty) = f21_max_fe_sub(ttot,all_regi,all_in) ;
-  p21_prop_fe_subEs(ttot,all_regi,esty) = f21_prop_fe_sub(ttot,all_regi,all_in) ;
-);  
+  p21_tau_fe_tax_bit_st(ttot,all_regi,in) = f21_tau_fe_tax_bit_st(ttot,all_regi,in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
+  p21_tau_fe_sub_bit_st(ttot,all_regi,in) = f21_tau_fe_sub_bit_st(ttot,all_regi,in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
+  p21_max_fe_sub(ttot,all_regi,in) = f21_max_fe_sub(ttot,all_regi,in) ;
+  p21_prop_fe_sub(ttot,all_regi,in) = f21_prop_fe_sub(ttot,all_regi,in) ;
 
 if(cm_fetaxscen eq 0,
 p21_tau_fe_tax_transport(ttot,regi,all_enty)     = 0;
 p21_tau_fe_sub_transport(ttot,regi,all_enty)     = 0;
 p21_tau_fe_tax_bit_st(ttot,regi,all_in)          = 0; 
 p21_tau_fe_sub_bit_st(ttot,regi,all_in)          = 0;
-pm_tau_fe_tax_ES_st(ttot,regi,all_esty)          = 0; 
-pm_tau_fe_sub_ES_st(ttot,regi,all_esty)          = 0;
 p21_tau_fuEx_sub(ttot,regi,all_enty)               = 0;
 );
 
@@ -114,8 +103,6 @@ p21_tau_fe_tax_transport(ttot,regi,entyFE)     = p21_tau_fe_tax_transport(ttot,r
 p21_tau_fe_sub_transport(ttot,regi,entyFE)     = p21_tau_fe_sub_transport(ttot,regi,entyFE)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
 p21_tau_fe_tax_bit_st(ttot,regi,ppfen)          = p21_tau_fe_tax_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa; 
 p21_tau_fe_sub_bit_st(ttot,regi,ppfen)          = p21_tau_fe_sub_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
-pm_tau_fe_tax_ES_st(ttot,regi,esty)          = pm_tau_fe_tax_ES_st(ttot,regi,esty)*0.001/sm_EJ_2_TWa; 
-pm_tau_fe_sub_ES_st(ttot,regi,esty)          = pm_tau_fe_sub_ES_st(ttot,regi,esty)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
 p21_tau_fuEx_sub(ttot,regi,entyPE)              =p21_tau_fuEx_sub(ttot,regi,entyPE)*0.001/sm_EJ_2_TWa;
 );
 

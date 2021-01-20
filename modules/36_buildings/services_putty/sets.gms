@@ -193,16 +193,6 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
     feels . (fescelb,fealelb)
   /
   
-  fe_tax_subEs36(all_in,all_esty)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
-    /
-    fesob . (ueshsob,ueshstb,uecwsob,uecwstb)
-    fehob . (ueshhob,uecwhob)
-    fegab . (ueshgab,uecwgab)
-    feh2b . (ueshh2b,uecwh2b)
-    feheb . (ueshheb,uecwheb)
-    feelb . (ueshelb,ueshhpb, uecwelb,uecwhpb)  
-    /
-    
   fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
     /
      feelb . (fealelb,fescelb)  
@@ -277,7 +267,6 @@ in_complements(in_complements_dyn36) = YES;
 in_enerSerAdj(in_enerSerAdj_dyn36) = YES;
 nests_putty(nests_putty_dyn36) = YES;
 fe_tax_sub_sbi(fe_tax_sub36) = YES;
-fe_tax_subEs(fe_tax_subEs36) = YES;
 
 buildMoBio(buildMoBio36) = YES;
 

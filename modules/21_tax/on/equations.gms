@@ -33,8 +33,7 @@
     + v21_taxrevCCS(t,regi) 
     + v21_taxrevNetNegEmi(t,regi)  
     + v21_taxrevFEtrans(t,regi) 
-    + v21_taxrevFEBuildInd(t,regi) 
-    + v21_taxrevFE_Es(t,regi) 
+    + v21_taxrevFEBuildInd(t,regi)  
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
     + v21_taxrevXport(t,regi)
@@ -116,24 +115,20 @@ v21_taxrevFEtrans(t,regi)
 ***---------------------------------------------------------------------------
 q21_taxrevFEBuildInd(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevFEBuildInd(t,regi) 
-=e= SUM(ppfen(in)$( NOT ppfenFromUe(in)),
-          (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen) ) * ( vm_cesIO(t,regi,ppfen) + pm_cesdata(t,regi,ppfen,"offset_quantity"))
-        )
-	- p21_taxrevFEBuildInd0(t,regi) ;
-	
-***---------------------------------------------------------------------------
-*'  Calculation of final Energy taxes in Buildings_Industry or Stationary sector with energy service representation: effective tax rate (tax - subsidy) times FE use in sector
-*'  Documentation of overall tax approach is above at q21_taxrev.
-***---------------------------------------------------------------------------
-q21_taxrevFE_Es(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevFE_Es(t,regi) 
-=e= SUM(fe2es(entyFe,esty,teEs),
-          (pm_tau_fe_tax_ES_st(t,regi,esty) + pm_tau_fe_sub_ES_st(t,regi,esty) ) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
-        )
-	- p21_taxrevFE_Es0(t,regi) ;
+=e=
+sum(fe2ppfEn(entyFe,ppfen)$entyFeStat(entyFe),  
+  (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen))
+  *
+  sum(sector$entyFe2Sector(entyFe,sector),
+    sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+      sum(se2fe(entySe,entyFe,te),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  ) ) )
+)
+- p21_taxrevFEBuildInd0(t,regi) ;
     
 ***---------------------------------------------------------------------------
-*'  Calcuation of ressource extraction subsidies: subsidy rate times fuel extraction
+*'  Calculation of resource extraction subsidies: subsidy rate times fuel extraction
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevResEx(t,regi)$(t.val ge max(2010,cm_startyear))..
