@@ -1215,7 +1215,6 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
    );
 );
 
-
 option p29_efficiency_growth:4:3:1;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 
@@ -1530,4 +1529,3 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 
 $ONorder
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms
-
