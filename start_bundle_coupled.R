@@ -300,10 +300,14 @@ for(scen in common){
     nr_of_regions <- 1
   }
 
+  # Optionally set maximum run time (currently set for qos=medium but with only 2 days instead of a week)
+  if (qos=="medium") time_max <- "02-00"
+  else               time_max <- "01-00"
+
   if (start_now){
       # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
       #qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
-      if (!exists("test")) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
+      if (!exists("test")) system(paste0("sbatch --qos=",qos," --time=",time_max," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
       else cat("Test mode: run NOT submitted to the cluster\n")
   } else {
      cat(paste0("Run ",runname," will start after preceding run ",prefix_runname,settings_remind[scen,"path_gdx_ref"]," has finished\n"))
