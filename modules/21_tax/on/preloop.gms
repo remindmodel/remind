@@ -52,13 +52,13 @@ if(cm_fetaxscen ne 0,
 *----- TAXES  ----------------------------------
 ***CASE 1: constant TAXES
   if(cm_fetaxscen eq 1,
-    loop(ttot, p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-     loop(ttot, p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
+     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
   );
 ***CASE 2: constant TAXES except for the final energies and regions defined at the f21_tax_convergence.cs4r file
   if(cm_fetaxscen eq 2,
-	loop(ttot, p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-    loop(ttot, p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+	loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
 
 	s21_tax_time  = 2050;
 	p21_tau_fe_tax_transport(ttot,regi,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
@@ -68,18 +68,18 @@ if(cm_fetaxscen ne 0,
   );
 ***CASE 3, 4: constant TAXES (same as CASE 1)
   if(cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
-    loop(ttot, p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-     loop(ttot, p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
+     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
   );
 
 ***----- SUBSIDIES  ----------------------------------
 ***global subsidies phase-out until 2030 for SSP1 (CASE 2) & SDP (CASE 4), until 2050 for SSP2 (CASE 3), no phaseout for SSP5 (CASE 1)
 *** CASE 1: Constant subsidy (SSP5)
   if(cm_fetaxscen eq 1,
-    loop(ttot, p21_tau_fe_sub_transport(ttot,regi,entyFe)=p21_tau_fe_sub_transport("2005",regi,entyFe));
-    loop(ttot, p21_tau_fe_sub_bit_st(ttot,regi,ppfen) = p21_tau_fe_sub_bit_st("2005",regi,ppfen));
-    loop(ttot, p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
-    loop(ttot, p21_tau_fuEx_sub(ttot,regi,entyPE)=p21_tau_fuEx_sub("2005",regi,entyPE));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub_transport(ttot,regi,entyFe)=p21_tau_fe_sub_transport("2005",regi,entyFe));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub_bit_st(ttot,regi,ppfen) = p21_tau_fe_sub_bit_st("2005",regi,ppfen));
+    loop(ttot$(ttot.val ge 2005), p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
+    loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPE)=p21_tau_fuEx_sub("2005",regi,entyPE));
   );
 *** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
   if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,

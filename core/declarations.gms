@@ -262,7 +262,7 @@ vm_usableSeTe(ttot,all_regi,entySe,all_te)           "usable se produced by one 
 vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy [tril$US]"
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
-vm_emiFgas(tall,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
+vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
 v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
@@ -294,7 +294,7 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFeSector(tall,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market. Unit: TWa"
+vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market. Unit: TWa"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
 vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
