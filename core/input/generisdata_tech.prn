@@ -175,6 +175,6 @@ omf                 0.84       0.025
 omv                    0           0
 lifetime              20          20
 incolearn                      18000
-ccap0                       0.000005
+ccap0                       0.000001
 learn                           0.15   
 *** EOF ./core/input/generisdata_tech.prn
