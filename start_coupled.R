@@ -112,7 +112,6 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
-      ####### START REMIND #######
       cfg_rem$pathToMagpieReport <- report
       outfolder_rem <- submit(cfg_rem)
       ############################
