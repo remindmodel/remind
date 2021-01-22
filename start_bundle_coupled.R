@@ -178,7 +178,7 @@ for(scen in common){
   rm(cfg)
 
   # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
-  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) cfg_mag <- setScenario(cfg_mag,c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"],split="|"))),"coupling"),scenario_config=paste0(path_magpie,"config/scenario_config.csv"))
+  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) cfg_mag <- setScenario(cfg_mag,c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"],split = ",|\\|"))),"coupling"),scenario_config=paste0(path_magpie,"config/scenario_config.csv"))
   cfg_mag <- check_config(cfg_mag, reference_file=paste0(path_magpie,"config/default.cfg"),modulepath = paste0(path_magpie,"modules/"))
 
   # How to provide the exogenous TC to MAgPIE:
