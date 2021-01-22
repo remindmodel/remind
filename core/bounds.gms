@@ -489,7 +489,7 @@ vm_cap.fx(ttot,regi,te,rlf)$((NOT rlf.val eq 1) AND ( teSe2rlf(te,"1") OR teFe2r
 
 *** cm_startyear eq 2015 - SPA0
 *** cm_startyear gt 2015 - SPAx
-vm_emiFgas.fx(tall,all_regi,all_enty) = f_emiFgas(tall,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","%c_delayPolicy%",all_enty);
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","%c_delayPolicy%",all_enty);
 display vm_emiFgas.L;
 
 

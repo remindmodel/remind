@@ -32,8 +32,6 @@ pm_shFeCes,input,questionnaire
 cm_DiscRateScen,input,questionnaire
 cm_noReboundEffect,input,questionnaire
 qm_budget,input,questionnaire
-pm_tau_fe_tax_ES_st,input,questionnaire
-pm_tau_fe_sub_ES_st,input,questionnaire
 sm_year_2_day,input,questionnaire
 sm_day_2_hour,input,questionnaire
 qm_balFeForCesAndEs,input,questionnaire
