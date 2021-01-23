@@ -131,6 +131,11 @@ pm_pricePerm(ttot) = 0;
 pm_fe2es(ttot,regi,teEs) = 1;
 pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 
+pm_shfe_up(ttot,regi,entyFe,sector)=0;
+pm_shfe_lo(ttot,regi,entyFe,sector)=0;
+pm_shGasLiq_fe_up(ttot,regi,sector)=0;
+pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
+
 ***---------------------------------------------------------------------------
 *** Import and set global data
 ***---------------------------------------------------------------------------
