@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,6 +7,7 @@
 *** SOF ./modules/36_buildings/services_putty/sets.gms
 Sets
  regi_dyn36(all_regi)   "dynamic region set for compatibility with testOneRegi"
+ regi_dyn36_cooling(all_regi)   "regions with high cooling on which we impose efficiency constraint"
   teEs_dyn36(all_teEs)  "technologies - buildings module additions"
   /
     te_ueshheb  "buildings space heating district heat"
@@ -231,6 +232,7 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   
   teEs_pushCalib_dyn36(all_teEs) "technologies for which the Logit parameter should be modified"
   
+  opTimeYr2teEs(all_teEs,opTimeYr)   "mapping for technologies to yearly lifetime - is filled automatically from the lifetime values of technologies"
 ;
 
 loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
@@ -260,6 +262,7 @@ $offOrder
 $offOrder
 
 teEs_pushCalib_dyn36(all_teEs) = NO;
+regi_dyn36_cooling(all_regi) = NO;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------

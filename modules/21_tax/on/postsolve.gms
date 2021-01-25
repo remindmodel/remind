@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -49,7 +49,6 @@ p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
 p21_taxrevBioImport0(ttot,regi) = p21_tau_BioImport(ttot,regi) * pm_pvp(ttot,"pebiolc") / pm_pvp(ttot,"good") * vm_Mport.l(ttot,regi,"pebiolc");
 
     
-
 
 ***DK: for reporting only
 p21_tau_bioenergy_tax(t) = v21_tau_bio.l(t);

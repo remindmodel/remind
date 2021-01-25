@@ -10,7 +10,6 @@ $IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off"
 
 ***Germany Nuclear phase-out
 *** DEU Nuclear capacity phase out
-    vm_capEarlyReti.up(ttot,regi,"tnrs")$(sameas(regi,"DEU")) = 1; !! allow early retirement for tnrs
     vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
     vm_cap.fx("2020",regi,"tnrs","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 7.8/1000;
     vm_cap.up(t,regi,"tnrs","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"DEU"))) = 1E-6;
@@ -44,9 +43,8 @@ $ENDIF.CCSinvestment
 $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off" 
 
 ***UK Coal capacity phase-out
-    vm_capEarlyReti.up(ttot,regi,"pc")$(sameas(regi,"UKI")) = 1; !! allow early retirement for pc
-    vm_cap.fx("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
-    vm_cap.fx(t,regi,"pc","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"UKI"))) = 1E-6;
+    vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
+    vm_cap.up(t,regi,"pc","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"UKI"))) = 1E-6;
 
 $ENDIF.CoalRegiPol  
 
