@@ -114,18 +114,20 @@ v21_taxrevFEtrans(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevFEBuildInd(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevFEBuildInd(t,regi) 
-=e=
-sum(fe2ppfEn(entyFe,ppfen)$entyFeStat(entyFe),  
-  (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen))
-  *
-  sum(sector$entyFe2Sector(entyFe,sector),
-    sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-      sum(se2fe(entySe,entyFe,te),   
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
-  ) ) )
-)
-- p21_taxrevFEBuildInd0(t,regi) ;
+  v21_taxrevFEBuildInd(t,regi) 
+  =e= 
+  sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
+    sum(ppfen$ppfEn2Sector(ppfen,sector),
+      (p21_tau_fe_tax_bit_st(t,regi,ppfen) + p21_tau_fe_sub_bit_st(t,regi,ppfen))
+      *
+      sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+        sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
+          vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+      ) )
+    )
+  )
+  - p21_taxrevFEBuildInd0(t,regi)
+;
     
 ***---------------------------------------------------------------------------
 *'  Calculation of resource extraction subsidies: subsidy rate times fuel extraction
