@@ -49,8 +49,8 @@ $elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
   pm_shfe_up("2030",regi,"seel","indst") = 0.35;
 $endif.feShareScenario
 
-vm_shfe.up(t,regi,entyFe,regi)$pm_shfe_up(t,regi,entyFe,regi) = pm_shfe_up(t,regi,entyFe,regi);
-vm_shfe.lo(t,regi,entyFe,regi)$pm_shfe_lo(t,regi,entyFe,regi) = pm_shfe_lo(t,regi,entyFe,regi);
+vm_shfe.up(t,regi,entyFe,sector)$pm_shfe_up(t,regi,entyFe,sector) = pm_shfe_up(t,regi,entyFe,sector);
+vm_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,regi,entyFe,sector);
 
 $endif.feShare
 

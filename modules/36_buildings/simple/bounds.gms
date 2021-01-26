@@ -33,8 +33,8 @@ $ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
   pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2030 AND t.val le 2045) = 0.15 + (0.10/20)*(t.val-2030);
 $endif.feShareScenario
 
-vm_shGasLiq_fe.up(t,regi,regi)$pm_shGasLiq_fe_up(t,regi,regi) = pm_shGasLiq_fe_up(t,regi,regi);
-vm_shGasLiq_fe.lo(t,regi,regi)$pm_shGasLiq_fe_lo(t,regi,regi) = pm_shGasLiq_fe_lo(t,regi,regi);
+vm_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
+vm_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
 
 $endif.feShare
 
