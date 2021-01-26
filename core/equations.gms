@@ -180,10 +180,10 @@ $endif
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
 ***---------------------------------------------------------------------------
-q_transSe2fe(t,regi,se2fe(enty,enty2,te))..
-         pm_eta_conv(t,regi,te) * vm_demSe(t,regi,enty,enty2,te)
+q_transSe2fe(t,regi,se2fe(entySe,entyFe,te))..
+         pm_eta_conv(t,regi,te) * vm_demSe(t,regi,entySe,entyFe,te)
          =e=
-         vm_prodFe(t,regi,enty,enty2,te) 
+         vm_prodFe(t,regi,entySe,entyFe,te) 
 ;
 
 
@@ -288,7 +288,7 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
          vm_cap(ttot,regi,te,rlf)
          =e=
-***cb early retirement for some fossil technologies
+    !! early retirement for some fossil technologies
         (1 - vm_capEarlyReti(ttot,regi,te))
         *
 
@@ -297,13 +297,16 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
                 * pm_omeg(regi,opTimeYr+1,te)
                 * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
             )
-*LB* half of the last time step ttot
-        +  pm_dt(ttot)/2 
-         * pm_omeg(regi,"2",te)
-         * vm_deltaCap(ttot,regi,te,rlf)
+       !! half of the last time step ttot
+        +  ( pm_dt(ttot) / 2 
+       * pm_omeg(regi,"2",te)
+       * vm_deltaCap(ttot,regi,te,rlf)
+       )
 $ifthen setGlobal END2110
-             - (pm_ts(ttot)* pm_omeg(regi,"11",te)
-                  * 0.5 * vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
+    - ( pm_ts(ttot) / 2
+      * pm_omeg(regi,"11",te)
+      * vm_deltaCap(ttot,regi,te,rlf)
+      )$ (ord(ttot) eq card(ttot) )				   
 $endif
 );
 
