@@ -7,3 +7,7 @@
 name,type,reason
 pm_ttot_val,parameter,???
 
+pm_eta_conv,input,questionnaire
+cm_startyear,input,questionnaire
+cm_bioprod_histlim,input,questionnaire
+cm_H2targets,input,questionnaire

@@ -17,3 +17,5 @@ vm_capFac,variable,???
 pm_pop,input,questionnaire
 cm_LimRock,input,questionnaire
 cm_ccapturescen,input,questionnaire
+vm_demFeSector,input,questionnaire
+cm_emiscen,input,questionnaire

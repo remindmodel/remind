@@ -812,18 +812,18 @@ loop(ttot$(ttot.val ge 2005),
 
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  parameter p_new_adj_seed(all_te) / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
+  parameter p_new_adj_seed(all_te) "new adj seed parameters"  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
-  parameter p_new_adj_seed(all_te) / %cm_INNOPATHS_adj_seed% /;
+  parameter p_new_adj_seed(all_te) "new adj seed parameters" / %cm_INNOPATHS_adj_seed% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $endif
 
 $ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
-  parameter p_new_adj_coeff(all_te) / %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /;
+  parameter p_new_adj_coeff(all_te) "new adj coef parameters"/ %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /;
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
-  parameter p_new_adj_coeff(all_te) / %cm_INNOPATHS_adj_coeff% /;
+  parameter p_new_adj_coeff(all_te) "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /;
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $endif
 

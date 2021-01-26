@@ -1,9 +1,3 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
-# |  authors, and contributors see CITATION.cff file. This file is part
-# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-# |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
-# |  Contact: remind@pik-potsdam.de
 name,type,reason
 vm_cesIO,input,questionnaire
 vm_cesIOdelta,input,questionnaire
@@ -36,3 +30,9 @@ sm_year_2_day,input,questionnaire
 sm_day_2_hour,input,questionnaire
 qm_balFeForCesAndEs,input,questionnaire
 pm_tsu2opTimeYr,input,questionnaire
+vm_demFeForEs,input,questionnaire
+cm_INNOPATHS_priceSensiBuild,input,questionnaire
+cm_logitCal_markup_conv_b,input,questionnaire
+cm_logitCal_markup_newtech_conv_b,input,questionnaire
+qm_balFe,input,questionnaire
+pm_ppfen_ratios,input,questionnaire

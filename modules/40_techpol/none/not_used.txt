@@ -18,3 +18,7 @@ pm_NuclearConstraint,input,questionnaire
 cm_nucscen,input,questionnaire
 vm_capEarlyReti,input,questionnaire
 cm_earlyreti_rate,input,questionnaire
+pm_eta_conv,input,questionnaire
+cm_startyear,input,questionnaire
+cm_bioprod_histlim,input,questionnaire
+cm_H2targets,input,questionnaire

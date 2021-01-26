@@ -112,8 +112,8 @@ vm_shUePeT.up(t,regi,"apCarH2T") = 90;  !! limit hydrogen vehicles to less than 
 vm_shUePeT.lo(t,regi,"apCarPeT") =  5;  !! require that ICE vehicles supply at least 10% market share of LDV (Uepet)
 
 $ifthen not "%cm_INNOPATHS_LDV_mkt_share%" == "off"
-   vm_shUePeT.up(t,regi,te)$(new_bound(te,"upper")) = new_bound(te,"upper");
-   vm_shUePeT.lo(t,regi,te)$(new_bound(te,"lower")) = new_bound(te,"lower");
+   vm_shUePeT.up(t,regi,te)$(35_new_bound(te,"upper")) = 35_new_bound(te,"upper");
+   vm_shUePeT.lo(t,regi,te)$(35_new_bound(te,"lower")) = 35_new_bound(te,"lower");
 $endif
 
 *** Limit phase-in of electric vehicles to historic values (1Mio cars = 	1/650 cap = 0.00154)

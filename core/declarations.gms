@@ -33,8 +33,8 @@ pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in ite
 p_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
 p_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
-pm_taxemiMkt(ttot,all_regi,all_emiMkt)
-pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt)
+pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "emission tax"
+pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "emission tax for each iteration"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
@@ -267,10 +267,10 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
-v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt)
-vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)
-vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)
-vm_flexAdj(tall,all_regi,all_te)			         "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
+v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions for detailes technology"
+vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)       "emissions for technologies"
+vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "emissions for all XXX"
+vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
 vm_taxrevimplFETax(ttot,all_regi)                    "implicit efficiency directive target tax"
 ;
 
@@ -388,7 +388,7 @@ q_budgetCO2eqGlob                                    "global emission budget bal
 
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
 q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)			             "total energy-emissions per region and market"
-q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)
+q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "emissions of all markets"
 
 
 q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf)        "transformation equation for ccs"
@@ -426,7 +426,7 @@ q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of gases and liquid
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
-q_heat_limit(ttot,all_regi)
+q_heat_limit(ttot,all_regi)  "limit heating"
 $ENDIF.sehe_upper
 
 ***----------------------------------------------------------------------------------------
@@ -526,34 +526,34 @@ magicc_sed_script.ap = 0;
 *** INNOPATHS emissions reporting
 
 Parameter 
-o_emissions(ttot,all_regi,all_enty) 
-o_emissions_bunkers(ttot,all_regi,all_enty)
-o_emissions_energy(ttot,all_regi,all_enty)
-o_emissions_energy_demand(ttot,all_regi,all_enty)
-o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors)
-o_emissions_energy_supply_gross(ttot,all_regi,all_enty)
-o_emissions_energy_supply_gross_carrier(ttot,all_regi,all_enty,all_enty)
-o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty)
-o_emissions_energy_negative(ttot,all_regi,all_enty)
-o_emissions_industrial_processes(ttot,all_regi,all_enty)
-o_emissions_AFOLU(ttot,all_regi,all_enty)
-o_emissions_DACCS(ttot,all_regi,all_enty)
-o_emissions_other(ttot,all_regi,all_enty)
+o_emissions(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_bunkers(ttot,all_regi,all_enty)    "output parameter"
+o_emissions_energy(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_energy_demand(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors)   "output parameter"
+o_emissions_energy_supply_gross(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_energy_supply_gross_carrier(ttot,all_regi,all_enty,all_enty)   "output parameter"
+o_emissions_energy_extraction(ttot,all_regi,all_enty,all_enty)   "output parameter"
+o_emissions_energy_negative(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_industrial_processes(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_AFOLU(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_DACCS(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_other(ttot,all_regi,all_enty)   "output parameter"
 
-o_capture(ttot,all_regi,all_enty)
-o_capture_energy(ttot,all_regi,all_enty)
-o_capture_energy_elec(ttot,all_regi,all_enty)
-o_capture_energy_other(ttot,all_regi,all_enty)
-o_capture_cdr(ttot,all_regi,all_enty)
-o_capture_industry(ttot,all_regi,all_enty)
-o_capture_energy_bio(ttot,all_regi,all_enty)
-o_capture_energy_fos(ttot,all_regi,all_enty)
-o_carbon_CCU(ttot,all_regi,all_enty)
-o_carbon_LandUse(ttot,all_regi,all_enty)
-o_carbon_underground(ttot,all_regi,all_enty)
-o_carbon_reemitted(ttot,all_regi,all_enty)
+o_capture(ttot,all_regi,all_enty)   "output parameter"
+o_capture_energy(ttot,all_regi,all_enty)   "output parameter"
+o_capture_energy_elec(ttot,all_regi,all_enty)   "output parameter"
+o_capture_energy_other(ttot,all_regi,all_enty)   "output parameter"
+o_capture_cdr(ttot,all_regi,all_enty)   "output parameter"
+o_capture_industry(ttot,all_regi,all_enty)   "output parameter"
+o_capture_energy_bio(ttot,all_regi,all_enty)   "output parameter"
+o_capture_energy_fos(ttot,all_regi,all_enty)   "output parameter"
+o_carbon_CCU(ttot,all_regi,all_enty)   "output parameter"
+o_carbon_LandUse(ttot,all_regi,all_enty)   "output parameter"
+o_carbon_underground(ttot,all_regi,all_enty)   "output parameter"
+o_carbon_reemitted(ttot,all_regi,all_enty)   "output parameter"
 
-emi_conv(all_enty) / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
+o_emi_conv(all_enty)    "output parameter" / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
 ;
 
 *** EOF ./core/declarations.gms
