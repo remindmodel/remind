@@ -42,7 +42,7 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename,regionLis
   if (!shortTerm) {
     try(compareScenarios(mif=mif_path, hist=hist_path, reg=regionList, mainReg=mainRegName, fileName = paste0(outfilename,".pdf")))
   } else {
-    try(compareScenarios(mif=mif_path, hist=hist_path, reg=regionList, mainReg=mainRegName, y=c(seq(2005,2050,5)), y_hist=c(seq(1990,2015,1)), y_bar=c(2010,2030,2050), fileName=paste0(outfilename,".pdf")))
+    try(compareScenarios(mif=mif_path, hist=hist_path, reg=regionList, mainReg=mainRegName, y=c(seq(2005,2050,5)), y_hist=c(seq(1990,2020,1), seq(2025,2050,5)), y_bar=c(2010,2030,2050), fileName=paste0(outfilename,".pdf")))
   }
 }
 

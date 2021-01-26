@@ -321,6 +321,8 @@ cm_indst_costDecayStart     "simplified logistic function end of full value   (e
 cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 cm_BioImportTax_EU          "factor for EU bioenergy import tax"
+cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
+cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution capital cost for buildings and industry"
@@ -335,7 +337,7 @@ cm_startIter_EDGET          "starting iteration of EDGE-T"
 
 cm_iteration_max       = 0;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
-c_keep_iteration_gdxes = 0;     !! def = 0
+c_keep_iteration_gdxes = 1;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
@@ -482,10 +484,19 @@ cm_bioprod_histlim = 1.2; !! def -1
 
 cm_H2targets = 0; !! def 0
 
+cm_BioSupply_Adjust_EU = 2; !! def 1
+cm_BioImportTax_EU = 0.5; !! def 0.25
+
+*** buildings services_putty switches
+cm_logitCal_markup_conv_b = 0; !! def 0.8
+cm_logitCal_markup_newtech_conv_b = 0; !! def 0.3
+
+*** flex tax switches
 cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
+*** H2 simple buildings/industry switches
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.3;  !! def 10%
@@ -494,6 +505,7 @@ cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.3;  !! def 10%
 
+*** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
 

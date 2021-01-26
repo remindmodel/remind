@@ -82,6 +82,8 @@ p36_fePrice(t,regi_dyn36(regi),entyFe)  =
 );
 $ONorder 
 
+*** Can you explain again the purpose of adding an implicit discount rate to the capital cost of fe2ue techs?
+*** Is p36_costReduc(t,teEs) assuming some exogenous learning?
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_implicitDiscRateMarg(t,regi,in);
 );
@@ -121,8 +123,8 @@ p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
        +
       (p36_fePrice(t,regi,entyFe)
       + p36_inconvpen(t,regi,teEs)
-      + pm_tau_fe_tax_ES_st(t,regi,esty) 
-      + pm_tau_fe_sub_ES_st(t,regi,esty)
+      + p21_tau_fe_tax_bit_st(t,regi,esty) 
+      + p21_tau_fe_sub_bit_st(t,regi,esty)
       )
       / pm_fe2es(t,regi,teEs)
       !! add taxes, subsidies, and later on costs
@@ -186,19 +188,19 @@ loop ( t36_hist_last(ttot),
   loop ( t36_scen(t2),
    
   p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ fe2es_dyn36(entyFe,esty,teEs)
-   = min(max((2100 - pm_ttot_val(t2))/(2100 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2100
+   = min(max((2040 - pm_ttot_val(t2))/(2040 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2040
     * (p36_logitCalibration(ttot,regi,entyFe,esty,teEs)
-       - 0.80 * p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
-     +  0.80 * p36_logitCalibration(ttot,regi,entyFe,esty,teEs)
+       - cm_logitCal_markup_conv_b * p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
+     +  cm_logitCal_markup_conv_b * p36_logitCalibration(ttot,regi,entyFe,esty,teEs)
     ;
     
     !! give a high parameter value to the technologies that do not have some
    p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ (fe2es_dyn36(entyFe,esty,teEs)
                                                     AND NOT p36_logitCalibration(t2,regi,entyFe,esty,teEs))
-  =   min(max((2100 - pm_ttot_val(t2))/(2100 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2100     
-      * (5
-       - 0.3 * 5)
-     +  0.3 * 5;
+  =   min(max((2040 - pm_ttot_val(t2))/(2040 -ttot.val),0),1)  !! lambda = 1 in 2015 and 0 in 2040     
+      * (3
+       - cm_logitCal_markup_newtech_conv_b * 3)
+     +  cm_logitCal_markup_newtech_conv_b * 3;
      
      !! Decrease the calibration factor for some technologies, based on the difference between the 2015 (ttot) Income per capita and scenario (t2) income per capita.
      !! the calibration factor decreases by 90% when income reaches 30 k$ if income per capita was equal or below 5 k$ in 2015.
@@ -323,14 +325,14 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "calibfactor", teEs.tl, in.tl, (p
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceWoTax", teEs.tl, in.tl,  (p36_fePrice(t,regi,entyFe) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM", teEs.tl, in.tl, ((p36_fePrice(t,regi,entyFe)
                                                                          + p36_inconvpen(t,regi,teEs)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + p21_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + p21_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_FEpriceWtax", teEs.tl, in.tl, (
                                                                          (p36_fePrice(t,regi,entyFe)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + p21_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + p21_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_inconvenience", teEs.tl, in.tl, ((
@@ -338,8 +340,8 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_inconvenience", teEs.tl, in.t
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceTax", teEs.tl, in.tl,  ((p36_fePrice(t,regi,entyFe)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + p21_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + p21_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "CapCosts", teEs.tl, in.tl, (p36_esCapCost(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;

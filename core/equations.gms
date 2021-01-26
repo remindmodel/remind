@@ -865,24 +865,24 @@ q_shBioTrans(t,regi)..
 ***---------------------------------------------------------------------------
 *' Share of final energy in stationary sector
 ***---------------------------------------------------------------------------
-q_shSeel_fe(t,regi,sector)$(vm_shSeel_fe.up(t,regi,sector) OR vm_shSeel_fe.lo(t,regi,sector))..
-  vm_shSeel_fe(t,regi,sector) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
-        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
+q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..
+  vm_shfe(t,regi,entyFe,sector) 
+  * sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+      sum(se2fe(entySe,entyFe2,te)$(entyFe2Sector(entyFe2,sector)),   
+        vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
   =e=
-  sum(emiMkt, 
+  sum(emiMkt$sector2emiMkt(sector,emiMkt), 
       sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feels"),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
 ;
 
-q_shGasLiq_fe(t,regi,sector)$(vm_shGasLiq_fe.up(t,regi,sector) OR vm_shGasLiq_fe.lo(t,regi,sector))..
+q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
   vm_shGasLiq_fe(t,regi,sector) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(entyFeStat(entyFe)),   
+  * sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+      sum(se2fe(entySe,entyFe,te)$(entyFe2Sector(entyFe,sector)),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))
   =e=
-  sum(emiMkt, 
+  sum(emiMkt$sector2emiMkt(sector,emiMkt), 
     sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fehos")),
       vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
 ;

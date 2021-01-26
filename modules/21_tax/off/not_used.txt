@@ -43,8 +43,6 @@ pm_fuExtrForeign,input,questionnaire
 cm_DiscRateScen,input,questionnaire
 vm_demFeForEs,input,questionnaire
 pm_ttot_val,input,questionnaire
-pm_tau_fe_tax_ES_st,input,questionnaire
-pm_tau_fe_sub_ES_st,input,questionnaire
 p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
