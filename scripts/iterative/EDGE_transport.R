@@ -116,30 +116,11 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 if (file.exists(datapath("demand_previousiter.RDS"))) {
-  ## load previous iteration number of cars
-  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
-  ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
-  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
-  if (techswitch == "BEV"){
-    rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
-    rebates_febatesFCEV = FALSE
-  } else if (techswitch == "FCEV") {
-    rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
-    rebates_febatesBEV = FALSE
   } else {
-    rebates_febatesFCEV = FALSE
-    rebates_febatesBEV = FALSE
-  }
-
-  nonfuel_costs_list = applylearning(non_fuel_costs = nonfuel_costs,capcost4W = capcost4W,gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp, ES_demandpr =  ES_demandpr, ES_demand =  ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
-  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
-  capcost4W = nonfuel_costs_list$capcost4W
-  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-  saveRDS(capcost4W, "capcost_learning.RDS")} else {
     stations = NULL
     totveh = NULL
   }
@@ -190,35 +171,22 @@ if(average_prices){
 REMIND_prices[, "iternum" := NULL]
 
 ## calculates logit
-if (inconvenience) {
-  years=copy(REMINDyears)
-  if (file.exists(datapath("demand_totalLDV.RDS"))) {
-    ## load previous iteration number of cars
-    totveh = readRDS(datapath("demand_totalLDV.RDS"))
-  }
-  logit_data <- calculate_logit_inconv_endog(
-    prices= REMIND_prices[tot_price > 0],
-    vot_data = vot_data,
-    pref_data = pref_data,
-    logit_params = logit_params,
-    intensity_data = int_dat,
-    price_nonmot = price_nonmot,
-    stations = if (!is.null(stations)) stations,
-    totveh = if (!is.null(totveh)) totveh,
-    techswitch = techswitch)
-
-} else{
-
-  logit_data <- calculate_logit(
-    REMIND_prices[tot_price > 0],
-    REMIND2ISO_MAPPING,
-    vot_data = vot_data,
-    sw_data = sw_data,
-    logit_params = logit_params,
-    intensity_data = int_dat,
-    price_nonmot = price_nonmot)
-
+years=copy(REMINDyears)
+if (file.exists(datapath("demand_totalLDV.RDS"))) {
+  ## load previous iteration number of cars
+  totveh = readRDS(datapath("demand_totalLDV.RDS"))
 }
+logit_data <- calculate_logit_inconv_endog(
+  prices= REMIND_prices[tot_price > 0],
+  vot_data = vot_data,
+  pref_data = pref_data,
+  logit_params = logit_params,
+  intensity_data = int_dat,
+  price_nonmot = price_nonmot,
+  stations = if (!is.null(stations)) stations,
+  totveh = if (!is.null(totveh)) totveh,
+  techswitch = techswitch)
+
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
 
