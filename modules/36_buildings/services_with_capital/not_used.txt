@@ -2,7 +2,6 @@ name,type,reason
 vm_enerSerAdj,input,questionnaire
 pm_cumDeprecFactor_old,input,questionnaire
 pm_cumDeprecFactor_new,input,questionnaire
-pm_ppfen_shares,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 vm_shGasLiq_fe,input,questionnaire
 pm_shGasLiq_fe_up,input,questionnaire

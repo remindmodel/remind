@@ -33,8 +33,8 @@ pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in ite
 p_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
 p_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
-pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "emission tax"
-pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "emission tax for each iteration"
+pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
+pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
 pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
@@ -267,9 +267,9 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
-v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions for detailes technology"
-vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)       "emissions for technologies"
-vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "emissions for all XXX"
+v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from fuel combustion per region, technology and emission market. [GtC, Mt CH4, Mt N]"
+vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)       "total energy-emissions of each region and emission market. [GtC, Mt CH4, Mt N]"
+vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
 vm_taxrevimplFETax(ttot,all_regi)                    "implicit efficiency directive target tax"
 ;
@@ -388,7 +388,7 @@ q_budgetCO2eqGlob                                    "global emission budget bal
 
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
 q_emiTeMkt(ttot,all_regi,all_enty,all_emiMkt)			             "total energy-emissions per region and market"
-q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "emissions of all markets"
+q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
 
 
 q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf)        "transformation equation for ccs"
@@ -426,7 +426,7 @@ q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of gases and liquid
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
-q_heat_limit(ttot,all_regi)  "limit heating"
+q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
 
 ***----------------------------------------------------------------------------------------
@@ -469,8 +469,8 @@ s_gwpCH4                                              "Global Warming Potentials
 s_gwpN2O                                              "Global Warming Potentials of N2O, AR5 WG1 CH08 Table 8.7"     /265/
 sm_dmac                                               "step in MAC functions [US$]"                                                                   /5/
 s_macChange                                           "maximum yearly increase of relative abatement in percentage points of maximum abatement. Unit: 0..1"      /0.05/
-s_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
-s_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
+sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
+sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 
 sm_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
@@ -500,8 +500,8 @@ sm_eps                                                "small number: 1e-9 "  /1e
 ***----------------------------------------------trade module------------------------------
 ;
 
-s_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
-s_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
+sm_tgn_2_pgc = (44/28) * s_gwpN2O * (12/44) * 0.001;
+sm_tgch4_2_pgc = s_gwpCH4 * (12/44) * 0.001;
 
 ***----------------------------------------------------------------------------------------
 *----------------------------------------------carbon intensities of coal, oil, and gas

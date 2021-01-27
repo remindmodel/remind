@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 name, type, reason
 pm_ts,parameter,???
-cm_startyear,switch,???
 cm_gs_ew,switch,???
 pm_pop,input,questionnaire
 cm_LimRock,input,questionnaire

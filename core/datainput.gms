@@ -812,10 +812,10 @@ loop(ttot$(ttot.val ge 2005),
 
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  parameter p_new_adj_seed(all_te) "new adj seed parameters"  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
+  parameter p_new_adj_seed(all_te) "redefine adjustment seed parameters through model config switch"  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
-  parameter p_new_adj_seed(all_te) "new adj seed parameters" / %cm_INNOPATHS_adj_seed% /;
+  parameter p_new_adj_seed(all_te) "redefine adjustment coefficient parameters through model config switch" / %cm_INNOPATHS_adj_seed% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $endif
 
@@ -841,19 +841,19 @@ p_adj_coeff_glob('tnrs')    = 0.0;
 
 *** Unit conversions
 p_emi_quan_conv_ar4(enty) = 1;
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = s_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("ch4coal")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4gas")     = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4oil")     = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wstl")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wsts")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("n2otrans")   = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2oadac")    = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2onitac")   = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2owaste")   = s_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
+p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 
 
 *RP* Distribute ccap0 for all regions

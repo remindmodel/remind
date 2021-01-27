@@ -166,7 +166,7 @@ ue2ppfen_dyn35(all_enty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 ;
 
 sets
- bound_type    "type of bound"
+ bound_type    "auxiliar set to allow different values for upper and lower bound defined in a single switch"
   /
   upper
   lower

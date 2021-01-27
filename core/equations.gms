@@ -644,8 +644,8 @@ q_emiAllGlob(t,emi(enty))..
   vm_co2eqMkt(ttot,regi,emiMkt)
   =e=
   vm_emiAllMkt(ttot,regi,"co2",emiMkt)
-  + (s_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
-     s_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
+  + (sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
+     sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
   - vm_emiMacSector(ttot,regi,"co2luc") $((cm_multigasscen eq 3) AND (sameas(emiMkt,"other")));	
 
 ***------------------------------------------------------

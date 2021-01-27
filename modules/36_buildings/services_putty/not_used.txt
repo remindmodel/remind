@@ -1,5 +1,4 @@
 name,type,reason
-pm_ppfen_shares,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 vm_shGasLiq_fe,input,questionnaire
 pm_shGasLiq_fe_up,input,questionnaire
