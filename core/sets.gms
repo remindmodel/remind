@@ -1825,7 +1825,7 @@ all_emiMkt         "emission markets"
 	other	"other market configurations"	
 /
 
-sector2emiMkt(emi_sectors,all_emiMkt)
+sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
 /
         indst.ETS
         indst.ES
@@ -1836,7 +1836,7 @@ sector2emiMkt(emi_sectors,all_emiMkt)
 /
 
 
-macSector2emiMkt(all_enty,all_emiMkt)
+macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
 /
         ch4coal.ETS      
         ch4gas.ETS       

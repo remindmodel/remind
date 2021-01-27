@@ -19,3 +19,5 @@ cm_1stgen_phaseout,input,questionnaire
 vm_demPe,variable,not needed
 vm_prodSe,variable,not needed
 cm_emiscen,variable,not needed
+cm_bioprod_histlim,input,questionnaire
+cm_BioSupply_Adjust_EU,input,questionnaire

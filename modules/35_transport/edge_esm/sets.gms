@@ -161,7 +161,7 @@ segabio.fegat.tdbiogat.ch4
 segafos.fegat.tdfosgat.ch4
 /
 
-entyFe2Sector_dyn35(all_enty,emi_sectors)
+entyFe2Sector_dyn35(all_enty,emi_sectors)   "mapping final energy to sectors"
 /
     fegat.trans
 /

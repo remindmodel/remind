@@ -612,7 +612,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
 table f_maxProdGradeRegiHydro(all_regi,char,rlf)                  "input of regionalized maximum from hydro [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiHydro_up.cs3r"
+$include "./core/input/f_maxProdGradeRegiHydro.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
@@ -739,7 +739,7 @@ display teEtaIncr;
 *** import regionalized CCS constraints:
 table pm_dataccs(all_regi,char,rlf)                       "maximum CO2 storage capacity using CCS technology. Unit: GtC"
 $ondelim
-$include "./core/input/pm_dataccs_up.cs3r"
+$include "./core/input/pm_dataccs.cs3r"
 $offdelim
 ;
 
@@ -812,18 +812,18 @@ loop(ttot$(ttot.val ge 2005),
 
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  parameter p_new_adj_seed(all_te) / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
+  parameter p_new_adj_seed(all_te) "new adj seed parameters"  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
-  parameter p_new_adj_seed(all_te) / %cm_INNOPATHS_adj_seed% /;
+  parameter p_new_adj_seed(all_te) "new adj seed parameters" / %cm_INNOPATHS_adj_seed% /;
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
 $endif
 
 $ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
-  parameter p_new_adj_coeff(all_te) / %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /;
+  parameter p_new_adj_coeff(all_te) "new adj coef parameters"/ %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /;
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
-  parameter p_new_adj_coeff(all_te) / %cm_INNOPATHS_adj_coeff% /;
+  parameter p_new_adj_coeff(all_te) "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /;
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te)=p_new_adj_coeff(te);
 $endif
 

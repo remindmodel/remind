@@ -29,15 +29,15 @@ p21_taxrevFEtrans0(ttot,regi) = SUM(feForUe(enty),
                                     )+
 				SUM(feForEs(enty), (p21_tau_fe_tax_transport(ttot,regi,feForEs) + p21_tau_fe_sub_transport(ttot,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
 				);
-p21_taxrevFEBuildInd0(ttot,regi) = 
-  sum(fe2ppfEn(entyFe,ppfen)$entyFeStat(entyFe),  
-    (p21_tau_fe_tax_bit_st(ttot,regi,ppfen) + p21_tau_fe_sub_bit_st(ttot,regi,ppfen))
-    *
-    sum(sector$entyFe2Sector(entyFe,sector),
+p21_taxrevFEBuildInd0(ttot,regi) = sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
+    sum(ppfen$ppfEn2Sector(ppfen,sector),
+      (p21_tau_fe_tax_bit_st(ttot,regi,ppfen) + p21_tau_fe_sub_bit_st(ttot,regi,ppfen))
+      *
       sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-        sum(se2fe(entySe,entyFe,te),   
+        sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
           vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-    ) ) )
+      ) )
+    )
   )
 ;
 p21_taxrevResEx0(ttot,regi) = sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(ttot,regi,enty) * vm_fuExtr.l(ttot,regi,enty,rlf));

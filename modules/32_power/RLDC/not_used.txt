@@ -14,3 +14,4 @@ sm_eps,input,questionnaire
 pm_priceSeel,input,questionnaire
 qm_budget,input,questionnaire
 
+cm_bioprod_histlim,input,questionnaire

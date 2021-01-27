@@ -34,7 +34,7 @@ p35_share_seh2_t(ttot,all_regi)                                "share of hydroge
 p35_share_seel_t(ttot,all_regi)                                "Share of electricity used for transport sector (feelt). Unit 0..1"
 
 $ifthen not "%cm_INNOPATHS_LDV_mkt_share%" == "off"
-    new_bound(all_te,bound_type) / %cm_INNOPATHS_LDV_mkt_share% /
+    35_new_bound  "new bound" (all_te,bound_type) / %cm_INNOPATHS_LDV_mkt_share% /
 $endif    
 ;
 
