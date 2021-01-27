@@ -41,8 +41,7 @@ $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off"
   pm_cesdata_sigma(ttot,"enb")$( (pm_cesdata_sigma(ttot,"enb") ge 1) AND (pm_cesdata_sigma(ttot,"enb") lt 1.2)) = 1.2; !! If substitution factors, sigma should be above 1.2
 $ENDIF.cm_INNOPATHS_enb
 
-*** Don't use more than 75% district heat in buildings
-pm_ppfen_shares(t,regi,"enhb","feheb") = 0.75;
+
 
 *** additional H2 cost parameters
 s36_costAddH2Inv = cm_build_H2costAddH2Inv;
