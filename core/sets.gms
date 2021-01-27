@@ -794,6 +794,14 @@ $ELSE.RegScenSens
   set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
 $ENDIF.RegScenSens
 
+*** definition of set of regions that use alternative FE emission factors from umweltbundesamt
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
+set
+  altFeEmiFac_regi(ext_regi)   /
+    %cm_altFeEmiFac%
+  /
+;
+$endif.altFeEmiFac 
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################

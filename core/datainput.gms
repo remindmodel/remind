@@ -1188,25 +1188,33 @@ $offdelim
 ;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
-*AD* Updated Demand Side Emission Factors
-*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
-*AD* Reverted to Gunnar's previous values due to inconsistencies in the reporting
-***  triggered by this update.
-*** Gunnar's original comment:
-*GL* demand side emission factor of final energy carriers in MtCO2/EJ
+*** demand side emission factor of final energy carriers in MtCO2/EJ
 *** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
-p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 74;
-p_ef_dem("fehos") = 73;
-p_ef_dem("fepet") = 73;
-p_ef_dem("fegas") = 55;
-p_ef_dem("fesos") = 96;
+p_ef_dem(regi,entyFe) = 0;
+p_ef_dem(regi,"fedie") = 69.3;
+p_ef_dem(regi,"fehos") = 69.3;
+p_ef_dem(regi,"fepet") = 68.5;
+p_ef_dem(regi,"fegas") = 50.3;
+p_ef_dem(regi,"fesos") = 90.5;
 
-pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem("fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem("fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem("fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem("fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
-pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem("fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
+*** demand side emission factor of final energy carriers in MtCO2/EJ
+*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
+  loop(ext_regi$altFeEmiFac_regi(ext_regi), 
+    p_ef_dem(regi,entyFe)$(regi_group(ext_regi,regi)) = 0;
+    p_ef_dem(regi,"fedie")$(regi_group(ext_regi,regi)) = 74;
+    p_ef_dem(regi,"fehos")$(regi_group(ext_regi,regi)) = 73;
+    p_ef_dem(regi,"fepet")$(regi_group(ext_regi,regi)) = 73;
+    p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
+    p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
+  );
+$endif.altFeEmiFac
+
+pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
