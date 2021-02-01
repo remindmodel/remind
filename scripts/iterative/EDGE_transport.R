@@ -117,15 +117,37 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 if (file.exists(datapath("demand_previousiter.RDS"))) {
+  ## load previous iteration number of cars
+  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
+  ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+  if (techswitch == "BEV"){
+    rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesFCEV = FALSE
+  } else if (techswitch == "FCEV") {
+    rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesBEV = FALSE
   } else {
     stations = NULL
     totveh = NULL
   }
 
+  nonfuel_costs_list = applylearning(
+      non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
+      gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
+      ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
+      rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+      nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+      capcost4W = nonfuel_costs_list$capcost4W
+      saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+      saveRDS(capcost4W, "capcost_learning.RDS")} else {
+      stations = NULL
+      totveh = NULL
+}
 ## load price
 REMIND_prices <- merge_prices(
   gdx = gdx,
