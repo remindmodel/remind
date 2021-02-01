@@ -132,8 +132,8 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
     rebates_febatesBEV = FALSE
   } else {
-    stations = NULL
-    totveh = NULL
+    rebates_febatesFCEV = FALSE
+    rebates_febatesBEV = FALSE
   }
 
   nonfuel_costs_list = applylearning(
@@ -144,10 +144,11 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
       nonfuel_costs = nonfuel_costs_list$nonfuel_costs
       capcost4W = nonfuel_costs_list$capcost4W
       saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-      saveRDS(capcost4W, "capcost_learning.RDS")} else {
+      saveRDS(capcost4W, "capcost_learning.RDS")}
+   else {
       stations = NULL
       totveh = NULL
-}
+   }
 ## load price
 REMIND_prices <- merge_prices(
   gdx = gdx,
