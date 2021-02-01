@@ -797,7 +797,8 @@ $ENDIF.RegScenSens
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
 set
-  altFeEmiFac_regi(ext_regi)   /
+  altFeEmiFac_regi(ext_regi)  "set of regions that use alternative FE emission factors from umweltbundesamt" 
+  /
     %cm_altFeEmiFac%
   /
 ;

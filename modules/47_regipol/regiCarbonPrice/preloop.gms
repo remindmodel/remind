@@ -42,7 +42,7 @@ $ENDIF.ETSprice
 
 *** Removing the economy wide co2 tax parameters for regions within the ES
 $IFTHEN.ESprice not "%cm_emiMktES%" == "off" 
-	loop((regi)$p47_emiTargetES("2030",regi),
+	loop((regi)$pm_emiTargetES("2030",regi),
 		pm_taxCO2eq(t,regi)$(t.val ge cm_startyear) = 0;
 		pm_taxCO2eqHist(t,regi)$(t.val ge cm_startyear) = 0;
   );

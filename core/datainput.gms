@@ -410,7 +410,7 @@ pm_cf(ttot,regi,"apcardieffH2t") = 1;
 pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 
-table p_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
+table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
 $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
 $offdelim
@@ -812,11 +812,13 @@ loop(ttot$(ttot.val ge 2005),
 
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  parameter p_new_adj_seed(all_te) "redefine adjustment seed parameters through model config switch"  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
-  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
+  parameter p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch"
+  / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /;
+  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
-  parameter p_new_adj_seed(all_te) "redefine adjustment coefficient parameters through model config switch" / %cm_INNOPATHS_adj_seed% /;
-  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te)=p_new_adj_seed(te);
+  parameter p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"
+  / %cm_INNOPATHS_adj_seed% /;
+  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $endif
 
 $ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"

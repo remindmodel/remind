@@ -130,6 +130,16 @@ p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coe
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
 p_varyAdj_mult_adjCoeff(ttot,all_regi)               "Multiplicative factor to adjust adjustment cost parameter p_adj_coeff according to CO2 price level"
+***$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
+***p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch"
+***$elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
+***p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"     
+***$endif
+***$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
+***p_new_adj_coeff(all_te)                              "new adj coef parameters";
+***$elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
+***p_new_adj_coeff(all_te)                               "new adj coef parameters" 
+***$endif
 
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"

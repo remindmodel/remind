@@ -113,25 +113,25 @@ $offdelim
 /
 ;
 
-p47_emiTargetES(t,regi)$f47_ESTarget(t,regi) = ( f47_ESreferenceEmissions("2005",regi)/1000 * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
+pm_emiTargetES(t,regi)$f47_ESTarget(t,regi) = ( f47_ESreferenceEmissions("2005",regi)/1000 * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
 
 * Applying modifier if it is assumed that the Effort Sharing Decision target does not need to be reached entirely at 2030
-p47_emiTargetES("2030",regi)$p47_emiTargetES("2030",regi) = p47_emiTargetES("2030",regi) * %cm_emiMktES%;
+pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",regi) * %cm_emiMktES%;
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
-	p47_emiTargetES("2050",regi) = f47_ESreferenceEmissions("2005",regi)*%cm_emiMktES2050%;
+	pm_emiTargetES("2050",regi) = f47_ESreferenceEmissions("2005",regi)*%cm_emiMktES2050%;
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
-display p47_emiTargetES;
+display pm_emiTargetES;
 
 $ENDIF.emiMktES
 
 
 ***Germany Nuclear phase-out
 $IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off" 
-	p_earlyreti_adjRate(regi,"tnrs")$(sameas(regi,"DEU")) = 0.2;
+	pm_earlyreti_adjRate(regi,"tnrs")$(sameas(regi,"DEU")) = 0.2;
 $ENDIF.NucRegiPol
 
 $IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
