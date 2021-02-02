@@ -144,8 +144,8 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
       nonfuel_costs = nonfuel_costs_list$nonfuel_costs
       capcost4W = nonfuel_costs_list$capcost4W
       saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-      saveRDS(capcost4W, "capcost_learning.RDS")}
-   else {
+      saveRDS(capcost4W, "capcost_learning.RDS")
+   } else {
       stations = NULL
       totveh = NULL
    }
