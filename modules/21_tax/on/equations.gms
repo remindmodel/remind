@@ -43,6 +43,7 @@
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
     + v21_taxrevFlex(t,regi)
+    + v21_taxrevFeelhth(t,regi)
  ;
 
 
@@ -195,6 +196,17 @@ q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
 *** change sign such that flexible technologies get subsidy
       -vm_flexAdj(t,regi,te) * vm_demSe(t,regi,enty,enty2,te))           
   - p21_taxrevFlex0(t,regi)
+;
+
+***---------------------------------------------------------------------------
+*'  LM: Calculation of tax/subsidy on direct electrification technologies
+***---------------------------------------------------------------------------
+
+q21_taxrevFeelhth(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevFeelhth(t,regi)
+  =e= 
+  (vm_cesIO(t,regi,"feelhth_chemicals") + vm_cesIO(t,regi,"feelhth_otherInd")) * cm_feelhth_tax
+  - p21_taxrevFeelhth0(t,regi)
 ;
 
  

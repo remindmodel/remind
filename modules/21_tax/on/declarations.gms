@@ -40,8 +40,9 @@ p21_taxrevPE2SE0(ttot,all_regi)              "reference level value of pe2se tec
 p21_taxrevXport0(ttot,all_regi)              "reference level value of exports tax"
 p21_taxrevSO20(ttot,all_regi)                "reference level value of SO2 tax"
 p21_taxrevBio0(ttot,all_regi)                "reference level value of bioenergy tax"
-p21_implicitDiscRate0(ttot,all_regi)           "reference level value of implicit tax on energy efficient capital"
-p21_taxrevFlex0(ttot,all_regi)                  "reference level value of flexibility tax"
+p21_implicitDiscRate0(ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
+p21_taxrevFlex0(ttot,all_regi)               "reference level value of flexibility tax"
+p21_taxrevFeelhth0(ttot,all_regi)            "reference level value of feelhth tax"
 
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
@@ -89,7 +90,8 @@ v21_taxrevXport(ttot,all_regi)               "tax on exports (?)"
 v21_taxrevSO2(ttot,all_regi)                 "tax on SO2 (to reflect health impacts)"
 v21_taxrevBio(ttot,all_regi)                 "tax on bioenergy (to reflect sustainability constraints on bioenergy production)"
 v21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
-v21_implicitDiscRate(ttot,all_regi)           "implicit tax on energy efficient capital"
+v21_implicitDiscRate(ttot,all_regi)          "implicit tax on energy efficient capital"
+v21_taxrevFeelhth(ttot,all_regi)             "tax/subsidy on direct electrification in industry (to reflect/overcome risk aversion)"
 ;
 
 Positive Variable
@@ -113,7 +115,8 @@ q21_taxrevXport(ttot,all_regi)               "calculation of tax on exports"
 q21_taxrevSO2(ttot,all_regi)                 "calculation of tax on SO2"
 q21_taxrevBio(ttot,all_regi)                 "calculation of tax on bioenergy"
 q21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
-q21_implicitDiscRate(ttot,all_regi)           "calculation of the implicit discount rate on energy efficiency capital"
+q21_implicitDiscRate(ttot,all_regi)          "calculation of the implicit discount rate on energy efficiency capital"
+q21_taxrevFeelhth(ttot,all_regi)             "calculation of tax/subsidy on direct electrificaton"
 ;   
 
 *** EOF ./modules/21_tax/on/declarations.gms
