@@ -640,7 +640,7 @@ pm_dataren(regi,"maxprod",rlf,te) = sm_EJ_2_TWa * f_datarenglob("maxprod",rlf,te
 
 $ifthen.edge_esm_transport "%transport%" == "edge_esm"
 *** allow for slightly higher geothermal electricity to avoid INFES
-pm_dataren(regi,"maxprod","1","geohdr") = 1.5*pm_dataren(regi,"maxprod","1","geohdr");
+pm_dataren(regi,"maxprod","1","geohdr") = 1.7*pm_dataren(regi,"maxprod","1","geohdr");
 $endif.edge_esm_transport
 
 *RP* hydro, spv and csp get maxprod for all regions and grades from external file
