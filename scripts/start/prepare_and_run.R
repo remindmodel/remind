@@ -128,7 +128,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     # Write REMIND input file
     notGLO   <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     filename <- paste0("./core/input/f_macBaseMagpie_coupling.cs4r")
-    write.magpie(out[notGLO],filename)
+    write.magpie(out[notGLO,,],filename)
     write(paste0("*** EOF ",filename," ***"),file=filename,append=TRUE)
   }	
   .agriculture_costs <- function(mag){
