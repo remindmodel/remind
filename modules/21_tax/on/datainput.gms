@@ -241,5 +241,14 @@ elseif (cm_DiscRateScen eq 4),
                                                *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapal")
                                                +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapal");   !! Reduction of 75% of the Efficiency gap
 );
- 
+
+*** Initilize subsidy level for industry high temperature heat processes using 
+*** electricity.
+p21_tau_feelhth_sub(ttot,regi) = 0;
+$ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
+*** Read in subsidy level from input parameter 
+p21_tau_feelhth_sub(ttot,regi)$(ttot.val ge 2025 AND ttot.val le 2035) = p21_tau_feelhth_sub_aux(regi);
+$endIf.feelhth_sub
+
+
 *** EOF ./modules/21_tax/on/datainput.gms

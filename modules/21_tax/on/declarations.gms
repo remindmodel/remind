@@ -22,6 +22,10 @@ p21_max_fe_sub(tall,all_regi,all_in)           "maximum final energy subsidy lev
 p21_max_fe_subEs(tall,all_regi,all_esty)       "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
 p21_prop_fe_sub(tall,all_regi,all_in)          "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_prop_fe_subEs(tall,all_regi,all_esty)      "subsidy proportional cap to avoid liquids increasing dramatically"
+p21_tau_feelhth_sub(tall,all_regi)             "subsidy on electricity based high temperature heat processes (T$/TWa)"
+$ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
+p21_tau_feelhth_sub_aux(all_regi)              "auxiliary parameter for reading in a subsidy on electricity based high temperature heat processes for 2025 <= t <= 2035 (T$/TWa)" / %cm_feelhth_sub% /
+$endIf.feelhth_sub
 
 p21_tau_fuEx_sub(tall,all_regi,all_enty)      "subsidy path for fuel extraction"
 
@@ -58,6 +62,7 @@ p21_taxrevSO2_iter(iteration,ttot,all_regi)                "reference level valu
 p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level value of bioenergy tax revenue"
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)           "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
+p21_taxrevFeelhth_iter(iteration,ttot,all_regi)            "reference level value of feelhth tax revenue"
 
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"

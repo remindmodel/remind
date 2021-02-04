@@ -296,7 +296,7 @@ cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as 
 cm_regiNoBioImport              "Switch defining regions where biomass import is disabled"
 cm_regiFactorStorageMult        "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
 cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils in buildings from a given time step on"
-cm_feelhth_tax                  "Switch defining a tax/subsidy on direct electrification in industry to reflect (tax) or overcome (subsidy) risk aversion [T$/TWa]"
+cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
 
 cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
@@ -432,7 +432,7 @@ $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal cm_regiNoBioImport  none        !! def = none
 $setGlobal cm_regiPhaseOutFosBuil  none    !! def = none
 $setGlobal cm_regiFactorStorageMult  none  !! def = none
-cm_feelhth_tax         = 0;   !! def = 0
+$setGlobal cm_feelhth_sub  off             !! def = off
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 

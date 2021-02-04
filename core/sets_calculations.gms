@@ -181,4 +181,9 @@ t_interpolate(ttot) = t(ttot) - t_input_gdx(ttot);
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 
+*** Remove elements from the set with electricity based high temperature heat 
+*** processes that are not present in the current run (in particular if an 
+*** industry realization is chosen in which these processes are not present).
+pfFeelhth(all_in) = pfFeelhth(all_in) * in(all_in);
+
 *** EOF ./core/sets_calculations.gms

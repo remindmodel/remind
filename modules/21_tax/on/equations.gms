@@ -205,7 +205,7 @@ q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
 q21_taxrevFeelhth(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevFeelhth(t,regi)
   =e= 
-  (vm_cesIO(t,regi,"feelhth_chemicals") + vm_cesIO(t,regi,"feelhth_otherInd")) * cm_feelhth_tax
+  sum(pfFeelhth(in), vm_cesIO(t,regi,in)) * p21_tau_feelhth_sub(t,regi)
   - p21_taxrevFeelhth0(t,regi)
 ;
 
