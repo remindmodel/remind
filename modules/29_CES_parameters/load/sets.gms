@@ -6,14 +6,27 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/load/sets.gms
 
-Set 
-  regi_dyn29(all_regi)   "dynamic region set for compatibility with testOneRegi"
+Sets
 
-  eff_scale_par   "parameters for scaling certain efficiencies during calibration"
-  /
-    level
-    midperiod
-    width
-  /
+cesParameter   "parameters of the CES functions and for calibration"
+/
+  quantity          "quantity of CES function input/output"
+  price             "price of CES function input/output"
+  eff               "baseyear efficiency of CES function input/output"
+  effgr             "multiplicative efficiency growth of CES function input/output"
+  rho               "CES function elasticity parameter rho = 1 - (1 / sigma)"
+  xi                "baseyear income share of CES function input/output"
+  offset_quantity   "quantity offset for the CES tree if the quantity is null"
+  compl_coef        "coefficients for the perfectly complementary factors"
+/
+
+regi_dyn29(all_regi)   "dynamic region set for compatibility with testOneRegi"
+
+eff_scale_par   "parameters for scaling certain efficiencies during calibration"
+/
+  level
+  midperiod
+  width
+/
 ;
 *** EOF ./modules/29_CES_parameters/load/sets.gms
