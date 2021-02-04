@@ -60,7 +60,7 @@ If the following lines of code are executed without error, then you are all set!
 ``` r
 system("gams")
 library(gdxrrw)
-library(remind)
+library(remind2)
 print("")
 if(.Platform$OS.type == "unix") {
   system('pdflatex -version')
