@@ -14,6 +14,7 @@
 
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "sets" $include "./modules/40_techpol/NDC2018/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/40_techpol/NDC2018/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/40_techpol/NDC2018/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/40_techpol/NDC2018/equations.gms"

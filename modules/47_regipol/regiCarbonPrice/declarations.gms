@@ -104,7 +104,7 @@ Parameter
 $ENDIF.exoTax
 
 equations
-	q21_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
+	q47_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
 ;
 $endIf.cm_implicitFE
 

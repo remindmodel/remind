@@ -9,13 +9,10 @@
 vm_cesIO.fx(t0,regi_dyn29(regi),in_industry_dyn37(in))
   = pm_cesdata(t0,regi,in,"quantity");
 
-*** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. In case contrary, H2 is competitive against gas in buildings and industry even during calibration.
-$ifthen.build_H2_penetration "%buildings%" == "simple"
-v36_H2share.up(t,regi) = s36_costDecayStart;
-$endif.build_H2_penetration
+*** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. 
+*** In case contrary, H2 is competitive against gas in buildings and industry even during calibration.
+*** check therefore the bounds in realization simple of the module buildings and
+*** the relization fixed_shares of the module industry
 
-$ifthen.indst_H2_penetration "%industry%" == "fixed_shares"
-v37_H2share.up(t,regi) = s37_costDecayStart;
-$endif.indst_H2_penetration
 
 *** EOF ./modules/29_CES_parameters/calibrate/bounds.gms

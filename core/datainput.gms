@@ -376,11 +376,11 @@ pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
 
 *** historical installed capacity
-*** read-in of p_histCap.cs3r
+*** read-in of pm_histCap.cs3r
 $Offlisting
-table   p_histCap(tall,all_regi,all_te)     "historical installed capacity"
+table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
 $ondelim
-$include "./core/input/p_histCap.cs3r"
+$include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
 
@@ -666,7 +666,7 @@ display p_datapot, pm_dataren;
 
 loop(regi,
   loop(teReNoBio(te),
-    p_aux_capToDistr(regi,te) = p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
+    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
     s_aux_cap_remaining = p_aux_capToDistr(regi,te);
 *RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2, assuming the best grades are filled first (with 20% of each grade not yet used)
 

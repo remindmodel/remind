@@ -38,4 +38,9 @@ vm_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_
 
 $endif.feShare
 
+*** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. In case contrary, H2 is competitive against gas in buildings and industry even during calibration.
+$ifthen.CES_calibration "%CES_parameters%" == "calibrate"
+v36_H2share.up(t,regi) = s36_costDecayStart;
+$endif.CES_calibration
+
 *** EOF ./modules/36_buildings/simple/bounds.gms

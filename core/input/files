@@ -20,7 +20,7 @@ p_boundEmi.cs4r
 p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r
 p_emineg_econometric.cs3r
-p_histCap.cs3r
+pm_histCap.cs3r
 p_histCapFac.cs4r
 p_histEmiMac.cs4r
 p_histEmiSector.cs4r

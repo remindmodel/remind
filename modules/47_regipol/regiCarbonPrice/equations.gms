@@ -91,7 +91,7 @@ $endIf.quantity_regiCO2target
 ***---------------------------------------------------------------------------
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
-q21_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
+q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
   vm_taxrevimplFETax(t,regi)
   =e=
   sum(enty2$entyFE(enty2),

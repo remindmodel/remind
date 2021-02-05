@@ -45,8 +45,9 @@ $Ifi "%phase%" == "sets" $include "./modules/32_power/RLDC/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/32_power/RLDC/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/32_power/RLDC/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/32_power/RLDC/equations.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/32_power/RLDC/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/32_power/RLDC/bounds.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/32_power/RLDC/postsolve.gms"
+$Ifi "%phase%" == "presolve" $include "./modules/32_power/RLDC/presolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/32_power/RLDC/realization.gms
