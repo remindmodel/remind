@@ -15,7 +15,13 @@ if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) e
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;
     pm_esCapCost(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
 
+    !! load FE-to-ES results from EDGE-Transport into auxilliary parameter
     Execute_Loadpoint "p35_fe2es", p35_fe2es_aux = p35_fe2es;
+    !! update module parameter with EDGE-Transport results, preserving 2005 data
+    !! so no altered 2005 data gets passed on to potential fixed runs
+    p35_fe2es(t,regi,all_GDPscen,EDGE_scenario,teES_dyn35)$( t.val gt 2005 ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,EDGE_scenario,teES_dyn35);
+    !! up date model parameter with data after 2010
     pm_fe2es(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
     = p35_fe2es_aux(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
 
