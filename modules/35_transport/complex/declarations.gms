@@ -8,6 +8,7 @@
 
 Positive variables
 vm_shUePeT(ttot,all_regi,all_te)             "share of the Uepet production from a certain LDV type in the total Uepet production. Unit: percent"
+v35_demFe(ttot,all_regi,all_enty,all_enty,all_te)      "fe demand [TWa]"
 ;
 
 equations

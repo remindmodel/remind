@@ -31,7 +31,7 @@ p21_taxrevFEtrans0(ttot,regi) = SUM(feForUe(enty),
 				);
 p21_taxrevFEBuildInd0(ttot,regi) = sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
     sum(ppfen$ppfEn2Sector(ppfen,sector),
-      (p21_tau_fe_tax_bit_st(ttot,regi,ppfen) + p21_tau_fe_sub_bit_st(ttot,regi,ppfen))
+      (pm_tau_fe_tax_bit_st(ttot,regi,ppfen) + pm_tau_fe_sub_bit_st(ttot,regi,ppfen))
       *
       sum(emiMkt$sector2emiMkt(sector,emiMkt), 
         sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   

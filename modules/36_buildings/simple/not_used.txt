@@ -32,3 +32,5 @@ cm_logitCal_markup_conv_b,input,questionnaire
 cm_logitCal_markup_newtech_conv_b,input,questionnaire
 qm_balFe,input,questionnaire
 
+pm_tau_fe_tax_bit_st,input,questionnaire
+pm_tau_fe_sub_bit_st,input,questionnaire
