@@ -1,5 +1,7 @@
 # REMIND - REgional Model of INvestments and Development
 
+[![CodeCheck Status](https://github.com/remindmodel/remind/workflows/check/badge.svg)](https://github.com/remindmodel/remind/actions) 
+
   <https://www.pik-potsdam.de/research/transformation-pathways/models/remind>
 
 ## WHAT IS REMIND?
