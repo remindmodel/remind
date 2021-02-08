@@ -942,10 +942,8 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("20
 
 $if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
 
-**********************************
-*** Calculate learning parameters:
-**********************************
 
+*** Calculate learning parameters:
 
 *** global exponent
 *** parameter calculation for global level, that regional values can gradually converge to
@@ -979,9 +977,7 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(r
 display p_capCum;
 display pm_data;
 
-******************************
 *** end learning parameters
-******************************
 
 *RP* 2012-03-07: Markup for advanced technologies
 table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
