@@ -31,7 +31,7 @@ require(devtools)
 
 ```{r, echo=FALSE, warning=FALSE}
 setConfig(forcecache = TRUE)
-setConfig("regionmapping_21_EU11.csv")
+setConfig("regionmappingH12.csv")
 
 output_folder = "EDGE-T/"
 
