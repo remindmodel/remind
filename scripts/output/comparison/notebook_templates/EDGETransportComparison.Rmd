@@ -108,8 +108,8 @@ cols <- c("NG" = "#d11141",
           "FE|Transport" = "#1e90ff",
           "FE|Buildings" = "#d2b48c",
           "FE|Industry" = "#919191",
-          "LDVs Electricity" = "#00b159", 
-          "Bus+Rail Electricity" = "#7cfc00", 
+          "LDVs Electricity" = "#00b159",
+          "Bus+Rail Electricity" = "#7cfc00",
           "Road+Rail freight Electricity" = "#68c6a4",
           "LDVs Hydrogen" = "#00aedb",
           "Bus+Rail Hydrogen" = "#00bfff",
@@ -136,7 +136,6 @@ legend_ord_fuels <- c("BEV", "Electricity", "Electric", "Hybrid Electric", "FCEV
 legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy induced inconvenience","Fuel", "Purchase", "O&M")
 
 legend_ord_emissions <- c("Emi|CO2|Industry|Gross", "Emi|CO2|Buildings|Direct", "Emi|CO2|Transport|Demand", "Emi|CO2|Energy|Supply|Gross", "Emi|CO2|Land-Use Change","Emi|CO2|CDR|BECCS")
-
 
 legend_ord = c(legend_ord_modes, legend_ord_fuels, legend_ord_costs, legend_ord_modes_fuel)
 

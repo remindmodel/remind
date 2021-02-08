@@ -1207,6 +1207,8 @@ teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
         storspv     "storage technology for spv"
         storwind    "storage technology for wind"
         storcsp     "storage technology for csp"
+        dac         "direct air capture"
+        elh2        "hydrogen elecrolysis"
 /
 
 teNoLearn(all_te)   "Technologies without learning effect"
@@ -2033,17 +2035,6 @@ Sets
   //
   fe_tax_subEs(all_in,all_esty) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway III to the CES "
   //
-  cesParameter   "parameters of the CES functions and for calibration"
-  /
-    quantity   "quantity of CES function input/output"
-    price      "price of CES function input/output"
-    eff        "baseyear efficiency of CES function input/output"
-    effgr      "multiplicative efficiency growth of CES function input/output"
-    rho        "CES function elasticity parameter rho = 1 - (1 / sigma)"
-    xi         "baseyear income share of CES function input/output"
-    offset_quantity "quantity offset for the CES tree if the quantity is null"
-    compl_coef    "coefficients for the perfectly complementary factors"
-  /
 
 
 ***-------------------------------------------------------------------------------
