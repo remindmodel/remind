@@ -130,16 +130,16 @@ p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coe
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
 p_varyAdj_mult_adjCoeff(ttot,all_regi)               "Multiplicative factor to adjust adjustment cost parameter p_adj_coeff according to CO2 price level"
-***$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-***p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch"
-***$elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
-***p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"     
-***$endif
-***$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
-***p_new_adj_coeff(all_te)                              "new adj coef parameters";
-***$elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
-***p_new_adj_coeff(all_te)                               "new adj coef parameters" 
-***$endif
+$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
+  p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /
+$elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
+  p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"  / %cm_INNOPATHS_adj_seed% /   
+$endif
+$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /
+$elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /
+$endif
 
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
@@ -489,8 +489,8 @@ s_tau_cement                                          "range of per capita inves
 s_c_so2                                               "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
 sm_ccsinjecrate                                       "CCS injection rate factor. Unit: 1/a"
 
-s_t_start                                                      "start year of emission budget"
-cm_peakBudgYr                                              "date of net-zero CO2 emissions for peak budget runs without overshoot"
+s_t_start                                             "start year of emission budget"
+cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
