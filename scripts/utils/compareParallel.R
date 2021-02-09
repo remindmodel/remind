@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 require(data.table)
 require(parallel)
-require(remind)
+require(remind2)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {

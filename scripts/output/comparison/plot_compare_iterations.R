@@ -11,7 +11,7 @@ library(lusweave, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(gdx, quietly = TRUE,warn.conflicts =FALSE)
 library(magpie, quietly = TRUE,warn.conflicts =FALSE)
-library(remind, quietly = TRUE,warn.conflicts =FALSE)
+library(remind2, quietly = TRUE,warn.conflicts =FALSE)
 library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
 ############################# BASIC CONFIGURATION #############################

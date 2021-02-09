@@ -4,12 +4,12 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-## require(remind)
+## require(remind2)
 require(parallel)
 ## load local reporting
 ## require(devtools)
 ## load_all("~/git/remind-lib")
-require(remind)
+require(remind2)
 require(data.table)
 
 compareScenTable <- function(listofruns){
