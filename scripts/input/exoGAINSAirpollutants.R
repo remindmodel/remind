@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
-#library(moinput)
+
 library(dplyr)
 library(luscale) # rename_dimnames
 library(remind2)

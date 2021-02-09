@@ -199,10 +199,10 @@ if (cm_startyear le 2020,   !! require the realization of at least 50% of the pl
    vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.5 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
    vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
 );
-if (cm_startyear le 2025 AND cm_nucscen ge 2,   !! upper bound calculated in moinput/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
+if (cm_startyear le 2025 AND cm_nucscen ge 2,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2025",regi,"tnrs","1") = pm_NuclearConstraint("2025",regi,"tnrs") / 5;
 );
-if (cm_startyear le 2030 AND cm_nucscen ge 2,   !! upper bound calculated in moinput/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
+if (cm_startyear le 2030 AND cm_nucscen ge 2,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2030",regi,"tnrs","1") = pm_NuclearConstraint("2030",regi,"tnrs") / 5;
 );
 

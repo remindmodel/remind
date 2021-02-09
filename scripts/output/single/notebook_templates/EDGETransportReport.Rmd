@@ -13,7 +13,7 @@ output:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 require(ggplot2)
-require(moinput)
+require(mrremind)
 require(data.table)
 require(dplyr)
 require(remind2)

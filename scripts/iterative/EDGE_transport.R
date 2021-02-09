@@ -20,7 +20,7 @@ library(gdxdt)
 library(edgeTrpLib)
 require(devtools)
 library(rmndt)
-library(moinput)
+library(mrremind)
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)

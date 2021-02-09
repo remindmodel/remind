@@ -103,7 +103,7 @@ Rscript scripts/output/comparison/plot_compare_iterations.R folder=another-outpu
 
 # Technical concept
 
-There are two components of the REMIND-MAgPIE coupling: the prominent dynamic part (models solve iteratively and exchange data via coupling script), the more hidden static part (exogenous assumptions derived from the other model, updated manually from time to time via moinput).
+There are two components of the REMIND-MAgPIE coupling: the prominent dynamic part (models solve iteratively and exchange data via coupling script), the more hidden static part (exogenous assumptions derived from the other model, updated manually from time to time via mrremind).
 
 ### Dynamic part
 

@@ -173,7 +173,7 @@ prepare <- function() {
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
   require(remind2, quietly = TRUE,warn.conflicts =FALSE)
-  require(moinput)
+  require(mrremind)
   require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
@@ -194,7 +194,7 @@ prepare <- function() {
   cat("\n====================\n")
 
   ## print the libraries version
-  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "moinput", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
 
 
   load("config.Rdata")

@@ -52,7 +52,7 @@ pm_fe2es(ttot,regi,teEs_dyn35) = p35_fe2es(ttot,regi,"%cm_GDPScen%","%cm_EDGEtr_
 
 pm_shFeCes(ttot,regi,entyFe,ppfen_dyn35,teEs_dyn35)$fe2ces_dyn35(entyFe,ppfen_dyn35,teEs_dyn35) = p35_shFeCes(ttot,regi,"%cm_GDPScen%","%cm_EDGEtr_scen%",entyFe,ppfen_dyn35,teEs_dyn35);
 
-*** workaround for nat. gas for transport -> should go to mmoinput at some point
+*** workaround for nat. gas for transport -> should go to mrremind at some point
 pm_cf(ttot,regi,"tdfosgat") = 0.65;
 pm_cf(ttot,regi,"tdbiogat") = 0.65;
 

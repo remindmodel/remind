@@ -20,7 +20,7 @@ knitr::opts_chunk$set(dev = 'pdf')
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 require(ggplot2)
-require(moinput)
+require(mrremind)
 require(rmndt)
 require(quitte)
 library(lucode2)

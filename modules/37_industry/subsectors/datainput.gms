@@ -111,7 +111,7 @@ $offdelim
 
 s37_clinker_process_CO2 = 0.5262;
 
-*** FIXME *** this needs to be in moinput
+*** FIXME *** this needs to be in mrremind
 p37_clinker_cement_ratio("2005","CAZ") = 0.81;
 p37_clinker_cement_ratio("2005","CHA") = 0.58;
 p37_clinker_cement_ratio("2005","EUR") = 0.73;
