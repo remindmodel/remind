@@ -46,7 +46,7 @@ pkgs <- c("curl",
           "magpie4",
           "mip",
           "moinput",
-          "remind",
+          "remind2",
           "remulator",
           "rhdf5",
           "shinyresults")
