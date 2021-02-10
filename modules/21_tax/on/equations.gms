@@ -42,7 +42,7 @@
     - vm_costSubsidizeLearning(t,regi)
     + v21_implicitDiscRate(t,regi)
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
-    + v21_taxrevFlex(t,regi)$(cm_flex_tax eq 1)  
+    + v21_taxrevFlex(t,regi)
     + v21_taxrevBioImport(t,regi)  
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
     + vm_taxrevimplFETax(t,regi)
