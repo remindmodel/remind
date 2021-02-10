@@ -11,7 +11,7 @@
 #' @author Renato Rodrigues
 #' 
 
-library(lucode)
+library(lucode2)
 library(rmarkdown)
 library(remind2)
 
