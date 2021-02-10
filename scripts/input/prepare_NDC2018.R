@@ -10,7 +10,7 @@ prepare_NDC2018<-function(gdx){
   
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode,quietly=TRUE,warn.conflicts =FALSE)
-  require(remind,quietly = TRUE,warn.conflicts =FALSE)
+  require(remind2,quietly = TRUE,warn.conflicts =FALSE)
   
   ############################# BASIC CONFIGURATION #############################
   
