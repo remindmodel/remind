@@ -7,10 +7,10 @@
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
 
-library(dplyr)
-library(luscale) # rename_dimnames
-library(remind2)
-library(gdx) # writeGDX
+library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
+library(luscale, quietly = TRUE,warn.conflicts =FALSE) # rename_dimnames
+library(remind2, quietly = TRUE,warn.conflicts =FALSE)
+library(gdx, quietly = TRUE,warn.conflicts =FALSE) # writeGDX
 
 # read SSP scenario
 load("config.Rdata")
