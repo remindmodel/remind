@@ -536,5 +536,11 @@ vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU
 *** no Pe2Se fossil CCS in Germany
 vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
 
+*** FS: allow for H2 use in buildings only from 2030 onwards
+vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
+
+*** FS: limit H2 infrastructure capacity additions 2005-2020 to 80%, to be more in line with historical trend
+*** global H2 consumption increased about 30% between 2005-2018
+vm_cap.up("2020",regi,"tdh2s","1") = pm_EN_demand_from_initialcap2(regi,"feh2s") / pm_cf("2020",regi,"tdh2s") * 1.8;
 
 *** EOF ./core/bounds.gms

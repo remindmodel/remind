@@ -425,9 +425,14 @@ q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids 
 q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of gases and liquids in sector final energy"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
+q_capH2BI(ttot,all_regi)                                  "H2 infrastructure capacities of buildings and industry need to add up to the total infrastructure of the stationary sector"
+q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry"
+
+
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
 q_heat_limit(ttot,all_regi)  "limit heating"
 $ENDIF.sehe_upper
+
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------

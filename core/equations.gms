@@ -792,7 +792,7 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
 ***---------------------------------------------------------------------------
 *' Investment equation for end-use capital investments (energy service layer):
 ***---------------------------------------------------------------------------
-q_esCapInv(ttot,regi,teEs)$pm_esCapCost(ttot,regi,teEs) ..
+q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_startyear)..
     vm_esCapInv(ttot,regi,teEs)
     =e=
     sum (fe2es(entyFe,esty,teEs),
@@ -868,6 +868,7 @@ q_shBioTrans(t,regi)..
 ***---------------------------------------------------------------------------
 *' Share of final energy in stationary sector
 ***---------------------------------------------------------------------------
+
 q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..
   vm_shfe(t,regi,entyFe,sector) 
   * sum(emiMkt$sector2emiMkt(sector,emiMkt), 
@@ -875,7 +876,7 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
         vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feels"),   
+      sum(se2fe(entySe,entyFe,te),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
 ;
 
@@ -899,5 +900,32 @@ q_heat_limit(t,regi)$(t.val gt 2020)..
     %cm_INNOPATHS_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
 ;
 $ENDIF.sehe_upper
+
+$ontext
+q_H2BICouple(ttot,regi)$(ttot.val ge max(2010, cm_startyear))..
+    sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"build")), 
+      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
+  * sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"indst")),
+      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
+  =g=
+  0
+;
+$offtext
+
+
+q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
+  vm_cap(t,regi,"tdh2i","1") + vm_cap(t,regi,"tdh2b","1")
+  =e=
+  vm_cap(t,regi,"tdh2s","1")
+;
+
+q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") AND t.val ge max(2015, cm_startyear))..
+    sum(sector2emiMkt(sector,emiMkt), 
+      vm_demFeSector(t,regi,"seh2","feh2s",sector,emiMkt))
+    =l=
+    sum(te2sectortdH2(te,sector),
+      sum(teFe2rlfH2BI(te,rlf), 
+        vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)))
+;
 
 *** EOF ./core/equations.gms

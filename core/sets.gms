@@ -254,6 +254,9 @@ $endif
         tdgai_cs
         tdhoi_cs
         o_feel
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 /
 
 all_enty             "all types of quantities"
@@ -653,9 +656,9 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 
 sets
 
-   all_regi "all regions" /CAZ,CHA,DEU,ECE,ECS,ENC,ESC,ESW,EWN,FRA,IND,JPN,LAM,MEA,NEN,NES,OAS,REF,SSA,UKI,USA/
+   all_regi "all regions" /OAS,ENC,NES,MEA,SSA,LAM,REF,CAZ,EWN,ECS,CHA,ESC,ECE,FRA,DEU,UKI,NEN,IND,JPN,ESW,USA/
 
-   ext_regi "extended regions list (includes subsets of H12 regions)" / EUR_regi,NEU_regi,CAZ,CHA,DEU,ECE,ECS,ENC,ESC,ESW,EWN,FRA,IND,JPN,LAM,MEA,NEN,NES,OAS,REF,SSA,UKI,USA /
+   ext_regi "extended regions list (includes subsets of H12 regions)" / EUR_regi,NEU_regi,OAS,ENC,NES,MEA,SSA,LAM,REF,CAZ,EWN,ECS,CHA,ESC,ECE,FRA,DEU,UKI,NEN,IND,JPN,ESW,USA /
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
@@ -692,43 +695,43 @@ sets
 
    regi2iso(all_regi,iso) "mapping regions to iso countries"
       /
-       CAZ . (AUS,CAN,HMD,NZL,SPM)
-       CHA . (CHN,HKG,MAC,TWN)
-       DEU . (DEU)
-       ECE . (CZE,EST,LVA,LTU,POL,SVK)
-       ECS . (BGR,HRV,HUN,ROU,SVN)
-       ENC . (ALA,DNK,FRO,FIN,SWE)
-       ESC . (CYP,GRC,ITA,MLT)
-       ESW . (PRT,ESP)
-       EWN . (AUT,BEL,LUX,NLD)
-       FRA . (FRA)
-       IND . (IND)
-       JPN . (JPN)
-       LAM . (AIA,ATA,ATG,ARG,ABW,BHS,BRB,BLZ,BMU,BOL)
-       LAM . (BES,BVT,BRA,CYM,CHL,COL,CRI,CUB,CUW,DMA)
-       LAM . (DOM,ECU,SLV,FLK,GUF,GRD,GLP,GTM,GUY,HTI)
-       LAM . (HND,JAM,MTQ,MEX,MSR,NIC,PAN,PRY,PER,PRI)
-       LAM . (BLM,KNA,LCA,MAF,VCT,SXM,SGS,SUR,TTO,TCA)
-       LAM . (URY,VEN,VGB,VIR)
-       MEA . (DZA,BHR,EGY,IRN,IRQ,ISR,JOR,KWT,LBN,LBY)
-       MEA . (MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN,ARE,ESH)
-       MEA . (YEM)
-       NEN . (GRL,ISL,LIE,NOR,SJM,CHE)
-       NES . (ALB,AND,BIH,VAT,MKD,MCO,MNE,SMR,SRB,TUR)
        OAS . (AFG,ASM,BGD,BTN,IOT,BRN,KHM,CXR,CCK,COK)
        OAS . (FJI,PYF,ATF,GUM,IDN,KIR,PRK,KOR,LAO,MYS)
        OAS . (MDV,MHL,FSM,MNG,MMR,NRU,NPL,NCL,NIU,NFK)
        OAS . (MNP,PAK,PLW,PNG,PHL,PCN,WSM,SGP,SLB,LKA)
        OAS . (THA,TLS,TKL,TON,TUV,UMI,VUT,VNM,WLF)
-       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
-       REF . (UKR,UZB)
+       ENC . (ALA,DNK,FRO,FIN,SWE)
+       NES . (ALB,AND,BIH,VAT,MKD,MCO,MNE,SMR,SRB,TUR)
+       MEA . (DZA,BHR,EGY,IRN,IRQ,ISR,JOR,KWT,LBN,LBY)
+       MEA . (MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN,ARE,ESH)
+       MEA . (YEM)
        SSA . (AGO,BEN,BWA,BFA,BDI,CMR,CPV,CAF,TCD,COM)
        SSA . (COG,COD,CIV,DJI,GNQ,ERI,ETH,GAB,GMB,GHA)
        SSA . (GIN,GNB,KEN,LSO,LBR,MDG,MWI,MLI,MRT,MUS)
        SSA . (MYT,MOZ,NAM,NER,NGA,REU,RWA,SHN,STP,SEN)
        SSA . (SYC,SLE,SOM,ZAF,SSD,SWZ,TZA,TGO,UGA,ZMB)
        SSA . (ZWE)
+       LAM . (AIA,ATA,ATG,ARG,ABW,BHS,BRB,BLZ,BMU,BOL)
+       LAM . (BES,BVT,BRA,CYM,CHL,COL,CRI,CUB,CUW,DMA)
+       LAM . (DOM,ECU,SLV,FLK,GUF,GRD,GLP,GTM,GUY,HTI)
+       LAM . (HND,JAM,MTQ,MEX,MSR,NIC,PAN,PRY,PER,PRI)
+       LAM . (BLM,KNA,LCA,MAF,VCT,SXM,SGS,SUR,TTO,TCA)
+       LAM . (URY,VEN,VGB,VIR)
+       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
+       REF . (UKR,UZB)
+       CAZ . (AUS,CAN,HMD,NZL,SPM)
+       EWN . (AUT,BEL,LUX,NLD)
+       ECS . (BGR,HRV,HUN,ROU,SVN)
+       CHA . (CHN,HKG,MAC,TWN)
+       ESC . (CYP,GRC,ITA,MLT)
+       ECE . (CZE,EST,LVA,LTU,POL,SVK)
+       FRA . (FRA)
+       DEU . (DEU)
        UKI . (GIB,GGY,IRL,IMN,JEY,GBR)
+       NEN . (GRL,ISL,LIE,NOR,SJM,CHE)
+       IND . (IND)
+       JPN . (JPN)
+       ESW . (PRT,ESP)
        USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
@@ -761,8 +764,8 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
    map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        CHA . CHA
-       DEU . DEU
        FRA . FRA
+       DEU . DEU
        IND . IND
        JPN . JPN
        USA . USA
@@ -1088,6 +1091,9 @@ $endif
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdhes           "transmission and distribution for heat to stationary users"
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
 *        ccscomp         "compression of co2, CCS related"
 *        ccspipe         "transportation of co2, CCS related"
@@ -1832,9 +1838,14 @@ sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
         build.ES
         trans.ES
         trans.other
-		cdr.ETS
+	cdr.ETS
 /
 
+te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
+/
+        tdh2i.indst
+        tdh2b.build
+/
 
 macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
 /
@@ -2521,6 +2532,11 @@ teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
 /
       (tdels,tdelt,tdbiogas,tdfosgas,tdbiogat,tdfosgat,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
+/
+
+teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildlings and industry (which should not produce vm_prodFe in q_limitCapFe)"
+/
+        (tdh2i,tdh2b).1
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"

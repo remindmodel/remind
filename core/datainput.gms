@@ -131,10 +131,12 @@ pm_pricePerm(ttot) = 0;
 pm_fe2es(ttot,regi,teEs) = 1;
 pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 
+*** set upper and lower bound to FE shares (only active if non-zero)
 pm_shfe_up(ttot,regi,entyFe,sector)=0;
 pm_shfe_lo(ttot,regi,entyFe,sector)=0;
 pm_shGasLiq_fe_up(ttot,regi,sector)=0;
 pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
+
 
 ***---------------------------------------------------------------------------
 *** Import and set global data
@@ -410,6 +412,10 @@ pm_cf(ttot,regi,"apcardieffH2t") = 1;
 pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 
+*** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
+pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
+pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
+
 table p_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
 $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
@@ -421,6 +427,11 @@ $offdelim
 ***---------------------------------------------------------------------------
 *RP* use new lifetimes defined in generisdata_tech.prn:
 pm_omeg(regi,opTimeYr,te) = 0;
+
+*** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies 
+*** which are only helper technologies for consistent H2 use in industry and buildings
+pm_data(regi,"lifetime","tdh2i") = pm_data(regi,"lifetime","tdh2s");
+pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
 
 loop(regi,
         p_aux_lifetime(regi,te) = 5/4 * pm_data(regi,"lifetime",te);
