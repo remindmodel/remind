@@ -8,7 +8,7 @@
 # Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
 if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
   firstIteration = TRUE
-  cat("\nExoGAINS - log for first iteration...")
+  cat("\nExoGAINS - log for first iteration...\n\n")
 } else {
   firstIteration = FALSE
 }
@@ -218,6 +218,6 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
 
 if(firstIteration){
-  cat("ExoGAINS - end of first iteration.\n")
+  cat(\n"ExoGAINS - end of first iteration.\n\n")
 }
 
