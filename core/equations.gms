@@ -875,7 +875,7 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
         vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
   =e=
   sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feels"),   
+      sum(se2fe(entySe,entyFe,te),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))) 
 ;
 
