@@ -8,7 +8,7 @@
 # Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
 if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
   firstIteration = TRUE
-  cat("ExoGAINS - log for first iteration...")
+  cat("\nExoGAINS - log for first iteration...")
 } else {
   firstIteration = FALSE
 }
@@ -16,10 +16,10 @@ if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
 
-library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
-library(luscale, quietly = TRUE,warn.conflicts =FALSE) # rename_dimnames
-library(remind2, quietly = TRUE,warn.conflicts =FALSE)
-library(gdx, quietly = TRUE,warn.conflicts =FALSE) # writeGDX
+suppressMessages(library(dplyr, quietly = TRUE,warn.conflicts =FALSE))
+suppressMessages(library(luscale, quietly = TRUE,warn.conflicts =FALSE)) # rename_dimnames
+suppressMessages(library(remind2, quietly = TRUE,warn.conflicts =FALSE))
+suppressMessages(library(gdx, quietly = TRUE,warn.conflicts =FALSE)) # writeGDX
 
 # read SSP scenario
 load("config.Rdata")
@@ -218,6 +218,6 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
 
 if(firstIteration){
-  cat("ExoGAINS - end of first iteration.")
+  cat("ExoGAINS - end of first iteration.\n")
 }
 
