@@ -47,6 +47,14 @@ Sets
     otherInd  . co2otherInd
   /
 
+  secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
+  /
+    cement    . ETS
+    chemicals . ETS
+    steel     . ETS
+    otherInd  . ES  
+  /  
+
   in_industry_dyn37(all_in)   "all inputs and outputs of the CES function - industry"
   /
     ue_industry   "useful energy of industry sector"
