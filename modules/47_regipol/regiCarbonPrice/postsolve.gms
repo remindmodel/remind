@@ -14,7 +14,7 @@ display pm_taxCO2eq;
 *** net CO2 
 	p47_emiTarget(t,regi,"netCO2")
 	=
-	vm_emiAll.L(t,regi,"co2")
+	vm_co2eq.L(t,regi)
 ;
 
 *** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
@@ -64,12 +64,20 @@ loop((ttot,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ext_regi,target
 	if(iteration.val lt 10,
 		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, (p47_emissionsCurrent(ext_regi))/(p47_regiCO2target(ttot,ext_regi,target_type,emi_type)) ) ** 2;
 	else
-		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, (p47_emissionsCurrent(ext_regi))/(p47_regiCO2target(ttot,ext_regi,target_type,emi_type)) ) ** 1;
+		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, (p47_emissionsCurrent(ext_regi))/(p47_regiCO2target(ttot,ext_regi,target_type,emi_type)) ) ** 0.5;
 	);
-	p47_factorRescaleCO2Tax(ext_regi) =
-		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax(ext_regi)),
-			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
-		);
+	if(iteration.val lt 50,
+		p47_factorRescaleCO2Tax(ext_regi) =
+			max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax(ext_regi)),
+				1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+			);
+	else
+		!! Decrease stepsize at higher iterations to enhance convergence 
+		p47_factorRescaleCO2Tax(ext_regi) =
+			max(min( 2 * EXP( -0.15 * iteration.val ) + 1.001 ,p47_factorRescaleCO2Tax(ext_regi)),
+				1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.001)
+			);
+	);
 );
 
 ***	updating the co2 tax

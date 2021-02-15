@@ -26,7 +26,9 @@ loop(regi$(p45_gdppcap2015_PPP(regi) gt 30),
 );
 
 *** linear transition to global price - starting point depends on GDP/cap
-pm_taxCO2eq(t,regi) = p45_regCO2priceFactor(t,regi) * p45_CO2priceTrajDeveloped(t);
+*** pm_taxCO2eq(t,regi) = p45_regCO2priceFactor(t,regi) * p45_CO2priceTrajDeveloped(t); 
+*** FIXME: remove hard-coded exception for EUR and make it based on regions given by cm_regiCO2target
+pm_taxCO2eq(t,regi)$(not sameas(regi,"EUR")) = p45_regCO2priceFactor(t,regi) * p45_CO2priceTrajDeveloped(t)
 
 display pm_taxCO2eq;
 *** EOF ./modules/45_carbonprice/diffCurvPhaseIn2Lin/postsolve.gms
