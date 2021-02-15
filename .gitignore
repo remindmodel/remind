@@ -11,6 +11,9 @@
 *.swp
 *.pdf
 
+# ignore libreoffice lock files
+.~*#
+
 # Ignore everything in "input" folders
 input/
 !modules/29_CES_parameters/load/input
@@ -29,3 +32,7 @@ main.lst
 
 # Ignore .RData files only in the root folder
 /*.RData
+
+# ignore all the MAGICC files, should they be present
+core/magicc/
+
