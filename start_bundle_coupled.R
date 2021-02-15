@@ -46,7 +46,7 @@ n600_iterations <- 0 # max_iterations
 
 require(magclass)
 require(lucode)
-require(remind)
+require(remind2)
 require(gtools) # required for mixedsort()
 
 ####################################################

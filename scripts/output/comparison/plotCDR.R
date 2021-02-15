@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(lucode)
-library(remind)
+library(remind2)
 library(lusweave)
 library(mip)
 

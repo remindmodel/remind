@@ -8,7 +8,7 @@
 #----------------------------     PREPARATION     --------------------------
 #---------------------------------------------------------------------------
 library(tidyverse)
-library(remind)
+library(remind2)
 library(gridExtra)
 library(quitte)
 require(lucode)

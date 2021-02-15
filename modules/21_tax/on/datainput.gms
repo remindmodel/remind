@@ -72,7 +72,7 @@ $offdelim
   
 
   
-*** transfer data to parameters only for the relevant items. Pathway II
+*** transfer data to parameters
   p21_tau_fe_tax_transport(ttot,all_regi,feForUe) = f21_tau_fe_tax_transport(ttot,all_regi,feForUe);
   p21_tau_fe_sub_transport(ttot,all_regi,feForUe) = f21_tau_fe_sub_transport(ttot,all_regi,feForUe);
   
@@ -83,27 +83,16 @@ $offdelim
   p21_tau_fe_tax_transport(ttot,all_regi,"fegat") = p21_tau_fe_tax_transport(ttot,all_regi,"fedie");
   p21_tau_fe_sub_transport(ttot,all_regi,"fegat") = p21_tau_fe_sub_transport(ttot,all_regi,"fedie");
 
-loop ( fe_tax_sub_sbi(all_in, in), !! Pathways I from FE to the CES
-  p21_tau_fe_tax_bit_st(ttot,all_regi,in) = f21_tau_fe_tax_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_tau_fe_sub_bit_st(ttot,all_regi,in) = f21_tau_fe_sub_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_max_fe_sub(ttot,all_regi,in) = f21_max_fe_sub(ttot,all_regi,all_in) ;
-  p21_prop_fe_sub(ttot,all_regi,in) = f21_prop_fe_sub(ttot,all_regi,all_in) ;
-);  
-
-loop ( fe_tax_subEs(all_in, esty), !! Pathways III from FE to the CES, via the ES layer
-  pm_tau_fe_tax_ES_st(ttot,all_regi,esty) = f21_tau_fe_tax_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  pm_tau_fe_sub_ES_st(ttot,all_regi,esty) = f21_tau_fe_sub_bit_st(ttot,all_regi,all_in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
-  p21_max_fe_subEs(ttot,all_regi,esty) = f21_max_fe_sub(ttot,all_regi,all_in) ;
-  p21_prop_fe_subEs(ttot,all_regi,esty) = f21_prop_fe_sub(ttot,all_regi,all_in) ;
-);  
+  pm_tau_fe_tax_bit_st(ttot,all_regi,in) = f21_tau_fe_tax_bit_st(ttot,all_regi,in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
+  pm_tau_fe_sub_bit_st(ttot,all_regi,in) = f21_tau_fe_sub_bit_st(ttot,all_regi,in);   !! ppfen in stationary/buildings_industry : all but transport ppfen
+  p21_max_fe_sub(ttot,all_regi,in) = f21_max_fe_sub(ttot,all_regi,in) ;
+  p21_prop_fe_sub(ttot,all_regi,in) = f21_prop_fe_sub(ttot,all_regi,in) ;
 
 if(cm_fetaxscen eq 0,
 p21_tau_fe_tax_transport(ttot,regi,all_enty)     = 0;
 p21_tau_fe_sub_transport(ttot,regi,all_enty)     = 0;
-p21_tau_fe_tax_bit_st(ttot,regi,all_in)          = 0; 
-p21_tau_fe_sub_bit_st(ttot,regi,all_in)          = 0;
-pm_tau_fe_tax_ES_st(ttot,regi,all_esty)          = 0; 
-pm_tau_fe_sub_ES_st(ttot,regi,all_esty)          = 0;
+pm_tau_fe_tax_bit_st(ttot,regi,all_in)          = 0; 
+pm_tau_fe_sub_bit_st(ttot,regi,all_in)          = 0;
 p21_tau_fuEx_sub(ttot,regi,all_enty)               = 0;
 );
 
@@ -112,10 +101,8 @@ if(cm_fetaxscen ne 0,
 ***cb20110923 rescaling of FE parameters from $/GJ to trillion $ / TWa (subsidies also get adjusted in preloop.gms to avoid neg. prices)
 p21_tau_fe_tax_transport(ttot,regi,entyFE)     = p21_tau_fe_tax_transport(ttot,regi,entyFE)*0.001/sm_EJ_2_TWa; 
 p21_tau_fe_sub_transport(ttot,regi,entyFE)     = p21_tau_fe_sub_transport(ttot,regi,entyFE)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
-p21_tau_fe_tax_bit_st(ttot,regi,ppfen)          = p21_tau_fe_tax_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa; 
-p21_tau_fe_sub_bit_st(ttot,regi,ppfen)          = p21_tau_fe_sub_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
-pm_tau_fe_tax_ES_st(ttot,regi,esty)          = pm_tau_fe_tax_ES_st(ttot,regi,esty)*0.001/sm_EJ_2_TWa; 
-pm_tau_fe_sub_ES_st(ttot,regi,esty)          = pm_tau_fe_sub_ES_st(ttot,regi,esty)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
+pm_tau_fe_tax_bit_st(ttot,regi,ppfen)          = pm_tau_fe_tax_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa; 
+pm_tau_fe_sub_bit_st(ttot,regi,ppfen)          = pm_tau_fe_sub_bit_st(ttot,regi,ppfen)*0.001/sm_EJ_2_TWa;!!(subsidies also get adjusted in preloop.gms to avoid neg. prices)
 p21_tau_fuEx_sub(ttot,regi,entyPE)              =p21_tau_fuEx_sub(ttot,regi,entyPE)*0.001/sm_EJ_2_TWa;
 );
 
@@ -178,9 +165,13 @@ $include "./modules/21_tax/on/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
+
+** Fixing European 2020 carbon price to 20€/t CO2 (other regions to zero)
+f21_taxCO2eqHist("2020",regi) = 0;
+f21_taxCO2eqHist("2020",regi)$(regi_group("EUR_regi",regi)) =  20;
+
 *** convert from $/tCO2 to T$/GtC
 pm_taxCO2eqHist(t,regi) = f21_taxCO2eqHist(t,regi) * sm_DptCO2_2_TDpGtC;
-
 
 *JeS for SO2 tax case: tax path in 10^12$/TgS (= 10^6 $/t S) @ GDP/cap of 1000$/cap  (value gets scaled by GDP/cap)
 if((cm_so2tax_scen eq 0),
@@ -216,6 +207,21 @@ p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
  p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
 
+ p21_implicitDiscRateMarg(ttot,regi,in)$(pm_ttot_val(ttot) ge cm_startyear 
+                                         AND (sameAs(in,"kaphc") 
+                                              OR sameAs(in,"kapsc") 
+                                              OR sameAs(in,"kapal")
+                                              )
+                                        )
+                        = 0.25 * p21_implicitDiscRateMarg(ttot,regi,in);
+ 
+elseif (cm_DiscRateScen eq 4),
+ p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
+ 
+ p21_implicitDiscRateMarg(ttot,regi,"kaphc") = 0.05;  !! 5% for the efficiency capital for the building shell
+ p21_implicitDiscRateMarg(ttot,regi,"kapsc") = 0.05;  !! 5% for the efficiency capital for the air conditioning
+ p21_implicitDiscRateMarg(ttot,regi,"kapal") = 0.20;  !! 20% for the efficiency capital for appliances
+
  p21_implicitDiscRateMarg(ttot,regi,"kaphc") = min(max((2030 - pm_ttot_val(ttot))/(2030 -2020),0),1)    !! lambda = 1 in 2020 and 0 in 2030; 
                                                *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kaphc")
                                                +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kaphc");   !! Reduction of 75% of the Efficiency gap
@@ -226,5 +232,11 @@ p21_implicitDiscRateMarg(ttot,regi,all_in) = 0;
                                                *  0.75 * p21_implicitDiscRateMarg(ttot,regi,"kapal")
                                                +  0.25 * p21_implicitDiscRateMarg(ttot,regi,"kapal");   !! Reduction of 75% of the Efficiency gap
 );
+
+
+*** FS: bioenergy import tax level
+*** EU subregions pay cm_BioImportTax_EU of the world market price in addition after 2030 due to sustainability concerns in the Global South
+p21_tau_BioImport(t,regi) = 0;
+p21_tau_BioImport(t,regi)$(regi_group("EUR_regi",regi) AND t.val ge 2030) = cm_BioImportTax_EU;
  
 *** EOF ./modules/21_tax/on/datainput.gms

@@ -147,7 +147,7 @@ REMIND modeling routine
 
 # 3. What happens once you start REMIND on the cluster? 
 
-First, a number of R libraries like **madrat**, **moinput** and **remind** are loaded into your cache on the cluster. These libraries were and are still developed at PIK. They contain the functions necessary for the input data preparation and the output processing. Let us go through each of the stages and briefly describe what happens:
+First, a number of R libraries like **madrat**, **mrremind** and **remind** are loaded into your cache on the cluster. These libraries were and are still developed at PIK. They contain the functions necessary for the input data preparation and the output processing. Let us go through each of the stages and briefly describe what happens:
 	
 ## a) Input Data Preparation
 
@@ -157,7 +157,7 @@ The optimization in REMIND requires a lot of input data. For example, the model 
 /p/projects/rd3mod/inputdata/sources.
 ```
 
-The data are mostly in csv files. During the input data preparation, these files are read and processed, using functions from the *moinput* package. Input data are available on country-level. Then, depending on the regionmapping file you chose in the config file of your run, the country-level data are aggregated into regions, e.g. to LAM (Latin America), EUR (Europe) and so on. Finally, the data are stored as .cs3r or .cs4r files in various input folders of your REMIND directory. These files are basically tables, too, that you can open with a text editor or Excel. For example, you find the input file `p_histCap.cs3r` in your REMIND directory under `core/input`. It provides the model with historically observed values of installed capacities of some technologies in the respective regions. 
+The data are mostly in csv files. During the input data preparation, these files are read and processed, using functions from the *mrremind* package. Input data are available on country-level. Then, depending on the regionmapping file you chose in the config file of your run, the country-level data are aggregated into regions, e.g. to LAM (Latin America), EUR (Europe) and so on. Finally, the data are stored as .cs3r or .cs4r files in various input folders of your REMIND directory. These files are basically tables, too, that you can open with a text editor or Excel. For example, you find the input file `pm_histCap.cs3r` in your REMIND directory under `core/input`. It provides the model with historically observed values of installed capacities of some technologies in the respective regions. 
 The regional resolution of the run is set in the config/default.cfg by 
 ``` bash
 cfg$regionmapping

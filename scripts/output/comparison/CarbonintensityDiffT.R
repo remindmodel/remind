@@ -10,7 +10,7 @@ library(luplot)
 library(lucode)
 library(gdx)
 library(magpie)
-library(remind)
+library(remind2)
 
 ############################# BASIC CONFIGURATION #############################
 gdx_name <- "fulldata.gdx"        # name of the gdx   

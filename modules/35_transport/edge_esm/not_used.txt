@@ -13,3 +13,7 @@ pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
 pm_vintage_in,input,questionnaire
 vm_shUePeT,input,questionnaire
+vm_capFac,input,questionnaire
+pm_eta_conv,input,questionnaire
+vm_cesIO,input,questionnaire
+pm_prodCouple,input,questionnaire

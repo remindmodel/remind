@@ -12,14 +12,14 @@ lifetime    given in years
 $offtext
 
                 te_ueshhpb    te_ueshgab      te_ueshhob    te_ueshelb   te_ueshh2b    te_ueshsob    te_ueshheb  te_ueshstb  
-inco0                 1000           180             180            60        10000           470           110          10
+inco0                 1000           180             180            60          180           470           110          10
 omf                      7             3               3             2           13            17             2           1
 eta                      3           0.9             0.8             1          0.7           0.8           0.7        0.25
 usehr                 1440          1440            1440          1440         1440          1440          1440        1440     !! 60 days a year      
 lifetime                20            20              20            20           20            20            20           5   
 
 +               te_uecwhpb    te_uecwgab      te_uecwhob    te_uecwelb   te_uecwh2b    te_uecwsob    te_uecwheb  te_uecwstb  
-inco0                  500           190             200           110        10000           250           100          10
+inco0                  500           190             200           110          190           250           100          10
 omf                      1             2               6             0           13            17             2           1
 eta                      3             1             0.8             1          0.7           0.8           0.7        0.25
 usehr                  730           730             730           730          730           730           730         730         

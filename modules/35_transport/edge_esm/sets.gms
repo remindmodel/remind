@@ -87,6 +87,12 @@ fe2es_dyn35(all_enty,all_esty,all_teEs)    "map FE carriers to ES via appliances
     fegat.esgat_frgt_sm.te_esgat_frgt_sm
 /
 
+es_lo35(all_esty) "energy services long distance (bunkers)"
+/
+    esdie_pass_lo
+    esdie_frgt_lo
+/
+
 fe2ces_dyn35(all_enty,all_in,all_teEs)    "map FE carriers to CES nodes via appliances"
 /
     fepet.entrp_pass_sm.te_espet_pass_sm
@@ -155,6 +161,10 @@ segabio.fegat.tdbiogat.ch4
 segafos.fegat.tdfosgat.ch4
 /
 
+entyFe2Sector_dyn35(all_enty,emi_sectors)   "mapping final energy to transport sector"
+/
+    fegat.trans
+/
 ;
 
 alias(teEs_dyn35,teEs_dyn35_2);
@@ -172,6 +182,7 @@ se2fe(se2fe_dyn35) = YES;
 enty(enty_dyn35) = YES;
 entyFeTrans(entyFeTrans_dyn35) = YES;
 emi2te(emi2te_dyn35) = YES;
+entyFe2Sector(entyFe2Sector_dyn35) = YES;
 
 cesOut2cesIn(ces_transport_dyn35)            = YES;
 

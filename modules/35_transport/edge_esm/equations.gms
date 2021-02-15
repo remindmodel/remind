@@ -6,4 +6,13 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/equations.gms
 
+
+*'  Transportation Final Energy Balance
+q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans"))) ..
+  sum((entySe,te)$se2fe(entySe,entyFe,te), 
+    vm_demFeSector(ttot,regi,entySe,entyFe,"trans",emiMkt)
+  )
+  =e=
+  sum(fe2es(entyFe,esty,teEs)$(NOT (es_lo35(esty))), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"ES"))+
+  sum(fe2es(entyFe,esty,teEs)$es_lo35(esty), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"other"));
 *** EOF ./modules/35_transport/edge_esm/equations.gms

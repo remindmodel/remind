@@ -168,6 +168,11 @@ loop (fe2es(entyFe,esty,teEs),
 
 display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
 
+
+loop ( se2fe(entySe,entyFe,te),
+fete(entyFe,te) = YES;
+);
+
 *** MAGICC related sets
 t_magiccttot(tall) = ttot(tall) + t_extra(tall);
 t_magicc(t_magiccttot)$(t_magiccttot.val ge 2005) = Yes;

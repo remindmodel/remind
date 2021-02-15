@@ -11,4 +11,7 @@ vm_omcosts_cdr.fx(t,regi) = 0.0;
 v33_emiEW.fx(t,regi) = 0.0;
 v33_grindrock_onfield.fx(t,regi,rlf,rlf2) = 0;
 v33_grindrock_onfield_tot.fx(t,regi,rlf,rlf2) = 0;
+if (cm_emiscen ne 1,
+    vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf_dyn33("dac",rlf) AND (t.val ge max(2025,cm_startyear))) = 1e-7;  
+);
 *** EOF ./modules/33_CDR/DAC/bounds.gms

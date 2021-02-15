@@ -18,7 +18,7 @@ v39_shSynGas(ttot,all_regi)                                          "Share of s
 
 equations
 q39_emiCCU(ttot,all_regi,all_te)                                        "calculate CCU emissions"
-q39_shSynTrans(ttot,all_regi)                                           "Define share of synthetic liquids in all SE liquids."
+q39_shSynTrans(ttot,all_regi)                                           "Define share of of synthetic liquids in all SE liquids."
 q39_shSynGas(ttot,all_regi)                                             "Define share of of synthetic gas in all SE gases."
 ;
 

@@ -107,13 +107,33 @@ q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
 q30_limitXpBio(t,regi)..
          vm_Xport(t,regi,"pebiolc")
          =l=
-         vm_fuExtr(t,regi,"pebiolc","1");
-         
+         vm_fuExtr(t,regi,"pebiolc","1")
+;
+
 *** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
 q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
         sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
         =l=
         0.5 * p30_demPe(t,regi);
-         
-		 
+
+*** FS: calculate total biomass production
+q30_BioPEProdTotal(t,regi)..
+        v30_BioPEProdTotal(t,regi)
+        =e=
+        sum(peren2rlf30(enty,rlf),
+          vm_fuExtr(t,regi,enty,rlf)) +
+        sum(peren2cont30(enty,rlf),
+          vm_fuExtr(t,regi,enty,rlf))
+;
+
+
+*** FS: limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a region EU subregion
+q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi))..
+        v30_BioPEProdTotal(t,regi)
+        =l=
+        cm_bioprod_histlim*v30_BioPEProdTotal("2015",regi)
+;
+
+
+ 
 *** EOF ./modules/30_biomass/magpie_4/equations.gms

@@ -7,6 +7,15 @@
 *** SOF ./modules/33_CDR/weathering/equations.gms
 
 ***---------------------------------------------------------------------------
+*'  CDR Final Energy Balance
+***---------------------------------------------------------------------------
+q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
+  vm_otherFEdemand(t,regi,entyFe)
+  =e=
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
+;
+
+***---------------------------------------------------------------------------
 *'  Calculation of the energy demand of enhanced weathering. The first part of the equation describes the electricity demand for grinding, 
 *'  the second part the diesel demand for transportation and spreading on crop fields.
 ***---------------------------------------------------------------------------

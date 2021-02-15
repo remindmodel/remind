@@ -10,6 +10,7 @@
 $Ifi "%phase%" == "sets" $include "./modules/39_CCU/off/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/39_CCU/off/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/39_CCU/off/bounds.gms"
+$Ifi "%phase%" == "presolve" $include "./modules/39_CCU/off/presolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/39_CCU/off.gms

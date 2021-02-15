@@ -406,6 +406,7 @@ loop(regi,
   );
 );
 pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP)
+
 display pm_eta_conv, fm_dataglob;
 
 
@@ -499,5 +500,17 @@ loop(regi,
 *** no CCS leakage in the first time step
 );
 display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
+
+*** To be moved to new emiAccounting module
+* Discounting se2fe emissions from pe2se emission factors
+loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") = 
+    pm_emifac(ttot,regi,entyPe,entySe,te,"co2") 
+    - pm_eta_conv(ttot,regi,te)
+      *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
+);
+
+display pm_emifac;
+
 
 *** EOF ./modules/05_initialCap/on/preloop.gms

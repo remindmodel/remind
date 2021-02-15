@@ -10,7 +10,7 @@ require(lucode)
 require(quitte)
 require(data.table)
 require(rmndt)
-require(moinput)
+require(mrremind)
 require(edgeTrpLib)
 require(gdx)
 require(gdxdt)
@@ -487,7 +487,6 @@ for (outputdir in outputdirs) {
 
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source)
-print(FEliq_source$FEliq_sourceR)
   ## calculate sales
   salescomp = SalesFun(shares_LDV, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1)
   ## calculate fleet compositons

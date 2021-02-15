@@ -7,6 +7,7 @@
 *** SOF ./modules/39_CCU/off/bounds.gms
 
 vm_co2CCUshort.fx(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = 0;
-
+vm_cap.fx(t,regi,"h22ch4",rlf)$te2rlf("h22ch4",rlf) = 0;
+vm_cap.fx(t,regi,"MeOH",rlf)$te2rlf("MeOH",rlf) = 0;
 
 *** EOF ./modules/39_CCU/39_CCU.gms

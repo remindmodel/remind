@@ -20,7 +20,7 @@ library(gdxdt)
 library(edgeTrpLib)
 require(devtools)
 library(rmndt)
-library(moinput)
+library(mrremind)
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
@@ -49,6 +49,7 @@ scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 setConfig(regionmapping = gsub('config/', '', cfg$regionmapping))
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
@@ -117,8 +118,6 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 if (file.exists(datapath("demand_previousiter.RDS"))) {
-  ## load previous iteration number of cars
-  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations

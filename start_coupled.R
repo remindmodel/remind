@@ -13,7 +13,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   require(magclass)
   require(gdx)
   library(methods)
-  library(remind)
+  library(remind2)
   
   # delete entries in stack that contain needle and append new
   .setgdxcopy <- function(needle,stack,new){

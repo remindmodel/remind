@@ -20,7 +20,7 @@ knitr::opts_chunk$set(dev = 'pdf')
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 require(ggplot2)
-require(moinput)
+require(mrremind)
 require(rmndt)
 require(quitte)
 library(lucode2)
@@ -131,7 +131,7 @@ legend_ord_modes_fuel <- c("LDVs Electricity", "Bus+Rail Electricity", "Road+Rai
                            "LDVs Hydrogen", "Bus+Rail Hydrogen", "Road+Rail freight Hydrogen", "Domestic Aviation Hydrogen",
                            "LDVs Hydrocarbons", "Bus+Rail Hydrocarbons", "Road+Rail freight Hydrocarbons", "Domestic Aviation Hydrocarbons", "Domestic Shipping Hydrocarbons", "International Aviation Hydrocarbons", "International Shipping Hydrocarbons")
 
-legend_ord_fuels <- c("BEV", "Electricity", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Synfuel", "Synfuels", "Gases","NG")
+legend_ord_fuels <- c("BEV", "Electricity", "Electric", "Hybrid Electric", "FCEV", "Hydrogen", "Hybrid Liquids", "Liquids", "Oil", "Biodiesel", "Biofuel", "Biomass", "Synfuel", "Synfuels", "Gases","NG")
 
 legend_ord_costs <- c("Inconvenience", "Risk", "Charging", "Model availability", "Range anxiety", "Refuel availability", "Policy induced inconvenience","Fuel", "Purchase", "O&M")
 
@@ -267,7 +267,7 @@ EJmodepf(EJmode_all)
 ## Energy services, per capita, by mode
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=12}
-ESmodecappf = function(dt, rp){
+ESmodecappf = function(dt){
   dt[, vehicle_type_plot := factor(vehicle_type_plot, levels = legend_ord)]
   plot_frgt = ggplot()+
     geom_area(data = dt[mode == "freight" & year >= 2020], aes(x=year, y=cap_dem, group = vehicle_type_plot, fill = vehicle_type_plot), color="black", size=0.05, position= position_stack())+

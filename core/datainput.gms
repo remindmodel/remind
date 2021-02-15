@@ -131,6 +131,12 @@ pm_pricePerm(ttot) = 0;
 pm_fe2es(ttot,regi,teEs) = 1;
 pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 
+*** set upper and lower bound to FE shares (only active if non-zero)
+pm_shfe_up(ttot,regi,entyFe,sector)=0;
+pm_shfe_lo(ttot,regi,entyFe,sector)=0;
+pm_shGasLiq_fe_up(ttot,regi,sector)=0;
+pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
+
 ***---------------------------------------------------------------------------
 *** Import and set global data
 ***---------------------------------------------------------------------------
@@ -163,6 +169,13 @@ if (c_techAssumptScen eq 3,
 );
 
 display fm_dataglob;
+
+***INNOPATHS
+$if not "%cm_INNOPATHS_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_INNOPATHS_incolearn% /;
+$if not "%cm_INNOPATHS_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
+$if not "%cm_INNOPATHS_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_INNOPATHS_inco0Factor% /;
+$if not "%cm_INNOPATHS_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
+
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
 fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
@@ -364,11 +377,11 @@ pm_data(all_regi,char,te) = fm_dataglob(char,te);
 
 
 *** historical installed capacity
-*** read-in of p_histCap.cs3r
+*** read-in of pm_histCap.cs3r
 $Offlisting
-table   p_histCap(tall,all_regi,all_te)     "historical installed capacity"
+table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
 $ondelim
-$include "./core/input/p_histCap.cs3r"
+$include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
 
@@ -398,7 +411,7 @@ pm_cf(ttot,regi,"apcardieffH2t") = 1;
 pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 
-table p_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
+table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
 $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
 $offdelim
@@ -626,6 +639,21 @@ pm_dataren(all_regi,"nur",rlf,"spv")        = f_dataRegiSolar(all_regi,"nur","sp
 p_datapot(all_regi,"limitGeopot",rlf,"pesol") = f_dataRegiSolar(all_regi,"limitGeopot","spv",rlf);
 pm_data(all_regi,"luse","spv")              = f_dataRegiSolar(all_regi,"luse","spv","1")/1000;
 
+
+
+table f_maxProdGeothermal(all_regi,char)                  "input of regionalized maximum from geothermal [EJ/a]"
+$ondelim
+$include "./core/input/f_maxProdGeothermal.cs3r"
+$offdelim
+;
+
+pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potential
+
+pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
+*** FS: temporary fix: set minimum geothermal potential across all regions to 10 PJ (still negligible even in small regions) to get rid of infeasibilities
+***pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
+
+
 *mh* set 'nur' for all non renewable technologies to '1':
 pm_dataren(regi,"nur",rlf,teNoRe)    = 1;
 
@@ -639,7 +667,7 @@ display p_datapot, pm_dataren;
 
 loop(regi,
   loop(teReNoBio(te),
-    p_aux_capToDistr(regi,te) = p_histCap("2015",regi,te)$(p_histCap("2015",regi,te) gt 1e-10);
+    p_aux_capToDistr(regi,te) = pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
     s_aux_cap_remaining = p_aux_capToDistr(regi,te);
 *RP* fill up the renewable grades to calculate the total capacity needed to produce the amount calculated in initialcap2, assuming the best grades are filled first (with 20% of each grade not yet used)
 
@@ -782,6 +810,24 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
+
+***Overwritting adj seed and coeff
+$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
+  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
+$elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
+  p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
+$endif
+
+$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
+  p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
+$elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
+  p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
+$endif
+
+***Rescaling adj seed and coeff
+$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
+$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
+
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);  
@@ -792,19 +838,19 @@ p_adj_coeff_glob('tnrs')    = 0.0;
 
 *** Unit conversions
 p_emi_quan_conv_ar4(enty) = 1;
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = s_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
-p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("ch4coal")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4gas")     = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4oil")     = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wstl")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("ch4wsts")    = s_tgch4_2_pgc * (25/s_gwpCH4);
-p_emi_quan_conv_ar4("n2otrans")   = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2oadac")    = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2onitac")   = s_tgn_2_pgc * (298/s_gwpN2O);
-p_emi_quan_conv_ar4("n2owaste")   = s_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4(enty)$(emiMacMagpieCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);  !! need to use old GWP for MAC cost conversion as it only reverts what has been done in the calculation of the MACs
+p_emi_quan_conv_ar4(enty)$(emiMacMagpieN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4(enty)$(emiMacExoCH4(enty)) = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4(enty)$(emiMacExoN2O(enty)) = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("ch4coal")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4gas")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4oil")     = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4wstl")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("ch4wsts")    = sm_tgch4_2_pgc * (25/s_gwpCH4);
+p_emi_quan_conv_ar4("n2otrans")   = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2oadac")    = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2onitac")   = sm_tgn_2_pgc * (298/s_gwpN2O);
+p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 
 
 *RP* Distribute ccap0 for all regions
@@ -897,10 +943,8 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"inco0",teRegTechCosts) = p_inco0("20
 
 $if %cm_techcosts% == "REG"   pm_data(regi,"incolearn",teLearn(te)) = pm_data(regi,"inco0",te) - pm_data(regi,"floorcost",te) ;
 
-**********************************
-*** Calculate learning parameters:
-**********************************
 
+*** Calculate learning parameters:
 
 *** global exponent
 *** parameter calculation for global level, that regional values can gradually converge to
@@ -934,9 +978,7 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(r
 display p_capCum;
 display pm_data;
 
-******************************
 *** end learning parameters
-******************************
 
 *RP* 2012-03-07: Markup for advanced technologies
 table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investment cost markup for early time periods (until 2030) on advanced technologies (CCS, Hydrogen) that are not modeled through endogenous learning"
@@ -986,7 +1028,9 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-
+*** FS: scale H2 transmission and distribution cost in industry/buildings 
+*** for scenarios with different assumptions on the cost of building/upgrading H2 grid
+pm_inco0_t(ttot,regi,"tdh2s") = c_H2tdCapCost_stat * pm_inco0_t(ttot,regi,"tdh2s");
 
 
 
@@ -1147,19 +1191,33 @@ $offdelim
 ;
 
 *** ----- Emission factor of final energy carriers -----------------------------------
-*AD* Updated Demand Side Emission Factors
-*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
-*AD* Reverted to Gunnar's previous values due to inconsistencies in the reporting
-***  triggered by this update.
-*** Gunnar's original comment:
-*GL* demand side emission factor of final energy carriers in MtCO2/EJ
+*** demand side emission factor of final energy carriers in MtCO2/EJ
 *** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
-p_ef_dem(entyFe) = 0;
-p_ef_dem("fedie") = 69.3;
-p_ef_dem("fehos") = 69.3;
-p_ef_dem("fepet") = 68.5;
-p_ef_dem("fegas") = 50.3;
-p_ef_dem("fesos") = 90.5;
+p_ef_dem(regi,entyFe) = 0;
+p_ef_dem(regi,"fedie") = 69.3;
+p_ef_dem(regi,"fehos") = 69.3;
+p_ef_dem(regi,"fepet") = 68.5;
+p_ef_dem(regi,"fegas") = 50.3;
+p_ef_dem(regi,"fesos") = 90.5;
+
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
+*** demand side emission factor of final energy carriers in MtCO2/EJ
+*** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
+  loop(ext_regi$altFeEmiFac_regi(ext_regi), 
+    p_ef_dem(regi,entyFe)$(regi_group(ext_regi,regi)) = 0;
+    p_ef_dem(regi,"fedie")$(regi_group(ext_regi,regi)) = 74;
+    p_ef_dem(regi,"fehos")$(regi_group(ext_regi,regi)) = 73;
+    p_ef_dem(regi,"fepet")$(regi_group(ext_regi,regi)) = 73;
+    p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
+    p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
+  );
+$endif.altFeEmiFac
+
+pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"sesofos","fesos","tdfossos","co2") = p_ef_dem(regi,"fesos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
+pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

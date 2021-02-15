@@ -11,6 +11,13 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+*** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
+*** to avoid infeasibilities with vintage biomass capacities
+*** allow bio techs to reduce capacity factor
+if ( cm_bioprod_histlim ge 0,
+	vm_capFac.lo(t,regi_sensscen,teBioPebiolc)$(t.val ge 2030) = 0;
+);
+
 *** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
 *** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,
@@ -25,7 +32,6 @@ if ( cm_flex_tax eq 1,
     v32_flexPriceShare.fx(t,regi,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
   );
 );
-
 
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
@@ -51,5 +57,7 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2050) = 1;
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
 );
+
+
 
 

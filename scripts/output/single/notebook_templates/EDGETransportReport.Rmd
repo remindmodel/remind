@@ -13,10 +13,10 @@ output:
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 require(ggplot2)
-require(moinput)
+require(mrremind)
 require(data.table)
 require(dplyr)
-require(remind)
+require(remind2)
 require(gdxdt)
 require(gdx)
 require(rmndt)
@@ -25,11 +25,14 @@ require(quitte)
 require(ggpubr)
 require(gridExtra)
 require(edgeTrpLib)
+require(devtools)
 ```
 
 
 ```{r, echo=FALSE, warning=FALSE}
 setConfig(forcecache = TRUE)
+setConfig("regionmappingH12.csv")
+
 output_folder = "EDGE-T/"
 
 cols <- c("NG" = "#d11141",

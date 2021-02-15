@@ -7,6 +7,7 @@ f_IO_trade.cs4r
 f_lab.cs3r
 f_macBaseExo.cs4r
 f_macBaseMagpie.cs4r
+f_maxProdGeothermal.cs3r
 f_maxProdGradeRegiHydro.cs3r
 f_maxProdGradeRegiWind.cs3r
 f_pop.cs3r
@@ -19,7 +20,7 @@ p_boundEmi.cs4r
 p_earlyRetirementAdjFactor.cs3r
 p_emiFossilFuelExtr.cs4r
 p_emineg_econometric.cs3r
-p_histCap.cs3r
+pm_histCap.cs3r
 p_histCapFac.cs4r
 p_histEmiMac.cs4r
 p_histEmiSector.cs4r

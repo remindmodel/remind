@@ -1,11 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
-# |  authors, and contributors see CITATION.cff file. This file is part
-# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-# |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
-# |  Contact: remind@pik-potsdam.de
 name,type,reason
-vm_cesIO,input,questionnaire
 vm_cesIOdelta,input,questionnaire
 vm_enerSerAdj,input,questionnaire
 pm_capital_lifetime_exp,input,questionnaire
@@ -13,7 +6,6 @@ pm_dt,input,questionnaire
 pm_ts,input,questionnaire
 pm_cumDeprecFactor_old,input,questionnaire
 pm_cumDeprecFactor_new,input,questionnaire
-cm_startyear,input,questionnaire
 pm_delta_kap,input,questionnaire
 sm_EJ_2_TWa,input,questionnaire
 sm_DpKW_2_TDpTW,input,questionnaire
@@ -23,7 +15,6 @@ sm_eps,input,questionnaire
 sm_tmp,input,questionnaire
 vm_effGr,input,questionnaire
 pm_shPPPMER,input,questionnaire
-pm_cesdata,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
 pm_esCapCost,input,questionnaire
@@ -32,9 +23,14 @@ pm_shFeCes,input,questionnaire
 cm_DiscRateScen,input,questionnaire
 cm_noReboundEffect,input,questionnaire
 qm_budget,input,questionnaire
-pm_tau_fe_tax_ES_st,input,questionnaire
-pm_tau_fe_sub_ES_st,input,questionnaire
 sm_year_2_day,input,questionnaire
 sm_day_2_hour,input,questionnaire
-qm_balFeForCesAndEs,input,questionnaire
 pm_tsu2opTimeYr,input,questionnaire
+vm_demFeForEs,input,questionnaire
+cm_INNOPATHS_priceSensiBuild,input,questionnaire
+cm_logitCal_markup_conv_b,input,questionnaire
+cm_logitCal_markup_newtech_conv_b,input,questionnaire
+qm_balFe,input,questionnaire
+
+pm_tau_fe_tax_bit_st,input,questionnaire
+pm_tau_fe_sub_bit_st,input,questionnaire

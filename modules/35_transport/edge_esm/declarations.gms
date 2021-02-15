@@ -6,8 +6,11 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/declarations.gms
 Parameters
-  pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
-  p35_fe2es_aux(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
+pm_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
+p35_fe2es_aux(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_teEs) "Aggregate energy efficiency of transport fuel technologies [trn pkm/Twa or trn tkm/Twa]"
+;
+Equations
+q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
 ;
 
 *** EOF ./modules/35_transport/edge_esm/declarations.gms

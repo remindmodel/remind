@@ -8,7 +8,7 @@ library(luplot)
 library(lucode)
 library(gdx)
 library(magpie)
-library(remind)
+library(remind2)
 library(ggplot2)
 
 ############################# BASIC CONFIGURATION #############################

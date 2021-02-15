@@ -172,8 +172,8 @@ prepare <- function() {
   require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind, quietly = TRUE,warn.conflicts =FALSE)
-  require(moinput)
+  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
+  require(mrremind)
   require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
@@ -194,7 +194,7 @@ prepare <- function() {
   cat("\n====================\n")
 
   ## print the libraries version
-  installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "moinput", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
 
 
   load("config.Rdata")
@@ -221,6 +221,7 @@ prepare <- function() {
   if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
+
 
   # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
@@ -272,6 +273,12 @@ prepare <- function() {
     }
   }
 
+  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
+  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
+       demComplex = "fromEDGET"
+  }
+
+
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
                                          "indu_",cfg$gms$industry,"-",
@@ -281,6 +288,9 @@ prepare <- function() {
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
+                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
+                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
 
   # write name of corresponding CES file to datainput.gms
@@ -341,9 +351,7 @@ prepare <- function() {
     regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping)
-    if(is.null(subsets[["EUR"]]))
-        subsets[["EUR"]] <- c("EUR")
+    subsets <- toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -581,7 +589,14 @@ prepare <- function() {
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
 
-    # Include fixings (levels) and marginals in full.gms at predefined position
+    levs_manipulateThis <- c(levs_manipulateThis, 
+                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
+    fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
+    margs_manipulateThis <- c(margs_manipulateThis, 
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
+    # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
                              list(c("cb20150605readinpositionforlevelfile",
@@ -857,6 +872,7 @@ run <- function(start_subsequent_runs = TRUE) {
       write(filetext,file=subseq_start_file)
     }
   }
+
   #=================== END - Subsequent runs ========================
 
   # Copy important files into output_folder (after REMIND execution)

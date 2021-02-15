@@ -153,6 +153,20 @@ loop(en2en(enty,enty2,te),
     );
 );
 
+
+*** recalculating the eta for seliq (fehos, fedie and fepet), seso and sega T&D to final energy, assuming that biomass or fossil based fuels use the same network and, consequently, share the same eta  
+loop(entyFe$(SAMEAS(entyFe,"fehos") OR SAMEAS(entyFe,"fedie") OR SAMEAS(entyFe,"fepet") OR SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fesos")), 
+	loop(regi,
+		if(sum(se2fe(entySe,entyFe,te), pm_IO_input(regi,entySe,entyFe,te)) ne 0,
+			loop((entySe,te)$se2fe(entySe,entyFe,te),
+				pm_data(regi,"eta",te) = sum(se2fe(enty,entyFe,te2), p04_IO_output(regi,enty,entyFe,te2))/sum(se2fe(enty,entyFe,te2), pm_IO_input(regi,enty,entyFe,te2));
+			);
+		);
+	);
+);
+
+
+
 *** calculate mix0 - the share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production
 ***old calculation: mix0(enty, enty2, te) = output(enty, enty2, te) / sum( (enty3,te2), output(enty3, enty2, te2) $(enty2 is not joint product of a te2 that is technology with joint products, like CHP )
 loop(en2en(enty,enty2,te),  !! this sum does not include couple production, only direct transformation processes

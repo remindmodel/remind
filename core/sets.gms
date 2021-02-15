@@ -280,7 +280,7 @@ all_enty             "all types of quantities"
         all_sega	 "all to SE gas" 
 		segabio      "SE gas from biomass"
 		segafos      "SE gas from fossil pe"
-        sehe         "SE district heating nd heat pumps"
+        sehe         "SE district heating and heat pumps"
         fegas        "FE gas stationary"
         fegab
         fegai
@@ -408,10 +408,10 @@ all_esty "energy services"
 	esdie_frgt_lo
 	esdie_frgt_sm
 	eselt_frgt_sm
-        esh2t_pass_sm
-        esgat_pass_sm
-        esh2t_frgt_sm
-        esgat_frgt_sm
+    esh2t_pass_sm
+    esgat_pass_sm
+    esh2t_frgt_sm
+    esgat_frgt_sm
 
 *** Buildings module: Energy services (useful energy)
     ueshheb  "buildings space heating district heat"
@@ -446,7 +446,7 @@ all_sectorEmi     "all sectors with emissions"
 all_exogEmi     " all exogenous emission types"
 /       Aviation         "Exog emi from Aviation"
         InternationalShipping "Ecog emi from Int. Shipping" 
-        Waste            "???"
+        Waste            "Exogenous emissions from Waste treatment"
         Agriculture      "Exogenous emissions from Agriculture" 
         AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
         ForestBurning    "Exogenous emissions from Forest Burning"
@@ -472,6 +472,7 @@ all_in   "all inputs and outputs of the CES function"
 
   enb                     "buildings energy use"
   enhb                    "buildings heat energy use"
+  enhgab                  "buildings heat gaseous energy use (fegab and feh2b)"  
   fesob                   "buildings use of solid energy carriers"
   fehob                   "buildings use of liquid energy carriers"
   fegab                   "buildings use of gaseous energy carriers"
@@ -481,6 +482,7 @@ all_in   "all inputs and outputs of the CES function"
 
   eni                     "industry energy use"
   enhi                    "industry heat energy use"
+  enhgai                  "industry heat gaseous energy use (fegab and feh2b)" 
   fesoi                   "industry use of solid energy carriers"
   fehoi                   "industry use of liquid energy carriers"
   fegai                   "industry use of gaseous energy carriers"
@@ -633,7 +635,7 @@ all_teEs                 "energy service technologies"
 
 teEs(all_teEs)           "ES technologies which are actually used (to be filled by module realizations)."
 //
-    
+
 ;
 
 ***-----------------------------------------------------------------------------
@@ -651,13 +653,24 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 
 sets
 
-   all_regi "all regions" /CAZ,CHA,EUR,IND,JPN,LAM,MEA,NEU,OAS,REF,SSA,USA/
+   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
 
-   ext_regi "extended regions list (includes subsets of H12 regions)" / EUR_regi,CAZ,CHA,EUR,IND,JPN,LAM,MEA,NEU,OAS,REF,SSA,USA /
+   ext_regi "extended regions list (includes subsets of H12 regions)" / LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA /
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
+        LAM_regi .(LAM)
+        OAS_regi .(OAS)
+        SSA_regi .(SSA)
         EUR_regi .(EUR)
+        NEU_regi .(NEU)
+        MEA_regi .(MEA)
+        REF_regi .(REF)
+        CAZ_regi .(CAZ)
+        CHA_regi .(CHA)
+        IND_regi .(IND)
+        JPN_regi .(JPN)
+        USA_regi .(USA)
       /
  
    iso "list of iso countries" /
@@ -689,38 +702,38 @@ sets
 
    regi2iso(all_regi,iso) "mapping regions to iso countries"
       /
-       CAZ . (AUS,CAN,HMD,NZL,SPM)
-       CHA . (CHN,HKG,MAC,TWN)
-       EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
-       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
-       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
-       EUR . (ROU,SVK,SVN,SWE)
-       IND . (IND)
-       JPN . (JPN)
        LAM . (ABW,AIA,ARG,ATA,ATG,BES,BHS,BLM,BLZ,BMU)
        LAM . (BOL,BRA,BRB,BVT,CHL,COL,CRI,CUB,CUW,CYM)
        LAM . (DMA,DOM,ECU,FLK,GLP,GRD,GTM,GUF,GUY,HND)
        LAM . (HTI,JAM,KNA,LCA,MAF,MEX,MSR,MTQ,NIC,PAN)
        LAM . (PER,PRI,PRY,SGS,SLV,SUR,SXM,TCA,TTO,URY)
        LAM . (VCT,VEN,VGB,VIR)
-       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
-       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
-       MEA . (YEM)
-       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
-       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
        OAS . (AFG,ASM,ATF,BGD,BRN,BTN,CCK,COK,CXR,FJI)
        OAS . (FSM,GUM,IDN,IOT,KHM,KIR,KOR,LAO,LKA,MDV)
        OAS . (MHL,MMR,MNG,MNP,MYS,NCL,NFK,NIU,NPL,NRU)
        OAS . (PAK,PCN,PHL,PLW,PNG,PRK,PYF,SGP,SLB,THA)
        OAS . (TKL,TLS,TON,TUV,UMI,VNM,VUT,WLF,WSM)
-       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
-       REF . (UKR,UZB)
        SSA . (AGO,BDI,BEN,BFA,BWA,CAF,CIV,CMR,COD,COG)
        SSA . (COM,CPV,DJI,ERI,ETH,GAB,GHA,GIN,GMB,GNB)
        SSA . (GNQ,KEN,LBR,LSO,MDG,MLI,MOZ,MRT,MUS,MWI)
        SSA . (MYT,NAM,NER,NGA,REU,RWA,SEN,SHN,SLE,SOM)
        SSA . (SSD,STP,SWZ,SYC,TCD,TGO,TZA,UGA,ZAF,ZMB)
        SSA . (ZWE)
+       EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
+       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
+       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
+       EUR . (ROU,SVK,SVN,SWE)
+       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
+       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
+       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
+       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
+       MEA . (YEM)
+       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
+       REF . (UKR,UZB)
+       CAZ . (AUS,CAN,HMD,NZL,SPM)
+       CHA . (CHN,HKG,MAC,TWN)
+       IND . (IND)
+       JPN . (JPN)
        USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
@@ -752,8 +765,8 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 
    map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
-       CHA . CHA
        EUR . EUR
+       CHA . CHA
        IND . IND
        JPN . JPN
        USA . USA
@@ -778,6 +791,22 @@ $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
 
+$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
+  regi_sensscen(all_regi)=YES;
+$ELSE.RegScenSens
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
+$ENDIF.RegScenSens
+
+*** definition of set of regions that use alternative FE emission factors from umweltbundesamt
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
+set
+  altFeEmiFac_regi(ext_regi)  "set of regions that use alternative FE emission factors from umweltbundesamt" 
+  /
+    %cm_altFeEmiFac%
+  /
+;
+$endif.altFeEmiFac 
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
@@ -1417,7 +1446,7 @@ enty(all_enty)       "all types of quantities"
         seh2         "secondary energy hydrogen"
         segabio      "secondary energy gas from biomass"
 		segafos      "secondary energy gas from fossil primary energy"
-        sehe         "secondary energy district heating nd heat pumps"
+        sehe         "secondary energy district heating and heat pumps"
         fegas        "final energy gas stationary"
         fehos        "final energy heating oil stationary"
         fesos        "final energy solids stationary"
@@ -1426,10 +1455,11 @@ enty(all_enty)       "all types of quantities"
         feh2s         "final energy hydrogen stationary"
         fepet         "final energy petrol transport"
         fedie         "final energy diesel transport"
-	feelt         "final energy electricity for transport"
+        feelt         "final energy electricity for transport"
         fetf          "final energy transport fuels"
         feh2t         "final energy hydrogen transport"
         fegat         "final energy nat. gas for transport"
+	
         co2          "carbon dioxide emissions"  
         ch4          "methane emissions"
         n2o          "n2o emissions from the energy system"
@@ -1545,6 +1575,7 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
 /
         pesol        "PE solar"
 /
+
 entySe(all_enty)       "secondary energy types"
 /
         seliqbio     "secondary energy liquids from biomass"
@@ -1556,6 +1587,13 @@ entySe(all_enty)       "secondary energy types"
         segabio      "secondary energy gas from biomass"
 		segafos      "secondary energy gas from fossil primary energy"
         sehe         "SE district heating nd heat pumps"
+/
+
+entySeBio(all_enty)       "biomass secondary energy types"
+/
+	seliqbio     "secondary energy liquids from biomass"
+	sesobio      "secondary energy solids from biomass"
+	segabio      "secondary energy gas from biomass"
 /
 
 entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
@@ -1753,6 +1791,95 @@ sector_types "differentiation of energy and process emissions in each sector"
         energy "fuel combustion part (and emissions) of the sector activity"
         process "process sepecific part (and emissions) of the sector activity"
 /
+
+entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
+/
+		fegas.build
+		fegas.indst
+		fehos.build
+		fehos.indst
+		fesos.build
+		fesos.indst
+		feels.build
+		feels.indst
+		fehes.build
+		fehes.indst
+		feh2s.build
+		feh2s.indst
+		fepet.trans
+		fedie.trans
+		feh2t.trans
+		feelt.trans
+		feels.cdr
+		fegas.cdr
+		feh2s.cdr
+/
+
+ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
+/
+		fegab.build
+		fegai.indst
+		fehob.build
+		fehoi.indst
+		fesob.build
+		fesoi.indst
+		feelb.build
+		feeli.indst
+		feheb.build
+		fehei.indst
+		feh2b.build
+		feh2i.indst
+		ueHDVt.trans
+		ueLDVt.trans
+		ueelTt.trans
+/
+
+all_emiMkt         "emission markets"
+/	ETS     "ETS emission market"
+	ES      "Effort sharing emission market"
+	other	"other market configurations"	
+/
+
+sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
+/
+        indst.ETS
+        indst.ES
+        build.ES
+        trans.ES
+        trans.other
+		cdr.ETS
+/
+
+
+macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
+/
+        ch4coal.ETS      
+        ch4gas.ETS       
+        ch4oil.ETS       
+        ch4wstl.ES       
+        ch4wsts.ES       
+        ch4rice.ES       
+        ch4animals.ES    
+        ch4anmlwst.ES    
+        ch4agwaste.ES    
+        ch4forest.other  
+        ch4savan.other   
+        n2oforest.other  
+        n2osavan.other   
+        n2otrans.ES      
+        n2oadac.ETS      
+        n2onitac.ETS     
+        n2ofertin.ES     
+        n2ofertcr.ES     
+        n2ofertsom.other 
+        n2oanwstc.ES     
+        n2oanwstm.ES     
+        n2oanwstp.ES     
+        n2oagwaste.ES    
+        n2owaste.ES      
+        co2luc.other     
+        co2cement_process.ETS 
+/
 ccsCo2(all_enty)    "only cco2 (???)"
 /
         cco2
@@ -1949,6 +2076,7 @@ steps         "iterator for MAC steps"
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 alias(t,t2,t3);
+alias(iteration,iteration2);
 alias(tall,tall2,tall3);
 alias(ttot,ttot2);
 alias(opTimeYr,opTimeYr2);
@@ -1966,7 +2094,9 @@ alias(esty,esty2);
 alias(rlf,rlf2);
 alias(regi,regi2);
 alias(steps,steps2);
-alias(iteration,iteration2);
+alias(all_emiMkt,emiMkt);
+alias(emi_sectors,sector);
+alias(sector_types,type)
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -2094,19 +2224,19 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
         seliqbio.fehos.tdbiohos
-	seliqfos.fehos.tdfoshos
+        seliqfos.fehos.tdfoshos
         sesobio.fesos.tdbiosos
-	sesofos.fesos.tdfossos
+        sesofos.fesos.tdfossos
         seh2.feh2s.tdh2s
         sehe.fehes.tdhes
         seel.feelt.tdelt
         seliqbio.fepet.tdbiopet
-	seliqfos.fepet.tdfospet
+        seliqfos.fepet.tdfospet
         seliqbio.fedie.tdbiodie
-	seliqfos.fedie.tdfosdie
+        seliqfos.fedie.tdfosdie
         seh2.feh2t.tdh2t
 /
-
+fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 
@@ -2235,25 +2365,32 @@ $endif
         pebiolc.seel.bioigcc.n2o
         pebiolc.segabio.biogas.n2o
         segabio.fegas.tdbiogas.ch4
-		segafos.fegas.tdfosgas.ch4
+        segafos.fegas.tdfosgas.ch4
 *        cco2.pco2.ccscomp.co2
 *        pco2.tco2.ccspipe.co2
         cco2.ico2.ccsinje.co2
         pebiolc.seel.bioigccc.co2
         pebiolc.seel.bioigccc.cco2
         seliqbio.fehos.tdbiohos.bc
-		seliqfos.fehos.tdfoshos.bc
+        seliqfos.fehos.tdfoshos.bc
         seliqbio.fedie.tdbiodie.bc
-		seliqfos.fedie.tdfosdie.bc
+        seliqfos.fedie.tdfosdie.bc
         seliqbio.fepet.tdbiopet.bc
-		seliqfos.fepet.tdfospet.bc
+        seliqfos.fepet.tdfospet.bc
         seliqbio.fehos.tdbiohos.oc
-		seliqfos.fehos.tdfoshos.oc
+        seliqfos.fehos.tdfoshos.oc
         seliqbio.fedie.tdbiodie.oc
-		seliqfos.fedie.tdfosdie.oc
+        seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
-		seliqfos.fepet.tdfospet.oc
+        seliqfos.fepet.tdfospet.oc
+
+        segafos.fegas.tdfosgas.co2
+        seliqfos.fehos.tdfoshos.co2
+        sesofos.fesos.tdfossos.co2
+        seliqfos.fepet.tdfospet.co2
+        seliqfos.fedie.tdfosdie.co2
 /
+
 emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
 /
     pecoal.ch4coal
@@ -2294,6 +2431,25 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2chemicals . co2chemicals
         co2steel     . co2steel
 /
+
+emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
+/
+        (ch4coal, ch4gas, ch4oil).extraction.process.ch4
+        (ch4wstl, ch4wsts).waste.process.ch4
+        (ch4rice, ch4animals, ch4anmlwst, ch4agwaste).agriculture.process.ch4
+        (ch4forest, ch4savan).lulucf.process.ch4
+
+        (n2otrans).trans.process.n2o
+        (n2oadac, n2onitac).indst.process.n2o
+        (n2owaste).waste.process.n2o
+        (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
+        (n2oforest, n2osavan).lulucf.process.n2o
+        
+        (co2cement_process,co2cement,co2chemicals,co2steel).indst.process.co2
+        (co2luc).lulucf.process.co2
+/
+
+
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
 /
@@ -2528,3 +2684,4 @@ alias(pe2se,pe2se2);
 alias(se2fe,se2fe2);
 
 *** EOF ./core/sets.gms
+

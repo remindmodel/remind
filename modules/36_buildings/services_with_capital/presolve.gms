@@ -23,7 +23,7 @@ if (ord(iteration) le 8,
 
 *** Take average price over previous iterations
 if (ord(iteration) ge 5,
-p36_fePrice(t,regi_dyn36(regi),entyFe) = 
+p36_fePrice(t,regi_dyn36(regi),entyFe) $  p36_fePrice(t,regi,entyFe)= 
             ( p36_fePrice_iter(iteration - 1,t,regi,entyFe)
             + p36_fePrice_iter(iteration - 2,t,regi,entyFe)
             + p36_fePrice_iter(iteration - 3,t,regi,entyFe)
@@ -87,6 +87,7 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 
  p36_esCapCost(t,regi_dyn36(regi),teEs_dyn36(teEs)) =
    (f36_datafecostsglob("inco0",teEs) 
+    * p36_costReduc(t,teEs)
    *   p36_kapPrice(t,regi) / (1 - (1 + p36_kapPrice(t,regi))** (-f36_datafecostsglob("lifetime",teEs))) !! annualised initial capital costs
    + f36_datafecostsglob("omf",teEs)   
    )
@@ -96,6 +97,7 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 
  p36_esCapCostImplicit(t,regi_dyn36(regi),teEs_dyn36(teEs)) =
    (f36_datafecostsglob("inco0",teEs) 
+    * p36_costReduc(t,teEs)
    *   p36_kapPriceImplicit(t,regi,teEs) / (1 - (1 + p36_kapPriceImplicit(t,regi,teEs))** (-f36_datafecostsglob("lifetime",teEs))) !! annualised initial capital costs
    + f36_datafecostsglob("omf",teEs)   
    )
@@ -112,14 +114,14 @@ p36_inconvpen(t,regi_dyn36(regi),teEs)$f36_inconvpen(teEs) =
     )
     * f36_inconvpen(teEs) ;
 
-loop ( fe2es_dyn36(entyFe,esty,teEs),
+loop ( (fe2es_dyn36(entyFe,esty,teEs)),
 p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
        p36_esCapCostImplicit(t,regi,teEs)
        +
       (p36_fePrice(t,regi,entyFe)
       + p36_inconvpen(t,regi,teEs)
-      + pm_tau_fe_tax_ES_st(t,regi,esty) 
-      + pm_tau_fe_sub_ES_st(t,regi,esty)
+      + pm_tau_fe_tax_bit_st(t,regi,esty) 
+      + pm_tau_fe_sub_bit_st(t,regi,esty)
       )
       / pm_fe2es(t,regi,teEs)
       !! add taxes, subsidies, and later on costs
@@ -175,7 +177,6 @@ p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ p36_shUeCesDelta(
 *** The calibration factors are reduced towards 80% in the long term to represent the enhanced flexibility of the system
 *** Long lasting non-price barriers should preferably be represented through price mark-ups
 loop ( t36_hist_last(ttot),
-
  p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( fe2es_dyn36(entyFe,esty,teEs)
                                                                  AND NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
   = 5;
@@ -210,7 +211,12 @@ loop ( t36_hist_last(ttot),
        ) 
      ;
      
-  );
+    p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ (fe2es_dyn36(entyFe,esty,teEs) AND teEs_pushCalib_dyn36(teEs)) = 
+        p36_pushCalib(t2,teEs) 
+        * p36_logitCalibration(t2,regi,entyFe,esty,teEs)
+        ;
+     
+);
 ); 
 
 option
@@ -314,17 +320,17 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "shareFE", teEs.tl, in.tl, p36_sh
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "shareUE", teEs.tl, in.tl, p36_shUeCes(t,regi,entyFe,in,teEs) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "cost", teEs.tl, in.tl, (p36_techCosts(t,regi,entyFe,esty,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "calibfactor", teEs.tl, in.tl, (p36_logitCalibration(t,regi,entyFe,esty,teEs)* 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceWoTax", teEs.tl, in.tl, (p36_fePrice(t,regi,entyFe) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
-put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM", teEs.tl, in.tl, ((p36_fePrice(t,regi,entyFe)
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceWoTax", teEs.tl, in.tl,  (p36_fePrice(t,regi,entyFe) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
+put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM", teEs.tl, in.tl,  ((p36_fePrice(t,regi,entyFe)
                                                                          + p36_inconvpen(t,regi,teEs)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + pm_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + pm_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_FEpriceWtax", teEs.tl, in.tl, (
                                                                          (p36_fePrice(t,regi,entyFe)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + pm_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + pm_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_inconvenience", teEs.tl, in.tl, ((
@@ -332,8 +338,8 @@ put "%c_expname%", iteration.tl, t.tl,regi.tl, "OM_inconvenience", teEs.tl, in.t
                                                                          )
                                                                          / pm_fe2es(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "FEpriceTax", teEs.tl, in.tl, ((p36_fePrice(t,regi,entyFe)
-                                                                         + pm_tau_fe_tax_ES_st(t,regi,esty) 
-                                                                         + pm_tau_fe_sub_ES_st(t,regi,esty)
+                                                                         + pm_tau_fe_tax_bit_st(t,regi,esty) 
+                                                                         + pm_tau_fe_sub_bit_st(t,regi,esty)
                                                                          )
                                                                          * 1000 / (sm_day_2_hour * sm_year_2_day)) /;
 put "%c_expname%", iteration.tl, t.tl,regi.tl, "CapCosts", teEs.tl, in.tl, (p36_esCapCost(t,regi,teEs) * 1000 / (sm_day_2_hour * sm_year_2_day)) /;

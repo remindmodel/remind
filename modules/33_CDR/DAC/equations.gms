@@ -7,6 +7,15 @@
 *** SOF ./modules/33_CDR/DAC/equations.gms
 
 ***---------------------------------------------------------------------------
+*'  CDR Final Energy Balance
+***---------------------------------------------------------------------------
+q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
+  vm_otherFEdemand(t,regi,entyFe)
+  =e=
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
+;
+
+***---------------------------------------------------------------------------
 *'  Calculation of (negative) CO2 emissions from direct air capture. The first part of the equation describes emissions captured from the ambient air, 
 *'  the second part calculates the CO2 captured from the gas used for heat production assuming 90% capture rate.
 ***---------------------------------------------------------------------------

@@ -12,7 +12,7 @@ library(lusweave)
 library(luplot)
 library(gdx)
 library(ggplot2)
-library(remind)
+library(remind2)
 library(mip)
 
 #####################################################

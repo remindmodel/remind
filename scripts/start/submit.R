@@ -48,7 +48,7 @@ submit <- function(cfg, restart = FALSE) {
     cat("   Writing cfg to file",filename,"\n")
     save(cfg,file=filename)
     
-    # Copy files required to confiugre and start a run
+    # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)

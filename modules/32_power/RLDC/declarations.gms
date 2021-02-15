@@ -15,6 +15,7 @@ parameters
     p32_shCHP(all_regi,char)            		"Upper boundary of chp electricity generation"
     p32_grid_factor(all_regi)					"Multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
     p32_LoBheight0(all_regi,LoB)	            "Load band heights at 0% VRE share (declared here, on the data input file, because it is only used for the p32_capFacDem definition) [0,1]"
+    p32_priceSeel(ttot,all_regi)                 "parameter with electricity price from last iteration (unit: trUSD/TWa)"
 ;
 
 positive variables

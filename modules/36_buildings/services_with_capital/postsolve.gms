@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_with_capital/postsolve.gms
 ***Update final energy prices. (if marginal of budget is greater than eps, which happens in case of 4-7) 
-p36_fePrice(t,regi_dyn36(regi),entyFe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = abs ( qm_balFeForCesAndEs.m(t,regi,entyFe)) / abs (qm_budget.m(t,regi));
-
+loop (se2fe(entySe,entyFe,te),
+p36_fePrice(t,regi_dyn36(regi),entyFe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = abs ( qm_balFe.m(t,regi,entySe,entyFe,te)) / abs (qm_budget.m(t,regi));
+);
 p36_fePrice_iter(iteration,t,regi_dyn36(regi),entyFe) $ p36_fePrice(t,regi,entyFe) = p36_fePrice(t,regi,entyFe);
 
 *** To compute the capital price, take the CES derivative and substract the depreciation rate

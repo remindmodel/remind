@@ -1,9 +1,3 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
-# |  authors, and contributors see CITATION.cff file. This file is part
-# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-# |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
-# |  Contact: remind@pik-potsdam.de
 name,type,reason
 sm_EJ_2_TWa, scalar, ???
 vm_costSubsidizeLearning, variable, ???
@@ -41,10 +35,7 @@ cm_frac_CCS,input,questionnaire
 cm_frac_NetNegEmi,input,questionnaire
 pm_fuExtrForeign,input,questionnaire
 cm_DiscRateScen,input,questionnaire
-vm_demFeForEs,input,questionnaire
 pm_ttot_val,input,questionnaire
-pm_tau_fe_tax_ES_st,input,questionnaire
-pm_tau_fe_sub_ES_st,input,questionnaire
 p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
@@ -52,3 +43,14 @@ cm_cprice_red_factor,input,questionnaire
 vm_pebiolc_price,input,questionnaire
 vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
+cm_flex_tax,input,questionnaire
+sm_eps,input,questionnaire
+vm_co2eqMkt,input,questionnaire
+vm_taxrevimplFETax,input,questionnaire
+vm_demFeSector,input,questionnaire
+pm_pvp,input,questionnaire
+pm_taxemiMkt,input,questionnaire
+cm_BioImportTax_EU,input,questionnaire
+vm_Mport,input,questionnaire
+pm_tau_fe_tax_bit_st,input,questionnaire
+pm_tau_fe_sub_bit_st,input,questionnaire

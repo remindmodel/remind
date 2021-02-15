@@ -95,6 +95,7 @@ choose_folder <- function(folder,title="Please choose a folder") {
 	} else return(dirs[identifier])
 }
 
+
 choose_module <- function(Rfolder,title="Please choose an outputmodule") {
   module <- gsub("\\.R$","",grep("\\.R$",list.files(Rfolder), value=TRUE))
   cat("\n\n",title,":\n\n")

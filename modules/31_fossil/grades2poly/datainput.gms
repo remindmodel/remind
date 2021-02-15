@@ -15,6 +15,7 @@ $offdelim
 ;
 p31_costExPoly(all_regi,xirog,all_enty) = f31_costExPoly(all_regi,all_enty,xirog);
 
+p31_costExPoly(all_regi,"xi1","peur") = 0.025; !! forcing the same x intercept value as the region disaggregation method could force an approximated value instead  
 ***----------------------------------------------------------------------
 *** Get oil, gas and coal extraction cost data (7th-order grades2poly based on REMIND output obtained with timeDepGrades)
 ***----------------------------------------------------------------------
@@ -60,7 +61,7 @@ p31_fosadjco_xi5xi6(regi,"xi6","pegas")=1/1;
 
 *RP* Define bound on total PE uranium use in Megatonnes of metal uranium (U3O8, the stuff that is traded at 40-60US$/lb).
 s31_max_disp_peur = 23;
-*JH* 20140604 New nuclear assumption for SSP5
+*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   s31_max_disp_peur = 23*10;
 );

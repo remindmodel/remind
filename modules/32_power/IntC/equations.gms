@@ -55,15 +55,25 @@ q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
 		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
 ;
 
-q32_h2turbVREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"h2turbVRE","1") 
-  =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
-;
+
+*** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
+*** represent H2 storage. This is implemented by automatically scaling up capacities of 
+*** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
+*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+
+
+*** build additional electrolysis capacities with stored VRE electricity
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2VRE","1") 
   =e= 
   sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+;
+
+*** build additional h2 to seel capacities to use stored hydrogen
+q32_h2turbVREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"h2turbVRE","1") 
+  =e= 
+  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 
@@ -162,7 +172,7 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 *** The formulation assumes a cubic price duration curve. That is, the effective electricity price the flexible technologies sees
 *** depends on the capacity factor (CF) with a cubic function centered at (0.5,1): 
 *** p32_PriceDurSlope * (CF-0.5)^3 + 1, 
-*** Hence, at CF = 0.5, the REMIND average price pm_priceSeel is paid. 
+*** Hence, at CF = 0.5, the REMIND average price p32_priceSeel is paid. 
 *** To get the average electricity price that a flexible technology sees at a certain CF, 
 *** we need to integrate this function with respect to CF and divide by CF. This gives the formulation below:
 *** v32_flexPriceShareMin = p32_PriceDurSlope * ((CF-0.5)^4-0.5^4) / (4*CF) + 1.
@@ -201,13 +211,13 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** This calculates the flexibility benefit or cost per unit electricity input 
 *** of flexibile or inflexibly technology. 
 *** In the tax module, vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation. 
-*** Below, pm_priceSeel is the (average) electricity price from the last iteration. 
+*** Below, p32_priceSeel is the (average) electricity price from the last iteration. 
 *** Flexible technologies benefit (v32_flexPriceShare < 1),
 *** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	((1-v32_flexPriceShare(t,regi,te)) * pm_priceSeel(t,regi))$(cm_flex_tax eq 1)
+	((1-v32_flexPriceShare(t,regi,te)) * p32_priceSeel(t,regi))$(cm_flex_tax eq 1)
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms

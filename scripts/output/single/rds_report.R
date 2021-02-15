@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind)
+library(remind2)
 library(lucode)
 library(quitte)
 options("magclass.verbosity" = 1)

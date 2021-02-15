@@ -13,26 +13,20 @@
 *** Bounds on 1st generation biomass annual production
 *** -------------------------------------------------------------
 
-*** Prescribe upper and lower limit for first generation biomass from 2030/45 on, so REMIND has freedom before.
+*** Prescribe upper and lower limit for first generation biomass from 2045 on, so REMIND has freedom before.
 *** To avoid infeasibilities it was necessary to modify the initial vintage structure for bioeths.
+*** FS: changed the bounds to start only in 2045 in REMIND-EU to rule out some infeasibilities with EDGE-T
 vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t);
-
-$ifthen.edge_esm_transport "%transport%" == "edge_esm"
-*** Slightly relaxed extraction bounds for biofuels.
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2045)  = 1.4*p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebios","5")$(t.val ge 2055)  = p30_datapebio(regi,"pebios","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2030) = 2*p30_datapebio(regi,"pebioil","5","maxprod",t);
-vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2050) = p30_datapebio(regi,"pebioil","5","maxprod",t);
-$endif.edge_esm_transport
+vm_fuExtr.up(t,regi,"pebioil","5")$(t.val ge 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t);
 
 if(cm_1stgen_phaseout=0,
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val ge 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val ge 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 else
-    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2030)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
-    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2030) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebios","5")$(t.val eq 2045)  = p30_datapebio(regi,"pebios","5","maxprod",t)*0.9;
+    vm_fuExtr.lo(t,regi,"pebioil","5")$(t.val eq 2045) = p30_datapebio(regi,"pebioil","5","maxprod",t)*0.9;
 );
+
 
 *** -------------------------------------------------------------
 *** Bounds on 2nd generation biomass annual production
@@ -123,5 +117,8 @@ vm_fuExtr.up(t,regi,"pebiolc","2") = p30_maxprod_residue(t,regi)*1.0001;
 if(cm_bioenergymaxscen>0,
 vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
 );
+
+*** FS: test regional bounds on pebiolc.1 production
+***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
 
 *** EOF ./modules/30_biomass/magpie_4/bounds.gms

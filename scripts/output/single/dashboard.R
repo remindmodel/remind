@@ -11,9 +11,9 @@
 #' @author Renato Rodrigues
 #' 
 
-library(lucode)
+library(lucode2)
 library(rmarkdown)
-library(remind)
+library(remind2)
 
 ############################# BASIC CONFIGURATION #############################
 
