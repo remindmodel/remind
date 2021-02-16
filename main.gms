@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.979
 * 
-* Last modification (input data): Mon Feb 08 15:48:42 2021
+* Last modification (input data): Tue Feb 16 18:10:26 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -139,7 +139,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  default
+$setGlobal c_expname  SSP2-Base_biogasc200
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -190,7 +190,7 @@ $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  off !! def = off
+$setglobal CCU  on !! def = off
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -206,7 +206,7 @@ $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------
 $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
-$setglobal water  off                 !! def = off
+$setglobal water  heat                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
 $setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
@@ -329,6 +329,7 @@ c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution ca
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
+c_inco0_biogasc             "factor for biogasc investment cost (fraction of cost for biogas)"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -419,12 +420,12 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1350;   !! def = 1300
+c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
-cm_peakBudgYr            = 2050;   !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_peakBudgYr            = 2100;   !! def = 2050
+cm_taxCO2inc_after_peakBudgYr = 3; !! def = 2
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
@@ -528,6 +529,8 @@ cm_FlexTaxFeedback = 0; !! def 0, off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
+c_inco0_biogasc = 1; !! def 1
+
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -535,7 +538,7 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  on        !! def = on
+$setGlobal cm_OILRETIRE  off        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -562,7 +565,7 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
+$setglobal cm_cooling_shares  dynamic    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 

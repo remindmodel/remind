@@ -150,6 +150,9 @@ $offdelim
 /
 ;
 
+*RK* manual introduction of biogasc that has to be implemented in in mrremind later
+p_inco0(ttot,all_regi,"biogasc") = c_inco0_biogasc * p_inco0(ttot,all_regi,"biogas");  !! average of biogas in p_inco0.cs4r
+
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"

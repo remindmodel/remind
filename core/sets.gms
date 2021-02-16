@@ -148,6 +148,7 @@ $endif
         bioigcc         "integrated biomass gasification combined cycle"
         bioigccc        "integrated biomass gasification combined cycle with CCS"
         biogas          "gasification of biomass"
+        biogasc         "gasification of biomass with capture"
         bioftrec        "biomass based fischer-tropsch recycle"
         bioftcrec       "biomass based fischer-tropsch with capture recycle"
         bioh2           "biomass to hydrogen"
@@ -1063,6 +1064,7 @@ $endif
         bioigcc         "integrated biomass gasification combined cycle"
         bioigccc        "integrated biomass gasification combined cycle with CCS"
         biogas          "gasification of biomass"
+        biogasc         "gasification of biomass with capture"
         bioftrec        "biomass based fischer-tropsch recycle"
         bioftcrec       "biomass based fischer-tropsch with capture recycle"
         bioh2           "biomass to hydrogen"
@@ -1150,6 +1152,7 @@ $endif
   bioigcc         "integrated biomass gasification combined cycle"
   bioigccc        "integrated biomass gasification combined cycle with CCS"
   biogas          "gasification of biomass"
+  biogasc         "gasification of biomass with capture"
   bioftrec        "biomass based fischer-tropsch recycle"
   bioftcrec       "biomass based fischer-tropsch with capture recycle"
   bioh2           "biomass to hydrogen"
@@ -1233,6 +1236,7 @@ $ifthen setGlobal cm_ccsfosall
 $endif
   coalftcrec  "coal based fischer-tropsch with capture recycle"
   coalh2c     "coal to hydrogen with capture"
+  biogasc         "gasification of biomass with capture"
   bioftcrec   "biomass based fischer-tropsch with capture recycle"
   bioh2c      "biomass to hydrogen with capture"
   bioigccc    "integrated biomass gasification combined cycle with CCS"
@@ -1251,6 +1255,7 @@ teBio(all_te)      "biomass energy systems technologies"
         bioigcc     "integrated biomass gasification combined cycle"
         bioigccc    "integrated biomass gasification combined cycle with CCS"
         biogas      "gasification of biomass"
+        biogasc         "gasification of biomass with capture"
         bioftrec    "biomass based fischer-tropsch recycle"
         bioftcrec   "biomass based fischer-tropsch with capture recycle"
         bioh2       "biomass to hydrogen"
@@ -1268,6 +1273,7 @@ teRe(all_te)     "renewable technologies including biomass"
         bioigcc     "integrated biomass gasification combined cycle"
         bioigccc    "integrated biomass gasification combined cycle with CCS"
         biogas      "gasification of biomass"
+        biogasc         "gasification of biomass with capture"
         bioftrec    "biomass based fischer-tropsch recycle"
         bioftcrec   "biomass based fischer-tropsch with capture recycle"
         bioh2       "biomass to hydrogen"
@@ -1361,6 +1367,7 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
         bioigcc
         bioigccc
         biogas
+        biogasc
         bioftrec
         bioftcrec
         bioh2
@@ -2154,6 +2161,7 @@ $endif
         pebiolc.sesobio.biotr
         pebiolc.sesobio.biotrmod
         pebiolc.segabio.biogas
+        pebiolc.segabio.biogasc
         pegeo.seel.geohdr
         pegeo.sehe.geohe
         pehyd.seel.hydro
@@ -2364,6 +2372,9 @@ $endif
         pebiolc.seel.bioigccc.n2o
         pebiolc.seel.bioigcc.n2o
         pebiolc.segabio.biogas.n2o
+        pebiolc.segabio.biogasc.co2
+        pebiolc.segabio.biogasc.cco2
+        pebiolc.segabio.biogasc.n2o
         segabio.fegas.tdbiogas.ch4
         segafos.fegas.tdfosgas.ch4
 *        cco2.pco2.ccscomp.co2
@@ -2504,7 +2515,7 @@ teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the i
 /
       (wind,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
-       biotr,biotrmod,biogas,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
+       biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
 $ifthen setGlobal cm_ccsfosall
        pcc, pco

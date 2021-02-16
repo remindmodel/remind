@@ -36,6 +36,7 @@ pecoal.sesofos.coaltr          26.1             0.04415
 pecoal.segafos.coalgas         26.1             0.04415
 pebiolc.seel.bioigccc         -20.0      20.0   0.12614
 pebiolc.seel.bioigcc                            0.12614
+pebiolc.segabio.biogasc       -10.0      10.0   0.12614  !! RK: dummy values
 pebiolc.seliqbio.bioftcrec    -12.0      12.0 
 pebiolc.seh2.bioh2c           -22.5      22.5   0.12614
 pebiolc.seel.biochp                             0.12614
