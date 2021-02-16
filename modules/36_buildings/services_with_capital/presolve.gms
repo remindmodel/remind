@@ -226,6 +226,11 @@ option
 ;
 
 s36_logit = 1;
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve logit_36 maximizing v36_shares_obj using nlp;
 s36_logit = 0;
 

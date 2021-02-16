@@ -22,6 +22,11 @@ q36_putty_obj
 
 
 
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve putty_paths_floor minimizing v36_putty_obj using nlp;
 
 if ( NOT ( putty_paths_floor.solvestat eq 1  AND (putty_paths_floor.modelstat eq 1 OR putty_paths_floor.modelstat eq 2)),
@@ -50,6 +55,11 @@ q36_ueTech2Total
 q36_cap
 q36_vintage_obj
 /;
+
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
 
 solve vintage_36 minimizing v36_vintage_obj using nlp;
 

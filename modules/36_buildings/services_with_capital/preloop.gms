@@ -23,6 +23,11 @@ q36_cap
 q36_vintage_obj
 /;
 
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve vintage_36 minimizing v36_vintage_obj using nlp;
 
 if ( NOT ( vintage_36.solvestat eq 1  AND (vintage_36.modelstat eq 1 OR vintage_36.modelstat eq 2)),
@@ -50,3 +55,4 @@ p36_kapPriceImplicit(t,regi_dyn36(regi),teEs) = p36_kapPrice(t,regi) + p36_impli
 );
 
 *** EOF ./modules/36_buildings/services_with_capital/preloop.gms
+

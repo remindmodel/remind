@@ -96,6 +96,11 @@ option limcol = 70;
 option limrow = 70;
 
 *** solve statement
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve initialcap2 using cns;
 
 display v05_INIdemEn0.l, v05_INIcap0.l;
@@ -514,3 +519,4 @@ display pm_emifac;
 
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
+
