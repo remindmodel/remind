@@ -22,6 +22,11 @@ option
   solprint = on
 ;
 
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve hybrid using nlp maximizing vm_welfareGlob;
 
 o_modelstat = hybrid.modelstat;
@@ -40,3 +45,4 @@ if((o_modelstat eq 2),
 ***Warning: All reported values from regions except regi_dyn80 are just dummies ! 
 regi(all_regi) = YES;
 *** EOF ./modules/80_optimization/testOneRegi/solve.gms
+
