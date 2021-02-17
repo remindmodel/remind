@@ -14,6 +14,7 @@
 # Based on the Version 2.2 of same file in the MAgPIE main folder
 #########################################################################################
 
+
 #Write dump file when error occurs, see help to dump.frames for more information
 options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 
@@ -273,3 +274,4 @@ if (comp==TRUE) {
     if(!is.null(warnings())) print(warnings())
   }
 }
+.libPaths(c("/p/projects/rd3mod/R/libraries/snapshots/magclass_only/",.libPaths()))

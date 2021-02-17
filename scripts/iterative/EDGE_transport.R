@@ -222,6 +222,10 @@ demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
 
+  ## save temporary demand structure for debugging
+  saveRDS(shares_int_dem$demandF_plot_pkm, datapath(paste0("demandF_plot_pkm", iter, ".RDS")))
+  saveRDS(shares_int_dem$demandF_plot_EJ, datapath(paste0("demandF_plot_EJ", iter, ".RDS")))
+
 if (opt$reporting) {
   saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
   saveRDS(vintages[["newcomp"]], file = datapath("newcomp.RDS"))
