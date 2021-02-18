@@ -19,5 +19,6 @@
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/36_buildings/simple/sets.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/36_buildings/simple/datainput.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/36_buildings/simple/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/36_buildings/simple.gms
