@@ -94,7 +94,7 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
 		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val lt 2031)  = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,t,all_regi) * p47_factorRescaleCO2Tax(ext_regi)); !! before 2030
 		pm_taxCO2eq(t,all_regi)$(t.val gt 2030) = pm_taxCO2eq("2030",all_regi)*1.05**(t.val-2030); !! post 2030: increase at 5% p.a.
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
+		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0000**(t.val-2050); !! post 2050: increase at 1.25% p.a.
 	);
 );
 
