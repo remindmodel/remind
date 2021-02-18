@@ -67,4 +67,13 @@ ppfEn(ppfen_buildings_dyn36)      = YES;
 cesOut2cesIn(ces_buildings_dyn36) = YES;
 fe2ppfEn(fe2ppfEn36)              = YES;
 fe_tax_sub_sbi(fe_tax_sub36) = YES;
+
+
+***-------------------------------------------------------------------------
+***  Add sets that are needed to read in regional specific bounds
+***-------------------------------------------------------------------------
+*LM* Define region sets the phase out fossils in buildings according to switches
+$ifThen.regiPhaseOutFosBuil not "%cm_regiPhaseOutFosBuilSimple%" == "none"
+Set regiPhaseOutFosBuil_36(all_regi) "Set of regions that phase out fossils in buildings" / %cm_regiPhaseOutFosBuilSimple% /;
+$endIf.regiPhaseOutFosBuil
 *** EOF ./modules/36_buildings/simple/sets.gms
