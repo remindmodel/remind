@@ -12,14 +12,14 @@
 *** ---------------------------------------------------------------------------
 *LM* Exogenously fade out fossils in buildings
 $ifThen.regiPhaseOutFosBuil not "%cm_regiPhaseOutFosBuilSimple%" == "none"
-vm_cesIO.up("2040", regiPhaseOutFosBuil_43, "fegab")                    = 0.10;
-vm_cesIO.up("2045", regiPhaseOutFosBuil_43, "fegab")                    = 0.05;
-vm_cesIO.up(ttot,   regiPhaseOutFosBuil_43, "fegab")$(ttot.val ge 2050) = 1e-6;
+vm_cesIO.up("2040", regiPhaseOutFosBuil_36, "fegab")                    = 0.10;
+vm_cesIO.up("2045", regiPhaseOutFosBuil_36, "fegab")                    = 0.05;
+vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fegab")$(ttot.val ge 2050) = 1e-6;
 
-vm_cesIO.up("2040", regiPhaseOutFosBuil_43, "fehob")                    = 0.04;
-vm_cesIO.up("2045", regiPhaseOutFosBuil_43, "fehob")                    = 0.02;
-vm_cesIO.up(ttot,   regiPhaseOutFosBuil_43, "fehob")$(ttot.val ge 2050) = 1e-6;
+vm_cesIO.up("2040", regiPhaseOutFosBuil_36, "fehob")                    = 0.04;
+vm_cesIO.up("2045", regiPhaseOutFosBuil_36, "fehob")                    = 0.02;
+vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fehob")$(ttot.val ge 2050) = 1e-6;
 
-* vm_cesIO.up(ttot,   regiPhaseOutFosBuil_43, "fesob")$(ttot.val ge 2040) = 1e-6;
+* vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fesob")$(ttot.val ge 2040) = 1e-6;
 $endIf.regiPhaseOutFosBuil
 *** EOF ./modules/36_buildings/simple/bounds.gms
