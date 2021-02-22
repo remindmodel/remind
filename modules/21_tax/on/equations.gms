@@ -201,13 +201,16 @@ q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
 *'  This is to emulate the effect of lower/higher electricity prices in high VRE systems on flexible/inflexible electricity demands. 
 ***---------------------------------------------------------------------------
 
-q21_taxrevFlex(t,regi)$(t.val ge max(2010,cm_startyear))..
+q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
   v21_taxrevFlex(t,regi)
   =e=
-  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
-*** vm_flexAdj is electricity price reduction/increases for flexible/inflexible technologies
-*** change sign such that flexible technologies get subsidy
-      -vm_flexAdj(t,regi,te) * vm_demSe(t,regi,enty,enty2,te))           
+    sum(en2en(enty,enty2,te)$(teFlexTax(te)),
+      !! vm_flexAdj is electricity price reduction/increases for flexible/
+      !! inflexible technologies change sign such that flexible technologies
+      !! get subsidy
+      -vm_flexAdj(t,regi,te) 
+    * vm_demSe(t,regi,enty,enty2,te)
+    )
   - p21_taxrevFlex0(t,regi)
 ;
 

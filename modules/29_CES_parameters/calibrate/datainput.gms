@@ -278,7 +278,12 @@ $endif.module
 display pm_fedemand;
 
 *** Industry alternative FE trajectory
-$if NOT "%cm_calibration_FE%" == "off" pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37) = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37);
+$ifthen.cm_calibration_FE NOT "%cm_calibration_FE%" == "off"  !! cm_calibration_FE
+$ifthen.industry_subsectors NOT  "%industry%" == "subsectors" !! industry
+pm_fedemand(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37) 
+  = p29_fedemand_alt(t,regi,"%cm_GDPscen%",ppfen_industry_dyn37);
+$endif.industry_subsectors
+$endif.cm_calibration_FE
 
 *** setting feh2i equal to 1% of fegai
 $ifthen.indst_H2_penetration "%industry%" == "fixed_shares"
