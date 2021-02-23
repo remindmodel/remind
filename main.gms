@@ -330,6 +330,8 @@ cm_HeatLim_b                "switch to set maximum share of district heating in 
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
 c_inco0_biogasc             "factor for biogasc investment cost (fraction of cost for biogas)"
+c_biogasc_fixed_inco0       "switch to fix biogasc investment cost to gobal time-invariant value" 
+
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -530,6 +532,8 @@ cm_FlexTaxFeedback = 0; !! def 0, off
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 c_inco0_biogasc = 1; !! def 1
+c_biogasc_fixed_inco0  = 0; !! def 0
+
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
