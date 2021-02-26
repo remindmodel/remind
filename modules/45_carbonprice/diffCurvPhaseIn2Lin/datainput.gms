@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -47,9 +47,11 @@ loop(ttot$((ttot.val ge cm_startyear) AND (ttot.val le cm_CO2priceRegConvEndYr) 
    min(1,
        max(0, 
 	        p45_phasein_2025ratio(regi) + (1 - p45_phasein_2025ratio(regi)) 
-			                               * ( ( (ttot.val - 2025) + (cm_CO2priceRegConvEndYr - 2025) * 0.1 ) 
-                                               / ( (cm_CO2priceRegConvEndYr - 2025) * 1.1 ) 
-											 ) ** 2
+			                               * Power( 
+										       ( (ttot.val - 2025) + (cm_CO2priceRegConvEndYr - 2025) * 0.1 ) 
+                                               / ( (cm_CO2priceRegConvEndYr - 2025) * 1.1 )
+											   , 2
+											 ) !! use Power instead of ** to allow ttot be smaller than 2025, and thus the base to be negative
        )											 
    );
 );

@@ -1,4 +1,5 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+#!/usr/bin/env Rscript
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,8 +25,6 @@ library(lucode)
 if(!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command line arguments and let the user choose the slurm options
   readArgs("outputdir","output","comp","remind_dir")
-  #source("scripts/utils/choose_slurmConfig.R")
-  #slurmConfig <- choose_slurmConfig()
 } 
 
 #Setting relevant paths
@@ -95,6 +94,7 @@ choose_folder <- function(folder,title="Please choose a folder") {
 		return(dirs[identifier])
 	} else return(dirs[identifier])
 }
+
 
 choose_module <- function(Rfolder,title="Please choose an outputmodule") {
   module <- gsub("\\.R$","",grep("\\.R$",list.files(Rfolder), value=TRUE))

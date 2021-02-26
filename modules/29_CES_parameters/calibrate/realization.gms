@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -16,7 +16,7 @@
 *' 
 *' #### How to calibrate Remind
 *'
-*'1. the energy demand pathways will be selected automatically in input/pm_fe_demand.cs4r according to the modules selected and the SSP scenario chosen. If you wish to modify the pathways, refer to the moinput library, which provides the pm_fe_demand.cs4r file.
+*'1. the energy demand pathways will be selected automatically in input/pm_fe_demand.cs4r according to the modules selected and the SSP scenario chosen. If you wish to modify the pathways, refer to the mrremind library, which provides the pm_fe_demand.cs4r file.
 *'2. Select/Add the scenarios of interest in `scenario_config_calibrateSSPs.csv` and copy it to `scenario_config.csv`.
 *'3. Rscript start_bundle.R or similar command
 *'4.	After the runs are finished, look at `CES calibration report_RunName.pdf` in the output folder
@@ -53,12 +53,12 @@
 *'
 *'If you are calibrating a new CES structure (added/removed branches to/from the CES tree), you will also need
 *'
-*'    explicit price trajectories for the primary production factors (`ppf`, capital and final energy carriers/energy services). They are included in `input/p29_cesdata_price.cs4r` which is derived from the moinput library.
+*'    explicit price trajectories for the primary production factors (`ppf`, capital and final energy carriers/energy services). They are included in `input/p29_cesdata_price.cs4r` which is derived from the mrremind library.
 *'
 *'Strictly speaking, the price only have to be larger than 0, but the closer the prices are to the "real" ones, the faster the calibration will converge.
 *'It is therefore advisable to use the prices of some substitute energy carrier/service. The prices give the indication of the marginal cost of each input, and thus represent the economical constraint.
 *'
-*'The information on final energy quantities is stored in `./modules/29_CES_parameters/calibration/input/`, read in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `p29_fedemand` and loaded in `./modules/29_CES_parameters/calibration/input/` and transfered to `pm_cesdata(,,,"quantity")` in `./modules/29_CES_parameters/calibration/datainput.gms`
+*'The information on final energy quantities is stored in `./modules/29_CES_parameters/calibration/input/`, read in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `pm_fedemand` and loaded in `./modules/29_CES_parameters/calibration/input/` and transfered to `pm_cesdata(,,,"quantity")` in `./modules/29_CES_parameters/calibration/datainput.gms`
 *'The information on labour and GDP is stored and read somewhere else in the model in the parameters `p_lab` and `pm_gdp`, respectively.
 *'The information on capital quantities is stored in `./modules/29_CES_parameters/calibrate/input/p29_capitalQuantity.cs4r` and loaded in `./modules/29_CES_parameters/calibration/datainput.gms` in the parameter `p29_capitalQuantity`.
 *'
@@ -228,6 +228,7 @@ $Ifi "%phase%" == "declarations" $include "./modules/29_CES_parameters/calibrate
 $Ifi "%phase%" == "datainput" $include "./modules/29_CES_parameters/calibrate/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/29_CES_parameters/calibrate/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/29_CES_parameters/calibrate/preloop.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/29_CES_parameters/calibrate/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/29_CES_parameters/calibrate/output.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/29_CES_parameters/calibrate.gms

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,15 +55,25 @@ q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
 		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
 ;
 
-q32_h2turbVREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"h2turbVRE","1") 
-  =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
-;
+
+*** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
+*** represent H2 storage. This is implemented by automatically scaling up capacities of 
+*** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
+*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+
+
+*** build additional electrolysis capacities with stored VRE electricity
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2VRE","1") 
   =e= 
   sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+;
+
+*** build additional h2 to seel capacities to use stored hydrogen
+q32_h2turbVREcapfromTestor(t,regi)..
+  vm_cap(t,regi,"h2turbVRE","1") 
+  =e= 
+  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 
@@ -149,3 +159,65 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	=l=
 	0.2 * vm_usableSe(t,regi,"seel")
 ;
+
+***----------------------------------------------------------------------------
+*** FS: calculate flexibility adjustment used in flexibility tax for technologies with electricity input 
+***----------------------------------------------------------------------------
+
+*** This equation calculates the minimal flexible electricity price that flexible technologies (like elh2) can see. It is reached when the VRE share is 100%.
+*** It depends on the capacity factor with a hyperbolic function. The equation ensures that by decreasing 
+*** capacity factor of flexible technologies (teFlex) these technologies see lower electricity prices given that there is a high VRE share in the power system.
+
+*** On the derivation of the equation: 
+*** The formulation assumes a cubic price duration curve. That is, the effective electricity price the flexible technologies sees
+*** depends on the capacity factor (CF) with a cubic function centered at (0.5,1): 
+*** p32_PriceDurSlope * (CF-0.5)^3 + 1, 
+*** Hence, at CF = 0.5, the REMIND average price p32_priceSeel is paid. 
+*** To get the average electricity price that a flexible technology sees at a certain CF, 
+*** we need to integrate this function with respect to CF and divide by CF. This gives the formulation below:
+*** v32_flexPriceShareMin = p32_PriceDurSlope * ((CF-0.5)^4-0.5^4) / (4*CF) + 1.
+*** This is the new average electricity price a technology sees if it runs on (a possibly lower than one) capacity factor CF 
+*** and deliberately uses hours of low-cost electricity.
+ q32_flexPriceShareMin(t,regi,te)$(teFlex(te))..
+  v32_flexPriceShareMin(t,regi,te) * 4 * vm_capFac(t,regi,te)
+  =e=
+  p32_PriceDurSlope(regi,te) * (power(vm_capFac(t,regi,te) - 0.5,4) - 0.5**4) +
+  4 * vm_capFac(t,regi,te) 
+;
+
+*** Calculates the electricity price of flexible technologies:
+*** The effective flexible price linearly decreases with VRE share
+*** from 1 (at 0% VRE share) to v32_flexPriceShareMin (at 100% VRE). 
+q32_flexPriceShare(t,regi,te)$(teFlex(te))..
+  v32_flexPriceShare(t,regi,te)
+  =e=
+  1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, v32_shSeEl(t,regi,teVRE))/100
+;
+
+*** This balance ensures that the lower electricity prices of flexible technologies are compensated 
+*** by higher electricity prices of inflexible technologies. Inflexible technologies are all technologies
+*** which are part of teFlexTax but not of teFlex. The weighted sum of 
+*** flexible/inflexible electricity prices (v32_flexPriceShare) and electricity demand must be one. 
+*** Note: this is only on if cm_FlexTaxFeedback = 1. Otherwise, there is no change in electricity prices for inflexible technologies. 
+q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
+  sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
+  	vm_demSe(t,regi,enty,enty2,te)) 
+  =e=
+  sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
+  	vm_demSe(t,regi,enty,enty2,te) * v32_flexPriceShare(t,regi,te)) 
+;
+
+
+*** This calculates the flexibility benefit or cost per unit electricity input 
+*** of flexibile or inflexibly technology. 
+*** In the tax module, vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation. 
+*** Below, p32_priceSeel is the (average) electricity price from the last iteration. 
+*** Flexible technologies benefit (v32_flexPriceShare < 1),
+*** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
+q32_flexAdj(t,regi,te)$(teFlexTax(te))..
+	vm_flexAdj(t,regi,te) 
+	=e=
+	((1-v32_flexPriceShare(t,regi,te)) * p32_priceSeel(t,regi))$(cm_flex_tax eq 1)
+;
+
+*** EOF ./modules/32_power/IntC/equations.gms

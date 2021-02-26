@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,12 +8,17 @@
 
 *nb* lower bounds on CES values
 vm_cons.lo(t,regi)     = 1e-3;
-vm_cesIO.lo(t,regi,in) = 1e-6;
+vm_cesIO.lo(t,regi,in)$( NOT in_industry_dyn37(in) ) = 1e-6;
 vm_cesIOdelta.lo(t,regi,in_putty) = 1e-6;
 
-*nb fix energy inputs to CES structure in t0 to the parameter values
-vm_cesIO.fx(t0(tall),regi,in)$(ppfEn(in) OR ppfIO_putty(in)) = pm_cesdata(tall,regi,in,"quantity");
-vm_cesIOdelta.fx(t0(tall),regi,in)$(ppfEn(in) OR in_putty(in)) = pm_cesdata_putty(tall,regi,in,"quantity");
+*** fix energy inputs to CES structure in t0 to the parameter values
+vm_cesIO.fx(t0(tall),regi,in)$(   ppfEn(in) 
+                               OR ppfIO_putty(in) 
+                               OR industry_ue_calibration_target_dyn37(in) )
+  = pm_cesdata(tall,regi,in,"quantity");
+
+vm_cesIOdelta.fx(t0(tall),regi,in)$( ppfEn(in) OR in_putty(in) )
+  = pm_cesdata_putty(tall,regi,in,"quantity");
 
 
 *** set macro investments to bound in 2005

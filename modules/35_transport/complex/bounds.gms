@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -111,13 +111,18 @@ vm_shUePeT.up(t,regi,"apCarElT") = 80;  !! limit electric vehicles to less than 
 vm_shUePeT.up(t,regi,"apCarH2T") = 90;  !! limit hydrogen vehicles to less than 90% market share of LDV (Uepet)
 vm_shUePeT.lo(t,regi,"apCarPeT") =  5;  !! require that ICE vehicles supply at least 10% market share of LDV (Uepet)
 
+$ifthen not "%cm_INNOPATHS_LDV_mkt_share%" == "off"
+   vm_shUePeT.up(t,regi,te)$(p35_shUePeT_bound(te,"upper")) = p35_shUePeT_bound(te,"upper");
+   vm_shUePeT.lo(t,regi,te)$(p35_shUePeT_bound(te,"lower")) = p35_shUePeT_bound(te,"lower");
+$endif
+
 *** Limit phase-in of electric vehicles to historic values (1Mio cars = 	1/650 cap = 0.00154)
 vm_cap.up("2010",regi,"apCarH2T","1") = 0;
 vm_cap.up("2015",regi,"apCarH2T","1") = 0.0002;
 vm_cap.up("2010",regi,"apCarElT","1") = pm_boundCapEV("2010",regi);
-vm_cap.up("2015",regi,"apCarElT","1") = pm_boundCapEV("2015",regi) * 1.05;
+vm_cap.up("2015",regi,"apCarElT","1") = pm_boundCapEV("2015",regi) + 0.01/650;  !! allow all regions to have at least 10k vehicles in 2015
 vm_cap.lo("2015",regi,"apCarElT","1") = pm_boundCapEV("2015",regi) * 0.95;
-
+vm_cap.lo("2020",regi,"apCarElT","1") = pm_boundCapEV("2019",regi);
 *** prevent too early uptake due to high liquids prices in EUR etc.
 vm_cap.up(t,regi,"apCarDiEffT","1")$(t.val < 2030) = 0.001;
 vm_cap.up(t,regi,"apCarDiEffH2T","1")$(t.val < 2030) = 0.0001;

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -132,7 +132,7 @@ $include "./modules/31_fossil/timeDepGrades/input/p31_datafosdyn.inc";
 *RP* Define bound on total PE uranium use in Megatonnes of metal uranium (U3O8, the commodity that is traded at 40-60US$/lb).
 s31_max_disp_peur = 23;
 
-*JH* 20140604 New nuclear assumption for SSP5
+*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
   s31_max_disp_peur = 23*10;
 );

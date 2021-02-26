@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -35,6 +35,11 @@ p80_defic_sum_rel(iteration)                "Surplus monetary value over all tim
 *LB* diagnostic parameters 
 p80_etaLT_correct(all_enty,iteration)       "long term price correction factor in percent"
 p80_etaST_correct(tall,all_enty,iteration)  "short term price correction factor in percent"
+
+p80_etaST_correct_safecopy(tall,all_enty,iteration)       "auxiliary parameter to remember short term price correction factor in percent, before new convergence adjustments"
+o80_counter_iteration_trade_ttot(ttot,all_enty,iteration) "auxiliary parameter to display in which iteration and for which item (ttot, trade) additional convergence measures were taken"
+o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter to track how long the surplus for an item (ttot, trade) had the same sign over iterations"
+o80_SurplusOverTolerance(ttot,all_enty,iteration)         "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
 
 
 p80_surplusMax(all_enty,iteration,tall)    "Diagnostics for Nash: Worst residual market surplus until given year, absolute value. [Units: TWa, trillion Dollar, GtC]"
@@ -75,8 +80,10 @@ p80_count                                  "count regions with feasible solution
 p80_eoWeights_fix(all_regi)                "default and fallback weighting factors"
 
 p80_SolNonOpt(all_regi)                    "solve status"
+p80_taxrev_dev(ttot,all_regi)              "deviation of tax revenue normalized by GDP if taxes did not converge"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
+p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
 ;
 
 positive variable

@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -11,12 +11,14 @@ library(lusweave, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode, quietly = TRUE,warn.conflicts =FALSE)
 library(gdx, quietly = TRUE,warn.conflicts =FALSE)
 library(magpie, quietly = TRUE,warn.conflicts =FALSE)
-library(remind, quietly = TRUE,warn.conflicts =FALSE)
+library(remind2, quietly = TRUE,warn.conflicts =FALSE)
 library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
 ############################# BASIC CONFIGURATION #############################
 runs <- NULL
-readArgs("runs")
+folder <- "./output"
+readArgs("runs","folder")
+
 ###############################################################################
 
 ############################# DEFINE FUNCTIONS ###########################
@@ -125,7 +127,8 @@ plot_iterations <- function(runname) {
   getNames(price) <- gsub(".*rem-","",getNames(price))
 
 	v  <- paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n")
-	p_price_mag <- magpie2ggplot2(price[r,y,],scenario=1,
+  
+	p_price_mag <- magpie2ggplot2(price[r,years,],scenario=1,
 						 group=NULL,ylab="$/GJ",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
 						 scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
 						 legend_position="right")
@@ -148,15 +151,16 @@ plot_iterations <- function(runname) {
   getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
 
 	v  <- paste(runname,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)",sep="\n")
-	p_fuelex <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,
+
+	p_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,
 						 group=NULL,ylab="EJ/yr",color="Scenario",facet_x="Region",show_grid=TRUE,title=v,
 						 scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,
 						 legend_position="right")
 
-  p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,y,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+  p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
-  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,y,]["GLO",,,invert=TRUE],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,years,]["GLO",,,invert=TRUE],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="fixed",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
                        
@@ -211,8 +215,30 @@ plot_iterations <- function(runname) {
                         scales='free_y',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price mult factor",sep="\n"))
              
+  
+  ### CO2 price ###
+  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
+  report_path <- report_path[!grepl("with|adj",report_path)]
+  
+  tmp <- NULL
+  for (r in report_path) tmp <- mbind(tmp, read.report(r,as.list=FALSE))
+  tmp <- tmp[,,"Price|Carbon (US$2005/t CO2)"]
+  getNames(tmp) <- gsub(".*rem-","",getNames(tmp))
+  
+  v  <- paste(runname,"Price|Carbon (US$2005/t CO2)",sep="\n")
+  
+  #p_price_carbon <- magpie2ggplot2(tmp,geom='line',group=NULL,
+  #               ylab='US$2005/t CO2',color='Data1',#linetype="Data2",
+  #               scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz+4,#ylim=y_limreg,
+  #               title=paste(runname,"Carbon price",sep="\n"))
+                 
+  p_it_price_carbon_1 <- magpie2ggplot2(tmp[,getYears(tmp)<"y2025",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
+  p_it_price_carbon_2 <- magpie2ggplot2(tmp[,getYears(tmp)>"y2020" & getYears(tmp)<="y2100",],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+                              scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
+
   ######################### PRINT TO PDF ################################
-	out<-swopen(template="/home/dklein/scripts/template.tex")
+	out<-swopen(template="david")
 	swfigure(out,print,p_price_mag,sw_option="height=9,width=16")
 	swfigure(out,print,p_fuelex,sw_option="height=9,width=16")
   swfigure(out,print,p_it_fuelex,sw_option="height=9,width=16")
@@ -223,6 +249,8 @@ plot_iterations <- function(runname) {
 	swfigure(out,print,p_shift,sw_option="height=9,width=16")
 	swfigure(out,print,p_shift_2060,sw_option="height=9,width=16")
 	swfigure(out,print,p_mult,sw_option="height=9,width=16")
+  swfigure(out,print,p_it_price_carbon_1,sw_option="height=9,width=16")
+  swfigure(out,print,p_it_price_carbon_2,sw_option="height=9,width=16")
 	filename <- paste0(runname,"-",length(scenNames))
 	swclose(out,outfile=filename,clean_output=TRUE,save_stream=FALSE)
 	file.remove(paste0(filename,c(".log",".out")))
@@ -230,7 +258,7 @@ plot_iterations <- function(runname) {
 }
 
 wdnow <- getwd()
-setwd("../../../output/")
+setwd(folder)
 
 # Searching for runs to plot iterations for
 if (is.null(runs)) {

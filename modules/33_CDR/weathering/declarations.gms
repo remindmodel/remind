@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -32,6 +32,7 @@ v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a] - fixe
 ;
 
 equations
+q33_demFeCDR(ttot,all_regi,all_enty)                   "CDR demand balance for final energy"
 q33_otherFEdemand(ttot,all_regi,all_enty)              "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
 q33_capconst_grindrock(ttot,all_regi)                  "calculates amount of ground rock spread on fields"
 q33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)       "calculates total amount of ground rock on fields"

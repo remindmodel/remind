@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -47,8 +47,9 @@ ppf_putty(all_in)   = NO;
 ipf_putty(all_in)   = NO; 
 ppfIO_putty(all_in) = NO;  
 
-alias(cesOut2cesIn,cesOut2cesIn2);
+alias(cesOut2cesIn,cesOut2cesIn2,cesOut2cesIn3);
 alias(in,out);
 alias(in,in2,in3);
 alias(ipf,ipf2);
 *** EOF ./modules/01_macro/singleSectorGr/sets.gms
+

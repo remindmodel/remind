@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -108,6 +108,16 @@ char35 "characteristics of transport technologies"
   Eff_Pass_LDV
   Eff_Freight
 /
+
+EDGE_scenario_all    "EDGE-T scenarios, used to get the bunkers share on total liquids demand."
+/
+ConvCase
+ConvCaseWise
+ElecEra
+ElecEraWise
+HydrHype
+HydrHypeWise
+/
 ;
 
 ***-----------------------------------------------------------
@@ -154,6 +164,14 @@ ue2ppfen_dyn35(all_enty,all_in)      "matching ES in ESM to ppfEn in MACRO"
     ueelt.ueelTt
 /
 ;
+
+sets
+ bound_type    "auxiliar set to allow different values for upper and lower bound defined in a single switch"
+  /
+  upper
+  lower
+  /
+ ;
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings

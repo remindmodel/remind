@@ -1,3 +1,9 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 ############## Define function: .copy.fromlist #########################
 
 .copy.fromlist <- function(filelist,destfolder) {
@@ -42,7 +48,7 @@ submit <- function(cfg, restart = FALSE) {
     cat("   Writing cfg to file",filename,"\n")
     save(cfg,file=filename)
     
-    # Copy files required to confiugre and start a run
+    # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)

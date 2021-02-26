@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -33,6 +33,7 @@ q02_welfare(regi)..
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
+$if "%cm_INCONV_PENALTY_bioSwitch%" == "on"  - sum((entySe,entyFe,te,sector)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,"ES") AND entySeBio(entySe)), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector))/1e3	
             )
         )
 ;
@@ -53,11 +54,23 @@ q02_inconvPen(t,regi)$(t.val > 2005)..
 q02_inconvPenCoalSolids(t,regi)$(t.val > 2005)..
     v02_inconvPenCoalSolids(t,regi)
   =g=
-*' local air pollution for coal: inconvinienve penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
+*' local air pollution for coal: inconvinience penalty applies only for buildings use; slack variable ensures that v02_inconvPen can stay > 0 
     p02_inconvpen_lap(t,regi,"coaltr") * (vm_prodSe(t,regi,"pecoal","sesofos","coaltr") 
-  - vm_cesIO(t,regi,"fesoi"))
+  - (vm_cesIO(t,regi,"fesoi") + pm_cesdata(t,regi,"fesoi","offset_quantity")))
   + v02_sesoInconvPenSlack(t,regi)
 ;
 $ENDIF.INCONV
+
+
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
+q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector)$((ttot.val ge cm_startyear) AND se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,"ES") AND entySeBio(entySe))..
+  vm_demFeSector(ttot,regi,entySe,entyFe,sector,"ES") - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,"ES")
+  + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector)
+  - v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector)
+  =e=
+  0
+;
+$ENDIF.INCONV_bioSwitch
+
 
 *** EOF ./modules/02_welfare/utilitarian/equations.gms

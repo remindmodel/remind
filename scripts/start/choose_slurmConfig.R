@@ -1,3 +1,9 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 #######################################################################
 ############### Select slurm partitiion ###############################
 #######################################################################
@@ -33,7 +39,10 @@ choose_slurmConfig <- function() {
                "10: SLURM short                 16   nash H12+",
                "11: SLURM short                  1   nash debug, testOneRegi, reporting",
                "12: SLURM medium                 1   negishi",
-               "13: SLURM long                   1   negishi")
+               "13: SLURM long                   1   negishi",
+			   "-----------------------------------------------------------------------",
+               "14: SLURM medium                12   nash - long calibration",
+               "15: SLURM medium                16   nash - long calibration")
 
     cat("\nCurrent cluster utilization:\n")
     system("sclass")
@@ -60,7 +69,9 @@ choose_slurmConfig <- function() {
                   "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
                   "11" = "--qos=short --nodes=1 --tasks-per-node=1"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
                   "12" = "--qos=medium --nodes=1 --tasks-per-node=1"    , # SLURM medium   - task per node:  1 (negishi)
-                  "13" = "--qos=long --nodes=1 --tasks-per-node=1"      ) # SLURM long     - task per node:  1 (negishi)
+                  "13" = "--qos=long --nodes=1 --tasks-per-node=1"      , # SLURM long     - task per node:  1 (negishi)
+                  "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node: 12 (nash long calibration)
+                  "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   ) # SLURM medium   - task per node: 16 (nash long calibration)
                   
     if(is.null(comp)) stop("This type is invalid. Please choose a valid type")
   } else {
@@ -68,4 +79,45 @@ choose_slurmConfig <- function() {
   }
 
   return(comp)
+}
+
+# combine_slurmconfig takes two strings with SLURM parameters (e.g. "--qos=priority --time=03:30:00") 
+# and combines them into one sting of SLURM parameters overwriting the parameters in "original" 
+# if they also exist in "update_with".
+ 
+combine_slurmConfig <- function (original, update_with) {
+  
+  # trim whitespaces
+  original <- trimws(original)
+  update_with <- trimws(update_with)
+  
+  # remove double whitespaces
+  original <- gsub("\\s+"," ",original)
+  update_with <- gsub("\\s+"," ",update_with)
+  
+  # if user chose "direct" dont update any slurm commands
+  if(update_with == "direct") return(update_with)
+
+  # ignore original if it is "direct"
+  if (original == "direct") original <- ""
+  
+  # put RHS strings into vector
+  v_update_with <- gsub("--.*=(.*)","\\1",unlist(strsplit(update_with,split=" ")))
+  # name the vector using LHS strings
+  names(v_update_with) <- gsub("--(.*)=.*","\\1",unlist(strsplit(update_with,split=" ")))
+  
+  # put RHS strings into vector
+  v_original <- gsub("--.*=(.*)","\\1",unlist(strsplit(original,split=" ")))
+  # name the vector using LHS strings
+  names(v_original) <- gsub("--(.*)=.*","\\1",unlist(strsplit(original,split=" ")))
+  
+  # remove elements from "original" that are existing in "update_with"
+  v_original <- v_original[!names(v_original) %in% "qos"]
+  
+  combined <- c(v_update_with,v_original)
+  
+  # concatenate SLURM command (insert "--" and "=")
+  res <- paste(paste0("--",names(combined),"=",combined),collapse = " ")
+  
+  return(res)
 }

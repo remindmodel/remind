@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,6 +15,12 @@ $offdelim
   /;
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
+
+*** FS: in scenario with limited energy crop production, 
+*** switch-off biomass capacity targets of NDC 
+if (cm_bioprod_histlim ge 0,
+  p40_ElecBioBound(t,regi) = 0;
+  );
 
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model

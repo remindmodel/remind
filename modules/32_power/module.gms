@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,12 +8,12 @@
 *** SOF ./modules/32_power/module.gms
 *' @title Power sector
 *'
-*' @description  The 32_power module determine the operation production decision for the electricity supply.
+*' @description  The 32_power module determines the operation production decisions for the electricity supply.
 *'
 *'
-*'               The `IntC` realization (Integrated Costs) assume a single electricity market balance.
+*'               The `IntC` realization (Integrated Costs) assumes a single electricity market balance.
 *'
-*'               The `RLDC` realization (Residual Load Duration Curve) distinguish different operation electricity supply decisions under four distinct load bands, plus additional peak capacity requirements.
+*'               The `RLDC` realization (Residual Load Duration Curve) distinguishes different operation electricity supply decisions under four distinct load bands, plus additional peak capacity requirements.
 *'
 *' @authors Robert Pietzcker, Falko Ueckerdt, Renato Rodrigues
 

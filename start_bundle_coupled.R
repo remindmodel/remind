@@ -1,4 +1,4 @@
-# |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,23 +12,25 @@
 path_remind <- paste0(getwd(),"/")   # provide path to REMIND. Default: the actual path which the script is started from
 path_magpie <- "/p/projects/piam/runs/coupled-magpie/"
 
-# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from provide the path here and the name prefix below. 
-# Note: the sceanrio names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the 
-# file that you read in below to path_settings_coupled (scenario_config_coupled_xxx.csv).
+# Paths to the files where scenarios are defined
+# path_settings_remind contains the detailed configuration of the REMIND scenarios
+# path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
+path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
+path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
+
+# You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
+# This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
+prefix_runname <- "C_"
+
+# If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below.
+# Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the
+# file that you specified on path_settings_coupled (scenario_config_coupled_xxx.csv).
 path_remind_oldruns <- paste0(path_remind,"output/")
 path_magpie_oldruns <- paste0(path_magpie,"output/")
 
-# The scripts automatically adds a prefix (name of your remind path) to the scenario names. This is useful because it enables 
-# using the same MAgPIE and REMIND output folders to store results of coupled runs from multiple REMIND revisions (prevents double names)
-# If you want the script to find gdxs or reports of older runs as starting point for new runs please 
+# If you want the script to find gdxs or reports of older runs as starting point for new runs please
 # provide the prefix of the old run names so the script can find them.
 prefix_oldruns <-  "C_"
-
-# Paths to the files where scenarios are defined
-# path_settings_remind contains the detailed configuration of the REMIND scenarios
-# path_settings_coupled defines which runs will be started, coupling infos, and optinal gdx and report inforamtion that overrides path_settings_remind
-path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
-path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 
 # number of coupling iterations
 max_iterations <- 5
@@ -44,7 +46,7 @@ n600_iterations <- 0 # max_iterations
 
 require(magclass)
 require(lucode)
-require(remind)
+require(remind2)
 require(gtools) # required for mixedsort()
 
 ####################################################
@@ -94,30 +96,29 @@ if (!identical(common,character(0))) {
 ####################################################
 for(scen in common){
   cat(paste0("\n################################\nPreparing run ",scen,"\n"))
-  
-  prefix_runname <- "C" #strsplit(path_remind,"/")[[1]][length(strsplit(path_remind,"/")[[1]])]
-  prefix_runname <- paste0(prefix_runname,"_")
-  
+
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
-  LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # indicates whether GHG prices should be used by MAgPIE or not
-  
+  LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # set the GHG prices to zero up to and including the year specified here
+  qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
+  if(is.null(qos)) qos <- "short"                        # if qos could not be found in scenarios_coupled use short
+
   start_iter <- 1 # iteration to start the coupling with
-  
+
   # look whether there is already a REMIND run (check for old name if provided)
   if (!is.na(scenarios_coupled[scen, "oldrun"])) {
     needle <- scenarios_coupled[scen, "oldrun"]
   } else {
     needle <- scen
   }
-	
+
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   suche <- paste0(path_remind_oldruns,prefix_oldruns,needle,"-rem-*/fulldata.gdx")
   already_rem <- Sys.glob(suche)
   if(identical(already_rem,character(0))) cat("Nothing found for",suche,"\n")
 
   if (!identical(already_rem, character(0))) {
-    # if there is an existing REMIND run use it's gdx for the run to be started
+    # if there is an existing REMIND run, use its gdx for the run to be started
 	  already_rem <- mixedsort(already_rem)[1]
 	  settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
     cat(paste0("\nFound gdx here: ",normalizePath(already_rem),"\n"))
@@ -127,7 +128,7 @@ for(scen in common){
       # continue counting only if remind is started in the same directoy the gdxes are taken from
       iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1",already_rem))
     }
-      
+
     # is there already a MAgPIE run with this name?
     suche <- paste0(path_magpie_oldruns,prefix_oldruns,needle,"-mag-*/report.mif")
     already_mag <- Sys.glob(suche)
@@ -156,12 +157,12 @@ for(scen in common){
 
   cat(paste0("Set start iteration to: ",start_iter,"\n"))
 
-	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previouly found 
+	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previously found
   if (!is.na(scenarios_coupled[scen, "path_gdx"])) {
     settings_remind[scen, "path_gdx"] <- scenarios_coupled[scen, "path_gdx"]
     cat("Using gdx specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx"],"\n")
   }
-  
+
   # If provided replace the path to the MAgPIE report found automatically with path given in scenario_config_coupled.csv
   if (!is.na(scenarios_coupled[scen, "path_report"])) {
     path_report  <- scenarios_coupled[scen, "path_report"] # sets the path to the report REMIND is started with in the first loop
@@ -171,17 +172,17 @@ for(scen in common){
   source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
   cfg_rem <- cfg
   rm(cfg)
-  
+
   source(paste0(path_magpie,"config/default.cfg")) # retrieve MAgPIE settings
   cfg_mag <- cfg
   rm(cfg)
 
   # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
-  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) cfg_mag <- setScenario(cfg_mag,c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"],split=","))),"coupling"),scenario_config=paste0(path_magpie,"config/scenario_config.csv"))
+  if(!is.null(scenarios_coupled[scen, "magpie_scen"])) cfg_mag <- setScenario(cfg_mag,c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"],split = ",|\\|"))),"coupling"),scenario_config=paste0(path_magpie,"config/scenario_config.csv"))
   cfg_mag <- check_config(cfg_mag, reference_file=paste0(path_magpie,"config/default.cfg"),modulepath = paste0(path_magpie,"modules/"))
 
   # How to provide the exogenous TC to MAgPIE:
-  # Running MAgPIE with exogenous TC requires a path with exogenous TC. Using exo_indc_MAR17 the path is chosen via c13_tau_scen. 
+  # Running MAgPIE with exogenous TC requires a path with exogenous TC. Using exo_indc_MAR17 the path is chosen via c13_tau_scen.
   # Using exo_JUN13 the path is given in the file modules/13_tc/exo_JUN13/input/tau_scenario.csv
   # This file can be generated (prior to all runs that use exogenous TC) using the following lines of code:
   #  require(magpie) # for tau function
@@ -198,48 +199,48 @@ for(scen in common){
   #cfg_rem$gms$biomass <- "magpie_linear"
 
   # Configure Afforestation in MAgPIE
-   if (grepl("-aff760",scen)) {
-      cat("Setting MAgPIE max_aff_area to 760\n")
-      cfg_mag$gms$s32_max_aff_area <- 760
-  } else if (grepl("-aff900",scen)) {
-      cat("Setting MAgPIE max_aff_area to 900\n")
-      cfg_mag$gms$s32_max_aff_area <- 900
-  } else if (grepl("-affInf",scen)) {
-      cat("Setting MAgPIE max_aff_area to Inf\n")
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost2",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.2\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.2
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  } else if (grepl("-cost3",scen)) {
-      cat("Setting MAgPIE cprice_red_factor to 0.3\n")
-      cfg_mag$gms$s56_cprice_red_factor <- 0.3
-      cfg_mag$gms$s32_max_aff_area <- Inf
-  }
+  # if (grepl("-aff760",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 760\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 760
+  #} else if (grepl("-aff900",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to 900\n")
+  #    cfg_mag$gms$s32_max_aff_area <- 900
+  #} else if (grepl("-affInf",scen)) {
+  #    cat("Setting MAgPIE max_aff_area to Inf\n")
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost2",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.2\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.2
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #} else if (grepl("-cost3",scen)) {
+  #    cat("Setting MAgPIE cprice_red_factor to 0.3\n")
+  #    cfg_mag$gms$s56_cprice_red_factor <- 0.3
+  #    cfg_mag$gms$s32_max_aff_area <- Inf
+  #}
 
   #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
 
   # Add non-gms-switches manually
   if( "regionmapping" %in% names(settings_remind)){
-    cfg_rem$regionmapping <- settings_remind[scen,"regionmapping"] 
+    cfg_rem$regionmapping <- settings_remind[scen,"regionmapping"]
   }
-  
+
   # Edit default.cfg settings according to the SSP scenarios only for elements in 'scenarios' that exist in the cfg
   for (switchname in intersect(names(cfg_rem$gms),names(settings_remind))){
     cfg_rem$gms[[switchname]] <- settings_remind[scen,switchname]
   }
-  
+
   # If provided replace gdx paths given in scenario_config_SSP with paths given in scenario_config_coupled
   if (!is.na(scenarios_coupled[scen, "path_gdx_bau"])) {
 	  settings_remind[scen, "path_gdx_bau"] <- scenarios_coupled[scen, "path_gdx_bau"]
 	  cat("Replacing gdx_bau information with those specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx_bau"],"\n")
   }
-  
+
   if (!is.na(scenarios_coupled[scen, "path_gdx_ref"])) {
 	  settings_remind[scen, "path_gdx_ref"] <- scenarios_coupled[scen, "path_gdx_ref"]
 	  cat("Replacing gdx_ref information with those specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx_ref"],"\n")
   }
- 
+
   # Create list of previously defined paths to gdxs
   gdxlist <- c(input.gdx     = settings_remind[scen, "path_gdx"], # eventually this was updated if older runs exists in this folder (see above)
                input_ref.gdx = settings_remind[scen, "path_gdx_ref"],
@@ -247,21 +248,21 @@ for(scen in common){
 
   # Remove potential elements that contain ".gdx" and append gdxlist
   cfg_rem$files2export$start <- .setgdxcopy(".gdx",cfg_rem$files2export$start,gdxlist)
-  
+
   # add information on subsequent runs to start after the current run is finished
   # take rownames (which is the runname) of that row, that has the current scenario in its gdx_ref
   cfg_rem$subsequentruns <- intersect(rownames(settings_remind[settings_remind$path_gdx_ref == scen & !is.na(settings_remind$path_gdx_ref),]),common)
-     
+
   # immediately start run if it has a real gdx file (not a runname) given (last four letters are ".gdx") in path_gdx_ref or where this field is empty (NA)
-  start_now <- (substr(settings_remind[scen,"path_gdx_ref"], nchar(settings_remind[scen,"path_gdx_ref"])-3, nchar(settings_remind[scen,"path_gdx_ref"])) == ".gdx" 
+  start_now <- (substr(settings_remind[scen,"path_gdx_ref"], nchar(settings_remind[scen,"path_gdx_ref"])-3, nchar(settings_remind[scen,"path_gdx_ref"])) == ".gdx"
                | is.na(settings_remind[scen,"path_gdx_ref"]))
-               
+
   if (!start_now) {
       # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
       # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
       cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
-      
+
       # If the preceding run has already finished (= their gdx files exist) start the current run immediately.
       # This might be the case e.g. if you started the baseline and NDC runs in a first batch and now want to start the subsequent policy runs by hand after the baselines have finished
       if (file.exists(cfg_rem$files2export$start['input_ref.gdx']) & file.exists(cfg_rem$files2export$start['input_bau.gdx'])) {
@@ -269,7 +270,7 @@ for(scen in common){
       }
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"
@@ -278,9 +279,10 @@ for(scen in common){
 
   # convert from logi to character so file.exists does not throw an error
   path_report <- as.character(path_report)
-  
+
   cat("\nSUMMARY\n")
   cat("runname     :",runname,"\n")
+  cat("QOS         :",qos,"\n")
   cat("start_iter  :",start_iter,"\n")
   cat("path_remind : ",ifelse(dir.exists(path_remind),green,red), path_remind, NC, "\n",sep="")
   cat("path_magpie : ",ifelse(dir.exists(path_magpie),green,red), path_magpie, NC, "\n",sep="")
@@ -289,17 +291,19 @@ for(scen in common){
   cat("bau_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
   cat("path_report : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
   cat("LU_pricing  :",LU_pricing,"\n")
- 
+
   if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
     # for nash: set the number of CPUs per node to number of regions + 1
-    nr_of_regions <- length(levels(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1 
+    nr_of_regions <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
   } else {
     # for negishi: use only one CPU
     nr_of_regions <- 1
   }
 
   if (start_now){
-      if (!exists("test")) system(paste0("sbatch --qos=priority --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
+      # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
+      #qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
+      if (!exists("test")) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
       else cat("Test mode: run NOT submitted to the cluster\n")
   } else {
      cat(paste0("Run ",runname," will start after preceding run ",prefix_runname,settings_remind[scen,"path_gdx_ref"]," has finished\n"))

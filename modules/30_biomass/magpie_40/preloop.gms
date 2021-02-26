@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -44,6 +44,11 @@ $ifthen %cm_MAgPIE_coupling% == "on"
 *** ============================================================
 
 ***------------ Step 2a: calculate bioenergy prices -------------
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve model_biopresolve_p using cns; !!! nothing has to be optimized here, just pure calculation
 p30_pebiolc_price_emu_preloop(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for shift factor calculation and reporting
 
@@ -53,6 +58,11 @@ v30_pricemult.lo(ttot,regi) = 0;
 v30_pricemult.up(ttot,regi) = inf;
 
 s30_switch_shiftcalc = 1; !!! activate equations for shift calculation
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 Solve model_priceshift using nlp minimizing v30_shift_r2;
 *** Initialize shift factors
 p30_pebiolc_pricshift(t,regi) = 0;
@@ -64,6 +74,11 @@ v30_pricemult.fx(ttot,regi) = p30_pebiolc_pricmult(ttot,regi);
 v30_priceshift.fx(ttot,regi) = p30_pebiolc_pricshift(ttot,regi);
 
 *** Calculate shifted prices
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve model_biopresolve_p using cns; !!! nothing has to be optimized here, just pure calculation
 p30_pebiolc_price_emu_preloop_shifted(ttot,regi) = vm_pebiolc_price.l(ttot,regi); !!! save for reporting
 
@@ -79,6 +94,11 @@ $endif
 *** The costs are calculated applying the regular cost equation. 
 *** This equation integrates the shifted (!) price supply curve over the demand.
 *** It requires the price shift factor to be calcualted before (see above).
+
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
 
 solve model_biopresolve_c using cns; !!! nothing has to be optimized here, just pure calculation
 
@@ -98,3 +118,4 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demandmag(ttot,regi);
 ***-------------------------------------------------------------
 
 *** EOF ./modules/30_biomass/magpie_4/preloop.gms
+

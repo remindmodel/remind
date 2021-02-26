@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -20,28 +20,20 @@ enty_ccu39(all_enty)      						"all types of quantities"
 
 te_ccu39(all_te)                            "CCU technologies"
 /
-        h22ch4         							"CO2 hydrogenation, H2 to CH2 (currently only H2 as feed, as for now we consider CO2 supply to be non-binding, equations for CC --> CCU will be the next step)"
-		MeOH									"Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
+    h22ch4         							"conversion technology of secondary energy hydrogen to secondary energy gas by methanation using captured CO2"
+    MeOH								"conversion technology of secondary energy hydrogen to secondary energy liquids by the H2-Fischer-Tropsch route/Methanol route using captured CO2"
 /
 
 
 
-***-------------------------------------------------------------------------
-***                  module specific mappings
-***-------------------------------------------------------------------------
-
-
-teCCU2rlf(all_te,rlf)     "mapping for CCU technologies to grades"
-/
-/
-
-
-teCCU2rlf2(all_te,rlf)				  "mapping for CCU technologies to grades, only used to always list ccu-technologies in te2rlf"
+teCCU2rlf(all_te,rlf)				  "mapping for CCU technologies to grades"
 /
       (h22ch4) . 1
-	  (MeOH) . 1
+      (MeOH) . 1
 /
 ;
+
+alias(teCCU2rlf,teCCU2rlf2); 
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings

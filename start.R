@@ -1,11 +1,17 @@
 #!/usr/bin/env Rscript
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 library(lucode)
 
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
 #'
-#' Without additional arguments this starts a single REMIND runs using the settings
+#' Without additional arguments this starts a single REMIND run using the settings
 #' from `config/default.cfg`.
 #'
 #' Control the script's behavior by providing additional arguments:
@@ -47,8 +53,8 @@ choose_folder <- function(folder,title="Please choose a folder") {
   # Detect all output folders containing fulldata.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/fulldata.gdx","",sub("./output/","",Sys.glob(file.path(folder,"*","fulldata.gdx"))))
-
+  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
+  
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   #runs <- findCoupledruns(folder)
   #dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
@@ -161,8 +167,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
                  input_bau.gdx = isettings[iscen, "path_gdx_bau"])
 
-    # Remove potential elements that contain ".gdx" and append gdxlist
-    icfg$files2export$start <- .setgdxcopy(".gdx", icfg$files2export$start, gdxlist)
+    # Remove potential elements that end with ".gdx" and append gdxlist
+    icfg$files2export$start <- .setgdxcopy("\\.gdx$", icfg$files2export$start, gdxlist)
 
     # add gdx information for subsequent runs
     icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
@@ -196,6 +202,8 @@ if ('--restart' %in% argv) {
   for (outputdir in outputdirs) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
+    cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
@@ -203,7 +211,6 @@ if ('--restart' %in% argv) {
 } else {
 
   # If testOneRegi was selected, set up a testOneRegi run.
-
   if ('--testOneRegi' %in% argv) {
     testOneRegi <- TRUE
     config.file <- NA
@@ -254,7 +261,7 @@ if ('--restart' %in% argv) {
 
     cat("\n",scen,"\n")
 
-    # configure cfg based on settings from csv if provided
+    # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
@@ -262,7 +269,7 @@ if ('--restart' %in% argv) {
                    | is.na(scenarios[scen,"path_gdx_ref"]))
     }
     
-    # save the cfg data for later start of subsequent runs (after preceding run finished)
+    # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     filename <- paste0(scen,".RData")
     cat("   Writing cfg to file",filename,"\n")
     save(cfg,file=filename)

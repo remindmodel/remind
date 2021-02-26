@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,17 +28,20 @@ q80_budg_intertemp(regi)..
 
 
 *' quadratic adjustment costs, penalizing deviations from the trade pattern of the last iteration.
-q80_costAdjNash(ttot,regi)$(ttot.val ge cm_startyear)..
-vm_costAdjNash(ttot,regi) =e= sum(trade,
-                      pm_pvp(ttot,trade) * p80_etaAdj(trade)
-                      * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
-		      )
-                      * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
-		      )
-                      / (p80_normalize0(ttot,regi,trade) + sm_eps)
-
-
-);
+q80_costAdjNash(ttot,regi)$( ttot.val ge cm_startyear ) ..
+  vm_costAdjNash(ttot,regi) 
+  =e= sum(trade,
+        pm_pvp(ttot,trade) 
+      * p80_etaAdj(trade)
+      * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) 
+        - (vm_Xport(ttot,regi,trade)  - vm_Mport(ttot,regi,trade))
+        )
+      * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) 
+        - (vm_Xport(ttot,regi,trade)  - vm_Mport(ttot,regi,trade))
+        )
+      / (p80_normalize0(ttot,regi,trade) + sm_eps)
+      )
+;
 
 *** mlb 20150324
 *' link between permit budget and  emission budget

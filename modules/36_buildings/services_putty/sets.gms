@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,6 +7,7 @@
 *** SOF ./modules/36_buildings/services_putty/sets.gms
 Sets
  regi_dyn36(all_regi)   "dynamic region set for compatibility with testOneRegi"
+ regi_dyn36_cooling(all_regi)   "regions with high cooling on which we impose efficiency constraint"
   teEs_dyn36(all_teEs)  "technologies - buildings module additions"
   /
     te_ueshheb  "buildings space heating district heat"
@@ -123,6 +124,9 @@ uecwsob
  
  fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) "map FE carriers to CES via appliances"
 // 
+feteces_dyn36(all_enty,all_teEs,all_in) "map FE carriers to CES without esty"
+//
+
 
 inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
 
@@ -189,16 +193,6 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
     feels . (fescelb,fealelb)
   /
   
-  fe_tax_subEs36(all_in,all_esty)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
-    /
-    fesob . (ueshsob,ueshstb,uecwsob,uecwstb)
-    fehob . (ueshhob,uecwhob)
-    fegab . (ueshgab,uecwgab)
-    feh2b . (ueshh2b,uecwh2b)
-    feheb . (ueshheb,uecwheb)
-    feelb . (ueshelb,ueshhpb, uecwelb,uecwhpb)  
-    /
-    
   fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
     /
      feelb . (fealelb,fescelb)  
@@ -225,17 +219,24 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
  t36_hist(ttot) "historic time steps"
   t36_hist_last(ttot) "last historic time step"
   t36_scen(ttot) "non historical scenario time step"
+  
+  teEs_pushCalib_dyn36(all_teEs) "technologies for which the Logit parameter should be modified"
+  
+  opTimeYr2teEs(all_teEs,opTimeYr)   "mapping for technologies to yearly lifetime - is filled automatically from the lifetime values of technologies"
 ;
 
 loop ( fe2es_dyn36(all_enty,all_esty,all_teEs),
     loop ( es2ppfen_dyn36(all_esty,all_in),
     fe2ces_dyn36(all_enty,all_esty,all_teEs,all_in) = YES;
     inViaEs_dyn36(all_in) = YES;
+    feteces_dyn36(all_enty,all_teEs,all_in) = YES;
     )
     );
 
+
  alias (fe2ces_dyn36,fe2ces_dyn36_2);
  alias (fe2es_dyn36, fe2es_dyn36_2);
+ alias (feteces_dyn36, feteces_dyn36_2);
 
  
 t36_hist(ttot) = NO;
@@ -249,6 +250,9 @@ $offOrder
  t36_hist_last(ttot) = NO;
  t36_hist_last(t36_hist)$(ord(t36_hist) eq card(t36_hist)) = YES;
 $offOrder
+
+teEs_pushCalib_dyn36(all_teEs) = NO;
+regi_dyn36_cooling(all_regi) = NO;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
@@ -263,7 +267,6 @@ in_complements(in_complements_dyn36) = YES;
 in_enerSerAdj(in_enerSerAdj_dyn36) = YES;
 nests_putty(nests_putty_dyn36) = YES;
 fe_tax_sub_sbi(fe_tax_sub36) = YES;
-fe_tax_subEs(fe_tax_subEs36) = YES;
 
 buildMoBio(buildMoBio36) = YES;
 

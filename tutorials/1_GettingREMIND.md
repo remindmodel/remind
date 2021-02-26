@@ -6,7 +6,11 @@ Anastasis Giannousakis (<giannou@pik-potsdam.de>), Felix Schreyer (<felix.schrey
 HOW TO INSTALL
 --------------
 
-To get the REMIND code you need to have git installed and then clone the model from <https://github.com/remindmodel/remind.git>.
+To get the REMIND code you need to have git installed and then clone the model from <https://github.com/remindmodel/remind.git>. To get a specific release (e.g. 2.1.0) please type 
+
+``` bash
+git clone -b v2.1.0 https://github.com/remindmodel/remind.git 
+```
 
 REMIND requires *GAMS* (<https://www.gams.com/>) including licenses for the solvers *CONOPT* and (optionally) *CPLEX* for its core calculations. As the model benefits significantly from recent improvements in *GAMS* and *CONOPT4* it is recommended to work with the most recent versions of both. Please make sure that the GAMS installation path is added to the PATH variable of the system:
 
@@ -41,8 +45,8 @@ pkgs <- c("curl",
           "magclass",
           "magpie4",
           "mip",
-          "moinput",
-          "remind",
+          "mrremind",
+          "remind2",
           "remulator",
           "rhdf5",
           "shinyresults")
@@ -56,7 +60,7 @@ If the following lines of code are executed without error, then you are all set!
 ``` r
 system("gams")
 library(gdxrrw)
-library(remind)
+library(remind2)
 print("")
 if(.Platform$OS.type == "unix") {
   system('pdflatex -version')

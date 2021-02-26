@@ -1,6 +1,34 @@
 {
     "creators": [
         {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Luderer, Gunnar"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Bauer, Nico"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Baumstark, Lavinia"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Bertram, Christoph"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Leimbach, Marian"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Pietzcker, Robert"
+        },
+        {
+            "affiliation": "Potsdam Institute for Climate Impact Research",
+            "name": "Strefler, Jessica"
+        },
+        {
             "name": "Aboumahboub, Tino"
         },
         {
@@ -60,18 +88,10 @@
         },
         {
             "affiliation": "Potsdam Institute for Climate Impact Research",
-            "name": "Leimbach, Marian"
-        },
-        {
-            "affiliation": "Potsdam Institute for Climate Impact Research",
             "name": "Levesque, Antoine"
         },
         {
             "name": "Lorenz, Alexander"
-        },
-        {
-            "affiliation": "Potsdam Institute for Climate Impact Research",
-            "name": "Luderer, Gunnar"
         },
         {
             "name": "Ludig, Sylvie"
@@ -96,10 +116,6 @@
         {
             "affiliation": "Potsdam Institute for Climate Impact Research",
             "name": "Pehl, Michaja"
-        },
-        {
-            "affiliation": "Potsdam Institute for Climate Impact Research",
-            "name": "Pietzker, Robert"
         },
         {
             "affiliation": "Potsdam Institute for Climate Impact Research",
@@ -140,10 +156,6 @@
         },
         {
             "affiliation": "Potsdam Institute for Climate Impact Research",
-            "name": "Strefler, Jessica"
-        },
-        {
-            "affiliation": "Potsdam Institute for Climate Impact Research",
             "name": "Ueckerdt, Falko"
         }
     ],
@@ -155,7 +167,7 @@
     "license": {
         "id": "AGPL-3.0-or-later"
     },
-    "publication_date": "2020-03-27",
+    "publication_date": "2020-05-08",
     "title": "REMIND - REgional Model of INvestments and Development",
-    "version": "2.1.0"
+    "version": "2.1.1"
 }

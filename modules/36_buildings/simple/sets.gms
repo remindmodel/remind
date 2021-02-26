@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,6 +10,7 @@ Sets
   /
     enb     "buildings energy use"
     enhb    "buildings heat energy use"
+    enhgab  "buildings heat gaseous energy use (fegab and feh2b)"     
     fesob   "buildings use of solid energy carriers"
     fehob   "buildings use of liquid energy carriers"
     fegab   "buildings use of gaseous energy carriers"
@@ -28,10 +29,20 @@ Sets
   /
     en    . enb
     enb   . (enhb, feelb)
-    enhb  . (fesob, fehob, fegab, feh2b, feheb)
+    enhb  . (fesob, fehob, feheb, enhgab)
+    enhgab . (fegab, feh2b)
   /
 
  
+  entyFe36(all_enty)   "FE carriers used in buildings"
+  /
+    fesos 
+    fehos 
+    fegas
+    feh2s
+    fehes
+    feels
+  /
 
   fe2ppfEn36(all_enty,all_in)   "match ESM entyFe to ppfEn"
   /

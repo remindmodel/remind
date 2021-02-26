@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -123,6 +123,26 @@ else
 
 *** Define co2 price for entities that are used in MAC. 
 p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
+
+*** Redefine the MAC price for sectors and regions within the ETS
+$IFTHEN.macPriceETS not "%cm_emiMktETS%" == "off" 
+  loop(ETS_mkt,
+    loop(enty$(macSector2emiMkt(enty,"ETS")),
+      p_priceCO2forMAC(t,regi,enty2)$(ETS_regi(ETS_mkt,regi) AND emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ETS")* 1000;
+    );
+  );
+$ENDIF.macPriceETS
+
+*** Redefine the MAC price for sectors and regions within the ES
+$IFTHEN.macPriceES not "%cm_emiMktES%" == "off" 
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"ES")),
+    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ES")* 1000;
+  );
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"other")),
+    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
+  );
+$ENDIF.macPriceES
+
 *** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
 *** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
 *** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
@@ -242,9 +262,9 @@ vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,"co2luc") = p_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
-vm_macBase.fx(ttot,regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac") = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
+vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2otrans")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_macBaseVanv("2005",regi,"n2onitac")) = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
 
 *** baseline continuation after 2100
 vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=vm_macBase.l("2100",regi,enty);
@@ -402,6 +422,7 @@ pm_macCost(ttot,regi,emiMacSector(enty))
 
 *JeS* add 50% of abated CH4 from coal MACs to PEprod. CH4 from oil production is usually flared and not re-used. CH4 from gas production is mostly avoided losses from leakages.
 *** These losses are not accounted for, so neither are the avoided losses.
+*** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = sm_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
@@ -450,6 +471,5 @@ loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change v
 display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
 
 $endif.CO2priceDependent_AdjCosts
-
 
 *** EOF ./core/presolve.gms

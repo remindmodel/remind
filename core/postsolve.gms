@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,6 +9,7 @@
 *-------------------------------calculate regional permit prices-----------------------------------
 *** saving CO2 tax used in this iteration
 pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
+pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
 *RP* added the historic 2010/2015 CO2 prices 
 if (cm_emiscen eq 9,
@@ -295,8 +296,7 @@ display p_actualbudgetco2;
 *** if tax after cm_peakBudgYr is higher than normal increase rate (exceeding a 20% tolerance): shift right
 		elseif( ( sum(regi, sum(t2$(t2.val = pm_ttot_val(ttot+1)),pm_taxCO2eq(t2,regi))) > sum(regi,sum(t2$(t2.val = pm_ttot_val(ttot+1)),p_taxCO2eq_until2150(t2,regi)))*1.2 ) AND (cm_peakBudgYr < 2100) ), !! if peaking time would be after 2100, keep 2100 budget year
           if(  (iteration.val > 2) AND ( o_peakBudgYr_Itr(iteration - 1) > o_peakBudgYr_Itr(iteration) ) AND ( o_peakBudgYr_Itr(iteration - 2) = o_peakBudgYr_Itr(iteration) ) , !! if the target year was just shifted left after being shifted right
-            o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration); !! don't shift right again immediately, but go into a different loop:
-            o_delay_increase_peakBudgYear(iteration) = 1;
+            o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration); !! don't shift right again immediately
           else
 		    display "shift peakBudgYr right";
             o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot + 1);  !! ttot+1 is the new peakBudgYr
@@ -330,8 +330,8 @@ display p_actualbudgetco2;
 
 if(cm_iterative_target_adj eq 9,
 *RP* Update tax levels/ multigasbudget values to reach the peak CO2 budget, with a linear increase afterwards given by cm_taxCO2inc_after_peakBudgYr
-*** The PeakBudgYr is found automatically by the algorithm (within the time window 204-2100)
- 
+*** The PeakBudgYr is found automatically by the algorithm (within the time window 2040-2100)
+
   p_actualbudgetco2(t) =  sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
                           + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
                           + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
@@ -342,7 +342,11 @@ if(cm_iterative_target_adj eq 9,
   display s_actualbudgetco2;  
   display p_actualbudgetco2;
 
+
   if(cm_emiscen eq 9,
+  
+*** --------A: calculate the new CO2 price path,  the CO2 tax rescale factor----------------------------------------------------------  
+  
     if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
       display pm_taxCO2eq;
 
@@ -356,8 +360,7 @@ if(cm_iterative_target_adj eq 9,
         cm_peakBudgYr = 2100;
       );
 
-*** --------new convergence----------------------------------------------------------
-***  calculating the CO2 tax rescale factor
+*** --------A1: for that, calculate the CO2 tax rescale factor---
 
       if(iteration.val lt 10,
         p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2) ) ** 3;
@@ -388,31 +391,44 @@ if(cm_iterative_target_adj eq 9,
   
     else !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 ))
       if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
-          p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi); !! nothing changes
+        p_factorRescale_taxCO2(iteration)          = 1;
+        p_factorRescale_taxCO2_Funneled(iteration) = 1;
+        p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi); !! nothing changes
       else
 *** if budget has turned negative, reduce CO2 price by 20%
-      p_taxCO2eq_until2150(t,regi) = 0.8*p_taxCO2eq_until2150(t,regi);
-      pm_taxCO2eq(t,regi) = 0.8*pm_taxCO2eq(t,regi);
+      p_factorRescale_taxCO2(iteration) = 0.8;
+	  p_factorRescale_taxCO2_Funneled(iteration) = p_factorRescale_taxCO2(iteration);
+	  
+      p_taxCO2eq_until2150(t,regi) = p_factorRescale_taxCO2(iteration) * p_taxCO2eq_until2150(t,regi);
+      pm_taxCO2eq(t,regi) = p_factorRescale_taxCO2(iteration) * pm_taxCO2eq(t,regi);
       );  
     ); !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,
     
     display pm_taxCO2eq, p_taxCO2eq_until2150;
 
 	
-***-----------------------------------------------  
-
+*** -------B: checking the peak timing, if cm_peakBudgYr is still correct or needs to be shifted-----------------------
 
     o_diff_to_Budg(iteration) = (c_budgetCO2 - s_actualbudgetco2);
     o_totCO2emi_peakBudgYr(iteration) = sum(t$(t.val = cm_peakBudgYr), sum(regi2, vm_emiAll.l(t,regi2,"co2")) );
     o_totCO2emi_allYrs(t,iteration) = sum(regi2, vm_emiAll.l(t,regi2,"co2") );
+	
+*RP* calculate how fast emissions are changing around the peaking time to get an idea how close it is possible to get to 0 due to the 5(10) year time steps 	
     o_change_totCO2emi_peakBudgYr(iteration) = sum(ttot$(ttot.val = cm_peakBudgYr), (o_totCO2emi_allYrs(ttot-1,iteration) - o_totCO2emi_allYrs(ttot+1,iteration) )/4 );  !! Only gives a tolerance range, exact value not important. Division by 4 somewhat arbitrary - could be 3 or 5 as well. 
 
     display cm_peakBudgYr, o_diff_to_Budg, o_peakBudgYr_Itr, o_totCO2emi_allYrs, o_totCO2emi_peakBudgYr, o_change_totCO2emi_peakBudgYr;
 
 
-*** check if cm_peakBudgYr is correct: if global emissions are already negative, move cm_peakBudgYr forward
+*** ----B1: check if cm_peakBudgYr should be shifted left or right: 
     if( abs(o_diff_to_Budg(iteration)) < 20,                      !! only think about shifting peakBudgYr if the budget is close enough to target budget
       display "close enough to target budget to check timing of peak year";
+	  
+	  !!  check if the target year was just shifted back left after being shifted right before
+	  if ( (iteration.val > 2) AND ( o_peakBudgYr_Itr(iteration - 1) > o_peakBudgYr_Itr(iteration) ) AND ( o_peakBudgYr_Itr(iteration - 2) = o_peakBudgYr_Itr(iteration) ),
+	    o_pkBudgYr_flipflop(iteration) = 1; 
+        display "flipflop observed (before loop)";
+	  );
+	  
       loop(ttot$(ttot.val = cm_peakBudgYr),                               !! look at the peak timing
         if(  ( (o_totCO2emi_peakBudgYr(iteration) < -(0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) AND (cm_peakBudgYr > 2040) ), !! no peaking time before 2040
           display "shift peakBudgYr left";
@@ -420,9 +436,13 @@ if(cm_iterative_target_adj eq 9,
           pm_taxCO2eq(t,regi)$(t.val gt pm_ttot_val(ttot - 1)) = p_taxCO2eq_until2150(ttot-1,regi) + (t.val - pm_ttot_val(ttot - 1)) * cm_taxCO2inc_after_peakBudgYr * sm_DptCO2_2_TDpGtC;  !! increase by cm_taxCO2inc_after_peakBudgYr per year after peakBudgYr
         
 		elseif ( ( o_totCO2emi_peakBudgYr(iteration) > (0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) AND (cm_peakBudgYr < 2100) ), !! if peaking time would be after 2100, keep 2100 budget year
-          if(  (iteration.val > 2) AND ( o_peakBudgYr_Itr(iteration - 1) > o_peakBudgYr_Itr(iteration) ) AND ( o_peakBudgYr_Itr(iteration - 2) = o_peakBudgYr_Itr(iteration) ) , !! if the target year was just shifted left after being shifted right
+          if(  (o_pkBudgYr_flipflop(iteration) eq 1), !! if the target year was just shifted left after being shifted right, and would now be shifted right again
+            display "peakBudgYr was left, right, left and is now supposed to be shifted right again -> flipflop, thus go into separate loop";
             o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration); !! don't shift right again immediately, but go into a different loop:
             o_delay_increase_peakBudgYear(iteration) = 1;
+		  elseif ( o_delay_increase_peakBudgYear(iteration) eq 1 ),
+		    display "still in separate loop trying to resolve flip-flop behavior";
+			o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration); !! keep current peakBudgYr,
           else
 		    display "shift peakBudgYr right";
             o_peakBudgYr_Itr(iteration+1) =  pm_ttot_val(ttot + 1);  !! ttot+1 is the new peakBudgYr
@@ -432,7 +452,7 @@ if(cm_iterative_target_adj eq 9,
             );
 		  );
         
-		else   !! don't do anything if the peakBudgYr is already at the corner values (2040, 2100) or if the emissions in the peakBudgYr are close to 0
+		else   !! don't do anything if the peakBudgYr is already at the corner values (2040, 2100) or if the emissions in the peakBudgYr are close enough to 0 (within the range of +/- o_change_totCO2emi_peakBudgYr)
           o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration)
         );
       );
@@ -442,31 +462,41 @@ if(cm_iterative_target_adj eq 9,
         
     pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = p_taxCO2eq_until2150(t,regi); !! until peakBudgYr, take the contiuous price trajectory
     
-    if (o_delay_increase_peakBudgYear(iteration) = 1,   !! if there was a flip-floping in the previous iterations, try to solve this
+*** -----B2: if there was a flip-floping of cm_peakBudgYr in the previous iterations, try to overome this by adjusting the CO2 price path after the peaking year	
+    if (o_delay_increase_peakBudgYear(iteration) = 1,   
       display "not shifting peakBudgYr right, instead adjusting CO2 price for following year";
       loop(ttot$(ttot.val eq cm_peakBudgYr),  !! set ttot to the current peakBudgYr 
         loop(t2$(t2.val eq pm_ttot_val(ttot+1)),  !! set t2 to the following time step
-          o_factorRescale_taxCO2_afterPeakBudgYr(iteration) = 1 + max(sum(regi2,vm_emiAll.l(t2,regi2,"co2"))/sum(regi2,vm_emiAll.l("2015",regi2,"co2")),-0.75) ; !! inspired by Christoph. This value is 1 if emissions are 0.
+          o_factorRescale_taxCO2_afterPeakBudgYr(iteration) = 1 + max(sum(regi2,vm_emiAll.l(ttot,regi2,"co2"))/sum(regi2,vm_emiAll.l("2015",regi2,"co2")),-0.75) ; 
+		  !! this was inspired by Christoph's approach. This value is 1 if emissions in the peakBudgYr are 0; goes down to 0.25 if emissions are <0 and approaching the size of 2015 emissions, and > 1 if emissions > 0. 
           
 		  !! in case the normal linear extension still is not enough to get emissions to 0 after the peakBudgYr, shift peakBudgYr right again:
-          if( ( o_reached_until2150pricepath(iteration-1) eq 1 ) AND ( (o_factorRescale_taxCO2_afterPeakBudgYr(iteration) / p_factorRescale_taxCO2_Funneled(iteration)) > 1), 
-            display "price in following year reached original path and is still not enough -> shift peakBudgYr to right";
-            o_delay_increase_peakBudgYear(iteration) = 0;
+          if( ( o_reached_until2150pricepath(iteration-1) eq 1 ) AND ( o_totCO2emi_peakBudgYr(iteration) > (0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ), 
+            display "price in following year reached original path in previous iteration and is still not enough -> shift peakBudgYr to right";
+            o_delay_increase_peakBudgYear(iteration+1) = 0;  !! probably is not necessary
             o_reached_until2150pricepath(iteration) = 0;
             o_peakBudgYr_Itr(iteration+1) = t2.val;        !! shift PeakBudgYear to the following time step
             cm_peakBudgYr = o_peakBudgYr_Itr(iteration+1);
             pm_taxCO2eq(t2,regi) = p_taxCO2eq_until2150(t2,regi) ;  !! set CO2 price in t2 to value in the "continuous path"
       
             display cm_peakBudgYr;
+		  elseif ( ( o_reached_until2150pricepath(iteration-1) eq 1 ) AND ( o_totCO2emi_peakBudgYr(iteration) < (0.1 + o_change_totCO2emi_peakBudgYr(iteration)) ) ), 
+            display "New intermediate price in timestep after cm_peakBudgYr is sufficient to stabilize peaking year - go back to normal loop";	
+			o_delay_increase_peakBudgYear(iteration+1) = 0;  !! probably is not necessary
+            o_reached_until2150pricepath(iteration) = 0;
+			o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration);  
+            cm_peakBudgYr = o_peakBudgYr_Itr(iteration+1);
           else      !! either didn't reach the continued "until2150"-price path in last iteration, or the increase was high enough to get emissions to 0. 
 		            !! in this case, keep PeakBudgYr, and adjust the price in the year after the peakBudgYr to get emissions close to 0,
+			o_delay_increase_peakBudgYear(iteration+1) = 1; !! make sure next iteration peakBudgYr is not shifted right again
 		    o_peakBudgYr_Itr(iteration+1) = o_peakBudgYr_Itr(iteration);
             pm_taxCO2eq(t2,regi) = max(pm_taxCO2eq(ttot,regi), !! at least as high as the price in the peakBudgYr
                                        pm_taxCO2eq(t2,regi) * (o_factorRescale_taxCO2_afterPeakBudgYr(iteration) / p_factorRescale_taxCO2_Funneled(iteration) ) !! the full path was already rescaled by p_factorRescale_taxCO2_Funneled, so adjust the second rescaling
                                    );
-            loop(regi,                   !! this loop necessary to allow the <-comparison in the next if statement
+            loop(regi,                   !! this loop is necessary to allow the <-comparison in the next if statement
               if( p_taxCO2eq_until2150(t2,regi) < pm_taxCO2eq(t2,regi) ,   !! check if new price would be higher than the price if the peakBudgYr would be one timestep later 
-                pm_taxCO2eq(t2,regi) = p_taxCO2eq_until2150(t2,regi);
+                display "price increase reached price from path with cm_peakBudgYr one timestep later - downscale to 99%"; 
+				pm_taxCO2eq(t2,regi) = 0.99 * p_taxCO2eq_until2150(t2,regi); !! reduce the new CO2 price to 99% of the price that it would be if the peaking year was one timestep later. The next iteration will show if this is enough, otherwise cm_peakBudgYr will be shifted right 
                 o_reached_until2150pricepath(iteration) = 1;             !! upward CO2 price correction reached the continued price path - check in next iteration if this is high enough.  
               );
             );
@@ -480,7 +510,12 @@ if(cm_iterative_target_adj eq 9,
       cm_peakBudgYr = o_peakBudgYr_Itr(iteration+1);  !! this has to happen outside the loop, otherwise the loop condition might be true twice
     ); !! if o_delay_increase_peakBudgYear(iteration) = 1,   !! if there was a flip-floping in the previous iterations, try to solve this
 	
-    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr;
+	
+	loop(regi, !! not a nice solution to having only the price of one regi display (for better visibility), but this way it overwrites again and again until the value from the last regi remain
+	    o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(t,iteration+1) = pm_taxCO2eq(t,regi); 
+	);
+	
+    display o_delay_increase_peakBudgYear, o_reached_until2150pricepath, pm_taxCO2eq, o_peakBudgYr_Itr, o_taxCO2eq_afterPeakShiftLoop_Itr_1regi, o_pkBudgYr_flipflop;
   ); !! if cm_emiscen eq 9,
 );   !! if cm_iterative_target_adj eq 8,
 
@@ -531,23 +566,23 @@ DISPLAY  p_share_seliq_s, p_share_seh2_s, p_share_seel_s;
 *GL*calculation of a bioshare for each FE carrier
 *NB* the following is only relevant for reporting. As reporting is moved to R the following will be obsolete.
 p_bioshare(ttot,regi,entyFe)$(sum(se2fe(entySe,entyFe,te),
-								sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-								+ sum(pc2te(entyPe,entySe2,te2,entySe),
-									  max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-									)
-							) ne 0) 
+                                  sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
+                                  + sum(pc2te(entyPe,entySe2,te2,entySe),
+                                       max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
+                                     )
+                             ) ne 0) 
   = sum(se2fe(entySe,entyFe,te),
-		sum(pe2se(peBio,entySe,te2), vm_prodSe.l(ttot,regi,peBio,entySe,te2))
-		+ sum(pc2te(peBio,entySe2,te2,entySe),
-			  max(0, pm_prodCouple(regi,peBio,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,peBio,entySe2,te2)
-			)
+        sum(pe2se(peBio,entySe,te2), vm_prodSe.l(ttot,regi,peBio,entySe,te2))
+        + sum(pc2te(peBio,entySe2,te2,entySe),
+               max(0, pm_prodCouple(regi,peBio,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,peBio,entySe2,te2)
+             )
     ) 
-	/
-	sum(se2fe(entySe,entyFe,te),
-		sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-		+ sum(pc2te(entyPe,entySe2,te2,entySe),
-			  max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-			)
+    /
+    sum(se2fe(entySe,entyFe,te),
+        sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
+        + sum(pc2te(entyPe,entySe2,te2,entySe),
+             max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
+           )
     )
 ;
 
@@ -586,25 +621,25 @@ $iftheni.CO2priceDependent_AdjCosts %c_CO2priceDependent_AdjCosts% == "on"
 loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change values in the unfixed time steps of the current run, and not in the past
   loop(regi,
     if( pm_taxCO2eq(ttot-1,regi) le (40 * sm_DptCO2_2_TDpGtC) ,
-	  p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
+      p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.1;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 4;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (40 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (80 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.25;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 2.5;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (80 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (160 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 0.5;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1.5;
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (160 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (320 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 1;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;	
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 1;	
     elseif ( ( pm_taxCO2eq(ttot-1,regi) gt (320 * sm_DptCO2_2_TDpGtC) ) AND ( pm_taxCO2eq(ttot-1,regi) le (640 * sm_DptCO2_2_TDpGtC) ) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 2;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;	
-	elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.5;	
+    elseif ( pm_taxCO2eq(ttot-1,regi) gt (640 * sm_DptCO2_2_TDpGtC) ) ,
       p_varyAdj_mult_adjSeedTe(ttot,regi) = 4;
-	  p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;	
+      p_varyAdj_mult_adjCoeff(ttot,regi)  = 0.25;	
     );
-	p_adj_seed_te(ttot,regi,'apCarH2T')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarH2T');
+    p_adj_seed_te(ttot,regi,'apCarH2T')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarH2T');
     p_adj_seed_te(ttot,regi,'apCarElT')        = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarElT');
     p_adj_seed_te(ttot,regi,'apCarDiEffT')     = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffT');
     p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = p_varyAdj_mult_adjSeedTe(ttot,regi) * p_adj_seed_te_Orig(ttot,regi,'apCarDiEffH2T');
@@ -617,4 +652,231 @@ loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change v
 display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
 
 $endif.CO2priceDependent_AdjCosts
+
+
+
+*** INNOPATHS emissions reporting
+o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 
+    sum(se2fe(enty,enty2,te),
+        pm_emifac(ttot,regi,enty,enty2,te,emi)
+        * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
+    )*o_emi_conv(emi);
+
+o_emissions(ttot,regi,emi)$(ttot.val ge 2005) = 
+    sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
+    - o_emissions_bunkers(ttot,regi,emi);
+
+*** note! this still excludes industry CCS and CCU. To fix. 
+o_emissions_energy(ttot,regi,emi)$(ttot.val ge 2005) = 
+    sum(emiMkt, vm_emiTeMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
+    - o_emissions_bunkers(ttot,regi,emi);
+
+*** note! this still excludes industry CCS. To fix. 
+o_emissions_energy_demand(ttot,regi,emi)$(ttot.val ge 2005) = 
+    sum(sector2emiMkt(sector,emiMkt),
+        sum(se2fe(enty,enty2,te),
+            pm_emifac(ttot,regi,enty,enty2,te,emi)
+            * vm_demFeSector.l(ttot,regi,enty,enty2,sector,emiMkt)
+        )
+    )*o_emi_conv(emi)
+    - o_emissions_bunkers(ttot,regi,emi)
+;
+
+*** note! this still excludes industry CCS. To fix.
+o_emissions_energy_demand_sector(ttot,regi,emi,sector)$(ttot.val ge 2005) =
+    sum(emiMkt$sector2emiMkt(sector,emiMkt),
+        sum(se2fe(enty,enty2,te),
+            pm_emifac(ttot,regi,enty,enty2,te,emi) * vm_demFeSector.l(ttot,regi,enty,enty2,sector,emiMkt)
+        )
+    )*o_emi_conv(emi)
+    +
+   (sum(emiMacSector$(emiMac2sector(emiMacSector,"trans","process",emi)),
+        vm_emiMacSector.l(ttot,regi,emiMacSector)
+        )*o_emi_conv(emi)
+        - o_emissions_bunkers(ttot,regi,emi)
+    )$(sameas(sector,"trans"))
+    +
+    (sum(emiMacSector$(emiMac2sector(emiMacSector,"waste","process",emi)),
+         vm_emiMacSector.l(ttot,regi,emiMacSector)
+        )*o_emi_conv(emi)
+    )$(sameas(sector,"waste"))
+;
+
+o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
+***   emissions from non-conventional fuel extraction
+    (
+    ( sum(emi2fuelMine(emi,entyPe,rlf),      
+           p_cint(regi,emi,entyPe,rlf)
+         * vm_fuExtr.l(ttot,regi,entyPe,rlf)
+         )$( c_cint_scen eq 1 )
+     )
+***   emissions from conventional fuel extraction
+    + ( sum(pe2rlf(entyPe,rlf2),sum(enty2,      
+         (p_cintraw(enty2)
+          * pm_fuExtrOwnCons(regi, enty2, entyPe) 
+          * vm_fuExtr.l(ttot,regi,entyPe,rlf2)
+         )$(pm_fuExtrOwnCons(regi, entyPe, enty2) gt 0)    
+        ))
+    )
+    )*o_emi_conv(emi)
+    +
+    (sum(emiMacSector$(emiMac2sector("ch4coal","extraction","process",emi)),
+         vm_emiMacSector.l(ttot,regi,emiMacSector)
+        )*o_emi_conv(emi)
+    )$(sameas(entyPe,"pecoal"))
+    +
+    (sum(emiMacSector$(emiMac2sector("ch4gas","extraction","process",emi)),
+         vm_emiMacSector.l(ttot,regi,emiMacSector)
+        )*o_emi_conv(emi)
+    )$(sameas(entyPe,"pegas"))
+    +
+    (sum(emiMacSector$(emiMac2sector("ch4oil","extraction","process",emi)),
+         vm_emiMacSector.l(ttot,regi,emiMacSector)
+        )*o_emi_conv(emi)
+    )$(sameas(entyPe,"peoil"))
+;
+
+
+o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
+    sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+    )*o_emi_conv(emi)
+    +
+    sum(entyPe, o_emissions_energy_extraction(ttot,regi,emi,entyPe))
+;
+    
+o_emissions_energy_supply_gross_carrier(ttot,regi,emi,entySe)$(ttot.val ge 2005) =
+    sum((entyPe,te)$(pe2se(entyPe,entySe,te) AND (pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0)),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+    )*o_emi_conv(emi)
+    +
+    (
+    o_emissions_energy_extraction(ttot,regi,emi,"pecoal")
+    )$(sameas(entySe,"sesofos"))
+    +
+    (
+    o_emissions_energy_extraction(ttot,regi,emi,"pegas")
+    )$(sameas(entySe,"segafos"))
+    +
+    (	
+    o_emissions_energy_extraction(ttot,regi,emi,"peoil")
+    )$(sameas(entySe,"seliqfos"))
+;
+
+o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
+    (
+     sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)<0),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+         * vm_demPE.l(ttot,regi,entyPe,entySe,te)
+    )
+    +
+    sum((ccs2Leak(enty,enty2,te,emi),teCCS2rlf(te,rlf)),
+            pm_emifac(ttot,regi,enty,enty2,te,emi)
+            * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
+          )
+***   Industry CCS emissions
+    - ( sum(emiMac2mac(emiInd37_fuel,enty2),
+          vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
+        )$( sameas(emi,"co2") )
+    )
+    )*o_emi_conv(emi)
+;
+
+o_emissions_industrial_processes(ttot,regi,emi)$(ttot.val ge 2005) =
+    sum(emiMacSector$(emiMac2sector(emiMacSector,"indst","process",emi)),
+        vm_emiMacSector.l(ttot,regi,emiMacSector)
+    )*o_emi_conv(emi);
+
+o_emissions_AFOLU(ttot,regi,emi)$(ttot.val ge 2005) =
+    sum(emiMacSector$(emiMac2sector(emiMacSector,"agriculture","process",emi) OR emiMac2sector(emiMacSector,"lulucf","process",emi)),
+        vm_emiMacSector.l(ttot,regi,emiMacSector)
+    )*o_emi_conv(emi);
+
+o_emissions_DACCS(ttot,regi,emi)$(ttot.val ge 2005) =
+   vm_emiCdr.l(ttot,regi,emi)*o_emi_conv(emi)
+;
+
+o_emissions_other(ttot,regi,emi)$(ttot.val ge 2005) =
+    pm_emiExog(ttot,regi,emi)*o_emi_conv(emi)
+;
+
+***Carbon Management|Carbon Capture (Mt CO2/yr)
+o_capture(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(teCCS2rlf(te,rlf),
+        vm_co2capture.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Process|Energy (Mt CO2/yr)
+o_capture_energy(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(emi2te(enty3,enty4,te2,"cco2"),
+        vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Process|Energy|Electricity (Mt CO2/yr)
+o_capture_energy_elec(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(emi2te(enty3,enty4,te2,"cco2")$(sameas(enty4,"seel")),
+        vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Process|Energy|Other (Mt CO2/yr)
+o_capture_energy_other(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(emi2te(enty3,enty4,te2,"cco2")$(NOT(sameas(enty4,"seel"))),
+        vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Process|Direct Air Capture (Mt CO2/yr)
+o_capture_cdr(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(teCCS2rlf("ccsinje",rlf),
+      vm_ccs_cdr.l(ttot,regi,"cco2","ico2","ccsinje",rlf)
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Process|Industrial Processes (Mt CO2/yr)
+o_capture_industry(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(emiInd37,
+      vm_emiIndCCS.l(ttot,regi,emiInd37)
+    )*o_emi_conv("co2")
+;
+
+***Carbon Management|Carbon Capture|Primary Energy|Biomass (Mt CO2/yr)
+o_capture_energy_bio(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(enty3$pebio(enty3),
+        sum(emi2te(enty3,enty4,te2,"cco2"),
+            vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
+        )
+    )*o_emi_conv("co2");
+
+***Carbon Management|Carbon Capture|Primary Energy|Fossil (Mt CO2/yr)
+o_capture_energy_fos(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(enty3$(NOT(pebio(enty3))),
+        sum(emi2te(enty3,enty4,te2,"cco2"),
+            vm_emiTeDetail.l(ttot,regi,enty3,enty4,te2,"cco2")
+        )
+    )*o_emi_conv("co2");
+
+***Carbon Management|CCU (Mt CO2/yr)
+o_carbon_CCU(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(teCCU2rlf(te2,rlf),
+        vm_co2CCUshort.l(ttot,regi,"cco2","ccuco2short",te2,rlf)
+    )*o_emi_conv("co2");
+
+***Carbon Management|Land Use (Mt CO2/yr)
+o_carbon_LandUse(ttot,regi,"co2")$(ttot.val ge 2005) =
+    vm_emiMacSector.l(ttot,regi,"co2luc")
+    *o_emi_conv("co2");
+
+***Carbon Management|Underground Storage (Mt CO2/yr)
+o_carbon_underground(ttot,regi,"co2")$(ttot.val ge 2005) =
+    sum(teCCS2rlf(te,rlf), 
+         vm_co2CCS.l(ttot,regi,"cco2","ico2",te,rlf)
+    )*o_emi_conv("co2") 	
+;
+    
+***Carbon Management|Carbon Re-emitted (Mt CO2/yr)
+o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
+     v_co2capturevalve.l(ttot,regi)	
+     *o_emi_conv("co2") 	
+;
+
 *** EOF ./core/postsolve.gms

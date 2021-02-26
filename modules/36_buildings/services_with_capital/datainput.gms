@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,12 +24,13 @@ pm_cesdata_sigma(ttot,in)$p36_cesdata_sigma(in) = p36_cesdata_sigma(in);
 pm_capital_lifetime_exp(all_regi,"kapsc") = 20;
 pm_capital_lifetime_exp(all_regi,"kapal") = 12;
 
-pm_capital_lifetime_exp(all_regi,"kaphc") = 30;
-pm_capital_lifetime_exp(all_regi,"esswb") = 30;
-pm_capital_lifetime_exp(all_regi,"ueswb") = 30;
+pm_capital_lifetime_exp(all_regi,"esswb") = log ( 0.25) / log ( 1 -0.02 );
 
-pm_delta_kap(regi,in)$(ppfKap_dyn36(in) OR in_putty_dyn36(in)) = - log (0.25) / pm_capital_lifetime_exp(regi,in);
-  
+pm_delta_kap(regi,in)$((ppfKap_dyn36(in) AND NOT in_putty(in)) OR nests_putty_dyn36(in,in)) = - log (0.25) / pm_capital_lifetime_exp(regi,in);
+
+loop (out,
+pm_delta_kap(regi,in)$nests_putty_dyn36(out,in) = pm_delta_kap(regi,out);
+);  
       
 parameter
 
@@ -79,7 +80,7 @@ p36_prodEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_prodE
 ***_____________________________Information for the ES layer  and the multinomial logit function _____________________________
 
 *** Price sensitivity of the logit function
-p36_logitLambda(regi,in)$inViaEs_dyn36(in) = -3;
+p36_logitLambda(regi,in)$inViaEs_dyn36(in) = cm_INNOPATHS_priceSensiBuild;
 
 *** Compute efficiencies of technologies producing ES(UE) from FE
 loop ( fe2es_dyn36(entyFe,esty,teEs),
@@ -170,7 +171,10 @@ Execute_Loadpoint 'input'  p36_marginalUtility = qm_budget.m;
     );
 );
 if ( execError = 0,
-Execute_Loadpoint 'input' p36_fePrice = qm_balFeForCesAndEs.m;
+Execute_Loadpoint 'input' p36_fePrice_load = qm_balFe.m;
+loop (se2fe(entySe,entyFe,te),
+ p36_fePrice(ttot,regi,entyFe) = p36_fePrice_load(ttot,regi,entySe,entyFe,te);
+ );
 if (execError gt 0,
     execError = 0;
     p36_fePrice(ttot,regi,entyFe) = 1;
@@ -178,8 +182,10 @@ if (execError gt 0,
 );
 
 p36_marginalUtility(ttot,regi)$( abs (p36_marginalUtility(ttot,regi)) lt sm_eps) = 1;
+
 p36_fePrice(ttot,regi,entyFe) = abs (p36_fePrice(ttot,regi,entyFe)) / abs (p36_marginalUtility(ttot,regi));
 p36_fePrice(ttot,regi,entyFe)$ ( NOT p36_fePrice(ttot,regi,entyFe)) = 0.01; !! give a default value in case the relevant information is not available in the input.gdx
+
 
 p36_fePrice_iter(iteration,ttot,regi,entyFe) = 0;
 
@@ -197,7 +203,21 @@ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  p36_implicitDiscRateMarg(ttot,regi,"ueshb")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the choice of space heating technology
  p36_implicitDiscRateMarg(ttot,regi,"uecwb")$(ttot.val ge 2005 AND ttot.val lt cm_startyear) = 0.05;  !! 5% for the choice of cooking and water heating technology
+ 
  elseif (cm_DiscRateScen eq 3),
+ p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
+ 
+ p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
+ p36_implicitDiscRateMarg(ttot,regi,"uecwb") = 0.05;  !! 5% for the choice of cooking and water heating technology
+ 
+ p36_implicitDiscRateMarg(ttot,regi,in)$( pm_ttot_val(ttot) ge cm_startyear
+                                         AND (sameAs(in,"ueshb") 
+                                              OR sameAs(in,"uecwb")
+                                             )
+                                         )
+                                     = 0.25 * p36_implicitDiscRateMarg(ttot,regi,in) ; 
+ 
+ elseif (cm_DiscRateScen eq 4),
  p36_implicitDiscRateMarg(ttot,regi,all_in) = 0;
  
  p36_implicitDiscRateMarg(ttot,regi,"ueshb") = 0.05;  !! 5% for the choice of space heating technology
@@ -225,11 +245,73 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 *** Compute depreciation rates for technologies
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
+*** Define which technologies will have a faster reduction of their calibration parameter
+p36_pushCalib(ttot,teEs) = 0;
+
+$ifthen "%cm_INNOPATHS_pushCalib%" == "none" 
+$elseif "%cm_INNOPATHS_pushCalib%" == "hydrogen"
+teEs_pushCalib_dyn36("te_ueshh2b") = YES;
+teEs_pushCalib_dyn36("te_uecwh2b") = YES;
+p36_pushCalib(ttot,"te_ueshh2b") = 0;
+p36_pushCalib(ttot,"te_uecwh2b") = 0.5;
+
+p36_pushCalib(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_pushCalib(ttot,teEs))
+      + p36_pushCalib(ttot,teEs) ;
+$endif
+
+
+*** Define for which technologies the investment costs will evolve
+p36_costReduc(ttot,teEs_dyn36) = 1;
+
+$ifthen "%cm_INNOPATHS_reducCostB%" == "none" 
+$elseif "%cm_INNOPATHS_reducCostB%" == "hydrogen"
+
+p36_costReduc(ttot,"te_ueshh2b") = 0.2;
+p36_costReduc(ttot,"te_uecwh2b") = 0.5;
+
+p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_costReduc(ttot,teEs))
+      + p36_costReduc(ttot,teEs) ;
+      
+$elseif "%cm_INNOPATHS_reducCostB%" == "heatpumps"
+p36_costReduc(ttot,"te_ueshhpb") = 0.8;
+p36_costReduc(ttot,"te_uecwhpb") = 0.8;
+
+p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) = 
+      min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
+      * ( 1 - p36_costReduc(ttot,teEs))
+      + p36_costReduc(ttot,teEs) ;
+$endif
+
+
+
+*** Computation of omegs and opTimeYr2teEs for technology vintages
+p36_omegEs(regi,opTimeYr,teEs_dyn36(teEs)) = 0;
+
+loop(regi,
+        p36_aux_lifetime(teEs_dyn36(teEs)) = 5/4 * f36_datafecostsglob("lifetime",teEs);
+        loop(teEs_dyn36(teEs),
+
+                loop(opTimeYr,
+                        p36_omegEs(regi,opTimeYr,teEs) = 1 - ((opTimeYr.val-0.5) / p36_aux_lifetime(teEs))**4 ;
+                        opTimeYr2teEs(teEs,opTimeYr)$(p36_omegEs(regi,opTimeYr,teEs) > 0 ) =  yes;
+                        if( p36_omegEs(regi,opTimeYr,teEs) <= 0,
+                                p36_omegEs(regi,opTimeYr,teEs) = 0;
+                                opTimeYr2teEs(teEs,opTimeYr) =  no;
+                        );
+                )
+        );
+);
+display p36_omegEs , opTimeYr2teEs ; 
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
 *** Adjustement cost factor
 p36_adjFactor(ttot,regi) = 1;
+
 
 *** Set dynamic regional set depending on testOneRegi
 $ifthen "%optimization%" == "testOneRegi"

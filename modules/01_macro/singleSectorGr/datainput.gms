@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,6 +9,9 @@
 *** depreciation rate of capital
 pm_delta_kap(regi,"kap") = 0.05;
 
+*AL* initialize parameter (avoid compilation errors)
+pm_ppfen_ratios(t,regi,in,in2) = 0; 
+pm_ppfen_shares(t,regi,in,in2) = 0; 
 *** load data for macro investments in 2005, used as bound
 parameter p01_boundInvMacro(all_regi)        "macro investments in 2005" 
 /

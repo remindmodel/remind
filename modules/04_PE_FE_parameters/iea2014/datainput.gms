@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -117,21 +117,21 @@ loop(pc2te(enty,enty2,te,enty3),
 display pm_prodCouple;
 
 *** define global values for couple production that can be used if the regional IEA data are 0
-***p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")       = 0.61;
-***p04_prodCoupleGlob("pegas","seel","gaschp","sehe")         = 0.42;                                                                     
-***p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")        = 0.081;    
-***p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")       = 0.054;    
-***p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")       = 0.72;
-***p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")    = 0.16;     
-***p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel")   = 0.14;     
-***p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")     = 0.153;    
-***p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")          = -0.05;           
-***p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")          = -0.05;             
-***p04_prodCoupleGlob("pegeo","sehe","geohe","seel")          = -0.3;                       
-***p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")         = -0.005; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffT","feelt")   = -0.1; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feelt") = -0.2; 
-p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feh2t") = -0.1;                                 
+***p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")        = 0.61;
+***p04_prodCoupleGlob("pegas","seel","gaschp","sehe")          = 0.42;
+p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
+p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
+***p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.16;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.14;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
+p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
+p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
+p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
+p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
+p04_prodCoupleGlob("fedie","uedit","apcardiEffT","feelt")   = -0.1;
+p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feelt") = -0.2;
+p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feh2t") = -0.1;
 *** use global data for coule products if regional data form IEA are 0
 loop(pc2te(enty,enty2,te,enty3),
     loop(regi,
@@ -152,6 +152,20 @@ loop(en2en(enty,enty2,te),
        );
     );
 );
+
+
+*** recalculating the eta for seliq (fehos, fedie and fepet), seso and sega T&D to final energy, assuming that biomass or fossil based fuels use the same network and, consequently, share the same eta  
+loop(entyFe$(SAMEAS(entyFe,"fehos") OR SAMEAS(entyFe,"fedie") OR SAMEAS(entyFe,"fepet") OR SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fesos")), 
+	loop(regi,
+		if(sum(se2fe(entySe,entyFe,te), pm_IO_input(regi,entySe,entyFe,te)) ne 0,
+			loop((entySe,te)$se2fe(entySe,entyFe,te),
+				pm_data(regi,"eta",te) = sum(se2fe(enty,entyFe,te2), p04_IO_output(regi,enty,entyFe,te2))/sum(se2fe(enty,entyFe,te2), pm_IO_input(regi,enty,entyFe,te2));
+			);
+		);
+	);
+);
+
+
 
 *** calculate mix0 - the share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production
 ***old calculation: mix0(enty, enty2, te) = output(enty, enty2, te) / sum( (enty3,te2), output(enty3, enty2, te2) $(enty2 is not joint product of a te2 that is technology with joint products, like CHP )

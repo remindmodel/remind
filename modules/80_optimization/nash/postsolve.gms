@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,15 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/nash/postsolve.gms
 
-option decimals = 6;    
-display p80_repy;
 
-option decimals = 0;    
-display o_modelstat;
-
-o_iterationNumber = iteration.val;
-display o_iterationNumber;
-option decimals = 3;
  
 *ML*2015-02-04* calculate current account
 *LB* needed for decomposition script
@@ -60,6 +52,71 @@ p80_etaST_correct(ttot,trade,iteration)$(ttot.val ge 2005) =
       * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,trade)/pm_pvp('2050',trade)) )$(tradePe(trade)) + 1$(NOT tradePe(trade)) )
          * p80_surplus(ttot,trade,iteration)
          / max(sm_eps , sum(regi, p80_normalize0(ttot,regi,trade)));
+
+*RP* add a stronger push to the price adjustment if convergence doesn't happen for an extended amount of iterations:
+p80_etaST_correct_safecopy(ttot,trade,iteration) = p80_etaST_correct(ttot,trade,iteration); !! first make a copy of the initial adjustment values
+
+*RP* track sign of the surplus
+if(iteration.val > 2, 
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
+      if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade),
+	    o80_SurplusOverTolerance(ttot,trade,iteration) = Sign(p80_surplus(ttot,trade,iteration) );
+	  );
+    );
+  );
+);	
+
+*RP* track continued surplusses with the same sign (to show where convergence is too slow)
+if(iteration.val > 2, 
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good") ),
+      if( ( Sign(p80_surplus(ttot,trade,iteration) ) eq Sign(p80_surplus(ttot,trade,iteration-1) ) ) AND 
+	  ( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ) ,
+        o80_trackSurplusSign(ttot,trade,iteration) = o80_trackSurplusSign(ttot,trade,iteration-1) +1;	  
+	  else
+	    o80_trackSurplusSign(ttot,trade,iteration) = 0;
+	  );
+    );
+  );
+);
+
+if(iteration.val > 15,
+  loop(ttot$(ttot.val ge 2005),
+    loop(trade$(tradePe(trade) OR sameas(trade,"good")),
+	  if( abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) , 
+        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 4))),      
+                  p80_surplus(ttot,trade,iteration2)          !! this sum should ensure the additional price adjustment only happens if the surplus was always off the same sign
+                )
+              ) ge ( 5 * p80_surplusMaxTolerance(trade) ) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 5 ) , !! check if surplus was out of the target range for 5 consecutive iterations
+          p80_etaST_correct(ttot,trade,iteration) = 4 * p80_etaST_correct(ttot,trade,iteration);
+          o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 1;
+		  
+		  if(iteration.val gt 20,      !! only start checking if a stronger push is necessary a few iterations later, so that step 1 could potentially show an effect
+		    if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 9))),
+                         p80_surplus(ttot,trade,iteration2)
+                       )
+                  ) ge ( 10 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 10 ), !! check if surplus was out of the target range for 10 consecutive iterations
+              p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
+              o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 2;
+		      
+			  if(iteration.val gt 25,   !! only start checking if a stronger push is necessary a few iterations later, so that step 1&2 could potentially show an effect
+		        if( ( abs( sum(iteration2$( (iteration2.val le iteration.val) AND (iteration2.val ge (iteration.val - 14))),
+                             p80_surplus(ttot,trade,iteration2)
+                           )
+                      ) ge ( 15 * p80_surplusMaxTolerance(trade)) ) AND ( o80_trackSurplusSign(ttot,trade,iteration) ge 15 ), !! check if surplus was out of the target range for 15 consecutive iterations
+                  p80_etaST_correct(ttot,trade,iteration) = 2 * p80_etaST_correct(ttot,trade,iteration);
+                  o80_counter_iteration_trade_ttot(ttot,trade,iteration) = 3;
+                );
+              );
+			);
+          );
+		);
+      );
+    );
+  );
+);	 
+
 
 ***calculate prices for next iteration 
 p80_pvp_itr(ttot,trade,iteration+1)$(ttot.val ge cm_startyear) = 
@@ -114,7 +171,7 @@ p80_defic_sum("1") = 1;
 p80_defic_sum(iteration) = sum(trade,  p80_defic_trade(trade)); 
 p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeLT("good")/pm_pvp("2005","good"));
 
-display p80_defic_trade,p80_defic_sum,p80_defic_sum_rel;
+
 
 ***adjust parameters for next iteration 
 ***Decide on when to fade out price anticipation terms (doing this too early leads to diverging markets)
@@ -180,8 +237,88 @@ loop(regi,
 );
 
 ***additional criterion: are the anticipation terms sufficienctly small?
-if(sm_fadeoutPriceAnticip gt 1E-4, s80_bool = 0);
+if(sm_fadeoutPriceAnticip gt 1E-4, 
+  s80_bool = 0;
+  p80_messageShow("anticip") = YES;
+);
 **
+
+***additional criterion: did taxes converge? (only checked if cm_TaxConvCheck is 1)
+p80_taxrev_dev(t,regi) = 0;
+if (cm_TaxConvCheck eq 1,
+  loop(regi,
+    loop(t,
+      if( abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco") gt 1E-4,
+        p80_taxrev_dev(t,regi) = abs(vm_taxrev.l(t,regi)) / vm_cesIO.l(t,regi,"inco");
+        if (t.val lt 2100,
+          s80_bool = 0;
+          p80_messageShow("taxconv") = YES;
+        );
+      );
+    );
+  );
+);
+
+
+display "####";
+display "Convergence diagnostics";
+display "Iteration number: ";
+o_iterationNumber = iteration.val;
+display o_iterationNumber;
+option decimals = 3;
+
+display "In the following you find some diagnostics on whether the model converged in this iteration: ";   
+
+display "solvestat and modelstat parameters: ";
+display p80_repy;
+
+display "trade convergence indicators";
+display p80_surplusMaxTolerance, p80_surplusMax2100;
+
+display "Reasons for non-convergence in this iteration (if not yet converged)";
+
+	 loop(convMessage80$(p80_messageShow(convMessage80)),
+	      if(sameas(convMessage80, "infes"),
+          display "#### 1.) Infeasibilities found in at least some regions in the last iteration. Plase check parameter p80_repy for details. ";
+		      display "#### Try a different gdx, or re-run the optimization with cm_nash_mode set to debug in order to debug the infes.";
+        );
+        if(sameas(convMessage80, "surplus"),
+	        display "#### 2.) Some markets failed to reach a residual surplus below the prescribed threshold. ";
+	        display "#### In the following, the offending markets are indicated by a 1:";
+	        OPTION decimals = 0;
+          display p80_messageFailedMarket;
+	        OPTION decimals = 3;
+          display "#### You will find detailed trade convergence indicators below, search for p80_defic_trade";
+        );	   
+        if(sameas(convMessage80, "nonopt"),
+    		  display "#### 3.) Found a feasible, but non-optimal solution. This is the infamous status-7 problem: ";
+		      display "#### We can't accept this solution, because it is non-optimal, and, in addition, too far away from the last known optimal solution. ";
+		      display "#### Just trying a different gdx may help.";
+	      );	 
+	      if(sameas(convMessage80, "taxconv"),
+		      display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev below.";
+	      );
+        if(sameas(convMessage80, "anticip"),
+		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
+	      );
+   );
+
+display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
+
+display "tax convergence indicators";
+display p80_taxrev_dev;
+
+display "detailed trade convergence indicators";
+display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
+OPTION decimals = 7;
+***display p80_surplus;
+OPTION decimals = 3;
+
+*RP* display effect of additional convergence push
+display "display effect of additional convergence push";
+display  o80_trackSurplusSign, o80_SurplusOverTolerance, o80_counter_iteration_trade_ttot, p80_etaST_correct_safecopy,p80_etaST_correct,p80_pvp_itr;
+
+
 
 ***end with failure message if max number of iterations is reached w/o convergence:
 if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max number of iteration, still no convergence
@@ -194,13 +331,13 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	 loop(convMessage80$(p80_messageShow(convMessage80)),
 	     if(sameas(convMessage80, "infes"),
 		 display "####";
-		 display "#### Infeasibilities found in at least some regions in the last iteration. Plase check parameter p80_repy for details. ";
+		 display "#### 1.) Infeasibilities found in at least some regions in the last iteration. Plase check parameter p80_repy for details. ";
 		 display "#### Try a different gdx, or re-run the optimization with cm_nash_mode set to debug in order to debug the infes.";
 		 display p80_repy;
 	     );	 
 	     if(sameas(convMessage80 , "surplus"),
 	       display "####";
-	       display "#### Some markets failed to reach a residual surplus below the prescribed threshold. ";
+	       display "#### 2.) Some markets failed to reach a residual surplus below the prescribed threshold. ";
 	       display "#### You may try less stringent convergence target (a lower cm_nash_autoconverge), or a different gdx. ";
 	       display "#### In the following, the offending markets are indicated by a 1:";
 	       OPTION decimals = 0;
@@ -209,10 +346,17 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	      );
 	     if(sameas(convMessage80, "nonopt"),
 		 display "####";
-		 display "#### Found a feasible, but non-optimal solution. This is the infamous status-7 problem: ";
+		 display "#### 3.) Found a feasible, but non-optimal solution. This is the infamous status-7 problem: ";
 		 display "#### We can't accept this solution, because it is non-optimal, and too far away from the last known optimal solution. ";
 		 display "#### Just trying a different gdx may help.";
 	     );	 
+	     if(sameas(convMessage80, "taxconv"),
+		 display "####";
+		 display "#### 4.) Taxes did not converge in all regions and time steps. Absolut level of tax revenue must be smaller than 0.01 percent of GDP. Check p80_taxrev_dev.";
+	     );	
+      if(sameas(convMessage80, "anticip"),
+		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
+	     );
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;
@@ -255,20 +399,12 @@ if(s80_bool eq 1,
 );
 
 
+
+
 ***Fade out LT correction terms, they should only be important in the first iterations and might interfere with ST corrections.
 ***p80_etaLT(trade) = p80_etaLT(trade)*0.5;
 
                 
-OPTION decimals = 7;
-*display vm_costAdjNash.l;
-display p80_taxrev_agg;
-display p80_surplus;
-*display p80_surplusMax;
-OPTION decimals = 1;
-*display p80_surplusMaxRel;
-OPTION decimals = 3;
-display p80_surplusMax2100;
-display p80_surplusMaxTolerance;
 
 ***--------------------------
 ***  EMIOPT implementation
