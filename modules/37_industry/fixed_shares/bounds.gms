@@ -30,23 +30,23 @@ v37_CFuelshare.lo(t,regi)$(sameas(regi,"DEU"))=0.35;
 $IFTHEN.feShare not "%cm_feShareLimits%" == "off" 
 
 $ifthen.feShareScenario "%cm_feShareLimits%" == "electric"
-  pm_shfe_up(t,regi,"seel","indst")$(t.val ge 2050) = 0.6;
-  pm_shfe_up("2045",regi,"seel","indst") = 0.57;
-  pm_shfe_up("2040",regi,"seel","indst") = 0.52;
-  pm_shfe_up("2035",regi,"seel","indst") = 0.45;
-  pm_shfe_up("2030",regi,"seel","indst") = 0.40;
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.6;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.57;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.52;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.45;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.40;
 $elseif.feShareScenario "%cm_feShareLimits%" == "incumbents"
-  pm_shfe_up(t,regi,"seel","indst")$(t.val ge 2050) = 0.4;
-  pm_shfe_up("2045",regi,"seel","indst") = 0.38;
-  pm_shfe_up("2040",regi,"seel","indst") = 0.33;
-  pm_shfe_up("2035",regi,"seel","indst") = 0.30;
-  pm_shfe_up("2030",regi,"seel","indst") = 0.27;
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.4;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.38;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.33;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.30;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.27;
 $elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
-  pm_shfe_up(t,regi,"seel","indst")$(t.val ge 2050) = 0.5;
-  pm_shfe_up("2045",regi,"seel","indst") = 0.47;
-  pm_shfe_up("2040",regi,"seel","indst") = 0.42;
-  pm_shfe_up("2035",regi,"seel","indst") = 0.37;
-  pm_shfe_up("2030",regi,"seel","indst") = 0.35;
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.5;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.47;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.42;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.37;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.35;
 $endif.feShareScenario
 
 vm_shfe.up(t,regi,entyFe,sector)$pm_shfe_up(t,regi,entyFe,sector) = pm_shfe_up(t,regi,entyFe,sector);
