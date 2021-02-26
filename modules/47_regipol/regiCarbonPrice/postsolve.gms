@@ -308,7 +308,11 @@ $ifthen.cm_implicitFE "%cm_implicitFE%" == "exoTax"
 *** Exogenous FE implicit tax
 
 *** saving previous iteration value for implicit tax revenue
-	p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
+  p47_implFETax0(t,regi) = 
+    sum(entyFE,
+      p47_implFETax(t,regi,entyFE) * 
+      sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
+    );
 
 *** setting exogenous tax level
 ***		for region groups
@@ -332,16 +336,30 @@ $elseif.cm_implicitFE "%cm_implicitFE%" == "FEtarget"
 
 *** saving previous iteration value for implicit tax
 p47_implFETax_prevIter(t,all_regi,entyFe) = p47_implFETax(t,all_regi,entyFe);
-p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
+p47_implFETax0(t,regi) = 
+  sum(entyFE,
+    p47_implFETax(t,regi,entyFE) * 
+    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
+  );
 
-***  Calculating current FE level
+***  Calculating current FE level (-bunkers)
 ***		for region groups
 loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
-  p47_implFETargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
+  p47_implFETargetCurrent(ext_regi) = 
+    sum(all_regi$regi_group(ext_regi,all_regi), 
+	  sum(ttot2$sameas(ttot2,ttot), 
+	    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(ttot2,all_regi,entySe,entyFe,sector,emiMkt)))
+	  )
+    );
 );
 ***		for single regions (overwrites region groups)  
 loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (all_regi(ext_regi))),
-  p47_implFETargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
+  p47_implFETargetCurrent(ext_regi) = 
+    sum(all_regi$sameas(ext_regi,all_regi),
+	  sum(ttot2$sameas(ttot2,ttot),
+	    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(ttot2,all_regi,entySe,entyFe,sector,emiMkt)))
+      )
+ 	);
 );
 ***  calculating efficiency directive targets implicit tax rescale
 loop((ttot,ext_regi)$p47_implFETarget(ttot,ext_regi),	
