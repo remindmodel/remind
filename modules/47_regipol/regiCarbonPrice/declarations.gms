@@ -88,6 +88,12 @@ Parameter
 	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa)" / 2030.EUR_regi 0.1194863 /
 	p47_implFETarget_extended(ttot,ext_regi)         "final energy target with added bunkers and non-energy use [TWa]" 
 ;
+
+#cm_implFETarget "default = 2030.EUR_regi 1.26921. Only active if cm_implicitFE = FEtarget. Enforce EU Energy Efficiency Directive maximum final energy level of 956 Mtoe by 2030 for EU28 regions by exogenous taxes reflecting non price-driven measures, 
+#i.e. not influencing the carbon pricing -> 956 Mtoe (956 Mtoe -> 956 * 10^6 toe -> 956 * 10^6 toe * 41.868 GJ/toe -> 40025.808 * 10^6 GJ * 10^-9 EJ/GJ -> 40.025808 EJ * 1 TWa/31.536 EJ -> 1.26921 TWa)"
+
+90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 37.6812 EJ * 1 TWa/31.536 EJ -> 1.194863 TWa
+
 $endIf.implicitFEtarget
 
 $IFTHEN.exoTax "%cm_implFEExoTax%" == "off"
