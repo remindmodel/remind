@@ -38,9 +38,9 @@ display pm_taxCO2eq;
 
 *** Adjustment of final energy subsidies to avoid neg. implicit 2005 prices that result in huge demand increases in 2010 and 2015
 *** Maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429
-p21_tau_fe_sub_bit_st(ttot,regi,all_in)$p21_max_fe_sub(ttot,regi,all_in) = max(p21_tau_fe_sub_bit_st(ttot,regi,all_in),-p21_max_fe_sub(ttot,regi,all_in)*0.001/sm_EJ_2_TWa);
+pm_tau_fe_sub_bit_st(ttot,regi,all_in)$p21_max_fe_sub(ttot,regi,all_in) = max(pm_tau_fe_sub_bit_st(ttot,regi,all_in),-p21_max_fe_sub(ttot,regi,all_in)*0.001/sm_EJ_2_TWa);
 *** Subsidy proportional cap to avoid liquids increasing dramatically
-p21_tau_fe_sub_bit_st(ttot,regi,all_in)$p21_prop_fe_sub(ttot,regi,all_in) = p21_prop_fe_sub(ttot,regi,all_in) * p21_tau_fe_sub_bit_st(ttot,regi,all_in);
+pm_tau_fe_sub_bit_st(ttot,regi,all_in)$p21_prop_fe_sub(ttot,regi,all_in) = p21_prop_fe_sub(ttot,regi,all_in) * pm_tau_fe_sub_bit_st(ttot,regi,all_in);
 *** Maximum primary energy subsidy levels (in $/Gj) to provide plausible upper bound: 40$/barrel ~ 8 $/GJ"
 p21_tau_fuEx_sub(ttot,regi,enty)$f21_max_pe_sub(ttot,regi,enty) = max(p21_tau_fuEx_sub(ttot,regi,enty),-f21_max_pe_sub(ttot,regi,enty)*0.001/sm_EJ_2_TWa);
 
@@ -53,12 +53,12 @@ if(cm_fetaxscen ne 0,
 ***CASE 1: constant TAXES
   if(cm_fetaxscen eq 1,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+     loop(ttot$(ttot.val ge 2005), pm_tau_fe_tax_bit_st(ttot,regi,ppfen) = pm_tau_fe_tax_bit_st("2005",regi,ppfen));
   );
 ***CASE 2: constant TAXES except for the final energies and regions defined at the f21_tax_convergence.cs4r file
   if(cm_fetaxscen eq 2,
 	loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-    loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+    loop(ttot$(ttot.val ge 2005), pm_tau_fe_tax_bit_st(ttot,regi,ppfen) = pm_tau_fe_tax_bit_st("2005",regi,ppfen));
 
 	s21_tax_time  = 2050;
 	p21_tau_fe_tax_transport(ttot,regi,entyFe)$(f21_tax_convergence("2050",regi,entyFe) AND ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
@@ -69,7 +69,7 @@ if(cm_fetaxscen ne 0,
 ***CASE 3, 4: constant TAXES (same as CASE 1)
   if(cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_transport(ttot,regi,entyFe) = p21_tau_fe_tax_transport("2005",regi,entyFe));
-     loop(ttot$(ttot.val ge 2005), p21_tau_fe_tax_bit_st(ttot,regi,ppfen) = p21_tau_fe_tax_bit_st("2005",regi,ppfen));
+     loop(ttot$(ttot.val ge 2005), pm_tau_fe_tax_bit_st(ttot,regi,ppfen) = pm_tau_fe_tax_bit_st("2005",regi,ppfen));
   );
 
 ***----- SUBSIDIES  ----------------------------------
@@ -77,14 +77,14 @@ if(cm_fetaxscen ne 0,
 *** CASE 1: Constant subsidy (SSP5)
   if(cm_fetaxscen eq 1,
     loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub_transport(ttot,regi,entyFe)=p21_tau_fe_sub_transport("2005",regi,entyFe));
-    loop(ttot$(ttot.val ge 2005), p21_tau_fe_sub_bit_st(ttot,regi,ppfen) = p21_tau_fe_sub_bit_st("2005",regi,ppfen));
+    loop(ttot$(ttot.val ge 2005), pm_tau_fe_sub_bit_st(ttot,regi,ppfen) = pm_tau_fe_sub_bit_st("2005",regi,ppfen));
     loop(ttot$(ttot.val ge 2005), p21_tau_pe2se_sub(ttot,regi,te)=p21_tau_pe2se_sub("2005",regi,te));
     loop(ttot$(ttot.val ge 2005), p21_tau_fuEx_sub(ttot,regi,entyPE)=p21_tau_fuEx_sub("2005",regi,entyPE));
   );
 *** CASE 2 and 3 and 4: Global subsidies phase-out by 2030 (SSP1, SDP) and 2050 (SSP2) respectively
   if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 3 OR cm_fetaxscen eq 4,
      p21_tau_fe_sub_transport(ttot,regi,entyFe)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub_transport("2005",regi,entyFe);
-     p21_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fe_sub_bit_st("2005",regi,ppfen);
+     pm_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val eq 2010 OR ttot.val eq 2015)=pm_tau_fe_sub_bit_st("2005",regi,ppfen);
      p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_pe2se_sub("2005",regi,te);
      p21_tau_fuEx_sub(ttot,regi,entyPE)$(ttot.val eq 2010 OR ttot.val eq 2015)=p21_tau_fuEx_sub("2005",regi,entyPE);
     if(cm_fetaxscen eq 2 OR cm_fetaxscen eq 4, s21_tax_time = 2030);
@@ -97,10 +97,10 @@ if(cm_fetaxscen ne 0,
       p21_tau_fe_sub_transport("2015",regi,entyFe)+((s21_tax_value-p21_tau_fe_sub_transport("2015",regi,entyFe))*(ttot.val-2015)/(s21_tax_time-2015));
       p21_tau_fe_sub_transport(ttot,regi,entyFe)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
-      p21_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
+      pm_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
       =
-      p21_tau_fe_sub_bit_st("2015",regi,ppfen)+((s21_tax_value-p21_tau_fe_sub_bit_st("2015",regi,ppfen))*(ttot.val-2015)/(s21_tax_time-2015));
-      p21_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val>(s21_tax_time)) = s21_tax_value;
+      pm_tau_fe_sub_bit_st("2015",regi,ppfen)+((s21_tax_value-pm_tau_fe_sub_bit_st("2015",regi,ppfen))*(ttot.val-2015)/(s21_tax_time-2015));
+      pm_tau_fe_sub_bit_st(ttot,regi,ppfen)$(ttot.val>(s21_tax_time)) = s21_tax_value;
 
       p21_tau_pe2se_sub(ttot,regi,te)$(ttot.val > 2015 AND ttot.val<(s21_tax_time + 1))
       =
@@ -116,8 +116,8 @@ if(cm_fetaxscen ne 0,
   );
 );
 
-display p21_tau_fe_sub_bit_st, p21_tau_fe_sub_transport, p21_tau_fuEx_sub;
-display p21_tau_fe_tax_bit_st, p21_tau_fe_tax_transport;
+display pm_tau_fe_sub_bit_st, p21_tau_fe_sub_transport, p21_tau_fuEx_sub;
+display pm_tau_fe_tax_bit_st, p21_tau_fe_tax_transport;
 display p21_tau_pe2se_sub;
 
 *LB* initialization of vm_emiMac

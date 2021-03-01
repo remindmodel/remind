@@ -128,7 +128,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     # Write REMIND input file
     notGLO   <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     filename <- paste0("./core/input/f_macBaseMagpie_coupling.cs4r")
-    write.magpie(out[notGLO],filename)
+    write.magpie(out[notGLO,,],filename)
     write(paste0("*** EOF ",filename," ***"),file=filename,append=TRUE)
   }
   .agriculture_costs <- function(mag){
@@ -172,8 +172,8 @@ prepare <- function() {
   require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind, quietly = TRUE,warn.conflicts =FALSE)
-  require(moinput)
+  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
+  require(mrremind)
   require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
@@ -194,7 +194,7 @@ prepare <- function() {
   cat("\n====================\n")
 
   ## print the libraries version
-  installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "moinput", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
 
 
   load("config.Rdata")
@@ -351,9 +351,7 @@ prepare <- function() {
     regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping)
-    if(is.null(subsets[["EUR"]]))
-        subsets[["EUR"]] <- c("EUR")
+    subsets <- toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')

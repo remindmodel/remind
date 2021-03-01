@@ -15,37 +15,35 @@ Parameter
     ue_industry                      0.5   !! cement - chemicals - steel - other
 
       ue_cement                      1.7   !! energy, capital
-        en_cement                    0.7   !! non-electric, electric
+        en_cement                    0.3   !! non-electric, electric
           en_cement_non_electric     2.0   !! solids, liquids, gases, hydrogen
 
       ue_chemicals                   1.7   !! energy, capital
-        en_chemicals                 0.7   !! fuels and high-temperature heat, electricity
+        en_chemicals                 0.3   !! fuels and high-temperature heat, electricity
           en_chemicals_fhth          3.0   !! solids, liquids, gases, electricity
 
       ue_steel                       5     !! primary steel, secondary steel
         ue_steel_primary             1.7   !! energy, capital
-          en_steel_primary           0.7   !! furnace, electricity
+          en_steel_primary           0.3   !! furnace, electricity
             en_steel_furnace         2.0   !! solids, liquids, gases, hydrogen
         ue_steel_secondary           1.7   !! energy, capital
 
       ue_otherInd                    1.7   !! energy, capital
-        en_otherInd                  0.7   !! high-temperature heat, electricity
+        en_otherInd                  0.3   !! high-temperature heat, electricity
           en_otherInd_hth            2.0   !! solids, liquids, gases, hydrogen, heat
   /
 ;
 pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 
-*** converge substitution elasticities until 2105
-loop (cesOUt2cesIn(out,in)$(   sameas(in,"en_chemicals") 
-                            OR sameas(in,"en_otherInd")  ),
-  pm_cesdata_sigma(ttot,out)$( ttot.val ge 2005 )
-  = p37_cesdata_sigma(out)
-  + (p37_cesdata_sigma(in) - p37_cesdata_sigma(out))
-  * min(1, (ttot.val - 2005) / 100);
-);
-
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+
+$IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+pm_abatparam_Ind(ttot,regi,all_enty,steps)$( 
+                                    pm_abatparam_Ind(ttot,regi,all_enty,steps) )
+  = pm_abatparam_Ind(ttot,regi,all_enty,steps);
+  / %cm_INNOPATHS_Industry_CCS_markup%);
+$ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -104,22 +102,31 @@ Parameter
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.inc";
+$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
 $offdelim
   /
 ;
 
 s37_clinker_process_CO2 = 0.5262;
 
-*** FIXME *** this needs to be in moinput
+*** FIXME *** this needs to be in mrremind
 p37_clinker_cement_ratio("2005","CAZ") = 0.81;
 p37_clinker_cement_ratio("2005","CHA") = 0.58;
-p37_clinker_cement_ratio("2005","EUR") = 0.73;
+p37_clinker_cement_ratio("2005","DEU") = 0.73;
+p37_clinker_cement_ratio("2005","ECE") = 0.73;
+p37_clinker_cement_ratio("2005","ECS") = 0.73;
+p37_clinker_cement_ratio("2005","ENC") = 0.73;
+p37_clinker_cement_ratio("2005","ESC") = 0.73;
+p37_clinker_cement_ratio("2005","ESW") = 0.73;
+p37_clinker_cement_ratio("2005","EWN") = 0.73;
+p37_clinker_cement_ratio("2005","FRA") = 0.73;
+p37_clinker_cement_ratio("2005","UKI") = 0.73;
 p37_clinker_cement_ratio("2005","IND") = 0.71;
 p37_clinker_cement_ratio("2005","JPN") = 0.80;
 p37_clinker_cement_ratio("2005","LAM") = 0.70;
 p37_clinker_cement_ratio("2005","MEA") = 0.81;
-p37_clinker_cement_ratio("2005","NEU") = 0.81;
+p37_clinker_cement_ratio("2005","NEN") = 0.81;
+p37_clinker_cement_ratio("2005","NES") = 0.81;
 p37_clinker_cement_ratio("2005","OAS") = 0.80;
 p37_clinker_cement_ratio("2005","REF") = 0.80;
 p37_clinker_cement_ratio("2005","SSA") = 0.77;
@@ -137,10 +144,6 @@ p37_clinker_cement_ratio(t,regi)
 *** Cement demand reduction is implicit in the production function, so no extra
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
-
-if (cm_emiscen ne 1,
-  Execute_Loadpoint "input_ref.gdx" p37_cesIO_base = vm_cesIO.l;
-);
 
 *** FIXME calibration debug
 Parameter
@@ -164,10 +167,10 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
     feelhth_chemicals . fega_chemicals   1.5     2030        15
     feelhth_otherInd  . fega_otherInd    1.5     2030        15
 
-    feh2_cement       . fega_cement      1.4     2030        22
-    feh2_chemicals    . fega_chemicals   1.4     2030        22
-    feh2_steel        . fega_steel       1.4     2030        22
-    feh2_otherInd     . fega_otherInd    1.4     2030        22
+    feh2_cement       . fega_cement      1.1     2050        22
+    feh2_chemicals    . fega_chemicals   1.1     2050        22
+    feh2_steel        . fega_steel       1.1     2050        22
+    feh2_otherInd     . fega_otherInd    1.1     2050        22
 ;
 $offtext
 
@@ -177,24 +180,24 @@ pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","width")     = 15;
 pm_calibrate_eff_scale("feelhth_otherInd","fega_otherInd","level")       = 1.5;
 pm_calibrate_eff_scale("feelhth_otherInd","fega_otherInd","midperiod")   = 2030;
 pm_calibrate_eff_scale("feelhth_otherInd","fega_otherInd","width")       = 15;
-pm_calibrate_eff_scale("feh2_cement","fega_cement","level")              = 1.4;
-pm_calibrate_eff_scale("feh2_cement","fega_cement","midperiod")          = 2030;
+pm_calibrate_eff_scale("feh2_cement","fega_cement","level")              = 1.1;
+pm_calibrate_eff_scale("feh2_cement","fega_cement","midperiod")          = 2050;
 pm_calibrate_eff_scale("feh2_cement","fega_cement","width")              = 22;
-pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.4;
-pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2030;
+pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","level")        = 1.1;
+pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","midperiod")    = 2050;
 pm_calibrate_eff_scale("feh2_chemicals","fega_chemicals","width")        = 22;
-pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.4;
-pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2030;
+pm_calibrate_eff_scale("feh2_steel","fega_steel","level")                = 1.1;
+pm_calibrate_eff_scale("feh2_steel","fega_steel","midperiod")            = 2050;
 pm_calibrate_eff_scale("feh2_steel","fega_steel","width")                = 22;
-pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","level")          = 1.4;
-pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","midperiod")      = 2030;
+pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","level")          = 1.1;
+pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","midperiod")      = 2050;
 pm_calibrate_eff_scale("feh2_otherInd","fega_otherInd","width")          = 22;
 
-pm_ue_eff_target("ue_cement")           = 0.0075;
-pm_ue_eff_target("ue_chemicals")        = 0.001;
-pm_ue_eff_target("ue_steel_primary")    = 0.0075;
-pm_ue_eff_target("ue_steel_secondary")  = 0.005;
-pm_ue_eff_target("ue_otherInd")         = 0.0075;
+pm_ue_eff_target("ue_cement")           = 0.00475;
+pm_ue_eff_target("ue_chemicals")        = 0.008;
+pm_ue_eff_target("ue_steel_primary")    = 0.0015;
+pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
+pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

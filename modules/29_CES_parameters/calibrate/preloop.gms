@@ -456,6 +456,11 @@ q29_putty_obj
 q29_esubsConstraint
 /;
 
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve putty_paths minimizing v29_putty_obj using nlp;
 
 if ( NOT (( putty_paths.solvestat eq 1  
@@ -599,6 +604,11 @@ if ( sm_tmp2 gt 0,
       );
   );
    
+  if (execError > 0,
+    execute_unload "abort.gdx";
+    abort "at least one execution error occured, abort.gdx written";
+  );
+
   solve putty_paths minimizing v29_putty_obj using nlp;
 
 
@@ -1076,6 +1086,11 @@ loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1)
                                                * p29_capitalUnitProjections(regi,in,"0") !! index = 0, is the typical technology
 
 );
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve esubs minimizing v29_esub_err using nlp;
 
 if ( NOT ( esubs.solvestat eq 1  AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
@@ -1529,3 +1544,4 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
 
 $ONorder
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms
+

@@ -135,10 +135,10 @@ $ENDIF.macPriceETS
 
 *** Redefine the MAC price for sectors and regions within the ES
 $IFTHEN.macPriceES not "%cm_emiMktES%" == "off" 
-  loop((regi,enty)$(p47_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"ES")),
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"ES")),
     p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ES")* 1000;
   );
-  loop((regi,enty)$(p47_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"other")),
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"other")),
     p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
   );
 $ENDIF.macPriceES
@@ -472,8 +472,4 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 
 $endif.CO2priceDependent_AdjCosts
 
-*** FS: calculate electricity price of last iteration in trUSD2005/TWa
-pm_priceSeel(t,regi)=q32_balSe.m(t,regi,"seel")/(qm_budget.m(t,regi)+sm_eps);
-
-***Display "electricity price", pm_priceSeel;
 *** EOF ./core/presolve.gms

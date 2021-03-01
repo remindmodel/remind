@@ -13,7 +13,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   require(magclass)
   require(gdx)
   library(methods)
-  library(remind)
+  library(remind2)
   
   # delete entries in stack that contain needle and append new
   .setgdxcopy <- function(needle,stack,new){
@@ -24,7 +24,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   
   mainwd <- getwd() # save folder in which this script is executed
   
-  # retrieve REMIND settings
+  # Retrieve REMIND settings
   cfg_rem <- check_config(cfg_rem,paste0(path_remind,"config/default.cfg"),paste0(path_remind,"modules")) 
   cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
@@ -112,7 +112,6 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
-      ####### START REMIND #######
       cfg_rem$pathToMagpieReport <- report
       outfolder_rem <- submit(cfg_rem)
       ############################

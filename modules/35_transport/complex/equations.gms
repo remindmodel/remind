@@ -13,7 +13,7 @@ q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   ) 
   =e=
   (
-    sum(fe2ue(entyFe,entyUe,te), v_demFe(ttot,regi,entyFe,entyUe,te) )
+    sum(fe2ue(entyFe,entyUe,te), v35_demFe(ttot,regi,entyFe,entyUe,te) )
     - 
     sum(pc2te(entyFE2,entyUe,te,entyFE),                        !! couple production from FE to ES for heavy duty vehicles
 		  pm_prodCouple(regi,entyFE2,entyUe,te,entyFE) * vm_prodUe(ttot,regi,entyFE2,entyUe,te)
@@ -30,7 +30,7 @@ q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 
 *** Transformation from final energy to useful energy
 q35_transFe2Ue(t,regi,fe2ue(entyFe,entyUe,te))..
-    pm_eta_conv(t,regi,te) * v_demFe(t,regi,entyFe,entyUe,te)
+    pm_eta_conv(t,regi,te) * v35_demFe(t,regi,entyFe,entyUe,te)
     =e=
     vm_prodUe(t,regi,entyFe,entyUe,te);
 

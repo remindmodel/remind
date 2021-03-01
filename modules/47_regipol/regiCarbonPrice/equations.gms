@@ -50,8 +50,8 @@ q47_emiTarget_netGHG_noBunkers(t, regi)..
 	sum(se2fe(enty,enty2,te),
 		(
 		pm_emifac(t,regi,enty,enty2,te,"co2")
-		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*s_tgn_2_pgc
-		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*s_tgch4_2_pgc
+		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
+		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc
 		) * vm_demFeSector(t,regi,enty,enty2,"trans","other")
 	)
 ;
@@ -91,7 +91,7 @@ $endIf.quantity_regiCO2target
 ***---------------------------------------------------------------------------
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
-q21_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
+q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
   vm_taxrevimplFETax(t,regi)
   =e=
   sum(enty2$entyFE(enty2),

@@ -1,14 +1,14 @@
 *** SOF ./core/input/generisdata_tech.prn
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
-inco0       Initial investment costs given in $(2015)/kW electricity capacity
+inco0       Initial investment costs given in $(2015)/kW(output) capacity
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (for all but nuclear plants, there it is TW energy output over MT Uranium input)
 omf         Fixed operation and maintenace costs given as a fraction of investment costs
 omv         Variable operation and maintenance costs given in $(2015)/kWa energy production
 lifetime    given in years
-incolearn   Difference from inco0 to floor investment costs, given in $(2015)/kW electricity capacity for electricity generation technologies
+incolearn   Difference from inco0 to floor investment costs, given in $(2015)/kW(output)
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 $offtext
@@ -78,15 +78,17 @@ learn                                                   0.084       0.17        
 luse                                                                0.09                   0.021
 
 +                   elh2         dot         dhp      h2turb      h2curt    h2turbVRE   elh2VRE         h22ch4      MeOH
-tech_stat            1                                    2                                                3          3 
-inco0                360         480         360         600         700          0.1       0.1          700        800
-constrTme              2           2           1           2           2            1         1           2          2
+tech_stat            1                                    2                                                 3          3
+inco0                1600         480         360         600         700          0.1       0.1          700        800
+constrTme              2           2           1           2           2            1         1            2          2
 mix0                                                                                                                    
 eta                 0.62        0.30        0.80        0.40        0.62         0.40      0.80          0.8        0.7
 omf                 0.05        0.03        0.03        0.03        0.05         0.00      0.00          0.03       0.03
 omv                    3          12          12          24           0                                  3           12
 lifetime              30          25          25          30          30            3         3           30          30
-
+incolearn           1000
+ccap0             0.0005 
+learn               0.15
 
 +                 tdels     tdbiogas    tdfosgas    tdbiohos    tdfoshos       tdh2s       tdh2t      
 inco0               1800         360         360          60          60        1080        1400        
@@ -164,12 +166,15 @@ ccap0              0.003                   0.003
 learn               0.10                    0.10
 
 +              rockgrind         dac
-inco0               0.01        3600
+tech_stat                          3
+inco0               0.01       21600
 mix0                   0           0
 eta                 1.00        1.00
 omf                 0.84       0.025
 omv                    0           0
 lifetime              20          20
-
+incolearn                      18000
+ccap0                       0.000001
+learn                           0.15  
 
 *** EOF ./core/input/generisdata_tech.prn

@@ -644,8 +644,8 @@ q_emiAllGlob(t,emi(enty))..
   vm_co2eqMkt(ttot,regi,emiMkt)
   =e=
   vm_emiAllMkt(ttot,regi,"co2",emiMkt)
-  + (s_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
-     s_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
+  + (sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
+     sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
   - vm_emiMacSector(ttot,regi,"co2luc") $((cm_multigasscen eq 3) AND (sameas(emiMkt,"other")));	
 
 ***------------------------------------------------------
@@ -770,7 +770,7 @@ q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(tto
         =l=
         vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (cm_earlyreti_rate 
 *** more retirement possible for coal power plants in early time steps for Europe and USA, to account for relatively old fleet 
-		+ p_earlyreti_adjRate(regi,te)$(ttot.val lt 2035)
+		+ pm_earlyreti_adjRate(regi,te)$(ttot.val lt 2035)
 *** more retirement possible for first generation biofuels		
 		+ 0.05$(sameas(te,"biodiesel") or sameas(te, "bioeths")));
 
@@ -792,7 +792,7 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
 ***---------------------------------------------------------------------------
 *' Investment equation for end-use capital investments (energy service layer):
 ***---------------------------------------------------------------------------
-q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_startyear)..
+q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_startyear) ..
     vm_esCapInv(ttot,regi,teEs)
     =e=
     sum (fe2es(entyFe,esty,teEs),

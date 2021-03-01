@@ -6,12 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(lucode)
-slurm <- suppressWarnings(ifelse(system2('srun',stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
-  if (slurm) { 
-    library('remind',lib.loc = '/p/tmp/renatoro/REMIND-EU/reporting_library/lib/')  
-  } else {
-    library(remind)
-  }
+library(remind2)
 library(lusweave)
 library(mip)
 

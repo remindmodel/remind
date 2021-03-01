@@ -18,7 +18,6 @@ Parameters
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
 
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
-  p37_cesIO_base(ttot,all_regi,all_in)      "baseline scenario pf quantities"
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
 ;
@@ -38,8 +37,7 @@ Equations
   q37_IndCCS(ttot,all_regi,emiInd37)                      "limit industry emissions abatement"
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
-  q37_limit_specific_total_energy(ttot,all_regi,all_in)   "limit specific energy use to baseline level"
-  q37_arcane_FE_limits(ttot,all_regi,all_in,all_in)       "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"
+  q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

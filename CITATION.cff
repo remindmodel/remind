@@ -159,8 +159,8 @@ authors:
 
 
 title: REMIND - REgional Model of INvestments and Development
-version: "2.1.1"
-date-released: 2020-05-08
+version: "2.1.3"
+date-released: 2020-10-15
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
