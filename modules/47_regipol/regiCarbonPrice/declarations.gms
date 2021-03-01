@@ -77,7 +77,7 @@ Parameter
 	p47_implFETax_prevIter(ttot,all_regi,all_enty)   "previous iteration implicit final energy target tax"
 	p47_implFETax0(ttot,all_regi)					 "previous iteration implicit final energy target tax revenue"
 
-	p47_implFETax_iter(iteration,ttot,all_regi)      "final energy implicit tax per iteration"
+	p47_implFETax_iter(iteration,ttot,all_regi,all_enty) "final energy implicit tax per iteration"
 	p47_implFETax_Rescale_iter(iteration,ext_regi)   "final energy implicit tax rescale factor per iteration"    
 	p47_implFETargetCurrent_iter(iteration,ext_regi) "total final energy level per iteration"    
 ;
