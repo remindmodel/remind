@@ -307,14 +307,6 @@ $ENDIF.regicarbonprice
 $ifthen.cm_implicitFE "%cm_implicitFE%" == "exoTax"
 *** Exogenous FE implicit tax
 
-*** Updating original target to include bunkers and non-energy use
-p47_implFETarget_extended(ttot,ext_regi)$p47_implFETarget(ttot,ext_regi) = p47_implFETarget(ttot,ext_regi) 
-*** bunkers
-  + sum(regi$regi_group(ext_regi,regi), sum(se2fe(entySe,entyFe,te), vm_demFeSector.l(t,regi,entySe,entyFe,"trans","other")) )
-*** non-energy = 11.8% of total FE gases and liquids in calibrated data 
-  + 0.118 * ( sum(regi$regi_group(ext_regi,regi), pm_cesdata("2030",regi,"fegas","quantity") + pm_cesdata("2030",regi,"fehos","quantity") + pm_cesdata("2030",regi,"fepet","quantity") + pm_cesdata("2030",regi,"fedie","quantity") ) )
-  ;
-
 *** saving previous iteration value for implicit tax revenue
 	p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
 
@@ -337,6 +329,14 @@ p47_implFETarget_extended(ttot,ext_regi)$p47_implFETarget(ttot,ext_regi) = p47_i
 
 $elseif.cm_implicitFE "%cm_implicitFE%" == "FEtarget"
 *** Endogenous FE implicit tax calculate to reach total FE target
+
+*** Updating original target to include bunkers and non-energy use
+p47_implFETarget_extended(ttot,ext_regi)$p47_implFETarget(ttot,ext_regi) = p47_implFETarget(ttot,ext_regi) 
+*** bunkers
+  + sum(regi$regi_group(ext_regi,regi), sum(se2fe(entySe,entyFe,te), vm_demFeSector.l(t,regi,entySe,entyFe,"trans","other")) )
+*** non-energy = 11.8% of total FE gases and liquids in calibrated data 
+  + 0.118 * ( sum(regi$regi_group(ext_regi,regi), pm_cesdata("2030",regi,"fegas","quantity") + pm_cesdata("2030",regi,"fehos","quantity") + pm_cesdata("2030",regi,"fepet","quantity") + pm_cesdata("2030",regi,"fedie","quantity") ) )
+  ;
 
 *** saving previous iteration value for implicit tax
 p47_implFETax_prevIter(t,all_regi,entyFe) = p47_implFETax(t,all_regi,entyFe);
