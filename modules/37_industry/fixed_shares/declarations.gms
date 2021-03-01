@@ -35,7 +35,6 @@ Positive Variables
   vm_IndCCSCost(ttot,all_regi,all_enty)            "industry CCS cost"
   v37_expSlack(ttot,all_regi)                      "slack variable to avoid overflow on too high logistic function exponent"
   v37_H2share(ttot,all_regi)                       "H2 share in gases"
-  v37_CFuelshare(ttot,all_regi)                    "share of carbonaceous fuels (solids, liquids, gases) in total industry FE"
 ;
 
 Equations
@@ -48,7 +47,6 @@ Equations
   q37_H2Share(ttot,all_regi)                         "H2 share in gases"
   q37_costAddTeInv(ttot,all_regi)                    "additional industry hydrogen annual investment costs under low technology diffusion due to T&D conversion"
   q37_auxCostAddTeInv(ttot,all_regi)                 "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
-  q37_CFuelShare(ttot,all_regi)                      "calculate share of carbonaceous fuels (solids, liquids, gases) in total industry FE"
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/declarations.gms

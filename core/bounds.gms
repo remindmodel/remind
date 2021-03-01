@@ -529,11 +529,23 @@ v_shGreenH2.lo(t,regi)$(t.val gt 2025) = c_shGreenH2;
 v_shBioTrans.up(t,regi)$(t.val > 2020) = c_shBioTrans;
 
 ***----------------------------------------------------------------------------
-*** CCS limitations in Germany (for ARIADNE)
+*** bounds on final energy use (relevant in case some switches are acitvated that make pm_shfe_up and pm_shfe_lo non-zero)
 ***----------------------------------------------------------------------------
-*** only small amount of co2 injection ccs until 2030
+
+*** upper and lower bounds on FE carrier shares
+vm_shfe.up(t,regi,entyFe,sector)$pm_shfe_up(t,regi,entyFe,sector) = pm_shfe_up(t,regi,entyFe,sector);
+vm_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,regi,entyFe,sector);
+
+*** upper and lower bounds on gases+liquids share in FE
+vm_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
+vm_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
+
+
+
+
+*** only small amount of co2 injection ccs until 2030 in Germany
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
-*** no Pe2Se fossil CCS in Germany
+*** no Pe2Se fossil CCS in Germany, if c_noPeFosCCDeu = 1 chosen 
 vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
 
 *** FS: allow for H2 use in buildings only from 2030 onwards
