@@ -85,6 +85,7 @@ Parameter
 $ifthen.implicitFEtarget "%cm_implicitFE%" == "FEtarget"
 Parameter
 	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
+	p47_implFETarget_extended(ttot,ext_regi)         "final energy target with added bunkers and non-energy use [TWa]" 
 ;
 $endIf.implicitFEtarget
 

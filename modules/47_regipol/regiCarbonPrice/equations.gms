@@ -94,10 +94,9 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
   vm_taxrevimplFETax(t,regi)
   =e=
-  sum(entyFE,
-      p47_implFETax(t,regi,entyFE) * 
-      sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
-    )
+  sum(enty2$entyFE(enty2),
+  	p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
+  )
   - p47_implFETax0(t,regi) 
   ;
 

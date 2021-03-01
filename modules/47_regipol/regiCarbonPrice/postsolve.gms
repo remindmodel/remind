@@ -307,12 +307,16 @@ $ENDIF.regicarbonprice
 $ifthen.cm_implicitFE "%cm_implicitFE%" == "exoTax"
 *** Exogenous FE implicit tax
 
+*** Updating original target to include bunkers and non-energy use
+p47_implFETarget_extended(ttot,ext_regi)$p47_implFETarget(ttot,ext_regi) = p47_implFETarget(ttot,ext_regi) 
+*** bunkers
+  + sum(regi$regi_group(ext_regi,regi), sum(se2fe(entySe,entyFe,te), vm_demFeSector.l(t,regi,entySe,entyFe,"trans","other")) )
+*** non-energy = 11.8% of total FE gases and liquids in calibrated data 
+  + 0.118 * ( sum(regi$regi_group(ext_regi,regi), pm_cesdata("2030",regi,"fegas","quantity") + pm_cesdata("2030",regi,"fehos","quantity") + pm_cesdata("2030",regi,"fepet","quantity") + pm_cesdata("2030",regi,"fedie","quantity") ) )
+  ;
+
 *** saving previous iteration value for implicit tax revenue
-  p47_implFETax0(t,regi) = 
-    sum(entyFE,
-      p47_implFETax(t,regi,entyFE) * 
-      sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
-    );
+	p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
 
 *** setting exogenous tax level
 ***		for region groups
@@ -336,37 +340,23 @@ $elseif.cm_implicitFE "%cm_implicitFE%" == "FEtarget"
 
 *** saving previous iteration value for implicit tax
 p47_implFETax_prevIter(t,all_regi,entyFe) = p47_implFETax(t,all_regi,entyFe);
-p47_implFETax0(t,regi) = 
-  sum(entyFE,
-    p47_implFETax(t,regi,entyFE) * 
-    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))
-  );
+p47_implFETax0(t,regi) = sum(enty2$entyFE(enty2), p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe.l(t,regi,enty,enty2,te)));
 
-***  Calculating current FE level (-bunkers)
+***  Calculating current FE level
 ***		for region groups
 loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (NOT(all_regi(ext_regi)))),
-  p47_implFETargetCurrent(ext_regi) = 
-    sum(all_regi$regi_group(ext_regi,all_regi), 
-	  sum(ttot2$sameas(ttot2,ttot), 
-	    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(ttot2,all_regi,entySe,entyFe,sector,emiMkt)))
-	  )
-    );
+  p47_implFETargetCurrent(ext_regi) = sum(all_regi$regi_group(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
 );
 ***		for single regions (overwrites region groups)  
 loop((ttot,ext_regi)$(p47_implFETarget(ttot,ext_regi) AND (all_regi(ext_regi))),
-  p47_implFETargetCurrent(ext_regi) = 
-    sum(all_regi$sameas(ext_regi,all_regi),
-	  sum(ttot2$sameas(ttot2,ttot),
-	    sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (NOT (sameas(sector,"trans") AND sameas(emiMkt,"other") ) )), vm_demFeSector.l(ttot2,all_regi,entySe,entyFe,sector,emiMkt)))
-      )
- 	);
+  p47_implFETargetCurrent(ext_regi) = sum(all_regi$sameas(ext_regi,all_regi), sum(ttot2$sameas(ttot2,ttot), sum(se2fe(enty,,entyFe,te), vm_prodFe.l(ttot2,all_regi,enty,,entyFe,te))));
 );
 ***  calculating efficiency directive targets implicit tax rescale
 loop((ttot,ext_regi)$p47_implFETarget(ttot,ext_regi),	
   if(iteration.val lt 10,
-		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
+		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget_extended(ttot,ext_regi) ) ) ** 2; !! current final energy levels minus target 
   else 
-		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget(ttot,ext_regi) ) ) ** 1;
+		p47_implFETax_Rescale(ext_regi) = max(0.1, ( p47_implFETargetCurrent(ext_regi) / p47_implFETarget_extended(ttot,ext_regi) ) ) ** 1;
   );  
 );
 ***	updating efficiency directive targets implicit tax
@@ -390,7 +380,7 @@ p47_implFETax_iter(iteration,ttot,all_regi,entyFe) = p47_implFETax(ttot,all_regi
 p47_implFETax_Rescale_iter(iteration,ext_regi) = p47_implFETax_Rescale(ext_regi);
 p47_implFETargetCurrent_iter(iteration,ext_regi) = p47_implFETargetCurrent(ext_regi);
 
-display p47_implFETargetCurrent, p47_implFETarget, p47_implFETax_prevIter, p47_implFETax, p47_implFETax_Rescale, p47_implFETax_Rescale_iter, p47_implFETax_iter, p47_implFETargetCurrent_iter, p47_implFETax0;
+display p47_implFETargetCurrent, p47_implFETarget, p47_implFETarget_extended, p47_implFETax_prevIter, p47_implFETax, p47_implFETax_Rescale, p47_implFETax_Rescale_iter, p47_implFETax_iter, p47_implFETargetCurrent_iter, p47_implFETax0;
 
 $endIf.cm_implicitFE
 
