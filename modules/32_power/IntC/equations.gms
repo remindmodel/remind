@@ -218,7 +218,7 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	(1-v32_flexPriceShare(t,regi,te)) * pm_priceSeel(t,regi)$(cm_flex_tax eq 1 AND t.val ge 2025)
+	(1-v32_flexPriceShare(t,regi,te)) * p32_priceSeel(t,regi)$(cm_flex_tax eq 1 AND t.val ge 2025)
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms

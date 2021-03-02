@@ -132,6 +132,7 @@ pm_fe2es(ttot,regi,teEs) = 1;
 pm_shFeCes(ttot,regi,enty,in,teEs) = 0;
 
 *** initialize upper and lower bound to FE share parameters as zero (this will leave any FE share bounds non-activated)
+*** please set FE share bounds by modying this parameter in the sectormodules, e.g. 36_buildings and 37_industry datainput files
 pm_shfe_up(ttot,regi,entyFe,sector)=0;
 pm_shfe_lo(ttot,regi,entyFe,sector)=0;
 pm_shGasLiq_fe_up(ttot,regi,sector)=0;
@@ -416,7 +417,7 @@ pm_cf(ttot,regi,"elh2VRE") = 0.6;
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-table p_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
+table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
 $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
 $offdelim
