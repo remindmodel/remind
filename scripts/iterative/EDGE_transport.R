@@ -47,7 +47,9 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
-setConfig(regionmapping = gsub('config/', '', cfg$regionmapping))
+# set regionmapping compatible with REMIND-EU and REMIND-H12 configs
+setConfig(regionmapping = sub('.*\\/', '', cfg$regionmapping))
+
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 
