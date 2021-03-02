@@ -870,7 +870,7 @@ q_shBioTrans(t,regi)..
 ***---------------------------------------------------------------------------
 
 q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..
-  vm_shfe(t,regi,entyFe,sector) 
+  v_shfe(t,regi,entyFe,sector) 
   * sum(emiMkt$sector2emiMkt(sector,emiMkt), 
       sum(se2fe(entySe,entyFe2,te)$(entyFe2Sector(entyFe2,sector)),   
         vm_demFeSector(t,regi,entySe,entyFe2,sector,emiMkt)))
@@ -881,7 +881,7 @@ q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,r
 ;
 
 q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe_lo(t,regi,sector))..
-  vm_shGasLiq_fe(t,regi,sector) 
+  v_shGasLiq_fe(t,regi,sector) 
   * sum(emiMkt$sector2emiMkt(sector,emiMkt), 
       sum(se2fe(entySe,entyFe,te)$(entyFe2Sector(entyFe,sector)),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))

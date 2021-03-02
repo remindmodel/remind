@@ -121,6 +121,14 @@ s37_costDecayStart = cm_indst_costDecayStart;
 s37_costDecayEnd = cm_indst_H2costDecayEnd;
 
 
+*** FE Share Bounds
+*** intialize industry FE share bounds as non-activated
+pm_shfe_up(ttot,regi,entyFe,"indst")=0;
+pm_shfe_lo(ttot,regi,entyFe,"indst")=0;
+pm_shGasLiq_fe_up(ttot,regi,"indst")=0;
+pm_shGasLiq_fe_lo(ttot,regi,"indst")=0;
+
+
 *** Upper bound for electricity share in industry
 $IFTHEN.feShare not "%cm_feShareLimits%" == "off" 
 
@@ -143,6 +151,7 @@ $elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
   pm_shfe_up("2035",regi,"feels","indst") = 0.37;
   pm_shfe_up("2030",regi,"feels","indst") = 0.35;
 $endif.feShareScenario
+
 $ENDIF.feShare
 
 *** ARIADNE-specific EU switches bounds on gases+liquids share and H2 share in industry

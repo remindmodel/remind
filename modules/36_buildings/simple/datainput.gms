@@ -48,6 +48,13 @@ s36_costAddH2Inv = cm_build_H2costAddH2Inv;
 s36_costDecayStart = cm_build_costDecayStart;
 s36_costDecayEnd = cm_build_H2costDecayEnd;
 
+*** FE Share Bounds
+*** intialize buildings FE share bounds as non-activated
+pm_shfe_up(ttot,regi,entyFe,"build")=0;
+pm_shfe_lo(ttot,regi,entyFe,"build")=0;
+pm_shGasLiq_fe_up(ttot,regi,"build")=0;
+pm_shGasLiq_fe_lo(ttot,regi,"build")=0;
+
 *** RR: lower bound for gases and liquids share in buildings for an incumbents scenario
 $ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
   pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2050) = 0.25;
