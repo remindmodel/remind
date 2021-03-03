@@ -48,5 +48,30 @@ s36_costAddH2Inv = cm_build_H2costAddH2Inv;
 s36_costDecayStart = cm_build_costDecayStart;
 s36_costDecayEnd = cm_build_H2costDecayEnd;
 
+*** FE Share Bounds
+*** intialize buildings FE share bounds as non-activated
+pm_shfe_up(ttot,regi,entyFe,"build")=0;
+pm_shfe_lo(ttot,regi,entyFe,"build")=0;
+pm_shGasLiq_fe_up(ttot,regi,"build")=0;
+pm_shGasLiq_fe_lo(ttot,regi,"build")=0;
+
+*** RR: lower bound for gases and liquids share in buildings for an incumbents scenario
+$ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
+  pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2050) = 0.25;
+  pm_shGasLiq_fe_lo(t,regi,"build")$(t.val ge 2030 AND t.val le 2045) = 0.15 + (0.10/20)*(t.val-2030);
+$endif.feShareScenario
+
+*** FS: bounds for scenarios with a limited share of FE buildings district heat in EU regions
+if ((cm_HeatLim_b lt 1),
+  pm_shfe_up(t,regi,"fehes","build")$(regi_group("EUR_regi",regi) AND t.val gt 2030 AND t.val lt 2100) = cm_HeatLim_b+0.05;
+  pm_shfe_up(t,regi,"fehes","build")$(regi_group("EUR_regi",regi) AND t.val gt 2040 AND t.val lt 2100) = cm_HeatLim_b;
+);
+
+*** FS: bounds for scenarios with a limited share of FE buildings electricity in EU regions
+if ((cm_ElLim_b lt 1),
+  pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi) AND t.val gt 2030 AND t.val lt 2100) = cm_ElLim_b+0.05;
+  pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi) AND t.val gt 2040 AND t.val lt 2100) = cm_ElLim_b;
+);
+
 *** EOF ./modules/36_buildings/simple/datainput.gms
 

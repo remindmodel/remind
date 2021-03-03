@@ -171,18 +171,7 @@ q37_H2Share(t,regi)..
         vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
-*** carbonaceous Fe share in industry (solids, gases, liquids)
-*** needed to provide a lower bound for ensuring feedstock supply
-q37_CFuelShare(t,regi)..
-  v37_CFuelshare(t,regi) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$( entyFe37(entyFe)),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
-  =e=
-  sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fesos") OR SAMEAS(entyFe,"fegas")  OR SAMEAS(entyFe,"fehos") ),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
-;
+
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
 

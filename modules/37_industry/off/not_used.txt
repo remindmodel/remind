@@ -24,9 +24,10 @@ pm_ue_eff_target,parameter,not needed
 pm_fedemand,parameter,not needed
 vm_demFeSector,input,questionnaire
 vm_costAddTeInv,input,questionnaire
-vm_shfe,input,questionnaire
-pm_shfe_up,input,questionnaire
-pm_shfe_lo,input,questionnaire
 cm_indst_H2costAddH2Inv,input,questionnaire
 cm_indst_costDecayStart,input,questionnaire
 cm_indst_H2costDecayEnd,input,questionnaire
+pm_shGasLiq_fe_lo,parameter,not needed
+pm_shGasLiq_fe_up,parameter,not needed
+pm_shfe_lo,parameter,not needed
+pm_shfe_up,parameter,not needed
