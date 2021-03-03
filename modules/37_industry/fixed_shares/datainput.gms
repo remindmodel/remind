@@ -121,5 +121,46 @@ s37_costDecayStart = cm_indst_costDecayStart;
 s37_costDecayEnd = cm_indst_H2costDecayEnd;
 
 
+*** FE Share Bounds
+*** intialize industry FE share bounds as non-activated
+pm_shfe_up(ttot,regi,entyFe,"indst")=0;
+pm_shfe_lo(ttot,regi,entyFe,"indst")=0;
+pm_shGasLiq_fe_up(ttot,regi,"indst")=0;
+pm_shGasLiq_fe_lo(ttot,regi,"indst")=0;
+
+
+*** Upper bound for electricity share in industry
+$IFTHEN.feShare not "%cm_feShareLimits%" == "off" 
+
+$ifthen.feShareScenario "%cm_feShareLimits%" == "electric"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.6;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.57;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.52;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.45;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.40;
+$elseif.feShareScenario "%cm_feShareLimits%" == "incumbents"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.4;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.38;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.33;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.30;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.27;
+$elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.5;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.47;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.42;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.37;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.35;
+$endif.feShareScenario
+
+$ENDIF.feShare
+
+*** ARIADNE-specific EU switches bounds on gases+liquids share and H2 share in industry
+$ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on" 
+*** at least 15% liquids+gases in industry FE up to midcentury to guarantee feedstocks input
+  pm_shGasLiq_fe_lo(t,regi,"indst")$(t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.15; 
+*** at least 10% H2 in industry FE from 2040 onwards
+*** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
+$endif.feShareAriad
+
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

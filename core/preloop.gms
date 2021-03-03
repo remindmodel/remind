@@ -35,8 +35,8 @@ vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005)         = 0;
 vm_emiAllMkt.l(t,regi,enty,emiMkt) = 0;
 vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 
-vm_shfe.l(t,regi,enty,sector) = 0;
-vm_shGasLiq_fe.l(t,regi,sector) = 0;   
+v_shfe.l(t,regi,enty,sector) = 0;
+v_shGasLiq_fe.l(t,regi,sector) = 0;   
   
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;

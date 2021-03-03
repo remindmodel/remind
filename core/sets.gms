@@ -254,6 +254,9 @@ $endif
         tdgai_cs
         tdhoi_cs
         o_feel
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 /
 
 all_enty             "all types of quantities"
@@ -1101,6 +1104,9 @@ $endif
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdhes           "transmission and distribution for heat to stationary users"
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
 *        ccscomp         "compression of co2, CCS related"
 *        ccspipe         "transportation of co2, CCS related"
@@ -1847,9 +1853,14 @@ sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
         build.ES
         trans.ES
         trans.other
-		cdr.ETS
+	cdr.ETS
 /
 
+te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
+/
+        tdh2i.indst
+        tdh2b.build
+/
 
 macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
 /
@@ -2525,6 +2536,11 @@ teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
 /
       (tdels,tdelt,tdbiogas,tdfosgas,tdbiogat,tdfosgat,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
+/
+
+teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildlings and industry (which should not produce vm_prodFe in q_limitCapFe)"
+/
+        (tdh2i,tdh2b).1
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"

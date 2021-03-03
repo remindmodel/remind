@@ -127,7 +127,7 @@ q30_BioPEProdTotal(t,regi)..
 ;
 
 
-*** FS: limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a region EU subregion
+*** FS: limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
 q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi))..
         v30_BioPEProdTotal(t,regi)
         =l=
