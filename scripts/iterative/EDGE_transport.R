@@ -111,7 +111,13 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 ## optional average of prices
 average_prices = TRUE
 
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
+## calculate the ES demand (in million km)
+GDP = calcOutput("GDPppp", aggregate = T)[,, scenario, pmatch=TRUE]
+GDP <- as.data.table(GDP)
+GDP[, year := as.numeric(gsub("y", "", Year))][, Year := NULL]
+setnames(GDP, old = "ISO3", new = "region")
+ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario, GDP = GDP)
+
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
