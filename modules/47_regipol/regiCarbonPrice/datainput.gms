@@ -154,7 +154,6 @@ $ENDIF.quantity_regiCO2target
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
 	p47_implFETax(ttot,all_regi,entyFe) = 0;
-	p47_implFETax_prevIter(ttot,all_regi,entyFe) = 0;
 	p47_implFETax0(ttot,all_regi) = 0;
 
 $endIf.cm_implicitFE
