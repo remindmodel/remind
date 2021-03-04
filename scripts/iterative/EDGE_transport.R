@@ -22,6 +22,8 @@ require(devtools)
 library(rmndt)
 library(mrremind)
 
+print("Start of the EDGE-T iterative model run")
+
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
 
@@ -112,11 +114,7 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 average_prices = TRUE
 
 ## calculate the ES demand (in million km)
-GDP = calcOutput("GDPppp", aggregate = T)[,, scenario, pmatch=TRUE]
-GDP <- as.data.table(GDP)
-GDP[, year := as.numeric(gsub("y", "", Year))][, Year := NULL]
-setnames(GDP, old = "ISO3", new = "region")
-ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario, GDP = GDP)
+ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario)
 
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
@@ -355,3 +353,5 @@ writegdx.parameter("p35_fe2es.gdx", finalInputs$intensity, "p35_fe2es",
 writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
+
+print("End of the EDGE-T iterative model run")
