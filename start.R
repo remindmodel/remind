@@ -179,7 +179,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
 
 # check command-line arguments for testOneRegi and scenario_config file
-argv <- commandArgs(trailingOnly = TRUE)
+if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 config.file <- argv[1]
 
 # define arguments that are accepted
@@ -193,7 +193,7 @@ if (!all(known)) {
 }
 
 ###################### Choose submission type #########################
-slurmConfig <- choose_slurmConfig()
+if(!exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
 
 # Restart REMIND in existing results folder (if required by user)
 if ('--restart' %in% argv) {
