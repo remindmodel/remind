@@ -204,7 +204,6 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   =e=
   sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
 ; 
-  
 
 ***To be moved to specific modules---------------------------------------------------------------------------
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
@@ -495,6 +494,28 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 ;
 
 ***--------------------------------------------------
+*' energy emissions from fuel extraction  
+***--------------------------------------------------
+
+q_emiEnFuelEx(t,regi,emiTe(enty))..
+  v_emiEnFuelEx(t,regi,enty)
+  =e=
+***   emissions from non-conventional fuel extraction
+	sum(emi2fuelMine(enty,enty2,rlf),      
+		  p_cint(regi,enty,enty2,rlf)
+		* vm_fuExtr(t,regi,enty2,rlf)
+		)$( c_cint_scen eq 1 )
+***   emissions from conventional fuel extraction
+	+ (sum(pe2rlf(enty3,rlf2),
+      sum(enty2$(peFos(enty2)),   
+		    (p_cintraw(enty2)
+		     * pm_fuExtrOwnCons(regi, enty2, enty3) 
+		     * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))))$(sameas("co2",enty))
+;    
+		 
+
+
+***--------------------------------------------------
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
 q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
@@ -504,20 +525,8 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
     sum(emi2te(enty2,enty3,te,enty),     
       v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
-***   emissions from non-conventional fuel extraction
-	+ ( sum(emi2fuelMine(enty,enty2,rlf),      
-		  p_cint(regi,enty,enty2,rlf)
-		* vm_fuExtr(t,regi,enty2,rlf)
-		)$( c_cint_scen eq 1 )
-	 )$(sameas(emiMkt,"ETS"))
-***   emissions from conventional fuel extraction
-	+ ( sum(pe2rlf(enty3,rlf2),sum(enty2,      
-		 (p_cintraw(enty2)
-		  * pm_fuExtrOwnCons(regi, enty2, enty3) 
-		  * vm_fuExtr(t,regi,enty3,rlf2)
-		 )$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0)    
-		))
-	)$(sameas(emiMkt,"ETS"))
+***   energy emissions fuel extraction
+	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
 ***   Industry CCS emissions
 	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
@@ -545,7 +554,7 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
   )
 *** CDR from CDR module
 	+	vm_emiCdr(t,regi,emi)$(sameas(emiMkt,"ETS")) 
-*** Exogenous emissions (F-Gases)
+*** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
 ;
 
