@@ -10,8 +10,6 @@ sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_emiFgas,input,questionnaire
 vm_cesIO,input,questionnaire
-vm_prodSe,input,questionnaire
-vm_prodFe,input,questionnaire
 pm_pvp,input,questionnaire
 pm_ttot_val,input,questionnaire
 pm_ts,input,questionnaire
@@ -20,7 +18,6 @@ cm_co2_tax_growth,input,questionnaire
 cm_startyear,input,questionnaire
 cm_iterative_target_adj,input,questionnaire
 cm_expoLinear_yearStart,input,questionnaire
-pm_prodCouple,input,questionnaire
 pm_bunker_share_in_nonldv_fe,input,questionnaire
 pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire

@@ -9,8 +9,6 @@ cm_emiscen, switch, ???
 cm_co2_tax_2020, switch, ???
 sm_c_2_co2,switch, ???
 vm_cesIO,variable,???
-vm_prodSe,variable,???
-vm_prodFe,variable,???
 pm_pvp,parameter,???
 pm_ttot_val,parameter,???
 pm_ts,parameter,???
@@ -18,8 +16,6 @@ cm_co2_tax_growth,switch,???
 cm_startyear,switch,???
 cm_iterative_target_adj,switch,???
 cm_expoLinear_yearStart,switch,???
-pm_prodCouple,parameter,???
-pm_bunker_share_in_nonldv_fe,parameter,???
 vm_co2eq,variable,???
 sm_DptCO2_2_TDpGtC,scalar,???
 vm_emiFgas,input,questionnaire

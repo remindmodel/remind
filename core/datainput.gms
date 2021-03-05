@@ -410,6 +410,12 @@ pm_cf(ttot,regi,"apcardiefft") = 1;
 pm_cf(ttot,regi,"apcardieffH2t") = 1;
 pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
+*short-term fix for new synfuel td technologies
+pm_cf(ttot,regi,"tdsyngas") = 0.65;
+pm_cf(ttot,regi,"tdsynhos") = 0.6;
+pm_cf(ttot,regi,"tdsynpet") = 0.7;
+pm_cf(ttot,regi,"tdsyndie") = 0.7;
+
 
 table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
@@ -563,6 +569,7 @@ $include "./core/input/f_emiFgas.cs4r"
 $offdelim
 /
 ;
+
 
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 /

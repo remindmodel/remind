@@ -6,13 +6,10 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 sm_c_2_co2,switch, ???
-vm_prodSe,variable,???
-vm_prodFe,variable,???
 pm_ttot_val,parameter,???
 cm_emiscen,switch,???
 cm_iterative_target_adj,switch,???
 cm_expoLinear_yearStart,switch,???
-pm_prodCouple,parameter,???
 pm_bunker_share_in_nonldv_fe,parameter,???
 vm_co2eq,variable,???
 vm_cesIO,variable,???

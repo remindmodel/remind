@@ -10,8 +10,6 @@ cm_peakBudgYr,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_emiFgas,input,questionnaire
 vm_cesIO,input,questionnaire
-vm_prodSe,input,questionnaire
-vm_prodFe,input,questionnaire
 pm_pvp,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire
@@ -30,5 +28,4 @@ cm_expoLinear_yearStart,input,questionnaire
 cm_carbonprice_temperatureLimit,input,questionnaire
 cm_taxCO2inc_after_peakBudgYr,input,questionnaire
 cm_CO2priceRegConvEndYr,input,questionnaire
-pm_prodCouple,input,questionnaire
 pm_bunker_share_in_nonldv_fe,input,questionnaire

@@ -30,7 +30,7 @@ q39_shSynTrans(t,regi)..
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynTrans(t,regi)
     =e=
-    vm_prodSe(t,regi,"seh2","seliqbio","MeOH")
+    vm_prodSe(t,regi,"seh2","seliqsyn","MeOH")
 ;
 
 *** share of synthetic gas in all SE gases
@@ -40,7 +40,7 @@ q39_shSynGas(t,regi)..
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_sega",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynGas(t,regi)
     =e=
-    vm_prodSe(t,regi,"seh2","segabio","h22ch4")
+    vm_prodSe(t,regi,"seh2","segasyn","h22ch4")
 ;
 
 
