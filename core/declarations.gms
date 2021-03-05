@@ -182,6 +182,10 @@ pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling ef
 /   /
 
 pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
+* Fuel Prices
+pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
+pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
+p_PEPrice(ttot,all_regi,all_enty)                     "parameter to capture all PE prices (tr$2005/TWa)"
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
