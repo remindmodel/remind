@@ -214,10 +214,11 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** Below, pm_SEPrice(t,regi,"seel") is the (average) electricity price from the last iteration. 
 *** Flexible technologies benefit (v32_flexPriceShare < 1),
 *** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
+*** Flexibility tax is switched only if cm_flex_tax = 1 and is active from 2025 onwards. 
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	((1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel"))$(cm_flex_tax eq 1 AND t.val ge 2025)
+	(1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel")$(cm_flex_tax eq 1 AND t.val ge 2025)
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms

@@ -22,6 +22,8 @@ require(devtools)
 library(rmndt)
 library(mrremind)
 
+print("Start of the EDGE-T iterative model run")
+
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
 
@@ -47,7 +49,9 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
-setConfig(regionmapping = gsub('config/', '', cfg$regionmapping))
+# set regionmapping compatible with REMIND-EU and REMIND-H12 configs
+setConfig(regionmapping = sub('.*\\/', '', cfg$regionmapping))
+
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
 
@@ -111,7 +115,9 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 ## optional average of prices
 average_prices = TRUE
 
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
+## calculate the ES demand (in million km)
+ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario)
+
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
@@ -349,3 +355,5 @@ writegdx.parameter("p35_fe2es.gdx", finalInputs$intensity, "p35_fe2es",
 writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
+
+print("End of the EDGE-T iterative model run")

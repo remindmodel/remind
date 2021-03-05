@@ -77,7 +77,7 @@ Parameter
 	p47_implFETax_prevIter(ttot,all_regi,all_enty)   "previous iteration implicit final energy target tax"
 	p47_implFETax0(ttot,all_regi)					 "previous iteration implicit final energy target tax revenue"
 
-	p47_implFETax_iter(iteration,ttot,all_regi)      "final energy implicit tax per iteration"
+	p47_implFETax_iter(iteration,ttot,all_regi,all_enty) "final energy implicit tax per iteration"
 	p47_implFETax_Rescale_iter(iteration,ext_regi)   "final energy implicit tax rescale factor per iteration"    
 	p47_implFETargetCurrent_iter(iteration,ext_regi) "total final energy level per iteration"    
 ;
@@ -85,6 +85,8 @@ Parameter
 $ifthen.implicitFEtarget "%cm_implicitFE%" == "FEtarget"
 Parameter
 	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
+	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa)" / 2030.EUR_regi 0.1194863 /
+	p47_implFETarget_extended(ttot,ext_regi)         "final energy target with added bunkers and non-energy use [TWa]" 
 ;
 $endIf.implicitFEtarget
 

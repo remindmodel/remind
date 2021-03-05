@@ -6,11 +6,12 @@
 # |  Contact: remind@pik-potsdam.de
 
 # Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
-if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
-  firstIteration = TRUE
-  cat("\nExoGAINS - log for first iteration...\n\n")
-} else {
-  firstIteration = FALSE
+firstIteration = FALSE
+if (file.exists("log.txt")){
+  if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
+    firstIteration = TRUE
+    cat("\nExoGAINS - log for first iteration...\n\n")
+  }
 }
 
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
