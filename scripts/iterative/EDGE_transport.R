@@ -66,10 +66,11 @@ if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
   quit()
 }
 
+## learning is OFF by default
+learning = FALSE
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
 EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
-
 
 ## input data loading
 input_folder = paste0("../../modules/35_transport/edge_esm/input/")
@@ -121,7 +122,9 @@ ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 
-if (file.exists(datapath("demand_previousiter.RDS"))) {
+if (file.exists(datapath("demand_previousiter.RDS")) & learning) {
+  ## load previous iteration number of cars
+  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
@@ -144,14 +147,15 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
       gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
       ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
       rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
-      nonfuel_costs = nonfuel_costs_list$nonfuel_costs
-      capcost4W = nonfuel_costs_list$capcost4W
-      saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-      saveRDS(capcost4W, "capcost_learning.RDS")
+
+  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+  capcost4W = nonfuel_costs_list$capcost4W
+  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+  saveRDS(capcost4W, "capcost_learning.RDS")
    } else {
-      stations = NULL
       totveh = NULL
    }
+
 ## load price
 REMIND_prices <- merge_prices(
   gdx = gdx,
@@ -210,7 +214,6 @@ logit_data <- calculate_logit_inconv_endog(
   logit_params = logit_params,
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
-  stations = if (!is.null(stations)) stations,
   totveh = if (!is.null(totveh)) totveh,
   techswitch = techswitch)
 
@@ -247,7 +250,7 @@ shares_int_dem <- shares_intensity_and_demand(
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
+norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## totla demand normalized to 1; if opt$reporting, in million km
 
 if (opt$reporting) {
   saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
@@ -264,12 +267,12 @@ if (opt$reporting) {
 
   vint <- vintages[["vintcomp_startyear"]]
   dem <- shares_int_dem$demandF_plot_pkm
-  vint <- dem[vint, on=c("iso", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
+  vint <- dem[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
   vint <- vint[!is.na(demand_F)][
   , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
   vint[, demand_F := demand_F * 1e6] # million pkm -> pkm
 
-  vint <- loadFactor[vint, on=c("year", "iso", "vehicle_type")]
+  vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
   vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
@@ -284,15 +287,17 @@ num_veh_stations = calc_num_vehicles_stations(
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
     c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
+  intensity = intensity,
   techswitch = techswitch,
-  loadFactor = loadFactor)
+  loadFactor = loadFactor,
+  EDGE2teESmap = EDGE2teESmap,
+  rep = opt$reporting)
 
 ## save number of vehicles for next iteration
-saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
-saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
-saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS"))
+saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))  ## in million veh
+saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS")) ## in million veh
 ## save the demand for next iteration renaming the column
-setnames(ES_demand, old ="demand", new = "demandpr")
+setnames(ES_demand, old ="demand", new = "demandpr")                  ## in million km
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 
 
@@ -300,6 +305,7 @@ saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 budget <- calculate_capCosts(
   base_price=prices$base,
   Fdemand_ES = shares_int_dem[["demandF_plot_pkm"]],
+  stations = num_veh_stations$stations,
   EDGE2CESmap = EDGE2CESmap,
   EDGE2teESmap = EDGE2teESmap,
   REMINDyears = REMINDyears,
