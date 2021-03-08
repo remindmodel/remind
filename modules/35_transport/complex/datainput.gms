@@ -64,9 +64,9 @@ $offdelim
 /
 ;
 
-pm_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
+p35_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
 
-display pm_bunker_share_in_nonldv_fe;
+display p35_bunker_share_in_nonldv_fe;
 
 
 *** RP: to be able to better reproduce the 2010 decrease of liquids and solids demand in the US, additionally decrease the refineries build-up in 2005:
