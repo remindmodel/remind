@@ -297,7 +297,7 @@ num_veh_stations = calc_num_vehicles_stations(
 saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))  ## in million veh
 saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS")) ## in million veh
 ## save the demand for next iteration renaming the column
-setnames(ES_demand, old ="demand", new = "demandpr")                  ## in million km
+setnames(ES_demand, old ="demand", new = "demandpr")                  ## in million passenger-km
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 
 
