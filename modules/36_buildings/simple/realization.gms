@@ -22,5 +22,6 @@ $Ifi "%phase%" == "declarations" $include "./modules/36_buildings/simple/declara
 $Ifi "%phase%" == "datainput" $include "./modules/36_buildings/simple/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/36_buildings/simple/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/36_buildings/simple/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/36_buildings/simple/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/36_buildings/simple.gms

@@ -553,6 +553,6 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
 *** FS: limit H2 infrastructure capacity additions 2005-2020 to 80%, to be more in line with historical trend
 *** global H2 consumption increased about 30% between 2005-2018
-vm_cap.up("2020",regi,"tdh2s","1") = pm_EN_demand_from_initialcap2(regi,"feh2s") / pm_cf("2020",regi,"tdh2s") * 1.8;
+***vm_cap.up("2020",regi,"tdh2s","1") = pm_EN_demand_from_initialcap2(regi,"feh2s") / pm_cf("2020",regi,"tdh2s") * 1.8;
 
 *** EOF ./core/bounds.gms

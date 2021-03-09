@@ -48,6 +48,7 @@ $Ifi "%phase%" == "equations" $include "./modules/32_power/RLDC/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/32_power/RLDC/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/32_power/RLDC/bounds.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/32_power/RLDC/presolve.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/32_power/RLDC/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/32_power/RLDC/realization.gms

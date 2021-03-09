@@ -4,8 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/32_power/RLDC/presolve.gms
+*** SOF ./modules/36_buildings/simple/postsolve.gms
 
 
+*** calculation of FE Buildings Prices (useful for internal use and reporting purposes)
+pm_FEPrice(t,regi,entyFE,"build",emiMkt)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
+       q36_demFeBuild.m(t,regi,entyFE,emiMkt) / qm_budget.m(t,regi);
 
-*** EOF ./modules/32_power/RLDC/presolve.gms
+*** EOF ./modules/36_buildings/simple/postsolve.gms

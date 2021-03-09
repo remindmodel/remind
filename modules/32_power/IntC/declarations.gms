@@ -14,7 +14,6 @@ parameters
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
-    p32_priceSeel(ttot,all_regi)                     "parameter with electricity price from last iteration (unit: trUSD/TWa)"
 ;
 
 scalars

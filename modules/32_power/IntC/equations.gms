@@ -172,7 +172,7 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 *** The formulation assumes a cubic price duration curve. That is, the effective electricity price the flexible technologies sees
 *** depends on the capacity factor (CF) with a cubic function centered at (0.5,1): 
 *** p32_PriceDurSlope * (CF-0.5)^3 + 1, 
-*** Hence, at CF = 0.5, the REMIND average price p32_priceSeel is paid. 
+*** Hence, at CF = 0.5, the REMIND average price pm_SEPrice(t,regi,"seel") is paid. 
 *** To get the average electricity price that a flexible technology sees at a certain CF, 
 *** we need to integrate this function with respect to CF and divide by CF. This gives the formulation below:
 *** v32_flexPriceShareMin = p32_PriceDurSlope * ((CF-0.5)^4-0.5^4) / (4*CF) + 1.
@@ -211,14 +211,14 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** This calculates the flexibility benefit or cost per unit electricity input 
 *** of flexibile or inflexibly technology. 
 *** In the tax module, vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation. 
-*** Below, p32_priceSeel is the (average) electricity price from the last iteration. 
+*** Below, pm_SEPrice(t,regi,"seel") is the (average) electricity price from the last iteration. 
 *** Flexible technologies benefit (v32_flexPriceShare < 1),
 *** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
 *** Flexibility tax is switched only if cm_flex_tax = 1 and is active from 2025 onwards. 
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	(1-v32_flexPriceShare(t,regi,te)) * p32_priceSeel(t,regi)$(cm_flex_tax eq 1 AND t.val ge 2025)
+	(1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel")$(cm_flex_tax eq 1 AND t.val ge 2025)
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms
