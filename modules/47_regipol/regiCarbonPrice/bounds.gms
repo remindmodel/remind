@@ -40,11 +40,22 @@ vm_deltaCap.up(t,regi,teCCS,rlf)$( (t.val le %cm_CCSRegiPol%) AND (regi_group("E
 $ENDIF.CCSinvestment
 
 
+** European regions coal capacity phase-out based on Beyond Coal 2021 (https://beyond-coal.eu/2021/03/03/overview-of-national-phase-out-announcements-march-2021/), whith adjustment for possible delay in Italy
 $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off" 
 
-***UK Coal capacity phase-out
-    vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
-    vm_cap.up(t,regi,"pc","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"UKI"))) = 1E-6;
+    vm_cap.up(t,regi,"pc","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"ESW") or sameas(regi,"FRA") )) = 1E-6;
+    vm_cap.up(t,regi,"pc","1")$((t.val ge 2030) and (t.val ge cm_startyear) and (sameas(regi,"ENC") or sameas(regi,"ESC") or sameas(regi,"EWN") )) = 1E-6;
+
+*** DEU coal capacity phase-out
+    vm_cap.up("2020","DEU","tnrs","1")$(cm_startyear le 2020) = 38.028/1000;
+    vm_cap.up("2025","DEU","tnrs","1")$(cm_startyear le 2025) = 25.125/1000;
+    vm_cap.up("2030","DEU","tnrs","1")$(cm_startyear le 2020) = 16.7/1000;
+    vm_cap.up("2035","DEU","tnrs","1")$(cm_startyear le 2025) = 6.375/1000;
+    vm_cap.up(t,"DEU","tnrs","1")$((t.val ge 2040) and (t.val ge cm_startyear)) = 1E-6;
+
+*** UK coal capacity phase-out
+    vm_cap.up("2020","UKI","pc","1")$(cm_startyear le 2020) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
+    vm_cap.up(t,"UKI","pc","1")$((t.val ge 2025) and (t.val ge cm_startyear)) = 1E-6;
 
 $ENDIF.CoalRegiPol  
 
