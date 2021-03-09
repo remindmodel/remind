@@ -47,11 +47,11 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_cap.up(t,regi,"pc","1")$((t.val ge 2030) and (t.val ge cm_startyear) and (sameas(regi,"ENC") or sameas(regi,"ESC") or sameas(regi,"EWN") )) = 1E-6;
 
 *** DEU coal capacity phase-out
-    vm_cap.up("2020","DEU","tnrs","1")$(cm_startyear le 2020) = 38.028/1000;
-    vm_cap.up("2025","DEU","tnrs","1")$(cm_startyear le 2025) = 25.125/1000;
-    vm_cap.up("2030","DEU","tnrs","1")$(cm_startyear le 2020) = 16.7/1000;
-    vm_cap.up("2035","DEU","tnrs","1")$(cm_startyear le 2025) = 6.375/1000;
-    vm_cap.up(t,"DEU","tnrs","1")$((t.val ge 2040) and (t.val ge cm_startyear)) = 1E-6;
+    vm_cap.up("2020","DEU","pc","1")$(cm_startyear le 2020) = 38.028/1000;
+    vm_cap.up("2025","DEU","pc","1")$(cm_startyear le 2025) = 25.125/1000;
+    vm_cap.up("2030","DEU","pc","1")$(cm_startyear le 2020) = 16.7/1000;
+    vm_cap.up("2035","DEU","pc","1")$(cm_startyear le 2025) = 6.375/1000;
+    vm_cap.up(t,"DEU","pc","1")$((t.val ge 2040) and (t.val ge cm_startyear)) = 1E-6;
 
 *** UK coal capacity phase-out
     vm_cap.up("2020","UKI","pc","1")$(cm_startyear le 2020) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
