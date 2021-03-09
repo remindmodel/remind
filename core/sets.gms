@@ -176,31 +176,36 @@ $endif
         tdelb           "transmission and distribution for electricity to buildings"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
-		tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+	tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
         tdbiogai        "transmission and distribution for gas from biomass origin to industry"
-		tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+	tdfosgai        "transmission and distribution for gas from fossil origin to industry"
         tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
-		tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
+	tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
         tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
-		tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+	tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
         tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
-		tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+	tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
         tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
         tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
         tdh2t           "transmission and distribution for hydrogen to transportation"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
-		tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
+	tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
         tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
         tdfossoi        "transmission and distribution for solids from fossil origin to industry"
         tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
-		tdfossob        "transmission and distribution for solids from fossil origin to buildings"
+	tdfossob        "transmission and distribution for solids from fossil origin to buildings"
         tdhes           "transmission and distribution for heat to stationary users"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
@@ -272,9 +277,10 @@ all_enty             "all types of quantities"
         pebiolc      "PE biomass lignocellulosic"
         pebios       "PE biomass sugar and starch"
         pebioil      "PE biomass sunflowers, palm oil, etc"
-		all_seliq	 "all to SE liquids" 
+	all_seliq	 "all to SE liquids" 
 		seliqbio     "SE liquids from biomass (ex. ethanol)"
 		seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
+                seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
         all_seso	 "all to SE solids" 
 		sesobio      "SE solids from biomass"
 		sesofos      "SE solids from fossil pe"
@@ -283,6 +289,7 @@ all_enty             "all types of quantities"
         all_sega	 "all to SE gas" 
 		segabio      "SE gas from biomass"
 		segafos      "SE gas from fossil pe"
+                segasyn      "SE synthetic gas from H2"
         sehe         "SE district heating and heat pumps"
         fegas        "FE gas stationary"
         fegab
@@ -1084,23 +1091,28 @@ $endif
         fnrs            "fast nuclear reactor (simple structure)"
         elh2            "hydrogen elecrolysis"
         h2turb          "hydrogen turbine for electricity production"
-		elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+	elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2curt      	"hydrogen production from curtailment"
         tdels           "transmission and distribution for electricity to stationary users"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
         tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
-        tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
+        tdbiogat        "transmission and distribution for gas from synthetic origin to transportation"
         tdfosgat        "transmission and distribution for gas from biomass origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to stationary users"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
         tdh2t           "transmission and distribution for hydrogen to transportation"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
         tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
-		tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+	tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdhes           "transmission and distribution for heat to stationary users"
@@ -1445,13 +1457,15 @@ enty(all_enty)       "all types of quantities"
         pebios       "primary energy biomass sugar nd starch"
         pebioil      "primary energy biomass sunflowers, palm oil, etc"
         seliqbio     "secondary energy liquids from biomass (ex. ethanol)"
-		seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
+	seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
+        seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-		sesofos      "secondary energy solids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
         seel         "secondary energy electricity"
         seh2         "secondary energy hydrogen"
         segabio      "secondary energy gas from biomass"
-		segafos      "secondary energy gas from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+        segasyn      "secondary energy synthetic gas from H2"
         sehe         "secondary energy district heating and heat pumps"
         fegas        "final energy gas stationary"
         fehos        "final energy heating oil stationary"
@@ -1585,13 +1599,15 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
 entySe(all_enty)       "secondary energy types"
 /
         seliqbio     "secondary energy liquids from biomass"
-		seliqfos     "secondary energy liquids from fossil primary energy"
+	seliqfos     "secondary energy liquids from fossil primary energy"
+        seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-		sesofos      "secondary energy solids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
         seel         "SE electricity"
         seh2         "SE hydrogen"
         segabio      "secondary energy gas from biomass"
-		segafos      "secondary energy gas from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+        segasyn      "secondary energy synthetic gas from H2"
         sehe         "SE district heating nd heat pumps"
 /
 
@@ -2187,10 +2203,12 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
 /
 	all_seliq.seliqbio
 	all_seliq.seliqfos
+        all_seliq.seliqsyn
 	all_seso.sesobio
 	all_seso.sesofos
 	all_sega.segabio
 	all_sega.segafos
+        all_sega.segasyn
 /
 
 *RP* mappings for storage technologies
@@ -2234,8 +2252,10 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seel.feels.tdels
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
+        segasyn.fegas.tdsyngas
         seliqbio.fehos.tdbiohos
         seliqfos.fehos.tdfoshos
+        seliqsyn.fehos.tdsynhos
         sesobio.fesos.tdbiosos
         sesofos.fesos.tdfossos
         seh2.feh2s.tdh2s
@@ -2243,8 +2263,10 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seel.feelt.tdelt
         seliqbio.fepet.tdbiopet
         seliqfos.fepet.tdfospet
+        seliqsyn.fepet.tdsynpet
         seliqbio.fedie.tdbiodie
         seliqfos.fedie.tdfosdie
+        seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
 fete(all_enty,all_te) "map final energy to technologies"
@@ -2535,7 +2557,7 @@ teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 
 teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
 /
-      (tdels,tdelt,tdbiogas,tdfosgas,tdbiogat,tdfosgat,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
+      (tdels,tdelt,tdbiogas,tdfosgas,tdsyngas,tdbiogat,tdfosgat,tdsyngat,tdbiohos,tdfoshos,tdsynhos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdsyndie,tdbiopet,tdfospet,tdsynpet,tdbiosos,tdfossos,tdhes) . 1
 /
 
 teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildlings and industry (which should not produce vm_prodFe in q_limitCapFe)"
@@ -2608,13 +2630,17 @@ sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)	 "map sectors to techno
         pebiolc.sesobio.biotr.res
         pebiolc.sesobio.biotrmod.indst
         seliqbio.fehos.tdbiohos.indst
-		seliqfos.fehos.tdfoshos.indst
+	seliqfos.fehos.tdfoshos.indst
+        seliqsyn.fehos.tdsynhos.indst
         seliqbio.fehos.tdbiohos.res
-		seliqfos.fehos.tdfoshos.res
+	seliqfos.fehos.tdfoshos.res
+        seliqsyn.fehos.tdsynhos.res
         seliqbio.fedie.tdbiodie.trans
-		seliqfos.fedie.tdfosdie.trans
+	seliqfos.fedie.tdfosdie.trans
+        seliqsyn.fedie.tdsyndie.trans
         seliqbio.fepet.tdbiopet.trans
-		seliqfos.fepet.tdfospet.trans
+	seliqfos.fepet.tdfospet.trans
+        seliqsyn.fepet.tdsynpet.trans
 /
 emiRCP2emiREMIND "mapping between emission types expected by MAGICC and provided by REMIND"
 /

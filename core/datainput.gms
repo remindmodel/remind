@@ -412,6 +412,12 @@ pm_cf(ttot,regi,"apcardiefft") = 1;
 pm_cf(ttot,regi,"apcardieffH2t") = 1;
 pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
+*short-term fix for new synfuel td technologies
+pm_cf(ttot,regi,"tdsyngas") = 0.65;
+pm_cf(ttot,regi,"tdsynhos") = 0.6;
+pm_cf(ttot,regi,"tdsynpet") = 0.7;
+pm_cf(ttot,regi,"tdsyndie") = 0.7;
+
 
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
@@ -574,6 +580,7 @@ $include "./core/input/f_emiFgas.cs4r"
 $offdelim
 /
 ;
+
 
 parameter p_abatparam_CH4(tall,all_regi,all_enty,steps)        "MAC costs for CH4 by source"
 /

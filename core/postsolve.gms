@@ -654,6 +654,14 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 $endif.CO2priceDependent_AdjCosts
 
 
+*** calculation of PE and SE Prices (useful for internal use and reporting purposes)
+pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
+       q_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
+
+p_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
+       q_balPe.m(t,regi,entyPe) / qm_budget.m(t,regi);
+
+
 
 *** INNOPATHS emissions reporting
 o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 

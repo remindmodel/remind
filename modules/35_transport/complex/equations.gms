@@ -21,9 +21,9 @@ q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   ) * ( !! splitting heavy dutty final energy demand between "other" (bunkers) and "ES" emission markets
     1$(sameas(emiMkt,"ES") AND (NOT(sameas(entyFe,"fedie")))) + !! do nothing for non heavy dutty FE demand
     (
-      pm_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(emiMkt,"other"))  !! asign heavy dutty bunkers to "other" emiMkt
+      p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(emiMkt,"other"))  !! asign heavy dutty bunkers to "other" emiMkt
       +
-      (1-pm_bunker_share_in_nonldv_fe(ttot,regi))$(sameas(emiMkt,"ES")) !! Effort Sharing does not include bunkers
+      (1-p35_bunker_share_in_nonldv_fe(ttot,regi))$(sameas(emiMkt,"ES")) !! Effort Sharing does not include bunkers
     )$((sameas(entyFe,"fedie")))
   )
 ;

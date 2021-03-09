@@ -137,6 +137,7 @@ se2fe_dyn35(all_enty,all_enty,all_te) "nat. gas techs for transport, missing in 
 /
 segabio.fegat.tdbiogat
 segafos.fegat.tdfosgat
+segasyn.fegat.tdsyngat
 /
 
 enty_dyn35(all_enty) "nat. gas FE used for transport, see comment above"
