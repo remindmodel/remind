@@ -12,7 +12,7 @@ p04_x_enty2te_dyn04(all_regi,all_enty,all_enty,all_te,all_te)   "parameter for t
 pm_prodCouple(all_regi,all_enty,all_enty,all_te,all_enty)       "own consumption"
 p04_aux_data(all_regi,char, all_te)                             "auxiliary parameter to store the initial mix0 and eta values for gas electricity before splitting it to ngcc and ngt (needed as long as calibration routine sets ngt to 0)"
 p04_shareNGTinGas(all_regi)                                     "Share of ngt in electricity produced from gas"
-pm_fuExtrOwnCons(all_regi, all_enty, all_enty)                  "energy own consumption in the extraction sector with first enty being the output produced and the second enty being the input required"
+pm_fuExtrOwnCons(all_regi, all_enty, all_enty)                  "energy own consumption in the extraction sector with first enty being the output produced by the extraction sector and the second enty being the input of the extracted fuel required"
 p04_shOilGasEx(all_regi, all_enty)                              "share of oil and gas extraction in all regions"
 p04_fuExtr(all_regi, all_enty)                                  "regional fuel extraction for the base year calibration"
 pm_histfegrowth(all_regi,all_enty)                              "average growth rate of fe use from 1995 to 2005"

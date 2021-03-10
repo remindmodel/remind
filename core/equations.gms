@@ -507,8 +507,8 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 		)$( c_cint_scen eq 1 )
 ***   emissions from conventional fuel extraction
 	+ (sum(pe2rlf(enty3,rlf2),
-      sum(enty2$(peFos(enty2)),   
-		    (p_cintraw(enty2)
+      sum(enty2,   
+		    (p_cintraw(enty3)
 		     * pm_fuExtrOwnCons(regi, enty2, enty3) 
 		     * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))))$(sameas("co2",enty))
 ;    
