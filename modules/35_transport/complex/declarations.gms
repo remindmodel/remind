@@ -15,9 +15,9 @@ v35_demTransType(ttot,all_regi,all_enty,all_emiMkt,transType_35) "Tranportation 
 equations
 q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt)       "Transportation final energy demand"
 
-q35_demTransLDV(ttot,regi,entyFe,emiMkt)                "Tranportation LDV FE demand"
-q35_demTransNonLDVnoBunkers(ttot,regi,entyFe,emiMkt)    "Tranportation non LDV without Bunkers FE demand"
-q35_demTransBunkers(ttot,regi,entyFe,emiMkt)            "Tranportation non LDV Bunkers FE demand"
+q35_demTransLDV(ttot,all_regi,all_enty,all_emiMkt)      "Tranportation LDV FE demand"
+q35_demTransNonLDVnoBunkers(ttot,all_regi,all_enty,all_emiMkt) "Tranportation non LDV without Bunkers FE demand"
+q35_demTransBunkers(ttot,all_regi,all_enty,all_emiMkt)  "Tranportation non LDV Bunkers FE demand"
 
 q35_limitCapUe(ttot,all_regi,all_enty,all_enty,all_te)  "capacity constraint for ES production"
 q35_transFe2Ue(ttot,all_regi,all_enty,all_enty,all_te)  "energy tranformation fe to es"
