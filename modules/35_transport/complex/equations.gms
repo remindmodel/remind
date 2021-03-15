@@ -41,7 +41,7 @@ q35_demTransNonLDVnoBunkers(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear) 
       )
     )  !! the total amount of liquids demand
     -
-    v35_demTransType(ttot,regi,entyFe,emiMkt,"nonLDV_Bunkers")
+    sum(all_emiMkt, v35_demTransType(ttot,regi,entyFe,all_emiMkt,"nonLDV_Bunkers"))
   )$(sameas(emiMkt,"ES") AND sameas(entyFe,"fedie"))
 ;
 
