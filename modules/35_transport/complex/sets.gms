@@ -65,6 +65,13 @@ entyFeTrans_dyn35(all_enty)      "final energy types - transport module addition
     feelt
 /
 
+transType_35  "transport type"
+/
+  LDV              "Light Duty Vehicle"
+  nonLDV_noBunkers "non Light Duty Vehicle, no Bunkers"
+  nonLDV_Bunkers   "non Light Duty Vehicle Bunkers"
+/
+
 entyUe_dyn35(all_enty)            "Energy service types"
 /
   uedit   "Energy Service: DIesel for Transport. Unit: TWa (currently 1:1 transfer from FE)"
