@@ -10,6 +10,10 @@ pm_Xport0(ttot,regi,tradePe) = vm_Xport.l(ttot,regi,tradePe);
 
 *** Secondary energy trade
 
+*** Temporarily forcing Mports (until all bugs are fixed with automatic trading)
+vm_Mport.fx(t,regi,entySe)$(sum(regi2,pm_seTradeCapacity(t,regi2,regi,entySe)) gt 0) = sum(regi2,pm_seTradeCapacity(t,regi2,regi,entySe));
+vm_Mport.l(t,regi,entySe)$(sum(regi2,pm_seTradeCapacity(t,regi2,regi,entySe)) gt 0) = sum(regi2,pm_seTradeCapacity(t,regi2,regi,entySe));
+
 *** Xport price
 pm_XPortsPrice(t,regi,tradeSe) = pm_SEPrice(t,regi,tradeSe);
 
