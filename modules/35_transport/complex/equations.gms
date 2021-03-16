@@ -43,6 +43,15 @@ q35_demTransNonLDVnoBunkers(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear) 
     -
     sum(all_emiMkt, v35_demTransType(ttot,regi,entyFe,all_emiMkt,"nonLDV_Bunkers"))
   )$(sameas(emiMkt,"ES") AND sameas(entyFe,"fedie"))
+  +
+  (
+    ( sum(fe2ue(entyFe,entyUe,te), v35_demFe(ttot,regi,entyFe,entyUe,te) )
+      -
+      sum(pc2te(entyFE2,entyUe,te,entyFE),  !! couple production from FE to ES for heavy duty vehicles
+        pm_prodCouple(regi,entyFE2,entyUe,te,entyFE) * vm_prodUe(ttot,regi,entyFE2,entyUe,te)
+      )
+    )  !! the total amount of liquids demand
+  )$(sameas(emiMkt,"ES") AND (sameas(entyFe,"feh2t") or sameas(entyFe,"feelt")))  
 ;
 
 *** Transport nonLDV, Bunkers
