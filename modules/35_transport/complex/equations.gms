@@ -45,7 +45,7 @@ q35_demTransNonLDVnoBunkers(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear) 
   )$(sameas(emiMkt,"ES") AND sameas(entyFe,"fedie"))
   +
   (
-    ( sum(fe2ue(entyFe,entyUe,te)$(NOT LDV35(te), v35_demFe(ttot,regi,entyFe,entyUe,te) )
+    ( sum(fe2ue(entyFe,entyUe,te)$(NOT LDV35(te)), v35_demFe(ttot,regi,entyFe,entyUe,te) )
       -
       sum(pc2te(entyFE2,entyUe,te,entyFE),  !! couple production from FE to ES for heavy duty vehicles
         pm_prodCouple(regi,entyFE2,entyUe,te,entyFE) * vm_prodUe(ttot,regi,entyFE2,entyUe,te)
