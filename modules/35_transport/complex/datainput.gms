@@ -76,11 +76,12 @@ $ifthen "%cm_altTransBunkersShare%" == "on"
   p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ECE") AND (ttot.val ge 2010)) = 0.17;
   p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ECS") AND (ttot.val ge 2010)) = 0.19;
   p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ENC") AND (ttot.val ge 2010)) = 0.53;
-  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ESW") AND (ttot.val ge 2010)) = 0.48;
-  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"EWN") AND (ttot.val ge 2010)) = 0.53;
-  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"FRA") AND (ttot.val ge 2010)) = 0.76;
-  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"UKI") AND (ttot.val ge 2010)) = 0.43;
-  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"NEN") AND (ttot.val ge 2010)) = 0.55;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ESC") AND (ttot.val ge 2010)) = 0.48;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ESW") AND (ttot.val ge 2010)) = 0.53;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"EWN") AND (ttot.val ge 2010)) = 0.76;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"FRA") AND (ttot.val ge 2010)) = 0.43;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"UKI") AND (ttot.val ge 2010)) = 0.55;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"NEN") AND (ttot.val ge 2010)) = 0.35;
   p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"NES") AND (ttot.val ge 2010)) = 0.1;
 $endif
 

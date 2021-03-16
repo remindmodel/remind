@@ -122,8 +122,8 @@ display pm_prodCouple;
 p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
 p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
 ***p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.16;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.14;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
