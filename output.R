@@ -18,8 +18,8 @@
 options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 
 #load landuse library
-
-library(lucode)
+library(lucode2)
+library(gms)
 
 ###Define arguments that can be read from command line
 if(!exists("source_include")) {
