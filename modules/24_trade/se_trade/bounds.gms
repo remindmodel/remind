@@ -123,7 +123,7 @@ if ( cm_biotrade_phaseout eq 1,
 );
 
 *** set maximum import and export secondary energy trade based on trading capacities 
-vm_Mport.up(t,regi,entySe) = sum(regi2,pm_seTradeCapacity(t,regi2,regi,entySe));
-vm_Xport.up(t,regi,entySe) = sum(regi2,pm_seTradeCapacity(t,regi,regi2,entySe));
+vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
+vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));
 
 *** EOF ./modules/24_trade/se_trade/bounds.gms

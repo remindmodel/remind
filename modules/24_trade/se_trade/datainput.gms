@@ -42,17 +42,17 @@ pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTr
 *** Secondary Energy exogenously defined trade scenarios
 $ifthen.seTradeScenario "%cm_seTradeScenario%" == "DEU_Low_H2"
 *Low Hydrogen trade in Germany only (all imports from MEA)
-  pm_seTradeCapacity("2040","MEA","DEU","seh2") = 10/8760; !! TWh to TWa
-  pm_seTradeCapacity("2045","MEA","DEU","seh2") = 30/8760;
-  pm_seTradeCapacity("2050","MEA","DEU","seh2") = 100/8760;
-  pm_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 150/8760;
+  p24_seTradeCapacity("2040","MEA","DEU","seh2") = 10/8760; !! TWh to TWa
+  p24_seTradeCapacity("2045","MEA","DEU","seh2") = 30/8760;
+  p24_seTradeCapacity("2050","MEA","DEU","seh2") = 100/8760;
+  p24_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 150/8760;
 $elseif.seTradeScenario "%cm_seTradeScenario%" == "DEU_High_H2"
-  pm_seTradeCapacity("2030","MEA","DEU","seh2") = 30/8760;
-  pm_seTradeCapacity("2035","MEA","DEU","seh2") = 100/8760;
-  pm_seTradeCapacity("2040","MEA","DEU","seh2") = 200/8760;
-  pm_seTradeCapacity("2045","MEA","DEU","seh2") = 400/8760;
-  pm_seTradeCapacity("2050","MEA","DEU","seh2") = 500/8760;
-  pm_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 600/8760;
+  p24_seTradeCapacity("2030","MEA","DEU","seh2") = 30/8760;
+  p24_seTradeCapacity("2035","MEA","DEU","seh2") = 100/8760;
+  p24_seTradeCapacity("2040","MEA","DEU","seh2") = 200/8760;
+  p24_seTradeCapacity("2045","MEA","DEU","seh2") = 400/8760;
+  p24_seTradeCapacity("2050","MEA","DEU","seh2") = 500/8760;
+  p24_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 600/8760;
 $endif.seTradeScenario
 
 
