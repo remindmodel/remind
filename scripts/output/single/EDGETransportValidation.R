@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(rmarkdown)
-require(lucode)
+require(lucode2)
+require(gms)
 
 if(!exists("source_include")) {
   ## Define arguments that can be read from command line
