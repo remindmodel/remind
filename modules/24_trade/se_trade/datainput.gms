@@ -42,17 +42,17 @@ pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTr
 *** Secondary Energy exogenously defined trade scenarios
 $ifthen.seTradeScenario "%cm_seTradeScenario%" == "DEU_Low_H2"
 *Low Hydrogen trade in Germany only (all imports from MEA)
-  p24_seTradeCapacity("2040","MEA","DEU","seh2") = 10/8760; !! TWh to TWa
-  p24_seTradeCapacity("2045","MEA","DEU","seh2") = 30/8760;
-  p24_seTradeCapacity("2050","MEA","DEU","seh2") = 100/8760;
-  p24_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 150/8760;
+  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 10/8760; !! TWh to TWa
+  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 30/8760;
+  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 100/8760;
+  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2055) = 150/8760;
 $elseif.seTradeScenario "%cm_seTradeScenario%" == "DEU_High_H2"
-  p24_seTradeCapacity("2030","MEA","DEU","seh2") = 30/8760;
-  p24_seTradeCapacity("2035","MEA","DEU","seh2") = 100/8760;
-  p24_seTradeCapacity("2040","MEA","DEU","seh2") = 200/8760;
-  p24_seTradeCapacity("2045","MEA","DEU","seh2") = 400/8760;
-  p24_seTradeCapacity("2050","MEA","DEU","seh2") = 500/8760;
-  p24_seTradeCapacity(t,"MEA","DEU","seh2")$(t.val ge 2055) = 600/8760;
+  p24_seTradeCapacity("2030",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 30/8760;
+  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 100/8760;
+  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 200/8760;
+  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 400/8760;
+  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 500/8760;
+  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2055) = 600/8760;
 $endif.seTradeScenario
 
 
