@@ -68,6 +68,22 @@ p35_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPsc
 
 display p35_bunker_share_in_nonldv_fe;
 
+$ifthen "%cm_altTransBunkersShare%" == "on"
+*** avoiding strange share increase by setting the values fater 2050 constant
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(ttot.val > 2050) = p35_bunker_share_in_nonldv_fe("2050",regi);    
+*** for EU and NEU regions use 2010 TRACCS-based FE demand for all years
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"DEU") AND (ttot.val ge 2010)) = 0.4;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ECE") AND (ttot.val ge 2010)) = 0.17;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ECS") AND (ttot.val ge 2010)) = 0.19;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ENC") AND (ttot.val ge 2010)) = 0.53;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ESC") AND (ttot.val ge 2010)) = 0.48;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"ESW") AND (ttot.val ge 2010)) = 0.53;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"EWN") AND (ttot.val ge 2010)) = 0.76;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"FRA") AND (ttot.val ge 2010)) = 0.43;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"UKI") AND (ttot.val ge 2010)) = 0.55;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"NEN") AND (ttot.val ge 2010)) = 0.35;
+  p35_bunker_share_in_nonldv_fe(ttot,regi)$(sameas(regi,"NES") AND (ttot.val ge 2010)) = 0.1;
+$endif
 
 *** RP: to be able to better reproduce the 2010 decrease of liquids and solids demand in the US, additionally decrease the refineries build-up in 2005:
 table f35_factorVintages(all_regi,opTimeYr,all_te) "factor to be able to better reproduce the 2010 decrease of liquids and solids demand"
