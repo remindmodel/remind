@@ -84,7 +84,7 @@
 * 
 * Input data revision: 5.979
 * 
-* Last modification (input data): Mon Feb 08 15:48:42 2021
+* Last modification (input data): Tue Mar 16 15:12:14 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -190,7 +190,7 @@ $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  off !! def = off
+$setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -598,6 +598,8 @@ $setglobal cm_INNOPATHS_sehe_upper  off !! def = off
 $setglobal cm_fixCO2price  off !! def = off
 
 $setglobal cm_feShareLimits  off  !! def = off
+
+$setglobal cm_altTransBunkersShare  off      !! def = off
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

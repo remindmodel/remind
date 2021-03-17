@@ -223,7 +223,7 @@ if(!exists("source_include")) {
                   "base_noEffChange_2020-03-09_17.16.28/")   
   special_requests <- c("2")
   # Make over-writtable from command line
-  lucode::readArgs("outputdirs","special_requests")
+  lucode2::readArgs("outputdirs","special_requests")
 }
 
 
