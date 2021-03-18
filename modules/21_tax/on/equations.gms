@@ -36,6 +36,7 @@
     + v21_taxrevFEBuildInd(t,regi)  
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
+    + v21_taxrevTech(t,regi)
     + v21_taxrevXport(t,regi)
     + v21_taxrevSO2(t,regi)
     + v21_taxrevBio(t,regi)
@@ -147,6 +148,17 @@ v21_taxrevPE2SE(t,regi)
           (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te) + p21_tau_pe2se_inconv(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
        )
 	- p21_taxrevPE2SE0(t,regi) ; 
+
+***---------------------------------------------------------------------------
+*'  Calculation of technology specific subsidies and taxes. Tax incidency applied only over new capacity (deltaCap)
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevTech(t,regi)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevTech(t,regi) 
+=e= sum(te2rlf(te,rlf),
+          (p21_tech_tax(t,regi,te,rlf) + p21_tech_sub(t,regi,te,rlf)) * vm_deltaCap(t,regi,te,rlf)
+       )
+	- p21_taxrevTech0(t,regi) ;   
 
 ***---------------------------------------------------------------------------
 *'  Calculation of export taxes: tax rate times export volume

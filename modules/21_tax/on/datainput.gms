@@ -71,6 +71,19 @@ $offdelim
   /             ;  
   
 
+$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
+
+Parameter f21_tech_sub(tall,all_regi,all_te) "subsidy path for transport specific new capacity (BEV and FCEV)"
+  /
+$ondelim
+$include "./modules/21_tax/on/input/f21_vehiclesSubsidies.cs4r"
+$offdelim
+  /; 
+
+  p21_tech_sub(t,regi,te,"1")$((t.val ge 2020) AND f21_tech_sub("2020",regi,te)) = - f21_tech_sub("2020",regi,te);
+
+$endIf.vehiclesSubsidies
+
   
 *** transfer data to parameters
   p21_tau_fe_tax_transport(ttot,all_regi,feForUe) = f21_tau_fe_tax_transport(ttot,all_regi,feForUe);
@@ -151,7 +164,12 @@ $offdelim
 p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
 *LB* use 0 for all regions as default
 p21_tau_xpres_tax(ttot,regi,all_enty) = 0;  
-            
+
+
+*** -------------------------Technology specific subsidies and taxes for new capacity--------------------------
+*** initialize subsidies and taxes to zero
+p21_tech_tax(t,regi,te,rlf) = 0;
+p21_tech_sub(t,regi,te,rlf) = 0;
             
 *** --------------------
 *** CO2 prices
