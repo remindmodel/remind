@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 ############################# LOAD LIBRARIES #############################
 library(magclass, quietly = TRUE,warn.conflicts =FALSE)
-library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(gms, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(magpie, quietly = TRUE,warn.conflicts =FALSE)
 
 if(!exists("source_include")) {

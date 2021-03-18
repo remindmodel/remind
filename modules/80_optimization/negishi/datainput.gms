@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/negishi/datainput.gms
 
-pm_pvp(ttot,trade)$(ttot.val ge 2005)               = 1;
+pm_pvp(ttot,trade)$(ttot.val ge 2005 AND (NOT tradeSe(trade))) = 1;
 p80_trade(ttot,regi,trade)$(ttot.val ge 2005)       = 0;
 
 if (cm_emiscen eq 1,

@@ -7,7 +7,7 @@
 
 library(magclass)
 library(remind2)
-library(lucode)
+library(lucode2)
 library(methods)
 library(tidyverse)
 library(gdx)

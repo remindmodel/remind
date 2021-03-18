@@ -7,7 +7,8 @@
 
 library(magclass)
 library(remind2)
-library(lucode)
+library(lucode2)
+library(gms)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"        # name of the gdx  
