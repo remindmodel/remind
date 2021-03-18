@@ -53,3 +53,4 @@ cm_BioImportTax_EU,input,questionnaire
 vm_Mport,input,questionnaire
 pm_tau_fe_tax_bit_st,input,questionnaire
 pm_tau_fe_sub_bit_st,input,questionnaire
+vm_deltaCap, variable, ???
