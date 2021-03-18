@@ -120,7 +120,9 @@ pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
+$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 	pm_emiTargetES("2050",regi) = f47_ESreferenceEmissions("2005",regi)*%cm_emiMktES2050%;
+$ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
