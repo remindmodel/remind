@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(rmarkdown)
-require(lucode)
+library(gms)
+library(lucode2)
 require(quitte)
 require(data.table)
 require(rmndt)

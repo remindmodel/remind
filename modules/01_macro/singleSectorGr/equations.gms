@@ -41,6 +41,8 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
         )$( ttot.val ge max(2010, cm_startyear) )
       )
     )
+  + sum(tradeSe, pm_MPortsPrice(ttot,regi,tradeSe) * vm_Mport(ttot,regi,tradeSe)) 
+  - sum(tradeSe, pm_XPortsPrice(ttot,regi,tradeSe) * vm_Xport(ttot,regi,tradeSe)) 
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
   + sum(in_enerSerAdj(in), vm_enerSerAdj(ttot,regi,in))

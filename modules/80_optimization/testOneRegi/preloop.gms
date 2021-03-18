@@ -20,7 +20,7 @@
 ***in order to read parameters like p80_priceXXX from a gdx, instead of only variables , we have to explicitly instruct gams to do so in the execute_loadpoint command in core/preloop.gms.
 ***the price paths are the trickiest part. Try to find p80_priceXXX prices in the gdx fist, if that fails, fallback to price path read from input/prices_NASH.inc
 loop(ttot$(ttot.val ge 2005),
-    loop(trade,
+    loop(trade$(NOT tradeSe(trade)),
 $ontext
         if((pm_pvp(ttot,trade) eq NA) OR (pm_pvp(ttot,trade) lt 1E-12) OR (pm_pvp(ttot,trade) gt 0.1) ,
 ***in case we have not been able to read price paths from the gdx, or these price are zero (or eps),  fall back to price paths in file input/prices_NASH.inc:
@@ -33,8 +33,8 @@ $ontext
          );
 $offtext
         loop(regi,	    
-         pm_Xport0(ttot,regi,trade)  = vm_Xport.l(ttot,regi,trade);
-         p80_Mport0(ttot,regi,trade) = vm_Mport.l(ttot,regi,trade);
+         pm_Xport0(ttot,regi,trade)$(NOT tradeSe(trade))  = vm_Xport.l(ttot,regi,trade);
+         p80_Mport0(ttot,regi,trade)$(NOT tradeSe(trade)) = vm_Mport.l(ttot,regi,trade);
        
 ***in case xport/mport is not found in gdx:
 $ontext

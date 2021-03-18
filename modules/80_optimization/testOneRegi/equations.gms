@@ -13,7 +13,7 @@ q80_budg_intertemp(regi)..
 0 =e=  
  SUM(ttot$(ttot.val ge 2005), 
     pm_ts(ttot) 
-       * SUM(trade, 
+       * SUM(trade$(NOT tradeSe(trade)), 
               (vm_Xport(ttot,regi,trade)-vm_Mport(ttot,regi,trade)) * pm_pvp(ttot,trade)
               * ( 1 +  p80_etaXp(trade)
                    * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade)) )
