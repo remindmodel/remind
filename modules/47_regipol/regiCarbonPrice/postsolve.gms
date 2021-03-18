@@ -110,6 +110,7 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
+$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) )** 2;
@@ -117,6 +118,7 @@ $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) );
 		);
 
+$ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
@@ -132,6 +134,7 @@ $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 NOT "%cm_emiMktES2050%" == "linear"
+$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) )** 2;
@@ -139,6 +142,7 @@ $IFTHEN.emiMktES2050_2 NOT "%cm_emiMktES2050%" == "linear"
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) );
 		);
 
+$ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
