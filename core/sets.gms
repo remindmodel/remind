@@ -1833,8 +1833,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		feh2t.trans
 		feelt.trans
 		feels.cdr
-		fegas.cdr
-		feh2s.cdr
+		fehes.cdr
 /
 
 ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"

@@ -48,14 +48,12 @@ q33_emiEW(t,regi)..
 	;	
 
 ***---------------------------------------------------------------------------
-*'  Calculation of (negative) CO2 emissions from direct air capture. The first part of the equation describes emissions captured from the ambient air, 
-*'  the second part calculates the CO2 captured from the gas used for heat production assuming 90% capture rate.
+*'  Calculation of (negative) CO2 emissions from direct air capture. 
 ***---------------------------------------------------------------------------
 q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
 	-sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
-	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * vm_otherFEdemand(t,regi,"fegas")	
 	;
 
 ***---------------------------------------------------------------------------
@@ -71,9 +69,7 @@ q33_emicdrregi(t,regi)..
 *'  Calculation of energy demand of DAC and EW. 
 *'  The first part of the equation describes the electricity demand for grinding, 
 *'  the second part the diesel demand for transportation and spreading on crop fields.
-*'  The third part is DAC electricity demand and the last part is DAC heat demand.
-*'  Heat for DAC can be provided by gas or H2; vm_otherFEdemand(t,regi,"fegas") is calculated as the total 
-*'  DAC energy demand for heat minus what is already covered by h2, i.e. vm_otherFEdemand(t,regi,"feh2s") and vice versa.
+*'  The third part is DAC final energy demand
 ***---------------------------------------------------------------------------	
 q33_otherFEdemand(t,regi,entyFe)..
 	vm_otherFEdemand(t,regi,entyFe)
@@ -81,17 +77,8 @@ q33_otherFEdemand(t,regi,entyFe)..
 	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
    - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe)
-   - vm_otherFEdemand(t,regi,"feh2s")$(sameas(entyFe,"fegas")) - vm_otherFEdemand(t,regi,"fegas")$(sameas(entyFe,"feh2s"))
 	;	
 	
-***---------------------------------------------------------------------------
-*'  Limit the amount of H2 from biomass to the demand without DAC.
-***---------------------------------------------------------------------------	
-q33_H2bio_lim(t,regi,te)..	         
-	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
-	=l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - vm_otherFEdemand(t,regi,"feh2s")
-	;
 
 ***---------------------------------------------------------------------------
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
