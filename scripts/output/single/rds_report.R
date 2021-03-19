@@ -14,7 +14,7 @@ options("magclass.verbosity" = 1)
 
 ############################# BASIC CONFIGURATION #############################
 if(!exists("source_include")) {
-  outputdir <- "output/r8473-trunk-C_Budg600-rem-5/"
+  outputdir <- "output/default_2021-03-18_18.16.40/"
   readArgs("outputdir")
 }
 
@@ -30,12 +30,13 @@ resultsarchive <- "/p/projects/rd3mod/models/results/remind"
 mif <- path(outputdir,paste0("REMIND_generic_",cfg$title,".mif"))
 
 if(file.exists(mif)) {
-  report <- read.report(mif,as.list = FALSE)
+  report <- read.quitte(mif)
 } else {
   report <- convGDX2MIF(gdx,gdx_ref,scenario=cfg$title)
 }
 
-q <- as.quitte(report)
+if (!is.quitte(report)) report <- as.quitte(report)
+q<-report
 if(all(is.na(q$value))) stop("No values in reporting!")
 saveRDS(q,file=rds)
 
