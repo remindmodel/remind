@@ -86,10 +86,10 @@ $include "./modules/21_tax/on/input/f21_vehiclesSubsidies.cs4r"
 $offdelim
   /; 
 
-  p21_tech_sub(t,regi,te,"1")$((t.val ge 2020) AND f21_tech_sub("2020",regi,te)) = - f21_tech_sub("2020",regi,te);
+  p21_tech_sub(t,regi,te,"1")$(f21_tech_sub(t,regi,te)) = - f21_tech_sub("2020",regi,te);
 
   display p21_tech_sub;
-  
+
 $endIf.vehiclesSubsidies
 
   
