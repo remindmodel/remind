@@ -71,6 +71,12 @@ $offdelim
   /             ;  
   
 
+
+*** -------------------------Technology specific subsidies and taxes for new capacity--------------------------
+*** initialize subsidies and taxes to zero
+p21_tech_tax(t,regi,te,rlf) = 0;
+p21_tech_sub(t,regi,te,rlf) = 0;
+
 $ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
 
 Parameter f21_tech_sub(tall,all_regi,all_te) "subsidy path for transport specific new capacity (BEV and FCEV)"
@@ -82,6 +88,8 @@ $offdelim
 
   p21_tech_sub(t,regi,te,"1")$((t.val ge 2020) AND f21_tech_sub("2020",regi,te)) = - f21_tech_sub("2020",regi,te);
 
+  display p21_tech_sub;
+  
 $endIf.vehiclesSubsidies
 
   
@@ -165,12 +173,7 @@ p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot
 *LB* use 0 for all regions as default
 p21_tau_xpres_tax(ttot,regi,all_enty) = 0;  
 
-
-*** -------------------------Technology specific subsidies and taxes for new capacity--------------------------
-*** initialize subsidies and taxes to zero
-p21_tech_tax(t,regi,te,rlf) = 0;
-p21_tech_sub(t,regi,te,rlf) = 0;
-            
+           
 *** --------------------
 *** CO2 prices
 *** --------------------    
