@@ -22,6 +22,7 @@ options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 
 library(lucode)
 
+.libPaths(c("/p/projects/rd3mod/R/libraries/snapshots/magclass_only/",.libPaths()))
 ###Define arguments that can be read from command line
 if(!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command line arguments and let the user choose the slurm options
@@ -274,4 +275,3 @@ if (comp==TRUE) {
     if(!is.null(warnings())) print(warnings())
   }
 }
-.libPaths(c("/p/projects/rd3mod/R/libraries/snapshots/magclass_only/",.libPaths()))
