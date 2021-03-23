@@ -130,7 +130,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Set reporting script
     if( "output" %in% names(iscenarios)){
-      icfg$output <- paste0("c(\"",gsub(",","\",\"",gsub(", ",",",iscenarios[iscen,"output"])),"\")")
+      icfg$output <- gsub('c\\("|\\)|"','',strsplit(iscenarios[iscen,"output"],',')[[1]])
     }
 
     # check if full input.gdx path is provided and, if not, search for correct path
