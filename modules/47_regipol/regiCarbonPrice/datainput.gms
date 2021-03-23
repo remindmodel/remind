@@ -160,4 +160,8 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
 $endIf.cm_implicitFE
 
+*** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
+p_adj_deltacapoffset("2020",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+p_adj_deltacapoffset("2025",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
