@@ -56,6 +56,7 @@ p30_max200_path("2020") = 160;
 p30_max200_path("2025") = 190;
 
 *** bound of 75 EJ in 2050 and 90 EJ from 2100 on with linear interpolation in between
+p30_max200_path("2025")$(cm_bioenergymaxscen=6) = 75;
 p30_max200_path("2030")$(cm_bioenergymaxscen=6) = 75;
 p30_max200_path("2035")$(cm_bioenergymaxscen=6) = 75;
 p30_max200_path("2040")$(cm_bioenergymaxscen=6) = 75;
