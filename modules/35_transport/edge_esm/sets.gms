@@ -116,6 +116,8 @@ ConvCase
 ConvCaseWise
 ElecEra
 ElecEraWise
+ElecEraEur
+ElecEraEurWise
 HydrHype
 HydrHypeWise
 /

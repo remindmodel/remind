@@ -64,7 +64,17 @@ $offdelim
 /
 ;
 
+$ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
+pm_bunker_share_in_nonldv_fe(ttot,regi) =  p35_bunker_share(ttot,regi, "%cm_GDPscen%","ConvCase");
+pm_bunker_share_in_nonldv_fe(ttot,"EUR") = p35_bunker_share(ttot,"EUR","%cm_GDPscen%","ElecEra" );
+
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
+pm_bunker_share_in_nonldv_fe(ttot,regi) =  p35_bunker_share(ttot,regi, "%cm_GDPscen%","ConvCase");
+pm_bunker_share_in_nonldv_fe(ttot,"EUR") = p35_bunker_share(ttot,"EUR","%cm_GDPscen%","ElecEraWise" );
+
+$else.EDGEtr_ElecEraEur
 pm_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
+$endif.EDGEtr_ElecEraEur
 
 display pm_bunker_share_in_nonldv_fe;
 

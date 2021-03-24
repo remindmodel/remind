@@ -224,6 +224,15 @@ prepare <- function() {
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
 
+   # Copy MAGICC
+  magicc_template <- "/p/projects/rd3mod/magicc/"
+  if(file.exists(magicc_template)) {
+      cat("Copying MAGICC files from",magicc_template,"to ./core/magicc/\n")
+      system(paste0("cp -rp ",magicc_template,"*.* ./core/magicc/"))
+    } else {
+      cat("Could not copy",magicc_template,"because it does not exist\n") 
+    }
+
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
   if (on_cluster)
     system("find ./core/magicc/ -type f | xargs dos2unix -q")
@@ -255,6 +264,10 @@ prepare <- function() {
   if(cfg$gms$transport == "edge_esm"){
     if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
        demTrsp = "wise"
+       if (cfg$gms$cm_EDGEtr_scen == "ElecEraEurWise"){
+         # Use only "wise" demands for EUR; ROW uses "conv" demands
+         demTrp = "wiseEUR"
+       }
     } else {
        demTrsp = "conv"
     }
@@ -880,7 +893,7 @@ run <- function(start_subsequent_runs = TRUE) {
 #                                    script                                                      #
 ##################################################################################################
 
-# Call prepare() and run() without cfg, because cfg is read from results folder, where it has been
+# Call prepare() and run() without cfg, because cfg is read from results folder, where it has been 
 # copied to by submit(cfg)
 
 if (!file.exists("full.gms")) {

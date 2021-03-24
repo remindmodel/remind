@@ -17,7 +17,9 @@ opt = parse_args(opt_parser);
 library(data.table)
 library(gdx)
 library(gdxdt)
-library(edgeTrpLib)
+# library(edgeTrpLib)
+require(devtools)
+load_all("/p/projects/dipol/libraries/edgeTrpLib_DIPOL")
 library(rmndt)
 library(moinput)
 
@@ -55,10 +57,12 @@ if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
   techswitch <- "Liquids"
 } else if (EDGE_scenario %in% c("ElecEra", "ElecEraWise")) {
   techswitch <- "BEV"
+} else if (EDGE_scenario %in% c("ElecEraEur", "ElecEraEurWise")) {
+  techswitch <- "BEV_EUR"
 } else if (EDGE_scenario %in% c("HydrHype", "HydrHypeWise")) {
   techswitch <- "FCEV"
 } else {
-  print("You selected a not allowed scenario. Scenarios allowed are: ConvCase, ConvCaseWise, ElecEra, ElecEraWise, HydrHype, HydrHypeWise")
+  print("You selected a not allowed scenario. Scenarios allowed are: ConvCase, ConvCaseWise, ElecEra, ElecEraWise, ElecEraEur, ElecEraEurWise, HydrHype, HydrHypeWise")
   quit()
 }
 
@@ -284,6 +288,17 @@ finalInputs <- prepare4REMIND(
 for (i in names(finalInputs)) {
   finalInputs[[i]]$SSP_scenario <- scenario
   finalInputs[[i]]$EDGE_scenario <- EDGE_scenario
+
+  # In case of ElecEraEur set the the scenario names to ElecEra for EUR and to ConvCase in ROW
+  if (EDGE_scenario == "ElecEraEur") {
+  finalInputs[[i]]$EDGE_scenario <- "ConvCase"
+    finalInputs[[i]][finalInputs[[i]]$all_regi == "EUR"]$EDGE_scenario <- "ElecEra"
+
+  # In case of ElecEraEurWise set the the scenario names to ElecEraWise for EUR and to ConvCase in ROW
+  } else if (EDGE_scenario == "ElecEraEurWise") {
+    finalInputs[[i]]$EDGE_scenario <- "ConvCase"
+    finalInputs[[i]][finalInputs[[i]]$all_regi == "EUR"]$EDGE_scenario <- "ElecEraWise"
+  }
 }
 
 

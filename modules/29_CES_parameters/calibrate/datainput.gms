@@ -275,9 +275,25 @@ pm_cesdata(t,regi,in,"quantity") $ p29_esdemand(t,regi,"%cm_GDPscen%",in)
            = p29_esdemand(t,regi,"%cm_GDPscen%",in);
 
 *** Load exogenous transport demand - required for the EDGE transport module
-$ifthen.edgesm %transport% ==  "edge_esm"
+$ifthen.edgesm %transport% ==  "edge_esm"           
+$ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
+*** Use ElecEra for EUR and ConvCase for the rest of the world
+pm_cesdata(t,regi, in,"quantity") $ p29_trpdemand(t,regi, "%cm_GDPscen%","ConvCase", in)
+           = p29_trpdemand(t,regi, "%cm_GDPscen%", "ConvCase", in);
+pm_cesdata(t,"EUR",in,"quantity") $ p29_trpdemand(t,"EUR","%cm_GDPscen%","ElecEra",  in)
+           = p29_trpdemand(t,"EUR","%cm_GDPscen%", "ElecEra",  in);
+
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
+*** Use ElecEraWise for EUR and ConvCase for the rest of the world
+pm_cesdata(t,regi, in,"quantity") $ p29_trpdemand(t,regi, "%cm_GDPscen%","ConvCase", in)
+           = p29_trpdemand(t,regi, "%cm_GDPscen%", "ConvCase", in);
+pm_cesdata(t,"EUR",in,"quantity") $ p29_trpdemand(t,"EUR","%cm_GDPscen%","ElecEraWise",  in)
+           = p29_trpdemand(t,"EUR","%cm_GDPscen%", "ElecEraWise",  in);
+
+$else.EDGEtr_ElecEraEur
 pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%", in)
            = p29_trpdemand(t,regi,"%cm_GDPscen%", "%cm_EDGEtr_scen%", in);
+$endif.EDGEtr_ElecEraEur
 $endif.edgesm
 
 *** Load capital quantities
