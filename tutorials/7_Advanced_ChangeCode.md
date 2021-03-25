@@ -60,8 +60,7 @@ The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are docum
 * Comment all parts of the code generously
 * For all equations, it should become clear from the comments what part of the equation is supposed to do what
 * Variables and parameters should be declared along with a descriptive text (use " " for descriptive text to avoid compilation errors)
-* Start comment on sections with the initials of the programmer and the data of change (e.g. GL, 2011-06-07) 
-* Otherwise use three asterisks *** for comments
+* Use three asterisks *** for comments od *' if teh comment should show up in the documentation of REMIND 
 * Never use 4 asterisks (reserved for GAMS error messages)
 * Don't use the string "infes" in comments
 * Don't use $+number combinations, e.g., $20 (this interferes with GAMS error codes).
