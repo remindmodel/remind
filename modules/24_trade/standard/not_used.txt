@@ -4,7 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name, type, reason
-sm_eps,scalar,???
-cm_ccapturescen,input,questionnaire
-cm_emiscen,input,questionnaire
+name,type,reason
+pm_SEPrice, parameter, only necessary for secondary energy trade
+

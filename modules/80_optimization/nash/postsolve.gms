@@ -10,7 +10,7 @@
  
 *ML*2015-02-04* calculate current account
 *LB* needed for decomposition script
-p80_curracc(ttot, regi) =  SUM(trade, pm_pvp(ttot,trade)/ max(pm_pvp(ttot,"good"),sm_eps) * (vm_Xport.l(ttot,regi,trade)- vm_Mport.l(ttot,regi,trade))  );
+p80_curracc(ttot, regi) =  SUM(trade$(NOT tradeSe(trade)), pm_pvp(ttot,trade)/ max(pm_pvp(ttot,"good"),sm_eps) * (vm_Xport.l(ttot,regi,trade)- vm_Mport.l(ttot,regi,trade))  );
 
 p80_taxrev0(ttot,regi)$( (ttot.val ge max(2010,cm_startyear)) and (pm_SolNonInfes(regi) eq 1) ) = vm_taxrev.l(ttot,regi);
 
@@ -27,25 +27,25 @@ p80_normalize0(ttot,regi,tradePe)$(ttot.val ge 2005) = max(0.5 * (sum(rlf, vm_fu
 
 ***calculate residual surplus on the markets
 loop(ttot$(ttot.val ge 2005),
-  loop(trade,
+  loop(trade$(NOT tradeSe(trade)),
      p80_surplus(ttot,trade,iteration) = sum(regi, (vm_Xport.l(ttot,regi,trade) - vm_Mport.l(ttot,regi,trade))$(pm_SolNonInfes(regi) eq 1)
                                                + (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade) )$(pm_SolNonInfes(regi) eq 0) );
       ); 
 ); 
 
 ***calculate aggregated intertemporal market volumes - used in calculation of price corrections later on  
-loop(trade,
+loop(trade$(NOT tradeSe(trade)),
        p80_normalizeLT(trade) = sum(ttot$(ttot.val ge 2005), sum(regi, pm_pvp(ttot,trade) * pm_ts(ttot) *  p80_normalize0(ttot,regi,trade) ));
      if (p80_normalizeLT(trade) = 0, p80_normalizeLT(trade) = sm_eps);
     );
 
 *LB* calculate price correction terms
-p80_etaLT_correct(trade,iteration) = 
+p80_etaLT_correct(trade,iteration)$(NOT tradeSe(trade)) = 
           p80_etaLT(trade) *
          sum(ttot2$(ttot2.val ge cm_startyear), pm_pvp(ttot2,trade) * pm_ts(ttot2) * p80_surplus(ttot2,trade,iteration) )
         / p80_normalizeLT(trade);
 
-p80_etaST_correct(ttot,trade,iteration)$(ttot.val ge 2005) = 
+p80_etaST_correct(ttot,trade,iteration)$((ttot.val ge 2005) AND (NOT tradeSe(trade))) = 
            p80_etaST(trade)    
          * ( (  (1-sm_fadeoutPriceAnticip) + sm_fadeoutPriceAnticip * sqrt(pm_pvp(ttot,"good")/pm_pvp("2100","good"))  )$(sameas(trade,"perm")) + 1$(NOT sameas(trade,"perm")) )    
       * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,"good")/pm_pvp('2040',"good")) )$(sameas(trade,"perm")) + 1$(NOT sameas(trade,"perm")) )
@@ -54,7 +54,7 @@ p80_etaST_correct(ttot,trade,iteration)$(ttot.val ge 2005) =
          / max(sm_eps , sum(regi, p80_normalize0(ttot,regi,trade)));
 
 *RP* add a stronger push to the price adjustment if convergence doesn't happen for an extended amount of iterations:
-p80_etaST_correct_safecopy(ttot,trade,iteration) = p80_etaST_correct(ttot,trade,iteration); !! first make a copy of the initial adjustment values
+p80_etaST_correct_safecopy(ttot,trade,iteration)$(NOT tradeSe(trade)) = p80_etaST_correct(ttot,trade,iteration); !! first make a copy of the initial adjustment values
 
 *RP* track sign of the surplus
 if(iteration.val > 2, 
@@ -119,7 +119,7 @@ if(iteration.val > 15,
 
 
 ***calculate prices for next iteration 
-p80_pvp_itr(ttot,trade,iteration+1)$(ttot.val ge cm_startyear) = 
+p80_pvp_itr(ttot,trade,iteration+1)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 
  pm_pvp(ttot,trade)
  * max(0.05,                                                  !! prevent prices from turning negative by limiting extreme prices corrections
        (1 - p80_etaLT_correct(trade,iteration)
@@ -130,7 +130,7 @@ p80_pvp_itr(ttot,trade,iteration+1)$(ttot.val ge cm_startyear) =
 
 *AJS* feed updated prices and quantities into the next iteration:
 *ML* adjustments in case of infeasibilities (increase import)
-loop(trade,
+loop(trade$(NOT tradeSe(trade)),
     loop(regi,
 	loop(ttot$(ttot.val ge cm_startyear),
 	    pm_pvp(ttot,trade)  = p80_pvp_itr(ttot,trade,iteration+1);
@@ -148,16 +148,16 @@ p80_taxrev_agg(ttot,iteration)$(ttot.val ge 2005) = sum(regi,vm_taxrev.l(ttot,re
 
 
 *AJS* calculate maximum residual surplusses on markets
-p80_surplusMax(trade,iteration,ttot)$(ttot.val ge cm_startyear) = smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
+p80_surplusMax(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
 
 ***from this, relative residual surplusses.  
-p80_surplusMaxRel(trade,iteration,ttot)$(ttot.val ge cm_startyear) = 100 * smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
+p80_surplusMaxRel(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 100 * smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
 
-p80_surplusMax2100(trade) = p80_surplusMax(trade,iteration,"2100");
+p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax(trade,iteration,"2100");
 
 
 ***convergence indicators 
-loop(trade,
+loop(trade$(NOT tradeSe(trade)),
     p80_defic_trade(trade) = 1/pm_pvp("2005","good") *
 	sum(ttot$(ttot.val ge 2005),   pm_ts(ttot) * (
 	    abs(p80_surplus(ttot,trade,iteration)) * pm_pvp(ttot,trade)
@@ -168,7 +168,7 @@ loop(trade,
     );
 );
 p80_defic_sum("1") = 1;
-p80_defic_sum(iteration) = sum(trade,  p80_defic_trade(trade)); 
+p80_defic_sum(iteration) = sum(trade$(NOT tradeSe(trade)),  p80_defic_trade(trade)); 
 p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeLT("good")/pm_pvp("2005","good"));
 
 
@@ -198,7 +198,7 @@ p80_messageShow(convMessage80) = NO;
 p80_messageFailedMarket(ttot,all_enty) = NO;
 
 ***criterion ""surplus": are we converged yet?
-loop(trade,
+loop(trade$(NOT tradeSe(trade)),
  if(p80_surplusMax(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
      s80_bool=0;                 
      p80_messageShow("surplus") = YES;
@@ -378,9 +378,12 @@ if(s80_bool eq 1,
      OPTION decimals = 3;
      s80_numberIterations = cm_iteration_max + 1;
      display "######################################################################################################";
+     display "Run converged!!";
      display "#### Nash Solution Report";
      display "#### Convergence threshold reached within ",s80_numberIterations, "iterations.";
      display "############";
+     display "Model solution parameters of last iteration";
+     display p80_repy;
      display "#### Residual market surpluses in 2100 are:";
      display  p80_surplusMax2100;
      display "#### This meets the prescribed tolerance requirements of: ";

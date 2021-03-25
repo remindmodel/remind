@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode) # getScenNames
+library(lucode2) # getScenNames
 library(remind2)
 
 if(!exists("source_include")) {

@@ -5,7 +5,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode)
+library(gms)
 
 #' Usage:
 #' Rscript start.R [options]
@@ -130,7 +130,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Set reporting script
     if( "output" %in% names(iscenarios)){
-      icfg$output <- paste0("c(\"",gsub(",","\",\"",gsub(", ",",",iscenarios[iscen,"output"])),"\")")
+      icfg$output <- gsub('c\\("|\\)|"','',strsplit(iscenarios[iscen,"output"],',')[[1]])
     }
 
     # check if full input.gdx path is provided and, if not, search for correct path

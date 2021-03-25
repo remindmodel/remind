@@ -9,7 +9,8 @@
 ##################################################################
 start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE,qos) {
   
-  require(lucode)
+  require(lucode2)
+  require(gms)
   require(magclass)
   require(gdx)
   library(methods)
@@ -253,7 +254,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
 ##################################################################
 ################# E X E C U T E  start_coupled ###################
 ##################################################################
-require(lucode)
+require(lucode2)
 
 readArgs("coupled_config")
 load(coupled_config)

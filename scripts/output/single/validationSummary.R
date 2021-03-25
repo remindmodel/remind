@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(remind2)
-library(lucode)
+library(lucode2)
 
 ############################# BASIC CONFIGURATION #############################
 

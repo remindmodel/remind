@@ -131,8 +131,7 @@ Sometimes you want to restart a run in its already existing results folder whith
 Rscript start.R --restart
 ```
 
-This will use the result of the previous optimization (fulldata.gdx) as input for the restart.
-
+This will use the result of the previous optimization (fulldata.gdx) as input for the restart. Note that this will NOT continue the run from the last CONOPT iteration (which is impossible at the moment), but simply restart the run from the last fulldata.gdx. Accordingly, all outputs (like full.lst, gdx, etc) are overwritten if you do not first make a safecopy by hand. Alternatively, one can manually start a new run setting "path_gdx" to PATH_OF_UNCONVERGED_RUN. 
 
 # 2. What happens during a REMIND run?
 

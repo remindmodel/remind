@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-require(lucode, quietly = TRUE, warn.conflicts = FALSE)
+require(lucode2, quietly = TRUE, warn.conflicts = FALSE)
 
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
