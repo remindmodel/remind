@@ -10,7 +10,7 @@ Florian Humpenöder (<humpenoeder@pik-potsdam.de>), Lavinia Baumstark (<baumstar
 
 Technical Structure
 =====================
-The REMIND-code is structured in a modular way. The technical structure looky as follows: At the top level you find the folders config, core, modules and scripts. The overall structure is build in the file main.gms. All settings and configuration information is given in the config folder.The core folder contains all files that are part of the core of the REMIND model. For each module there exists a sub-folder in the modules folder. Helpful scripts for e.g. starting a run or analysing results you find in the scripts folder.
+The REMIND-code is structured in a modular way. The technical structure looks as follows: At the top level you find the folders config, core, modules and scripts. The overall structure is built in the file main.gms. All settings and configuration information are given in the config folder.The core folder contains all files that are part of the core of the REMIND model. For each module there exists a sub-folder in the modules folder. Helpful scripts for e.g. starting a run or analysing results you find in the scripts folder.
 
 In the main.gms the technical structure of REMIND can be found. First, the *.gms files from the core folder are included and afterward the *.gms files from the activated module realization, beginning with the one with the smallest module-number. The technical structure of REMIND looks as follows:
 
@@ -60,7 +60,7 @@ The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are docum
 * Comment all parts of the code generously
 * For all equations, it should become clear from the comments what part of the equation is supposed to do what
 * Variables and parameters should be declared along with a descriptive text (use " " for descriptive text to avoid compilation errors)
-* Use three asterisks *** for comments od *' if teh comment should show up in the documentation of REMIND 
+* Use three asterisks *** for comments or *' if the comment should show up in the documentation of REMIND 
 * Never use 4 asterisks (reserved for GAMS error messages)
 * Don't use the string "infes" in comments
 * Don't use $+number combinations, e.g., $20 (this interferes with GAMS error codes).
@@ -78,7 +78,7 @@ The general idea is not to write code and equations as short as possible, but to
 
 
 #### Other general rules:
-* Decompose large model equations into several small equations to enhance readability and model diagnostics.
+* Decompose large model equations into several small equations to enhance readability and model diagnostics
 * Don't use hard-coded numbers in the equations part of the model
 * Parameters should not be overwritten in the initialization part of the models. Use if-statements instead. Notable exceptions include parameters that are part a loop iteration, e.g. Negishi weights.
 * Have your work double-checked! To avoid bugs and problems: If you make major changes to your code, ask an experienced colleague to review the changes before they are pushed to the git main repository.
