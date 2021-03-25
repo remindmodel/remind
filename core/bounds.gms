@@ -372,7 +372,7 @@ if ( c_ccsinjecratescen gt 0,
 
 	loop(regi,
 ***vm_co2CCS.up(t,regi,"tco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1")*sm_ccsinjecrate
-		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * sm_ccsinjecrate;
+		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * sm_ccsinjecrate * p_ccsinject_fac(regi);
 	);
 
 );

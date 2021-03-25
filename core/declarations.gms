@@ -168,6 +168,12 @@ pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling ef
 
 pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
 
+$ifThen.regi_ccsinject_fac "%c_regi_ccsinject_fac%" == "none"
+p_ccsinject_fac(all_regi)                            "Regionalized factor reducing or increasing the CCS injection rate for given regions (1 by default)"
+$else.regi_ccsinject_fac
+p_ccsinject_fac(all_regi)                            "Regionalized factor reducing or increasing the CCS injection rate for given regions (1 by default)" / %c_regi_ccsinject_fac% /
+$endif.regi_ccsinject_fac
+
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
 pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zeroed around 1900"

@@ -267,6 +267,7 @@ cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
+c_regi_ccsinject_fac  "Additional regionalized factor reducing or increasing the CCS injection rate for given regions"
 c_ccscapratescen      "CCS capture rate"
 c_export_tax_scen    "choose which oil export tax is used in the model. 0 = none, 1 = fix"
 cm_iterative_target_adj "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
@@ -389,6 +390,7 @@ cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
+$setglobal c_regi_ccsinject_fac  none    !! def = none
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0

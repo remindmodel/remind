@@ -224,6 +224,18 @@ if (c_ccsinjecratescen eq 3, sm_ccsinjecrate = sm_ccsinjecrate *   1.50 ); !! Up
 if (c_ccsinjecratescen eq 4, sm_ccsinjecrate = sm_ccsinjecrate * 200    ); !! remove flow constraint for DAC runs
 if (c_ccsinjecratescen eq 5, sm_ccsinjecrate = sm_ccsinjecrate *   0.20 ); !! sustainable estimate
 
+*LM* Set additional bounds on the CCS inregation rate
+$ifThen.regi_ccsinject_fac "%c_regi_ccsinject_fac%" == "none"
+*** Set regionalized injection rate factor to 1 for all regions, since no value
+*** was read in for any region (default, no additional changes to the injection
+*** rate)
+p_ccsinject_fac(regi) = 1;
+$else.regi_ccsinject_fac
+*** Set regionalized injection rate factor to 1 for all regions, except for 
+*** those, where an additional factor was read in
+p_ccsinject_fac(regi)$(p_ccsinject_fac(regi) eq 0) = 1;
+$endif.regi_ccsinject_fac
+
 $include "./core/input/generisdata_flexibility.prn"
 
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
