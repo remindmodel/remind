@@ -103,6 +103,11 @@ insertheader <- function(maindir=".",
 
     if(length(grep("^$",f,invert=TRUE))==0) warning("Empty file: ",file ,call. = FALSE)
 
+    # update header with current year
+    header <- sub('^\\(C\\) 2006-2020',
+                  paste0('(C) 2006-', format(Sys.Date(), '%Y')),
+                  header)
+
     # insert header at the appropriate line
     if (ext %in% names(comments)) {
       withcomment <- paste(co,key,header)
