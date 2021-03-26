@@ -299,6 +299,7 @@ cm_regiFactorStorageMult        "Switch enabling regional multitplicative factor
 cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils in buildings from a given time step on - services_putty buildings realization"
 cm_regiPhaseOutFosBuilSimple    "Switch defining regions that phase out fossils in buildings - simple buildings realization"
 cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
+cm_ban_ICE                      "Switch that phases out internal combustion engine (ICE) cars strongly until 2030"
 
 cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
@@ -428,6 +429,7 @@ $setGlobal cm_esubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
+cm_ban_ICE             = 0;
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all

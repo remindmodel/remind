@@ -49,6 +49,8 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+# Read in switch to ban ICE cars in EUR
+ban_ICE   <- cfg$gms$cm_ban_ICE
 
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
 
@@ -190,7 +192,8 @@ logit_data <- calculate_logit_inconv_endog(
   price_nonmot = price_nonmot,
   stations = if (!is.null(stations)) stations,
   totveh = if (!is.null(totveh)) totveh,
-  techswitch = techswitch)
+  techswitch = techswitch,
+  ban_ICE = ban_ICE)
 
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
