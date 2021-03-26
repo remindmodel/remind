@@ -290,6 +290,13 @@ pm_cesdata(t,regi, in,"quantity") $ p29_trpdemand(t,regi, "%cm_GDPscen%","ConvCa
 pm_cesdata(t,"EUR",in,"quantity") $ p29_trpdemand(t,"EUR","%cm_GDPscen%","ElecEraWise",  in)
            = p29_trpdemand(t,"EUR","%cm_GDPscen%", "ElecEraWise",  in);
 
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseEurWise"
+*** Use ConvCaseWise for EUR and ConvCase for the rest of the world
+pm_cesdata(t,regi, in,"quantity") $ p29_trpdemand(t,regi, "%cm_GDPscen%","ConvCase", in)
+           = p29_trpdemand(t,regi, "%cm_GDPscen%", "ConvCase", in);
+pm_cesdata(t,"EUR",in,"quantity") $ p29_trpdemand(t,"EUR","%cm_GDPscen%","ConvCaseWise",  in)
+           = p29_trpdemand(t,"EUR","%cm_GDPscen%", "ConvCaseWise",  in);
+
 $else.EDGEtr_ElecEraEur
 pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%", in)
            = p29_trpdemand(t,regi,"%cm_GDPscen%", "%cm_EDGEtr_scen%", in);

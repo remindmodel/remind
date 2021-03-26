@@ -264,9 +264,9 @@ prepare <- function() {
   if(cfg$gms$transport == "edge_esm"){
     if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
        demTrsp = "wise"
-       if (cfg$gms$cm_EDGEtr_scen == "ElecEraEurWise"){
+       if (cfg$gms$cm_EDGEtr_scen == "ElecEraEurWise" | cfg$gms$cm_EDGEtr_scen == "ConvCaseEurWise"){
          # Use only "wise" demands for EUR; ROW uses "conv" demands
-         demTrp = "wiseEUR"
+         demTrsp = "wiseEUR"
        }
     } else {
        demTrsp = "conv"

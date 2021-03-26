@@ -54,7 +54,7 @@ EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_sce
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
-if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
+if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise", "ConvCaseEurWise")) {
   techswitch <- "Liquids"
 } else if (EDGE_scenario %in% c("ElecEra", "ElecEraWise")) {
   techswitch <- "BEV"
@@ -290,9 +290,14 @@ for (i in names(finalInputs)) {
   finalInputs[[i]]$SSP_scenario <- scenario
   finalInputs[[i]]$EDGE_scenario <- EDGE_scenario
 
+  # In case of ConvCaseEurWise set the the scenario names to ConvCaseWise for EUR and to ConvCase in ROW
+  if (EDGE_scenario == "ConvCaseEurWise") {
+    finalInputs[[i]]$EDGE_scenario <- "ConvCase"
+    finalInputs[[i]][finalInputs[[i]]$all_regi == "EUR"]$EDGE_scenario <- "ConvCaseWise"
+
   # In case of ElecEraEur set the the scenario names to ElecEra for EUR and to ConvCase in ROW
-  if (EDGE_scenario == "ElecEraEur") {
-  finalInputs[[i]]$EDGE_scenario <- "ConvCase"
+  } else if (EDGE_scenario == "ElecEraEur") {
+    finalInputs[[i]]$EDGE_scenario <- "ConvCase"
     finalInputs[[i]][finalInputs[[i]]$all_regi == "EUR"]$EDGE_scenario <- "ElecEra"
 
   # In case of ElecEraEurWise set the the scenario names to ElecEraWise for EUR and to ConvCase in ROW
