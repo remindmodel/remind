@@ -114,6 +114,7 @@ EDGE_scenario_all    "EDGE-T scenarios"
 /
 ConvCase
 ConvCaseWise
+ConvCaseEurWise
 ElecEra
 ElecEraWise
 ElecEraEur

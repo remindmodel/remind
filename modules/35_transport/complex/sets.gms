@@ -113,6 +113,7 @@ EDGE_scenario_all    "EDGE-T scenarios, used to get the bunkers share on total l
 /
 ConvCase
 ConvCaseWise
+ConvCaseEurWise
 ElecEra
 ElecEraWise
 ElecEraEur
