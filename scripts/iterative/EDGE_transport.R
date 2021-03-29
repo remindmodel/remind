@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-print("Running default version of EDGE_transport.R")
+print("Running DIPOL version of EDGE_transport.R")
 library(optparse)
 
 opt_parser = OptionParser(
@@ -337,3 +337,4 @@ writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
 
+print("Finished DIPOL version of EDGE_transport.R")

@@ -41,7 +41,7 @@ $elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
     = p35_fe2es_aux(t,regi, "%cm_GDPscen%","ConvCase",teEs_dyn35);
     pm_fe2es(t,"EUR",teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
     = p35_fe2es_aux(t,"EUR","%cm_GDPscen%","ElecEraWise", teEs_dyn35);
-$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseurWise"
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseEurWise"
     pm_fe2es(t,regi, teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
     = p35_fe2es_aux(t,regi, "%cm_GDPscen%","ConvCase",teEs_dyn35);
     pm_fe2es(t,"EUR",teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
