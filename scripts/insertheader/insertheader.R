@@ -15,21 +15,36 @@ insertheader <- function(maindir=".",
                          donottouch=c("AUTHORS","README","LICENSE",".lhd",".mz",".rda",".opt",
                                       ".op2", ".op3", ".op4", ".op5", ".op6", ".op7", ".op8", ".op9",
                                       ".spam",".xlsx",".xls", ".sh","files",".md",".RData", ".jpg",
-                                      ".png",".cff", ".rds", ".aux", ".log", ".out", ".pdf",
+                                      ".png", ".PNG",".cff", ".rds", ".aux", ".log", ".out", ".pdf",
                                       ".tex", ".htm", ".css", ".bib", ".ref", ".mif", ".gmif", ".gdx",
                                       ".lst", ".git-id", ".csv", ".gcsv", ".Rdata", ".prn", ".cmd", ".put",
                                       ".IN", ".awk", ".MON", ".CFG", ".mod", ".SCEN", ".inc"),
-                         comments=c(".R"="#", ".Rmd"="#",".gms"="***",".cfg"="#",".csv"="*",".cs2"="*",
+                         comments=c(".R"="#", ".gms"="***",".cfg"="#",".csv"="*",".cs2"="*",
                                     ".cs3r"="*",".cs4r"="*",".sh"="#",".txt"="#"),
                          line_endings="notwin",
                          key = "| ",
                          oldkey = NULL,
-                         test_only=FALSE) {
+                         test_only=FALSE,
+                         blockcomments = list('.Rmd' = c('<!--', '-->'))) {
 
 
-  .findheader <- function(f,key){
-    .escape <- function(x) return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
-    return(grep(paste0("^",.escape(key)," "),f))
+  .findheader <- function(f, key, block = NULL) {
+    .escape <- function(x) {
+      return(gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", x))
+    }
+
+    if (is.null(block)) {
+      return(grep(paste0("^", .escape(key), " "), f))
+    } else {
+      tmp <- grep(paste0('^', .escape(key), ' '), f)
+
+      if (all(head(tmp, 1) - 1 %in% grep(block[[1]], f),
+              tail(tmp, 1) + 1 %in% grep(block[[2]], f))) {
+        return(c(head(tmp, 1) - 1, tmp, tail(tmp, 1) + 1))
+      } else {
+        return(0)
+      }
+    }
   }
 
   .getExtension <- function(file) {
@@ -65,7 +80,7 @@ insertheader <- function(maindir=".",
       next
     }
 
-    if(is.na(co)) {
+    if (!(ext %in% c(names(comments), names(blockcomments)))) {
       warning("Unknown extension ",ext)
       next
     }
@@ -74,7 +89,12 @@ insertheader <- function(maindir=".",
     f <- readLines(file)
 
     # Remove old header
-    tmp <- .findheader(f,paste(co,oldkey))
+    if (ext %in% names(comments)) {
+      tmp <- .findheader(f,paste(co,oldkey))
+    } else {
+      tmp <- .findheader(f, oldkey, blockcomments[[ext]])
+    }
+
     if (length(tmp)>0){
       f <- f[-tmp]
       writefile <- TRUE
@@ -83,8 +103,20 @@ insertheader <- function(maindir=".",
 
     if(length(grep("^$",f,invert=TRUE))==0) warning("Empty file: ",file ,call. = FALSE)
 
-    # insert header after line 0
-    withcomment <- paste(co,key,header)
+    # update header with current year
+    header <- sub('^\\(C\\) 2006-2020',
+                  paste0('(C) 2006-', format(Sys.Date(), '%Y')),
+                  header)
+
+    # insert header at the appropriate line
+    if (ext %in% names(comments)) {
+      withcomment <- paste(co,key,header)
+    } else {
+      withcomment <- c(blockcomments[[ext]][[1]],
+                       paste(key, header),
+                       blockcomments[[ext]][[2]])
+    }
+
     f <- append(f,withcomment,after = ifelse(!length(tmp), 0, tmp[1] - 1))
     writefile <- TRUE
     done <- c(done,file)
