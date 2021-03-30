@@ -62,7 +62,4 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
 
 $ENDIF.CoalRegiPol  
 
-*** disabling electric vehicles vm_cap lower bound for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
-vm_cap.lo("2020",regi,"apCarElT","1")$(regi_group("EUR_regi",regi)) = 1e-7;
-
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

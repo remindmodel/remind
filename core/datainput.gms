@@ -779,6 +779,12 @@ p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
 p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
 
+$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
+*** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
+p_adj_deltacapoffset("2020",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+p_adj_deltacapoffset("2025",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+$endIf.vehiclesSubsidies
+
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
 
