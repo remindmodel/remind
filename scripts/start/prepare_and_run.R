@@ -292,7 +292,7 @@ prepare <- function() {
                                          if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
-                                         "Reg_", substr(regionscode(cfg$regionmapping),1,10))
+                                         "Reg_", regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",

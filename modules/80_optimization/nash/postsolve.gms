@@ -378,9 +378,12 @@ if(s80_bool eq 1,
      OPTION decimals = 3;
      s80_numberIterations = cm_iteration_max + 1;
      display "######################################################################################################";
+     display "Run converged!!";
      display "#### Nash Solution Report";
      display "#### Convergence threshold reached within ",s80_numberIterations, "iterations.";
      display "############";
+     display "Model solution parameters of last iteration";
+     display p80_repy;
      display "#### Residual market surpluses in 2100 are:";
      display  p80_surplusMax2100;
      display "#### This meets the prescribed tolerance requirements of: ";
