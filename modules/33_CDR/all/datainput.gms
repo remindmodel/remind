@@ -6,12 +6,13 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/all/datainput.gms
 !! Beutler et al. 2019 (Climeworks)
-p33_dac_fedem("feels") = 5.28;
-p33_dac_fedem("fehes") = 21.12;
-!!previously used fe demands
-!!p33_dac_fedem("feels") = 7.33;    
-!!p33_dac_fedem("fegas") = 36.667;
-!!p33_dac_fedem("feh2s") = 36.667;
+!!fe demand electricity for ventilation
+p33_dac_fedem_el("feels") = 5.28;
+!!fe demand heat for material recovery
+p33_dac_fedem_heat("fehes") = 21.12;
+p33_dac_fedem_heat("fegas") = 21.12;
+p33_dac_fedem_heat("feh2s") = 21.12;
+p33_dac_fedem_heat("feels") = 21.12;
 
 *** enhanced weatering data
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)                                      "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"

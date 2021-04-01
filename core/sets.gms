@@ -1834,6 +1834,8 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		feelt.trans
 		feels.cdr
 		fehes.cdr
+                fegas.cdr
+                feh2s.cdr
 /
 
 ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
@@ -1853,6 +1855,10 @@ ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to s
 		ueHDVt.trans
 		ueLDVt.trans
 		ueelTt.trans
+                feeli.cdr
+                fehei.cdr
+                feh2i.cdr
+                fegai.cdr
 /
 
 all_emiMkt         "emission markets"
