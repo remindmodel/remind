@@ -30,5 +30,10 @@ loop(regi$(p45_gdppcap2015_PPP(regi) gt 30),
 *** FIXME: remove hard-coded exception for EUR and make it based on regions given by cm_regiCO2target
 pm_taxCO2eq(t,regi)$(not sameas(regi,"EUR")) = p45_regCO2priceFactor(t,regi) * p45_CO2priceTrajDeveloped(t)
 
+*** Set carbon price constant after 2050
+*** FIXME: Combine with the switch cm_taxCO2inc_after_peakBudgYr
+if (cm_taxCO2inc_after_peakBudgYr eq 0,
+  pm_taxCO2eq(t,regi)$(t.val gt 2050) = pm_taxCO2eq("2050",regi);
+);
 display pm_taxCO2eq;
 *** EOF ./modules/45_carbonprice/diffCurvPhaseIn2Lin/postsolve.gms
