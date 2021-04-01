@@ -173,5 +173,4 @@ else
 logfile.nr = 2;
 
 );  !! close iteration loop
-
 *** EOF ./core/loop.gms
