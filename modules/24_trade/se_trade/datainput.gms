@@ -38,6 +38,8 @@ pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(reg
 pm_costsTradePeFinancial(regi,"Xport", "pegas") = cm_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
 pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
+*** initialize secondary energy trade capacity
+p24_seTradeCapacity(t,regi2,regi,entySe) = 0;
 
 *** Secondary Energy exogenously defined trade scenarios
 $ifthen.seTradeScenario "%cm_seTradeScenario%" == "DEU_Low_H2"
