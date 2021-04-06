@@ -156,8 +156,8 @@ $ENDIF.feShare
 
 *** ARIADNE-specific EU switches bounds on gases+liquids share and H2 share in industry
 $ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on" 
-*** at least 15% liquids+gases in industry FE up to midcentury to guarantee feedstocks input
-  pm_shGasLiq_fe_lo(t,regi,"indst")$(t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.15; 
+*** at least 10% liquids+gases in industry FE up to midcentury to guarantee feedstocks input
+  pm_shGasLiq_fe_lo(t,regi,"indst")$(t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1; 
 *** at least 10% H2 in industry FE from 2040 onwards
 *** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
 $endif.feShareAriad
