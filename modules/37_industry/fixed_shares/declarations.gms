@@ -34,7 +34,6 @@ Positive Variables
   vm_emiIndCCS(ttot,all_regi,all_enty)             "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,all_regi,all_enty)            "industry CCS cost"
   v37_expSlack(ttot,all_regi)                      "slack variable to avoid overflow on too high logistic function exponent"
-  v37_H2share(ttot,all_regi)                       "H2 share in gases"
 ;
 
 Equations
@@ -44,7 +43,6 @@ Equations
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"
   q37_cementCCS(ttot,all_regi)                      "equal abatement levels for cement fuel and process emissions"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"
-  q37_H2Share(ttot,all_regi)                         "H2 share in gases"
   q37_costAddTeInv(ttot,all_regi)                    "additional industry hydrogen annual investment costs under low technology diffusion due to T&D conversion"
   q37_auxCostAddTeInv(ttot,all_regi)                 "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
 ;

@@ -39,19 +39,9 @@ q36_costAddTeInv(t,regi)..
 q36_auxCostAddTeInv(t,regi)..
   v36_costExponent(t,regi)
   =e=
-  ( (10/(s36_costDecayEnd-s36_costDecayStart)) * ( (v36_H2share(t,regi)+1e-7) -  ((s36_costDecayEnd+s36_costDecayStart)/2) ) ) - v36_expSlack(t,regi)
+  ( (10/(s36_costDecayEnd-s36_costDecayStart)) * ( (vm_H2share_stationary(t,regi)+1e-7) -  ((s36_costDecayEnd+s36_costDecayStart)/2) ) ) - v36_expSlack(t,regi)
 ;
 
-
-*' Hydrogen fe share in buildings gases use (natural gas + hydrogen)
-q36_H2Share(t,regi)..
-  v36_H2share(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-  =e=
-  sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-;
 
 *** calculate district heat share in FE buildings
 q36_HeatShare(t,regi)..
@@ -65,13 +55,14 @@ q36_HeatShare(t,regi)..
 
 *** calculate electricity share in FE buildings
 q36_ElShare(t,regi)..
-  v36_Elshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
+  v36_Elshare(t,regi)
+  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),
       vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
   =e=
   sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feels")),
       vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
 ;
+
 
 
 *** EOF ./modules/36_buildings/simple/equations.gms

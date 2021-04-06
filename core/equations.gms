@@ -939,4 +939,18 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
         vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)))
 ;
 
+q_H2Share_stationary(t,regi)..
+  vm_H2share_stationary(t,regi) 
+  * sum(emiMkt,
+      sum(entyFe2Sector(entyFeStat,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
+        sum(se2fe(entySe,entyFeStat,te),  
+          vm_demFeSector(t,regi,entySe,entyFeStat,sector,emiMkt))))
+  =e=
+  sum(emiMkt,
+      sum(entyFe2Sector(entyFeStat,sector)$((SAMEAS(sector,"build") OR SAMEAS(sector,"indst")) AND SAMEAS(entyFeStat,"feh2s")),
+        sum(se2fe(entySe,entyFeStat,te),  
+          vm_demFeSector(t,regi,entySe,entyFeStat,sector,emiMkt))))
+;
+
+
 *** EOF ./core/equations.gms
