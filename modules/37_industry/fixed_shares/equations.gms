@@ -156,20 +156,9 @@ q37_costAddTeInv(t,regi)..
 q37_auxCostAddTeInv(t,regi)..
   v37_costExponent(t,regi)
   =e=
-  ( (10/(s37_costDecayEnd-s37_costDecayStart)) * ( (v37_H2share(t,regi)+1e-7) -  ((s37_costDecayEnd+s37_costDecayStart)/2) ) ) - v37_expSlack(t,regi)
+  ( (10/(s37_costDecayEnd-s37_costDecayStart)) * ( (vm_H2share_stationary(t,regi)+1e-7) -  ((s37_costDecayEnd+s37_costDecayStart)/2) ) ) - v37_expSlack(t,regi)
   ;
 
-*' Hydrogen fe share in industry gases use (natural gas + hydrogen)
-q37_H2Share(t,regi)..
-  v37_H2share(t,regi) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
-  =e=
-  sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
-;
 
 
 
