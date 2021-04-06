@@ -39,17 +39,13 @@ p47_emiAllowances("2019","EU_ETS") = p47_emiAllowances("2019","EU_ETS") - 1.5;
 p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123+0.0025); 
 
 * ETS 2005 reference emissions
-* 2368.8517 Mt CO2-equiv/yr, verified stationary emissions from EEA
+* 2368.8517 Mt CO2-equiv/yr, verified stationary emissions from EEA, 
+*   this is equal to 2333 Mt CO2-equiv/yr = 2368.8517 *(1-0.0123-0.0025) if:
+*   - remove Norway, Iceland and Liechtenstein (-1.2% allowances according EEA data), as they are not accounted for now in the REMIND ETS
+*   - remove Switzerland emissions in the ETS (5 mtCO2). 0.25% of total EU (2 Gt CO2).
 * 2501.24927010579 Mt CO2-equiv/yr, from EU Reference Scenario
-* 2932.555379 Mt CO2-equiv/yr, from REMIND 2005
-* 2633.49473 Mt CO2/yr, from REMIND 2005 (should be using this one, but the ETS prices would be too low)
-p47_emiAllowances("2005","EU_ETS") = 2.3688517;
-
-$ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
-*removing Norway, Iceland and Liechtenstein from the ETS budget as they are not accounted for now in the REMIND ETS. They account for approximately 1.2% of the total allocated allowances according EEA data (European Environment Agency) 
-*removing Switzerland emissions in the ETS (5 mtCO2) vs total EU (2 Gt CO2) equal to 0.25%
-p47_regiCO2ETStarget(ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type) = p47_regiCO2ETStarget(ttot,target_type,emi_type)*(1-0.0123-0.0025);
-$endIf.emiMktETS  
+* 2345 Mt CO2-equiv/yr, from EEA sectoral data (REMIND needs to be able to reflect this number as close as possible for 2005 emissions)
+p47_emiAllowances("2005","EU_ETS") = 2.345;
 
 $ontext
 
