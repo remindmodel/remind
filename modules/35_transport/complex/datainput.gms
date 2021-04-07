@@ -64,7 +64,7 @@ $offdelim
 /
 ;
 
-p35_bunkers_fe(ttot,regi) = p35_bunkers_fedemand(ttot,regi,"%cm_GDPscen%","ConvCase");
+p35_bunkers_fe(ttot,regi) = p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","ConvCase");
 
 display p35_bunkers_fe;
 
