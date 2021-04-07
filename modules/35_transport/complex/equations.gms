@@ -59,12 +59,8 @@ q35_demTransBunkers(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear) ..
   v35_demTransType(ttot,regi,entyFe,emiMkt,"nonLDV_Bunkers")
   =e=
   (
-    p35_bunker_share_in_nonldv_fe(ttot,regi) *
-    sum(fe2ue(entyFE2,entyUe,te)$sameas(entyUE,"uedit"),      !! take all the output of "heavy duty transport" as basis for bunker share calculation
-      vm_prodUe(ttot,regi,entyFE2,entyUe,te)
-    )
-    / pm_eta_conv(ttot,regi,"apCarDit")                       !! calculate the "liquids equivalent input of the heavy duty transport output" - in case the default efficiency of apcardit is ever changed
-  )$(sameas(emiMkt,"other") AND sameas(entyFe,"fedie"))       !! asign heavy duty bunkers to "other" emiMkt
+    p35_bunkers_fe(ttot,regi)
+  )$(sameas(emiMkt,"other") AND sameas(entyFe,"fedie"))       !! asign bunkers to "other" emiMkt
   + 0$(sameas(emiMkt,"other") AND NOT sameas(entyFe,"fedie")) !! make sure no non-liquids FE is accounted in bunkers (= emiMkt "other")
 ;
 
