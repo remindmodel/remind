@@ -116,7 +116,7 @@ v21_taxrevFEtrans(t,regi)
 q21_taxrevFEBuildInd(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevFEBuildInd(t,regi) 
   =e= 
-  sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
+  sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") OR SAMEAS(sector,"cdr")),
     sum(ppfen$ppfEn2Sector(ppfen,sector),
       (pm_tau_fe_tax_bit_st(t,regi,ppfen) + pm_tau_fe_sub_bit_st(t,regi,ppfen))
       *
