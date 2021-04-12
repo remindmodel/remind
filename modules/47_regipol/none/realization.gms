@@ -7,5 +7,7 @@
 *** SOF ./modules/47_regipol/none.gms
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "declarations" $include "./modules/47_regipol/none/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/47_regipol/none/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/47_regipol/none.gms

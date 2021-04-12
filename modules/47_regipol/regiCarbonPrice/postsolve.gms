@@ -250,17 +250,22 @@ loop((ttot,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ext_regi,targe
 
 	
 ***  calculating the CO2 tax rescale factor
-loop((ttot,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ext_regi,target_type,emi_type),		 
+loop((ttot,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ext_regi,target_type,emi_type),	
+	pm_regiTarget_dev(ext_regi) = p47_emissionsCurrent(ext_regi)/p47_regiCO2target(ttot,ext_regi,target_type,emi_type);	 
 	if(iteration.val lt 10,
-		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, (p47_emissionsCurrent(ext_regi))/(p47_regiCO2target(ttot,ext_regi,target_type,emi_type)) ) ** 2;
+		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, pm_regiTarget_dev(ext_regi) ) ** 2;
 	else
-		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, (p47_emissionsCurrent(ext_regi))/(p47_regiCO2target(ttot,ext_regi,target_type,emi_type)) ) ** 1;
+		p47_factorRescaleCO2Tax(ext_regi) = max(0.1, pm_regiTarget_dev(ext_regi) ) ** 1;
 	);
+*** dampen rescale factor with increasing iterations to help convergence
 	p47_factorRescaleCO2Tax(ext_regi) =
 		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax(ext_regi)),
 			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
 		);
 );
+
+*** save regional target deviation across iterations for debugging of target convergence issues
+p47_regiTarget_dev_iter(iteration,ext_regi) = pm_regiTarget_dev(ext_regi);
 
 ***	updating the co2 tax
 ***		for region groups

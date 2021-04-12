@@ -8,9 +8,11 @@
 
 	
 Parameter
+	pm_regiTarget_dev(ext_regi)	   "target deviation across iterations in current emissions divided by target emissions"
+	p47_regiTarget_dev_iter(iteration,ext_regi)	   "parameter to save pm_regiTarget_dev across iterations"
 	p47_taxCO2eqBeforeStartYear(ttot,all_regi) "CO2eq prices before start year"
 	p47_emissionsCurrent(ext_regi)		"previous iteration region GHG emissions [GtCO2]"
-	p47_factorRescaleCO2Tax(ext_regi)	"tax rescale factor"
+	p47_factorRescaleCO2Tax(ext_regi)	"multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 

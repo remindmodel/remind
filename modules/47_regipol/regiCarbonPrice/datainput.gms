@@ -45,6 +45,9 @@ p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123+0.
 * 2633.49473 Mt CO2/yr, from REMIND 2005 (should be using this one, but the ETS prices would be too low)
 p47_emiAllowances("2005","EU_ETS") = 2.3688517;
 
+* initialize regipol target deviation parameter
+pm_regiTarget_dev(ext_regi) = 0;
+
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 *removing Norway, Iceland and Liechtenstein from the ETS budget as they are not accounted for now in the REMIND ETS. They account for approximately 1.2% of the total allocated allowances according EEA data (European Environment Agency) 
 *removing Switzerland emissions in the ETS (5 mtCO2) vs total EU (2 Gt CO2) equal to 0.25%
@@ -157,5 +160,7 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 	p47_implFETax0(ttot,all_regi) = 0;
 
 $endIf.cm_implicitFE
+
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

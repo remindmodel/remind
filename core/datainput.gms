@@ -1341,5 +1341,8 @@ if (9 lt smax((t,regi,all_GDPscen)$(
 );
 $endif.subsectors
 
+*** initialize global target deviation scalar
+sm_globalBudget_dev = 1;
+
 *** EOF ./core/datainput.gms
 
