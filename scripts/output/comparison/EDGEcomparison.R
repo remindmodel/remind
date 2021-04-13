@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(rmarkdown)
-require(lucode)
+library(gms)
+library(lucode2)
 require(quitte)
 require(data.table)
 require(rmndt)
@@ -390,10 +391,19 @@ for (outputdir in outputdirs) {
   mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/mj_km_data.RDS"))
   loadFactor = readRDS(paste0(outputdir, "/EDGE-T/loadFactor.RDS"))
   pref_FV = readRDS(paste0(outputdir, "/EDGE-T/pref_output.RDS"))[["FV_final_pref"]]
-  nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
+  ## if learning is ON, load the corresponding costs
+  if (file.exists(paste0(outputdir, "/nonfuel_costs_learning.RDS")) ) {
+    nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
+  } else {
+    nonf = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "totalNE_cost"][,price_component := NULL] 
+  }
   capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[(price_component == "Capital_costs_purchase") & ((!technology %in% c("BEV", "FCEV"))|(technology %in% c("BEV", "FCEV") & year < 2020))]
-  capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
-
+  ## if learning is ON, load the corresponding costs
+  if (file.exists(paste0(outputdir, "/capcost_learning.RDS")) ) {
+    capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
+  } else {
+      capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "Capital_costs_purchase" & technology %in% c("BEV", "FCEV") & year > 2020]
+  }
   ## read in fuel prices
   files<- list.files(path = paste0(outputdir, "/EDGE-T"), pattern = "REMINDprices")
   ## only the last iteration is to be used
@@ -407,8 +417,16 @@ for (outputdir in outputdirs) {
   POP=calcOutput("Population", aggregate = T)[,, "pop_SSP2"]
   POP <- magpie2dt(POP, regioncol = "region",
                    yearcol = "year", datacols = "POP")
-  gdp <- getRMNDGDP(scenario = "gdp_SSP2", to_aggregate = T, isocol = "region", usecache = T, gdpfile = "GDPcache.RDS")
-  GDPcap <- getRMNDGDPcap(scenario = "gdp_SSP2", usecache = TRUE, isocol = "region", to_aggregate = T, gdpCapfile = "GDPcapCache.RDS")
+  GDP=calcOutput("GDPppp", aggregate = T)[,, "gdp_SSP2"]
+  GDP <- as.data.table(GDP)
+  GDP[, year := as.numeric(gsub("y", "", Year))][, Year := NULL]
+  setnames(GDP, old = c("ISO3","value"), new = c("region","weight"))
+  GDP = GDP[,.(weight = sum(weight)), by = c("region", "year")]
+
+  GDPcap=merge(GDP,POP[,.(region,year,POP_val=value)],all = TRUE,by=c("region","year"))
+  GDPcap[,GDP_cap:=weight/POP_val]
+
+
   if (nrow(miffile[variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting")])==0) {
     TWa_2_EJ     <- 31.536
     prodFE  <- readGDX(gdx,name=c("vm_prodFe"),field="l",restore_zeros=FALSE,format="first_found")*TWa_2_EJ

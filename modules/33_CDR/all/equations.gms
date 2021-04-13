@@ -67,31 +67,44 @@ q33_emicdrregi(t,regi)..
 	v33_emiEW(t,regi) + v33_emiDAC(t,regi)
 	;
 
+
+***---------------------------------------------------------------------------
+*'  Calculation of electricity demand for ventilation of direct air capture.
+***---------------------------------------------------------------------------
+q33_DacFEdemand_el(t,regi,entyFe)..
+    v33_DacFEdemand_el(t,regi,entyFe)
+    =e=
+	- vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
+    ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
+*'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
+***---------------------------------------------------------------------------
+q33_DacFEdemand_heat(t,regi,entyFe)..
+    v33_DacFEdemand_heat(t,regi,entyFe)
+    =e=
+    - vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
+    - v33_DacFEdemand_heat(t,regi,"feh2s")$((sameas(entyFe,"fegas"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels"))) 
+	- v33_DacFEdemand_heat(t,regi,"fegas")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels")))
+	- v33_DacFEdemand_heat(t,regi,"feels")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"fegas")))
+	- v33_DacFEdemand_heat(t,regi,"fehes")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fegas"))OR(sameas(entyFe,"feels")))
+    ;
+
 ***---------------------------------------------------------------------------
 *'  Calculation of energy demand of DAC and EW. 
 *'  The first part of the equation describes the electricity demand for grinding, 
 *'  the second part the diesel demand for transportation and spreading on crop fields.
-*'  The third part is DAC electricity demand and the last part is DAC heat demand.
-*'  Heat for DAC can be provided by gas or H2; vm_otherFEdemand(t,regi,"fegas") is calculated as the total 
-*'  DAC energy demand for heat minus what is already covered by h2, i.e. vm_otherFEdemand(t,regi,"feh2s") and vice versa.
+*'  The third part is DAC final energy demand
 ***---------------------------------------------------------------------------	
 q33_otherFEdemand(t,regi,entyFe)..
 	vm_otherFEdemand(t,regi,entyFe)
 	=e=
 	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-   - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe)
-   - vm_otherFEdemand(t,regi,"feh2s")$(sameas(entyFe,"fegas")) - vm_otherFEdemand(t,regi,"fegas")$(sameas(entyFe,"feh2s"))
+   + v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
 	;	
 	
-***---------------------------------------------------------------------------
-*'  Limit the amount of H2 from biomass to the demand without DAC.
-***---------------------------------------------------------------------------	
-q33_H2bio_lim(t,regi,te)..	         
-	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
-	=l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - vm_otherFEdemand(t,regi,"feh2s")
-	;
 
 ***---------------------------------------------------------------------------
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
@@ -133,5 +146,13 @@ q33_LimEmiEW(t,regi)..
                 )
         =l=
         cm_LimRock*p33_LimRock(regi);
-		
+
+***---------------------------------------------------------------------------
+*'  Limit the amount of H2 from biomass to the demand without DAC.
+***---------------------------------------------------------------------------
+q33_H2bio_lim(t,regi,te)..	         
+	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
+	=l=
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - vm_otherFEdemand(t,regi,"feh2s")
+	;		
 *** EOF ./modules/33_CDR/all/equations.gms

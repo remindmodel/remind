@@ -5,10 +5,14 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/all/datainput.gms
-
-p33_dac_fedem("feels") = 7.333;
-p33_dac_fedem("fegas") = 36.667;
-p33_dac_fedem("feh2s") = 36.667;
+!! Beutler et al. 2019 (Climeworks)
+!!fe demand electricity for ventilation
+p33_dac_fedem_el("feels") = 5.28;
+!!fe demand heat for material recovery
+p33_dac_fedem_heat("fehes") = 21.12;
+p33_dac_fedem_heat("fegas") = 21.12;
+p33_dac_fedem_heat("feh2s") = 21.12;
+p33_dac_fedem_heat("feels") = 21.12;
 
 *** enhanced weatering data
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)                                      "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"

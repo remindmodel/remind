@@ -7,13 +7,14 @@
 
 library(magclass)
 library(remind2)
-library(lucode)
+library(lucode2)
+library(gms)
 library(quitte)
 options("magclass.verbosity" = 1)
 
 ############################# BASIC CONFIGURATION #############################
 if(!exists("source_include")) {
-  outputdir <- "output/r8473-trunk-C_Budg600-rem-5/"
+  outputdir <- "output/default_2021-03-18_18.16.40/"
   readArgs("outputdir")
 }
 
@@ -29,12 +30,13 @@ resultsarchive <- "/p/projects/rd3mod/models/results/remind"
 mif <- path(outputdir,paste0("REMIND_generic_",cfg$title,".mif"))
 
 if(file.exists(mif)) {
-  report <- read.report(mif,as.list = FALSE)
+  report <- read.quitte(mif)
 } else {
   report <- convGDX2MIF(gdx,gdx_ref,scenario=cfg$title)
 }
 
-q <- as.quitte(report)
+if (!is.quitte(report)) report <- as.quitte(report)
+q<-report
 if(all(is.na(q$value))) stop("No values in reporting!")
 saveRDS(q,file=rds)
 
@@ -44,8 +46,8 @@ if(file.exists(runstatistics) & dir.exists(resultsarchive)) {
   if(is.null(stats$id)) {
     # create an id if it does not exist (which means that statistics have not 
     # been saved to the archive before) and save statistics to the archive
-    message("No id found in runstatistics.rda. Calling lucode::runstatistics() to create one.") 
-    stats <- lucode::runstatistics(file = runstatistics, submit = cfg$runstatistics)
+    message("No id found in runstatistics.rda. Calling lucode2::runstatistics() to create one.") 
+    stats <- lucode2::runstatistics(file = runstatistics, submit = cfg$runstatistics)
     message("Created the id ",stats$id)
     # save stats locally (including id) otherwise it would generate a new id (and 
     # resubmit the results and the statistics) next time rds_report is executed

@@ -122,4 +122,9 @@ if ( cm_biotrade_phaseout eq 1,
       pm_demPeBio("2015",regi)$(regi_group("EUR_regi",regi))/4;
 );
 
+
+*** force secondary energy trade to zero
+vm_Mport.fx(t,regi,entySe) = 0;
+vm_Xport.fx(t,regi,entySe) = 0;
+
 *** EOF ./modules/24_trade/standard/bounds.gms

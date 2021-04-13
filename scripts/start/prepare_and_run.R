@@ -4,7 +4,8 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(gms, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
 require(gdx)
 
@@ -13,7 +14,7 @@ require(gdx)
 ##################################################################################################
 
 getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
-	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   .bioenergy_price <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
@@ -169,7 +170,7 @@ prepare <- function() {
   timePrepareStart <- Sys.time()
 
   # Load libraries
-  require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
   require(remind2, quietly = TRUE,warn.conflicts =FALSE)
@@ -291,7 +292,7 @@ prepare <- function() {
                                          if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
-                                         "Reg_", substr(regionscode(cfg$regionmapping),1,10))
+                                         "Reg_", regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
@@ -436,7 +437,7 @@ prepare <- function() {
   singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
-  lucode::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
+  lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
                         user = Sys.info()[["user"]],
                         date = Sys.time(),
                         version_management = "git",
@@ -638,7 +639,7 @@ prepare <- function() {
   timePrepareEnd <- Sys.time()
   # Save run statistics to local file
   cat("Saving timePrepareStart and timePrepareEnd to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0("runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0("runstatistics.rda"),
                       timePrepareStart = timePrepareStart,
                       timePrepareEnd   = timePrepareEnd)
 
@@ -776,11 +777,11 @@ run <- function(start_subsequent_runs = TRUE) {
   cat("\n gams_runtime is ", gams_runtime, "\n")
 
   # Collect and submit run statistics to central data base
-  lucode::runstatistics(file       = "runstatistics.rda",
+  lucode2::runstatistics(file       = "runstatistics.rda",
                         modelstat  = readGDX(gdx="fulldata.gdx","o_modelstat", format="first_found"),
                         config     = cfg,
                         runtime    = gams_runtime,
-                        setup_info = lucode::setup_info(),
+                        setup_info = lucode2::setup_info(),
                         submit     = cfg$runstatistics)
 
   # Compress files with the fixing-information
@@ -892,7 +893,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   # Save run statistics to local file
   cat("Saving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
                        timeGAMSStart   = timeGAMSStart,
                        timeGAMSEnd     = timeGAMSEnd,
                        timeOutputStart = timeOutputStart,

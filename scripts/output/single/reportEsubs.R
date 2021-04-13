@@ -10,7 +10,7 @@
 
 library(tidyverse)
 library(quitte)
-library(lucode)
+library(lucode2)
 library(grid)
 library(gridExtra)
 

@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 library(magclass)
 library(remind2)
-library(lucode)
+library(gms)
+library(lucode2)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"        # name of the gdx  

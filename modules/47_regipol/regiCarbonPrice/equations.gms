@@ -19,11 +19,9 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 	v47_emiTarget(t,regi,"netCO2_noBunkers")
 	=e=
 	vm_emiAll(t,regi,"co2")
-	-
-	sum(se2fe(enty,enty2,te),
+	- sum(se2fe(enty,enty2,te),
 		pm_emifac(t,regi,enty,enty2,te,"co2")
-		* vm_demFeSector(t,regi,enty,enty2,"trans","other")
-	)
+		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
 *** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS

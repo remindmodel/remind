@@ -28,7 +28,7 @@ p21_taxrevFEtrans0(ttot,regi) = SUM(feForUe(enty),
                                       )+
 				      SUM(feForEs(enty), (p21_tau_fe_tax_transport(ttot,regi,feForEs) + p21_tau_fe_sub_transport(ttot,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
 				    );
-p21_taxrevFEBuildInd0(ttot,regi) = sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst")),
+p21_taxrevFEBuildInd0(ttot,regi) = sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") OR SAMEAS(sector,"cdr")),
     sum(ppfen$ppfEn2Sector(ppfen,sector),
       (pm_tau_fe_tax_bit_st(ttot,regi,ppfen) + pm_tau_fe_sub_bit_st(ttot,regi,ppfen))
       *
