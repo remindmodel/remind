@@ -33,4 +33,13 @@ te(te_dyn33)								   = YES;
 teNoTransform(teNoTransform_dyn33)             = YES;
 teNoTransform2rlf(teNoTransform2rlf_dyn33)     = YES;
 
+
+***-------------------------------------------------------------------------
+***  Add sets that are needed to read in regional specific bounds
+***-------------------------------------------------------------------------
+*LM* Define set of regions, in which DAC is not allowed
+$ifThen.regiNoDAC not "%cm_regiNoDAC%" == "none"
+Set regiNoDAC_33(all_regi) "Set of regions in which DAC is not allowed" / %cm_regiNoDAC% /;
+$endIf.regiNoDAC
+
 *** EOF ./modules/33_CDR/all/sets.gms

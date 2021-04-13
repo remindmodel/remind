@@ -300,6 +300,7 @@ cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils 
 cm_regiPhaseOutFosBuilSimple    "Switch defining regions that phase out fossils in buildings - simple buildings realization"
 cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
 cm_ban_ICE                      "Switch that phases out internal combustion engine (ICE) cars strongly until 2030"
+cm_regiNoDAC                    "Switch defining regions that are not allowed to use DAC"
 
 cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
@@ -439,6 +440,7 @@ $setGlobal cm_regiPhaseOutFosBuil  none       !! def = none
 $setGlobal cm_regiPhaseOutFosBuilSimple  none !! def = none
 $setGlobal cm_regiFactorStorageMult  none     !! def = none
 $setGlobal cm_feelhth_sub  off                !! def = off
+$setGlobal cm_regiNoDAC  none                 !! def = none
 
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 

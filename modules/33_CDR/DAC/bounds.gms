@@ -11,4 +11,10 @@ vm_omcosts_cdr.fx(t,regi) = 0.0;
 v33_emiEW.fx(t,regi) = 0.0;
 v33_grindrock_onfield.fx(t,regi,rlf,rlf2) = 0;
 v33_grindrock_onfield_tot.fx(t,regi,rlf,rlf2) = 0;
+
+$ifThen.regiNoDAC not "%cm_regiNoDAC%" == "none"
+*** Switch off DAC for selected regions
+v33_emiDAC.fx(t,regiNoDAC_33) = 0.0;
+$endIf.regiNoDAC
+
 *** EOF ./modules/33_CDR/DAC/bounds.gms
