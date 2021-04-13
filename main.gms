@@ -312,6 +312,7 @@ c_regi_capturescen		"region to apply ccapturescen to"
 cm_GDPcovid                     "GDP correction for covid"
 cm_TaxConvCheck                 "switch for enabling tax convergence check in nash mode"
 cm_flex_tax                     "switch for enabling flexibility tax"
+cm_regiFlexTax                  "Switch defining, in which regions the flexibility tax is applied"
 cm_PriceDurSlope_elh2           "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback              "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 cm_VRE_supply_assumptions       "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
@@ -445,6 +446,7 @@ $setGlobal cm_regiNoDAC  none                 !! def = none
 cm_TaxConvCheck = 1; !! def 1, which means tax convergence check is on
 
 cm_flex_tax = 1; !! def 0
+$setGlobal cm_regiFlexTax  all                !! def = all
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 

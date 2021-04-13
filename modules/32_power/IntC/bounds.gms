@@ -16,13 +16,13 @@ vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 if ( cm_flex_tax eq 1,
   if ( cm_FlexTaxFeedback eq 1,
 *** if flexibility tax feedback is on, let model choose capacity factor of flexible technologies freely
-	  vm_capFac.lo(t,regi,teFlexTax)$(t.val ge 2010) = 0.1;
-    vm_capFac.up(t,regi,teFlexTax)$(t.val ge 2010) = pm_cf(t,regi,teFlexTax);
+	  vm_capFac.lo(t,regiFlexTax_32,teFlexTax)$(t.val ge 2010) = 0.1;
+    vm_capFac.up(t,regiFlexTax_32,teFlexTax)$(t.val ge 2010) = pm_cf(t,regiFlexTax_32,teFlexTax);
   else 
 *** if flexibility tax feedback is off, only flexibliity tax benefit for flexible technologies and 0.5 capacity factor
-    vm_capFac.fx(t,regi,teFlex)$(t.val ge 2010) = 0.5;
+    vm_capFac.fx(t,regiFlexTax_32,teFlex)$(t.val ge 2010) = 0.5;
 *** electricity price of inflexible technologies the same w/o feedback
-    v32_flexPriceShare.fx(t,regi,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
+    v32_flexPriceShare.fx(t,regiFlexTax_32,te)$(teFlexTax(te) AND NOT(teFlex(te))) = 1;
   );
 );
 

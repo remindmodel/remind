@@ -224,7 +224,7 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 *** Below, pm_priceSeel is the (average) electricity price from the last iteration. 
 *** Flexible technologies benefit (v32_flexPriceShare < 1),
 *** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
-q32_flexAdj(t,regi,te)$(teFlexTax(te))..
+q32_flexAdj(t,regi,te)$(teFlexTax(te) AND regiFlexTax_32(regi))..
 	vm_flexAdj(t,regi,te) 
 	=e=
 	((1-v32_flexPriceShare(t,regi,te)) * pm_priceSeel(t,regi))$(cm_flex_tax eq 1)
