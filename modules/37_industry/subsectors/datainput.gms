@@ -112,21 +112,20 @@ s37_clinker_process_CO2 = 0.5262;
 *** FIXME *** this needs to be in mrremind
 p37_clinker_cement_ratio("2005","CAZ") = 0.81;
 p37_clinker_cement_ratio("2005","CHA") = 0.58;
-p37_clinker_cement_ratio("2005","DEU") = 0.73;
-p37_clinker_cement_ratio("2005","ECE") = 0.73;
-p37_clinker_cement_ratio("2005","ECS") = 0.73;
-p37_clinker_cement_ratio("2005","ENC") = 0.73;
-p37_clinker_cement_ratio("2005","ESC") = 0.73;
-p37_clinker_cement_ratio("2005","ESW") = 0.73;
-p37_clinker_cement_ratio("2005","EWN") = 0.73;
-p37_clinker_cement_ratio("2005","FRA") = 0.73;
-p37_clinker_cement_ratio("2005","UKI") = 0.73;
+
+loop (regi_group("EUR_regi",regi),
+  p37_clinker_cement_ratio("2005",regi) = 0.73;
+);
+
 p37_clinker_cement_ratio("2005","IND") = 0.71;
 p37_clinker_cement_ratio("2005","JPN") = 0.80;
 p37_clinker_cement_ratio("2005","LAM") = 0.70;
 p37_clinker_cement_ratio("2005","MEA") = 0.81;
-p37_clinker_cement_ratio("2005","NEN") = 0.81;
-p37_clinker_cement_ratio("2005","NES") = 0.81;
+
+loop (regi_group("NEU_regi",regi),
+  p37_clinker_cement_ratio("2005",regi) = 0.81;
+);
+
 p37_clinker_cement_ratio("2005","OAS") = 0.80;
 p37_clinker_cement_ratio("2005","REF") = 0.80;
 p37_clinker_cement_ratio("2005","SSA") = 0.77;
