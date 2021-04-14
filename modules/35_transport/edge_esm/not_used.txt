@@ -17,3 +17,4 @@ vm_capFac,input,questionnaire
 pm_eta_conv,input,questionnaire
 vm_cesIO,input,questionnaire
 pm_prodCouple,input,questionnaire
+sm_EJ_2_TWa,input,questionnaire
