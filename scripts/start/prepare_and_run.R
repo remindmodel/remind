@@ -390,7 +390,9 @@ prepare <- function() {
 
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
-      download_distribute(files        = input_new,
+      # add CES data to the list of inputs
+      input_data <- c(input_new, "CESparameters.tgz")
+      download_distribute(files        = input_data,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
                           debug        = FALSE)
