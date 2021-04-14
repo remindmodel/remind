@@ -778,6 +778,13 @@ $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
 
+$IFTHEN.regiFlexTax "%cm_regiFlexTax%" == "all"
+  set regi_flexTax(all_regi) "Set of regions, in which the flexibility tax is applied";
+  regi_flexTax(all_regi) = YES;
+$ELSE.regiFlexTax
+  set regi_flexTax(all_regi) "Set of regions, in which the flexibility tax is applied" / %cm_regiFlexTax% /;
+$ENDIF.regiFlexTax
+
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
