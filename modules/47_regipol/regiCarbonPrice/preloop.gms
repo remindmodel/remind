@@ -31,6 +31,18 @@ p47_emiRescaleCo2TaxES(ttot,regi) = 0;
 *** Initialize tax path
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
+$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
+if ( (cm_startyear gt 2005),
+  Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
+);
+$ENDIF.emiMktETS
+
+$IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
+if ( (cm_startyear gt 2005),
+  Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
+);
+$ENDIF.emiMktES
+
 $ontext
 *** Removing the economy wide co2 tax parameters for regions within the ETS
 $IFTHEN.ETSprice not "%cm_emiMktETS%" == "off" 

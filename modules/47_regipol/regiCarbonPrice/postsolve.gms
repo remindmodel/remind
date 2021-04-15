@@ -110,6 +110,7 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
+$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) )** 2;
@@ -117,6 +118,7 @@ $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) );
 		);
 
+$ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
@@ -132,6 +134,7 @@ $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 NOT "%cm_emiMktES2050%" == "linear"
+$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) )** 2;
@@ -139,6 +142,7 @@ $IFTHEN.emiMktES2050_2 NOT "%cm_emiMktES2050%" == "linear"
 			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) );
 		);
 
+$ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
@@ -175,10 +179,16 @@ $IFTHEN.emiMktES2050 "%cm_emiMktES2050%" == "linear"
 		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2030) AND  (t.val le 2055))  = pm_taxemiMkt("2030",regi,"ES") + (%cm_ESD_postTargetIncrease%*sm_DptCO2_2_TDpGtC)*(t.val-2030) ; !! post 2030 and before 2055: 8 €/tCO2 increase per year after 2030
 		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2055) )  = pm_taxemiMkt("2055",regi,"ES") + (%cm_ESD_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055) ; !! post 2055: 2 €/tCO2 increase per year after 2030
 
+$ELSEIF.emiMktES2050 "%cm_emiMktES2050%" == "linear2010to2050"
+
+		pm_taxemiMkt("2030",regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND pm_emiTargetES("2030",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2030",regi,"ES") * p47_emiRescaleCo2TaxES("2030",regi));
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2020) AND  (t.val le 2055)) = pm_taxemiMkt("2010",regi,"ES") + ((t.val - 2010)* (pm_taxemiMkt("2030",regi,"ES") - pm_taxemiMkt("2010",regi,"ES"))/(2030-2010));
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (t.val gt 2055) )  = pm_taxemiMkt("2055",regi,"ES") + (%cm_ESD_post2055Increase%*sm_DptCO2_2_TDpGtC)*(t.val-2055) ; !! post 2055: 2 €/tCO2 increase per year after 2030
+
 $ELSEIF.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 		
 		pm_taxemiMkt("2050",regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND pm_emiTargetES("2050",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2050",regi,"ES") * p47_emiRescaleCo2TaxES("2050",regi));
-		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (pm_emiTargetES("2050",regi)) AND (t.val gt 2030) AND (t.val lt 2050)) = pm_taxemiMkt("2030",regi,"ES") + ((t.val-2030)/(2050-2030))*(pm_taxemiMkt("2050",regi,"ES")-pm_taxemiMkt("2030",regi,"ES")) ;
+		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (pm_emiTargetES("2050",regi)) AND (t.val gt 2030) AND (t.val lt 2050)) = pm_taxemiMkt("2030",regi,"ES") + ((t.val-2030)/(2050-2030))*(pm_taxemiMkt("2050",regi,"ES")-pm_taxemiMkt("2030",regi,"ES"));
 ***		pm_taxemiMkt(t,regi,"ES")$((pm_emiTargetES("2050",regi)) AND (t.val gt 2030) AND (t.val le 2050)) = pm_taxemiMkt("2050",regi,"ES")*1.05**(t.val-2050); !! 2035 to 2050: increase at 5% p.a.
 		pm_taxemiMkt(t,regi,"ES")$(p47_emiRescaleCo2TaxES("2030",regi) AND (pm_emiTargetES("2050",regi)) AND (t.val gt 2050)) = pm_taxemiMkt("2050",regi,"ES")*1.0125**(t.val-2050); !! post 2050: increase at 1.25% p.a.
 

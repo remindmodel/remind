@@ -62,6 +62,4 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
 
 $ENDIF.CoalRegiPol  
 
-
-
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
