@@ -188,7 +188,7 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 *** v32_flexPriceShareMin = p32_PriceDurSlope * ((CF-0.5)^4-0.5^4) / (4*CF) + 1.
 *** This is the new average electricity price a technology sees if it runs on (a possibly lower than one) capacity factor CF 
 *** and deliberately uses hours of low-cost electricity.
- q32_flexPriceShareMin(t,regi,te)$(teFlex(te))..
+ q32_flexPriceShareMin(t,regi,te)$(teFlex(te) AND regi_flexTax(regi))..
   v32_flexPriceShareMin(t,regi,te) * 4 * vm_capFac(t,regi,te)
   =e=
   p32_PriceDurSlope(regi,te) * (power(vm_capFac(t,regi,te) - 0.5,4) - 0.5**4) +
@@ -198,7 +198,7 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 *** Calculates the electricity price of flexible technologies:
 *** The effective flexible price linearly decreases with VRE share
 *** from 1 (at 0% VRE share) to v32_flexPriceShareMin (at 100% VRE). 
-q32_flexPriceShare(t,regi,te)$(teFlex(te))..
+q32_flexPriceShare(t,regi,te)$(teFlex(te) AND regi_flexTax(regi))..
   v32_flexPriceShare(t,regi,te)
   =e=
   1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, v32_shSeEl(t,regi,teVRE))/100
@@ -209,7 +209,7 @@ q32_flexPriceShare(t,regi,te)$(teFlex(te))..
 *** which are part of teFlexTax but not of teFlex. The weighted sum of 
 *** flexible/inflexible electricity prices (v32_flexPriceShare) and electricity demand must be one. 
 *** Note: this is only on if cm_FlexTaxFeedback = 1. Otherwise, there is no change in electricity prices for inflexible technologies. 
-q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
+q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback AND regi_flexTax(regi))..
   sum(en2en(enty,enty2,te)$(teFlexTax(te)), 
   	vm_demSe(t,regi,enty,enty2,te)) 
   =e=

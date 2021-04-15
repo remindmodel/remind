@@ -26,6 +26,11 @@ if ( cm_flex_tax eq 1,
   );
 );
 
+*** Set flexibility tax to 0 and price shares to 1 for those regions where it
+*** is not applied
+vm_flexAdj.fx(t,regi,te)$(NOT regi_flexTax(regi)) = 0;
+v32_flexPriceShare.fx(t,regi,te)$(NOT regi_flexTax(regi)) = 1;
+v32_flexPriceShareMin.fx(t,regi,te)$(NOT regi_flexTax(regi)) = 1;
 
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
