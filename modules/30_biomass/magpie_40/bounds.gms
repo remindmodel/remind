@@ -44,6 +44,7 @@ s30_max_pebiolc $(cm_bioenergymaxscen=1) = 100;
 s30_max_pebiolc $(cm_bioenergymaxscen=2) = 200;
 s30_max_pebiolc $(cm_bioenergymaxscen=3) = 300;
 s30_max_pebiolc $(cm_bioenergymaxscen=4) = 152;
+s30_max_pebiolc $(cm_bioenergymaxscen=6) = 90;
 
 p30_max200_path(t) = s30_max_pebiolc;
 
@@ -53,6 +54,20 @@ p30_max200_path("2010") = 100;
 p30_max200_path("2015") = 130;
 p30_max200_path("2020") = 160;
 p30_max200_path("2025") = 190;
+
+*** bound of 75 EJ in 2050 and 90 EJ from 2100 on with linear interpolation in between
+p30_max200_path("2025")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2030")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2035")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2040")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2045")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2050")$(cm_bioenergymaxscen=6) = 75;
+p30_max200_path("2055")$(cm_bioenergymaxscen=6) = 76.5;
+p30_max200_path("2060")$(cm_bioenergymaxscen=6) = 78;
+p30_max200_path("2070")$(cm_bioenergymaxscen=6) = 81;
+p30_max200_path("2080")$(cm_bioenergymaxscen=6) = 84;
+p30_max200_path("2090")$(cm_bioenergymaxscen=6) = 87;
+p30_max200_path(ttot)$(cm_bioenergymaxscen=6 AND ttot.val ge 2100) = 90;
 
 *** Use values if they are smaller than the maximal allowed value (s30_max_pebiolc)
 *** otherwise limit to maximal allowed value (s30_max_pebiolc)

@@ -393,7 +393,11 @@ for (outputdir in outputdirs) {
   nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
   capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[(price_component == "Capital_costs_purchase") & ((!technology %in% c("BEV", "FCEV"))|(technology %in% c("BEV", "FCEV") & year < 2020))]
   capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
-
+#nonf = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "totalNE_cost"]
+#nonf[, price_component:=NULL]
+#  capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "Capital_costs_purchase" & !technology %in% c("BEV", "FCEV")]
+  ##capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
+#capcost4W_BEVFCEV=readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "Capital_costs_purchase" & technology %in% c("BEV", "FCEV")]
   ## read in fuel prices
   files<- list.files(path = paste0(outputdir, "/EDGE-T"), pattern = "REMINDprices")
   ## only the last iteration is to be used
