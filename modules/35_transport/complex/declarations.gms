@@ -27,11 +27,11 @@ q35_shUePeTbal(ttot,all_regi)                 "shares sum must be equal to 100"
 ;
 
 Parameter
-p35_pass_FE_share_transp(ttot,all_regi)            "Share of 'non-LDV passenger FE' in 'total non-LDV FE. Unit: share [0..1]"
+p35_pass_FE_share_transp(ttot,all_regi)        "Share of 'non-LDV passenger FE' in 'total non-LDV FE. Unit: share [0..1]"
 p35_pass_nonLDV_ES_efficiency(ttot,all_regi)  "Non-LDV passenger energy service per non-LDV FE. Unit: bn pkm/EJ"
 p35_passLDV_ES_efficiency(ttot,all_regi)      "LDV passenger energy service per non-LDV FE. Only correct if applied to CES-input, as BEV and H2FCV have higher efficiencies. Unit: bn pkm/EJ"
 p35_freight_ES_efficiency(ttot,all_regi)      "Freight energy service per freight FE. Unit: bn tkm/EJ"
-p35_bunker_share_in_nonldv_fe(tall,all_regi)   "Share of bunkers in non-LDV transport - fedie"
+p35_bunkers_fe(tall,all_regi)                 "Bunkers FE demand (fedie) [TWa]"
 
 p35_pass_FE_target_share    "The target share for the harmonization of non-LDV passenger FE (p35_pass_FE_share_transp). Unit: share [0..1]"
 p35_harmonizing_year        "Year when full harmonization of shares and efficiencies would be reached."
