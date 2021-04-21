@@ -31,5 +31,8 @@ sm_fadeoutPriceAnticip,scalar,???
 vm_co2eq,variable,???
 vm_cesIO,variable,???
 cm_TaxConvCheck,variable,??
-
 pm_nfa_start,input,questionnaire
+pm_taxCO2eq_iterationdiff,input,questionnaire
+pm_taxCO2eq_iterationdiff_tmp,input,questionnaire
+pm_regiTarget_dev,input,questionnaire
+sm_globalBudget_dev,input,questionnaire

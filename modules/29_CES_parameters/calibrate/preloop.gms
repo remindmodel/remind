@@ -47,7 +47,7 @@ $endif.new_structure
 *** In the first iteration with a changed CES structure, load ppf prices
 $ifthen.get_prices %c_CES_calibration_prices% == "load"
 
-*** Set CES prices that are not loaded from a file to default value.
+*** Set CES prices that are not available in the input file p29_cesdata_price to the value specified by cm_CES_calibration_default_prices
 *** Will be slower than calculated values, but can get the calibration started.
 $ifthen.default_prices NOT %cm_CES_calibration_default_prices% == "0"
 pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
