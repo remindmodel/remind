@@ -352,7 +352,7 @@ prepare <- function() {
     regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
+    subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -390,14 +390,18 @@ prepare <- function() {
 
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
-      # add CES data to the list of inputs
-      ceshash <- cfg$CESversion
-      cestar <- paste0("CESparameters_",ceshash,".tgz")
-      input_data <- c(input_new, cestar)
+      # add CES data and gdx to the list of inputs
+      ceshash    <- cfg$CESversion
+      cestar     <- paste0("CESparameters_",ceshash,".tgz")
+	  inputgdx   <- paste0("input_",regionscode(cfg$regionmapping),".gdx")
+      input_data <- c(input_new, cestar, inputgdx)
       download_distribute(files        = input_data,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
                           debug        = FALSE)
+	  # copy input_*.gdx into input.gdx and input_ref.gdx
+      system(paste0("cp input/",inputgdx, " config/input.gdx"))
+      system(paste0("cp input/",inputgdx, " config/input_ref.gdx"))	  
   }
 
   ############ update information ########################
