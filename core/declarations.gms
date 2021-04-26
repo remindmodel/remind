@@ -30,8 +30,8 @@ p_inv_gdx(tall,all_regi)                            "macro-investments path from
 pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqHist(ttot,all_regi)                       "Historic CO2 tax path in 2010 and 2015 (also in BAU!) in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
-p_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
-p_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
+pm_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
+pm_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
@@ -512,6 +512,8 @@ s_referencebudgetco2                                  "reference level of 2000-2
 s_actual2030co2eq                                     "actual level of 2030 GHG emissions for AWP2 myopic scenarios in GtCO2eq p.a., all Kyoto gases for last iteration"
 s_actualbudgetco2                                     "actual level of 2000-2100 cumulated emissions for AWP2 myopic scenarios in GtCO2, including all CO2 for last iteration"
 s_actualbudgetco2_last                                "actual level of 2000-2100 cumulated emissions for previous iteration" /0/
+
+sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 ***----------------------------------------------------------------------------------------
