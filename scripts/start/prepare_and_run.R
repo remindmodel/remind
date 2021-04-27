@@ -383,28 +383,33 @@ prepare <- function() {
   ############ download and distribute input data ########
   # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old <- readLines("input/source_files.log")[1]
+      input_old     <- readLines("input/source_files.log")[1]
+      CESandGDX_old <- readLines("input/source_files.log")[1]
   } else {
-      input_old <- "no_data"
+      input_old     <- "no_data"
+      CESandGDX_old <- "no_data"
   }
-  input_new <- paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz")
-
+  input_new      <- paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz")
+  CESandGDX_new  <- paste0("CESparameters_",cfg$CESandGDXversion,".tgz")
+  # add new input data to list of downloaded data if needed 
+  inputData2download <- NULL
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
-      # add CES data and gdx to the list of inputs
-      ceshash    <- cfg$CESversion
-      cestar     <- paste0("CESparameters_",ceshash,".tgz")
-	  inputgdx   <- paste0("input_",regionscode(cfg$regionmapping),".gdx")
-      input_data <- c(input_new, cestar, inputgdx)
-      download_distribute(files        = input_data,
+      inputData2download <- c(input_new)
+  } 
+  # add new CES parameteres and GDXes to list of downloaded data if needed	
+  if(!setequal(CESandGDX_new, CESandGDX_old) | cfg$force_download) {
+      cat("Your CES parameters and gdxes are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
+      inputData2download <- c(inputData2download, CESandGDX_new)
+  }
+  # download and distribute needed data	  
+  if(!is.null(inputData2download) | cfg$force_download) {  
+      download_distribute(files        = inputData2download,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE)
-	  # copy input_*.gdx into input.gdx and input_ref.gdx
-      system(paste0("cp input/",inputgdx, " config/input.gdx"))
-      system(paste0("cp input/",inputgdx, " config/input_ref.gdx"))	  
+                          debug        = FALSE) 
   }
-
+  
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$revision)
@@ -431,7 +436,11 @@ prepare <- function() {
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
-
+  
+  # copy right gdx file to the output folder
+  gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
+  system(paste0('cp ',gdx_name,' ',path(cfg$results_folder, "input.gdx")))
+  
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
 
