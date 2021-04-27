@@ -111,7 +111,7 @@ s37_clinker_process_CO2 = 0.5262;
 
 *** Clinker-to-cement ratio
 Parameter
-  p37_clinker_cement_ratio(ttot,all_regi)
+  p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs3r"
