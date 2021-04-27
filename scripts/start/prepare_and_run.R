@@ -7,6 +7,7 @@
 library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
+library(yaml, quietly = TRUE,warn.conflicts=FALSE)
 require(gdx)
 
 ##################################################################################################
@@ -258,7 +259,7 @@ prepare <- function() {
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
   }
-  ## the following is outcommented because by now it has to be done by hand ( currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
+  ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
   #if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
@@ -380,7 +381,7 @@ prepare <- function() {
   }
 
   ############ download and distribute input data ########
-  # check wheather the regional resolution and input data revision are outdated and update data if needed
+  # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
       input_old <- readLines("input/source_files.log")[1]
   } else {
@@ -462,6 +463,8 @@ prepare <- function() {
   ################## M O D E L   U N L O C K ###################################
 
   setwd(cfg$results_folder)
+
+  write_yaml(cfg,file="cfg.txt")
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
