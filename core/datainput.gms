@@ -1184,6 +1184,13 @@ $offdelim
 $if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 $if %cm_MAgPIE_coupling% == "on"  p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
 
+$ifThen.regicarbonprice "%cm_regiCO2target%" == "2050.EUR.year.netCO2 0.000001"
+*** Quickfix for DIPOL runs increasing negative emissions from afforestation to 500 Mt CO2/yr in EUR (0.136 Gt C/yr).
+*** This avoids infeasibilities due to DIPOL CDR constraints in runs with net zero 2050 target in EUR.
+*** The emission values will be overwritten in coupled runs starting in the second REMIND iteration (i.e after MAgPIE was run for the first time).
+$if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,"EUR","co2luc")$(ttot.val ge 2005) = -0.136
+$endIf.regicarbonprice
+
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
 parameter p_macPolCO2luc(tall,all_regi)                "co2 emissions from landuse change with strong mitigation in MAgPIE"
