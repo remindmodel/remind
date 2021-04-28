@@ -1,0 +1,30 @@
+# .gitignore file for the remind folder.
+
+# !!!
+# Remember:
+# 1: Patterns listed below are used recursively in the entire git folder
+# 2: Use a "!" at the start, to explicitly NOT ignore a pattern
+# !!!
+
+# Ignore files that end with ".un~", ".swp" or ".pdf"
+*.un~
+*.swp
+*.pdf
+
+# Ignore everything in "input" folders
+input/
+!modules/29_CES_parameters/load/input
+# Ignore everything in "output" folders
+output/
+
+# Ignore everything in "doc" folders, except for 3 specific files
+doc/
+!doc/literature.bib
+!doc/images/MAC_costs.png
+!doc/images/technical_structure.png
+
+# Ignore "main.lst" files
+main.lst
+
+# Ignore .RData files only in the root folder
+/*.RData
