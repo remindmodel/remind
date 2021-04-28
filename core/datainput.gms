@@ -639,7 +639,7 @@ pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"n
 
 table f_maxProdGradeRegiWind(all_regi,char,rlf)                  "input of regionalized maximum from wind [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiWind.cs3r"
+$include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWind(all_regi,"maxprod",rlf);
