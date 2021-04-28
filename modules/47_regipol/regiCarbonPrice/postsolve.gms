@@ -64,8 +64,11 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 ***			target year
 			pm_taxemiMkt(ttot,regi,"ETS")$ETS_regi(ETS_mkt,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot,regi,"ETS") * p47_emiRescaleCo2TaxETS(ETS_mkt));
 
-***         2020 to target year
-			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) =  pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2030)
+***         2025 to target year
+***			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) =  pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between 2020 and ttot (ex. 2030)
+
+***         2025 to target year (linear assuming projection from 2010)
+			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt 2020) AND (t.val ge cm_startyear) AND (t.val lt ttot.val)) =  pm_taxemiMkt("2010",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2010",regi,"ETS"))/(ttot.val-2010))*(t.val-2010); !!linear price between 2025 and target year assuming projection from 2010
 
 ***			target year to 2055			
 $IFTHEN.ETS_postTargetIncrease "%cm_ETS_postTargetIncrease%" == "linear"
