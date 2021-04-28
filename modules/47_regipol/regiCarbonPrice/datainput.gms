@@ -7,6 +7,9 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
 
+* initialize regipol target deviation parameter
+pm_regiTarget_dev(ext_regi) = 0;
+
 *** if the bau or ref gdx has been run with a carbon tax  
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxCO2eqBeforeStartYear = pm_taxCO2eq;
@@ -155,5 +158,7 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 	p47_implFETax0(ttot,all_regi) = 0;
 
 $endIf.cm_implicitFE
+
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

@@ -44,6 +44,7 @@ alltosave = list(fleet_all = NULL,
                  EJModeFuel_all = NULL,
                  ESmodecap_all = NULL,
                  emidem_all = NULL,
+                 emiDemMode_all = NULL,
                  EJfuelsPass = NULL,
                  EJfuelsFrgt = NULL,
                  costs_all = NULL,
@@ -54,7 +55,7 @@ scenNames <- getScenNames(outputdirs)
 EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
 gdx_path  <- path(outputdirs,gdx_name)
 scenNames <- getScenNames(outputdirs)
-
+setConfig(regionmapping = gsub("(.*/\\s*(.*$))", "\\2", cfg$regionmapping))
 names(gdx_path) <- scenNames
 names(EDGEdata_path) <- scenNames
 
@@ -268,6 +269,28 @@ emidemFun = function(miffile){
   emidem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand","Emi|CO2|Transport|Freight|Short-Medium Distance|Demand", "Emi|CO2|Transport|Freight|Long Distance|Demand"),]
   return(emidem)
 }
+
+emiDemModeFun = function(miffile){
+ emiDem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Road|Bus|Demand",
+                                  "Emi|CO2|Transport|Pass|Road|LDV|Demand",
+                                  "Emi|CO2|Transport|Pass|Rail|Demand",
+                                  "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand",
+                                  "Emi|CO2|Transport|Pass|Aviation|International|Demand",
+                                  "Emi|CO2|Transport|Freight|International Shipping|Demand",
+                                  "Emi|CO2|Transport|Freight|Road|Demand",
+                                  "Emi|CO2|Transport|Freight|Navigation|Demand",
+                                  "Emi|CO2|Transport|Freight|Rail|Demand"),]
+ return(emiDem)
+}
+
+
+#FEFun = function(miffile){
+# FEMWh = miffile[variable %in% c(),]
+# FEMWh[, value := value*   ## in EJ
+#                  ]        ## in MWh
+# return(FEMWh)
+#}
+
 
 costscompFun = function(newcomp, sharesVS1,  pref_FV, capcost4Wall, capcost4W_BEVFCEV, nonf, totp){
 
@@ -523,6 +546,8 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt = EJfuels[["demandEJfrgt"]]
   ## calculate demand emissions
   emidem = emidemFun(miffile)
+  ## emissions from demand by mode
+  emiDemMode = emiDemModeFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp)
   ## per capita demand-gdp per capita
@@ -535,6 +560,7 @@ for (outputdir in outputdirs) {
                     EJModeFuel = EJModeFuel,
                     ESmodecap = ESmodecap,
                     emidem = emidem,
+                    emiDemMode = emiDemMode,
                     EJfuelsPass = EJfuelsPass,
                     EJfuelsFrgt = EJfuelsFrgt,
                     costs = costs,

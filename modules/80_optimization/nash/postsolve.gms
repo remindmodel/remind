@@ -259,6 +259,25 @@ if (cm_TaxConvCheck eq 1,
   );
 );
 
+*** additional criterion: Were global and regional climate targets reached? 
+*** check regional target must be within 1% 
+loop(ext_regi,
+  if(pm_regiTarget_dev(ext_regi) gt 0,
+    if(pm_regiTarget_dev(ext_regi) gt 1.01 OR pm_regiTarget_dev(ext_regi) lt 0.99,
+      s80_bool = 0;
+      p80_messageShow("target") = YES;
+    );
+  );
+);
+
+*** check global budget target from core/postsolve, must be within 1% of target value
+if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
+  s80_bool = 0;
+  p80_messageShow("target") = YES;
+);
+
+
+
 
 display "####";
 display "Convergence diagnostics";
@@ -300,6 +319,17 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      );
         if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
+          display "#### Check out sm_fadeoutPriceAnticip which needs to be below 1e-4.";
+	      );
+        if(sameas(convMessage80, "target"),
+		      display "#### 6.) A global or regional climate target has not been reached yet.";
+          display "#### For global targets check out sm_globalBudget_dev which must within 0.99 and 1.01 as well as";
+          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
+          display "#### For regional target of 47_regipol module, check out pm_regiTarget_dev parameter.";
+          display "#### The parameter gives the current emissions value divided by the target value and must be within 0.99 and 1.01.";
+          display sm_globalBudget_dev;
+          display pm_regiTarget_dev;
 	      );
    );
 
@@ -311,8 +341,11 @@ display p80_taxrev_dev;
 display "detailed trade convergence indicators";
 display p80_defic_trade, p80_defic_sum,p80_defic_sum_rel;
 OPTION decimals = 7;
-***display p80_surplus;
+display p80_surplus;
 OPTION decimals = 3;
+
+display "Tax difference to last iteration for global targets of core/postsolve";
+display pm_taxCO2eq_iterationdiff_tmp, pm_taxCO2eq_iterationdiff;
 
 *RP* display effect of additional convergence push
 display "display effect of additional convergence push";
@@ -357,6 +390,14 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
 	     );
+      if(sameas(convMessage80, "target"),
+		    display "#### 6.) A global or regional climate target has not been reached yet.";
+        display "#### For global targets check out pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+        display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
+        display "#### For regional target of 47_regipol module, check out pm_regiTarget_dev parameter.";
+        display "#### The parameter gives the current emissions value divided by the target value and must be within 0.99 and 1.01.";
+        display pm_regiTarget_dev;
+	    );
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;
