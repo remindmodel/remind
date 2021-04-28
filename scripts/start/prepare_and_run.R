@@ -748,6 +748,7 @@ run <- function(start_subsequent_runs = TRUE) {
         file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
         file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
         file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
                   overwrite = TRUE)
 
