@@ -98,12 +98,6 @@ choose_folder <- function(folder,title="Please choose a folder") {
 
 configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
-    .setgdxcopy <- function(needle, stack, new) {
-      # delete entries in stack that contain needle and append new
-      out <- c(stack[-grep(needle, stack)], new)
-      return(out)
-    }
-
     # Edit run title
     icfg$title <- iscen
     cat("   Configuring cfg for", iscen,"\n")
@@ -153,13 +147,9 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       }
     }
 
-    # if the above has not created a path to a valid gdx, take config/input.gdx
+    # if the above has not created a path to a valid gdx, stop
     if (!file.exists(isettings[iscen,"path_gdx"])){
-      isettings[iscen,"path_gdx"] <- "config/input.gdx"
-      #if even this is not existent, stop
-      if (!file.exists(isettings[iscen,"path_gdx"])){
       stop("Cant find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
-      }
     }
 
     # Define path where the GDXs will be taken from
@@ -167,8 +157,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
                  input_bau.gdx = isettings[iscen, "path_gdx_bau"])
 
-    # Remove potential elements that end with ".gdx" and append gdxlist
-    icfg$files2export$start <- .setgdxcopy("\\.gdx$", icfg$files2export$start, gdxlist)
+    # add gdxlist to list of files2export
+    icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
 
     # add gdx information for subsequent runs
     icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])

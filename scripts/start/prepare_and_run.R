@@ -383,7 +383,7 @@ prepare <- function() {
   ############ download and distribute input data ########
   # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old     <- readLines("input/source_files.log")
+      input_old     <- readLines("input/source_files.log")[c(1,2)]
   } else {
       input_old     <- "no_data"
   }
