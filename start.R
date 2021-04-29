@@ -128,12 +128,10 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     }
 
     # check if full input.gdx path is provided and, if not, search for correct path
-    if (!substr(isettings[iscen,"path_gdx"], nchar(isettings[iscen,"path_gdx"])-3, nchar(isettings[iscen,"path_gdx"])) == ".gdx"){
-      #if there is no correct scenario folder within the output folder path provided, take the config/input.gdx
-      if(length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==0){
-        isettings[iscen,"path_gdx"] <- "config/input.gdx"
+    
+    if (!is.na(isettings[iscen,"path_gdx"])) if (!substr(isettings[iscen,"path_gdx"], nchar(isettings[iscen,"path_gdx"])-3, nchar(isettings[iscen,"path_gdx"])) == ".gdx"){
       #if there is only one instance of an output folder with that name, take the fulldata.gdx from this
-      } else if (length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==1){
+      if (length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==1){
         isettings[iscen,"path_gdx"] <- paste0(isettings[iscen,"path_gdx"],"/",
                                             grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T),"/fulldata.gdx")
       } else {
@@ -145,13 +143,11 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                                  nchar(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))-18,
                                  nchar(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T)))),"/fulldata.gdx")
       }
+      # if the above has not created a path to a valid gdx, stop
+      if (!file.exists(isettings[iscen,"path_gdx"])){
+        stop("Can't find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
+      }
     }
-
-    # if the above has not created a path to a valid gdx, stop
-    if (!file.exists(isettings[iscen,"path_gdx"])){
-      stop("Cant find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
-    }
-
     # Define path where the GDXs will be taken from
     gdxlist <- c(input.gdx     = isettings[iscen, "path_gdx"],
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
