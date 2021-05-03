@@ -27,9 +27,9 @@ prepare_NDC2018<-function(gdx){
     stop("No gdx file found - please provide gdx from reference BAU run")
   }
   regs <- setdiff(getRegions(emi),"GLO")
-  if (grepl("Emi|GHG|w/o Land-Use Change (Mt CO2eq/yr)",getItems(emi,3.1))) {
+  if ("Emi|GHG|w/o Land-Use Change (Mt CO2eq/yr)" %in% getItems(emi,3.1)) {
       p45_BAU_reg_emi_wo_LU_bunkers <- emi[regs,seq(2005,2050,5),"Emi|GHG|w/o Land-Use Change (Mt CO2eq/yr)"]
-  } else if (grepl("Emi|Kyoto Gases excl Land-Use Change|w/o Bunkers (Mt CO2-equiv/yr)",getItems(emi,3.1))) {
+  } else if ("Emi|Kyoto Gases excl Land-Use Change|w/o Bunkers (Mt CO2-equiv/yr)" %in% getItems(emi,3.1)) {
       p45_BAU_reg_emi_wo_LU_bunkers <- emi[regs,seq(2005,2050,5),"Emi|Kyoto Gases excl Land-Use Change|w/o Bunkers (Mt CO2-equiv/yr)"]
   } else {
      stop("No emissions variable found in the NDC2018 script!") 
