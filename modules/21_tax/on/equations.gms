@@ -105,7 +105,7 @@ q21_taxrevFE(t,regi)$(t.val ge max(2010,cm_startyear))..
     ( pm_tau_fe_tax(t,regi,sector,entyFe) + pm_tau_fe_sub(t,regi,sector,entyFe) ) 
     * 
     sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-      sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
+      sum(se2fe(entySe,entyFe,te),   
         vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
       )
     )

@@ -25,11 +25,11 @@ p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inc
                             * (1/sm_ccsinjecrate) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1");
 p21_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eq(ttot,regi) * v21_emiALLco2neg.l(ttot,regi);
 p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
-    ( pm_tau_fe_tax(t,regi,sector,entyFe) + pm_tau_fe_sub(t,regi,sector,entyFe) ) 
+    ( pm_tau_fe_tax(ttot,regi,sector,entyFe) + pm_tau_fe_sub(ttot,regi,sector,entyFe) ) 
     * 
     sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-      sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
-        vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)
+      sum(se2fe(entySe,entyFe,te),   
+        vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
       )
     )
   )
