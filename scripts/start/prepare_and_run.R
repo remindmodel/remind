@@ -11,7 +11,7 @@ require(gdx)
 ##################################################################################################
 #                             function: getReportData                                            #
 ##################################################################################################
-
+madrat::setConfig(hash="md5")
 getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
 	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
