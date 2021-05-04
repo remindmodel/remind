@@ -64,4 +64,11 @@ $ENDIF.CoalRegiPol
 
 
 
+*** ARIADNE target, impose constraint on gross-zero energy CO2 emissions (w/o Bunkers) in Germany from 2050 onwards to reach 
+if (cm_ariadne_GrossTarget ge 0,
+    v47_emiTarget.up(t,regi,"grossEnCO2_noBunkers")$(t.val ge 2050 AND sameas(regi,"DEU")) = cm_ariadne_GrossTarget/sm_c_2_co2;
+);
+
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

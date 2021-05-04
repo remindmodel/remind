@@ -329,6 +329,10 @@ c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution ca
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
+cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
+cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
+cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
+cm_ariadne_GrossTarget      "switch for constraining gross energy CO2 emissions without bunkers in Germany from 2050 onwards"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

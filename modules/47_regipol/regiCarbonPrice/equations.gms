@@ -24,8 +24,19 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
+*** gross energy CO2 emissions (excl. BECCS and bunkers)
+q47_emiTarget_grossEnCO2(t,regi)..
+	v47_emiTarget(t,regi,"grossEnCO2_noBunkers")
+	=e=
+*** total net CO2 - non-energy CO2 (cement and land-use change) - captured bio CO2 * CCS share of captured CO2 - bunkers
+	vm_emiAll(t,regi,"co2")
+	-  sum( emiMacSector$(emiMacSector2emiMac(emiMacSector,"co2")), vm_emiMacSector(t,regi,emiMacSector))
+	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+;
+    
 *** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
-q47_emiTarget_grossFFaI(t, regi)..
+q47_emiTarget_grossFFaI(t,regi)..
 	v47_emiTarget(t,regi,"grossFFaI")
 	=e=
 	  vm_emiTe(t,regi,"co2") 
@@ -44,14 +55,11 @@ q47_emiTarget_netGHG_noBunkers(t, regi)..
 	v47_emiTarget(t,regi,"netGHG_noBunkers")
 	=e=
 	vm_co2eq(t,regi)
-	-
-	sum(se2fe(enty,enty2,te),
-		(
-		pm_emifac(t,regi,enty,enty2,te,"co2")
+	- 	sum(se2fe(enty,enty2,te),
+		(pm_emifac(t,regi,enty,enty2,te,"co2")
 		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
-		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc
-		) * vm_demFeSector(t,regi,enty,enty2,"trans","other")
-	)
+		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
+		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
 ***$endIf.regicarbonprice
