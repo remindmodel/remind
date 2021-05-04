@@ -272,14 +272,20 @@ if (opt$reporting) {
   vint <- dem[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
   vint <- vint[!is.na(demand_F)][
   , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
-  vint[, demand_F := demand_F * 1e6] # million pkm -> pkm
 
   vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
   vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
+  setnames(vint, "variable", "construction_year")
 
-  fwrite(vint, "vintcomp.csv")
+  vintfile <- "vintcomp.csv"
+  cat("# LDV Fleet vintages.", file=vintfile, sep="\n")
+  cat("# full_demand_vkm is the full demand for a given year, region, vehicle_type and technology.", file=vintfile, sep="\n", append=TRUE)
+  cat("# New sales for the current year can be calculated by full_demand_vkm - sum(vintage_demand_vkm).", file=vintfile, sep="\n", append=TRUE)
+  cat("# Units: million vkms.", file=vintfile, sep="\n", append=TRUE)
+
+  fwrite(vint, vintfile, append=TRUE)
 
   quit()
 }
