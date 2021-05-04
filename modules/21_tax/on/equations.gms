@@ -32,8 +32,7 @@
     + v21_taxrevCO2luc(t,regi)
     + v21_taxrevCCS(t,regi) 
     + v21_taxrevNetNegEmi(t,regi)  
-    + v21_taxrevFEtrans(t,regi) 
-    + v21_taxrevFEBuildInd(t,regi)  
+    + v21_taxrevFE(t,regi) 
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
     + v21_taxrevTech(t,regi)
@@ -96,40 +95,24 @@ q21_emiAllco2neg(t,regi)..
 v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Calculation of final Energy taxes in Transports: effective tax rate (tax - subsidy) times FE use in transport
+*'  Calculation of final Energy taxes: effective tax rate (tax - subsidy) times FE use in the specific sector
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
-q21_taxrevFEtrans(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevFEtrans(t,regi) 
-=e=  SUM(feForEs(enty),
-        (p21_tau_fe_tax_transport(t,regi,feForEs) + p21_tau_fe_sub_transport(t,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe(t,regi,enty2,enty,te))
-      ) +
-     SUM(feForUe(enty),
-        (p21_tau_fe_tax_transport(t,regi,feForUe) + p21_tau_fe_sub_transport(t,regi,feForUe) ) * SUM(se2fe(enty2,enty,te), vm_prodFe(t,regi,enty2,enty,te))
+q21_taxrevFE(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevFE(t,regi) 
+  =e=
+  sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
+    ( pm_tau_fe_tax(t,regi,sector,entyFe) + pm_tau_fe_sub(t,regi,sector,entyFe) ) 
+    * 
+    sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+      sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
+        vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
       )
-  - p21_taxrevFEtrans0(t,regi) ;
-
-
-***---------------------------------------------------------------------------
-*'  Calculation of final Energy taxes in Buildings_Industry or Stationary: effective tax rate (tax - subsidy) times FE use in sector
-*'  Documentation of overall tax approach is above at q21_taxrev.
-***---------------------------------------------------------------------------
-q21_taxrevFEBuildInd(t,regi)$(t.val ge max(2010,cm_startyear))..
-  v21_taxrevFEBuildInd(t,regi) 
-  =e= 
-  sum(sector$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") OR SAMEAS(sector,"cdr")),
-    sum(ppfen$ppfEn2Sector(ppfen,sector),
-      (pm_tau_fe_tax_bit_st(t,regi,ppfen) + pm_tau_fe_sub_bit_st(t,regi,ppfen))
-      *
-      sum(emiMkt$sector2emiMkt(sector,emiMkt), 
-        sum(se2fe(entySe,entyFe,te)$fe2ppfEn(entyFe,ppfen),   
-          vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
-      ) )
     )
   )
-  - p21_taxrevFEBuildInd0(t,regi)
-;
-    
+  - p21_taxrevFE0(t,regi)
+  ;
+
 ***---------------------------------------------------------------------------
 *'  Calculation of resource extraction subsidies: subsidy rate times fuel extraction
 *'  Documentation of overall tax approach is above at q21_taxrev.
