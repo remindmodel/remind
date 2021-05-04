@@ -72,8 +72,8 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 
 ***			target year to 2055			
 $IFTHEN.ETS_postTargetIncrease "%cm_ETS_postTargetIncrease%" == "linear"
-***			keep same slope as 2020 to target year variation
-            pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt("2020",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2020",regi,"ETS"))/(ttot.val-2020))*(t.val-2020); !!linear price between ttot and 2055
+***			keep same slope as 2010 to target year variation
+            pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt("2010",regi,"ETS") + ((pm_taxemiMkt(ttot,regi,"ETS") - pm_taxemiMkt("2010",regi,"ETS"))/(ttot.val-2010))*(t.val-2010); !!linear price between ttot and 2055
 $ELSEIF.ETS_postTargetIncrease not "%cm_ETS_postTargetIncrease%" == "off"
 ***			keep fixed per year increase
 			pm_taxemiMkt(t,regi,"ETS")$((ETS_regi(ETS_mkt,regi)) AND (t.val gt ttot.val) AND (t.val le 2055)) = pm_taxemiMkt(ttot,regi,"ETS") + (%cm_ETS_postTargetIncrease% * sm_DptCO2_2_TDpGtC)*(t.val-ttot.val); !! post ttot (ex. in between 2030 and 2055): 2 €/tCO2 increase per year
