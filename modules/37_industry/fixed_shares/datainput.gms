@@ -47,8 +47,8 @@ $ENDIF.cm_INNOPATHS_eni
 *** assuming a maximum 20% of heat pumps in heat industry to be more in line with industry subsectors
 pm_ppfen_shares(t,regi,"enhi","fehei") = 0.2;
 *** exception or the above: REF. Assuming a maximum 30% of heat pumps in heat industry. reduced lineraly from initial year levels to be more in line with industry subsectors (2030 and afterwards = 30% maximum, 2005 = 50% to avoid infeasiblities)
-pm_ppfen_shares(t,"REF","enhi","fehei") = 0.3;
-pm_ppfen_shares(t,"REF","enhi","fehei")$(t.val le 2030) = 0.50 - (0.20/25)*(t.val-2005);
+pm_ppfen_shares(t,regi,"enhi","fehei")$(sameas(regi,"REF")) = 0.3; 
+pm_ppfen_shares(t,regi,"enhi","fehei")$((t.val le 2030) and (sameas(regi,"REF"))) = 0.50 - (0.20/25)*(t.val-2005); 
 
 Table p37_shIndFE(all_regi,all_in,secInd37)   "share of industry sub-sectors in FE use [ratio]"
 $ondelim

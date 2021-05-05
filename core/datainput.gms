@@ -639,7 +639,7 @@ pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"n
 
 table f_maxProdGradeRegiWind(all_regi,char,rlf)                  "input of regionalized maximum from wind [EJ/a]"
 $ondelim
-$include "./core/input/f_maxProdGradeRegiWind.cs3r"
+$include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
 ;
 pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWind(all_regi,"maxprod",rlf);
@@ -778,6 +778,12 @@ p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 ***additional deltacapoffset on electric vehicles, based on latest data
 p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
 p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
+
+$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
+*** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
+p_adj_deltacapoffset("2020",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+p_adj_deltacapoffset("2025",regi,"apCarElT")$(regi_group("EUR_regi",regi)) = 0;
+$endIf.vehiclesSubsidies
 
 *** share of PE2SE capacities in 2005 depends on GDP-MER
 p_adj_seed_reg(t,regi) = pm_gdp(t,regi) * 1e-4;
@@ -1229,6 +1235,12 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
     p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
     p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
   );
+
+*** Changing Germany and France refineries emission factors to avoid negative emissions on pe2se (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
+  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(sameas(regi,"DEU") OR sameas(regi,"FRA")) = 0.630719841;
+*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
+  pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
+
 $endif.altFeEmiFac
 
 pm_emifac(ttot,regi,"segafos","fegas","tdfosgas","co2") = p_ef_dem(regi,"fegas") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa

@@ -123,6 +123,12 @@ vm_cap.up("2010",regi,"apCarElT","1") = pm_boundCapEV("2010",regi);
 vm_cap.up("2015",regi,"apCarElT","1") = pm_boundCapEV("2015",regi) + 0.01/650;  !! allow all regions to have at least 10k vehicles in 2015
 vm_cap.lo("2015",regi,"apCarElT","1") = pm_boundCapEV("2015",regi) * 0.95;
 vm_cap.lo("2020",regi,"apCarElT","1") = pm_boundCapEV("2019",regi);
+
+$ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
+*** disabling electric vehicles vm_cap lower bound for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
+vm_cap.lo("2020",regi,"apCarElT","1")$(regi_group("EUR_regi",regi)) = 1e-7;
+$endif.vehiclesSubsidies
+
 *** prevent too early uptake due to high liquids prices in EUR etc.
 vm_cap.up(t,regi,"apCarDiEffT","1")$(t.val < 2030) = 0.001;
 vm_cap.up(t,regi,"apCarDiEffH2T","1")$(t.val < 2030) = 0.0001;

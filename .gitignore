@@ -16,7 +16,6 @@
 
 # Ignore everything in "input" folders
 input/
-!modules/29_CES_parameters/load/input
 
 # Ignore everything in root "output" folder
 /output/
@@ -36,3 +35,5 @@ main.lst
 # ignore all the MAGICC files, should they be present
 core/magicc/
 
+# ignore GDX files in the gdx-files folder
+config/gdx-files/*.gdx

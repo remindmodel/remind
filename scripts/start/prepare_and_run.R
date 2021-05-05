@@ -7,6 +7,7 @@
 library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
+library(yaml, quietly = TRUE,warn.conflicts=FALSE)
 require(gdx)
 
 ##################################################################################################
@@ -258,7 +259,7 @@ prepare <- function() {
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
   }
-  ## the following is outcommented because by now it has to be done by hand ( currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
+  ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
   #if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
@@ -352,7 +353,7 @@ prepare <- function() {
     regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
+    subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -380,22 +381,23 @@ prepare <- function() {
   }
 
   ############ download and distribute input data ########
-  # check wheather the regional resolution and input data revision are outdated and update data if needed
+  # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old <- readLines("input/source_files.log")[1]
+      input_old     <- readLines("input/source_files.log")[c(1,2)]
   } else {
-      input_old <- "no_data"
+      input_old     <- "no_data"
   }
-  input_new <- paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz")
-
+  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
+  # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE)
-  }
-
+                          debug        = FALSE) 
+  } 
+    
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$revision)
@@ -422,7 +424,11 @@ prepare <- function() {
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
-
+  
+  # copy right gdx file to the output folder
+  gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
+  system(paste0('cp ',gdx_name,' ',path(cfg$results_folder, "input.gdx")))
+  
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
 
@@ -454,6 +460,8 @@ prepare <- function() {
   ################## M O D E L   U N L O C K ###################################
 
   setwd(cfg$results_folder)
+
+  write_yaml(cfg,file="cfg.txt")
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
@@ -740,6 +748,7 @@ run <- function(start_subsequent_runs = TRUE) {
         file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
         file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
         file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
                   overwrite = TRUE)
 
