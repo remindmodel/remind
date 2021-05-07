@@ -15,9 +15,9 @@ p21_tech_sub(tall,all_regi,all_te,rlf)       "subsidy path for technology specif
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty) "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty) "subsidy path for final energy"
 p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy technologies"
-p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels (in $/Gj) from REMIND version prior to rev. 5429"
+p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
-p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction"
+p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
 p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 
@@ -35,7 +35,7 @@ p21_taxrevXport0(ttot,all_regi)              "reference level value of exports t
 p21_taxrevSO20(ttot,all_regi)                "reference level value of SO2 tax"
 p21_taxrevBio0(ttot,all_regi)                "reference level value of bioenergy tax"
 p21_implicitDiscRate0(ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
-p21_taxemiMkt0(ttot,all_regi,all_emiMkt)     "reference level value of pe2se technologies tax"
+p21_taxemiMkt0(ttot,all_regi,all_emiMkt)     "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)               "reference level value of flexibility tax"
 p21_taxrevBioImport0(ttot,all_regi)          "reference level value of bioenergy import tax"  
 
