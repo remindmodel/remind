@@ -73,5 +73,8 @@ if ((cm_ElLim_b lt 1),
   pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi) AND t.val gt 2040 AND t.val lt 2100) = cm_ElLim_b;
 );
 
+*** Heat pumps markup cost: 0.2 €/kwh = 0.2 / ((10^12)/(10^9*8760)) T$/TWa = 1.752 T$/TWa
+p36_heatPumpMkup(t,regi) = 1.752;
+
 *** EOF ./modules/36_buildings/simple/datainput.gms
 
