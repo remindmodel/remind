@@ -326,6 +326,7 @@ cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of ne
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution capital cost for buildings and industry"
+c_HeattdCapCost_stat        "factor to scale district heat transmission and distribution capital cost for buildings and industry"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
@@ -516,8 +517,9 @@ cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
-c_noPeFosCCDeu = 0; !! def 0
-c_H2tdCapCost_stat = 1; !! def 1
+c_noPeFosCCDeu = 1; !! def 0
+c_H2tdCapCost_stat = 3; !! def 1
+c_HeattdCapCost_stat = 8; !! def 1
 
 cm_HeatLim_b = 1; !! def 1
 cm_ElLim_b = 1; !! def 1
@@ -527,9 +529,16 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 0; !! def 0
+cm_flex_tax = 1; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
+
+
+cm_ariadne_trade_el = 0; !! def 0
+cm_ariadne_trade_h2 = 100; !! def 0
+cm_ariadne_trade_syn = 50; !! def 0
+
+cm_ariadne_GrossTarget = 0.01; !! def -1
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
