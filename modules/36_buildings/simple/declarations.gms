@@ -13,7 +13,8 @@ scalars
 ;
 
 Parameters
-  p36_heatPumpMkup(t,regi) "Heat pumps markup cost [T$/TWa]"
+  p36_heatPumpMkup(ttot,all_regi) "Heat pumps markup cost [T$/TWa]"
+  p36_districtHeatingMkup(ttot,all_regi) "District heatingMkup markup cost [T$/TWa]"
 ;
 
 Variables
@@ -32,7 +33,7 @@ Equations
   q36_H2Share(ttot,all_regi)         "H2 share in gases"
   q36_HeatShare(ttot,all_regi)       "calculate district heating share in FE buildings"
   q36_ElShare(ttot,all_regi)         "calculate electricity share in FE buildings"
-  q36_costAddTeInv(ttot,all_regi,all_enty) "additional buildings hydrogen annual investment costs under low technology diffusion due to T&D conversion and heat pumps markup"
+  q36_costAddTeInv(ttot,all_regi,all_te) "additional buildings hydrogen annual investment costs under low technology diffusion due to T&D conversion and heat pumps markup"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
 ;
 

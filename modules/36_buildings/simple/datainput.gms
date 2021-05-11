@@ -9,7 +9,7 @@
 Parameter 
   p36_cesdata_sigma(all_in)  "substitution elasticities"
   /
-        enb    2.5
+        enb    0.5
         enhb   3.0
         enhgab 5.0
   /
@@ -18,9 +18,6 @@ pm_cesdata_sigma(ttot,in)$p36_cesdata_sigma(in) = p36_cesdata_sigma(in);
 
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) le 2025  AND sameAs(in, "enb")) = 0.1;
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2030  AND sameAs(in, "enb")) = 0.3;
-pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2035  AND sameAs(in, "enb")) = 0.6;
-pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2040  AND sameAs(in, "enb")) = 1.3;
-pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "enb")) = 1.7;
 
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) le 2025  AND sameAs(in, "enhb")) = 0.1;
 pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2030  AND sameAs(in, "enhb")) = 0.3;
@@ -75,6 +72,8 @@ if ((cm_ElLim_b lt 1),
 
 *** Heat pumps markup cost: 0.2 €/kwh = 0.2 / ((10^12)/(10^9*8760)) T$/TWa = 1.752 T$/TWa
 p36_heatPumpMkup(t,regi) = 1.752;
+*** District heating markup cost: 7$/GJ = 7 * sm_DpGJ_2_TDpTWa T$/TWa = 7 * 0.03154 T$/TWa = 0.22078 T$/TWa
+p36_districtHeatingMkup(ttot,all_regi) = 0.22078;
 
 *** EOF ./modules/36_buildings/simple/datainput.gms
 

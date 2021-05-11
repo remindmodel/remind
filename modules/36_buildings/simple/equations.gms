@@ -22,8 +22,8 @@ q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 ***---------------------------------------------------------------------------
 *'  Additional hydrogen cost at low penetration level and heat pumps markup
 ***---------------------------------------------------------------------------
-q36_costAddTeInv(t,regi,entyFe)..
-  vm_costAddTeInv(t,regi,entyFe,"build")
+q36_costAddTeInv(t,regi,te)..
+  vm_costAddTeInv(t,regi,te,"build")
   =e=
   (
     ( 1 /(
@@ -34,11 +34,15 @@ q36_costAddTeInv(t,regi,entyFe)..
       * (vm_demFeSector(t,regi,"seh2","feh2s","build","ES"))
     )
     + (v36_expSlack(t,regi)*1e-8)
-  )$(sameas(entyFe,"tdh2s"))
+  )$(sameas(te,"tdh2s"))
   +
   ( 
     p36_heatPumpMkup(t,regi)*(vm_cesIO(t,regi,"feelhpb") + pm_cesdata(t,regi,"feelhpb","offset_quantity")) 
-  )$(sameas(entyFe,"tdels"))
+  )$(sameas(te,"tdels"))
+  +
+  ( 
+    p36_districtHeatingMkup(t,regi)*(vm_cesIO(t,regi,"feheb") + pm_cesdata(t,regi,"feheb","offset_quantity")) 
+  )$(sameas(te,"tdhes"))
 ;
 
 *' Logistic function exponent for additional hydrogen low penetration cost equation
