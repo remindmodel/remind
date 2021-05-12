@@ -30,12 +30,13 @@ q47_emiTarget_grossEnCO2(t,regi)..
 	=e=
 *** total net CO2 energy CO2 (w/o DAC accounting of synfuels) - DAC accounting of synfuels - captured bio CO2 * CCS share of captured CO2 - bunkers
 	vm_emiTe(t,regi,"co2")
-*** DAC accounting of synfuels: CO2 from vm_emiCDR which is not stored in vm_co2CCS
+*** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
 	+  vm_emiCdr(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
 	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
 	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
-    
+
+
 *** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
 q47_emiTarget_grossFFaI(t,regi)..
 	v47_emiTarget(t,regi,"grossFFaI")
