@@ -312,7 +312,7 @@ p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
     )$( (ttot.val gt 2040) )
 ;
 
-$ifthen setGlobal c_scaleEmiHistorical
+$ifthen.scaleEmiHistorical  "%c_scaleEmiHistorical%" == "on"
 
 **p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 * Set minimum abatment levels based on historical emissions
@@ -324,11 +324,11 @@ p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p_histEmiSect
 p_macLevFree("2010",regi,enty)$((p_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
 p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
 
-$else
+$else.scaleEmiHistorical
 
 p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 
-$endif
+$endif.scaleEmiHistorical
 
 pm_macAbatLev(ttot,regi,enty) = 0.0;
 pm_macAbatLev("2005",regi,enty) = p_macUse2005(regi,enty);

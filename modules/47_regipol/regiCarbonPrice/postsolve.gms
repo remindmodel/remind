@@ -14,7 +14,8 @@ display pm_taxCO2eq;
 *** net CO2 
 	p47_emiTarget(t,regi,"netCO2")
 	=
-	vm_co2eq.L(t,regi)
+$if "%cm_emiTargetType%" == "netCO2"	 vm_emiAll.L(t,regi,"co2")
+$if "%cm_emiTargetType%" == "netGHG"	 vm_co2eq.L(t,regi)
 ;
 
 *** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
