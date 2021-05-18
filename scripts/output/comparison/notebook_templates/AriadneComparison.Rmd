@@ -1,0 +1,661 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+# Data analysis and plotting using quitte
+
+Authors: Gunnar Luderer (luderer@pik-potsdam.de), Felix Schreyer, Falk Benke, Marianna Rottoli
+
+## Load necessary libraries
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(quitte)
+require(mip)
+library(reshape2)
+library(gridExtra)
+library(quitte)
+```
+
+
+## Chose scenarios and regions for the analysis
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+############## CONFIG PARAMS (change config parameters for plots here) ###################
+reg <- "DEU"    # DEU or EUR
+
+# mind: must be in format "./data/folderName"
+results.folder <- "./" 
+
+# path of historical mif
+hist.path = "./historical.mif"
+
+# plot periods
+tmax <- 2060
+t.barplot <- c(2015, 2020, 2030, 2040, 2050, 2060)
+plot.period <- seq(2015,2060,5)
+reg.sr15 <- "R5OECD90+EU"
+
+#################### end config ###################################
+
+
+### prepare data and plot paths
+
+data.path = list.files(path = paste0(results.folder), 
+                       pattern = "REMIND_generic.*mif", full.names = T)
+
+plots.path = paste0("./", tolower(reg))
+
+dir.create(plots.path)
+
+
+# new colors for some of the more exotic variables
+tt = plotstyle.add( entity = "non-LDV"  ,legend = "public", c("#999999"), replace = T)
+tt = plotstyle.add( entity = "SE|Liquids|Oil"  ,legend = "Oil", c("#222222"), replace = T)
+tt = plotstyle.add( entity = "Oil"  ,legend = "Oil", c("#884422"), replace = T)
+tt = plotstyle.add( entity = "Solids|Modern"  ,legend = "Solids", c("#008800"), replace = T)
+
+```
+
+
+## Read all mif data from output file into quitte data frame
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# read in REMIND data as quitte df
+df.mod <- read.quitte(data.path) 
+# read in REMIND data as magpie array, sometimes more convenient to calculate new variables
+dat.mod <- read.report(data.path, as.list = F)
+
+
+
+df.hist = read.quitte(hist.path) %>%
+  calc_addVariable("`Emi|CO2|Total`" = "`Emi|CO2|Energy` +
+                            `Emi|CO2|Land Use|Grassland Burning` +
+                            `Emi|CO2|Land Use|Forest Burning`+
+                            `Emi|CO2|Land Use|Agriculture and Biomass Burning`",
+                   units = "EJ/yr"
+  ) %>% factor.data.frame()
+
+```
+
+
+## Filter data and calculate additional variables 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+df <- df.mod %>%  
+        filter( region %in% reg, period <= tmax)  %>%   
+        #remove duplicates if present
+        distinct() %>% 
+        as.quitte() 
+
+
+
+df <- calc_addVariable(df,
+                       "`PE|Biomass|Solids|Traditional`"  =  "`PE|Biomass|Traditional`", 
+                       "`PE|Biomass|Solids|Modern`"  =  "`PE|Biomass|Solids` - `PE|Biomass|Traditional`", 
+                       units  = "EJ/yr") 
+
+
+# calculate other fossil (coal + oil) and other renewables categories for electricity generation shown in some plots
+df <- df %>% 
+        calc_addVariable("`SE|Electricity|Other Renewables`" = "`SE|Electricity|Biomass|w/ CCS`+`SE|Electricity|Biomass|w/o CCS`+`SE|Electricity|Solar|CSP`+`SE|Electricity|Hydro`+`SE|Electricity|Geothermal`",
+                               "`SE|Electricity|Other Fossil`" =  "`SE|Electricity|Coal|w/ CCS` + `SE|Electricity|Coal|w/o CCS` + `SE|Electricity|Oil`", 
+                               units = "EJ/yr") 
+
+
+# calculate additional categories of CO2 capture
+df <- df %>% 
+        calc_addVariable("`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w/ couple prod`" = "`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Electricity w/ couple prod` + `Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Heat w/ couple prod`+`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Solids w/ couple prod`+`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Gases w/ couple prod`", units = "MtCO2/yr")
+
+```
+
+
+## CO2-price
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+var = c('Price|Carbon')
+
+df.plot = filter(df, 
+                 variable == var, 
+                 period <= tmax, value > 0)
+
+
+p.co2price <- ggplot(df.plot, aes(period, value, color=scenario)) +
+                geom_line(size=1.2, alpha=0.7) +
+                geom_point(size=2) +
+                scale_y_continuous("CO2 Price USD2005/tCO2") +
+                theme_bw() +
+                theme( strip.background = element_blank(), axis.text.x = element_text(angle = 90)) 
+
+p.co2price
+
+p.co2price.log <- ggplot(df.plot, aes(period, value, color=scenario)) +
+                geom_line(size=1.2, alpha=0.7) +
+                geom_point(size=2) +
+                scale_y_continuous("CO2 Price USD2005/tCO2", trans = "log2") +
+                theme_bw() +
+                theme( strip.background = element_blank(), axis.text.x = element_text(angle = 90)) 
+
+p.co2price.log
+
+
+
+ggsave(plot = p.co2price, filename = paste0(plots.path, "/CO2price_lineplot.png"), width=20, height=10, units = "cm")
+ggsave(plot = p.co2price.log, filename = paste0(plots.path, "/CO2price_lineplot_log.png"), width=20, height=10, units = "cm")
+
+
+```
+
+
+## carbon budget 2020-2050 (for ARIADNE)
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# emissions variables to cumulate
+cumul.vars <- c("Emi|CO2",
+                "Emi|CO2|+|Energy")
+
+
+df.cumul <- df %>% 
+              filter(variable %in% cumul.vars, period %in% seq(2020,2050,5)) %>%  
+              right_join(remind_timesteps %>% 
+                           filter(period %in% seq(2020,2050,5))) %>%  
+              # adjust weights to how budget calculation is done in regipol module (0.5 factor for edge years of budget)
+              mutate( weight = ifelse(period %in% c(2020,2050), 0.5,1)) %>%
+              # weight emissions with year factor for cumunlation
+              mutate( value = value * weight) %>%  
+              # cumulate
+              group_by(model, region, scenario, variable, unit) %>%
+              mutate( cumsum.value = cumsum(value) / 1000) %>% 
+              ungroup() 
+
+p.emi.cumul <- ggplot(df.cumul, aes(year, cumsum.value)) +
+                  geom_line(size=1.2, alpha=0.7) +
+                  geom_point(size=1.5, alpha=0.6) +
+                  facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle = 90),
+                         strip.background = element_blank()) +
+                  scale_y_continuous("2020-2050 Cumulative Emissions (Gt CO2)",
+                                     limits = c(7,10))
+              
+p.emi.cumul   
+
+
+```
+
+
+## Carbon intensity
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE }
+
+
+
+df.plot = df %>% 
+  calc_addVariable("`Carbon Intensity|Electricity`" = "(`Emi|CO2|Energy|Supply|+|Electricity w/ couple prod`) / (`SE|Electricity`)*3.6",
+                                                   units  = "tCO2/MWh", only.new = T)  %>% 
+  mutate (value = pmax(0, value)) %>% 
+  filter( period <= tmax)
+
+g1 <- mipLineHistorical(df.plot, ylab = "Carbon Intensity Electricity\n[kgCO2/MWh]", size = 10) + 
+  xlim(c(2015,2055))+
+  theme_bw()
+ggsave(filename = paste0(plots.path, "/CI_Elec_lineplot.png"), width=12, height=8, units = "cm")
+
+
+df.plot = df %>% 
+  calc_addVariable("`Carbon Intensity|Non-Elec`" = "(`Emi|CO2|Energy|Demand|+|Industry` +  `Emi|CO2|Energy|Demand|+|Buildings` +  `Emi|CO2|Energy|Demand|+|Transport`)  / (`SE|Solids` + `SE|Liquids` + `SE|Gases`)*3.6",
+                                                   units  = "tCO2/MWh", only.new = T)  %>% 
+  mutate (value = pmax(0, value)) %>% 
+  filter( period <= tmax)
+
+mipLineHistorical(df.plot, ylab = "Carbon Intensity Fuels\n[kgCO2/MWh]", size = 10) + 
+  xlim(c(2015,2055))+
+  theme_bw()
+
+ggsave(filename = paste0(plots.path, "/CI_nonElec_lineplot.png"), width=12, height=8, units = "cm")
+
+
+```
+
+
+## Gross vs. net CO2 Emissions
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+             "Emi|CO2|+|Land-Use Change",
+             "Emi|CO2|+|Process",
+             "Emi|CO2|Energy|Demand|+|Transport",
+             "Emi|CO2|Energy|Demand|+|Industry",
+             "Emi|CO2|Energy|Demand|+|Buildings",
+             "Emi|CO2|Gross|Energy|Supply|Non-electric",
+             "Emi|CO2|Gross|Energy|Supply|+|Electricity",
+             "Emi|CO2|CDR|BECCS",
+             "Emi|CO2|CDR|DACCS",
+             "Emi|CO2|CDR|EW")
+
+# Check to what extent aggregation adds up
+CheckAgg <- df %>%
+              filter(variable %in% vars) %>%
+              sum_total(variable) %>%
+              filter( variable == "Total") %>%
+              left_join(df %>%
+                          filter(variable == "Emi|CO2") %>%
+                          select(scenario, period, value) %>%
+                          rename(Total = value))
+
+tt = plotstyle.add(c("Emi|CO2|CDR|EW")   ,c("EW"),  c("sandybrown"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|CDR|BECCS")   ,c("BECCS"),  c("lightgreen"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|CDR|DACCS")   ,c("DAC"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Industry")   ,c("Industry"),  c( "grey"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Transport")   ,c("Transport"),  c("darkblue"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Buildings")   ,c("Buildings"),  c( "darkred"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|+|Land-Use Change")   ,c("Land"),  c("darkgreen"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Gross|Energy|Supply|+|Electricity")   ,c("Elec. Supply"),  c("darkgoldenrod"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Gross|Energy|Supply|Non-electric")   ,c("Non-elec. Supply"),  c("darkorchid"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|+|Process"),c("Industrial Processes"),  c("darkseagreen4"),replace=T)
+
+
+
+df.plot = filter(df, variable %in% vars, period <= tmax) %>%
+            order.levels(variable = vars) %>%
+            factor.data.frame()
+
+df.tot =  filter(df, variable ==  "Emi|CO2", 
+                      period <= tmax)
+df.tot.hist = filter(df.hist, variable == "Emi|CO2|Total", 
+                     period >= 1990, model == "CEDS", region == reg) %>%
+              select(-scenario)
+
+mipArea(df.plot %>% 
+          filter(period <= tmax), 
+        total = df.tot) +
+  scale_fill_manual(values = as.character(plotstyle(vars)),  
+                    labels = as.character(plotstyle(vars, out = "legend"))) +
+  facet_grid(~scenario) +
+  ylab("CO2 Emissions  [MtCO2/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank(), legend.position = "right", axis.text.x = element_text(angle = 90)) +
+  geom_hline(yintercept = 0) +
+  geom_line(data= df.tot.hist, aes(x=period, y = value), color = "black", size =2 )
+
+ggsave(filename = paste0(plots.path, "/EmiCO2_grossnet_area.png"),width=19, height=10, units = "cm")
+
+
+mipBarYearData(df.plot %>% filter(period %in% t.barplot)) +
+  scale_fill_manual(values = as.character(plotstyle(vars)),  labels = as.character(plotstyle(vars, out = "legend"))) +
+  ylab("CO2 Emissions  [MtCO2/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank(),  legend.position = "right") +
+  geom_hline(yintercept = 0) +
+#  geom_line(data=df.tot %>% filter(period %in% t.barplot), aes(x=period, y = value), color = "black", size =2 )
+  
+ggsave(filename = paste0(plots.path, "/EmiCO2_grossnet_bar.png"),width=19, height=10, units = "cm")
+
+```
+
+## Final Energy Carriers
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+"FE|+|Solids",                                              
+"FE|+|Liquids" ,                                            
+"FE|+|Gases" ,                                              
+"FE|+|Electricity" ,                                        
+"FE|+|Hydrogen",                                            
+"FE|+|Heat" )
+
+
+
+
+df.plot = filter(df, variable %in% vars, period <= tmax) %>% 
+                order.levels(variable = vars) %>%
+                factor.data.frame()
+
+df.tot =  filter(df, variable ==  "FE", period <= tmax ) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+df.tot.hist = filter(df.hist, variable == "FE", period >= 1990, !is.na(value), model == "IEA", region == reg) %>%
+  select(-scenario)
+
+mipArea(df.plot %>% filter(period <= tmax), total = df.tot) +
+  facet_grid(~scenario) +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  theme(legend.position = "bottom") +
+  ylab("Final Energy [EJ/yr]") +
+  geom_line(data= df.tot.hist, aes(x=period, y=value), color ="black", size=2)
+
+ggsave(filename = paste0(plots.path, "/FE_area.png"),width=20, height=10, units="cm")
+
+mipBarYearData(df.plot %>% filter(period %in% t.barplot)) +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  ylab("Final Energy [EJ/yr]")
+
+ggsave(filename = paste0(plots.path, "/FE_bar.png"),width=20, height=10, units="cm")  
+
+```
+
+## Final Energy Carriers
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "FE|++|CDR",
+  "FE|++|Buildings",
+  "FE|++|Transport",                                                              
+  "FE|++|Industry"
+)
+
+df.plot = filter(df, variable %in% vars, period <= tmax ) %>%
+  order.levels(variable = vars) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+df.tot =  filter(df, variable ==  "FE", period <= tmax ) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+df.tot.hist = filter(df.hist, variable == "FE", period >= 1990, !is.na(value), model == "IEA", region == reg) %>%
+  select(-scenario)
+
+mipArea(df.plot %>% filter(period <= tmax), total = df.tot) +
+  facet_grid(~scenario) +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  theme(legend.position = "bottom") +
+  ylab("Final Energy [EJ/yr]") +
+  geom_line(data= df.tot.hist, aes(x=period, y = value), color = "black", size =2 )
+
+ggsave(filename = paste0(plots.path, "/FEsector_area.png"),width=20, height=10, units = "cm")
+
+mipBarYearData(df.plot %>% filter(period %in% t.barplot)) +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  ylab("Final Energy [EJ/yr]")
+
+ggsave(filename = paste0(plots.path, "/FEsector_bar.png"),width=20, height=10, units = "cm")
+
+```
+
+## Final energy prices
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# transport prices
+FE.price.trans <- c("Price|Final Energy|Transport|Electricity|Moving Avg",
+                    "Price|Final Energy|Transport|Liquids|Moving Avg",
+                    "Price|Final Energy|Transport|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Transport|Gases|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue")
+
+
+df.FE.price.trans <- df %>% 
+                      filter(variable %in% FE.price.trans, 
+                             period %in% plot.period) %>% 
+                      # remove part of variable names which are not needed
+                      mutate( variable = 
+                                substr(as.character(variable),
+                                        30,
+                                        nchar(as.character(variable))-11)) %>% 
+                      # convert to 2020€/MWh
+                      mutate( value = value*1.2*3.66) 
+
+p.FE.price.trans <- ggplot(df.FE.price.trans, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Transport Prices\n(EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.trans
+
+
+
+# buildings prices
+FE.price.build <- c("Price|Final Energy|Buildings|Electricity|Moving Avg",
+                    "Price|Final Energy|Buildings|Liquids|Moving Avg",
+                    "Price|Final Energy|Buildings|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Buildings|Gases|Moving Avg",
+                    "Price|Final Energy|Buildings|Solids|Moving Avg",
+                    "Price|Final Energy|Buildings|Heat|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.FE.price.build <- df %>% 
+                      filter(variable %in% FE.price.build, 
+                             period %in% plot.period) %>% 
+                      # remove part of variable names which are not needed
+                      mutate( variable = 
+                                substr(as.character(variable),
+                                        30,
+                                        nchar(as.character(variable))-11)) %>% 
+                      # convert to 2020€/MWh
+                      mutate( value = value*1.2*3.66) 
+
+p.FE.price.build <- ggplot(df.FE.price.build, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Buildings Prices\n(EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.build
+
+
+
+# industry  prices
+FE.price.indst <- c("Price|Final Energy|Industry|Electricity|Moving Avg",
+                    "Price|Final Energy|Industry|Liquids|Moving Avg",
+                    "Price|Final Energy|Industry|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Industry|Gases|Moving Avg",
+                    "Price|Final Energy|Industry|Solids|Moving Avg",
+                    "Price|Final Energy|Industry|Heat|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.FE.price.indst <- df %>% 
+                      filter(variable %in% FE.price.indst, 
+                             period %in% plot.period) %>% 
+                      # remove part of variable names which are not needed
+                      mutate( variable = 
+                                substr(as.character(variable),
+                                        29,
+                                        nchar(as.character(variable))-11)) %>% 
+                      # convert to 2020€/MWh
+                      mutate( value = value*1.2*3.66) 
+
+p.FE.price.indst <- ggplot(df.FE.price.indst, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Industry Prices\nMov. Avg. (EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.indst
+
+#save plots
+ggsave(plot = p.FE.price.indst, 
+       filename = paste0(plots.path, "/Prices_FEind", ".png"),
+       width=15, height=10, units = "cm")
+
+ggsave(plot = p.FE.price.trans, 
+       filename = paste0(plots.path, "/Prices_FEtrans", ".png"),
+       width=15, height=10, units = "cm")
+
+
+ggsave(plot = p.FE.price.build, 
+       filename = paste0(plots.path, "/Prices_FEbuild", ".png"),
+       width=15, height=10, units = "cm")
+
+
+```
+
+
+## Secondary energy prices
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# se prices
+vars = c("Price|Secondary Energy|Electricity",
+         #"Price|Secondary Energy|Heat",
+         "Price|Secondary Energy|Liquids",
+         "Price|Secondary Energy|Gases",
+        # "Price|Secondary Energy|Solids",
+         "Price|Secondary Energy|Hydrogen")
+
+SE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.SE.price <- df %>% 
+                      filter(variable %in% vars, 
+                             period %in% plot.period) %>% 
+                      # remove part of variable names which are not needed
+                      mutate( variable = 
+                                substr(as.character(variable),
+                                        24,
+                                        nchar(as.character(variable)))) %>% 
+                      # convert to 2020€/MWh
+                      mutate( value = value*1.2*3.66) 
+
+p.SE.price <- ggplot(df.SE.price, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("SE  Prices\n (EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.SE.price
+
+#save plots
+ggsave(plot = p.SE.price, 
+       filename = paste0(plots.path, "/Prices_SE", ".png"),
+       width=15, height=10, units = "cm")
+
+
+
+
+```
+
+
+## Residual Fuel demand
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "SE|Hydrogen|Electricity",
+  "PE|Biomass|w/ CCS", "PE|Biomass|w/o CCS", 
+  "PE|Nuclear",  
+  "PE|Gas|w/ CCS", 
+  "PE|Gas|w/o CCS",
+  "PE|Oil",
+  "PE|Coal|w/ CCS", 
+  "PE|Coal|w/o CCS"
+)
+
+df.plot = filter(df, variable %in% vars, period <= tmax ) %>%
+  order.levels(variable = vars) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+
+mipBarYearData(df.plot %>% filter(period %in% t.barplot)) +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  ylab("Fuel Demand (Primary Level) [EJ/yr]")
+
+ggsave(filename = paste0(plots.path, "/ResFuels_bar.png"), width=25, height=10, units = "cm")
+
+
+```
+
+## Final Energy demand
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "FE|+|Electricity",
+  "FE|+|Heat",
+
+  "FE|Transport|+|Hydrogen",
+  "FE|Buildings|+|Hydrogen",
+  "FE|Industry|+|Hydrogen",
+  "FE|CDR|+|Hydrogen",
+ 
+   "FE|Transport|+|Gases",                                                                "FE|Buildings|+|Gases",                                                             
+   "FE|Industry|+|Gases",                                                                    
+  "FE|Transport|+|Liquids",     
+  "FE|Buildings|+|Liquids",     
+  "FE|Industry|+|Liquids", 
+  
+  "FE|Buildings|+|Solids",     
+  "FE|Industry|+|Solids"
+)
+
+
+df.plot = filter(df, variable %in% vars, period <= tmax) %>%
+  order.levels(variable = vars) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+mipBarYearData(df.plot %>% filter(period %in% t.barplot)) +
+  ylab("Final Energy Demand [EJ/yr]") + 
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/ResFuels_bar0.png"), width=25, height=14, units = "cm")
+
+
+```
