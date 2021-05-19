@@ -282,6 +282,7 @@ prepare <- function() {
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
+                                         "bcb_", cfg$gms$cm_behavChangeBuil, "-",
                                          "Reg_", substr(regionscode(cfg$regionmapping),1,10))
 
   # write name of corresponding CES file to datainput.gms

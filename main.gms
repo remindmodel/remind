@@ -298,6 +298,7 @@ cm_regiNoBioImport              "Switch defining regions where biomass import is
 cm_regiFactorStorageMult        "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
 cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils in buildings from a given time step on - services_putty buildings realization"
 cm_regiPhaseOutFosBuilSimple    "Switch defining regions that phase out fossils in buildings - simple buildings realization"
+cm_behavChangeBuil              "Switch for enabling a reduced FE demand in buildings for (a) given region(s)."
 cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
 cm_ban_ICE                      "Switch that phases out internal combustion engine (ICE) cars strongly until 2030"
 cm_regiNoDAC                    "Switch defining regions that are not allowed to use DAC"
@@ -440,6 +441,7 @@ $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal cm_regiNoBioImport  none           !! def = none
 $setGlobal cm_regiPhaseOutFosBuil  none       !! def = none
 $setGlobal cm_regiPhaseOutFosBuilSimple  none !! def = none
+$setGlobal cm_behavChangeBuil  conv           !! def = conv
 $setGlobal cm_regiFactorStorageMult  none     !! def = none
 $setGlobal cm_feelhth_sub  off                !! def = off
 $setGlobal cm_regiNoDAC  none                 !! def = none

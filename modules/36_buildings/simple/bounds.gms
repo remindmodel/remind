@@ -20,6 +20,8 @@ vm_cesIO.up("2040", regiPhaseOutFosBuil_36, "fehob")                    = 0.04;
 vm_cesIO.up("2045", regiPhaseOutFosBuil_36, "fehob")                    = 0.02;
 vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fehob")$(ttot.val ge 2050) = 1e-6;
 
+vm_prodSe.up(ttot, regiPhaseOutFosBuil_36, "pecoal", "sesofos", "coaltr")$(ttot.val ge 2050) = 1e-6;
+
 * vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fesob")$(ttot.val ge 2040) = 1e-6;
 $endIf.regiPhaseOutFosBuil
 *** EOF ./modules/36_buildings/simple/bounds.gms

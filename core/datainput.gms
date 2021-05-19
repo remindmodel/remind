@@ -1271,7 +1271,11 @@ Parameter
   pm_fedemand   "final energy demand"
   /
 $ondelim
+$ifthen.behavChangeBuil "%cm_behavChangeBuil%" == "wiseEUR"
+$include "./core/input/pm_fe_demand_EURwise.cs4r"
+$else.behavChangeBuil
 $include "./core/input/pm_fe_demand.cs4r"
+$endif.behavChangeBuil
 $offdelim
   /
 ;
