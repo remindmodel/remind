@@ -8,12 +8,12 @@
 
 $IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off" 
 
-loop((ttot,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ext_regi,target_type,emi_type),
+loop((ttot,ttot2,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),
 	loop(all_regi$(sameas(ext_regi,all_regi) OR (regi_group(ext_regi,all_regi))),
 *** 		Initialize EU tax path until 2050
-		pm_taxCO2eq(ttot,all_regi)$(ttot.val gt 2016 AND ttot.val le 2050) = pm_taxCO2eq("2020",all_regi)*1.05**(ttot.val-2020);		
+		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val le 2050) = pm_taxCO2eq("2020",all_regi)*1.05**(t.val-2020);		
 *** 		convergence scheme post 2050: exponential increase with 1.25%
-		pm_taxCO2eq(ttot,all_regi)$(ttot.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(ttot.val-2050);
+		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050);
 	);
 );
 

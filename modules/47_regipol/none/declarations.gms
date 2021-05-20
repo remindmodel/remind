@@ -8,7 +8,7 @@
 
 	
 Parameter
-	pm_regiTarget_dev(ext_regi)	   "target deviation across iterations in current emissions divided by target emissions"
+	pm_regiTarget_dev(ext_regi,ttot,ttot2)	   "target deviation across iterations in current emissions divided by target emissions"
 ;
 
 
