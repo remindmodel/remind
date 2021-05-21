@@ -143,7 +143,48 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 *** Import and set global data
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
-$include "./core/input/generisdata_tech.prn";
+$include "./core/input/generisdata_tech.prn"
+;
+
+!! Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_VRE_supply_assumptions eq 1,
+  if (fm_dataglob("learn","spv") ne 0.207,
+    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","spv") = 0.257;
+  );
+
+  if (fm_dataglob("inco0","storspv") ne 9000,
+    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("inco0","storspv") = 7000;
+  );
+
+  if (fm_dataglob("incolearn","storspv") ne 6240,
+    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","storspv") = 4240;
+  );
+
+  if (fm_dataglob("learn","storspv") ne 0.10,
+    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","storspv") = 0.12;
+  );
+elseif cm_VRE_supply_assumptions eq 2,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 5010;
+  );
+elseif cm_VRE_supply_assumptions eq 3,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 4960;
+  );
+);
+
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
 $ondelim
@@ -435,7 +476,7 @@ $offdelim
 *RP* use new lifetimes defined in generisdata_tech.prn:
 pm_omeg(regi,opTimeYr,te) = 0;
 
-*** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies 
+*** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies
 *** which are only helper technologies for consistent H2 use in industry and buildings
 pm_data(regi,"lifetime","tdh2i") = pm_data(regi,"lifetime","tdh2s");
 pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
@@ -777,7 +818,7 @@ p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
 
 ***additional deltacapoffset on electric vehicles, based on latest data
 p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
-p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi); 
+p_adj_deltacapoffset("2025",regi,"apCarElT") = 2   * pm_boundCapEV("2019",regi);
 
 $ifthen.vehiclesSubsidies not "%cm_vehiclesSubsidies%" == "off"
 *** disabling electric vehicles delta cap offset for European regions as BEV installed capacity for these regions is a consequence of subsidies instead of a hard coded values.
@@ -809,7 +850,7 @@ loop(ttot$(ttot.val ge 2005),
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
-  
+
   p_adj_coeff(ttot,regi,te)                = 0.2;
   p_adj_coeff(ttot,regi,"pc")              = 0.5;
   p_adj_coeff(ttot,regi,"ngcc")            = 0.5;
@@ -838,13 +879,13 @@ loop(ttot$(ttot.val ge 2005),
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
-$elseif not "%cm_INNOPATHS_adj_seed%" == "off" 
+$elseif not "%cm_INNOPATHS_adj_seed%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $endif
 
 $ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
-$elseif not "%cm_INNOPATHS_adj_coeff%" == "off" 
+$elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
 $endif
 
@@ -854,7 +895,7 @@ $if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te
 
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
-p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);  
+p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
 
 p_adj_coeff_glob(te)        = 0.0;
@@ -979,7 +1020,7 @@ pm_data(regi,"learnExp_woFC",teLearn(te))    = log(1-pm_data(regi,"learn", te))/
 *RP* adjust exponent parameter learnExp_woFC to take floor costs into account
 pm_data(regi,"learnExp_wFC",teLearn(te))     = pm_data(regi,"inco0",te) / pm_data(regi,"incolearn",te) * log(1-pm_data(regi,"learn", te))/log(2);
 
-*** global factor 
+*** global factor
 *** parameter calculation for global level, that regional values can gradually converge to
 fm_dataglob("learnMult_wFC",teLearn(te)) = fm_dataglob("incolearn",te)/(fm_dataglob("ccap0",te)**fm_dataglob("learnExp_wFC", te));
 
@@ -1052,7 +1093,7 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-*** FS: scale H2 transmission and distribution cost in industry/buildings 
+*** FS: scale H2 transmission and distribution cost in industry/buildings
 *** for scenarios with different assumptions on the cost of building/upgrading H2 grid
 pm_inco0_t(ttot,regi,"tdh2s") = c_H2tdCapCost_stat * pm_inco0_t(ttot,regi,"tdh2s");
 
@@ -1224,10 +1265,10 @@ p_ef_dem(regi,"fepet") = 68.5;
 p_ef_dem(regi,"fegas") = 50.3;
 p_ef_dem(regi,"fesos") = 90.5;
 
-$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 *** demand side emission factor of final energy carriers in MtCO2/EJ
 *** https://www.umweltbundesamt.de/sites/default/files/medien/1968/publikationen/co2_emission_factors_for_fossil_fuels_correction.pdf
-  loop(ext_regi$altFeEmiFac_regi(ext_regi), 
+  loop(ext_regi$altFeEmiFac_regi(ext_regi),
     p_ef_dem(regi,entyFe)$(regi_group(ext_regi,regi)) = 0;
     p_ef_dem(regi,"fedie")$(regi_group(ext_regi,regi)) = 74;
     p_ef_dem(regi,"fehos")$(regi_group(ext_regi,regi)) = 73;
@@ -1302,7 +1343,7 @@ loop(te,
 o_reached_until2150pricepath(iteration) = 0;
 
 *** ---- FE demand trajectories for calibration -------------------------------
-*** also used for limiting secondary steel demand in baseline and policy 
+*** also used for limiting secondary steel demand in baseline and policy
 *** scenarios
 Parameter
   pm_fedemand   "final energy demand"
@@ -1314,10 +1355,10 @@ $offdelim
 ;
 
 $ifthen.subsectors "%industry%" == "subsectors"   !! industry
-*** Limit secondary steel production to 90 %.  This might be slightly off due 
+*** Limit secondary steel production to 90 %.  This might be slightly off due
 *** to rounding in the mrremind package.
 if (9 lt smax((t,regi,all_GDPscen)$(
-                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ), 
+                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
            pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
          / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
          ),
@@ -1329,20 +1370,20 @@ if (9 lt smax((t,regi,all_GDPscen)$(
                            pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
     if (9 lt ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
              / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")),
-  
+
       put t.tl, " ", regi.tl, " ", all_GDPscen.tl, ": ";
       put @20 "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
       put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ") -> ";
-  
+
       pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
       = 0.1
       * ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
         + pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
         );
-  
+
       pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
       = 9 * pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary");
-  
+
       put "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
       put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ")" /;
     );
