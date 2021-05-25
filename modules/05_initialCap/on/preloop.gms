@@ -449,18 +449,20 @@ p05_deltacap_res(ttot,regi,teBioPebiolc) = vm_deltaCap.l(ttot,regi,teBioPebiolc,
 * BS/DK* Developed regions phase out quickly (no new capacities)
 * BS/DK* Developing regions (GDP PPP threshold) phase out more slowly (varied by SSP)
 loop(regi,
-     if( ( pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi) ) < 4,
-          p05_deltacap_res("2010",regi,"biotr") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2015",regi,"biotr") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2020",regi,"biotr") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2025",regi,"biotr") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2030",regi,"biotr") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2035",regi,"biotr") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2040",regi,"biotr") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2045",regi,"biotr") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2050",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-$if NOT %cm_tradbio_phaseout% == "fast"  p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-      );
+  if ((pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
+    p05_deltacap_res("2010",regi,"biotr") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2015",regi,"biotr") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2020",regi,"biotr") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$ifthen NOT %cm_tradbio_phaseout% == "fast"   !! cm_tradbio_phaseout
+    p05_deltacap_res("2025",regi,"biotr") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2030",regi,"biotr") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2035",regi,"biotr") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2040",regi,"biotr") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2045",regi,"biotr") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2050",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$endif
+  );
 );
 
 * quickest phaseout in SDP (no new capacities allowed), quick phaseout in SSP1 und SSP5
