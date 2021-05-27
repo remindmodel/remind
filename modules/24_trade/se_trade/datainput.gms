@@ -42,6 +42,34 @@ pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTr
 p24_seTradeCapacity(t,regi2,regi,entySe) = 0;
 
 *** Secondary Energy exogenously defined trade scenarios
+
+
+*** Scenario Assumptions for Imports to the EU
+$ifthen.import_h2_EU "%cm_import_EU%" == "low_h2"
+loop(regi2$(regi_group("EUR_regi",regi2)),
+  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.5*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.75*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND t.val ge 2055) = 1*sm_EJ_2_TWa*1.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+);
+$endif.import_h2_EU
+
+
+$ifthen.import_h2_EU "%cm_import_EU%" == "high_h2"
+loop(regi2$(regi_group("EUR_regi",regi2)),
+  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.5*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.75*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND t.val ge 2055) = 4*sm_EJ_2_TWa*1.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
+);
+$endif.import_h2_EU
+
+
+
+
+*** Scenario Assumptions for Imports to Germany (overwrites EU-wide import assumptions above)
 $ifthen.seTradeScenario "%cm_seTradeScenario%" == "DEU_Low_H2"
 *Low Hydrogen trade in Germany only (all imports from MEA)
   p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 10/8760; !! TWh to TWa
