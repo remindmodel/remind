@@ -285,7 +285,7 @@ if (opt$reporting) {
   cat("# New sales for the current year can be calculated by full_demand_vkm - sum(vintage_demand_vkm).", file=vintfile, sep="\n", append=TRUE)
   cat("# Units: million vkms.", file=vintfile, sep="\n", append=TRUE)
 
-  fwrite(vint, vintfile, append=TRUE)
+  fwrite(vint, vintfile, col.names=TRUE, append=TRUE)
 
   quit()
 }

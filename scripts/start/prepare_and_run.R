@@ -232,9 +232,13 @@ prepare <- function() {
   on_cluster    <- file.exists('/p')
   
   # Copy MAGICC
-  if(file.exists(cfg$magicc_template)) {
+  if ( !file.exists(cfg$magicc_template) 
+     & file.exists(path.expand(Sys.getenv('MAGICC'))))
+	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
+
+  if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",cfg$magicc_template,"*.* ./core/magicc/"))
+      system(paste0("cp -rp ",cfg$magicc_template,"/*.* ./core/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }

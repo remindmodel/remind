@@ -399,7 +399,7 @@ for (outputdir in outputdirs) {
   miffile[, region := as.character(region)]
   miffile[, year := period]
   miffile[, period := NULL]
-  miffile = miffile[region != "World" & year >= 2015 & year <= 2100]
+  miffile = miffile[year >= 2015 & year <= 2100]
   miffile[, variable := as.character(variable)]
   ## load gdx file
   gdx = paste0(outputdir, "/fulldata.gdx")
@@ -449,82 +449,31 @@ for (outputdir in outputdirs) {
   GDPcap=merge(GDP,POP[,.(region,year,POP_val=value)],all = TRUE,by=c("region","year"))
   GDPcap[,GDP_cap:=weight/POP_val]
 
+  ## select useful entries from mif file
+  FEliq_source = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Liquids",
+                                         "FE|Transport|Liquids|LDV|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|LDV|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|LDV|Fossil|New Reporting",
+                                         "FE|Transport|Liquids",
+                                         "FE|Transport|Liquids|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|Fossil|New Reporting",
+                                         "FE|Transport|Pass|Road|HDV|Liquids",
+                                         "FE|Transport|Liquids|HDV|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|HDV|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|HDV|Fossil|New Reporting"),]
 
-  if (nrow(miffile[variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting")])==0) {
-    TWa_2_EJ     <- 31.536
-    prodFE  <- readGDX(gdx,name=c("vm_prodFe"),field="l",restore_zeros=FALSE,format="first_found")*TWa_2_EJ
-    tmp1=mbind(setNames(collapseNames(prodFE[,,"seliqbio.fepet.tdbiopet"]),
-                        "FE|Transport|Liquids|LDV|Biomass|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqfos.fepet.tdfospet"]),
-                        "FE|Transport|Liquids|LDV|Fossil|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqbio.fedie.tdbiodie"]),
-                        "FE|Transport|Liquids|HDV|Biomass|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqfos.fedie.tdfosdie"]),
-                        "FE|Transport|Liquids|HDV|Fossil|New Reporting"))
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|LDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|LDV|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting"), value := 0]
 
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|HDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|HDV|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|HDV|Biomass|New Reporting", "FE|Transport|Liquids|HDV|Synthetic|New Reporting"), value := 0]
 
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|Fossil|New Reporting", value[variable == "FE|Transport|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|Biomass|New Reporting", "FE|Transport|Liquids|Synthetic|New Reporting"), value := 0]
 
-    tmp1=magpie2dt(tmp1)
-    setnames(tmp1, old = c("all_regi", "ttot", "data"), new = c("region", "year", "variable"))
-    tmp1[, model := unique(miffile$model)]
-    tmp1[, scenario := unique(miffile$scenario)]
-    tmp1[, unit := "EJ/yr"]
-    feliqsyn = tmp1[variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Liquids|HDV|Fossil|New Reporting")]
-    feliqsyn[, c("value", "variable") := list(0, gsub("Fossil", "Synfuel", variable ))]
-    FEliq_source=rbind(tmp1, feliqsyn)
-    ## add the totals
-    FEliq_source_tot = copy(FEliq_source)
-    FEliq_source_tot[, tech := str_extract(variable, "Biomass|Fossil|Synfuel")]
-    FEliq_source_tot = FEliq_source_tot[,.(value = sum(value)), by = .(region, year,model,scenario, unit, tech)]
-    FEliq_source_tot[, variable:= paste0("FE|Transport|Liquids|", tech, "|New Reporting")][, tech := NULL]
-    FEliq_source = rbind(FEliq_source, FEliq_source_tot)
-    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
-                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
-                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
-
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
-
-
-  } else {
-    ## select useful entries from mif file
-    FEliq_source = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Liquids",
-                                           "FE|Transport|Liquids|LDV|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|LDV|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|LDV|Fossil|New Reporting",
-                                           "FE|Transport|Liquids",
-                                           "FE|Transport|Liquids|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|Fossil|New Reporting",
-                                           "FE|Transport|Pass|Road|HDV|Liquids",
-                                           "FE|Transport|Liquids|HDV|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|HDV|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|HDV|Fossil|New Reporting"),]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|LDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|LDV|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting"), value := 0]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|HDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|HDV|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|HDV|Biomass|New Reporting", "FE|Transport|Liquids|HDV|Synthetic|New Reporting"), value := 0]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|Fossil|New Reporting", value[variable == "FE|Transport|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|Biomass|New Reporting", "FE|Transport|Liquids|Synthetic|New Reporting"), value := 0]
-
-
-
-    ## remove the value that was used to repair the NAs
-    FEliq_source = FEliq_source[!variable %in% c("FE|Transport|Pass|Road|LDV|Liquids", "FE|Transport|Pass|Road|HDV|Liquids", "FE|Transport|Liquids")]
-    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
-                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
-                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
-
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
-
-  }
-
+  ## remove the value that was used to repair the NAs
+  FEliq_source = FEliq_source[!variable %in% c("FE|Transport|Pass|Road|LDV|Liquids", "FE|Transport|Pass|Road|HDV|Liquids", "FE|Transport|Liquids")]
 
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source)
