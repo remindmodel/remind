@@ -326,8 +326,6 @@ cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
-c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution capital cost for buildings and industry"
-c_HeattdCapCost_stat        "factor to scale district heat transmission and distribution capital cost for buildings and industry"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
@@ -525,8 +523,7 @@ cm_BioImportTax_EU = 1; !! def 0.25
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
 c_noPeFosCCDeu = 1; !! def 0
-c_H2tdCapCost_stat = 3; !! def 1
-c_HeattdCapCost_stat = 8; !! def 1
+
 
 cm_HeatLim_b = 1; !! def 1
 cm_ElLim_b = 1; !! def 1
