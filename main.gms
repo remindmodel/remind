@@ -335,6 +335,7 @@ cm_ariadne_trade_el         "switch for enabling electricity imports to Germany 
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
 cm_ariadne_GrossTarget      "switch for constraining gross energy CO2 emissions without bunkers in Germany from 2050 onwards"
+cm_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -540,11 +541,13 @@ cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 100; !! def 0
-cm_ariadne_trade_syn = 50; !! def 0
+cm_ariadne_trade_el = 50; !! def 0
+cm_ariadne_trade_h2 = 150; !! def 0
+cm_ariadne_trade_syn = 150; !! def 0
 
-cm_ariadne_GrossTarget = 0.01; !! def -1
+cm_ariadne_GrossTarget = -1; !! def -1
+
+$setGlobal cm_VREPot_Factor  spv 0.5, wind 0.5 !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
