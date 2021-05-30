@@ -25,7 +25,7 @@ $offdelim
 Parameter f21_tau_fuEx_sub(tall,all_regi,all_enty) "2005 subsidy for fuel extraction"
   /
 $ondelim
-$include "./modules/21_tax/on/input/p21_tau_fuEx_sub.cs4r"
+$include "./modules/21_tax/on/input/f21_tau_pe_sub.cs4r"
 $offdelim
   /             ;
 
