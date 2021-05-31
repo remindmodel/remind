@@ -332,7 +332,6 @@ cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
-cm_ariadne_GrossTarget      "switch for constraining gross energy CO2 emissions without bunkers in Germany from 2050 onwards"
 cm_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 ;
 
@@ -533,18 +532,17 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 1; !! def 0
+cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-cm_ariadne_trade_el = 50; !! def 0
-cm_ariadne_trade_h2 = 150; !! def 0
-cm_ariadne_trade_syn = 150; !! def 0
+cm_ariadne_trade_el = 0; !! def 0
+cm_ariadne_trade_h2 = 0; !! def 0
+cm_ariadne_trade_syn = 0; !! def 0
 
-cm_ariadne_GrossTarget = -1; !! def -1
 
-$setGlobal cm_VREPot_Factor  spv 0.5, wind 0.5 !! def = off
+$setGlobal cm_VREPot_Factor  off !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 

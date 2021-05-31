@@ -42,8 +42,9 @@ $ENDIF.CCSinvestment
 
 
 ** Force historical bounds on coal
-    vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
-    vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; !!2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
+vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
+*** 2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
+vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; 
 
 ** European regions coal capacity phase-out based on Beyond Coal 2021 (https://beyond-coal.eu/2021/03/03/overview-of-national-phase-out-announcements-march-2021/), whith adjustment for possible delay in Italy
 $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off" 
@@ -61,19 +62,6 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
 $ENDIF.CoalRegiPol  
-
-
-
-*** ARIADNE target, impose constraint on gross-zero energy CO2 emissions (w/o Bunkers) in Germany from 2050 onwards to reach 
-$ontext
-if (cm_ariadne_GrossTarget ge 0 AND iteration.val ge 20,
-    v47_emiTarget.up(t,regi,"grossEnCO2_noBunkers")$(t.val ge 2050 AND sameas(regi,"DEU")) = cm_ariadne_GrossTarget/sm_c_2_co2;
-);
-$offtext
-
-if (cm_ariadne_GrossTarget ge 0,
-    v47_emiTarget.up(t,regi,"grossEnCO2_noBunkers")$(t.val ge 2050 AND sameas(regi,"DEU")) = cm_ariadne_GrossTarget/sm_c_2_co2;
-);
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

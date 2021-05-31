@@ -38,13 +38,6 @@ rem_in_mo <- mbind(rem_in_mo,reportSE(gdx)[,t,])
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
 
-# FS: quick fix as long as variables with plus and without plus (e.g. FE|Industry|Liquids and FE|Industry|+|Liquids etc.) exist at the same time creating duplicates
-vars.dupl <- c("FE|Industry|Liquids (EJ/yr)","FE|Industry|Solids (EJ/yr)","FE|Industry|Gases (EJ/yr)",
-               "FE|Industry|Electricity (EJ/yr)", "FE|Industry|Heat (EJ/yr)", "FE|Industry|Hydrogen (EJ/yr)")
-
-rem_in_mo <- rem_in_mo[,,vars.dupl,invert=T]
-
-
 # delete "+" and "++" from variable names
 rem_in_mo <- deletePlus(rem_in_mo)
 

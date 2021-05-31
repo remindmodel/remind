@@ -36,16 +36,6 @@ q47_emiTarget_grossEnCO2(t,regi)..
 	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
-
-*** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
-q47_emiTarget_grossFFaI(t,regi)..
-	v47_emiTarget(t,regi,"grossFFaI")
-	=e=
-	  vm_emiTe(t,regi,"co2") 
-	+ vm_emiMacSector(t,regi,"co2cement_process")
-	+ sum( (enty,enty2,te)$(pe2se(enty,enty2,te) AND teBio(te)), vm_emiTeDetail(t,regi,enty,enty2,te,"cco2"))
-;
-
 *** net GHG
 q47_emiTarget_netGHG(t, regi)..
 	v47_emiTarget(t,regi,"netGHG")
