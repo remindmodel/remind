@@ -748,8 +748,11 @@ display p_aux_capacityFactorHistOverREMIND, pm_dataren;
 $ifthen.VREPot_Factor not "%cm_VREPot_Factor%" == "off" 
   parameter p_VREPot_Factor(all_te) / %cm_VREPot_Factor% /;
 *** rescale renewable potentials for all grades which have not been used by 2020, i.e. where p_aux_capThisGrade is 0
-  pm_dataren(regi,"maxprod",rlf,te)$(NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
+  loop(te$(p_VREPot_Factor(te)),
+    pm_dataren(regi,"maxprod",rlf,te)$( NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
+  );
 $endif.VREPot_Factor
+
 
 
 *** -----------------------------------------------------------------
