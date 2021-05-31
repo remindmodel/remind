@@ -37,7 +37,6 @@ rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
 rem_in_mo <- mbind(rem_in_mo,reportSE(gdx)[,t,])
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
-
 # delete "+" and "++" from variable names
 rem_in_mo <- deletePlus(rem_in_mo)
 

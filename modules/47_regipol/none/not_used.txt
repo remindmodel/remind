@@ -6,7 +6,6 @@ sm_tgch4_2_pgc,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_emiTeDetail,input,questionnaire
 vm_emiTe,input,questionnaire
-vm_emiMacSector,input,questionnaire
 vm_emiAll,input,questionnaire
 vm_co2eq,input,questionnaire
 vm_co2eqMkt,input,questionnaire
@@ -32,3 +31,5 @@ cm_postTargetIncrease,input,questionnaire
 pm_histCap,input,questionnaire
 pm_earlyreti_adjRate,input,questionnaire
 pm_emiTargetES,input,questionnaire
+vm_emiCdr,input,questionnaire
+pm_share_CCS_CCO2,input,questionnaire

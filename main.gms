@@ -332,7 +332,7 @@ cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
-cm_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
+c_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -542,7 +542,7 @@ cm_ariadne_trade_h2 = 0; !! def 0
 cm_ariadne_trade_syn = 0; !! def 0
 
 
-$setGlobal cm_VREPot_Factor  off !! def = off
+$setGlobal c_VREPot_Factor  off !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 

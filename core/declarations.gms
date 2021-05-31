@@ -141,6 +141,10 @@ $elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /
 $endif
 
+$ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off" 
+  p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
+$endif.VREPot_Factor
+
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "

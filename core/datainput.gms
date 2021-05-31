@@ -675,9 +675,6 @@ pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxpro
 *mh* set 'nur' for all non renewable technologies to '1':
 pm_dataren(regi,"nur",rlf,teNoRe)    = 1;
 
-
-
-
 display p_datapot, pm_dataren;
 
 ***---------------------------------------------------------------------------
@@ -744,14 +741,15 @@ loop(te$sameas(te,"csp"),
 
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;
 
+
 *** FS: sensitivity scenarios for renewable potentials
-$ifthen.VREPot_Factor not "%cm_VREPot_Factor%" == "off" 
-  parameter p_VREPot_Factor(all_te) / %cm_VREPot_Factor% /;
-*** rescale renewable potentials for all grades which have not been used by 2020, i.e. where p_aux_capThisGrade is 0
+$ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off" 
   loop(te$(p_VREPot_Factor(te)),
     pm_dataren(regi,"maxprod",rlf,te)$( NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
   );
 $endif.VREPot_Factor
+
+
 
 
 
@@ -1065,6 +1063,11 @@ $if %cm_techcosts% == "REG"   );
 
 
 
+
+
+
+
+
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
 *** -----------------------------------------------------------------------------
@@ -1360,12 +1363,6 @@ $endif.subsectors
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
-
-
-
-
-
-
 
 *** EOF ./core/datainput.gms
 
