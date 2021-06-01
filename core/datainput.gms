@@ -742,6 +742,17 @@ loop(te$sameas(te,"csp"),
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;
 
 
+*** FS: sensitivity scenarios for renewable potentials
+$ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off" 
+  loop(te$(p_VREPot_Factor(te)),
+    pm_dataren(regi,"maxprod",rlf,te)$( NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
+  );
+$endif.VREPot_Factor
+
+
+
+
+
 *** -----------------------------------------------------------------
 
 pm_dataeta(tall,regi,te) = f_dataetaglob(tall,te);
@@ -1051,9 +1062,6 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-*** FS: scale H2 transmission and distribution cost in industry/buildings 
-*** for scenarios with different assumptions on the cost of building/upgrading H2 grid
-pm_inco0_t(ttot,regi,"tdh2s") = c_H2tdCapCost_stat * pm_inco0_t(ttot,regi,"tdh2s");
 
 
 
