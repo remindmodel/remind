@@ -44,8 +44,7 @@ $ENDIF.CCSinvestment
 ** Force historical bounds on coal
 vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 38.028/1000;
 *** 2019 capacity = 7TWh, capacity factor = 0.6 ->  ~1.35GW -> Assuming no new capacity -> average 2018-2022 = ~ 1GW
-*** Commented out as this line causes issues for H12 regionmappings
-***vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; 
+vm_cap.up("2020",regi,"pc","1")$((cm_startyear le 2020) and (sameas(regi,"UKI"))) = 1.3/1000; 
 
 ** European regions coal capacity phase-out based on Beyond Coal 2021 (https://beyond-coal.eu/2021/03/03/overview-of-national-phase-out-announcements-march-2021/), whith adjustment for possible delay in Italy
 $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off" 
