@@ -788,6 +788,9 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
+  / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW  /;
+
 *** FS: definition of regional sensitivity/scenario sets
 
 $IFTHEN.RegScenNuc "%c_regi_nucscen%" == "all"
