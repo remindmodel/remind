@@ -305,6 +305,9 @@ all_enty             "all types of quantities"
         fesob
         feels        "FE electricity stationary"
         feelb
+        feelcb       "buildings use of conventional electricity (all but space heating)"
+        feelhpb      "buildings use of electricity for space heating with heat pumps"
+        feelrhb      "buildings use of electricity for space heating with resistive heating"
         feeli
         feel
         fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
