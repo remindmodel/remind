@@ -50,6 +50,4 @@ pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
 cm_BioImportTax_EU,input,questionnaire
 vm_Mport,input,questionnaire
-pm_tau_fe_tax,input,questionnaire
-pm_tau_fe_sub,input,questionnaire
 vm_deltaCap, variable, ???

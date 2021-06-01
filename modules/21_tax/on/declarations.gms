@@ -12,15 +12,12 @@ p21_tau_pe2se_inconv(tall,all_regi,all_te)   "inconvenience cost path for primar
 p21_tech_tax(tall,all_regi,all_te,rlf)       "tax path for technology specific new capacity"
 p21_tech_sub(tall,all_regi,all_te,rlf)       "subsidy path for technology specific new capacity"
 
-pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty) "tax path for final energy"
-pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty) "subsidy path for final energy"
 p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy technologies"
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
 p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
-
 
 p21_taxrevGHG0(ttot,all_regi)                "reference level value of GHG emission tax"
 p21_taxrevCO2luc0(ttot,all_regi)             "reference level value of co2luc emission tax"
@@ -39,8 +36,6 @@ p21_taxemiMkt0(ttot,all_regi,all_emiMkt)     "reference level value of co2 emiss
 p21_taxrevFlex0(ttot,all_regi)               "reference level value of flexibility tax"
 p21_taxrevBioImport0(ttot,all_regi)          "reference level value of bioenergy import tax"  
 
-
-
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
 p21_taxrevNetNegEmi_iter(iteration,ttot,all_regi)          "reference level value of net-negative emissions tax revenue"
@@ -54,7 +49,6 @@ p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level valu
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
-
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 
