@@ -8,7 +8,7 @@
 
 
 * initialize regipol target deviation parameter
-pm_regiTarget_dev(ext_regi) = 0;
+pm_regiTarget_dev(ext_regi,ttot,ttot2) = 0;
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
