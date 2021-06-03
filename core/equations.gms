@@ -877,7 +877,7 @@ q_shBioTrans(t,regi)..
 ;
  
 ***---------------------------------------------------------------------------
-*' Share of final energy in stationary sector
+*' Share of final energy carrier in sector
 ***---------------------------------------------------------------------------
 
 q_shfe(t,regi,entyFe,sector)$(pm_shfe_up(t,regi,entyFe,sector) OR pm_shfe_lo(t,regi,entyFe,sector))..

@@ -8,7 +8,7 @@
 
 
 * initialize regipol target deviation parameter
-pm_regiTarget_dev(ext_regi) = 0;
+pm_regiTarget_dev(ext_regi,ttot,ttot2) = 0;
 
 *** if the bau or ref gdx has been run with a carbon tax  
 if ( (cm_startyear gt 2005),
