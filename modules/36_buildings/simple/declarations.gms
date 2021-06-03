@@ -12,6 +12,11 @@ scalars
   s36_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
 ;
 
+Parameters
+  p36_heatPumpMkup(ttot,all_regi) "Heat pumps markup cost [T$/TWa]"
+  p36_districtHeatingMkup(ttot,all_regi) "District heatingMkup markup cost [T$/TWa]"
+;
+
 Variables
   v36_costExponent(ttot,all_regi) "logistic function exponent for additional hydrogen low penetration cost"
 ;
@@ -28,7 +33,7 @@ Equations
   q36_H2Share(ttot,all_regi)         "H2 share in gases"
   q36_HeatShare(ttot,all_regi)       "calculate district heating share in FE buildings"
   q36_ElShare(ttot,all_regi)         "calculate electricity share in FE buildings"
-  q36_costAddTeInv(ttot,all_regi)    "additional buildings hydrogen annual investment costs under low technology diffusion due to T&D conversion"
+  q36_costAddTeInv(ttot,all_regi,all_te) "additional buildings hydrogen annual investment costs under low technology diffusion due to T&D conversion and heat pumps markup"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
 ;
 

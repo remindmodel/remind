@@ -141,6 +141,10 @@ $elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /
 $endif
 
+$ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off" 
+  p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
+$endif.VREPot_Factor
+
 p_boundtmp(tall,all_regi,all_te,rlf)                 "read-in bound on capacities"
 p_bound_cap(tall,all_regi,all_te,rlf)                "read-in bound on capacities"
 pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' "
@@ -182,10 +186,16 @@ pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling ef
 /   /
 
 pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
+pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from total captured CO2"
+
+
 * Fuel Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
 p_PEPrice(ttot,all_regi,all_enty)                     "parameter to capture all PE prices (tr$2005/TWa)"
+
+pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
+pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
@@ -435,7 +445,7 @@ q_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)         "Shares of final energ
 q_shGreenH2(ttot,all_regi)  "share of green hydrogen in all hydrogen"
 q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids from 2025 on."
 
-q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of gases and liquids in sector final energy"
+q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of final energy carrier in the sector final energy"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
 
 q_capH2BI(ttot,all_regi)                                  "H2 infrastructure capacities of buildings and industry need to add up to the total infrastructure of the stationary sector"

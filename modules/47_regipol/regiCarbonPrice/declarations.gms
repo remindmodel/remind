@@ -8,16 +8,16 @@
 
 	
 Parameter
-	pm_regiTarget_dev(ext_regi)	   "target deviation across iterations in current emissions divided by target emissions"
-	p47_regiTarget_dev_iter(iteration,ext_regi)	   "parameter to save pm_regiTarget_dev across iterations"
-	p47_taxCO2eqBeforeStartYear(ttot,all_regi) "CO2eq prices before start year"
-	p47_emissionsCurrent(ext_regi)		"previous iteration region GHG emissions [GtCO2]"
-	p47_factorRescaleCO2Tax(ext_regi)	"multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
+  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "target deviation across iterations in current emissions divided by target emissions"
+  p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations"
+  p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year"
+  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region GHG emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter
-	p47_regiCO2target(ttot,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
+	p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
 ;  
 $endIf.regicarbonprice
 
@@ -27,7 +27,7 @@ variables
 ;
 
 equations
-	q47_emiTarget_grossFFaI(ttot, all_regi)		"Calculates gross co2 emissions from fossil fuels and industry used for target"
+	q47_emiTarget_grossEnCO2(ttot, all_regi)		"Calculates gross energy-related co2 emissions"
 	q47_emiTarget_netCO2(ttot, all_regi)	    "Calculates net co2 emissions used for target"
 	q47_emiTarget_netCO2_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers used for target"
 	q47_emiTarget_netGHG(ttot, all_regi)		"Calculates net GHG emissions used for target"

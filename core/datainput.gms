@@ -783,6 +783,17 @@ loop(te$sameas(te,"csp"),
 display p_aux_capacityFactorHistOverREMIND, pm_dataren;
 
 
+*** FS: sensitivity scenarios for renewable potentials
+$ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off" 
+  loop(te$(p_VREPot_Factor(te)),
+    pm_dataren(regi,"maxprod",rlf,te)$( NOT( p_aux_capThisGrade(regi,te,rlf))) = pm_dataren(regi,"maxprod",rlf,te) * p_VREPot_Factor(te);
+  );
+$endif.VREPot_Factor
+
+
+
+
+
 *** -----------------------------------------------------------------
 
 pm_dataeta(tall,regi,te) = f_dataetaglob(tall,te);
@@ -875,6 +886,9 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
+***Rescaling adj seed and coeff
+$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
+$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
 
 ***Overwritting adj seed and coeff
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
@@ -888,10 +902,6 @@ $ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
 $elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
 $endif
-
-***Rescaling adj seed and coeff
-$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
-$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
 
 p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
