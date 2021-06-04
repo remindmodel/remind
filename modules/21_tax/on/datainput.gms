@@ -247,7 +247,7 @@ elseif (cm_DiscRateScen eq 4),
 p21_tau_feelhth_sub(ttot,regi) = 0;
 $ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
 *** Read in subsidy level from input parameter 
-p21_tau_feelhth_sub(ttot,regi)$(ttot.val ge 2025 AND ttot.val le 2045) = p21_tau_feelhth_sub_aux(regi);
+p21_tau_feelhth_sub(ttot,regi)$(ttot.val ge 2025) = p21_tau_feelhth_sub_aux(regi);
 $endIf.feelhth_sub
 
 

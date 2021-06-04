@@ -24,7 +24,7 @@ p21_prop_fe_sub(tall,all_regi,all_in)          "subsidy proportional cap to avoi
 p21_prop_fe_subEs(tall,all_regi,all_esty)      "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_feelhth_sub(tall,all_regi)             "subsidy on electricity based high temperature heat processes (T$/TWa)"
 $ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
-p21_tau_feelhth_sub_aux(all_regi)              "auxiliary parameter for reading in a subsidy on electricity based high temperature heat processes for 2025 <= t <= 2035 (T$/TWa)" / %cm_feelhth_sub% /
+p21_tau_feelhth_sub_aux(all_regi)              "auxiliary parameter for reading in a subsidy on electricity based high temperature heat processes for starting in 2025 (T$/TWa)" / %cm_feelhth_sub% /
 $endIf.feelhth_sub
 
 p21_tau_fuEx_sub(tall,all_regi,all_enty)      "subsidy path for fuel extraction"
