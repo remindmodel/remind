@@ -1992,7 +1992,7 @@ df <-  df %>%
  `Emi|CO2|Energy|Demand|+|Buildings` + `Emi|CO2|Energy|Demand|+|Transport`))/((`FE|Gases|+|Hydrogen` +
  `FE|Gases|+|Fossil` + `FE|Solids|+|Fossil` + `FE|Solids|+|Biomass` + `FE|Liquids|+|Hydrogen` +
 `FE|Liquids|+|Fossil` + `FE|Liquids|+|Biomass`)*277777777.78)", ## convert MtCO2 in kgCO2 and EJ into MWh
-                       "`FE|Emission|Intensity|Electricity`"  =  "(1e9*`Emi|CO2|Gross|Energy|Supply|+|Electricity`)/(`FE|+|Electricity`*277777777.78)",
+                       "`FE|Emission|Intensity|Electricity`"  =  "(1e9*`Emi|CO2|Gross|Energy|Supply|+|Electricity`)/(`SE|Electricity`*277777777.78)",
                        units  = "MWh/kgCO2") ## convert MtCO2 in kgCO2 and EJ into MWh
 
 vars.emi.int <- c("FE|Emission|Intensity|Fuel",

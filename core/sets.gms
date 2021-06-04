@@ -305,6 +305,9 @@ all_enty             "all types of quantities"
         fesob
         feels        "FE electricity stationary"
         feelb
+        feelcb       "buildings use of conventional electricity (all but space heating)"
+        feelhpb      "buildings use of electricity for space heating with heat pumps"
+        feelrhb      "buildings use of electricity for space heating with resistive heating"
         feeli
         feel
         fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
@@ -787,6 +790,9 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ;
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
+
+set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
+  / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW  /;
 
 *** FS: definition of regional sensitivity/scenario sets
 
@@ -2113,7 +2119,7 @@ steps         "iterator for MAC steps"
 alias(t,t2,t3);
 alias(iteration,iteration2);
 alias(tall,tall2,tall3);
-alias(ttot,ttot2);
+alias(ttot,ttot2,ttot3);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);

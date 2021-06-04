@@ -232,9 +232,13 @@ prepare <- function() {
   on_cluster    <- file.exists('/p')
   
   # Copy MAGICC
-  if(file.exists(cfg$magicc_template)) {
+  if ( !file.exists(cfg$magicc_template) 
+     & file.exists(path.expand(Sys.getenv('MAGICC'))))
+	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
+
+  if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",cfg$magicc_template,"*.* ./core/magicc/"))
+      system(paste0("cp -rp ",cfg$magicc_template,"/*.* ./core/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }
@@ -604,6 +608,12 @@ prepare <- function() {
                                 list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
     margs_manipulateThis <- c(margs_manipulateThis, 
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
+    #RP filter out regipol items
+    if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("q47_implFETax.M", "!!q47_implFETax.M")))
+    }
 
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.

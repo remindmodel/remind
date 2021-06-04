@@ -88,7 +88,6 @@ if (length(args) == 1) {
     pm_costsPEtradeMp      = 'pm_costsPEtradeMp', 
     vm_welfare             = 'v_welfare',
     pm_tau_fe_sub          = 'p21_tau_fe_sub', 
-    pm_tau_fe_tax          = 'p21_tau_fe_tax',
     pm_datapop             = 'pm_pop',
     p_datalab              = 'pm_lab',
     p80_pvp                = 'pm_pvp', 

@@ -261,12 +261,10 @@ if (cm_TaxConvCheck eq 1,
 
 *** additional criterion: Were global and regional climate targets reached? 
 *** check regional target must be within 1% 
-loop(ext_regi,
-  if(pm_regiTarget_dev(ext_regi) gt 0,
-    if(pm_regiTarget_dev(ext_regi) gt 1.01 OR pm_regiTarget_dev(ext_regi) lt 0.99,
-      s80_bool = 0;
-      p80_messageShow("target") = YES;
-    );
+loop((ext_regi,ttot,ttot2)$pm_regiTarget_dev(ext_regi,ttot,ttot2),
+  if(pm_regiTarget_dev(ext_regi,ttot,ttot2) gt 1.01 OR pm_regiTarget_dev(ext_regi,ttot,ttot2) lt 0.99,
+    s80_bool = 0;
+    p80_messageShow("target") = YES;
   );
 );
 
