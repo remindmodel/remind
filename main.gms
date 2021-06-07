@@ -332,7 +332,9 @@ cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
-c_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
+c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
+cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
+cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -543,6 +545,10 @@ cm_ariadne_trade_syn = 0; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
+
+$setGlobal cm_FEtax_trajectory_abs  off !! def = off
+$setGlobal cm_FEtax_trajectory_rel  2040.indst.feels 2 !! def = off
+
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
