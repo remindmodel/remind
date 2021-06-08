@@ -117,6 +117,9 @@ s_aux_cap_remaining                                         "aux. param. to calc
 p_aux_capThisGrade(all_regi,all_te,rlf)                     "aux. param. to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
 
+p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
+p_shareWindOff(ttot)                                 "windoff rollout as a fraction of technical potential"
+
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
 
 pm_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)   "Final energy shares for CES nodes"
@@ -372,6 +375,7 @@ q_costInv(ttot,all_regi)                             "costs of investment"
 
 q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
+q_windoff(tall,all_regi)                             "exogenous representation of offshore wind power generation"
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
 q_limitCapSe2se(ttot,all_regi,all_enty,all_enty,all_te) "capacity constraint for se to se transformation"

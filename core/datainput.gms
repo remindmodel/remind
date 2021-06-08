@@ -375,7 +375,9 @@ p_cint(regi,"co2","peoil","8")=0.4153983800;
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 *NB* display
 
-
+*** CG: set wind offshore to be the same as wind onshore (later should be integrated into input data)
+fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
+pm_data(all_regi,char,"windoff") = pm_data(all_regi,char,"wind");
 
 
 *** historical installed capacity
@@ -637,13 +639,35 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"hydro") = sm_EJ_2_TWa * f_maxProdGradeRegiHydro(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"hydro")     = f_maxProdGradeRegiHydro(all_regi,"nur",rlf);
 
-table f_maxProdGradeRegiWind(all_regi,char,rlf)                  "input of regionalized maximum from wind [EJ/a]"
+*CG* separating input of wind onshore and offshore
+table f_maxProdGradeRegiWindOn(all_regi,char,rlf)                  "input of regionalized maximum from wind onshore [EJ/a]"
 $ondelim
 $include "./core/input/f_maxProdGradeRegiWindOn.cs3r"
 $offdelim
 ;
-pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWind(all_regi,"maxprod",rlf);
-pm_dataren(all_regi,"nur",rlf,"wind")     = f_maxProdGradeRegiWind(all_regi,"nur",rlf);
+
+pm_dataren(all_regi,"maxprod",rlf,"wind") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf);
+pm_dataren(all_regi,"nur",rlf,"wind")     = f_maxProdGradeRegiWindOn(all_regi,"nur",rlf);
+
+table f_maxProdGradeRegiWindOff(all_regi,char,rlf)                  "input of regionalized maximum from wind offshore [EJ/a]"
+$ondelim
+$include "./core/input/f_maxProdGradeRegiWindOff.cs3r"
+$offdelim
+;
+pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
+pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
+
+p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)) /
+                      sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf));
+
+p_shareWindOff(ttot)$(ttot.val le 2015) = 0;
+p_shareWindOff(ttot)$((ttot.val ge 2020) AND (ttot.val le 2025)) = 0.05;
+p_shareWindOff(ttot)$((ttot.val ge 2030) AND (ttot.val le 2035)) = 0.3;
+p_shareWindOff(ttot)$((ttot.val ge 2040) AND (ttot.val le 2045)) = 0.45;
+p_shareWindOff(ttot)$((ttot.val ge 2050) AND (ttot.val le 2060)) = 0.65;
+p_shareWindOff(ttot)$((ttot.val ge 2065) AND (ttot.val le 2080)) = 0.7;
+p_shareWindOff(ttot)$((ttot.val ge 2085) AND (ttot.val le 2100)) = 0.8;
+p_shareWindOff(ttot)$((ttot.val gt 2100)) = 0.9;
 
 table f_dataRegiSolar(all_regi,char,all_te,rlf)                  "input of regionalized data for solar"
 $ondelim

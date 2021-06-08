@@ -159,6 +159,7 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
+        windoff         "wind offshore power converters"
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -212,7 +213,7 @@ $endif
 
 *        ccscomp         "compression of co2"
 *        ccspipe         "transportation of co2"
-        ccsinje         "injection of co2"
+         ccsinje         "injection of co2"
 *        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
@@ -1093,6 +1094,7 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
+        windoff         "wind offshore power converters"
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -1316,6 +1318,7 @@ teReNoBio(all_te) "renewable technologies except for biomass"
         geohe       "geothermal heat"
         hydro       "hydro electric"
         wind        "wind power converters"
+        windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 ***        solhe       "solar thermal heat generation"
@@ -1325,6 +1328,7 @@ teNoRe(all_te)        "Non renewable energy technologies"
 teVRE(all_te)      "technologies requiring storage"
 /
         wind        "wind power converters"
+        windoff     "wind offshore power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 /
@@ -2199,6 +2203,7 @@ $endif
         pegeo.sehe.geohe
         pehyd.seel.hydro
         pewin.seel.wind
+        pewin.seel.windoff
         pesol.seel.spv
         pesol.seel.csp
         pesol.sehe.solhe
@@ -2549,7 +2554,7 @@ prodSeOth2te(all_enty,all_te)      "map other se production not directly followi
 
 teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
 /
-      (wind,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
+      (wind,windoff,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
@@ -2562,6 +2567,7 @@ $endif
 teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 /
         wind.(1*9)
+	windoff.(1*9)
         spv.(1*9)
         csp.(1*9)
         hydro.(1*5)

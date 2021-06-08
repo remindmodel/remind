@@ -10,6 +10,8 @@
 
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
+*** CG: set wind offshore to be 10% higher than wind onshore
+vm_capFac.fx(t,regi,"windoff") = 1.1 * pm_cf(t,regi,"wind");
 
 *** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
 *** to avoid infeasibilities with vintage biomass capacities
