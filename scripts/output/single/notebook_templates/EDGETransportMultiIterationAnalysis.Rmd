@@ -9,12 +9,10 @@ title: "Analysis of the transport module for a run with resolved iteration domai
 output: html_document
 ---
 
-Set folder to your fulldata_*.gdx files here
+Set path to your fulldata_*.gdx files here
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-folder <- "/home/pascal/dev/cluster_tmp/mount/remind/output/BAU_Nash_2021-06-09_16.19.27"
-```
+pathToGdxFiles <- "."
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(lusweave)
 library(rmndt)
@@ -23,7 +21,7 @@ library(stringr)
 
 knitr::opts_chunk$set(fig.width = 12, fig.height = 12)
 
-files <- list.files(path = folder, pattern = "fulldata_[0-9]+\\.gdx")
+files <- list.files(path = pathToGdxFiles, pattern = "fulldata_[0-9]+\\.gdx")
 
 year_toplot <- 2050
 iter_toplot <- 25
@@ -121,7 +119,7 @@ get_demand <- function(gdx) {
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-sorted_files <- paste0(folder, "/fulldata_", seq_along(files), ".gdx")
+sorted_files <- paste0(pathToGdxFiles, "/fulldata_", seq_along(files), ".gdx")
 
 shares <- lapply(sorted_files, get_trp_shares)
 prices <- lapply(sorted_files, get_fuel_prices)
