@@ -11,7 +11,7 @@ output: html_document
 
 Set folder to your fulldata_*.gdx files here
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-folder <- "."
+folder <- "/home/pascal/dev/cluster_tmp/mount/remind/output/BAU_Nash_2021-06-09_16.19.27"
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -80,7 +80,6 @@ get_fuel_prices <- function(gdx) {
 
   budget.m <- interpolate_first_timesteps(budget.m)
   budget.m <- lowpass(budget.m)
-
 
   bal_eq <- "q35_demFeTrans"
   febal.m <- gdx::readGDX(gdx, name = bal_eq, types = "equations", field = "m",
