@@ -130,7 +130,6 @@ shares <- readRDS(datapath(fname = "shares.RDS"))
 pref <- readRDS(datapath(fname = "pref_output.RDS"))
 annual_sales <- readRDS(datapath(fname = "annual_sales.RDS"))
 mj_km_data <- readRDS(datapath(fname = "mj_km_data.RDS"))
-stations <- readRDS(datapath(fname = "stations.RDS"))
 loadFactor <- readRDS(datapath(fname = "loadFactor.RDS"))
 ## Load population to calculate per capita values
 POP_country=calcOutput("Population", aggregate = T)[,, "pop_SSP2"]
@@ -140,22 +139,6 @@ POP <- magpie2dt(POP_country, regioncol = "region",
 name_mif = list.files(pattern = "REMIND_generic", full.names = F)
 name_mif = name_mif[!grepl("withoutPlu", name_mif)]
 miffile <- as.data.table(read.quitte(name_mif))
-```
-
-# Share of stations
-
-```{r, echo=FALSE, warning=FALSE}
-
-stationsplot = function(stations){
-  p = ggplot()+
-    geom_line(data = stations, aes(x= year, y = fracst))+
-    facet_grid(region~technology)+
-    theme_minimal()
-
-  return(p)
-}
-
-stationsplot(stations)
 ```
 
 # Energy services demand
