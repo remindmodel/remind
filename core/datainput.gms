@@ -371,16 +371,16 @@ p_cint(regi,"co2","peoil","6")=0.1775748800;
 p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
+G: set wind offshore (also its storage and grid) to be the same as wind onshore (later should be integrated into input data)
+fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
+fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
+fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
+
 *** Use global data as standard for regionalized data:
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 *NB* display
 
-*** CG: set wind offshore to be the same as wind onshore (later should be integrated into input data)
-fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
-pm_data(all_regi,char,"windoff") = pm_data(all_regi,char,"wind");
-
-
-*** historical installed capacity
+** historical installed capacity
 *** read-in of pm_histCap.cs3r
 $Offlisting
 table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
