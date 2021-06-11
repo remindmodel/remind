@@ -756,6 +756,11 @@ pm_cf(t,regi,"wind") =
 (pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
 
+*CG* set windoff to be the same as above wind onshore
+pm_cf(t,regi,"windoff") = pm_cf(t,regi,"wind");
+*CG* set storwindoff and gridwindoff to be the same as storwind and gridwind
+pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwind");
+pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwind");
 
 
 p_aux_capacityFactorHistOverREMIND(regi,"spv")$p_avCapFac2015(regi,"spv") =  p_histCapFac("2015",regi,"spv") / p_avCapFac2015(regi,"spv");
@@ -1323,7 +1328,7 @@ $include "./core/input/generisdata_vintages.prn"
 ;
 
 *CG* wind offshore has the same vintage structure as onshore
-p_vintage_glob_in(opTimeYr,"windoff") = p_vintage_glob_in(opTimeYr,"windon");
+p_vintage_glob_in(opTimeYr,"windoff") = p_vintage_glob_in(opTimeYr,"wind");
 
 pm_vintage_in(regi,opTimeYr,te) = p_vintage_glob_in(opTimeYr,te);
 
