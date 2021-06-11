@@ -217,12 +217,14 @@ $endif
 *        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
-        storwind        "storage technology for wind"
+        storwind        "storage technology for wind onshore"
+        storwindoff     "storage technology for wind offshore"
         storcsp         "storage technology for concentrating solar power (CSP)"
 *RP* grid technology
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
-        gridwind        "grid between areas with high wind production and the rest"
+        gridwind        "grid between areas with high wind onshore production and the rest"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
 *AJS* transport technologies (ESH2T etc..) are defined in the transport module. 
  	apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
     apCarDiT        "Vehicles using final energy diesel (FEDIE) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
@@ -1137,12 +1139,14 @@ $endif
 *        ccsmoni         "monitoring of co2, CCS related"
 
         storspv         "storage technology for photo voltaic"
-        storwind        "storage technology for wind"
+        storwind        "storage technology for wind onshore"
+        storwindoff     "storage technology for wind offshore"
         storcsp         "storage technology for concentrating solar power"
 
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
-        gridwind        "grid between areas with high wind production and the rest"
+        gridwind        "grid between areas with high wind onshore production and the rest"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1204,14 +1208,16 @@ $endif
 *** ccsmoni         "monitoring of co2, CCS related"
 
   storspv         "storage technology for PV"
-  storwind        "storage technology for wind"
+  storwind        "storage technology for wind onshore"
+  storwindoff     "storage technology for wind offshore"
   storcsp         "storage technology for CSP"
   
   refliq          "refinery oil to SE liquids"
   
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
-  gridwind        "grid between areas with high wind production and the rest"
+  gridwind        "grid between areas with high wind onshore production and the rest"
+  gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
 
 ***-----------------------------------------------------------------------------
@@ -1228,7 +1234,8 @@ teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
         spv         "solar photovoltaic" 
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind"
+        storwind    "storage technology for wind onshore"
+        storwindoff "storage technology for wind offshore"
         storcsp     "storage technology for csp"
         dac         "direct air capture"
         elh2        "hydrogen elecrolysis"
@@ -1336,7 +1343,8 @@ teVRE(all_te)      "technologies requiring storage"
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind"
+        storwind    "storage technology for wind onshore"
+        storwindoff "storage technology for wind offshore"
         storcsp     "storage technology for csp"
 /
 teLoc(all_te)      "centralized technologies which require grid"
@@ -1349,7 +1357,8 @@ teGrid(all_te)      "grid between areas"
 /
     gridspv     "grid between areas with high pv production and the rest"
     gridcsp     "grid between areas with high csp production and the rest"
-    gridwind    "grid between areas with high wind production and the rest"
+    gridwind    "grid between areas with high wind onshore production and the rest"
+    gridwindoff "grid between areas with high wind offshore production and the rest"
 /
 teFosCCS(all_te)    "fossil technologies with CCS"
 /
@@ -1401,12 +1410,14 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
 teNoTransform(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
        storspv       "storage technology for photo voltaic (PV)"
-       storwind      "storage technology for wind"
+       storwind      "storage technology for wind onshore"
+       storwindoff   "storage technology for wind offshore"
        storcsp       "storage technology for concentrating solar power (CSP)"
 
        gridspv       "grid between areas with high pv production and the rest"
        gridcsp       "grid between areas with high csp production and the rest"
-       gridwind      "grid between areas with high wind production and the rest"   
+       gridwind        "grid between areas with high wind onshore production and the rest"
+       gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
 teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
 /
@@ -2235,6 +2246,7 @@ VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage
 /
         spv.storspv
         wind.storwind
+        windoff.storwindoff
         csp.storcsp
 /
 
@@ -2249,6 +2261,7 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
 /
         spv.gridspv
         wind.gridwind
+	windoff.gridwindoff
         csp.gridcsp
 /
 
@@ -2596,7 +2609,7 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 
 teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
 /
-      (storspv,storwind,storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
+      (storspv,storwind,storwindoff,storcsp,gridspv,gridwind,gridwindoff,gridcsp,h2curt) . 1
 /
 
 opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"

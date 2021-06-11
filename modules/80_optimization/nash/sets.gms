@@ -9,11 +9,13 @@
 sets
 learnte_dyn80(all_te)   "learnte for nash"
 /
-        wind        "wind power converters"
+        wind        "wind onshore power converters"
+	windoff     "wind offshore power converters"
         spv         "solar photovoltaic" 
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind"
+        storwind    "storage technology for wind onshore"
+        storwindoff "storage technology for wind offshore"
         storcsp     "storage technology for csp"
         apCarElT
         apCarH2T
