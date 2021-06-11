@@ -373,7 +373,7 @@ p_cint(regi,"co2","peoil","6")=0.1775748800;
 p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
-G: set wind offshore (also its storage and grid) to be the same as wind onshore (later should be integrated into input data)
+*CG* set wind offshore (also its storage and grid) to be the same as wind onshore (later should be integrated into input data)
 fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
@@ -390,6 +390,8 @@ $ondelim
 $include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
+
+pm_histCap(tall,all_regi,"windoff") = 0;
 
 $Onlisting
 *** historical PE installed capacity
@@ -409,6 +411,8 @@ $include "./core/input/f_cf.cs3r"
 $offdelim
 ;
 $Onlisting
+*CG* setting wind off capacity factor to be the same as onshore here (test)
+f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"wind");
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 
 *RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
@@ -1318,6 +1322,8 @@ table p_vintage_glob_in(opTimeYr,all_te)         "read-in of global historical v
 $include "./core/input/generisdata_vintages.prn"
 ;
 
+*CG* wind offshore has the same vintage structure as onshore
+p_vintage_glob_in(opTimeYr,"windoff") = p_vintage_glob_in(opTimeYr,"windon");
 
 pm_vintage_in(regi,opTimeYr,te) = p_vintage_glob_in(opTimeYr,te);
 

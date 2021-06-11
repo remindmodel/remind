@@ -1230,7 +1230,8 @@ teRLDCDisp(all_te)     "RLDC Dispatchable technologies that produce seel"
 
 teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
 /
-        wind        "wind power converters"
+        wind        "wind onshore power converters"
+	windoff     "wind offshore power converters"
         spv         "solar photovoltaic" 
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
