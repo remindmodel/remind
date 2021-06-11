@@ -107,10 +107,10 @@ if(cm_fetaxscen ne 0,
 *** FS: switch cm_FEtax_trajectory to explicitly control tax level trajectory (overwrites cm_fetaxscen settings for the respective taxes affected), 
 $ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
 *** from year given in cm_FEtax_trajectory_abs, set FE tax to level specified by cm_FEtax_trajectory_abs, cm_FEtax_trajectory_abs in USD/MWh -> convert to trUSD/TWa
-  loop((ttot,sector,entyFe)$p21_FEtax_trajectory(ttot,sector,entyFe),
+  loop((ttot,sector,entyFe)$p21_FEtax_trajectory_abs(ttot,sector,entyFe),
 *** set FE tax to cm_FEtax_trajectory_abs to year given in cm_FEtax_trajectory_abs and after
     loop(ttot2$(ttot2.val ge ttot.val),
-    pm_tau_fe_tax(ttot2,regi,sector,entyFe) = p21_FEtax_trajectory(ttot,sector,entyFe) * sm_TWa_2_MWh * 1e-12;
+    pm_tau_fe_tax(ttot2,regi,sector,entyFe) = p21_FEtax_trajectory_abs(ttot,sector,entyFe) * sm_TWa_2_MWh * 1e-12;
     );
 *** phase-in(out) FE tax linearly before from startyear to year given in cm_FEtax_trajectory_abs
     loop(ttot2$(ttot2.val eq cm_startyear),
