@@ -93,7 +93,7 @@ q32_limitCapTeChp(t,regi)..
 *** Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
 q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
-   ( vm_cap(t,regi,"gridwind",'1') + vm_cap(t,regi,"gridwindoff",'1'))      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+   vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
     / p32_grid_factor(regi)        		!! It is assumed that large regions require higher grid investment 
     =g=
     vm_prodSe(t,regi,"pesol","seel","spv")                
