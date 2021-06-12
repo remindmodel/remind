@@ -2169,7 +2169,6 @@ en2en(all_enty,all_enty,all_te)  "all energy conversion mappings"
 en2en2(all_enty,all_enty,all_te) "alias of en2en: all energy conversion mappings"
 en2se(all_enty,all_enty,all_te)   "all energy conversion mappings producing SE"
 te2rlf(all_te,rlf)               "all technologies to grades"
-te2rlf_nowindoff(all_te,rlf)     "all technologies to grades except windoff"
 
 pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
 /

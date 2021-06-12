@@ -667,7 +667,7 @@ p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_reg
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf));
 
 p_shareWindOff(ttot)$(ttot.val le 2015) = 0;
-p_shareWindOff(ttot)$((ttot.val ge 2020) AND (ttot.val le 2025)) = 0.05;
+p_shareWindOff(ttot)$((ttot.val ge 2020) AND (ttot.val le 2025)) = 0.1;
 p_shareWindOff(ttot)$((ttot.val ge 2030) AND (ttot.val le 2035)) = 0.3;
 p_shareWindOff(ttot)$((ttot.val ge 2040) AND (ttot.val le 2045)) = 0.45;
 p_shareWindOff(ttot)$((ttot.val ge 2050) AND (ttot.val le 2060)) = 0.65;
