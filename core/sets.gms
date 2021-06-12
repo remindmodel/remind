@@ -1193,7 +1193,8 @@ $endif
   geohdr          "geothermal electric hot dry rock"
   geohe           "geothermal heat"
   hydro           "hydro electric"
-  wind            "wind power converters"
+  wind            "wind onshore power converters"
+  windoff         "wind offshore power converters"
   spv             "solar photovoltaic"
   csp             "concentrating solar power"
   solhe           "solar thermal heat generation"
@@ -1209,6 +1210,7 @@ $endif
 
   storspv         "storage technology for PV"
   storwind        "storage technology for wind onshore"
+  storwindoff     "storage technology for wind offshore"
   storcsp         "storage technology for CSP"
   
   refliq          "refinery oil to SE liquids"
@@ -1216,6 +1218,8 @@ $endif
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
   gridwind        "grid between areas with high wind onshore production and the rest"
+  gridwindoff     "grid between areas with high wind offshore production and the rest"
+
 /
 
 ***-----------------------------------------------------------------------------

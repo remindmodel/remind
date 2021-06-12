@@ -36,6 +36,7 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
+f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
 ***INNOPATHS

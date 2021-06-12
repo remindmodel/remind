@@ -286,7 +286,7 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 *' Calculation of actual capacities (exponential and vintage growth TE):
 ***-----------------------------------------------------------------------------
 
-q_cap(ttot,regi,te2rlf_nowindoff(te,rlf))$(ttot.val ge cm_startyear)..
+q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
          vm_cap(ttot,regi,te,rlf)
          =e=
     !! early retirement for some fossil technologies
