@@ -1209,7 +1209,6 @@ $endif
 
   storspv         "storage technology for PV"
   storwind        "storage technology for wind onshore"
-  storwindoff     "storage technology for wind offshore"
   storcsp         "storage technology for CSP"
   
   refliq          "refinery oil to SE liquids"
@@ -1217,7 +1216,6 @@ $endif
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
   gridwind        "grid between areas with high wind onshore production and the rest"
-  gridwindoff     "grid between areas with high wind offshore production and the rest"
 /
 
 ***-----------------------------------------------------------------------------
@@ -2167,6 +2165,7 @@ en2en(all_enty,all_enty,all_te)  "all energy conversion mappings"
 en2en2(all_enty,all_enty,all_te) "alias of en2en: all energy conversion mappings"
 en2se(all_enty,all_enty,all_te)   "all energy conversion mappings producing SE"
 te2rlf(all_te,rlf)               "all technologies to grades"
+te2rlf_nowindoff(all_te,rlf)     "all technologies to grades except windoff"
 
 pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
 /
