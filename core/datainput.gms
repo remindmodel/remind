@@ -820,6 +820,7 @@ $offdelim
 /
 ;
 p_adj_deltacapoffset("2015",regi,"tnrs")= 1;
+p_adj_deltacapoffset(t,regi,"windoff")= p_adj_deltacapoffset(t,regi,"wind");
 
 ***additional deltacapoffset on electric vehicles, based on latest data
 p_adj_deltacapoffset("2020",regi,"apCarElT") = 0.3 * pm_boundCapEV("2019",regi);
@@ -870,6 +871,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
   p_adj_coeff(ttot,regi,"spv")             = 0.08;
   p_adj_coeff(ttot,regi,"wind")            = 0.08;
+  p_adj_coeff(ttot,regi,"windoff")         = 0.08; 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
   p_adj_coeff(ttot,regi,'apCarH2T')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarElT')        = 1.0;

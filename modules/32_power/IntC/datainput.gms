@@ -46,6 +46,7 @@ $if not "%cm_INNOPATHS_storageFactor%" == "off" p32_factorStorage(all_regi,all_t
 p32_storexp(regi,"spv")     = 1;
 p32_storexp(regi,"csp")     = 1;
 p32_storexp(regi,"wind")    = 1;
+p32_storexp(regi,"windoff")    = 1;
 
 
 ***parameter p32_gridexp(all_regi,all_te) - exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly
