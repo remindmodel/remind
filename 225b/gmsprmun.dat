@@ -1,8 +1,0 @@
-Input=main.gms
-PageWidth=211
-PageSize=0
-Action=C
-ScrDir=225b
-SysDir=/p/system/packages/gams/35.1.0
-ScriptNext=225b/gamsnext.sh
-ErrMsg=1
