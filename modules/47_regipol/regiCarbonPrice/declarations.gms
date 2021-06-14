@@ -116,4 +116,12 @@ equations
 ;
 $endIf.cm_implicitFE
 
+$ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 
+Parameter
+	p47_slope_beforeTarget(ttot,all_regi) "parameter to scale slope of co2 price trajectory in years before target year" / %cm_regipol_slope_beforeTarget% /
+	p47_slope_beforeTarget_regi(ttot)	  "helper parameter to make loops shorter in implementation"
+	p47_slope_firstYears(all_regi)		  "helper parameter to hold co2 price trajectory slope of first years [USD/tC/yr]"
+;
+$endIf.co2priceSlope
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

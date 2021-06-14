@@ -335,6 +335,7 @@ cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for 
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
+cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -534,21 +535,22 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 0; !! def 0
+cm_flex_tax = 1; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 0; !! def 0
-cm_ariadne_trade_syn = 0; !! def 0
+cm_ariadne_trade_el = 50; !! def 0
+cm_ariadne_trade_h2 = 150; !! def 0
+cm_ariadne_trade_syn = 150; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
 
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
-$setGlobal cm_FEtax_trajectory_rel  2040.indst.feels 2 !! def = off
+$setGlobal cm_FEtax_trajectory_rel  off !! def = off
 
+$setGlobal cm_regipol_slope_beforeTarget  2040.DEU 1.3 !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
