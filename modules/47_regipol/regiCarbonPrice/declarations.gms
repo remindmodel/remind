@@ -11,9 +11,13 @@ Parameter
   pm_regiTarget_dev(ext_regi,ttot,ttot2)       "target deviation across iterations in current emissions divided by target emissions"
   p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations"
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year"
-  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region GHG emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets"
   p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
+  p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening"
 ;
+
+
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter

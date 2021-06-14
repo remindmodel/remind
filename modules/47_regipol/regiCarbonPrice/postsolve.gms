@@ -242,7 +242,10 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)
 			));		
 	elseif sameas(target_type,"year"), !! year total CO2 target
+* calculate emissions in target year
 		p47_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
+* calculate emissions in 2015, used to determine target compliance for year targets
+		p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l("2015", all_regi,emi_type)*sm_c_2_co2);	
 	);
 );
 
@@ -257,28 +260,55 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)
 			));
 	elseif sameas(target_type,"year"),
-		p47_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2); 
+* calculate emissions in target year
+		p47_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
+* calculate emissions in 2015, used to determine target compliance for year targets
+		p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l("2015", all_regi,emi_type)*sm_c_2_co2);	
 	);
+);
+
+*** calculate target deviation
+loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type)),
+* for budget targets, target deviation is difference of current budget to target budget normalized by target budget
+	if(sameas(target_type,"budget"),
+		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (p47_emissionsCurrent(ext_regi,ttot,ttot2)-p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type);
+	);
+* for year targets, target deviation is difference of current emissions in target year to target emissions normalized by 2015 emissions
+	if(sameas(target_type,"year"),
+		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (p47_emissionsCurrent(ext_regi,ttot,ttot2)-p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / p47_emissionsRefYear(ext_regi,ttot,ttot2);
+	);
+* save regional target deviation across iterations for debugging of target convergence issues
+	p47_regiTarget_dev_iter(iteration, ext_regi, ttot, ttot2) = pm_regiTarget_dev(ext_regi, ttot, ttot2);
 );
 
 
 ***  calculating the CO2 tax rescale factor
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),	
-	pm_regiTarget_dev(ext_regi,ttot,ttot2) = p47_emissionsCurrent(ext_regi,ttot,ttot2)/p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type);	 
-	if(iteration.val lt 10,
-		p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = max(0.1, pm_regiTarget_dev(ext_regi,ttot,ttot2) ) ** 2;
-	else
-		p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = max(0.1, pm_regiTarget_dev(ext_regi,ttot,ttot2) ) ** 1;
+loop((ttot,ttot2,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),
+*** co2 price updating rule for budget targets
+	if(sameas(target_type,"budget"), !! budget target
+		if(iteration.val lt 10,
+			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+		else
+			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 1;
+		);
+	);
+*** co2 price updating rule for year targets
+	if(sameas(target_type,"year"), !! year target
+		if(iteration.val lt 10,
+*** rescale factor for year targets a bit higher given a certain target deviation because pm_regiTarget_dev is normalized to reference year emissions such that it will usually not be higher than 1 at maximum
+			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 4;
+		else
+			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+		);
 	);
 *** dampen rescale factor with increasing iterations to help convergence
 	p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) =
-		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2)),
-			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
-		);
+		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
 );
 
-*** save regional target deviation across iterations for debugging of target convergence issues
-p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2) = pm_regiTarget_dev(ext_regi,ttot,ttot2);
+
+
+
 
 ***	updating the co2 tax
 ***		for region groups
