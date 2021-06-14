@@ -321,7 +321,10 @@ q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) ..
     =g=
     vm_prodSe(t,regi,"pesol","seel","spv")
     + vm_prodSe(t,regi,"pesol","seel","csp")
-    + 1.5 * (vm_prodSe(t,regi,"pewin","seel","wind") + vm_prodSe(t,regi,"pewin","seel","windoff"))       !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")                 !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windoff")
+$ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------

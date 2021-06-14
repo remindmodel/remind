@@ -12,7 +12,9 @@ $offdelim
 /
 ;
 *CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
 f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
+$ENDIF.WindOff
 
 parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data"
 /

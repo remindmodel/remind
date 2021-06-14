@@ -36,7 +36,9 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
+$ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
 ***INNOPATHS
@@ -46,7 +48,9 @@ $if not "%cm_INNOPATHS_storageFactor%" == "off" p32_factorStorage(all_regi,all_t
 p32_storexp(regi,"spv")     = 1;
 p32_storexp(regi,"csp")     = 1;
 p32_storexp(regi,"wind")    = 1;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
 p32_storexp(regi,"windoff")    = 1;
+$ENDIF.WindOff
 
 
 ***parameter p32_gridexp(all_regi,all_te) - exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly
