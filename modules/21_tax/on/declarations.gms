@@ -60,9 +60,9 @@ p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal d
 
 
 $ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
-    Parameters
+Parameters
     p21_FEtax_trajectory_abs(ttot,emi_sectors,all_enty)     "absolute final energy tax level of the end year set by cm_FEtax_trajectory_abs switch [USD/MWh]"  / %cm_FEtax_trajectory_abs% /   
-    ;
+;
 $endif.fetax
 
 $ifthen.fetaxRel not "%cm_FEtax_trajectory_rel%" == "off" 
