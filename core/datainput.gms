@@ -413,13 +413,24 @@ pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 *RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
 pm_cf(ttot,regi,"apcardiefft") = 1;
 pm_cf(ttot,regi,"apcardieffH2t") = 1;
-pm_cf(ttot,regi,"h2turbVRE") = 0.15;
+***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *short-term fix for new synfuel td technologies
 pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
+
+*RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
+pm_cf(ttot,regi,"h2turbVRE") = 0.05;
+pm_cf(ttot,regi,"h2turb") = 0.05;
+
+*RP* phasing down the ngt cf to "peak load" cf of 0.036
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2035) = 0.7 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2040) = 0.5 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
+
 
 
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
