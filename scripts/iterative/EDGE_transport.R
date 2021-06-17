@@ -22,7 +22,8 @@ library(gdxdt)
 require(devtools)
 load_all("/p/projects/dipol/libraries/edgeTrpLib_DIPOL")
 library(rmndt)
-library(moinput)
+library(mrremind)
+print("Start of the EDGE-T iterative model run")
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
@@ -51,8 +52,11 @@ scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
 # Read in switch to ban ICE cars in EUR
 ban_ICE   <- cfg$gms$cm_ban_ICE
+# set regionmapping compatible with REMIND-EU and REMIND-H12 configs
+setConfig(regionmapping = sub('.*\\/', '', cfg$regionmapping))
 
 EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
@@ -69,10 +73,11 @@ if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise", "ConvCaseEurWise")) {
   quit()
 }
 
+## learning is OFF by default
+learning = FALSE
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
 EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
-
 
 ## input data loading
 input_folder = paste0("../../modules/35_transport/edge_esm/input/")
@@ -116,19 +121,45 @@ pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 ## optional average of prices
 average_prices = TRUE
 
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
+## calculate the ES demand (in million km)
+ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario)
+
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 
-if (file.exists(datapath("demand_previousiter.RDS"))) {
+if (file.exists(datapath("demand_previousiter.RDS")) & learning) {
+  ## load previous iteration number of cars
+  demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
   ES_demandpr = readRDS(datapath("demand_previousiter.RDS"))
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
+  ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+  if (techswitch == "BEV"){
+    rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesFCEV = FALSE
+  } else if (techswitch == "FCEV") {
+    rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
+    rebates_febatesBEV = FALSE
   } else {
-    stations = NULL
+    rebates_febatesFCEV = FALSE
+    rebates_febatesBEV = FALSE
+  }
+  
+  nonfuel_costs_list = applylearning(
+    non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
+    gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
+    ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
+    rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  
+  nonfuel_costs = nonfuel_costs_list$nonfuel_costs
+  capcost4W = nonfuel_costs_list$capcost4W
+  saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
+  saveRDS(capcost4W, "capcost_learning.RDS")
+  } else {
     totveh = NULL
   }
 
@@ -190,7 +221,6 @@ logit_data <- calculate_logit_inconv_endog(
   logit_params = logit_params,
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
-  stations = if (!is.null(stations)) stations,
   totveh = if (!is.null(totveh)) totveh,
   techswitch = techswitch,
   ban_ICE = ban_ICE)
@@ -247,6 +277,26 @@ if (opt$reporting) {
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
 
+    vint <- vintages[["vintcomp_startyear"]]
+  dem <- shares_int_dem$demandF_plot_pkm
+  vint <- dem[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
+  vint <- vint[!is.na(demand_F)][
+    , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
+  
+  vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
+  vint[, full_demand_vkm := demand_F/loadFactor]
+  vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
+  vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
+  setnames(vint, "variable", "construction_year")
+  
+  vintfile <- "vintcomp.csv"
+  cat("# LDV Fleet vintages.", file=vintfile, sep="\n")
+  cat("# full_demand_vkm is the full demand for a given year, region, vehicle_type and technology.", file=vintfile, sep="\n", append=TRUE)
+  cat("# New sales for the current year can be calculated by full_demand_vkm - sum(vintage_demand_vkm).", file=vintfile, sep="\n", append=TRUE)
+  cat("# Units: million vkms.", file=vintfile, sep="\n", append=TRUE)
+  
+  fwrite(vint, vintfile, col.names=TRUE, append=TRUE)
+  
   quit()
 }
 
@@ -255,15 +305,17 @@ num_veh_stations = calc_num_vehicles_stations(
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
     c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
+  intensity = intensity,
   techswitch = techswitch,
-  loadFactor = loadFactor)
+  loadFactor = loadFactor,
+  EDGE2teESmap = EDGE2teESmap,
+  rep = opt$reporting)
 
 ## save number of vehicles for next iteration
-saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
-saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
-saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS"))
+saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))  ## in million veh
+saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS")) ## in million veh
 ## save the demand for next iteration renaming the column
-setnames(ES_demand, old ="demand", new = "demandpr")
+setnames(ES_demand, old ="demand", new = "demandpr")                  ## in million passenger-km
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 
 
@@ -271,6 +323,7 @@ saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 budget <- calculate_capCosts(
   base_price=prices$base,
   Fdemand_ES = shares_int_dem[["demandF_plot_pkm"]],
+  stations = num_veh_stations$stations,
   EDGE2CESmap = EDGE2CESmap,
   EDGE2teESmap = EDGE2teESmap,
   REMINDyears = REMINDyears,
@@ -341,4 +394,4 @@ writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
 
-print("Finished DIPOL version of EDGE_transport.R")
+print("End of the EDGE-T iterative model run")
