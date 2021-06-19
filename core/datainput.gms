@@ -690,14 +690,14 @@ pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_reg
 p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf));
 
-p_shareWindOff(ttot)$(ttot.val e 2010) = 0.05;
-p_shareWindOff(ttot)$(ttot.val e 2015) = 0.1;
-p_shareWindOff(ttot)$(ttot.val e 2020) = 0.15;
-p_shareWindOff(ttot)$(ttot.val e 2025) = 0.2;
-p_shareWindOff(ttot)$(ttot.val e 2030) = 0.35;
-p_shareWindOff(ttot)$(ttot.val e 2035) = 0.5;
-p_shareWindOff(ttot)$(ttot.val e 2040) = 0.65;
-p_shareWindOff(ttot)$(ttot.val e 2045) = 0.8;
+p_shareWindOff("2010") = 0.05;
+p_shareWindOff("2015") = 0.1;
+p_shareWindOff("2020") = 0.15;
+p_shareWindOff("2025") = 0.2;
+p_shareWindOff("2030") = 0.35;
+p_shareWindOff("2035") = 0.5;
+p_shareWindOff("2040") = 0.65;
+p_shareWindOff("2045") = 0.8;
 p_shareWindOff(ttot)$((ttot.val gt 2050)) = 1;
 
 $ENDIF.WindOff
