@@ -376,8 +376,7 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore (also its storage and grid) to be the same as wind onshore (later should be integrated into input data)
-fm_dataglob(char,"windoff") = fm_dataglob(char,"wind");
+*CG* set wind offshore storage and grid to be the same as wind onshore (later should be integrated into input data)
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 $ENDIF.WindOff
@@ -436,6 +435,8 @@ pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 
+*RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
+pm_cf(ttot,regi,"h2turbVRE") = 0.05;
 *RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
 pm_cf(ttot,regi,"h2turbVRE") = 0.05;
 pm_cf(ttot,regi,"h2turb") = 0.05;
@@ -689,14 +690,15 @@ pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_reg
 p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf));
 
-p_shareWindOff(ttot)$(ttot.val le 2015) = 0;
-p_shareWindOff(ttot)$((ttot.val ge 2020) AND (ttot.val le 2025)) = 0.1;
-p_shareWindOff(ttot)$((ttot.val ge 2030) AND (ttot.val le 2035)) = 0.3;
-p_shareWindOff(ttot)$((ttot.val ge 2040) AND (ttot.val le 2045)) = 0.45;
-p_shareWindOff(ttot)$((ttot.val ge 2050) AND (ttot.val le 2060)) = 0.65;
-p_shareWindOff(ttot)$((ttot.val ge 2065) AND (ttot.val le 2080)) = 0.7;
-p_shareWindOff(ttot)$((ttot.val ge 2085) AND (ttot.val le 2100)) = 0.8;
-p_shareWindOff(ttot)$((ttot.val gt 2100)) = 0.9;
+p_shareWindOff(ttot)$(ttot.val e 2010) = 0.05;
+p_shareWindOff(ttot)$(ttot.val e 2015) = 0.1;
+p_shareWindOff(ttot)$(ttot.val e 2020) = 0.15;
+p_shareWindOff(ttot)$(ttot.val e 2025) = 0.2;
+p_shareWindOff(ttot)$(ttot.val e 2030) = 0.35;
+p_shareWindOff(ttot)$(ttot.val e 2035) = 0.5;
+p_shareWindOff(ttot)$(ttot.val e 2040) = 0.65;
+p_shareWindOff(ttot)$(ttot.val e 2045) = 0.8;
+p_shareWindOff(ttot)$((ttot.val gt 2050)) = 1;
 
 $ENDIF.WindOff
 
