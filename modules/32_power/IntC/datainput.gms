@@ -58,11 +58,6 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 ;
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
-
-
-*** RP 
-p32_storageCap(te,"elh2VREcapratio") = 0.5 * p32_storageCap(te,"elh2VREcapratio") ;
-
 display p32_storageCap;
 
 $ontext

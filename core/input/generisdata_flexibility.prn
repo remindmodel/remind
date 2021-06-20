@@ -3,8 +3,8 @@
 *** parameterization after simple algorithm
 fm_dataglob("flexibility","ngcc")   = 0.95;
 fm_dataglob("flexibility","ngccc")  = 0.85;
-fm_dataglob("flexibility","ngt")    = 16;
-fm_dataglob("flexibility","h2turb") = 16;
+fm_dataglob("flexibility","ngt")    = 6;
+fm_dataglob("flexibility","h2turb") = 6;
 fm_dataglob("flexibility","dot")    = 6;
 fm_dataglob("flexibility","igcc")   = 0.85;
 fm_dataglob("flexibility","igccc")  = 0.7;

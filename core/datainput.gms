@@ -1366,14 +1366,5 @@ $endif.subsectors
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
-
-*** RP with increasing VRE shares in the future, h2 turbines and gas turbines have more of a backup role, further decreasing their capacity factors
-pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
-pm_cf(ttot,regi,"ngt")$(ttot.val eq 2035) = 0.7 * pm_cf(ttot,regi,"ngt");
-pm_cf(ttot,regi,"ngt")$(ttot.val eq 2040) = 0.5 * pm_cf(ttot,regi,"ngt");
-pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
-pm_cf(ttot,regi,"h2turbVRE") = 0.05;  !! as H2 turbines are not yet deployed, no need to slowly phase the cf reduction in
-pm_cf(ttot,regi,"h2turb") = 0.05; !! as H2 turbines are not yet deployed, no need to slowly phase the cf reduction in
-
 *** EOF ./core/datainput.gms
 
