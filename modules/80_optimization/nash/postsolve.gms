@@ -148,10 +148,10 @@ p80_taxrev_agg(ttot,iteration)$(ttot.val ge 2005) = sum(regi,vm_taxrev.l(ttot,re
 
 
 *AJS* calculate maximum residual surplusses on markets
-p80_surplusMax(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
+p80_surplusMax(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)));
 
 ***from this, relative residual surplusses.  
-p80_surplusMaxRel(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 100 * smax(ttot2$(ttot2.val ge 2005 AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
+p80_surplusMaxRel(trade,iteration,ttot)$((ttot.val ge cm_startyear) AND (NOT tradeSe(trade))) = 100 * smax(ttot2$(ttot2.val ge cm_startyear AND ttot2.val le ttot.val), abs(p80_surplus(ttot2,trade,iteration)) / sum(regi, p80_normalize0(ttot2,regi,trade)));
 
 p80_surplusMax2100(trade)$(NOT tradeSe(trade)) = p80_surplusMax(trade,iteration,"2100");
 
@@ -202,7 +202,7 @@ loop(trade$(NOT tradeSe(trade)),
  if(p80_surplusMax(trade,iteration,"2100") gt p80_surplusMaxTolerance(trade),
      s80_bool=0;                 
      p80_messageShow("surplus") = YES;
-      loop(ttot$((ttot.val ge 2005) and (ttot.val le 2100)),
+      loop(ttot$((ttot.val ge cm_startyear) and (ttot.val le 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
 	   p80_messageFailedMarket(ttot,trade) = YES;
        );
@@ -211,7 +211,7 @@ loop(trade$(NOT tradeSe(trade)),
  if(p80_surplusMax(trade,iteration,"2150") gt 10 * p80_surplusMaxTolerance(trade),
      s80_bool=0;
      p80_messageShow("surplus") = YES;
-      loop(ttot$((ttot.val ge 2005) and (ttot.val gt 2100)),
+      loop(ttot$((ttot.val ge cm_startyear) and (ttot.val gt 2100)),
        if( (abs(p80_surplus(ttot,trade,iteration)) gt p80_surplusMaxTolerance(trade) ),
 	   p80_messageFailedMarket(ttot,trade) = YES;
        );
