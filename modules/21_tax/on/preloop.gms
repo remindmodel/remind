@@ -134,9 +134,9 @@ $ifthen.fetaxRel not "%cm_FEtax_trajectory_rel%" == "off"
   );
 $endif.fetaxRel
 
-display pm_tau_fe_sub, p21_tau_fuEx_sub;
+display pm_tau_fe_sub; 
 display pm_tau_fe_tax;
-display p21_tau_pe2se_sub;
+display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;
