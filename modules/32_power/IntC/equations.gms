@@ -49,12 +49,19 @@ q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
 ***---------------------------------------------------------------------------
 *** Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
-q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
-	sum(VRE2teStor(teVRE,teStor), v32_storloss(t,regi,teVRE) )
-	* pm_eta_conv(t,regi,teStor) / ( 1 - pm_eta_conv(t,regi,teStor))
-	=l=
-	sum(te2rlf(teStor,rlf), 
-		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
+q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
+    ( 0.5$( cm_VRE_supply_assumptions eq 1 )
+    + 1$(   cm_VRE_supply_assumptions ne 1 )
+    )
+  * sum(VRE2teStor(teVRE,teStor), v32_storloss(t,regi,teVRE))
+  * pm_eta_conv(t,regi,teStor)
+  / (1 - pm_eta_conv(t,regi,teStor))
+  =l=
+  sum(te2rlf(teStor,rlf),
+    vm_capFac(t,regi,teStor)
+  * pm_dataren(regi,"nur",rlf,teStor)
+  * vm_cap(t,regi,teStor,rlf)
+  )
 ;
 
 
