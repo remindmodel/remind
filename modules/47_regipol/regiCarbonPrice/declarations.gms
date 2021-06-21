@@ -126,6 +126,11 @@ Parameter
 	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
 	p47_ttot_display					 "helper parameter to display ttot in loop"
 ;
+
+Scalar
+s47_initialCO2Price_year				"initial year of co2 price which should be unchanged by co2 price adjustment"
+;
+
 $endIf.co2priceSlope
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

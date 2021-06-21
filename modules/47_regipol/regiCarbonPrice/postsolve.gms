@@ -325,6 +325,13 @@ loop((ttot,all_regi)$p47_slope_beforeTarget(ttot,all_regi),
 	p47_slope_beforeTarget_regi(all_regi) = p47_slope_beforeTarget(ttot,all_regi);
 );
 
+*** intitial year of co2 price which should be unchanged by co2 price adjustment is last time step before cm_startyear
+loop(ttot$(ttot.val eq cm_startyear),
+	s47_initialCO2Price_year = ttot.val - pm_dt(ttot);
+);
+
+display s47_initialCO2Price_year;
+
 ***		for region groups
 * ttot is start year of budget, ttot2 is the target year
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))),
@@ -341,12 +348,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 		loop(ttot3$p47_slope_beforeTarget_timeStep(ttot3),
 * rescale co2 price in year of end of first slope, p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2)) is still the rescale factor calculated above
 			pm_taxCO2eq(ttot3,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot3,all_regi) * p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
-***	ttot4 is the intitial free price year,
-			loop(ttot4,
-				break$(ttot4.val ge ttot.val and ttot4.val ge cm_startyear); !!initial free price year
+***	ttot4 is the intitial free price year, carbon prices are only adjusted after this time step
+			loop(ttot4$(ttot4.val eq s47_initialCO2Price_year),
 				p47_slope_firstYears(all_regi) =  (pm_taxCO2eq(ttot3,all_regi) - ( pm_taxCO2eq(ttot4,all_regi) + pm_taxCO2eqHist(ttot4,all_regi)))/(ttot3.val-ttot4.val);
 *** linear price development between first free year and end of first slope
-				pm_taxCO2eq(t,all_regi)$(t.val ge ttot4.val AND t.val lt ttot3.val)  = pm_taxCO2eq(ttot4,all_regi) + p47_slope_firstYears(all_regi)*(t.val-ttot4.val); 
+				pm_taxCO2eq(t,all_regi)$(t.val gt ttot4.val AND t.val lt ttot3.val)  = pm_taxCO2eq(ttot4,all_regi) + p47_slope_firstYears(all_regi)*(t.val-ttot4.val); 
 *** linear price development with different slope scaled by cm_regipol_slope_beforeTarget from end of first slope until target year
 				pm_taxCO2eq(t,all_regi)$(t.val ge ttot3.val AND t.val le ttot2.val)  = pm_taxCO2eq(ttot3,all_regi) + p47_slope_beforeTarget(ttot3,all_regi) * p47_slope_firstYears(all_regi)*(t.val-ttot3.val); 
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
@@ -383,12 +389,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 			display "co2 tax after adjustment of end year of first slope";
 			display p47_tax_display;
 *** End Testing Part ***
-***	ttot4 is the intitial free price year,
-			loop(ttot4$(ttot4.val ge 2005),
-				break$(ttot4.val ge ttot.val and ttot4.val ge cm_startyear); !!initial free price year
+***	ttot4 is the intitial free price year, carbon prices are only adjusted after this time step
+			loop(ttot4$(ttot4.val eq s47_initialCO2Price_year),
 				p47_slope_firstYears(all_regi) =  (pm_taxCO2eq(ttot3,all_regi) - ( pm_taxCO2eq(ttot4,all_regi) + pm_taxCO2eqHist(ttot4,all_regi)))/(ttot3.val-ttot4.val);
 *** linear price development between first free year and end of first slope
-				pm_taxCO2eq(t,all_regi)$(t.val ge ttot4.val AND t.val lt ttot3.val)  = pm_taxCO2eq(ttot4,all_regi) + p47_slope_firstYears(all_regi)*(t.val-ttot4.val); 
+				pm_taxCO2eq(t,all_regi)$(t.val gt ttot4.val AND t.val lt ttot3.val)  = pm_taxCO2eq(ttot4,all_regi) + p47_slope_firstYears(all_regi)*(t.val-ttot4.val); 
 *** Testing Part ***
 			p47_tax_display(ttot5,all_regi) = pm_taxCO2eq(ttot5,all_regi);
 			p47_ttot_display = ttot4.val;
