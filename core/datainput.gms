@@ -687,8 +687,8 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);
 
-p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val ge 8)) /
-                      sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val ge 8));
+p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
+                      sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
 
 p_shareWindOff("2010") = 0.05;
 p_shareWindOff("2015") = 0.1;
