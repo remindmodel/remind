@@ -391,12 +391,6 @@ loop (in$(    industry_ue_calibration_target_dyn37(in)
   * (1 + max(0, %c_CES_calibration_iteration% - 2) / 8);
 );
 
-*** FIXME fix secondary steel for the calibration
-*** see discussion w/ Gunnar & Antoine 2020-07-09
-vm_cesIO.fx(t,regi_dyn29(regi),"ue_steel_secondary")
-  = pm_cesdata(t,regi,"ue_steel_secondary","quantity");
-*** end FIXME fix secondary steel for the calibration
-
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
 
 display "start consistency", pm_cesdata;
