@@ -266,7 +266,7 @@ EJfuelsFun = function(demandEJ, FEliq_source_val){
 }
 
 emidemFun = function(miffile){
-  emidem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand","Emi|CO2|Transport|Freight|Short-Medium Distance|Demand", "Emi|CO2|Transport|Freight|Long Distance|Demand"),]
+  emidem = miffile[variable %in% c("Emi|CO2|Transport|Freight|Demand", "Emi|CO2|Transport|Pass|Rail|Demand","Emi|CO2|Transport|Pass|Road|Demand", "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand", "Emi|CO2|Transport|Pass|Aviation|International|Demand"),]
   return(emidem)
 }
 

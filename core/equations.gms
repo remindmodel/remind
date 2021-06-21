@@ -319,8 +319,17 @@ q_capDistr(t,regi,teReNoBio(te))..
     vm_cap(t,regi,te,"1")
 ;
 
-
-
+***---------------------------------------------------------------------------
+*' CG: implementing simple exogenous wind offshore energy production
+*'
+***---------------------------------------------------------------------------
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+q_windoff(t,regi)..
+   sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
+   =e=
+   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+;
+$ENDIF.WindOff
 ***---------------------------------------------------------------------------
 *' Technological change is an important driver of the evolution of energy systems.
 *' For mature technologies, such as coal-fired power plants, the evolution
