@@ -153,6 +153,15 @@ $offdelim
 ;
 *CG* setting regional technology cost to be the same for wind offshore as onshore
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
+inco0(ttot,regi,"windoff") = 4500;
+constrTme(ttot,regi,"windoff") = 4;
+eta(ttot,regi,"windoff") = 1.00;
+omf(ttot,regi,"windoff") = 0.03;
+lifetime(ttot,regi,"windoff") = 25;
+incolearn(ttot,regi,"windoff") = 3750;
+ccap0(ttot,regi,"windoff") = 0.0007;
+learn(ttot,regi,"windoff") = 0.12;
+
 p_inco0(ttot,regi,"windoff") = p_inco0(ttot,regi,"wind");
 $ENDIF.WindOff
 
