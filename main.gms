@@ -329,6 +329,7 @@ c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in G
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
+cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
@@ -534,20 +535,22 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_flex_tax = 1; !! def 0
+cm_PriceDurSlope_elh2 = 10; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 0; !! def 0
-cm_ariadne_trade_syn = 0; !! def 0
+$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
+
+cm_ariadne_trade_el = 50; !! def 0
+cm_ariadne_trade_h2 = 600; !! def 0
+cm_ariadne_trade_syn = 100; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
 
-$setGlobal cm_FEtax_trajectory_abs  off !! def = off
-$setGlobal cm_FEtax_trajectory_rel  2040.indst.feels 2 !! def = off
+$setGlobal cm_FEtax_trajectory_abs  2040.indst.fehos 45, 2040.build.fehos 60, 2040.indst.fegas -40, 2040.build.fegas -20 !! def = off
+$setGlobal cm_FEtax_trajectory_rel  off !! def = off
 
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
