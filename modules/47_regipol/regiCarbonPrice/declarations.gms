@@ -125,6 +125,9 @@ Parameter
 
 	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
 	p47_ttot_display					 "helper parameter to display ttot in loop"
+
+
+	o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type)	"diagnostic output parameter holding the CO2 budget up to the target year [GtCO2]"
 ;
 
 Scalar

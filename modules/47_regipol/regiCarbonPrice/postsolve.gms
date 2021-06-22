@@ -330,6 +330,7 @@ loop(ttot$(ttot.val eq cm_startyear),
 	s47_initialCO2Price_year = ttot.val - pm_dt(ttot);
 );
 
+display p47_slope_beforeTarget;
 display s47_initialCO2Price_year;
 
 ***		for region groups
@@ -340,8 +341,6 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 	if( NOT p47_slope_beforeTarget_regi(all_regi),
 		p47_slope_beforeTarget(ttot2,all_regi)=1;
 	);
-	display "Display of p47_slope_beforeTarget";
-	display p47_slope_beforeTarget;
 * helper parameter to make following loop shorter
 		p47_slope_beforeTarget_timeStep(ttot3) = p47_slope_beforeTarget(ttot3,all_regi); 
 * ttot3 is the end year of the first slope
@@ -370,46 +369,19 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 	if( NOT p47_slope_beforeTarget_regi(all_regi),
 		p47_slope_beforeTarget(ttot2,all_regi)=1;
 	);
-	display "Display of p47_slope_beforeTarget";
-	display p47_slope_beforeTarget;
 * helper parameter to make following loop shorter
 		p47_slope_beforeTarget_timeStep(ttot3) = p47_slope_beforeTarget(ttot3,all_regi); 
 * ttot3 is the end year of the first slope
 		loop(ttot3$p47_slope_beforeTarget_timeStep(ttot3),
 * rescale co2 price in year of end of first slope, p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2)) is still the rescale factor calculated above
-			
-*** Testing Part ***
-			p47_tax_display(ttot5,all_regi) = pm_taxCO2eq(ttot5,all_regi);
-			display "co2 tax before adjustment";
-			display p47_tax_display;
-*** End Testing Part ***
 			pm_taxCO2eq(ttot3,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot3,all_regi) * p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
-*** Testing Part ***
-			p47_tax_display(ttot5,all_regi) = pm_taxCO2eq(ttot5,all_regi);
-			display "co2 tax after adjustment of end year of first slope";
-			display p47_tax_display;
-*** End Testing Part ***
 ***	ttot4 is the intitial free price year, carbon prices are only adjusted after this time step
 			loop(ttot4$(ttot4.val eq s47_initialCO2Price_year),
 				p47_slope_firstYears(all_regi) =  (pm_taxCO2eq(ttot3,all_regi) - ( pm_taxCO2eq(ttot4,all_regi) + pm_taxCO2eqHist(ttot4,all_regi)))/(ttot3.val-ttot4.val);
 *** linear price development between first free year and end of first slope
 				pm_taxCO2eq(t,all_regi)$(t.val gt ttot4.val AND t.val lt ttot3.val)  = pm_taxCO2eq(ttot4,all_regi) + p47_slope_firstYears(all_regi)*(t.val-ttot4.val); 
-*** Testing Part ***
-			p47_tax_display(ttot5,all_regi) = pm_taxCO2eq(ttot5,all_regi);
-			p47_ttot_display = ttot4.val;
-			display "co2 tax after adjustment of first slope";
-			display p47_ttot_display;
-			display p47_tax_display;
-*** End Testing Part ***
 *** linear price development with different slope scaled by cm_regipol_slope_beforeTarget from end of first slope until target year
 				pm_taxCO2eq(t,all_regi)$(t.val ge ttot3.val AND t.val le ttot2.val)  = pm_taxCO2eq(ttot3,all_regi) + p47_slope_beforeTarget(ttot3,all_regi) * p47_slope_firstYears(all_regi)*(t.val-ttot3.val); 
-*** Testing Part ***
-			p47_tax_display(ttot5,all_regi) = pm_taxCO2eq(ttot5,all_regi);
-			p47_ttot_display = ttot4.val;
-			display "co2 tax after adjustment of second slope";
-			display p47_ttot_display;
-			display p47_tax_display;
-*** End Testing Part ***
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 				pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
 			);
@@ -418,6 +390,31 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 );
 
 display p47_slope_beforeTarget, p47_slope_firstYears;
+
+
+
+*** calculate CO2 budget up to target year as a diagnostic output
+*** This is useful to see afterwards whether a budget and a year target are reached at the same time
+
+***		for region groups
+loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))),
+		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type) =
+			sum(all_regi$regi_group(ext_regi,all_regi),
+				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
+					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
+					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)));
+);
+
+***		for single regions (overwrites region groups)
+loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))),
+		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type) =
+			sum(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
+					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
+					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)));
+);
+
+display o47_emiCO2Budget;
 
 $else.co2priceSlope
 
