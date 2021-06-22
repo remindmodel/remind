@@ -186,4 +186,10 @@ en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 *** industry realization is chosen in which these processes are not present).
 pfFeelhth(all_in) = pfFeelhth(all_in) * in(all_in);
 
+*** Remove elements from the set with electricity consumption production 
+*** factors in buildings that are not present in the current run (in particular
+*** if an industry realization is chosen in which these factors are not 
+*** present).
+pfFeelb(all_in) = pfFeelb(all_in) * in(all_in);
+
 *** EOF ./core/sets_calculations.gms

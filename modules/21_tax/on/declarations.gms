@@ -26,6 +26,10 @@ p21_tau_feelhth_sub(tall,all_regi)             "subsidy on electricity based hig
 $ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
 p21_tau_feelhth_sub_aux(all_regi)              "auxiliary parameter for reading in a subsidy on electricity based high temperature heat processes for starting in 2025 (T$/TWa)" / %cm_feelhth_sub% /
 $endIf.feelhth_sub
+p21_subElecBuil(tall,all_regi)                 "subsidy on electricity in buildings (T$/TWa)"
+$ifThen.feelhth_sub not "%cm_regiSubElecBuil%" == "off"
+p21_subElecBuil_aux(all_regi)                  "auxiliary parameter for reading in a subsidy on electricity in buildings starting in 2025 (T$/TWa)" / %cm_regiSubElecBuil% /
+$endIf.feelhth_sub
 
 p21_tau_fuEx_sub(tall,all_regi,all_enty)      "subsidy path for fuel extraction"
 
@@ -47,6 +51,7 @@ p21_taxrevBio0(ttot,all_regi)                "reference level value of bioenergy
 p21_implicitDiscRate0(ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex0(ttot,all_regi)               "reference level value of flexibility tax"
 p21_taxrevFeelhth0(ttot,all_regi)            "reference level value of feelhth tax"
+p21_taxrevElecBuil0(ttot,all_regi)           "reference level value of electricty buildings subsidy"
 
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
@@ -63,6 +68,7 @@ p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level valu
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)           "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevFeelhth_iter(iteration,ttot,all_regi)            "reference level value of feelhth tax revenue"
+p21_taxrevElecBuil_iter(iteration,ttot,all_regi)           "reference level value of buildings electricity tax/subsidy revenue"
 
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
@@ -97,6 +103,7 @@ v21_taxrevBio(ttot,all_regi)                 "tax on bioenergy (to reflect susta
 v21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
 v21_implicitDiscRate(ttot,all_regi)          "implicit tax on energy efficient capital"
 v21_taxrevFeelhth(ttot,all_regi)             "tax/subsidy on direct electrification in industry (to reflect/overcome risk aversion)"
+v21_taxrevElecBuil(ttot,all_regi)            "tax/subsidy on electrification in buildings (to reflect/overcome refurbishments)"
 ;
 
 Positive Variable
@@ -122,6 +129,7 @@ q21_taxrevBio(ttot,all_regi)                 "calculation of tax on bioenergy"
 q21_taxrevFlex(ttot,all_regi)                "tax on technologies with flexible or inflexible electricity input"
 q21_implicitDiscRate(ttot,all_regi)          "calculation of the implicit discount rate on energy efficiency capital"
 q21_taxrevFeelhth(ttot,all_regi)             "calculation of tax/subsidy on direct electrificaton"
+q21_taxrevElecBuil(ttot,all_regi)            "calculation of tax/subsidy on electricity in buildings"
 ;   
 
 *** EOF ./modules/21_tax/on/declarations.gms

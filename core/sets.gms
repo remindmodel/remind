@@ -1394,6 +1394,11 @@ pfFeelhth(all_in)    "all production factors for high temperature heat processes
        feelhth_otherInd
 /
 
+pfFeelb(all_in)      "production factors for electricity consumption in buildings"
+/
+       feelb
+/
+
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
 ppfenFromUe(all_in)  "all ppfEn that are equivalent to UE - is filled automatically from the content of fe2ue"
 

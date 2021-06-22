@@ -47,6 +47,7 @@ p21_implicitDiscRate0(ttot,regi) = sum(ppfKap(in),  p21_implicitDiscRateMarg(tto
 p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
                                         -vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
 p21_taxrevFeelhth0(ttot,regi) = sum(pfFeelhth(in), vm_cesIO.l(ttot,regi,in)) * p21_tau_feelhth_sub(ttot,regi);
+p21_taxrevElecBuil0(ttot,regi) = sum(pfFeelb(in), vm_cesIO.l(ttot,regi,in)) * p21_subElecBuil(ttot,regi);
 
 
 *** EOF ./modules/21_tax/on/presolve.gms

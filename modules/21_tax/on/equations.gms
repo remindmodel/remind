@@ -44,6 +44,7 @@
     + v21_implicitDiscRate(t,regi)
     + v21_taxrevFlex(t,regi)
     + v21_taxrevFeelhth(t,regi)
+    + v21_taxrevElecBuil(t,regi)
  ;
 
 
@@ -208,6 +209,18 @@ q21_taxrevFeelhth(t,regi)$(t.val ge max(2010,cm_startyear))..
   sum(pfFeelhth(in), vm_cesIO(t,regi,in)) * p21_tau_feelhth_sub(t,regi)
   - p21_taxrevFeelhth0(t,regi)
 ;
+
+***---------------------------------------------------------------------------
+*'  LM: Calculation of tax/subsidy on electrification in buildings
+***---------------------------------------------------------------------------
+
+q21_taxrevElecBuil(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevElecBuil(t,regi)
+  =e= 
+  sum(pfFeelb(in), vm_cesIO(t,regi,in)) * p21_subElecBuil(t,regi)
+  - p21_taxrevElecBuil0(t,regi)
+;
+
 
  
 *** EOF ./modules/21_tax/on/equations.gms

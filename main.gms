@@ -300,6 +300,7 @@ cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils 
 cm_regiPhaseOutFosBuilSimple    "Switch defining regions that phase out fossils in buildings - simple buildings realization"
 cm_behavChangeBuil              "Switch for enabling a reduced FE demand in buildings for (a) given region(s)."
 cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
+cm_regiSubElecBuil              "Switch defining an additional region-specfic subsidy on eclectricity consumption in buildings"
 cm_ban_ICE                      "Switch that phases out internal combustion engine (ICE) cars strongly until 2030"
 cm_regiNoDAC                    "Switch defining regions that are not allowed to use DAC"
 cm_emiTargetType                "Switch for choosing type of regional targets: netGHG or netCO2"
@@ -444,6 +445,7 @@ $setGlobal cm_regiPhaseOutFosBuilSimple  none !! def = none
 $setGlobal cm_behavChangeBuil  conv           !! def = conv
 $setGlobal cm_regiFactorStorageMult  none     !! def = none
 $setGlobal cm_feelhth_sub  off                !! def = off
+$setGlobal cm_regiSubElecBuil  off            !! def = off
 $setGlobal cm_regiNoDAC  none                 !! def = none
 $setGlobal cm_emiTargetType  netCO2           !! def = netCO2
 

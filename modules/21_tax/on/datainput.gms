@@ -250,5 +250,12 @@ $ifThen.feelhth_sub not "%cm_feelhth_sub%" == "off"
 p21_tau_feelhth_sub(ttot,regi)$(ttot.val ge 2025) = p21_tau_feelhth_sub_aux(regi);
 $endIf.feelhth_sub
 
+*** Initilize subsidy level for buildings subsidies
+p21_subElecBuil(ttot,regi) = 0;
+$ifThen.subElecBuil not "%cm_regiSubElecBuil%" == "off"
+*** Read in subsidy level from input parameter 
+p21_subElecBuil(ttot,regi)$(ttot.val ge 2025) = p21_subElecBuil_aux(regi);
+$endIf.subElecBuil
+
 
 *** EOF ./modules/21_tax/on/datainput.gms
