@@ -499,6 +499,12 @@ $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
 $offdelim
 ;
 
+# Early retirement limits in historical timesteps
+p_earlyreti_lim(ttot,regi,te)$(ttot.val gt 2025) = 0 - cm_earlyreti_rate;
+p_earlyreti_lim(ttot,regi,te)$(ttot.val lt 2025) = 0.01 - cm_earlyreti_rate;
+p_earlyreti_lim(ttot,regi,"pc")$(ttot.val lt 2025) = 0.05 - cm_earlyreti_rate;
+p_earlyreti_lim(ttot,"EUR","pc")$(ttot.val lt 2025) = 0.1 - pm_earlyreti_adjRate("EUR","pc") - cm_earlyreti_rate;
+
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
 ***---------------------------------------------------------------------------
