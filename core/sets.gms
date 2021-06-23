@@ -2303,7 +2303,7 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
         spv.gridspv
         wind.gridwind
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-	      windoff.gridwindoff
+        windoff.gridwindoff
 $ENDIF.WindOff
         csp.gridcsp
 /
@@ -2312,6 +2312,10 @@ te2teLoclinked(teLoc,teLoc2)   "mapping between the technologies requiring grids
 /
         spv.csp
         csp.spv
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff.windoff
+$ENDIF.WindOff
+
 /
 
 se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using a technology"
