@@ -153,14 +153,14 @@ $offdelim
 ;
 *CG* setting regional technology cost to be the same for wind offshore as onshore
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-inco0(ttot,regi,"windoff") = 4500;
-constrTme(ttot,regi,"windoff") = 4;
-eta(ttot,regi,"windoff") = 1.00;
-omf(ttot,regi,"windoff") = 0.03;
-lifetime(ttot,regi,"windoff") = 25;
-incolearn(ttot,regi,"windoff") = 3750;
-ccap0(ttot,regi,"windoff") = 0.0007;
-learn(ttot,regi,"windoff") = 0.12;
+fm_dataglob("inco0","windoff") = 4500;
+fm_dataglob("constrTme","windoff") = 4;
+fm_dataglob("eta","windoff") = 1.00;
+fm_dataglob("omf","windoff") = 0.03;
+fm_dataglob("lifetime","windoff") = 25;
+fm_dataglob("incolearn","windoff") = 3750;
+fm_dataglob("ccap0","windoff") = 0.0007;
+fm_dataglob("learn","windoff") = 0.12;
 
 p_inco0(ttot,regi,"windoff") = p_inco0(ttot,regi,"wind");
 $ENDIF.WindOff
@@ -212,6 +212,10 @@ if (c_ccsinjecratescen eq 4, sm_ccsinjecrate = sm_ccsinjecrate * 200    ); !! re
 if (c_ccsinjecratescen eq 5, sm_ccsinjecrate = sm_ccsinjecrate *   0.20 ); !! sustainable estimate
 
 $include "./core/input/generisdata_flexibility.prn"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+fm_dataglob("flexibility","storwindoff")  = 1.93;
+fm_dataglob("flexibility","windoff")  = -1;
+$ENDIF.WindOff
 
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
@@ -385,9 +389,14 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore storage and grid to be the same as wind onshore (later should be integrated into input data)
+*CG* set wind offshore storage and grid to be the same as wind onshore, except cost and eta (later should be integrated into input data)
+*CG* raise eta and lower cost to represent the lower storage requirements due to higher CF for windoff
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
+fm_dataglob("inco0","storwindoff") = 0.5 * fm_dataglob("inco0","storwind");
+fm_dataglob("inco0","storwindoff") = 0.92;
+
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
+
 $ENDIF.WindOff
 
 *** Use global data as standard for regionalized data:
