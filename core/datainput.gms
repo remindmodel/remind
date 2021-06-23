@@ -434,6 +434,7 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *CG* raise eta and lower cost to represent the lower storage requirements due to higher CF for windoff
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob("inco0","storwindoff") = 0.5 * fm_dataglob("inco0","storwind");
+fm_dataglob("incolearn","storwindoff") = 0.5 * fm_dataglob("incolearn","storwind");
 fm_dataglob("eta","storwindoff") = 0.92;
 
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
