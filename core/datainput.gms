@@ -393,7 +393,7 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *CG* raise eta and lower cost to represent the lower storage requirements due to higher CF for windoff
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob("inco0","storwindoff") = 0.5 * fm_dataglob("inco0","storwind");
-fm_dataglob("inco0","storwindoff") = 0.92;
+fm_dataglob("eta","storwindoff") = 0.92;
 
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 
@@ -453,8 +453,6 @@ pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 
-*RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
-pm_cf(ttot,regi,"h2turbVRE") = 0.05;
 *RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
 pm_cf(ttot,regi,"h2turbVRE") = 0.05;
 pm_cf(ttot,regi,"h2turb") = 0.05;
