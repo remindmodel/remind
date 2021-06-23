@@ -336,6 +336,8 @@ cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for 
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
+cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
+cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -535,25 +537,29 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 1; !! def 0
-cm_PriceDurSlope_elh2 = 10; !! def 10
+cm_flex_tax = 0; !! def 0
+cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
+$setGlobal cm_ARIADNE_FeShareBounds  on !! def = off
 
 cm_ariadne_trade_el = 50; !! def 0
-cm_ariadne_trade_h2 = 600; !! def 0
-cm_ariadne_trade_syn = 100; !! def 0
+cm_ariadne_trade_h2 = 150; !! def 0
+cm_ariadne_trade_syn = 150; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
 
-$setGlobal cm_FEtax_trajectory_abs  2040.indst.fehos 45, 2040.build.fehos 60, 2040.indst.fegas -40, 2040.build.fegas -20 !! def = off
-$setGlobal cm_FEtax_trajectory_rel  off !! def = off
+$setGlobal cm_FEtax_trajectory_abs  off !! def = off
+$setGlobal cm_FEtax_trajectory_rel  2040.indst.feels 0.75, 2040.build.feels 0.75, 2040.indst.feh2s 7 !! def = off
 
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
+
+
+cm_heatPumpMkup_build = 100; !! def = 200
+cm_districtHeatingMkup_build = 12; !! def = 25
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
