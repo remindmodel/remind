@@ -1389,6 +1389,10 @@ teLoc(all_te)      "centralized technologies which require grid"
         wind        "wind power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff
+$ENDIF.WindOff
+
 /
 teGrid(all_te)      "grid between areas"
 /
