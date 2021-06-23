@@ -8,7 +8,7 @@
 
 	
 Parameter
-  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "target deviation across iterations in current emissions divided by target emissions"
+  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2015 emissions"
   p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations"
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year"
   p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"

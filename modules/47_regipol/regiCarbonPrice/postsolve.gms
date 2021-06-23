@@ -398,20 +398,20 @@ display p47_slope_beforeTarget, p47_slope_firstYears;
 
 ***		for region groups
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))),
-		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type) =
+		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type2) =
 			sum(all_regi$regi_group(ext_regi,all_regi),
 				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
 					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
-					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)));
+					*(v47_emiTarget.l(ttot3, all_regi,emi_type2)*sm_c_2_co2)));
 );
 
 ***		for single regions (overwrites region groups)
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))),
-		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type) =
+		o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type2) =
 			sum(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
 				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
 					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
-					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)));
+					*(v47_emiTarget.l(ttot3, all_regi,emi_type2)*sm_c_2_co2)));
 );
 
 display o47_emiCO2Budget;

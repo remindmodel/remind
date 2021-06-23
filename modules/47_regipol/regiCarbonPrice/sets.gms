@@ -39,5 +39,8 @@ $ENDIF.cm_implicitFE
 
 ;
 
+
+alias(emi_type,emi_type2);
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 
