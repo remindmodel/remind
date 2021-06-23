@@ -45,68 +45,6 @@ loop(ttot$(ttot.val ge 2005),
 );
 
 
-if(cm_iterative_target_adj eq 1,
-***cb 20140212 Update tax levels/ multigasbudget values to reach the emission target / CO2 budget (s_actualbudgetco2 runs from 2000-2100)
-	if (cm_emiscen eq 6,
-		display sm_budgetCO2eqGlob;
-***cb from awp2 20140212: budget calculated as 2005-2095*pm_ts (92.5 years)  + 2100*5 + 2000*2.5; 
-*for the period 2000.5 until the end of 2002 (therefore the factor 2.5 in line 11) we have to use historical data:  6.9 GtC CO2 in 2001 according to http://cdiac.ornl.gov/ftp/ndp030/global.1751_2008.ems + 1.4GtC luc http://cdiac.ornl.gov/trends/landuse/houghton/1850-2005.txt
-		s_actualbudgetco2 =    sum(ttot$(ttot.val < 2100 AND ttot.val ge 2005), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2")))*sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2"))*sm_c_2_co2 * pm_ts("2100")/2
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiCdr.l("2090",regi,"co2") + vm_emiMac.l("2090",regi,"co2"))*sm_c_2_co2 * pm_ts("2090")/2
-                              + (6.9 + 1.4)*sm_c_2_co2 * 2.5;
-		display s_actualbudgetco2;
-		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,!!only for optimal iterations, and not after the last one
-			sm_budgetCO2eqGlob=sm_budgetCO2eqGlob*(s_referencebudgetco2/s_actualbudgetco2);
-			pm_budgetCO2eq(regi)=pm_budgetCO2eq(regi)*(s_referencebudgetco2/s_actualbudgetco2);
-		else
-			sm_budgetCO2eqGlob=sm_budgetCO2eqGlob;
-		);
-		display sm_budgetCO2eqGlob;
-	elseif cm_emiscen eq 9,
-		display pm_taxCO2eq;
-***cb from awp2 20140212: Kyoto emissions in 2030 to update tax level: unit [Gt CO2eq/yr]
-		s_actual2030co2eq = (sum(regi, vm_co2eq.l("2030",regi)*sm_c_2_co2 + vm_emiFgas.L("2030",regi,"emiFgasTotal")/1000));
-		display vm_co2eq.l;
-		display s_actual2030co2eq;
-		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max,!!only for optimal iterations, and not after the last one
-			pm_taxCO2eq(t,regi)=pm_taxCO2eq(t,regi)*min(((s_actual2030co2eq/s_reference2030co2eq)**8),2);
-		);
-    pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
-		display pm_taxCO2eq;
-	 );
-);
-
-if(cm_iterative_target_adj eq 4,
-*JeS* Update tax levels/ multigasbudget values to reach the CO2 FF&I budget (s_actualbudgetco2 runs from 2010-2100)
-
-*** budget calculated as 2015-2095 + 2100*5 + 2010*2.5 in Gt CO2; 
-s_actualbudgetco2 =           sum(ttot$(ttot.val < 2100 AND ttot.val > 2010), (sum(regi, vm_emiTe.l(ttot,regi,"co2") + vm_emiMacSector.l(ttot,regi,"co2cement_process")) * sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiMacSector.l("2100",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2100")/2
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiMacSector.l("2090",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2090")/2
-                              + sum(regi, vm_emiTe.l("2010",regi,"co2") + vm_emiMacSector.l("2010",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2010")/2;
-display s_actualbudgetco2;
-		
-	if (cm_emiscen eq 6,
-		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
-		display sm_budgetCO2eqGlob;		
-			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob + ((1/sm_c_2_co2) * (c_budgetCO2FFI - s_actualbudgetco2));
-			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) + ((1/sm_c_2_co2) * (c_budgetCO2FFI - s_actualbudgetco2) / card(regi));
-		else
-			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob;
-		);
-		display sm_budgetCO2eqGlob;
-	elseif cm_emiscen eq 9,
-	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
-		display pm_taxCO2eq;		
-			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) * (s_actualbudgetco2/c_budgetCO2FFI);
-		else
-			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
-		);
-    pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
-		display pm_taxCO2eq;
-	 );
-);
 
 if(cm_iterative_target_adj eq 5,
 *JeS* Update tax levels/ multigasbudget values to reach the CO2 budget (s_actualbudgetco2 runs from 2011-2100)
