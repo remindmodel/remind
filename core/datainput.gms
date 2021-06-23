@@ -143,7 +143,48 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 *** Import and set global data
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
-$include "./core/input/generisdata_tech.prn";
+$include "./core/input/generisdata_tech.prn"
+;
+
+!! Modify spv and storspv parameters for optimistic VRE supply assumptions
+if (cm_VRE_supply_assumptions eq 1,
+  if (fm_dataglob("learn","spv") ne 0.207,
+    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","spv") = 0.257;
+  );
+
+  if (fm_dataglob("inco0","storspv") ne 9000,
+    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("inco0","storspv") = 7000;
+  );
+
+  if (fm_dataglob("incolearn","storspv") ne 6240,
+    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","storspv") = 4240;
+  );
+
+  if (fm_dataglob("learn","storspv") ne 0.10,
+    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
+  else
+    fm_dataglob("learn","storspv") = 0.12;
+  );
+elseif cm_VRE_supply_assumptions eq 2,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 5010;
+  );
+elseif cm_VRE_supply_assumptions eq 3,
+  if (fm_dataglob("incolearn","spv") ne 5060,
+    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+  else
+    fm_dataglob("incolearn","spv") = 4960;
+  );
+);
+
 parameter p_inco0(ttot,all_regi,all_te)     "regionalized technology costs Unit: USD$/KW"
 /
 $ondelim
@@ -428,13 +469,24 @@ pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
 *RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
 pm_cf(ttot,regi,"apcardiefft") = 1;
 pm_cf(ttot,regi,"apcardieffH2t") = 1;
-pm_cf(ttot,regi,"h2turbVRE") = 0.15;
+***pm_cf(ttot,regi,"h2turbVRE") = 0.15;
 pm_cf(ttot,regi,"elh2VRE") = 0.6;
 *short-term fix for new synfuel td technologies
 pm_cf(ttot,regi,"tdsyngas") = 0.65;
 pm_cf(ttot,regi,"tdsynhos") = 0.6;
 pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
+
+*RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
+pm_cf(ttot,regi,"h2turbVRE") = 0.05;
+pm_cf(ttot,regi,"h2turb") = 0.05;
+
+*RP* phasing down the ngt cf to "peak load" cf of 0.036
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2035) = 0.7 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val eq 2040) = 0.5 * pm_cf(ttot,regi,"ngt");
+pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
+
 
 
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
@@ -1121,10 +1173,6 @@ $if %cm_techcosts% == "REG"   );
 
 
 
-
-
-
-
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
 *** -----------------------------------------------------------------------------
@@ -1287,6 +1335,7 @@ p_ef_dem(regi,"fedie") = 69.3;
 p_ef_dem(regi,"fehos") = 69.3;
 p_ef_dem(regi,"fepet") = 68.5;
 p_ef_dem(regi,"fegas") = 50.3;
+p_ef_dem(regi,"fegat") = 50.3;
 p_ef_dem(regi,"fesos") = 90.5;
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
