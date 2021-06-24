@@ -4,8 +4,10 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(gms, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
+library(yaml, quietly = TRUE,warn.conflicts=FALSE)
 require(gdx)
 
 ##################################################################################################
@@ -13,7 +15,7 @@ require(gdx)
 ##################################################################################################
 madrat::setConfig(hash="md5")
 getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
-	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   .bioenergy_price <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
@@ -169,11 +171,11 @@ prepare <- function() {
   timePrepareStart <- Sys.time()
 
   # Load libraries
-  require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind, quietly = TRUE,warn.conflicts =FALSE)
-  require(moinput)
+  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
+  require(mrremind)
   require(mrvalidation)
 
   .copy.fromlist <- function(filelist,destfolder) {
@@ -192,6 +194,10 @@ prepare <- function() {
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
   cat("\n====================\n")
+
+  ## print the libraries version
+  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+
 
   load("config.Rdata")
 
@@ -218,19 +224,23 @@ prepare <- function() {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
+
   # adjust GDPpcScen based on GDPscen
   cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
 
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
+  
+  # Copy MAGICC
+  if ( !file.exists(cfg$magicc_template) 
+     & file.exists(path.expand(Sys.getenv('MAGICC'))))
+	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
 
-   # Copy MAGICC
-  magicc_template <- "/p/projects/rd3mod/magicc/"
-  if(file.exists(magicc_template)) {
-      cat("Copying MAGICC files from",magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",magicc_template,"*.* ./core/magicc/"))
+  if (file.exists(cfg$magicc_template)) {
+      cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
+      system(paste0("cp -rp ",cfg$magicc_template,"/*.* ./core/magicc/"))
     } else {
-      cat("Could not copy",magicc_template,"because it does not exist\n") 
+      cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
@@ -253,7 +263,7 @@ prepare <- function() {
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
   }
-  ## the following is outcommented because by now it has to be done by hand ( currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
+  ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
   #if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
@@ -273,6 +283,12 @@ prepare <- function() {
     }
   }
 
+  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
+  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
+       demComplex = "fromEDGET"
+  }
+
+
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
                                          "indu_",cfg$gms$industry,"-",
@@ -283,7 +299,10 @@ prepare <- function() {
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
                                          "bcb_", cfg$gms$cm_behavChangeBuil, "-",
-                                         "Reg_", substr(regionscode(cfg$regionmapping),1,10))
+                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
+                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
+                                         "Reg_", regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
@@ -340,12 +359,10 @@ prepare <- function() {
     content <- c(modification_warning,'','sets')
     # write iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
-    regions <- levels(map$RegionCode)
+    regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping)
-    if(is.null(subsets[["EUR"]]))
-        subsets[["EUR"]] <- c("EUR")
+    subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -358,14 +375,14 @@ prepare <- function() {
 	  content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
-    for(i in levels(map$RegionCode)) {
+    for(i in as.character(unique(map$RegionCode))) {
       content <- c(content, .tmp(map$CountryCode[map$RegionCode==i], prefix=paste0(i," . ("), suffix1=")", suffix2=")"))
     }
     content <- c(content,'      /')
     content <- c(content, 'iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" ','         /')
-    for(i in regions[regions %in% c("EUR","CHA",levels(map$CountryCode))]) {
+    for(i in regions[regions %in% c("EUR","CHA",as.character(unique(map$CountryCode)))]) {
       content <- c(content, .tmp(i, prefix=paste0(i," . "), suffix1="", suffix2=""))
     }
     content <- c(content,'      /',';')
@@ -373,22 +390,23 @@ prepare <- function() {
   }
 
   ############ download and distribute input data ########
-  # check wheather the regional resolution and input data revision are outdated and update data if needed
+  # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old <- readLines("input/source_files.log")[1]
+      input_old     <- readLines("input/source_files.log")[c(1,2)]
   } else {
-      input_old <- "no_data"
+      input_old     <- "no_data"
   }
-  input_new <- paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz")
-
+  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
+  # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE)
-  }
-
+                          debug        = FALSE) 
+  } 
+    
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$revision)
@@ -415,7 +433,11 @@ prepare <- function() {
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
-
+  
+  # copy right gdx file to the output folder
+  gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
+  system(paste0('cp ',gdx_name,' ',path(cfg$results_folder, "input.gdx")))
+  
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
 
@@ -430,7 +452,7 @@ prepare <- function() {
   singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
-  lucode::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
+  lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
                         user = Sys.info()[["user"]],
                         date = Sys.time(),
                         version_management = "git",
@@ -447,6 +469,8 @@ prepare <- function() {
   ################## M O D E L   U N L O C K ###################################
 
   setwd(cfg$results_folder)
+
+  write_yaml(cfg,file="cfg.txt")
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
@@ -583,7 +607,20 @@ prepare <- function() {
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
 
-    # Include fixings (levels) and marginals in full.gms at predefined position
+    levs_manipulateThis <- c(levs_manipulateThis, 
+                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
+    fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
+    margs_manipulateThis <- c(margs_manipulateThis, 
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
+    #RP filter out regipol items
+    if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("q47_implFETax.M", "!!q47_implFETax.M")))
+    }
+
+    # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
                              list(c("cb20150605readinpositionforlevelfile",
@@ -625,7 +662,7 @@ prepare <- function() {
   timePrepareEnd <- Sys.time()
   # Save run statistics to local file
   cat("Saving timePrepareStart and timePrepareEnd to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0("runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0("runstatistics.rda"),
                       timePrepareStart = timePrepareStart,
                       timePrepareEnd   = timePrepareEnd)
 
@@ -726,6 +763,7 @@ run <- function(start_subsequent_runs = TRUE) {
         file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
         file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
+        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
         file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
                   overwrite = TRUE)
 
@@ -763,11 +801,11 @@ run <- function(start_subsequent_runs = TRUE) {
   cat("\n gams_runtime is ", gams_runtime, "\n")
 
   # Collect and submit run statistics to central data base
-  lucode::runstatistics(file       = "runstatistics.rda",
+  lucode2::runstatistics(file       = "runstatistics.rda",
                         modelstat  = readGDX(gdx="fulldata.gdx","o_modelstat", format="first_found"),
                         config     = cfg,
                         runtime    = gams_runtime,
-                        setup_info = lucode::setup_info(),
+                        setup_info = lucode2::setup_info(),
                         submit     = cfg$runstatistics)
 
   # Compress files with the fixing-information
@@ -859,6 +897,7 @@ run <- function(start_subsequent_runs = TRUE) {
       write(filetext,file=subseq_start_file)
     }
   }
+
   #=================== END - Subsequent runs ========================
 
   # Copy important files into output_folder (after REMIND execution)
@@ -878,7 +917,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   # Save run statistics to local file
   cat("Saving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
                        timeGAMSStart   = timeGAMSStart,
                        timeGAMSEnd     = timeGAMSEnd,
                        timeOutputStart = timeOutputStart,

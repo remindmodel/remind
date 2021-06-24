@@ -1,0 +1,24 @@
+* description: maximum electricity price discount for flexible technologies reached at high VRE shares (60% of average 2050 el. prices of a reference REMIND-EU run)
+* unit: 2015USD/MWh(el)
+* comment: manually produced not in moinput yet
+CAZ,elh2,41.6812785768
+CHA,elh2,52.40014773696
+DEU,elh2,81.13158471168
+ECE,elh2,65.92058313408
+ECS,elh2,69.3494819208
+ENC,elh2,61.05261322224
+ESC,elh2,83.42171159616
+ESW,elh2,76.75865872848
+EWN,elh2,82.64650717008
+FRA,elh2,67.77020418912
+IND,elh2,49.2038179992
+JPN,elh2,53.7711874848
+LAM,elh2,47.64589882704
+MEA,elh2,46.05991609248
+NEN,elh2,36.9471075192
+NES,elh2,50.4761782032
+OAS,elh2,54.83254485312
+REF,elh2,50.79740065056
+SSA,elh2,53.03417026896
+UKI,elh2,60.95731490352
+USA,elh2,44.79909885504

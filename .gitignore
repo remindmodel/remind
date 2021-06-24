@@ -11,11 +11,14 @@
 *.swp
 *.pdf
 
+# ignore libreoffice lock files
+.~*#
+
 # Ignore everything in "input" folders
 input/
-!modules/29_CES_parameters/load/input
-# Ignore everything in "output" folders
-output/
+
+# Ignore everything in root "output" folder
+/output/
 
 # Ignore everything in "doc" folders, except for 3 specific files
 doc/
@@ -29,8 +32,8 @@ main.lst
 # Ignore .RData files only in the root folder
 /*.RData
 
-# ignore temporary libreoffice files
-.~lock.*#
+# ignore all the MAGICC files, should they be present
+core/magicc/
 
-# ignore all those secret MAGICC files
-/core/magicc/
+# ignore GDX files in the gdx-files folder
+config/gdx-files/*.gdx

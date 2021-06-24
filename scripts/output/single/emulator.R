@@ -7,12 +7,13 @@
 
 # setwd("~/Documents/0_SVN/REMIND2.0")
 
-library(lucode)
+library(lucode2)
+library(gms)
 library(lusweave)
 library(luplot)
 library(gdx)
 library(ggplot2)
-library(remind)
+library(remind2)
 library(mip)
 
 #####################################################

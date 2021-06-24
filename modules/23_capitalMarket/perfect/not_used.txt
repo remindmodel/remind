@@ -11,3 +11,5 @@ vm_Mport,input,questionnaire
 pm_pvp,input,questionnaire
 pm_prtp,input,questionnaire
 cm_prtpScen,input,questionnaire
+pm_MPortsPrice, parameter, only necessary for debt limit formulations
+pm_XPortsPrice, parameter, only necessary for debt limit formulations

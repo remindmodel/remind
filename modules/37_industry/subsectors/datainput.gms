@@ -35,19 +35,15 @@ Parameter
 ;
 pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 
-$ontext
-*** converge substitution elasticities until 2105
-loop (cesOUt2cesIn(out,in)$(   sameas(in,"en_chemicals") 
-                            OR sameas(in,"en_otherInd")  ),
-  pm_cesdata_sigma(ttot,out)$( ttot.val ge 2005 )
-  = p37_cesdata_sigma(out)
-  + (p37_cesdata_sigma(in) - p37_cesdata_sigma(out))
-  * min(1, (ttot.val - 2005) / 100);
-);
-$offtext
-
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
+
+$IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+pm_abatparam_Ind(ttot,regi,all_enty,steps)$( 
+                                    pm_abatparam_Ind(ttot,regi,all_enty,steps) )
+  = pm_abatparam_Ind(ttot,regi,all_enty,steps);
+  / %cm_INNOPATHS_Industry_CCS_markup%);
+$ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
@@ -113,19 +109,15 @@ $offdelim
 
 s37_clinker_process_CO2 = 0.5262;
 
-*** FIXME *** this needs to be in moinput
-p37_clinker_cement_ratio("2005","CAZ") = 0.81;
-p37_clinker_cement_ratio("2005","CHA") = 0.58;
-p37_clinker_cement_ratio("2005","EUR") = 0.73;
-p37_clinker_cement_ratio("2005","IND") = 0.71;
-p37_clinker_cement_ratio("2005","JPN") = 0.80;
-p37_clinker_cement_ratio("2005","LAM") = 0.70;
-p37_clinker_cement_ratio("2005","MEA") = 0.81;
-p37_clinker_cement_ratio("2005","NEU") = 0.81;
-p37_clinker_cement_ratio("2005","OAS") = 0.80;
-p37_clinker_cement_ratio("2005","REF") = 0.80;
-p37_clinker_cement_ratio("2005","SSA") = 0.77;
-p37_clinker_cement_ratio("2005","USA") = 0.82;
+*** Clinker-to-cement ratio
+Parameter
+  p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs3r"
+$offdelim
+  /
+;
 
 *' Clinker-to-cement ratios converge to the lowest regional 2005 value by 2100.
 p37_clinker_cement_ratio(t,regi)

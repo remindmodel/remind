@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
+*' Industry final energy balance
+q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
+                                         AND entyFe2Sector(entyFe,"indst") ) .. 
+  sum(se2fe(entySE,entyFE,te),
+    vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+  )
+  =e=
+  sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
+       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
+    vm_cesIO(ttot,regi,in)
+  + pm_cesdata(ttot,regi,in,"offset_quantity")
+  )
+;
+
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
                         ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
     sum(ces_eff_target_dyn37(out,in), 

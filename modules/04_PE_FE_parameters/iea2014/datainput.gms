@@ -11,6 +11,10 @@ $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
 $offdelim
 /
 ;
+*CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
+$ENDIF.WindOff
 
 parameter f04_IO_output(tall,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data"
 /
@@ -122,8 +126,8 @@ display pm_prodCouple;
 p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
 p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
 ***p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.16;
-p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.14;
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
+p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
@@ -153,19 +157,18 @@ loop(en2en(enty,enty2,te),
     );
 );
 
-*** overwrite eta values due to bug in input data
-pm_data(regi,"eta","tdbiodie")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdfosdie")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdbiopet")$pm_data(regi,"eta","tdbiodie") = 1;
-pm_data(regi,"eta","tdfospet")$pm_data(regi,"eta","tdbiodie") = 1;
 
-pm_data(regi,"eta","tdbiogas")$pm_data(regi,"eta","tdbiogas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),pm_IO_input(regi,enty,enty2,te));
+*** recalculating the eta for seliq (fehos, fedie and fepet), seso and sega T&D to final energy, assuming that biomass or fossil based fuels use the same network and, consequently, share the same eta  
+loop(entyFe$(SAMEAS(entyFe,"fehos") OR SAMEAS(entyFe,"fedie") OR SAMEAS(entyFe,"fepet") OR SAMEAS(entyFe,"fegas") OR SAMEAS(entyFe,"fesos")), 
+	loop(regi,
+		if(sum(se2fe(entySe,entyFe,te), pm_IO_input(regi,entySe,entyFe,te)) ne 0,
+			loop((entySe,te)$se2fe(entySe,entyFe,te),
+				pm_data(regi,"eta",te) = sum(se2fe(enty,entyFe,te2), p04_IO_output(regi,enty,entyFe,te2))/sum(se2fe(enty,entyFe,te2), pm_IO_input(regi,enty,entyFe,te2));
+			);
+		);
+	);
+);
 
-pm_data(regi,"eta","tdfosgas")$pm_data(regi,"eta","tdfosgas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiogas") OR SAMEAS(te,"tdfosgas")),pm_IO_input(regi,enty,enty2,te));
-
-pm_data(regi,"eta","tdbiosos")$pm_data(regi,"eta","tdbiogas") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),pm_IO_input(regi,enty,enty2,te));
-
-pm_data(regi,"eta","tdfossos")$pm_data(regi,"eta","tdfossos") = sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),p04_IO_output(regi,enty,enty2,te))/sum(en2en(enty,enty2,te)$(SAMEAS(te,"tdbiosos") OR SAMEAS(te,"tdfossos")),pm_IO_input(regi,enty,enty2,te));
 
 
 *** calculate mix0 - the share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production

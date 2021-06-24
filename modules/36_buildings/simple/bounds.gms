@@ -32,4 +32,21 @@ vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fehob")$(ttot.val ge 2050) = 1e-6;
 ***    out (not only coal).
 * vm_cesIO.up(ttot,   regiPhaseOutFosBuil_36, "fesob")$(ttot.val ge 2040) = 1e-6;
 $endIf.regiPhaseOutFosBuil
+
+*** Upper bound for exponent to avoid exponential gams overflow (if > 20 -> 3^20 > 1e10 what would cause GAMS to get an overflow x**y error) 
+v36_costExponent.up(t,regi) = 20; 
+
+
+*** FS: no H2 in buildings before 2050
+vm_demFeSector.up('2010',regi,'seh2','feh2s','build','ES') = 0;
+vm_demFeSector.up('2015',regi,'seh2','feh2s','build','ES') = 0;
+vm_demFeSector.up('2020',regi,'seh2','feh2s','build','ES') = 1e-5;
+vm_demFeSector.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
+
+
+*** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. In case contrary, H2 is competitive against gas in buildings and industry even during calibration.
+$ifthen.CES_calibration "%CES_parameters%" == "calibrate"
+v36_H2share.up(t,regi) = s36_costDecayStart;
+$endif.CES_calibration
+
 *** EOF ./modules/36_buildings/simple/bounds.gms

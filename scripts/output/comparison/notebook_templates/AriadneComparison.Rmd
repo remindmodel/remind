@@ -1,0 +1,2470 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+# Regional Data Analyses for REMIND ARIADNE Runs
+
+Authors: Felix Schreyer, Marianna Rottoli, Falk Benke, Gunnar Luderer
+
+## Load necessary libraries
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(quitte)
+require(mip)
+library(reshape2)
+library(gridExtra)
+library(quitte)
+```
+
+
+## Chose scenarios and regions for the analysis
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+############## CONFIG PARAMS (change config parameters for plots here) ###################
+
+# region to be analyzed
+reg <- "DEU"   
+
+# mind: must be in format "./data/folderName"
+results.folder <- "./"
+
+# path of historical mif
+hist.path = "./historical.mif"
+
+# plot periods
+plot.period <- seq(2015,2060,5)
+reg.sr15 <- "R5OECD90+EU"
+
+# should ariadne-specific validation plots be created?
+ariadne.val.plots <- T
+# should historical data be shown in plots where available?
+show.historical <- T
+
+#################### end config ###################################
+
+
+### prepare data and plot paths
+
+data.path = list.files(path = paste0(results.folder),
+                       pattern = "REMIND_generic.*mif", full.names = T)
+
+plots.path = paste0("./", tolower(reg))
+
+dir.create(plots.path)
+
+
+# new colors for some of the more exotic variables
+tt = plotstyle.add( entity = "non-LDV"  ,legend = "public", c("#999999"), replace = T)
+tt = plotstyle.add( entity = "SE|Liquids|Oil"  ,legend = "Oil", c("#222222"), replace = T)
+tt = plotstyle.add( entity = "Oil"  ,legend = "Oil", c("#884422"), replace = T)
+tt = plotstyle.add( entity = "Solids|Modern"  ,legend = "Solids", c("#008800"), replace = T)
+
+```
+
+
+## Read all mif data from output file into quitte data frame
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# read in REMIND data as quitte df
+df.mod <- read.quitte(data.path)
+# read in REMIND data as magpie array, sometimes more convenient to calculate new variables
+dat.mod <- read.report(data.path, as.list = F)
+
+
+# read in historical data
+df.hist = read.quitte(hist.path)
+```
+
+
+## Filter data and calculate additional variables
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# filter for dimensions used in plots
+df <- df.mod %>%
+        filter( region %in% reg, period %in% plot.period)  %>%
+        #remove duplicates if present
+        distinct() 
+
+
+df.hist <- df.hist %>% 
+            filter(region %in% reg)
+
+
+
+
+# calculate modern PE biomass
+df <- calc_addVariable(df,
+                       "`PE|Biomass|Solids|Traditional`"  =  "`PE|Biomass|Traditional`",
+                       "`PE|Biomass|Solids|Modern`"  =  "`PE|Biomass|Solids` - `PE|Biomass|Traditional`",
+                       units  = "EJ/yr")
+
+
+# calculate other fossil (coal + oil) and other renewables categories for electricity generation shown in some plots
+df <- df %>%
+        calc_addVariable("`SE|Electricity|Other Renewables`" = "`SE|Electricity|Biomass|w/ CCS`+`SE|Electricity|Biomass|w/o CCS`+`SE|Electricity|Solar|CSP`+`SE|Electricity|Hydro`+`SE|Electricity|Geothermal`",
+                               "`SE|Electricity|Other Fossil`" =  "`SE|Electricity|Coal|w/ CCS` + `SE|Electricity|Coal|w/o CCS` + `SE|Electricity|Oil`",
+                               units = "EJ/yr")
+
+
+# calculate additional categories of CO2 capture
+df <- df %>%
+        calc_addVariable("`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w/ couple prod`" = "`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Electricity w/ couple prod` + `Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Heat w/ couple prod`+`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Solids w/ couple prod`+`Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Gases w/ couple prod`", units = "MtCO2/yr")
+
+
+# if EDGE-T reporting variables exist, calculate transport demand emissions by mode
+if (any(grepl("Emi\\|CO2\\|Transport\\|Freight\\|International Shipping\\|Demand" ,getVars(df)))) { 
+df <- calc_addVariable(df,
+                       "`Emi|CO2|Transport|Shipping|Demand`"  =  "`Emi|CO2|Transport|Freight|International Shipping|Demand` + `Emi|CO2|Transport|Freight|Navigation|Demand`",
+                       "`Emi|CO2|Transport|Pass|Aviation|Demand`"  =  "`Emi|CO2|Transport|Pass|Aviation|Domestic|Demand` + `Emi|CO2|Transport|Pass|Aviation|International|Demand`",
+                       units = "Mt CO2/yr")
+}
+
+```
+
+
+
+
+## 1. Emissions
+
+
+### Gross vs. net CO2 Emissions
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(     "Emi|CO2|Gross|Energy|Supply|+|Electricity",
+              "Emi|CO2|Gross|Energy|Supply|Non-electric",
+             
+              "Emi|CO2|Energy|Demand|+|Buildings",
+              "Emi|CO2|Energy|Demand|+|Transport",
+              "Emi|CO2|+|Industrial Processes",
+              "Emi|CO2|Energy|Demand|+|Industry",
+
+             "Emi|CO2|+|Land-Use Change",
+
+             "Emi|CO2|CDR|BECCS",
+             "Emi|CO2|CDR|DACCS",
+             "Emi|CO2|CDR|EW")
+
+
+# define colors and labels
+tt = plotstyle.add(c("Emi|CO2|CDR|EW")   ,c("EW"),  c("sandybrown"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|CDR|BECCS")   ,c("BECCS"),  c("lightgreen"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|CDR|DACCS")   ,c("DAC"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Industry")   ,c("Industry"),  c( "grey"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Transport")   ,c("Transport"),  c("darkblue"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|Energy|Demand|+|Buildings")   ,c("Buildings"),  c( "darkred"), replace = T)
+tt = plotstyle.add(c("Emi|CO2|+|Land-Use Change")   ,c("Land-Use Change"),  c("darkgreen"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Gross|Energy|Supply|+|Electricity")   ,c("Elec. Supply"),  c("darkgoldenrod"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|Gross|Energy|Supply|Non-electric")   ,c("Non-elec. Supply"),  c("darkorchid"),replace=T)
+tt = plotstyle.add(c("Emi|CO2|+|Industrial Processes"),c("Industrial Processes"),  c("palevioletred"),replace=T)
+
+
+
+df.emi.grossneg <- df %>% 
+                    filter(variable %in% vars, period %in% plot.period) %>% 
+                    order.levels(variable = vars)
+df.emi.tot <- df %>% 
+                filter(variable == "Emi|CO2", period %in% plot.period) %>% 
+                mutate(variable = "Total")
+
+
+
+
+
+p.emi.grossneg <- ggplot() +
+                    geom_col(data=df.emi.grossneg, aes(period, value, fill=variable), alpha=0.8) +
+                    geom_line(data=df.emi.tot, aes(period, value, linetype=variable), size=1.2, alpha=0.7) +
+                    geom_point(data=df.emi.tot, aes(period, value, shape=variable), size=1.5, alpha=0.7) +
+                    facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                    scale_y_continuous("CO2 Emissions (Mt CO2/yr)") +
+                    scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(vars, out = "legend")) +
+                    geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
+                    
+                    theme_bw() +
+                    theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                           legend.position = "bottom",strip.background = element_blank(),
+                           legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+# show historical data for validation
+if (show.historical) {
+  
+  df.emi.tot.hist <- df.hist %>%
+                    filter(variable == "Emi|CO2", period >= 1990, period <= max(plot.period), model == "CEDS") %>% 
+                    select(-scenario) %>% 
+                    mutate(model = "historical")
+  
+  p.emi.grossneg <- p.emi.grossneg +
+                      geom_line(data=df.emi.tot.hist, aes(period, value, color=model), size=1.2, alpha=0.7) 
+}
+  
+              
+p.emi.grossneg  
+  
+ggsave(plot = p.emi.grossneg, filename = paste0(plots.path, "/Emi_CO2GrossNeg.png"), width=20, height=10, units = "cm")
+
+```
+
+### Gross vs. net GHG Emission
+
+```{r}
+vars = c(    "Emi|GHG|Gross|Energy|Supply|Electricity",
+             "Emi|GHG|Gross|Energy|Supply|Non-electric",
+             "Emi|GHG|Energy|Demand|+|Buildings",
+             "Emi|GHG|Energy|Demand|+|Transport",
+             "Emi|GHG|+++|Industrial Processes",
+             "Emi|GHG|Energy|Demand|+|Industry",
+             "Emi|GHG|+++|Waste",
+             "Emi|GHG|+++|Agriculture",
+             "Emi|GHG|+++|Land-Use Change",
+
+             "Emi|CO2|CDR|BECCS",
+             "Emi|CO2|CDR|DACCS",
+             "Emi|CO2|CDR|EW")
+
+
+
+
+
+# define colors and labels
+tt = plotstyle.add(c("Emi|GHG|Energy|Demand|+|Industry")   ,c("Industry"),  c( "grey"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|Energy|Demand|+|Transport")   ,c("Transport"),  c("darkblue"), replace = T)
+tt = plotstyle.add(c("Emi|GHG|Energy|Demand|+|Buildings")   ,c("Buildings"),  c( "darkred"), replace = T)
+tt = plotstyle.add(c("Emi|GHG|+++|Land-Use Change")   ,c("Land-Use Change"),  c("darkgreen"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|Gross|Energy|Supply|Electricity")   ,c("Elec. Supply"),  c("darkgoldenrod"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|Gross|Energy|Supply|Non-electric")   ,c("Non-elec. Supply"),  c("darkorchid"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|+++|Industrial Processes"),c("Industrial Processes"),  c("palevioletred"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|+++|Agriculture"),c("Agriculture"),  c("saddlebrown"),replace=T)
+tt = plotstyle.add(c("Emi|GHG|+++|Waste"),c("Waste"),  c("slategrey"),replace=T)
+
+
+
+df.emighg.grossneg <- df %>% 
+                    filter(variable %in% vars, period %in% plot.period) %>% 
+                    order.levels(variable = vars)
+df.emighg.tot <- df %>% 
+                filter(variable == "Emi|GHG", period %in% plot.period) %>% 
+                mutate(variable = "Total")
+
+
+
+
+
+p.emighg.grossneg <- ggplot() +
+                    geom_col(data=df.emighg.grossneg, aes(period, value, fill=variable), alpha=0.8) +
+                    geom_line(data=df.emighg.tot, aes(period, value, linetype=variable), size=1.2, alpha=0.7) +
+                    geom_point(data=df.emighg.tot, aes(period, value, shape=variable), size=1.5, alpha=0.7) +
+                    facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                    scale_y_continuous("GHG Emissions (Mt CO2eq/yr)") +
+                    scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(vars, out = "legend")) +
+                    geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
+                    
+                    theme_bw() +
+                    theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                           legend.position = "bottom",strip.background = element_blank(),
+                           legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+# show historical data for validation
+if (show.historical) {
+  
+  df.emighg.tot.hist <- df.hist %>%
+                    filter(variable == "Emi|GHGtot", period >= 1990, period <= max(plot.period), model == "CEDS") %>% 
+                    select(-scenario) %>% 
+                    mutate(model = "historical")
+  
+  p.emighg.grossneg <- p.emighg.grossneg +
+                      geom_line(data=df.emighg.tot.hist, aes(period, value, color=model), size=1.2, alpha=0.7) 
+}
+  
+              
+p.emighg.grossneg 
+  
+ggsave(plot = p.emighg.grossneg, filename = paste0(plots.path, "/Emi_GHGGrossNeg.png"), width=20, height=10, units = "cm")
+```
+
+
+
+
+
+### Emissions Reduction relative to reference year
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+ref.year <- 1990
+
+hist.vars.map <- c( 'Emi|GHGtot' = 'Emi|GHG',
+  'Emi|CO2|Energy|Supply'='Emi|CO2|Gross|Energy|+|Supply',
+  'Emi|CO2|Energy|Supply|Electricity'='Emi|CO2|Gross|Energy|Supply|+|Electricity',
+  'Emi|CO2|Energy|Demand|Industry'='Emi|CO2|Energy|Demand|+|Industry',
+  'Emi|CO2|Energy|Demand|Residential and Commercial'='Emi|CO2|Energy|Demand|+|Buildings',
+  'Emi|CO2|Energy|Demand|Transportation'='Emi|CO2|Energy|Demand|+|Transport')
+
+
+emi.labels <- c(
+  'Emi|GHG'="Total GHG",
+  'Emi|CO2|Gross|Energy|Supply|+|Electricity'= "Electricity CO2",
+  'Emi|CO2|Gross|Energy|+|Supply' = "Energy Supply CO2",
+  "Emi|CO2|Energy|Demand|+|Industry"="Industry CO2",
+  'Emi|CO2|Energy|Demand|+|Buildings'="Buildings CO2",
+  'Emi|CO2|Energy|Demand|+|Transport'="Transport CO2"
+)
+
+
+
+
+
+# take CEDS data for historic emissions
+df.hist.rel <-    df.hist %>%
+                    filter(variable %in% names(hist.vars.map), period %in% ref.year, model %in% c("CEDS")) %>%
+                    select(-scenario, -model, -unit, -period) %>%
+                    rename( RefYear = value) %>% 
+                    revalue.levels(variable = hist.vars.map)
+
+
+df.emi.rel.plot <- df %>%
+                      filter(variable %in% hist.vars.map, period %in% plot.period) %>%
+                      left_join(df.hist.rel) %>% 
+                      mutate( Emi.rel = (value-RefYear)/RefYear * 100) %>%
+                      revalue.levels(variable = emi.labels)
+
+df.emi.rel.hist.plot <- df.hist %>% 
+                          filter(variable %in% names(hist.vars.map), period >= ref.year, period <= 2020, model %in% c("CEDS","Eurostat","UNFCC")) %>%
+                          revalue.levels(variable = hist.vars.map) %>%
+                          left_join(df.hist.rel) %>% 
+                          mutate( Emi.rel = (value-RefYear)/RefYear * 100) %>%
+                          revalue.levels(variable = emi.labels) 
+
+
+p.emi.rel <- ggplot() +
+              geom_line(data=df.emi.rel.plot, aes(period, Emi.rel, color=scenario), size=1.2, alpha=0.7) +
+              geom_point(data=df.emi.rel.plot, aes(period, Emi.rel, color=scenario), size=1.5, alpha=0.7) +
+              geom_line(data=df.emi.rel.hist.plot, aes(period, Emi.rel, color=model), size=1.2, alpha=0.7) +
+              facet_wrap(~variable) +
+              scale_y_continuous(paste0("Emissions Reductions\nrelative to ", ref.year,"\n [%]"), breaks = seq(-120,40,20)) +
+              geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
+              geom_hline(yintercept=-100, size=0.8, linetype="dashed", alpha=0.7) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                           legend.position = "bottom",strip.background = element_blank(),
+                           legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+
+
+
+
+p.emi.rel
+
+
+ggsave(plot = p.emi.rel, filename = paste0(plots.path, "/Emi_RelReduction", ".png"),width=20, height=10, units = "cm")
+```
+
+
+### Carbon intensity 
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE }
+
+
+
+# calculate carbon intensity (note: the fuel carbon intensity includes hydrogen in this plot, so not only carbon fuels)
+df.CI <- df %>% 
+          filter(period %in% plot.period) %>% 
+          # TODO: once Emi|CO2|Gross|Energy|Demand|+|Industry variable there, consider taking industry gross emissions variable instead of net variable to avoid negative carbon intensities for fuels, perhaps also gross electricity emissions variable instead of net
+          calc_addVariable("`Electricity`" = "(`Emi|CO2|Energy|Supply|+|Electricity w/ couple prod`) / (`SE|Electricity`)*3.6",
+                           "`Fuels`" = "(`Emi|CO2|Energy|Demand|+|Industry` +  `Emi|CO2|Energy|Demand|+|Buildings` +  `Emi|CO2|Energy|Demand|+|Transport`)  / (`FE|+|Solids` + `FE|+|Liquids` + `FE|+|Gases` + `FE|+|Hydrogen`)*3.6",
+                           "`Fuels Transport`" = "(`Emi|CO2|Energy|Demand|+|Transport`)  / (`FE|Transport|+|Liquids` + `FE|Transport|+|Gases` + `FE|Transport|+|Hydrogen`)*3.6",
+                           "`Fuels Industry`" = "(`Emi|CO2|Energy|Demand|+|Industry`)  / (`FE|Industry|+|Solids` + `FE|Industry|+|Liquids` + `FE|Transport|+|Gases` + `FE|Transport|+|Hydrogen`)*3.6",
+                          "`Fuels Buildings`" = "(`Emi|CO2|Energy|Demand|+|Buildings`)  / (`FE|Buildings|+|Solids` + `FE|Buildings|+|Liquids` + `FE|Buildings|+|Gases` + `FE|Buildings|+|Hydrogen`)*3.6",
+                          units  = "kg CO2/MWh", only.new = T)
+
+# electricity carbon intensity
+df.CI_elec <- df.CI %>% 
+                filter(variable == "Electricity") 
+
+p.CI_Elec <- mipLineHistorical(df.CI_elec, ylab = "Carbon Intensity Electricity\n[kg CO2/MWh]", size = 10) +
+              theme_bw()
+
+
+p.CI_Elec
+# fuel (Solids, Liquids, Gases, Hydrogen) carbon intensity
+df.CI_nonelec <- df.CI %>% 
+                filter(variable == "Fuels") 
+
+p.CI_nonelec <- mipLineHistorical(df.CI_nonelec, ylab = "Carbon Intensity Fuels\n[kg CO2/MWh]", size = 10) +
+              theme_bw()
+
+p.CI_nonelec
+
+
+df.CI_sector <- df.CI %>% 
+                  filter(variable %in% c( "Electricity","Fuels Transport","Fuels Industry","Fuels Buildings"))
+
+# electricity carbon intensity and fuel (solids, gases, liuquids, hydrogen) carbon intensity per sector
+p.CI_sector <- ggplot(df.CI_sector, aes(period, value, color=scenario)) +
+                geom_line(size=1.2, alpha=0.7) +
+                geom_point(size=1.5, alpha=0.7) +
+                facet_wrap(~variable, ncol = length(getVars(df.CI_sector))) +
+                geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
+                scale_y_continuous("Carbon Intensity\n[kg CO2/MWh]") +
+                theme_bw() +
+                theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                       legend.position = "bottom",strip.background = element_blank(),
+                       legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+  
+
+
+p.CI_sector
+
+
+ggsave(plot = p.CI_Elec, filename = paste0(plots.path, "/Emi_CI_Elec.png"), width=12, height=8, units = "cm")
+ggsave(plot = p.CI_nonelec, filename = paste0(plots.path, "/Emi_CI_NonElec.png"), width=12, height=8, units = "cm")
+ggsave(plot = p.CI_sector, filename = paste0(plots.path, "/Emi_CI_Sector.png"), width=20, height=10, units = "cm")
+
+
+
+
+```
+
+
+### FE emissions intensity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Note: Difference to carbon intensity above is that here fuels are defined only as carbon fuels, so excl. hydrogen
+df <-  df %>%
+                 calc_addVariable(
+                  ## convert MtCO2 in kgCO2 and EJ into MWh
+                       "`FE|Emission|Intensity|Fuel`"  =  "(1e9*(`Emi|CO2|Energy|Demand|+|Industry` +
+ `Emi|CO2|Energy|Demand|+|Buildings` + `Emi|CO2|Energy|Demand|+|Transport`))/((`FE|+|Gases` + `FE|+|Liquids` + `FE|+|Solids`)*277777777.78)", 
+
+                       "`FE|Emission|Intensity|Electricity`"  =  "(1e9*`Emi|CO2|Gross|Energy|Supply|+|Electricity`)/(`SE|Electricity`*277777777.78)",
+                       units  = "MWh/kgCO2") ## convert MtCO2 in kgCO2 and EJ into MWh
+
+vars.emi.int <- c("FE|Emission|Intensity|Fuel",
+                  "FE|Emission|Intensity|Electricity")
+
+emi.int.label <- c("FE|Emission|Intensity|Fuel" = "Emissions intensity fuel",
+                   "FE|Emission|Intensity|Electricity" = "Emissions intensity electricity")
+
+
+emi.int.color <- c("Emissions intensity fuel" = "#191919",
+                    "Emissions intensity electricity" = "#cc0000")
+
+
+
+df.emi.int <- df %>%
+                  filter(variable %in% vars.emi.int, period %in% plot.period) %>%
+                  revalue.levels(variable = emi.int.label)
+
+p.emi.int <- ggplot(df.emi.int, aes(period, value, color=variable)) +
+                  geom_line(size=1.2, alpha=0.7) +
+                                            facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                  scale_y_continuous("Emissions intensity\n(MWh/kgCO2)") +
+                  scale_color_manual(values = emi.int.color)+
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                  legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.emi.int
+
+
+
+ggsave(plot = p.emi.int,
+       filename =  paste0(plots.path, "/Emi_intensityFE.png"),
+       width=20, height=10, units="cm")
+
+```
+
+
+
+
+### Carbon Management: Carbon Sources and Sinks
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+### plot with positive supply and negative CO2 demand bars
+co2sup.focus.vars <- c("Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w/ couple prod",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Hydrogen w/ couple prod",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Liquids w/ couple prod",
+                      "Carbon Management|Carbon Sources|+|Fossil|Pe2Se",
+                      "Carbon Management|Carbon Sources|+|Industry Energy (Mt CO2/yr)",
+                      "Carbon Management|Carbon Sources|+|Industry Process (Mt CO2/yr)",
+                      "Carbon Management|Carbon Sources|+|DAC")
+
+co2dem.focus.vars <- c("Carbon Management|Carbon Sinks|+|Storage",
+                      "Carbon Management|Carbon Sinks|+|Synthetic Liquids",
+                      "Carbon Management|Carbon Sinks|+|Synthetic Gases")
+
+co2.sink.source.label <- c("Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w/ couple prod" = "Other Biomass w/ CC",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Hydrogen w/ couple prod" = "CC from Biomass to H2 w/ CC",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Liquids w/ couple prod" = "CC from Biomass to Liquids w/ CC",
+                      "Carbon Management|Carbon Sources|+|Fossil|Pe2Se" = "Pe2Se Fossil CC",
+                      "Carbon Management|Carbon Sources|+|Industry Energy" = "industry energy CC",
+                      "Carbon Management|Carbon Sources|+|Industry Process" = "industry process CC",
+                      "Carbon Management|Carbon Sources|+|DAC" = "DAC",
+                      "Carbon Management|Carbon Sinks|+|Storage" = "Underground Storage",
+                      "Carbon Management|Carbon Sinks|+|Synthetic Liquids" = "Synthetic Liquids",
+                      "Carbon Management|Carbon Sinks|+|Synthetic Gases" = "Synthetic Gases")
+
+
+
+co2.sink.source.color <- c("Other Biomass w/ CC" = "seagreen1",
+                          "CC from Biomass to H2 w/ CC" = "lightseagreen",
+                          "CC from Biomass to Liquids w/ CC" = "seagreen4",
+                          "Pe2Se Fossil CC" = "grey20",
+                     "industry energy CC" = "red",
+                      "industry process CC" = "lightyellow",
+                     "DAC" = "cyan",
+                      "Underground Storage" = "sandybrown",
+                      "Synthetic Liquids" = "mediumpurple4",
+                      "Synthetic Gases" = "plum2")
+
+vars.order <- c("Other Biomass w/ CC",
+                "CC from Biomass to H2 w/ CC",
+                "CC from Biomass to Liquids w/ CC",
+                "Pe2Se Fossil CC",
+                "industry energy CC",
+                "industry process CC",
+                "DAC",
+                "Underground Storage",
+                "Synthetic Liquids",
+                "Synthetic Gases")
+
+
+df.co2.sink.source <- df %>%
+                       filter(variable %in% co2sup.focus.vars) %>%
+                       # change sign of DAC variable
+                       mutate( value = ifelse(as.character(variable) == "Emi|CO2|DAC",
+                               -value, value)) %>%
+                       # bind demand variables with negative sign
+                        rbind( df %>%
+                              filter(variable %in% co2dem.focus.vars) %>%
+                              # change sign an remove "SE|Electricity|used for"
+                              mutate( value = - value)) %>%
+                        revalue.levels(variable = co2.sink.source.label) %>%
+                        order.levels(variable = vars.order) %>%
+                        filter(period %in% plot.period)
+
+
+
+p.co2.sink.source <- ggplot() +
+                      geom_col(data=df.co2.sink.source,
+                               aes(period, value, fill=variable),
+                               alpha=.6, width = 3) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("Captured CO2 (Mt CO2/yr)") +
+                      scale_fill_manual(values = co2.sink.source.color) +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                        legend.position = "bottom",
+                        strip.background = element_blank(),
+                        legend.title = element_blank(),
+                        strip.text.y = element_text(angle = 0, hjust = 0)) +
+                      guides(fill=guide_legend(ncol=4, direction = "horizontal"))
+
+
+p.co2.sink.source
+
+
+
+ggsave(plot = p.co2.sink.source,filename =  paste0(plots.path, "/CarbonManag_SinkSource.png"),width=20, height=10, units="cm")
+
+
+```
+
+
+## 2. Primary Energy
+
+### PE Mix
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars <- c("PE|+|Coal",
+"PE|+|Oil",
+"PE|+|Gas",
+"PE|+|Biomass",
+"PE|+|Nuclear",
+"PE|+|Hydro",
+"PE|+|Wind",
+"PE|+|Solar",
+"PE|+|Geothermal")
+
+
+df.PE = df %>% 
+          filter(variable %in% vars) 
+  
+
+
+
+
+
+p.PEmix <- ggplot() +
+            ylab("Primary Energy\n[EJ/yr]") +
+            geom_col(data=df.PE, aes(period, value, fill=variable)) +
+            scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(out = "legend", vars)) +
+            facet_wrap(~scenario) +
+            theme_bw() +
+            theme(strip.background = element_blank())
+
+
+
+
+
+# show historical data for validation
+if (show.historical) {
+  
+  df.pe.tot.hist = df.hist %>% 
+                filter(variable == "PE", period >= 1990, period <= 2015, !is.na(value), model == "IEA") %>%
+                # rescale IEA Pe by 95%, why?
+                mutate(value = .95*value) %>%
+                select(-scenario)
+  
+  p.PEmix <- p.PEmix +
+                geom_line(data=df.pe.tot.hist, aes(period, value, color=model), size=1.2, alpha=0.7) 
+}
+p.PEmix  
+
+ggsave(plot = p.PEmix, filename = paste0(plots.path, "/PE_mix_bar.png"), width=25, height=18, units="cm")
+
+```
+
+
+
+### PE Biomass Use
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "PE|Biomass|Electricity",
+  "PE|Biomass|Gases",
+  "PE|Biomass|Heat",
+  "PE|Biomass|Hydrogen|w/ CCS", "PE|Biomass|Hydrogen|w/o CCS",
+  "PE|Biomass|Liquids|w/ CCS",
+  "PE|Biomass|Liquids|w/o CCS",
+  "PE|Biomass|Solids|Modern",
+  "PE|Biomass|Traditional"
+)
+
+df.plot = filter(df, variable %in% vars) %>%
+  order.levels(variable = vars) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+mipArea(df.plot, total = F) +
+  facet_grid(~scenario) +
+  ylab("Biomass use\n[EJ/yr]") +
+  theme_bw() +
+  theme(legend.position = "bottom", strip.background = element_blank())
+
+
+ggsave(filename = paste0(plots.path, "/PE_BioenergyUse_area.png"), width=19, height=12, units="cm")
+
+mipBarYearData(df.plot) +
+  ylab("Biomass use\n[EJ/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/PE_BioenergyUse_bar.png"), width=19, height=12, units="cm")
+
+```
+
+
+## 3. Secondary Energy
+
+
+
+### Electricity Mix
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "SE|Electricity|Hydrogen",
+  "SE|Electricity|Solar",
+  "SE|Electricity|Wind",
+  "SE|Electricity|Geothermal",
+  "SE|Electricity|Hydro",
+  "SE|Electricity|Biomass",
+  "SE|Electricity|Nuclear",
+  "SE|Electricity|Gas",
+  "SE|Electricity|Oil",
+  "SE|Electricity|Coal"
+)
+
+df.plot = filter(df, variable %in% vars ) %>%
+  order.levels(variable = vars) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+df.tot.hist = filter(df.hist, variable %in% vars, period >= 1990, !is.na(value), model == "IEA", region == reg) %>%
+  mutate(value = value) %>%
+  select(-scenario) %>%
+  group_by(period) %>%
+  summarise(value = sum(value)) %>%
+  ungroup() %>%
+  filter(!is.na(value)) %>%
+  mutate(variable = "SE|Electricity")
+
+geom_line(data= df.tot.hist, aes(x=period, y = value), color = "black", size =2 )
+
+mipArea(df.plot, total = F) +
+  facet_grid(~scenario) +
+  geom_line(data= df.tot.hist, aes(x=period, y = value), color = "black", size =2 ) +
+  ylab("Electricity Generation\n[EJ/yr]") +
+  xlab("") +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  theme(legend.position = 'bottom')
+
+ggsave(filename = paste0(plots.path, "/SE_Electricity_area.png"), width=20, height=10, units = "cm")
+
+mipBarYearData(df.plot) +
+  ylab("Electricity Generation\n[EJ/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/SE_Electricity_bar.png"), width=20, height=12, units = "cm")
+
+```
+
+
+### Non-electric SE
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "SE|Solids|Coal",
+  "SE|Liquids|Oil",
+  "SE|Gases|Natural Gas",
+  "SE|Liquids|Coal",
+  "SE|Gases|Coal",
+  "SE|Hydrogen|Coal",
+  "SE|Heat|Coal",
+  "SE|Liquids|Gas",
+  "SE|Hydrogen|Gas",
+  "SE|Hydrogen|Biomass",
+  "SE|Hydrogen|Net Imports",
+  "SE|Heat|Gas",
+  "SE|Solids|Biomass",
+  "SE|Liquids|Biomass",
+  "SE|Gases|Biomass",
+  "SE|Gases|Waste",
+  "SE|Hydrogen|Biomass",
+  "SE|Heat|Biomass",
+  "SE|Heat|Geothermal",
+  "SE|Hydrogen|Electricity")
+
+df.plot = filter(df, variable %in% vars ) %>%
+  order.levels(variable = rev(vars)) %>%
+  mutate(value = value) %>%
+  factor.data.frame()
+
+mipArea(df.plot, total = F) +
+  facet_grid(~scenario) +
+  ylab("Secondary Energy [EJ/yr]") +
+  xlab("") +
+  theme_bw() +
+  theme(strip.background = element_blank()) +
+  theme(legend.position = 'bottom')
+
+ggsave(filename = paste0(plots.path, "/SE_nonElec_area.png"), width=25, height=15, units="cm")
+
+mipBarYearData(df.plot) +
+  ylab("Secondary Energy [EJ/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/SE_nonElec_bar.png"), width=25, height=15, units="cm")
+
+```
+
+
+### Liquid Fuel production
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "SE|Liquids|Biomass",
+  "SE|Liquids|Coal",
+  "SE|Liquids|Oil",
+  "SE|Liquids|Hydrogen")
+
+df.plot = filter(df, variable %in% vars ) 
+
+mipArea(df.plot, total = F) +
+  facet_grid(~scenario) +
+  ylab("Liquid fuel supply\n[EJ/yr]") +
+  theme_bw()
+
+ggsave(filename = paste0(plots.path, "/SE_Liquids_area.png"), width=19, height=12, units="cm")
+
+mipBarYearData(df.plot) +
+  ylab("Liquid fuel supply\n[EJ/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/SE_Liquids_bar.png"), width=19, height=12, units="cm")
+
+```
+
+
+### Gases Fuel production
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars = c(
+  "SE|Gases|Biomass",
+  "SE|Gases|Coal",
+  "SE|Gases|Natural Gas",
+  "SE|Gases|Hydrogen")
+
+df.plot = filter(df, variable %in% vars) 
+  
+
+mipArea(df.plot, total = F) +
+  facet_grid(~scenario) +
+  ylab("Gases fuel supply\n[EJ/yr]") +
+  theme_bw()
+
+ggsave(filename = paste0(plots.path, "/SE_Gases_area.png"), width=19, height=12, units="cm")
+
+mipBarYearData(df.plot) +
+  ylab("Gases fuel supply\n[EJ/yr]") +
+  theme_bw() +
+  theme(strip.background = element_blank())
+
+ggsave(filename = paste0(plots.path, "/SE_Gases_bar.png"), width=19, height=12, units="cm")
+
+```
+
+
+
+
+
+### SE H2 Sinks and Sources Plot
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+### plot with positive supply and negative demand bars
+h2sup.focus.vars <- c("SE|Hydrogen|Biomass|w/ CCS",
+                      "SE|Hydrogen|Biomass|w/o CCS",
+                      "SE|Hydrogen|Coal",
+                      "SE|Hydrogen|Gas",
+                      "SE|Hydrogen|Electricity|Standard Electrolysis",
+                      "SE|Hydrogen|Electricity|VRE Storage Electrolysis",
+                      "SE|Hydrogen|Net Imports")
+
+h2dem.focus.vars <- c("SE|Hydrogen|used for electricity|normal turbines",
+                "SE|Hydrogen|used for electricity|forced VRE turbines",
+                "SE|Hydrogen|used for synthetic fuels|liquids",
+                "SE|Hydrogen|used for synthetic fuels|gases",
+                "FE|Industry|+|Hydrogen",
+                "FE|Buildings|+|Hydrogen",
+                "FE|Transport|+|Hydrogen",
+                "FE|CDR|+|Hydrogen")
+
+
+h2.sink.source.label <- c(
+                "SE|Hydrogen|Biomass|w/ CCS" = "Biomass w/ CC",
+                "SE|Hydrogen|Biomass|w/o CCS" = "Biomass w/o CC",
+                "SE|Hydrogen|Coal" = "Coal",
+                "SE|Hydrogen|Gas" = "Gas",
+                "SE|Hydrogen|Electricity|Standard Electrolysis" = "Grey Electrolysis",
+                "SE|Hydrogen|Electricity|VRE Storage Electrolysis" = "VRE Storage Electrolysis",
+                "SE|Hydrogen|Net Imports" = "Net Imports",
+
+                "SE|Hydrogen|used for electricity|normal turbines" = "H2 Turbines",
+                "SE|Hydrogen|used for electricity|forced VRE turbines" = "H2 forced VRE Turbines",
+                "SE|Hydrogen|used for synthetic fuels|liquids" = "H2 for Synthetic Liquids",
+                "SE|Hydrogen|used for synthetic fuels|gases" = "H2 for Synthetic Gases",
+                "FE|Industry|+|Hydrogen" = "H2 for Industry",
+                "FE|Buildings|+|Hydrogen" = "H2 for Buildings",
+                "FE|Transport|+|Hydrogen" = "H2 for Transport",
+                "FE|CDR|+|Hydrogen" = "H2 for CDR"
+)
+
+h2.sink.source.color <- c(
+                "Biomass w/ CC" = "darkgreen",
+                "Biomass w/o CC" = "lightgreen",
+                "Coal"= "black",
+                "Gas"= "grey80",
+                "Grey Electrolysis" = "darkred",
+                "VRE Storage Electrolysis" = "darkgoldenrod",
+                "Net Imports" = "darkslateblue",
+
+                "H2 Turbines" = "darkred",
+                "H2 forced VRE Turbines" = "coral",
+                "H2 for Synthetic Liquids" = "darkblue",
+                "H2 for Synthetic Gases" = "lightblue",
+                "H2 for Industry" = "steelblue",
+                "H2 for Buildings" = "grey80",
+                "H2 for Transport" = "green",
+                "H2 for CDR" = "cyan"
+
+)
+
+
+
+
+vars.order <- c("Coal",
+                "Gas",
+                "Biomass w/ CC",
+                "Biomass w/o CC",
+                "Grey Electrolysis",
+                "VRE Storage Electrolysis",
+                "Net Imports",
+
+                "H2 for Synthetic Gases",
+                "H2 for Synthetic Liquids",
+                "H2 for CDR",
+                "H2 for Transport",
+                "H2 for Buildings",
+                "H2 for Industry",
+                "H2 Turbines",
+                "H2 forced VRE Turbines"
+)
+
+df.h2.sink.source <- df %>%
+                       filter(variable %in% h2sup.focus.vars) %>%
+                       # bind demand variables with negative sign
+                        rbind( df %>%
+                              filter(variable %in% h2dem.focus.vars) %>%
+                              # change sign an remove "SE|Electricity|used for"
+                              mutate( value = - value)) %>%
+                        revalue.levels(variable = h2.sink.source.label) %>%
+                        order.levels(variable = vars.order) %>%
+                        filter(period %in% plot.period)
+
+
+
+p.h2.sink.source <- ggplot() +
+                      geom_col(data=df.h2.sink.source,
+                               aes(period, value, fill=variable),
+                               alpha=.6, width = 3) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("H2 (EJ/yr)") +
+                      scale_fill_manual(values = h2.sink.source.color) +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                        legend.position = "bottom",
+                        strip.background = element_blank(),
+                        legend.title = element_blank(),
+                        strip.text.y = element_text(angle = 0, hjust = 0)) +
+                      guides(fill=guide_legend(direction = "horizontal"))
+
+
+p.h2.sink.source
+
+
+ggsave(plot = p.h2.sink.source,
+       filename =  paste0(plots.path, "/SE_H2_SinkSource.png"),
+       width=25, height=10, units="cm")
+
+
+
+
+
+
+```
+
+
+### SE Electricity Sinks and Sources Plot
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+### plot with positive supply and negative demand bars
+elsup.focus.vars <- c("SE|Electricity|Wind",
+                      "SE|Electricity|Solar|PV",
+                      "SE|Electricity|Hydrogen",
+                      "SE|Electricity|Gas",
+                      "SE|Electricity|Other Fossil",
+                      "SE|Electricity|Other Renewables",
+                      "SE|Electricity|Nuclear",
+                      "SE|Electricity|Net Imports")
+
+eldem.focus.vars <- c("SE|Electricity|used for own consumption of energy system",
+                      "SE|Electricity|used for CDR",
+                      "SE|Electricity|used in Buildings",
+                      "SE|Electricity|used in Industry",
+                      "SE|Electricity|used in Transport",
+                      "SE|Electricity|used for H2|direct FE H2",
+                      "SE|Electricity|used for H2|VRE Storage",
+                      "SE|Electricity|used for H2|for synthetic fuels|liquids",
+                      "SE|Electricity|used for H2|for synthetic fuels|gases")
+
+el.sink.source.label <- c("SE|Electricity|Wind" = "Wind",
+                      "SE|Electricity|Solar|PV" = "PV",
+                      "SE|Electricity|Hydrogen" = "Hydrogen",
+                      "SE|Electricity|Gas" = "Gas",
+                      "SE|Electricity|Other Fossil" = "Other Fossil",
+                      "SE|Electricity|Other Renewables" = "Other Renewables",
+                      "SE|Electricity|Nuclear" = "Nuclear",
+                      "SE|Electricity|Net Imports" = "Net Imports",
+                      "SE|Electricity|used for own consumption of energy system" = "for own consumption",
+                      "SE|Electricity|used for H2|direct FE H2" = "for direct H2",
+                      "SE|Electricity|used for H2|VRE Storage" = "for H2 storage",
+                      "SE|Electricity|used for CDR" = "for CDR",
+                      "SE|Electricity|used in Buildings" = "for Buildings",
+                      "SE|Electricity|used in Industry" = "for Industry",
+                      "SE|Electricity|used in Transport" = "for Transport",
+                      "SE|Electricity|used for H2|for synthetic fuels|liquids" = "for synthetic liquids",
+                      "SE|Electricity|used for H2|for synthetic fuels|gases" = "for synthetic gases")
+
+el.sink.source.color <- c("Wind" = "deepskyblue1",
+                          "PV" = "yellow",
+                          "Hydrogen" = "cyan",
+                          "Gas" = "grey80",
+                          "Other Fossil" = "grey20",
+                          "Other Renewables" = "darkgreen",
+                          "Nuclear" = "darkorchid",
+                          "Net Imports" = "darkslateblue",
+                          "for own consumption" = "darkgoldenrod",
+                          "for direct H2" = "darkcyan",
+                          "for H2 storage" = "mediumpurple1",
+                          "for CDR" = "lightgreen",
+                          "for Buildings" = "red",
+                          "for Industry" = "grey50",
+                          "for Transport" = "blue",
+                          "for synthetic liquids" = "lightyellow3",
+                          "for synthetic gases" = "navajowhite1")
+
+vars.order <- c("PV",
+                "Wind",
+                "Hydrogen",
+                "Other Renewables",
+                "Gas",
+                "Other Fossil",
+                "Nuclear",
+                "Net Imports",
+                "for synthetic gases",
+                "for synthetic liquids",
+                "for H2 storage",
+                "for direct H2",
+                "for CDR",
+                "for Buildings",
+                "for Industry",
+                "for Transport",
+                "for own consumption")
+
+
+
+df.el.sink.source <- df %>%
+                       filter(variable %in% elsup.focus.vars) %>%
+                       # bind demand variables with negative sign
+                        rbind( df %>%
+                              filter(variable %in% eldem.focus.vars) %>%
+                              # change sign an remove "SE|Electricity|used for"
+                              mutate( value = - value)) %>%
+                        revalue.levels(variable = el.sink.source.label) %>%
+                        order.levels(variable = vars.order) %>%
+                        filter(period %in% plot.period)
+
+
+
+p.el.sink.source <- ggplot() +
+                      geom_col(data=df.el.sink.source,
+                               aes(period, value, fill=variable),
+                               alpha=.6, width = 3) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("Electricity (EJ/yr)") +
+                      scale_fill_manual(values = el.sink.source.color) +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                        legend.position = "bottom",
+                        strip.background = element_blank(),
+                        legend.title = element_blank(),
+                        strip.text.y = element_text(angle = 0, hjust = 0)) +
+                      guides(fill=guide_legend(direction = "horizontal"))
+
+
+p.el.sink.source
+
+
+ggsave(plot = p.el.sink.source,
+       filename =  paste0(plots.path, "/SE_Elec_SinkSource.png"),
+       width=25, height=10, units="cm")
+
+
+```
+
+
+
+## 4. Final Energy
+
+### FE by sector
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars.fe.sec = c("FE|++|CDR",
+                "FE|++|Buildings",
+                "FE|++|Transport",
+                "FE|++|Industry")
+
+
+
+# define colors and labels
+tt = plotstyle.add(c("FE|++|CDR")   ,c("CDR"),  c( "cyan"),replace=T)
+tt = plotstyle.add(c("FE|++|Buildings")   ,c("Buildings"),  c("darkred"), replace = T)
+tt = plotstyle.add(c("FE|++|Transport")   ,c("Transport"),  c( "darkblue"), replace = T)
+tt = plotstyle.add(c("FE|++|Industry")   ,c("Industry"),  c("darkgrey"),replace=T)
+
+
+
+
+
+df.fe.sec <- df %>% 
+                    filter(variable %in% vars.fe.sec, period %in% plot.period) %>% 
+                    order.levels(variable = vars.fe.sec)
+df.fe.sec.tot <- df %>% 
+                filter(variable == "FE", period %in% plot.period) %>% 
+                mutate(variable = "Total")
+
+
+
+
+
+p.fe.sec <- ggplot() +
+                    geom_col(data=df.fe.sec, aes(period, value, fill=variable), alpha=0.8) +
+                    geom_line(data=df.fe.sec.tot, aes(period, value, linetype=variable), size=1.2, alpha=0.7) +
+                    geom_point(data=df.fe.sec.tot, aes(period, value, shape=variable), size=1.5, alpha=0.7) +
+                    facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                    scale_y_continuous("Final Energy (EJ/yr)") +
+                    scale_fill_manual(values = mip::plotstyle(vars.fe.sec), labels = mip::plotstyle(vars.fe.sec, out = "legend")) +
+                    geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
+                    theme_bw() +
+                    theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                           legend.position = "bottom",strip.background = element_blank(),
+                           legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+# show historical data for validation
+if (show.historical) {
+  
+  df.fe.sec.hist <- df.hist %>%
+                    filter(variable == "FE", period >= 1990, period <= max(plot.period), model %in% c("IEA","Eurostat")) %>% 
+                    select(-scenario) 
+  
+  p.fe.sec <- p.fe.sec +
+                      geom_line(data=df.fe.sec.hist, aes(period, value, color=model), size=1.2, alpha=0.7) 
+}
+  
+              
+p.fe.sec 
+  
+ggsave(plot = p.fe.sec, filename = paste0(plots.path, "/FE_sector.png"), width=20, height=10, units = "cm")
+
+
+
+
+
+
+```
+
+
+### FE by sector and carrier 
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+vars <- c(
+          # liquids
+          "FE|Buildings|Liquids|+|Fossil",
+          "FE|Buildings|Liquids|+|Biomass",
+          "FE|Buildings|Liquids|+|Hydrogen",
+          "FE|Industry|Liquids|+|Fossil",
+          "FE|Industry|Liquids|+|Biomass",
+          "FE|Industry|Liquids|+|Hydrogen",
+          "FE|Transport|Liquids|+|Fossil",
+          "FE|Transport|Liquids|+|Biomass",
+          "FE|Transport|Liquids|+|Hydrogen",
+          # gases
+          "FE|Buildings|Gases|+|Fossil",
+          "FE|Buildings|Gases|+|Biomass",
+          "FE|Buildings|Gases|+|Hydrogen",
+          "FE|Industry|Gases|+|Fossil",
+          "FE|Industry|Gases|+|Biomass",
+          "FE|Industry|Gases|+|Hydrogen",
+          "FE|Transport|Gases|+|Fossil",
+          "FE|Transport|Gases|+|Biomass",
+          "FE|Transport|Gases|+|Hydrogen",
+          # solids
+          "FE|Buildings|+|Solids", "FE|Industry|+|Solids",
+          # heat
+          "FE|Buildings|+|Heat", "FE|Industry|+|Heat",
+          # hydrogen
+          "FE|Buildings|+|Hydrogen",
+          "FE|Industry|+|Hydrogen",
+          "FE|Transport|+|Hydrogen",
+          # electricity
+          "FE|Buildings|+|Electricity",
+          "FE|Industry|+|Electricity",
+          "FE|Transport|+|Electricity"
+          )
+
+plot.vars.order <- c("Solids","Heat","Synthetic Gases","Biomass Gases","Fossil Gases",
+                     "Synthetic Liquids","Biomass Liquids","Fossil Liquids",
+                     "Hydrogen" ,"Electricity" )
+
+plot.vars.color <- c("Solids" = "#191919","Heat" = "#cc0000",
+                     "Synthetic Gases" = "plum2","Biomass Gases" = "olivedrab2",
+                     "Fossil Gases" = "gray90",
+                     "Synthetic Liquids" = "mediumpurple4",
+                     "Biomass Liquids" = "olivedrab",
+                     "Fossil Liquids" = "gray40",
+                     "Hydrogen" = "#66cccc","Electricity" =   "#ffb200" )
+
+
+df.FE.sec.car <- df %>%
+              filter(variable %in% vars, period %in% plot.period) %>%
+              # add bar to be able to retrieve for dimensions of variables in the next step
+              mutate( variable = paste0(variable,"| "))
+
+# spread variables label across dimensions (to obtain sector dimensions and energy carrier dimension)
+df.FE.sec.car$sector <- strsplit(as.character(df.FE.sec.car$variable), "\\|")
+df.FE.sec.car$sector <- sapply(df.FE.sec.car$sector, "[[", 2)
+
+df.FE.sec.car$encar <- strsplit(as.character(df.FE.sec.car$variable), "\\|")
+df.FE.sec.car$encar <- sapply(df.FE.sec.car$encar, "[[", 3)
+
+df.FE.sec.car$origin <- strsplit(as.character(df.FE.sec.car$variable), "\\|")
+df.FE.sec.car$origin <- sapply(df.FE.sec.car$origin, "[[", 4)
+
+df.FE.sec.car$origin2 <- strsplit(as.character(df.FE.sec.car$variable), "\\|")
+df.FE.sec.car$origin2 <- sapply(df.FE.sec.car$origin2, "[[", 5)
+
+df.FE.sec.car.plot <- df.FE.sec.car %>%
+                    mutate(encar = ifelse( origin == "+",
+                                           paste(origin2, encar), encar)) %>%
+                    mutate( encar = ifelse( encar == "+", origin, encar)) %>%
+                    revalue.levels(encar = c("Hydrogen Liquids" = "Synthetic Liquids",
+                                             "Hydrogen Gases" = "Synthetic Gases")) %>%
+                    order.levels(encar = plot.vars.order)
+
+
+p.FE.sec.car <- ggplot(df.FE.sec.car.plot) +
+                geom_col(aes(period, value, fill=encar), alpha=0.8) +
+                scale_fill_manual(values=plot.vars.color) +
+                facet_wrap(sector~scenario, ncol = length(getScenarios(df))) +
+                scale_x_continuous("Year") +
+                scale_y_continuous("Final Energy\n(EJ/yr)") +
+                theme_bw()+
+                theme(strip.background = element_blank(), text = element_text(size=12),
+                      axis.text.x = element_text(angle=90, vjust = 0.5)) +
+                theme(legend.position = 'right', legend.title=element_blank())
+
+
+p.FE.sec.car
+
+ggsave(plot = p.FE.sec.car,
+       filename = paste0(plots.path, "/FE_sec_encar.png"))
+
+
+
+```
+
+
+
+### Sectoral Electrification
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+### set plot config
+vars <- c("Transport El. Share", "BEV Share", "Buildings El. Share",
+          "Industry El. Share")
+vars.colors <- c("CO2 Price" = "black", "Transport El. Share" = "chocolate4",
+                 "BEV Share" = "darkorange", "Buildings El. Share" = "grey",
+                 "Industry El. Share" = "steelblue")
+
+yax.scale <- 100
+secax.scale <- 1500
+###
+
+
+
+# calculate electricity shares
+df.electrif <- df %>%
+              calc_addVariable("`Transport El. Share`" = "`FE|Transport|+|Electricity`/`FE|++|Transport`*100",
+                               # "`BEV Share`" = "`Est EV LDV Stock`/`Est LDV Stock`*100",
+                               "`Buildings El. Share`" = "`FE|Buildings|+|Electricity`/`FE|++|Buildings`*100",
+                               "`Industry El. Share`" = "`FE|Industry|+|Electricity`/`FE|++|Industry`*100", units = "%") %>%
+              filter(variable %in% vars) %>%
+              # join with carbon price as a new column
+              left_join(df %>%
+                                select(scenario, variable, period, value) %>%
+                                filter(variable == "Price|Carbon") %>%
+                                spread(variable, value) %>%
+                                # rescale to fit to second y axes
+                                mutate(`Price|Carbon` = `Price|Carbon` / secax.scale * yax.scale,
+                                       sec.variable = "CO2 Price"))
+
+
+
+  # plot
+  p.Electrif <- ggplot(df.electrif) +
+                  geom_line(aes(period, value, color=variable), size=1.2, alpha=0.7) +
+                  geom_point(aes(period, value, color=variable), size=2) +
+                  geom_line(aes(period, `Price|Carbon`, color=sec.variable),  size=1.2, alpha=0.7) +
+                  geom_point(aes(period, `Price|Carbon`, color=sec.variable), size=2) +
+                  scale_color_manual(values=vars.colors) +
+                  facet_wrap(~scenario, ncol = 4) +
+                  scale_x_continuous("Year") +
+                  scale_y_continuous("Electrification Share (%)", c(0,yax.scale),
+                                     sec.axis = sec_axis(~ . * secax.scale / yax.scale,
+                                                         name = "CO2 Price\n(USD2005/tCO2)"),
+                                     breaks = seq(0,100,20)) +
+                  theme_bw()+
+                  theme(strip.background = element_blank(), text = element_text(size=12)) +
+                  theme(legend.position = 'bottom', legend.title=element_blank())
+
+  p.Electrif
+
+  ggsave(plot = p.Electrif,
+         filename = paste0(plots.path, "/FE_ElectrifShare_Sector.png"),
+         width=40, height=12, units = "cm")
+
+
+
+```
+### Sectoral H2 use
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+### set plot config
+vars <- c("Transport H2 Share", "FCEV Share", "Buildings H2 Share",
+          "Industry H2 Share")
+vars.colors <- c("CO2 Price" = "black", "Transport H2 Share" = "chocolate4",
+                 "FCEV Share" = "darkorange", "Buildings H2 Share" = "grey",
+                 "Industry H2 Share" = "steelblue")
+
+yax.scale <- 50
+secax.scale <- 1500
+###
+
+# UE|Transport is there twice, remove duplicate
+df <- df %>%
+        distinct(region, scenario, period, variable, .keep_all = T)
+
+# calculate H2 shares
+
+  df.H2Share <- df %>%
+              calc_addVariable("`Transport H2 Share`" = "`FE|Transport|+|Hydrogen`/`FE|++|Transport`*100",
+                               # "`FCEV Share`" = "`Est H2 LDV Stock`/`Est LDV Stock`*100",
+                               "`Buildings H2 Share`" = "`FE|Buildings|+|Hydrogen`/`FE|++|Buildings`*100",
+                               "`Industry H2 Share`" = "`FE|Industry|+|Hydrogen`/`FE|++|Industry`*100", units = "%") %>%
+              filter(variable %in% vars) %>%
+              # join with carbon price as a new column
+              left_join(df %>%
+                                select(scenario, variable, period, value) %>%
+                                filter(variable == "Price|Carbon") %>%
+                                spread(variable, value) %>%
+                                # rescale to fit to second y axes
+                                mutate(`Price|Carbon` = `Price|Carbon` / secax.scale * yax.scale,
+                                       sec.variable = "CO2 Price"))
+
+
+
+  # plot
+  p.H2Share <- ggplot(df.H2Share) +
+                  geom_line(aes(period, value, color=variable), size=1.2, alpha=0.7) +
+                  geom_point(aes(period, value, color=variable), size=2) +
+                  geom_line(aes(period, `Price|Carbon`, color=sec.variable),  size=1.2, alpha=0.7) +
+                  geom_point(aes(period, `Price|Carbon`, color=sec.variable), size=2) +
+                  scale_color_manual(values=vars.colors) +
+                  facet_wrap(~scenario, ncol = 4) +
+                  scale_x_continuous("Year") +
+                  scale_y_continuous("H2 Share (%)", c(0,yax.scale),
+                                     sec.axis = sec_axis(~ . * secax.scale / yax.scale,
+                                                         name = "CO2 Price\n(USD2005/tCO2)"),
+                                     breaks = c(seq(0,100,20))) +
+                  theme_bw()+
+                  theme(strip.background = element_blank(), text = element_text(size=12)) +
+                  theme(legend.position = 'bottom', legend.title=element_blank())
+
+  p.H2Share
+
+
+  ggsave(plot = p.H2Share,
+         filename = paste0(plots.path, "/FE_H2Share_Sector.png"),
+         width=40, height=12, units = "cm")
+
+```
+
+## 5. Energy Prices
+
+## Final energy prices
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# transport prices
+FE.price.trans <- c("Price|Final Energy|Transport|Electricity|Moving Avg",
+                    "Price|Final Energy|Transport|Liquids|Moving Avg",
+                    "Price|Final Energy|Transport|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Transport|Gases|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue")
+
+
+df.FE.price.trans <- df %>%
+                      filter(variable %in% FE.price.trans,
+                             period %in% plot.period) %>%
+                      # remove part of variable names which are not needed
+                      mutate( variable =
+                                substr(as.character(variable),
+                                        30,
+                                        nchar(as.character(variable))-11)) %>%
+                      # convert to 2020EUR/MWh
+                      mutate( value = value*1.2*3.66)
+
+p.FE.price.trans <- ggplot(df.FE.price.trans, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Transport Prices\n(EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.trans
+
+
+
+# buildings prices
+FE.price.build <- c("Price|Final Energy|Buildings|Electricity|Moving Avg",
+                    "Price|Final Energy|Buildings|Liquids|Moving Avg",
+                    "Price|Final Energy|Buildings|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Buildings|Gases|Moving Avg",
+                    "Price|Final Energy|Buildings|Solids|Moving Avg",
+                    "Price|Final Energy|Buildings|Heat|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.FE.price.build <- df %>%
+                      filter(variable %in% FE.price.build,
+                             period %in% plot.period) %>%
+                      # remove part of variable names which are not needed
+                      mutate( variable =
+                                substr(as.character(variable),
+                                        30,
+                                        nchar(as.character(variable))-11)) %>%
+                      # convert to 2020EUR/MWh
+                      mutate( value = value*1.2*3.66)
+
+p.FE.price.build <- ggplot(df.FE.price.build, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Buildings Prices\n(EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.build
+
+
+
+# industry  prices
+FE.price.indst <- c("Price|Final Energy|Industry|Electricity|Moving Avg",
+                    "Price|Final Energy|Industry|Liquids|Moving Avg",
+                    "Price|Final Energy|Industry|Hydrogen|Moving Avg",
+                    "Price|Final Energy|Industry|Gases|Moving Avg",
+                    "Price|Final Energy|Industry|Solids|Moving Avg",
+                    "Price|Final Energy|Industry|Heat|Moving Avg")
+
+FE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.FE.price.indst <- df %>%
+                      filter(variable %in% FE.price.indst,
+                             period %in% plot.period) %>%
+                      # remove part of variable names which are not needed
+                      mutate( variable =
+                                substr(as.character(variable),
+                                        29,
+                                        nchar(as.character(variable))-11)) %>%
+                      # convert to 2020EUR/MWh
+                      mutate( value = value*1.2*3.66)
+
+p.FE.price.indst <- ggplot(df.FE.price.indst, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("FE Industry Prices\nMov. Avg. (EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.FE.price.indst
+
+#save plots
+ggsave(plot = p.FE.price.indst,
+       filename = paste0(plots.path, "/Prices_FEind", ".png"),
+       width=15, height=10, units = "cm")
+
+ggsave(plot = p.FE.price.trans,
+       filename = paste0(plots.path, "/Prices_FEtrans", ".png"),
+       width=15, height=10, units = "cm")
+
+
+ggsave(plot = p.FE.price.build,
+       filename = paste0(plots.path, "/Prices_FEbuild", ".png"),
+       width=15, height=10, units = "cm")
+
+
+```
+
+
+## Secondary energy prices
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# se prices
+vars = c("Price|Secondary Energy|Electricity|Moving Avg",
+         #"Price|Secondary Energy|Heat",
+         "Price|Secondary Energy|Liquids|Moving Avg",
+         "Price|Secondary Energy|Gases|Moving Avg",
+        # "Price|Secondary Energy|Solids",
+         "Price|Secondary Energy|Hydrogen|Moving Avg")
+
+SE.price.colors <-  c("Electricity" = "yellow",
+                      "Hydrogen" = "cyan",
+                      "Gases" = "grey20",
+                      "Liquids" = "darkblue",
+                      "Heat" = "red",
+                      "Solids" = "darkgreen")
+
+
+df.SE.price <- df %>%
+                      filter(variable %in% vars,
+                             period %in% plot.period) %>%
+                      # remove part of variable names which are not needed
+                      mutate( variable =
+                                substr(as.character(variable),
+                                        24,
+                                        nchar(as.character(variable)))) %>%
+                      # convert to 2020EUR/MWh
+                      mutate( value = value*1.2*3.66)
+
+p.SE.price <- ggplot(df.SE.price, aes(period, value, color=variable)) +
+                      geom_line(size=1.2, alpha=0.7) +
+                      geom_point(size=1.8, alpha=0.5) +
+                      facet_wrap(~scenario) +
+                      scale_y_continuous("SE Prices\nMov. Avg. (EUR2020/MWh)") +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90),
+                             strip.background = element_blank(), legend.position="bottom")
+
+
+p.SE.price
+
+#save plots
+ggsave(plot = p.SE.price,filename = paste0(plots.path, "/Prices_SE", ".png"),width=15, height=10, units = "cm")
+
+
+
+
+```
+
+
+
+## 6. Policy Cost
+
+### CO2-price
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+var = c('Price|Carbon')
+
+df.plot = filter(df,
+                 variable == var,
+                 period %in% plot.period, value > 0)
+
+
+p.co2price <- ggplot(df.plot, aes(period, value, color=scenario)) +
+                geom_line(size=1.2, alpha=0.7) +
+                geom_point(size=2) +
+                scale_y_continuous("CO2 Price USD2005/tCO2") +
+                theme_bw() +
+                theme( strip.background = element_blank(), axis.text.x = element_text(angle = 90))
+
+p.co2price
+
+p.co2price.log <- ggplot(df.plot, aes(period, value, color=scenario)) +
+                geom_line(size=1.2, alpha=0.7) +
+                geom_point(size=2) +
+                scale_y_continuous("CO2 Price USD2005/tCO2", trans = "log2") +
+                theme_bw() +
+                theme( strip.background = element_blank(), axis.text.x = element_text(angle = 90))
+
+p.co2price.log
+
+
+
+ggsave(plot = p.co2price, filename = paste0(plots.path, "/PolicyCost_CO2price.png"), width=20, height=10, units = "cm")
+ggsave(plot = p.co2price.log, filename = paste0(plots.path, "/PolicyCost_CO2price_log.png"), width=20, height=10, units = "cm")
+
+
+```
+
+
+
+## 7. Detailed Transport Analysis
+
+
+### FE short-medium distance
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# only do plots if EDGE-T reporting variabls are there
+if (any(grepl("FE\\|Transport\\|Freight\\|Road\\|Electricity" ,getVars(df)))) {
+  
+  
+
+## LDV
+vars.LDV <- c("FE|Transport|Pass|Road|LDV|Electricity",
+              "FE|Transport|Pass|Road|LDV|Hydrogen",
+              "FE|Transport|Pass|Road|LDV|Gases",
+              "FE|Transport|Pass|Road|LDV|Liquids")
+
+
+
+# define colors and labels
+tt = plotstyle.add(c("FE|Transport|Pass|Road|LDV|Electricity")   ,c("Electricity"),  c("darkgoldenrod"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Pass|Road|LDV|Hydrogen")   ,c("Hydrogen"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Pass|Road|LDV|Gases")   ,c("Gases"),  c("grey20"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Pass|Road|LDV|Liquids")   ,c("Liquids"),  c( "darkblue"),replace=T)
+
+
+
+df.FE.LDV <- df %>%
+              filter(variable %in% vars.LDV)
+
+
+
+p.FE.LDV <- ggplot(df.FE.LDV, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+              scale_y_continuous("LDV FE (EJ/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.LDV), labels = mip::plotstyle(vars.LDV, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.FE.LDV
+
+
+ggsave(plot = p.FE.LDV,
+       filename =  paste0(plots.path, "/Transport_FE_shortDist_LDV.png"),
+       width=20, height=10, units="cm")
+
+### Road Freight
+vars.Trucks <- c("FE|Transport|Freight|Road|Electricity",
+              "FE|Transport|Freight|Road|Hydrogen",
+              "FE|Transport|Freight|Road|Gases",
+              "FE|Transport|Freight|Road|Liquids")
+
+# define colors and labels
+tt = plotstyle.add(c("FE|Transport|Freight|Road|Electricity")   ,c("Electricity"),  c("darkgoldenrod"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Freight|Road|Hydrogen")   ,c("Hydrogen"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Freight|Road|Gases")   ,c("Gases"),  c("grey20"), replace = T)
+tt = plotstyle.add(c("FE|Transport|Freight|Road|Liquids")   ,c("Liquids"),  c( "darkblue"),replace=T)
+
+
+
+
+
+
+df.FE.Trucks <- df %>%
+              filter(variable %in% vars.Trucks) 
+
+
+p.FE.Trucks <- ggplot(df.FE.Trucks, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Trucks FE (EJ/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.Trucks), labels = mip::plotstyle(vars.Trucks, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.FE.Trucks
+
+ggsave(plot = p.FE.Trucks,
+       filename =  paste0(plots.path, "/Transport_FE_shortDist_Trucks.png"),
+       width=20, height=10, units="cm")
+
+
+
+### All HDVs (no bunkers)
+
+vars.HDV <- c("FE|Transport|Freight|Road|Electricity",
+              "FE|Transport|Freight|Road|Hydrogen",
+              "FE|Transport|Freight|Road|Gases",
+              "FE|Transport|Freight|Road|Liquids",
+	            "FE|Transport|Pass|Road|Bus|Electricity",
+              "FE|Transport|Pass|Road|Bus|Hydrogen",
+              "FE|Transport|Pass|Road|Bus|Gases",
+              "FE|Transport|Pass|Road|Bus|Liquids",
+              "FE|Transport|Freight|Rail|Liquids",
+              "FE|Transport|Freight|Rail|Electricity",
+              "FE|Transport|Pass|Rail|Liquids",
+              "FE|Transport|Pass|Rail|Electricity",
+              "FE|Transport|Pass|Aviation|Domestic|Liquids",
+              "FE|Transport|Pass|Aviation|Domestic|Hydrogen",
+              "FE|Transport|Freight|Navigation|Liquids")
+
+
+
+tr.encar.color <- c("Electricity" = "darkgoldenrod",
+                           "Hydrogen" = "cyan",
+                           "Gases" = "grey20",
+                           "Liquids" = "darkblue")
+
+
+
+df.FE.HDV <- df %>%
+              filter(variable %in% vars.HDV) %>%
+              mutate(fuel = gsub("(.*\\|\\s*(.*$))", "\\2", variable)) ## grep after last | only energy carrier name
+
+
+df.FE.HDV <- df.FE.HDV %>%
+	      group_by(fuel, period, scenario) %>%
+	      summarize(value = sum(value))
+
+p.FE.HDV <- ggplot(df.FE.HDV, aes(period, value, fill=fuel)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("HDV FE\nw/o Bunkers\n (EJ/yr)") +
+              scale_fill_manual(values = tr.encar.color) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.FE.HDV
+
+ggsave(plot = p.FE.HDV,
+       filename =  paste0(plots.path, "/Transport_FE_shortDist_HDV.png"),
+       width=20, height=10, units="cm")
+
+
+  
+} else {
+  p.FE.LDV <- NULL
+  p.FE.Trucks <- NULL
+  p.FE.HDV <- NULL
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.FE.LDV
+p.FE.Trucks
+p.FE.HDV
+
+```
+
+
+
+
+
+
+### ES short-distance
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+# only do plots if EDGE-T reporting variabls are there
+if (any(grepl("FE\\|Transport\\|Freight\\|Road\\|Electricity" ,getVars(df)))) {
+
+# population to normalize
+df.pop <- df %>%
+              filter(variable == "Population") %>%
+              select(period, value) %>%
+              rename(Population = value)
+
+### LDV
+vars.ES.LDV <- c("ES|Transport|Pass|Road|LDV|BEV",
+              "ES|Transport|Pass|Road|LDV|FCEV",
+              "ES|Transport|Pass|Road|LDV|Gases",
+              "ES|Transport|Pass|Road|LDV|Hybrid Electric",
+              "ES|Transport|Pass|Road|LDV|Liquids")
+
+
+# define colors and labels
+tt = plotstyle.add(c("ES|Transport|Pass|Road|LDV|BEV")   ,c("BEV"),  c("darkgoldenrod"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Pass|Road|LDV|FCEV")   ,c("FCEV"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Pass|Road|LDV|Gases")   ,c("Gases"),  c("grey20"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Pass|Road|LDV|Hybrid Electric")   ,c("Hybrid Electric"),  c( "darkred"),replace=T)
+tt = plotstyle.add(c("ES|Transport|Pass|Road|LDV|Liquids")   ,c("ICE"),  c( "darkblue"),replace=T)
+
+
+df.ES.LDV <- df %>%
+              filter(variable %in% vars.ES.LDV) %>% 
+              left_join(df.pop) %>%
+              mutate( value = value / Population)
+
+
+
+p.ES.LDV <- ggplot(df.ES.LDV, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("LDV Activity\n(thousand pkm/cap/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.ES.LDV), labels = mip::plotstyle(vars.ES.LDV, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.ES.LDV
+
+### trucks
+vars.ES.trucks <- c("ES|Transport|Freight|Road|Electric",
+              "ES|Transport|Freight|Road|FCEV",
+              "ES|Transport|Freight|Road|Gases",
+              "ES|Transport|Freight|Road|Liquids")
+
+
+
+
+# define colors and labels
+tt = plotstyle.add(c("ES|Transport|Freight|Road|Electric")   ,c("BEV"),  c("darkgoldenrod"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Freight|Road|FCEV")   ,c("FCEV"),  c("cyan"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Freight|Road|Gases")   ,c("Gases"),  c("grey20"), replace = T)
+tt = plotstyle.add(c("ES|Transport|Freight|Road|Liquids")   ,c("ICE"),  c( "darkblue"),replace=T)
+
+
+
+df.ES.trucks <- df %>%
+              filter(variable %in% vars.ES.trucks) %>%
+              left_join(df.pop) %>%
+              mutate( value = value / Population)
+
+
+p.ES.trucks <- ggplot(df.ES.trucks, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Truck Activity\n(thousand tkm/cap/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.ES.trucks), labels = mip::plotstyle(vars.ES.trucks, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.ES.trucks
+
+
+ggsave(plot = p.ES.LDV,
+       filename =  paste0(plots.path, "/Transport_ES_LDV.png"),
+       width=20, height=10, units="cm")
+
+ggsave(plot = p.ES.trucks,
+       filename =  paste0(plots.path, "/Transport_ES_trucks.png"),
+       width=20, height=10, units="cm")
+
+
+} else {
+  p.ES.LDV <- NULL
+  p.ES.trucks <- NULL
+
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.ES.LDV
+p.ES.trucks
+
+
+
+
+```
+
+### Long-distance FE Transport
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+# only do plots if EDGE-T reporting variabls are there
+if (any(grepl("FE\\|Transport\\|Freight\\|Road\\|Electricity" ,getVars(df)))) {
+  
+### LDT
+vars.FE.LDT.pass <- c("FE|Transport|Pass|Long distance|Diesel Liquids")
+
+# define colors and labels
+tt = plotstyle.add(c("FE|Transport|Pass|Long distance|Diesel Liquids")   ,c("Liquids"),  c("darkblue"), replace = T)
+
+
+
+df.FE.LDT.pass <- df %>%
+              filter(variable %in% vars.FE.LDT.pass) 
+
+
+p.FE.LDT.pass <- ggplot(df.FE.LDT.pass, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Long-Distance Passenger\nTransport FE (EJ/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.FE.LDT.pass), labels = mip::plotstyle(vars.FE.LDT.pass, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.FE.LDT.pass
+
+# long-distance Freight Transprot
+vars.FE.LDT.frgt <- c("FE|Transport|Freight|Long distance|Diesel Liquids")
+
+# define colors and labels
+tt = plotstyle.add(c("FE|Transport|Freight|Long distance|Diesel Liquids")   ,c("Liquids"),  c("darkblue"), replace = T)
+
+
+df.FE.LDT.frgt <- df %>%
+              filter(variable %in% vars.FE.LDT.frgt) 
+
+
+
+p.FE.LDT.frgt <- ggplot(df.FE.LDT.frgt, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Long-Distance Freight\nTransport FE (EJ/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.FE.LDT.frgt), labels = mip::plotstyle(vars.FE.LDT.frgt, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.FE.LDT.frgt
+
+
+ggsave(plot = p.FE.LDT.pass,
+       filename =  paste0(plots.path, "/Transport_FE_longDist_pass.png"),
+       width=20, height=10, units="cm")
+
+ggsave(plot = p.FE.LDT.frgt,
+       filename =  paste0(plots.path, "/Transport_FE_longDist_frgt.png"),
+       width=20, height=10, units="cm")
+
+
+} else {
+  p.FE.LDT.pass <- NULL
+  p.FE.LDT.frgt <- NULL
+
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.FE.LDT.pass
+p.FE.LDT.frgt
+
+```
+
+
+### Long-distance ES Transport
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+# only do plots if EDGE-T reporting variabls are there
+if (any(grepl("FE\\|Transport\\|Freight\\|Road\\|Electricity" ,getVars(df)))) {
+
+### LDT
+vars.ES.LDT.pass <- c("ES|Transport|Pass|Long distance")
+
+# define colors and labels
+tt = plotstyle.add(c("ES|Transport|Pass|Long distance")   ,c("Liquids"),  c("darkblue"), replace = T)
+
+
+df.ES.LDT.pass <- df %>%
+              filter(variable %in% vars.ES.LDT.pass) %>% 
+              left_join(df.pop) %>%
+              mutate( value = value / Population)
+
+
+
+p.ES.LDT.pass <- ggplot(df.ES.LDT.pass, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Long-Distance Passenger\nTransport ES\n (thousand pkm/cap/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.ES.LDT.pass), labels = mip::plotstyle(vars.ES.LDT.pass, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.ES.LDT.pass
+
+# long-distance Freight Transprot
+vars.ES.LDT.frgt <- c("ES|Transport|Freight|Long distance")
+
+# define colors and labels
+tt = plotstyle.add(c("ES|Transport|Freight|Long distance")   ,c("Liquids"),  c("darkblue"), replace = T)
+
+
+df.ES.LDT.frgt <- df %>%
+              filter(variable %in% vars.ES.LDT.frgt) %>%
+              left_join(df.pop) %>%
+              mutate( value = value / Population)
+
+
+
+p.ES.LDT.frgt <- ggplot(df.ES.LDT.frgt, aes(period, value, fill=variable)) +
+              geom_col(alpha=0.7) +
+              facet_wrap(~scenario, ncol = 4) +
+              scale_y_continuous("Long-Distance Freight\nTransport ES\n (thousand tkm/cap/yr)") +
+              scale_fill_manual(values = mip::plotstyle(vars.ES.LDT.frgt), labels = mip::plotstyle(vars.ES.LDT.frgt, out="legend")) +
+              theme_bw() +
+              theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+              legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.ES.LDT.frgt
+
+
+ggsave(plot = p.ES.LDT.pass,
+       filename =  paste0(plots.path, "/Transport_ES_longDist_pass.png"),
+       width=20, height=10, units="cm")
+
+ggsave(plot = p.ES.LDT.frgt,
+       filename =  paste0(plots.path, "/Transport_ES_longDist_frgt.png"),
+       width=20, height=10, units="cm")
+
+
+} else {
+  p.ES.LDT.pass <- NULL
+  p.FE.LDT.frgt <- NULL
+
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.ES.LDT.pass
+p.ES.LDT.frgt
+```
+
+
+### Emissions transport by mode
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+if (any(grepl("Emi\\|CO2\\|Transport\\|Freight\\|International Shipping\\|Demand" ,getVars(df)))) { 
+
+vars.emi.transp <- c("Emi|CO2|Transport|Shipping|Demand",
+               "Emi|CO2|Transport|Rail|Demand",
+               "Emi|CO2|Transport|Road|Demand",
+               "Emi|CO2|Transport|Pass|Aviation|Demand")
+
+emi.transp.label <- c("Emi|CO2|Transport|Shipping|Demand" = "Shipping emissions",
+               "Emi|CO2|Transport|Rail|Demand" = "Rail emissions",
+               "Emi|CO2|Transport|Road|Demand" = "Road emissions",
+               "Emi|CO2|Transport|Pass|Aviation|Demand" = "Aviation emissions")
+
+
+emi.transp.color <- c("Shipping emissions" = "#191919",
+                      "Rail emissions" = "#cc0000",
+                      "Road emissions" = "mediumpurple4",
+                      "Aviation emissions" = "#66cccc")
+
+df.emi.transp <- df %>%
+                  filter(variable %in% vars.emi.transp, period %in% plot.period) %>%
+                  revalue.levels(variable = emi.transp.label)
+
+p.emi.transp <- ggplot(df.emi.transp, aes(period, value, fill=variable)) +
+                  geom_col(alpha=0.7) +
+                  facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                  scale_y_continuous("Emissions from transport\n(MtCO2)") +
+                  scale_fill_manual(values = emi.transp.color)+
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                  legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.emi.transp
+
+
+
+ggsave(plot = p.emi.transp,
+       filename =  paste0(plots.path, "/Transport_Emissions_Mode.png"),
+       width=20, height=10, units="cm")
+
+} else {
+  p.emi.transp <- NULL
+}
+
+
+p.emi.transp
+```
+
+
+## 8. Detailed Industry Analysis
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+# only do plots if industry non-energy use variables are there
+if (any(grepl("FE\\|Non-energy Use\\|Industry\\|+\\|Liquids" ,getVars(df)))) {
+
+
+vars.ind.nonen <- c("FE|Non-energy Use|Industry|+|Liquids",
+                    "FE|Non-energy Use|Industry|+|Gases",
+                    "FE|Non-energy Use|Industry|+|Solids",
+                    "FE|w/o Non-energy Use|Industry|+|Liquids",
+                    "FE|w/o Non-energy Use|Industry|+|Gases",
+                    "FE|w/o Non-energy Use|Industry|+|Solids",
+                    "FE|Industry|+|Electricity",
+                    "FE|Industry|+|Heat",
+                    "FE|Industry|+|Hydrogen")
+
+ind.nonen.label <- c("FE|Non-energy Use|Industry|+|Liquids" = "Non-energy Liquids",
+                    "FE|Non-energy Use|Industry|+|Gases" = "Non-energy Gases",
+                    "FE|Non-energy Use|Industry|+|Solids" = "Non-energy Solids",
+                    "FE|w/o Non-energy Use|Industry|+|Liquids" = "Energy Liquids",
+                    "FE|w/o Non-energy Use|Industry|+|Gases" = "Energy Gases",
+                    "FE|w/o Non-energy Use|Industry|+|Solids" = "Energy Solids",
+                    "FE|Industry|+|Electricity" = "Electricity",
+                    "FE|Industry|+|Heat" = "Heat",
+                    "FE|Industry|+|Hydrogen" = "Hydrogen")
+
+
+ind.nonen.color <- c("Solids" = "#191919",
+                     "Heat" = "#cc0000",
+                     "Energy Gases" = "plum2",
+                     "Non-energy Gases" = "gray90",
+                     "Non-energy Liquids" = "mediumpurple4",
+                     "Energy Liquids" = "gray40",
+                     "Non-energy Solids" = "black",
+                     "Energy Solids" = "brown",
+                     "Hydrogen" = "#66cccc",
+                     "Electricity" =   "#ffb200" )
+
+
+
+df.ind.nonen <- df %>%
+                  filter(variable %in% vars.ind.nonen, period %in% plot.period) %>%
+                  revalue.levels(variable = ind.nonen.label)
+
+p.ind.nonen <- ggplot(df.ind.nonen, aes(period, value, fill=variable)) +
+                  geom_col(alpha=0.7) +
+                  facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                  scale_y_continuous("FE Industry (non-energy split)\n(EJ/yr)") +
+                  scale_fill_manual(values = ind.nonen.color)+
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                  legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+
+p.ind.nonen
+
+
+
+ggsave(plot = p.ind.nonen,
+       filename =  paste0(plots.path, "/Industry_FE_nonen.png"),
+       width=20, height=10, units="cm")
+
+
+} else {
+  p.ind.nonen <- NULL
+
+
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.ind.nonen
+
+```
+
+
+### FE mix in industry subsectors
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+# only do plots if industry subsectors
+if (any(grepl("FE\\|Industry\\|Electricity\\|Steel" ,getVars(df)))) {
+
+# plot config
+vars.ind.FE.detail <- c(
+                    # steel
+                    "FE|Industry|Electricity|Steel","FE|Industry|Heat|Steel","FE|Industry|Hydrogen|Steel",
+                    "FE|Industry|Solids|Steel","FE|Industry|Liquids|Steel","FE|Industry|Gases|Steel",
+
+                    # cement
+                    "FE|Industry|Electricity|Cement","FE|Industry|Heat|Cement","FE|Industry|Hydrogen|Cement",
+                    "FE|Industry|Solids|Cement","FE|Industry|Liquids|Cement","FE|Industry|Gases|Cement",
+
+                    # chemicals
+                    "FE|Industry|Electricity|Chemicals","FE|Industry|Heat|Chemicals","FE|Industry|Hydrogen|Chemicals",
+                    "FE|Industry|Solids|Chemicals","FE|Industry|Liquids|Chemicals","FE|Industry|Gases|Chemicals",
+
+                    # other industry
+                    "FE|Industry|Electricity|other","FE|Industry|Heat|other","FE|Industry|Hydrogen|other",
+                    "FE|Industry|Solids|other","FE|Industry|Liquids|other","FE|Industry|Gases|other")
+
+
+plot.vars.order <- c("Heat","Gases","Liquids","Solids",
+                     "Hydrogen" ,"Electricity" )
+
+plot.vars.color <- c("Solids" = as.vector(mip:::plotstyle("FE|Industry|Solids")),
+                     "Heat" = as.vector(mip::plotstyle("FE|Industry|Heat")),
+                     "Gases" = as.vector(mip::plotstyle("FE|Industry|Gases")),
+                     "Liquids" = as.vector(mip::plotstyle("FE|Industry|Liquids")),
+                     "Hydrogen" = as.vector(mip::plotstyle("FE|Industry|Hydrogen")),
+                     "Electricity" = as.vector(mip::plotstyle("FE|Industry|Electricity")))
+# end config
+
+
+
+
+df.ind.FE.detail <- df %>%
+                    filter(variable %in% vars.ind.FE.detail, period %in% plot.period)
+
+
+# spread variables label across dimensions (to obtain sector dimensions and energy carrier dimension)
+df.ind.FE.detail$sector <- strsplit(as.character(df.ind.FE.detail$variable), "\\|")
+df.ind.FE.detail$sector <- sapply(df.ind.FE.detail$sector, "[[", 4)
+
+df.ind.FE.detail$fuel <- strsplit(as.character(df.ind.FE.detail$variable), "\\|")
+df.ind.FE.detail$fuel <- sapply(df.ind.FE.detail$fuel, "[[", 3)
+
+
+df.ind.FE.detail <- df.ind.FE.detail %>%
+                      order.levels(fuel = plot.vars.order, sector = c("Steel","Cement","Chemicals","other"))
+
+
+
+
+
+p.ind.FE.detail <- ggplot(df.ind.FE.detail, aes(period, value, fill=fuel)) +
+                        geom_col(alpha=0.7) +
+                        facet_wrap(sector~scenario, ncol = length(getScenarios(df)), scales = "free_y") +
+                        scale_y_continuous("FE Industry by sector \n(EJ/yr)") +
+                        scale_fill_manual(values = plot.vars.color)+
+                        theme_bw() +
+                        theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                               strip.background = element_blank())
+
+p.ind.FE.detail
+
+
+ggsave(plot =p.ind.FE.detail,
+       filename =  paste0(plots.path, "/Industry_FE_subsectors.png"),
+       width=20, height=15, units="cm")
+
+} else {
+  p.ind.FE.detail <- NULL
+
+
+}
+  
+# to show plots generated from if clause in notebook
+  
+p.ind.FE.detail
+
+
+```
+
+### Industry Production
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+# only do plots if industry subsectors
+if (any(grepl("Production\\|Industry\\|Steel\\|Primary" ,getVars(df)))) {
+  
+
+### config
+vars.ind.prod <- c("Production|Industry|Steel|Primary","Production|Industry|Steel|Secondary",  "Production|Industry|Cement")
+
+
+ind.prod.label <- c("Production|Industry|Steel|Primary" = "Primary Steel",
+                    "Production|Industry|Steel|Secondary" = "Secondary Steel",
+                    "Production|Industry|Cement" = "Cement")
+
+
+vars.ind.value <- c("Value Added|Industry|Chemicals",
+                    "Value Added|Industry|other")
+
+ind.value.label <- c("Value Added|Industry|Chemicals" = "Chemicals",
+                    "Value Added|Industry|other" = "Other Industry")
+
+### end config
+
+
+df.ind.prod <- df %>%
+                  filter(variable %in% vars.ind.prod, period %in% plot.period) %>%
+                  order.levels(variable = vars.ind.prod) %>%
+                  revalue.levels(variable = ind.prod.label)
+
+
+p.ind.prod <- ggplot(df.ind.prod, aes(period, value)) +
+                geom_line(size=1.2, alpha=0.8) +
+                geom_point(size=2) +
+                facet_wrap(variable~scenario, scales = "free_y") +
+                scale_y_continuous("Industrial Production by Sector \n(Mt/yr)") +
+                expand_limits(y = 0) +
+                theme_bw() +
+                theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                               strip.background = element_blank())
+
+p.ind.prod
+
+
+
+
+df.ind.value <- df %>%
+                  filter(variable %in% vars.ind.value, period %in% plot.period) %>%
+                  order.levels(variable = vars.ind.value) %>%
+                  revalue.levels(variable = ind.value.label)
+
+
+p.ind.value <- ggplot(df.ind.value, aes(period, value)) +
+                geom_line(size=1.2, alpha=0.8) +
+                geom_point(size=2) +
+                facet_wrap(variable~scenario, scales = "free_y") +
+                scale_y_continuous("Value Added by Industrial Sector \n(bn US$2005/yr)") +
+                expand_limits(y = 0) +
+                theme_bw() +
+                theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                               strip.background = element_blank())
+
+p.ind.value
+
+
+ggsave(plot =p.ind.prod,
+       filename =  paste0(plots.path, "/Industry_Production.png"),
+       width=20, height=10, units="cm")
+
+
+ggsave(plot =p.ind.value,
+       filename =  paste0(plots.path, "/Industry_ValueAdded.png"),
+       width=20, height=10, units="cm")
+#
+  
+} else {
+  p.ind.prod <- NULL
+  p.ind.value <- NULL
+
+}
+
+# to show plots generated from if clause in notebook
+p.ind.prod
+p.ind.value
+```
+
+
+
+
+## 9. Ariadne-specific validation plots
+
+### Check Ariadne Budget Target
+
+
+```{r}
+if (ariadne.val.plots) {
+  
+    # emissions variables to cumulate
+    cumul.vars <- c("Emi|CO2",
+                "Emi|CO2|+|Energy")
+    
+    cumul.target <- data.frame(variable = c("Emi|CO2","Emi|CO2|+|Energy"), value = c(9,8))
+
+
+    df.cumul <- df %>%
+              filter(variable %in% cumul.vars, period %in% seq(2020,2050,5)) %>%
+              right_join(remind_timesteps %>%
+                           filter(period %in% seq(2020,2050,5))) %>%
+              # adjust weights to how budget calculation is done in regipol module (0.5 factor for edge years of budget)
+              mutate( weight = ifelse(period %in% c(2020,2050), 0.5,1)) %>%
+              # weight emissions with year factor for cumunlation
+              mutate( value = value * weight) %>%
+              # cumulate
+              group_by(model, region, scenario, variable, unit) %>%
+              mutate( cumsum.value = cumsum(value) / 1000) %>%
+              ungroup()
+
+    p.emi.cumul <- ggplot(df.cumul, aes(year, cumsum.value)) +
+                  geom_line(size=1.2, alpha=0.7) +
+                  geom_point(size=1.5, alpha=0.6) +
+                  geom_hline(data=cumul.target, aes(yintercept = value), linetype="dashed") +
+                  facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle = 90),
+                         strip.background = element_blank()) +
+                  scale_y_continuous("2020-2050 Cumulative Emissions (Gt CO2)",
+                                     limits = c(7,10))
+
+    p.emi.cumul
+    
+    ggsave(plot = p.emi.cumul, filename =  paste0(plots.path, "/AriadneVal_CumulTarget.png"),width=20, height=15, units="cm")
+} else {
+  p.emi.cumul <- NULL
+
+
+}
+
+# to show plots generated from if clause in notebook
+p.emi.cumul
+
+```
+

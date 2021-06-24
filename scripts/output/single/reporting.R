@@ -6,8 +6,9 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind)
-library(lucode)
+library(remind2)
+library(lucode2)
+library(gms)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"        # name of the gdx  
@@ -31,9 +32,12 @@ magicc_reporting_file <- path(outputdir,paste0("REMIND_climate_", scenario, ".mi
 LCOE_reporting_file   <- path(outputdir,paste0("REMIND_LCOE_", scenario, ".csv"))
 
 # produce REMIND reporting *.mif based on gdx information
+print("start generation of mif files")
 tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF
 if(class(tmp)=="try-error") convGDX2MIF_fallback_for_coupling(gdx,file=remind_reporting_file,scenario=scenario)
+print("end generation of mif files")
 
+#  MAGICC code not working with REMIND-EU										   
 # generate MAGICC reporting and append to REMIND reporting
 if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
   warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
@@ -53,10 +57,20 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 ## generate EDGE-T reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
+
 if(file.exists(file.path(outputdir, "EDGE-T"))){
+print("start generation of EDGE-T reporting")
   reportEDGETransport(outputdir)
+print("end generation of EDGE-T reporting")
 }
 
-# produce REMIND LCOE reporting *.csv based on gdx information
-tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
 
+
+
+## produce REMIND LCOE reporting *.mif based on gdx information
+print("start generation of LCOE reporting")
+tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
+print("end generation of LCOE reporting")
+										
+															   
+														

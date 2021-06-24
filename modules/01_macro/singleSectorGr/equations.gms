@@ -41,6 +41,8 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
         )$( ttot.val ge max(2010, cm_startyear) )
       )
     )
+  + sum(tradeSe, pm_MPortsPrice(ttot,regi,tradeSe) * vm_Mport(ttot,regi,tradeSe)) 
+  - sum(tradeSe, pm_XPortsPrice(ttot,regi,tradeSe) * vm_Xport(ttot,regi,tradeSe)) 
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
   + sum(in_enerSerAdj(in), vm_enerSerAdj(ttot,regi,in))
@@ -154,19 +156,19 @@ q01_kapMo0(t0(t),regi,ppfKap(in))$(pm_cesdata(t,regi,in,"quantity") gt 0)..
     pm_cesdata(t,regi,in,"quantity");
 
 *' Limit the share of one ppfEn in total CES nest inputs:
-q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(out,in) ) ..
-    vm_cesIO(t,regi,in)
+q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(t,regi,out,in) ) ..
+    vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_shares(out,in)
-  * sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2))
+    pm_ppfen_shares(t,regi,out,in)
+  * (sum(cesOut2cesIn(out,in2), vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in2,"offset_quantity")))
 ;
 
 *' Limit the ratio of two ppfEn:
-q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(in,in2) ) ..
-    vm_cesIO(t,regi,in)
+q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(t,regi,in,in2) ) ..
+    vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_ratios(in,in2)
-  * vm_cesIO(t,regi,in2)
+    pm_ppfen_ratios(t,regi,in,in2)
+  * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 

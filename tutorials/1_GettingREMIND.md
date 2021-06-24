@@ -37,7 +37,8 @@ pkgs <- c("curl",
           "gdxrrw",
           "ggplot2",
           "goxygen",
-          "lucode",
+          "lucode2",
+          "gms",
           "luplot",
           "luscale",
           "lusweave",
@@ -45,8 +46,8 @@ pkgs <- c("curl",
           "magclass",
           "magpie4",
           "mip",
-          "moinput",
-          "remind",
+          "mrremind",
+          "remind2",
           "remulator",
           "rhdf5",
           "shinyresults")
@@ -60,7 +61,7 @@ If the following lines of code are executed without error, then you are all set!
 ``` r
 system("gams")
 library(gdxrrw)
-library(remind)
+library(remind2)
 print("")
 if(.Platform$OS.type == "unix") {
   system('pdflatex -version')

@@ -127,7 +127,7 @@ all_te          "all energy technologies, including from modules"
         igcc            "integrated coal gasification combined cycle"
         igccc           "integrated coal gasification combined cycle with capture"
         pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall        
+$ifthen setGlobal cm_ccsfosall
         pcc             "pulverised coal power plant with capture"
         pco             "pulverised coal power plant with oxyfuel capture"
 $endif
@@ -159,6 +159,9 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff         "wind offshore power converters"
+$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -176,48 +179,60 @@ $endif
         tdelb           "transmission and distribution for electricity to buildings"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
-		tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+	tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
         tdbiogai        "transmission and distribution for gas from biomass origin to industry"
-		tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+	tdfosgai        "transmission and distribution for gas from fossil origin to industry"
         tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
-		tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
+	tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
         tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
-		tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+	tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
         tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
-		tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+	tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
         tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
         tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
         tdh2t           "transmission and distribution for hydrogen to transportation"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
-		tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
+	tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
         tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
         tdfossoi        "transmission and distribution for solids from fossil origin to industry"
         tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
-		tdfossob        "transmission and distribution for solids from fossil origin to buildings"
+	tdfossob        "transmission and distribution for solids from fossil origin to buildings"
         tdhes           "transmission and distribution for heat to stationary users"
         tdhei           "transmission and distribution for heat to industry"
         tdheb           "transmission and distribution for heat to buildings"
 
 *        ccscomp         "compression of co2"
 *        ccspipe         "transportation of co2"
-        ccsinje         "injection of co2"
+         ccsinje         "injection of co2"
 *        ccsmoni         "monitoring of co2"
 *RP* Storage technology:
         storspv         "storage technology for photo voltaic (PV)"
-        storwind        "storage technology for wind"
+        storwind        "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff     "storage technology for wind offshore"
+$ENDIF.WindOff
         storcsp         "storage technology for concentrating solar power (CSP)"
 *RP* grid technology
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
-        gridwind        "grid between areas with high wind production and the rest"
-*AJS* transport technologies (ESH2T etc..) are defined in the transport module. 
+        gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
+
+*AJS* transport technologies (ESH2T etc..) are defined in the transport module.
  	apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
     apCarDiT        "Vehicles using final energy diesel (FEDIE) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
     apcarDiEffT     "More efficient vehicles using final energy diesel (FEDIE) and electricity (FEELT) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
@@ -254,6 +269,9 @@ $endif
         tdgai_cs
         tdhoi_cs
         o_feel
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 /
 
 all_enty             "all types of quantities"
@@ -269,18 +287,20 @@ all_enty             "all types of quantities"
         pebiolc      "PE biomass lignocellulosic"
         pebios       "PE biomass sugar and starch"
         pebioil      "PE biomass sunflowers, palm oil, etc"
-		all_seliq	 "all to SE liquids" 
+	all_seliq	 "all to SE liquids"
 		seliqbio     "SE liquids from biomass (ex. ethanol)"
 		seliqfos     "SE liquids from fossil pe (ex. petrol and diesel)"
-        all_seso	 "all to SE solids" 
+                seliqsyn     "SE synthetic liquids from H2 (ex. petrol and diesel)"
+        all_seso	 "all to SE solids"
 		sesobio      "SE solids from biomass"
 		sesofos      "SE solids from fossil pe"
         seel         "SE electricity"
         seh2         "SE hydrogen"
-        all_sega	 "all to SE gas" 
+        all_sega	 "all to SE gas"
 		segabio      "SE gas from biomass"
 		segafos      "SE gas from fossil pe"
-        sehe         "SE district heating nd heat pumps"
+                segasyn      "SE synthetic gas from H2"
+        sehe         "SE district heating and heat pumps"
         fegas        "FE gas stationary"
         fegab
         fegai
@@ -295,6 +315,9 @@ all_enty             "all types of quantities"
         fesob
         feels        "FE electricity stationary"
         feelb
+        feelcb       "buildings use of conventional electricity (all but space heating)"
+        feelhpb      "buildings use of electricity for space heating with heat pumps"
+        feelrhb      "buildings use of electricity for space heating with resistive heating"
         feeli
         feel
         fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
@@ -317,15 +340,15 @@ all_enty             "all types of quantities"
         ueelTt       "transport useful energy for electric trains"
 
         !! emissions
-        co2          "carbon dioxide emissions"  
+        co2          "carbon dioxide emissions"
         ch4          "methane emissions"
-        n2o          "n2o emissions from the energy system"		
+        n2o          "n2o emissions from the energy system"
         so2          "sulfur dioxide emissions"
         ch4coal    "fugitive emissions from coal mining"
         ch4gas     "fugitive emissions from gas production"
         ch4oil     "fugitive emissions from oil production"
-        ch4wstl    "ch4 emissions from solid waste disposal on land"	
-        ch4wsts    "ch4 emissions from waste water"		
+        ch4wstl    "ch4 emissions from solid waste disposal on land"
+        ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
@@ -337,16 +360,16 @@ all_enty             "all types of quantities"
         n2otrans   "n2o emissions from transport"
         n2oacid    "n2o emissions from acid production (only 2005 EDGAR data for calibration of n2oadac and n2onitac baselines)"
         n2oadac    "n2o emissions from adipic acid production"
-        n2onitac   "n2o emissions from nitric acid production"				
+        n2onitac   "n2o emissions from nitric acid production"
         n2ofert    "MAC for n2o emissions from fertilizer (starting with n2ofert)"
-        n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"		
+        n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
-        n2oanwst   "MAC for n2o emissions from animal waste (starting with n2oanwst)"	
-        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"	
+        n2oanwst   "MAC for n2o emissions from animal waste (starting with n2oanwst)"
+        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
-        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"		
+        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -392,8 +415,8 @@ all_enty             "all types of quantities"
         ueelt        "Useful Energy: ELectricity for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
 *** uegat   "Useful Energy: GAs for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
 *** ueh2t   "Useful Energy: H2 for Transport. Unit: TWa (not yet a real ES, only copied 1:1 from FE)"
-	
-	good         "Generic good"     
+
+	good         "Generic good"
          perm         "Carbon permit"
          peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
 /
@@ -408,10 +431,10 @@ all_esty "energy services"
 	esdie_frgt_lo
 	esdie_frgt_sm
 	eselt_frgt_sm
-        esh2t_pass_sm
-        esgat_pass_sm
-        esh2t_frgt_sm
-        esgat_frgt_sm
+    esh2t_pass_sm
+    esgat_pass_sm
+    esh2t_frgt_sm
+    esgat_frgt_sm
 
 *** Buildings module: Energy services (useful energy)
     ueshheb  "buildings space heating district heat"
@@ -422,7 +445,7 @@ all_esty "energy services"
     ueshh2b  "buildings space heating hydrogen"
     ueshelb  "buildings space heating electricity resistance"
     ueshhpb  "buildings space heating electricity heat pump"
-    
+
     uecwhob  "buildings cooking and water heating liquids"
     uecwsob  "buildings cooking and water heating solids"
     uecwstb  "buildings cooking and water heating traditional solids"
@@ -445,9 +468,9 @@ all_sectorEmi     "all sectors with emissions"
 
 all_exogEmi     " all exogenous emission types"
 /       Aviation         "Exog emi from Aviation"
-        InternationalShipping "Ecog emi from Int. Shipping" 
-        Waste            "???"
-        Agriculture      "Exogenous emissions from Agriculture" 
+        InternationalShipping "Ecog emi from Int. Shipping"
+        Waste            "Exogenous emissions from Waste treatment"
+        Agriculture      "Exogenous emissions from Agriculture"
         AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
         ForestBurning    "Exogenous emissions from Forest Burning"
         GrasslandBurning "Exogenous emissions from Grassland Burning"
@@ -455,7 +478,7 @@ all_exogEmi     " all exogenous emission types"
 
 all_in   "all inputs and outputs of the CES function"
 /
-  inco                    "macroeconomic output"  
+  inco                    "macroeconomic output"
 
   lab                     "labour input"
   kap                     "capital input"
@@ -472,15 +495,20 @@ all_in   "all inputs and outputs of the CES function"
 
   enb                     "buildings energy use"
   enhb                    "buildings heat energy use"
+  enhgab                  "buildings heat gaseous energy use (fegab and feh2b)"
   fesob                   "buildings use of solid energy carriers"
   fehob                   "buildings use of liquid energy carriers"
   fegab                   "buildings use of gaseous energy carriers"
   feh2b                   "buildings use of hydrogen"
   feheb                   "buildings use of district heat"
   feelb                   "buildings use of electricity"
+  feelcb                  "buildings use of conventional electricity (all but space heating)"
+  feelhpb                 "buildings use of electricity for space heating with heat pumps"
+  feelrhb                 "buildings use of electricity for space heating with resistive heating"
 
   eni                     "industry energy use"
   enhi                    "industry heat energy use"
+  enhgai                  "industry heat gaseous energy use (fegab and feh2b)"
   fesoi                   "industry use of solid energy carriers"
   fehoi                   "industry use of liquid energy carriers"
   fegai                   "industry use of gaseous energy carriers"
@@ -489,25 +517,25 @@ all_in   "all inputs and outputs of the CES function"
   feeli                   "industry use of electricity"
 
   fehcsob                 "buildings heating and cooking solids final energy"
-  fehcelb                 "buildings heating and cooking electricity final energy" 
+  fehcelb                 "buildings heating and cooking electricity final energy"
   fehcheb                 "buildings heating and cooking district heat final energy"
   fehcgab                 "buildings heating and cooking gas final energy"
   fehchob                 "buildings heating and cooking liquids final energy"
   fealelb                 "buildings appliances and light electricity final energy"
   fecwsob                 "buildings cooking and water heating solids final energy"
-  fecwelb                 "buildings cooking and water heating electricity final energy" 
-  fecwhpb                 "buildings cooking and water heating electricity heat pump final energy" 
+  fecwelb                 "buildings cooking and water heating electricity final energy"
+  fecwhpb                 "buildings cooking and water heating electricity heat pump final energy"
   fecwheb                 "buildings cooking and water heating district heat final energy"
   fecwgab                 "buildings cooking and water heating gas final energy"
   fecwhob                 "buildings cooking and water heating liquids final energy"
   fescelb                 "buildings space cooling electricity final energy"
   feshsob                 "buildings space heating solids final energy"
-  feshelb                 "buildings space heating electricity final energy" 
+  feshelb                 "buildings space heating electricity final energy"
   feshheb                 "buildings space heating district heat final energy"
   feshgab                 "buildings space heating gas final energy"
   feshhob                 "buildings space heating liquids final energy"
   feshhpb                 "buildings space heating electricity heat pump final energy"
-    
+
   esswb                   "buildings weatherization energy service"
   uehcb                   "buildings heating and cooking useful energy"
   uecwb                   "buildings cooking and water heating useful energy"
@@ -543,7 +571,7 @@ all_in   "all inputs and outputs of the CES function"
   kaphc                   "buildings capital stock insulation"
   kapsc                   "buildings capital stock space cooling"
   kapal                   "buildings capital stock appliances and light"
-    
+
   !! production factors of industry with subsectors
   ue_industry             "useful energy of industry sector"
 
@@ -556,7 +584,7 @@ all_in   "all inputs and outputs of the CES function"
   fega_cement             "gases energy use of cement production"
   feh2_cement             "hydrogen energy use of cement production"
   feel_cement             "electricity energy use of cement production"
- 
+
 
   ue_chemicals            "useful energy of chemicals production"
   en_chemicals            "energy use of chemicals production"
@@ -609,7 +637,7 @@ all_teEs                 "energy service technologies"
     te_eselt_frgt_sm "short-to-medium distance freight transport CES node"
     te_esh2t_frgt_sm "short-to-medium distance freight transport CES node"
     te_esgat_frgt_sm "short-to-medium distance freight transport CES node"
-    te_esdie_frgt_lo "long distance freight transport CES node" 
+    te_esdie_frgt_lo "long distance freight transport CES node"
 
 *** Buildings module
     te_ueshheb  "buildings space heating district heat"
@@ -620,7 +648,7 @@ all_teEs                 "energy service technologies"
     te_ueshh2b  "buildings space heating hydrogen"
     te_ueshelb  "buildings space heating electricity resistance"
     te_ueshhpb  "buildings space heating electricity heat pump"
-    
+
     te_uecwhob  "buildings cooking and water heating liquids"
     te_uecwsob  "buildings cooking and water heating solids"
     te_uecwstb  "buildings cooking and water heating traditional solids"
@@ -628,12 +656,12 @@ all_teEs                 "energy service technologies"
     te_uecwheb  "buildings cooking and water heating district heat"
     te_uecwh2b  "buildings cooking and water heating hydrogen"
     te_uecwelb  "buildings cooking and water heating electricity"
-    te_uecwhpb  "buildings cooking and water heating heat pump" 
+    te_uecwhpb  "buildings cooking and water heating heat pump"
 /
 
 teEs(all_teEs)           "ES technologies which are actually used (to be filled by module realizations)."
 //
-    
+
 ;
 
 ***-----------------------------------------------------------------------------
@@ -651,15 +679,26 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 
 sets
 
-   all_regi "all regions" /CAZ,CHA,EUR,IND,JPN,LAM,MEA,NEU,OAS,REF,SSA,USA/
+   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
 
-   ext_regi "extended regions list (includes subsets of H12 regions)" / EUR_regi,CAZ,CHA,EUR,IND,JPN,LAM,MEA,NEU,OAS,REF,SSA,USA /
+   ext_regi "extended regions list (includes subsets of H12 regions)" / LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA /
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
+        LAM_regi .(LAM)
+        OAS_regi .(OAS)
+        SSA_regi .(SSA)
         EUR_regi .(EUR)
+        NEU_regi .(NEU)
+        MEA_regi .(MEA)
+        REF_regi .(REF)
+        CAZ_regi .(CAZ)
+        CHA_regi .(CHA)
+        IND_regi .(IND)
+        JPN_regi .(JPN)
+        USA_regi .(USA)
       /
- 
+
    iso "list of iso countries" /
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
@@ -689,38 +728,38 @@ sets
 
    regi2iso(all_regi,iso) "mapping regions to iso countries"
       /
-       CAZ . (AUS,CAN,HMD,NZL,SPM)
-       CHA . (CHN,HKG,MAC,TWN)
-       EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
-       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
-       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
-       EUR . (ROU,SVK,SVN,SWE)
-       IND . (IND)
-       JPN . (JPN)
        LAM . (ABW,AIA,ARG,ATA,ATG,BES,BHS,BLM,BLZ,BMU)
        LAM . (BOL,BRA,BRB,BVT,CHL,COL,CRI,CUB,CUW,CYM)
        LAM . (DMA,DOM,ECU,FLK,GLP,GRD,GTM,GUF,GUY,HND)
        LAM . (HTI,JAM,KNA,LCA,MAF,MEX,MSR,MTQ,NIC,PAN)
        LAM . (PER,PRI,PRY,SGS,SLV,SUR,SXM,TCA,TTO,URY)
        LAM . (VCT,VEN,VGB,VIR)
-       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
-       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
-       MEA . (YEM)
-       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
-       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
        OAS . (AFG,ASM,ATF,BGD,BRN,BTN,CCK,COK,CXR,FJI)
        OAS . (FSM,GUM,IDN,IOT,KHM,KIR,KOR,LAO,LKA,MDV)
        OAS . (MHL,MMR,MNG,MNP,MYS,NCL,NFK,NIU,NPL,NRU)
        OAS . (PAK,PCN,PHL,PLW,PNG,PRK,PYF,SGP,SLB,THA)
        OAS . (TKL,TLS,TON,TUV,UMI,VNM,VUT,WLF,WSM)
-       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
-       REF . (UKR,UZB)
        SSA . (AGO,BDI,BEN,BFA,BWA,CAF,CIV,CMR,COD,COG)
        SSA . (COM,CPV,DJI,ERI,ETH,GAB,GHA,GIN,GMB,GNB)
        SSA . (GNQ,KEN,LBR,LSO,MDG,MLI,MOZ,MRT,MUS,MWI)
        SSA . (MYT,NAM,NER,NGA,REU,RWA,SEN,SHN,SLE,SOM)
        SSA . (SSD,STP,SWZ,SYC,TCD,TGO,TZA,UGA,ZAF,ZMB)
        SSA . (ZWE)
+       EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
+       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
+       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
+       EUR . (ROU,SVK,SVN,SWE)
+       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
+       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
+       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
+       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
+       MEA . (YEM)
+       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
+       REF . (UKR,UZB)
+       CAZ . (AUS,CAN,HMD,NZL,SPM)
+       CHA . (CHN,HKG,MAC,TWN)
+       IND . (IND)
+       JPN . (JPN)
        USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
@@ -750,10 +789,10 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
-       CHA . CHA
        EUR . EUR
+       CHA . CHA
        IND . IND
        JPN . JPN
        USA . USA
@@ -761,6 +800,9 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ;
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
+
+set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
+  / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW  /;
 
 *** FS: definition of regional sensitivity/scenario sets
 
@@ -785,6 +827,22 @@ $ELSE.regiFlexTax
   set regi_flexTax(all_regi) "Set of regions, in which the flexibility tax is applied" / %cm_regiFlexTax% /;
 $ENDIF.regiFlexTax
 
+$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
+  regi_sensscen(all_regi)=YES;
+$ELSE.RegScenSens
+  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
+$ENDIF.RegScenSens
+
+*** definition of set of regions that use alternative FE emission factors from umweltbundesamt
+$ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
+set
+  altFeEmiFac_regi(ext_regi)  "set of regions that use alternative FE emission factors from umweltbundesamt"
+  /
+    %cm_altFeEmiFac%
+  /
+;
+$endif.altFeEmiFac
 
 ***###############################################################################
 ***######################## R SECTION START (MODULES) ###############################
@@ -872,7 +930,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
 
 sets
 
-regi(all_regi)  "all regions used in the solution process"   
+regi(all_regi)  "all regions used in the solution process"
 
 *** region sets used for MAGICC
 RCP_regions_world_bunkers "five RCP regions plus total (world) and bunkers"
@@ -903,7 +961,7 @@ RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world
 ***   Miscellaneous sets
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
-Sets 
+Sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
 ;
 
@@ -919,14 +977,14 @@ tall            "time index"
         1900*3000
         /
 
-*LB* Different time-steps are used for the flags cm_less_TS (default), test_TS, 
+*LB* Different time-steps are used for the flags cm_less_TS (default), test_TS,
 *** and END2110. If none of these flags is set, five year steps are used.
 *** test_TS: 2005,2010,2020,2030,2040,2050,2070,2090,2110,2130,2150
 *** cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,
 *** 2070,2080,2090,2100,2110,2130,2150
 *** END2110: 2005:5:2105,2120
-*AJS* Defining ttot as sum of t and tsu will give errors from compiler, so do 
-*** it manually instead: 
+*AJS* Defining ttot as sum of t and tsu will give errors from compiler, so do
+*** it manually instead:
 ttot(tall)      "time index with spin up"
 /
         1900, 1905, 1910, 1915, 1920, 1925,
@@ -974,7 +1032,7 @@ opTime5(opTimeYr)            "actual life time of ??? in years - 5 years time st
 /
         1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96
 /
-t0(tall)   "start of modelling time, not optimization" /2005/    
+t0(tall)   "start of modelling time, not optimization" /2005/
 
 t_input_gdx(ttot)     "t loaded from input.gdx, used for t interpolation"
 t_interpolate(ttot)   "periods that need interpolation"
@@ -1016,7 +1074,7 @@ te(all_te)              "energy technologies"
         gash2           "gas to hydrogen"
         gash2c          "gas to hydrogen with carbon capture"
         gasftrec        "gas based fischer-tropsch recycle"
-        gasftcrec       "gas based fischer-tropsch with capture recycle"		
+        gasftcrec       "gas based fischer-tropsch with capture recycle"
         refliq          "refinery oil to SE liquids"
         dot             "diesel oil turbine"
         igcc            "integrated coal gasification combined cycle"
@@ -1052,6 +1110,9 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff         "wind offshore power converters"
+$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -1059,26 +1120,34 @@ $endif
         fnrs            "fast nuclear reactor (simple structure)"
         elh2            "hydrogen elecrolysis"
         h2turb          "hydrogen turbine for electricity production"
-		elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+	elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
         h2curt      	"hydrogen production from curtailment"
         tdels           "transmission and distribution for electricity to stationary users"
         tdelt           "transmission and distribution for electricity to transport"
         tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
         tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
-        tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
+        tdbiogat        "transmission and distribution for gas from synthetic origin to transportation"
         tdfosgat        "transmission and distribution for gas from biomass origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
         tdbiohos        "transmission and distribution for heating oil from biomass origin to stationary users"
         tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
         tdh2s           "transmission and distribution for hydrogen to stationary users"
         tdh2t           "transmission and distribution for hydrogen to transportation"
         tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
         tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
         tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
-		tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+	tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
         tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
         tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
         tdhes           "transmission and distribution for heat to stationary users"
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 
 *        ccscomp         "compression of co2, CCS related"
 *        ccspipe         "transportation of co2, CCS related"
@@ -1086,12 +1155,18 @@ $endif
 *        ccsmoni         "monitoring of co2, CCS related"
 
         storspv         "storage technology for photo voltaic"
-        storwind        "storage technology for wind"
+        storwind        "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff     "storage technology for wind offshore"
+$ENDIF.WindOff
         storcsp         "storage technology for concentrating solar power"
 
         gridspv         "grid between areas with high pv production and the rest"
         gridcsp         "grid between areas with high csp production and the rest"
-        gridwind        "grid between areas with high wind production and the rest"
+        gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1104,7 +1179,7 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   gash2           "gas to hydrogen"
   gash2c          "gas to hydrogen with capture"
   gasftrec        "gas based fischer-tropsch recycle"
-  gasftcrec       "gas based fischer-tropsch with capture recycle"  
+  gasftcrec       "gas based fischer-tropsch with capture recycle"
   dot             "diesel oil turbine"
   igcc            "integrated coal gasification combined cycle"
   igccc           "integrated coal gasification combined cycle with capture"
@@ -1138,7 +1213,10 @@ $endif
   geohdr          "geothermal electric hot dry rock"
   geohe           "geothermal heat"
   hydro           "hydro electric"
-  wind            "wind power converters"
+  wind            "wind onshore power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  windoff         "wind offshore power converters"
+$ENDIF.WindOff
   spv             "solar photovoltaic"
   csp             "concentrating solar power"
   solhe           "solar thermal heat generation"
@@ -1153,14 +1231,20 @@ $endif
 *** ccsmoni         "monitoring of co2, CCS related"
 
   storspv         "storage technology for PV"
-  storwind        "storage technology for wind"
+  storwind        "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  storwindoff     "storage technology for wind offshore"
+$ENDIF.WindOff
   storcsp         "storage technology for CSP"
-  
+
   refliq          "refinery oil to SE liquids"
-  
+
   gridspv         "grid between areas with high pv production and the rest"
   gridcsp         "grid between areas with high csp production and the rest"
-  gridwind        "grid between areas with high wind production and the rest"
+  gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
 /
 
 ***-----------------------------------------------------------------------------
@@ -1173,25 +1257,33 @@ teRLDCDisp(all_te)     "RLDC Dispatchable technologies that produce seel"
 
 teLearn(all_te)     "Learning technologies (investment costs can be reduced)"
 /
-        wind        "wind power converters"
-        spv         "solar photovoltaic" 
+        wind        "wind onshore power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+	      windoff     "wind offshore power converters"
+$ENDIF.WindOff
+        spv         "solar photovoltaic"
         csp         "concentrating solar power"
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind"
+        storwind    "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff "storage technology for wind offshore"
+$ENDIF.WindOff
         storcsp     "storage technology for csp"
+        dac         "direct air capture"
+        elh2        "hydrogen elecrolysis"
 /
 
 teNoLearn(all_te)   "Technologies without learning effect"
 
-teEtaIncr(all_te)       "Technologies with time variable efficiency parameter eta"   
+teEtaIncr(all_te)       "Technologies with time variable efficiency parameter eta"
 *RP* computationally the explicit build-time tracking for teEtaIncr is expensive. Therefore, I removed the heating plants, because there the efficiency is anyway high and doesn't have such a large influence
 /
-  pc    
-  igcc  
-  igccc 
-  ngcc  
-  ngccc 
-  ngt   
+  pc
+  igcc
+  igccc
+  ngcc
+  ngccc
+  ngt
   bioigcc
   bioigccc
 /
@@ -1201,7 +1293,7 @@ teEtaConst(all_te)      "Technologies with constant eta"
 teCCS(all_te)       "Technologies with CCS"
 /
   ngccc       "natural gas combined cycle with carbon capture"
-  gash2c      "gas to hydrogen with capture"     
+  gash2c      "gas to hydrogen with capture"
   igccc       "integrated coal gasification combined cycle with carbon capture"
 $ifthen setGlobal cm_ccsfosall
   pcc         "pulverized coal power plant with capture"
@@ -1265,6 +1357,9 @@ teReNoBio(all_te) "renewable technologies except for biomass"
         geohe       "geothermal heat"
         hydro       "hydro electric"
         wind        "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 ***        solhe       "solar thermal heat generation"
@@ -1274,6 +1369,9 @@ teNoRe(all_te)        "Non renewable energy technologies"
 teVRE(all_te)      "technologies requiring storage"
 /
         wind        "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
 /
@@ -1281,7 +1379,10 @@ teVRE(all_te)      "technologies requiring storage"
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
-        storwind    "storage technology for wind"
+        storwind    "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff "storage technology for wind offshore"
+$ENDIF.WindOff
         storcsp     "storage technology for csp"
 /
 teLoc(all_te)      "centralized technologies which require grid"
@@ -1294,12 +1395,15 @@ teGrid(all_te)      "grid between areas"
 /
     gridspv     "grid between areas with high pv production and the rest"
     gridcsp     "grid between areas with high csp production and the rest"
-    gridwind    "grid between areas with high wind production and the rest"
+    gridwind    "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    gridwindoff "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
 /
 teFosCCS(all_te)    "fossil technologies with CCS"
 /
         ngccc       "natural gas combined cycle with carbon capture"
-	gash2c      "gas to hydrogen with capture"     
+	gash2c      "gas to hydrogen with capture"
         gasftcrec       "gas based fischer-tropsch with capture recycle"
         igccc       "integrated coal gasification combined cycle with carbon capture"
 $ifthen setGlobal cm_ccsfosall
@@ -1346,21 +1450,27 @@ teBioPebiolc(all_te)      "biomass technologies using pebiolc"
 teNoTransform(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
        storspv       "storage technology for photo voltaic (PV)"
-       storwind      "storage technology for wind"
+       storwind      "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+       storwindoff   "storage technology for wind offshore"
+$ENDIF.WindOff
        storcsp       "storage technology for concentrating solar power (CSP)"
 
        gridspv       "grid between areas with high pv production and the rest"
        gridcsp       "grid between areas with high csp production and the rest"
-       gridwind      "grid between areas with high wind production and the rest"   
+       gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+       gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
 /
 teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
 /
        pc
-       igcc      
-       ngcc       
+       igcc
+       ngcc
        ngt
-       gaschp       
-       pcc       
+       gaschp
+       pcc
        pco
        igccc
        ngccc
@@ -1372,7 +1482,7 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        hydro
        spv
        csp
-       wind      
+       wind
 /
 
 teFlex(all_te)       "all technologies which can benefit from flexibility tax"
@@ -1396,7 +1506,9 @@ pfFeelhth(all_in)    "all production factors for high temperature heat processes
 
 pfFeelb(all_in)      "production factors for electricity consumption in buildings"
 /
-       feelb
+       feelcb
+       feelhpb
+       feelrhb
 /
 
 feForUe(all_enty)    "final energy types that are transformed into useful energys - is filled automatically from the content of fe2ue"
@@ -1426,14 +1538,16 @@ enty(all_enty)       "all types of quantities"
         pebios       "primary energy biomass sugar nd starch"
         pebioil      "primary energy biomass sunflowers, palm oil, etc"
         seliqbio     "secondary energy liquids from biomass (ex. ethanol)"
-		seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
+	seliqfos     "secondary energy liquids from fossil primary energy (ex. petrol and diesel)"
+        seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-		sesofos      "secondary energy solids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
         seel         "secondary energy electricity"
         seh2         "secondary energy hydrogen"
         segabio      "secondary energy gas from biomass"
-		segafos      "secondary energy gas from fossil primary energy"
-        sehe         "secondary energy district heating nd heat pumps"
+	segafos      "secondary energy gas from fossil primary energy"
+        segasyn      "secondary energy synthetic gas from H2"
+        sehe         "secondary energy district heating and heat pumps"
         fegas        "final energy gas stationary"
         fehos        "final energy heating oil stationary"
         fesos        "final energy solids stationary"
@@ -1442,19 +1556,20 @@ enty(all_enty)       "all types of quantities"
         feh2s         "final energy hydrogen stationary"
         fepet         "final energy petrol transport"
         fedie         "final energy diesel transport"
-	feelt         "final energy electricity for transport"
+        feelt         "final energy electricity for transport"
         fetf          "final energy transport fuels"
         feh2t         "final energy hydrogen transport"
         fegat         "final energy nat. gas for transport"
-        co2          "carbon dioxide emissions"  
+
+        co2          "carbon dioxide emissions"
         ch4          "methane emissions"
         n2o          "n2o emissions from the energy system"
         so2          "sulfur dioxide emissions"
         ch4coal    "fugitive emissions from coal mining"
         ch4gas     "fugitive emissions from gas production"
         ch4oil     "fugitive emissions from oil production"
-        ch4wstl    "ch4 emissions from solid waste disposal on land"	
-        ch4wsts    "ch4 emissions from waste water"		
+        ch4wstl    "ch4 emissions from solid waste disposal on land"
+        ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
@@ -1466,16 +1581,16 @@ enty(all_enty)       "all types of quantities"
         n2otrans   "n2o emissions from transport"
         n2oacid    "n2o emissions from acid production (only 2005 EDGAR data for calibration of n2oadac and n2onitac baselines)"
         n2oadac    "n2o emissions from adipic acid production"
-        n2onitac   "n2o emissions from nitric acid production"				
+        n2onitac   "n2o emissions from nitric acid production"
         n2ofert    "MAC for n2o emissions from fertilizer (starting with n2ofert)"
-        n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"		
+        n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
-        n2oanwst   "MAC for n2o emissions from animal waste (starting with n2oanwst)"	
-        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"	
+        n2oanwst   "MAC for n2o emissions from animal waste (starting with n2oanwst)"
+        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
-        n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"	
-        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"		
+        n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
+        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1491,7 +1606,7 @@ enty(all_enty)       "all types of quantities"
 *        tco2         "CCS related parameter during transportation of CO2"
         ico2         "CCS related parameter during injection of CO2"
 *        sco2         "CCS related parameter during storage of CO2 - monitoring ???"
-	good         "Generic good"     
+	good         "Generic good"
 	perm         "Carbon permit"
 
         !! emissions from industry sub-sectors
@@ -1561,17 +1676,27 @@ peReComp(all_enty) "Renewable PE used by several technologies, thus the competit
 /
         pesol        "PE solar"
 /
+
 entySe(all_enty)       "secondary energy types"
 /
         seliqbio     "secondary energy liquids from biomass"
-		seliqfos     "secondary energy liquids from fossil primary energy"
+	seliqfos     "secondary energy liquids from fossil primary energy"
+        seliqsyn     "secondary energy synthetic liquids from H2"
         sesobio      "secondary energy solids from biomass"
-		sesofos      "secondary energy solids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
         seel         "SE electricity"
         seh2         "SE hydrogen"
         segabio      "secondary energy gas from biomass"
-		segafos      "secondary energy gas from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+        segasyn      "secondary energy synthetic gas from H2"
         sehe         "SE district heating nd heat pumps"
+/
+
+entySeBio(all_enty)       "biomass secondary energy types"
+/
+	seliqbio     "secondary energy liquids from biomass"
+	sesobio      "secondary energy solids from biomass"
+	segabio      "secondary energy gas from biomass"
 /
 
 entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
@@ -1614,7 +1739,7 @@ emiTe(all_enty)   "types of climate-relevant energy emissions for climate coupli
         n2o     "energy system n2o"
 /
 emiExog(all_enty)  "exogenous emissions"
-/ 
+/
         so2
         bc
         oc
@@ -1636,8 +1761,8 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         ch4coal    "fugitive emissions from coal mining"
         ch4gas     "fugitive emissions from gas production"
         ch4oil     "fugitive emissions from oil production"
-        ch4wstl    "ch4 emissions from solid waste disposal on land"	
-        ch4wsts    "ch4 emissions from waste water"	
+        ch4wstl    "ch4 emissions from solid waste disposal on land"
+        ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
@@ -1648,14 +1773,14 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         n2osavan   "n2o emissions from savannah burning (no MAC available)"
         n2otrans   "n2o emissions from transport"
         n2oadac    "n2o emissions from adipic acid production"
-        n2onitac   "n2o emissions from nitric acid production"				
+        n2onitac   "n2o emissions from nitric acid production"
         n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
-        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"	
+        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
-        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"		
+        n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1666,16 +1791,16 @@ MacSector(all_enty)  "sectors for which mac curves exist. Some MACs are used for
         ch4coal    "coal mining"
         ch4gas     "gas production"
         ch4oil     "oil production"
-        ch4wstl    "solid waste disposal on land"	
-        ch4wsts    "waste water"	
+        ch4wstl    "solid waste disposal on land"
+        ch4wsts    "waste water"
         ch4rice    "rice cultivation"
         ch4animals "enteric fermentation of ruminants"
         ch4anmlwst "animal waste management"
         n2otrans   "transport"
         n2oadac    "adipic acid production"
-        n2onitac   "nitric acid production"				
+        n2onitac   "nitric acid production"
         n2ofert    "Inorganic fertilizers"
-        n2oanwst   "manure applied to croplands"	
+        n2oanwst   "manure applied to croplands"
         n2owaste   "waste (domestic sewage)"
         co2luc     "land use change"
         co2cement  "cement production (only process emissions)"
@@ -1689,7 +1814,7 @@ MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIN
         ch4animals "enteric fermentation of ruminants"
         ch4anmlwst "animal waste management"
         n2ofert    "Inorganic fertilizers"
-        n2oanwst   "manure applied to croplands"	
+        n2oanwst   "manure applied to croplands"
         co2luc     "land use change"
 /
 
@@ -1699,7 +1824,7 @@ emiMacMagpieN2O(all_enty)  "types of climate-relevant non-energy N2O emissions w
         n2ofertin  "n2o emissions from Inorganic fertilizers (inorg_fert_n2o)"
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
-        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"	
+        n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
 /
@@ -1707,11 +1832,11 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
 /
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
-        ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"	
+        ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
 /
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
-        co2luc     "co2 emissions from land use change"			
+        co2luc     "co2 emissions from land use change"
 /
 
 emiMacExo(all_enty)  "types of climate-relevant non-energy emissions with mac curve where baseline emissions are exogenous"
@@ -1719,13 +1844,13 @@ emiMacExoN2O(all_enty) "types of climate-relevant non-energy N2O emissions with 
 /
         n2oforest  "n2o emissions from forest burning (no MAC available)"
         n2osavan   "n2o emissions from savannah burning (no MAC available)"
-		n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"		
+		n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
 /
 emiMacExoCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions are exogenous"
 /
-        ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"	
+        ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
         ch4forest  "ch4 emissions from forest burning (no MAC available)"
-        ch4savan   "ch4 emissions from savannah burning (no MAC available)"	
+        ch4savan   "ch4 emissions from savannah burning (no MAC available)"
 /
 
 emiFuEx(all_enty)   "fugitive emissions"
@@ -1769,13 +1894,112 @@ sector_types "differentiation of energy and process emissions in each sector"
         energy "fuel combustion part (and emissions) of the sector activity"
         process "process sepecific part (and emissions) of the sector activity"
 /
+
+entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
+/
+		fegas.build
+		fegas.indst
+		fehos.build
+		fehos.indst
+		fesos.build
+		fesos.indst
+		feels.build
+		feels.indst
+		fehes.build
+		fehes.indst
+		feh2s.build
+		feh2s.indst
+		fepet.trans
+		fedie.trans
+		feh2t.trans
+		feelt.trans
+		feels.cdr
+		fehes.cdr
+                fegas.cdr
+                feh2s.cdr
+/
+
+ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"
+/
+		fegab.build
+		fegai.indst
+		fehob.build
+		fehoi.indst
+		fesob.build
+		fesoi.indst
+		feelb.build
+		feeli.indst
+		feheb.build
+		fehei.indst
+		feh2b.build
+		feh2i.indst
+		ueHDVt.trans
+		ueLDVt.trans
+		ueelTt.trans
+                feeli.cdr
+                fehei.cdr
+                feh2i.cdr
+                fegai.cdr
+/
+
+all_emiMkt         "emission markets"
+/	ETS     "ETS emission market"
+	ES      "Effort sharing emission market"
+	other	"other market configurations"
+/
+
+sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
+/
+        indst.ETS
+        indst.ES
+        build.ES
+        trans.ES
+        trans.other
+	cdr.ETS
+/
+
+te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
+/
+        tdh2i.indst
+        tdh2b.build
+/
+
+macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
+/
+        ch4coal.ETS
+        ch4gas.ETS
+        ch4oil.ETS
+        ch4wstl.ES
+        ch4wsts.ES
+        ch4rice.ES
+        ch4animals.ES
+        ch4anmlwst.ES
+        ch4agwaste.ES
+        ch4forest.other
+        ch4savan.other
+        n2oforest.other
+        n2osavan.other
+        n2otrans.ES
+        n2oadac.ETS
+        n2onitac.ETS
+        n2ofertin.ES
+        n2ofertcr.ES
+        n2ofertsom.other
+        n2oanwstc.ES
+        n2oanwstm.ES
+        n2oanwstp.ES
+        n2oagwaste.ES
+        n2owaste.ES
+        co2luc.other
+        co2cement_process.ETS
+/
 ccsCo2(all_enty)    "only cco2 (???)"
 /
         cco2
 /
 rlf             "cost levels of fossil fuels"
-/ 
-      1*12 
+/
+      1*12
 /
 integ           "set of integers for looping etc"
 /
@@ -1873,12 +2097,12 @@ char            "characteristics of technologies"
   linconstela     "elastaticity of investment costs for linear growth constraint"
   limitGeopot        "geographical annual solar potential"
   luse            "land use factor of solar technologies"
-  capacity        "capacity of solar technologies" 
+  capacity        "capacity of solar technologies"
   constrTme       "Construction time in years, needed to calculate turn-key cost premium compared to overnight costs"
   tkpremused      "turn-key cost premium used in the model (with a discount rate of 3+ pure rate of time preference); in comparison to overnight costs)"
   lifetime        "average lifetime of a technology (integral under the omeg-curve). Unit: years"
   flexibility                        "representing ramping constraints or additional costs for partial load of technologies in power sector"
-  tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'" 
+  tech_stat       "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
   Xport           "imports"
   Mport           "exports"
   use             "financial trade costs for PE use [trl$US per TWa]"
@@ -1901,8 +2125,8 @@ charPeRe(char) "characteristics of renewables"
         maxprod    "maximum annual production"
 /
 s_statusTe   "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
-/ 
-      0 * 3 
+/
+      0 * 3
 /
 ;
 
@@ -1918,17 +2142,6 @@ Sets
   //
   fe_tax_subEs(all_in,all_esty) "correspondence between tax and subsidy input data resolution and model sectoral resolution. For FE which takes the pathway III to the CES "
   //
-  cesParameter   "parameters of the CES functions and for calibration"
-  /
-    quantity   "quantity of CES function input/output"
-    price      "price of CES function input/output"
-    eff        "baseyear efficiency of CES function input/output"
-    effgr      "multiplicative efficiency growth of CES function input/output"
-    rho        "CES function elasticity parameter rho = 1 - (1 / sigma)"
-    xi         "baseyear income share of CES function input/output"
-    offset_quantity "quantity offset for the CES tree if the quantity is null"
-    compl_coef    "coefficients for the perfectly complementary factors"
-  /
 
 
 ***-------------------------------------------------------------------------------
@@ -1960,11 +2173,11 @@ sol_itr       "iterator for inner solution process within one Negishi iteration"
       1*10
 /
 
-iteration     "iterator for main (Negishi/Nash) iterations" 
-/    
+iteration     "iterator for main (Negishi/Nash) iterations"
+/
       1*200
 /
-steps         "iterator for MAC steps" 
+steps         "iterator for MAC steps"
 /
       1*801
 /
@@ -1976,8 +2189,9 @@ steps         "iterator for MAC steps"
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 alias(t,t2,t3);
+alias(iteration,iteration2);
 alias(tall,tall2,tall3);
-alias(ttot,ttot2);
+alias(ttot,ttot2,ttot3);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);
@@ -1991,9 +2205,11 @@ alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
 alias(rlf,rlf2);
-alias(regi,regi2);
+alias(regi,regi2,regi3);
 alias(steps,steps2);
-alias(iteration,iteration2);
+alias(all_emiMkt,emiMkt);
+alias(emi_sectors,sector);
+alias(sector_types,type)
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
@@ -2055,6 +2271,9 @@ $endif
         pegeo.sehe.geohe
         pehyd.seel.hydro
         pewin.seel.wind
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        pewin.seel.windoff
+$ENDIF.WindOff
         pesol.seel.spv
         pesol.seel.csp
         pesol.sehe.solhe
@@ -2073,10 +2292,12 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
 /
 	all_seliq.seliqbio
 	all_seliq.seliqfos
+        all_seliq.seliqsyn
 	all_seso.sesobio
 	all_seso.sesofos
 	all_sega.segabio
 	all_sega.segafos
+        all_sega.segasyn
 /
 
 *RP* mappings for storage technologies
@@ -2084,6 +2305,9 @@ VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage
 /
         spv.storspv
         wind.storwind
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff.storwindoff
+$ENDIF.WindOff
         csp.storcsp
 /
 
@@ -2098,6 +2322,9 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
 /
         spv.gridspv
         wind.gridwind
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+	      windoff.gridwindoff
+$ENDIF.WindOff
         csp.gridcsp
 /
 
@@ -2120,20 +2347,24 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seel.feels.tdels
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
+        segasyn.fegas.tdsyngas
         seliqbio.fehos.tdbiohos
-	seliqfos.fehos.tdfoshos
+        seliqfos.fehos.tdfoshos
+        seliqsyn.fehos.tdsynhos
         sesobio.fesos.tdbiosos
-	sesofos.fesos.tdfossos
+        sesofos.fesos.tdfossos
         seh2.feh2s.tdh2s
         sehe.fehes.tdhes
         seel.feelt.tdelt
         seliqbio.fepet.tdbiopet
-	seliqfos.fepet.tdfospet
+        seliqfos.fepet.tdfospet
+        seliqsyn.fepet.tdsynpet
         seliqbio.fedie.tdbiodie
-	seliqfos.fedie.tdfosdie
+        seliqfos.fedie.tdfosdie
+        seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
-
+fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 
@@ -2262,25 +2493,32 @@ $endif
         pebiolc.seel.bioigcc.n2o
         pebiolc.segabio.biogas.n2o
         segabio.fegas.tdbiogas.ch4
-		segafos.fegas.tdfosgas.ch4
+        segafos.fegas.tdfosgas.ch4
 *        cco2.pco2.ccscomp.co2
 *        pco2.tco2.ccspipe.co2
         cco2.ico2.ccsinje.co2
         pebiolc.seel.bioigccc.co2
         pebiolc.seel.bioigccc.cco2
         seliqbio.fehos.tdbiohos.bc
-		seliqfos.fehos.tdfoshos.bc
+        seliqfos.fehos.tdfoshos.bc
         seliqbio.fedie.tdbiodie.bc
-		seliqfos.fedie.tdfosdie.bc
+        seliqfos.fedie.tdfosdie.bc
         seliqbio.fepet.tdbiopet.bc
-		seliqfos.fepet.tdfospet.bc
+        seliqfos.fepet.tdfospet.bc
         seliqbio.fehos.tdbiohos.oc
-		seliqfos.fehos.tdfoshos.oc
+        seliqfos.fehos.tdfoshos.oc
         seliqbio.fedie.tdbiodie.oc
-		seliqfos.fedie.tdfosdie.oc
+        seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
-		seliqfos.fepet.tdfospet.oc
+        seliqfos.fepet.tdfospet.oc
+
+        segafos.fegas.tdfosgas.co2
+        seliqfos.fehos.tdfoshos.co2
+        sesofos.fesos.tdfossos.co2
+        seliqfos.fepet.tdfospet.co2
+        seliqfos.fedie.tdfosdie.co2
 /
+
 emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
 /
     pecoal.ch4coal
@@ -2295,7 +2533,7 @@ emiMacSector2emiMac(all_enty,all_enty)   "mapping of sub-emissions to their sum"
 /
 emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - caution: not all MACs exist, in that case they are zero"
 /
-        ch4coal.ch4coal 
+        ch4coal.ch4coal
         ch4gas.ch4gas
         ch4oil.ch4oil
         ch4wstl.ch4wstl
@@ -2321,6 +2559,25 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2chemicals . co2chemicals
         co2steel     . co2steel
 /
+
+emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
+/
+        (ch4coal, ch4gas, ch4oil).extraction.process.ch4
+        (ch4wstl, ch4wsts).waste.process.ch4
+        (ch4rice, ch4animals, ch4anmlwst, ch4agwaste).agriculture.process.ch4
+        (ch4forest, ch4savan).lulucf.process.ch4
+
+        (n2otrans).trans.process.n2o
+        (n2oadac, n2onitac).indst.process.n2o
+        (n2owaste).waste.process.n2o
+        (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
+        (n2oforest, n2osavan).lulucf.process.n2o
+
+        (co2cement_process,co2cement,co2chemicals,co2steel).indst.process.co2
+        (co2luc).lulucf.process.co2
+/
+
+
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
 /
@@ -2373,7 +2630,11 @@ prodSeOth2te(all_enty,all_te)      "map other se production not directly followi
 
 teSe2rlf(all_te,rlf)        "mapping for techologies to grades. Currently, the information was shifted to teRe2rlfDetail. Thus, teSe2rlf now only has '1' for the rlf values"
 /
-      (wind,spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
+      (wind
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff
+$ENDIF.WindOff
+        spv,csp,refliq,hydro,geohe,geohdr,solhe,ngcc,ngccc,ngt,gaschp,gashp,gash2,gash2c,gastr,gasftrec,gasftcrec,dot,
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
@@ -2386,6 +2647,9 @@ $endif
 teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 /
         wind.(1*9)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff.(1*9)
+$ENDIF.WindOff
         spv.(1*9)
         csp.(1*9)
         hydro.(1*5)
@@ -2395,7 +2659,12 @@ teRe2rlfDetail(all_te,rlf)        "mapping for se techologies to grades"
 
 teFe2rlf(all_te,rlf)      "mapping for final energy to grades"
 /
-      (tdels,tdelt,tdbiogas,tdfosgas,tdbiogat,tdfosgat,tdbiohos,tdfoshos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdbiopet,tdfospet,tdbiosos,tdfossos,tdhes) . 1
+      (tdels,tdelt,tdbiogas,tdfosgas,tdsyngas,tdbiogat,tdfosgat,tdsyngat,tdbiohos,tdfoshos,tdsynhos,tdh2s,tdh2t,tdbiodie,tdfosdie,tdsyndie,tdbiopet,tdfospet,tdsynpet,tdbiosos,tdfossos,tdhes) . 1
+/
+
+teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technologies of H2 t&d in buildlings and industry (which should not produce vm_prodFe in q_limitCapFe)"
+/
+        (tdh2i,tdh2b).1
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"
@@ -2409,7 +2678,11 @@ teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
 
 teNoTransform2rlf(all_te,rlf)         "mapping for no transformation technologies to grades"
 /
-      (storspv,storwind,storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
+      (storspv,storwind
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+storwindoff,gridwindoff
+$ENDIF.WindOff
+        storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
 /
 
 opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
@@ -2463,13 +2736,17 @@ sectorEndoEmi2te(all_enty,all_enty,all_te,sectorEndoEmi)	 "map sectors to techno
         pebiolc.sesobio.biotr.res
         pebiolc.sesobio.biotrmod.indst
         seliqbio.fehos.tdbiohos.indst
-		seliqfos.fehos.tdfoshos.indst
+	seliqfos.fehos.tdfoshos.indst
+        seliqsyn.fehos.tdsynhos.indst
         seliqbio.fehos.tdbiohos.res
-		seliqfos.fehos.tdfoshos.res
+	seliqfos.fehos.tdfoshos.res
+        seliqsyn.fehos.tdsynhos.res
         seliqbio.fedie.tdbiodie.trans
-		seliqfos.fedie.tdfosdie.trans
+	seliqfos.fedie.tdfosdie.trans
+        seliqsyn.fedie.tdsyndie.trans
         seliqbio.fepet.tdbiopet.trans
-		seliqfos.fepet.tdfospet.trans
+	seliqfos.fepet.tdfospet.trans
+        seliqsyn.fepet.tdsynpet.trans
 /
 emiRCP2emiREMIND "mapping between emission types expected by MAGICC and provided by REMIND"
 /
@@ -2482,7 +2759,7 @@ emiRCP2emiREMIND "mapping between emission types expected by MAGICC and provided
 /
 emiFgas2emiRCP(all_enty,emiRCP)   "match F-gases to MAGICC emissions"
 /
-    emiFgasCF4       . CF4 
+    emiFgasCF4       . CF4
     emiFgasC2F6      . C2F6
     emiFgasC6F14     . C6F14
     emiFgasHFC23     . HFC23
@@ -2521,7 +2798,7 @@ emiRCP2order "order of emission types expected by MAGICC"
     HFC245fa  . 22
     SF6       . 23
 /
-  
+
 emiRCP2unitsMagicc(emiRCP,unitsMagicc) "match units to emission types"
 /
     (FossilCO2,OtherCO2)  . GtC

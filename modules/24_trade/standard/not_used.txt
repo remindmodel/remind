@@ -1,0 +1,14 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+pm_SEPrice, parameter, only necessary for secondary energy trade
+
+pm_gdp,input,questionnaire
+cm_import_EU,input,questionnaire
+cm_ariadne_trade_el,input,questionnaire
+cm_ariadne_trade_h2,input,questionnaire
+cm_ariadne_trade_syn,input,questionnaire

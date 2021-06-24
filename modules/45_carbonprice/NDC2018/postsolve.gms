@@ -15,41 +15,33 @@ if(cm_iterative_target_adj eq 3,
 
 *#' @equations 
 *#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
-p45_actual_co2eq_woLU_regi(regi_2030target) = vm_co2eq.l("2030",regi_2030target)*sm_c_2_co2*1000 + vm_emiFgas.L("2030",regi_2030target,"emiFgasTotal")
-*cb*    substract the bunker emissions, as in /modules/35_transport/complex/output.gms
-*cb*                             69.3 = ef_dem("fedie") as defined in /core/reporting.gms ()emission factor of liquid fuels in [Mt CO2/EJ]
-		- 69.3*(1-
-*cb     p_bioshare as in /core/reporting.gms
-	      sum(se2fe(entySe,"fedie",te),
-                                     (sum(pe2se(peBio,entySe,te2),vm_prodSe.l("2030",regi_2030target,peBio,entySe,te2))
-                                       + sum(pc2te(enty,entySe2(enty3),te,entySe),max(0, pm_prodCouple(regi_2030target,enty,enty3,te,entySe)) * vm_prodSe.l("2030",regi_2030target,enty,enty3,te)))
-                                     /(sum(pe2se(entyPe,entySe,te2),vm_prodSe.l("2030",regi_2030target,entyPe,entySe,te2))
-                                       + sum(pc2te(enty,entySe2(enty3),te,entySe),max(0, pm_prodCouple(regi_2030target,enty,enty3,te,entySe)) * vm_prodSe.l("2030",regi_2030target,enty,enty3,te)))))
-*cb total fedie energy in [TWa]]									   
-	* sum(se2fe(enty,"fedie",te),vm_prodFe.l("2030",regi_2030target,enty,"fedie",te) )
-*cb bunkershare times emission intensity of liquid fuels
-	* pm_bunker_share_in_nonldv_fe("2030",regi_2030target) * 31.536;
-	
-*#' special case: US target refers to 2025,
-p45_actual_co2eq_woLU_regi(regi_2025target) = vm_co2eq.l("2025",regi_2025target)*sm_c_2_co2*1000 + vm_emiFgas.L("2025",regi_2025target,"emiFgasTotal")
-*cb*    substract the bunker emissions, as in /modules/35_transport/complex/output.gms
-*cb*                             69.3 = ef_dem("fedie") as defined in /core/reporting.gms ()emission factor of liquid fuels in [Mt CO2/EJ]
-		- 69.3*(1-
-*cb     p_bioshare as in /core/reporting.gms
-	      sum(se2fe(entySe,"fedie",te),
-                                     (sum(pe2se(peBio,entySe,te2),vm_prodSe.l("2025",regi_2025target,peBio,entySe,te2))
-                                       + sum(pc2te(enty,entySe2(enty3),te,entySe),max(0, pm_prodCouple(regi_2025target,enty,enty3,te,entySe)) * vm_prodSe.l("2025",regi_2025target,enty,enty3,te)))
-                                     /(sum(pe2se(entyPe,entySe,te2),vm_prodSe.l("2025",regi_2025target,entyPe,entySe,te2))
-                                       + sum(pc2te(enty,entySe2(enty3),te,entySe),max(0, pm_prodCouple(regi_2025target,enty,enty3,te,entySe)) * vm_prodSe.l("2025",regi_2025target,enty,enty3,te)))))
-*cb total fedie energy in [TWa]]									   
-	* sum(se2fe(enty,"fedie",te),vm_prodFe.l("2025",regi_2025target,enty,"fedie",te) )
-*cb bunkershare times emission intensity of liquid fuels
-	* pm_bunker_share_in_nonldv_fe("2025",regi_2025target) * 31.536;
-	
-	
-		display vm_co2eq.l;
-		display p45_actual_co2eq_woLU_regi;
-		display p45_ref_co2eq_woLU_regi;
+p45_actual_co2eq_woLU_regi(regi_2030target) = 
+	vm_co2eq.l("2030",regi_2030target)*sm_c_2_co2*1000
+*** add F-Gases
+	+ vm_emiFgas.L("2030",regi_2030target,"emiFgasTotal") 
+*** substract bunker emissions
+	- sum(se2fe(enty,enty2,te),
+        pm_emifac("2030",regi_2030target,enty,enty2,te,"co2")
+        * vm_demFeSector.l("2030",regi_2030target,enty,enty2,"trans","other")*sm_c_2_co2*1000
+    )
+; 
+
+
+*#' special case: US target refers to 2025
+p45_actual_co2eq_woLU_regi(regi_2025target) = 
+	vm_co2eq.l("2025",regi_2025target)*sm_c_2_co2*1000
+*** add F-Gases
+	+ vm_emiFgas.L("2025",regi_2025target,"emiFgasTotal") 
+*** substract bunker emissions
+	- sum(se2fe(enty,enty2,te),
+        pm_emifac("2025",regi_2025target,enty,enty2,te,"co2")
+        * vm_demFeSector.l("2025",regi_2025target,enty,enty2,"trans","other")*sm_c_2_co2*1000
+    )
+; 
+
+display vm_co2eq.l;
+display p45_actual_co2eq_woLU_regi;
+display p45_ref_co2eq_woLU_regi;
 		
 *#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
 *#' maximum possible change between iterations decreases with increase of iteration number

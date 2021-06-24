@@ -33,6 +33,7 @@ positive variables
     v32_shStor(ttot,all_regi,all_te)         		"share of seel production from renewables that needs to be stored, range 0..1 [0,1]"
     v32_storloss(ttot,all_regi,all_te)         		"total energy loss from storage for a given technology [TWa]"
     v32_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
+    v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
 ;
 
 equations

@@ -22,3 +22,5 @@ cm_emiscen,variable,not needed
 cm_regiBioenergymax,switch,questionnaire
 cm_regiNoBioImport,switch,questionnaire
 vm_Mport,variable,not needed
+cm_bioprod_histlim,input,questionnaire
+cm_BioSupply_Adjust_EU,input,questionnaire

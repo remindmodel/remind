@@ -42,7 +42,6 @@ o80_trackSurplusSign(ttot,all_enty,iteration)             "auxiliary parameter t
 o80_SurplusOverTolerance(ttot,all_enty,iteration)         "auxiliary parameter to track in which iterations which item surpassed the tolerance (positive/negative)"
 
 
-
 p80_surplusMax(all_enty,iteration,tall)    "Diagnostics for Nash: Worst residual market surplus until given year, absolute value. [Units: TWa, trillion Dollar, GtC]"
 p80_surplusMax2100(all_enty)               "Worst residual market surplus until 2100, absolute value. [Units: TWa, trillion Dollar, GtC]"
 p80_surplusMaxRel(all_enty,iteration,tall) "Diagnostics for Nash: Worst residual market surplus until given year, in per cent."
@@ -84,6 +83,7 @@ p80_SolNonOpt(all_regi)                    "solve status"
 p80_taxrev_dev(ttot,all_regi)              "deviation of tax revenue normalized by GDP if taxes did not converge"
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
+p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
 ;
 
 positive variable

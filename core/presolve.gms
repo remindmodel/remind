@@ -123,7 +123,40 @@ else
 
 *** Define co2 price for entities that are used in MAC. 
 p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
-*** Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
+
+*** Redefine the MAC price for sectors and regions within the ETS
+$IFTHEN.macPriceETS not "%cm_emiMktETS%" == "off" 
+  loop(ETS_mkt,
+    loop(enty$(macSector2emiMkt(enty,"ETS")),
+      p_priceCO2forMAC(t,regi,enty2)$(ETS_regi(ETS_mkt,regi) AND emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ETS")* 1000;
+    );
+  );
+$ENDIF.macPriceETS
+
+*** Redefine the MAC price for sectors and regions within the ES
+$IFTHEN.macPriceES not "%cm_emiMktES%" == "off" 
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"ES")),
+    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ES")* 1000;
+  );
+  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"other")),
+    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
+  );
+$ENDIF.macPriceES
+
+*** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
+*** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
+*** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * cm_cprice_red_factor;
+*** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+5)  = 0.2 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+10) = 0.4 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear+15) = 0.8 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val ge cm_startyear+20) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie);
+*** 3. Reduce co2 price for land-use entities by level of development (uses the same data from MOINPUT as MAgPIE for im_development_state)
+p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * p_developmentState(ttot,regi);
+*** 4. Price for MACs was calculated with AR4 GWPs --> convert CO2 price with old GWPs here as well
 p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
 p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
 
@@ -229,9 +262,9 @@ vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,"co2luc") = p_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
-vm_macBase.fx(ttot,regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
-vm_macBase.fx(ttot,regi,"n2oadac")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
-vm_macBase.fx(ttot,regi,"n2onitac") = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
+vm_macBase.fx(ttot,regi,"n2oadac")$p_macBaseVanv("2005",regi,"n2otrans")  = p_macBaseVanv(ttot,regi,"n2oadac")  * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
+vm_macBase.fx(ttot,regi,"n2onitac")$(p_macBaseVanv("2005",regi,"n2oadac") OR p_macBaseVanv("2005",regi,"n2onitac")) = p_macBaseVanv(ttot,regi,"n2onitac") * (p_macBase2005(regi,"n2oacid")  / (p_macBaseVanv("2005",regi,"n2oadac") + p_macBaseVanv("2005",regi,"n2onitac")));
 
 *** baseline continuation after 2100
 vm_macBase.fx(ttot,regi,enty)$((ttot.val gt 2100)$((NOT emiMacMagpie(enty)) AND (NOT emiFuEx(enty)) AND (NOT sameas(enty,"n2ofertin")) ))=vm_macBase.l("2100",regi,enty);
@@ -389,6 +422,7 @@ pm_macCost(ttot,regi,emiMacSector(enty))
 
 *JeS* add 50% of abated CH4 from coal MACs to PEprod. CH4 from oil production is usually flared and not re-used. CH4 from gas production is mostly avoided losses from leakages.
 *** These losses are not accounted for, so neither are the avoided losses.
+*** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 p_macPE(ttot,regi,enty) = 0.0;
 p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = sm_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
@@ -438,6 +472,4 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 
 $endif.CO2priceDependent_AdjCosts
 
-
-***Display "electricity price", pm_priceSeel;
 *** EOF ./core/presolve.gms

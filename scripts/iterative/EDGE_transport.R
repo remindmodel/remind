@@ -148,20 +148,20 @@ if (file.exists(datapath("demand_previousiter.RDS")) & learning) {
     rebates_febatesFCEV = FALSE
     rebates_febatesBEV = FALSE
   }
-  
+
   nonfuel_costs_list = applylearning(
-    non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
-    gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
-    ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
-    rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
-  
+      non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
+      gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
+      ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
+      rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+
   nonfuel_costs = nonfuel_costs_list$nonfuel_costs
   capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
   saveRDS(capcost4W, "capcost_learning.RDS")
-  } else {
-    totveh = NULL
-  }
+   } else {
+      totveh = NULL
+   }
 
 ## load price
 REMIND_prices <- merge_prices(
@@ -258,11 +258,7 @@ shares_int_dem <- shares_intensity_and_demand(
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
-
-  ## save temporary demand structure for debugging
-  saveRDS(shares_int_dem$demandF_plot_pkm, datapath(paste0("demandF_plot_pkm", iter, ".RDS")))
-  saveRDS(shares_int_dem$demandF_plot_EJ, datapath(paste0("demandF_plot_EJ", iter, ".RDS")))
+norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## totla demand normalized to 1; if opt$reporting, in million km
 
 if (opt$reporting) {
   saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
@@ -277,26 +273,25 @@ if (opt$reporting) {
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
 
-    vint <- vintages[["vintcomp_startyear"]]
+  vint <- vintages[["vintcomp_startyear"]]
   dem <- shares_int_dem$demandF_plot_pkm
   vint <- dem[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
   vint <- vint[!is.na(demand_F)][
-    , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
-  
+  , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
+
   vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
   vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
   setnames(vint, "variable", "construction_year")
-  
   vintfile <- "vintcomp.csv"
   cat("# LDV Fleet vintages.", file=vintfile, sep="\n")
   cat("# full_demand_vkm is the full demand for a given year, region, vehicle_type and technology.", file=vintfile, sep="\n", append=TRUE)
   cat("# New sales for the current year can be calculated by full_demand_vkm - sum(vintage_demand_vkm).", file=vintfile, sep="\n", append=TRUE)
   cat("# Units: million vkms.", file=vintfile, sep="\n", append=TRUE)
-  
+
   fwrite(vint, vintfile, col.names=TRUE, append=TRUE)
-  
+
   quit()
 }
 

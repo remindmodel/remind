@@ -13,7 +13,7 @@ End_Use_Industry_LLF,FE|Industry|Liquids (EJ/yr),0,1
 End_Use_Industry_NatGas,FE|Industry|Gases (EJ/yr),0,1
 End_Use_Residential_Bio_Mod,FE|Solids|Biomass|Modern (EJ/yr),0,1
 End_Use_Residential_Bio_Trad,FE|Solids|Biomass|Traditional (EJ/yr),0,1
-End_Use_Residential_Coal,FE|Solids|Coal (EJ/yr),0,1
+End_Use_Residential_Coal,FE|Solids|Fossil|Coal (EJ/yr),0,1
 End_Use_Residential_HLF,FE|Buildings|Liquids (EJ/yr),0,1
 End_Use_Residential_LLF,FE|Buildings|Liquids (EJ/yr),0,1
 End_Use_Residential_NatGas,FE|Buildings|Gases (EJ/yr),0,1

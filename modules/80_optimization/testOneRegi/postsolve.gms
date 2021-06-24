@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/80_optimization/testOneRegi/postsolve.gms
 *AJS* feed updated prices and quantities into the next iteration:
-loop(trade,
+loop(trade$(NOT tradeSe(trade)),
     loop(regi,
 	loop(ttot$(ttot.val ge cm_startyear),
 	    pm_Xport0(ttot,regi,trade)$(pm_SolNonInfes(regi) eq 1)  = vm_Xport.l(ttot,regi,trade);

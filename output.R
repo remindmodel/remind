@@ -19,8 +19,8 @@
 options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 
 #load landuse library
-
-library(lucode)
+library(lucode2)
+library(gms)
 
 .libPaths(c("/p/projects/rd3mod/R/libraries/snapshots/magclass_only/",.libPaths()))
 ###Define arguments that can be read from command line
@@ -96,6 +96,7 @@ choose_folder <- function(folder,title="Please choose a folder") {
 		return(dirs[identifier])
 	} else return(dirs[identifier])
 }
+
 
 choose_module <- function(Rfolder,title="Please choose an outputmodule") {
   module <- gsub("\\.R$","",grep("\\.R$",list.files(Rfolder), value=TRUE))

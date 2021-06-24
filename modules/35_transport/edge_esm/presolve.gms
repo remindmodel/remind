@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/edge_esm/presolve.gms
 $ifthen.calibrate %CES_parameters% == "load"
-if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) eq 0))
+if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(iteration), 3) eq 0))
     or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 5) eq 0))
     or (ord(iteration)  gt 45 and  (mod(ord(iteration), 8) eq 0)),
 
@@ -16,21 +16,40 @@ if( (ord(iteration) le 25 and ord(iteration) ge 14 and (mod(ord(iteration), 3) e
 $ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
     pm_esCapCost(t,regi, teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi, "%cm_GDPscen%","ConvCase",teEs_dyn35);
     pm_esCapCost(t,"EUR",teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,"EUR","%cm_GDPscen%","ElecEra", teEs_dyn35);
-
 $elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
     pm_esCapCost(t,regi, teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi, "%cm_GDPscen%","ConvCase",    teEs_dyn35);
     pm_esCapCost(t,"EUR",teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,"EUR","%cm_GDPscen%","ElecEraWise", teEs_dyn35);
-
 $elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseEurWise"
     pm_esCapCost(t,regi, teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi, "%cm_GDPscen%","ConvCase",     teEs_dyn35);
     pm_esCapCost(t,"EUR",teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,"EUR","%cm_GDPscen%","ConvCaseWise", teEs_dyn35);
-
 $else.EDGEtr_ElecEraEur
     pm_esCapCost(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);
 $endif.EDGEtr_ElecEraEur
 
-
+    !! load FE-to-ES results from EDGE-Transport into auxilliary parameter
     Execute_Loadpoint "p35_fe2es", p35_fe2es_aux = p35_fe2es;
+    !! update module parameter with EDGE-Transport results, preserving 2005 data
+    !! so no altered 2005 data gets passed on to potential fixed runs
+$ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
+    p35_fe2es(t,regi,all_GDPscen,"ConvCase",teES_dyn35)$(     (t.val gt 2005) AND (not sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ConvCase",teES_dyn35);
+    p35_fe2es(t,regi,all_GDPscen,"ElecEra",teES_dyn35)$(      (t.val gt 2005) AND (sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ElecEra",teES_dyn35);
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
+    p35_fe2es(t,regi,all_GDPscen,"ConvCase",teES_dyn35)$(     (t.val gt 2005) AND (not sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ConvCase",teES_dyn35);
+    p35_fe2es(t,regi,all_GDPscen,"ElecEraWise",teES_dyn35)$(  (t.val gt 2005) AND (sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ElecEraWise",teES_dyn35);
+$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseEurWise"
+    p35_fe2es(t,regi,all_GDPscen,"ConvCase",teES_dyn35)$(     (t.val gt 2005) AND (not sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ConvCase",teES_dyn35);
+    p35_fe2es(t,regi,all_GDPscen,"ConvCaseWise",teES_dyn35)$( (t.val gt 2005) AND (sameas(regi, "EUR")) ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,"ConvCaseWise",teES_dyn35);
+$else.EDGEtr_ElecEraEur
+    p35_fe2es(t,regi,all_GDPscen,EDGE_scenario,teES_dyn35)$( t.val gt 2005 ) 
+    = p35_fe2es_aux(t,regi,all_GDPscen,EDGE_scenario,teES_dyn35);
+$endif.EDGEtr_ElecEraEur
+    !! up date model parameter with data after 2010
 $ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
     pm_fe2es(t,regi, teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100)
     = p35_fe2es_aux(t,regi, "%cm_GDPscen%","ConvCase",teEs_dyn35);

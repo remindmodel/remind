@@ -1,5 +1,7 @@
 # REMIND - REgional Model of INvestments and Development
 
+[![CodeCheck Status](https://github.com/remindmodel/remind/workflows/check/badge.svg)](https://github.com/remindmodel/remind/actions) 
+
   <https://www.pik-potsdam.de/research/transformation-pathways/models/remind>
 
 ## WHAT IS REMIND?
@@ -13,7 +15,7 @@ The macro-economic core of REMIND is a Ramsey-type optimal growth model
 in which intertemporal global welfare is optimized subject to equilibrium constraints.
 
 ## DOCUMENTATION
-The model documentation for version 2.1.0 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.0.
+The model documentation for version 2.1.3 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.3.
 
 A most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
@@ -62,6 +64,14 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 16GB of memory and a Core i7 CPU or similar.
 
 ## HOW TO INSTALL
+
+**Please note: You need input data to run REMIND. At present, there are
+still legal issues with sharing this data, so we can not publish them yet
+(but we are working on it, please bear with us). If you have access to the
+necessary data sources (IEA, etc.) you can generate the input data on your own,
+we are happy to assist you in doing so.**
+
+
 REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
 solvers *CONOPT* for its core calculations. As the model
 benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
@@ -96,12 +106,14 @@ pkgs <- c("gdxrrw",
           "magclass",
           "madrat",
           "mip",
-          "lucode",
-          "remind",
+          "lucode2",
+          "gms",
+          "remind2",
           "lusweave",
           "luscale",
           "goxygen",
-          "luplot")
+          "luplot",
+          "yaml")
 install.packages(pkgs)
 ```
 Updating R is recommended if problems arise at package installation, please write

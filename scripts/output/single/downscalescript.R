@@ -6,11 +6,11 @@
 # |  Contact: remind@pik-potsdam.de
 
 #load libraries
-library(moinput)
+library(mrremind)
 library(luscale)
 library(lusweave)
 library(luplot)
-library(lucode)
+library(lucode2)
 library(gdx)
 library(ludata)
 library(luplot)

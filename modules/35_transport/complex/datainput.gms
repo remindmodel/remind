@@ -55,33 +55,18 @@ display p35_passLDV_ES_efficiency;
 display p35_freight_ES_efficiency;
 
 
-*** bunker share in non-LDV transport
-Parameter  p35_bunker_share(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "share of bunkers in non-LDV transport"
+*** bunkers FE demand trajectories
+Parameter  p35_bunkers_fedemand(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "Bunkers FE demand [EJ]"
 /
 $ondelim
-$include "./modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r"
+$include "./modules/35_transport/complex/input/f35_bunkers_fe.cs4r"
 $offdelim
 /
 ;
 
-$ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
-pm_bunker_share_in_nonldv_fe(ttot,regi) =  p35_bunker_share(ttot,regi, "%cm_GDPscen%","ConvCase");
-pm_bunker_share_in_nonldv_fe(ttot,"EUR") = p35_bunker_share(ttot,"EUR","%cm_GDPscen%","ElecEra" );
+p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","ConvCase");
 
-$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEurWise"
-pm_bunker_share_in_nonldv_fe(ttot,regi) =  p35_bunker_share(ttot,regi, "%cm_GDPscen%","ConvCase");
-pm_bunker_share_in_nonldv_fe(ttot,"EUR") = p35_bunker_share(ttot,"EUR","%cm_GDPscen%","ElecEraWise" );
-
-$elseif.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ConvCaseEurWise"
-pm_bunker_share_in_nonldv_fe(ttot,regi) =  p35_bunker_share(ttot,regi, "%cm_GDPscen%","ConvCase");
-pm_bunker_share_in_nonldv_fe(ttot,"EUR") = p35_bunker_share(ttot,"EUR","%cm_GDPscen%","ConvCaseWise" );
-
-$else.EDGEtr_ElecEraEur
-pm_bunker_share_in_nonldv_fe(ttot,regi) = p35_bunker_share(ttot,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%");
-$endif.EDGEtr_ElecEraEur
-
-display pm_bunker_share_in_nonldv_fe;
-
+display p35_bunkers_fe;
 
 *** RP: to be able to better reproduce the 2010 decrease of liquids and solids demand in the US, additionally decrease the refineries build-up in 2005:
 table f35_factorVintages(all_regi,opTimeYr,all_te) "factor to be able to better reproduce the 2010 decrease of liquids and solids demand"

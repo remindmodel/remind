@@ -5,8 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-library(remind)
-library(lucode)
+library(remind2)
+library(lucode2)
 
 ############################# BASIC CONFIGURATION #############################
 
