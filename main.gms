@@ -329,6 +329,7 @@ c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in G
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
+cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
@@ -336,6 +337,8 @@ c_VREPot_Factor             "switch for rescaling renewable potentials in all gr
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
+cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
+cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -540,6 +543,8 @@ cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
+$setGlobal cm_ARIADNE_FeShareBounds  on !! def = off
+
 cm_ariadne_trade_el = 50; !! def 0
 cm_ariadne_trade_h2 = 150; !! def 0
 cm_ariadne_trade_syn = 150; !! def 0
@@ -553,6 +558,10 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 $setGlobal cm_regipol_slope_beforeTarget  2040.DEU 1.3 !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
+
+
+cm_heatPumpMkup_build = 100; !! def = 200
+cm_districtHeatingMkup_build = 12; !! def = 25
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)

@@ -437,6 +437,18 @@ pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
+
+*** FS: scale down capacity factor for coal power in Germany in the near-term based on observed values in 2020 (~0.35 CF)
+*** https://static.agora-energiewende.de/fileadmin/Projekte/2021/2020_01_Jahresauswertung_2020/200_A-EW_Jahresauswertung_2020_WEB.pdf
+
+*** do this only in non-baseline runs for now to not mess with the calibration, the if clause can be removed (or changes moved to mrremind) once covid-corrected calibration input data is there
+
+if( cm_emiscen ne 1,
+pm_cf("2020",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
+pm_cf("2025",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
+pm_cf("2030",regi,"pc")$(sameAs(regi,"DEU")) = 0.4;
+);
+
 table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
 $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
