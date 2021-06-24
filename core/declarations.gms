@@ -188,7 +188,7 @@ pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling ef
 pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
 pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from total captured CO2"
 
-pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
+p_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
 
 
 * Fuel Prices

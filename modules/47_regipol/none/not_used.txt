@@ -33,3 +33,5 @@ pm_earlyreti_adjRate,input,questionnaire
 pm_emiTargetES,input,questionnaire
 vm_emiCdr,input,questionnaire
 pm_share_CCS_CCO2,input,questionnaire
+pm_dt,input,questionnaire
+cm_regipol_slope_beforeTarget,input,questionnaire

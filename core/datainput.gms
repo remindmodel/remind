@@ -388,7 +388,7 @@ $offdelim
 ;
 
 *** calculate historic capacity additions
-pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
+p_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
 $Onlisting
 *** historical PE installed capacity
