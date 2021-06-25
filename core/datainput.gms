@@ -1338,6 +1338,7 @@ p_ef_dem(regi,"fedie") = 69.3;
 p_ef_dem(regi,"fehos") = 69.3;
 p_ef_dem(regi,"fepet") = 68.5;
 p_ef_dem(regi,"fegas") = 50.3;
+p_ef_dem(regi,"fegat") = 50.3;
 p_ef_dem(regi,"fesos") = 90.5;
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
