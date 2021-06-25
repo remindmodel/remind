@@ -21,7 +21,6 @@ library(edgeTrpLib)
 require(devtools)
 library(rmndt)
 library(mrremind)
-
 print("Start of the EDGE-T iterative model run")
 
 ## use cached input data for speed purpose
