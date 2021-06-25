@@ -2468,3 +2468,80 @@ p.emi.cumul
 
 ```
 
+
+## FE emission intensity
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+df <-  df %>%
+                 calc_addVariable(
+                       "`FE|Emission|Intensity|Fuel`"  =  "(1e9*(`Emi|CO2|Energy|Demand|+|Industry` +
+ `Emi|CO2|Energy|Demand|+|Buildings` + `Emi|CO2|Energy|Demand|+|Transport`))/((`FE|Gases|+|Hydrogen` +
+ `FE|Gases|+|Fossil` + `FE|Solids|+|Fossil` + `FE|Solids|+|Biomass` + `FE|Liquids|+|Hydrogen` +
+`FE|Liquids|+|Fossil` + `FE|Liquids|+|Biomass`)*277777777.78)", ## convert MtCO2 in kgCO2 and EJ into MWh
+                       "`FE|Emission|Intensity|Electricity`"  =  "(1e9*`Emi|CO2|Gross|Energy|Supply|+|Electricity`)/(`FE|+|Electricity`*277777777.78)",
+                       units  = "MWh/kgCO2") ## convert MtCO2 in kgCO2 and EJ into MWh
+vars.emi.int <- c("FE|Emission|Intensity|Fuel",
+                  "FE|Emission|Intensity|Electricity")
+emi.int.label <- c("FE|Emission|Intensity|Fuel" = "Emissions intensity fuel",
+                   "FE|Emission|Intensity|Electricity" = "Emissions intensity electricity")
+emi.int.color <- c("Emissions intensity fuel" = "#191919",
+                    "Emissions intensity electricity" = "#cc0000")
+df.emi.int <- df %>%
+                  filter(variable %in% vars.emi.int, period %in% plot.period) %>%
+                  revalue.levels(variable = emi.int.label)
+p.emi.int <- ggplot(df.emi.int, aes(period, value, color=variable)) +
+                  geom_line(size=1.2, alpha=0.7) +
+                                            facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                  scale_y_continuous("Emissions intensity\n(MWh/kgCO2)") +
+                  scale_color_manual(values = emi.int.color)+
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                  legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+p.emi.int
+ggsave(plot = p.emi.int,
+       filename =  paste0(plots.path, "/Emi_int_FE.png"),
+       width=20, height=10, units="cm")
+```
+
+## Emissions transport by mode
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+df <- calc_addVariable(df,
+                       "`Emi|CO2|Transport|Shipping|Demand`"  =  "`Emi|CO2|Transport|Freight|International Shipping|Demand` + `Emi|CO2|Transport|Freight|Navigation|Demand`",
+                       "`Emi|CO2|Transport|Pass|Aviation|Demand`"  =  "`Emi|CO2|Transport|Pass|Aviation|Domestic|Demand` + `Emi|CO2|Transport|Pass|Aviation|International|Demand`",
+                       units = "MtCO2")
+vars.emi.transp <- c("Emi|CO2|Transport|Shipping|Demand",
+               "Emi|CO2|Transport|Rail|Demand",
+               "Emi|CO2|Transport|Road|Demand",
+               "Emi|CO2|Transport|Pass|Aviation|Demand")
+emi.transp.label <- c("Emi|CO2|Transport|Shipping|Demand" = "Shipping emissions",
+               "Emi|CO2|Transport|Rail|Demand" = "Rail emissions",
+               "Emi|CO2|Transport|Road|Demand" = "Road emissions",
+               "Emi|CO2|Transport|Pass|Aviation|Demand" = "Aviation emissions")
+emi.transp.color <- c("Shipping emissions" = "#191919",
+                      "Rail emissions" = "#cc0000",
+                      "Road emissions" = "mediumpurple4",
+                      "Aviation emissions" = "#66cccc")
+df.emi.transp <- df %>%
+                  filter(variable %in% vars.emi.transp, period %in% plot.period) %>%
+                  revalue.levels(variable = emi.transp.label)
+p.emi.transp <- ggplot(df.emi.transp, aes(period, value, fill=variable)) +
+                  geom_col(alpha=0.7) +
+                  facet_wrap(~scenario, ncol = length(getScenarios(df))) +
+                  scale_y_continuous("Emissions from transport\n(MtCO2)") +
+                  scale_fill_manual(values = emi.transp.color)+
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                  legend.position = "bottom",
+                    strip.background = element_blank(),
+                    legend.title = element_blank(),
+                    strip.text.y = element_text(angle = 0, hjust = 0))
+p.emi.transp
+ggsave(plot = p.emi.transp,
+       filename =  paste0(plots.path, "/Emi_trsp.png"),
+       width=20, height=10, units="cm")
+```
