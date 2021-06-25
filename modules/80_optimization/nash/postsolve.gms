@@ -260,13 +260,15 @@ if (cm_TaxConvCheck eq 1,
 );
 
 *** additional criterion: Were global and regional climate targets reached? 
-*** check regional target must be within 1% 
+$ifthen.regipol %regipol% == "regiCarbonPrice"
 loop((ext_regi,ttot,ttot2)$pm_regiTarget_dev(ext_regi,ttot,ttot2),
-  if(pm_regiTarget_dev(ext_regi,ttot,ttot2) gt 1.01 OR pm_regiTarget_dev(ext_regi,ttot,ttot2) lt 0.99,
+*** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
+  if( (pm_regiTarget_dev(ext_regi,ttot,ttot2) gt 0.01 OR pm_regiTarget_dev(ext_regi,ttot,ttot2) lt -0.01),
     s80_bool = 0;
     p80_messageShow("target") = YES;
   );
 );
+$endif.regipol
 
 *** check global budget target from core/postsolve, must be within 1% of target value
 if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
