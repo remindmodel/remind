@@ -113,7 +113,5 @@ $offOrder
  t_29_last(ttot) = NO;
  t_29_last(t_29)$(ord(t_29) eq card(t_29)) = YES;
 $onOrder
-
-
 *** EOF ./modules/29_CES_parameters/calibrate/sets.gms
 

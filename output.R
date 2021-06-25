@@ -14,7 +14,6 @@
 # Based on the Version 2.2 of same file in the MAgPIE main folder
 #########################################################################################
 
-
 #Write dump file when error occurs, see help to dump.frames for more information
 options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 

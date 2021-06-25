@@ -1504,7 +1504,7 @@ pfFeelhth(all_in)    "all production factors for high temperature heat processes
        feelhth_otherInd
 /
 
-pfFeelb(all_in)      "production factors for electricity consumption in buildings"
+pfFeelb(all_in)      "production factors for electricity consumption in buildings" !! FIXME: use fe_tax_sub36
 /
        feelcb
        feelhpb

@@ -17,8 +17,8 @@ regi(regi_dyn80) = YES;
 ***                     SOLVE statement
 ***      -------------------------------------------------------------------
 option
-  limrow = 2147483647
-  limcol = 2147483647
+  limrow = 10000000
+  limcol = 10000000
   solprint = on
 ;
 

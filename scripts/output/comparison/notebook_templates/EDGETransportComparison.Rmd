@@ -166,7 +166,7 @@ vintcomparisonpf = function(dt){
   dt_glob[, region := "GLO"]
   dt = rbind(dt, dt_glob)
   plot = ggplot()+
-    geom_bar(data = dt[year %in% c(2015, 2050, 2100)],
+    geom_bar(data = dt,
              aes(x=scenario, y=value, group=interaction(variable, technology),
                  fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
     geom_bar(data = dt,

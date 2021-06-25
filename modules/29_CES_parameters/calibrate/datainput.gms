@@ -372,7 +372,7 @@ pm_cesdata(t,regi,in,"quantity") $ p29_esdemand(t,regi,"%cm_GDPscen%",in)
            = p29_esdemand(t,regi,"%cm_GDPscen%",in);
 
 *** Load exogenous transport demand - required for the EDGE transport module
-$ifthen.edgesm %transport% ==  "edge_esm"           
+$ifthen.edgesm %transport% ==  "edge_esm"
 $ifthen.EDGEtr_ElecEraEur "%cm_EDGEtr_scen%" == "ElecEraEur"
 *** Use ElecEra for EUR and ConvCase for the rest of the world
 pm_cesdata(t,regi, in,"quantity") $ p29_trpdemand(t,regi, "%cm_GDPscen%","ConvCase", in)

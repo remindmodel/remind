@@ -121,30 +121,17 @@ q32_shSeEl(t,regi,teVRE)..
 ;
 
 ***---------------------------------------------------------------------------
-*** Calculation of necessary storage for electricity production:
+*** Calculation of necessary storage electricity production:
 ***---------------------------------------------------------------------------
-q32_shStor(t,regi,teVRE)$( t.val ge 2015 ) ..
-  v32_shStor(t,regi,teVRE)
-  =g=
-    p32_factorStorage(regi,teVRE) * 100 
-  !! offset of 1.e-10 for numerical reasons: gams doesn't like 0 if the 
-  !! exponent is not integer 
-  * ( ( ( ( ( v32_shSeEl(t,regi,teVRE)
-            + ( sum(VRE2teVRElinked(teVRE,teVRE2), v32_shSeEl(t,regi,teVRE2)) 
-              / s32_storlink
-              )$( cm_VRE_supply_assumptions ne 1 )
-            )
-          / 100
-          )
-        + 1e-10
-        ) 
-     ** p32_storexp(regi,teVRE)
-      )
-      !! offset correction
-    - (1.e-10 ** p32_storexp(regi,teVRE))
-      !! first 7% of VRE share bring no negative effects
-    - 0.07
-    )
+q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
+	v32_shStor(t,regi,teVRE)
+	=g=
+	p32_factorStorage(regi,teVRE) * 100 
+	* (
+		(1.e-10 + (v32_shSeEl(t,regi,teVRE)+ sum(VRE2teVRElinked(teVRE,teVRE2), v32_shSeEl(t,regi,teVRE2)) /s32_storlink)/100 ) ** p32_storexp(regi,teVRE)    !! offset of 1.e-10 for numerical reasons: gams doesn't like 0 if the exponent is not integer 
+		- (1.e-10 ** p32_storexp(regi,teVRE) )       !! offset correction
+		- 0.07                                      !! first 7% of VRE share bring no negative effects
+	)
 ;
 
 q32_storloss(t,regi,teVRE)$(t.val ge 2015)..

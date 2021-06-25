@@ -500,10 +500,6 @@ $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 $setGlobal c_regi_sensscen  all !! def = all
-
-
-
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 																	  
 cm_biotrade_phaseout = 1; !! def 0
 cm_bioprod_histlim = 1.1; !! def -1	
@@ -559,12 +555,7 @@ cm_ElLim_b = 1; !! def 1
 
 cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 
-
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
-
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
-cm_FlexTaxFeedback = 0; !! def 0, off
 
 cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
 
