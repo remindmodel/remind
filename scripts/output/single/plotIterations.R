@@ -3,7 +3,7 @@ if (!exists("source_include")) {
   lucode2::readArgs("outputdir")
 }
 
-scenario <- lucode2::getScenNames(outputdir)
+outputdir <- normalizePath(outputdir)
 
 get_line <- function() {
   # gets characters (line) from the terminal of from a connection
@@ -18,18 +18,20 @@ get_line <- function() {
   return(s)
 }
 
-outputFile <- file.path(outputdir, "plotIterations.Rmd")
-if (file.exists(outputFile)) {
-  cat(outputFile, " already exists, overwrite? (y/n): ")
+rmdFile <- file.path(outputdir, "plotIterations.Rmd")
+if (file.exists(rmdFile)) {
+  cat(rmdFile, " already exists, overwrite? (y/n): ")
   if (!identical(get_line(), "y")) {
-    stop("aborting, because file already exists")
+    stop("aborting, file already exists")
   }
 }
 
-cat("Which variables/parameters do you want to plot? Separate with commas. (default: p36_shUeCes_iter) ")
+defaultSymbolNames <-
+  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es, v36_deltaProdEs, v36_ProdEs"
+cat("Which variables/parameters do you want to plot? Separate with commas. (default: ", defaultSymbolNames, ") ")
 symbolNames <- get_line()
 if (identical(symbolNames, "")) {
-  symbolNames <- "p36_shUeCes_iter, p36_techCosts, p36_fe2es"
+  symbolNames <- defaultSymbolNames
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
@@ -45,7 +47,7 @@ rmdChunksForSymbol <- function(symbolName) {
 ```{r}
 ', symbolName, 'Raw <- mip::getPlotData(
   "', symbolName, '",
-  "/home/pascal/dev/remind/output/B-putty_SSP2-NDC_restartWithAllIterationResults"
+  "', outputdir, '"
 )
 str(', symbolName, 'Raw)
 ```
@@ -75,5 +77,14 @@ lapply(', symbolName, 'Plots[-1], renderPlot)
 ```'))
 }
 
-writeLines(paste0(c(rmdHeader, sapply(symbolNames, rmdChunksForSymbol)), collapse = "\n\n"), outputFile)
-# p36_shUeCes, p36_techCosts, p36_fe2es
+writeLines(paste0(c(rmdHeader, sapply(symbolNames, rmdChunksForSymbol)), collapse = "\n\n"), rmdFile)
+
+cat("Render plots to html? (y/n): ")
+if (identical(get_line(), "y")) {
+  if (rmarkdown::pandoc_available("1.12.3")) {
+    rmarkdown::render(rmdFile, output_file = file.path(outputdir, "plotIterations.html"))
+  } else {
+    warning("Could not find pandoc (>=1.12.3). Please add it to your PATH environment variable.",
+            "In an RStudio console run `Sys.getenv(\"RSTUDIO_PANDOC\")` to get the path to RStudio's pandoc.")
+  }
+}
