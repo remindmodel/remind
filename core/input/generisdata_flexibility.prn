@@ -24,6 +24,9 @@ fm_dataglob("flexibility","wind")     = -1;
 fm_dataglob("flexibility","csp")      = -1;
 fm_dataglob("flexibility","spv")      = -1;
 fm_dataglob("flexibility","storwind") = 1.89;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+fm_dataglob("flexibility","storwind") = 1.86;
+$ENDIF.WindOff 
 fm_dataglob("flexibility","storcsp")  = 1.85;
 fm_dataglob("flexibility","storspv")  = 1.85;
 fm_dataglob("flexibility","geohdr")   = 0.8;

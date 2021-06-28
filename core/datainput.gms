@@ -194,12 +194,12 @@ $offdelim
 ;
 *CG* setting regional technology cost to be the same for wind offshore as onshore
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("inco0","windoff") = 4500;
+fm_dataglob("inco0","windoff") = 5000;
 fm_dataglob("constrTme","windoff") = 4;
 fm_dataglob("eta","windoff") = 1.00;
 fm_dataglob("omf","windoff") = 0.03;
 fm_dataglob("lifetime","windoff") = 25;
-fm_dataglob("incolearn","windoff") = 3750;
+fm_dataglob("incolearn","windoff") = 4000;
 fm_dataglob("ccap0","windoff") = 0.0007;
 fm_dataglob("learn","windoff") = 0.12;
 
@@ -941,6 +941,11 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'apCarDiEffT')     = 0.50;
   p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  p_adj_seed_te(ttot,regi,"windoff") = 0.5; 
+$ENDIF.WindOff 
+
 *RP: for comparison of different technologies:
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
@@ -961,7 +966,8 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_coeff(ttot,regi,"wind")            = 0.08;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-  p_adj_coeff(ttot,regi,"windoff")         = 0.08;
+
+  p_adj_coeff(ttot,regi,"windoff")         = 0.16
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
