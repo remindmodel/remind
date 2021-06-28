@@ -967,7 +967,7 @@ $ENDIF.WindOff
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
-  p_adj_coeff(ttot,regi,"windoff")         = 0.16
+  p_adj_coeff(ttot,regi,"windoff")         = 0.16;
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
