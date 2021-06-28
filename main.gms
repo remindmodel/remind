@@ -326,7 +326,7 @@ cm_import_EU                "EU switch for different scenarios of EU SE import a
 cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
-c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
+cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
@@ -531,7 +531,7 @@ cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
-c_noPeFosCCDeu = 0; !! def 0
+cm_noPeFosCCDeu = 0; !! def 0
 
 
 cm_HeatLim_b = 1; !! def 1

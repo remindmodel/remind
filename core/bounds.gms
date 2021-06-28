@@ -308,13 +308,6 @@ vm_deltaCap.up("2020",regi,te,"1") = max(1.2*(pm_histCap("2019",regi,te)-pm_hist
 );
 );
 
-*** upper bound on capacity additions for 2025 based on near-term trends
-*** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
-loop(regi$(sameAs(regi,"DEU")),
-  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), p_delta_histCap(tall,regi,"wind"));
-  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), p_delta_histCap(tall,regi,"spv"));
-);
-
 *** lower bound on capacities for ngcc and ngt for regions defined at the pm_histCap file
 loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt")),
 ***  vm_cap.lo("2010",regi,te,"1")$pm_histCap("2010",regi,te) = 0.75 * pm_histCap("2010",regi,te);
@@ -540,14 +533,6 @@ v_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,
 *** upper and lower bounds on gases+liquids share in FE
 v_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
 v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
-
-
-
-
-*** only small amount of co2 injection ccs until 2030 in Germany
-vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
-*** no Pe2Se fossil CCS in Germany, if c_noPeFosCCDeu = 1 chosen 
-vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (c_noPeFosCCDeu = 1)) = 1e-4;
 
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;

@@ -437,7 +437,7 @@ $offdelim
 ;
 
 *** calculate historic capacity additions
-p_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
+pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 pm_histCap(tall,all_regi,"windoff") = 0;
@@ -496,17 +496,6 @@ pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-
-*** FS: scale down capacity factor for coal power in Germany in the near-term based on observed values in 2020 (~0.35 CF)
-*** https://static.agora-energiewende.de/fileadmin/Projekte/2021/2020_01_Jahresauswertung_2020/200_A-EW_Jahresauswertung_2020_WEB.pdf
-
-*** do this only in non-baseline runs for now to not mess with the calibration, the if clause can be removed (or changes moved to mrremind) once covid-corrected calibration input data is there
-
-if( cm_emiscen ne 1,
-pm_cf("2020",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
-pm_cf("2025",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
-pm_cf("2030",regi,"pc")$(sameAs(regi,"DEU")) = 0.4;
-);
 
 table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
@@ -1364,11 +1353,6 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
     p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
     p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
   );
-
-*** Changing Germany and France refineries emission factors to avoid negative emissions on pe2se (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
-  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(sameas(regi,"DEU") OR sameas(regi,"FRA")) = 0.630719841;
-*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
-  pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 
 $endif.altFeEmiFac
 
