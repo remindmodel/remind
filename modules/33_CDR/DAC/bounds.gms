@@ -6,6 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/DAC/bounds.gms
 vm_emiCdr.fx(t,regi,enty)$(not sameas(enty,"co2")) = 0.0;
+vm_emiCdr.fx(t,regi,enty)$((t.val le 2005) AND sameas(enty, "co2")) = 0.0;
 vm_emiCdr.l(t,regi,"co2")$(t.val gt 2020 AND cm_ccapturescen ne 2) = -sm_eps;
 vm_omcosts_cdr.fx(t,regi) = 0.0;
 v33_emiEW.fx(t,regi) = 0.0;
