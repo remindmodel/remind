@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
+*** SOF ./modules/47_regipol/none/datainput.gms
 
 
 * initialize regipol target deviation parameter
@@ -32,4 +32,4 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
   pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
 
-*** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
+*** EOF ./modules/47_regipol/none/datainput.gms
