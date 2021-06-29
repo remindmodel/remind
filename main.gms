@@ -339,6 +339,7 @@ cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_
 cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
 cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
 cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
+c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany by the value assigned to it"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -562,6 +563,8 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 
 cm_heatPumpMkup_build = 100; !! def = 200
 cm_districtHeatingMkup_build = 12; !! def = 25
+
+c_BaselineAgriEmiRedDEU = 0; !! def = 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
