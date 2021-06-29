@@ -137,20 +137,27 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen cost at low penetration level
+*'  Additional hydrogen cost at low penetration level and markup-cost for CES levels to be able to influence efficiencies/cost of demand-side conversions which are not explicitly represented
 ***---------------------------------------------------------------------------
-q37_costAddTeInv(t,regi)..
-  vm_costAddTeInv(t,regi,"tdh2s","indst")
+q37_costAddTeInv(t,regi,te)..
+  vm_costAddTeInv(t,regi,te,"indst")
   =e=
-  ( 1 /(
-        1 + (3**v37_costExponent(t,regi))
+  (
+    ( 1 /(
+      1 + (3**v37_costExponent(t,regi))
       )
-  ) * (
-    s37_costAddH2Inv * 8.76 
-    * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
-  )
-  + (v37_expSlack(t,regi)*1e-8)
+    ) * (
+      s37_costAddH2Inv * 8.76
+      * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
+    )
+    + (v37_expSlack(t,regi)*1e-8)
+  )$(sameas(te,"tdh2s"))
+  +
+  ( 
+    p37_CESMkup(t,regi,"feeli")*(vm_cesIO(t,regi,"feeli") + pm_cesdata(t,regi,"feeli","offset_quantity")) 
+  )$(sameas(te,"tdels"))
 ;
+
 
 *' Logistic function exponent for additional hydrogen low penetration cost equation
 q37_auxCostAddTeInv(t,regi)..

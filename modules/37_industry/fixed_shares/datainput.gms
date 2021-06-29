@@ -162,5 +162,15 @@ $ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on"
 *** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
 $endif.feShareAriad
 
+
+
+*** FS: CES level markup cost in industry to influence demand-side cost and efficiencies in CES tree
+$ifThen.CESMkup not "%cm_CESMkup_cost%" == "off" 
+  p37_CESMkup(t,regi,in) = p37_CESMkup_input(in);
+$else.CESMkup
+  p37_CESMkup(t,regi,in) = 0;
+$endIf.CESMkup
+
+
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

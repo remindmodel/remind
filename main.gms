@@ -339,7 +339,8 @@ cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explic
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
 cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
-cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
+cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"  
+cm_CESMkup_cost             "switch for setting markup cost in CES function, to scale cost and efficicies of sectoral demand-side conversions in CES tree" 
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -566,6 +567,9 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 
 cm_heatPumpMkup_build = 200; !! def = 200
 cm_districtHeatingMkup_build = 25; !! def = 25
+
+
+$setGlobal cm_CESMkup_cost  feeli 0.05 !! def = feeli 0.05
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
