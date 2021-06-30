@@ -70,10 +70,12 @@ if ((cm_ElLim_b lt 1),
   pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi) AND t.val gt 2040 AND t.val lt 2100) = cm_ElLim_b;
 );
 
-*** Heat pumps markup cost: 0.2 €/kwh = 0.2 / ((10^12)/(10^9*8760)) T$/TWa = 1.752 T$/TWa
-p36_heatPumpMkup(t,regi) = 1.752;
-*** District heating markup cost: 7$/GJ = 7 * sm_DpGJ_2_TDpTWa T$/TWa = 7 * 0.03154 T$/TWa = 0.22078 T$/TWa
-p36_districtHeatingMkup(ttot,all_regi) = 0.22078;
+
+
+*** Heat pumps markup cost: convert USD/MWh to trUSD/TWa
+p36_heatPumpMkup(t,regi) = cm_heatPumpMkup_build * sm_TWa_2_MWh * 1e-12;
+*** District heating markup cost: convert USD/MWh to trUSD/TWa
+p36_districtHeatingMkup(ttot,all_regi) = cm_districtHeatingMkup_build * sm_TWa_2_MWh * 1e-12;
 
 *** EOF ./modules/36_buildings/simple/datainput.gms
 

@@ -68,8 +68,20 @@ p21_tau_CO2_tax_gdx(ttot,all_regi)           "tax path from gdx, may overwrite d
 p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite default values"
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
-
 ;
+
+
+$ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
+Parameters
+    p21_FEtax_trajectory_abs(ttot,emi_sectors,all_enty)     "absolute final energy tax level of the end year set by cm_FEtax_trajectory_abs switch [USD/MWh]"  / %cm_FEtax_trajectory_abs% /   
+;
+$endif.fetax
+
+$ifthen.fetaxRel not "%cm_FEtax_trajectory_rel%" == "off" 
+Parameters
+    p21_FEtax_trajectory_rel(ttot,emi_sectors,all_enty)     "factor to scale final energy tax level of the end year from cm_FEtax_trajectory_rel switch"  / %cm_FEtax_trajectory_rel% /   
+;
+$endif.fetaxRel
 
 Scalars
 s21_so2_tax_2010                             "SO2 tax value in 2010 in 10^12$/TgS = 10^6 $/t S"

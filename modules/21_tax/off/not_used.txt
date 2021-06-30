@@ -51,3 +51,6 @@ pm_taxemiMkt,input,questionnaire
 cm_BioImportTax_EU,input,questionnaire
 vm_Mport,input,questionnaire
 vm_deltaCap, variable, ???
+sm_TWa_2_MWh,input,questionnaire
+cm_FEtax_trajectory_abs,input,questionnaire
+cm_FEtax_trajectory_rel,input,questionnaire

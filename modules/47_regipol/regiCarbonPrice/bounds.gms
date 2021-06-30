@@ -6,6 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
 
+
+*** region-specific bounds (with hard-coded regions)
+
 ** Force historical bounds on nuclear
 vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
 vm_cap.fx("2020",regi,"tnrs","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"))) = 7.8/1000;
@@ -62,6 +65,23 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
 $ENDIF.CoalRegiPol  
+
+
+
+*** further bounds for Germany
+*** upper bound on capacity additions for 2025 based on near-term trends
+*** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
+loop(regi$(sameAs(regi,"DEU")),
+  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
+  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
+);
+
+
+*** only small amount of co2 injection ccs until 2030 in Germany
+vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
+*** no Pe2Se fossil CCS in Germany, if cm_noPeFosCCDeu = 1 chosen 
+vm_emiTeDetail.up(t,regi,peFos,enty,te,"cco2")$((sameas(regi,"DEU")) AND (cm_noPeFosCCDeu = 1)) = 1e-4;
+
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

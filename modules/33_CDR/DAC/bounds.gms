@@ -21,4 +21,8 @@ $endIf.regiNoDAC
 if (cm_emiscen ne 1,
     vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf_dyn33("dac",rlf) AND (t.val ge max(2025,cm_startyear))) = 1e-7;  
 );
+
+
+vm_emiCdr.up(t,regi,"co2")$(t.val le 2025)=0;
+
 *** EOF ./modules/33_CDR/DAC/bounds.gms

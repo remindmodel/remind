@@ -248,9 +248,9 @@ prepare <- function() {
     system("find ./core/magicc/ -type f | xargs dos2unix -q")
 
   ################## M O D E L   L O C K ###################################
-  # Lock the directory for other instances of the start scritps
-  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
-  on.exit(model_unlock(lock_id, oncluster=on_cluster))
+  # Lock the directory for other instances of the start scripts
+  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60), oncluster=on_cluster)
+  on.exit(model_unlock(lock_id, oncluster=on_cluster),add=TRUE)
   ################## M O D E L   L O C K ###################################
 
   ###########################################################
