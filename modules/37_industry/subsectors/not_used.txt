@@ -18,3 +18,4 @@ pm_shGasLiq_fe_lo,parameter,not needed
 pm_shGasLiq_fe_up,parameter,not needed
 pm_shfe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
+cm_ARIADNE_FeShareBounds,input,questionnaire

@@ -66,9 +66,9 @@ Parameters
 $endif.fetax
 
 $ifthen.fetaxRel not "%cm_FEtax_trajectory_rel%" == "off" 
-    Parameters
+Parameters
     p21_FEtax_trajectory_rel(ttot,emi_sectors,all_enty)     "factor to scale final energy tax level of the end year from cm_FEtax_trajectory_rel switch"  / %cm_FEtax_trajectory_rel% /   
-    ;
+;
 $endif.fetaxRel
 
 Scalars

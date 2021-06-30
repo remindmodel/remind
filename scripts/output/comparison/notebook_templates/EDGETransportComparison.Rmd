@@ -1,4 +1,4 @@
----
+<!---
 # |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
@@ -6,6 +6,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+-->
 ---
 title: "Compare scenarios Transport"
 output:
@@ -160,6 +161,10 @@ theme2use <- theme_minimal()+
 ## Vintages
 vintcomparisonpf = function(dt){
   dt = dt[year %in% c(2015, 2050, 2100)]
+  ## add global values
+  dt_glob = dt[,.(value = sum(value)), by = .(year, technology, variable, alphaval, scenario)]
+  dt_glob[, region := "GLO"]
+  dt = rbind(dt, dt_glob)
   plot = ggplot()+
     geom_bar(data = dt,
              aes(x=scenario, y=value, group=interaction(variable, technology),
@@ -205,6 +210,10 @@ salescompf(salescomp_all)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=20}
 EJroadpf = function(dt){
+   ## add global values
+  dt_glob = dt[,.(demand_EJ = sum(demand_EJ)), by = .(year, technology, subsector_L1, scenario)]
+  dt_glob[, region := "GLO"]
+  dt = rbind(dt, dt_glob)
   dt[, technology := factor(technology, levels = legend_ord)]
   dt = dt[year >= 2010]
   plotLDV = ggplot()+
@@ -247,6 +256,10 @@ EJroadpf(EJroad_all)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=20}
 EJmodepf = function(dt){
+  dt_glob = dt[,.(demand_EJ = sum(demand_EJ)), by = .(year, aggr_mode, veh, vehicle_type_plot, scenario)]
+  dt_glob[, region := "GLO"]
+  dt = rbind(dt, dt_glob)
+
   dt = dt[year >= 2010]
   plot = ggplot()+
     geom_area(data = dt, aes(x=year, y=demand_EJ, group = interaction(vehicle_type_plot,aggr_mode), fill = vehicle_type_plot), color = "black", size=0.05, position= position_stack())+
@@ -308,8 +321,15 @@ EJfuelsMod_pf = function(dt_all){
   dt_all[technology %in% c("FCEV"), technology := "Hydrogen"]
   dt_all = dt_all[, techmode := paste0(veh, " ", technology)]
   dt_all[, techmode := factor(techmode, levels = legend_ord)]
+
+
+  dt_glob = dt_all[,.(demand_F = sum(demand_F),demand_EJ = sum(demand_EJ)), by = .(year, sector, subsector_L3, subsector_L2, subsector_L1, vehicle_type, technology, aggr_mode, veh, techmode, scenario)]
+  dt_glob[, region := "GLO"]
+  dt_all = rbind(dt_all, dt_glob)
+
   dt_all_b = dt_all[, .(demand_EJ = sum(demand_EJ)), by = c("techmode", "year", "region", "scenario")]
   dt_all_nob = dt_all[! veh %in% c("International Aviation", "International Shipping")][, .(demand_EJ = sum(demand_EJ)), by = c("techmode", "year", "region", "scenario")]
+
 
   plot_b_lo = ggplot()+
     geom_area(data = dt_all_b, aes(x=year, y=demand_EJ, group = techmode, fill = techmode), color="black", size=0.05, position= position_stack())+
@@ -343,6 +363,10 @@ EJfuelsMod_pf(dt_all = EJModeFuel_all)
 EJfuels_pf = function(dt_p, dt_f){
   dt_p = dt_p[year >= 2020]
   dt_p = dt_p[, .(demand_EJ = sum(demand_EJ)), by = c("subtech", "year", "region", "scenario", "sector")]
+  dt_p_glo = dt_f[,.(demand_EJ = sum(demand_EJ)), by = c("subtech", "year", "scenario", "sector")]
+  dt_p_glo[, region := "GLO"]
+  dt_p = rbind(dt_p, dt_p_glo)
+
   plotp = ggplot()+
     geom_area(data = dt_p[sector=="trn_pass"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "Passenger transport FE demand by fuel, no bunkers")+
@@ -351,7 +375,7 @@ EJfuels_pf = function(dt_p, dt_f){
     expand_limits(y = c(0,1))+
     scale_x_continuous(breaks = c(2020, 2030,2050, 2100)) +
     theme2use
-  
+
   plotp_LO = ggplot()+
     geom_area(data = dt_p[sector=="trn_aviation_intl"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "Passenger transport FE demand by fuel, no bunkers")+
@@ -363,6 +387,11 @@ EJfuels_pf = function(dt_p, dt_f){
 
     dt_f = dt_f[year >= 2020]
     dt_f = dt_f[, .(demand_EJ = sum(demand_EJ)), by = c("subtech", "year", "region", "scenario", "sector")]
+    dt_f_glo = dt_f[,.(demand_EJ = sum(demand_EJ)), by = c("subtech", "year", "scenario", "sector")]
+    dt_f_glo[, region := "GLO"]
+    dt_f = rbind(dt_f, dt_f_glo)
+
+
   plotf_lo = ggplot()+
     geom_area(data = dt_f[sector == "trn_shipping_intl"], aes(x=year, y=demand_EJ, group = subtech, fill = subtech), color="black", size=0.05, position= position_stack())+
     labs(x = "", y = "[EJ]", title = "International freight FE demand by fuel")+

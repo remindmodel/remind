@@ -168,6 +168,9 @@ vm_cap.fx(t,regi,"gridspv","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"gridcsp","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"storcsp","1")$(t.val > 2070)           = 0;
 vm_cap.fx(t,regi,"storwind","1")$(t.val > 2070)           = 0;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+vm_cap.fx(t,regi,"storwindoff","1")$(t.val > 2070)           = 0;
+$ENDIF.WindOff
 
 $if %cm_Full_Integration% == "on" vm_cap.fx(t,regi,"storspv","1")               = 0;
 $if %cm_Full_Integration% == "on" vm_deltaCap.fx(t,regi,"storspv","1")           = 0;
