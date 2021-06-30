@@ -340,6 +340,7 @@ cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price tra
 cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
 cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
 c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany by the value assigned to it"
+c_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2/y"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -565,6 +566,8 @@ cm_heatPumpMkup_build = 100; !! def = 200
 cm_districtHeatingMkup_build = 12; !! def = 25
 
 c_BaselineAgriEmiRedDEU = 0; !! def = 0
+
+c_deuCDRmax = -1 !! def = -1
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
