@@ -340,8 +340,8 @@ cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_
 cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
 cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
 cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
-c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
-c_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2/y"
+cm_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
+cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2/y"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
