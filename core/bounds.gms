@@ -292,7 +292,7 @@ loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
 *additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2019 average
-  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(pm_histCap("2019",regi,te)-pm_histCap("2015",regi,te))/4;
+  vm_deltaCap.lo("2020",regi,te,"1") = pm_histCap("2020",regi,te);
 );
 vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"); !! allow offset of 10MW even for countries with no CSP installations to help the solver
 

@@ -445,6 +445,7 @@ $ENDIF.WindOff
 pm_data(all_regi,char,te) = fm_dataglob(char,te);
 *NB* display
 
+$IFTHEN.WindOff %cm_wind_offshore% == "0"
 ** historical installed capacity
 *** read-in of pm_histCap.cs3r
 $Offlisting
@@ -453,10 +454,19 @@ $ondelim
 $include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
+$ENDIF.WindOff
+
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-pm_histCap(tall,all_regi,"windoff") = 0;
+*** read-in of pm_histCap_windoff.cs3r
+$Offlisting
+table   pm_histCap(tall,all_regi,all_te)     "historical installed capacity"
+$ondelim
+$include "./core/input/pm_histCap_windoff.cs3r"
+$offdelim
+;
 $ENDIF.WindOff
+
 
 $Onlisting
 *** historical PE installed capacity
@@ -478,7 +488,7 @@ $offdelim
 $Onlisting
 
 
-*CG* setting wind off capacity factor to be the same as onshore here (test)
+*CG* setting wind off capacity factor to be the same as onshore here (later adjusting it in vm_capFac)
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 f_cf(ttot,regi,"windoff") = f_cf(ttot,regi,"wind");
 $ENDIF.WindOff
@@ -820,6 +830,7 @@ loop(regi,
 
 display p_aux_capToDistr, s_aux_cap_remaining, p_aux_capThisGrade, p_avCapFac2015, p_inco0;
 
+$IFTHEN.WindOff %cm_wind_offshore% == "0"
 parameter p_histCapFac(tall,all_regi,all_te)     "Capacity factor (fraction of the year that a plant is running) of installed capacity in 2015"
 /
 $ondelim
@@ -827,6 +838,17 @@ $include "./core/input/p_histCapFac.cs4r"
 $offdelim
 /
 ;
+$ENDIF.WindOff
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+parameter p_histCapFac(tall,all_regi,all_te)     "Capacity factor (fraction of the year that a plant is running) of installed capacity in 2015"
+/
+$ondelim
+$include "./core/input/p_histCapFac_windoff.cs4r"
+$offdelim
+/
+;
+$ENDIF.WindOff
 
 
 *** RP rescale wind capacity factors in REMIND to account for very different real-world CF (potentially partially due to assumed low-wind turbine set-ups in the NREL data)
