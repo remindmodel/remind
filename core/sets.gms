@@ -2557,7 +2557,7 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (co2luc).lulucf.process.co2
 /
 
-emiBECCS2te(all_enty,all_enty,all_te,all_enty)
+emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technology and captured emissions"
 /
         pebiolc.seliqbio.bioftcrec.cco2
         pebiolc. seel.bioigccc.cco2
