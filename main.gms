@@ -244,6 +244,7 @@ cm_bioenergymaxscen   "choose bound on global pebiolc production excluding resid
 cm_regiBioenergymax   "choose regionally differentiated bounds on pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
 cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
@@ -296,6 +297,16 @@ cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_dam
 cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
 cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
+
+cm_regiNoBioImport              "Switch defining regions where biomass import is disabled"
+cm_regiFactorStorageMult        "Switch enabling regional multitplicative factors for the scaling of curtailment and storage requirements for renewables"
+cm_regiPhaseOutFosBuil          "Switch defining regions that phase out fossils in buildings from a given time step on - services_putty buildings realization"
+cm_regiPhaseOutFosBuilSimple    "Switch defining regions that phase out fossils in buildings - simple buildings realization"
+cm_behavChangeBuil              "Switch for enabling a reduced FE demand in buildings for (a) given region(s)."
+cm_feelhth_sub                  "Switch defining a (region-specfic) subsidy on direct electrification in industry"
+cm_regiSubElecBuil              "Switch defining an additional region-specfic subsidy on eclectricity consumption in buildings"
+cm_ban_ICE                      "Switch that phases out internal combustion engine (ICE) cars strongly until 2030"
+cm_regiNoDAC                    "Switch defining regions that are not allowed to use DAC"
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
@@ -385,6 +396,7 @@ $setGlobal cm_regiBioenergymax  off !! def = off
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
+$setglobal cm_tradbio_phaseout  default  !! def = default
 cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
