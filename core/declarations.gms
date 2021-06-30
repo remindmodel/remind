@@ -61,7 +61,7 @@ o_change_totCO2emi_peakBudgYr                         "Measure for how much the 
 p_factorRescale_taxCO2(iteration)                     "Multiplicative factor for rescaling the CO2 price to reach the target"
 p_factorRescale_taxCO2_Funneled(iteration)            "Multiplicative factor for rescaling the CO2 price to reach the target - limited by an iteration-dependent funnel"
 o_taxCO2eq_Itr_1regi(ttot,iteration)                  "CO2 taxed in the last region, tracked over iterations for debugging"
-o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of cm_peakBudgYr occured in the last iterations"
+o_pkBudgYr_flipflop(iteration)                        "Counter that tracks if flipfloping of c_peakBudgYr occured in the last iterations"
 o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last region, after the loop that shifts peakBudgYr, tracked over iterations for debugging"
 
 ***----------------------------------------------------------------------------------------
@@ -521,7 +521,7 @@ s_c_so2                                               "constant, see S. Smith, 2
 sm_ccsinjecrate                                       "CCS injection rate factor. Unit: 1/a"
 
 s_t_start                                             "start year of emission budget"
-cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
+c_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
 
 sm_endBudgetCO2eq                                     "end time step of emission budget period 1"
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
