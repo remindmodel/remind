@@ -84,7 +84,9 @@ if (identical(get_line(), "y")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
     rmarkdown::render(rmdFile, output_file = file.path(outputdir, "plotIterations.html"))
   } else {
-    warning("Could not find pandoc (>=1.12.3). Please add it to your PATH environment variable.",
-            "In an RStudio console run `Sys.getenv(\"RSTUDIO_PANDOC\")` to get the path to RStudio's pandoc.")
+    warning(
+      "Rendering to html failed: Could not find pandoc (>=1.12.3), please add it to your PATH environment variable.",
+      "In an RStudio console run `Sys.getenv(\"RSTUDIO_PANDOC\")` to get the path to RStudio's pandoc."
+    )
   }
 }
