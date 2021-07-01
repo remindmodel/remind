@@ -17,12 +17,14 @@ if (!exists("source_include")) {
   ## Define arguments that can be read from command line
   lucode2::readArgs("outputdirs")
 }
+outputdirs <- list.dirs("/home/pascal/dev/remind/testing_robins_runtime/scenarios", recursive = FALSE) # TODO remove
 stopifnot(length(outputdirs) >= 1)
 cat("comparing the following runs:\n")
 print(outputdirs)
 
 defaultFilenameKeywords <- "Base, NDC, PkBudg900"
-cat("Which filename keywords do you want to compare? Separate with commas. (default: ", defaultFilenameKeywords, ") ")
+cat("Which filename keywords (case-insensitive regex) do you want to compare? Separate with commas. (default: ",
+    defaultFilenameKeywords, ") ")
 filenameKeywords <- getLine()
 if (identical(filenameKeywords, "")) {
   filenameKeywords <- defaultFilenameKeywords
@@ -141,12 +143,11 @@ solverTimePlot <- ggplot() +
     strip.background = element_rect(fill = "white"),
     panel.grid.major.x = element_blank()
   )
-solverTimePlot
 
 # Rectangle: Runtime ------------------------------------------------------
 
 # one green and orange rectangle per run
-statsRun %>%
+runtimeRectanglePlot <- statsRun %>%
   mutate(across(c(AvgTime, InterSolveTime), as.numeric, units = "mins")) %>%
   ggplot(aes(alpha = 0.25)) +
   geom_rect(aes(
@@ -182,7 +183,7 @@ statsRun %>%
 
 # Stacked bar: Computation time -------------------------------------------
 
-statsRun %>%
+stackedBarPlot <- statsRun %>%
   mutate(
     Preparation = Preparationtime,
     Solver = AvgTime * Iterations,
@@ -216,7 +217,7 @@ statsRun %>%
 
 
 # Scatter: Solver time ----------------------------------------------------
-ggplot(stats, aes(x = as.numeric(Iteration),
+regionSolverTimePlot <- ggplot(stats, aes(x = as.numeric(Iteration),
                   y = as.numeric(Time, unit = "mins"),
                   color = Region)) +
   geom_point() +
@@ -225,4 +226,17 @@ ggplot(stats, aes(x = as.numeric(Iteration),
   scale_x_continuous("Iteration") +
   theme_bw()
 
-# TODO create pdf + interactive html
+# Create Output pdf and html files
+withr::with_pdf("plotRuntime.pdf", {
+  print(solverTimePlot)
+  print(runtimeRectanglePlot)
+  print(stackedBarPlot)
+  print(regionSolverTimePlot)
+})
+
+htmltools::save_html(htmltools::tagList(plotly::ggplotly(solverTimePlot),
+                                        plotly::ggplotly(runtimeRectanglePlot),
+                                        plotly::ggplotly(stackedBarPlot),
+                                        plotly::ggplotly(regionSolverTimePlot)),
+                     file = "plotRuntime.html",
+                     libdir = "plotRuntimeDependencies")

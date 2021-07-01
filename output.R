@@ -69,13 +69,13 @@ choose_folder <- function(folder, title = "Please choose a folder") {
 
   dirs <- c("all", dirs)
   cat("\n\n", title, ":\n\n")
-  cat(paste(1:length(dirs), dirs, sep = ": "), sep = "\n")
+  cat(paste(seq_along(dirs), dirs, sep = ": "), sep = "\n")
   cat(paste(length(dirs) + 1, "Search by the pattern.\n", sep = ": "))
   cat("\nNumber: ")
   identifier <- get_line()
   identifier <- strsplit(identifier, ",")[[1]]
   tmp <- NULL
-  for (i in 1:length(identifier)) {
+  for (i in seq_along(identifier)) {
     if (length(strsplit(identifier, ":")[[i]]) > 1) {
       tmp <- c(tmp, as.numeric(strsplit(identifier, ":")[[i]])[1]:as.numeric(strsplit(identifier, ":")[[i]])[2])
     } else {
@@ -90,7 +90,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
     id <- grep(pattern = pattern, dirs[-1])
     # lists all chosen directories and ask for the confirmation of the made choice
     cat("\n\nYou have chosen the following directories:\n")
-    cat(paste(1:length(id), dirs[id + 1], sep = ": "), sep = "\n")
+    cat(paste(seq_along(id), dirs[id + 1], sep = ": "), sep = "\n")
     cat("\nAre you sure these are the right directories?(y/n): ")
     answer <- get_line()
     if (answer == "y") {
@@ -110,11 +110,11 @@ choose_folder <- function(folder, title = "Please choose a folder") {
 choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
   module <- gsub("\\.R$", "", grep("\\.R$", list.files(Rfolder), value = TRUE))
   cat("\n\n", title, ":\n\n")
-  cat(paste(1:length(module), module, sep = ": "), sep = "\n")
+  cat(paste(seq_along(module), module, sep = ": "), sep = "\n")
   cat("\nNumber: ")
   identifier <- get_line()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
-  if (any(!(identifier %in% 1:length(module)))) {
+  if (any(!(identifier %in% seq_along(module)))) {
     stop("This choice (", identifier, ") is not possible. Please type in a number between 1 and ", length(module))
   }
   return(module[identifier])
@@ -123,7 +123,7 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
 choose_mode <- function(title = "Please choose the output mode") {
   modes <- c("Output for single run ", "Comparison across runs")
   cat("\n\n", title, ":\n\n")
-  cat(paste(1:length(modes), modes, sep = ": "), sep = "\n")
+  cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
   cat("\nNumber: ")
   identifier <- get_line()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
@@ -159,7 +159,7 @@ if (comp == TRUE) {
         outputdirs[i] <- file.path("output", temp[i])
       }
     } else {
-      temp <- choose_folder(remind_dir, "Please choose the runs to be used for output generation")
+      temp <- choose_folder(remind_dir, "Please choose the runs to be used for output generation, separate with comma")
       outputdirs <- temp
       for (i in seq_along(temp)) {
         last_iteration <-
@@ -197,13 +197,13 @@ if (comp == TRUE) {
     if (!exists("remind_dir")) {
       temp <- choose_folder("./output", "Please choose the run(s) to be used for output generation")
       outputdirs <- temp
-      for (i in 1:length(temp)) {
+      for (i in seq_along(temp)) {
         outputdirs[i] <- file.path("output", temp[i])
       }
     } else {
       temp <- choose_folder(remind_dir, "Please choose the runs to be used for output generation")
       outputdirs <- temp
-      for (i in 1:length(temp)) {
+      for (i in seq_along(temp)) {
         last_iteration <-
           max(as.numeric(sub("magpie_", "", grep("magpie_",
                                                  list.dirs(file.path(remind_dir, temp[i], "data", "results")),
