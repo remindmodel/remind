@@ -24,7 +24,8 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
-*** gross energy CO2 emissions (excl. BECCS and bunkers)
+*** FS: gross energy CO2 emissions (excl. BECCS and bunkers)
+*** note: industry BECCS is still missing from this variable, to be added in the future
 q47_emiTarget_grossEnCO2(t,regi)..
 	v47_emiTarget(t,regi,"grossEnCO2_noBunkers")
 	=e=
