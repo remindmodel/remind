@@ -314,9 +314,10 @@ vm_cap.lo("2020",regi,"spv","1")$(pm_histCap("2020",regi,"spv")) = 0.9*pm_histCa
 
 *CB* additional upper bound on 2020 deployment
 loop(regi,
-loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
-vm_deltaCap.up("2020",regi,te,"1") = max(1.2*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5,!!20% more than the 5 year average might be relevant for regions with low 2019 insta
-                                         1.25*(pm_histCap("2020",regi,te)-pm_histCap("2019",regi,te)),!!for most countries this will be binding
+*loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
+loop(te$(sameas(te,"csp") OR sameas(te,"wind")),
+vm_deltaCap.up("2020",regi,te,"1") = max(1.3*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5,!!20% more than the 5 year average might be relevant for regions with low 2019 insta
+                                         1.35*(pm_histCap("2020",regi,te)-pm_histCap("2019",regi,te)),!!for most countries this will be binding
                                                                                 0.005$(sameas(te,"spv")) + 0.0045$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));!! for small regions
 );
 );
