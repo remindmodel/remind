@@ -1,5 +1,4 @@
 name,type,reason
-sm_c_2_co2,input,questionnaire
 sm_DpGJ_2_TDpTWa,input,questionnaire
 sm_tgn_2_pgc,input,questionnaire
 sm_tgch4_2_pgc,input,questionnaire
