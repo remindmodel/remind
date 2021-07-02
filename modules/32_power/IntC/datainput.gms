@@ -65,7 +65,7 @@ $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 ;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-f32_storageCap(char,"windoff") = f32_storageCap(char,"wind")
+f32_storageCap(char,"windoff") = f32_storageCap(char,"wind");
 $ENDIF.WindOff 
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
