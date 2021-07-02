@@ -856,6 +856,9 @@ $ENDIF.WindOff
 
 *cb* CF calibration analogously for wind and spv: calibrate 2015, and assume gradual phase-in of grade-based CF (until 2045 for wind, until 2030 for spv)
 p_aux_capacityFactorHistOverREMIND(regi,"wind")$p_avCapFac2015(regi,"wind") =  p_histCapFac("2015",regi,"wind") / p_avCapFac2015(regi,"wind");
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+p_aux_capacityFactorHistOverREMIND(regi,"windoff")$p_avCapFac2015(regi,"windoff") =  p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
+$ENDIF.WindOff
 
 loop(t$(t.val ge 2015 AND t.val le 2045 ),
 pm_cf(t,regi,"wind") =
@@ -864,7 +867,20 @@ pm_cf(t,regi,"wind") =
 (pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
 
-*CG* set storwindoff and gridwindoff to be the same as storwind and gridwind
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+loop(te$(sameas(te,"wind") OR sameas(te,"windoff")),
+loop(t$(t.val ge 2015 AND t.val le 2045 ),
+pm_cf(t,regi,te) =
+(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
++
+(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,te)
+);
+);
+$ENDIF.WindOff
+
+
+*CG* set storage and grid of windoff to be the same as windon
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 pm_cf(t,regi,"storwindoff") = pm_cf(t,regi,"storwind");
 pm_cf(t,regi,"gridwindoff") = pm_cf(t,regi,"gridwind");

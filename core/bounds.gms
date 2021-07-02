@@ -287,24 +287,36 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 *** -------------------------------------------------------------------------
 ***----
 *RP* fix capacities for wind, spv and csp to real world 2010 and 2015 values:
+*CG* adding 2020 values
 ***----
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2019 average
-  vm_deltaCap.lo("2020",regi,te,"1") = pm_histCap("2020",regi,te);
+*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2020 average  
+  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5;
 );
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"windoff")),
+  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
+  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
+*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2020 average
+  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5;
+);
+
+$ENDIF.WindOff
+
 vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"); !! allow offset of 10MW even for countries with no CSP installations to help the solver
 
-*RR* set lower bounds to spv installed capacity in 2020 to reflect the massive deployment in recent years to 90% of 2019 historical value
-vm_cap.lo("2020",regi,"spv","1")$(pm_histCap("2019",regi,"spv")) = 0.9*pm_histCap("2019",regi,"spv");
+*RP* fix to spv installed capacity in 2020 to reflect the massive deployment in recent years
+vm_cap.fx("2020",regi,"spv","1") = pm_histCap("2020",regi,"spv");
 
 *CB* additional upper bound on 2020 deployment
 loop(regi,
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
 vm_deltaCap.up("2020",regi,te,"1") = max(1.2*(pm_histCap("2019",regi,te)-pm_histCap("2015",regi,te))/4,!!20% more than the 4 year average might be relevant for regions with low 2019 insta
                                          1.25*(pm_histCap("2019",regi,te)-pm_histCap("2018",regi,te)),!!for most countries this will be binding
-										 0.005$(sameas(te,"spv")) + 0.0045$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));!! for small regions
+                                                                                0.005$(sameas(te,"spv")) + 0.0045$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));!! for small regions
 );
 );
 
