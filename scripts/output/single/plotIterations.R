@@ -18,13 +18,8 @@ get_line <- function() {
   return(s)
 }
 
-rmdFile <- file.path(outputdir, "plotIterations.Rmd")
-if (file.exists(rmdFile)) {
-  cat(rmdFile, " already exists, overwrite? (y/n): ")
-  if (!identical(get_line(), "y")) {
-    stop("aborting, file already exists")
-  }
-}
+now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
+rmdPath <- file.path(outputdir, "plotIterations_", now, ".Rmd")
 
 defaultSymbolNames <-
   "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es, v36_deltaProdEs, v36_ProdEs"
@@ -77,16 +72,16 @@ lapply(', symbolName, 'Plots[-1], renderPlot)
 ```'))
 }
 
-writeLines(paste0(c(rmdHeader, sapply(symbolNames, rmdChunksForSymbol)), collapse = "\n\n"), rmdFile)
+writeLines(paste0(c(rmdHeader, sapply(symbolNames, rmdChunksForSymbol)), collapse = "\n\n"), rmdPath)
 
 cat("Render plots to html? (y/n): ")
 if (identical(get_line(), "y")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
-    rmarkdown::render(rmdFile, output_file = file.path(outputdir, "plotIterations.html"))
+    rmarkdown::render(rmdPath, output_file = file.path(outputdir, "plotIterations_", now, ".html"))
   } else {
     warning(
       "Rendering to html failed: Could not find pandoc (>=1.12.3), please add it to your PATH environment variable.",
-      "In an RStudio console run `Sys.getenv(\"RSTUDIO_PANDOC\")` to get the path to RStudio's pandoc."
+      "Run `Sys.getenv(\"RSTUDIO_PANDOC\")` in an RStudio console to get the path to RStudio's pandoc."
     )
   }
 }

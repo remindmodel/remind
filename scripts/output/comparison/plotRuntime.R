@@ -226,7 +226,7 @@ regionSolverTimePlot <- ggplot(stats, aes(x = as.numeric(Iteration),
   theme_bw()
 
 # Create Output pdf and html files
-now <- format(Sys.time(), "%Y-%M-%d_%H:%M:%S")
+now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
 plotRuntimePdfPath <- paste0("plotRuntime_", now, ".pdf")
 withr::with_pdf(plotRuntimePdfPath, {
   print(solverTimePlot)
