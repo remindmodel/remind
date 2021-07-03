@@ -17,7 +17,6 @@ if (!exists("source_include")) {
   ## Define arguments that can be read from command line
   lucode2::readArgs("outputdirs")
 }
-outputdirs <- list.dirs("/home/pascal/dev/remind/testing_robins_runtime/scenarios", recursive = FALSE) # TODO remove
 stopifnot(length(outputdirs) >= 1)
 cat("comparing the following runs:\n")
 print(outputdirs)
@@ -227,16 +226,20 @@ regionSolverTimePlot <- ggplot(stats, aes(x = as.numeric(Iteration),
   theme_bw()
 
 # Create Output pdf and html files
-withr::with_pdf("plotRuntime.pdf", {
+now <- format(Sys.time(), "%Y-%M-%d_%H:%M:%S")
+plotRuntimePdfPath <- paste0("plotRuntime_", now, ".pdf")
+withr::with_pdf(plotRuntimePdfPath, {
   print(solverTimePlot)
   print(runtimeRectanglePlot)
   print(stackedBarPlot)
   print(regionSolverTimePlot)
 })
 
+plotRuntimeHtmlPath <- paste0("plotRuntime_", now, ".html")
 htmltools::save_html(htmltools::tagList(plotly::ggplotly(solverTimePlot),
                                         plotly::ggplotly(runtimeRectanglePlot),
                                         plotly::ggplotly(stackedBarPlot),
                                         plotly::ggplotly(regionSolverTimePlot)),
-                     file = "plotRuntime.html",
+                     file = plotRuntimeHtmlPath,
                      libdir = "plotRuntimeDependencies")
+cat("plotRuntime finished, see ", plotRuntimePdfPath, " and ", plotRuntimeHtmlPath, " in ", getwd(), "\n")
