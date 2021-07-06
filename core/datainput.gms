@@ -453,9 +453,6 @@ $offdelim
 $Onlisting
 $ENDIF.WindOff
 
-*** calculate historic capacity additions
-pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
-
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *** read-in of pm_histCap_windoff.cs3r
 $Offlisting
@@ -466,6 +463,9 @@ $offdelim
 ;
 $Onlisting
 $ENDIF.WindOff
+
+*** calculate historic capacity additions
+pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
 *** historical PE installed capacity
 *** read-in of p_PE_histCap.cs3r
