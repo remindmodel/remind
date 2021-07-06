@@ -292,6 +292,8 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
+  vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
+  vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
 );
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"

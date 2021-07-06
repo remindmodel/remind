@@ -430,8 +430,8 @@ p_cint(regi,"co2","peoil","7")=0.2283105600;
 p_cint(regi,"co2","peoil","8")=0.4153983800;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-*CG* set wind offshore storage and grid to be the same as wind onshore, except cost and eta (later should be integrated into input data)
-*CG* raise eta and lower cost to represent the lower storage requirements due to higher CF for windoff
+*CG* set wind offshore storage and grid to be the same as wind onshore (later should be integrated into input data)
+* main difference between onshore and offshore is the difference in f32_factorStorage
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 

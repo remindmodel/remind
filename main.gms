@@ -80,11 +80,11 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
-* Regionscode: 2b1450bc
+* Regionscode: 62eff8f7
 * 
-* Input data revision: 6.171
+* Input data revision: 6.18
 * 
-* Last modification (input data): Wed Jun 23 09:58:05 2021
+* Last modification (input data): Fri Jun 25 13:09:38 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -139,7 +139,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  xx_ref_FEmed
+$setGlobal c_expname  default
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -190,7 +190,7 @@ $setglobal industry  fixed_shares     !! def = simple
 ***---------------------    38_stationary    --------------------------------------
 $setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  off !! def = on
+$setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -200,7 +200,7 @@ $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
 ***---------------------    47_regipol  -------------------------------------
-$setglobal regipol  regiCarbonPrice              !! def = none
+$setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------
@@ -296,30 +296,25 @@ cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree abov
 cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
 
+cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
+cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
 cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
+cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
+cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
+c_regi_nucscen				"regions to apply nucscen to"
+c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
-c_regi_sensscen				"regions which regional sensitivity parameters apply to"
-cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
-cm_DiscRateScen                 "Scenario for the implicit discount rate applied to the energy efficiency capital"
-cm_noReboundEffect              "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_peakBudgYr                   "date of net-zero CO2 emissions for peak budget runs without overshoot"
-cm_taxCO2inc_after_peakBudgYr   "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
-cm_CO2priceRegConvEndYr         "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
-c_regi_nucscen			"regions to apply nucscen to"
-c_regi_capturescen		"region to apply ccapturescen to"
-cm_GDPcovid                     "GDP correction for covid"
-cm_TaxConvCheck                 "switch for enabling tax convergence check in nash mode"
-cm_flex_tax                     "switch for enabling flexibility tax"
-cm_PriceDurSlope_elh2           "slope of price duration curve of electrolysis"
-cm_FlexTaxFeedback              "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
-cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
-c_regi_synfuelscen                    "region to apply synfuelscen to"
+cm_GDPcovid                  "GDP correction for covid"
+cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
 cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
 cm_bioprod_histlim			"regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
+cm_flex_tax                 "switch for enabling flexibility tax"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
+cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
@@ -332,14 +327,22 @@ cm_import_EU                "EU switch for different scenarios of EU SE import a
 cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
-c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
+cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
+cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
-c_VREPot_Factor            "switch for rescaling renewable potentials in all grades which have not been used by 2020"
+c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
+cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
+cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
+cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
+cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
+cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
+c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
+cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -410,7 +413,7 @@ cm_rentconvgas      = 50;        !! def 50
 cm_rentdisccoal     = 0.4;       !! def 0.4
 cm_rentdisccoal2    = 0.6;       !! def 0.6
 cm_rentconvcoal     = 50;        !! def 50
-cm_earlyreti_rate   = 0.15;      !! def 0.09
+cm_earlyreti_rate   = 0.09;      !! def 0.09
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
@@ -431,7 +434,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 0;   !! def = 1300
+c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
@@ -441,17 +444,17 @@ cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
 
-$setGlobal cm_ETS_postTargetIncrease  2 !! def = linear
+$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
 $setGlobal cm_ETS_post2055Increase  2      !! def = 2
 
 $setGlobal cm_emiMktES  off        !! def = off	
-$setGlobal cm_emiMktES_type  off !! def = netGHG	
+$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
 
-$setGlobal cm_ESD_postTargetIncrease  off !! def = 8
-$setGlobal cm_ESD_post2055Increase  off !! def = 2
+$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
+$setGlobal cm_ESD_post2055Increase  2 !! def = 2
 
 $setGlobal cm_emiMktEScoop  off    !! def = off	
-$setGlobal cm_emiMktES2020price  off !! def = 30
+$setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
@@ -514,6 +517,9 @@ cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
+*** VRE switch
+cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
+
 *** H2 simple buildings/industry switches
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_costDecayStart = 0.05; !! def 5%
@@ -529,7 +535,7 @@ cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
-c_noPeFosCCDeu = 0; !! def 0
+cm_noPeFosCCDeu = 0; !! def 0
 
 
 cm_HeatLim_b = 1; !! def 1
@@ -544,7 +550,8 @@ cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
-cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
+
+$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
 cm_ariadne_trade_el = 0; !! def 0
 cm_ariadne_trade_h2 = 0; !! def 0
@@ -553,7 +560,20 @@ cm_ariadne_trade_syn = 0; !! def 0
 
 $setGlobal c_VREPot_Factor  off !! def = off
 
-$setGlobal cm_altFeEmiFac  EUR_regi, NEU_regi        !! def = off	
+$setGlobal cm_FEtax_trajectory_abs  off !! def = off
+$setGlobal cm_FEtax_trajectory_rel  off !! def = off
+
+$setGlobal cm_regipol_slope_beforeTarget  off !! def = off
+
+$setGlobal cm_altFeEmiFac  off        !! def = off	
+
+
+cm_heatPumpMkup_build = 200; !! def = 200
+cm_districtHeatingMkup_build = 25; !! def = 25
+
+c_BaselineAgriEmiRedDEU = 0; !! def = 0
+
+cm_deuCDRmax = -1; !! def = -1
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
@@ -564,7 +584,7 @@ $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
-$setglobal cm_INCONV_PENALTY_bioSwitch  on !! def = off
+$setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
@@ -578,16 +598,16 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-FE_med-Reg_2b1450bc   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
-$setglobal cm_calibration_string  FE_med      !! def = off
+$setglobal cm_calibration_string  off      !! def = off
 
-$setglobal c_testOneRegi_region  DEU       !! def = EUR
+$setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
@@ -612,7 +632,7 @@ $setglobal cm_INNOPATHS_adj_coeff_cont  off
 $setglobal cm_INNOPATHS_adj_seed_multiplier  off
 $setglobal cm_INNOPATHS_adj_coeff_multiplier  off
 
-$setglobal cm_INNOPATHS_inco0Factor  apcardiEfft 0.8, apcardiEffH2t 0.675 !! def = off
+$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
 
 $setglobal cm_INNOPATHS_CCS_markup  off !! def = off
 $setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
@@ -630,8 +650,6 @@ $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
-
-$setglobal cm_wind_offshore  1      !! def = 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
