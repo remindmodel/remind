@@ -306,10 +306,6 @@ $ENDIF.WindOff
 
 vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"); !! allow offset of 10MW even for countries with no CSP installations to help the solver
 
-*RP* fix to spv installed capacity in 2020 to reflect the massive deployment in recent years
-*vm_cap.fx("2020",regi,"spv","1") = pm_histCap("2020",regi,"spv");
-vm_cap.lo("2020",regi,"spv","1")$(pm_histCap("2020",regi,"spv")) = 0.9*pm_histCap("2020",regi,"spv");
-
 *** lower bound on capacities for ngcc and ngt for regions defined at the pm_histCap file
 loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt")),
 ***  vm_cap.lo("2010",regi,te,"1")$pm_histCap("2010",regi,te) = 0.75 * pm_histCap("2010",regi,te);
