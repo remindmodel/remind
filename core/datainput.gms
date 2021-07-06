@@ -433,10 +433,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *CG* set wind offshore storage and grid to be the same as wind onshore, except cost and eta (later should be integrated into input data)
 *CG* raise eta and lower cost to represent the lower storage requirements due to higher CF for windoff
 fm_dataglob(char,"storwindoff") = fm_dataglob(char,"storwind");
-fm_dataglob("inco0","storwindoff") = 0.5 * fm_dataglob("inco0","storwind");
-fm_dataglob("incolearn","storwindoff") = 0.5 * fm_dataglob("incolearn","storwind");
-fm_dataglob("eta","storwindoff") = 0.92;
-
 fm_dataglob(char,"gridwindoff") = fm_dataglob(char,"gridwind");
 
 $ENDIF.WindOff
@@ -860,12 +856,14 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_aux_capacityFactorHistOverREMIND(regi,"windoff")$p_avCapFac2015(regi,"windoff") =  p_histCapFac("2015",regi,"windoff") / p_avCapFac2015(regi,"windoff");
 $ENDIF.WindOff
 
+$IFTHEN.WindOff %cm_wind_offshore% == "0"
 loop(t$(t.val ge 2015 AND t.val le 2045 ),
 pm_cf(t,regi,"wind") =
 (2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
 +
 (pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
 );
+$ENDIF.WindOff
 
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"

@@ -300,8 +300,8 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"windoff")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2020 average
-  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5;
+  vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
+  vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
 );
 
 $ENDIF.WindOff
@@ -311,16 +311,6 @@ vm_cap.up("2015",regi,"csp",'1') = 1e-5 + 1.05 * vm_cap.lo("2015",regi,"csp","1"
 *RP* fix to spv installed capacity in 2020 to reflect the massive deployment in recent years
 *vm_cap.fx("2020",regi,"spv","1") = pm_histCap("2020",regi,"spv");
 vm_cap.lo("2020",regi,"spv","1")$(pm_histCap("2020",regi,"spv")) = 0.9*pm_histCap("2020",regi,"spv");
-
-*CB* additional upper bound on 2020 deployment
-loop(regi,
-*loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
-loop(te$(sameas(te,"csp") OR sameas(te,"wind")),
-vm_deltaCap.up("2020",regi,te,"1") = max(1.3*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5,!!20% more than the 5 year average might be relevant for regions with low 2019 insta
-                                         1.35*(pm_histCap("2020",regi,te)-pm_histCap("2019",regi,te)),!!for most countries this will be binding
-                                                                                0.005$(sameas(te,"spv")) + 0.0045$(sameas(te,"wind"))+0.0005$(sameas(te,"csp")));!! for small regions
-);
-);
 
 *** lower bound on capacities for ngcc and ngt for regions defined at the pm_histCap file
 loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt")),
