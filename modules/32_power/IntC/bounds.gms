@@ -13,9 +13,7 @@ vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *** CG: set wind offshore to be 10% higher than wind onshore
-*vm_capFac.fx(t,regi,"windoff") = 1.1 * pm_cf(t,regi,"wind");
-*** CG: set wind offshore to be the same as wind onshore: for testing
-vm_capFac.fx(t,regi,"windoff") = 1 * pm_cf(t,regi,"wind");
+vm_capFac.fx(t,regi,"windoff") = 1.25 * pm_cf(t,regi,"wind");
 $ENDIF.WindOff
 
 *** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
@@ -44,7 +42,7 @@ if ( cm_flex_tax eq 1,
 loop(regi,
   loop(te$(teVRE(te)),
     if ( (sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels")) ,
-         v32_shSeEl.lo(t,regi,te)$(t.val>2015) = 0.01; 
+         v32_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01; 
     );
   );
 );

@@ -386,7 +386,8 @@ q_cap(tall,all_regi,all_te,rlf)                      "definition of available ca
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-q_windoff(tall,all_regi)                             "exogenous representation of offshore wind power generation"
+q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"
+q_windoff_high(tall,all_regi)                        "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to less than twice of maxprod ratio"
 $ENDIF.WindOff
 
 q_limitCapSe(ttot,all_regi,all_enty,all_enty,all_te)    "capacity constraint for se production"
