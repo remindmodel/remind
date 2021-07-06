@@ -82,9 +82,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6
+* Input data revision: 6.18
 * 
-* Last modification (input data): Wed Apr 28 19:37:13 2021
+* Last modification (input data): Fri Jun 25 13:09:38 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -313,6 +313,7 @@ cm_flex_tax                 "switch for enabling flexibility tax"
 cm_H2targets                "switches on capacity targets for electrolysis in NDC techpol following national Hydrogen Strategies"
 cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
+cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
@@ -325,7 +326,7 @@ cm_import_EU                "EU switch for different scenarios of EU SE import a
 cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
 cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
-c_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
+cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
@@ -492,8 +493,8 @@ $setGlobal c_regi_sensscen  all !! def = all
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 																	  
-cm_biotrade_phaseout = 1; !! def 0
-cm_bioprod_histlim = 1.1; !! def -1	
+cm_biotrade_phaseout = 0; !! def 0
+cm_bioprod_histlim = -1; !! def -1	
 
 cm_H2targets = 0; !! def 0
 
@@ -508,18 +509,21 @@ cm_logitCal_markup_conv_b = 0.8; !! def 0.8
 cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 
 *** flex tax switches
-cm_flex_tax = 1; !! def 0
+cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
+
+*** VRE switch
+cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
 
 *** H2 simple buildings/industry switches
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_build_costDecayStart = 0.05; !! def 5%
-cm_build_H2costDecayEnd = 0.3;  !! def 10%
+cm_build_H2costDecayEnd = 0.1;  !! def 10%
 
 cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_indst_costDecayStart = 0.05; !! def 5%
-cm_indst_H2costDecayEnd = 0.3;  !! def 10%
+cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
@@ -527,7 +531,7 @@ cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
-c_noPeFosCCDeu = 1; !! def 0
+cm_noPeFosCCDeu = 0; !! def 0
 
 
 cm_HeatLim_b = 1; !! def 1
@@ -538,16 +542,16 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 
-cm_flex_tax = 1; !! def 0
+cm_flex_tax = 0; !! def 0
 cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0, off
 
 
-$setGlobal cm_ARIADNE_FeShareBounds  on !! def = off
+$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
-cm_ariadne_trade_el = 50; !! def 0
-cm_ariadne_trade_h2 = 150; !! def 0
-cm_ariadne_trade_syn = 150; !! def 0
+cm_ariadne_trade_el = 0; !! def 0
+cm_ariadne_trade_h2 = 0; !! def 0
+cm_ariadne_trade_syn = 0; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
@@ -555,13 +559,13 @@ $setGlobal c_VREPot_Factor  off !! def = off
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 
-$setGlobal cm_regipol_slope_beforeTarget  2040.DEU 1.3 !! def = off
+$setGlobal cm_regipol_slope_beforeTarget  off !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 
-cm_heatPumpMkup_build = 100; !! def = 200
-cm_districtHeatingMkup_build = 12; !! def = 25
+cm_heatPumpMkup_build = 200; !! def = 200
+cm_districtHeatingMkup_build = 25; !! def = 25
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)

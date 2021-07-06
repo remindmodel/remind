@@ -13,6 +13,8 @@ output: html_document
 require(ggplot2)
 require(lusweave)
 require(rmndt)
+require(gdx)
+require(gdxdt)
 
 
 knitr::opts_chunk$set(fig.width=12, fig.height=12) 
@@ -74,10 +76,10 @@ get_fuel_prices <- function(gdx){
   budget.m <- lowpass(budget.m)
   
   
-  bal_eq <- "qm_balFeForCesAndEs"
+  bal_eq <- "q35_demFeTrans"
   febal.m <- readGDX(gdx, name = bal_eq, types = "equations",
                       field = "m", format = "first_found")[, REMINDyears[REMINDyears>=startyear], fety]
-    
+  febal.m <- dimSums(febal.m,dim=c(3.2))
   if(any(febal.m > 0)){
     sprintf("Found positive marginals on %s. We correct this, but the issue should be adressed.", bal_eq)
     febal.m[febal.m > 0] <- -1e-10
