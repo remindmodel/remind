@@ -38,7 +38,7 @@ $offdelim
 ;
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
-f32_factorStorage(all_regi,"wind")      = 1.5 * f32_factorStorage(all_regi,"wind"); 
+f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
 $ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
