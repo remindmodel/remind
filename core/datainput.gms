@@ -451,7 +451,7 @@ $include "./core/input/pm_histCap.cs3r"
 $offdelim
 ;
 $ENDIF.WindOff
-
+$Onlisting
 
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
@@ -465,9 +465,8 @@ $include "./core/input/pm_histCap_windoff.cs3r"
 $offdelim
 ;
 $ENDIF.WindOff
-
-
 $Onlisting
+
 *** historical PE installed capacity
 *** read-in of p_PE_histCap.cs3r
 table p_PE_histCap(tall,all_regi,all_enty,all_enty)     "historical installed capacity"
