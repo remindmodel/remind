@@ -129,6 +129,7 @@ newcomp <- readRDS(datapath(fname = "newcomp.RDS"))
 shares <- readRDS(datapath(fname = "shares.RDS"))
 pref <- readRDS(datapath(fname = "pref_output.RDS"))
 annual_sales <- readRDS(datapath(fname = "annual_sales.RDS"))
+annual_mileage <- readRDS(datapath(fname = "annual_mileage.RDS"))
 mj_km_data <- readRDS(datapath(fname = "mj_km_data.RDS"))
 loadFactor <- readRDS(datapath(fname = "loadFactor.RDS"))
 ## Load population to calculate per capita values
@@ -608,7 +609,7 @@ demandkmplotf(demand_km, POP)
 
 ```{r, echo=FALSE, warning=FALSE}
 
-plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
+plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor, annual_mileage){
   vintcomp = vintcomp[,.(totdem, region, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
   newcomp = newcomp[,.(region, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
@@ -620,9 +621,8 @@ plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
                                       "year"), measure.vars = c("vintdem", "newdem"))
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
-  # allfleet = merge(allfleet[region=="EUR"], loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
-  annual_mileage = 13000
-  loadFactor = 1.5
+  allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
+  allfleet = merge(allfleet, annual_mileage, all.x = TRUE, by = c("region", "vehicle_type", "year"))
   allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("region", "technology", "variable", "year")]
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
   allfleet[,alphaval := ifelse(variable =="vintdem", 1,0)]
