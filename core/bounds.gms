@@ -292,8 +292,6 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
-*additional bound on 2020 expansion: at least yearly as much as 80% of in 2015-2020 average  
-  vm_deltaCap.lo("2020",regi,te,"1") = 0.8*(pm_histCap("2020",regi,te)-pm_histCap("2015",regi,te))/5;
 );
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
