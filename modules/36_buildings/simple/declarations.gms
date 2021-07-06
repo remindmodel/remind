@@ -26,6 +26,7 @@ Positive Variables
   v36_H2share(ttot,all_regi)      "H2 share in gases"
   v36_Heatshare(ttot,all_regi)    "district heat share in FE buildings"
   v36_Elshare(ttot,all_regi)      "electricity share in FE buildings"
+  v36_costAddH2LowPen(ttot,all_regi) "low penetration H2 mark up component"
 ;
 
 Equations
@@ -34,6 +35,7 @@ Equations
   q36_HeatShare(ttot,all_regi)       "calculate district heating share in FE buildings"
   q36_ElShare(ttot,all_regi)         "calculate electricity share in FE buildings"
   q36_costAddTeInv(ttot,all_regi,all_te) "additional buildings hydrogen annual investment costs under low technology diffusion due to T&D conversion and heat pumps markup"
+  q36_costAddH2LowPen(ttot,all_regi) "additional buildings hydrogen annual investment costs under low technology diffusion"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
 ;
 

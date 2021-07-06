@@ -22,4 +22,12 @@ $ifthen.CES_calibration "%CES_parameters%" == "calibrate"
 v36_H2share.up(t,regi) = s36_costDecayStart;
 $endif.CES_calibration
 
+
+*** RK: force more H2 into buildings to observe H2 mark up
+*loop(t,
+*  vm_demFeSector.lo(t,'DEU','seh2','feh2s','build','ES') = max(0, 0.006 * (t.val - 2025) / (2100 - 2025));
+*);
+* vm_demFeSector.lo('2100','DEU','seh2','feh2s','build','ES') = 0.006;
+
+
 *** EOF ./modules/36_buildings/simple/bounds.gms
