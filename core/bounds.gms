@@ -289,15 +289,25 @@ vm_emiMac.fx(t,regi,"oc") = 0;
 *RP* fix capacities for wind, spv and csp to real world 2010 and 2015 values:
 *CG* adding 2020 values
 ***----
-loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind")),
+loop(te$(sameas(te,"csp")),
+  vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
+  vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
+);
+
+
+$IFTHEN.WindOff %cm_wind_offshore% == "0"
+loop(te$(sameas(te,"spv") OR sameas(te,"wind") ),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
   vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
 );
 
+$ENDIF.WindOff
+
+
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-loop(te$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"windoff")),
+loop(te$(sameas(te,"spv") OR sameas(te,"wind") OR sameas(te,"windoff")),
   vm_cap.lo("2015",regi,te,"1") = 0.95 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
