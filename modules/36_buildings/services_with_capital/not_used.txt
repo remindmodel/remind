@@ -15,3 +15,6 @@ pm_shGasLiq_fe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
 pm_shfe_lo,parameter,not needed
 qm_balFe,input,questionnaire
+sm_TWa_2_MWh,input,questionnaire
+cm_heatPumpMkup_build,input,questionnaire
+cm_districtHeatingMkup_build,input,questionnaire

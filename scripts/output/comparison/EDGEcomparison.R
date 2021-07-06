@@ -91,7 +91,7 @@ SalesFun = function(shares_LDV, newcomp, sharesVS1){
 }
 
 
-fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
+fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor, annual_mileage){
   vintcomp = vintcomp[,.(totdem, region, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
   newcomp = newcomp[,.(region, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
@@ -104,7 +104,8 @@ fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
   allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
-  annual_mileage = 13000
+  allfleet = merge(allfleet, annual_mileage, all.x = TRUE, by = c("region", "vehicle_type", "year"))
+
   allfleet = allfleet[,.(value = sum(value/1.5/annual_mileage)), by = c("region", "technology", "variable", "year")]
 
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
@@ -413,12 +414,13 @@ for (outputdir in outputdirs) {
   demandkm = readRDS(paste0(outputdir, "/EDGE-T/demandF_plot_pkm.RDS"))
   mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/mj_km_data.RDS"))
   loadFactor = readRDS(paste0(outputdir, "/EDGE-T/loadFactor.RDS"))
+  annual_mileage = readRDS(paste0(outputdir, "/EDGE-T/annual_mileage.RDS"))
   pref_FV = readRDS(paste0(outputdir, "/EDGE-T/pref_output.RDS"))[["FV_final_pref"]]
   ## if learning is ON, load the corresponding costs
   if (file.exists(paste0(outputdir, "/nonfuel_costs_learning.RDS")) ) {
     nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
   } else {
-    nonf = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "totalNE_cost"][,price_component := NULL] 
+    nonf = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "totalNE_cost"][,price_component := NULL]
   }
   capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[(price_component == "Capital_costs_purchase") & ((!technology %in% c("BEV", "FCEV"))|(technology %in% c("BEV", "FCEV") & year < 2020))]
   ## if learning is ON, load the corresponding costs
@@ -480,7 +482,7 @@ for (outputdir in outputdirs) {
   ## calculate sales
   salescomp = SalesFun(shares_LDV, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1)
   ## calculate fleet compositons
-  fleet = fleetFun(vintcomp, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1, loadFactor)
+  fleet = fleetFun(vintcomp, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1, loadFactor, annual_mileage)
   ## calculate EJ from LDVs by technology
   EJroad = EJroadFun(demandEJ)
   ## calculate FE demand by mode

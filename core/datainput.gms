@@ -154,13 +154,13 @@ if (cm_VRE_supply_assumptions eq 1,
     fm_dataglob("learn","spv") = 0.257;
   );
 
-  if (fm_dataglob("inco0","storspv") ne 9000,
+  if (fm_dataglob("inco0","storspv") ne 8350,
     abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
   else
     fm_dataglob("inco0","storspv") = 7000;
   );
 
-  if (fm_dataglob("incolearn","storspv") ne 6240,
+  if (fm_dataglob("incolearn","storspv") ne 5710,
     abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
   else
     fm_dataglob("incolearn","storspv") = 4240;
@@ -453,6 +453,9 @@ $offdelim
 $ENDIF.WindOff
 
 
+*** calculate historic capacity additions
+pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
+
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 *** read-in of pm_histCap_windoff.cs3r
 $Offlisting
@@ -516,6 +519,7 @@ pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
 *** FS: set CF of additional t&d H2 for buildings and industry to t&d H2 stationary value
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
+
 
 table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
 $ondelim
@@ -1199,27 +1203,26 @@ loop(teNoLearn(te),
 display pm_inco0_t;
 
 ***for those technologies, for which differentiated costs are available for 2015-2040, use those
-$if %cm_techcosts% == "REG"   loop(teRegTechCosts(te)$(not teLearn(te)),
-$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2040) = p_inco0("2040",regi,te);
+$if %cm_techcosts% == "REG"   loop(te$(teNoLearn(te) AND teRegTechCosts(te)),
+$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);  !! no value after 2020 is currently used (see convergence below)
+
+***linear convergence of investment costs from 2025 on for non-learning technologies with regionally differentiated costs
+***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
+$if %cm_techcosts% == "REG"     loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
+$if %cm_techcosts% == "REG"       pm_inco0_t(ttot,regi,te) =   ( pm_ttot_val(ttot) - 2020 ) / 50 * fm_dataglob("inco0",te)
+$if %cm_techcosts% == "REG"                                  + ( 2070 - pm_ttot_val(ttot) ) / 50 * pm_inco0_t("2020",regi,te) ;
+$if %cm_techcosts% == "REG"     );
+$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val gt 2070) = fm_dataglob("inco0",te);
 $if %cm_techcosts% == "REG"   );
 
 *** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
-$if %c_techcosts% == "REG"    loop(teNoLearn(te)$(sameas(te,"igcc"),
+$if %c_techcosts% == "REG" loop(teNoLearn(te)$(sameas(te,"igcc"),
 $if %c_techcosts% == "REG"      loop(ttot$(ttot.val ge 2005 AND ttot.val < 2035 ),
-$if %c_techcosts% == "REG"        pm_inco0_t(ttot,regi,te) = sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ), p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te) );
+$if %c_techcosts% == "REG"        pm_inco0_t(ttot,regi,te) = sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+$if %c_techcosts% == "REG" p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te)
+$if %c_techcosts% == "REG"                                   );
 $if %c_techcosts% == "REG"      );
 $if %c_techcosts% == "REG"    );
-
-***linear convergence of investment costs from 2025 on for non-learning technologies,
-***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
-$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,teNoLearn(te)) = ((pm_ttot_val(ttot)-2020)*fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                            + (2070-pm_ttot_val(ttot))*pm_inco0_t("2020",regi,te))/50;
-$if %cm_techcosts% == "REG"   );
-$if %cm_techcosts% == "REG"   loop(ttot$(ttot.val gt 2070),
-$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,teNoLearn(te)) = fm_dataglob("inco0",te);
-$if %cm_techcosts% == "REG"   );
 
 
 *** rename f_datafecostsglob
@@ -1396,6 +1399,7 @@ p_ef_dem(regi,"fedie") = 69.3;
 p_ef_dem(regi,"fehos") = 69.3;
 p_ef_dem(regi,"fepet") = 68.5;
 p_ef_dem(regi,"fegas") = 50.3;
+p_ef_dem(regi,"fegat") = 50.3;
 p_ef_dem(regi,"fesos") = 90.5;
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
@@ -1409,11 +1413,6 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
     p_ef_dem(regi,"fegas")$(regi_group(ext_regi,regi)) = 55;
     p_ef_dem(regi,"fesos")$(regi_group(ext_regi,regi)) = 96;
   );
-
-*** Changing Germany and France refineries emission factors to avoid negative emissions on pe2se (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
-  pm_emifac(ttot,regi,"peoil","seliqfos","refliq","co2")$(sameas(regi,"DEU") OR sameas(regi,"FRA")) = 0.630719841;
-*** Changing Germany and UKI solids emissions factors to be in line with CRF numbers (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
-  pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 
 $endif.altFeEmiFac
 

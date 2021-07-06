@@ -8,12 +8,16 @@
 
 	
 Parameter
-  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "target deviation across iterations in current emissions divided by target emissions"
+  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2015 emissions"
   p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations"
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year"
-  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region GHG emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets"
   p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
+  p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening"
 ;
+
+
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter
@@ -111,5 +115,25 @@ equations
 	q47_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
 ;
 $endIf.cm_implicitFE
+
+$ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 
+Parameter
+	p47_slope_beforeTarget(ttot,all_regi) "parameter to scale slope of co2 price trajectory in years before target year" / %cm_regipol_slope_beforeTarget% /
+	p47_slope_beforeTarget_timeStep(ttot)	  "helper parameter to make loops shorter in implementation"
+	p47_slope_beforeTarget_regi(all_regi)	  "helper paramter to hold regions to which second slope adjustment before Target should apply"
+	p47_slope_firstYears(all_regi)		  "helper parameter to hold co2 price trajectory slope of first years [USD/tC/yr]"
+
+	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
+	p47_ttot_display					 "helper parameter to display ttot in loop"
+
+
+	o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type)	"diagnostic output parameter holding the CO2 budget up to the target year [GtCO2]"
+;
+
+Scalar
+s47_initialCO2Price_year				"initial year of co2 price which should be unchanged by co2 price adjustment"
+;
+
+$endIf.co2priceSlope
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

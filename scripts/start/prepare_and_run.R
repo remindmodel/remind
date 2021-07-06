@@ -237,20 +237,21 @@ prepare <- function() {
 	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
 
   if (file.exists(cfg$magicc_template)) {
-      cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",cfg$magicc_template,"/*.* ./core/magicc/"))
+      cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
+      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
   if (on_cluster)
-    system("find ./core/magicc/ -type f | xargs dos2unix -q")
+    system(paste0("find ",cfg$results_folder,"/magicc/ -type f | xargs dos2unix -q"))
 
   ################## M O D E L   L O C K ###################################
-  # Lock the directory for other instances of the start scritps
-  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
-  on.exit(model_unlock(lock_id, oncluster=on_cluster))
+  # Lock the directory for other instances of the start scripts
+  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  on.exit(model_unlock(lock_id),add=TRUE)
   ################## M O D E L   L O C K ###################################
 
   ###########################################################
@@ -431,7 +432,7 @@ prepare <- function() {
   
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
-  system(paste0('cp ',gdx_name,' ',path(cfg$results_folder, "input.gdx")))
+  system(paste0('cp ',gdx_name,' ',file.path(cfg$results_folder, "input.gdx")))
   
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
@@ -440,11 +441,11 @@ prepare <- function() {
   .copy.fromlist(cfg$files2export$start,cfg$results_folder)
 
   # Save configuration
-  save(cfg, file = path(cfg$results_folder, "config.Rdata"))
+  save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
   cat("Creating full.gms\n")
-  singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
+  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -457,7 +458,7 @@ prepare <- function() {
 
   ################## M O D E L   U N L O C K ###################################
   # After full.gms was produced remind folders have to be unlocked to allow setting up the next run
-  model_unlock(lock_id, oncluster=on_cluster)
+  model_unlock(lock_id)
   # Reset on.exit: Prevent model_unlock from being executed again at the end
   # and remove "setwd(cfg$results_folder)" from on.exit, becaue we change to it in the next line
   on.exit()
@@ -466,6 +467,10 @@ prepare <- function() {
   setwd(cfg$results_folder)
 
   write_yaml(cfg,file="cfg.txt")
+  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
+  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
+  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
+  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.

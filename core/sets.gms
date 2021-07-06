@@ -768,31 +768,31 @@ sets
        USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
-       AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,
-       ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,
-       BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,
-       BVT,BRA,IOT,BRN,BGR,BFA,BDI,KHM,CMR,CAN,
-       CPV,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,
-       COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,
-       DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,
-       ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,
-       GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,
-       GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,
-       HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,
-       JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,
-       KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,
-       MAC,MKD,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,
-       MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,
-       MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,
-       NER,NGA,NIU,NFK,MNP,NOR,OMN,PAK,PLW,PSE,
-       PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,
-       REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,
-       VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,
-       SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,
-       SDN,SUR,SJM,SWZ,SWE,CHE,SYR,TWN,TJK,TZA,
-       THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,
-       TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,
-       VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE /
+       ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
+       ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
+       BES,BFA,BGD,BGR,BHR,BHS,BIH,BLM,BLR,BLZ,
+       BMU,BOL,BRA,BRB,BRN,BTN,BVT,BWA,CAF,CAN,
+       CCK,CHN,CHE,CHL,CIV,CMR,COD,COG,COK,COL,
+       COM,CPV,CRI,CUB,CUW,CXR,CYM,CYP,CZE,DEU,
+       DJI,DMA,DNK,DOM,DZA,ECU,EGY,ERI,ESH,ESP,
+       EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,
+       GEO,GGY,GHA,GIB,GIN,GLP,GMB,GNB,GNQ,GRC,
+       GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,HRV,
+       HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,
+       ISR,ITA,JAM,JEY,JOR,JPN,KAZ,KEN,KGZ,KHM,
+       KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,
+       LKA,LSO,LTU,LUX,LVA,MAC,MAF,MAR,MCO,MDA,
+       MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,MNE,MNG,
+       MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,
+       NCL,NER,NFK,NGA,NIC,NIU,NLD,NOR,NPL,NRU,
+       NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
+       PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,
+       RWA,SAU,SDN,SEN,SGP,SGS,SHN,SJM,SLB,SLE,
+       SLV,SMR,SOM,SPM,SRB,SSD,STP,SUR,SVK,SVN,
+       SWE,SWZ,SXM,SYC,SYR,TCA,TCD,TGO,THA,TJK,
+       TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
+       UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
+       VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
    map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
@@ -2181,7 +2181,7 @@ steps         "iterator for MAC steps"
 alias(t,t2,t3);
 alias(iteration,iteration2);
 alias(tall,tall2,tall3);
-alias(ttot,ttot2,ttot3);
+alias(ttot,ttot2,ttot3,ttot4,ttot5);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);
@@ -2572,6 +2572,12 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (co2luc).lulucf.process.co2
 /
 
+emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technology and captured emissions"
+/
+        pebiolc.seliqbio.bioftcrec.cco2
+        pebiolc. seel.bioigccc.cco2
+        pebiolc.seh2.bioh2c.cco2
+/
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
