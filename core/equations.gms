@@ -324,11 +324,18 @@ q_capDistr(t,regi,teReNoBio(te))..
 *'
 ***---------------------------------------------------------------------------
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-q_windoff(t,regi)..
+q_windoff_low(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
-   =e=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   =g=
+   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
+
+q_windoff_high(t,regi)$(t.val > 2020)..
+   sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
+   =l=
+   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+;
+
 $ENDIF.WindOff
 ***---------------------------------------------------------------------------
 *' Technological change is an important driver of the evolution of energy systems.
@@ -564,7 +571,7 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
    	vm_emiMacSector(t,regi,emiMacSector)
   )
 *** CDR from CDR module
-	+	vm_emiCdr(t,regi,emi)$(sameas(emiMkt,"ETS")) 
+	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
 ;
@@ -622,6 +629,26 @@ q_emiMac(t,regi,emiMac) ..
     vm_emiMacSector(t,regi,emiMacSector)
   )
 ;
+
+***--------------------------------------------------
+*' All CDR emissions summed up
+***--------------------------------------------------
+q_emiCdrAll(t,regi)..
+  vm_emiCdrAll(t,regi)
+       =e= !! BECC + DACC
+  (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
+  + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+  !! scaled by the fraction that gets stored geologically
+  * (sum(teCCS2rlf(te,rlf),
+        vm_co2CCS(t,regi,"cco2","ico2",te,rlf)) /
+  (sum(teCCS2rlf(te,rlf),
+        vm_co2capture(t,regi,"cco2","ico2","ccsinje",rlf))+sm_eps))
+  !! net negative emissions from co2luc
+  -  p_macBaseMagpieNegCo2(t,regi)
+       !! negative emissions from the cdr module that are not stored geologically
+       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+;
+
 
 ***------------------------------------------------------
 *' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
