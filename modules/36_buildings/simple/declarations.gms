@@ -15,6 +15,8 @@ scalars
 Parameters
   p36_heatPumpMkup(ttot,all_regi) "Heat pumps markup cost [T$/TWa]"
   p36_districtHeatingMkup(ttot,all_regi) "District heatingMkup markup cost [T$/TWa]"
+  p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2, in simple realization only used for reporting"
+  p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2, in simple realization only used for reporting"
 ;
 
 Variables

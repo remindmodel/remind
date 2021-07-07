@@ -32,6 +32,18 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2035) = 2;
 pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 
 
+Parameter
+
+p36_floorspace_scen                    "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
+/
+$ondelim
+$include "./modules/36_buildings/simple/input/p36_floorspace_scen.cs4r"
+$offdelim
+/
+;
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2
+
+
 $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off" 
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") = pm_cesdata_sigma(ttot,"enb") * %cm_INNOPATHS_enb%;
   pm_cesdata_sigma(ttot,"enb")$( (pm_cesdata_sigma(ttot,"enb") gt 0.8) AND (pm_cesdata_sigma(ttot,"enb") lt 1)) = 0.8; !! If complementary factors, sigma should be below 0.8
