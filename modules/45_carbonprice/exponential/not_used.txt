@@ -21,7 +21,5 @@ pm_shPPPMER,input,questionnaire
 pm_pop,input,questionnaire
 pm_gdp,input,questionnaire
 cm_CO2priceRegConvEndYr,input,questionnaire
-cm_peakBudgYr,input,questionnaire
-cm_taxCO2inc_after_peakBudgYr,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire

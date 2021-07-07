@@ -1,4 +1,4 @@
-title;start;cm_rcp_scen;cm_iterative_target_adj;subsidizeLearning;c_budgetCO2;carbonprice;cm_co2_tax_2020;cm_peakBudgYr;cm_emiscen;techpol;cm_OILRETIRE;cm_multigasscen;cm_taxCO2inc_after_peakBudgYr;cm_GDPcovid;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
+title;start;cm_rcp_scen;cm_iterative_target_adj;subsidizeLearning;c_budgetCO2;carbonprice;cm_co2_tax_2020;c_peakBudgYr ;cm_emiscen;techpol;cm_OILRETIRE;cm_multigasscen;c_taxCO2inc_after_peakBudgYr;cm_GDPcovid;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
 SSP2-Base;1;none;0;off;0;none;-1;2100;1;none;off;2;3;0;2005;./config/input.gdx;;
 SSP2-NDC;1;rcp45;3;globallyOptimal;0;NDC2018;1;2100;9;NDC2018;off;3;3;0;2015;./config/input.gdx;SSP2-Base;SSP2-Base
 SSP2-NDC_covid;1;rcp45;3;globallyOptimal;0;NDC2018;1;2100;9;NDC2018;off;3;3;1;2020;./config/input.gdx;SSP2-NDC;SSP2-Base
