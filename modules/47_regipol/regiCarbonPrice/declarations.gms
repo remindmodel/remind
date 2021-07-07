@@ -55,7 +55,7 @@ Parameter
 	pm_emiTargetES(ttot,all_regi)      		    "Effort Sharing GtCO2-eq (or GtCO2) emissions target per region"
 	p47_emiRescaleCo2TaxES(ttot,all_regi)		"Effort Sharing CO2 equivalent (or CO2) price re-scale update factor in between iterations"
 	pm_ESRTarget_dev(ttot,all_regi)				"ESR emissions deviation of current iteration from target emissions"
-	pm_ESRTarget_dev_iter(iteration,ttot,all_regi) "parameter to save pm_ESRTarget_dev across iterations"
+	p47_ESRTarget_dev_iter(iteration,ttot,all_regi) "parameter to save pm_ESRTarget_dev across iterations"
 ;
 
 variables
