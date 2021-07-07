@@ -656,7 +656,7 @@ plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor, annual_mileage){
   }
 
 
-p = plotVint(vintcomp, newcomp, sharesVS1 = shares$VS1_shares, loadFactor)
+p = plotVint(vintcomp, newcomp, sharesVS1 = shares$VS1_shares, loadFactor, annual_mileage)
 
 p
 
