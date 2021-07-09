@@ -346,6 +346,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
+$ifthen.regipol %regipol% == "regiCarbonPrice"        
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
           display "#### Check out the ETS target of 47_regipol module and pm_regiTarget_dev parameter.";
@@ -354,6 +355,8 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### The deviation must to be less than 1% of 2015 emissions (in between -0.01 and 0.01) to reach convergence.";
           display pm_regiTarget_dev;
 	      );
+$endif.regipol
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off"         
         if(sameas(convMessage80, "ETStarget"),
 		      display "#### 8) The ETS regional climate target has not been reached yet.";
           display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
@@ -361,13 +364,16 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ETSTarget_dev;
 	      );
+$endif.emiMktETS
+$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
         if(sameas(convMessage80, "ESRtarget"),
 		      display "#### 9) The ESR regional climate target has not been reached yet.";
           display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
           display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ESRTarget_dev;
-	      );        
+	      ); 
+$endif.emiMktESR       
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
@@ -434,6 +440,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
+$ifthen.regipol %regipol% == "regiCarbonPrice"
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
           display "#### Check out the ETS target of 47_regipol module and pm_regiTarget_dev parameter.";
@@ -442,6 +449,8 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
           display "#### The deviation must to be less than 1% of 2015 emissions (in between -0.01 and 0.01) to reach convergence.";
           display pm_regiTarget_dev;
 	      );
+$endif.regipol
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
         if(sameas(convMessage80, "ETStarget"),
 		      display "#### 8) The ETS regional climate target has not been reached yet.";
           display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
@@ -449,13 +458,16 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ETSTarget_dev;
 	      );
+$endif.emiMktETS
+$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
         if(sameas(convMessage80, "ESRtarget"),
 		      display "#### 9) The ESR regional climate target has not been reached yet.";
           display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
           display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ESRTarget_dev;
-	      );  
+	      );
+$endif.emiMktESR   
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;
