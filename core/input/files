@@ -11,6 +11,8 @@ f_maxProdGeothermal.cs3r
 f_maxProdGradeRegiHydro.cs3r
 f_maxProdGradeRegiWindOn.cs3r
 f_maxProdGradeRegiWindOff.cs3r
+pm_histCap_windoff.cs3r
+p_histCapFac_windoff.cs4r
 f_pop.cs3r
 p_abatparam_CH4.cs4r
 p_abatparam_CO2.cs4r
