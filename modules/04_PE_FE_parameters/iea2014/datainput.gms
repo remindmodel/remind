@@ -28,6 +28,15 @@ $offdelim
 f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 
+*** calculate bio share per carrier and sector 
+pm_secBioShare(ttot,regi,entyFe,sector)$(sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0) = 
+  sum((entySeBio,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySeBio,all_enty,all_te) ) 
+  /
+  sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) )
+;
+
+display pm_secBioShare;
+
 pm_IO_input(regi,all_enty,all_enty2,all_te)   = 0;
 p04_IO_output(regi,all_enty,all_enty2,all_te)  = 0;
 pm_IO_input(regi,all_enty,enty,all_te)  = f04_IO_input("2005",regi,all_enty,enty,all_te);    !! t0 did not work
