@@ -978,12 +978,12 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ***---------------------------------------------------------------------------
 *' Enforce historical data biomass use per carrier in sector final energy
 ***---------------------------------------------------------------------------
-q_shbiofe(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector))..
+q_shbiofe(t,regi,entyFe,sector,emiMkt)$(pm_secBioShare(t,regi,entyFe,sector) and sector2emiMkt(sector,emiMkt))..
   pm_secBioShare(t,regi,entyFe,sector)
+  *
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
   =e=
   sum((entySeBio,te)$se2fe(entySeBio,entyFe,te), vm_demFeSector(t,regi,entySeBio,entyFe,sector,emiMkt))
-  /
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
 ;
 
 *** EOF ./core/equations.gms
