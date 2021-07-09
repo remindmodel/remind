@@ -698,7 +698,7 @@ sets
         JPN_regi .(JPN)
         USA_regi .(USA)
       /
-
+ 
    iso "list of iso countries" /
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
@@ -789,7 +789,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA
@@ -1383,6 +1383,9 @@ teLoc(all_te)      "centralized technologies which require grid"
         wind        "wind power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
 /
 teGrid(all_te)      "grid between areas"
 /
@@ -2171,7 +2174,7 @@ steps         "iterator for MAC steps"
 alias(t,t2,t3);
 alias(iteration,iteration2);
 alias(tall,tall2,tall3);
-alias(ttot,ttot2,ttot3);
+alias(ttot,ttot2,ttot3,ttot4,ttot5);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);
@@ -2303,7 +2306,7 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
         spv.gridspv
         wind.gridwind
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-	      windoff.gridwindoff
+        windoff.gridwindoff
 $ENDIF.WindOff
         csp.gridcsp
 /
@@ -2312,6 +2315,10 @@ te2teLoclinked(teLoc,teLoc2)   "mapping between the technologies requiring grids
 /
         spv.csp
         csp.spv
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff.wind
+        wind.windoff
+$ENDIF.WindOff
 /
 
 se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using a technology"
@@ -2557,6 +2564,12 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (co2luc).lulucf.process.co2
 /
 
+emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technology and captured emissions"
+/
+        pebiolc.seliqbio.bioftcrec.cco2
+        pebiolc. seel.bioigccc.cco2
+        pebiolc.seh2.bioh2c.cco2
+/
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"

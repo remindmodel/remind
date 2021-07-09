@@ -9,5 +9,6 @@
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/47_regipol/none/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/47_regipol/none/datainput.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/47_regipol/none/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/47_regipol/none.gms

@@ -24,47 +24,62 @@ library(quitte)
 ```
 
 
-## Chose scenarios and regions for the analysis
+## Set switches and filters for notebook
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r}
+
+
 ############## CONFIG PARAMS (change config parameters for plots here) ###################
 
 # region to be analyzed
-reg <- "DEU"   
-
-# mind: must be in format "./data/folderName"
-results.folder <- "./"
-
-# path of historical mif
-hist.path = "./historical.mif"
-
+reg <- "DEU" 
 # plot periods
 plot.period <- seq(2015,2060,5)
-reg.sr15 <- "R5OECD90+EU"
+# historic reference year for percentage reductions
+ref.year <- 1990
 
+
+# should only a subset of scenario be plotted
+plot.scen.subset <- F
 # should ariadne-specific validation plots be created?
 ariadne.val.plots <- T
 # should historical data be shown in plots where available?
 show.historical <- T
 
+
+# subset of scenarios considered
+#plot.scen <- c( "Trend" ,"Bal","Elec_dom", "Elec_imp" ,"H2_dom", "H2_imp", "Synf_imp")
+# name of scenario subset
+scen.batch.name <- ""
+#scen.batch.name <- "_CO2PriceKink"
+
+
+
 #################### end config ###################################
 
 
-### prepare data and plot paths
+```
 
+
+
+## Set folders
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+results.folder <- "./"
+
+# path of historical mif
+hist.path = "./historical.mif"
+
+### prepare data and plot paths
 data.path = list.files(path = paste0(results.folder),
                        pattern = "REMIND_generic.*mif", full.names = T)
 
-plots.path = paste0("./", tolower(reg))
+plots.path = paste0("./", tolower(reg), scen.batch.name)
 
 dir.create(plots.path)
 
-
-# new colors for some of the more exotic variables
-tt = plotstyle.add( entity = "non-LDV"  ,legend = "public", c("#999999"), replace = T)
-tt = plotstyle.add( entity = "SE|Liquids|Oil"  ,legend = "Oil", c("#222222"), replace = T)
-tt = plotstyle.add( entity = "Oil"  ,legend = "Oil", c("#884422"), replace = T)
-tt = plotstyle.add( entity = "Solids|Modern"  ,legend = "Solids", c("#008800"), replace = T)
 
 ```
 
@@ -81,6 +96,12 @@ dat.mod <- read.report(data.path, as.list = F)
 
 # read in historical data
 df.hist = read.quitte(hist.path)
+
+if (!plot.scen.subset) {
+ # use all scenarios
+ plot.scen <- getScenarios(df.mod) 
+}
+
 ```
 
 
@@ -90,9 +111,11 @@ df.hist = read.quitte(hist.path)
 
 # filter for dimensions used in plots
 df <- df.mod %>%
-        filter( region %in% reg, period %in% plot.period)  %>%
+        filter( region %in% reg, period %in% plot.period,
+                scenario %in% plot.scen)  %>%
         #remove duplicates if present
-        distinct() 
+        distinct() %>% 
+        order.levels(scenario = plot.scen)
 
 
 df.hist <- df.hist %>% 
@@ -127,6 +150,9 @@ df <- calc_addVariable(df,
                        "`Emi|CO2|Transport|Pass|Aviation|Demand`"  =  "`Emi|CO2|Transport|Pass|Aviation|Domestic|Demand` + `Emi|CO2|Transport|Pass|Aviation|International|Demand`",
                        units = "Mt CO2/yr")
 }
+
+
+
 
 ```
 
@@ -177,6 +203,12 @@ df.emi.tot <- df %>%
                 mutate(variable = "Total")
 
 
+df.emi.co2.ref <- df.hist %>% 
+                filter(variable == "Emi|CO2", period == ref.year,
+                       model == "CEDS") %>% 
+                rename( Reference = value)
+
+
 
 
 
@@ -185,7 +217,9 @@ p.emi.grossneg <- ggplot() +
                     geom_line(data=df.emi.tot, aes(period, value, linetype=variable), size=1.2, alpha=0.7) +
                     geom_point(data=df.emi.tot, aes(period, value, shape=variable), size=1.5, alpha=0.7) +
                     facet_wrap(~scenario, ncol = length(getScenarios(df))) +
-                    scale_y_continuous("CO2 Emissions (Mt CO2/yr)") +
+                    scale_y_continuous("CO2 Emissions (Mt CO2/yr)",
+                                       sec.axis = sec_axis(~ (. - df.emi.co2.ref$Reference)  / df.emi.co2.ref$Reference * 100, 
+                                                       name = paste0("Reduction\nrelative to ",ref.year," (%)"), breaks = seq(-120,0,20))) +
                     scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(vars, out = "legend")) +
                     geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
                     
@@ -193,6 +227,16 @@ p.emi.grossneg <- ggplot() +
                     theme( axis.text.x = element_text(angle=90, vjust = 0.5),
                            legend.position = "bottom",strip.background = element_blank(),
                            legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+
+
+# 
+#   scale_y_continuous("Electricity Share (%)", 
+#                      sec.axis = sec_axis(~ . * plot.price.scale / 100, 
+#                                                        name = paste0("Cost of Electricity\n", 
+#                                                                      5*rollmean.step,"-year mov. Avg. \n",
+#                                                                      "(2015USD/MWh)")))
+
 
 # show historical data for validation
 if (show.historical) {
@@ -209,7 +253,7 @@ if (show.historical) {
               
 p.emi.grossneg  
   
-ggsave(plot = p.emi.grossneg, filename = paste0(plots.path, "/Emi_CO2GrossNeg.png"), width=20, height=10, units = "cm")
+ggsave(plot = p.emi.grossneg, filename = paste0(plots.path, "/Emi_CO2GrossNeg.png"), width=25, height=10, units = "cm")
 
 ```
 
@@ -255,6 +299,13 @@ df.emighg.tot <- df %>%
                 mutate(variable = "Total")
 
 
+df.emi.ghg.ref <- df.hist %>% 
+                filter(variable == "Emi|GHGtot", period == ref.year,
+                       model == "CEDS") %>% 
+                rename( Reference = value)
+
+
+
 
 
 
@@ -263,7 +314,9 @@ p.emighg.grossneg <- ggplot() +
                     geom_line(data=df.emighg.tot, aes(period, value, linetype=variable), size=1.2, alpha=0.7) +
                     geom_point(data=df.emighg.tot, aes(period, value, shape=variable), size=1.5, alpha=0.7) +
                     facet_wrap(~scenario, ncol = length(getScenarios(df))) +
-                    scale_y_continuous("GHG Emissions (Mt CO2eq/yr)") +
+                    scale_y_continuous("GHG Emissions (Mt CO2eq/yr)",
+                                       sec.axis = sec_axis(~ (. - df.emi.ghg.ref$Reference)  / df.emi.ghg.ref$Reference * 100, 
+                                                       name = paste0("Reduction\nrelative to ",ref.year," (%)"), breaks = seq(-120,0,20))) +
                     scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(vars, out = "legend")) +
                     geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
                     
@@ -287,7 +340,7 @@ if (show.historical) {
               
 p.emighg.grossneg 
   
-ggsave(plot = p.emighg.grossneg, filename = paste0(plots.path, "/Emi_GHGGrossNeg.png"), width=20, height=10, units = "cm")
+ggsave(plot = p.emighg.grossneg, filename = paste0(plots.path, "/Emi_GHGGrossNeg.png"), width=25, height=10, units = "cm")
 ```
 
 
@@ -298,7 +351,7 @@ ggsave(plot = p.emighg.grossneg, filename = paste0(plots.path, "/Emi_GHGGrossNeg
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
-ref.year <- 1990
+
 
 hist.vars.map <- c( 'Emi|GHGtot' = 'Emi|GHG',
   'Emi|CO2|Energy|Supply'='Emi|CO2|Gross|Energy|+|Supply',
@@ -348,6 +401,7 @@ p.emi.rel <- ggplot() +
               geom_point(data=df.emi.rel.plot, aes(period, Emi.rel, color=scenario), size=1.5, alpha=0.7) +
               geom_line(data=df.emi.rel.hist.plot, aes(period, Emi.rel, color=model), size=1.2, alpha=0.7) +
               facet_wrap(~variable) +
+              scale_x_continuous("Year", breaks = c(1990,2000,plot.period)) +
               scale_y_continuous(paste0("Emissions Reductions\nrelative to ", ref.year,"\n [%]"), breaks = seq(-120,40,20)) +
               geom_hline(yintercept=0, size=0.8, linetype="dashed", alpha=0.7) +
               geom_hline(yintercept=-100, size=0.8, linetype="dashed", alpha=0.7) +
@@ -499,45 +553,45 @@ co2sup.focus.vars <- c("Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w
                       "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Hydrogen w/ couple prod",
                       "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Liquids w/ couple prod",
                       "Carbon Management|Carbon Sources|+|Fossil|Pe2Se",
-                      "Carbon Management|Carbon Sources|+|Industry Energy (Mt CO2/yr)",
-                      "Carbon Management|Carbon Sources|+|Industry Process (Mt CO2/yr)",
+                      "Carbon Management|Carbon Sources|+|Industry Energy",
+                      "Carbon Management|Carbon Sources|+|Industry Process",
                       "Carbon Management|Carbon Sources|+|DAC")
 
 co2dem.focus.vars <- c("Carbon Management|Carbon Sinks|+|Storage",
-                      "Carbon Management|Carbon Sinks|+|Synthetic Liquids",
-                      "Carbon Management|Carbon Sinks|+|Synthetic Gases")
+                      "Carbon Management|Carbon Sinks|CCU|+|Synthetic Liquids",
+                      "Carbon Management|Carbon Sinks|CCU|+|Synthetic Gases")
 
 co2.sink.source.label <- c("Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Other w/ couple prod" = "Other Biomass w/ CC",
-                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Hydrogen w/ couple prod" = "CC from Biomass to H2 w/ CC",
-                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Liquids w/ couple prod" = "CC from Biomass to Liquids w/ CC",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Hydrogen w/ couple prod" = "Biomass to H2 w/ CC",
+                      "Carbon Management|Carbon Sources|Biomass|Pe2Se|+|Liquids w/ couple prod" = "Biomass to Liquids w/ CC",
                       "Carbon Management|Carbon Sources|+|Fossil|Pe2Se" = "Pe2Se Fossil CC",
                       "Carbon Management|Carbon Sources|+|Industry Energy" = "industry energy CC",
                       "Carbon Management|Carbon Sources|+|Industry Process" = "industry process CC",
                       "Carbon Management|Carbon Sources|+|DAC" = "DAC",
                       "Carbon Management|Carbon Sinks|+|Storage" = "Underground Storage",
-                      "Carbon Management|Carbon Sinks|+|Synthetic Liquids" = "Synthetic Liquids",
-                      "Carbon Management|Carbon Sinks|+|Synthetic Gases" = "Synthetic Gases")
+                      "Carbon Management|Carbon Sinks|CCU|+|Synthetic Liquids" = "Synthetic Liquids",
+                      "Carbon Management|Carbon Sinks|CCU|+|Synthetic Gases" = "Synthetic Gases")
 
 
 
 co2.sink.source.color <- c("Other Biomass w/ CC" = "seagreen1",
-                          "CC from Biomass to H2 w/ CC" = "lightseagreen",
-                          "CC from Biomass to Liquids w/ CC" = "seagreen4",
+                          "Biomass to H2 w/ CC" = "lightseagreen",
+                          "Biomass to Liquids w/ CC" = "seagreen4",
                           "Pe2Se Fossil CC" = "grey20",
                      "industry energy CC" = "red",
-                      "industry process CC" = "lightyellow",
+                      "industry process CC" = "purple",
                      "DAC" = "cyan",
                       "Underground Storage" = "sandybrown",
                       "Synthetic Liquids" = "mediumpurple4",
                       "Synthetic Gases" = "plum2")
 
 vars.order <- c("Other Biomass w/ CC",
-                "CC from Biomass to H2 w/ CC",
-                "CC from Biomass to Liquids w/ CC",
+                "Biomass to H2 w/ CC",
+                "Biomass to Liquids w/ CC",
+                "DAC",
                 "Pe2Se Fossil CC",
                 "industry energy CC",
                 "industry process CC",
-                "DAC",
                 "Underground Storage",
                 "Synthetic Liquids",
                 "Synthetic Gases")
@@ -563,7 +617,7 @@ p.co2.sink.source <- ggplot() +
                       geom_col(data=df.co2.sink.source,
                                aes(period, value, fill=variable),
                                alpha=.6, width = 3) +
-                      facet_wrap(~scenario) +
+                      facet_wrap(~scenario, ncol = length(plot.scen)) +
                       scale_y_continuous("Captured CO2 (Mt CO2/yr)") +
                       scale_fill_manual(values = co2.sink.source.color) +
                       theme_bw() +
@@ -614,7 +668,7 @@ p.PEmix <- ggplot() +
             ylab("Primary Energy\n[EJ/yr]") +
             geom_col(data=df.PE, aes(period, value, fill=variable)) +
             scale_fill_manual(values = mip::plotstyle(vars), labels = mip::plotstyle(out = "legend", vars)) +
-            facet_wrap(~scenario) +
+            facet_wrap(~scenario, ncol = length(plot.scen)) +
             theme_bw() +
             theme(strip.background = element_blank())
 
@@ -645,6 +699,8 @@ ggsave(plot = p.PEmix, filename = paste0(plots.path, "/PE_mix_bar.png"), width=2
 ### PE Biomass Use
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+tt = plotstyle.add( entity = "Solids|Modern"  ,legend = "Solids", c("#008800"), replace = T)
 
 vars = c(
   "PE|Biomass|Electricity",
@@ -764,6 +820,12 @@ vars = c(
   "SE|Heat|Biomass",
   "SE|Heat|Geothermal",
   "SE|Hydrogen|Electricity")
+
+
+# new colors 
+tt = plotstyle.add( entity = "SE|Liquids|Oil"  ,legend = "Oil", c("#222222"), replace = T)
+
+
 
 df.plot = filter(df, variable %in% vars ) %>%
   order.levels(variable = rev(vars)) %>%
@@ -953,7 +1015,7 @@ p.h2.sink.source <- ggplot() +
                       geom_col(data=df.h2.sink.source,
                                aes(period, value, fill=variable),
                                alpha=.6, width = 3) +
-                      facet_wrap(~scenario) +
+                      facet_wrap(~scenario,ncol = length(plot.scen)) +
                       scale_y_continuous("H2 (EJ/yr)") +
                       scale_fill_manual(values = h2.sink.source.color) +
                       theme_bw() +
@@ -1078,7 +1140,7 @@ p.el.sink.source <- ggplot() +
                       geom_col(data=df.el.sink.source,
                                aes(period, value, fill=variable),
                                alpha=.6, width = 3) +
-                      facet_wrap(~scenario) +
+                      facet_wrap(~scenario, ncol = length(plot.scen)) +
                       scale_y_continuous("Electricity (EJ/yr)") +
                       scale_fill_manual(values = el.sink.source.color) +
                       theme_bw() +
@@ -1097,6 +1159,73 @@ ggsave(plot = p.el.sink.source,
        filename =  paste0(plots.path, "/SE_Elec_SinkSource.png"),
        width=25, height=10, units="cm")
 
+
+```
+
+
+
+### Capacity Additions for Wind and Solar
+
+
+```{r}
+vars.capadd.VRE <- c("New Cap|Electricity|Wind",
+                     "New Cap|Electricity|Solar|PV")
+
+
+# define colors and labels
+tt = plotstyle.add(c("New Cap|Electricity|Wind")   ,c("Wind"),  c( "deepskyblue1"),replace=T)
+tt = plotstyle.add(c("New Cap|Electricity|Solar|PV")   ,c("Solar PV"),  c( "yellow"),replace=T)
+
+
+df.capadd.VRE <- df %>% 
+                  filter(variable %in% vars.capadd.VRE, period >= 2020,period <= 2040) %>% 
+                  mutate(period = as.factor(period)) %>% 
+                  revalue.levels(variable = c("New Cap|Electricity|Wind" = "Wind", "New Cap|Electricity|Solar|PV" = "Solar PV"))
+                  
+
+df.cappadd.VRE.hist <- df.hist %>% 
+                        filter(variable %in% c("Cap|Electricity|Wind", "Cap|Electricity|Solar|PV"),
+                               period %in% seq(2010,2020,1), model == "IRENA") %>%
+                        # average and maximum capacity additions over 2011-2020
+                        group_by(model, scenario, region, variable, unit) %>% 
+                        mutate( CapAdd = value - lag(value)) %>% 
+                        mutate(Avg = mean(CapAdd, na.rm = T), Max = max(CapAdd, na.rm = T)) %>% 
+                        ungroup() %>% 
+                        # relabel as capacity additions
+                        revalue.levels(variable = c("Cap|Electricity|Wind" = "Wind",
+                                                    "Cap|Electricity|Solar|PV" = "Solar PV")) 
+
+
+df.cappadd.VRE.hist.plot <- df.cappadd.VRE.hist %>% 
+                        # put label for average and maximum into scenario dimensions
+                        select(-scenario) %>% 
+                        gather(scenario, value, Avg, Max) %>%  
+                        # choose one arbitrary period to select average and maximum
+                        filter(period == 2010) %>% 
+                        mutate( period = scenario) %>% 
+                        revalue.levels(period = c("Avg" = "2011-20 Avg.", "Max" = "2011-20 Max.")) %>% 
+                        mutate( period = as.factor(period))
+                      
+
+
+p.capadd.VRE <- ggplot() +
+                  geom_col(data=df.capadd.VRE, aes(period, value, fill=scenario), alpha=0.7, position = "dodge") +
+                  geom_col(data=df.cappadd.VRE.hist.plot, aes(period, value, fill = model), alpha=0.7, position = "dodge") +
+                  facet_wrap(~variable, nrow = length(vars.capadd.VRE)) +
+                  scale_y_continuous("Capacity Additions (GW/yr)") +
+                  theme_bw() +
+                  theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                           legend.position = "right",strip.background = element_blank(),
+                           legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
+
+
+
+p.capadd.VRE
+
+
+ggsave(plot = p.capadd.VRE,
+       filename =  paste0(plots.path, "/SE_CapAdd_VRE.png"),
+       width=25, height=10, units="cm")
 
 ```
 
@@ -1332,7 +1461,7 @@ df.electrif <- df %>%
 
   ggsave(plot = p.Electrif,
          filename = paste0(plots.path, "/FE_ElectrifShare_Sector.png"),
-         width=40, height=12, units = "cm")
+         width=20, height=12, units = "cm")
 
 
 
@@ -1396,7 +1525,7 @@ df <- df %>%
 
   ggsave(plot = p.H2Share,
          filename = paste0(plots.path, "/FE_H2Share_Sector.png"),
-         width=40, height=12, units = "cm")
+         width=20, height=12, units = "cm")
 
 ```
 
@@ -1550,8 +1679,11 @@ ggsave(plot = p.FE.price.build,
 # se prices
 vars = c("Price|Secondary Energy|Electricity|Moving Avg",
          #"Price|Secondary Energy|Heat",
-         "Price|Secondary Energy|Liquids|Moving Avg",
-         "Price|Secondary Energy|Gases|Moving Avg",
+         "Price|Secondary Energy|Liquids|Biomass|Moving Avg",
+         "Price|Secondary Energy|Liquids|Fossil|Moving Avg",
+         "Price|Secondary Energy|Liquids|Hydrogen|Moving Avg",
+         "Price|Secondary Energy|Gases|Biomass|Moving Avg",
+          "Price|Secondary Energy|Liquids|Biomass|Moving Avg",
         # "Price|Secondary Energy|Solids",
          "Price|Secondary Energy|Hydrogen|Moving Avg")
 
@@ -1565,7 +1697,7 @@ SE.price.colors <-  c("Electricity" = "yellow",
 
 df.SE.price <- df %>%
                       filter(variable %in% vars,
-                             period %in% plot.period) %>%
+                             period %in% plot.period) %>% 
                       # remove part of variable names which are not needed
                       mutate( variable =
                                 substr(as.character(variable),
@@ -1587,7 +1719,7 @@ p.SE.price <- ggplot(df.SE.price, aes(period, value, color=variable)) +
 p.SE.price
 
 #save plots
-ggsave(plot = p.SE.price,filename = paste0(plots.path, "/Prices_SE", ".png"),width=15, height=10, units = "cm")
+ggsave(plot = p.SE.price,filename = paste0(plots.path, "/Prices_SE", ".png"),width=20, height=10, units = "cm")
 
 
 
@@ -2101,28 +2233,27 @@ p.ES.LDT.frgt
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 
-if (any(grepl("Emi\\|CO2\\|Transport\\|Freight\\|International Shipping\\|Demand" ,getVars(df)))) { 
+if ("Emi|CO2|Transport|Shipping|Demand" %in% getVars(df)) { 
 
+df <- calc_addVariable(df,
+                       "`Emi|CO2|Transport|Shipping|Demand`"  =  "`Emi|CO2|Transport|Freight|International Shipping|Demand` + `Emi|CO2|Transport|Freight|Navigation|Demand`",
+                       "`Emi|CO2|Transport|Pass|Aviation|Demand`"  =  "`Emi|CO2|Transport|Pass|Aviation|Domestic|Demand` + `Emi|CO2|Transport|Pass|Aviation|International|Demand`",
+                       units = "MtCO2")
 vars.emi.transp <- c("Emi|CO2|Transport|Shipping|Demand",
                "Emi|CO2|Transport|Rail|Demand",
                "Emi|CO2|Transport|Road|Demand",
                "Emi|CO2|Transport|Pass|Aviation|Demand")
-
 emi.transp.label <- c("Emi|CO2|Transport|Shipping|Demand" = "Shipping emissions",
                "Emi|CO2|Transport|Rail|Demand" = "Rail emissions",
                "Emi|CO2|Transport|Road|Demand" = "Road emissions",
                "Emi|CO2|Transport|Pass|Aviation|Demand" = "Aviation emissions")
-
-
 emi.transp.color <- c("Shipping emissions" = "#191919",
                       "Rail emissions" = "#cc0000",
                       "Road emissions" = "mediumpurple4",
                       "Aviation emissions" = "#66cccc")
-
 df.emi.transp <- df %>%
                   filter(variable %in% vars.emi.transp, period %in% plot.period) %>%
                   revalue.levels(variable = emi.transp.label)
-
 p.emi.transp <- ggplot(df.emi.transp, aes(period, value, fill=variable)) +
                   geom_col(alpha=0.7) +
                   facet_wrap(~scenario, ncol = length(getScenarios(df))) +
@@ -2135,12 +2266,8 @@ p.emi.transp <- ggplot(df.emi.transp, aes(period, value, fill=variable)) +
                     legend.title = element_blank(),
                     strip.text.y = element_text(angle = 0, hjust = 0))
 
-p.emi.transp
-
-
-
 ggsave(plot = p.emi.transp,
-       filename =  paste0(plots.path, "/Transport_Emissions_Mode.png"),
+       filename =  paste0(plots.path, "/Transport_Emi.png"),
        width=20, height=10, units="cm")
 
 } else {
@@ -2158,7 +2285,7 @@ p.emi.transp
 
 
 # only do plots if industry non-energy use variables are there
-if (any(grepl("FE\\|Non-energy Use\\|Industry\\|+\\|Liquids" ,getVars(df)))) {
+if ("FE|Non-energy Use|Industry|+|Liquids"  %in% getVars(df)) {
 
 
 vars.ind.nonen <- c("FE|Non-energy Use|Industry|+|Liquids",
@@ -2294,14 +2421,43 @@ df.ind.FE.detail <- df.ind.FE.detail %>%
 
 
 
-p.ind.FE.detail <- ggplot(df.ind.FE.detail, aes(period, value, fill=fuel)) +
-                        geom_col(alpha=0.7) +
+p.ind.FE.detail <- ggplot() +
+                        geom_col(data=df.ind.FE.detail, aes(period, value, fill=fuel), alpha=0.7) +
                         facet_wrap(sector~scenario, ncol = length(getScenarios(df)), scales = "free_y") +
                         scale_y_continuous("FE Industry by sector \n(EJ/yr)") +
                         scale_fill_manual(values = plot.vars.color)+
                         theme_bw() +
                         theme( axis.text.x = element_text(angle=90, vjust = 0.5),
                                strip.background = element_blank())
+
+p.ind.FE.detail
+
+
+
+# show historical data for validation
+if (show.historical) {
+
+  
+  vars.ind.FE.hist.map <- c("FE|Industry|Cement" = "Cement","FE|Industry|Steel" = "Steel", 
+                            "FE|Industry|Chemicals" = "Chemicals")
+  
+  
+
+  df.ind.FE.hist <- df.hist %>%
+                    filter(variable %in% names(vars.ind.FE.hist.map), period <= max(plot.period), model == "JRC") %>% 
+                    select(-scenario) %>% 
+                    mutate(sector = variable) %>% 
+                    revalue.levels(sector = vars.ind.FE.hist.map) %>% 
+                    full_join( df.ind.FE.detail %>%
+                                 filter(period == 2015, fuel == "Liquids") %>%
+                                 select(sector, scenario)
+                                 ) %>% 
+                    filter( !is.na(value))
+  
+  p.ind.FE.detail <- p.ind.FE.detail +
+                      geom_line(data=df.ind.FE.hist, aes(period, value, color=model), size=1.2, alpha=0.7) 
+  
+}
 
 p.ind.FE.detail
 
@@ -2334,10 +2490,11 @@ if (any(grepl("Production\\|Industry\\|Steel\\|Primary" ,getVars(df)))) {
   
 
 ### config
-vars.ind.prod <- c("Production|Industry|Steel|Primary","Production|Industry|Steel|Secondary",  "Production|Industry|Cement")
+vars.ind.prod <- c("Production|Industry|Steel","Production|Industry|Steel|Primary","Production|Industry|Steel|Secondary",  "Production|Industry|Cement")
 
 
-ind.prod.label <- c("Production|Industry|Steel|Primary" = "Primary Steel",
+ind.prod.label <- c("Production|Industry|Steel" = "Steel",
+                    "Production|Industry|Steel|Primary" = "Primary Steel",
                     "Production|Industry|Steel|Secondary" = "Secondary Steel",
                     "Production|Industry|Cement" = "Cement")
 
@@ -2391,6 +2548,52 @@ p.ind.value <- ggplot(df.ind.value, aes(period, value)) +
 p.ind.value
 
 
+# show historical data for validation
+if (show.historical) {
+
+  
+  vars.ind.prod.hist.map <- c("Production|Industry|Cement" = "Cement","Production|Industry|Steel|Primary" = "Primary Steel", 
+                            "Production|Industry|Steel|Secondary" = "Secondary Steel", "Production|Industry|Steel" = "Steel")
+  
+  
+  
+  
+
+  df.ind.prod.hist <- df.hist %>%
+                    filter(variable %in% names(vars.ind.prod.hist.map), period <= max(plot.period), model == "JRC") %>% 
+                    select(-scenario) %>% 
+                    revalue.levels(variable = vars.ind.prod.hist.map) %>% 
+                    # expand dimensions to have both variable and scenario dimensions for faceting
+                    full_join( df.ind.prod %>%
+                                 filter(period == 2015) %>%
+                                 select(variable, scenario)
+                                 ) %>% 
+                    filter( !is.na(value))
+  
+  p.ind.prod <- p.ind.prod +
+                      geom_line(data=df.ind.prod.hist, aes(period, value, color=model), size=1.2, alpha=0.7)
+  
+  
+  
+  vars.ind.value.hist.map <- c("Value Added|Industry|Chemicals" = "Chemicals")
+  
+  
+  df.ind.value.hist <- df.hist %>%
+                    filter(variable %in% names(vars.ind.value.hist.map), period <= max(plot.period), model == "JRC") %>% 
+                    select(-scenario) %>% 
+                    revalue.levels(variable = vars.ind.value.hist.map) %>% 
+                    full_join( df.ind.value %>%
+                                 filter(period == 2015) %>%
+                                 select(variable, scenario)
+                                 ) %>% 
+                    filter( !is.na(value))
+  
+  p.ind.value <- p.ind.value +
+                      geom_line(data=df.ind.value.hist, aes(period, value, color=model), size=1.2, alpha=0.7)
+  
+}
+
+
 ggsave(plot =p.ind.prod,
        filename =  paste0(plots.path, "/Industry_Production.png"),
        width=20, height=10, units="cm")
@@ -2423,19 +2626,21 @@ p.ind.value
 ```{r}
 if (ariadne.val.plots) {
   
+    cumul.period <- seq(2020,2045,5)
+  
     # emissions variables to cumulate
     cumul.vars <- c("Emi|CO2",
                 "Emi|CO2|+|Energy")
     
-    cumul.target <- data.frame(variable = c("Emi|CO2","Emi|CO2|+|Energy"), value = c(9,8))
+    cumul.target <- data.frame(variable = c("Emi|CO2","Emi|CO2|+|Energy"), value = c(8.2,7.2))
 
 
     df.cumul <- df %>%
-              filter(variable %in% cumul.vars, period %in% seq(2020,2050,5)) %>%
+              filter(variable %in% cumul.vars, period %in% cumul.period) %>%
               right_join(remind_timesteps %>%
-                           filter(period %in% seq(2020,2050,5))) %>%
+                           filter(period %in% cumul.period)) %>%
               # adjust weights to how budget calculation is done in regipol module (0.5 factor for edge years of budget)
-              mutate( weight = ifelse(period %in% c(2020,2050), 0.5,1)) %>%
+              mutate( weight = ifelse(period == min(cumul.period) | period == max(cumul.period), 0.5,1)) %>%
               # weight emissions with year factor for cumunlation
               mutate( value = value * weight) %>%
               # cumulate
@@ -2451,8 +2656,7 @@ if (ariadne.val.plots) {
                   theme_bw() +
                   theme( axis.text.x = element_text(angle = 90),
                          strip.background = element_blank()) +
-                  scale_y_continuous("2020-2050 Cumulative Emissions (Gt CO2)",
-                                     limits = c(7,10))
+                  scale_y_continuous("2020-2045 Cumulative Emissions (Gt CO2)")
 
     p.emi.cumul
     
