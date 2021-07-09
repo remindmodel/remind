@@ -19,24 +19,26 @@ get_line <- function() {
 }
 
 now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
-rmdPath <- file.path(outputdir, "plotIterations_", now, ".Rmd")
+rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-defaultSymbolNames <-
-  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es, v36_deltaProdEs, v36_ProdEs"
-cat("Which variables/parameters do you want to plot? Separate with commas. (default: ", defaultSymbolNames, ") ")
+defaultSymbolNames <- paste("p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
+                            "v36_deltaProdEs, v36_ProdEs")
+cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", defaultSymbolNames, ") ")
 symbolNames <- get_line()
 if (identical(symbolNames, "")) {
   symbolNames <- defaultSymbolNames
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
-rmdHeader <- paste0('---
-output: html_document
-title: plotIterations - ', paste(symbolNames, collapse = ", "), '
----')
+rmdHeader <- paste0('---\n',
+                    'output: html_document\n',
+                    'title: plotIterations - ', paste(symbolNames, collapse = ", "), '\n',
+                    '---')
 
 rmdChunksForSymbol <- function(symbolName) {
-  return(paste0('## ', symbolName, '
+  # BEGIN TEMPLATE -------------------------
+  return(paste0('
+## ', symbolName, '
 
 ### Read Data from gdx
 ```{r}
@@ -46,6 +48,7 @@ rmdChunksForSymbol <- function(symbolName) {
 )
 str(', symbolName, 'Raw)
 ```
+
 ### Clean Data
 ```{r}
 ', symbolName, 'Clean <- ', symbolName, 'Raw
@@ -60,24 +63,31 @@ str(', symbolName, 'Clean)
   xAxis = "year", slider = "iteration", facets = "region", color = NULL
 )
 
-renderPlot <- function(plot) {
-  # customize plot here
-  plot <- plot + ggplot2::theme_minimal()
-  return(htmltools::tagList(plotly::ggplotly(plot)))
-}
+# customize plots here if needed
 
-# show first plot outside of the loop because of quirky interaction between plotly and knitr
-renderPlot(', symbolName, 'Plots[[1]])
-lapply(', symbolName, 'Plots[-1], renderPlot)
+# convert up to 5 plots via plotly::ggplotly and render
+htmltools::tagList(lapply(head(', symbolName, 'Plots, 5), plotly::ggplotly))
 ```'))
+# END TEMPLATE -------------------------
 }
 
-writeLines(paste0(c(rmdHeader, sapply(symbolNames, rmdChunksForSymbol)), collapse = "\n\n"), rmdPath)
+rmdFooter <- if (length(symbolNames) >= 2) {
+  paste0('\n',
+         '## Show Plots side-by-side for Comparison\n',
+         '```{r, results = "asis"}\n',
+         'mip::sideBySidePlots(list(', symbolNames[[1]], 'Plots[[1]], ', symbolNames[[2]], 'Plots[[1]]))\n',
+         '```')
+} else {
+  NULL
+}
+
+writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
+                  collapse = "\n\n"), rmdPath)
 
 cat("Render plots to html? (y/n): ")
 if (identical(get_line(), "y")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
-    rmarkdown::render(rmdPath, output_file = file.path(outputdir, "plotIterations_", now, ".html"))
+    rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
   } else {
     warning(
       "Rendering to html failed: Could not find pandoc (>=1.12.3), please add it to your PATH environment variable.",
