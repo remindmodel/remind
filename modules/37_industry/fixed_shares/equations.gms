@@ -179,6 +179,17 @@ q37_H2Share(t,regi)..
 ;
 
 
+*** FS: quick fix to keep biomass/coal split in industry solids constant for historical years after 2005
+q37_SolidsSplit(t,regi)$(t.val gt 2005 AND t.val ge cm_startyear)..
+  sum(emiMkt,vm_demFeSector(t,regi,"sesofos","fesos","indst",emiMkt)) 
+  =g=
+  p37_shareCoalSolids_lo(t,regi) *
+    sum(emiMkt, 
+      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fesos")), 
+        vm_demFeSector(t,regi,entySe,"fesos","indst",emiMkt)))
+;
+
+
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
 
