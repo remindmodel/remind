@@ -156,7 +156,10 @@ runtimeRectanglePlot <- statsRun %>%
   geom_rect(aes(
     xmin = 0, ymin = AvgTime, xmax = Iterations, ymax = AvgTime + InterSolveTime,
     fill = "InterSolve", color = "InterSolve"
-  ), show.legend = FALSE) +
+  )) +
+  geom_text(aes(
+    x = Iterations / 2, y = AvgTime + InterSolveTime / 2, label = Name
+  ), size = 2.5) +
   facet_grid(~.data[[comparisonPropertyLabel]]) +
   scale_x_continuous("Iterations") +
   scale_y_continuous("Average time per iteration [min]") +
@@ -178,7 +181,6 @@ runtimeRectanglePlot <- statsRun %>%
     strip.background = element_rect(fill = "white"),
     panel.grid.minor.x = element_blank()
   )
-
 
 # Stacked bar: Computation time -------------------------------------------
 
