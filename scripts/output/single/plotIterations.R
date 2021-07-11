@@ -3,9 +3,10 @@ if (!exists("source_include")) {
   lucode2::readArgs("outputdir")
 }
 
+# TODO setwd at the start of the Rmd and use relative paths
 outputdir <- normalizePath(outputdir)
 
-get_line <- function() {
+getLine <- function() {
   # gets characters (line) from the terminal of from a connection
   # and stores it in the return object
   if (interactive()) {
@@ -21,19 +22,28 @@ get_line <- function() {
 now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-defaultSymbolNames <- paste("p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
-                            "v36_deltaProdEs, v36_ProdEs")
+defaultSymbolNames <- paste(
+  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
+  "v36_deltaProdEs, v36_ProdEs"
+)
 cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", defaultSymbolNames, ") ")
-symbolNames <- get_line()
+symbolNames <- getLine()
 if (identical(symbolNames, "")) {
   symbolNames <- defaultSymbolNames
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
-rmdHeader <- paste0('---\n',
-                    'output: html_document\n',
-                    'title: plotIterations - ', paste(symbolNames, collapse = ", "), '\n',
-                    '---')
+rmdHeader <- paste0(
+  "---\n",
+  "output: html_document\n",
+  "title: plotIterations - ", paste(symbolNames, collapse = ", "), "\n",
+  "---\n",
+  "\n",
+  "## Setup\n",
+  "```{r}\n",
+  'runPath <- "', outputdir, '"\n',
+  "```"
+)
 
 rmdChunksForSymbol <- function(symbolName) {
   # BEGIN TEMPLATE -------------------------
@@ -42,10 +52,7 @@ rmdChunksForSymbol <- function(symbolName) {
 
 ### Read Data from gdx
 ```{r}
-', symbolName, 'Raw <- mip::getPlotData(
-  "', symbolName, '",
-  "', outputdir, '"
-)
+', symbolName, 'Raw <- mip::getPlotData("', symbolName, '", runPath)
 str(', symbolName, 'Raw)
 ```
 
@@ -68,24 +75,27 @@ str(', symbolName, 'Clean)
 # convert up to 5 plots via plotly::ggplotly and render
 htmltools::tagList(lapply(head(', symbolName, 'Plots, 5), plotly::ggplotly))
 ```'))
-# END TEMPLATE -------------------------
+  # END TEMPLATE -------------------------
 }
 
 rmdFooter <- if (length(symbolNames) >= 2) {
-  paste0('\n',
-         '## Show Plots side-by-side for Comparison\n',
-         '```{r, results = "asis"}\n',
-         'mip::sideBySidePlots(list(', symbolNames[[1]], 'Plots[[1]], ', symbolNames[[2]], 'Plots[[1]]))\n',
-         '```')
+  paste0(
+    "\n",
+    "## Show Plots side-by-side for Comparison\n",
+    '```{r, results = "asis"}\n',
+    "mip::sideBySidePlots(list(", symbolNames[[1]], "Plots[[1]], ", symbolNames[[2]], "Plots[[1]]))\n",
+    "```"
+  )
 } else {
   NULL
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-                  collapse = "\n\n"), rmdPath)
+  collapse = "\n\n"
+), rmdPath)
 
 cat("Render plots to html? (y/n): ")
-if (identical(get_line(), "y")) {
+if (identical(getLine(), "y")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
     rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
   } else {
