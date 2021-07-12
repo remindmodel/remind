@@ -36,3 +36,6 @@ pm_taxCO2eq_iterationdiff,input,questionnaire
 pm_taxCO2eq_iterationdiff_tmp,input,questionnaire
 pm_regiTarget_dev,input,questionnaire
 sm_globalBudget_dev,input,questionnaire
+pm_ETSTarget_dev,input,questionnaire
+pm_emiTargetES,input,questionnaire
+pm_ESRTarget_dev,input,questionnaire
