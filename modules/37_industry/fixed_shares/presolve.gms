@@ -92,6 +92,9 @@ p37_shareCoalSolids_lo("2005",regi)= sum(emiMkt,vm_demFeSector.l("2005",regi,"se
                                         sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fesos")), 
                                           vm_demFeSector.l("2005",regi,entySe,"fesos","indst",emiMkt)));
 
+
+***p37_shareCoalSolids_lo("2005",regi) = 0;                                          
+
 *** quick fix: set share externally for DEU to 80% following FORECAST model
 p37_shareCoalSolids_lo("2005",regi)$(SAMEAS(regi,"DEU")) = 0.8;
 
