@@ -267,15 +267,28 @@ if (opt$reporting) {
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
 
   vint <- vintages[["vintcomp_startyear"]]
-  dem <- shares_int_dem$demandF_plot_pkm
-  vint <- dem[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
-  vint <- vint[!is.na(demand_F)][
-  , c("sector", "subsector_L3", "subsector_L2", "subsector_L1", "vint", "value") := NULL]
+  newd <- vintages[["newcomp"]]
+  sharesVS1 <- shares[["VS1_shares"]]
+  setnames(sharesVS1, "share", "shareVS1")
+
+  newd <- sharesVS1[newd, on=c("region", "year", "subsector_L1", "vehicle_type")]
+  newd[, demNew := totdem * sharetech_new * shareVS1]
+
+  ## newd <- loadFactor[newd, on=c("year", "region", "vehicle_type")]
+  ## newd[, demNew := demNew/loadFactor]
+
+  vint <- newd[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
+  vint <- vint[!is.na(demNew)]
+  
+  vint <- vint[, c("year", "region", "vehicle_type", "technology", "variable", "demNew", "demVintEachYear")]
+  vint[, demand_F := demNew + sum(demVintEachYear), by=c("region", "year", "vehicle_type", "technology")]
 
   vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
+
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
-  vint[, c("demand_F", "demVintEachYear", "loadFactor") := NULL]
+  vint[, c("demand_F", "demVintEachYear", "loadFactor", "demNew") := NULL]
+  
   setnames(vint, "variable", "construction_year")
 
   vintfile <- "vintcomp.csv"
