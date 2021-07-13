@@ -40,3 +40,8 @@ core/magicc/
 
 # ignore GDX files in the gdx-files folder
 config/gdx-files/*.gdx
+
+# ignore output created by output script plotRuntime.R
+plotRuntime*.html
+plotRuntimeDependencies/
+.Rproj.user
