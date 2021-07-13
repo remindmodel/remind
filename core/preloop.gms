@@ -147,5 +147,12 @@ p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 p_macBaseMagpie(t,regi,enty)$(sameas(regi,"DEU") AND (emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o")))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRedDEU)*p_macBaseMagpie(t,regi,enty);
 
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
 
 *** EOF ./core/preloop.gms

@@ -92,9 +92,6 @@ display pm_data;
 *** model definition
 model initialcap2 / q05_eedemini, q05_ccapini /;
 
-option limcol = 70;
-option limrow = 70;
-
 *** solve statement
 if (execError > 0,
   execute_unload "abort.gdx";
