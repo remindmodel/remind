@@ -138,7 +138,11 @@ E <- mbind(E,dimSums(E,dim=1))
 # E_calibrated <- E * E(2015) / E_CEDS(2015)
 
 # read mapping from GAINS sectors to REMIND sectors
-map_GAINSsec2REMINDsec <- read.csv(madrat::toolGetMapping("sectoral", "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE), stringsAsFactors = FALSE, na.strings = "")
+map_GAINSsec2REMINDsec <- read.csv(madrat::toolGetMapping(type = "sectoral",
+                                                          name = "mappingGAINStoREMINDsectors.csv",
+                                                          returnPathOnly = TRUE),
+                                   stringsAsFactors = FALSE,
+                                   na.strings = "")
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
