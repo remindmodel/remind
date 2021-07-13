@@ -31,3 +31,5 @@ vm_emiCdr,input,questionnaire
 pm_share_CCS_CCO2,input,questionnaire
 pm_dt,input,questionnaire
 cm_regipol_slope_beforeTarget,input,questionnaire
+pm_ESRTarget_dev,input,questionnaire
+pm_ETSTarget_dev,input,questionnaire
