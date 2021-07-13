@@ -44,3 +44,4 @@ config/gdx-files/*.gdx
 # ignore output created by output script plotRuntime.R
 plotRuntime*.html
 plotRuntimeDependencies/
+.Rproj.user
