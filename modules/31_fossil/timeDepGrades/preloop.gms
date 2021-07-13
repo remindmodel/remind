@@ -177,6 +177,15 @@ $ENDIF.mofex
 ***--------------------------------------
 v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.01;
 model m31_uran_bound_dummy /q31_mc_dummy, q31_totfuex_dummy/;
+
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
+
  if(cm_limit_peur_scen eq 1,
 *** Small CNS model to initiate regional bounds on uranium extraction
      v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.01;

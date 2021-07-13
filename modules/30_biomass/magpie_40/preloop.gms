@@ -33,6 +33,14 @@ model
 model_biopresolve_c /q30_pebiolc_costs/
 ;
 
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
+
 ***------------ Step 1: Fix fuelex to MAgPIE demand -------------
 *** BEFORE calculation: Regular emulator equations are applied to calculate costs and prices. Therefore set demand (fuelex) in
 *** the emulator equations for price and costs to demand from MAgPIE reporting

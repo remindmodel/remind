@@ -92,8 +92,14 @@ display pm_data;
 *** model definition
 model initialcap2 / q05_eedemini, q05_ccapini /;
 
-option limcol = 70;
+
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
 
 *** solve statement
 if (execError > 0,
