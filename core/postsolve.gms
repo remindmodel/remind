@@ -665,9 +665,10 @@ o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
-o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) = v_costInvTeAdj.l(ttot,regi,te) / vm_deltaCap.l(ttot,regi,te,rlf);
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 )) 
+    = v_costInvTeAdj.l(ttot,regi,te) / sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf));
 *** and ratio between average adjCost and direct investment cost
-o_avgAdjCost_2_InvCost_ratio(ttot,regi,te) = o_avgAdjCostInv(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te);
+o_avgAdjCost_2_InvCost_ratio(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ne 0) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te);
 
 *** calculation of PE and SE Prices (useful for internal use and reporting purposes)
 pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
