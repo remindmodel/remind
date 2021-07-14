@@ -182,7 +182,7 @@ saveRDS(REMIND_prices, datapath(paste0("REMINDprices", iter, ".RDS")))
 
 if(average_prices){
 
-  if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30){
+  if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30 & file.exists(datapath(pfile))){
     old_prices <- readRDS(datapath(pfile))
     all_prices <- rbind(old_prices, REMIND_prices)
     setkeyv(all_prices, keys)
