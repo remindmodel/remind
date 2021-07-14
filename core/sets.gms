@@ -1925,6 +1925,22 @@ ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to s
                 fegai.cdr
 /
 
+entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary) and sector mapping to detailed final energy enty split by buildings and industry"
+/
+  fegas.build.fegab
+  fegas.indst.fegai
+  fehos.build.fehob
+  fehos.indst.fehoi
+  fesos.build.fesob
+  fesos.indst.fesoi
+  feels.build.feelb
+  feels.indst.feeli
+  fehes.build.feheb
+  fehes.indst.fehei
+***  feh2s.build.feh2b
+***  feh2s.indst.feh2i
+/
+
 all_emiMkt         "emission markets"
 /	ETS     "ETS emission market"
 	ES      "Effort sharing emission market"
