@@ -24,6 +24,10 @@ $offdelim
 /
 ;
 
+*** making sure f04_IO_output is compatible with pm_fedemand values in 2005  
+f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") = f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") * (pm_fedemand("2005",regi,"gdp_SSP2","fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") = f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") * (pm_fedemand("2005",regi,"gdp_SSP2","fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
+
 *** convert data from EJ to TWa
 f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
