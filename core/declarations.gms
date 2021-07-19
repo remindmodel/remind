@@ -191,7 +191,7 @@ p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting d
 
 o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics"
 o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics"
-o_avgAdjCost_2_InvCost_ratio(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
+o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
 
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
