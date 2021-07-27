@@ -1280,6 +1280,7 @@ teEtaIncr(all_te)       "Technologies with time variable efficiency parameter et
   bioigcc
   bioigccc
   elh2
+  elh2VRE
 /
 
 teEtaConst(all_te)      "Technologies with constant eta"

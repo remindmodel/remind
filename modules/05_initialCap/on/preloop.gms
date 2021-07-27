@@ -418,6 +418,7 @@ pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP);
 **** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
 
 pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
+pm_eta_conv(ttot,regi,"elh2VRE") = pm_dataeta(ttot,regi,"elh2VRE");
 display pm_eta_conv, fm_dataglob;
 
 
