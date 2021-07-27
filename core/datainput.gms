@@ -923,7 +923,6 @@ loop(te,
         teEtaIncr(te) = no;
         teEtaIncr(te) = yes$(f_dataetaglob('1900',te) > 0);
 );
-teEtaConst(te) = not teEtaIncr(te);
 display teEtaIncr;
 
 *** import regionalized CCS constraints:
