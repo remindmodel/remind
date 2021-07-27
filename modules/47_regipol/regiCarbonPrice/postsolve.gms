@@ -46,11 +46,13 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 		);
 	
 ***  calculating ETS CO2 tax rescale factor
-		loop((ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type),		 
+		loop((ttot,target_type,emi_type)$p47_regiCO2ETStarget(ttot,target_type,emi_type),
+			pm_ETSTarget_dev(ETS_mkt) = (p47_emiCurrentETS(ETS_mkt) - p47_regiCO2ETStarget(ttot,target_type,emi_type))/p47_regiCO2ETStarget(ttot,target_type,emi_type);		 
+			p47_ETSTarget_dev_iter(iteration, ETS_mkt) = pm_ETSTarget_dev(ETS_mkt);
 			if(iteration.val lt 10,
-				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, (p47_emiCurrentETS(ETS_mkt))/(p47_regiCO2ETStarget(ttot,target_type,emi_type)) ) ** 2;
+				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 2;
 			else
-				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, (p47_emiCurrentETS(ETS_mkt))/(p47_regiCO2ETStarget(ttot,target_type,emi_type)) ) ** 1;
+				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 1;
 			);
 			p47_emiRescaleCo2TaxETS(ETS_mkt)$p47_emiRescaleCo2TaxETS(ETS_mkt) =
 				max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxETS(ETS_mkt)),
@@ -103,12 +105,14 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 		pm_taxCO2eqSCC(ttot,regi) = 0;
 		
 ***  calculating the ES CO2 tax rescale factor
+		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetES(t,regi))/pm_emiTargetES(t,regi);
+		p47_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
 		if(iteration.val lt 15,
-			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, ( v47_emiTargetMkt.l("2020",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2020",regi) ) )** 2;
-			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, ( v47_emiTargetMkt.l("2030",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2030",regi) ) )** 2;
+			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) )** 2;
+			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, 1+pm_ESRTarget_dev("2030",regi) )** 2;
 		else
-			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, ( v47_emiTargetMkt.l("2020",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2020",regi) ) );
-			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, ( v47_emiTargetMkt.l("2030",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2030",regi) ) );
+			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) );
+			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, 1+pm_ESRTarget_dev("2030",regi) );
 		);
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
@@ -116,9 +120,9 @@ $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
 $IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
-			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) )** 2;
+			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, 1+pm_ESRTarget_dev("2050",regi) )** 2;
 		else
-			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( v47_emiTargetMkt.l("2050",regi,"ES","%cm_emiMktES_type%")/pm_emiTargetES("2050",regi) ) );
+			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, 1+pm_ESRTarget_dev("2050",regi) );
 		);
 
 $ENDIF.emiMktES2050_3
@@ -127,12 +131,26 @@ $ENDIF.emiMktES2050
 
 $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 *** alternative cooperative ES solution: calculating the ES CO2 tax rescale factor
+		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = 
+			( sum(regi2$regi_group("EUR_regi",regi2),
+  				v47_emiTargetMkt.l(t,regi2,"ES","%cm_emiMktES_type%")
+			  ) - 
+			  sum(regi2$regi_group("EUR_regi",regi2),
+  				pm_emiTargetES(t,regi2)
+			  ) 
+			)/
+			sum(regi2$regi_group("EUR_regi",regi2),
+				pm_emiTargetES(t,regi2)
+			)
+		; 
+		p47_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
+
 		if(iteration.val lt 15,
-			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2020",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2020",regi2)) ) )** 2;
-			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2030",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2030",regi2)) ) )** 2;
+			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) )** 2;
+			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, 1+pm_ESRTarget_dev("2030",regi) )** 2;
 		else
-			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2020",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2020",regi2)) ) );
-			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2030",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2030",regi2)) ) );
+			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) );
+			p47_emiRescaleCo2TaxES("2030",regi)$((cm_startyear le 2030) AND (pm_emiTargetES("2030",regi))) = max(0.1, 1+pm_ESRTarget_dev("2030",regi) );
 		);
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
@@ -140,9 +158,9 @@ $IFTHEN.emiMktES2050_2 NOT "%cm_emiMktES2050%" == "linear"
 $IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
 
 		if(iteration.val lt 15,
-			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) )** 2;
+			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, 1+pm_ESRTarget_dev("2050",regi) )** 2;
 		else
-			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, ( sum(regi2$regi_group("EUR_regi",regi2),v47_emiTargetMkt.l("2050",regi2,"ES","%cm_emiMktES_type%"))/sum(regi2$regi_group("EUR_regi",regi2),pm_emiTargetES("2050",regi)) ) );
+			p47_emiRescaleCo2TaxES("2050",regi)$(pm_emiTargetES("2050",regi)) = max(0.1, 1+pm_ESRTarget_dev("2050",regi) );
 		);
 
 $ENDIF.emiMktES2050_3
@@ -150,7 +168,6 @@ $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
 $ENDIF.emiMktEScoop
-
 
 		p47_emiRescaleCo2TaxES(t,regi)$p47_emiRescaleCo2TaxES(t,regi) =
 		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxES(t,regi)),
@@ -276,6 +293,7 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 * for year targets, target deviation is difference of current emissions in target year to target emissions normalized by 2015 emissions
 	if(sameas(target_type,"year"),
 		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (p47_emissionsCurrent(ext_regi,ttot,ttot2)-p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / p47_emissionsRefYear(ext_regi,ttot,ttot2);
+***		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (p47_emissionsCurrent(ext_regi,ttot,ttot2)-p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type);
 	);
 * save regional target deviation across iterations for debugging of target convergence issues
 	p47_regiTarget_dev_iter(iteration, ext_regi, ttot, ttot2) = pm_regiTarget_dev(ext_regi, ttot, ttot2);
