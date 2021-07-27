@@ -270,13 +270,31 @@ loop((ext_regi,ttot,ttot2)$pm_regiTarget_dev(ext_regi,ttot,ttot2),
 );
 $endif.regipol
 
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
+*** regipol ETS targets must be met within 1% of target deviation
+loop(ETS_mkt,
+  if( (pm_ETSTarget_dev(ETS_mkt) gt 0.01 OR pm_ETSTarget_dev(ETS_mkt) lt -0.01),
+    s80_bool = 0;
+    p80_messageShow("ETStarget") = YES;
+  );
+);
+$endif.emiMktETS
+
+$ifthen.emiMktESR not "%cm_emiMktES%" == "off" 
+*** regipol ESR targets must be met within 1% of target deviation
+loop((ttot,regi)$pm_emiTargetES(ttot,regi),
+  if( (pm_ESRTarget_dev(ttot,regi) gt 0.01 OR pm_ESRTarget_dev(ttot,regi) lt -0.01),
+    s80_bool = 0;
+    p80_messageShow("ESRtarget") = YES;
+  );
+);
+$endif.emiMktESR
+
 *** check global budget target from core/postsolve, must be within 1% of target value
 if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
   s80_bool = 0;
   p80_messageShow("target") = YES;
 );
-
-
 
 
 display "####";
@@ -322,15 +340,40 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### Check out sm_fadeoutPriceAnticip which needs to be below 1e-4.";
 	      );
         if(sameas(convMessage80, "target"),
-		      display "#### 6.) A global or regional climate target has not been reached yet.";
-          display "#### For global targets check out sm_globalBudget_dev which must within 0.99 and 1.01 as well as";
+		      display "#### 6.) A global climate target has not been reached yet.";
+          display "#### check out sm_globalBudget_dev, it must within 0.99 and 1.01 to reach convergence, as well as";
           display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-          display "#### For regional target of 47_regipol module, check out pm_regiTarget_dev parameter.";
-          display "#### The parameter gives the current emissions value divided by the target value and must be within 0.99 and 1.01.";
           display sm_globalBudget_dev;
+	      );
+$ifthen.regipol %regipol% == "regiCarbonPrice"        
+        if(sameas(convMessage80, "regiTarget"),
+		      display "#### 7) A regional climate target has not been reached yet.";
+          display "#### Check out the ETS target of 47_regipol module and pm_regiTarget_dev parameter.";
+          display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2015 emissions.";
+          display "#### The deviation must to be less than 1% of 2015 emissions (in between -0.01 and 0.01) to reach convergence.";
           display pm_regiTarget_dev;
 	      );
+$endif.regipol
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off"         
+        if(sameas(convMessage80, "ETStarget"),
+		      display "#### 8) The ETS regional climate target has not been reached yet.";
+          display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
+          display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display pm_ETSTarget_dev;
+	      );
+$endif.emiMktETS
+$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
+        if(sameas(convMessage80, "ESRtarget"),
+		      display "#### 9) The ESR regional climate target has not been reached yet.";
+          display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
+          display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display pm_ESRTarget_dev;
+	      ); 
+$endif.emiMktESR       
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
@@ -390,14 +433,41 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
       if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
 	     );
-      if(sameas(convMessage80, "target"),
-		    display "#### 6.) A global or regional climate target has not been reached yet.";
-        display "#### For global targets check out pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
-        display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
-        display "#### For regional target of 47_regipol module, check out pm_regiTarget_dev parameter.";
-        display "#### The parameter gives the current emissions value divided by the target value and must be within 0.99 and 1.01.";
-        display pm_regiTarget_dev;
-	    );
+        if(sameas(convMessage80, "target"),
+		      display "#### 6.) A global climate target has not been reached yet.";
+          display "#### check out sm_globalBudget_dev, must within 0.99 and 1.01 to reach convergence, as well as";
+          display "#### pm_taxCO2eq_iterationdiff_tmp and pm_taxCO2eq_iterationdiff in diagnostics section below."; 
+          display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
+          display sm_globalBudget_dev;
+	      );
+$ifthen.regipol %regipol% == "regiCarbonPrice"
+        if(sameas(convMessage80, "regiTarget"),
+		      display "#### 7) A regional climate target has not been reached yet.";
+          display "#### Check out the ETS target of 47_regipol module and pm_regiTarget_dev parameter.";
+          display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2015 emissions.";
+          display "#### The deviation must to be less than 1% of 2015 emissions (in between -0.01 and 0.01) to reach convergence.";
+          display pm_regiTarget_dev;
+	      );
+$endif.regipol
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
+        if(sameas(convMessage80, "ETStarget"),
+		      display "#### 8) The ETS regional climate target has not been reached yet.";
+          display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
+          display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display pm_ETSTarget_dev;
+	      );
+$endif.emiMktETS
+$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
+        if(sameas(convMessage80, "ESRtarget"),
+		      display "#### 9) The ESR regional climate target has not been reached yet.";
+          display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
+          display "#### The parameter gives the percentage deviation of current emissions in relation to the target value.";
+          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display pm_ESRTarget_dev;
+	      );
+$endif.emiMktESR   
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;

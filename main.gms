@@ -587,6 +587,7 @@ cm_deuCDRmax = -1; !! def = -1
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
+$setGLobal cm_debug_preloop off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on

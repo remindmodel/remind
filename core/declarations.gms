@@ -113,6 +113,8 @@ p_ef_dem(all_regi,all_enty)                                 "Demand side emissio
 p_bioshare(tall,all_regi,all_enty)                          "bioshare for each FE carrier"
 pm_demPeBio(tall,all_regi)                                  "Primary energy bioenergy demand from last iteration [TWyr]"
 
+pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
+
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
 p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calculate p_avCapFac2015; The historic capacity in 2015"
 s_aux_cap_remaining                                         "aux. param. to calculate p_avCapFac2015; countdown parameter"
@@ -189,7 +191,10 @@ p_cintraw(all_enty)                                  "carbon intensity of fossil
 p_CapFixFromRWfix(ttot,all_regi,all_te)              "parameter for fixing capacity variable to Real-World values in 2010/2015"
 p_deltaCapFromRWfix(ttot,all_regi,all_te)            "parameter with resulting deltacap values resulting from fixing capacity to real-world values in 2010/2015"
 
-o_adjCostInv(ttot,all_regi,all_te)                   "marginal adjustment cost calculated in postsolve for diagnostics"
+o_margAdjCostInv(ttot,all_regi,all_te)               "marginal adjustment cost calculated in postsolve for diagnostics"
+o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost calculated in postsolve for diagnostics"
+o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
+
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
 
@@ -466,6 +471,9 @@ q_shBioTrans(ttot,all_regi)  "Define the share of biofuels in transport liquids 
 
 q_shfe(ttot,all_regi,all_enty,emi_sectors)            "share of final energy carrier in the sector final energy"
 q_shGasLiq_fe(ttot,all_regi,emi_sectors)              "share of gases and liquids in sector final energy"
+
+q_shbiofe_up(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (upper bound)"
+q_shbiofe_lo(ttot,all_regi,all_enty,emi_sectors,all_emiMkt) "share of biomass per carrier in sector final energy (lower bound)"
 
 q_capH2BI(ttot,all_regi)                                  "H2 infrastructure capacities of buildings and industry need to add up to the total infrastructure of the stationary sector"
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry"

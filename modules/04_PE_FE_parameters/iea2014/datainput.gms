@@ -24,9 +24,24 @@ $offdelim
 /
 ;
 
+*** making sure f04_IO_output is compatible with pm_fedemand values in 2005  
+*** this will become irrelevant to the model once the input data routines can be fixed so that pm_fedemand is again the same as f04_IO_output
+*** these lines should be removed once this is fixed at mrremind side.
+f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") = f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") * (pm_fedemand("2005",regi,"gdp_SSP2","fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") = f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") * (pm_fedemand("2005",regi,"gdp_SSP2","fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
+
 *** convert data from EJ to TWa
 f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
 f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_output(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;
+
+*** calculate bio share per carrier for buildings and industry (only for historically available years)
+pm_secBioShare(ttot,regi,entyFe,sector)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector)  and (ttot.val ge 2005 and ttot.val le 2015) and (sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) ) gt 0)) = 
+  sum((entySeBio,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySeBio,all_enty,all_te) ) 
+  /
+  sum((entySe,all_enty,all_te)$entyFeSec2entyFeDetail(entyFe,sector,all_enty), f04_IO_output(ttot,regi,entySe,all_enty,all_te) )
+;
+
+display pm_secBioShare;
 
 pm_IO_input(regi,all_enty,all_enty2,all_te)   = 0;
 p04_IO_output(regi,all_enty,all_enty2,all_te)  = 0;
