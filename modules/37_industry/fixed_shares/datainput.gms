@@ -172,6 +172,5 @@ $else.CESMkup
 $endIf.CESMkup
 
 
-
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

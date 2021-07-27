@@ -16,8 +16,6 @@ scalars
 Parameters
   p37_fctEmi(all_enty)                                   "emission factors of FE carriers [GtC/TWa]"
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
-  p37_shareCoalSolids_lo(ttot,all_regi)                  "lower bound of the coal share in solids for the first time steps to avoid too fast phase-out of coal solids in industry"
-
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
@@ -57,8 +55,7 @@ Equations
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"
   q37_H2Share(ttot,all_regi)                         "H2 share in gases"
   q37_costAddTeInv(ttot,all_regi,all_te)             "calculation of additional industry hydrogen t&d cost and CES markup cost to influence demand-side cost and efficiencies in CES tree"
-  q37_auxCostAddTeInv(ttot,all_regi)                 "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"  
-  q37_SolidsSplit(ttot,all_regi)                     "constraint to avoid too fast phase-out of coal solids in industry in line with historic data" 
+  q37_auxCostAddTeInv(ttot,all_regi)                 "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/declarations.gms

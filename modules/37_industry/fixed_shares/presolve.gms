@@ -83,24 +83,5 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
   = vm_macBase.lo(ttot,regi,"co2cement_process");
 );
 
-
-
-*** FS: lower bound on coal share in industry solids to avoid too fast phase-out
-
-p37_shareCoalSolids_lo("2005",regi)= sum(emiMkt,vm_demFeSector.l("2005",regi,"sesofos","fesos","indst",emiMkt)) / 
-                                      sum(emiMkt, 
-                                        sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fesos")), 
-                                          vm_demFeSector.l("2005",regi,entySe,"fesos","indst",emiMkt)));
-
-*** quick fix: set share externally for DEU to 80% following FORECAST model
-p37_shareCoalSolids_lo("2005",regi)$(SAMEAS(regi,"DEU")) = 0.8;
-
-
-p37_shareCoalSolids_lo(t,regi)$(t.val ge 2010 AND t.val le 2020) = p37_shareCoalSolids_lo("2005",regi);
-p37_shareCoalSolids_lo("2025",regi) = p37_shareCoalSolids_lo("2005",regi)*0.8;
-p37_shareCoalSolids_lo("2030",regi) = p37_shareCoalSolids_lo("2005",regi)*0.5;
-p37_shareCoalSolids_lo("2035",regi) = p37_shareCoalSolids_lo("2005",regi)*0.3;
-p37_shareCoalSolids_lo(t,regi)$(t.val gt 2035) = 0;
-
 *** EOF ./modules/37_industry/fixed_shares/presolve.gms
 
