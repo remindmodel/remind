@@ -11,7 +11,7 @@
 *'
 *'               The `simple` realization only gives a representation of the demand for energy carriers.
 *'               The `services_with_capital` realization distinguishes between end-uses and adds a trade-off between energy consumption and capital investments.
-*'               The `services_putty` realization uses `services_with_capital` as a basis, but adds inertia dynamics to improve building envelopes.
+*'               The `services_putty` realization uses `services_with_capital` as a basis, but adds inertia dynamics to the improvement of building envelopes (insulation).
 *'
 *' @authors Antoine Levesque, Robin Krekeler
 *###################### R SECTION START (MODULETYPES) ##########################
