@@ -969,7 +969,7 @@ q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
 q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") AND t.val ge max(2015, cm_startyear))..
     sum(sector2emiMkt(sector,emiMkt), 
       vm_demFeSector(t,regi,"seh2","feh2s",sector,emiMkt))
-    =l=
+    =e=
     sum(te2sectortdH2(te,sector),
       sum(teFe2rlfH2BI(te,rlf), 
         vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)))
