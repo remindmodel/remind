@@ -137,12 +137,21 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen cost at low penetration level and markup-cost for CES levels to be able to influence efficiencies/cost of demand-side conversions which are not explicitly represented
+*'  Calculate sector-specific demand-side cost: hydrogen phase-in cost + CES markup cost 
 ***---------------------------------------------------------------------------
-q37_costAddTeInv(t,regi,te)..
+q37_costAddTeInv(t,regi,te)$(tdTeMarkup37(te) OR sameAs(te,"tdh2s"))..
   vm_costAddTeInv(t,regi,te,"indst")
   =e=
-  (
+  v37_costAddTeInvH2(t,regi,te) + v37_costCESMkup(t,regi,te)
+;
+
+
+***---------------------------------------------------------------------------
+*'  Additional hydrogen phase-in cost at low H2 penetration levels 
+***---------------------------------------------------------------------------
+q37_costAddH2PhaseIn(t,regi)..
+  v37_costAddTeInvH2(t,regi,"tdh2s")
+  =e=
     ( 1 /(
       1 + (3**v37_costExponent(t,regi))
       )
@@ -151,11 +160,6 @@ q37_costAddTeInv(t,regi,te)..
       * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
     )
     + (v37_expSlack(t,regi)*1e-8)
-  )$(sameas(te,"tdh2s"))
-  +
-  ( 
-    p37_CESMkup(t,regi,"feeli")*(vm_cesIO(t,regi,"feeli") + pm_cesdata(t,regi,"feeli","offset_quantity")) 
-  )$(sameas(te,"tdels"))
 ;
 
 
@@ -178,7 +182,15 @@ q37_H2Share(t,regi)..
         vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
-
+***---------------------------------------------------------------------------
+*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+***---------------------------------------------------------------------------
+q37_costCESmarkup(t,regi,te)$(tdTeMarkup37(te))..
+  v37_costCESMkup(t,regi,te)
+  =e=
+  sum(in$(tdTe2In37(te,in)),
+  p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")))
+;
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
 

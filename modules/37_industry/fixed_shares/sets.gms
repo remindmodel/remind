@@ -117,7 +117,17 @@ Sets
     chemicals.ETS
     steel.ETS
     otherInd.ES  
-  /  
+  / 
+
+tdTeMarkup37(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
+  /
+  tdels
+  /
+
+tdTe2In37(all_te,all_in) "mapping of td technologies to CES nodes for CES markup cost"
+  /
+  tdels.feeli
+  /
 
   !! empty sets from the subsectors realisation
   industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
@@ -125,6 +135,9 @@ Sets
   ppfKap_industry_dyn37(all_in)   "energy efficiency capital of industry"
   /   /
 ;
+
+
+
 
 *** add module specific sets and mappings to the global sets and mappings
 in(in_industry_dyn37)              = YES;

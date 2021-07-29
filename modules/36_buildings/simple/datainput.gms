@@ -83,11 +83,19 @@ if ((cm_ElLim_b lt 1),
 );
 
 
+*** FS: CES markup cost buildings
+p36_CESMkup(t,regi,in) = 0;
+*** place markup cost on heat pumps electricity of 200 USD/MWh(el) to represent demand-side cost of electrification and reach higher efficiency during calibration which leads to some energy efficiency gains of electrification
+p36_CESMkup(t,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
+*** place markup cost on district heating of 25 USD/MWh(heat) to represent additional sector-specific cost expanding district heat
+p36_CESMkup(t,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
 
-*** Heat pumps markup cost: convert USD/MWh to trUSD/TWa
-p36_heatPumpMkup(t,regi) = cm_heatPumpMkup_build * sm_TWa_2_MWh * 1e-12;
-*** District heating markup cost: convert USD/MWh to trUSD/TWa
-p36_districtHeatingMkup(ttot,all_regi) = cm_districtHeatingMkup_build * sm_TWa_2_MWh * 1e-12;
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
+  p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in)) = p36_CESMkup_input(in);
+$endIf.CESMkup
+
+display p36_CESMkup;
 
 *** EOF ./modules/36_buildings/simple/datainput.gms
 
