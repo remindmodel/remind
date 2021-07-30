@@ -342,7 +342,7 @@ cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_
 cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year" 
 cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
-c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
+c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
 cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 ;
 
@@ -570,9 +570,9 @@ $setGlobal cm_regipol_slope_beforeTarget  off !! def = off
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 
-$setGlobal cm_CESMkup_ind  feeli 0.8 !! def = standard
-$setGlobal cm_CESMkup_build  fehob 0.2 !! def = standard
-c_BaselineAgriEmiRedDEU = 0; !! def = 0
+$setGlobal cm_CESMkup_ind  standard !! def = standard
+$setGlobal cm_CESMkup_build  standard !! def = standard
+c_BaselineAgriEmiRed = 0.6; !! def = 0
 
 cm_deuCDRmax = -1; !! def = -1
 
