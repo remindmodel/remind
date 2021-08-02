@@ -180,7 +180,25 @@ vintcomparisonpf = function(dt){
            fill=guide_legend(reverse=FALSE, title="Transport mode"))+
     scale_fill_manual(values = cols)+
     labs(y = "[million Veh]", x="", title = "LDV fleet")
-    return(plot)
+
+   plot1 = ggplot()+
+    geom_bar(data = dt[variable == "newdem"],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, width=.75), alpha = 0.5, position="stack", stat = "identity", width = 0.5)+
+    geom_bar(data = dt[variable == "newdem"],
+             aes(x=scenario, y=value, group=interaction(variable, technology),
+                 fill = technology, alpha = factor(alphaval),  width=.75), position="stack", stat = "identity", width = 0.5, color = "black", size=0.05)+
+    guides(fill = guide_legend(reverse=TRUE))+
+    facet_grid(region~year, scales = "free") +
+    theme2use +
+    scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
+    guides(linetype=FALSE,
+           fill=guide_legend(reverse=FALSE, title="Transport mode"))+
+    scale_fill_manual(values = cols)+
+    labs(y = "[million Veh]", x="", title = "LDV new sales fleet")
+
+return(list(plot=plot, plot1=plot1))
+
 }
 
 vintcomparisonpf(fleet_all)
@@ -436,22 +454,6 @@ EJfuels_pf = function(dt_p, dt_f){
 }
 
 EJfuels_pf(dt_p = EJpass_all, dt_f = EJfrgt_all)
-```
-
-## Emissions from demand
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=14, fig.height=20}
-emidem_pf = function(dt){
- dt[, scenario := as.character(scenario)]
- dt = dt[,.(value = sum(value)), by = c("region","year","scenario")]
-  plot = ggplot()+
-    geom_line(data = dt, aes(x = year, y = value, group = scenario, color = scenario))+
-    labs(x = "", y = "CO2 emissions [Mt/CO2]", title = "Emissions from transport demand (including biofuels)")+
-    facet_wrap(~region) +
-    theme2use
-  return(plot)
-}
-emidem_pf(emidem_all)
 ```
 
 
