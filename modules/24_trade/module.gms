@@ -9,6 +9,7 @@
 *'
 *' @description This file loads the trade module realization.
 *###################### R SECTION START (MODULETYPES) ##########################
+$Ifi "%trade%" == "network_trade" $include "./modules/24_trade/network_trade/realization.gms"
 $Ifi "%trade%" == "se_trade" $include "./modules/24_trade/se_trade/realization.gms"
 $Ifi "%trade%" == "standard" $include "./modules/24_trade/standard/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
