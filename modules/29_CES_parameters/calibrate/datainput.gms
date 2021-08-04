@@ -41,7 +41,6 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "en")) = 0
 
 *** Specify the ces structure on which the calibration will run.
 ppf_29(all_in)
-*** FIXME should include set of "stationary" module, too
   = ppfen_dyn35(all_in)
   + cal_ppf_buildings_dyn36(all_in)
   + cal_ppf_industry_dyn37(all_in)

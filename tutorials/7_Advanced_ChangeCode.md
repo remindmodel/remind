@@ -40,7 +40,8 @@ Use the following *prefixes*:
 * "s_" to designate scalars,
 * "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
 * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
-* "c_" to designate switches (parameters that enable different configuration choices),
+* "p_" to designate other parameters (parameters that were derived from "f_" parameters or defined in code),
+* "c_" to designate config switches (parameters that enable different configuration choices),
 * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
                              through multiplication, e.g. s_GWh_2_EJ.
 

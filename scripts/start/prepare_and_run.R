@@ -287,8 +287,7 @@ prepare <- function() {
 
 
   # Calculate CES configuration string
-  cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
-                                         "indu_",cfg$gms$industry,"-",
+  cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
                                          "POP_", cfg$gms$cm_POPscen, "-",

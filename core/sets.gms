@@ -868,7 +868,6 @@ sets
        transport
        buildings
        industry
-       stationary
        CCU
        techpol
        emicapregi
@@ -904,7 +903,6 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        transport . %transport%
        buildings . %buildings%
        industry . %industry%
-       stationary . %stationary%
        CCU . %CCU%
        techpol . %techpol%
        emicapregi . %emicapregi%
