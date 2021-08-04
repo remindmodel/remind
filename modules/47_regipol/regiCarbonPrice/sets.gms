@@ -19,7 +19,7 @@ ETS_mkt "ETS market"
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market"
 /
-   EU_ETS.(ENC,EWN,ECS,ESC,ECE,FRA,DEU,UKI,ESW)  !!,NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
+   EU_ETS.(ENC,EWN,ECS,ESC,ECE,FRA,DEU,ESW)  !!NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
 /
 $ENDIF.emiMktETS
 
