@@ -553,6 +553,8 @@ s_actualbudgetco2_last                                "actual level of 2000-2100
 sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
+
+s_histBioShareTolerance                               "tolerance range of percentage points by how much the biomass share in solids, liquids and gases in industry and buildings can deviate from the historical value in 2005"
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;
