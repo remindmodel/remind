@@ -496,15 +496,11 @@ $setGlobal c_regi_sensscen  all !! def = all
 
 
 
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 																	  
 cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
 
 cm_H2targets = 0; !! def 0
-
-cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
 
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
@@ -515,7 +511,7 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_PriceDurSlope_elh2 = 10; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -531,8 +527,8 @@ cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
-cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
+cm_BioSupply_Adjust_EU = 1; !! def 1
+cm_BioImportTax_EU = 0.25; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
@@ -545,18 +541,14 @@ cm_ElLim_b = 1; !! def 1
 cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 
 
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
-
-cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
-cm_FlexTaxFeedback = 0; !! def 0, off
+cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
 cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 50; !! def 0
-cm_ariadne_trade_synliq = 50; !! def 0
+cm_ariadne_trade_h2 = 0; !! def 0
+cm_ariadne_trade_synliq = 0; !! def 0
 cm_ariadne_trade_syngas = 0; !! def 0
 
 
@@ -572,7 +564,7 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 
 $setGlobal cm_CESMkup_ind  standard !! def = standard
 $setGlobal cm_CESMkup_build  standard !! def = standard
-c_BaselineAgriEmiRed = 0.6; !! def = 0
+c_BaselineAgriEmiRed = 0; !! def = 0
 
 cm_deuCDRmax = -1; !! def = -1
 
