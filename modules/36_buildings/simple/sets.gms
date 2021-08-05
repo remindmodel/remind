@@ -68,6 +68,18 @@ Sets
   
  ue_dyn36(all_in)  "useful energy items"
  //
+
+ tdTeMarkup36(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
+  /
+  tdels
+  tdhes
+  /
+
+tdTe2In36(all_te,all_in) "mapping of td technologies to CES nodes for CES markup cost"
+  /
+  tdels.feelhpb
+  tdhes.feheb
+  /
 ;
 
 cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;

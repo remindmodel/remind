@@ -343,7 +343,7 @@ vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according 
 v_costOM(ttot,all_regi)                              "o&m costs"
 v_costInv(ttot,all_regi)                             "investment costs"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
-vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "small diffusion additional sector specific investment cost"
+vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
 
 vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all differenct ccs. [GtC/a]"
 
@@ -552,6 +552,8 @@ s_actualbudgetco2_last                                "actual level of 2000-2100
 sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
+
+s_histBioShareTolerance                               "tolerance range of percentage points by how much the biomass share in solids, liquids and gases in industry and buildings can deviate from the historical value in 2005"
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;

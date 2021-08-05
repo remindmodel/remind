@@ -144,8 +144,8 @@ p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
 *** Rescale German non-co2 base line emissions from agriculture 
-p_macBaseMagpie(t,regi,enty)$(sameas(regi,"DEU") AND (emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o")))
-  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRedDEU)*p_macBaseMagpie(t,regi,enty);
+p_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
+  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*p_macBaseMagpie(t,regi,enty);
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;
