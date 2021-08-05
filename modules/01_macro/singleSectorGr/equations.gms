@@ -164,10 +164,10 @@ q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(t,regi,out,in) ) ..
 ;
 
 *' Limit the ratio of two ppfEn:
-q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(t,regi,in,in2) ) ..
+q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
     vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_ratios(t,regi,in,in2)
+    p01_ppfen_ratios(t,regi,in,in2)
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
