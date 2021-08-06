@@ -1,10 +1,9 @@
 if (!exists("source_include")) {
-  outputdir <- "output/B-putty_SSP2-NDC_restartWithAllIterationResults"
+  outputdir <- file.path("output", "B-putty_SSP2-NDC_restartWithAllIterationResults")
   lucode2::readArgs("outputdir")
 }
 
-# TODO setwd at the start of the Rmd and use relative paths
-outputdir <- normalizePath(outputdir)
+outputdir <- sub('[/\\]+$', '', normalizePath(outputdir))
 
 getLine <- function() {
   # gets characters (line) from the terminal of from a connection
