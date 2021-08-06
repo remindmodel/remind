@@ -28,14 +28,8 @@ getLine <- function() {
   return(s)
 }
 
-now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
+now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
-cat("outputdir: ", outputdir, "\n")
-cat("rmdPath: ", rmdPath, "\n")
-if (identical(Sys.info()[["sysname"]], "Windows")) {
-  rmdPath <- gsub('/', '\\\\', rmdPath)
-  cat("backslash rmdPath: ", rmdPath, "\n")
-}
 
 cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
 answer <- getLine()
@@ -112,14 +106,7 @@ if (!identical(trimws(answer), "")) {
 }
 if (generateHtml %in% c("y", "yes")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
-    outputPath <- file.path(outputdir, paste0("plotIterations_", now, ".html"))
-    cat("outputdir: ", outputdir, "\n")
-    cat("outputPath: ", outputPath, "\n")
-    if (identical(Sys.info()[["sysname"]], "Windows")) {
-      outputPath <- gsub('/', '\\\\', outputPath)
-      cat("backslash outputPath: ", outputPath, "\n")
-    }
-    rmarkdown::render(rmdPath, output_file = outputPath)
+    rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
   } else {
     warning(
       "Rendering to html failed: Could not find pandoc (>=1.12.3), please add it to your PATH environment variable.",
