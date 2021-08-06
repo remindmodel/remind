@@ -106,7 +106,14 @@ if (!identical(trimws(answer), "")) {
 }
 if (generateHtml %in% c("y", "yes")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
-    rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
+    outputPath <- file.path(outputdir, paste0("plotIterations_", now, ".html"))
+    cat("outputdir: ", outputdir, "\n")
+    cat("outputPath: ", outputPath, "\n")
+    if (identical(Sys.info()[["sysname"]], "Windows")) {
+      outputPath <- gsub('/', '\\\\', outputPath)
+      cat("backslash outputPath: ", outputPath, "\n")
+    }
+    rmarkdown::render(rmdPath, output_file = outputPath)
   } else {
     warning(
       "Rendering to html failed: Could not find pandoc (>=1.12.3), please add it to your PATH environment variable.",
