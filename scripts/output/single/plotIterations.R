@@ -47,7 +47,7 @@ rmdHeader <- paste0(
   "\n",
   "## Setup\n",
   "```{r}\n",
-  'runPath <- "', gsub("\\", "\\\\", outputdir), '"\n',
+  'runPath <- "', gsub("\\", "\\\\", outputdir, fixed = TRUE), '"\n',
   "```"
 )
 
