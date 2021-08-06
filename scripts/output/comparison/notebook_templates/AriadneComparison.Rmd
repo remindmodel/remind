@@ -158,7 +158,6 @@ df <- calc_addVariable(df,
 
 
 
-
 ## 1. Emissions
 
 
@@ -229,13 +228,6 @@ p.emi.grossneg <- ggplot() +
                            legend.title = element_blank(),strip.text.y = element_text(angle = 0, hjust = 0))
 
 
-
-# 
-#   scale_y_continuous("Electricity Share (%)", 
-#                      sec.axis = sec_axis(~ . * plot.price.scale / 100, 
-#                                                        name = paste0("Cost of Electricity\n", 
-#                                                                      5*rollmean.step,"-year mov. Avg. \n",
-#                                                                      "(2015USD/MWh)")))
 
 
 # show historical data for validation
@@ -745,10 +737,16 @@ ggsave(filename = paste0(plots.path, "/PE_BioenergyUse_bar.png"), width=19, heig
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
+
+tt = plotstyle.add( entity = "SE|Electricity|Wind|Onshore"  ,legend = "Wind Onshore", c("#337fff"), replace = T)
+tt = plotstyle.add( entity = "SE|Electricity|Wind|Offshore"  ,legend = "Wind Offshore", c("#E41A1C"), replace = T)
+
+
 vars = c(
   "SE|Electricity|Hydrogen",
   "SE|Electricity|Solar",
-  "SE|Electricity|Wind",
+  "SE|Electricity|Wind|Onshore",
+  "SE|Electricity|Wind|Offshore",
   "SE|Electricity|Geothermal",
   "SE|Electricity|Hydro",
   "SE|Electricity|Biomass",
@@ -1161,6 +1159,77 @@ ggsave(plot = p.el.sink.source,
 
 
 ```
+
+
+### Liquid Synfuel: Sinks and Sources
+
+```{r}
+### plot with positive supply and negative demand bars
+synliqsup.focus.vars <- c("SE|Liquids|Hydrogen",
+                      "SE|Liquids|Hydrogen|Net Imports")
+
+synliqdem.focus.vars <- c("FE|Industry|Liquids|+|Hydrogen",
+                      "FE|Buildings|Liquids|+|Hydrogen",
+                      "FE|Transport|Liquids|+|Hydrogen")
+
+synliq.sink.source.label <- c("SE|Liquids|Hydrogen" = "Liquid Synfuel Production",
+                      "SE|Liquids|Hydrogen|Net Imports" = "Liquid Synfuel Import",
+                      "FE|Industry|Liquids|+|Hydrogen" = "Synfuel Use Industry",
+                      "FE|Buildings|Liquids|+|Hydrogen" = "Synfuel Use Buildings",
+                      "FE|Transport|Liquids|+|Hydrogen" = "Synfuel Use Transport")
+
+synliq.sink.source.color <- c("Liquid Synfuel Production" = "mediumpurple1",
+                          "Liquid Synfuel Import" = "darkslateblue",
+                          "Synfuel Use Industry" = "red",
+                          "Synfuel Use Buildings" = "grey80",
+                          "Synfuel Use Transport" = "blue")
+
+vars.order <- c("Liquid Synfuel Production",
+                "Liquid Synfuel Import",
+                "Synfuel Use Industry",
+                "Synfuel Use Buildings",
+                "Synfuel Use Transport")
+
+
+
+df.synliq.sink.source <- df %>%
+                       filter(variable %in% synliqsup.focus.vars) %>%
+                       # bind demand variables with negative sign
+                        rbind( df %>%
+                              filter(variable %in% synliqdem.focus.vars) %>%
+                              # change sign an remove "SE|Electricity|used for"
+                              mutate( value = - value)) %>%
+                        revalue.levels(variable = synliq.sink.source.label) %>%
+                        order.levels(variable = vars.order) %>%
+                        filter(period %in% plot.period)
+
+
+
+p.synliq.sink.source <- ggplot() +
+                      geom_col(data=df.synliq.sink.source,
+                               aes(period, value, fill=variable),
+                               alpha=.6, width = 3) +
+                      facet_wrap(~scenario, ncol = length(plot.scen)) +
+                      scale_y_continuous("Liquid Synfuel (EJ/yr)") +
+                      scale_fill_manual(values = synliq.sink.source.color) +
+                      theme_bw() +
+                      theme( axis.text.x = element_text(angle=90, vjust = 0.5),
+                        legend.position = "bottom",
+                        strip.background = element_blank(),
+                        legend.title = element_blank(),
+                        strip.text.y = element_text(angle = 0, hjust = 0)) +
+                      guides(fill=guide_legend(direction = "horizontal"))
+
+
+p.synliq.sink.source
+
+
+ggsave(plot = p.synliq.sink.source,
+       filename =  paste0(plots.path, "/SE_synliq_SinkSource.png"),
+       width=25, height=10, units="cm")
+```
+
+
 
 
 
@@ -2267,7 +2336,7 @@ p.emi.transp <- ggplot(df.emi.transp, aes(period, value, fill=variable)) +
                     strip.text.y = element_text(angle = 0, hjust = 0))
 
 ggsave(plot = p.emi.transp,
-       filename =  paste0(plots.path, "/Transport_Emi.png"),
+       filename =  paste0(plots.path, "/Emi_trsp.png"),
        width=20, height=10, units="cm")
 
 } else {
@@ -2671,4 +2740,3 @@ if (ariadne.val.plots) {
 p.emi.cumul
 
 ```
-

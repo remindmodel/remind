@@ -504,8 +504,8 @@ pm_cf(ttot,regi,"tdsynpet") = 0.7;
 pm_cf(ttot,regi,"tdsyndie") = 0.7;
 
 *RP* again, short-term fix for the update of the VRE-integration hydrogen/electrolysis parameters:
-pm_cf(ttot,regi,"h2turbVRE") = 0.05;
-pm_cf(ttot,regi,"h2turb") = 0.05;
+pm_cf(ttot,regi,"h2turbVRE") = 0.1;
+pm_cf(ttot,regi,"h2turb") = 0.1;
 
 *RP* phasing down the ngt cf to "peak load" cf of 0.036
 pm_cf(ttot,regi,"ngt")$(ttot.val eq 2030) = 0.8 * pm_cf(ttot,regi,"ngt");
@@ -1532,5 +1532,14 @@ $endif.subsectors
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
+
+*** define tolerance level by how much biomass share needs to comply with 2005 historical values
+*** low tolerance for fixed_shares, there is works
+s_histBioShareTolerance = 0.02;
+*** temporary: until subsectors historical FE mix checked -> high tolerance for industry subsectors to make it run 
+$ifthen.subsectors "%industry%" == "subsectors"   !! industry
+s_histBioShareTolerance = 0.3;
+$endif.subsectors
+
 
 *** EOF ./core/datainput.gms

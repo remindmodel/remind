@@ -969,7 +969,7 @@ q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
 q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") AND t.val ge max(2015, cm_startyear))..
     sum(sector2emiMkt(sector,emiMkt), 
       vm_demFeSector(t,regi,"seh2","feh2s",sector,emiMkt))
-    =l=
+    =e=
     sum(te2sectortdH2(te,sector),
       sum(teFe2rlfH2BI(te,rlf), 
         vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)))
@@ -980,7 +980,7 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ***---------------------------------------------------------------------------
 
 q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
-  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) + s_histBioShareTolerance)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
   =g=
@@ -988,7 +988,7 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(ent
 ;
 
 q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
-  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
+  (pm_secBioShare(t,regi,entyFe,sector) - s_histBioShareTolerance)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
   =l=

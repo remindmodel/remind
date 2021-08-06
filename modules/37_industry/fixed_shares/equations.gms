@@ -137,20 +137,31 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen cost at low penetration level
+*'  Calculate sector-specific demand-side cost: hydrogen phase-in cost + CES markup cost 
 ***---------------------------------------------------------------------------
-q37_costAddTeInv(t,regi)..
-  vm_costAddTeInv(t,regi,"tdh2s","indst")
+q37_costAddTeInv(t,regi,te)$(tdTeMarkup37(te) OR sameAs(te,"tdh2s"))..
+  vm_costAddTeInv(t,regi,te,"indst")
   =e=
-  ( 1 /(
-        1 + (3**v37_costExponent(t,regi))
-      )
-  ) * (
-    s37_costAddH2Inv * 8.76 
-    * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
-  )
-  + (v37_expSlack(t,regi)*1e-8)
+  v37_costAddTeInvH2(t,regi,te) + v37_costCESMkup(t,regi,te)
 ;
+
+
+***---------------------------------------------------------------------------
+*'  Additional hydrogen phase-in cost at low H2 penetration levels 
+***---------------------------------------------------------------------------
+q37_costAddH2PhaseIn(t,regi)..
+  v37_costAddTeInvH2(t,regi,"tdh2s")
+  =e=
+    ( 1 /(
+      1 + (3**v37_costExponent(t,regi))
+      )
+    ) * (
+      s37_costAddH2Inv * 8.76
+      * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
+    )
+    + (v37_expSlack(t,regi)*1e-8)
+;
+
 
 *' Logistic function exponent for additional hydrogen low penetration cost equation
 q37_auxCostAddTeInv(t,regi)..
@@ -171,7 +182,15 @@ q37_H2Share(t,regi)..
         vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
-
+***---------------------------------------------------------------------------
+*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+***---------------------------------------------------------------------------
+q37_costCESmarkup(t,regi,te)$(tdTeMarkup37(te))..
+  v37_costCESMkup(t,regi,te)
+  =e=
+  sum(in$(tdTe2In37(te,in)),
+  p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")))
+;
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
 
