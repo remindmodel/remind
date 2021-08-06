@@ -22,6 +22,7 @@ library(mip)
  
 if(!exists("source_include")) {
    outputdir <- "~/Transferfolder/coupling/"
+   readArgs("outputdir")
 }
 
 scenario <- getScenNames(outputdir)
@@ -119,10 +120,12 @@ for (y in years) {
 
 swlatex(pdf,"\\section{Bioenergy demand and prices}")
 
-var_price_shapes = c("Price|Biomass|MAgPIE (US$2005/GJ)" = 0,
-                     "Price|Biomass|Emulator presolve (US$2005/GJ)" = 1,
-                     "Price|Biomass|Emulator presolve shifted (US$2005/GJ)" = 2,
-                     "Price|Biomass|Emulator shifted (US$2005/GJ)" = 4)
+var_price_shapes = c(
+  "Internal|Price|Biomass|MAgPIE (US$2005/GJ)" = 0,
+  "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)" = 1,
+  "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)" = 2,
+  "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)" = 4
+)
 
 # bring GLO to front
 regions <- getRegions(csv)
@@ -145,7 +148,12 @@ for (r in regions){
   if(r!= "GLO") {
     plot.title<-paste0("\\subsection{Bioenergy prices (",r,")}")
     swlatex(pdf,plot.title)
-    var_price = c("Price|Biomass|MAgPIE (US$2005/GJ)","Price|Biomass|Emulator presolve (US$2005/GJ)","Price|Biomass|Emulator presolve shifted (US$2005/GJ)","Price|Biomass|Emulator shifted (US$2005/GJ)")
+    var_price = c(
+      "Internal|Price|Biomass|MAgPIE (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)"
+    )
     dat<-as.ggplot(csv[r,years,var_price])
     
     p <- ggplot(data=dat, aes(x=Year, y=Value,colour=Data3)) + geom_line(size=1) + labs(y="$/GJ") + 

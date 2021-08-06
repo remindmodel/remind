@@ -169,9 +169,9 @@ the name of the needed input data is constructed. It is checked whether those in
 
 ## b) Optimization
 
-The actual REMIND is written in GAMS, a programming software to numerically solve optimization problems. The GAMS scripts are *.gms* files that you can find under the `core` (main part of the model) and the `modules` directories (subparts of the model). The general structure of the GAMS code is depicted in Figure 2. At each stage (e.g. sets), GAMS runs through the respective *.gms* files of the core and all chosen module realisations of that stage (`core/sets.gms`, `modules/01_macro/sets.gms`, `modules/02_welfare/sets.gms`, ...) before going to the next stage. The stages bpunds, presolve, solve and postsolve are run in a loop that is followed by the final stage output.
+The actual REMIND is written in GAMS, a programming software to numerically solve optimization problems. The GAMS scripts are *.gms* files that you can find under the `core` (main part of the model) and the `modules` directories (subparts of the model). The general structure of the GAMS code is depicted in Figure 2. At each stage (e.g. *sets*), GAMS runs through the respective *.gms* files of the core and all chosen module realisations of that stage (`core/sets.gms` -> `modules/01_macro/sets.gms`, -> `modules/02_welfare/sets.gms` -> ...) before going to the next stage. The stages *bounds*, *presolve*, *solve* and *postsolve* are run in a loop that is followed by the final stage *output*.
 
-<img src="figures/REMIND_gams_flow.eps" alt="Structure of the REMIND GAMS code" width="100%" />
+<img src="figures/REMIND_gams_flow.png" alt="Structure of the REMIND GAMS code" width="100%" />
 <p class="caption">
 GAMS code structure
 </p>

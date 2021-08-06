@@ -82,9 +82,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.18
+* Input data revision: 6.223
 * 
-* Last modification (input data): Fri Jun 25 13:09:38 2021
+* Last modification (input data): Mon Aug 02 14:11:26 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -334,14 +334,15 @@ cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
 cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
-cm_ariadne_trade_syn        "switch for enabling synfuel imports to Germany for ARIADNE project"
+cm_ariadne_trade_synliq        "switch for enabling synfuel liquids imports to Germany for ARIADNE project"
+cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Germany for ARIADNE project"
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
-cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year"
-cm_heatPumpMkup_build       "switch for cost markup for using heat pumps in simple buildings module"
-cm_districtHeatingMkup_build "switch for cost markup for using district heat in simple buildings module"   
-c_BaselineAgriEmiRedDEU     "switch to lower agricultural base line emissions in Germany as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
+cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year" 
+cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
+cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
+c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
 cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 ;
 
@@ -495,15 +496,11 @@ $setGlobal c_regi_sensscen  all !! def = all
 
 
 
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
 																	  
 cm_biotrade_phaseout = 0; !! def 0
 cm_bioprod_histlim = -1; !! def -1	
 
 cm_H2targets = 0; !! def 0
-
-cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
 
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
@@ -514,7 +511,7 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_PriceDurSlope_elh2 = 10; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -530,8 +527,8 @@ cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
-cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
+cm_BioSupply_Adjust_EU = 1; !! def 1
+cm_BioImportTax_EU = 0.25; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
@@ -544,18 +541,15 @@ cm_ElLim_b = 1; !! def 1
 cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 
 
-cm_TaxConvCheck = 0; !! def 1, which means tax convergence check is on
-
-cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
-cm_FlexTaxFeedback = 0; !! def 0, off
+cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
 cm_ariadne_trade_el = 0; !! def 0
 cm_ariadne_trade_h2 = 0; !! def 0
-cm_ariadne_trade_syn = 0; !! def 0
+cm_ariadne_trade_synliq = 0; !! def 0
+cm_ariadne_trade_syngas = 0; !! def 0
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
@@ -568,10 +562,9 @@ $setGlobal cm_regipol_slope_beforeTarget  off !! def = off
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 
-cm_heatPumpMkup_build = 200; !! def = 200
-cm_districtHeatingMkup_build = 25; !! def = 25
-
-c_BaselineAgriEmiRedDEU = 0; !! def = 0
+$setGlobal cm_CESMkup_ind  standard !! def = standard
+$setGlobal cm_CESMkup_build  standard !! def = standard
+c_BaselineAgriEmiRed = 0; !! def = 0
 
 cm_deuCDRmax = -1; !! def = -1
 
@@ -581,7 +574,7 @@ cm_deuCDRmax = -1; !! def = -1
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
-$setGLobal cm_debug_preloop off !! def = off
+$setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
