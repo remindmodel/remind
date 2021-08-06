@@ -1,6 +1,6 @@
 symbolNames <- paste(
   "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
-  "v36_deltaProdEs, v36_ProdEs"
+  "v36_deltaProdEs, v36_prodEs"
 )
 generateHtml <- "y"
 
@@ -20,7 +20,11 @@ getLine <- function() {
     con <- file("stdin")
     s <- readLines(con, 1, warn = FALSE)
     on.exit(close(con))
+    if (identical(length(s), 0L)) {
+      s <- ""
+    }
   }
+  stopifnot(identical(length(s), 1L))
   return(s)
 }
 
@@ -29,7 +33,7 @@ rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
 cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
 answer <- getLine()
-if (!identical(answer, "")) {
+if (!identical(trimws(answer), "")) {
   symbolNames <- answer
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
@@ -92,12 +96,12 @@ rmdFooter <- if (length(symbolNames) >= 2) {
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-  collapse = "\n\n"
+                  collapse = "\n\n"
 ), rmdPath)
 
 cat("Render plots to html? (default: ", generateHtml, ") ")
 answer <- getLine()
-if (!identical(answer, "")) {
+if (!identical(trimws(answer), "")) {
   generateHtml <- tolower(answer)
 }
 if (generateHtml %in% c("y", "yes")) {
