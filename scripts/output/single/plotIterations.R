@@ -30,6 +30,12 @@ getLine <- function() {
 
 now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
+cat("outputdir: ", outputdir, "\n")
+cat("rmdPath: ", rmdPath, "\n")
+if (identical(Sys.info()[["sysname"]], "Windows")) {
+  rmdPath <- gsub('/', '\\\\', rmdPath)
+  cat("backslash rmdPath: ", rmdPath, "\n")
+}
 
 cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
 answer <- getLine()
