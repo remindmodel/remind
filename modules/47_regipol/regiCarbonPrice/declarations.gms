@@ -31,11 +31,13 @@ variables
 ;
 
 equations
-	q47_emiTarget_grossEnCO2(ttot, all_regi)		"Calculates gross energy-related co2 emissions"
-	q47_emiTarget_netCO2(ttot, all_regi)	    "Calculates net co2 emissions used for target"
+	q47_emiTarget_grossEnCO2(ttot, all_regi)	   "Calculates gross energy-related co2 emissions"
+	q47_emiTarget_netCO2(ttot, all_regi)	       "Calculates net co2 emissions used for target"
 	q47_emiTarget_netCO2_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers used for target"
-	q47_emiTarget_netGHG(ttot, all_regi)		"Calculates net GHG emissions used for target"
+	q47_emiTarget_netCO2_noLULUCF_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers and LULUCF (=ESR+ETS)"
+	q47_emiTarget_netGHG(ttot, all_regi)		   "Calculates net GHG emissions used for target"
 	q47_emiTarget_netGHG_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers used for target"
+	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS)"
 ;
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
