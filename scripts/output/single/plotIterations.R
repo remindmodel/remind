@@ -9,7 +9,8 @@ if (!exists("source_include")) {
   lucode2::readArgs("outputdir", "symbolNames", "generateHtml")
 }
 
-outputdir <- sub('[/\\]+$', '', normalizePath(outputdir))
+outputdir <- normalizePath(outputdir)
+
 
 getLine <- function() {
   # gets characters (line) from the terminal of from a connection
@@ -46,7 +47,7 @@ rmdHeader <- paste0(
   "\n",
   "## Setup\n",
   "```{r}\n",
-  'runPath <- "', outputdir, '"\n',
+  'runPath <- "', gsub("\\", "\\\\", outputdir), '"\n',
   "```"
 )
 
