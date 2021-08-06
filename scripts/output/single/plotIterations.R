@@ -1,6 +1,12 @@
+symbolNames <- paste(
+  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
+  "v36_deltaProdEs, v36_ProdEs"
+)
+generateHtml <- "y"
+
 if (!exists("source_include")) {
   outputdir <- file.path("output", "B-putty_SSP2-NDC_restartWithAllIterationResults")
-  lucode2::readArgs("outputdir")
+  lucode2::readArgs("outputdir", "symbolNames", "generateHtml")
 }
 
 outputdir <- sub('[/\\]+$', '', normalizePath(outputdir))
@@ -21,14 +27,10 @@ getLine <- function() {
 now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-defaultSymbolNames <- paste(
-  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
-  "v36_deltaProdEs, v36_ProdEs"
-)
-cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", defaultSymbolNames, ") ")
-symbolNames <- getLine()
-if (identical(symbolNames, "")) {
-  symbolNames <- defaultSymbolNames
+cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
+answer <- getLine()
+if (!identical(answer, "")) {
+  symbolNames <- answer
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
@@ -93,8 +95,12 @@ writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character
   collapse = "\n\n"
 ), rmdPath)
 
-cat("Render plots to html? (y/n): ")
-if (identical(getLine(), "y")) {
+cat("Render plots to html? (default: ", generateHtml, ") ")
+answer <- getLine()
+if (!identical(answer, "")) {
+  generateHtml <- tolower(answer)
+}
+if (generateHtml %in% c("y", "yes")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
     rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
   } else {
