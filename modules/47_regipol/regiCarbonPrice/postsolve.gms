@@ -183,6 +183,7 @@ $IFTHEN.emiMktES2020price "%cm_emiMktES2020price%" == "target"
 		pm_taxemiMkt("2020",regi,"ES")$(p47_emiRescaleCo2TaxES("2020",regi) AND pm_emiTargetES("2020",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2020",regi,"ES") * p47_emiRescaleCo2TaxES("2020",regi));
 $ELSEIF.emiMktES2020price not "%cm_emiMktES2020price%" == "off"
 		pm_taxemiMkt("2020",regi,"ES") = %cm_emiMktES2020price%*sm_DptCO2_2_TDpGtC;
+		pm_ESRTarget_dev("2020",regi) = 0;
 $ENDIF.emiMktES2020price
 
 ***		pm_taxemiMkt(t,regi,"ES")$((t.val lt 2020) AND (t.val ge cm_startyear) AND (pm_emiTargetES("2020",regi))) = pm_taxemiMkt("2020",regi,"ES")*1.05**(t.val-2020); !! pre 2020: decrease at 5% p.a.
