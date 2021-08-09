@@ -11,6 +11,11 @@ hybrid.optfile = s80_cnptfile;
 ***      -------------------------------------------------------------------
 ***                     SOLVE statement
 ***      -------------------------------------------------------------------
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve hybrid using nlp maximizing vm_welfareGlob;
 o_modelstat = hybrid.modelstat;
 
@@ -41,3 +46,4 @@ $IFTHEN.cm_SlowConvergence %cm_SlowConvergence% == "on"
 $ENDIF.cm_SlowConvergence
 );
 *** EOF ./modules/80_optimization/negishi/solve.gms
+

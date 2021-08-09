@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magpie)
-library(remind)
+library(remind2)
 library(luplot)
 
 rm(list = ls())

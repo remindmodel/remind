@@ -6,8 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind)
-library(lucode)
+library(remind2)
+library(lucode2)
 library(methods)
 library(tidyverse)
 library(gdx)

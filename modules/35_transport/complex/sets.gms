@@ -65,6 +65,13 @@ entyFeTrans_dyn35(all_enty)      "final energy types - transport module addition
     feelt
 /
 
+transType_35  "transport type"
+/
+  LDV              "Light Duty Vehicle"
+  nonLDV_noBunkers "non Light Duty Vehicle, no Bunkers"
+  nonLDV_Bunkers   "non Light Duty Vehicle Bunkers"
+/
+
 entyUe_dyn35(all_enty)            "Energy service types"
 /
   uedit   "Energy Service: DIesel for Transport. Unit: TWa (currently 1:1 transfer from FE)"
@@ -107,6 +114,16 @@ char35 "characteristics of transport technologies"
   Eff_Pass_nonLDV
   Eff_Pass_LDV
   Eff_Freight
+/
+
+EDGE_scenario_all    "EDGE-T scenarios, used to get the bunkers share on total liquids demand."
+/
+ConvCase
+ConvCaseWise
+ElecEra
+ElecEraWise
+HydrHype
+HydrHypeWise
 /
 ;
 
@@ -154,6 +171,14 @@ ue2ppfen_dyn35(all_enty,all_in)      "matching ES in ESM to ppfEn in MACRO"
     ueelt.ueelTt
 /
 ;
+
+sets
+ bound_type    "auxiliar set to allow different values for upper and lower bound defined in a single switch"
+  /
+  upper
+  lower
+  /
+ ;
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings

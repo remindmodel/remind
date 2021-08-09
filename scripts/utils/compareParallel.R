@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 require(data.table)
 require(parallel)
-require(remind)
+require(remind2)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
@@ -35,7 +35,7 @@ run_compare <- function(scens, policies, mifs, short){
   policies <- unique(policies)
   scens <- unique(scens)
 
-  hist <- "core/input/historical/historical.mif"
+  hist_path <- "core/input/historical/historical.mif"
   short_y <- seq(2005,2060,5)
   short_ybar <- c(2010,2030,2050)
 
@@ -59,11 +59,11 @@ run_compare <- function(scens, policies, mifs, short){
   rcpscen <- if(length(policies) == 1) RCP_MAP[[policies]]
 
   if(short){
-    compareScenarios(mifs, y=short_y, y_bar=short_ybar, hist = hist,
+    compareScenarios(mifs, y=short_y, y_bar=short_ybar, hist = hist_path,
                      fileName = outfile,
                      sr15marker_RCP = rcpscen)
   }else{
-    compareScenarios(mifs, hist = hist,
+    compareScenarios(mifs, hist = hist_path,
                      fileName = outfile,
                      sr15marker_RCP = rcpscen)
   }

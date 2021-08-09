@@ -23,29 +23,28 @@ p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inc
                             * (1/sm_ccsinjecrate) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1");			
 p21_taxrevNetNegEmi0(ttot,regi) = cm_frac_NetNegEmi * pm_taxCO2eq(ttot,regi) * v21_emiALLco2neg.l(ttot,regi);
 p21_emiALLco2neg0(ttot,regi)  = v21_emiALLco2neg.l(ttot,regi);		
-p21_taxrevFEtrans0(ttot,regi) = SUM(feForUe(enty),
-                                      (p21_tau_fe_tax_transport(ttot,regi,feForUe) + p21_tau_fe_sub_transport(ttot,regi,feForUe) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
-                                      )+
-				      SUM(feForEs(enty), (p21_tau_fe_tax_transport(ttot,regi,feForEs) + p21_tau_fe_sub_transport(ttot,regi,feForEs) ) * SUM(se2fe(enty2,enty,te), vm_prodFe.l(ttot,regi,enty2,enty,te))
-				    );
-p21_taxrevFEBuildInd0(ttot,regi) = SUM(ppfen(in)$( NOT ppfenFromUe(in)),
-                                         (p21_tau_fe_tax_bit_st(ttot,regi,ppfen) + p21_tau_fe_sub_bit_st(ttot,regi,ppfen) ) * vm_cesIO.l(ttot,regi,ppfen)
-                                       );
-
-p21_taxrevFE_Es0(ttot,regi) = SUM(fe2es(entyFe,esty,teEs),
-                                          (pm_tau_fe_tax_ES_st(ttot,regi,esty) + pm_tau_fe_sub_ES_st(ttot,regi,esty) ) * vm_demFeForEs.L(ttot,regi,entyFe,esty,teEs)
-                                       );
-                                       
+p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
+    ( pm_tau_fe_tax(ttot,regi,sector,entyFe) + pm_tau_fe_sub(ttot,regi,sector,entyFe) ) 
+    * 
+    sum(emiMkt$sector2emiMkt(sector,emiMkt), 
+      sum(se2fe(entySe,entyFe,te),   
+        vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+      )
+    )
+  )
+;
 p21_taxrevResEx0(ttot,regi) = sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(ttot,regi,enty) * vm_fuExtr.l(ttot,regi,enty,rlf));
 p21_taxrevPE2SE0(ttot,regi) = SUM(pe2se(enty,enty2,te),
                                     (p21_tau_pe2se_tax(ttot,regi,te) + p21_tau_pe2se_sub(ttot,regi,te) + p21_tau_pe2se_inconv(ttot,regi,te)) * vm_prodSe.l(ttot,regi,enty,enty2,te)
                                   ); 
+p21_taxrevTech0(ttot,regi) = sum(te2rlf(te,rlf), (p21_tech_tax(ttot,regi,te,rlf) + p21_tech_sub(ttot,regi,te,rlf)) * vm_deltaCap.l(ttot,regi,te,rlf));
 p21_taxrevXport0(ttot,regi) = SUM(tradePe(enty), p21_tau_XpRes_tax(ttot,regi,enty) * vm_Xport.l(ttot,regi,enty));
 p21_taxrevSO20(ttot,regi) = p21_tau_so2_tax(ttot,regi) * vm_emiTe.l(ttot,regi,"so2");
 p21_taxrevBio0(ttot,regi) = v21_tau_bio.l(ttot) * vm_fuExtr.l(ttot,regi,"pebiolc","1")*vm_pebiolc_price.l(ttot,regi);
 p21_implicitDiscRate0(ttot,regi) = sum(ppfKap(in),  p21_implicitDiscRateMarg(ttot,regi,in)  * vm_cesIO.l(ttot,regi,in) );
+p21_taxemiMkt0(ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt);
 p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
                                         -vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
-
+p21_taxrevBioImport0(ttot,regi) = p21_tau_BioImport(ttot,regi) * pm_pvp(ttot,"pebiolc") / pm_pvp(ttot,"good") * vm_Mport.l(ttot,regi,"pebiolc");
 
 *** EOF ./modules/21_tax/on/presolve.gms

@@ -1,17 +1,17 @@
+#!/usr/bin/env Rscript
 # |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-#!/usr/bin/env Rscript
-library(lucode)
+library(gms)
 
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
 #'
-#' Without additional arguments this starts a single REMIND runs using the settings
+#' Without additional arguments this starts a single REMIND run using the settings
 #' from `config/default.cfg`.
 #'
 #' Control the script's behavior by providing additional arguments:
@@ -50,11 +50,11 @@ get_line <- function(){
 choose_folder <- function(folder,title="Please choose a folder") {
   dirs <- NULL
   
-  # Detect all output folders containing fulldata.gdx or non_optimal.gdx
+  # Detect all output folders containing fulldata.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/full.gms","",sub("./output/","",Sys.glob(file.path(folder,"*","full.gms"))))
-
+  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
+  
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   #runs <- findCoupledruns(folder)
   #dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
@@ -98,12 +98,6 @@ choose_folder <- function(folder,title="Please choose a folder") {
 
 configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
-    .setgdxcopy <- function(needle, stack, new) {
-      # delete entries in stack that contain needle and append new
-      out <- c(stack[-grep(needle, stack)], new)
-      return(out)
-    }
-
     # Edit run title
     icfg$title <- iscen
     cat("   Configuring cfg for", iscen,"\n")
@@ -130,16 +124,14 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Set reporting script
     if( "output" %in% names(iscenarios)){
-      icfg$output <- paste0("c(\"",gsub(",","\",\"",gsub(", ",",",iscenarios[iscen,"output"])),"\")")
+      icfg$output <- gsub('c\\("|\\)|"','',strsplit(iscenarios[iscen,"output"],',')[[1]])
     }
 
     # check if full input.gdx path is provided and, if not, search for correct path
-    if (!substr(isettings[iscen,"path_gdx"], nchar(isettings[iscen,"path_gdx"])-3, nchar(isettings[iscen,"path_gdx"])) == ".gdx"){
-      #if there is no correct scenario folder within the output folder path provided, take the config/input.gdx
-      if(length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==0){
-        isettings[iscen,"path_gdx"] <- "config/input.gdx"
+    
+    if (!is.na(isettings[iscen,"path_gdx"])) if (!substr(isettings[iscen,"path_gdx"], nchar(isettings[iscen,"path_gdx"])-3, nchar(isettings[iscen,"path_gdx"])) == ".gdx"){
       #if there is only one instance of an output folder with that name, take the fulldata.gdx from this
-      } else if (length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==1){
+      if (length(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))==1){
         isettings[iscen,"path_gdx"] <- paste0(isettings[iscen,"path_gdx"],"/",
                                             grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T),"/fulldata.gdx")
       } else {
@@ -151,24 +143,18 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                                  nchar(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T))-18,
                                  nchar(grep(iscen,list.files(path=isettings[iscen,"path_gdx"]),value=T)))),"/fulldata.gdx")
       }
-    }
-
-    # if the above has not created a path to a valid gdx, take config/input.gdx
-    if (!file.exists(isettings[iscen,"path_gdx"])){
-      isettings[iscen,"path_gdx"] <- "config/input.gdx"
-      #if even this is not existent, stop
+      # if the above has not created a path to a valid gdx, stop
       if (!file.exists(isettings[iscen,"path_gdx"])){
-      stop("Cant find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
+        stop("Can't find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
       }
     }
-
     # Define path where the GDXs will be taken from
     gdxlist <- c(input.gdx     = isettings[iscen, "path_gdx"],
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
                  input_bau.gdx = isettings[iscen, "path_gdx_bau"])
 
-    # Remove potential elements that end with ".gdx" and append gdxlist
-    icfg$files2export$start <- .setgdxcopy("\\.gdx$", icfg$files2export$start, gdxlist)
+    # add gdxlist to list of files2export
+    icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
 
     # add gdx information for subsequent runs
     icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
@@ -179,7 +165,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
 
 # check command-line arguments for testOneRegi and scenario_config file
-argv <- commandArgs(trailingOnly = TRUE)
+if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 config.file <- argv[1]
 
 # define arguments that are accepted
@@ -189,11 +175,11 @@ accepted <- c('--restart','--testOneRegi')
 known <-  argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown argument provided: ",paste(argv[!known][!file_exists]," \nAccepted arguments are '--testOneRegi', '--restart' or a path to an existing scenario_config.csv"))
+  if (!all(file_exists)) stop("Unknown paramter provided: ",paste(argv[!known][!file_exists]," "))
 }
 
 ###################### Choose submission type #########################
-slurmConfig <- choose_slurmConfig()
+if(!exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
 
 # Restart REMIND in existing results folder (if required by user)
 if ('--restart' %in% argv) {
@@ -202,7 +188,7 @@ if ('--restart' %in% argv) {
   for (outputdir in outputdirs) {
     cat("Restarting",outputdir,"\n")
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
-    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose (it was being ignored before)
+    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
@@ -211,7 +197,6 @@ if ('--restart' %in% argv) {
 } else {
 
   # If testOneRegi was selected, set up a testOneRegi run.
-
   if ('--testOneRegi' %in% argv) {
     testOneRegi <- TRUE
     config.file <- NA
@@ -245,7 +230,7 @@ if ('--restart' %in% argv) {
     source("config/default.cfg")
 
     # Have the log output written in a file (not on the screen)
-    cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig)
+    cfg$slurmConfig <- slurmConfig
     cfg$logoption   <- 2
     start_now       <- TRUE
 
@@ -262,7 +247,7 @@ if ('--restart' %in% argv) {
 
     cat("\n",scen,"\n")
 
-    # configure cfg based on settings from csv if provided
+    # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
@@ -270,7 +255,7 @@ if ('--restart' %in% argv) {
                    | is.na(scenarios[scen,"path_gdx_ref"]))
     }
     
-    # save the cfg data for later start of subsequent runs (after preceding run finished)
+    # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     filename <- paste0(scen,".RData")
     cat("   Writing cfg to file",filename,"\n")
     save(cfg,file=filename)

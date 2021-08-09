@@ -57,6 +57,7 @@ Sets
   /
     eni     "industry energy use"
     enhi    "industry heat energy use"
+    enhgai  "industry heat gaseous energy use (fegab and feh2b)"
     fesoi   "industry use of solid energy carriers"
     fehoi   "industry use of liquid energy carriers"
     fegai   "industry use of gaseous energy carriers"
@@ -75,7 +76,8 @@ Sets
   /
     en    . eni
     eni   . (enhi, feeli)
-    enhi  . (fesoi, fehoi, fegai, feh2i, fehei)
+    enhi  . (fesoi, fehoi, fehei, enhgai)
+    enhgai . (fegai, feh2i)
   /
 
  
@@ -99,12 +101,43 @@ Sets
   feeli . feeli
   /
 
+  entyFe37(all_enty)   "FE carriers used in industry"
+  /
+    fesos 
+    fehos 
+    fegas
+    feh2s
+    fehes
+    feels
+  /
+  
+  secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
+  /
+    cement.ETS
+    chemicals.ETS
+    steel.ETS
+    otherInd.ES  
+  / 
+
+tdTeMarkup37(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
+  /
+  tdels
+  /
+
+tdTe2In37(all_te,all_in) "mapping of td technologies to CES nodes for CES markup cost"
+  /
+  tdels.feeli
+  /
+
   !! empty sets from the subsectors realisation
   industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
   /   /
   ppfKap_industry_dyn37(all_in)   "energy efficiency capital of industry"
   /   /
 ;
+
+
+
 
 *** add module specific sets and mappings to the global sets and mappings
 in(in_industry_dyn37)              = YES;

@@ -11,6 +11,18 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+*** CG: set wind offshore to be 10% higher than wind onshore
+vm_capFac.fx(t,regi,"windoff") = 1.25 * pm_cf(t,regi,"wind");
+$ENDIF.WindOff
+
+*** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
+*** to avoid infeasibilities with vintage biomass capacities
+*** allow bio techs to reduce capacity factor
+if ( cm_bioprod_histlim ge 0,
+	vm_capFac.lo(t,regi_sensscen,teBioPebiolc)$(t.val ge 2030) = 0;
+);
+
 *** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
 *** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,
@@ -26,12 +38,11 @@ if ( cm_flex_tax eq 1,
   );
 );
 
-
 *** Lower bounds on VRE use (more than 0.01% of electricity demand) after 2015 to prevent the model from overlooking solar and wind
 loop(regi,
   loop(te$(teVRE(te)),
     if ( (sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels")) ,
-         v32_shSeEl.lo(t,regi,te)$(t.val>2015) = 0.01; 
+         v32_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01; 
     );
   );
 );
@@ -51,5 +62,9 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2050) = 1;
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
 );
+
+*** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1
+vm_cap.fx(t,regi,"elh2VRE",rlf) = 0;
+
 
 

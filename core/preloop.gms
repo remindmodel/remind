@@ -26,12 +26,18 @@ vm_emiTe.l(ttot,regi,enty)      = 0;
 vm_emiCdr.l(ttot,regi,enty)	     = 0;
 vm_prodFe.l(ttot,regi,entyFe2,entyFe2,te) = 0;
 vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
+vm_demSe.l(ttot,regi,enty,enty2,te) = 0;
 vm_Xport.l(ttot,regi,tradePe)       = 0;
 vm_capDistr.l(t,regi,te,rlf)          = 0;
 vm_cap.l(t,regi,te,rlf)              = 0;
 vm_fuExtr.l(ttot,regi,"pebiolc","1")$(ttot.val ge 2005)  = 0;
 vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005)         = 0;
-vm_demSe.l(ttot,regi,enty,enty2,te) = 0;
+vm_emiAllMkt.l(t,regi,enty,emiMkt) = 0;
+vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
+
+v_shfe.l(t,regi,enty,sector) = 0;
+v_shGasLiq_fe.l(t,regi,sector) = 0;  
+pm_share_CCS_CCO2(t,regi) = 0; 
   
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
@@ -40,8 +46,16 @@ Execute_Loadpoint 'input' q_balPe.m = q_balPe.m;
 Execute_Loadpoint 'input' qm_budget.m = qm_budget.m;
 Execute_Loadpoint 'input' pm_pvpRegi = pm_pvpRegi;
 Execute_Loadpoint 'input' pm_pvp = pm_pvp;
+Execute_Loadpoint 'input' vm_demFeSector.l = vm_demFeSector.l;
 
-
+*** if startyear > 2005, overwrite prices of first years with values from input_ref.gdx
+$ifthen not "%c_fuelprice_init%" == "off"
+  if ( (cm_startyear gt 2005),
+    Execute_Loadpoint 'input_ref' pm_FEPrice = pm_FEPrice;
+    Execute_Loadpoint 'input_ref' pm_SEPrice = pm_SEPrice;
+    Execute_Loadpoint 'input_ref' p_PEPrice = p_PEPrice;
+  );
+$endif
 
 
 
@@ -114,5 +128,31 @@ loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"
 display p_macBaseMagpie;
 $endif
 
+*** FS: calculate total bioenregy primary energy demand from last iteration
+pm_demPeBio(ttot,regi) = 
+  sum(en2en(enty,enty2,te)$(peBio(enty)), 
+    vm_demPe.l(ttot,regi,enty,enty2,te))
+;
+
+!! all net negative co2luc
+p_macBaseMagpieNegCo2(t,regi) = p_macBaseMagpie(t,regi,"co2luc")$(p_macBaseMagpie(t,regi,"co2luc") < 0);
+
+p_agriEmiPhaseOut(t) = 0;
+p_agriEmiPhaseOut("2025") = 0.25;
+p_agriEmiPhaseOut("2030") = 0.5;
+p_agriEmiPhaseOut("2035") = 0.75;
+p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
+
+*** Rescale German non-co2 base line emissions from agriculture 
+p_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
+  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*p_macBaseMagpie(t,regi,enty);
+
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
 
 *** EOF ./core/preloop.gms

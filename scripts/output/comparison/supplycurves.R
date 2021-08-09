@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(remind)
+library(remind2)
 library(lusweave)
 library(luplot)
 library(ggplot2)

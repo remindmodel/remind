@@ -16,9 +16,9 @@ Parameters
   p29_cesIOdelta_load(tall,all_regi,all_in)                "production factor vm_cesIOdelta from input.gdx"
   p29_effGr(tall,all_regi,all_in)                                   "growth of factor efficiency from input.gdx"
   p29_cesdata_price(tall,all_regi,all_in)                          "exogenous prices in case they are needed"
-$ifthen.edgesm %transport% ==  "edge_esm"
+$ifthen.transpmodule "%transport%" == "edge_esm"
   p29_trpdemand(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in) "transport demand for the edge_esm transport module, unit: trillion passenger/ton km"
-$endif.edgesm
+$endif.transpmodule
   p29_esdemand(tall,all_regi,all_GDPscen,all_in)                  "energy service demand"
   p29_efficiency_growth(tall,all_regi,all_GDPscen,all_in)         "efficency level paths for ppf beyond calibration"
   p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in)            "capital quantities"

@@ -5,10 +5,11 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(luplot)
-library(lucode)
+library(lucode2)
+library(gms)
 library(gdx)
 library(magpie)
-library(remind)
+library(remind2)
 library(ggplot2)
 
 ############################# BASIC CONFIGURATION #############################

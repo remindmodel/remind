@@ -8,10 +8,11 @@
 #----------------------------     PREPARATION     --------------------------
 #---------------------------------------------------------------------------
 library(tidyverse)
-library(remind)
+library(remind2)
 library(gridExtra)
 library(quitte)
-require(lucode)
+require(lucode2)
+require(gms)
 require(colorspace)
 
 gdx_name     <- "fulldata.gdx"        # name of the gdx  

@@ -9,8 +9,8 @@
 create_ExogSameAsPrevious_CO2price_file<-function(gdx){
   
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
-  library(lucode,quietly=TRUE,warn.conflicts =FALSE)
-  require(remind,quietly = TRUE,warn.conflicts =FALSE)
+  library(gms,quietly=TRUE,warn.conflicts =FALSE)
+  require(remind2,quietly = TRUE,warn.conflicts =FALSE)
   
   ############################# BASIC CONFIGURATION #############################
   

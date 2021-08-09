@@ -4,13 +4,23 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
+
+# Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
+firstIteration = FALSE
+if (file.exists("log.txt")){
+  if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
+    firstIteration = TRUE
+    cat("\nExoGAINS - log for first iteration...\n\n")
+  }
+}
+
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
-#library(moinput)
-library(dplyr)
-library(luscale) # rename_dimnames
-library(remind)
-library(gdx) # writeGDX
+
+suppressMessages(library(dplyr, quietly = TRUE,warn.conflicts =FALSE))
+suppressMessages(library(luscale, quietly = TRUE,warn.conflicts =FALSE)) # rename_dimnames
+suppressMessages(library(remind2, quietly = TRUE,warn.conflicts =FALSE))
+suppressMessages(library(gdx, quietly = TRUE,warn.conflicts =FALSE)) # writeGDX
 
 # read SSP scenario
 load("config.Rdata")
@@ -34,8 +44,8 @@ rem_in_mo <- deletePlus(rem_in_mo)
 rem_in <- rem_in_mo
 
 # load GAINS emissions and emission factors
-ef_gains  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_gains.cs4r")
-emi_gains <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_gains.cs4r")
+ef_gains  <- read.magpie("ef_gains.cs4r")
+emi_gains <- read.magpie("emi_gains.cs4r")
 
 # ship_ef  <- read.magpie("../../modules/11_aerosols/exoGAINS/input/ef_ship.cs4r")
 # ship_emi <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_ship.cs4r")
@@ -48,7 +58,7 @@ emi_gains <- read.magpie("../../modules/11_aerosols/exoGAINS/input/emi_gains.cs4
 ################### Load REMIND activities ###################
 ##############################################################
 
-map_GAINS2REMIND <- read.csv("../../modules/11_aerosols/exoGAINS/input/mappingGAINSmixedtoREMIND17activities.csv", stringsAsFactors=FALSE)
+map_GAINS2REMIND <- read.csv("mappingGAINSmixedtoREMIND17activities.csv", stringsAsFactors=FALSE)
 
 # End_Use_Services_Coal is mapped to an activity that is so far not existing in the REMIND reporting:
 # FE|Solids without BioTrad (EJ/yr) = Final Energy|Solids (EJ/yr) -  Final Energy|Solids|Biomass|Traditional (EJ/yr)
@@ -69,10 +79,12 @@ RA <- RA["GLO",,invert=TRUE]
 ###################   select GAINS data    ###################
 ##############################################################
 
-cat("List of sectors that are not in the GAINS2REMIND mapping because there is no emission and/or activity data.\nThese sectors will be omitted in the calculations!\n")
-
-missing_sectors <- setdiff(getNames(ef_gains,dim=1),map_GAINS2REMIND$GAINS)
-cat(missing_sectors,sep="\n")
+# logging missing sectors
+if(firstIteration){
+  cat("List of sectors that are not in the GAINS2REMIND mapping because there is no emission and/or activity data.\nThese sectors will be omitted in the calculations!\n")
+  missing_sectors <- setdiff(getNames(ef_gains,dim=1),map_GAINS2REMIND$GAINS)
+  cat(missing_sectors,sep="\n")
+}
 
 # select GAINS data according to order in mapping and bring regions into same (alphabetically sorted) order as RA
 ef_gains  <- ef_gains[getRegions(RA),,map_GAINS2REMIND$GAINS]
@@ -126,8 +138,11 @@ E <- mbind(E,dimSums(E,dim=1))
 # E_calibrated <- E * E(2015) / E_CEDS(2015)
 
 # read mapping from GAINS sectors to REMIND sectors
-#map_GAINSsec2REMINDsec <- read.csv(madrat:::toolMappingFile("sectoral", "mappingGAINStoREMINDsectors.csv"), stringsAsFactors=FALSE,na.strings = "")
-map_GAINSsec2REMINDsec <- read.csv("../../modules/11_aerosols/exoGAINS/input/mappingGAINStoREMINDsectors.csv", stringsAsFactors=FALSE,na.strings = "")
+map_GAINSsec2REMINDsec <- read.csv(madrat::toolGetMapping(type = "sectoral",
+                                                          name = "mappingGAINStoREMINDsectors.csv",
+                                                          returnPathOnly = TRUE),
+                                   stringsAsFactors = FALSE,
+                                   na.strings = "")
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
@@ -205,3 +220,7 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # CEDS16 <- add_columns(CEDS16,addnm = getNames(avi_E,dim=1)) # filled with NA
 # CEDS16[,,getNames(avi_E,dim=1)] <- 0 # replace NA with zero
 # CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
+
+if(firstIteration){
+  cat("\nExoGAINS - end of first iteration.\n\n")
+}

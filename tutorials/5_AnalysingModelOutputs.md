@@ -197,8 +197,8 @@ setwd("/path/to/your/remind/model/folder")
 Then, load the package and call the help pages:
 
 ``` r
-library(remind)
-?remind
+library(remind2)
+?remind2
 ```
 
 You can click on the index and search for interesting functions. All functions used to generate the reporting start with "reporting*.R".

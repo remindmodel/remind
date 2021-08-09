@@ -31,6 +31,7 @@ p36_fe2es(ttot,all_regi,all_teEs) "FE to ES(UE) efficiency of technology teES"
 
 p36_logitLambda(all_regi,all_in)  "logit parameter for homogeneity"
 p36_logitLambda_load (all_regi,all_in)  "logit parameter for homogeneity, loaded from GDX_ref"
+p36_fePrice_load(tall,all_regi,all_enty,all_enty,all_te)                  "Final energy price from GDX"
 p36_fePrice(tall,all_regi,all_enty)                  "Final energy price"
 p36_fePrice_iter(iteration,tall,all_regi,all_enty)                  "Storage parameter for final energy price over iterations"
 p36_marginalUtility(tall,all_regi)                    "Marginal utility of income: used to compute the final energy price from the marginal of balance equation"
@@ -51,6 +52,9 @@ p36_esCapCostImplicit(tall,all_regi,all_teEs)                    "Capital costs 
 p36_kapPrice(tall,all_regi)                             "Macroeconomic capital price, net of depreciation"
 p36_kapPriceImplicit(tall,all_regi,all_teEs)         "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
 p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
+p36_depreciationRate(all_teEs)                       "Depreciation rates for the indivudal conversion technologies, rouhgly derived from their lifetime parameter"
+p36_pushCalib(tall,all_teEs)                             "degree to which the calibration parameter should be reduced/increased for these technologies"
+
 
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
@@ -59,27 +63,10 @@ p36_aux_lifetime(all_teEs)                             "auxiliary parameter for 
 p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 ;
 
-
-Variables
-
-v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
-v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
-v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)                "slack variable to avoid infeasibilities in the initialisation of vintages"
-v36_logitInfes(tall,all_regi,all_in)                                      "slack variable to avoid infeasibilities in case historical demand cannot be declined fast enough"
-v36_costs(ttot,all_regi)                                                  "technological costs"
-v36_vintage_obj                                                           "objective variable for vintage model"
-v36_shares_obj                                                            "objective variable for heterogeneity preferences"
-;
-
 Equations
-q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
-q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"
-q36_budget(tall,all_regi)                             "budget equation"
-q36_vintage_obj                                              "objective function for vintage model"
-
-q36_shares_obj                                         "objective function for logit shares: heterogeneity preferences"
-
+  q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
 ;
+
 
 file testfile /""/;
 

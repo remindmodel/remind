@@ -9,11 +9,12 @@
 ##################################################################
 start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE,qos) {
   
-  require(lucode)
+  require(lucode2)
+  require(gms)
   require(magclass)
   require(gdx)
   library(methods)
-  library(remind)
+  library(remind2)
   
   # delete entries in stack that contain needle and append new
   .setgdxcopy <- function(needle,stack,new){
@@ -24,17 +25,17 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   
   mainwd <- getwd() # save folder in which this script is executed
   
-  # retrieve REMIND settings
+  # Retrieve REMIND settings
   cfg_rem <- check_config(cfg_rem,paste0(path_remind,"config/default.cfg"),paste0(path_remind,"modules")) 
   cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
-  cfg_rem_original <- cfg_rem$output
+  cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing
 
   # retrieve MAgPIE settings
   cfg_mag <- check_config(cfg_mag,paste0(path_magpie,"config/default.cfg"),paste0(path_magpie,"modules")) 
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
-  cfg_mag$output     <- c("report","rds_report","remind") # report: MAgPIE3 and MAgPIE4, remind: MAgPIE3 (glo.modelstat.csv)
+  cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
@@ -112,7 +113,6 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
-      ####### START REMIND #######
       cfg_rem$pathToMagpieReport <- report
       outfolder_rem <- submit(cfg_rem)
       ############################
@@ -209,8 +209,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   #start subsequent runs via sbatch
   for(run in cfg_rem$subsequentruns){
     cat("Submitting subsequent run",run,"\n")
-    load(paste0("C_",run,".RData")) # load the config of the subsequent run here to provide the correct qos setting
-    system(paste0("sbatch --qos=",qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+    # load the config of the subsequent run to provide the correct qos setting (use new environmet to not overwrite the cfg_rem of the current run)
+    subseq.env <- new.env()
+    load(paste0("C_",run,".RData"),envir=subseq.env)
+    system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
   }
   
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
@@ -244,7 +246,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     warning(msg)
   } else {
     # Replace REMIND and MAgPIE with REMIND-MAgPIE
-    gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
+    #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
     write.report(tmp3,file=paste0("output/",runname,".mif"))
   }
 }
@@ -252,7 +254,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
 ##################################################################
 ################# E X E C U T E  start_coupled ###################
 ##################################################################
-require(lucode)
+require(lucode2)
 
 readArgs("coupled_config")
 load(coupled_config)

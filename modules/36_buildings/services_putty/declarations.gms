@@ -35,6 +35,7 @@ p36_fe2es(ttot,all_regi,all_teEs) "FE to ES(UE) efficiency of technology teES"
 
 p36_logitLambda(all_regi,all_in)  "logit parameter for homogeneity"
 p36_logitLambda_load (all_regi,all_in)  "logit parameter for homogeneity, loaded from GDX_ref"
+p36_fePrice_load(tall,all_regi,all_enty,all_enty,all_te)                  "Final energy price from GDX"
 p36_fePrice(tall,all_regi,all_enty)                  "Final energy price"
 p36_fePrice_iter(iteration,tall,all_regi,all_enty)                  "Storage parameter for final energy price over iterations"
 p36_marginalUtility(tall,all_regi)                    "Marginal utility of income: used to compute the final energy price from the marginal of balance equation"
@@ -56,6 +57,9 @@ p36_kapPrice(tall,all_regi)                             "Macroeconomic capital p
 p36_kapPriceImplicit(tall,all_regi,all_teEs)         "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
 p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
 
+p36_pushCalib(tall,all_teEs)                             "degree to which the calibration parameter should be reduced/increased for these technologies"
+p36_costReduc(tall,all_teEs)                             "Reduction of costs for some technologies"
+
 f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
 p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
 
@@ -76,11 +80,14 @@ v36_costs(ttot,all_regi)                                                  "techn
 v36_vintage_obj                                                           "objective variable for vintage model"
 v36_shares_obj                                                            "objective variable for heterogeneity preferences"
 ;
+
 Equations
 q36_enerSerAdj(tall,all_regi,all_in)       "adjustment costs for energy services" 
 q36_enerCoolAdj(tall,all_regi,all_in)      "adjustment costs for energy cooling services" 
 q36_pathConstraint(tall,all_regi)          "equation describing the relation between a variable and its variation"
 q36_putty_obj                              "objective function"
+
+q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
 
 q36_ueTech2Total(tall,all_regi,all_in)                       "definition of total UE buildings demand, based on the sum of demand by technology"
 q36_cap(tall,all_regi,all_enty,all_esty,all_teEs)     "definition of available capacities"

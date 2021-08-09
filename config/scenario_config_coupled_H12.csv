@@ -1,7 +1,7 @@
 title;start;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt
-Base;1;;;SSP2,NPI;y2100;;;;
-NDC;0;;;SSP2,NDC;y2100;;;;
-NPi;0;;;SSP2,NPI;y2100;;;;
-Budg1300;0;;;SSP2,NDC;y2020;;;;
-Budg950;0;;;SSP2,NDC;y2020;;;;
-Budg600;0;;;SSP2,NDC;y2020;;;;
+Base;1;;;SSP2|NPI;y2100;;;;
+NDC;0;;;SSP2|NDC;y2100;;;;
+NPi;0;;;SSP2|NPI;y2100;;;;
+Budg1300;0;;;SSP2|NDC;y2020;;;;
+Budg950;0;;;SSP2|NDC;y2020;;;;
+Budg600;0;;;SSP2|NDC;y2020;;;;

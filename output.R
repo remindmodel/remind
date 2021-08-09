@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
@@ -17,8 +18,8 @@
 options(error=quote({dump.frames(to.file=TRUE); traceback(); q()}))
 
 #load landuse library
-
-library(lucode)
+library(lucode2)
+library(gms)
 
 ###Define arguments that can be read from command line
 if(!exists("source_include")) {
@@ -93,6 +94,7 @@ choose_folder <- function(folder,title="Please choose a folder") {
 		return(dirs[identifier])
 	} else return(dirs[identifier])
 }
+
 
 choose_module <- function(Rfolder,title="Please choose an outputmodule") {
   module <- gsub("\\.R$","",grep("\\.R$",list.files(Rfolder), value=TRUE))

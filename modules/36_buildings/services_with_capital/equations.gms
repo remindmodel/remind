@@ -6,6 +6,19 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_with_capital/equations.gms
 
+***  Buildings Final Energy Balance
+q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"build"))) .. 
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(ttot,regi,entySe,entyFe,"build",emiMkt)) 
+  =e=
+  (
+    sum(fe2ppfEn36(entyFe,in),
+      vm_cesIO(ttot,regi,in)
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
+    )
+    +
+    sum(fe2es_dyn36(entyFe,esty,teEs), vm_demFeForEs(ttot,regi,entyFe,esty,teEs) )
+  )$(sameas(emiMkt,"ES")) 
+;
 q36_ueTech2Total(ttot,regi_dyn36(regi),inViaEs_dyn36(in)) $
                                   ( (s36_vintage_calib eq 1 AND t36_hist(ttot) )
                                     OR ((s36_logit eq 1) AND (ttot.val ge cm_startyear)) ) ..

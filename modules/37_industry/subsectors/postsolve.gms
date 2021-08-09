@@ -59,4 +59,12 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
     );
 );
 
+
+*** calculation of FE Industry Prices (useful for internal use and reporting 
+*** purposes)
+pm_FEPrice(t,regi,entyFE,"indst",emiMkt)$( abs (qm_budget.m(t,regi)) gt sm_eps )
+  = q37_demFeIndst.m(t,regi,entyFE,emiMkt)
+  / qm_budget.m(t,regi);
+
 *** EOF ./modules/37_industry/subsectors/postsolve.gms
+

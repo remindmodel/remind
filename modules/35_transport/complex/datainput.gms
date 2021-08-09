@@ -55,25 +55,18 @@ display p35_passLDV_ES_efficiency;
 display p35_freight_ES_efficiency;
 
 
-*CB* read-in of bunker share in non-LDV transport, i.e. fedie. Based on regional linear regional aggregation, but limited to 50% (binding in EU, OAS, RUS)
-Parameter  pm_bunker_share_in_nonldv_fe(tall,all_regi)       "share of bunkers in non-LDV transport, i.e. fedie"
+*** bunkers FE demand trajectories
+Parameter  p35_bunkers_fedemand(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "Bunkers FE demand [EJ]"
 /
 $ondelim
-$include "./modules/35_transport/complex/input/pm_bunker_share_in_nonldv_fe.cs4r"
+$include "./modules/35_transport/complex/input/f35_bunkers_fe.cs4r"
 $offdelim
 /
 ;
-display pm_bunker_share_in_nonldv_fe;
-*** limit share to maximum 55%
-loop(regi,
-     loop(t,
-         if( pm_bunker_share_in_nonldv_fe(t,regi) > 0.55,
-             pm_bunker_share_in_nonldv_fe(t,regi) = 0.55;
-         ); 
-     ); 
-);
-display pm_bunker_share_in_nonldv_fe;
 
+p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","ConvCase");
+
+display p35_bunkers_fe;
 
 *** RP: to be able to better reproduce the 2010 decrease of liquids and solids demand in the US, additionally decrease the refineries build-up in 2005:
 table f35_factorVintages(all_regi,opTimeYr,all_te) "factor to be able to better reproduce the 2010 decrease of liquids and solids demand"

@@ -21,7 +21,7 @@ p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues e
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
 p30_pebiolc_demandmag(tall,all_regi)            "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
-***p30_pedemBio_BAU(ttot,all_regi)                 "Primary bioenergy demand imported from reference gdx [TWa]"
+
 
 
 *** Shift factor calculation
@@ -52,6 +52,7 @@ Positive variable
 v30_priceshift(ttot,all_regi)      "Regional translation factor that shifts emulator prices to better fit actual MAgPIE prices [-]"
 v30_pricemult(ttot,all_regi)       "Regional multiplication factor that sclaes emulator prices to better fit actual MAgPIE prices [-]"
 v30_multcost(ttot,all_regi)        "Cost markup factor for deviations from demand of last coupling iteration [-]"
+v30_BioPEProdTotal(ttot,all_regi)  "total domestic PE biomass production [unit: TWyr]"
 ***v30_pedem_BAU(tall,all_regi,all_enty,all_enty,all_te)    "Primary energy demand imported from refernce gdx [TWa]"
 ***v30_seprod_BAU(tall,all_regi,all_enty,all_enty,all_te)   "Secondary energy production imported from reference gdx [TWa]"
 
@@ -65,5 +66,7 @@ q30_priceshift                     "Calculates shift factor by minimizing least 
 q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported, no residues"
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
+q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production to multiple of cm_bioprod_histlim times 2015 level, active if cm_bioprod_histlim >= 0"
+q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
 ;
 *** EOF ./modules/30_biomass/magpie_4/declarations.gms

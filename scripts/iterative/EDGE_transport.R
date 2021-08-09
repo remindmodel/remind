@@ -20,16 +20,13 @@ library(gdxdt)
 library(edgeTrpLib)
 require(devtools)
 library(rmndt)
-library(moinput)
+library(mrremind)
+print("Start of the EDGE-T iterative model run")
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
 
 data_folder <- "EDGE-T"
-
-mapspath <- function(fname){
-  file.path("../../modules/35_transport/edge_esm/input", fname)
-}
 
 datapath <- function(fname){
   file.path(data_folder, fname)
@@ -51,8 +48,11 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+# set regionmapping compatible with REMIND-EU and REMIND-H12 configs
+setConfig(regionmapping = sub('.*\\/', '', cfg$regionmapping))
 
-EDGEscenarios <- fread("../../modules/35_transport/edge_esm/input/EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
+
 
 inconvenience <- EDGEscenarios[options == "inconvenience", switch]
 
@@ -67,10 +67,11 @@ if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
   quit()
 }
 
+## learning is OFF by default
+learning = FALSE
 
 REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode, region = RegionCode)]
-EDGE2teESmap <- fread(mapspath("mapping_EDGE_REMIND_transport_categories.csv"))
-
+EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 ## input data loading
 input_folder = paste0("../../modules/35_transport/edge_esm/input/")
@@ -95,29 +96,34 @@ pref_data = inputdata$pref_data
 ## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
 prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
-pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "iso")]
+pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+pref_data$FV_final_pref[, check := sum(value), by = c("vehicle_type", "region")]
 pref_data$FV_final_pref = pref_data$FV_final_pref[check>0]
 pref_data$FV_final_pref[, check := NULL]
 pref_data$FV_final_pref = rbind(prefdata_nonmot, pref_data$FV_final_pref)
 
 prefdata_nonmotV = pref_data$VS1_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
-pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
-pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "iso")]
+pref_data$VS1_final_pref = merge(pref_data$VS1_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
+pref_data$VS1_final_pref[, check := sum(sw), by = c("vehicle_type", "region")]
 pref_data$VS1_final_pref = pref_data$VS1_final_pref[check>0]
 pref_data$VS1_final_pref[, check := NULL]
 pref_data$VS1_final_pref = rbind(prefdata_nonmotV, pref_data$VS1_final_pref)
 
+
+
+
 ## optional average of prices
 average_prices = TRUE
 
-ES_demand_all = readREMINDdemand(gdx, REMIND2ISO_MAPPING, EDGE2teESmap, REMINDyears, scenario)
+## calculate the ES demand (in million km)
+ES_demand_all = readREMINDdemand(gdx = gdx, REMINDmapping = REMIND2ISO_MAPPING, EDGE2teESmap = EDGE2teESmap, years = REMINDyears, scenario = scenario)
+
 ## select from total demand only the passenger sm
 ES_demand = ES_demand_all[sector == "trn_pass",]
 
 
 
-if (file.exists(datapath("demand_previousiter.RDS"))) {
+if (file.exists(datapath("demand_previousiter.RDS")) & learning) {
   ## load previous iteration number of cars
   demand_learntmp = readRDS(datapath("demand_learn.RDS"))
   ## load previous iteration demand
@@ -125,7 +131,7 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
   ## load previus iteration number of stations
   stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
-  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("iso", "vehicle_type")]), by = c("iso", "vehicle_type"), all.y = TRUE)
+  nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
   if (techswitch == "BEV"){
     rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
     rebates_febatesFCEV = FALSE
@@ -137,14 +143,19 @@ if (file.exists(datapath("demand_previousiter.RDS"))) {
     rebates_febatesBEV = FALSE
   }
 
-  nonfuel_costs_list = applylearning(nonfuel_costs, capcost4W, gdx, REMINDmapping, EDGE2teESmap, demand_learntmp, ES_demandpr, ES_demand, rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+  nonfuel_costs_list = applylearning(
+      non_fuel_costs = nonfuel_costs, capcost4W = capcost4W,
+      gdx =  gdx, EDGE2teESmap = EDGE2teESmap, demand_learntmp = demand_learntmp,
+      ES_demandpr =  ES_demandpr, ES_demand =  ES_demand,
+      rebates_febatesBEV = rebates_febatesBEV, rebates_febatesFCEV = rebates_febatesFCEV)
+
   nonfuel_costs = nonfuel_costs_list$nonfuel_costs
   capcost4W = nonfuel_costs_list$capcost4W
   saveRDS(nonfuel_costs, "nonfuel_costs_learning.RDS")
-  saveRDS(capcost4W, "capcost_learning.RDS")} else {
-    stations = NULL
-    totveh = NULL
-  }
+  saveRDS(capcost4W, "capcost_learning.RDS")
+   } else {
+      totveh = NULL
+   }
 
 ## load price
 REMIND_prices <- merge_prices(
@@ -157,7 +168,7 @@ REMIND_prices <- merge_prices(
 
 ## save prices
 ## read last iteration count
-keys <- c("iso", "year", "technology", "vehicle_type")
+keys <- c("region", "year", "technology", "vehicle_type")
 setkeyv(REMIND_prices, keys)
 
 pfile <- "EDGE_transport_prices.rds"
@@ -171,7 +182,7 @@ saveRDS(REMIND_prices, datapath(paste0("REMINDprices", iter, ".RDS")))
 
 if(average_prices){
 
-  if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30){
+  if(max(unique(REMIND_prices$iternum)) >= 20 & max(unique(REMIND_prices$iternum)) <= 30 & file.exists(datapath(pfile))){
     old_prices <- readRDS(datapath(pfile))
     all_prices <- rbind(old_prices, REMIND_prices)
     setkeyv(all_prices, keys)
@@ -192,35 +203,21 @@ if(average_prices){
 REMIND_prices[, "iternum" := NULL]
 
 ## calculates logit
-if (inconvenience) {
-  years=copy(REMINDyears)
-  if (file.exists(datapath("demand_totalLDV.RDS"))) {
-    ## load previous iteration number of cars
-    totveh = readRDS(datapath("demand_totalLDV.RDS"))
-  }
-  logit_data <- calculate_logit_inconv_endog(
-    prices= REMIND_prices[tot_price > 0],
-    vot_data = vot_data,
-    pref_data = pref_data,
-    logit_params = logit_params,
-    intensity_data = int_dat,
-    price_nonmot = price_nonmot,
-    stations = if (!is.null(stations)) stations,
-    totveh = if (!is.null(totveh)) totveh,
-    techswitch = techswitch)
-
-} else{
-
-  logit_data <- calculate_logit(
-    REMIND_prices[tot_price > 0],
-    REMIND2ISO_MAPPING,
-    vot_data = vot_data,
-    sw_data = sw_data,
-    logit_params = logit_params,
-    intensity_data = int_dat,
-    price_nonmot = price_nonmot)
-
+years=copy(REMINDyears)
+if (file.exists(datapath("demand_totalLDV.RDS"))) {
+  ## load previous iteration number of cars
+  totveh = readRDS(datapath("demand_totalLDV.RDS"))
 }
+logit_data <- calculate_logit_inconv_endog(
+  prices= REMIND_prices[tot_price > 0],
+  vot_data = vot_data,
+  pref_data = pref_data,
+  logit_params = logit_params,
+  intensity_data = int_dat,
+  price_nonmot = price_nonmot,
+  totveh = if (!is.null(totveh)) totveh,
+  techswitch = techswitch)
+
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
 
@@ -230,7 +227,7 @@ prices <- logit_data[["prices_list"]] ## prices at each level of the logit funct
 
 ## calculate vintages (new shares, prices, intensity)
 vintages = calcVint(shares = shares,
-                    totdem_regr = ES_demand,
+                    totdem_regr = ES_demand_all,
                     prices = prices,
                     mj_km_data = mj_km_data,
                     years = REMINDyears)
@@ -241,7 +238,7 @@ mj_km_data = vintages[["mj_km_data"]]
 
 
 ## use logit to calculate shares and intensities (on tech level)
-EDGE2CESmap <- fread(mapspath("mapping_CESnodes_EDGE.csv"))
+EDGE2CESmap <- fread("mapping_CESnodes_EDGE.csv")
 
 
 shares_int_dem <- shares_intensity_and_demand(
@@ -250,13 +247,11 @@ shares_int_dem <- shares_intensity_and_demand(
   EDGE2CESmap=EDGE2CESmap,
   REMINDyears=REMINDyears,
   scenario=scenario,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING,
   demand_input = if (opt$reporting) ES_demand_all)
 
 demByTech <- shares_int_dem[["demand"]] ##in [-]
 intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
-norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## total demand is 1, required for costs
-
+norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## totla demand normalized to 1; if opt$reporting, in million km
 
 if (opt$reporting) {
   saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
@@ -270,35 +265,71 @@ if (opt$reporting) {
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
+
+  vint <- vintages[["vintcomp_startyear"]]
+  newd <- vintages[["newcomp"]]
+  sharesVS1 <- shares[["VS1_shares"]]
+  setnames(sharesVS1, "share", "shareVS1")
+
+  newd <- sharesVS1[newd, on=c("region", "year", "subsector_L1", "vehicle_type")]
+  newd[, demNew := totdem * sharetech_new * shareVS1]
+
+  ## newd <- loadFactor[newd, on=c("year", "region", "vehicle_type")]
+  ## newd[, demNew := demNew/loadFactor]
+
+  vint <- newd[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
+  vint <- vint[!is.na(demNew)]
+  
+  vint <- vint[, c("year", "region", "vehicle_type", "technology", "variable", "demNew", "demVintEachYear")]
+  vint[, demand_F := demNew + sum(demVintEachYear), by=c("region", "year", "vehicle_type", "technology")]
+
+  vint <- loadFactor[vint, on=c("year", "region", "vehicle_type")]
+
+  vint[, full_demand_vkm := demand_F/loadFactor]
+  vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
+  vint[, c("demand_F", "demVintEachYear", "loadFactor", "demNew") := NULL]
+  
+  setnames(vint, "variable", "construction_year")
+
+  vintfile <- "vintcomp.csv"
+  cat("# LDV Fleet vintages.", file=vintfile, sep="\n")
+  cat("# full_demand_vkm is the full demand for a given year, region, vehicle_type and technology.", file=vintfile, sep="\n", append=TRUE)
+  cat("# New sales for the current year can be calculated by full_demand_vkm - sum(vintage_demand_vkm).", file=vintfile, sep="\n", append=TRUE)
+  cat("# Units: million vkms.", file=vintfile, sep="\n", append=TRUE)
+
+  fwrite(vint, vintfile, col.names=TRUE, append=TRUE)
+
   quit()
 }
 
 num_veh_stations = calc_num_vehicles_stations(
   norm_dem = norm_demand[
     subsector_L1 == "trn_pass_road_LDV_4W", ## only 4wheelers
-    c("iso", "year", "sector", "vehicle_type", "technology", "demand_F") ],
+    c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
+  intensity = intensity,
   techswitch = techswitch,
-  loadFactor = loadFactor)
+  loadFactor = loadFactor,
+  EDGE2teESmap = EDGE2teESmap,
+  rep = opt$reporting)
 
 ## save number of vehicles for next iteration
-saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))
-saveRDS(num_veh_stations$stations, datapath("stations.RDS"))
-saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS"))
+saveRDS(num_veh_stations$learntechdem, datapath("demand_learn.RDS"))  ## in million veh
+saveRDS(num_veh_stations$alltechdem, datapath("demand_totalLDV.RDS")) ## in million veh
 ## save the demand for next iteration renaming the column
-setnames(ES_demand, old ="demand", new = "demandpr")
+setnames(ES_demand, old ="demand", new = "demandpr")                  ## in million passenger-km
 saveRDS(ES_demand, datapath("demand_previousiter.RDS"))
 
 
 ## use logit to calculate costs
 budget <- calculate_capCosts(
   base_price=prices$base,
-  Fdemand_ES = norm_demand,
+  Fdemand_ES = shares_int_dem[["demandF_plot_pkm"]],
+  stations = num_veh_stations$stations,
   EDGE2CESmap = EDGE2CESmap,
   EDGE2teESmap = EDGE2teESmap,
   REMINDyears = REMINDyears,
-  scenario = scenario,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
+  scenario = scenario)
 
 ## full REMIND time range for inputs
 REMINDtall <- c(seq(1900,1985,5),
@@ -312,8 +343,7 @@ finalInputs <- prepare4REMIND(
   intensity = intensity,
   capCost = budget,
   EDGE2teESmap = EDGE2teESmap,
-  REMINDtall = REMINDtall,
-  REMIND2ISO_MAPPING=REMIND2ISO_MAPPING)
+  REMINDtall = REMINDtall)
 
 
 
@@ -350,3 +380,4 @@ writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
 
+print("End of the EDGE-T iterative model run")

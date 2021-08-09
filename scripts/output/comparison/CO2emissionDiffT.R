@@ -7,10 +7,11 @@
 
 library(lusweave)
 library(luplot)
-library(lucode)
+library(lucode2)
+library(gms)
 library(gdx)
 library(magpie)
-library(remind)
+library(remind2)
 
 ############################# BASIC CONFIGURATION #############################
 gdx_name <- "fulldata.gdx"        # name of the gdx   

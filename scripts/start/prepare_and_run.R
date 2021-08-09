@@ -4,16 +4,18 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(gms, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(dplyr, quietly = TRUE,warn.conflicts =FALSE)
+library(yaml, quietly = TRUE,warn.conflicts=FALSE)
 require(gdx)
 
-################################################################################################## 
+##################################################################################################
 #                             function: getReportData                                            #
 ##################################################################################################
 
 getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="costs") {
-	require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   .bioenergy_price <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
@@ -27,7 +29,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
     write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_pricemag_coupling.csv"),file_type="csvr")
-  }  
+  }
   .bioenergy_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     if ("Production Cost|Agriculture|Biomass|Energy Crops (million US$2005/yr)" %in% getNames(mag)) {
@@ -40,7 +42,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
     write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_costsmag.csv"),file_type="csvr")
-  }  
+  }
   .bioenergy_production <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     if("Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)" %in% getNames(mag)) {
@@ -54,9 +56,9 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
     write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_demandmag_coupling.csv"),file_type="csvr")
-  }  
+  }
   .emissions_mac <- function(mag) {
-    # define three columns of dataframe: 
+    # define three columns of dataframe:
     #   emirem (remind emission names)
     #   emimag (magpie emission names)
     #   factor_mag2rem (factor for converting magpie to remind emissions)
@@ -66,7 +68,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
     if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
       # MAgPIE 4
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land (Mt CO2/yr)",                                                                 emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr)",    emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -78,7 +80,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
     } else if("Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)" %in% getNames(mag)) {
       # MAgPIE 4 new
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land (Mt CO2/yr)",                                                                 emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)",                       emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O-N/yr)",      emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O-N/yr)",emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -124,13 +126,13 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
         #}
         out<-mbind(out,tmp)
     }
-    
+
     # Write REMIND input file
     notGLO   <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     filename <- paste0("./core/input/f_macBaseMagpie_coupling.cs4r")
-    write.magpie(out[notGLO],filename)
+    write.magpie(out[notGLO,,],filename)
     write(paste0("*** EOF ",filename," ***"),file=filename,append=TRUE)
-  }	
+  }
   .agriculture_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
     out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
@@ -145,7 +147,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     dimnames(out)[[3]] <- NULL
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/trade_bal_reg.rem.csv"),file_type="csvr")
   }
-  
+
   rep <- read.report(path_to_report,as.list=FALSE)
   if (length(getNames(rep,dim="scenario"))!=1) stop("getReportData: MAgPIE data contains more or less than 1 scenario.")
   rep <- collapseNames(rep) # get rid of scenrio and model dimension if they exist
@@ -160,22 +162,22 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
   #.agriculture_tradebal(mag)
 }
 
-################################################################################################## 
+##################################################################################################
 #                             function: prepare                                                  #
 ##################################################################################################
 
 prepare <- function() {
 
   timePrepareStart <- Sys.time()
-  
+
   # Load libraries
-  require(lucode, quietly = TRUE,warn.conflicts =FALSE)
+  #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind, quietly = TRUE,warn.conflicts =FALSE)
-  require(moinput)
+  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
+  require(mrremind)
   require(mrvalidation)
-  
+
   .copy.fromlist <- function(filelist,destfolder) {
     if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
     for(i in 1:length(filelist)) {
@@ -186,71 +188,89 @@ prepare <- function() {
       }
 	  }
   }
- 
+
   # Display git information
   cat("\n===== git info =====\nLatest commit: ")
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
   cat("\n====================\n")
 
+  ## print the libraries version
+  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
+
+
   load("config.Rdata")
-  
+
   # Store results folder of current scenario
   on.exit(setwd(cfg$results_folder))
-  
+
   # change to REMIND main folder
   setwd(cfg$remind_folder)
-  
+
   # Check configuration for consistency
   cfg <- check_config(cfg, reference_file="config/default.cfg", settings_config = "config/settings_config.csv")
-  
+
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
     cat("Only optimization='nash' is compatible with subsudizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now. \n")
     cfg$gms$subsidizeLearning = 'off'
   }
-  
+
   # reportCEScalib only works with the calibrate module
   if ( cfg$gms$CES_parameters != "calibrate" ) cfg$output <- setdiff(cfg$output,"reportCEScalib")
-  
+
   #AJS quit if title is too long - GAMS can't handle that
   if( nchar(cfg$title) > 75 | grepl("\\.",cfg$title) ) {
       stop("This title is too long or the name contains dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
   }
 
+
   # adjust GDPpcScen based on GDPscen
-  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen) 
+  cfg$gms$c_GDPpcScen <- gsub("gdp_","",cfg$gms$cm_GDPscen)
 
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
   
+  # Copy MAGICC
+  if ( !file.exists(cfg$magicc_template) 
+     & file.exists(path.expand(Sys.getenv('MAGICC'))))
+	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
+
+  if (file.exists(cfg$magicc_template)) {
+      cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
+      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
+    } else {
+      cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
+    }
+
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
   if (on_cluster)
-    system("find ./core/magicc/ -type f | xargs dos2unix -q")
-  
+    system(paste0("find ",cfg$results_folder,"/magicc/ -type f | xargs dos2unix -q"))
+
   ################## M O D E L   L O C K ###################################
-  # Lock the directory for other instances of the start scritps
-  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
-  on.exit(model_unlock(lock_id, oncluster=on_cluster))  
+  # Lock the directory for other instances of the start scripts
+  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  on.exit(model_unlock(lock_id),add=TRUE)
   ################## M O D E L   L O C K ###################################
 
   ###########################################################
   ### PROCESSING INPUT DATA ###################### START ####
   ###########################################################
-   
-  # update input files based on previous runs if applicable 
+
+  # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
-  } 
-  ## the following is outcommented because by now it has to be done by hand ( currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
+  }
+  ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
   #if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
-  #}  
-  
+  #}
+
   # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
   if(cfg$gms$transport == "edge_esm"){
     if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
@@ -259,6 +279,12 @@ prepare <- function() {
        demTrsp = "conv"
     }
   }
+
+  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
+  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
+       demComplex = "fromEDGET"
+  }
+
 
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
@@ -269,19 +295,22 @@ prepare <- function() {
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
-                                         "Reg_", substr(regionscode(cfg$regionmapping),1,10))
-  
+                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
+                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
+                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
+                                         "Reg_", regionscode(cfg$regionmapping))
+
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
                   content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
                   subject = "CES INPUT")
- 
+
   # If a path to a MAgPIE report is supplied use it as REMIND intput (used for REMIND-MAgPIE coupling)
   # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
     getReportData(path_to_report = cfg$pathToMagpieReport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
   }
-  
+
   # Update module paths in GAMS code
   update_modules_embedding()
 
@@ -293,10 +322,10 @@ prepare <- function() {
   # run main.gms if not further specified
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
-  
+
   ######## declare functions for updating information ####
   update_info <- function(regionscode,revision) {
-    
+
     subject <- 'VERSION INFO'
     content <- c('',
       paste('Regionscode:',regionscode),
@@ -305,9 +334,9 @@ prepare <- function() {
       '',
       paste('Last modification (input data):',date()),
       '')
-    replace_in_file(cfg$model,paste('*',content),subject)  
+    replace_in_file(cfg$model,paste('*',content),subject)
   }
-   
+
   update_sets <- function(map) {
      .tmp <- function(x,prefix="", suffix1="", suffix2=" /", collapse=",", n=10) {
       content <- NULL
@@ -326,12 +355,10 @@ prepare <- function() {
     content <- c(modification_warning,'','sets')
     # write iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
-    regions <- levels(map$RegionCode)
+    regions <- as.character(unique(map$RegionCode))
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
-    subsets <- toolRegionSubsets(map=cfg$regionmapping)
-    if(is.null(subsets[["EUR"]]))
-        subsets[["EUR"]] <- c("EUR")
+    subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -344,45 +371,46 @@ prepare <- function() {
 	  content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
-    for(i in levels(map$RegionCode)) {
+    for(i in as.character(unique(map$RegionCode))) {
       content <- c(content, .tmp(map$CountryCode[map$RegionCode==i], prefix=paste0(i," . ("), suffix1=")", suffix2=")"))
     }
-    content <- c(content,'      /') 
+    content <- c(content,'      /')
     content <- c(content, 'iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" ','         /')
-    for(i in regions[regions %in% c("EUR","CHA",levels(map$CountryCode))]) {
+    for(i in regions[regions %in% c("EUR","CHA",as.character(unique(map$CountryCode)))]) {
       content <- c(content, .tmp(i, prefix=paste0(i," . "), suffix1="", suffix2=""))
     }
-    content <- c(content,'      /',';') 
+    content <- c(content,'      /',';')
     replace_in_file('core/sets.gms',content,"SETS",comment="***")
   }
-  
+
   ############ download and distribute input data ########
-  # check wheather the regional resolution and input data revision are outdated and update data if needed
+  # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old <- readLines("input/source_files.log")[1]
+      input_old     <- readLines("input/source_files.log")[c(1,2)]
   } else {
-      input_old <- "no_data"
+      input_old     <- "no_data"
   }
-  input_new <- paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz")
-    
+  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
+  # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
       cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE)
-  }
-  
+                          debug        = FALSE) 
+  } 
+    
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$revision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
-  map <- read.csv(cfg$regionmapping,sep=";")  
+  map <- read.csv(cfg$regionmapping,sep=";")
   update_sets(map)
-  
+
   ########################################################
   ### PROCESSING INPUT DATA ###################### END ###
   ########################################################
@@ -401,22 +429,26 @@ prepare <- function() {
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
-      
+  
+  # copy right gdx file to the output folder
+  gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
+  system(paste0('cp ',gdx_name,' ',file.path(cfg$results_folder, "input.gdx")))
+  
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
-  
+
   # Copy important files into output_folder (before REMIND execution)
   .copy.fromlist(cfg$files2export$start,cfg$results_folder)
 
   # Save configuration
-  save(cfg, file = path(cfg$results_folder, "config.Rdata"))
+  save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
   cat("Creating full.gms\n")
-  singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
-  
+  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
+
   # Collect run statistics (will be saved to central database in submit.R)
-  lucode::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
+  lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
                         user = Sys.info()[["user"]],
                         date = Sys.time(),
                         version_management = "git",
@@ -426,77 +458,83 @@ prepare <- function() {
 
   ################## M O D E L   U N L O C K ###################################
   # After full.gms was produced remind folders have to be unlocked to allow setting up the next run
-  model_unlock(lock_id, oncluster=on_cluster)
+  model_unlock(lock_id)
   # Reset on.exit: Prevent model_unlock from being executed again at the end
   # and remove "setwd(cfg$results_folder)" from on.exit, becaue we change to it in the next line
   on.exit()
   ################## M O D E L   U N L O C K ###################################
-  
+
   setwd(cfg$results_folder)
 
-  # Function to create the levs.gms, fixings.gms, and margs.gms files, used in 
+  write_yaml(cfg,file="cfg.txt")
+  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
+  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
+  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
+  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
+
+  # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
   create_fixing_files <- function(cfg, input_ref_file = "input_ref.gdx") {
-    
+
     # Start the clock.
     begin <- Sys.time()
-    
-    # Extract data from input_ref.gdx file and store in levs_margs_ref.gms. 
-    system(paste("gdxdump", 
-                 input_ref_file, 
-                 "Format=gamsbas Delim=comma FilterDef=N Output=levs_margs_ref.gms", 
+
+    # Extract data from input_ref.gdx file and store in levs_margs_ref.gms.
+    system(paste("gdxdump",
+                 input_ref_file,
+                 "Format=gamsbas Delim=comma FilterDef=N Output=levs_margs_ref.gms",
                  sep = " "))
-    
+
     # Read data from levs_margs_ref.gms.
     ref_gdx_data <- suppressWarnings(readLines("levs_margs_ref.gms"))
-    
+
     # Create fixing files.
     cat("\n")
     create_standard_fixings(cfg, ref_gdx_data)
-    
+
     # Stop the clock.
     cat("Time it took to create the fixing files: ")
     manipulate_runtime <- Sys.time()-begin
     print(manipulate_runtime)
     cat("\n")
-    
-    
+
+
     # Delete file.
     file.remove("levs_margs_ref.gms")
-    
+
   }
 
 
-  # Function to create the levs.gms, fixings.gms, and margs.gms files, used in 
+  # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # the standard (i.e. the non-macro stand-alone) delay scenarios.
   create_standard_fixings <- function(cfg, ref_gdx_data) {
-    
-    # Declare empty lists to hold the strings for the 'manipulateFile' functions. 
+
+    # Declare empty lists to hold the strings for the 'manipulateFile' functions.
     full_manipulateThis <- NULL
     levs_manipulateThis <- NULL
     fixings_manipulateThis <- NULL
     margs_manipulateThis <- NULL
 
     str_years <- c()
-    no_years  <- (cfg$gms$cm_startyear - 2005) / 5  
-    
+    no_years  <- (cfg$gms$cm_startyear - 2005) / 5
+
     # Write level values to file
     levs <- c()
     for (i in 1:no_years) {
       str_years[i] <- paste("L \\('", 2000 + i * 5, sep = "")
       levs         <- c(levs, grep(str_years[i], ref_gdx_data, value = TRUE))
     }
-    
+
     writeLines(levs, "levs.gms")
-    
+
     # Replace fixing.gms with level values
     file.copy("levs.gms", "fixings.gms", overwrite = TRUE)
 
     fixings_manipulateThis <- c(fixings_manipulateThis, list(c(".L ", ".FX ")))
-    #cb q_co2eq is only "static" equation to be active before cm_startyear, as multigasscen could be different from a scenario to another that is fixed on the first  
+    #cb q_co2eq is only "static" equation to be active before cm_startyear, as multigasscen could be different from a scenario to another that is fixed on the first
     #cb therefore, vm_co2eq cannot be fixed, otherwise infeasibilities would result. vm_co2eq.M is meaningless, is never used in the code (a manipulateFile delete line command would be even better)
     #  manipulateFile("fixings.gms", list(c("vm_co2eq.FX ", "vm_co2eq.M ")))
-    
+
     # Write marginal values to file
     margs <- c()
     str_years    <- c()
@@ -508,43 +546,43 @@ prepare <- function() {
      # temporary fix so that you can use older gdx for fixings - will become obsolete in the future and can be deleted once the next variable name change is done
     margs_manipulateThis <- c(margs_manipulateThis, list(c("q_taxrev","q21_taxrev")))
     # fixing for SPA runs based on ModPol input data
-    margs_manipulateThis <- c(margs_manipulateThis, 
+    margs_manipulateThis <- c(margs_manipulateThis,
                               list(c("q41_emitrade_restr_mp.M", "!!q41_emitrade_restr_mp.M")),
-                              list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M"))) 
-    
-    #AJS this symbol is not known and crashes the run - is it depreciated? TODO 
-    levs_manipulateThis <- c(levs_manipulateThis, 
+                              list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M")))
+
+    #AJS this symbol is not known and crashes the run - is it depreciated? TODO
+    levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
-    
+
     #AJS filter out nash marginals in negishi case, as they would lead to a crash when trying to fix on them:
     if(cfg$gms$optimization == 'negishi'){
       margs_manipulateThis <- c(margs_manipulateThis, list(c("q80_costAdjNash.M", "!!q80_costAdjNash.M")))
     }
     if(cfg$gms$subsidizeLearning == 'off'){
-      levs_manipulateThis <- c(levs_manipulateThis, 
+      levs_manipulateThis <- c(levs_manipulateThis,
                                list(c("v22_costSubsidizeLearningForeign.L",
                                       "!!v22_costSubsidizeLearningForeign.L")))
-      margs_manipulateThis <- c(margs_manipulateThis, 
+      margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q22_costSubsidizeLearning.M", "!!q22_costSubsidizeLearning.M")),
                                 list(c("v22_costSubsidizeLearningForeign.M",
                                        "!!v22_costSubsidizeLearningForeign.M")),
                                 list(c("q22_costSubsidizeLearningForeign.M",
                                        "!!q22_costSubsidizeLearningForeign.M")))
-      fixings_manipulateThis <- c(fixings_manipulateThis, 
+      fixings_manipulateThis <- c(fixings_manipulateThis,
                                   list(c("v22_costSubsidizeLearningForeign.FX",
                                          "!!v22_costSubsidizeLearningForeign.FX")))
-      
+
     }
-    
+
     #JH filter out negishi marginals in nash case, as they would lead to a crash when trying to fix on them:
     if(cfg$gms$optimization == 'nash'){
-      margs_manipulateThis <- c(margs_manipulateThis, 
+      margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q80_balTrade.M", "!!q80_balTrade.M")),
                                 list(c("q80_budget_helper.M", "!!q80_budget_helper.M")))
     }
-    #RP filter out module 40 techpol fixings 
+    #RP filter out module 40 techpol fixings
     if(cfg$gms$techpol == 'none'){
-      margs_manipulateThis <- c(margs_manipulateThis, 
+      margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q40_NewRenBound.M", "!!q40_NewRenBound.M")),
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")),
                                 list(c("q40_LowCarbonBound.M", "!!q40_LowCarbonBound.M")),
@@ -562,16 +600,29 @@ prepare <- function() {
                                 list(c("q40_BioFuelBound.M", "!!q40_BioFuelBound.M")))
 
     }
-    
+
     if(cfg$gms$techpol == 'NPi2018'){
-      margs_manipulateThis <- c(margs_manipulateThis, 
+      margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q40_El_RenShare.M", "!!q40_El_RenShare.M")),
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
-    
+
+    levs_manipulateThis <- c(levs_manipulateThis, 
+                               list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
+    fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
+    margs_manipulateThis <- c(margs_manipulateThis, 
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
+
+    #RP filter out regipol items
+    if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("q47_implFETax.M", "!!q47_implFETax.M")))
+    }
+
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
-    full_manipulateThis <- c(full_manipulateThis, 
+    full_manipulateThis <- c(full_manipulateThis,
                              list(c("cb20150605readinpositionforlevelfile",
                                     paste("first offlisting inclusion of levs.gms so that level value can be accessed",
                                           "$offlisting",
@@ -584,14 +635,14 @@ prepare <- function() {
                                                                "$include \"fixings.gms\";",
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
-    
-    
-    # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in 
+
+
+    # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
     # single, respective, parses of the texts.
     manipulateFile("levs.gms", levs_manipulateThis)
     manipulateFile("fixings.gms", fixings_manipulateThis)
     manipulateFile("margs.gms", margs_manipulateThis)
-    
+
     # Perform actual manipulation on full.gms, in single parse of the text.
     manipulateFile("full.gms", full_manipulateThis)
   }
@@ -607,30 +658,30 @@ prepare <- function() {
   if (  cfg$gms$cm_startyear > 2005  & (!file.exists("levs.gms.gz") | !file.exists("levs.gms"))) {
     create_fixing_files(cfg = cfg, input_ref_file = "input_ref.gdx")
   }
-  
+
   timePrepareEnd <- Sys.time()
   # Save run statistics to local file
   cat("Saving timePrepareStart and timePrepareEnd to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0("runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0("runstatistics.rda"),
                       timePrepareStart = timePrepareStart,
                       timePrepareEnd   = timePrepareEnd)
-  
+
   # on.exit sets working directory to results folder
-  
+
 } # end of function "prepare"
 
-################################################################################################## 
+##################################################################################################
 #                                function: run                                                   #
 ##################################################################################################
 
 run <- function(start_subsequent_runs = TRUE) {
-  
+
   load("config.Rdata")
   on.exit(setwd(cfg$results_folder))
-  
+
   # Save start time
   timeGAMSStart <- Sys.time()
-  
+
   # De-compress finxing files if they have already been zipped (only valid if run is restarted)
   if (cfg$gms$cm_startyear > 2005) {
       if (file.exists("levs.gms.gz")) {
@@ -649,7 +700,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # Call GAMS
   if (cfg$gms$CES_parameters == "load") {
 
-    system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action, 
+    system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
                   " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
 
   } else if (cfg$gms$CES_parameters == "calibrate") {
@@ -665,34 +716,34 @@ run <- function(start_subsequent_runs = TRUE) {
       cat("CES calibration iteration: ", cal_itr, "\n")
 
       # Update calibration iteration in GAMS file
-      system(paste0("sed -i 's/^\\(\\$setglobal c_CES_calibration_iteration ", 
+      system(paste0("sed -i 's/^\\(\\$setglobal c_CES_calibration_iteration ",
                     "\\).*/\\1", cal_itr, "/' full.gms"))
 
-      system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action, 
+      system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
                     " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
 
       # If GAMS found a solution
       if (   file.exists("fulldata.gdx")
           && file.info("fulldata.gdx")$mtime > fulldata_m_time) {
-        
+
         #create the file to be used in the load mode
         getLoadFile <- function(){
-          
+
           file_name = paste0(cfg$gms$cm_CES_configuration,"_ITERATION_",cal_itr,".inc")
           ces_in = system("gdxdump fulldata.gdx symb=in NoHeader Format=CSV", intern = TRUE) %>% gsub("\"","",.) #" This comment is just to obtain correct syntax highlighting
           expr_ces_in = paste0("(",paste(ces_in, collapse = "|") ,")")
 
-          
-          tmp = system("gdxdump fulldata.gdx symb=pm_cesdata", intern = TRUE)[-(1:2)] %>% 
+
+          tmp = system("gdxdump fulldata.gdx symb=pm_cesdata", intern = TRUE)[-(1:2)] %>%
             grep("(quantity|price|eff|effgr|xi|rho|offset_quantity|compl_coef)", x = ., value = TRUE)
           tmp = tmp %>% grep(expr_ces_in,x = ., value = T)
-          
+
           tmp %>%
             sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
                 "pm_cesdata(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .) %>%
             write(file_name)
-          
-          
+
+
           pm_cesdata_putty = system("gdxdump fulldata.gdx symb=pm_cesdata_putty", intern = TRUE)
           if (length(pm_cesdata_putty) == 2){
             tmp_putty =  gsub("^Parameter *([A-z_(,)])+cesParameters\\).*$",'\\1"quantity")  =   0;',  pm_cesdata_putty[2])
@@ -705,14 +756,15 @@ run <- function(start_subsequent_runs = TRUE) {
             sub("'([^']*)'.'([^']*)'.'([^']*)'.'([^']*)' (.*)[ ,][ /];?",
                 "pm_cesdata_putty(\"\\1\",\"\\2\",\"\\3\",\"\\4\") = \\5;", x = .)%>% write(file_name,append =T)
         }
-        
+
         getLoadFile()
 
         # Store all the interesting output
         file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
         file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-        file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr), 
+        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
+        file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
                   overwrite = TRUE)
 
         # Update file modification time
@@ -729,7 +781,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # Calculate run time statistics
   timeGAMSEnd  <- Sys.time()
   gams_runtime <- timeGAMSEnd - timeGAMSStart
-  timeOutputStart <- Sys.time() 
+  timeOutputStart <- Sys.time()
 
   # If REMIND actually did run
   if (cfg$action == "ce" && cfg$gms$c_skip_output != "on") {
@@ -749,15 +801,15 @@ run <- function(start_subsequent_runs = TRUE) {
   cat("\n gams_runtime is ", gams_runtime, "\n")
 
   # Collect and submit run statistics to central data base
-  lucode::runstatistics(file       = "runstatistics.rda",
+  lucode2::runstatistics(file       = "runstatistics.rda",
                         modelstat  = readGDX(gdx="fulldata.gdx","o_modelstat", format="first_found"),
                         config     = cfg,
                         runtime    = gams_runtime,
-                        setup_info = lucode::setup_info(),
+                        setup_info = lucode2::setup_info(),
                         submit     = cfg$runstatistics)
 
   # Compress files with the fixing-information
-  if (cfg$gms$cm_startyear > 2005) 
+  if (cfg$gms$cm_startyear > 2005)
     system("gzip -f levs.gms margs.gms fixings.gms")
 
   # go up to the main folder, where the cfg files for subsequent runs are stored and the output scripts are executed from
@@ -767,8 +819,8 @@ run <- function(start_subsequent_runs = TRUE) {
   if (start_subsequent_runs) {
     # Note: step 1. and 2. below write to the same .RData file but are usually executed by different runs.
     # Step 1. is usually only executed by BASE runs, step 2 by every run that preceeds another run.
-    
-    # 1. Save the path to the fulldata.gdx of the current run to the cfg files 
+
+    # 1. Save the path to the fulldata.gdx of the current run to the cfg files
     # of the runs that use it as 'input_bau.gdx'
 
     # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
@@ -780,7 +832,7 @@ run <- function(start_subsequent_runs = TRUE) {
       source("scripts/start/submit.R")
       # Save the current cfg settings into a different data object, so that they are not overwritten
       cfg_main <- cfg
-      
+
       for(run in seq(1,length(cfg_main$RunsUsingTHISgdxAsBAU))){
         # for each of the runs that use this gdx as bau, read in the cfg, ...
         cat("Writing the path for input_bau.gdx to ",paste0(cfg_main$RunsUsingTHISgdxAsBAU[run],".RData"),"\n")
@@ -793,8 +845,8 @@ run <- function(start_subsequent_runs = TRUE) {
       cfg <- cfg_main
     }
 
-    # 2. Save the path to the fulldata.gdx of the current run to the cfg files 
-    # of the subsequent runs that use it as 'input_ref.gdx' and start these runs 
+    # 2. Save the path to the fulldata.gdx of the current run to the cfg files
+    # of the subsequent runs that use it as 'input_ref.gdx' and start these runs
 
     no_subsequent_runs <- identical(cfg$subsequentruns,character(0)) | identical(cfg$subsequentruns,NULL) | coupled_run
 
@@ -804,7 +856,7 @@ run <- function(start_subsequent_runs = TRUE) {
       # Save the current cfg settings into a different data object, so that they are not overwritten
       cfg_main <- cfg
       source("scripts/start/submit.R")
-      
+
       for(run in seq(1,length(cfg_main$subsequentruns))){
         # for each of the subsequent runs, read in the cfg, ...
         cat("Writing the path for input_ref.gdx to ",paste0(cfg_main$subsequentruns[run],".RData"),"\n")
@@ -812,8 +864,8 @@ run <- function(start_subsequent_runs = TRUE) {
         # ...change the path_gdx_ref field of the subsequent run to the fulldata gdx of the current (preceding) run ...
         cfg$files2export$start['input_ref.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
         save(cfg, file = paste0(cfg_main$subsequentruns[run],".RData"))
-        
-        # Subsequent runs will be started in submit.R using the RData files written above 
+
+        # Subsequent runs will be started in submit.R using the RData files written above
         # after the current run has finished.
         cat("Starting subsequent run ",cfg_main$subsequentruns[run],"\n")
         submit(cfg)
@@ -823,7 +875,7 @@ run <- function(start_subsequent_runs = TRUE) {
     }
 
     # 3. Create script file that can be used later to restart the subsequent runs manually.
-    # In case there are no subsequent runs (or it's coupled runs), the file contains only 
+    # In case there are no subsequent runs (or it's coupled runs), the file contains only
     # a small message.
 
     subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns_manually.R")
@@ -845,51 +897,52 @@ run <- function(start_subsequent_runs = TRUE) {
       write(filetext,file=subseq_start_file)
     }
   }
+
   #=================== END - Subsequent runs ========================
-  
+
   # Copy important files into output_folder (after REMIND execution)
   for (file in cfg$files2export$end)
     file.copy(file, cfg$results_folder, overwrite = TRUE)
 
-  # Set source_include so that loaded scripts know they are included as 
+  # Set source_include so that loaded scripts know they are included as
   # source (instead of being executed from the command line)
   source_include <- TRUE
-   
+
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()
-  
+
   # Save run statistics to local file
   cat("Saving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
-  lucode::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
+  lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
                        timeGAMSStart   = timeGAMSStart,
                        timeGAMSEnd     = timeGAMSEnd,
                        timeOutputStart = timeOutputStart,
                        timeOutputEnd   = timeOutputEnd)
-  
+
   return(cfg$results_folder)
   # on.exit sets working directory back to results folder
-  
+
 } # end of function "run"
 
 
-################################################################################################## 
+##################################################################################################
 #                                    script                                                      #
 ##################################################################################################
 
-# Call prepare and run without cfg, because cfg is read from results folder, where it has been 
+# Call prepare() and run() without cfg, because cfg is read from results folder, where it has been 
 # copied to by submit(cfg)
 
 if (!file.exists("full.gms")) {
-  # If no "full.gms" exists, the script assumes that REMIND did not run before and 
+  # If no "full.gms" exists, the script assumes that REMIND did not run before and
   # prepares all inputs before starting the run.
   prepare()
   start_subsequent_runs <- TRUE
 } else {
-  # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want 
+  # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want
   # to restart REMIND in the same folder using the gdx that it eventually previously produced.
   if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   start_subsequent_runs <- FALSE

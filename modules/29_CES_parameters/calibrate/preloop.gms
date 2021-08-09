@@ -47,7 +47,7 @@ $endif.new_structure
 *** In the first iteration with a changed CES structure, load ppf prices
 $ifthen.get_prices %c_CES_calibration_prices% == "load"
 
-*** Set CES prices that are not loaded from a file to default value.
+*** Set CES prices that are not available in the input file p29_cesdata_price to the value specified by cm_CES_calibration_default_prices
 *** Will be slower than calculated values, but can get the calibration started.
 $ifthen.default_prices NOT %cm_CES_calibration_default_prices% == "0"
 pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
@@ -82,13 +82,14 @@ p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(
     )
  ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
-  * ( p29_cesdata_load(t,regi,in,"eff")
-    * p29_effGr(t,regi,in)
-    * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-      + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
-      )
-    )
- ** (p29_cesdata_load(t,regi,out,"rho") - 1);
+  * exp(
+	  log(
+		p29_cesdata_load(t,regi,in,"eff")
+		* p29_effGr(t,regi,in)
+		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out)))
+		)
+		* (p29_cesdata_load(t,regi,out,"rho") - 1));
 
 *** Propagate price down the CES tree
 loop ((cesLevel2cesIO(counter,in),ces_29(in,in2),ces2_29(in2,in3)),
@@ -180,7 +181,8 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
                                   OR sameas(in,"inco") 
                                   OR ppf_beyondcalib_29(in) 
-                                  OR sameas(in,"enhb")      ),
+                                  OR sameas(in,"enhb")
+                                  OR sameas(in,"enhgab")       ),
     if (NOT in_putty(in) AND (ppf_29(in) OR sameas(in,"inco")),
       put "%c_expname%", "origin", t.tl, regi.tl, "quantity",   in.tl;
       put p29_cesIO_load(t,regi,in) /;
@@ -391,8 +393,8 @@ loop (in$(    industry_ue_calibration_target_dyn37(in)
 
 *** FIXME fix secondary steel for the calibration
 *** see discussion w/ Gunnar & Antoine 2020-07-09
-vm_cesIO.fx(t,regi_dyn29(regi),"ue_steel_secondary")
-  = pm_cesdata(t,regi,"ue_steel_secondary","quantity");
+*vm_cesIO.fx(t,regi_dyn29(regi),"ue_steel_secondary")
+*  = pm_cesdata(t,regi,"ue_steel_secondary","quantity");
 *** end FIXME fix secondary steel for the calibration
 
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
@@ -454,6 +456,11 @@ q29_putty_obj
 q29_esubsConstraint
 /;
 
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve putty_paths minimizing v29_putty_obj using nlp;
 
 if ( NOT (( putty_paths.solvestat eq 1  
@@ -488,7 +495,8 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
                                   OR sameas(in,"inco") 
                                   OR ppf_beyondcalib_29(in) 
-                                  OR sameas(in,"enhb")      ),
+                                  OR sameas(in,"enhb")
+                                  OR sameas(in,"enhgab")       ),
     if (NOT in_putty(in) AND (ppf_29(in) OR sameas(in,"inco")),
       put "%c_expname%", "target", t.tl, regi.tl, "quantity",   in.tl;
       put pm_cesdata(t,regi,in,"quantity") /;
@@ -596,6 +604,11 @@ if ( sm_tmp2 gt 0,
       );
   );
    
+  if (execError > 0,
+    execute_unload "abort.gdx";
+    abort "at least one execution error occured, abort.gdx written";
+  );
+
   solve putty_paths minimizing v29_putty_obj using nlp;
 
 
@@ -795,14 +808,16 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
       + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out) )
       )
    ** (1 - p29_cesdata_load(t,regi,out,"rho"))
-  
-    * ( p29_cesdata_load(t,regi,in,"eff")
-      * p29_effGr(t,regi,in)
-      * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-        + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
-        )
-      )
-   ** (p29_cesdata_load(t,regi,out,"rho") - 1);
+   
+   * exp(
+	  log(
+		p29_cesdata_load(t,regi,in,"eff")
+		* p29_effGr(t,regi,in)
+		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
+		  )
+		)
+		* (p29_cesdata_load(t,regi,out,"rho") - 1));
 
   !! Propagate price down the CES tree
   loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
@@ -1071,6 +1086,11 @@ loop ((cesOut2cesIn(out,in),  t_29hist_last(t))$((pm_cesdata_sigma(t,out) eq -1)
                                                * p29_capitalUnitProjections(regi,in,"0") !! index = 0, is the typical technology
 
 );
+if (execError > 0,
+  execute_unload "abort.gdx";
+  abort "at least one execution error occured, abort.gdx written";
+);
+
 solve esubs minimizing v29_esub_err using nlp;
 
 if ( NOT ( esubs.solvestat eq 1  AND (esubs.modelstat eq 1 OR esubs.modelstat eq 2)),
