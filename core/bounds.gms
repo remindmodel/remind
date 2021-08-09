@@ -545,4 +545,8 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
+*** to debug: switch on in case of small q_cap infes due to 1e-7 caps, sets upper bound of early retirements below 1 to push the model out of this solution
+vm_capEarlyReti.up(t,regi,te)$( (teFosNoCCS(te) OR sameAs(te,"tnrs")) AND (t.val gt 2021 AND t.val lt 2100)) = 1-1e-6;
+
+
 *** EOF ./core/bounds.gms
