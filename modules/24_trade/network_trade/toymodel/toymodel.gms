@@ -44,4 +44,4 @@ $include "./modules/24_trade/network_trade/presolve.gms"
 ***-----------------------------------------------------------------------------
 *** Dump results to a GDX file
 ***-----------------------------------------------------------------------------
-execute_unload './modules/24_trade/network_trade/toymodel/toymodel_output/results.gdx', v24_shipment_quan, v24_cap_tradeTransp, v24_deltaCap_tradeTransp;
+execute_unload './modules/24_trade/network_trade/toymodel/toymodel_output/results.gdx', v24_shipment_quan, v24_cap_tradeTransp, v24_deltaCap_tradeTransp, pm_omeg;

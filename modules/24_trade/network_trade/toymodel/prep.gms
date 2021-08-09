@@ -258,6 +258,290 @@ peFos(all_enty)      "primary energy fossil fuels"
 /
 ;
 
+SETS
+all_te          "all energy technologies, including from modules"
+/
+        ngcc            "natural gas combined cycle"
+        ngccc           "natural gas combined cycle with capture"
+        ngt             "natural gas turbine"
+        gastr           "transformation of gases"
+        gaschp          "combined heating power using gas"
+        gashp           "heating plant using gas"
+        gash2           "gas to hydrogen"
+        gash2c          "gas to hydrogen with capture"
+        gasftrec        "gas based fischer-tropsch recycle"
+        gasftcrec       "gas based fischer-tropsch with capture recycle"
+        refliq          "refinery oil to se liquids"
+        dot             "diesel oil turbine"
+        dhp             "diesel oil heating plant"
+        igcc            "integrated coal gasification combined cycle"
+        igccc           "integrated coal gasification combined cycle with capture"
+        pc              "pulverised coal power plant"
+$ifthen setGlobal cm_ccsfosall
+        pcc             "pulverised coal power plant with capture"
+        pco             "pulverised coal power plant with oxyfuel capture"
+$endif
+        coalchp         "combined heat powercoal"
+        coalhp          "heating plantcoal"
+        coaltr          "tranformation of coal"
+        coalgas         "coal gasification"
+        coalftrec       "coal based fischer-tropsch recycle"
+        coalftcrec      "coal based fischer-tropsch with capture recycle"
+        coalh2          "coal to hydrogen"
+        coalh2c         "coal to hydrogen with capture"
+        biotr           "transformation of biomass"
+        biotrmod        "modern solids from biomass"
+        biotrtradIEA    "only needed for reporting"
+        biotrmodIEA     "only needed for reporting"
+        biochp          "biomass combined heat and power"
+        biohp           "biomass heating plant"
+        bioigcc         "integrated biomass gasification combined cycle"
+        bioigccc        "integrated biomass gasification combined cycle with CCS"
+        biogas          "gasification of biomass"
+        bioftrec        "biomass based fischer-tropsch recycle"
+        bioftcrec       "biomass based fischer-tropsch with capture recycle"
+        bioh2           "biomass to hydrogen"
+        bioh2c          "biomass to hydrogen with capture"
+        bioethl         "biomass to ethanol"
+        bioeths         "sugar and starch biomass to ethanol"
+        biodiesel       "oil biomass to biodiesel"
+        geohdr          "geothermal electric hot dry rock"
+        geohe           "geothermal heat"
+        hydro           "hydro electric"
+        wind            "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff         "wind offshore power converters"
+$ENDIF.WindOff
+        spv             "solar photovoltaic"
+        csp             "concentrating solar power"
+        solhe           "solar thermal heat generation"
+        tnrs            "thermal nuclear reactor (simple structure)"
+        fnrs            "fast nuclear reactor (simple structure)"
+        elh2            "hydrogen elecrolysis"
+        h2turb          "hydrogen turbine for electricity production"
+		elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        h2curt          "hydrogen production from curtailment"
+        h22ch4          "Methanation, H2 + 4 CO2 --> CH4 + 2 H20"
+        MeOH			"Methanol production /liquid fuel, CO2 hydrogenation, CO2 + 3 H2 --> CH3OH + H20"
+		tdels           "transmission and distribution for electricity to stationary users"
+        tdeli           "transmission and distribution for electricity to industry"
+        tdelb           "transmission and distribution for electricity to buildings"
+        tdelt           "transmission and distribution for electricity to transport"
+        tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
+	tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
+        tdbiogai        "transmission and distribution for gas from biomass origin to industry"
+	tdfosgai        "transmission and distribution for gas from fossil origin to industry"
+        tdbiogab        "transmission and distribution for gas from biomass origin to buildings"
+	tdfosgab        "transmission and distribution for gas from fossil origin to buildings"
+        tdbiogat        "transmission and distribution for gas from biomass origin to transportation"
+	tdfosgat        "transmission and distribution for gas from fossil origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
+        tdbiohos        "transmission and distribution for heating oil from biomass origin to transportation"
+        tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
+        tdbiohoi        "transmission and distribution for heating oil from biomass origin to industry"
+	tdfoshoi        "transmission and distribution for heating oil from fossil origin to industry"
+        tdbiohob        "transmission and distribution for heating oil from biomass origin to buildings"
+        tdfoshob        "transmission and distribution for heating oil from fossil origin to buildings"
+        tdh2s           "transmission and distribution for hydrogen to stationary users"
+        tdh2t           "transmission and distribution for hydrogen to transportation"
+        tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
+        tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
+	tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
+        tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
+        tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
+        tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
+        tdbiosoi        "transmission and distribution for solids from biomass origin to industry"
+        tdfossoi        "transmission and distribution for solids from fossil origin to industry"
+        tdbiosob        "transmission and distribution for solids from biomass origin to buildings"
+	tdfossob        "transmission and distribution for solids from fossil origin to buildings"
+        tdhes           "transmission and distribution for heat to stationary users"
+        tdhei           "transmission and distribution for heat to industry"
+        tdheb           "transmission and distribution for heat to buildings"
+
+*        ccscomp         "compression of co2"
+*        ccspipe         "transportation of co2"
+         ccsinje         "injection of co2"
+*        ccsmoni         "monitoring of co2"
+*RP* Storage technology:
+        storspv         "storage technology for photo voltaic (PV)"
+        storwind        "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff     "storage technology for wind offshore"
+$ENDIF.WindOff
+        storcsp         "storage technology for concentrating solar power (CSP)"
+*RP* grid technology
+        gridspv         "grid between areas with high pv production and the rest"
+        gridcsp         "grid between areas with high csp production and the rest"
+        gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
+
+*AJS* transport technologies (ESH2T etc..) are defined in the transport module.
+ 	apCarPeT        "Cars using final energy petrol (FEPET) to produce useful energy in form of petrol for transport (UEPET) "
+    apCarDiT        "Vehicles using final energy diesel (FEDIE) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
+    apcarDiEffT     "More efficient vehicles using final energy diesel (FEDIE) and electricity (FEELT) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
+    apcarDiEffH2T   "Even more efficient vehicles using final energy diesel (FEDIE), electricity (FEELT) and Hydrogen (FEH2T) to produce heavy-duty useful energy (uedit, e.g. freight, busses, planes, ships)."
+    apCarH2T        "Cars using final energy hydrogen for transport (FEH2T) to produce useful energy as hydrogen for transport (ESH2T)."
+        apCarElT        "Cars using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
+        apTrnElT        "Trains using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
+***  appCarGaT  "Cars using FEGAT to produce ESGAT."  ???
+        rockgrind       "grinding rock for enhanced weathering"
+        dac             "direct air capture"
+        x_gas2elec
+        d_bio2elec      "d_* transmission and distribution losses"
+        d_coal2elec
+        d_gas2elec
+        d_feel
+        d_fehe
+        d_fesobio
+		d_fesofos
+        d_fegabio
+		d_fegafos
+        d_coal2coal
+        d_oil2coal
+        d_gas2coal
+        d_elec2coal
+        d_oil2og
+        d_gas2og
+        d_elec2og
+        d_oil2oil
+        d_oil2gas
+        d_gas2oil
+        d_gas2gas
+        d_elec2oil
+        d_elec2gas
+        tdgai_cs
+        tdhoi_cs
+        o_feel
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+*** technologies related to trading
+        pipeline
+        shipping
+        shipping_Mport
+        shipping_Xport
+        shipping_vessels
+/
+
+te(all_te)              "energy technologies"
+/
+        ngcc            "natural gas combined cycle"
+        ngccc           "natural gas combined cycle with capture"
+        ngt             "natural gas turbine"
+        gastr           "transformation of gases"
+        gaschp          "combined heat and power using gas"
+        gashp           "heating plant using gas"
+        gash2           "gas to hydrogen"
+        gash2c          "gas to hydrogen with carbon capture"
+        gasftrec        "gas based fischer-tropsch recycle"
+        gasftcrec       "gas based fischer-tropsch with capture recycle"
+        refliq          "refinery oil to SE liquids"
+        dot             "diesel oil turbine"
+        igcc            "integrated coal gasification combined cycle"
+        igccc           "integrated coal gasification combined cycle with carbon capture"
+        pc              "pulverised coal power plant"
+$ifthen setGlobal cm_ccsfosall
+        pcc             "pulverised coal power plant with capture"
+        pco             "pulverised coal power plant with oxyfuel capture"
+$endif
+        coalchp         "combined heat powercoal"
+        coalhp          "heating plant coal"
+        coaltr          "tranformation of coal"
+        coalgas         "coal gasification"
+        coalftrec       "coal based fischer-tropsch recycle"
+        coalftcrec      "coal based fischer-tropsch with capture recycle"
+        coalh2          "coal to hydrogen"
+        coalh2c         "coal to hydrogen with capture"
+        biotr           "transformation of biomass"
+        biotrmod        "modern solids from biomass"
+        biochp          "biomass combined heat and power"
+        biohp           "biomass heating plant"
+        bioigcc         "integrated biomass gasification combined cycle"
+        bioigccc        "integrated biomass gasification combined cycle with CCS"
+        biogas          "gasification of biomass"
+        bioftrec        "biomass based fischer-tropsch recycle"
+        bioftcrec       "biomass based fischer-tropsch with capture recycle"
+        bioh2           "biomass to hydrogen"
+        bioh2c          "biomass to hydrogen with capture"
+        bioethl         "biomass to ethanol"
+        bioeths         "sugar and starch biomass to ethanol"
+        biodiesel       "oil biomass to biodiesel"
+        geohdr          "geothermal electric hot dry rock"
+        geohe           "geothermal heat"
+        hydro           "hydro electric"
+        wind            "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff         "wind offshore power converters"
+$ENDIF.WindOff
+        spv             "solar photovoltaic"
+        csp             "concentrating solar power"
+        solhe           "solar thermal heat generation"
+        tnrs            "thermal nuclear reactor (simple structure)"
+        fnrs            "fast nuclear reactor (simple structure)"
+        elh2            "hydrogen elecrolysis"
+        h2turb          "hydrogen turbine for electricity production"
+	elh2VRE         "dummy technology: hydrogen electrolysis; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        h2turbVRE       "dummy technology: hydrogen turbine for electricity production; to demonstrate the capacities and SE flows inside the storXXX technologies"
+        h2curt      	"hydrogen production from curtailment"
+        tdels           "transmission and distribution for electricity to stationary users"
+        tdelt           "transmission and distribution for electricity to transport"
+        tdbiogas        "transmission and distribution for gas from biomass origin to stationary users"
+        tdfosgas        "transmission and distribution for gas from fossil origin to stationary users"
+        tdsyngas        "transmission and distribution for gas from synthetic origin to stationary users"
+        tdbiogat        "transmission and distribution for gas from synthetic origin to transportation"
+        tdfosgat        "transmission and distribution for gas from biomass origin to transportation"
+        tdsyngat        "transmission and distribution for gas from synthetic origin to transportation"
+        tdbiohos        "transmission and distribution for heating oil from biomass origin to stationary users"
+        tdfoshos        "transmission and distribution for heating oil from fossil origin to stationary users"
+        tdsynhos        "transmission and distribution for heating oil from synthetic origin to stationary users"
+        tdh2s           "transmission and distribution for hydrogen to stationary users"
+        tdh2t           "transmission and distribution for hydrogen to transportation"
+        tdbiodie        "transmission and distribution for diesel from biomass origin to stationary users"
+        tdfosdie        "transmission and distribution for diesel from fossil origin to stationary users"
+        tdsyndie        "transmission and distribution for diesel from synthetic origin to stationary users"
+        tdbiopet        "transmission and distribution for petrol from biomass origin to stationary users"
+	tdfospet        "transmission and distribution for petrol from fossil origin to stationary users"
+        tdsynpet        "transmission and distribution for petrol from synthetic origin to stationary users"
+        tdbiosos        "transmission and distribution for solids from biomass origin to stationary users"
+        tdfossos        "transmission and distribution for solids from fossil origin to stationary users"
+        tdhes           "transmission and distribution for heat to stationary users"
+*** FS: H2 transmission & distribution helper technologies for industry & buildings
+        tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+        tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+
+*        ccscomp         "compression of co2, CCS related"
+*        ccspipe         "transportation of co2, CCS related"
+        ccsinje         "injection of co2, CCS related"
+*        ccsmoni         "monitoring of co2, CCS related"
+
+        storspv         "storage technology for photo voltaic"
+        storwind        "storage technology for wind onshore"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        storwindoff     "storage technology for wind offshore"
+$ENDIF.WindOff
+        storcsp         "storage technology for concentrating solar power"
+
+        gridspv         "grid between areas with high pv production and the rest"
+        gridcsp         "grid between areas with high csp production and the rest"
+        gridwind        "grid between areas with high wind onshore production and the rest"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        gridwindoff     "grid between areas with high wind offshore production and the rest"
+$ENDIF.WindOff
+        pipeline
+        shipping
+        shipping_Mport
+        shipping_Xport
+        shipping_vessels
+/
+;
+
 ***-----------------------------------------------------------------------------
 *** Definition of the main characteristics set 'char':
 ***-----------------------------------------------------------------------------
@@ -266,11 +550,15 @@ SET char            "characteristics of technologies"
   mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
   ccap0           "cumulated installed capacity in t0. Unit: TW"
   inco0           "investment costs in t0. Unit: $/kW"
+  inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
   incolearn       "Investment costs that can be reduced through learning. Unit: $/kW"
   floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
   eta             "conversion efficiency"
+  eta_d           "conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km."
   omf             "fixed o&m"
+  omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
+  omv_d           "variable o&m per 1000km"
   tlt             "techical life time"
   delta           "depreciation rate"
   learn           "learning rate"
@@ -351,7 +639,7 @@ ttot(tall)      "time index with spin up"
 /
 ;
 
-alias(ttot,t);
+alias(ttot,t,tttot);
 
 SCALAR cm_startyear "first optimized modelling time step [year]"
 / 2005 /;
@@ -362,6 +650,25 @@ PARAMETERS
     pm_ts(tall)                                          "(t_n+1 - t_n-1)/2 for a timestep t_n"
     pm_dt(tall)                                          "difference to last timestep"
 ;
+
+SET opTimeYr            "actual life time of ??? in years"
+/
+        1*100
+/
+;
+alias(opTimeYr,opTimeYr2);
+
+SETS
+opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
+tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
+;
+
+PARAMETERS
+p_tsu2opTimeYr_h(ttot,opTimeYr)                      "parameter to generate pm_tsu2opTimeYr",
+pm_tsu2opTimeYr(ttot,opTimeYr)                       "parameter that counts opTimeYr regarding tsu2opTimeYr apping"
+;
+
+PARAMETER pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]";
 
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
@@ -392,3 +699,61 @@ cm_ariadne_trade_syn / 0 /
 PARAMETERS
     p_PEPrice(ttot,all_regi,all_enty)                     "parameter to capture all PE prices (tr$2005/TWa)"
 ;
+
+
+***---------------------------------------------------------------------------
+*** Import and set global data
+***---------------------------------------------------------------------------
+table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
+$include "./core/input/generisdata_tech.prn"
+$include "./core/input/generisdata_trade.prn"
+;
+
+PARAMETER pm_data(all_regi,char,all_te)                        "Large array for most technical parameters of technologies; more detail on the individual technical parameters can be found in the declaration of the set 'char' ";
+PARAMETER p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet";
+
+pm_data(all_regi,char,all_te) = fm_dataglob(char,all_te);
+
+pm_omeg(regi,opTimeYr,te) = 0;
+
+*** FS: use lifetime of tdh2s for tdh2b and tdh2i technologies
+*** which are only helper technologies for consistent H2 use in industry and buildings
+pm_data(regi,"lifetime","tdh2i") = pm_data(regi,"lifetime","tdh2s");
+pm_data(regi,"lifetime","tdh2b") = pm_data(regi,"lifetime","tdh2s");
+
+loop(regi,
+        p_aux_lifetime(regi,te) = 5/4 * pm_data(regi,"lifetime",te);
+        loop(te,
+                if(p_aux_lifetime(regi,te) > 0,
+                loop(opTimeYr,
+                        pm_omeg(regi,opTimeYr,te) = 1 - ((opTimeYr.val-0.5) / p_aux_lifetime(regi,te))**4 ;
+                        opTimeYr2te(te,opTimeYr)$(pm_omeg(regi,opTimeYr,te) > 0 ) =  yes;
+                        if( pm_omeg(regi,opTimeYr,te) <= 0,
+                                pm_omeg(regi,opTimeYr,te) = 0;
+                                opTimeYr2te(te,opTimeYr) =  no;
+                        );
+                )
+                );
+        );
+);
+
+display p_aux_lifetime;
+
+*LB* calculate mapping tsu2opTimeYr
+alias(ttot, tttot);
+tsu2opTimeYr(ttot,opTimeYr) =  no;
+tsu2opTimeYr(ttot,"1") =  yes;
+loop(ttot,
+   loop(opTimeYr,
+      loop(tttot $(ord(tttot) le ord(ttot)),
+         if(opTimeYr.val = pm_ttot_val(ttot)-pm_ttot_val(tttot)+1,
+            tsu2opTimeYr(ttot,opTimeYr) =  yes;
+         );
+      );
+   );
+);
+
+p_tsu2opTimeYr_h(ttot,opTimeYr) = 0;
+p_tsu2opTimeYr_h(ttot,opTimeYr) $tsu2opTimeYr(ttot,opTimeYr) = 1 ;
+pm_tsu2opTimeYr(ttot,opTimeYr)$tsu2opTimeYr(ttot,opTimeYr)
+= sum(opTimeYr2 $ (ord(opTimeYr2) le ord(opTimeYr)), p_tsu2opTimeYr_h(ttot,opTimeYr2));
