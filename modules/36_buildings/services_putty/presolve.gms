@@ -126,8 +126,10 @@ p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
       / pm_fe2es(t,regi,teEs)
       !! add taxes, subsidies, and later on costs
       ;
-);      
+);
 
+p36_techCosts_iter(iteration,t,regi,entyFe,esty,teEs) =
+  p36_techCosts(t,regi,entyFe,esty,teEs);
 
 *** Compute the share of UE for each technology that is needed to get the aggregate technological distribution observed
 loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
@@ -177,7 +179,6 @@ p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ p36_shUeCesDelta(
 *** The calibration factors are reduced towards 80% in the long term to represent the enhanced flexibility of the system
 *** Long lasting non-price barriers should preferably be represented through price mark-ups
 loop ( t36_hist_last(ttot),
-
  p36_logitCalibration(ttot,regi_dyn36(regi),entyFe,esty,teEs) $ ( fe2es_dyn36(entyFe,esty,teEs)
                                                                  AND NOT p36_logitCalibration(ttot,regi,entyFe,esty,teEs))
   = 5;
@@ -212,9 +213,8 @@ loop ( t36_hist_last(ttot),
        ) 
      ;
      
-     
     p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ (fe2es_dyn36(entyFe,esty,teEs) AND teEs_pushCalib_dyn36(teEs)) = 
-      p36_pushCalib(t2,teEs) 
+      p36_pushCalib(t2,teEs)
       * p36_logitCalibration(t2,regi,entyFe,esty,teEs)
       ;
 );
@@ -267,7 +267,6 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
                                                     ;
 
 *** Compute FE shares
-
 p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                 = (1 / p36_fe2es(t,regi,teEs))
                                                  / sum ( (fe2ces_dyn36(entyFe2,esty2,teEs2,in)),
@@ -276,7 +275,10 @@ p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                         )
                                                  * p36_shUeCes(t,regi,entyFe,in,teEs)
                                                  ;
-                                                 
+
+p36_shFeCes_iter(iteration,t,regi,entyFe,in,teEs) = 
+  p36_shFeCes(t,regi,entyFe,in,teEs);
+
 *** Pass on to core parameters
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 pm_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$( NOT t0(t)) 
