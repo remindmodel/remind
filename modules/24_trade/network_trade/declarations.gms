@@ -46,6 +46,7 @@ POSITIVE VARIABLES
   v24_nonserve_cost(ttot,all_regi,all_enty)                                     "Total cost arising from non-serviced transportation"
   v24_tradeTransp_cost(ttot,all_regi,all_enty)                                  "Cost incurring from trade transportation"
   v24_cap_tradeTransp(ttot,all_regi,all_regi,all_enty,teTradeTransp)            "Net total capacities for transportation"
+  v24_capEarlyReti(ttot,all_regi,all_regi,tradeSe,teTradeTransp)                "Early retired capacity"
   v24_deltaCap_tradeTransp(ttot,all_regi,all_regi,all_enty,teTradeTransp)       "Capacity additions for transportation"
 ;
 

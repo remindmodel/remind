@@ -101,11 +101,31 @@ q24_cap_tradeTransp_shipping_Xport(ttot,regi,tradeSe)..
     v24_cap_tradeTransp(ttot,regi,regi,tradeSe,'shipping_Xport')
 ;
 
+$ontext
 q24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)$(pm_ttot_val(ttot) gt cm_startyear)..
     v24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
   =e=
     v24_cap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
   - v24_cap_tradeTransp(ttot-1,regi,regi2,tradeSe,teTradeTransp)
+;
+$offtext
+
+q24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)$(ttot.val ge cm_startyear)..
+    v24_cap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
+  =e=
+***    (1 - v24_capEarlyReti(ttot,regi,regi2,tradeSe,teTradeTransp))
+***    *
+    (
+      sum(opTimeYr2te(teTradeTransp,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+      * pm_omeg(regi2,opTimeYr+1,teTradeTransp)
+      * v24_deltaCap_tradeTransp(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,regi2,tradeSe,teTradeTransp)
+      )
+    + ( pm_dt(ttot) / 2
+      * pm_omeg(regi2,"2",teTradeTransp)
+      * v24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
+      )
+    )
 ;
 
 *** delta cap constrained to small increase

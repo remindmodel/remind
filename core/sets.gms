@@ -301,6 +301,12 @@ $ENDIF.WindOff
 *** FS: H2 transmission & distribution helper technologies for industry & buildings
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+*** technologies related to trading
+        pipeline
+        shipping
+        shipping_Mport
+        shipping_Xport
+        shipping_vessels
 /
 
 all_enty             "all types of quantities"
@@ -2120,11 +2126,15 @@ char            "characteristics of technologies"
   mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
   ccap0           "cumulated installed capacity in t0. Unit: TW"
   inco0           "investment costs in t0. Unit: $/kW"
+  inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
   incolearn       "Investment costs that can be reduced through learning. Unit: $/kW"
   floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
   eta             "conversion efficiency"
+  eta_d           "conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km."
   omf             "fixed o&m"
+  omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
+  omv_d           "variable o&m per 1000km"
   tlt             "techical life time"
   delta           "depreciation rate"
   learn           "learning rate"

@@ -137,7 +137,7 @@ $include "./modules/24_trade/network_trade/input/p24_distance.prn"
 ;
 p24_distance(regi,regi2) = p24_distance(regi,regi2)/1000;
 
-PARAMETER TABLE p24_dataglob_transp(char_trade,all_enty,teTradeTransp)          'Transportation technology characteristics: investment costs, O&M costs, efficiency, ...'
+PARAMETER TABLE p24_dataglob_transp(char,all_enty,teTradeTransp)                'Transportation technology characteristics: investment costs, O&M costs, efficiency, ...'
 $include "./modules/24_trade/network_trade/input/generisdata_tradeTransp.prn"
 ;
 
