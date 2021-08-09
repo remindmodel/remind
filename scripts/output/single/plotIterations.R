@@ -1,7 +1,4 @@
-symbolNames <- paste(
-  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
-  "v36_deltaProdEs, v36_prodEs"
-)
+symbolNames <- paste("p36_techCosts, p36_shFeCes, p36_shUeCes, v36_deltaProdEs, v36_prodEs")
 generateHtml <- "y"
 
 if (!exists("source_include")) {
@@ -19,8 +16,8 @@ getLine <- function() {
     s <- readline()
   } else {
     con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
     on.exit(close(con))
+    s <- readLines(con, 1, warn = FALSE)
     if (identical(length(s), 0L)) {
       s <- ""
     }
