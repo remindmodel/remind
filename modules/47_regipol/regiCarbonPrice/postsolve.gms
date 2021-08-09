@@ -262,11 +262,14 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 	elseif sameas(target_type,"year"), !! year total CO2 target
 * calculate emissions in target year
 		p47_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
-* calculate emissions in 2015, used to determine target compliance for year targets
-		p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l("2015", all_regi,emi_type)*sm_c_2_co2);	
+* calculate emissions in 2015 (or cm_startyear), used to determine target compliance for year targets
+        p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), 
+			sum(ttot3$(ttot3.val eq max(2015,cm_startyear)), !! v47_emiTarget is not defined for years before cm_startyear
+				v47_emiTarget.l(ttot3, all_regi,emi_type)
+			)*sm_c_2_co2)
+		;	
 	);
 );
-
 
 ***		for single regions (overwrites region groups)  
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))),
@@ -281,7 +284,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(p47_regiCO2target(ttot,ttot2,ex
 * calculate emissions in target year
 		p47_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
 * calculate emissions in 2015, used to determine target compliance for year targets
-		p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l("2015", all_regi,emi_type)*sm_c_2_co2);	
+		p47_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), 
+			sum(ttot3$(ttot3.val eq max(2015,cm_startyear)), !! v47_emiTarget is not defined for years before cm_startyear
+				v47_emiTarget.l(ttot3, all_regi,emi_type)
+			)*sm_c_2_co2)
+		;
 	);
 );
 
