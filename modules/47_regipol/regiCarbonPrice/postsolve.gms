@@ -132,14 +132,14 @@ $ENDIF.emiMktES2050
 $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 *** alternative cooperative ES solution: calculating the ES CO2 tax rescale factor
 		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = 
-			( sum(regi2$regi_group("EUR_regi",regi2),
+			( sum(regi2$regi_group("EU27_regi",regi2),
   				v47_emiTargetMkt.l(t,regi2,"ES","%cm_emiMktES_type%")
 			  ) - 
-			  sum(regi2$regi_group("EUR_regi",regi2),
+			  sum(regi2$regi_group("EU27_regi",regi2),
   				pm_emiTargetES(t,regi2)
 			  ) 
 			)/
-			sum(regi2$regi_group("EUR_regi",regi2),
+			sum(regi2$regi_group("EU27_regi",regi2),
 				pm_emiTargetES(t,regi2)
 			)
 		; 
@@ -182,7 +182,7 @@ $ENDIF.emiMktEScoop
 $IFTHEN.emiMktES2020price "%cm_emiMktES2020price%" == "target"
 		pm_taxemiMkt("2020",regi,"ES")$(p47_emiRescaleCo2TaxES("2020",regi) AND pm_emiTargetES("2020",regi)) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,"2020",regi,"ES") * p47_emiRescaleCo2TaxES("2020",regi));
 $ELSEIF.emiMktES2020price not "%cm_emiMktES2020price%" == "off"
-		pm_taxemiMkt("2020",regi,"ES") = %cm_emiMktES2020price%*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2020",regi,"ES")$(p47_emiRescaleCo2TaxES("2020",regi) AND pm_emiTargetES("2020",regi)) = %cm_emiMktES2020price%*sm_DptCO2_2_TDpGtC;
 		pm_ESRTarget_dev("2020",regi) = 0;
 $ENDIF.emiMktES2020price
 
