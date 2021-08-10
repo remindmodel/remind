@@ -265,7 +265,7 @@ loop((ext_regi,ttot,ttot2)$pm_regiTarget_dev(ext_regi,ttot,ttot2),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
   if( (pm_regiTarget_dev(ext_regi,ttot,ttot2) gt 0.01 OR pm_regiTarget_dev(ext_regi,ttot,ttot2) lt -0.01),
     s80_bool = 0;
-    p80_messageShow("target") = YES;
+    p80_messageShow("regiTarget") = YES;
   );
 );
 $endif.regipol

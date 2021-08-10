@@ -359,7 +359,7 @@ prepare <- function() {
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
-    if(grepl("regionmapping_21_EU11", "config/21_regions_EU11/regionmapping_21_EU11.csv", fixed = TRUE)){ #add EU27 region group
+    if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
       subsets <- c(subsets,list(
         "EU27"=c("ENC","EWN","ECS","ESC","ECE","FRA","DEU","ESW"), #EU27 (without Ireland)
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
