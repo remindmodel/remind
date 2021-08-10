@@ -1,4 +1,4 @@
-symbolNames <- paste("p36_techCosts, p36_shFeCes, p36_shUeCes, v36_deltaProdEs, v36_prodEs")
+symbolNames <- paste("p36_techCosts_iter, p36_shFeCes_iter, p36_shUeCes_iter, v36_deltaProdEs_iter, v36_prodEs_iter")
 generateHtml <- "y"
 
 if (!exists("source_include")) {
