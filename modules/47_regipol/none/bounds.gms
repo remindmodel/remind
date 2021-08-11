@@ -27,4 +27,7 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
+*** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
+vm_capEarlyReti.up('2025',regi,'pc')$(sameas(regi,"DEU")) = 0.9; 
+
 *** EOF ./modules/47_regipol/none/bounds.gms
