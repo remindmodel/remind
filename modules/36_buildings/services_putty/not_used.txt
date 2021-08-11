@@ -12,5 +12,4 @@ pm_shfe_lo,parameter,not needed
 pm_tau_fe_tax,input,questionnaire
 pm_tau_fe_sub,input,questionnaire
 sm_TWa_2_MWh,input,questionnaire
-cm_heatPumpMkup_build,input,questionnaire
-cm_districtHeatingMkup_build,input,questionnaire
+cm_CESMkup_build,input,questionnaire

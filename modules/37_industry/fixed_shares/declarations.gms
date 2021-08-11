@@ -22,7 +22,17 @@ Parameters
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
   /   /
+
+  p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
+
 ;
+
+
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+Parameter
+	p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
+;
+$endIf.CESMkup
 
 Variables
   v37_costExponent(ttot,all_regi)                  "logistic function exponent for additional hydrogen low penetration cost"
@@ -35,6 +45,8 @@ Positive Variables
   vm_IndCCSCost(ttot,all_regi,all_enty)            "industry CCS cost"
   v37_expSlack(ttot,all_regi)                      "slack variable to avoid overflow on too high logistic function exponent"
   v37_H2share(ttot,all_regi)                       "H2 share in gases"
+  v37_costAddTeInvH2(ttot,all_regi,all_te)         "Additional hydrogen phase-in cost at low H2 penetration levels [trUSD]"
+  v37_costCESMkup(ttot,all_regi,all_te)            "CES markup cost [trUSD]"
 ;
 
 Equations
@@ -44,9 +56,11 @@ Equations
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"
   q37_cementCCS(ttot,all_regi)                      "equal abatement levels for cement fuel and process emissions"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"
-  q37_H2Share(ttot,all_regi)                         "H2 share in gases"
-  q37_costAddTeInv(ttot,all_regi)                    "additional industry hydrogen annual investment costs under low technology diffusion due to T&D conversion"
-  q37_auxCostAddTeInv(ttot,all_regi)                 "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"   
+  q37_H2Share(ttot,all_regi)                        "H2 share in gases"
+  q37_auxCostAddTeInv(ttot,all_regi)                "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost" 
+  q37_costAddH2PhaseIn(ttot,all_regi)               "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in industry"  
+  q37_costCESmarkup(ttot,all_regi,all_te)           "calculation of additional CES markup cost to represent demand-side transformation cost, for example, investment cost of electrification"
+  q37_costAddTeInv(ttot,all_regi,all_te)            "summation of sector-specific demand-side cost"
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/declarations.gms
