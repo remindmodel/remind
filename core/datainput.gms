@@ -860,25 +860,25 @@ p_aux_capacityFactorHistOverREMIND(regi,"windoff")$p_avCapFac2015(regi,"windoff"
 $ENDIF.WindOff
 
 $IFTHEN.WindOff %cm_wind_offshore% == "0"
-loop(t$(t.val ge 2015 AND t.val le 2045 ),
+loop(t$(t.val ge 2015 AND t.val le 2035 ),
 pm_cf(t,regi,"wind") =
-(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
+(2045 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,"wind") *pm_cf(t,regi,"wind")
 +
-(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,"wind")
+(pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,"wind")
 );
 $ENDIF.WindOff
 
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 loop(te$(sameas(te,"wind") OR sameas(te,"windoff")),
-loop(t$(t.val ge 2015 AND t.val le 2045 ),
+loop(t$(t.val ge 2015 AND t.val le 2035 ),
 pm_cf(t,regi,te) =
-(2045 - pm_ttot_val(t)) / 30 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
+(2045 - pm_ttot_val(t)) / 20 * p_aux_capacityFactorHistOverREMIND(regi,te) *pm_cf(t,regi,te)
 +
-(pm_ttot_val(t) - 2015) / 30 * pm_cf(t,regi,te)
+(pm_ttot_val(t) - 2015) / 20 * pm_cf(t,regi,te)
 );
 );
-$ENDIF.WindOff
+$ENDIF.WindOff 
 
 
 *CG* set storage and grid of windoff to be the same as windon
