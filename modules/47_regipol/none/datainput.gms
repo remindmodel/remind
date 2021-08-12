@@ -32,4 +32,31 @@ $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
   pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
 
+*** VRE capacity factor adjustments for Germany in line with ARIADNE assumptions
+$ifthen.GerVRECapFac not "%cm_ariadne_VRECapFac_adj%" == "off" 
+loop(te$sameas(te,"wind"),
+  loop(regi$sameas(regi,"DEU"),
+    pm_cf("2025",regi,te) =  1.04 * pm_cf("2025",regi,te);
+    pm_cf("2030",regi,te) =  1.08 * pm_cf("2030",regi,te);
+    pm_cf("2035",regi,te) =  1.12 * pm_cf("2035",regi,te);
+    pm_cf("2040",regi,te) =  1.16 * pm_cf("2040",regi,te);
+    pm_cf("2045",regi,te) =  1.2  * pm_cf("2045",regi,te);
+    pm_cf(t,regi,te)$(t.val gt 2045) =  pm_cf("2045",regi,te);
+  );
+);
+
+
+loop(te$sameas(te,"spv"),
+  loop(regi$sameas(regi,"DEU"),
+    pm_cf("2025",regi,te) =  1.02 * pm_cf("2025",regi,te);
+    pm_cf("2030",regi,te) =  1.04 * pm_cf("2030",regi,te);
+    pm_cf("2035",regi,te) =  1.06 * pm_cf("2035",regi,te);
+    pm_cf("2040",regi,te) =  1.08 * pm_cf("2040",regi,te);
+    pm_cf("2045",regi,te) =  1.10 * pm_cf("2045",regi,te);
+    pm_cf(t,regi,te)$(t.val gt 2045) =  pm_cf("2045",regi,te);
+  );
+);
+$endif.GerVRECapFac
+
+
 *** EOF ./modules/47_regipol/none/datainput.gms

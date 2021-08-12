@@ -82,9 +82,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.223
+* Input data revision: 6.24
 * 
-* Last modification (input data): Mon Aug 02 14:11:26 2021
+* Last modification (input data): Thu Aug 12 18:07:05 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -336,6 +336,7 @@ cm_ariadne_trade_el         "switch for enabling electricity imports to Germany 
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_synliq        "switch for enabling synfuel liquids imports to Germany for ARIADNE project"
 cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Germany for ARIADNE project"
+cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -511,7 +512,7 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 10; !! def 10
+cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -527,8 +528,8 @@ cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
-cm_BioSupply_Adjust_EU = 1; !! def 1
-cm_BioImportTax_EU = 0.25; !! def 0.25
+cm_BioSupply_Adjust_EU = 3; !! def 1
+cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
@@ -550,6 +551,8 @@ cm_ariadne_trade_el = 0; !! def 0
 cm_ariadne_trade_h2 = 0; !! def 0
 cm_ariadne_trade_synliq = 0; !! def 0
 cm_ariadne_trade_syngas = 0; !! def 0
+
+$setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
