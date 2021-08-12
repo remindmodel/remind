@@ -106,7 +106,7 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 		
 ***  calculating the ES CO2 tax rescale factor
 ***		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetES(t,regi))/pm_emiTargetES(t,regi);
-		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetES(t,regi))/f47_ESreferenceEmissions("2005",regi);
+		pm_ESRTarget_dev(t,regi)$pm_emiTargetES(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetES(t,regi))/(f47_ESreferenceEmissions("2005",regi)/(sm_c_2_co2*1000));
 		p47_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
 		if(iteration.val lt 15,
 			p47_emiRescaleCo2TaxES("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetES("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) ) ** 4;
@@ -144,7 +144,7 @@ $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 ***				pm_emiTargetES(t,regi2)
 ***			)
 			sum(regi2$regi_group("EU27_regi",regi2),
-				f47_ESreferenceEmissions("2005",regi2)
+				(f47_ESreferenceEmissions("2005",regi)/(sm_c_2_co2*1000))
 			)
 		; 
 		p47_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
