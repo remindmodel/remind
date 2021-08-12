@@ -112,7 +112,7 @@ $offdelim
 /
 ;
 
-pm_emiTargetES(t,regi)$f47_ESTarget(t,regi) = ( f47_ESreferenceEmissions("2005",regi)/1000 * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
+pm_emiTargetES(t,regi)$(f47_ESTarget(t,regi) and regi_group("EU27_regi",regi)) = ( f47_ESreferenceEmissions("2005",regi)/1000 * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
 
 * Applying modifier if it is assumed that the Effort Sharing Decision target does not need to be reached entirely at 2030
 pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",regi) * %cm_emiMktES%;
