@@ -144,7 +144,7 @@ $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 ***				pm_emiTargetES(t,regi2)
 ***			)
 			sum(regi2$regi_group("EU27_regi",regi2),
-				(f47_ESreferenceEmissions("2005",regi)/(sm_c_2_co2*1000))
+				(f47_ESreferenceEmissions("2005",regi2)/(sm_c_2_co2*1000))
 			)
 		; 
 		p47_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
