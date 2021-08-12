@@ -166,8 +166,8 @@ $endIf.cm_implicitFE
 *** do this only in non-baseline runs for now to not mess with the calibration, the if clause can be removed (or changes moved to mrremind) once covid-corrected calibration input data is there
 
 if( cm_emiscen ne 1,
-pm_cf("2020",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
-pm_cf("2025",regi,"pc")$(sameAs(regi,"DEU")) = 0.35;
+pm_cf("2020",regi,"pc")$(sameAs(regi,"DEU")) = 0.43;
+pm_cf("2025",regi,"pc")$(sameAs(regi,"DEU")) = 0.43;
 pm_cf("2030",regi,"pc")$(sameAs(regi,"DEU")) = 0.4;
 );
 
