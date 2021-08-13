@@ -118,17 +118,19 @@ if( cm_ariadne_trade_syn gt 0,
 *** Load data needed by network trade model
 ***-----------------------------------------------------------------------------
 PARAMETERS
-  p24_cap_absMaxGrowthRate(teTradeTransp)                                       'Absolute maximum yearly growth rate for trade transportation capacity (TWa)'
-      / pipeline 0.0
-        shipping_Mport 100.0
-        shipping_Xport 0.020 /
-  p24_cap_relMaxGrowthRate(teTradeTransp)                                       'Relative maximum yearly growth rate for trade transportation capacity (percent)'
-      / pipeline 0.0
-        shipping_Mport 0.03
-        shipping_Xport 0.01 /
+  p24_cap_absMaxGrowthRate(teTrade)                                             'Absolute maximum yearly growth rate for trade transportation capacity (TWa)'
+      / gas_pipe 0.0
+        lng_liq 0.020
+        lng_gas 100.0
+        lng_ves 100000.0 /
+  p24_cap_relMaxGrowthRate(teTrade)                                             'Relative maximum yearly growth rate for trade transportation capacity (percent)'
+      / gas_pipe 0.0
+        lng_liq 0.01
+        lng_gas 0.03
+        lng_ves 100000.0 /
 ;
 
-PARAMETER TABLE p24_disallowed(all_regi,all_regi,tradeSe,teTradeTranspModes)    'Trade routes that are explicitly disallowed.'
+PARAMETER TABLE p24_disallowed(all_regi,all_regi,tradeModes)                    'Trade routes that are explicitly disallowed.'
 $include "./modules/24_trade/network_trade/input/p24_disallowed.prn"
 ;
 
@@ -136,10 +138,6 @@ PARAMETER TABLE p24_distance(all_regi,all_regi)                                 
 $include "./modules/24_trade/network_trade/input/p24_distance.prn"
 ;
 p24_distance(regi,regi2) = p24_distance(regi,regi2)/1000;
-
-PARAMETER TABLE p24_dataglob_transp(char,all_enty,teTradeTransp)                'Transportation technology characteristics: investment costs, O&M costs, efficiency, ...'
-$include "./modules/24_trade/network_trade/input/generisdata_tradeTransp.prn"
-;
 
 
 

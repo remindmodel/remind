@@ -302,11 +302,10 @@ $ENDIF.WindOff
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 *** technologies related to trading
-        pipeline
-        shipping
-        shipping_Mport
-        shipping_Xport
-        shipping_vessels
+        gas_pipe                                                                'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
+        lng_ves                                                                 'LNG vessels.'
 /
 
 all_enty             "all types of quantities"
@@ -454,6 +453,10 @@ all_enty             "all types of quantities"
 	good         "Generic good"
          perm         "Carbon permit"
          peog         "aggregated oil and gas, only relevant for calibration because IEA only provides aggregated data"
+        gas_pipe                                                                'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
+        lng_ves                                                                 'LNG vessels.'
 /
 
 all_esty "energy services"
