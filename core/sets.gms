@@ -484,6 +484,8 @@ all_in   "all inputs and outputs of the CES function"
   kap                     "capital input"
   en                      "energy input"
 
+  ens                     "stationary energy use"
+  ensh                    "stationary heat energy use"
   fesos                   "stationary use of solid energy carriers"
   fehos                   "stationary use of liquid energy carriers"
   fegas                   "stationary use of gaseous energy carriers"
@@ -866,6 +868,7 @@ sets
        transport
        buildings
        industry
+       stationary
        CCU
        techpol
        emicapregi
@@ -901,6 +904,7 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        transport . %transport%
        buildings . %buildings%
        industry . %industry%
+       stationary . %stationary%
        CCU . %CCU%
        techpol . %techpol%
        emicapregi . %emicapregi%

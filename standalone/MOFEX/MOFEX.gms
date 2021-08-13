@@ -81,6 +81,8 @@ $setGlobal transport  complex         !! def = complex
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
+***---------------------    38_stationary    --------------------------------------
+$setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  off !! def = off
 ***---------------------    40_techpol  -----------------------------------------

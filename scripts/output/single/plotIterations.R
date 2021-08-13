@@ -3,6 +3,7 @@ if (!exists("source_include")) {
   lucode2::readArgs("outputdir")
 }
 
+# TODO setwd at the start of the Rmd and use relative paths
 outputdir <- normalizePath(outputdir)
 
 getLine <- function() {
