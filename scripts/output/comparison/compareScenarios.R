@@ -64,6 +64,14 @@ start_comp <- function(outputdirs,shortTerm,outfilename,regionList,mainReg) {
 
 # ---- For each list entry call start script that starts compareScenarios ----
 regionSubsetList <- remind2::toolRegionSubsets(lucode2::path(listofruns[[1]]$dirs,"fulldata.gdx"))
+# ADD EU-27 region aggregation if possible
+if("EUR" %in% names(regionSubsetList)){
+  regionSubsetList <- c(regionSubsetList,list(
+    "EU27"=c("ENC","EWN","ECS","ESC","ECE","FRA","DEU","ESW") #, #EU27 (without Ireland)
+    #"NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
+  ) ) 
+}
+
 for (r in listofruns) {
   # Create multiple pdf files for H12 and subregions of H12
   for (reg in c("H12",names(regionSubsetList))){
