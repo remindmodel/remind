@@ -34,12 +34,15 @@ pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
+  pm_taxemiMkt(t,regi,"ETS")$(NOT (ETS_regi("EU_ETS",regi))) = 0;
 );
 $ENDIF.emiMktETS
 
 $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
+  pm_taxemiMkt(t,regi,"ES")$(NOT (regi_group("EU27_regi",regi))) = 0;
+  pm_taxemiMkt(t,regi,"other")$(NOT (ETS_regi("EU_ETS",regi) OR regi_group("EU27_regi",regi))) = 0;
 );
 $ENDIF.emiMktES
 

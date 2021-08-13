@@ -24,6 +24,14 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
 
+q47_emiTarget_netCO2_noLULUCF_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netCO2_noLULUCF_noBunkers")
+	=e=
+	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
+		vm_emiAllMkt(t,regi,"co2",emiMkt)
+	);
+;
+
 *** FS: gross energy CO2 emissions (excl. BECCS and bunkers)
 *** note: industry BECCS is still missing from this variable, to be added in the future
 q47_emiTarget_grossEnCO2(t,regi)..
@@ -53,6 +61,14 @@ q47_emiTarget_netGHG_noBunkers(t, regi)..
 		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
 		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
 		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+;
+
+q47_emiTarget_netGHG_noLULUCF_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netGHG_noLULUCF_noBunkers")
+	=e=
+	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
+		vm_co2eqMkt(t,regi,emiMkt)
+	);
 ;
 
 ***$endIf.regicarbonprice
