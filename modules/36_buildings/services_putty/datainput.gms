@@ -9,14 +9,11 @@
 Parameter 
   p36_cesdata_sigma(all_in)   "substitution elasticities"
   /
-    
         enb     0.3
         esswb   -1 !! The Esub is estimated with technological data 
         ueswb   INF     !! all sigma equal to INF will be treated as a sum with coefficients equal to unity ie OUT = IN1+ IN2.
           uescb  -1    !! The Esub is estimated with technological data  
           uealb  -1 !! The Esub is estimated with technological data  
-          
-     
   /
   
 ;
@@ -70,7 +67,6 @@ table f36_dataeff(char,all_teEs)   "end-use (final energy) long term efficiency 
 $include "./modules/36_buildings/services_with_capital/input/generisdata_Eff.prn"
 ;
 
- 
 p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2
 
 p36_demFeForEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_demFeForEs_scen(ttot,regi,"%cm_GDPscen%",entyFe,esty,teEs) * sm_EJ_2_TWa; !!  from EJ to TWa;
@@ -110,8 +106,6 @@ p36_fe2es(ttot,regi,teEs)$(p36_fe2es(ttot,regi,teEs) gt sm_tmp) = sm_tmp;
 *** Correct the UE quantities of heat pumps and electricity in accordance
 p36_prodEs(ttot,regi,entyFe,esty,teEs) = p36_demFeForEs(ttot,regi,entyFe,esty,teEs) * p36_fe2es(ttot,regi,teEs);
 
-
-
 if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' p36_logitCalibration_load = p36_logitCalibration, p36_logitLambda_load = p36_logitLambda;
 p36_logitCalibration(ttot,regi,enty,esty,teEs) = p36_logitCalibration_load(ttot,regi,enty,esty,teEs);
@@ -138,8 +132,8 @@ p36_shFeCes(ttot,regi,entyFe,in,teEs)$(feViaEs2ppfen(entyFe,in,teEs)
                                    AND teEs_dyn36(teEs)
                                    AND sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2)))
   =
-sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe,esty,teEs))
-/ sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2))
+  sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe,esty,teEs))
+  / sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2))
 ;
 
 *** Compute UE shares of technologies producing ES(UE) from FE
@@ -307,7 +301,6 @@ display p36_omegEs , opTimeYr2teEs ;
 ***_____________________________END OF Information for the ES layer  and the multinomial logit function _____________________________
 
 
-
 *** Adjustement cost factor
 p36_adjFactor(ttot,regi) = 1;
 
@@ -323,6 +316,7 @@ regi_dyn36(all_regi) = regi_dyn80(all_regi);
 $else
 regi_dyn36(all_regi) = regi(all_regi);
 $endif
+
 ***-------------------------------------------------------------------------
 ***  pass on module specific parameter values to core parameters
 ***-------------------------------------------------------------------------

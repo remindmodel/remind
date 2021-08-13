@@ -5,6 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/services_with_capital/presolve.gms
+
 *** For the first iterations, avoid very high prices because of numerical reasons
 if (ord(iteration) le 8,
 
@@ -126,8 +127,10 @@ p36_techCosts(t,regi_dyn36(regi),entyFe,esty,teEs) =
       / pm_fe2es(t,regi,teEs)
       !! add taxes, subsidies, and later on costs
       ;
-);      
+);
 
+p36_techCosts_iter(iteration,t,regi,entyFe,esty,teEs) =
+  p36_techCosts(t,regi,entyFe,esty,teEs);
 
 *** Compute the share of UE for each technology that is needed to get the aggregate technological distribution observed
 loop ((t36_hist(ttot),fe2ces_dyn36(entyFe,esty,teEs,in)),
@@ -212,10 +215,9 @@ loop ( t36_hist_last(ttot),
      ;
      
     p36_logitCalibration(t2,regi_dyn36(regi),entyFe,esty,teEs) $ (fe2es_dyn36(entyFe,esty,teEs) AND teEs_pushCalib_dyn36(teEs)) = 
-        p36_pushCalib(t2,teEs) 
-        * p36_logitCalibration(t2,regi,entyFe,esty,teEs)
-        ;
-     
+      p36_pushCalib(t2,teEs)
+      * p36_logitCalibration(t2,regi,entyFe,esty,teEs)
+      ;
 );
 ); 
 
@@ -252,7 +254,6 @@ loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 );
 
 
-
 *** Set 1e-3 as a lower bound for shares
 p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
                                                       AND p36_shUeCes(ttot,regi,entyFe,in,teEs) lt 1e-3)
@@ -266,9 +267,7 @@ p36_shUeCes(ttot,regi_dyn36(regi),entyFe,in,teEs) $ ( t36_scen(ttot)
                                                     p36_shUeCes(ttot,regi,entyFe2,in,teEs2))
                                                     ;
 
-
 *** Compute FE shares
-
 p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                 = (1 / p36_fe2es(t,regi,teEs))
                                                  / sum ( (fe2ces_dyn36(entyFe2,esty2,teEs2,in)),
@@ -277,7 +276,10 @@ p36_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$feteces_dyn36(entyFe,teEs,in)
                                                         )
                                                  * p36_shUeCes(t,regi,entyFe,in,teEs)
                                                  ;
-                                                 
+
+p36_shFeCes_iter(iteration,t,regi,entyFe,in,teEs) = 
+  p36_shFeCes(t,regi,entyFe,in,teEs);
+
 *** Pass on to core parameters
 loop (fe2ces_dyn36(entyFe,esty,teEs,in),
 pm_shFeCes(t,regi_dyn36(regi),entyFe,in,teEs)$( NOT t0(t)) 
