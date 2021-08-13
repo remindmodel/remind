@@ -349,10 +349,10 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 $ifthen.regipol %regipol% == "regiCarbonPrice"        
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
-          display "#### Check out the ETS target of 47_regipol module and pm_regiTarget_dev parameter.";
+          display "#### Check out the pm_regiTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
-          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2015 emissions.";
-          display "#### The deviation must to be less than 1% of 2015 emissions (in between -0.01 and 0.01) to reach convergence.";
+          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2015 emissions (or cm_startyear if data is not available for 2015).";
+          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2015 (or cm_startyear) emissions to reach convergence.";
           display pm_regiTarget_dev;
 	      );
 $endif.regipol
