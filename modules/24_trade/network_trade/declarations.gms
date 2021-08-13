@@ -41,18 +41,16 @@ vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
 ;
 
 POSITIVE VARIABLES
-  v24_shipment_quan(ttot,all_regi,all_regi,all_enty,teTradeTranspModes)         "Shipment quantities for different transportation modes"
-  v24_shipment_cost(ttot,all_regi,all_enty)                                     "Total transportation cost"
-  v24_nonserve_cost(ttot,all_regi,all_enty)                                     "Total cost arising from non-serviced transportation"
-  v24_tradeTransp_cost(ttot,all_regi,all_enty)                                  "Cost incurring from trade transportation"
-  v24_cap_tradeTransp(ttot,all_regi,all_regi,all_enty,teTradeTransp)            "Net total capacities for transportation"
-  v24_capEarlyReti(ttot,all_regi,all_regi,tradeSe,teTradeTransp)                "Early retired capacity"
-  v24_deltaCap_tradeTransp(ttot,all_regi,all_regi,all_enty,teTradeTransp)       "Capacity additions for transportation"
+  v24_shipment_quan(ttot,all_regi,all_regi,tradeModes)                          'Shipment quantities for different transportation modes'
+  v24_cap_tradeTransp(ttot,all_regi,all_regi,teTrade)                           'Net total capacities for transportation'
+  v24_deltaCap_tradeTransp(ttot,all_regi,all_regi,teTrade)                      'Capacity additions for transportation'
+  v24_capEarlyReti(ttot,all_regi,all_regi,teTrade)                              'Early retired capacity'
 ;
 
 VARIABLES
-  v24_purchase_cost(ttot,all_regi,all_enty)                                     "Total income or expense generated from trade"
-  vm_budget(ttot,all_regi)                                                      "Budget of regions"
+  v24_tradeTransp_cost(ttot,all_regi,all_enty)                                  'Cost incurring from trade transportation'
+  v24_purchase_cost(ttot,all_regi,all_enty)                                     'Total income or expense generated from trade'
+  vm_budget(ttot,all_regi)                                                      'Budget of regions'
 ;
 
 VARIABLE  v24_objvar_opttransp                                                  'Objective variable for optimisation inside trade module';
@@ -65,12 +63,12 @@ VARIABLE  v24_objvar_opttransp                                                  
 EQUATIONS
   q24_totMport_quan(ttot,all_regi,all_enty)                                     'Total imports of each region must equal the demanded imports'
   
-  q24_cap_tradeTransp_pipeline(ttot,all_regi,all_regi,all_enty)                 'Trade is limited by capacity for pipelines.'
-  q24_cap_tradeTransp_shipping_Mport(ttot,all_regi,all_enty)                    'Trade is limited by capacity for shipping.'
-  q24_cap_tradeTransp_shipping_Xport(ttot,all_regi,all_enty)                    'Trade is limited by capacity for shipping.'
+  q24_cap_teTradeBilat(ttot,all_regi,all_regi,teTrade)                          'Trade is limited by capacity for pipelines.'
+  q24_cap_teTradeXport(ttot,all_regi,teTrade)                                   'Trade is limited by capacity for Xport terminals.'
+  q24_cap_teTradeMport(ttot,all_regi,teTrade)                                   'Trade is limited by capacity for Mport terminals.'
   
-  q24_deltaCap_tradeTransp(ttot,all_regi,all_regi,all_enty,teTradeTransp)       'Trade transportation capacities from deltaCap.'
-  q24_deltaCap_limit(ttot,all_regi,all_regi,all_enty,teTradeTransp)             'Limit deltaCap.'
+  q24_deltaCap_tradeTransp(ttot,all_regi,all_regi,teTrade)                      'Trade transportation capacities from deltaCap.'
+  q24_deltaCap_limit(ttot,all_regi,all_regi,teTrade)                            'Limit deltaCap.'
   q24_prohibit_MportXport(ttot,regi,tradeSe)                                    'Prohibit importers to be exessive exporters.'
 
   q24_purchase_cost(ttot,all_regi,all_enty)                                     'Total income or expense generated from trade'

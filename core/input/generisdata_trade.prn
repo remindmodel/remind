@@ -13,7 +13,7 @@ omv         Variable operation and maintenance costs given in $(2015)/kWa energy
 omv_d       Variable operation and maintenance costs given in $(2015)/kWa energy production. Per 1000km.s
 lifetime    Given in years
 $offtext
-+                       pipeline           shipping_Xport         shipping_vessels          shipping_Mport
++                        gas_pipe                 lng_liq                  lng_ves                 lng_gas
 tech_stat                     0                        0                        0                       0
 inco0                        20                      167                        0                       0.1
 inco0_d                     100                        0                        0                       0

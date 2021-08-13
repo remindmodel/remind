@@ -423,11 +423,10 @@ $ENDIF.WindOff
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 *** technologies related to trading
-        pipeline
-        shipping
-        shipping_Mport
-        shipping_Xport
-        shipping_vessels
+        gas_pipe                                                                'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
+        lng_ves  
 /
 
 te(all_te)              "energy technologies"
@@ -534,11 +533,10 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
-        pipeline
-        shipping
-        shipping_Mport
-        shipping_Xport
-        shipping_vessels
+        gas_pipe                                                                'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
+        lng_ves                                                                 'LNG vessels.'
 /
 ;
 

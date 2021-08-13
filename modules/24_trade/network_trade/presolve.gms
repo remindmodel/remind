@@ -65,7 +65,7 @@ pm_Xport_effective(ttot,regi,tradeSe)
  * pm_Xport(ttot,regi,tradeSe) / sum(regi2,pm_Xport(ttot,regi2,tradeSe))
 ;
 
-pm_XMport_pipeline(regi,regi2,tradeSe) = 0.0;
+pm_XMport_pipeline(regi,regi2,'pegas') = 0.0;
 pm_XMport_pipeline('MEA','EUR','pegas') = 0.100;
 pm_XMport_pipeline('REF','EUR','pegas') = 0.150;
 
@@ -80,90 +80,94 @@ pm_exportPrice(ttot,regi,'pegas') = p_PEPrice(ttot,regi,'pegas');
 
 *** all shipments must add up to satisfy the demanded imports
 q24_totMport_quan(ttot,regi,tradeSe)..
-    pm_Mport(ttot,regi,tradeSe) =e= sum(  (regi2,teTradeTranspModes), v24_shipment_quan(ttot,regi2,regi,tradeSe,teTradeTranspModes)  );
+    sum(  (regi2,tradeEnty2Mode(tradeSe,tradeModes))$(not sameAs(regi,regi2)), v24_shipment_quan(ttot,regi2,regi,tradeModes)  )
+  =e=
+    pm_Mport(ttot,regi,tradeSe);
 
 *** shipments constrained by capacity
-q24_cap_tradeTransp_pipeline(ttot,regi,regi2,tradeSe)..
-    v24_shipment_quan(ttot,regi,regi2,tradeSe,'pipeline')
+q24_cap_teTradeBilat(ttot,regi,regi2,teTradeBilat)$(not sameAs(regi,regi2))..
+    sum( tradeMode2te(tradeModes, teTradeBilat) , v24_shipment_quan(ttot,regi,regi2,tradeModes) )
   =l=
-    v24_cap_tradeTransp(ttot,regi,regi2,tradeSe,'pipeline')
+    v24_cap_tradeTransp(ttot,regi,regi2,teTradeBilat)
 ;
-
-q24_cap_tradeTransp_shipping_Mport(ttot,regi,tradeSe)..
-    sum(regi2, v24_shipment_quan(ttot,regi2,regi,tradeSe,'shipping'))
+q24_cap_teTradeXport(ttot,regi,teTradeXportonly)..
+    sum( tradeMode2te(tradeModes, teTradeXportonly) , sum(regi2$(not sameAs(regi,regi2)),v24_shipment_quan(ttot,regi,regi2,tradeModes)) )
   =l=
-    v24_cap_tradeTransp(ttot,regi,regi,tradeSe,'shipping_Mport')
+    v24_cap_tradeTransp(ttot,regi,regi,teTradeXportonly)
 ;
-
-q24_cap_tradeTransp_shipping_Xport(ttot,regi,tradeSe)..
-    sum(regi2, v24_shipment_quan(ttot,regi,regi2,tradeSe,'shipping'))
+q24_cap_teTradeMport(ttot,regi,teTradeMportonly)..
+    sum( tradeMode2te(tradeModes, teTradeMportonly) , sum(regi2$(not sameAs(regi,regi2)),v24_shipment_quan(ttot,regi2,regi,tradeModes)) )
   =l=
-    v24_cap_tradeTransp(ttot,regi,regi,tradeSe,'shipping_Xport')
+    v24_cap_tradeTransp(ttot,regi,regi,teTradeMportonly)
 ;
 
-$ontext
-q24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)$(pm_ttot_val(ttot) gt cm_startyear)..
-    v24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
-  =e=
-    v24_cap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
-  - v24_cap_tradeTransp(ttot-1,regi,regi2,tradeSe,teTradeTransp)
-;
-$offtext
-
-q24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)$(ttot.val ge cm_startyear)..
-    v24_cap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
+*** capacity can be built over years, but also depreciates
+q24_deltaCap_tradeTransp(ttot,regi,regi2,teTrade)$(ttot.val ge cm_startyear)..
+    v24_cap_tradeTransp(ttot,regi,regi2,teTrade)
   =e=
 ***    (1 - v24_capEarlyReti(ttot,regi,regi2,tradeSe,teTradeTransp))
 ***    *
     (
-      sum(opTimeYr2te(teTradeTransp,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+      sum(opTimeYr2te(teTrade,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
         pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
-      * pm_omeg(regi2,opTimeYr+1,teTradeTransp)
-      * v24_deltaCap_tradeTransp(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,regi2,tradeSe,teTradeTransp)
+      * pm_omeg(regi2,opTimeYr+1,teTrade)
+      * v24_deltaCap_tradeTransp(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,regi2,teTrade)
       )
     + ( pm_dt(ttot) / 2
-      * pm_omeg(regi2,"2",teTradeTransp)
-      * v24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
+      * pm_omeg(regi2,"2",teTrade)
+      * v24_deltaCap_tradeTransp(ttot,regi,regi2,teTrade)
       )
     )
 ;
 
 *** delta cap constrained to small increase
-q24_deltaCap_limit(ttot,regi,regi2,tradeSe,teTradeTransp)$(pm_ttot_val(ttot) gt cm_startyear)..
-    v24_deltaCap_tradeTransp(ttot,regi,regi2,tradeSe,teTradeTransp)
+q24_deltaCap_limit(ttot,regi,regi2,teTrade)$(pm_ttot_val(ttot) gt cm_startyear)..
+    v24_deltaCap_tradeTransp(ttot,regi,regi2,teTrade)
   =l=
-    v24_cap_tradeTransp(ttot-1,regi,regi2,tradeSe,teTradeTransp)
+    v24_cap_tradeTransp(ttot-1,regi,regi2,teTrade)
   * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
-  * p24_cap_relMaxGrowthRate(teTradeTransp)
-  + p24_cap_absMaxGrowthRate(teTradeTransp)
+  * p24_cap_relMaxGrowthRate(teTrade)
+  + p24_cap_absMaxGrowthRate(teTrade)
   * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
 ;
 
 *** shipments constrained: importers cant be exporters
 q24_prohibit_MportXport(ttot,regi,tradeSe)$(pm_Mport(ttot,regi,tradeSe))..
-    sum((regi2,teTradeTranspModes), v24_shipment_quan(ttot,regi,regi2,tradeSe,teTradeTranspModes))
+    sum(  (regi2,tradeEnty2Mode(tradeSe, tradeModes))  , v24_shipment_quan(ttot,regi,regi2,tradeModes))
   =l=
     pm_Xport_effective(ttot,regi,tradeSe)
 ;
 
 *** cost from purchasing/buying
 q24_purchase_cost(ttot,regi,tradeSe)..
-    v24_purchase_cost(ttot,regi,tradeSe) =e= sum(  (regi2,teTradeTranspModes), v24_shipment_quan(ttot,regi2,regi,tradeSe,teTradeTranspModes) * pm_exportPrice(ttot,regi2,tradeSe)  )
+    v24_purchase_cost(ttot,regi,tradeSe) =e= sum(  (regi2,tradeEnty2Mode(tradeSe,tradeModes)), v24_shipment_quan(ttot,regi2,regi,tradeModes) * pm_exportPrice(ttot,regi2,tradeSe)  )
 ;
 
 *** cost from transportation capacities
+*** cost for a tradeSe enty for importer regi = sum over all modes carrying that enty, 
+*** sum over all technologies involved in those trade modes, sum over regi2 (exporter), 
+*** sum over inco0,omf,omv, and sum over per distance or not
 q24_tradeTransp_cost(ttot,regi,tradeSe)..
     v24_tradeTransp_cost(ttot,regi,tradeSe)
   =e=
-    sum(regi2,
-      v24_deltaCap_tradeTransp(ttot,regi2,regi,tradeSe,'pipeline')        * (p24_dataglob_transp('inco0',tradeSe,'pipeline')         + p24_dataglob_transp('inco0_d',tradeSe,'pipeline')         * p24_distance(regi,regi2))
-    + v24_cap_tradeTransp(ttot,regi2,regi,tradeSe,'pipeline')             * (p24_dataglob_transp('omf'  ,tradeSe,'pipeline')         + p24_dataglob_transp('omf_d'  ,tradeSe,'pipeline')         * p24_distance(regi,regi2))
-    + v24_shipment_quan(ttot,regi2,regi,tradeSe,'pipeline')               * (p24_dataglob_transp('omv'  ,tradeSe,'pipeline')         + p24_dataglob_transp('omv_d'  ,tradeSe,'pipeline')         * p24_distance(regi,regi2))
-    + v24_deltaCap_tradeTransp(ttot,regi2,regi2,tradeSe,'shipping_Xport') * (p24_dataglob_transp('inco0',tradeSe,'shipping_Xport')   + p24_dataglob_transp('inco0_d',tradeSe,'shipping_Xport')   * p24_distance(regi,regi2))
-    + v24_cap_tradeTransp(ttot,regi2,regi2,tradeSe,'shipping_Xport')      * (p24_dataglob_transp('omf'  ,tradeSe,'shipping_Xport')   + p24_dataglob_transp('omf_d'  ,tradeSe,'shipping_Xport')   * p24_distance(regi,regi2))
-    + v24_deltaCap_tradeTransp(ttot,regi2,regi2,tradeSe,'shipping_Mport') * (p24_dataglob_transp('inco0',tradeSe,'shipping_Mport')   + p24_dataglob_transp('inco0_d',tradeSe,'shipping_Mport')   * p24_distance(regi,regi2))
-    + v24_cap_tradeTransp(ttot,regi2,regi2,tradeSe,'shipping_Mport')      * (p24_dataglob_transp('omf'  ,tradeSe,'shipping_Mport')   + p24_dataglob_transp('omf_d'  ,tradeSe,'shipping_Mport')   * p24_distance(regi,regi2))
-    + v24_shipment_quan(ttot,regi2,regi,tradeSe,'shipping')               * (p24_dataglob_transp('omv'  ,tradeSe,'shipping_vessels') + p24_dataglob_transp('omv_d'  ,tradeSe,'shipping_vessels') * p24_distance(regi,regi2))
+    sum( tradeEnty2Mode(tradeSe, tradeModes),
+      sum( tradeMode2te(tradeModes, teTradeBilat),
+        sum( regi2,
+          v24_deltaCap_tradeTransp(ttot,regi2,regi,teTradeBilat)      * (pm_data(regi,'inco0',teTradeBilat)      + pm_data(regi,'inco0_d',teTradeBilat)     * p24_distance(regi,regi2))
+        + v24_cap_tradeTransp(ttot,regi2,regi,teTradeBilat)           * (pm_data(regi,'omf'  ,teTradeBilat)      + pm_data(regi,'omf_d'  ,teTradeBilat)     * p24_distance(regi,regi2))
+        + v24_shipment_quan(ttot,regi2,regi,tradeModes)               * (pm_data(regi,'omv'  ,teTradeBilat)      + pm_data(regi,'omv_d'  ,teTradeBilat)     * p24_distance(regi,regi2))
+        )
+      )
+    + sum( tradeMode2te(tradeModes, teTradeXportonly),
+        v24_deltaCap_tradeTransp(ttot,regi,regi,teTradeXportonly)     *  pm_data(regi,'inco0',teTradeXportonly)
+      + v24_cap_tradeTransp(ttot,regi,regi,teTradeXportonly)          *  pm_data(regi,'omf'  ,teTradeXportonly)
+      + sum(regi2,v24_shipment_quan(ttot,regi2,regi,tradeModes))      *  pm_data(regi,'omv'  ,teTradeXportonly)
+      )
+    + sum( tradeMode2te(tradeModes, teTradeMportonly),
+        v24_deltaCap_tradeTransp(ttot,regi,regi,teTradeMportonly)     *  pm_data(regi,'inco0',teTradeMportonly)
+      + v24_cap_tradeTransp(ttot,regi,regi,teTradeMportonly)          *  pm_data(regi,'omf'  ,teTradeMportonly)
+      + sum(regi2,v24_shipment_quan(ttot,regi,regi2,tradeModes))      *  pm_data(regi,'omv'  ,teTradeMportonly)
+      )
     )
 ;
 
@@ -181,26 +185,25 @@ qm_budget(ttot,regi)..
 ***                               TRADE MODEL BOUNDS
 ***-------------------------------------------------------------------------------
 
-*** variable constraints
-v24_shipment_quan.lo(ttot,all_regi,all_regi,all_enty,teTradeTranspModes) = 0.0;
-v24_shipment_cost.lo(ttot,all_regi,all_enty) = 0.0;
-v24_nonserve_cost.lo(ttot,all_regi,all_enty) = 0.0;
-v24_cap_tradeTransp.lo(ttot,all_regi,all_regi,all_enty,teTradeTransp) = 0.0;
-v24_deltaCap_tradeTransp.lo(ttot,all_regi,all_regi,all_enty,teTradeTransp) = 0.0;
-
-v24_cap_tradeTransp.fx(ttot,regi,regi2,tradeSe,'shipping_Mport')$(not sameAs(regi,regi2)) = 0.0;
-v24_cap_tradeTransp.fx(ttot,regi,regi2,tradeSe,'shipping_Xport')$(not sameAs(regi,regi2)) = 0.0;
-
-*** fix initial capacities
-v24_cap_tradeTransp.fx(ttot,regi,regi2,tradeSe,'pipeline')$(pm_ttot_val(ttot) eq cm_startyear) = pm_XMport_pipeline(regi,regi2,tradeSe);
-v24_cap_tradeTransp.fx(ttot,regi,regi,tradeSe,'shipping_Mport')$(pm_ttot_val(ttot) eq cm_startyear) = pm_Mport(ttot,regi,tradeSe)-sum(regi2,pm_XMport_pipeline(regi2,regi,tradeSe));
-v24_cap_tradeTransp.fx(ttot,regi,regi,tradeSe,'shipping_Xport')$(pm_ttot_val(ttot) eq cm_startyear) = pm_Xport_effective(ttot,regi,tradeSe)-sum(regi2,pm_XMport_pipeline(regi,regi2,tradeSe));
+*** positive variables
+v24_shipment_quan.lo(ttot,all_regi,all_regi,tradeModes) = 0.0;
+v24_cap_tradeTransp.lo(ttot,all_regi,all_regi,teTrade) = 0.0;
+v24_deltaCap_tradeTransp.lo(ttot,all_regi,all_regi,teTrade) = 0.0;
 
 *** shipments constrained: no self-imports or self-exports
-v24_shipment_quan.fx(ttot,regi,regi2,tradeSe,teTradeTranspModes)$sameAs(regi,regi2) = 0.0;
+v24_shipment_quan.fx(ttot,regi,regi2,tradeModes)$sameAs(regi,regi2) = 0.0;
+
+*** trade capacity for terminals lives on the diagonal
+v24_cap_tradeTransp.fx(ttot,regi,regi2,teTradeXportonly)$(not sameAs(regi,regi2)) = 0.0;
+v24_cap_tradeTransp.fx(ttot,regi,regi2,teTradeMportonly)$(not sameAs(regi,regi2)) = 0.0;
+
+*** fix initial capacities for pegas
+v24_cap_tradeTransp.fx(ttot,regi,regi2,'gas_pipe')$(pm_ttot_val(ttot) eq cm_startyear) = pm_XMport_pipeline(regi,regi2,'pegas');
+v24_cap_tradeTransp.fx(ttot,regi,regi,'lng_liq')$(pm_ttot_val(ttot) eq cm_startyear) = pm_Xport_effective(ttot,regi,'pegas')-sum(regi2,pm_XMport_pipeline(regi,regi2,'pegas'));
+v24_cap_tradeTransp.fx(ttot,regi,regi,'lng_gas')$(pm_ttot_val(ttot) eq cm_startyear) = pm_Mport(ttot,regi,'pegas')-sum(regi2,pm_XMport_pipeline(regi2,regi,'pegas'));
 
 *** shipments constrained: trade only allowed between defined regions
-v24_shipment_quan.fx(ttot,regi,regi2,tradeSe,teTradeTranspModes)$(p24_disallowed(regi,regi2,tradeSe,teTradeTranspModes) gt 0.0) = 0.0;
+v24_shipment_quan.fx(ttot,regi,regi2,tradeModes)$(p24_disallowed(regi,regi2,tradeModes) gt 0.0) = 0.0;
 
 
 
@@ -220,9 +223,9 @@ MODEL m24_tradeTransp
     /
         q24_totMport_quan
         
-        q24_cap_tradeTransp_pipeline
-        q24_cap_tradeTransp_shipping_Mport
-        q24_cap_tradeTransp_shipping_Xport
+        q24_cap_teTradeBilat
+        q24_cap_teTradeXport
+        q24_cap_teTradeMport
         
         q24_deltaCap_tradeTransp
         q24_deltaCap_limit
