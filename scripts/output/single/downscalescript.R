@@ -57,7 +57,7 @@ EDGAR_SO2 <- read.magpie("../../../core/input/grid/EDGAR_SO2_2005_excl_agr_and_i
 # Set gdx path
 gdx_name <- "fulldata.gdx"
 outputdir <- "../../../output/SSP1emscen6"               # path to the output folder
-gdx_path <- path(outputdir,gdx_name)
+gdx_path <- file.path(outputdir,gdx_name)
 
 y_plot <- c("y2010","y2015","y2020","y2025","y2030","y2035","y2040","y2045","y2050","y2055","y2060","y2070","y2080","y2090","y2100")
 yrs <- c(2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100)
