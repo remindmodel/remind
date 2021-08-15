@@ -564,31 +564,6 @@ loop ((ttot,regi),
 DISPLAY  p_share_seliq_s, p_share_seh2_s, p_share_seel_s;
 
 
-*GL*calculation of a bioshare for each FE carrier
-*NB* the following is only relevant for reporting. As reporting is moved to R the following will be obsolete.
-p_bioshare(ttot,regi,entyFe)$(sum(se2fe(entySe,entyFe,te),
-                                  sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-                                  + sum(pc2te(entyPe,entySe2,te2,entySe),
-                                       max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-                                     )
-                             ) ne 0) 
-  = sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(peBio,entySe,te2), vm_prodSe.l(ttot,regi,peBio,entySe,te2))
-        + sum(pc2te(peBio,entySe2,te2,entySe),
-               max(0, pm_prodCouple(regi,peBio,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,peBio,entySe2,te2)
-             )
-    ) 
-    /
-    sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-        + sum(pc2te(entyPe,entySe2,te2,entySe),
-             max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-           )
-    )
-;
-
-display p_bioshare;
-
 *LB* update parameter that are used for variables during the run
 pm_gdp_gdx(ttot,regi)$(ttot.val ge 2005)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)$(ttot.val ge 2005)     = vm_invMacro.l(ttot,regi,"kap");

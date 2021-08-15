@@ -22,4 +22,5 @@ $ifthen.CES_calibration "%CES_parameters%" == "calibrate"
 v36_H2share.up(t,regi) = s36_costDecayStart;
 $endif.CES_calibration
 
+
 *** EOF ./modules/36_buildings/simple/bounds.gms

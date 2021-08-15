@@ -1,10 +1,13 @@
+symbolNames <- paste("p36_techCosts_iter, p36_shFeCes_iter, p36_shUeCes_iter, v36_deltaProdEs_iter, v36_prodEs_iter")
+generateHtml <- "y"
+
 if (!exists("source_include")) {
-  outputdir <- "output/B-putty_SSP2-NDC_restartWithAllIterationResults"
-  lucode2::readArgs("outputdir")
+  outputdir <- file.path("output", "B-putty_SSP2-NDC_restartWithAllIterationResults")
+  lucode2::readArgs("outputdir", "symbolNames", "generateHtml")
 }
 
-# TODO setwd at the start of the Rmd and use relative paths
 outputdir <- normalizePath(outputdir)
+
 
 getLine <- function() {
   # gets characters (line) from the terminal of from a connection
@@ -13,23 +16,23 @@ getLine <- function() {
     s <- readline()
   } else {
     con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
     on.exit(close(con))
+    s <- readLines(con, 1, warn = FALSE)
+    if (identical(length(s), 0L)) {
+      s <- ""
+    }
   }
+  stopifnot(identical(length(s), 1L))
   return(s)
 }
 
-now <- format(Sys.time(), "%Y-%m-%d_%H:%M:%S")
+now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-defaultSymbolNames <- paste(
-  "p36_techCosts, p36_shFeCes, p36_shUeCes, p36_demFeForEs, p36_prodEs, p36_fe2es,",
-  "v36_deltaProdEs, v36_ProdEs"
-)
-cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", defaultSymbolNames, ") ")
-symbolNames <- getLine()
-if (identical(symbolNames, "")) {
-  symbolNames <- defaultSymbolNames
+cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
+answer <- getLine()
+if (!identical(trimws(answer), "")) {
+  symbolNames <- answer
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
 
@@ -41,7 +44,7 @@ rmdHeader <- paste0(
   "\n",
   "## Setup\n",
   "```{r}\n",
-  'runPath <- "', outputdir, '"\n',
+  'runPath <- "', gsub("\\", "\\\\", outputdir, fixed = TRUE), '"\n',
   "```"
 )
 
@@ -91,11 +94,15 @@ rmdFooter <- if (length(symbolNames) >= 2) {
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-  collapse = "\n\n"
+                  collapse = "\n\n"
 ), rmdPath)
 
-cat("Render plots to html? (y/n): ")
-if (identical(getLine(), "y")) {
+cat("Render plots to html? (default: ", generateHtml, ") ")
+answer <- getLine()
+if (!identical(trimws(answer), "")) {
+  generateHtml <- tolower(answer)
+}
+if (generateHtml %in% c("y", "yes")) {
   if (rmarkdown::pandoc_available("1.12.3")) {
     rmarkdown::render(rmdPath, output_file = file.path(outputdir, paste0("plotIterations_", now, ".html")))
   } else {
