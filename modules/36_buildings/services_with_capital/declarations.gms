@@ -13,7 +13,6 @@ s36_logit         "switch for the inclusion of vintage equations. It should excl
 Parameter
 p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2"
 p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2"
-p36_floorspace_delta(tall,all_regi) "increase in floorspace, billion m2"
 p36_adjFactor(tall,all_regi)    "factor applied for the adjustment costs" 
 
 p36_cesIONoRebound(tall,all_regi,all_in) "loads the vm_cesIO values from the input_ref and sets the upper bound to vm_cesIO to forbid a rebound effect"
@@ -51,23 +50,38 @@ p36_demUEdelta(tall,all_regi,all_in)                     "Demand for UE, indepen
 p36_shUeCesDelta(ttot,all_regi,all_enty,all_in,all_teEs) "Technological shares in UE which is not covered by former depreciated technologies"
 p36_depreciationRate(all_teEs)                       "Depreciation rates for the indivudal conversion technologies, rouhgly derived from their lifetime parameter"
 
-p36_esCapCost(tall,all_regi,all_teEs)                    "Capital costs for each technology transforming FE into UE. Cost per unit of FE"
-p36_esCapCostImplicit(tall,all_regi,all_teEs)                    "Capital costs for each technology transforming FE into UE, taking the implicit discount rate into account. Cost per unit of FE"
-p36_kapPrice(tall,all_regi)                             "Macroeconomic capital price, net of depreciation"
-p36_kapPriceImplicit(tall,all_regi,all_teEs)         "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
-p36_implicitDiscRateMarg(tall,all_regi,all_in)       "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
+p36_esCapCost(tall,all_regi,all_teEs)           "Capital costs for each technology transforming FE into UE. Cost per unit of FE"
+p36_esCapCostImplicit(tall,all_regi,all_teEs)   "Capital costs for each technology transforming FE into UE, taking the implicit discount rate into account. Cost per unit of FE"
+p36_kapPrice(tall,all_regi)                     "Macroeconomic capital price, net of depreciation"
+p36_kapPriceImplicit(tall,all_regi,all_teEs)    "Macroeconomic capital price, net of depreciation, to which the implicit discount rate is added"
+p36_implicitDiscRateMarg(tall,all_regi,all_in)  "Implicit discount rate for the choice of conversion technologies from UE to FE in buildings"
+p36_depreciationRate(all_teEs)                  "Depreciation rates for the indivudal conversion technologies, rouhgly derived from their lifetime parameter"
+p36_pushCalib(tall,all_teEs)                    "degree to which the calibration parameter should be reduced/increased for these technologies"
+p36_costReduc(tall,all_teEs)                    "Reduction of costs for some technologies"
+f36_inconvpen(all_teEs)                         "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
+p36_inconvpen(ttot,all_regi,all_teEs)           "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
 
-p36_pushCalib(tall,all_teEs)                             "degree to which the calibration parameter should be reduced/increased for these technologies"
+p36_aux_lifetime(all_teEs)                      "auxiliary parameter for calculating life times"
+p36_omegEs(all_regi,opTimeYr,all_teEs)          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
+;
 
-f36_inconvpen(all_teEs)                                  "maximum inconvenience penalty for traditional conversion technologies. Unit: T$/TWa"
-p36_inconvpen(ttot,all_regi,all_teEs)                    "parameter for inconvenience penalty depending on income level. Unit: T$/TWa"
-
-p36_aux_lifetime(all_teEs)                             "auxiliary parameter for calculating life times"
-p36_omegEs(all_regi,opTimeYr,all_teEs)               "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
+Variables
+v36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)        "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
+v36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)   "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE"
+v36_vintageInfes(ttot,all_regi,all_enty,all_esty,all_teEs)  "slack variable to avoid infeasibilities in the initialisation of vintages"
+v36_logitInfes(tall,all_regi,all_in)                        "slack variable to avoid infeasibilities in case historical demand cannot be declined fast enough"
+v36_costs(ttot,all_regi)                                    "technological costs"
+v36_vintage_obj                                             "objective variable for vintage model"
+v36_shares_obj                                              "objective variable for heterogeneity preferences"
 ;
 
 Equations
 q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
+q36_ueTech2Total(tall,all_regi,all_in)            "definition of total UE buildings demand, based on the sum of demand by technology"
+q36_cap(tall,all_regi,all_enty,all_esty,all_teEs) "definition of available capacities"
+q36_budget(tall,all_regi)                         "budget equation"
+q36_vintage_obj                                   "objective function for vintage model"
+q36_shares_obj                                    "objective function for logit shares: heterogeneity preferences"
 ;
 
 

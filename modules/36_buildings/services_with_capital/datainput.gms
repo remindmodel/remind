@@ -21,6 +21,8 @@ pm_cesdata_sigma(ttot,in)$p36_cesdata_sigma(in) = p36_cesdata_sigma(in);
 
 pm_capital_lifetime_exp(all_regi,"kapsc") = 20;
 pm_capital_lifetime_exp(all_regi,"kapal") = 12;
+*** FS: ad-hoc assume the same lifetime for insulation capital than for space cooling capital to avoid division by zero
+pm_capital_lifetime_exp(all_regi,"kaphc") = 20;
 
 pm_capital_lifetime_exp(all_regi,"esswb") = log ( 0.25) / log ( 1 -0.02 );
 
