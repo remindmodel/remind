@@ -24,6 +24,7 @@ p36_prodEs_scen(tall,all_regi,all_GDPscen,all_enty,all_esty,all_teEs)     "Energ
 p36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
 p36_prodEs_iter(iteration,ttot,all_regi,all_enty,all_esty,all_teEs)       "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE over iterations"
 p36_deltaProdEs_iter(iteration,ttot,all_regi,all_enty,all_esty,all_teEs)  "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE over iterations"
+p36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. Result of vintage_36"
 
 p36_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)                 "share of Final energy of technology teEs in the final energy producing all_in"
 p36_shFeCes_iter(iteration,ttot,all_regi,all_enty,all_in,all_teEs)  "share of Final energy of technology teEs in the final energy producing all_in"
