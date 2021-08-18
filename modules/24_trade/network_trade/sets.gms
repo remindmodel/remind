@@ -21,6 +21,7 @@ tradePe(all_enty)           "Traded primary energy commodities"
 /
     peoil, 
     pecoal,
+    pegas,
     peur, 
     pebiolc
 /

@@ -5,6 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/24_trade/se_trade/declarations.gms
+
 ***-------------------------------------------------------------------------------
 ***                                   PARAMETERS
 ***-------------------------------------------------------------------------------
