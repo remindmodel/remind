@@ -18,13 +18,13 @@ loop (t36_hist_last(ttot2) ,
        v36_deltaProdEs.lo(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $ (
                     ttot.val le ttot2.val)  
                     = max ( 0,
-                            v36_deltaProdEs.L(ttot,regi,enty,esty,teEs)
+                            p36_deltaProdEs(ttot,regi,enty,esty,teEs)
                             -1e-6
                             )
                      ;
        v36_deltaProdEs.up(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $ (
                     ttot.val le ttot2.val)  
-                    =  v36_deltaProdEs.L(ttot,regi,enty,esty,teEs)
+                    =  p36_deltaProdEs(ttot,regi,enty,esty,teEs)
                             +1e-6
                      ;              
       );

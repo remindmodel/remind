@@ -318,6 +318,7 @@ cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bl
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
+cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
 cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
 cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
 cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
@@ -508,6 +509,7 @@ $setGlobal cm_import_EU  off !! def off
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
 cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
+cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
