@@ -1194,6 +1194,10 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
+        gas_pipe                                                                'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
+        lng_ves                                                                 'LNG vessels.'
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /

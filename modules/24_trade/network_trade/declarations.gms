@@ -5,6 +5,14 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/24_trade/network_trade/declarations.gms
+
+***-------------------------------------------------------------------------------
+***                                   SCALARS
+***-------------------------------------------------------------------------------
+scalars
+s24_switch_trademodel    "Switch to activate trade model eqns before main solve and to deactivate them during main solve" /0/
+;
+
 ***-----------------------------------------------------------------------------
 ***                                   PARAMETERS
 ***-----------------------------------------------------------------------------
@@ -27,10 +35,7 @@ PARAMETERS
     pm_Mport(ttot,all_regi,all_enty)                                            'Import of traded commodity.'
     pm_Xport_effective(ttot,all_regi,all_enty)                                  'Export of traded commodity effective (computed from imports).'
     pm_XMport_pipeline(all_regi,all_regi,all_enty)                              'Export and imports of traded commodity via pipeline.'
-    pm_exportPrice(ttot,all_regi,all_enty)                                      'Export price of traded commodity.'
 ;
-
-
 
 ***-----------------------------------------------------------------------------
 ***                                   VARIABLES
@@ -45,17 +50,13 @@ POSITIVE VARIABLES
   v24_cap_tradeTransp(ttot,all_regi,all_regi,teTrade)                           'Net total capacities for transportation'
   v24_deltaCap_tradeTransp(ttot,all_regi,all_regi,teTrade)                      'Capacity additions for transportation'
   v24_capEarlyReti(ttot,all_regi,all_regi,teTrade)                              'Early retired capacity'
-;
-
-VARIABLES
   v24_tradeTransp_cost(ttot,all_regi,all_enty)                                  'Cost incurring from trade transportation'
   v24_purchase_cost(ttot,all_regi,all_enty)                                     'Total income or expense generated from trade'
-  vm_budget(ttot,all_regi)                                                      'Budget of regions'
+  vm_tradeBudget_Xporter(ttot,all_regi)                                         'Export budget of regions'
+  vm_tradeBudget_Mporter(ttot,all_regi)                                         'Import budget of regions'
 ;
 
 VARIABLE  v24_objvar_opttransp                                                  'Objective variable for optimisation inside trade module';
-
-
 
 ***-----------------------------------------------------------------------------
 ***                                   EQUATIONS
@@ -69,15 +70,14 @@ EQUATIONS
   
   q24_deltaCap_tradeTransp(ttot,all_regi,all_regi,teTrade)                      'Trade transportation capacities from deltaCap.'
   q24_deltaCap_limit(ttot,all_regi,all_regi,teTrade)                            'Limit deltaCap.'
-  q24_prohibit_MportXport(ttot,regi,tradeSe)                                    'Prohibit importers to be exessive exporters.'
+  q24_prohibit_MportXport(ttot,all_regi,tradeSe)                                'Prohibit importers to be exessive exporters.'
 
   q24_purchase_cost(ttot,all_regi,all_enty)                                     'Total income or expense generated from trade'
   q24_tradeTransp_cost(ttot,all_regi,all_enty)                                  'Cost incurring from trade transportation'
-  qm_budget(ttot,all_regi)                                                      'Budgets of regions'
+  q24_tradeBudget_Xporter(ttot,all_regi)                                        'Export budget of regions'
+  q24_tradeBudget_Mporter(ttot,all_regi)                                        'Import budget of regions'
 ;
 
 EQUATION  q24_objfunc_opttransp                                                 'Objective function for optimisation inside trade module';
-
-
 
 *** EOF ./modules/24_trade/network_trade/declarations.gms

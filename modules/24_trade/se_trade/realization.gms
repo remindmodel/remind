@@ -10,6 +10,7 @@
 $Ifi "%phase%" == "sets" $include "./modules/24_trade/se_trade/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/24_trade/se_trade/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/24_trade/se_trade/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/24_trade/se_trade/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/24_trade/se_trade/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/24_trade/se_trade/bounds.gms"
 $Ifi "%phase%" == "presolve" $include "./modules/24_trade/se_trade/presolve.gms"
