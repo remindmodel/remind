@@ -37,6 +37,9 @@ abort "model vintage_36 is infeasible";
 p36_prodUEintern(t36_hist(ttot),regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) 
                = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
 
+*** Save result from vintage_36 for later bound setting
+p36_deltaProdEs(ttot,regi,enty,esty,teEs) = v36_deltaProdEs.L(ttot,regi,enty,esty,teEs);
+
 s36_vintage_calib = 0;
 
 
