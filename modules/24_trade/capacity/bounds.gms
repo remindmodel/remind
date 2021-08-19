@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/bounds.gms
+*** SOF ./modules/24_trade/capacity/bounds.gms
 
 *** set Mport and Xport positive
 vm_Mport.lo(ttot,regi,tradePe)$(ttot.val ge 2005) = 0;
@@ -122,8 +122,9 @@ if ( cm_biotrade_phaseout eq 1,
       pm_demPeBio("2015",regi)$(regi_group("EUR_regi",regi))/4;
 );
 
-*** set maximum import and export secondary energy trade based on trading capacities 
-vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
-vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));
 
-*** EOF ./modules/24_trade/network_trade/bounds.gms
+*** force secondary energy trade to zero
+vm_Mport.fx(t,regi,entySe) = 0;
+vm_Xport.fx(t,regi,entySe) = 0;
+
+*** EOF ./modules/24_trade/capacity/bounds.gms

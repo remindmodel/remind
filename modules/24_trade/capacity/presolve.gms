@@ -4,14 +4,9 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/presolve.gms
+*** SOF ./modules/24_trade/capacity/presolve.gms
 
 pm_Xport0(ttot,regi,tradePe) = vm_Xport.l(ttot,regi,tradePe);
-
-*** Xport price
-
-
-
 
 ***-------------------------------------------------------------------------------
 ***                        PREPARING THE TRADE MODEL
@@ -107,5 +102,4 @@ s24_switch_trademodel = 0;
 vm_tradeBudget_Mporter.fx(ttot,all_regi) = 0.0;
 vm_tradeBudget_Xporter.fx(ttot,all_regi) = 0.0;
 
-
-*** EOF ./modules/24_trade/network_trade/presolve.gms
+*** EOF ./modules/24_trade/capacity/presolve.gms

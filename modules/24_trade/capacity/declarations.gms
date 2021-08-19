@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/declarations.gms
+*** SOF ./modules/24_trade/capacity/declarations.gms
 
 ***-------------------------------------------------------------------------------
 ***                                   SCALARS
@@ -13,16 +13,14 @@ scalars
 s24_switch_trademodel    "Switch to activate trade model eqns before main solve and to deactivate them during main solve" /0/
 ;
 
-***-----------------------------------------------------------------------------
+***-------------------------------------------------------------------------------
 ***                                   PARAMETERS
-***-----------------------------------------------------------------------------
-PARAMETERS
+***-------------------------------------------------------------------------------
+parameters
 pm_tradecostgood(all_regi)                  "Trade costs (final good)."
 pm_Xport0(tall,all_regi,all_enty)           "Reference level value of export." 
 pm_IO_trade(tall,all_regi,all_enty,char)    "Energy trade bounds based on IEA data."
 p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil supply and internal region energy demand in the initial year"
-
-p24_seTradeCapacity(tall,all_regi,all_regi,all_enty) "Secondary energy international yearly trade capacity potential from regi to regi2 [TWa]"
 
 p24_MportsRegi(tall,all_regi,all_regi,tradeSe)      "Mports to regi from regi2, assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [TWa]"
 p24_XportsRegi(tall,all_regi,all_regi,tradeSe)      "Exports from regi to regi2. Defined in the postsolve as a result of p24_MportsRegi calculation [TWa]"
@@ -37,12 +35,17 @@ PARAMETERS
     pm_XMport_pipeline(all_regi,all_regi,all_enty)                              'Export and imports of traded commodity via pipeline.'
 ;
 
-***-----------------------------------------------------------------------------
+***-------------------------------------------------------------------------------
 ***                                   VARIABLES
-***-----------------------------------------------------------------------------
-POSITIVE VARIABLES
+***-------------------------------------------------------------------------------
+positive VARIABLES
 vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
+;
+
+POSITIVE VARIABLES
+  vm_tradeBudget_Xporter(ttot,all_regi)                                         'Export budget of regions'
+  vm_tradeBudget_Mporter(ttot,all_regi)                                         'Import budget of regions'
 ;
 
 POSITIVE VARIABLES
@@ -80,4 +83,4 @@ EQUATIONS
 
 EQUATION  q24_objfunc_opttransp                                                 'Objective function for optimisation inside trade module';
 
-*** EOF ./modules/24_trade/network_trade/declarations.gms
+*** EOF ./modules/24_trade/capacity/declarations.gms

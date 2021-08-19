@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/equations.gms
+*** SOF ./modules/24_trade/capacity/equations.gms
 
 ***-------------------------------------------------------------------------------
 ***                        TRADE MODEL EQUATIONS
@@ -126,4 +126,4 @@ q24_tradeBudget_Xporter(ttot,regi)$(s24_switch_trademodel eq 1)..
   + sum(tradeSe, v24_purchase_cost(ttot,regi,tradeSe))
 ;
 
-*** EOF ./modules/24_trade/network_trade/equations.gms
+*** EOF ./modules/24_trade/capacity/equations.gms
