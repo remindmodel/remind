@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/datainput.gms
+*** SOF ./modules/24_trade/capacity/datainput.gms
 
 
 pm_Xport0("2005",regi,peFos) = 0;
@@ -16,7 +16,7 @@ pm_tradecostgood(regi)        = 0.03;
 parameter pm_costsPEtradeMp(all_regi,all_enty)                   "PE tradecosts (energy losses on import)"
 /
 $ondelim
-$include "./modules/24_trade/network_trade/input/pm_costsPEtradeMp.cs4r"
+$include "./modules/24_trade/capacity/input/pm_costsPEtradeMp.cs4r"
 $offdelim
 /
 ;
@@ -24,7 +24,7 @@ $offdelim
 
 table pm_costsTradePeFinancial(all_regi,char,all_enty)          "PE tradecosts (financial costs on import, export and use)"
 $ondelim
-$include "./modules/24_trade/network_trade/input/pm_costsTradePeFinancial.cs3r"
+$include "./modules/24_trade/capacity/input/pm_costsTradePeFinancial.cs3r"
 $offdelim
 ;
 pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
@@ -37,6 +37,10 @@ pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(reg
 
 pm_costsTradePeFinancial(regi,"Xport", "pegas") = cm_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
 pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
+
+*set trase se prices to zero
+pm_MPortsPrice(ttot,regi,tradeSe)=0;
+pm_XPortsPrice(ttot,regi,tradeSe)=0;
 
 ***-----------------------------------------------------------------------------
 *** Load data needed by network trade model
@@ -55,12 +59,12 @@ PARAMETERS
 ;
 
 PARAMETER TABLE p24_disallowed(all_regi,all_regi,tradeModes)                    'Trade routes that are explicitly disallowed.'
-$include "./modules/24_trade/network_trade/input/p24_disallowed.prn"
+$include "./modules/24_trade/capacity/input/p24_disallowed.prn"
 ;
 
 PARAMETER TABLE p24_distance(all_regi,all_regi)                                 'Distance between regions (in units of 1000km)'
-$include "./modules/24_trade/network_trade/input/p24_distance.prn"
+$include "./modules/24_trade/capacity/input/p24_distance.prn"
 ;
 p24_distance(regi,regi2) = p24_distance(regi,regi2)/1000;
 
-*** EOF ./modules/24_trade/network_trade/datainput.gms
+*** EOF ./modules/24_trade/capacity/datainput.gms

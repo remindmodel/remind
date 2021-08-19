@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/24_trade/network_trade/sets.gms
+*** SOF ./modules/24_trade/capacity/sets.gms
 
 sets
 trade(all_enty)             "All traded commodities"
@@ -20,21 +20,17 @@ tradeMacro(all_enty)        "Traded macro-economic commodities"
 tradePe(all_enty)           "Traded primary energy commodities"
 /
     peoil, 
-    pecoal,
-    pegas,
+    pecoal, 
+    pegas, 
     peur, 
     pebiolc
 /
 
 tradeSe(all_enty)           "Traded secondary energy commodities"
 /
-***    seel,
-***    seh2,
     pegas
 /
 ;
-
-
 
 **********************************************************************
 *** define sets and parameters for trade exports and imports
@@ -86,6 +82,4 @@ SETS
         /
 ;
 
-
-
-*** EOF ./modules/24_trade/network_trade/sets.gms
+*** EOF ./modules/24_trade/capacity/sets.gms

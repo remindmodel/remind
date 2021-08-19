@@ -20,7 +20,7 @@
 * 
 * Input data revision: 6.241
 * 
-* Last modification (input data): Wed Aug 18 16:23:24 2021
+* Last modification (input data): Thu Aug 19 11:55:43 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -72,7 +72,7 @@ $setGlobal subsidizeLearning  off     !! def = off
 ***---------------------    23_capitalMarket    -----------------------------
 $setGlobal capitalMarket  debt_limit     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
-$setGlobal trade  network_trade     !! def = standard
+$setGlobal trade  capacity     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
@@ -593,13 +593,13 @@ $batinclude "./modules/include.gms"    declarations
 ***          DATAINPUT
 *--------------------------------------------------------------------------
 $include    "./core/datainput.gms";
-$include    "./modules/24_trade/network_trade/datainput.gms";
+$include    "./modules/24_trade/capacity/datainput.gms";
 
 *--------------------------------------------------------------------------
 ***          EQUATIONS
 *--------------------------------------------------------------------------
 $include    "./core/equations.gms";
-$include    "./modules/24_trade/network_trade/equations.gms";
+$include    "./modules/24_trade/capacity/equations.gms";
 
 *--------------------------------------------------------------------------
 ***          solveoptions
@@ -617,7 +617,7 @@ option solprint  = off;
 *--------------------------------------------------------------------------
 pm_SEPrice(ttot,all_regi,all_enty) = 0.0;
 p_PEPrice(ttot,all_regi,all_enty) = 0.0;
-$include "./modules/24_trade/network_trade/preloop.gms"
+$include "./modules/24_trade/capacity/preloop.gms"
 
 *--------------------------------------------------------------------------
 ***          LOAD INPUT GDX
@@ -629,7 +629,7 @@ execute_loadpoint 'input.gdx' p_PEPrice;
 *--------------------------------------------------------------------------
 ***          SOLVE TRADE MODEL IN 24_TRADE PRESOLVE
 *--------------------------------------------------------------------------
-$include "./modules/24_trade/network_trade/presolve.gms"
+$include "./modules/24_trade/capacity/presolve.gms"
 
 *---------------------------------------------------------------------------
 ***                  save gdx
