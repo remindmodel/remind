@@ -21,73 +21,113 @@
 *===========================================
 
 ***--------------------------------------
+*** INITIAL EXTRACTION BOUND
+***--------------------------------------
+*NB*110729 bound on initial extraction from grades
+if (s31_debug eq 1,
+  display pm_EN_demand_from_initialcap2;
+  display pm_IO_trade;
+);
+
+*** Calculate initial primary energy production in 2005 (function of PE demand (v05_INIdemEn0) and trade (pm_IO_trade))
+*** A dummy factor of 1.1 is used to give GAMS more flexibility 
+pm_prodIni(regi,peFos(enty)) = 1.1 * sum(t0,
+                                          pm_EN_demand_from_initialcap2(regi,enty)
+                                          + pm_IO_trade(t0,regi,enty,"Xport")
+                                          - pm_IO_trade(t0,regi,enty,"Mport")
+                                       );
+
+if (s31_debug eq 1,
+  display pm_prodIni;
+);
+
+***--------------------------------------
 *** ADDITIONAL HIGH/LOW COSTS OIL SCENARIOS
+*SB, NB, CB 04/15/2020* These constraints should no longer be necessary 
 ***--------------------------------------
 * High cost oil scenario with learning (from ADVANCE WP3.1)
 
-$IFTHEN.cm_oil_scen "%cm_oil_scen%" == "6" 
+* $IFTHEN.cm_oil_scen not "%cm_oil_scen%" == "6" 
 
-if ( (cm_startyear le 2005),
-  v31_fuExtrCum.l("2010","LAM","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","OAS","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","USA","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","IND","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","IND","peoil","4") = 0;
-  v31_fuExtrCum.l("2010","CHA","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","EUR","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","CAZ","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","JPN","pegas","3") = 0;
-); 
-***cb: in order to be able to access level values for fixed initial periods, they have to be loaded already here:
-*** The followig comment line staring "cb20150605readinpos" is therefore replaced by the R-script scripts/run_submis/submit.R with the include statements for the levs.gms file
-*** cb20150605readinpositionforlevelfile
-if ( (cm_startyear le 2015),
-  p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2010","LAM","peoil","2"));
-  p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","OAS","peoil","2"));
-  p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2010","USA","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","IND","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
-  p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CHA","peoil","2"));
-  p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2010","EUR","peoil","2"));
-  p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CAZ","peoil","2"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2010","JPN","pegas","3"));
-);
-if ( (cm_startyear gt 2015),
-  p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2020","LAM","peoil","2"));
-  p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","OAS","peoil","2"));
-  p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2020","USA","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","IND","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
-  p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CHA","peoil","2"));
-  p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2020","EUR","peoil","2"));
-  p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CAZ","peoil","2"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2020","JPN","pegas","3"));
-); 
-*** Low cost oil scenario with learning (from ADVANCE WP3.1)
-$ELSEIF.cm_oil_scen %cm_oil_scen% == "5"
-if (cm_startyear le 2015,
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
-  p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","JPN","peoil","2"));
-  p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2010","JPN","peoil","3"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2010","JPN","pegas","3"));
-);
-if (cm_startyear gt 2015,
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
-  p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","JPN","peoil","2"));
-  p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2020","JPN","peoil","3"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2020","JPN","pegas","3"));
-);
-$ENDIF.cm_oil_scen
+* if ( (cm_startyear le 2005),
+*   v31_fuExtrCum.l("2010","LAM","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","OAS","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","USA","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","IND","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","IND","peoil","4") = 0;
+*   v31_fuExtrCum.l("2010","CHA","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","EUR","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","CAZ","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","NEU","peoil","2") = 0;
+*   v31_fuExtrCum.l("2010","JPN","pegas","3") = 0;
+* ); 
+* if ( (cm_startyear le 2015),
+*   p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2010","LAM","peoil","2"));
+*   p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","OAS","peoil","2"));
+*   p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2010","USA","peoil","2"));
+*   p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","IND","peoil","2"));
+*   p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
+*   p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CHA","peoil","2"));
+*   p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2010","EUR","peoil","2"));
+*   p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CAZ","peoil","2"));
+*   p31_grades(t,"NEU","xi3","peoil","2") = max(p31_grades(t,"NEU","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","NEU","peoil","2"));
+*   p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2010","JPN","pegas","3"));
+* );
+* if ( (cm_startyear gt 2015),
+*   p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2020","LAM","peoil","2"));
+*   p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","OAS","peoil","2"));
+*   p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2020","USA","peoil","2"));
+*   p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","IND","peoil","2"));
+*   p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
+*   p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CHA","peoil","2"));
+*   p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2020","EUR","peoil","2"));
+*   p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CAZ","peoil","2"));
+*   p31_grades(t,"NEU","xi3","peoil","2") = max(p31_grades(t,"NEU","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","NEU","peoil","2"));
+*   p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2020","JPN","pegas","3"));
+* ); 
+* *** Low cost oil scenario with learning (from ADVANCE WP3.1)
+* $ELSEIF.cm_oil_scen %cm_oil_scen% == "5"
+* if (cm_startyear le 2015,
+*   p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
+*   p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","JPN","peoil","2"));
+*   p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2010","JPN","peoil","3"));
+*   p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2010","JPN","pegas","3"));
+* );
+* if (cm_startyear gt 2015,
+*   p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
+*   p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","JPN","peoil","2"));
+*   p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2020","JPN","peoil","3"));
+*   p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2020","JPN","pegas","3"));
+* );
+* $ENDIF.cm_oil_scen
+
+
+*** Decline and incline rate equation offsets from FFECCM
+* Additional factor entering the decline rate equation 
+parameter f31_decoffset(all_regi,all_enty,rlf)    "Decline rate equation offset"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/f31_decoffset.cs4r"
+$offdelim
+/
+;
+p31_datafosdyn(all_regi,all_enty,rlf,"decoffset")$(not sameas(all_enty,"pecoal")) = f31_decoffset(all_regi,all_enty,rlf);
+
+* Additional factor entering the increase rate equation
+p31_datafosdyn(regi, "pegas",  rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "pegas",  rlf);
+p31_datafosdyn(regi, "peoil",  rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "peoil",  rlf);
+p31_datafosdyn(regi, "pecoal", rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "pecoal", rlf);
+
+* Factor for quadratic adjustment cost function
+p31_datafosdyn(regi, enty, rlf, "alph") = 20;
 
 ***--------------------------------------
 *** MOFEX
 ***--------------------------------------
 *** Small partial model to compute level values of fossil fuel extraction (vm_fuExtr.l) given a 
 *** specific demand path
-
-*** Model statement
-model m31_MOFEX /q31_MOFEX_costMinFuelEx, q31_MOFEX_tradebal, q31_fuExtrDec, q31_fuExtrInc, 
-                 q31_fuExtrCum, q31_costFuExGrade, qm_fuel2pe/;
+$IFTHEN.mofex %cm_MOFEX% == "on"
+option nlp = conopt4;  !! Greatly speed up convergence process (x3~x4)
 
 *** Get fossil fuel demand (vm_prodPe) from reference GDX (input.gdx)
 p31_MOFEX_peprod_ref(ttot,regi,peExGrade(enty)) = 0; 
@@ -98,7 +138,6 @@ Execute_Loadpoint 'input',
   p31_MOFEX_Xport_ref  = vm_Xport.l,
   p31_MOFEX_Mport_ref  = vm_Mport.l;
 display p31_MOFEX_peprod_ref;
-display p31_MOFEX_Mport_ref;
 
 *** Fixing MOFEX fossil fuel demand to reference GDX data
 vm_prodPe.fx(ttot,regi,peExGrade(enty)) = p31_MOFEX_peprod_ref(ttot,regi,enty);
@@ -109,11 +148,61 @@ vm_costFuEx.up(t,regi,peExGrade(enty))                = 10.0;
 vm_Xport.fx(ttot,regi,trade)$(ttot.val lt cm_startyear) = p31_MOFEX_Xport_ref(ttot,regi,trade);  !! To avoid unbounded results
 vm_Mport.fx(ttot,regi,trade)$(ttot.val lt cm_startyear) = p31_MOFEX_Mport_ref(ttot,regi,trade);  !! To avoid unbounded results
 
-*** Fix initial year trade to gdx values
-vm_Mport.fx(t0(tall),regi,peFos(enty)) = p31_MOFEX_Mport_ref(tall,regi,enty);
-vm_Xport.fx(t0(tall),regi,peFos(enty)) = p31_MOFEX_Xport_ref(tall,regi,enty);
-
 display vm_prodPe.l;
 
+*** Model statement
+model m31_MOFEX /q31_MOFEX_costMinFuelEx, q31_MOFEX_tradebal, q31_fuExtrDec, q31_fuExtrInc, 
+                 q31_fuExtrCum, q31_costFuExGrade, qm_fuel2pe/;
+
+*** Iteration loop
+o_modelstat = 100;
+p31_sol_itr_max = 10;
+loop(sol_itr$(sol_itr.val <= p31_sol_itr_max),
+
+  if(ord(sol_itr)>(p31_sol_itr_max-1),
+    option solprint=on
+  );
+
+*** Solve statement
+  if(o_modelstat ne 2,
+    solve m31_MOFEX using nlp minimizing v31_MOFEX_costMinFuelEx;
+    o_modelstat = m31_MOFEX.modelstat;
+  );
+
+);
+
+vm_prodPe.lo(ttot,regi,peExGrade(enty)) = 1.e-9;
+vm_prodPe.up(ttot,regi,peExGrade(enty)) = 1.e+2;
+
+*** Save fuel extraction and trade values
+p31_MOFEX_fuelex_costMin(ttot,regi,enty,rlf)  = vm_fuExtr.l(ttot,regi,enty,rlf);
+p31_MOFEX_cumfex_costMin(ttot,regi,enty,rlf)  = v31_fuExtrCum.l(ttot,regi,enty,rlf);
+p31_MOFEX_Mport_costMin(ttot,regi,trade)      = vm_Mport.l(ttot,regi,trade);
+p31_MOFEX_Xport_costMin(ttot,regi,trade)      = vm_Xport.l(ttot,regi,trade);
+
+*** Save values in a gdx
+if(m31_MOFEX.modelstat ne 2,
+  Execute_Unload 'mofex';
+  abort "MOFEX did not find an optimal solution. Stopping job...";
+);
+
+display p31_MOFEX_fuelex_costMin;
+option nlp = %cm_conoptv%;
+$ENDIF.mofex
+
+
+***--------------------------------------
+*** URANIUM BOUND
+***--------------------------------------
+v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.01;
+model m31_uran_bound_dummy /q31_mc_dummy, q31_totfuex_dummy/;
+ if(cm_limit_peur_scen eq 1,
+*** Small CNS model to initiate regional bounds on uranium extraction
+     v31_fuExtrCumMax.l(regi,peExPol(enty), "1")=0.01;
+ solve m31_uran_bound_dummy using cns;
+
+*AJS* use parameter to save the result of the CNS model
+     p31_fuExtrCumMaxBound(regi,"peur", "1") = v31_fuExtrCumMax.l(regi,"peur", "1");
+);
 
 *** EOF ./modules/31_fossil/MOFEX/preloop.gms
