@@ -66,28 +66,6 @@ v24_shipment_quan.fx(ttot,regi,regi2,tradeModes)$(p24_disallowed(regi,regi2,trad
 ***                        SOLVING THE TRADE MODEL
 ***-------------------------------------------------------------------------------
 
-*** trade model
-MODEL m24_tradeTransp
-    /
-        q24_totMport_quan
-        
-        q24_cap_teTradeBilat
-        q24_cap_teTradeXport
-        q24_cap_teTradeMport
-        
-        q24_deltaCap_tradeTransp
-        q24_deltaCap_limit
-        q24_prohibit_MportXport
-        
-        q24_purchase_cost
-        q24_tradeTransp_cost
-        q24_tradeBudget_Xporter
-        q24_tradeBudget_Mporter
-        
-        q24_objfunc_opttransp
-    /
-;
-
 *** switching trade model equations on during trade model solve
 s24_switch_trademodel = 1;
 vm_tradeBudget_Mporter.lo(ttot,all_regi) = 0.0;
