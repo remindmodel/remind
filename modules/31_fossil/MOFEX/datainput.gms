@@ -151,14 +151,6 @@ $offdelim
 /
 ;
 
-*------------------------------------
-*** Upper bound on oil extraction in MEA
-*------------------------------------
-*** Otherwise the model extracts everything from this cheap region
-*** vm_XpRes in 2005 should be equal to 1.4876897061 TWa (46.86 EJ)
-*** BP statistics, 2012 says that MEA produced 1.980321 TWa in 2005 and 1.955456 TWa in 2010, however
-*** there a linear fit with an average increase of 1.5% per year was found e.g 7% per 5-year period
-*** Low and medium resource cases
 
 parameter f31_Xport(ttot,all_regi,all_enty,all_LU_emi_scen) "Upper bounds on exports from MEA in early timesteps [TWyr]"
 /
