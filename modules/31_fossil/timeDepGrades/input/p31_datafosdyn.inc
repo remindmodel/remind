@@ -18,9 +18,9 @@ p31_datafosdyn(regi,  "peoil",  rlf, "decoffset") = -2.E-4;
 p31_datafosdyn(regi,  "pegas",  rlf, "decoffset") = -2.E-4;
 p31_datafosdyn(regi,  "pecoal", rlf, "decoffset") = -2.E-4;
 p31_datafosdyn("MEA", "peoil",  rlf, "decoffset") = -2.E-5;
-p31_datafosdyn("RUS", "peoil",  rlf, "decoffset") = -2.E-5;
+p31_datafosdyn("REF", "peoil",  rlf, "decoffset") = -2.E-5;
 p31_datafosdyn("MEA", "pegas",  rlf, "decoffset") = -2.E-5;
-p31_datafosdyn("RUS", "pegas",  rlf, "decoffset") = -2.E-5;
+p31_datafosdyn("REF", "pegas",  rlf, "decoffset") = -2.E-5;
 
 * Additional factor entering the increase rate equation
 p31_datafosdyn(regi, "pegas",  rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "pegas",  rlf);
