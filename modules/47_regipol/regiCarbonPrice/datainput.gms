@@ -200,9 +200,9 @@ p47_wasteIncinerationPctg(ttot,regi,secInd37,all_enty) = 0.5;
 *** emissions captured in non burned industry feedstock
 p47_emiFeedstockCapture(ttot,regi,emiMkt,emiTe) = 
   sum(secInd37_emiMkt(secInd37,emiMkt),
-    sum(se2fe(entySe,entyFe,te)
-      pm_emifac(t,regi,entySe,entyFe,te,emiTe) *
-      (1-pm_wasteIncinerationPctg(ttot,regi,secInd37,entyFe))*p47_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)
+    sum(se2fe(entySe,entyFe,te),
+      pm_emifac(ttot,regi,entySe,entyFe,te,emiTe) *
+      (1-p47_wasteIncinerationPctg(ttot,regi,secInd37,entyFe))*p47_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)
     )
   )
 ;
