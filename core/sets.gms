@@ -679,17 +679,24 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 
 sets
 
-   all_regi "all regions" /LAM,OAS,AFR,EUR,ROW,MEA,CHN,IND,JPN,USA,RUS/
+   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
 
-   ext_regi "extended regions list (includes subsets of H12 regions)" / LAM_regi,REF_regi,CHA_regi,IND_regi,JPN_regi,LAM,OAS,AFR,EUR,ROW,MEA,CHN,IND,JPN,USA,RUS /
+   ext_regi "extended regions list (includes subsets of H12 regions)" / LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA /
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
         LAM_regi .(LAM)
-        REF_regi .(RUS)
-        CHA_regi .(CHN)
+        OAS_regi .(OAS)
+        SSA_regi .(SSA)
+        EUR_regi .(EUR)
+        NEU_regi .(NEU)
+        MEA_regi .(MEA)
+        REF_regi .(REF)
+        CAZ_regi .(CAZ)
+        CHA_regi .(CHA)
         IND_regi .(IND)
         JPN_regi .(JPN)
+        USA_regi .(USA)
       /
  
    iso "list of iso countries" /
@@ -697,7 +704,7 @@ sets
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
        BES,BFA,BGD,BGR,BHR,BHS,BIH,BLM,BLR,BLZ,
        BMU,BOL,BRA,BRB,BRN,BTN,BVT,BWA,CAF,CAN,
-       CCK,CHE,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
+       CCK,CHN,CHE,CHL,CIV,CMR,COD,COG,COK,COL,
        COM,CPV,CRI,CUB,CUW,CXR,CYM,CYP,CZE,DEU,
        DJI,DMA,DNK,DOM,DZA,ECU,EGY,ERI,ESH,ESP,
        EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,
@@ -721,45 +728,46 @@ sets
 
    regi2iso(all_regi,iso) "mapping regions to iso countries"
       /
-       LAM . (ABW,AIA,ARG,ATG,BES,BHS,BLM,BLZ,BMU,BOL)
-       LAM . (BRA,BRB,CHL,COL,CRI,CUB,CUW,CYM,DMA,DOM)
-       LAM . (ECU,FLK,GLP,GRD,GTM,GUF,GUY,HND,HTI,JAM)
-       LAM . (KNA,LCA,MEX,MSR,MTQ,NIC,PAN,PER,PRY,SLV)
-       LAM . (SUR,SXM,TCA,TTO,URY,VCT,VEN,VGB,VIR)
+       LAM . (ABW,AIA,ARG,ATA,ATG,BES,BHS,BLM,BLZ,BMU)
+       LAM . (BOL,BRA,BRB,BVT,CHL,COL,CRI,CUB,CUW,CYM)
+       LAM . (DMA,DOM,ECU,FLK,GLP,GRD,GTM,GUF,GUY,HND)
+       LAM . (HTI,JAM,KNA,LCA,MAF,MEX,MSR,MTQ,NIC,PAN)
+       LAM . (PER,PRI,PRY,SGS,SLV,SUR,SXM,TCA,TTO,URY)
+       LAM . (VCT,VEN,VGB,VIR)
        OAS . (AFG,ASM,ATF,BGD,BRN,BTN,CCK,COK,CXR,FJI)
        OAS . (FSM,GUM,IDN,IOT,KHM,KIR,KOR,LAO,LKA,MDV)
-       OAS . (MHL,MMR,MNG,MNP,MYS,NCL,NFK,NIU,NPL,PAK)
-       OAS . (PCN,PHL,PLW,PNG,PRK,PYF,SGP,SLB,THA,TKL)
-       OAS . (TLS,TON,TUV,TWN,UMI,VNM,VUT,WLF,WSM)
-       AFR . (AGO,BDI,BEN,BFA,BWA,CAF,CIV,CMR,COD,COG)
-       AFR . (COM,CPV,DJI,ERI,ETH,GAB,GHA,GIN,GMB,GNB)
-       AFR . (GNQ,KEN,LBR,LSO,MDG,MLI,MOZ,MRT,MUS,MWI)
-       AFR . (MYT,NAM,NER,NGA,REU,RWA,SDN,SEN,SHN,SLE)
-       AFR . (SOM,SSD,STP,SWZ,SYC,TCD,TGO,TZA,UGA,ZMB)
-       AFR . (ZWE)
+       OAS . (MHL,MMR,MNG,MNP,MYS,NCL,NFK,NIU,NPL,NRU)
+       OAS . (PAK,PCN,PHL,PLW,PNG,PRK,PYF,SGP,SLB,THA)
+       OAS . (TKL,TLS,TON,TUV,UMI,VNM,VUT,WLF,WSM)
+       SSA . (AGO,BDI,BEN,BFA,BWA,CAF,CIV,CMR,COD,COG)
+       SSA . (COM,CPV,DJI,ERI,ETH,GAB,GHA,GIN,GMB,GNB)
+       SSA . (GNQ,KEN,LBR,LSO,MDG,MLI,MOZ,MRT,MUS,MWI)
+       SSA . (MYT,NAM,NER,NGA,REU,RWA,SEN,SHN,SLE,SOM)
+       SSA . (SSD,STP,SWZ,SYC,TCD,TGO,TZA,UGA,ZAF,ZMB)
+       SSA . (ZWE)
        EUR . (ALA,AUT,BEL,BGR,CYP,CZE,DEU,DNK,ESP,EST)
-       EUR . (FIN,FRA,FRO,GBR,GIB,GRC,GRL,HUN,IMN,IRL)
-       EUR . (ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT,ROU)
-       EUR . (SVK,SVN,SWE)
-       ROW . (ALB,AND,ATA,AUS,BIH,BLR,BVT,CAN,CHE,GGY)
-       ROW . (HMD,HRV,ISL,LIE,MAF,MCO,MDA,MKD,MNE,NOR)
-       ROW . (NRU,NZL,SGS,SJM,SMR,SPM,SRB,TUR,UKR,VAT)
-       ROW . (ZAF)
-       MEA . (ARE,ARM,AZE,BHR,DZA,EGY,ESH,GEO,IRN,IRQ)
-       MEA . (ISR,JOR,KAZ,KGZ,KWT,LBN,LBY,MAR,OMN,PSE)
-       MEA . (QAT,SAU,SYR,TJK,TKM,TUN,UZB,YEM)
-       CHN . (CHN,HKG,MAC)
+       EUR . (FIN,FRA,FRO,GBR,GGY,GIB,GRC,HRV,HUN,IMN)
+       EUR . (IRL,ITA,JEY,LTU,LUX,LVA,MLT,NLD,POL,PRT)
+       EUR . (ROU,SVK,SVN,SWE)
+       NEU . (ALB,AND,BIH,CHE,GRL,ISL,LIE,MCO,MKD,MNE)
+       NEU . (NOR,SJM,SMR,SRB,TUR,VAT)
+       MEA . (ARE,BHR,DZA,EGY,ESH,IRN,IRQ,ISR,JOR,KWT)
+       MEA . (LBN,LBY,MAR,OMN,PSE,QAT,SAU,SDN,SYR,TUN)
+       MEA . (YEM)
+       REF . (ARM,AZE,BLR,GEO,KAZ,KGZ,MDA,RUS,TJK,TKM)
+       REF . (UKR,UZB)
+       CAZ . (AUS,CAN,HMD,NZL,SPM)
+       CHA . (CHN,HKG,MAC,TWN)
        IND . (IND)
        JPN . (JPN)
-       USA . (PRI,USA)
-       RUS . (RUS)
+       USA . (USA)
       /
 iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
        BES,BFA,BGD,BGR,BHR,BHS,BIH,BLM,BLR,BLZ,
        BMU,BOL,BRA,BRB,BRN,BTN,BVT,BWA,CAF,CAN,
-       CCK,CHE,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
+       CCK,CHN,CHE,CHL,CIV,CMR,COD,COG,COK,COL,
        COM,CPV,CRI,CUB,CUW,CXR,CYM,CYP,CZE,DEU,
        DJI,DMA,DNK,DOM,DZA,ECU,EGY,ERI,ESH,ESP,
        EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,
@@ -784,11 +792,10 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
    map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
-       CHN . CHN
+       CHA . CHA
        IND . IND
        JPN . JPN
        USA . USA
-       RUS . RUS
       /
 ;
 ***######################### R SECTION END (SETS) ################################
@@ -2000,7 +2007,7 @@ integ           "set of integers for looping etc"
 /
 xirog       "parameters decribing exhaustible extraction coss including long-run marginal costs and short term adjustment costs"
 /
-      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8, dec
+      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8
 /
 *** emissions exported to MAGICC
   emiRCP "emission types exported to MAGICC"
