@@ -12,6 +12,7 @@ q23_limit_debt_growth(t,regi)..
   vm_Mport(t,regi,"good") - vm_Xport(t,regi,"good") 
   + sum(tradePe, (pm_pvp(t,tradePe)/(pm_pvp(t,"good")+0.000000001))*(vm_Mport(t,regi,tradePe)- vm_Xport(t,regi,tradePe))) 
   + (pm_pvp(t,"perm")/(pm_pvp(t,"good")+0.000000001)) * (vm_Mport(t,regi,"perm") - vm_Xport(t,regi,"perm"))
+  + sum(tradeSe, pm_MPortsPrice(t,regi,tradeSe) * vm_Mport(t,regi,tradeSe)) - sum(tradeSe, pm_XPortsPrice(t,regi,tradeSe) * vm_Xport(t,regi,tradeSe)) 
   + vm_tradeBudget_Mporter(t,regi) - vm_tradeBudget_Xporter(t,regi)
 ;
 
@@ -21,6 +22,7 @@ q23_limit_surplus_growth(t,regi)..
   vm_Mport(t,regi,"good") - vm_Xport(t,regi,"good") 
   + sum(tradePe, (pm_pvp(t,tradePe)/(pm_pvp(t,"good")+0.000000001))*(vm_Mport(t,regi,tradePe)- vm_Xport(t,regi,tradePe))) 
   + (pm_pvp(t,"perm")/(pm_pvp(t,"good")+0.000000001)) * (vm_Mport(t,regi,"perm") - vm_Xport(t,regi,"perm"))
+  + sum(tradeSe, pm_MPortsPrice(t,regi,tradeSe) * vm_Mport(t,regi,tradeSe)) - sum(tradeSe, pm_XPortsPrice(t,regi,tradeSe) * vm_Xport(t,regi,tradeSe)) 
   + vm_tradeBudget_Mporter(t,regi) - vm_tradeBudget_Xporter(t,regi)
 ;
 
