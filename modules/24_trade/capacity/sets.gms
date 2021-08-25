@@ -28,6 +28,11 @@ tradePe(all_enty)           "Traded primary energy commodities"
 
 tradeSe(all_enty)           "Traded secondary energy commodities"
 /
+    null
+/
+
+tradeCap(all_enty)          "Commodities traded via capacity mode."
+/
     pecoal,
     pegas
 /

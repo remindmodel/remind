@@ -10,7 +10,7 @@
 ***                                   SCALARS
 ***-------------------------------------------------------------------------------
 scalars
-s24_switch_trademodel    "Switch to activate trade model eqns before main solve and to deactivate them during main solve" /0/
+s24_switch_trademodel    "Switch to activate trade model eqns before trade solve and to deactivate them during main solve" /0/
 ;
 
 ***-------------------------------------------------------------------------------
@@ -22,10 +22,8 @@ pm_Xport0(tall,all_regi,all_enty)           "Reference level value of export."
 pm_IO_trade(tall,all_regi,all_enty,char)    "Energy trade bounds based on IEA data."
 p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil supply and internal region energy demand in the initial year"
 
-p24_MportsRegi(tall,all_regi,all_regi,tradeSe)      "Mports to regi from regi2, assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [TWa]"
-p24_XportsRegi(tall,all_regi,all_regi,tradeSe)      "Exports from regi to regi2. Defined in the postsolve as a result of p24_MportsRegi calculation [TWa]"
-pm_MPortsPrice(tall,all_regi,tradeSe)              "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
-pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
+pm_MPortsPrice(tall,all_regi,all_enty)              "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
+pm_XPortsPrice(tall,all_regi,all_enty)              "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
 ;
 
 PARAMETERS
@@ -78,7 +76,7 @@ EQUATIONS
   
   q24_deltaCap_tradeTransp(ttot,all_regi,all_regi,teTrade)                      'Trade transportation capacities from deltaCap.'
   q24_deltaCap_limit(ttot,all_regi,all_regi,teTrade)                            'Limit deltaCap.'
-  q24_prohibit_MportXport(ttot,all_regi,tradeSe)                                'Prohibit importers to be exessive exporters.'
+  q24_prohibit_MportXport(ttot,all_regi,tradeCap)                               'Prohibit importers to be exessive exporters.'
 
   q24_purchase_cost(ttot,all_regi,all_enty)                                     'Total income or expense generated from trade'
   q24_tradeTransp_cost(ttot,all_regi,all_enty)                                  'Cost incurring from trade transportation'
