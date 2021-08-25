@@ -3,6 +3,7 @@ sm_DpGJ_2_TDpTWa,input,questionnaire
 sm_tgn_2_pgc,input,questionnaire
 sm_tgch4_2_pgc,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
+sm_EJ_2_TWa,input,questionnaire
 vm_emiTe,input,questionnaire
 vm_emiAll,input,questionnaire
 vm_co2eq,input,questionnaire
