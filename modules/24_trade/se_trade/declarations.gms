@@ -5,7 +5,6 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/24_trade/se_trade/declarations.gms
-
 ***-------------------------------------------------------------------------------
 ***                                   PARAMETERS
 ***-------------------------------------------------------------------------------
@@ -29,6 +28,11 @@ pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export pric
 positive VARIABLES
 vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
+;
+
+POSITIVE VARIABLES
+  vm_tradeBudget_Xporter(ttot,all_regi)                                         'Export budget of regions'
+  vm_tradeBudget_Mporter(ttot,all_regi)                                         'Import budget of regions'
 ;
 
 *** EOF ./modules/24_trade/se_trade/declarations.gms

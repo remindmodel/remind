@@ -11,10 +11,10 @@
 ***-------------------------------------------------------------------------------
 
 *** all shipments must add up to satisfy the demanded imports
-q24_totMport_quan(ttot,regi,tradeSe)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
-    sum(  (regi2,tradeEnty2Mode(tradeSe,tradeModes))$(not sameAs(regi,regi2)), v24_shipment_quan(ttot,regi2,regi,tradeModes)  )
+q24_totMport_quan(ttot,regi,tradeCap)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
+    sum(  (regi2,tradeEnty2Mode(tradeCap,tradeModes))$(not sameAs(regi,regi2)), v24_shipment_quan(ttot,regi2,regi,tradeModes)  )
   =e=
-    pm_Mport(ttot,regi,tradeSe);
+    pm_Mport(ttot,regi,tradeCap);
 
 *** shipments constrained by capacity
 q24_cap_teTradeBilat(ttot,regi,regi2,teTradeBilat)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear)  AND (not sameAs(regi,regi2)) )..
@@ -37,7 +37,7 @@ q24_cap_teTradeMport(ttot,regi,teTradeMportonly)$( (s24_switch_trademodel eq 1) 
 q24_deltaCap_tradeTransp(ttot,regi,regi2,teTrade)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
     v24_cap_tradeTransp(ttot,regi,regi2,teTrade)
   =e=
-***    (1 - v24_capEarlyReti(ttot,regi,regi2,tradeSe,teTradeTransp))
+***    (1 - v24_capEarlyReti(ttot,regi,regi2,tradeCap,teTradeTransp))
 ***    *
     (
       sum(opTimeYr2te(teTrade,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
@@ -64,25 +64,25 @@ q24_deltaCap_limit(ttot,regi,regi2,teTrade)$( (s24_switch_trademodel eq 1) AND (
 ;
 
 *** shipments constrained: importers cant be exporters
-q24_prohibit_MportXport(ttot,regi,tradeSe)$( (s24_switch_trademodel eq 1) AND (pm_Mport(ttot,regi,tradeSe)) )..
-    sum(  (regi2,tradeEnty2Mode(tradeSe, tradeModes))  , v24_shipment_quan(ttot,regi,regi2,tradeModes))
+q24_prohibit_MportXport(ttot,regi,tradeCap)$( (s24_switch_trademodel eq 1) AND (pm_Mport(ttot,regi,tradeCap)) )..
+    sum(  (regi2,tradeEnty2Mode(tradeCap, tradeModes))  , v24_shipment_quan(ttot,regi,regi2,tradeModes))
   =l=
-    pm_Xport_effective(ttot,regi,tradeSe)
+    pm_Xport_effective(ttot,regi,tradeCap)
 ;
 
 *** cost from purchasing/buying
-q24_purchase_cost(ttot,regi,tradeSe)$(s24_switch_trademodel eq 1)..
-    v24_purchase_cost(ttot,regi,tradeSe) =e= sum(  (regi2,tradeEnty2Mode(tradeSe,tradeModes)), v24_shipment_quan(ttot,regi2,regi,tradeModes) * pm_XPortsPrice(ttot,regi2,tradeSe)  )
+q24_purchase_cost(ttot,regi,tradeCap)$(s24_switch_trademodel eq 1)..
+    v24_purchase_cost(ttot,regi,tradeCap) =e= sum(  (regi2,tradeEnty2Mode(tradeCap,tradeModes)), v24_shipment_quan(ttot,regi2,regi,tradeModes) * pm_XPortsPrice(ttot,regi2,tradeCap)  )
 ;
 
 *** cost from transportation capacities
-*** cost for a tradeSe enty for importer regi = sum over all modes carrying that enty, 
+*** cost for a tradeCap enty for importer regi = sum over all modes carrying that enty, 
 *** sum over all technologies involved in those trade modes, sum over regi2 (exporter), 
 *** sum over inco0,omf,omv, and sum over per distance or not
-q24_tradeTransp_cost(ttot,regi,tradeSe)$(s24_switch_trademodel eq 1)..
-    v24_tradeTransp_cost(ttot,regi,tradeSe)
+q24_tradeTransp_cost(ttot,regi,tradeCap)$(s24_switch_trademodel eq 1)..
+    v24_tradeTransp_cost(ttot,regi,tradeCap)
   =e=
-    sum( tradeEnty2Mode(tradeSe, tradeModes),
+    sum( tradeEnty2Mode(tradeCap, tradeModes),
       sum( tradeMode2te(tradeModes, teTradeBilat),
         sum( regi2,
           v24_deltaCap_tradeTransp(ttot,regi2,regi,teTradeBilat)      * (pm_data(regi,'inco0',teTradeBilat)      + pm_data(regi,'inco0_d',teTradeBilat)     * p24_distance(regi,regi2))
@@ -107,8 +107,8 @@ q24_tradeTransp_cost(ttot,regi,tradeSe)$(s24_switch_trademodel eq 1)..
 q24_tradeBudget_Mporter(ttot,regi)$(s24_switch_trademodel eq 1)..
     vm_tradeBudget_Mporter(ttot,regi)
   =e=
-    sum(tradeSe, v24_tradeTransp_cost(ttot,regi,tradeSe))
-  + sum(tradeSe, v24_purchase_cost(ttot,regi,tradeSe))
+    sum(tradeCap, v24_tradeTransp_cost(ttot,regi,tradeCap))
+  + sum(tradeCap, v24_purchase_cost(ttot,regi,tradeCap))
 ;
 
 *** objective function for trade model
@@ -122,8 +122,8 @@ q24_objfunc_opttransp$(s24_switch_trademodel eq 1)..
 q24_tradeBudget_Xporter(ttot,regi)$(s24_switch_trademodel eq 1)..
     vm_tradeBudget_Mporter(ttot,regi)
   =e=
-    sum(tradeSe, v24_tradeTransp_cost(ttot,regi,tradeSe))
-  + sum(tradeSe, v24_purchase_cost(ttot,regi,tradeSe))
+    sum(tradeCap, v24_tradeTransp_cost(ttot,regi,tradeCap))
+  + sum(tradeCap, v24_purchase_cost(ttot,regi,tradeCap))
 ;
 
 *** EOF ./modules/24_trade/capacity/equations.gms
