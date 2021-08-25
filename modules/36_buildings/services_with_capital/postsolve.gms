@@ -12,7 +12,8 @@ pm_FEPrice(t,regi,entyFE,"build",emiMkt)$(abs (qm_budget.m(t,regi)) gt sm_eps) =
 
 p36_fePrice(t,regi_dyn36(regi),entyFe)=pm_FEPrice(t,regi,entyFE,"build","ES");
 
-p36_fePrice_iter(iteration,t,regi_dyn36(regi),entyFe) $ p36_fePrice(t,regi,entyFe) = p36_fePrice(t,regi,entyFe);
+p36_fePrice_iter(iteration,t,regi_dyn36(regi),entyFe)$p36_fePrice(t,regi,entyFe) = 
+  p36_fePrice(t,regi,entyFe);
 
 *** To compute the capital price, take the CES derivative and substract the depreciation rate
 loop(cesOut2cesIn(out,in) $ (sameAs(out,"inco")
@@ -40,5 +41,10 @@ p36_kapPrice(t,regi_dyn36(regi)) =
 
 
 p36_demUEtotal(t,regi_dyn36(regi),in)$(p36_demUEtotal(t,regi,in) AND ( NOT t36_hist(t))) = vm_cesIO.L(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity") ;
+
+p36_prodEs_iter(iteration,t,regi,enty,esty,teEs) =
+  v36_prodEs.l(t,regi,enty,esty,teEs);
+p36_deltaProdEs_iter(iteration,t,regi,enty,esty,teEs) =
+  v36_deltaProdEs.l(t,regi,enty,esty,teEs);
 
 *** EOF ./modules/36_buildings/services_with_capital/postsolve.gms

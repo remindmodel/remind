@@ -142,6 +142,8 @@ inViaEs_dyn36(all_in)  "CES inputs which are provided throught the ES pathway"
   ueshb
   /
   
+  nests_putty_dyn36(all_in,all_in)   "putty nests"
+  //
 
   ppfKap_dyn36(all_in)   "Capital primary production factors"
   /
