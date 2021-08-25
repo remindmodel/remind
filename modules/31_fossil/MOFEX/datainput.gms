@@ -22,29 +22,12 @@
 
 
 ***----------------------------------------------------------------------
-*** Get uranium extraction-cost data (3rd-order grades2poly)
-***----------------------------------------------------------------------
-table f31_costExPoly(all_regi,all_enty,xirog)  "3rd-order polynomial coefficients (Uranium)"
-$ondelim
-$include "./modules/31_fossil/grades2poly/input/f31_costExPoly.cs3r"
-$offdelim
-;
-p31_costExPoly(all_regi,xirog,all_enty) = f31_costExPoly(all_regi,all_enty,xirog);
-
-*Summarized p31_costExPoly modification steps found on Rev 7683.
-p31_costExPoly(regi,"xi1","peur") = 25/1000;
-p31_costExPoly(regi,"xi2","peur") = 0;
-p31_costExPoly(regi,"xi3","peur")= ( (300/1000)* 3 ** 1.8) / ((p31_costExPoly(regi,"xi3","peur")* 14 /4.154) * 3) ** 2;
-p31_costExPoly(regi,"xi4","peur") = 0;
-
-
-***----------------------------------------------------------------------
 *** Get oil gas & coal extraction cost grade data
 ***----------------------------------------------------------------------
 parameter f31_grades_oil(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about oil according to the grade structure concept. Unit: TWa"
 /
 $ondelim
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_oil.cs4r"
+$include "./modules/31_fossil/MOFEX/input/p31_grades_oil.cs4r"
 $offdelim
 /
 ;
@@ -52,7 +35,7 @@ $offdelim
 parameter f31_grades_gas(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about gas according to the grade structure concept. Unit: TWa"
 /
 $ondelim
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_gas.cs4r"
+$include "./modules/31_fossil/MOFEX/input/p31_grades_gas.cs4r"
 $offdelim
 /
 ;
@@ -60,7 +43,7 @@ $offdelim
 parameter f31_grades_coal(tall,all_regi,all_LU_emi_scen,xirog,rlf) "(Input) information about coal according to the grade structure concept. Unit: TWa"
 /
 $ondelim
-$include "./modules/31_fossil/timeDepGrades/input/p31_grades_coal.cs4r"
+$include "./modules/31_fossil/MOFEX/input/p31_grades_coal.cs4r"
 $offdelim
 /
 ;
@@ -106,7 +89,7 @@ $endif.cm_gas_scen
 *** Coal
 ***----------------------------------------------------------------------
 *if(cm_coal_scen eq 0,
-*$include "./modules/31_fossil/timeDepGrades/input/p31_grades_vlocoal.inc";
+*$include "./modules/31_fossil/MOFEX/input/p31_grades_vlocoal.inc";
 *);
 $ifthen.cm_coal_scen %cm_coal_scen% == "lowCoal"
 p31_grades(tall,regi,xirog,"pecoal",rlf) = f31_grades_coal(tall,regi,"SSP1",xirog,rlf)$(not sameas(xirog,"dec"));
@@ -128,15 +111,7 @@ p31_fosadjco_xi5xi6(regi, "xi5", "pegas")  = 0.3;
 p31_fosadjco_xi5xi6(regi, "xi6", "pegas")  = 1/1;
 
 *NB*110720 include data for constraints on maximum growth and decline of vm_fuExtr, and also the offsets
-$include "./modules/31_fossil/timeDepGrades/input/p31_datafosdyn.inc";
-
-*RP* Define bound on total PE uranium use in Megatonnes of metal uranium (U3O8, the commodity that is traded at 40-60US$/lb).
-s31_max_disp_peur = 23;
-
-*JH* 20140604 (25th Anniversary of Tiananmen) New nuclear assumption for SSP5
-if (cm_nucscen eq 6,
-  s31_max_disp_peur = 23*10;
-);
+*SB*04022020 Hardcoded this into the preloop instead of the FFECCM input routines
 
 p31_datafosdyn(regi,"pegas",rlf,"alph") = cm_trdadj * p31_datafosdyn(regi,"pegas",rlf,"alph");
 
@@ -146,7 +121,7 @@ p31_extraseed(ttot,regi,enty,rlf) = 0;
 parameter p31_extraseed(tall,all_regi,all_enty,rlf)  "extra seed value that scales up the ramp-up potential"
 /
 $ondelim
-$include "./modules/31_fossil/timeDepGrades/input/f31_extraseed.cs4r"
+$include "./modules/31_fossil/MOFEX/input/f31_extraseed.cs4r"
 $offdelim
 /
 ;
@@ -155,7 +130,7 @@ $offdelim
 parameter f31_Xport(ttot,all_regi,all_enty,all_LU_emi_scen) "Upper bounds on exports from MEA in early timesteps [TWyr]"
 /
 $ondelim
-$include "./modules/31_fossil/timeDepGrades/input/f31_Xport.cs4r"
+$include "./modules/31_fossil/MOFEX/input/f31_Xport.cs4r"
 $offdelim
 /
 ;

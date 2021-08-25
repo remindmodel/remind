@@ -35,99 +35,16 @@ if (s31_debug eq 1,
 
 
 *------------------------------------
-*** Bounds on decline and incline rates 
-*------------------------------------
-*Taken from WEO 2008/09 via FFECCM model (written by JH 2012)
-* Maximum decline rate for oil, gas and coal
-p31_datafosdyn(regi, "pegas",  rlf, "dec")$(p31_datafosdyn(regi, "pegas",  rlf, "dec") eq 0) = 0.15;
-p31_datafosdyn(regi, "peoil",  rlf, "dec")$(p31_datafosdyn(regi, "peoil",  rlf, "dec") eq 0) = 0.15;
-p31_datafosdyn(regi, "pecoal", rlf, "dec")$(p31_datafosdyn(regi, "pecoal", rlf, "dec") eq 0) = 0.15;
-
-* Maximum extraction rate increase of oil, gas and coal
-p31_datafosdyn(regi, "pegas",  rlf, "inc") = 0.1;
-p31_datafosdyn(regi, "peoil",  rlf, "inc") = 0.1;
-p31_datafosdyn(regi, "pecoal", rlf, "inc") = 0.1;
-
-
-*------------------------------------
-*** Upper bounds on fossil fuel extraction in 2005
-*------------------------------------
-***Initialise resource extraction in 2005 as a function of primary energy demand (v05_INIdemEn0) and trade (pm_IO_trade)
-if(ord(iteration) eq 1,
-  loop(regi,
-    loop(peFos(enty),
-***     Now allocate the remaining amount of FF demand to the grades in increasing order
-      loop(rlf,
-        if(pm_prodIni(regi,enty) ge 0,
-***         Initialise production share
-          p31_prodShare(regi,enty,rlf) = 0;
-***         Calculate production share as a function of the decline rate (assuming depletion over 50 years)
-          p31_prodShare(regi,enty,rlf) = p31_datafosdyn(regi,enty,rlf,"dec")/(1-exp(-50*p31_datafosdyn(regi,enty,rlf,"dec")));
-***         If the quantity in grade rlf increases over time from 2005 to 2030
-          if (p31_grades("2050",regi,"xi3",enty,rlf) gt p31_grades("2005",regi,"xi3",enty,rlf),
-***           If a user-defined upper bound is not defined then compute .up using demand information
-            if (p31_fuelexIni(regi, enty, rlf) eq 0.0,
-***             Update p31_prod_ini
-              pm_prodIni(regi,enty) = pm_prodIni(regi,enty) - p31_prodShare(regi,enty,rlf)*p31_grades("2005",regi,"xi3",enty,rlf);
-***             Set vm_fuExtr upper bound
-              vm_fuExtr.up("2005",regi,pe2rlf(enty,rlf)) = p31_prodShare(regi,enty,rlf)*p31_grades("2005",regi,"xi3",enty,rlf);
-            else
-***           Otherwise use it
-***             Update p31_prod_ini
-              pm_prodIni(regi,enty) = pm_prodIni(regi,enty) - p31_fuelexIni(regi, enty, rlf);
-***             Set vm_fuExtr upper bound
-              vm_fuExtr.up("2005",regi,pe2rlf(enty,rlf)) = p31_fuelexIni(regi, enty, rlf);
-            );
-          else
-***         If the quantity in grade rlf decreases over time from 2005 to 2030 (or is constant)
-***           If a user-defined upper bound is not defined then compute .up using demand information
-            if (p31_fuelexIni(regi, enty, rlf) eq 0.0,
-***             Update p31_prod_ini
-              pm_prodIni(regi,enty) = pm_prodIni(regi,enty) - p31_prodShare(regi,enty,rlf)*p31_grades("2035",regi,"xi3",enty,rlf);
-***             Set vm_fuExtr upper bound
-              vm_fuExtr.up("2005",regi,pe2rlf(enty,rlf)) = p31_prodShare(regi,enty,rlf)*p31_grades("2035",regi,"xi3",enty,rlf);
-            else
-***           Otherwise use it
-***             Update p31_prod_ini
-              pm_prodIni(regi,enty) = pm_prodIni(regi,enty) - p31_fuelexIni(regi, enty, rlf);
-***             Set vm_fuExtr upper bound
-              vm_fuExtr.up("2005",regi,pe2rlf(enty,rlf)) = p31_fuelexIni(regi, enty, rlf);
-            );
-          );
-        else
-***         Tiny amount of fuel extraction possible in other grades
-          vm_fuExtr.up("2005",regi,pe2rlf(enty,rlf)) = 1e-9;
-        );
-      );
-    );
-  );
-
-*------------------------------------
-*** [Optional] MOFEX
-*------------------------------------
-*** If MOFEX was run, fix fossil fuel extraction, cumulative FF Ext. and trade to values computed by MOFEX
-$IFTHEN.mofex %cm_MOFEX% == "on"
-  vm_fuExtr.l(ttot,regi,pe2rlf(peExGrade(enty),rlf))      = p31_MOFEX_fuelex_costMin(ttot,regi,enty,rlf);
-  v31_fuExtrCum.l(ttot,regi,pe2rlf(peExGrade(enty),rlf)) = p31_MOFEX_cumfex_costMin(ttot,regi,enty,rlf);
-  vm_Mport.l(ttot,regi,peExGrade(trade))                    = p31_MOFEX_Mport_costMin(ttot,regi,trade);
-  vm_Xport.l(ttot,regi,peExGrade(trade))                    = p31_MOFEX_Xport_costMin(ttot,regi,trade);
-$ENDIF.mofex
-
-);
-
-*------------------------------------
 *' Lower bounds on fossil fuel extraction for all time steps
 *' To make the model "see" all grades
 *------------------------------------
-if(ord(iteration) eq 1,
-  loop(regi,
-    loop(peFos(enty),
-      loop(rlf,
-        loop(t,
+loop(regi,
+  loop(peFos(enty),
+    loop(rlf,
+      loop(t,
 ***         Set a lower bound on fuel extraction when p31_grades if non-zero
-          if (p31_grades(t,regi,"xi3",enty,rlf) gt 0,
-            vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf)) = 1e-9;
-          );
+        if (p31_grades(t,regi,"xi3",enty,rlf) gt 0,
+          vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf)) = 1e-9;
         );
       );
     );
