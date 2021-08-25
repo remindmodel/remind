@@ -28,6 +28,7 @@ pm_XMport_pipeline('REF','EUR','pegas') = 0.150;
 
 *** prices
 pm_XPortsPrice(t,regi,'pegas') = p_PEPrice(t,regi,'pegas');
+pm_XPortsPrice(t,regi,'pecoal') = p_PEPrice(t,regi,'pecoal');
 ***this will need fixing and has to become something more like this: pm_XPortsPrice(t,regi,tradeSe) = p_PEPrice(t,regi,tradeSe) or pm_SEPrice(t,regi,tradeSe);
 
 *** Setting Xport price bound to avoid unrealists trading prices.
@@ -76,6 +77,13 @@ vm_tradeBudget_Xporter.up(ttot,all_regi) = inf;
 SOLVE m24_tradeTransp USING lp MINIMIZING v24_objvar_opttransp;
 display v24_objvar_opttransp.l;
 
+*** saving results to iteration variables
+p24_Xport_iter(iteration,t,regi,tradeSe) = vm_Xport.l(t,regi,tradeSe);
+p24_Mport_iter(iteration,t,regi,tradeSe) = vm_Mport.l(t,regi,tradeSe);
+p24_shipment_quan_iter(iteration,t,regi,regi2,tradeModes) = v24_shipment_quan.l(t,regi,regi2,tradeModes);
+p24_cap_tradeTransp_iter(iteration,t,regi,regi2,teTrade) = v24_cap_tradeTransp.l(t,regi,regi2,teTrade);
+
+*** switching trade model equations back off
 s24_switch_trademodel = 0;
 vm_tradeBudget_Mporter.fx(ttot,all_regi) = 0.0;
 vm_tradeBudget_Xporter.fx(ttot,all_regi) = 0.0;

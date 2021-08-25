@@ -33,6 +33,11 @@ PARAMETERS
     pm_Mport(ttot,all_regi,all_enty)                                            'Import of traded commodity.'
     pm_Xport_effective(ttot,all_regi,all_enty)                                  'Export of traded commodity effective (computed from imports).'
     pm_XMport_pipeline(all_regi,all_regi,all_enty)                              'Export and imports of traded commodity via pipeline.'
+    
+    p24_Xport_iter(iteration,tall,all_regi,all_enty)                            'Iterative values of vm_Xport for diagnostics.'
+    p24_Mport_iter(iteration,tall,all_regi,all_enty)                            'Iterative values of vm_Mport for diagnostics.'
+    p24_shipment_quan_iter(iteration,ttot,all_regi,all_regi,tradeModes)         'Iterative values of v24_shipment_quan for diagnostics.'
+    p24_cap_tradeTransp_iter(iteration,ttot,all_regi,all_regi,teTrade)          'Iterative values of v24_cap_tradeTransp for diagnostics.'
 ;
 
 ***-------------------------------------------------------------------------------

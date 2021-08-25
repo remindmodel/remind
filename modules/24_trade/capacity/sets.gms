@@ -28,6 +28,7 @@ tradePe(all_enty)           "Traded primary energy commodities"
 
 tradeSe(all_enty)           "Traded secondary energy commodities"
 /
+    pecoal,
     pegas
 /
 ;
@@ -54,11 +55,13 @@ SETS
         lng_liq                                                                 'Natural gas liquification facilities for transportation as LNG.'
         lng_gas                                                                 'LNG re-gasification facilities for transportation of NG.'
         lng_ves                                                                 'LNG shipping vessels.'
+        coal_ves                                                                'Vessels that can carry coal.'
         /
     teTradeBilat(teTrade)
         /
         gas_pipe
         lng_ves
+        coal_ves
         /
     teTradeXportonly(teTrade)
         /
@@ -79,6 +82,7 @@ SETS
         /
         pegas_pipe.gas_pipe
         pegas_shiplng.(lng_liq,lng_gas,lng_ves)
+        pecoal_ship.coal_ves
         /
 ;
 
