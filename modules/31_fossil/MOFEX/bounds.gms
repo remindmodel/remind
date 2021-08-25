@@ -26,15 +26,6 @@
 option nlp = conopt4;  !! Greatly speed up convergence process (x3~x4)
 
 *------------------------------------
-*** Initialise user-defined fuel extraction in 2005
-*------------------------------------
-p31_fuelexIni(regi, enty, rlf) = 0.0;
-if (s31_debug eq 1,
-  display p31_fuelexIni;
-);
-
-
-*------------------------------------
 *' Lower bounds on fossil fuel extraction for all time steps
 *' To make the model "see" all grades
 *------------------------------------
@@ -59,19 +50,17 @@ loop(regi,
 *' [TODO] In the future a small amount should be added to p31_grades to 
 *'        allow for extraction from these grades
 *------------------------------------
-if(ord(iteration) eq 1,
-  loop(regi,
-    loop(peFos(enty),
-      loop(rlf,
-        if (p31_grades("2005",regi,"xi3",enty,rlf) gt 0.0 and p31_grades("2035",regi,"xi3",enty,rlf) eq 0.0,
+loop(regi,
+  loop(peFos(enty),
+    loop(rlf,
+      if (p31_grades("2005",regi,"xi3",enty,rlf) gt 0.0 and p31_grades("2035",regi,"xi3",enty,rlf) eq 0.0,
 ***         For grades larger than 6 do not extract anything
-          vm_fuExtr.up(t,regi,pe2rlf(enty,rlf))$(rlf.val ge 6) = 0.0;
-          vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf))$(rlf.val ge 6) = 0.0;
+        vm_fuExtr.up(t,regi,pe2rlf(enty,rlf))$(rlf.val ge 6) = 0.0;
+        vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf))$(rlf.val ge 6) = 0.0;
 
 ***         For other grades, do the same for now 
-          vm_fuExtr.up(t,regi,pe2rlf(enty,rlf))$(rlf.val lt 6) = 0.0;
-          vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf))$(rlf.val lt 6) = 0.0;
-        );
+        vm_fuExtr.up(t,regi,pe2rlf(enty,rlf))$(rlf.val lt 6) = 0.0;
+        vm_fuExtr.lo(t,regi,pe2rlf(enty,rlf))$(rlf.val lt 6) = 0.0;
       );
     );
   );
