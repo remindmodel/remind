@@ -36,4 +36,9 @@ MODEL m24_tradeTransp
     /
 ;
 
+*** initialising iteration variables
+p24_Xport_iter(iteration,tall,all_regi,all_enty) = 0;
+p24_Mport_iter(iteration,tall,all_regi,all_enty) = 0;
+p24_shipment_quan_iter(iteration,ttot,all_regi,all_regi,tradeModes) = 0;
+
 *** EOF ./modules/24_trade/capacity/preloop.gms

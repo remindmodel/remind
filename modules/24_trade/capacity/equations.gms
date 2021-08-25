@@ -11,23 +11,23 @@
 ***-------------------------------------------------------------------------------
 
 *** all shipments must add up to satisfy the demanded imports
-q24_totMport_quan(ttot,regi,tradeSe)$(s24_switch_trademodel eq 1)..
+q24_totMport_quan(ttot,regi,tradeSe)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
     sum(  (regi2,tradeEnty2Mode(tradeSe,tradeModes))$(not sameAs(regi,regi2)), v24_shipment_quan(ttot,regi2,regi,tradeModes)  )
   =e=
     pm_Mport(ttot,regi,tradeSe);
 
 *** shipments constrained by capacity
-q24_cap_teTradeBilat(ttot,regi,regi2,teTradeBilat)$( (s24_switch_trademodel eq 1) AND (not sameAs(regi,regi2)) )..
+q24_cap_teTradeBilat(ttot,regi,regi2,teTradeBilat)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear)  AND (not sameAs(regi,regi2)) )..
     sum( tradeMode2te(tradeModes, teTradeBilat) , v24_shipment_quan(ttot,regi,regi2,tradeModes) )
   =l=
     v24_cap_tradeTransp(ttot,regi,regi2,teTradeBilat)
 ;
-q24_cap_teTradeXport(ttot,regi,teTradeXportonly)$(s24_switch_trademodel eq 1)..
+q24_cap_teTradeXport(ttot,regi,teTradeXportonly)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
     sum( tradeMode2te(tradeModes, teTradeXportonly) , sum(regi2$(not sameAs(regi,regi2)),v24_shipment_quan(ttot,regi,regi2,tradeModes)) )
   =l=
     v24_cap_tradeTransp(ttot,regi,regi,teTradeXportonly)
 ;
-q24_cap_teTradeMport(ttot,regi,teTradeMportonly)$(s24_switch_trademodel eq 1)..
+q24_cap_teTradeMport(ttot,regi,teTradeMportonly)$( (s24_switch_trademodel eq 1) AND (pm_ttot_val(ttot) ge cm_startyear) )..
     sum( tradeMode2te(tradeModes, teTradeMportonly) , sum(regi2$(not sameAs(regi,regi2)),v24_shipment_quan(ttot,regi2,regi,tradeModes)) )
   =l=
     v24_cap_tradeTransp(ttot,regi,regi,teTradeMportonly)

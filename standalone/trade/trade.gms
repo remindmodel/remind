@@ -610,7 +610,7 @@ option limrow    = 100;
 option savepoint = 0;
 option reslim    = 1.e+6;
 option iterlim   = 1.e+6;
-option solprint  = off;
+option solprint  = on;
 
 *--------------------------------------------------------------------------
 ***          PRELOOP
