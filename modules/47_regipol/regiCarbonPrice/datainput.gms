@@ -181,4 +181,34 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
   pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
 
+
+*** Calculating avoided emissions in feedstock capture to discount from ETS targets
+
+*** Final energy demand for feedstocks (non-energy use)
+parameter f47_fedemand_NonEnergyIndst(ttot,all_regi,all_GDPscen,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [EJ]"
+/
+$ondelim
+$include "./modules/47_regipol/regiCarbonPrice/input/f47_fedemand_NonEnergyIndst.cs4r";
+$offdelim
+/
+;
+p47_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = sm_EJ_2_TWa * f47_fedemand_NonEnergyIndst(ttot,regi,"%cm_GDPscen%",secInd37,entyFe);
+
+*** Percentage of feedstocks burned and re-emitted to the atmosphere (waste incineration)
+p47_wasteIncinerationPctg(ttot,regi,secInd37,all_enty) = 0.5;
+
+*** emissions captured in non burned industry feedstock
+p47_emiFeedstockCapture(ttot,regi,emiMkt,emiTe) = 
+  sum(secInd37_emiMkt(secInd37,emiMkt),
+    sum(se2fe(entySe,entyFe,te)
+      pm_emifac(t,regi,entySe,entyFe,te,emiTe) *
+      (1-pm_wasteIncinerationPctg(ttot,regi,secInd37,entyFe))*p47_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)
+    )
+  )
+;
+
+p47_co2eqEmiFeedstockCapture(ttot,regi,emiMkt) = p47_emiFeedstockCapture(ttot,regi,emiMkt,"co2") + sm_tgn_2_pgc * p47_emiFeedstockCapture(ttot,regi,emiMkt,"n2o") + sm_tgch4_2_pgc * p47_emiFeedstockCapture(ttot,regi,emiMkt,"ch4");
+
+display p47_emiFeedstockCapture, p47_co2eqEmiFeedstockCapture;
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

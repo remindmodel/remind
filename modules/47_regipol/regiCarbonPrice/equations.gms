@@ -77,14 +77,14 @@ q47_emiTarget_netGHG_noLULUCF_noBunkers(t, regi)..
 q47_emiTarget_mkt_netCO2(t, regi, emiMkt)..
 	v47_emiTargetMkt(t,regi,emiMkt,"netCO2")
 	=e=
-	vm_emiAllMkt(t,regi,"co2",emiMkt)
+	vm_emiAllMkt(t,regi,"co2",emiMkt) - p47_emiFeedstockCapture(t,regi,emiMkt,"co2")
 ;
 
 *** net GHG per Mkt
 q47_emiTarget_mkt_netGHG(t, regi, emiMkt)..
 	v47_emiTargetMkt(t,regi,emiMkt,"netGHG")
 	=e=
-	vm_co2eqMkt(t,regi,emiMkt)
+	vm_co2eqMkt(t,regi,emiMkt) - p47_co2eqEmiFeedstockCapture(t,regi,emiMkt)
 ;
 
 

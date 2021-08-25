@@ -1876,7 +1876,7 @@ emi_sectors  "comprehensive sector set used for more detailed emissions accounti
 sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
-        process "process sepecific part (and emissions) of the sector activity"
+        process "process specific part (and emissions) of the sector activity"
 /
 
 entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
