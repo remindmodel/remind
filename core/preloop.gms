@@ -53,7 +53,7 @@ $ifthen not "%c_fuelprice_init%" == "off"
   if ( (cm_startyear gt 2005),
     Execute_Loadpoint 'input_ref' pm_FEPrice = pm_FEPrice;
     Execute_Loadpoint 'input_ref' pm_SEPrice = pm_SEPrice;
-    Execute_Loadpoint 'input_ref' p_PEPrice = p_PEPrice;
+    Execute_Loadpoint 'input_ref' pm_PEPrice = pm_PEPrice;
   );
 $endif
 

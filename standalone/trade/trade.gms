@@ -576,6 +576,9 @@ $setGlobal cm_Full_Integration  off     !! def = off
 option nlp = %cm_conoptv%;
 option cns = %cm_conoptv%;
 
+* set log file
+file logfile /""/;
+
 *--------------------------------------------------------------------------
 ***          SETS
 *--------------------------------------------------------------------------
@@ -616,15 +619,19 @@ option solprint  = on;
 ***          PRELOOP
 *--------------------------------------------------------------------------
 pm_SEPrice(ttot,all_regi,all_enty) = 0.0;
-p_PEPrice(ttot,all_regi,all_enty) = 0.0;
+pm_PEPrice(ttot,all_regi,all_enty) = 0.0;
 $include "./modules/24_trade/capacity/preloop.gms"
 
 *--------------------------------------------------------------------------
 ***          LOAD INPUT GDX
 *--------------------------------------------------------------------------
+PARAMETER p_PEPrice(ttot,all_regi,all_enty);
+
 execute_loadpoint 'input.gdx' vm_Mport;
 execute_loadpoint 'input.gdx' vm_Xport;
 execute_loadpoint 'input.gdx' p_PEPrice;
+
+pm_PEPrice(ttot,all_regi,all_enty) = p_PEPrice(ttot,all_regi,all_enty);
 
 *--------------------------------------------------------------------------
 ***          SOLVE TRADE MODEL IN 24_TRADE PRESOLVE
