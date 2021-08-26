@@ -29,22 +29,22 @@ p24_shipment_quan_iter(iteration,ttot,all_regi,all_regi,tradeModes) = 0;
 ***-------------------------------------------------------------------------------
 MODEL m24_tradeTransp
 /
-  q24_totMport_quan
+  q24_tradeFromMports
 
-  q24_cap_teTradeBilat
-  q24_cap_teTradeXport
-  q24_cap_teTradeMport
+  q24_limitCapTradeBilat
+  q24_limitCapTradeXport
+  q24_limitCapTradeMport
 
-  q24_deltaCap_tradeTransp
-  q24_deltaCap_limit
-  q24_prohibit_MportXport
+  q24_capTrade
+  q24_limitDeltaCap
+  q24_prohibitMX
 
-  q24_purchase_cost
-  q24_tradeTransp_cost
-  q24_tradeBudget_Xporter
-  q24_tradeBudget_Mporter
+  q24_costTradePrice
+  q24_costTradeCap
+  q24_budgetTradeX
+  q24_budgetTradeM
 
-  q24_objfunc_opttransp
+  v24_objFunc
 /
 ;
 
