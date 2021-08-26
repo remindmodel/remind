@@ -124,12 +124,5 @@ vm_Xport.up(t,regi,enty)$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil
     f31_Xport(t,regi,enty,"SSP5")$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil") AND f31_Xport(t,regi,enty,"SSP5") ne 0);
 $endif.oilscen
 
-*------------------------------------
-*** Regionalised upper bound on uranium extraction
-*------------------------------------
-if(cm_limit_peur_scen eq 1,
- v31_fuExtrCum.up(ttot,regi,"peur", "1") = p31_fuExtrCumMaxBound(regi,"peur", "1");
-);
-
 
 *** EOF ./modules/31_fossil/MOFEX/bounds.gms
