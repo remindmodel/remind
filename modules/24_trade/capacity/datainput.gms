@@ -61,11 +61,11 @@ PARAMETERS
         coal_ves 999999.0 /
 ;
 
-PARAMETER TABLE p24_disallowed(all_regi,all_regi,tradeModes)                    "Trade routes that are explicitly disallowed."
+TABLE p24_disallowed(all_regi,all_regi,tradeModes)                    "Trade routes that are explicitly disallowed."
 $include "./modules/24_trade/capacity/input/p24_disallowed.prn"
 ;
 
-PARAMETER TABLE p24_distance(all_regi,all_regi)                                 "Distance between regions (in units of 1000km)"
+TABLE p24_distance(all_regi,all_regi)                                 "Distance between regions (in units of 1000km)"
 $include "./modules/24_trade/capacity/input/p24_distance.prn"
 ;
 p24_distance(regi,regi2) = p24_distance(regi,regi2)/1000;
