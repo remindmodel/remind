@@ -28,9 +28,9 @@ p24_XMportPipe('MEA','EUR','pegas') = 0.100;
 p24_XMportPipe('REF','EUR','pegas') = 0.150;
 
 *** prices
-pm_XPortsPrice(t,regi,'pegas') = p_PEPrice(t,regi,'pegas');
-pm_XPortsPrice(t,regi,'pecoal') = p_PEPrice(t,regi,'pecoal');
-***this will need fixing and has to become something more like this: pm_XPortsPrice(t,regi,tradeCap) = p_PEPrice(t,regi,tradeCap) or pm_SEPrice(t,regi,tradeCap);
+pm_XPortsPrice(t,regi,'pegas') = pm_PEPrice(t,regi,'pegas');
+pm_XPortsPrice(t,regi,'pecoal') = pm_PEPrice(t,regi,'pecoal');
+***this will need fixing and has to become something more like this: pm_XPortsPrice(t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap) or pm_SEPrice(t,regi,tradeCap);
 
 *** Setting Xport price bound to avoid unrealists trading prices.
 *** Lower bound: avoiding epsilon values (caused by using equation marginals for setting prices) or unrealistic small value for H2 exporting prices -> minimun price = 1$/kg (1$/kg = 0.030769231 $/Kwh = 0.030769231 / (10^12/10^9*8760) T$/TWa = 0.26953846356 T$/TWa) 

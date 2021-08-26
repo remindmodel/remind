@@ -5,6 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
+pm_PEPrice, parameter, only used in capacity realization
+
 pm_omeg,parameter,only used in capacity realization
 pm_data,parameter,only used in capacity realization
 pm_tsu2opTimeYr,parameter,only used in capacity realization

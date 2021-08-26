@@ -16,7 +16,7 @@ vm_Xport.l(t,regi,tradeSe)  = 0;
 *** trade parameters
 pm_MPortsPrice(t,regi,tradeSe) = 0;
 pm_XPortsPrice(t,regi,tradeSe) = 0;
-p_PEPrice(t,regi,entySe) = 0;
+pm_PEPrice(t,regi,entySe) = 0;
 pm_SEPrice(t,regi,entySe) = 0;
 
 *** iteration variables
