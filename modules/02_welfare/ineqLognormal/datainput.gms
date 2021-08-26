@@ -57,6 +57,9 @@ Execute_Loadpoint 'input_ref' p02_cons_ref = vm_cons.l;
 p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 0.5;
 display p02_distrAlpha;
 
+* TN: income elasticity of tax revenues redistribution. fixing this to some number for now
+p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 0;
+
 *expectation value of y^alpha
 * p02_distrEVyAlpha(t,regi) = exp(p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi));
 * display p02_distrEVyAlpha;
@@ -69,6 +72,10 @@ v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 * v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 1;
 * v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 100;
 v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
+
+* TN
+v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 
 *** EOF ./modules/02_welfare/ineqLognormal/datainput.gms

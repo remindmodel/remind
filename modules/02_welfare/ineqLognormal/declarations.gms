@@ -20,6 +20,10 @@ p02_ineqTheil(ttot,all_regi)		                   "regional Theil-T index = sigma
 p02_distrMu(ttot,all_regi)                         "mu of lognormal distribution (prior to mitigation costs)"
 p02_distrSigma(ttot,all_regi)                      "sigma of lognormal distribution (prior to mitigation costs)"
 p02_distrAlpha(ttot,all_regi)                      "income elasticity of mitigation costs"
+* TN
+p02_distrBeta(ttot,all_regi)                       "income elasticity of revenues redistribution"
+*p21_taxrevGHG0_ref(ttot,all_regi)                  "revenue levels in the reference run" 
+
 * p02_distrEVyAlpha(ttot,all_regi)                   "expectation value of income^alpha (used in several places)"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
@@ -37,6 +41,8 @@ vm_welfareGlob                                    "Global welfare"
 * v02_consPcap(ttot,all_regi)                       "per capita consumption"
 v02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
 * v02_distrNormalization(ttot,all_regi)             "normalization parameter for lognormal distribution of costs"
+v02_revShare(ttot,all_regi)                            "tax revenues (share of consumption)"
+
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
@@ -50,7 +56,10 @@ vm_forcOs(ttot)                                   "Forcing overshoot"
 * BS 2020-03-13 additions for distributional module
 * v02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
 * v02_distrNew_mu(ttot,all_regi)                        "mu parameter of lognormal distribution after costs"
-v02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs"
+v02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs (but before tax)"
+* TN
+v02_distrFinal_sigmaSq(ttot,all_regi)                  "sigma^2 parameter of final lognormal distribution (after redistributional effects of taxes)"
+
 ;
 
 ***-------------------------------------------------------------------------------
@@ -62,10 +71,15 @@ q02_welfare                                       "Regional welfare"
 * BS 2020-03-13 additions for distributional module
 * q02_consPcap(ttot,all_regi)                       "per capita consumption"
 q02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+* TN
+q02_relTaxlevels(ttot,all_regi)                    "tax revenues w.r.t. consumption"
+
 * q02_distrNormalization(ttot,all_regi)             "normalization parameter for distribution of costs"
 * q02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
 * q02_distrNew_mu(ttot,all_regi)                    "mu parameter of lognormal distribution after costs"
+* TN
 q02_distrNew_sigmaSq(ttot,all_regi)               "sigma^2 parameter of lognormal distribution after costs"
+q02_distrFinal_sigmaSq(ttot,all_regi)             "sigma^2 parameter of lognormal final distribution (after costs and taxes)"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 q02_inconvPen(ttot,all_regi)                      "Calculate the inconvenience penalty v02_inconvPen"
