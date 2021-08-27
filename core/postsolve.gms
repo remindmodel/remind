@@ -656,11 +656,11 @@ p_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) =
 pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
 
 *** INNOPATHS emissions reporting
-o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 
+o_emissions_bunkers(ttot,regi,emiTe)$(ttot.val ge 2005) = 
     sum(se2fe(enty,enty2,te),
-        pm_emifac(ttot,regi,enty,enty2,te,emi)
+        pm_emifac(ttot,regi,enty,enty2,te,emiTe)
         * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
-    )*o_emi_conv(emi);
+    )*o_emi_conv(emiTe);
 
 o_emissions(ttot,regi,emiTe)$(ttot.val ge 2005) = 
     sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emiTe,emiMkt))*o_emi_conv(emiTe)
@@ -672,33 +672,33 @@ o_emissions_energy(ttot,regi,emiTe)$(ttot.val ge 2005) =
     - o_emissions_bunkers(ttot,regi,emiTe);
 
 *** note! this still excludes industry CCS. To fix. 
-o_emissions_energy_demand(ttot,regi,emi)$(ttot.val ge 2005) = 
+o_emissions_energy_demand(ttot,regi,emiTe)$(ttot.val ge 2005) = 
     sum(sector2emiMkt(sector,emiMkt),
         sum(se2fe(enty,enty2,te),
-            pm_emifac(ttot,regi,enty,enty2,te,emi)
+            pm_emifac(ttot,regi,enty,enty2,te,emiTe)
             * vm_demFeSector.l(ttot,regi,enty,enty2,sector,emiMkt)
         )
-    )*o_emi_conv(emi)
-    - o_emissions_bunkers(ttot,regi,emi)
+    )*o_emi_conv(emiTe)
+    - o_emissions_bunkers(ttot,regi,emiTe)
 ;
 
 *** note! this still excludes industry CCS. To fix.
-o_emissions_energy_demand_sector(ttot,regi,emi,sector)$(ttot.val ge 2005) =
+o_emissions_energy_demand_sector(ttot,regi,emiTe,sector)$(ttot.val ge 2005) =
     sum(emiMkt$sector2emiMkt(sector,emiMkt),
         sum(se2fe(enty,enty2,te),
-            pm_emifac(ttot,regi,enty,enty2,te,emi) * vm_demFeSector.l(ttot,regi,enty,enty2,sector,emiMkt)
+            pm_emifac(ttot,regi,enty,enty2,te,emiTe) * vm_demFeSector.l(ttot,regi,enty,enty2,sector,emiMkt)
         )
-    )*o_emi_conv(emi)
+    )*o_emi_conv(emiTe)
     +
-   (sum(emiMacSector$(emiMac2sector(emiMacSector,"trans","process",emi)),
+   (sum(emiMacSector$(emiMac2sector(emiMacSector,"trans","process",emiTe)),
         vm_emiMacSector.l(ttot,regi,emiMacSector)
-        )*o_emi_conv(emi)
-        - o_emissions_bunkers(ttot,regi,emi)
+        )*o_emi_conv(emiTe)
+        - o_emissions_bunkers(ttot,regi,emiTe)
     )$(sameas(sector,"trans"))
     +
-    (sum(emiMacSector$(emiMac2sector(emiMacSector,"waste","process",emi)),
+    (sum(emiMacSector$(emiMac2sector(emiMacSector,"waste","process",emiTe)),
          vm_emiMacSector.l(ttot,regi,emiMacSector)
-        )*o_emi_conv(emi)
+        )*o_emi_conv(emiTe)
     )$(sameas(sector,"waste"))
 ;
 
