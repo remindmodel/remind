@@ -30,7 +30,7 @@ teNoCCS(te)     = not teCCS(te);
 
 entyFe(enty)         = entyFeStat(enty) + entyFeTrans(enty);
 trade(enty)          = tradePe(enty) + tradeSe(enty) + tradeMacro(enty);
-emi(enty)            = emiTe(enty) + emiMac(enty) + emiExog(enty); 
+emi(enty)            = emiTe(enty); 
 emiMacMagpie(enty)   = emiMacMagpieCH4(enty) + emiMacMagpieN2O(enty) + emiMacMagpieCO2(enty);
 emiMacExo(enty)      = emiMacExoCH4(enty) + emiMacExoN2O(enty);
 peExGrade(enty)      = peEx(enty)  - peExPol(enty);

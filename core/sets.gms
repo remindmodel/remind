@@ -1734,7 +1734,7 @@ emiAP(all_enty) "Used for allocation of emission factors"
         bc
         oc
 /
-emiMac(all_enty)  "sum over sub-emissions from emiMacSector"
+emiMac(emiTe)  "sum over sub-emissions from emiMacSector"
 /
         co2
         n2o

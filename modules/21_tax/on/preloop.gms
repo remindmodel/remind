@@ -139,7 +139,7 @@ display pm_tau_fe_tax;
 display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
 *LB* initialization of vm_emiMac
-vm_emiMac.l(ttot,regi,enty) = 0;
+vm_emiMac.l(ttot,regi,emiTe) = 0;
 *LB* initialization of v21_emiALLco2neg
 v21_emiALLco2neg.l(ttot,regi) =0;
 
