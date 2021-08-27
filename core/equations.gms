@@ -536,25 +536,25 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 ***--------------------------------------------------
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
-q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  vm_emiTeMkt(t,regi,enty,emiMkt)
+q_emiTeMkt(t,regi,emiTe,emiMkt)..
+  vm_emiTeMkt(t,regi,emiTe,emiMkt)
   =e=
 ***   emissions from fuel combustion
-    sum(emi2te(enty2,enty3,te,enty),     
-      v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
+    sum(emi2te(enty,enty2,te,emiTe),     
+      v_emiTeDetailMkt(t,regi,enty,enty2,te,emiTe,emiMkt)
     )
 ***   energy emissions fuel extraction
-	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+	+ v_emiEnFuelEx(t,regi,emiTe)$(sameas(emiMkt,"ETS"))
 ***   Industry CCS emissions
-	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
+	- ( sum(emiMac2mac(emiInd37_fuel,enty),
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") )
+		)$( sameas(emiTe,"co2") )
 	)$(sameas(emiMkt,"ETS"))
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
+  + ( v_co2capturevalve(t,regi)$( sameas(emiTe,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
+		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(emiTe,"co2") ) 
 	)$(sameas(emiMkt,"ETS"))
 ;
 
