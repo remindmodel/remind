@@ -35,7 +35,7 @@ pm_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterat
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
 pm_taxemiMkt(ttot,all_regi,all_emiMkt)                "CO2 or CO2eq region and emission market specific emission tax"
 pm_taxemiMkt_iteration(iteration,ttot,all_regi,all_emiMkt) "CO2 or CO2eq region and emission market specific emission tax per iteration"
-pm_emissionsForeign(tall,all_regi,all_enty)          "total emissions of other regions (nash relevant)"
+pm_emissionsForeign(tall,all_regi,emiTe)          "total emissions of other regions (nash relevant)"
 pm_co2eqForeign(tall,all_regi)                       "emissions, which are part of the climate policy, of other regions (nash relevant)"
 pm_cesdata(tall,all_regi,all_in,cesParameter)        "parameters of the CES function"
 pm_cesdata_putty(tall,all_regi,all_in,cesParameter)  "quantities for the putty clay factors"
