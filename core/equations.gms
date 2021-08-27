@@ -561,19 +561,19 @@ q_emiTeMkt(t,regi,emiTe,emiMkt)..
 ***--------------------------------------------------
 *' Total emissions
 ***--------------------------------------------------
-q_emiAllMkt(t,regi,emi,emiMkt)..
-  vm_emiAllMkt(t,regi,emi,emiMkt)
+q_emiAllMkt(t,regi,emiTe,emiMkt)..
+  vm_emiAllMkt(t,regi,emiTe,emiMkt)
 	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
+	vm_emiTeMkt(t,regi,emiTe,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
-	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
+	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emiTe))$macSector2emiMkt(emiMacSector,emiMkt),
    	vm_emiMacSector(t,regi,emiMacSector)
   )
 *** CDR from CDR module
-	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
+	+ vm_emiCdr(t,regi,emiTe)$(sameas(emiTe,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
-  +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
+  +	pm_emiExog(t,regi,emiTe)$(sameas(emiMkt,"other"))
 ;
 
 
