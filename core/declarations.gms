@@ -431,7 +431,7 @@ q_budgetCO2eqGlob                                    "global emission budget bal
 
 q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
 q_emiTeMkt(ttot,all_regi,emiTe,all_emiMkt)			             "total energy-emissions per region and market"
-q_emiEnFuelEx(ttot,all_regi,all_enty)                "energy emissions from fuel extraction"
+q_emiEnFuelEx(ttot,all_regi,emiTe)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,all_enty,all_emiMkt)       "total regional emissions for each emission market"
 
 

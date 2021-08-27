@@ -515,20 +515,20 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 *' energy emissions from fuel extraction  
 ***--------------------------------------------------
 
-q_emiEnFuelEx(t,regi,emiTe(enty))..
-  v_emiEnFuelEx(t,regi,enty)
+q_emiEnFuelEx(t,regi,emiTe)..
+  v_emiEnFuelEx(t,regi,emiTe)
   =e=
 ***   emissions from non-conventional fuel extraction
-	sum(emi2fuelMine(enty,enty2,rlf),      
-		  p_cint(regi,enty,enty2,rlf)
-		* vm_fuExtr(t,regi,enty2,rlf)
+	sum(emi2fuelMine(emiTe,enty,rlf),      
+		  p_cint(regi,emiTe,enty,rlf)
+		* vm_fuExtr(t,regi,enty,rlf)
 		)$( c_cint_scen eq 1 )
 ***   emissions from conventional fuel extraction
-	+ (sum(pe2rlf(enty3,rlf2),
-      sum(enty2$(peFos(enty2)),   
-		    (p_cintraw(enty2)
-		     * pm_fuExtrOwnCons(regi, enty2, enty3) 
-		     * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))))$(sameas("co2",enty))
+	+ (sum(pe2rlf(enty2,rlf2),
+      sum(enty$(peFos(enty)),   
+		    (p_cintraw(enty)
+		     * pm_fuExtrOwnCons(regi, enty, enty2) 
+		     * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0))))$(sameas("co2",emiTe))
 ;    
 		 
 
