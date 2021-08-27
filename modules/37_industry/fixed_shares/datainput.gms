@@ -179,7 +179,7 @@ display p37_CESMkup;
 parameter f37_fedemand_NonEnergyIndst(ttot,all_regi,all_GDPscen,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [EJ]"
 /
 $ondelim
-$include "./modules/37_regipol/regiCarbonPrice/input/f37_fedemand_NonEnergyIndst.cs4r";
+$include "./modules/37_industry/fixed_shares/input/f37_fedemand_NonEnergyIndst.cs4r";
 $offdelim
 /
 ;

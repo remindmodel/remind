@@ -15,7 +15,7 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   ) 
   =e=
   sum(in$(fe2ppfEn(entyFe,in) and ppfen_industry_dyn37(in)),
-      ( vm_cesIO(ttot,regi,in) 
+      ( vm_cesIO(ttot,regi,in)
         + pm_cesdata(ttot,regi,in,"offset_quantity")
       ) * sum(secInd37$secInd37_emiMkt(secInd37,emiMkt), p37_shIndFE(regi,in,secInd37))
   ) 

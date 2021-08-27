@@ -20,6 +20,8 @@ Parameters
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
+
+  p37_fedemand_NonEnergyIndst(ttot,all_regi,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [TWa]"
 ;
 
 Positive Variables
@@ -38,6 +40,7 @@ Equations
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
+  q37_demFeNonEnergyIndst(ttot,all_regi,all_enty,all_emiMkt) "industry non-energy demand (per emission market)"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
