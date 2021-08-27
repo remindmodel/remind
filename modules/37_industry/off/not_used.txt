@@ -2,6 +2,7 @@ name,type,reason
 sm_dmac,input,questionnaire
 sm_eps,input,questionnaire
 sm_tmp,input,questionnaire
+sm_EJ_2_TWa,input,questionnaire
 vm_emiMacSector,input,questionnaire
 vm_cesIO,input,questionnaire
 vm_effGr,input,questionnaire

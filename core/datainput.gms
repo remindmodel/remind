@@ -1423,15 +1423,15 @@ pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet"
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 *** emission factor for non-energy processes per sector (calculate from DEU JRC data, estmiation per fuel type done by back of envelope calculation)
-pm_emifacNonEnergy("2005",all_regi,"seliqfos","fehos","indst","co2") = 0.092;
-pm_emifacNonEnergy("2005",all_regi,"segafos","fegas","indst","co2") = 0.068;
-pm_emifacNonEnergy("2005",all_regi,"sesofos","fesos","indst","co2") = 0.114;
-pm_emifacNonEnergy("2010",all_regi,"seliqfos","fehos","indst","co2") = 0.096;
-pm_emifacNonEnergy("2010",all_regi,"segafos","fegas","indst","co2") = 0.071;
-pm_emifacNonEnergy("2010",all_regi,"sesofos","fesos","indst","co2") = 0.119;
-pm_emifacNonEnergy(ttot,all_regi,"seliqfos","fehos","indst","co2")$(ttot.val ge 2015) = 0.069;
-pm_emifacNonEnergy(ttot,all_regi,"segafos","fegas","indst","co2")$(ttot.val ge 2015) = 0.051;
-pm_emifacNonEnergy(ttot,all_regi,"sesofos","fesos","indst","co2")$(ttot.val ge 2015) = 0.086;
+p_emifacNonEnergy("2005",all_regi,"seliqfos","fehos","indst","co2") = 0.092;
+p_emifacNonEnergy("2005",all_regi,"segafos","fegas","indst","co2") = 0.068;
+p_emifacNonEnergy("2005",all_regi,"sesofos","fesos","indst","co2") = 0.114;
+p_emifacNonEnergy("2010",all_regi,"seliqfos","fehos","indst","co2") = 0.096;
+p_emifacNonEnergy("2010",all_regi,"segafos","fegas","indst","co2") = 0.071;
+p_emifacNonEnergy("2010",all_regi,"sesofos","fesos","indst","co2") = 0.119;
+p_emifacNonEnergy(ttot,all_regi,"seliqfos","fehos","indst","co2")$(ttot.val ge 2015) = 0.069;
+p_emifacNonEnergy(ttot,all_regi,"segafos","fegas","indst","co2")$(ttot.val ge 2015) = 0.051;
+p_emifacNonEnergy(ttot,all_regi,"sesofos","fesos","indst","co2")$(ttot.val ge 2015) = 0.086;
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

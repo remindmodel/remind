@@ -212,7 +212,7 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 *** FE without non-energy use
 ***---------------------------------------------------------------------------
 q_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)..
-  vm_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+  v_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
   - vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)  
@@ -536,10 +536,10 @@ q_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)$(emi2te(entySe,entyFe,te,
   sum(sector$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), 
     ( pm_emifac(t,regi,entySe,entyFe,te,emiTe)
       *
-      vm_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+      v_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     )
     +
-    ( pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emiTe)
+    ( p_emifacNonEnergy(t,regi,entySe,entyFe,sector,emiTe)
       *
       vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     )
