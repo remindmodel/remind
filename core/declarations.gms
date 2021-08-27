@@ -177,7 +177,7 @@ pm_inco0_t(ttot,all_regi,all_te)                     "New inco0 that is time-dep
 ***this parameter counts backwards from time ttot - only the existing time steps
 p_tsu2opTimeYr_h(ttot,opTimeYr)                      "parameter to generate pm_tsu2opTimeYr",
 pm_tsu2opTimeYr(ttot,opTimeYr)                       "parameter that counts opTimeYr regarding tsu2opTimeYr apping"
-pm_emissions0(tall,all_regi,all_enty)                "Emissions in last iteration"
+pm_emissions0(tall,all_regi,emiTe)                "Emissions in last iteration"
 pm_co2eq0(tall,all_regi)                             "vm_co2eq from last iteration"
 pm_capCum0(tall,all_regi,all_te)                     "vm_capCum from last iteration"
 p_capCum(tall, all_regi,all_te)                      "vm_capCum from input.gdx for recalibration of learning investment costs"
