@@ -654,13 +654,13 @@ q_emiCdrAll(t,regi)..
 *' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
 ***------------------------------------------------------
 *LB* calculate total emissions for each region at each time step
-q_emiAll(t,regi,emi(enty)).. 
-  vm_emiAll(t,regi,enty) 
+q_emiAll(t,regi,emiTe).. 
+  vm_emiAll(t,regi,emiTe) 
   =e= 
-    vm_emiTe(t,regi,enty) 
-  + vm_emiMac(t,regi,enty) 
-  + vm_emiCdr(t,regi,enty) 
-  + pm_emiExog(t,regi,enty)
+    vm_emiTe(t,regi,emiTe) 
+  + vm_emiMac(t,regi,emiTe) 
+  + vm_emiCdr(t,regi,emiTe) 
+  + pm_emiExog(t,regi,emiTe)
 ;
 
 ***------------------------------------------------------
