@@ -477,10 +477,10 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se
 *' Total energy-emissions:
 ***--------------------------------------------------
 *** calculate total energy system emissions for each region and timestep:
-q_emiTe(t,regi,emiTe(enty))..
-  vm_emiTe(t,regi,enty)
+q_emiTe(t,regi,emiTe)..
+  vm_emiTe(t,regi,emiTe)
   =e=
-  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, vm_emiTeMkt(t,regi,emiTe,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
