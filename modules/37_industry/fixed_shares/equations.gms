@@ -15,10 +15,23 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   ) 
   =e=
   sum(in$(fe2ppfEn(entyFe,in) and ppfen_industry_dyn37(in)),
-      ( vm_cesIO(ttot,regi,in)
+      ( vm_cesIO(ttot,regi,in) 
         + pm_cesdata(ttot,regi,in,"offset_quantity")
       ) * sum(secInd37$secInd37_emiMkt(secInd37,emiMkt), p37_shIndFE(regi,in,secInd37))
   ) 
+;
+
+***---------------------------------------------------------------------------
+*'  Industry non-energy demand
+***---------------------------------------------------------------------------
+q37_demFeNonEnergyIndst(t,regi,entyFe,emiMkt)$(feNonEnergy2sector(entyFe,"indst",emiMkt)) .. 
+  sum((entySe,te)$(se2fe(entySe,entyFe,te)), 
+    vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt) 
+  )
+  =e= 
+  sum(secInd37_emiMkt(secInd37,emiMkt),
+    p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)
+  )
 ;
 
 *' Baseline (emitted and captured) emissions by final energy carrier and 

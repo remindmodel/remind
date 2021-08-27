@@ -28,7 +28,6 @@ teNoLearn(te)   = not teLearn(te);
 teEtaConst(te)  = not teEtaIncr(te);
 teNoCCS(te)     = not teCCS(te);
 
-entyFe(enty)         = entyFeStat(enty) + entyFeTrans(enty);
 trade(enty)          = tradePe(enty) + tradeSe(enty) + tradeMacro(enty);
 emi(enty)            = emiTe(enty) + emiMac(enty) + emiExog(enty); 
 emiMacMagpie(enty)   = emiMacMagpieCH4(enty) + emiMacMagpieN2O(enty) + emiMacMagpieCO2(enty);

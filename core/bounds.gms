@@ -545,4 +545,12 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
+***----------------------------------------------------------------------------
+*** making sure non used non-energy FE demand variables not used in the model are disregarded
+***----------------------------------------------------------------------------
+loop(te,
+  vm_demFeNonEnergySector.fx(t,regi,enty,enty2,sector,emiMkt)$not(feNonEnergy2sector(enty2,sector,emiMkt) and se2fe(enty,enty2,te)) = 0;
+);  
+
+
 *** EOF ./core/bounds.gms

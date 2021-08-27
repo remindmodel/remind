@@ -106,6 +106,7 @@ pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
+pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty) "non-energy processes emission factor by sector"
 pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
@@ -335,7 +336,9 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market. Unit: TWa"
+vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Unit: TWa"
+vm_demFeEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)    "fe demand per sector and emission market excluding non-energy use. Unit: TWa"
+vm_demFeNonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "non-energy fe demand per sector and emission market. Unit: TWa"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
 vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
@@ -405,7 +408,9 @@ q_costTeCapital(tall,all_regi,all_te)                "calculation of investment 
 
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
-qm_balFe(ttot,all_regi,all_enty,all_enty,all_te)                "balance of final energy (fe)"
+qm_balFe(ttot,all_regi,all_enty,all_enty,all_te)     "balance of final energy (fe)"
+
+q_demFeEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "final energy without non-energy use"
 
 q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
 q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
@@ -416,6 +421,7 @@ qm_fuel2pe(ttot,all_regi,all_enty)                   "constraint on cumulative f
 q_limitProd(ttot,all_regi,all_te,rlf)                "constraint on annual production"
 
 q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
+q_emiFeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "final energy emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
 q_emiTe(ttot,all_regi,all_enty)                      "total energy-emissions per region"

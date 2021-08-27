@@ -15,14 +15,7 @@ Parameter
   p47_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets"
   p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
   p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening"
-
-  p47_fedemand_NonEnergyIndst(ttot,all_regi,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [TWa]"
-  p47_wasteIncinerationPctg(ttot,all_regi,secInd37,all_enty)   "Percentage of feedstocks burned and re-emitted to the atmosphere (waste incineration) [%]"
-  p47_emiFeedstockCapture(ttot,all_regi,all_emiMkt,all_enty)   "emissions captured in non burned industry feedstock"
-  p47_co2eqEmiFeedstockCapture(ttot,all_regi,all_emiMkt)       "emissions captured in non burned industry feedstock in CO2eq"
 ;
-
-
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter

@@ -1683,7 +1683,26 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
+entySeFos(all_enty) "secondary energy types from fossil primary energy"
+/
+	seliqfos     "secondary energy liquids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+/
+
+entyFe(all_enty)      "final energy types."
+/
+        fegas        "FE gas stationary"
+        fehos        "FE heating oil stationary"
+        fesos        "FE solids stationary"
+        feels        "FE electricity stationary"
+        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
+        feh2s        "FE hydrogen stationary"
+        fepet        "FE petrol transport"
+        fedie        "FE diesel transport"
+        feh2t        "FE hydrogen transport"
+	feelt        "FE electricity for transport"
+/
 
 esty(all_esty)      "energy service types. Have to be added by modules."
 //
@@ -1956,6 +1975,13 @@ sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
         trans.ES
         trans.other
 	cdr.ETS
+/
+
+feNonEnergy2sectorANDemiMkt(all_enty,emi_sectors,all_emiMkt) "non-energy use in sectors and emission market"
+/
+ fehos.indst.ETS
+ fegas.indst.ETS
+ fesos.indst.ETS
 /
 
 te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
