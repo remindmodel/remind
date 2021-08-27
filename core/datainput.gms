@@ -352,7 +352,7 @@ $offdelim
 /
 ;
 * Read in historical emissions per sector to calibrate MAC reference emissions
-parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
+parameter p_histEmiSector(tall,all_regi,emiTe,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
 $include "./core/input/p_histEmiSector.cs4r"

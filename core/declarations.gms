@@ -76,7 +76,7 @@ pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement 
 p_macAbat_lim(tall,all_regi,all_enty)                "limit of abatement level based on limit of yearly change [fraction]"
 p_macUse2005(all_regi,all_enty)                      "usage of MACs in 2005 [fraction]"
 p_histEmiMac(tall,all_regi,all_enty)                 "historical emissions per MAC; from Eurostat and CEDS, to correct CH4 and N2O reporting"
-p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
+p_histEmiSector(tall,all_regi,emiTe,emi_sectors,sector_types) "historical emissions per sector; from Eurostat and CEDS, to correct CH4 and N2O reporting"
 p_macLevFree(tall,all_regi,all_enty)                 "Phase in of zero-cost MAC options [fraction]"
 pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all emissions subject to MACCs (type emiMacSector) []"
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
