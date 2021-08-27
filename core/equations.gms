@@ -667,12 +667,12 @@ q_emiAll(t,regi,emiTe)..
 *' Total global emissions are calculated for each GHG emission type and links the energy system to the climate module.
 ***------------------------------------------------------
 *LB* calculate total global emissions for each timestep - link to the climate module
-q_emiAllGlob(t,emi(enty)).. 
-  vm_emiAllGlob(t,enty) 
+q_emiAllGlob(t,emiTe).. 
+  vm_emiAllGlob(t,emiTe) 
   =e= 
   sum(regi, 
-    vm_emiAll(t,regi,enty) 
-  + pm_emissionsForeign(t,regi,enty)
+    vm_emiAll(t,regi,emiTe) 
+  + pm_emissionsForeign(t,regi,emiTe)
   )
 ;
 
