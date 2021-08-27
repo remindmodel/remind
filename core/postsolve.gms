@@ -662,9 +662,9 @@ o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) =
         * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other")
     )*o_emi_conv(emi);
 
-o_emissions(ttot,regi,emi)$(ttot.val ge 2005) = 
-    sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
-    - o_emissions_bunkers(ttot,regi,emi);
+o_emissions(ttot,regi,emiTe)$(ttot.val ge 2005) = 
+    sum(emiMkt, vm_emiAllMkt.l(ttot,regi,emiTe,emiMkt))*o_emi_conv(emiTe)
+    - o_emissions_bunkers(ttot,regi,emiTe);
 
 *** note! this still excludes industry CCS and CCU. To fix. 
 o_emissions_energy(ttot,regi,emiTe)$(ttot.val ge 2005) = 
