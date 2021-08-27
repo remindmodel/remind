@@ -798,8 +798,8 @@ o_emissions_DACCS(ttot,regi,emi)$(ttot.val ge 2005) =
    vm_emiCdr.l(ttot,regi,emi)*o_emi_conv(emi)
 ;
 
-o_emissions_other(ttot,regi,emi)$(ttot.val ge 2005) =
-    pm_emiExog(ttot,regi,emi)*o_emi_conv(emi)
+o_emissions_other(ttot,regi,emiTe)$(ttot.val ge 2005) =
+    pm_emiExog(ttot,regi,emiTe)*o_emi_conv(emiTe)
 ;
 
 ***Carbon Management|Carbon Capture (Mt CO2/yr)
