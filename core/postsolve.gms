@@ -702,11 +702,11 @@ o_emissions_energy_demand_sector(ttot,regi,emi,sector)$(ttot.val ge 2005) =
     )$(sameas(sector,"waste"))
 ;
 
-o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
+o_emissions_energy_extraction(ttot,regi,emiTe,entyPe)$(ttot.val ge 2005) =
 ***   emissions from non-conventional fuel extraction
     (
-    ( sum(emi2fuelMine(emi,entyPe,rlf),      
-           p_cint(regi,emi,entyPe,rlf)
+    ( sum(emi2fuelMine(emiTe,entyPe,rlf),      
+           p_cint(regi,emiTe,entyPe,rlf)
          * vm_fuExtr.l(ttot,regi,entyPe,rlf)
          )$( c_cint_scen eq 1 )
      )
@@ -718,21 +718,21 @@ o_emissions_energy_extraction(ttot,regi,emi,entyPe)$(ttot.val ge 2005) =
          )$(pm_fuExtrOwnCons(regi, entyPe, enty2) gt 0)    
         ))
     )
-    )*o_emi_conv(emi)
+    )*o_emi_conv(emiTe)
     +
-    (sum(emiMacSector$(emiMac2sector("ch4coal","extraction","process",emi)),
+    (sum(emiMacSector$(emiMac2sector("ch4coal","extraction","process",emiTe)),
          vm_emiMacSector.l(ttot,regi,emiMacSector)
-        )*o_emi_conv(emi)
+        )*o_emi_conv(emiTe)
     )$(sameas(entyPe,"pecoal"))
     +
-    (sum(emiMacSector$(emiMac2sector("ch4gas","extraction","process",emi)),
+    (sum(emiMacSector$(emiMac2sector("ch4gas","extraction","process",emiTe)),
          vm_emiMacSector.l(ttot,regi,emiMacSector)
-        )*o_emi_conv(emi)
+        )*o_emi_conv(emiTe)
     )$(sameas(entyPe,"pegas"))
     +
-    (sum(emiMacSector$(emiMac2sector("ch4oil","extraction","process",emi)),
+    (sum(emiMacSector$(emiMac2sector("ch4oil","extraction","process",emiTe)),
          vm_emiMacSector.l(ttot,regi,emiMacSector)
-        )*o_emi_conv(emi)
+        )*o_emi_conv(emiTe)
     )$(sameas(entyPe,"peoil"))
 ;
 

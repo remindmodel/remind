@@ -94,7 +94,7 @@ pm_emicapglob(tall)                                  "global emission cap"
 p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment costs"
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
 p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
-p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
+p_cint(all_regi,emiTe,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
 
@@ -422,7 +422,7 @@ q_emiTe(ttot,all_regi,emiTe)                         "total energy-emissions per
 q_emiAll(ttot,all_regi,emiTe)                        "calculates all regional emissions as sum over energy and non-energy relates emissions"
 q_emiAllGlob(ttot,emiTe)                             "calculates all global emissions as sum over regions"
 q_emiCap(ttot,all_regi)                              "emission cap"
-q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
+q_emiMac(ttot,all_regi,emiMac)                       "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
 q_co2eqMkt(ttot,all_regi,all_emiMkt)                           "regional emissions per market in co2 equivalents"
 q_co2eqGlob(ttot)                                    "global emissions in co2 equivalents"
