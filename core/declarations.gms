@@ -286,7 +286,7 @@ vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related e
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions due to CDR technologies of each region. [GtC]"
 vm_emiMac(ttot,all_regi,emiTe)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiAll(ttot,all_regi,emiTe)                    "total regional emissions. [GtC, Mt CH4, Mt N]"
-vm_emiAllGlob(ttot,all_enty)                         "total global emissions - link to the climate module. [GtC, Mt CH4, Mt N]"
+vm_emiAllGlob(ttot,emiTe)                         "total global emissions - link to the climate module. [GtC, Mt CH4, Mt N]"
 vm_perm(ttot,all_regi)                               "emission allowances"
 vm_co2eqGlob(ttot)                                   "global emissions to be balanced by allowances. [GtCeq]"
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"

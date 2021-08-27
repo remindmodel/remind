@@ -183,7 +183,7 @@ q15_forc_os(t)..
 *'     link to core
 ***-----------------------------------------------------------------------------------------
 q15_linkEMI(ttot2ta10(ttot, ta10),emis2climate10(enty,FOB10))..
-    vm_emiAllGlob(ttot,enty)
+    vm_emiAllGlob(ttot,emiTe)
 	=e=
 	v15_emi(ta10,FOB10);
 $IF %cm_so2_out_of_opt% == "on" q15_linkEMI_aer(ttot2ta10(ttot, ta10),emiaer2climate10(emiaer,FOB10)).. p15_so2emi(ttot,emiaer) =e= v15_emi(ta10,FOB10);
