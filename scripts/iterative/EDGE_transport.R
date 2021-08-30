@@ -163,7 +163,7 @@ REMIND_prices <- merge_prices(
   REMINDmapping = REMIND2ISO_MAPPING,
   REMINDyears = REMINDyears,
   intensity_data = int_dat,
-  nonfuel_costs = nonfuel_costs[type == "normal"][, type := NULL])
+  nonfuel_costs = nonfuel_costs)
 
 
 ## save prices
