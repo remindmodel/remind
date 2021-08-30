@@ -48,7 +48,7 @@ ariadne.val.plots <- T
 # should historical data be shown in plots where available?
 show.historical <- T
 # should scenario specific plots be plotted
-show.scen.plots <- T
+show.scen.plots <- F
 
 
 # subset of scenarios considered
@@ -73,7 +73,7 @@ scen.batch.name <- ""
 results.folder <- "./"
 
 # path of historical mif
-hist.path = "../1_7_2021_IndElec/historical.mif"
+hist.path = "./historical.mif"
 
 ### prepare data and plot paths
 data.path = list.files(path = paste0(results.folder),
