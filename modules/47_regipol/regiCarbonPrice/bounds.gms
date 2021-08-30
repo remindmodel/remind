@@ -85,7 +85,7 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
 
-*** adaptation of power system for Germany in early years  w.r.t to coal and gas switch
+*** adaptation of power system for Germany in early years  w.r.t to coal and gas phase-out in early years
 loop(regi$(sameAs(regi,"DEU")),
 vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
 vm_deltaCap.up("2020",regi,"ngcc","1") = 0.0015;
