@@ -36,3 +36,4 @@ pm_FEPrice,input,questionnaire
 qm_budget,input,questionnaire
 cm_ARIADNE_FeShareBounds,input,questionnaire
 cm_CESMkup_ind,input,questionnaire
+vm_demFeNonEnergySector,input,questionnaire
