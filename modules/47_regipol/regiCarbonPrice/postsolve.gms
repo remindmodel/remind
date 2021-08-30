@@ -50,14 +50,18 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 			pm_ETSTarget_dev(ETS_mkt) = (p47_emiCurrentETS(ETS_mkt) - p47_regiCO2ETStarget(ttot,target_type,emi_type))/p47_regiCO2ETStarget(ttot,target_type,emi_type);		 
 			p47_ETSTarget_dev_iter(iteration, ETS_mkt) = pm_ETSTarget_dev(ETS_mkt);
 			if(iteration.val lt 10,
-				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 2;
+				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 4;
 			else
-				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 1;
+				p47_emiRescaleCo2TaxETS(ETS_mkt) = max(0.1, 1+pm_ETSTarget_dev(ETS_mkt)) ** 2;
 			);
-			p47_emiRescaleCo2TaxETS(ETS_mkt)$p47_emiRescaleCo2TaxETS(ETS_mkt) =
-				max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxETS(ETS_mkt)),
-					1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
-				);
+
+*** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
+            if((iteration.val gt 3) and (p47_ETSTarget_dev_iter(iteration.val, ETS_mkt)*p47_ETSTarget_dev_iter(iteration.val+1, ETS_mkt) < 0),
+				p47_emiRescaleCo2TaxETS(ETS_mkt)$p47_emiRescaleCo2TaxETS(ETS_mkt) =
+					max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxETS(ETS_mkt)),
+						1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+					);
+			);
 		);
 
 ***	updating the ETS co2 tax
@@ -173,9 +177,12 @@ $ENDIF.emiMktES2050
 
 $ENDIF.emiMktEScoop
 
-		p47_emiRescaleCo2TaxES(t,regi)$p47_emiRescaleCo2TaxES(t,regi) =
-		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxES(t,regi)),
-			1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+*** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
+        if((iteration.val gt 3) and (p47_ESRTarget_dev_iter(iteration.val,t,regi)*p47_ESRTarget_dev_iter(iteration.val-1,t,regi) < 0),
+			p47_emiRescaleCo2TaxES(t,regi)$p47_emiRescaleCo2TaxES(t,regi) =
+				max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_emiRescaleCo2TaxES(t,regi)),
+					1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+				);
 		);
 
 ***	updating the ES co2 tax
@@ -331,9 +338,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$p47_regiCO2target(ttot,ttot2,ext
 			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
 		);
 	);
-*** dampen rescale factor with increasing iterations to help convergence
-	p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) =
-		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+*** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
+	if((iteration.val gt 3) and (p47_regiTarget_dev_iter(iteration.val,ext_regi,ttot,ttot2)*p47_regiTarget_dev_iter(iteration.val-1,ext_regi,ttot,ttot2) < 0),
+	  p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) =
+	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+	);
 );
 
 display pm_taxCO2eq_iteration;

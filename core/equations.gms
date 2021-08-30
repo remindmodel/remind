@@ -215,7 +215,7 @@ q_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)..
   v_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
-  - vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)  
+  - (vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt))$(feNonEnergy2sectorANDemiMkt(entyFe,sector,emiMkt))  
 ;
 
 ***To be moved to specific modules---------------------------------------------------------------------------
@@ -516,7 +516,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 		  )
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
-      vm_emiFeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+      v_emiFeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
     )
 	)
 ;
@@ -531,7 +531,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 ***--------------------------------------------------
 
 q_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)$(emi2te(entySe,entyFe,te,emiTe) AND se2fe(entySe,entyFe,te))..
-  vm_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)
+  v_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)
   =e=
   sum(sector$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), 
     ( pm_emifac(t,regi,entySe,entyFe,te,emiTe)
@@ -542,7 +542,7 @@ q_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)$(emi2te(entySe,entyFe,te,
     ( p_emifacNonEnergy(t,regi,entySe,entyFe,sector,emiTe)
       *
       vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    )
+    )$(feNonEnergy2sectorANDemiMkt(entyFe,sector,emiMkt))  
   )
 ;
 

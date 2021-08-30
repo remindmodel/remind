@@ -21,13 +21,13 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 ;
 
 *'  Industry non-energy demand
-q37_demFeNonEnergyIndst(t,regi,entyFe,emiMkt)$(feNonEnergy2sector(entyFe,"indst",emiMkt)) .. 
+q37_demFeNonEnergyIndst(t,regi,entyFe,emiMkt)$(feNonEnergy2sectorANDemiMkt(entyFe,"indst",emiMkt)) .. 
   sum((entySe,te)$(se2fe(entySe,entyFe,te)), 
     vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt) 
   )
   =e= 
   sum(secInd37_emiMkt(secInd37,emiMkt),
-    p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)
+    p37_fedemand_NonEnergyIndst(t,regi,secInd37,entyFe)
   )
 ;
 
