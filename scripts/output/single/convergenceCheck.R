@@ -18,11 +18,11 @@ if(!exists("source_include")) {
    readArgs("outputdir","gdx_name")
 } 
 
-gdx      <- path(outputdir,gdx_name)
+gdx      <- file.path(outputdir,gdx_name)
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the pdf file
-file_name <- path(outputdir,paste0("convergenceCheck_",scenario,".pdf"))
+file_name <- file.path(outputdir,paste0("convergenceCheck_",scenario,".pdf"))
 
 # produce convergende pdf based on gdx information
 convergenceCheck(gdx,file=file_name) 

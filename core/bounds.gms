@@ -36,9 +36,9 @@ loop(regi,
   loop(teRe2rlfDetail(te,rlf),
     if( (pm_dataren(regi,"maxprod",rlf,te) gt 0),
         vm_capDistr.lo(t,regi,te,rlf)$(t.val gt 2011) = 1e-8;
-*cb* make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration
-       vm_capDistr.lo("2015",regi,te,rlf) = 0.90*p_aux_capThisGrade(regi,te,rlf);
-       vm_capDistr.lo("2020",regi,te,rlf) = 0.90*p_aux_capThisGrade(regi,te,rlf);
+*cb* make sure that grade distribution in early time steps with capacity fixing is close to optimal one assumed for vm_capFac calibration, divide by p_aux_capacityFactorHistOverREMIND to correct for deviation of REMIND capacity factors from historic capacity factors
+      vm_capDistr.lo("2015",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
+      vm_capDistr.lo("2020",regi,te,rlf) = 0.90 / max(1, p_aux_capacityFactorHistOverREMIND(regi,te)) * p_aux_capThisGrade(regi,te,rlf);
     );
   );
 );

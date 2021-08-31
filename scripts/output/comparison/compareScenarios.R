@@ -63,7 +63,7 @@ start_comp <- function(outputdirs,shortTerm,outfilename,regionList,mainReg) {
 }
 
 # ---- For each list entry call start script that starts compareScenarios ----
-regionSubsetList <- remind2::toolRegionSubsets(lucode2::path(listofruns[[1]]$dirs,"fulldata.gdx"))
+regionSubsetList <- remind2::toolRegionSubsets(file.path(listofruns[[1]]$dirs,"fulldata.gdx"))
 # ADD EU-27 region aggregation if possible
 if("EUR" %in% names(regionSubsetList)){
   regionSubsetList <- c(regionSubsetList,list(

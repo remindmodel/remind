@@ -16,15 +16,18 @@ scalars
 Parameters
   p37_fctEmi(all_enty)                                   "emission factors of FE carriers [GtC/TWa]"
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
-  o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
+
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
   /   /
 
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
 
+*** output parameters only for reporting
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
+  o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
+  o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector"
 ;
 
 
