@@ -737,31 +737,31 @@ o_emissions_energy_extraction(ttot,regi,emiTe,entyPe)$(ttot.val ge 2005) =
 ;
 
 
-o_emissions_energy_supply_gross(ttot,regi,emi)$(ttot.val ge 2005) =
-    sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0),
-         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+o_emissions_energy_supply_gross(ttot,regi,emiTe)$(ttot.val ge 2005) =
+    sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)>0),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)
          * vm_demPE.l(ttot,regi,entyPe,entySe,te)
-    )*o_emi_conv(emi)
+    )*o_emi_conv(emiTe)
     +
-    sum(entyPe, o_emissions_energy_extraction(ttot,regi,emi,entyPe))
+    sum(entyPe, o_emissions_energy_extraction(ttot,regi,emiTe,entyPe))
 ;
     
-o_emissions_energy_supply_gross_carrier(ttot,regi,emi,entySe)$(ttot.val ge 2005) =
-    sum((entyPe,te)$(pe2se(entyPe,entySe,te) AND (pm_emifac(ttot,regi,entyPe,entySe,te,emi)>0)),
-         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+o_emissions_energy_supply_gross_carrier(ttot,regi,emiTe,entySe)$(ttot.val ge 2005) =
+    sum((entyPe,te)$(pe2se(entyPe,entySe,te) AND (pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)>0)),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)
          * vm_demPE.l(ttot,regi,entyPe,entySe,te)
-    )*o_emi_conv(emi)
+    )*o_emi_conv(emiTe)
     +
     (
-    o_emissions_energy_extraction(ttot,regi,emi,"pecoal")
+    o_emissions_energy_extraction(ttot,regi,emiTe,"pecoal")
     )$(sameas(entySe,"sesofos"))
     +
     (
-    o_emissions_energy_extraction(ttot,regi,emi,"pegas")
+    o_emissions_energy_extraction(ttot,regi,emiTe,"pegas")
     )$(sameas(entySe,"segafos"))
     +
     (	
-    o_emissions_energy_extraction(ttot,regi,emi,"peoil")
+    o_emissions_energy_extraction(ttot,regi,emiTe,"peoil")
     )$(sameas(entySe,"seliqfos"))
 ;
 
