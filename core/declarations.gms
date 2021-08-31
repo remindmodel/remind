@@ -586,7 +586,7 @@ magicc_sed_script.ap = 0;
 Parameter
 o_emissions(ttot,all_regi,emiTe)   "output parameter"
 o_emissions_bunkers(ttot,all_regi,emiTe)    "output parameter"
-o_emissions_energy(ttot,all_regi,all_enty)   "output parameter"
+o_emissions_energy(ttot,all_regi,emiTe)   "output parameter"
 o_emissions_energy_demand(ttot,all_regi,all_enty)   "output parameter"
 o_emissions_energy_demand_sector(ttot,all_regi,all_enty,emi_sectors)   "output parameter"
 o_emissions_energy_supply_gross(ttot,all_regi,all_enty)   "output parameter"
