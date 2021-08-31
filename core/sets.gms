@@ -2003,7 +2003,7 @@ integ           "set of integers for looping etc"
 /
 xirog       "parameters decribing exhaustible extraction coss including long-run marginal costs and short term adjustment costs"
 /
-      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8
+      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8, dec
 /
 *** emissions exported to MAGICC
   emiRCP "emission types exported to MAGICC"
