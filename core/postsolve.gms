@@ -765,37 +765,37 @@ o_emissions_energy_supply_gross_carrier(ttot,regi,emiTe,entySe)$(ttot.val ge 200
     )$(sameas(entySe,"seliqfos"))
 ;
 
-o_emissions_energy_negative(ttot,regi,emi)$(ttot.val ge 2005) =
+o_emissions_energy_negative(ttot,regi,emiTe)$(ttot.val ge 2005) =
     (
-     sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emi)<0),
-         pm_emifac(ttot,regi,entyPe,entySe,te,emi)
+     sum(pe2se(entyPe,entySe,te)$(pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)<0),
+         pm_emifac(ttot,regi,entyPe,entySe,te,emiTe)
          * vm_demPE.l(ttot,regi,entyPe,entySe,te)
     )
     +
-    sum((ccs2Leak(enty,enty2,te,emi),teCCS2rlf(te,rlf)),
-            pm_emifac(ttot,regi,enty,enty2,te,emi)
+    sum((ccs2Leak(enty,enty2,te,emiTe),teCCS2rlf(te,rlf)),
+            pm_emifac(ttot,regi,enty,enty2,te,emiTe)
             * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
           )
 ***   Industry CCS emissions
     - ( sum(emiMac2mac(emiInd37_fuel,enty2),
           vm_emiIndCCS.l(ttot,regi,emiInd37_fuel)
-        )$( sameas(emi,"co2") )
+        )$( sameas(emiTe,"co2") )
     )
-    )*o_emi_conv(emi)
+    )*o_emi_conv(emiTe)
 ;
 
-o_emissions_industrial_processes(ttot,regi,emi)$(ttot.val ge 2005) =
-    sum(emiMacSector$(emiMac2sector(emiMacSector,"indst","process",emi)),
+o_emissions_industrial_processes(ttot,regi,emiTe)$(ttot.val ge 2005) =
+    sum(emiMacSector$(emiMac2sector(emiMacSector,"indst","process",emiTe)),
         vm_emiMacSector.l(ttot,regi,emiMacSector)
-    )*o_emi_conv(emi);
+    )*o_emi_conv(emiTe);
 
-o_emissions_AFOLU(ttot,regi,emi)$(ttot.val ge 2005) =
-    sum(emiMacSector$(emiMac2sector(emiMacSector,"agriculture","process",emi) OR emiMac2sector(emiMacSector,"lulucf","process",emi)),
+o_emissions_AFOLU(ttot,regi,emiTe)$(ttot.val ge 2005) =
+    sum(emiMacSector$(emiMac2sector(emiMacSector,"agriculture","process",emiTe) OR emiMac2sector(emiMacSector,"lulucf","process",emiTe)),
         vm_emiMacSector.l(ttot,regi,emiMacSector)
-    )*o_emi_conv(emi);
+    )*o_emi_conv(emiTe);
 
-o_emissions_DACCS(ttot,regi,emi)$(ttot.val ge 2005) =
-   vm_emiCdr.l(ttot,regi,emi)*o_emi_conv(emi)
+o_emissions_DACCS(ttot,regi,emiTe)$(ttot.val ge 2005) =
+   vm_emiCdr.l(ttot,regi,emiTe)*o_emi_conv(emiTe)
 ;
 
 o_emissions_other(ttot,regi,emiTe)$(ttot.val ge 2005) =
