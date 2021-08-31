@@ -21,6 +21,7 @@ require(mip)
 library(reshape2)
 library(gridExtra)
 library(quitte)
+
 ```
 
 
@@ -46,6 +47,8 @@ plot.scen.subset <- F
 ariadne.val.plots <- T
 # should historical data be shown in plots where available?
 show.historical <- T
+# should scenario specific plots be plotted
+show.scen.plots <- F
 
 
 # subset of scenarios considered
@@ -1460,7 +1463,8 @@ p.FE.sec.car <- ggplot(df.FE.sec.car.plot) +
                 scale_y_continuous("Final Energy\n(EJ/yr)") +
                 theme_bw()+
                 theme(strip.background = element_blank(), text = element_text(size=12),
-                      axis.text.x = element_text(angle=90, vjust = 0.5)) +
+                      axis.text.x = element_text(angle=90, vjust = 0.5),
+                      strip.text = element_text(size=6)) +
                 theme(legend.position = 'right', legend.title=element_blank())
 
 
@@ -2738,5 +2742,247 @@ if (ariadne.val.plots) {
 
 # to show plots generated from if clause in notebook
 p.emi.cumul
+
+```
+
+
+
+## Some scenario specific plots
+
+### Electrification vs. Hydrogen
+
+```{r}
+
+if (show.scen.plots) {
+  
+  library(stringr)
+  
+  elec.h2.col <- c("Other Energy" = "grey95",
+                   "Electricity|Min" =  "#ffb200",
+                   "Electricity|Max" =  "#ffb200",
+                   "Hydrogen|Max" = "#66cccc",
+                   "Hydrogen|Min" = "#66cccc")
+  
+  
+  h2.elec.alpha <- c("Other Energy" = 0.4,
+                   "Electricity|Min" =  0.7,
+                   "Electricity|Max" =  0.4,
+                   "Hydrogen|Max" = 0.4,
+                   "Hydrogen|Min" = 0.7)
+
+  
+  
+  
+  scen.bot <- "Elec_dom"
+  scen.top <- "H2_dom"
+  
+  df.elec.h2 <- df %>% 
+                  calc_addVariable("`Electricity`" = "`FE|+|Electricity` / `FE` * 100",
+                                   "`Hydrogen`" = "`FE|+|Hydrogen` / `FE` * 100", only.new = T, units = "%") %>% 
+                  filter( scenario %in% c(scen.bot, scen.top)) %>%
+                  rename( encar = variable) %>% 
+                  # rename scenarios to Max and Min
+                  mutate(MinMax.Scenario = ifelse( (encar == "Electricity" & scenario == "Elec_dom") | (encar == "Hydrogen" & scenario == "H2_dom"), 
+                                            "Max", "Min")) %>%  
+                  mutate( variable = paste0(encar,"|",MinMax.Scenario)) %>% 
+                  select(region, period, variable, value) %>% 
+                  spread(variable, value) %>% 
+                  mutate(`Other Energy` = 100-`Electricity|Max`-`Hydrogen|Max`,
+                         `Electricity|Max` = `Electricity|Max`-`Electricity|Min`,
+                         `Hydrogen|Max` = `Hydrogen|Max`-`Hydrogen|Min`) %>% 
+                  mutate(`Other Energy` = ifelse(`Other Energy` < 0, 0, `Other Energy`)) %>% 
+                  gather(variable, value, `Electricity|Min`, `Electricity|Max`, `Hydrogen|Min`, `Hydrogen|Max`, `Other Energy`) %>% 
+                  mutate( energy = word(variable, 1, sep="\\|"), scenario = word(variable, 2, sep="\\|")) %>% 
+                  mutate( scenario = ifelse(energy == "Other Energy", "Max", scenario)) %>% 
+                  order.levels(variable = c("Hydrogen|Min","Hydrogen|Max","Other Energy","Electricity|Max","Electricity|Min"))
+    
+    
+ 
+  
+  
+  p.elec.h2 <- ggplot() +
+                geom_area(data = df.elec.h2, aes(period, value, fill=variable, alpha=variable)) +
+                scale_fill_manual(values= elec.h2.col ) +
+                scale_alpha_manual(values =h2.elec.alpha) +
+                scale_y_continuous("Share in Final Energy (%)", breaks = seq(0,100,10)) +
+                scale_x_continuous("Year") +
+                  theme_bw() +
+                  theme(panel.grid.minor = element_line(size=1), panel.grid.major = element_line(size=1))
+
+
+  p.elec.h2
+  
+  
+  ggsave(plot = p.elec.h2, filename =  paste0(plots.path, "/H2Elec_Area.png"),width=20, height=15, units="cm")
+  
+  
+  
+  
+}
+
+
+
+```
+## Sector-specific plots
+
+
+### Industry
+
+```{r}
+
+vars <- c("FE|Industry|+|Electricity",
+          "FE|Industry|+|Hydrogen",
+          "FE|Industry|+|Liquids",
+          "FE|Industry|+|Gases")
+
+col.vars <- c("Electricity" = "#ffb200",
+              "Hydrogen" = "#66cccc",
+              "Liquids" = "darkblue",
+              "Gases" = "gray60")
+
+
+df.IndShare <- df %>% 
+                filter(period %in% c(2015,2030,2040,2050,2060)) %>% 
+                calc_addVariable("Electricity" = "`FE|Industry|+|Electricity` / `FE|++|Industry` * 100",
+                                 "Hydrogen" = "`FE|Industry|+|Hydrogen` / `FE|++|Industry` * 100",
+                                 "Liquids" = "`FE|Industry|+|Liquids` / `FE|++|Industry` * 100",
+                                 "Gases" = "`FE|Industry|+|Gases` / `FE|++|Industry` * 100",
+                                    only.new = T, units = "%")
+
+
+p.IndShare <- ggplot() +
+                geom_col(data=df.IndShare, aes(period, value, fill=variable), alpha=0.6) +
+                geom_text(data=df.IndShare, aes(period, value, label = as.character(round(value))), size=3) +
+                facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                scale_y_continuous("Industry: \nShare in Final Energy (%)") +
+                scale_x_continuous("Years") +
+                scale_fill_manual(values=col.vars) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 90),legend.position = "right")
+
+
+p.IndShare
+
+
+ggsave(plot = p.IndShare, filename =  paste0(plots.path, "/Industry_FEShare.png"),width=20, height=15, units="cm")
+```
+
+
+### Buildings Heating
+
+```{r}
+
+vars <- c("FE|Buildings|Heating|Electricity|Resistance",
+          "FE|Buildings|Heating|Electricity|Heat pumps",
+          "FE|Buildings|Heating|Hydrogen",
+          "FE|Buildings|Heating|District Heating",
+          "FE|Buildings|Heating|Gases")
+
+col.vars <- c("Resistive electricity" = "#ffb200",
+              "Heat pump electricity" = "darkorange",
+              "Hydrogen" = "#66cccc",
+              "Gases" = "gray90",
+              "District Heating" = "red")
+
+
+df.BuildShare <- df %>% 
+                filter(period %in% c(2015,2030,2040,2050,2060)) %>% 
+                calc_addVariable("Resistive electricity" = "`FE|Buildings|Heating|Electricity|Resistance` / `FE|Buildings|Heating` * 100",
+                                 "Heat pump electricity" = "`FE|Buildings|Heating|Electricity|Heat pumps` / `FE|Buildings|Heating` * 100",
+                                 "Hydrogen" = "`FE|Buildings|Heating|Hydrogen` / `FE|Buildings|Heating` * 100",
+                                 "Gases" = "`FE|Buildings|Heating|Gases` / `FE|Buildings|Heating` * 100",
+                                 "District Heating" = "`FE|Buildings|Heating|District Heating` / `FE|Buildings|Heating` * 100",
+                                    only.new = T, units = "%") %>% 
+                order.levels(variable = c(  "Heat pump electricity", "Resistive electricity" , "District Heating","Gases",   "Hydrogen"))
+
+
+p.BuildShare <- ggplot() +
+                geom_col(data=df.BuildShare, aes(period, value, fill=variable), alpha=0.6) +
+                geom_text(data=df.BuildShare, aes(period, value, label = as.character(round(value))), size=3) +
+                facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                scale_y_continuous("Buildings Heating: \n Share in Final Energy Heating (%)") +
+                scale_x_continuous("Years") +
+               # scale_fill_manual(values=col.vars) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 90),legend.position = "right")
+
+
+p.BuildShare
+
+ggsave(plot = p.BuildShare, filename =  paste0(plots.path, "/Build_FEShare.png"),width=20, height=15, units="cm")
+```
+### Transport
+
+```{r}
+
+
+
+## LDV
+vars <- c("FE|Transport|Pass|Road|LDV|Electricity",
+          "FE|Transport|Pass|Road|LDV|Hydrogen",
+          "FE|Transport|Pass|Road|LDV|Liquids")
+
+
+
+df.LDVShare <- df %>% 
+                filter(period %in% c(2015,2030,2040,2050,2060)) %>% 
+                calc_addVariable("Electricity" = "`FE|Transport|Pass|Road|LDV|Electricity` / `FE|Transport|Pass|Road|LDV` * 100",
+                                 "Hydrogen" = "`FE|Transport|Pass|Road|LDV|Hydrogen` / `FE|Transport|Pass|Road|LDV` * 100",
+                                 "Liquids" = "`FE|Transport|Pass|Road|LDV|Liquids` / `FE|Transport|Pass|Road|LDV` * 100",
+                                    only.new = T, units = "%")
+
+
+p.LDVShare <- ggplot() +
+                geom_col(data=df.LDVShare, aes(period, value, fill=variable), alpha=0.6) +
+                geom_text(data=df.LDVShare, aes(period, value, label = as.character(round(value))), size=3) +
+                facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                scale_y_continuous("LDV Transport: \n Share in Final Energy (%)") +
+                scale_x_continuous("Years") +
+               # scale_fill_manual(values=col.vars) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 90),legend.position = "right")
+
+
+p.LDVShare
+
+
+ggsave(plot = p.LDVShare, filename =  paste0(plots.path, "/Transport_LDV_FEShare.png"),width=20, height=15, units="cm")
+
+
+
+
+
+## Trucks
+vars <- c("FE|Transport|Freight|Road|Electricity",
+          "FE|Transport|Freight|Road|Hydrogen",
+          "FE|Transport|Freight|Road|Liquids")
+
+
+
+df.HDVShare <- df %>% 
+                filter(period %in% c(2015,2030,2040,2050,2060)) %>% 
+                calc_addVariable("Electricity" = "`FE|Transport|Freight|Road|Electricity` / `FE|Transport|Freight|Road` * 100",
+                                 "Hydrogen" = "`FE|Transport|Freight|Road|Hydrogen` / `FE|Transport|Freight|Road` * 100",
+                                 "Liquids" = "`FE|Transport|Freight|Road|Liquids` / `FE|Transport|Freight|Road` * 100",
+                                    only.new = T, units = "%")
+
+
+p.HDVShare <- ggplot() +
+                geom_col(data=df.HDVShare, aes(period, value, fill=variable), alpha=0.6) +
+                geom_text(data=df.HDVShare, aes(period, value, label = as.character(round(value))), size=3) +
+                facet_wrap(variable~scenario, ncol = length(getScenarios(df))) +
+                scale_y_continuous("Truck Transport: \n Share in Final Energy (%)") +
+                scale_x_continuous("Years") +
+               # scale_fill_manual(values=col.vars) +
+                theme_bw() +
+                theme(axis.text.x = element_text(angle = 90),legend.position = "right")
+
+
+p.HDVShare
+
+
+ggsave(plot = p.HDVShare, filename =  paste0(plots.path, "/Transport_HDV_FEShare.png"),width=20, height=15, units="cm")
+
+
 
 ```
