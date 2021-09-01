@@ -77,5 +77,12 @@ v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
+* adding initial values for the emissions:
+* they need to be declared because they are in the condition sign
+v02_emiEnergyco2eq.l(ttot,regi)$(ttot.val ge 2005)=vm_co2eq.l(ttot,regi)$(ttot.val ge 2005);
+*v02_emiEnergyco2eqMkt.l(ttot,regi,emiMkt)$(ttot.val ge 2005)=0;
+v02_emiIndus.l(ttot,regi)$(ttot.val ge 2005)=0;
+
+
 
 *** EOF ./modules/02_welfare/ineqLognormal/datainput.gms

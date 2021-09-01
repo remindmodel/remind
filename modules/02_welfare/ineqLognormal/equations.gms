@@ -71,18 +71,48 @@ q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
 ;
 
 
+* TN: Equations to calculate actual tax revenues
+* summing on all GHG the energy emissions as well as CDR emissions.
+q02_emiEnergyco2eqMkt(ttot,regi,emiMkt)..
+    v02_emiEnergyco2eqMkt(ttot,regi,emiMkt)
+  =e=
+    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
+    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
+    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
+;      
+
+* summing on all Mkt to get the total:
+q02_emiEnergyco2eq(ttot,regi)..
+    v02_emiEnergyco2eq(ttot,regi)
+    =e=
+    sum(emiMkt, v02_emiEnergyco2eqMkt(ttot,regi,emiMkt))
+;
+
+
+* Summing all the non-energy emissions sources coming from FF and industrial processes
+q02_emiIndus(t,regi)..
+    v02_emiIndus(t,regi)
+    =e=
+    vm_emiMacSector(t,regi,"co2cement_process")
+    + sm_tgch4_2_pgc*(vm_emiMacSector(t,regi,"ch4coal")+vm_emiMacSector(t,regi,"ch4gas")+vm_emiMacSector(t,regi,"ch4oil"))
+    + sm_tgn_2_pgc*(vm_emiMacSector(t,regi,"n2otrans")+vm_emiMacSector(t,regi,"n2oadac")+vm_emiMacSector(t,regi,"n2onitac"))
+;
+
 * TN relative tax revenues 
 * expression for the tax levels borrowed from q21_taxrevGHG
 * Note that for now, it's 'GHG tax revenues'
 * Also make sure that this is a positive value.
 * Later think about how to treat negative emissions.
-* TN: one zero
 
 q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
     v02_revShare(ttot,regi)
   =e=
-    0+(p21_taxrevGHG0(ttot,regi)/vm_cons(ttot,regi))$(p21_taxrevGHG0(ttot,regi) ge 0)
+*    0+(p21_taxrevGHG0(ttot,regi)/vm_cons(ttot,regi))$(p21_taxrevGHG0(ttot,regi) ge 0)
+    0+((v02_emiIndus(ttot,regi)+v02_emiEnergyco2eq(ttot,regi))*(pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))/vm_cons(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0)
 ;
+
+
+
 
 
 * normalization of cost distribution
