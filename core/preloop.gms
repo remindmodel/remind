@@ -36,7 +36,8 @@ vm_emiAllMkt.l(t,regi,enty,emiMkt) = 0;
 vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 
 v_shfe.l(t,regi,enty,sector) = 0;
-v_shGasLiq_fe.l(t,regi,sector) = 0;   
+v_shGasLiq_fe.l(t,regi,sector) = 0;  
+pm_share_CCS_CCO2(t,regi) = 0; 
   
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
@@ -133,5 +134,25 @@ pm_demPeBio(ttot,regi) =
     vm_demPe.l(ttot,regi,enty,enty2,te))
 ;
 
+!! all net negative co2luc
+p_macBaseMagpieNegCo2(t,regi) = p_macBaseMagpie(t,regi,"co2luc")$(p_macBaseMagpie(t,regi,"co2luc") < 0);
+
+p_agriEmiPhaseOut(t) = 0;
+p_agriEmiPhaseOut("2025") = 0.25;
+p_agriEmiPhaseOut("2030") = 0.5;
+p_agriEmiPhaseOut("2035") = 0.75;
+p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
+
+*** Rescale German non-co2 base line emissions from agriculture 
+p_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
+  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*p_macBaseMagpie(t,regi,enty);
+
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
 
 *** EOF ./core/preloop.gms

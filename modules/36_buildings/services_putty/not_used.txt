@@ -9,5 +9,7 @@ pm_shGasLiq_fe_up,parameter,not needed
 pm_shGasLiq_fe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
 pm_shfe_lo,parameter,not needed
-pm_tau_fe_tax_bit_st,input,questionnaire
-pm_tau_fe_sub_bit_st,input,questionnaire
+pm_tau_fe_tax,input,questionnaire
+pm_tau_fe_sub,input,questionnaire
+sm_TWa_2_MWh,input,questionnaire
+cm_CESMkup_build,input,questionnaire

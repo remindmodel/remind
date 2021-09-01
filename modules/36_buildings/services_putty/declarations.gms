@@ -9,8 +9,8 @@ Scalar
 s36_switch_floor  "switch for the inclusion of the floorspace equations. It should exclude the equations from hybrid" /0/,
 s36_vintage_calib "switch for the inclusion of vintage equations and restricting ttot to historical. It should exclude the equations from hybrid" /0/,
 s36_logit         "switch for the inclusion of vintage equations. It should exclude the equations from hybrid" /0/
-
 ;
+
 Parameter
 p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2"
 p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2"
@@ -26,23 +26,27 @@ p36_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)                     "Fi
 
 p36_prodEs_scen(tall,all_regi,all_GDPscen,all_enty,all_esty,all_teEs)     "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
 p36_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)                      "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE"
+p36_prodEs_iter(iteration,ttot,all_regi,all_enty,all_esty,all_teEs)       "Energy service demand (UE in the case of buildings) for technologies producing energy services and using FE over iterations"
+p36_deltaProdEs_iter(iteration,ttot,all_regi,all_enty,all_esty,all_teEs)  "Energy service demand (UE in the case of buildings) addition for a year. For technologies producing energy services and using FE over iterations"
+p36_deltaProdEs(ttot,all_regi,all_enty,all_esty,all_teEs)                 "Energy service demand (UE in the case of buildings) addition for a year. Result of vintage_36"
 
-p36_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)  "share of Final energy of technology teEs in the final energy producing all_in"
+p36_shFeCes(ttot,all_regi,all_enty,all_in,all_teEs)                 "share of Final energy of technology teEs in the final energy producing all_in"
 p36_shFeCes_iter(iteration,ttot,all_regi,all_enty,all_in,all_teEs)  "share of Final energy of technology teEs in the final energy producing all_in"
-p36_shUeCes(ttot,all_regi,all_enty,all_in,all_teEs)  "share of Useful energy of technology teEs in the final energy producing all_in"
+p36_shUeCes(ttot,all_regi,all_enty,all_in,all_teEs)                 "share of Useful energy of technology teEs in the final energy producing all_in"
 p36_shUeCes_iter(iteration,ttot,all_regi,all_enty,all_in,all_teEs)  "share of Useful energy of technology teEs in the final energy producing all_in"
-p36_fe2es(ttot,all_regi,all_teEs) "FE to ES(UE) efficiency of technology teES"
+p36_fe2es(ttot,all_regi,all_teEs)                                   "FE to ES(UE) efficiency of technology teES"
 
-p36_logitLambda(all_regi,all_in)  "logit parameter for homogeneity"
-p36_logitLambda_load (all_regi,all_in)  "logit parameter for homogeneity, loaded from GDX_ref"
-p36_fePrice_load(tall,all_regi,all_enty,all_enty,all_te)                  "Final energy price from GDX"
-p36_fePrice(tall,all_regi,all_enty)                  "Final energy price"
-p36_fePrice_iter(iteration,tall,all_regi,all_enty)                  "Storage parameter for final energy price over iterations"
-p36_marginalUtility(tall,all_regi)                    "Marginal utility of income: used to compute the final energy price from the marginal of balance equation"
-p36_techCosts(tall,all_regi,all_enty,all_esty,all_teEs)  "Relevant costs of each ES technology for the computation of the share in the multinomial logit"
-p36_logitCalibration(tall,all_regi,all_enty,all_esty,all_teEs)  "calibration parameter for the multinomial logit function"
-p36_logitCalibration_load(tall,all_regi,all_enty,all_esty,all_teEs)  "calibration parameter for the multinomial logit function from input_ref.gdx"
-p36_logitNorm(iteration,tall,all_regi,all_in)   "computes the norm of the share vector difference between two iterations"
+p36_logitLambda(all_regi,all_in)                                        "logit parameter for homogeneity"
+p36_logitLambda_load (all_regi,all_in)                                  "logit parameter for homogeneity, loaded from GDX_ref"
+p36_fePrice_load(tall,all_regi,all_enty,all_enty,all_te)                "Final energy price from GDX"
+p36_fePrice(tall,all_regi,all_enty)                                     "Final energy price"
+p36_fePrice_iter(iteration,tall,all_regi,all_enty)                      "Final energy price over iterations"
+p36_marginalUtility(tall,all_regi)                                      "Marginal utility of income: used to compute the final energy price from the marginal of balance equation"
+p36_techCosts(tall,all_regi,all_enty,all_esty,all_teEs)                 "Relevant costs of each ES technology for the computation of the share in the multinomial logit"
+p36_techCosts_iter(iteration,tall,all_regi,all_enty,all_esty,all_teEs)  "Relevant costs of each ES technology for the computation of the share in the multinomial logit over iterations"
+p36_logitCalibration(tall,all_regi,all_enty,all_esty,all_teEs)          "calibration parameter for the multinomial logit function"
+p36_logitCalibration_load(tall,all_regi,all_enty,all_esty,all_teEs)     "calibration parameter for the multinomial logit function from input_ref.gdx"
+p36_logitNorm(iteration,tall,all_regi,all_in)                           "Norm of the share vector difference between iterations"
 
 p36_prodUEintern(tall,all_regi,all_enty,all_esty,all_teEs)   "UE production from depreciated technologies of the previous period"
 p36_prodUEintern_load(tall,all_regi,all_enty,all_esty,all_teEs)   "UE production from depreciated technologies of the previous period -- From GDX"

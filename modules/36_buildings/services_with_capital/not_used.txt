@@ -10,8 +10,11 @@ cm_logitCal_markup_conv_b,input,questionnaire
 cm_logitCal_markup_newtech_conv_b,input,questionnaire
 cm_HeatLim_b,input,questionnaire
 cm_ElLim_b,input,questionnaire
+cm_build_AdjCostActive,input,questionnaire
 pm_shGasLiq_fe_up,parameter,not needed
 pm_shGasLiq_fe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
 pm_shfe_lo,parameter,not needed
 qm_balFe,input,questionnaire
+sm_TWa_2_MWh,input,questionnaire
+cm_CESMkup_build,input,questionnaire

@@ -20,20 +20,34 @@ q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 ;
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen cost at low penetration level
+*'  Calculate sector-specific demand-side cost: hydrogen phase-in cost + CES markup cost 
 ***---------------------------------------------------------------------------
-q36_costAddTeInv(t,regi)..
-  vm_costAddTeInv(t,regi,"tdh2s","build")
+q36_costAddTeInv(t,regi,te)$(tdTeMarkup36(te) OR sameAs(te,"tdh2s"))..
+  vm_costAddTeInv(t,regi,te,"build")
   =e=
-  ( 1 /(
-    1 + (3**v36_costExponent(t,regi))
-    )
-  ) * (
-    s36_costAddH2Inv * 8.76
-    * (vm_demFeSector(t,regi,"seh2","feh2s","build","ES"))
-  )
-  + (v36_expSlack(t,regi)*1e-8)
+  v36_costAddTeInvH2(t,regi,te) + v36_costCESMkup(t,regi,te)
 ;
+
+***---------------------------------------------------------------------------
+*'  Additional hydrogen phase in cost at low H2 penetration levels 
+***---------------------------------------------------------------------------
+q36_costAddH2PhaseIn(t,regi)..
+  v36_costAddTeInvH2(t,regi,"tdh2s")
+  =e=
+  v36_costAddH2LowPen(t,regi)
+    * (vm_demFeSector(t,regi,"seh2","feh2s","build","ES"))
+    + (v36_expSlack(t,regi)*1e-8)
+;
+
+
+
+*' barrier cost for low penetration
+q36_costAddH2LowPen(t,regi)..
+  v36_costAddH2LowPen(t,regi)
+  =e=
+  1 / (1 + 3**v36_costExponent(t,regi)) * s36_costAddH2Inv * 8.76
+;
+
 
 *' Logistic function exponent for additional hydrogen low penetration cost equation
 q36_auxCostAddTeInv(t,regi)..
@@ -52,6 +66,21 @@ q36_H2Share(t,regi)..
   sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
       vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
 ;
+
+
+***---------------------------------------------------------------------------
+*'  CES markup cost to represent sector-specific demand-side transformation cost in buildings
+***---------------------------------------------------------------------------
+q36_costCESmarkup(t,regi,te)$(tdTeMarkup36(te))..
+  v36_costCESMkup(t,regi,te)
+  =e=
+  sum(in$(tdTe2In36(te,in)),
+  p36_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")))
+;
+
+
+
+
 
 *** calculate district heat share in FE buildings
 q36_HeatShare(t,regi)..

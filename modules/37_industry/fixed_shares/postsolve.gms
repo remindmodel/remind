@@ -69,5 +69,13 @@ pm_FEPrice(t,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(t,regi)) gt sm_eps )
   = q37_demFeIndst.m(t,regi,entyFE,emiMkt)
   / qm_budget.m(t,regi);
 
+
+*** calculate reporting parameters for FE per subsector and SE origin to make R reporting easier
+
+*** FE per subsector and energy carrier for fixed_shares
+o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt) 
+  = sum(fe2ppfEn37(entyFe,in), p37_shIndFE(regi,in,secInd37)) 
+  * vm_demFeSector.l(ttot,regi,entySe,entyFe,"indst",emiMkt);
+
 *** EOF ./modules/37_industry/fixed_shares/postsolve.gms
 

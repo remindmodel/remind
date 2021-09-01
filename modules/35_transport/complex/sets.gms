@@ -95,7 +95,7 @@ ppfen_dyn35(all_in)   "all energy inputs because of unit conversion - transport 
   / ueLDVt, ueHDVt, ueelTt / !! feh2t, 
   
   
-ces_transport_dyn38(all_in,all_in)   "CES tree structure - transport"
+ces_transport_dyn35(all_in,all_in)   "CES tree structure - transport"
 /
    en    . entrp
    entrp . (fetf, ueelTt)
@@ -196,7 +196,7 @@ entyUe(entyUe_dyn35)            = YES;
 
 in(in_dyn35)             = YES;
 ppfEn(ppfen_dyn35)       = YES;
-cesOut2cesIn(ces_transport_dyn38)            = YES;
+cesOut2cesIn(ces_transport_dyn35)            = YES;
 ue2ppfen(ue2ppfen_dyn35) = YES;
 teue2rlf(teue2rlf_dyn35) = YES;
 

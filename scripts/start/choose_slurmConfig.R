@@ -22,7 +22,7 @@ get_line <- function(){
 }
 
 choose_slurmConfig <- function() {
-  
+
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
   if (slurm) { 
     modes <- c(" 1: SLURM standby               12   nash H12             [recommended]",
@@ -40,9 +40,11 @@ choose_slurmConfig <- function() {
                "11: SLURM short                  1   nash debug, testOneRegi, reporting",
                "12: SLURM medium                 1   negishi",
                "13: SLURM long                   1   negishi",
-			   "-----------------------------------------------------------------------",
+               "-----------------------------------------------------------------------",
                "14: SLURM medium                12   nash - long calibration",
-               "15: SLURM medium                16   nash - long calibration")
+               "15: SLURM medium                16   nash - long calibration",
+               "-----------------------------------------------------------------------",
+               "16: direct, without SLURM")
 
     cat("\nCurrent cluster utilization:\n")
     system("sclass")
@@ -66,14 +68,17 @@ choose_slurmConfig <- function() {
                    "7" = "--qos=priority --nodes=1 --tasks-per-node=16" , # SLURM priority - task per node: 16 (nash H12+)
                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
                    "9" = "--qos=short --nodes=1 --tasks-per-node=12"    , # SLURM short    - task per node: 12 (nash H12)
-                  "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
-                  "11" = "--qos=short --nodes=1 --tasks-per-node=1"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
-                  "12" = "--qos=medium --nodes=1 --tasks-per-node=1"    , # SLURM medium   - task per node:  1 (negishi)
-                  "13" = "--qos=long --nodes=1 --tasks-per-node=1"      , # SLURM long     - task per node:  1 (negishi)
-                  "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node: 12 (nash long calibration)
-                  "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   ) # SLURM medium   - task per node: 16 (nash long calibration)
-                  
-    if(is.null(comp)) stop("This type is invalid. Please choose a valid type")
+                   "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
+                   "11" = "--qos=short --nodes=1 --tasks-per-node=1"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
+                   "12" = "--qos=medium --nodes=1 --tasks-per-node=1"    , # SLURM medium   - task per node:  1 (negishi)
+                   "13" = "--qos=long --nodes=1 --tasks-per-node=1"      , # SLURM long     - task per node:  1 (negishi)
+                   "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node: 12 (nash long calibration)
+                   "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   , # SLURM medium   - task per node: 16 (nash long calibration)
+                   "16" = "direct")
+
+    if (is.null(comp)) {
+      stop("This type is invalid. Please choose a valid type")
+    }
   } else {
     comp <- "direct"
   }
@@ -84,40 +89,40 @@ choose_slurmConfig <- function() {
 # combine_slurmconfig takes two strings with SLURM parameters (e.g. "--qos=priority --time=03:30:00") 
 # and combines them into one sting of SLURM parameters overwriting the parameters in "original" 
 # if they also exist in "update_with".
- 
+
 combine_slurmConfig <- function (original, update_with) {
-  
+
   # trim whitespaces
   original <- trimws(original)
   update_with <- trimws(update_with)
-  
+
   # remove double whitespaces
   original <- gsub("\\s+"," ",original)
   update_with <- gsub("\\s+"," ",update_with)
-  
+
   # if user chose "direct" dont update any slurm commands
   if(update_with == "direct") return(update_with)
 
   # ignore original if it is "direct"
   if (original == "direct") original <- ""
-  
+
   # put RHS strings into vector
   v_update_with <- gsub("--.*=(.*)","\\1",unlist(strsplit(update_with,split=" ")))
   # name the vector using LHS strings
   names(v_update_with) <- gsub("--(.*)=.*","\\1",unlist(strsplit(update_with,split=" ")))
-  
+
   # put RHS strings into vector
   v_original <- gsub("--.*=(.*)","\\1",unlist(strsplit(original,split=" ")))
   # name the vector using LHS strings
   names(v_original) <- gsub("--(.*)=.*","\\1",unlist(strsplit(original,split=" ")))
-  
+
   # remove elements from "original" that are existing in "update_with"
   v_original <- v_original[!names(v_original) %in% "qos"]
-  
+
   combined <- c(v_update_with,v_original)
-  
+
   # concatenate SLURM command (insert "--" and "=")
   res <- paste(paste0("--",names(combined),"=",combined),collapse = " ")
-  
+
   return(res)
 }

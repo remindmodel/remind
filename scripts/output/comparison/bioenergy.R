@@ -36,8 +36,8 @@ r_plot <- c("ROW","EUR","CHN","IND","JPN","RUS","USA","OAS","MEA","LAM","AFR")
 r_plot <- c("GLO")
 
 # Set gdx path
-gdx_path       <- path(outputdirs,gdx_name)
-scenNames_path <- path(outputdirs,"config.Rdata")
+gdx_path       <- file.path(outputdirs,gdx_name)
+scenNames_path <- file.path(outputdirs,"config.Rdata")
 scenNames <- c()
 for (i in scenNames_path) {
   load(i)

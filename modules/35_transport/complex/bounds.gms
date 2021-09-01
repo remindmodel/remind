@@ -6,8 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/35_transport/complex/bounds.gms
 
-vm_prodUe.fx("2005",regi,"fepet","uepet","apCarPeT") = pm_cesdata("2005",regi,"ueLDVt","quantity");
-
 *BS* 2019-05-23 (merged from AD SDP-transport gitlab, changed SSP1 -> SDP)
 *AD* 2019-04-11 let's be a little more ambitious with respect to electricity shares in SDP
 $ifthen.cm_GDPScen %cm_GDPScen% == "gdp_SDP"

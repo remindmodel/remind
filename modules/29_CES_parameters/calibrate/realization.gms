@@ -25,10 +25,10 @@
 *'  *	If you see more than 10 lines, there is a high chance that the calibration ran into problems
 *'  *	There should be as many iterations as you asked for (default = 10). If that is not the case, it’s probably better to refrain from using the produced efficiencies
 *'5. If everything went well, you will see in the output folder a couple of files:
-*'  *	`stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_1.inc`
+*'  *	`indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_1.inc`
 *'6.	One of these files should be copied to `modules/29_CES_parameters/load/input`, by removing the _ITERATION_IterationNumber of the file chosen. Generally, you can take the 10th iteration (_ITERATION_10.inc)
 *'So if you are in the output folder of your run:
-*'`cp stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_1.inc  ../../modules/29_CES_parameters/load/input/stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1.inc`
+*'`cp indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_1.inc  ../../modules/29_CES_parameters/load/input/indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1.inc`
 *'*KEEP THE SAME NAME WITH THE EXCEPTION OF THE _ITERATION_XX PART*
 *'7.	Upload in GIT
 *'
@@ -219,7 +219,7 @@
 *'The most important numbers (quantities, prices and efficiencies) are also written to the file `CES_calibration.csv` for easy analysis.
 *'The file to be stored in `/load/datainput/` are produced after each iteration. Which iteration to take remains to be decided.
 *'The calibration produces a PDF-file based on the data in `CES_calibration.csv` called `CES calibration report_RunName.pdf`. See at the "How to calibrate Remind" section to see how to interpret it.
-*'The input files gathering all the efficiency parameters take the name `stat_off-indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_ITERATIONnumber.inc`. The file corresponding to the best iteration should be copied to `../../modules/29_CES_parameters/load/input/` removing the `_ITERATIONnumber` part
+*'The input files gathering all the efficiency parameters take the name `indu_fixed_shares-buil_services_putty-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_perfect-Reg_690d3718e1_ITERATION_ITERATIONnumber.inc`. The file corresponding to the best iteration should be copied to `../../modules/29_CES_parameters/load/input/` removing the `_ITERATIONnumber` part
 
 
 *####################### R SECTION START (PHASES) ##############################

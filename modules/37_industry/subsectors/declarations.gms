@@ -14,12 +14,18 @@ Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
   p37_energy_limit(all_in)                               "thermodynamic/technical limits of energy use [GJ/product]"
   p37_fctEmi(all_enty)                                   "FE emission factors"
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
+
 
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
+
+*** output parameters only for reporting
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                    "industry CCS emissions [GtC/a]"
+  o37_cementProcessEmissions(ttot,all_regi,all_enty)                      "cement process emissions [GtC/a]"
+  o37_demFeIndTotEn(ttot,all_regi,all_enty)                               "total FE per energy carrier in industry, summed over subsectors"
+  o37_shIndFE(ttot,all_regi,all_enty,secInd37)                            "share of FE carrier in total FE per industry subsector"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)    "FE demand per industry subsector"
 ;
 
 Positive Variables

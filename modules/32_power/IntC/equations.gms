@@ -49,12 +49,19 @@ q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
 ***---------------------------------------------------------------------------
 *** Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
-q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
-	sum(VRE2teStor(teVRE,teStor), v32_storloss(t,regi,teVRE) )
-	* pm_eta_conv(t,regi,teStor) / ( 1 - pm_eta_conv(t,regi,teStor))
-	=l=
-	sum(te2rlf(teStor,rlf), 
-		vm_capFac(t,regi,teStor) * pm_dataren(regi,"nur",rlf,teStor) * vm_cap(t,regi,teStor,rlf) )
+q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
+    ( 0.5$( cm_VRE_supply_assumptions eq 1 )
+    + 1$(   cm_VRE_supply_assumptions ne 1 )
+    )
+  * sum(VRE2teStor(teVRE,teStor), v32_storloss(t,regi,teVRE))
+  * pm_eta_conv(t,regi,teStor)
+  / (1 - pm_eta_conv(t,regi,teStor))
+  =l=
+  sum(te2rlf(teStor,rlf),
+    vm_capFac(t,regi,teStor)
+  * pm_dataren(regi,"nur",rlf,teStor)
+  * vm_cap(t,regi,teStor,rlf)
+  )
 ;
 
 
@@ -66,8 +73,8 @@ q32_limitCapTeStor(t,regi,teStor)$(t.val ge 2015)..
 
 *** build additional electrolysis capacities with stored VRE electricity
 q32_elh2VREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"elh2VRE","1") 
-  =e= 
+  vm_cap(t,regi,"elh2","1") 
+  =g= 
   sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
@@ -93,12 +100,15 @@ q32_limitCapTeChp(t,regi)..
 *** Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
 q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
-    vm_cap(t,regi,"gridwind",'1')       !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+    vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
     / p32_grid_factor(regi)        		!! It is assumed that large regions require higher grid investment 
     =g=
     vm_prodSe(t,regi,"pesol","seel","spv")                
     + vm_prodSe(t,regi,"pesol","seel","csp")
-    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")        !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")                 !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    + 3 * vm_prodSe(t,regi,"pewin","seel","windoff")         
+$ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------

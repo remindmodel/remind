@@ -5,11 +5,10 @@ vm_emiTe, variable, ???
 vm_emiMac, variable, ???
 vm_fuExtr, variable, ???
 vm_prodSe, variable, ???
-vm_prodFe, variable, ???
 vm_Xport, variable, ???
 pm_taxCO2eq, parameter, ???
-p21_tau_fe_sub, parameter, ???
-p21_tau_fe_tax, parameter, ???
+pm_tau_fe_sub, parameter, ???
+pm_tau_fe_tax, parameter, ???
 pm_ts, parameter, ???
 cm_bioenergy_tax, switch, ???
 cm_startyear, switch, ???
@@ -51,6 +50,7 @@ pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
 cm_BioImportTax_EU,input,questionnaire
 vm_Mport,input,questionnaire
-pm_tau_fe_tax_bit_st,input,questionnaire
-pm_tau_fe_sub_bit_st,input,questionnaire
 vm_deltaCap, variable, ???
+sm_TWa_2_MWh,input,questionnaire
+cm_FEtax_trajectory_abs,input,questionnaire
+cm_FEtax_trajectory_rel,input,questionnaire

@@ -8,16 +8,20 @@
 
 	
 Parameter
-	pm_regiTarget_dev(ext_regi)	   "target deviation across iterations in current emissions divided by target emissions"
-	p47_regiTarget_dev_iter(iteration,ext_regi)	   "parameter to save pm_regiTarget_dev across iterations"
-	p47_taxCO2eqBeforeStartYear(ttot,all_regi) "CO2eq prices before start year"
-	p47_emissionsCurrent(ext_regi)		"previous iteration region GHG emissions [GtCO2]"
-	p47_factorRescaleCO2Tax(ext_regi)	"multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
+  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2015 emissions"
+  p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations"
+  p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year"
+  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  p47_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets"
+  p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets"
+  p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening"
 ;
+
+
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter
-	p47_regiCO2target(ttot,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
+	p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
 ;  
 $endIf.regicarbonprice
 
@@ -27,17 +31,22 @@ variables
 ;
 
 equations
-	q47_emiTarget_grossFFaI(ttot, all_regi)		"Calculates gross co2 emissions from fossil fuels and industry used for target"
-	q47_emiTarget_netCO2(ttot, all_regi)	    "Calculates net co2 emissions used for target"
+	q47_emiTarget_grossEnCO2(ttot, all_regi)	   "Calculates gross energy-related co2 emissions"
+	q47_emiTarget_netCO2(ttot, all_regi)	       "Calculates net co2 emissions used for target"
 	q47_emiTarget_netCO2_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers used for target"
-	q47_emiTarget_netGHG(ttot, all_regi)		"Calculates net GHG emissions used for target"
+	q47_emiTarget_netCO2_noLULUCF_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers and LULUCF (=ESR+ETS)"
+	q47_emiTarget_netGHG(ttot, all_regi)		   "Calculates net GHG emissions used for target"
 	q47_emiTarget_netGHG_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers used for target"
+	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS)"
 ;
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 Parameter
 	p47_taxemiMktBeforeStartYear(ttot,all_regi,all_emiMkt) "CO2eq mkt prices before start year"
 	p47_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
+	pm_ETSTarget_dev(ETS_mkt)				    "ETS emissions deviation of current iteration from target emissions"
+	p47_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations"
+	
 ;
 $endIf.emiMktETS    
 
@@ -45,8 +54,10 @@ Parameter
 ***	p47_emiTargetETS(ttot,ETS_mkt)				"ETS emission target (GtCO2-eq)"
 	p47_emiCurrentETS(ETS_mkt)					"previous iteration ETS CO2 equivalent emissions"
 	p47_emiRescaleCo2TaxETS(ETS_mkt)			"ETS CO2 equivalent price re-scale update factor in between iterations"
-	pm_emiTargetES(tall,all_regi)      		"Effort Sharing GtCO2-eq (or GtCO2) emissions target per region"
+	pm_emiTargetES(ttot,all_regi)      		    "Effort Sharing GtCO2-eq (or GtCO2) emissions target per region"
 	p47_emiRescaleCo2TaxES(ttot,all_regi)		"Effort Sharing CO2 equivalent (or CO2) price re-scale update factor in between iterations"
+	pm_ESRTarget_dev(ttot,all_regi)				"ESR emissions deviation of current iteration from target emissions"
+	p47_ESRTarget_dev_iter(iteration,ttot,all_regi) "parameter to save pm_ESRTarget_dev across iterations"
 ;
 
 variables
@@ -87,7 +98,7 @@ Parameter
 $ifthen.implicitFEtarget "%cm_implicitFE%" == "FEtarget"
 Parameter
 	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
-	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa)" / 2030.EUR_regi 0.1194863 /
+	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28" / 2030.EUR_regi 0.1194863, 2030.EU27_regi 0.11 /
 	p47_implFETarget_extended(ttot,ext_regi)         "final energy target with added bunkers and non-energy use [TWa]" 
 ;
 $endIf.implicitFEtarget
@@ -103,7 +114,7 @@ Parameter
 $else.exoTax
 ***	p47_implFEExoTax defined by switch cm_implFEExoTax
 Parameter
-	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogneous tax [$/GJ]" / %cm_implFEExoTax% /
+	p47_implFEExoTax(ttot,ext_regi,FEtarget_sector)  "final energy exogenous tax [$/GJ]" / %cm_implFEExoTax% /
 ;
 $ENDIF.exoTax
 
@@ -111,5 +122,25 @@ equations
 	q47_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
 ;
 $endIf.cm_implicitFE
+
+$ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 
+Parameter
+	p47_slope_beforeTarget(ttot,ext_regi) "parameter to scale slope of co2 price trajectory in years before target year" / %cm_regipol_slope_beforeTarget% /
+	p47_slope_beforeTarget_timeStep(ttot)	  "helper parameter to make loops shorter in implementation"
+	p47_slope_beforeTarget_regi(ext_regi)	  "helper paramter to hold regions to which second slope adjustment before Target should apply"
+	p47_slope_firstYears(all_regi)		  "helper parameter to hold co2 price trajectory slope of first years [USD/tC/yr]"
+
+	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
+	p47_ttot_display					 "helper parameter to display ttot in loop"
+
+
+	o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type)	"diagnostic output parameter holding the CO2 budget up to the target year [GtCO2]"
+;
+
+Scalar
+s47_initialCO2Price_year				"initial year of co2 price which should be unchanged by co2 price adjustment"
+;
+
+$endIf.co2priceSlope
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

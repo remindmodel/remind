@@ -41,7 +41,6 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "en")) = 0
 
 *** Specify the ces structure on which the calibration will run.
 ppf_29(all_in)
-*** FIXME should include set of "stationary" module, too
   = ppfen_dyn35(all_in)
   + cal_ppf_buildings_dyn36(all_in)
   + cal_ppf_industry_dyn37(all_in)
@@ -418,9 +417,20 @@ $endif.indst_H2_offset
 
 $ifthen.build_H2_offset "%buildings%" == "simple"
 *** Assuming feh2b minimun levels as 5% of fegab to avoid CES numerical calibration issues and allow more aligned efficiencies between gas and h2
-loop ((t,regi)$(pm_cesdata(t,regi,"feh2b","quantity") lt (0.05 *pm_cesdata(t,regi,"fegab","quantity"))),
-	pm_cesdata(t,regi,"feh2b","offset_quantity") = - (0.05 * pm_cesdata(t,regi,"fegab","quantity") - pm_cesdata(t,regi,"feh2b","quantity"));
-	pm_cesdata(t,regi,"feh2b","quantity") = 0.05 * pm_cesdata(t,regi,"fegab","quantity");
+*loop ((t,regi)$(pm_cesdata(t,regi,"feh2b","quantity") lt (0.05 *pm_cesdata(t,regi,"fegab","quantity"))),
+*	pm_cesdata(t,regi,"feh2b","offset_quantity") = - (0.05 * pm_cesdata(t,regi,"fegab","quantity") - pm_cesdata(t,regi,"feh2b","quantity"));
+*	pm_cesdata(t,regi,"feh2b","quantity") = 0.05 * pm_cesdata(t,regi,"fegab","quantity");
+*);
+
+*** RK: feh2b offset scaled from 1% in 2025 to 50% in 2050 of fegab quantity
+loop ((t,regi),
+	pm_cesdata(t,regi,"feh2b","offset_quantity")
+  = - (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+      * pm_cesdata(t,regi,"fegab","quantity")
+    - pm_cesdata(t,regi,"feh2b","quantity");
+	pm_cesdata(t,regi,"feh2b","quantity") 
+  = (0.05 + 0.45 * min(1, max(0, (t.val - 2025) / (2050 - 2025))))
+      * pm_cesdata(t,regi,"fegab","quantity");
 );
 $endif.build_H2_offset
 
