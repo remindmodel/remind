@@ -16,6 +16,14 @@ if ( (cm_startyear gt 2005),
   p47_taxCO2eqBeforeStartYear(ttot,regi)$((ttot.val ge cm_startyear)) = 0;
 );
 
+parameter f47_ETSreferenceEmissions(tall,all_regi)      "ETS 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
+/
+$ondelim
+$include "./modules/47_regipol/regiCarbonPrice/input/p47_ETS_GHG_referenceEmissions.cs4r"
+$offdelim
+/
+;
+
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
@@ -23,86 +31,12 @@ if ( (cm_startyear gt 2005),
 );
 $ENDIF.emiMktETS
 
-$ontext
-
-parameter p47_emiAllowances(tall,ETS_mkt)       "emission allowances (without national aviation)"
-/
-$ondelim
-$include "./modules/47_regipol/regiCarbonPrice/input/p47_emiAllowances.cs4r"
-$offdelim
-/
-;
-
-p47_emiAllowances(tall,ETS_mkt) = p47_emiAllowances(tall,ETS_mkt) / 10**9; !!GtCO2
-
-*removing 3 GtCo2 from allowances in 2018 and 2019 due to market stability reserve (assumption: this amount of allowances will not return to the market)
-p47_emiAllowances("2018","EU_ETS") = p47_emiAllowances("2018","EU_ETS") - 1.5; 
-p47_emiAllowances("2019","EU_ETS") = p47_emiAllowances("2019","EU_ETS") - 1.5; 
-
-*removing Norway, Iceland and Liechtenstein from the allowances as they are not accounted for now in the REMIND ETS. They account for approximately 1.2% of the total allocated allowances according EEA data (European Environment Agency) 
-*adding allowances corresponding to Switzerland emissions in the ETS (5 mtCO2) vs total EU (2 Gt CO2) equal to 0.25%
-p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123+0.0025); 
-
-* ETS 2005 reference emissions
-* 2368.8517 Mt CO2-equiv/yr, verified stationary emissions from EEA, 
-*   this is equal to 2333 Mt CO2-equiv/yr = 2368.8517 *(1-0.0123-0.0025) if:
-*   - remove Norway, Iceland and Liechtenstein (-1.2% allowances according EEA data), as they are not accounted for now in the REMIND ETS
-*   - remove Switzerland emissions in the ETS (5 mtCO2). 0.25% of total EU (2 Gt CO2).
-* 2501.24927010579 Mt CO2-equiv/yr, from EU Reference Scenario
-* 2345 Mt CO2-equiv/yr, from EEA sectoral data (REMIND needs to be able to reflect this number as close as possible for 2005 emissions)
-p47_emiAllowances("2005","EU_ETS") = 2.345;
-
-$offtext
-
-$ontext
-
-* Calculating 2030 to 2050 allowances based on 2005 ETS emissions
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
-
-* budget target
-$IFTHEN.ETS_budget "%cm_emiMktETS_type%" == "budget" 
-	loop(tall$((tall.val gt 2030) AND (tall.val le 2050)),
-		p47_emiAllowances(tall,"EU_ETS")$p47_emiAllowances("2030","EU_ETS") = 
-			p47_emiAllowances("2030","EU_ETS") + 
-			( tall.val - 2030 )* (
-				( ((( p47_emiAllowances("2005","EU_ETS") ) * (%cm_emiMktETS%))) - p47_emiAllowances("2030","EU_ETS") ) / (2050 - 2030)
-			)
-	);
-
-	p47_emiTargetETS("2050","EU_ETS") = sum(tall$((tall.val ge 2013) AND (tall.val le 2050)), p47_emiAllowances(tall,"EU_ETS"))/sm_c_2_co2; !! emissions from 2013 to 2050
-$ENDIF.ETS_budget
-
-* linear target
-$IFTHEN.ETS_budget "%cm_emiMktETS_type%" == "linear" 
-	loop(tall$((tall.val gt 2030) AND (tall.val le 2050)),
-		p47_emiAllowances(tall,"EU_ETS")$p47_emiAllowances("2030","EU_ETS") = 
-			p47_emiAllowances("2030","EU_ETS") + 
-			( tall.val - 2030 )* (
-				( ((( p47_emiAllowances("2005","EU_ETS") ) * (%cm_emiMktETS%))) - p47_emiAllowances("2030","EU_ETS") ) / (2050 - 2030)
-			)
-	);
-
-	p47_emiTargetETS("2050","EU_ETS") = sum(tall$((tall.val ge 2013) AND (tall.val le 2050)), p47_emiAllowances(tall,"EU_ETS"))/sm_c_2_co2; !! emissions from 2013 to 2050
-$ENDIF.ETS_budget
-
-* year target
-$IFTHEN.ETS_yearTarget "%cm_emiMktETS_type%" == "year" 
-	p47_emiAllowances("2050","EU_ETS") = p47_emiAllowances("2005","EU_ETS") * %cm_emiMktETS%;
-	p47_emiTargetETS("2050","EU_ETS") = p47_emiAllowances("2050","EU_ETS")
-$ENDIF.ETS_yearTarget
-
-display p47_emiAllowances, p47_emiTargetETS;
-
-$ENDIF.emiMktETS
-
-$offtext
-
 $IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 
 
 parameter f47_ESTarget(tall,all_regi)      "Effort Sharing emission reduction target (%)"
 /
 $ondelim
-$include "./modules/47_regipol/regiCarbonPrice/input/p47_EStarget.cs4r"
+$include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_target.cs4r"
 $offdelim
 /
 ;
@@ -110,8 +44,8 @@ $offdelim
 parameter f47_ESreferenceEmissions(tall,all_regi)      "Effort Sharing 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
 /
 $ondelim
-$if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ES_GHG_referenceEmissions.cs4r"
-$if %cm_emiMktES_type% == "netCO2"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ES_CO2_referenceEmissions.cs4r"
+$if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_GHG_referenceEmissions.cs4r"
+$if %cm_emiMktES_type% == "netCO2"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_CO2_referenceEmissions.cs4r"
 $offdelim
 /
 ;
