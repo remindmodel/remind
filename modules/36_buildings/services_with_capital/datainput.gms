@@ -7,15 +7,13 @@
 *** SOF ./modules/36_buildings/services_with_capital/datainput.gms
 *** substitution elasticities
 Parameter 
-  p36_cesdata_sigma(all_in)  "substitution elasticities"
+  p36_cesdata_sigma(all_in)   "substitution elasticities"
   /
-    
         enb     0.3
         esswb   -1 !! The Esub is estimated with technological data 
         ueswb   INF     !! all sigma equal to INF will be treated as a sum with coefficients equal to unity ie OUT = IN1+ IN2.
           uescb  -1    !! The Esub is estimated with technological data  
           uealb  -1 !! The Esub is estimated with technological data  
-              
   /
   
 ;
@@ -23,6 +21,8 @@ pm_cesdata_sigma(ttot,in)$p36_cesdata_sigma(in) = p36_cesdata_sigma(in);
 
 pm_capital_lifetime_exp(all_regi,"kapsc") = 20;
 pm_capital_lifetime_exp(all_regi,"kapal") = 12;
+*** FS: ad-hoc assume the same lifetime for insulation capital than for space cooling capital to avoid division by zero
+pm_capital_lifetime_exp(all_regi,"kaphc") = 20;
 
 pm_capital_lifetime_exp(all_regi,"esswb") = log ( 0.25) / log ( 1 -0.02 );
 
@@ -54,13 +54,11 @@ $ondelim
 $include "./modules/36_buildings/services_with_capital/input/p36_serviceOutputs.cs4r"
 $offdelim
 /
-
 ;
 
 table f36_datafecostsglob(char,all_teEs)   "end-use (final energy) technologies characteristics"
 $include "./modules/36_buildings/services_with_capital/input/generisdata_feCapCosts.prn"
 ;
-
 
  f36_datafecostsglob("inco0",teEs)            = sm_D2015_2_D2005      * f36_datafecostsglob("inco0",teEs); 
  f36_datafecostsglob("inco0",teEs)            = sm_DpKW_2_TDpTW       * f36_datafecostsglob("inco0",teEs);
@@ -71,14 +69,13 @@ table f36_dataeff(char,all_teEs)   "end-use (final energy) long term efficiency 
 $include "./modules/36_buildings/services_with_capital/input/generisdata_Eff.prn"
 ;
 
-p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2;
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2
 
 p36_demFeForEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_demFeForEs_scen(ttot,regi,"%cm_GDPscen%",entyFe,esty,teEs) * sm_EJ_2_TWa; !!  from EJ to TWa;
 p36_prodEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_prodEs_scen(ttot,regi,"%cm_GDPscen%",entyFe,esty,teEs) * sm_EJ_2_TWa; !! from EJ to TWa;
 
 
 ***_____________________________Information for the ES layer  and the multinomial logit function _____________________________
-
 *** Price sensitivity of the logit function
 p36_logitLambda(regi,in)$inViaEs_dyn36(in) = cm_INNOPATHS_priceSensiBuild;
 
@@ -136,9 +133,9 @@ min(max((2100 - pm_ttot_val(ttot))/(2100 -ttot2.val),0),1)  !! lambda = 1 in 201
 p36_shFeCes(ttot,regi,entyFe,in,teEs)$(feViaEs2ppfen(entyFe,in,teEs)
                                    AND teEs_dyn36(teEs)
                                    AND sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2)))
-=
-sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe,esty,teEs))
-/ sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2))
+  =
+  sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe,esty,teEs))
+  / sum(fe2es(entyFe2,esty,teEs2)$es2ppfen(esty,in),  p36_demFeForEs(ttot,regi,entyFe2,esty,teEs2))
 ;
 
 *** Compute UE shares of technologies producing ES(UE) from FE
@@ -185,7 +182,6 @@ p36_marginalUtility(ttot,regi)$( abs (p36_marginalUtility(ttot,regi)) lt sm_eps)
 
 p36_fePrice(ttot,regi,entyFe) = abs (p36_fePrice(ttot,regi,entyFe)) / abs (p36_marginalUtility(ttot,regi));
 p36_fePrice(ttot,regi,entyFe)$ ( NOT p36_fePrice(ttot,regi,entyFe)) = 0.01; !! give a default value in case the relevant information is not available in the input.gdx
-
 
 p36_fePrice_iter(iteration,ttot,regi,entyFe) = 0;
 
@@ -246,7 +242,7 @@ f36_inconvpen(teEs) = f36_inconvpen(teEs) * sm_DpGJ_2_TDpTWa; !! conversion $/GJ
 p36_depreciationRate(teEs)$f36_datafecostsglob("lifetime",teEs) = - log (0.33) / f36_datafecostsglob("lifetime",teEs);
 
 *** Define which technologies will have a faster reduction of their calibration parameter
-p36_pushCalib(ttot,teEs) = 0;
+p36_pushCalib(ttot,teEs_dyn36) = 0;
 
 $ifthen "%cm_INNOPATHS_pushCalib%" == "none" 
 $elseif "%cm_INNOPATHS_pushCalib%" == "hydrogen"
@@ -275,7 +271,6 @@ p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) =
       min(max((2050 -ttot.val)/(2050 - cm_startyear),0),1)  !! lambda = 1 in startyear and 0 in 2050     
       * ( 1 - p36_costReduc(ttot,teEs))
       + p36_costReduc(ttot,teEs) ;
-      
 $elseif "%cm_INNOPATHS_reducCostB%" == "heatpumps"
 p36_costReduc(ttot,"te_ueshhpb") = 0.8;
 p36_costReduc(ttot,"te_uecwhpb") = 0.8;
@@ -285,8 +280,6 @@ p36_costReduc(ttot,teEs_pushCalib_dyn36(teEs)) =
       * ( 1 - p36_costReduc(ttot,teEs))
       + p36_costReduc(ttot,teEs) ;
 $endif
-
-
 
 *** Computation of omegs and opTimeYr2teEs for technology vintages
 p36_omegEs(regi,opTimeYr,teEs_dyn36(teEs)) = 0;

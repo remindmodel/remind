@@ -463,7 +463,6 @@ q_costTeCapital(t,regi,teLearn) ..
 *' EMF27 limits on fluctuating renewables, only turned on for special EMF27 and AWP 2 scenarios, not for SSP
 ***---------------------------------------------------------------------------
 *** this is to prevent that in the long term, all solids are supplied by biomass. Residential solids can be fully supplied by biomass (-> wood pellets), so the FE residential demand is subtracted
-*** vm_cesIO(t,regi,"fesob") will be 0 in the stationary realization
 q_limitBiotrmod(t,regi)$(t.val > 2020).. 
     vm_prodSe(t,regi,"pebiolc","sesobio","biotrmod") 
    - sum (in$sameAs("fesob",in), vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")) 
@@ -1004,7 +1003,7 @@ q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
 q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst") AND t.val ge max(2015, cm_startyear))..
     sum(sector2emiMkt(sector,emiMkt), 
       vm_demFeSector(t,regi,"seh2","feh2s",sector,emiMkt))
-    =e=
+    =l=
     sum(te2sectortdH2(te,sector),
       sum(teFe2rlfH2BI(te,rlf), 
         vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)))

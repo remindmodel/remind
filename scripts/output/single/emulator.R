@@ -27,13 +27,13 @@ if(!exists("source_include")) {
 
 scenario <- getScenNames(outputdir)
 
-gdx <- path(outputdir,"fulldata.gdx")
+gdx <- file.path(outputdir,"fulldata.gdx")
 
 filename<-paste0("REMIND_generic_",scenario,".mif")
 if (file.exists(filename)) {
   csv <- read.report(filename,as.list = FALSE)
-} else if (file.exists(path(outputdir,filename))) {
-  csv <- read.report(path(outputdir,filename),as.list = FALSE)
+} else if (file.exists(file.path(outputdir,filename))) {
+  csv <- read.report(file.path(outputdir,filename),as.list = FALSE)
 } else {
   stop("No REMIND_generic_*.mif file found - please perform postprocessing first!")
 }
@@ -46,7 +46,7 @@ years <- getYears(csv)
 
 # MAgPIE EMULATOR results
 # open pdf
-emulator_file <- path(outputdir,paste0("EMULATOR_",scenario,".pdf"))
+emulator_file <- file.path(outputdir,paste0("EMULATOR_",scenario,".pdf"))
 pdf<-swopen()
 swlatex(pdf,c("\\title{MAgPIE EMULATOR results}","\\author{David Klein}","\\maketitle","\\tableofcontents"))
 swlatex(pdf,"\\newpage")

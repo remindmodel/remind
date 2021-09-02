@@ -105,56 +105,24 @@ $ENDIF.cm_OILRETIRE
 *------------------------------------
 
 *------------------------------------
-*** Upper bound on oil extraction in MEA
+*** Upper bound on oil extraction
 *------------------------------------
-*** Otherwise the model extracts everything from this cheap region
+*** Otherwise the model extracts everything from MEA, the cheapest region
 *** vm_XpRes in 2005 should be equal to 1.4876897061 TWa (46.86 EJ)
 *** BP statistics, 2012 says that MEA produced 1.980321 TWa in 2005 and 1.955456 TWa in 2010, however
 *** there a linear fit with an average increase of 1.5% per year was found e.g 7% per 5-year period
 *** Low and medium resource cases
-$IFTHENi.oilscen %cm_oil_scen% == "lowOil"
-  vm_Xport.up("2010", "MEA", "peoil") = 1.4876897061*1.08794;
-  vm_Xport.up("2015", "MEA", "peoil") = 1.4876897061*1.18361;
-  vm_Xport.up("2020", "MEA", "peoil") = 1.4876897061*1.28770;
-  vm_Xport.up("2025", "MEA", "peoil") = 1.4876897061*1.40094;
-  vm_Xport.up("2030", "MEA", "peoil") = 1.4876897061*1.52414;
-  vm_Xport.up("2035", "MEA", "peoil") = 1.4876897061*1.65817;
-$ELSEIFi.oilscen %cm_oil_scen% == "medOil"
-  vm_Xport.up("2010", "MEA", "peoil") = 1.4876897061*1.08794;
-  vm_Xport.up("2015", "MEA", "peoil") = 1.4876897061*1.18361;
-  vm_Xport.up("2020", "MEA", "peoil") = 1.4876897061*1.28770;
-  vm_Xport.up("2025", "MEA", "peoil") = 1.4876897061*1.40094;
-  vm_Xport.up("2030", "MEA", "peoil") = 1.4876897061*1.52414;
-  vm_Xport.up("2035", "MEA", "peoil") = 1.4876897061*1.65817;
-$ELSEIFi.oilscen %cm_oil_scen% == "highOil"
-  vm_Xport.up("2010", "MEA", "peoil") = 1.4876897061*1.08794*1.10;
-  vm_Xport.up("2015", "MEA", "peoil") = 1.4876897061*1.18361*1.20;
-  vm_Xport.up("2020", "MEA", "peoil") = 1.4876897061*1.28770*1.25;
-  vm_Xport.up("2025", "MEA", "peoil") = 1.4876897061*1.40094*1.30;
-$ENDIF.oilscen
 
-*** High resource case (allowing a bit more of flexibility to the system)
-
-*------------------------------------
-*** Upper bound on natural gas production and trade for early periods
-*------------------------------------
-***EU-27: 18.95EJ/yr is total gas consumption in EU-27, 6.7EJ/yr is the EU-27 production of gas according to BP'13
-***Therefore, the difference is the import of gas
-vm_prodPe.up("2010","EUR","pegas") = 20.2 * sm_EJ_2_TWa;
-vm_Mport.up("2010","EUR","pegas") = (19 - 6.7) * sm_EJ_2_TWa;
-
-***China: consumed 5.5EJ/yr gas in 2010 and produced 3.6EJ/yr
-vm_prodPe.up("2010","CHN","pegas") = 5.5 * sm_EJ_2_TWa;
-vm_Mport.up("2010","CHN","pegas") = (5.5 - 3.6) * sm_EJ_2_TWa;
-
-***MEA: produced ~29EJ and consumed ~21.5EJ in 2010; The export has been between 6.4 and 8.0EJ 
-*** [TODO] (Potential problem other African countries)
-vm_prodPe.up("2010","MEA","pegas") = 21.5 * sm_EJ_2_TWa;
-vm_Xport.up("2010","MEA","pegas") = (29 - 21.5) * sm_EJ_2_TWa;
-
-***REF: produced 22.2EJ, consumed 15.6EJ
-vm_prodPe.up("2010","RUS","pegas") = 15.6 * sm_EJ_2_TWa;
-vm_Xport.up("2010","RUS","pegas") = (22.2 - 15.6) * sm_EJ_2_TWa;
+$ifthen.oilscen %cm_oil_scen% == "lowOil"
+vm_Xport.up(t,regi,enty)$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil")) = 
+    f31_Xport(t,regi,enty,"SSP1")$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil") AND f31_Xport(t,regi,enty,"SSP1") ne 0);
+$elseif.oilscen %cm_oil_scen% == "medOil"
+vm_Xport.up(t,regi,enty)$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil")) = 
+    f31_Xport(t,regi,enty,"SSP2")$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil") AND f31_Xport(t,regi,enty,"SSP2") ne 0);
+$elseif.oilscen %cm_oil_scen% == "highOil"
+vm_Xport.up(t,regi,enty)$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil")) = 
+    f31_Xport(t,regi,enty,"SSP5")$(t.val ge 2020 AND t.val le 2035 AND sameas(enty,"peoil") AND f31_Xport(t,regi,enty,"SSP5") ne 0);
+$endif.oilscen
 
 
 *** EOF ./modules/31_fossil/MOFEX/bounds.gms
