@@ -23,6 +23,8 @@ if ( (cm_startyear gt 2005),
 );
 $ENDIF.emiMktETS
 
+$ontext
+
 parameter p47_emiAllowances(tall,ETS_mkt)       "emission allowances (without national aviation)"
 /
 $ondelim
@@ -49,6 +51,8 @@ p47_emiAllowances(tall,"EU_ETS") = p47_emiAllowances(tall,"EU_ETS")*(1-0.0123+0.
 * 2501.24927010579 Mt CO2-equiv/yr, from EU Reference Scenario
 * 2345 Mt CO2-equiv/yr, from EEA sectoral data (REMIND needs to be able to reflect this number as close as possible for 2005 emissions)
 p47_emiAllowances("2005","EU_ETS") = 2.345;
+
+$offtext
 
 $ontext
 

@@ -185,6 +185,15 @@ $offdelim
 ;
 p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = sm_EJ_2_TWa * f37_fedemand_NonEnergyIndst(ttot,regi,"%cm_GDPscen%",secInd37,entyFe);
 
+*** BUG! non energy chemicals demand at most the same level as the total pm_fedemand
+***p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe)$p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = min( p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe), sum(in$(fe2ppfEn(entyFe,in) and ppfen_industry_dyn37(in)), pm_cesdata(ttot,regi,in,"quantity") * p37_shIndFE(regi,in,secInd37)) );
+***parameter error(ttot,all_regi,secInd37,all_enty);
+***error(ttot,regi,secInd37,entyFe)$p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = (p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) - (sm_EJ_2_TWa * f37_fedemand_NonEnergyIndst(ttot,regi,"%cm_GDPscen%",secInd37,entyFe))) / (sm_EJ_2_TWa * f37_fedemand_NonEnergyIndst(ttot,regi,"%cm_GDPscen%",secInd37,entyFe));
+
+***disabling nonenergy
+p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = 0;
+vm_demFeNonEnergySector.fx(ttot,regi,entySe,entyFe,emi_sectors,emiMkt) = 0;
+
 
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

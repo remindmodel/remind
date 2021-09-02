@@ -169,6 +169,7 @@ display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
 
 loop ( se2fe(entySe,entyFe,te),
 fete(entyFe,te) = YES;
+sefe(entySe,entyFe) = YES;
 );
 
 *** MAGICC related sets
