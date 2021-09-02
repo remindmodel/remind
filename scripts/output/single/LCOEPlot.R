@@ -21,13 +21,13 @@ if(!exists("source_include")) {
   lucode2::readArgs("outputdir","gdx_name")
 } 
 
-gdx <- path(outputdir,gdx_name)
+gdx <- file.path(outputdir,gdx_name)
 ###############################################################################
 
 # Set mif path
 scenNames <- getScenNames(outputdir)
-LCOE_path  <- path(outputdir,paste("REMIND_LCOE_",scenNames,".csv",sep=""))
-reportFile <- path(outputdir, paste("LCOE_Plot_",scenNames,".pdf",sep=""))
+LCOE_path  <- file.path(outputdir,paste("REMIND_LCOE_",scenNames,".csv",sep=""))
+reportFile <- file.path(outputdir, paste("LCOE_Plot_",scenNames,".pdf",sep=""))
 
 
 # run plot LCOE function

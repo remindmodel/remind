@@ -25,13 +25,13 @@ if(!exists("source_include")) {
    readArgs("outputdir","gdx_name","gdx_ref_name")
 } 
 
-gdx      <- path(outputdir,gdx_name)
-gdx_ref  <- path(outputdir,gdx_ref_name)
+gdx      <- file.path(outputdir,gdx_name)
+gdx_ref  <- file.path(outputdir,gdx_ref_name)
 if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # path of the reporting file
-remind_reporting_file <- path(outputdir,paste0("MOFEX_",scenario,".mif"))
+remind_reporting_file <- file.path(outputdir,paste0("MOFEX_",scenario,".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
 tmp <- try(reportMOFEX(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute reportMOFEX

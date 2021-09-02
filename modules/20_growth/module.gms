@@ -9,7 +9,7 @@
 *' @title Growth
 *'
 *' @description
-*' The growth module decides whether to follow a quasi exogenous growth path(calibrated to SSP GDP paths)
+*' The growth module decides whether to follow a quasi exogenous growth path (calibrated to SSP GDP paths)
 *' or an endogenous growth path that includes innovation, immitation and spillover effects  
 *'
 *' @authors Marian Leimbach, Lavinia Baumstark

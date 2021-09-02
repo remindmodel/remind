@@ -61,7 +61,8 @@
 *' * "s_" to designate scalars,
 *' * "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
 *' * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
-*' * "c_" to designate switches (parameters that enable different configuration choices),
+*' * "p_" to designate other parameters (parameters that were derived from "f_" parameters or defined in code),
+*' * "c_" to designate config switches (parameters that enable different configuration choices),
 *' * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
 *'                              through multiplication, e.g. s_GWh_2_EJ.
 *'
@@ -82,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.223
+* Input data revision: 6.241
 * 
-* Last modification (input data): Mon Aug 02 14:11:26 2021
+* Last modification (input data): Mon Aug 30 11:13:24 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -187,8 +188,6 @@ $setGlobal transport  complex         !! def = complex
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
-***---------------------    38_stationary    --------------------------------------
-$setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -318,6 +317,7 @@ cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bl
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
+cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
 cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
 cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
 cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
@@ -336,6 +336,7 @@ cm_ariadne_trade_el         "switch for enabling electricity imports to Germany 
 cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
 cm_ariadne_trade_synliq        "switch for enabling synfuel liquids imports to Germany for ARIADNE project"
 cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Germany for ARIADNE project"
+cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -508,10 +509,11 @@ $setGlobal cm_import_EU  off !! def off
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
 cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
+cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
 
 *** flex tax switches
 cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 10; !! def 10
+cm_PriceDurSlope_elh2 = 20; !! def 10
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -527,8 +529,8 @@ cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** EU bioenergy switches
-cm_BioSupply_Adjust_EU = 1; !! def 1
-cm_BioImportTax_EU = 0.25; !! def 0.25
+cm_BioSupply_Adjust_EU = 3; !! def 1
+cm_BioImportTax_EU = 1; !! def 0.25
 
 $setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
@@ -550,6 +552,8 @@ cm_ariadne_trade_el = 0; !! def 0
 cm_ariadne_trade_h2 = 0; !! def 0
 cm_ariadne_trade_synliq = 0; !! def 0
 cm_ariadne_trade_syngas = 0; !! def 0
+
+$setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
 
 $setGlobal c_VREPot_Factor  off !! def = off
@@ -592,7 +596,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
