@@ -186,16 +186,5 @@ pm_ue_eff_target("ue_steel_primary")    = 0.0015;
 pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
 
-*** Final energy demand for feedstocks (non-energy use)
-parameter f37_fedemand_NonEnergyIndst(ttot,all_regi,all_GDPscen,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [EJ]"
-/
-$ondelim
-$include "./modules/37_industry/fixed_shares/input/f37_fedemand_NonEnergyIndst.cs4r";
-$offdelim
-/
-;
-p37_fedemand_NonEnergyIndst(ttot,regi,secInd37,entyFe) = sm_EJ_2_TWa * f37_fedemand_NonEnergyIndst(ttot,regi,"%cm_GDPscen%",secInd37,entyFe);
-
-
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

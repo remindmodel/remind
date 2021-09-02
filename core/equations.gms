@@ -207,17 +207,6 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
 ; 
 
-
-***---------------------------------------------------------------------------
-*** FE without non-energy use
-***---------------------------------------------------------------------------
-q_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
-  v_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-  =e=
-  vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
-  - (vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt))$(feNonEnergy2sectorANDemiMkt(entyFe,sector,emiMkt))  
-;
-
 ***To be moved to specific modules---------------------------------------------------------------------------
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
 ***---------------------------------------------------------------------------
@@ -515,34 +504,10 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 		  )
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
-      v_emiFeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
-    )
+          pm_emifac(t,regi,enty,enty2,te,enty3)
+		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
+		)
 	)
-;
-
-***--------------------------------------------------
-*' final energy emissions
-*' fossils emission factors are applied only to FE use without non-energy
-*' fossils used as the feedstocks (e.g. fossils used in plastic production) are partially captured
-*' in the final product and only process emissions are considered for those
-*' still to be added: part of the non-energy fossils "captured" in products are re-emitted back to the 
-*' atmosphere when burned to produce energy (ETS) or burned due to waste management (ESR).  
-***--------------------------------------------------
-
-q_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)$(emi2te(entySe,entyFe,te,emiTe) AND se2fe(entySe,entyFe,te))..
-  v_emiFeDetailMkt(t,regi,entySe,entyFe,te,emiTe,emiMkt)
-  =e=
-  sum(sector$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), 
-    ( pm_emifac(t,regi,entySe,entyFe,te,emiTe)
-      *
-      v_demFeEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    )
-    +
-    ( p_emifacNonEnergy(t,regi,entySe,entyFe,sector,emiTe)
-      *
-      vm_demFeNonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-    )$(feNonEnergy2sectorANDemiMkt(entyFe,sector,emiMkt))  
-  )
 ;
 
 ***--------------------------------------------------

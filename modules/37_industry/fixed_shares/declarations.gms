@@ -23,7 +23,6 @@ Parameters
 
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
 
-  p37_fedemand_NonEnergyIndst(ttot,all_regi,secInd37,all_enty) "Final energy demand for feedstocks (non-energy use) [TWa]"
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
@@ -60,7 +59,6 @@ Equations
   q37_IndCCSCost(ttot,all_regi,all_enty)            "calculate cost for Industry CCS"
   q37_cementCCS(ttot,all_regi)                      "equal abatement levels for cement fuel and process emissions"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt) "industry final energy demand (per emission market)"
-  q37_demFeNonEnergyIndst(ttot,all_regi,all_enty,all_emiMkt) "industry non-energy demand (per emission market)"
   q37_H2Share(ttot,all_regi)                        "H2 share in gases"
   q37_auxCostAddTeInv(ttot,all_regi)                "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost" 
   q37_costAddH2PhaseIn(ttot,all_regi)               "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in industry"  

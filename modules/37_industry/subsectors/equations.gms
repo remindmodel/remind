@@ -20,17 +20,6 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
 ;
 
-*'  Industry non-energy demand
-q37_demFeNonEnergyIndst(t,regi,entyFe,emiMkt)$(feNonEnergy2sectorANDemiMkt(entyFe,"indst",emiMkt)) .. 
-  sum((entySe,te)$(se2fe(entySe,entyFe,te)), 
-    vm_demFeNonEnergySector(t,regi,entySe,entyFe,"indst",emiMkt) 
-  )
-  =e= 
-  sum(secInd37_emiMkt(secInd37,emiMkt),
-    p37_fedemand_NonEnergyIndst(t,regi,secInd37,entyFe)
-  )
-;
-
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
                         ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
     sum(ces_eff_target_dyn37(out,in), 

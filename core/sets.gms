@@ -1973,13 +1973,6 @@ sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
 	cdr.ETS
 /
 
-feNonEnergy2sectorANDemiMkt(all_enty,emi_sectors,all_emiMkt) "non-energy use in sectors and emission market"
-/
- fehos.indst.ETS
- fegas.indst.ETS
- fesos.indst.ETS
-/
-
 te2sectortdH2(all_te,emi_sectors)           "mapping of sectors to technologies to link H2 distribution capacities to sectors"
 /
         tdh2i.indst
