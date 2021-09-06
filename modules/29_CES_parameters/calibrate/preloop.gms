@@ -47,7 +47,8 @@ $endif.new_structure
 *** In the first iteration with a changed CES structure, load ppf prices
 $ifthen.get_prices %c_CES_calibration_prices% == "load"
 
-*** Set CES prices to the value specified by cm_CES_calibration_default_prices and abort if cm_CES_calibration_default_prices == 0 
+*** Set CES prices to the value specified by cm_CES_calibration_default_prices
+*** and abort if cm_CES_calibration_default_prices == 0 
 $ifthen.default_prices %cm_CES_calibration_default_prices% == "0"
    abort "Please set cm_CES_calibration_default_prices > 0 to get the calibration started";
 $endif.default_prices
