@@ -472,4 +472,14 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 
 $endif.CO2priceDependent_AdjCosts
 
+
+*** FS: calculate SE shares in FE, useful for different purposes (e.g. calculate industry BECC)
+
+*** total FE summed over all SEs
+pm_FeTot(t,regi,entyFe,sector,emiMkt) = sum(se2fe(enty,entyFe,te), vm_demFeSector.l(t,regi,enty,entyFe,sector,emiMkt));
+*** SE shares in FE
+pm_FeSeShare(t,regi,entySe,entyFe,sector,emiMkt)$(pm_FeTot(t,regi,entyFe,sector,emiMkt)) =  sum(se2fe(entySe,entyFe,te),
+                                                                                                vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)) /
+                                                                                            pm_FeTot(t,regi,entyFe,sector,emiMkt);
+
 *** EOF ./core/presolve.gms
