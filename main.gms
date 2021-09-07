@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.241
+* Input data revision: 6.2413
 * 
-* Last modification (input data): Mon Aug 30 11:13:24 2021
+* Last modification (input data): Mon Sep  6 15:38:51 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -602,7 +602,7 @@ $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
