@@ -51,9 +51,10 @@
 *'
 *'    trajectories for labour, GDP and final energy carriers/energy services (ppfen) quantities, usually provided by EDGE. We also need the capital quantities pathways.
 *'
-*'If you are calibrating a new CES structure (added/removed branches to/from the CES tree), you will also need
-*'
-*'    explicit price trajectories for the primary production factors (`ppf`, capital and final energy carriers/energy services). They are included in `input/p29_cesdata_price.cs4r` which is derived from the mrremind library.
+*' If you are calibrating a new CES structure (added/removed branches to/from
+*' the CES tree), you will also maybe need to adjust the value of 
+*' `cm_CES_calibration_default_prices`, which serves as fallback prices for
+*' calculating CES parameters in the first calibration iteration.
 *'
 *'Strictly speaking, the price only have to be larger than 0, but the closer the prices are to the "real" ones, the faster the calibration will converge.
 *'It is therefore advisable to use the prices of some substitute energy carrier/service. The prices give the indication of the marginal cost of each input, and thus represent the economical constraint.

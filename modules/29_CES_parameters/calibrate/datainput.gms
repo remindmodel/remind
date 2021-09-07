@@ -147,15 +147,8 @@ putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
                                       = YES;
 
 *** End of Sets calculation
+
 Parameter
-p29_cesdata_price   "exogenous final energy prices"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/p29_cesdata_price.cs4r"
-$offdelim
-/
-
-
 p29_esdemand       "energy service demand"
 /
 $ondelim
