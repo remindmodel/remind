@@ -110,6 +110,13 @@ Sets
     fehes
     feels
   /
+
+  entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  /
+    fesos
+    fehos
+    fegas
+  /
   
   secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
   /
