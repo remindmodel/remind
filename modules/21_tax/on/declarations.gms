@@ -19,6 +19,7 @@ p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction
 p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 
+p21_taxrev_redistr0(ttot,all_regi)            "reference level value of GHG emission tax revenues that can be redistributed"
 p21_taxrevGHG0(ttot,all_regi)                "reference level value of GHG emission tax"
 p21_taxrevCO2luc0(ttot,all_regi)             "reference level value of co2luc emission tax"
 p21_taxrevCCS0(ttot,all_regi)                "reference level value of CCS tax"

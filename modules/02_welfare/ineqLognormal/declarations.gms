@@ -25,6 +25,10 @@ p02_distrBeta(ttot,all_regi)                       "income elasticity of revenue
 *p21_taxrevGHG0_ref(ttot,all_regi)                  "revenue levels in the reference run" 
 
 * p02_distrEVyAlpha(ttot,all_regi)                   "expectation value of income^alpha (used in several places)"
+p02_cesdata_ref(ttot,all_regi,all_in,cesParameter)   "parameters of the CES function in the ref scenario"
+p02_EnergyExp_Add(ttot,all_regi)                    "regional additional energy expenditure w.r.t. reference run"
+p02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 p02_inconvpen_lap(ttot,all_regi,all_te)           "Parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
@@ -39,7 +43,7 @@ v02_welfare(all_regi)                             "Regional welfare"
 vm_welfareGlob                                    "Global welfare"
 * BS 2020-03-13 additions for distributional module
 * v02_consPcap(ttot,all_regi)                       "per capita consumption"
-v02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+*v02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
 * v02_distrNormalization(ttot,all_regi)             "normalization parameter for lognormal distribution of costs"
 v02_revShare(ttot,all_regi)                            "tax revenues (share of consumption)"
 
@@ -48,6 +52,8 @@ v02_emiEnergyco2eq(ttot,all_regi)                      "emissions from energy sy
 v02_emiEnergyco2eqMkt(ttot,all_regi,all_emiMkt)        "emissions from all GHG from energy system for each emiMkt"
 v02_emiIndus(ttot,all_regi)                            "emissions from fugitive and industrial processes"
 
+*TN
+*v02_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure, disaggregated level"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 v02_inconvPen(ttot,all_regi)                      "Inconvenience penalty in the welfare function, e.g. for air pollution. Unit: ?Utils?"
@@ -75,13 +81,17 @@ q02_welfareGlob                                   "Global welfare"
 q02_welfare                                       "Regional welfare"
 * BS 2020-03-13 additions for distributional module
 * q02_consPcap(ttot,all_regi)                       "per capita consumption"
-q02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+*q02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
 * TN
 q02_relTaxlevels(ttot,all_regi)                    "tax revenues w.r.t. consumption"
 * TN
 q02_emiEnergyco2eq(ttot,all_regi)                          "emissions from energy system + DAC"
 q02_emiEnergyco2eqMkt(ttot,all_regi,all_emiMkt)               "emissions from all GHG from energy system for each emiMkt"
 q02_emiIndus(ttot,all_regi)                            "emissions from fugitive and industrial processes"
+
+* TN to remove! (since CES data is a parameter, no need for an equation)
+*q02_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure, disaggregated level"
+*q02_EnergyExp_Add(ttot,all_regi)                     "regional additional energy expenditure w.r.t. reference run"
 
 * q02_distrNormalization(ttot,all_regi)             "normalization parameter for distribution of costs"
 * q02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"

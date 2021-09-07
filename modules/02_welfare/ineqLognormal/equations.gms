@@ -61,15 +61,40 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
 *    vm_cons(ttot,regi) / pm_pop(ttot,regi)
 *;
 
+* Energy expenditure
+* New way of doing it: using the CES data. see datainput.
+* I am following the way things are aggregated in the balance of FE equation (qm_balFe)
+* Instead of just vm_demFeSector (quantity), I multiply it by the corresponding price to get expenditures
+*q02_EnergyExp_enty(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
+*     v02_EnergyExp_enty(t,regi,entySe,entyFe,te)
+*  =e=
+*     sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
+*     vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(t,regi,entyFe,sector,emiMkt))
+*;
+
+* sum over all combinations of enSe entyFe and te to get the regional total. 
+*q02_EnergyExp(t,regi)..
+*      v02_EnergyExp(t,regi)
+*  =e=
+*      sum(en2en(entySe,entyFe,te),
+*      v02_EnergyExp_enty(t,regi,entySe,entyFe,te))
+*;
+
+* other way to compute energy expenditures is to use the CES function
+*q02_EnergyExp_Add(ttot,regi)..
+*     p02_EnergyExp_Add(ttot,regi)
+*  =e=
+*     pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,regi,"en","quantity")-p02_cesdata_ref(ttot,regi,"en","price")*p02_cesdata_ref(ttot,regi,"en","quantity")
+*;     
+
 * relative consumption loss
-* TN: one zero
-
-q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
-    v02_relConsLoss(ttot,regi)
-  =e=
-    ((p02_cons_ref(ttot,regi)-vm_cons(ttot,regi))/p02_cons_ref(ttot,regi))
-;
-
+*q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
+*    v02_relConsLoss(ttot,regi)
+*  =e=
+*    ((p02_cons_ref(ttot,regi)-vm_cons(ttot,regi))/p02_cons_ref(ttot,regi))
+* Computing rather additional energy expenditure as a share of consumption:
+*    p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi)
+*;
 
 * TN: Equations to calculate actual tax revenues
 * summing on all GHG the energy emissions as well as CDR emissions.
@@ -107,8 +132,9 @@ q02_emiIndus(t,regi)..
 q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
     v02_revShare(ttot,regi)
   =e=
+    0+(p21_taxrev_redistr0(ttot,regi)/vm_cons(ttot,regi))
 *    0+(p21_taxrevGHG0(ttot,regi)/vm_cons(ttot,regi))$(p21_taxrevGHG0(ttot,regi) ge 0)
-    0+((v02_emiIndus(ttot,regi)+v02_emiEnergyco2eq(ttot,regi))*(pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))/vm_cons(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0)
+*    0+((v02_emiIndus(ttot,regi)+v02_emiEnergyco2eq(ttot,regi))*(pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))/vm_cons(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0)
 ;
 
 
@@ -160,10 +186,10 @@ q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
   =e=
 * simplified equation
   log( exp(2*p02_ineqTheil(ttot,regi))
-      - 2* v02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
-      + power(v02_relConsLoss(ttot,regi),2) * exp( 2*power(p02_distrAlpha(ttot,regi),2) * p02_ineqTheil(ttot,regi) ))
-*      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-  - 2*log((1-v02_relConsLoss(ttot,regi)))
+      - 2* p02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
+      + power(p02_relConsLoss(ttot,regi),2) * exp( 2*power(p02_distrAlpha(ttot,regi),2) * p02_ineqTheil(ttot,regi) ))
+*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+  - 2*log((1-p02_relConsLoss(ttot,regi)))
 * original equation
 *    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
 ;
@@ -181,8 +207,8 @@ q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
       -exp(p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi)))
       + power(v02_revShare(ttot,regi),2)*(exp(power(p02_distrAlpha(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))
       +exp(power(p02_distrBeta(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))))
-*      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-*  - 2*log((1-v02_relConsLoss(ttot,regi)))
+*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+*  - 2*log((1-p02_relConsLoss(ttot,regi)))
 * original equation
 *    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
 ;

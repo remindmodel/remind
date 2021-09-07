@@ -40,7 +40,16 @@ display p02_ineqTheil;
 
 * consumption path from base run
 * Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
-Execute_Loadpoint 'input_ref' p02_cons_ref = vm_cons.l;
+* To change: this should be the baseline? so input_bau instead of input_ref
+Execute_Loadpoint 'input_bau' p02_cons_ref = vm_cons.l;
+
+* load parameters of the CES (in input)
+Execute_Loadpoint 'input_bau' p02_cesdata_ref=pm_cesdata;
+
+p02_EnergyExp_Add(ttot,regi)=pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,regi,"en","quantity")-p02_cesdata_ref(ttot,regi,"en","price")*p02_cesdata_ref(ttot,regi,"en","quantity");
+
+p02_relConsLoss(ttot,regi)=0+(p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi))$(p02_cons_ref(ttot,regi) ne 0);
+
 * per capita consumption in reference run (1e3 $ MER 2005)
 * p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi);
 * display p02_consPcap_ref;
@@ -67,7 +76,7 @@ p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 0;
 * set start values for variables because they are not contained in the gdx
 * trying to get correct order of magnitude here
 * v02_consPcap.l(ttot,regi)$(ttot.val ge 2005) = 10;
-v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+*v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 * v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 * v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 1;
 * v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 100;

@@ -18,6 +18,8 @@ OPTION decimals =3;
 *GL* save reference level value of taxes for revenue recycling
 *JH* !!Warning!! The same allocation block exists in presolve.gms.
 ***                Do not forget to update the other file.
+* TN
+p21_taxrev_redistr0(ttot,regi) = (pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*(v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0);
 p21_taxrevGHG0(ttot,regi) = ( pm_taxCO2eq(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi)) * (vm_co2eq.l(ttot,regi) - vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3));
 p21_taxrevCO2luc0(ttot,regi) = ( pm_taxCO2eq(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi)) * cm_cprice_red_factor * vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3);
 p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(ttot,regi,"ccsinje") 
