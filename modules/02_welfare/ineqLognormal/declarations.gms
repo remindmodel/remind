@@ -27,7 +27,7 @@ p02_distrBeta(ttot,all_regi)                       "income elasticity of revenue
 * p02_distrEVyAlpha(ttot,all_regi)                   "expectation value of income^alpha (used in several places)"
 p02_cesdata_ref(ttot,all_regi,all_in,cesParameter)   "parameters of the CES function in the ref scenario"
 p02_EnergyExp_Add(ttot,all_regi)                    "regional additional energy expenditure w.r.t. reference run"
-p02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+*p02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
 
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
@@ -43,7 +43,7 @@ v02_welfare(all_regi)                             "Regional welfare"
 vm_welfareGlob                                    "Global welfare"
 * BS 2020-03-13 additions for distributional module
 * v02_consPcap(ttot,all_regi)                       "per capita consumption"
-*v02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+v02_energyexpShare(ttot,all_regi)                    "relative additional energy expenditure w.r.t. reference run"
 * v02_distrNormalization(ttot,all_regi)             "normalization parameter for lognormal distribution of costs"
 v02_revShare(ttot,all_regi)                            "tax revenues (share of consumption)"
 
@@ -67,7 +67,7 @@ vm_forcOs(ttot)                                   "Forcing overshoot"
 * BS 2020-03-13 additions for distributional module
 * v02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
 * v02_distrNew_mu(ttot,all_regi)                        "mu parameter of lognormal distribution after costs"
-v02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs (but before tax)"
+*v02_distrNew_sigmaSq(ttot,all_regi)                    "sigma^2 parameter of lognormal distribution after costs (but before tax)"
 * TN
 v02_distrFinal_sigmaSq(ttot,all_regi)                  "sigma^2 parameter of final lognormal distribution (after redistributional effects of taxes)"
 
@@ -81,7 +81,7 @@ q02_welfareGlob                                   "Global welfare"
 q02_welfare                                       "Regional welfare"
 * BS 2020-03-13 additions for distributional module
 * q02_consPcap(ttot,all_regi)                       "per capita consumption"
-*q02_relConsLoss(ttot,all_regi)                    "relative consumption loss w.r.t. reference run"
+q02_energyexpShare(ttot,all_regi)                    "additional energy exp w.r.t. reference run as a share of consumption"
 * TN
 q02_relTaxlevels(ttot,all_regi)                    "tax revenues w.r.t. consumption"
 * TN
@@ -97,7 +97,7 @@ q02_emiIndus(ttot,all_regi)                            "emissions from fugitive 
 * q02_distrNew_SecondMom(ttot,all_regi)             "Second moment of distribution after subtracting costs"
 * q02_distrNew_mu(ttot,all_regi)                    "mu parameter of lognormal distribution after costs"
 * TN
-q02_distrNew_sigmaSq(ttot,all_regi)               "sigma^2 parameter of lognormal distribution after costs"
+*q02_distrNew_sigmaSq(ttot,all_regi)               "sigma^2 parameter of lognormal distribution after costs"
 q02_distrFinal_sigmaSq(ttot,all_regi)             "sigma^2 parameter of lognormal final distribution (after costs and taxes)"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"

@@ -48,7 +48,7 @@ Execute_Loadpoint 'input_bau' p02_cesdata_ref=pm_cesdata;
 
 p02_EnergyExp_Add(ttot,regi)=pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,regi,"en","quantity")-p02_cesdata_ref(ttot,regi,"en","price")*p02_cesdata_ref(ttot,regi,"en","quantity");
 
-p02_relConsLoss(ttot,regi)=0+(p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi))$(p02_cons_ref(ttot,regi) ne 0);
+*p02_relConsLoss(ttot,regi)=0+(p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi))$(p02_cons_ref(ttot,regi) ne 0);
 
 * per capita consumption in reference run (1e3 $ MER 2005)
 * p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi);
@@ -67,7 +67,7 @@ p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 0.5;
 display p02_distrAlpha;
 
 * TN: income elasticity of tax revenues redistribution. fixing this to some number for now
-p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 0;
+p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 1;
 
 *expectation value of y^alpha
 * p02_distrEVyAlpha(t,regi) = exp(p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi));
@@ -80,10 +80,11 @@ p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 0;
 * v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 * v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 1;
 * v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 100;
-v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
+*v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 * TN
 v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+v02_energyexpShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
 v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 * adding initial values for the emissions:

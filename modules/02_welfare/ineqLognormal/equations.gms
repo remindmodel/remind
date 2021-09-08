@@ -88,13 +88,14 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
 *;     
 
 * relative consumption loss
-*q02_relConsLoss(ttot,regi)$(ttot.val ge 2005)..
-*    v02_relConsLoss(ttot,regi)
-*  =e=
+q02_energyexpShare(ttot,regi)$(ttot.val ge 2005)..
+    v02_energyexpShare(ttot,regi)
+  =e=
+   (p02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi)+p02_EnergyExp_Add(ttot,regi)-p21_taxrev_redistr0(ttot,regi)))
 *    ((p02_cons_ref(ttot,regi)-vm_cons(ttot,regi))/p02_cons_ref(ttot,regi))
 * Computing rather additional energy expenditure as a share of consumption:
 *    p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi)
-*;
+;
 
 * TN: Equations to calculate actual tax revenues
 * summing on all GHG the energy emissions as well as CDR emissions.
@@ -132,13 +133,10 @@ q02_emiIndus(t,regi)..
 q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
     v02_revShare(ttot,regi)
   =e=
-    0+(p21_taxrev_redistr0(ttot,regi)/vm_cons(ttot,regi))
+    p21_taxrev_redistr0(ttot,regi)/(vm_cons(ttot,regi)+p02_EnergyExp_Add(ttot,regi)-p21_taxrev_redistr0(ttot,regi))
 *    0+(p21_taxrevGHG0(ttot,regi)/vm_cons(ttot,regi))$(p21_taxrevGHG0(ttot,regi) ge 0)
 *    0+((v02_emiIndus(ttot,regi)+v02_emiEnergyco2eq(ttot,regi))*(pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))/vm_cons(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0)
 ;
-
-
-
 
 
 * normalization of cost distribution
@@ -181,36 +179,49 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
 *;
 * sigma^2: this finally enters the welfare function to account for the change in the income distribution
 * with the simplified equation everything enters directly here
-q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
-    v02_distrNew_sigmaSq(ttot,regi)
-  =e=
+*q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
+*    v02_distrNew_sigmaSq(ttot,regi)
+*  =e=
 * simplified equation
-  log( exp(2*p02_ineqTheil(ttot,regi))
-      - 2* p02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
-      + power(p02_relConsLoss(ttot,regi),2) * exp( 2*power(p02_distrAlpha(ttot,regi),2) * p02_ineqTheil(ttot,regi) ))
+*  log( exp(2*p02_ineqTheil(ttot,regi))
+*      - 2* p02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
+*      + power(p02_relConsLoss(ttot,regi),2) * exp( 2*power(p02_distrAlpha(ttot,regi),2) * p02_ineqTheil(ttot,regi) ))
 *      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-  - 2*log((1-p02_relConsLoss(ttot,regi)))
+*  - 2*log((1-p02_relConsLoss(ttot,regi)))
+* original equation
+*    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
+*;
+
+* TN: adding the second step: distributional effects of revenues
+*q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
+*    v02_distrFinal_sigmaSq(ttot,regi)
+*  =e=
+* simplified equation
+*  log( exp(v02_distrNew_sigmaSq(ttot,regi))
+*      + 2* v02_revShare(ttot,regi) * (exp(p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
+*      -exp(p02_distrAlpha(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
+*      -exp(p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi)))
+*      + power(v02_revShare(ttot,regi),2)*(exp(power(p02_distrAlpha(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))
+*      +exp(power(p02_distrBeta(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))))
+*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
+*  - 2*log((1-p02_relConsLoss(ttot,regi)))
 * original equation
 *    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
 ;
 
 
-
-* TN: adding the second step: distributional effects of revenues
+* TN: one-step approximation
 q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
     v02_distrFinal_sigmaSq(ttot,regi)
   =e=
 * simplified equation
-  log( exp(v02_distrNew_sigmaSq(ttot,regi))
-      + 2* v02_revShare(ttot,regi) * (exp(p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
-      -exp(p02_distrAlpha(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
-      -exp(p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi)))
-      + power(v02_revShare(ttot,regi),2)*(exp(power(p02_distrAlpha(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))
-      +exp(power(p02_distrBeta(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))))
-*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-*  - 2*log((1-p02_relConsLoss(ttot,regi)))
-* original equation
-*    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
+  log( exp(2*p02_ineqTheil(ttot,regi))
+      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi))
+      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
+      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrAlpha(ttot,regi),2))
+      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
+      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)))
+      -2*log(1-v02_energyexpShare(ttot,regi)+v02_revShare(ttot,regi))
 ;
 
 
