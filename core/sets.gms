@@ -1679,6 +1679,13 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
+entySeFos(all_enty)       "biomass secondary energy types"
+/
+	seliqfos     "secondary energy liquids from fossil origin"
+	sesofos      "secondary energy solids from fossil origin"
+	segafos      "secondary energy gas from fossil origin"
+/
+
 entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
 
 esty(all_esty)      "energy service types. Have to be added by modules."
