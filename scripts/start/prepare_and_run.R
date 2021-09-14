@@ -210,7 +210,8 @@ prepare <- function() {
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),
+            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse", 
+	    "tools"),
 
         'Package') %>%
     print(n = Inf)
