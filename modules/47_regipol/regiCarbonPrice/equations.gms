@@ -95,7 +95,7 @@ q47_quantity_regiCO2target(t,ext_regi,emi_type)$p47_quantity_regiCO2target(t,ext
 		v47_emiTarget(t,regi,emi_type) 
 	)
 	=l=
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)
+	p47_quantity_regiCO2target(t,ext_regi,emi_type)/sm_c_2_co2
 ;
 
 $endIf.quantity_regiCO2target

@@ -24,6 +24,8 @@ $offdelim
 /
 ;
 
+p47_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSreferenceEmissions("2005",regi)*1000);
+
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
@@ -50,7 +52,9 @@ $offdelim
 /
 ;
 
-pm_emiTargetES(t,regi)$(f47_ESTarget(t,regi) and regi_group("EU27_regi",regi)) = ( f47_ESreferenceEmissions("2005",regi)/1000 * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
+p47_emissionsRefYearESR(ttot,regi) = f47_ESreferenceEmissions(ttot,regi)/1000;
+
+pm_emiTargetES(t,regi)$(f47_ESTarget(t,regi) and regi_group("EU27_regi",regi)) = ( p47_emissionsRefYearESR("2005",regi) * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
 
 * Applying modifier if it is assumed that the Effort Sharing Decision target does not need to be reached entirely at 2030
 pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",regi) * %cm_emiMktES%;
@@ -58,7 +62,7 @@ pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
 $IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
-	pm_emiTargetES("2050",regi) = f47_ESreferenceEmissions("2005",regi)*%cm_emiMktES2050%;
+	pm_emiTargetES("2050",regi) = (p47_emissionsRefYearESR("2005",regi)/sm_c_2_co2)*%cm_emiMktES2050%;
 $ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
