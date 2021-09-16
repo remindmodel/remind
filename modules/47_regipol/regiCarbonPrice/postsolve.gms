@@ -331,24 +331,24 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$pm_regiCO2target(ttot,ttot2,ext_
 *** co2 price updating rule for budget targets
 	if(sameas(target_type,"budget"), !! budget target
 		if(iteration.val lt 10,
-			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
 		else
-			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 1;
+			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 1;
 		);
 	);
 *** co2 price updating rule for year targets
 	if(sameas(target_type,"year"), !! year target
 		if(iteration.val lt 10,
 *** rescale factor for year targets a bit higher given a certain target deviation because pm_regiTarget_dev is normalized to reference year emissions such that it will usually not be higher than 1 at maximum
-			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 4;
+			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 4;
 		else
-			p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
 		);
 	);
 *** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
 	if((iteration.val gt 3) and (pm_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)*pm_regiTarget_dev_iter(iteration-1,ext_regi,ttot,ttot2) < 0),
 	  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) =
-	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
 	);
 );
 
@@ -499,7 +499,7 @@ $endIf.co2priceSlope
 
 
 
-*** display pm_regiCO2target,pm_emissionsCurrent,pm_emissionsRefYear,pm_regiTarget_dev,p47_factorRescaleCO2Tax_beforeDamp,pm_factorRescaleCO2Tax;
+*** display pm_regiCO2target,pm_emissionsCurrent,pm_emissionsRefYear,pm_regiTarget_dev,pm_factorRescaleCO2Tax;
 *** display pm_taxCO2eq;
 
 $ENDIF.regicarbonprice

@@ -14,7 +14,6 @@ Parameter
   pm_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
   pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
   pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
-  p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening [%]"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
