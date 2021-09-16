@@ -27,8 +27,8 @@ Parameters
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
-  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector"
-  o37_demFeIndSub_SumSe(ttot,all_regi,all_enty,secInd37,emiMkt) "FE per subsector summed across all SE origins, helper parameter for calculation of industry captured CO2 below"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
+  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
   o37_CO2Captured(ttot,all_regi,entySe,all_enty,secInd37,emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
 ;
 
