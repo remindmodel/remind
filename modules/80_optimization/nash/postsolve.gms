@@ -260,7 +260,7 @@ if (cm_TaxConvCheck eq 1,
 );
 
 *** additional criterion: Were global and regional climate targets reached? 
-$ifthen.regipol %regipol% == "regiCarbonPrice"
+$ifthen.regipol not %cm_regiCO2target% == "off" 
 loop((ext_regi,ttot,ttot2)$pm_regiTarget_dev(ext_regi,ttot,ttot2),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
   if( (pm_regiTarget_dev(ext_regi,ttot,ttot2) gt 0.01 OR pm_regiTarget_dev(ext_regi,ttot,ttot2) lt -0.01),
@@ -346,7 +346,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
-$ifthen.regipol %regipol% == "regiCarbonPrice"        
+$ifthen.regipol not %cm_regiCO2target% == "off"       
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
           display "#### Check out the pm_regiTarget_dev parameter of 47_regipol module.";
@@ -450,7 +450,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
           display "#### The two parameters give the difference in carbon price in $/GtC to the last iteration.";
           display sm_globalBudget_dev;
 	      );
-$ifthen.regipol %regipol% == "regiCarbonPrice"
+$ifthen.regipol not %cm_regiCO2target% == "off" 
         if(sameas(convMessage80, "regiTarget"),
 		      display "#### 7) A regional climate target has not been reached yet.";
           display "#### Check out the pm_regiTarget_dev parameter of 47_regipol module.";
