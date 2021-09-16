@@ -74,7 +74,7 @@ pm_FEPrice(t,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(t,regi)) gt sm_eps )
 
 *** FE per subsector and energy carrier for fixed_shares
 o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt) 
-  = sum(fe2ppfEn37(entyFe,in), p37_shIndFE(regi,in,secInd37)) 
+  = sum( (fe2ppfEn37(entyFe,in), secInd37_emiMkt(secInd37,emiMkt)), p37_shIndFE(regi,in,secInd37)) 
   * vm_demFeSector.l(ttot,regi,entySe,entyFe,"indst",emiMkt);
 
 *** FE per subsector summed across all SE origins (helper parameter for calculation of industry captured CO2 below)
