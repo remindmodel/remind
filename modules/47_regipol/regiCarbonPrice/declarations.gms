@@ -9,17 +9,17 @@
 	
 Parameter
   pm_regiTarget_dev(ext_regi,ttot,ttot2)       "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2015 emissions [%]"
-  p47_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations [%]"
+  pm_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations [%]"
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-  p47_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
-  p47_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
-  p47_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
+  pm_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
+  pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
+  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleCO2Tax_beforeDamp(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets before the dampening [%]"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter
-	p47_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
+	pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
 ;  
 $endIf.regicarbonprice
 
@@ -44,23 +44,23 @@ equations
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 Parameter
 	p47_taxemiMktBeforeStartYear(ttot,all_regi,all_emiMkt) "CO2eq mkt prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-	p47_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
+	pm_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
 	pm_ETSTarget_dev(ETS_mkt)				    "ETS emissions deviation of current iteration from target emissions [%]"
-	p47_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations [%]"
+	pm_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations [%]"
 	
 ;
 $endIf.emiMktETS    
 
 Parameter
-    p47_emissionsRefYearETS(ETS_mkt)	        "ETS emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
+    pm_emissionsRefYearETS(ETS_mkt)	        "ETS emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
 ***	p47_emiTargetETS(ttot,ETS_mkt)				"ETS emission target (GtCO2-eq)"
 	p47_emiCurrentETS(ETS_mkt)					"previous iteration ETS CO2 equivalent emissions [GtCO2]"
-	p47_emiRescaleCo2TaxETS(ETS_mkt)			"ETS CO2 equivalent price re-scale update factor in between iterations [%]"
-    p47_emissionsRefYearESR(ttot,all_regi)	    "ESR emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
-	pm_emiTargetES(ttot,all_regi)      		    "CO2 or GHG Effort Sharing emissions target per region [GtC]"
-	p47_emiRescaleCo2TaxES(ttot,all_regi)		"Effort Sharing CO2 equivalent (or CO2) price re-scale update factor in between iterations [%]"
+	pm_emiRescaleCo2TaxETS(ETS_mkt)			"ETS CO2 equivalent price re-scale update factor in between iterations [%]"
+    pm_emissionsRefYearESR(ttot,all_regi)	    "ESR emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
+	pm_emiTargetESR(ttot,all_regi)      		    "CO2 or GHG Effort Sharing emissions target per region [GtC]"
+	pm_emiRescaleCo2TaxESR(ttot,all_regi)		"Effort Sharing CO2 equivalent (or CO2) price re-scale update factor in between iterations [%]"
 	pm_ESRTarget_dev(ttot,all_regi)				"ESR emissions deviation of current iteration from target emissions [GtC]"
-	p47_ESRTarget_dev_iter(iteration,ttot,all_regi) "parameter to save pm_ESRTarget_dev across iterations [GtC]"
+	pm_ESRTarget_dev_iter(iteration,ttot,all_regi) "parameter to save pm_ESRTarget_dev across iterations [GtC]"
 ;
 
 *** Emission reduction quantity target

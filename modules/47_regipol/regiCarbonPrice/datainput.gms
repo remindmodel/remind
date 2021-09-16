@@ -24,7 +24,9 @@ $offdelim
 /
 ;
 
-p47_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSreferenceEmissions("2005",regi)*1000);
+pm_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSreferenceEmissions("2005",regi)/1000);
+
+display f47_ETSreferenceEmissions, pm_emissionsRefYearETS;
 
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
@@ -35,7 +37,7 @@ $ENDIF.emiMktETS
 
 $IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 
 
-parameter f47_ESTarget(tall,all_regi)      "Effort Sharing emission reduction target (%)"
+parameter f47_ESRTarget(tall,all_regi)      "Effort Sharing emission reduction target (%)"
 /
 $ondelim
 $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_target.cs4r"
@@ -43,7 +45,7 @@ $offdelim
 /
 ;
 
-parameter f47_ESreferenceEmissions(tall,all_regi)      "Effort Sharing 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
+parameter f47_ESRreferenceEmissions(tall,all_regi)      "Effort Sharing 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
 /
 $ondelim
 $if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_GHG_referenceEmissions.cs4r"
@@ -52,22 +54,22 @@ $offdelim
 /
 ;
 
-p47_emissionsRefYearESR(ttot,regi) = f47_ESreferenceEmissions(ttot,regi)/1000;
+pm_emissionsRefYearESR(ttot,regi) = f47_ESRreferenceEmissions(ttot,regi)/1000;
 
-pm_emiTargetES(t,regi)$(f47_ESTarget(t,regi) and regi_group("EU27_regi",regi)) = ( p47_emissionsRefYearESR("2005",regi) * (1 + f47_ESTarget(t,regi)) ) / sm_c_2_co2;
+pm_emiTargetESR(t,regi)$(f47_ESRTarget(t,regi) and regi_group("EU27_regi",regi)) = ( pm_emissionsRefYearESR("2005",regi) * (1 + f47_ESRTarget(t,regi)) ) / sm_c_2_co2;
 
 * Applying modifier if it is assumed that the Effort Sharing Decision target does not need to be reached entirely at 2030
-pm_emiTargetES("2030",regi)$pm_emiTargetES("2030",regi) = pm_emiTargetES("2030",regi) * %cm_emiMktES%;
+pm_emiTargetESR("2030",regi)$pm_emiTargetESR("2030",regi) = pm_emiTargetESR("2030",regi) * %cm_emiMktES%;
 
 $IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
 $IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
 $IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
-	pm_emiTargetES("2050",regi) = (p47_emissionsRefYearESR("2005",regi)/sm_c_2_co2)*%cm_emiMktES2050%;
+	pm_emiTargetESR("2050",regi) = (pm_emissionsRefYearESR("2005",regi)/sm_c_2_co2)*%cm_emiMktES2050%;
 $ENDIF.emiMktES2050_3
 $ENDIF.emiMktES2050_2
 $ENDIF.emiMktES2050
 
-display pm_emiTargetES;
+display pm_emiTargetESR;
 
 $ENDIF.emiMktES
 
