@@ -53,7 +53,7 @@ $endIf.emiMktETS
 Parameter
     pm_emissionsRefYearETS(ETS_mkt)	        "ETS emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
 ***	p47_emiTargetETS(ttot,ETS_mkt)				"ETS emission target (GtCO2-eq)"
-	p47_emiCurrentETS(ETS_mkt)					"previous iteration ETS CO2 equivalent emissions [GtCO2]"
+	pm_emiCurrentETS(ETS_mkt)					"previous iteration ETS CO2 equivalent emissions [GtCO2]"
 	pm_emiRescaleCo2TaxETS(ETS_mkt)			"ETS CO2 equivalent price re-scale update factor in between iterations [%]"
     pm_emissionsRefYearESR(ttot,all_regi)	    "ESR emissions in reference year 2005, used for calculating target deviation of year targets [GtCO2]"
 	pm_emiTargetESR(ttot,all_regi)      		    "CO2 or GHG Effort Sharing emissions target per region [GtC]"

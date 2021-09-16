@@ -367,7 +367,7 @@ $ifthen.emiMktETS not "%cm_emiMktETS%" == "off"
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ETSTarget_dev;
-***          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emissionsCurrent, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
+***          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emiCurrentETS, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
 ***          display pm_ETSTarget_dev_iter;
 ***          display pm_taxemiMkt_iteration;
 	      );
@@ -469,7 +469,7 @@ $ifthen.emiMktETS not "%cm_emiMktETS%" == "off"
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emissionsCurrent, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
+          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emiCurrentETS, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
           display pm_ETSTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );

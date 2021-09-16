@@ -32,7 +32,7 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 ***  calculating ETS CO2 emission target
 		loop((ttot,target_type,emi_type)$pm_regiCO2ETStarget(ttot,target_type,emi_type),
 			if(sameas(target_type,"budget"), !! budget total CO2 target
-				p47_emiCurrentETS(ETS_mkt) = 
+				pm_emiCurrentETS(ETS_mkt) = 
 					sum(regi$ETS_regi(ETS_mkt,regi),
 						sum(ttot2$((ttot2.val ge 2020) AND (ttot2.val le ttot.val)),
 							pm_ts(ttot2)
@@ -41,17 +41,17 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 							*(v47_emiTargetMkt.l(ttot2, regi,"ETS",emi_type)*sm_c_2_co2)
 					));		
 			elseif sameas(target_type,"year"), !! year total CO2 target
-				p47_emiCurrentETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), v47_emiTargetMkt.l(ttot, regi,"ETS", emi_type)*sm_c_2_co2);
+				pm_emiCurrentETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), v47_emiTargetMkt.l(ttot, regi,"ETS", emi_type)*sm_c_2_co2);
 			);
 		);
 	
 ***  calculating ETS CO2 tax rescale factor
 		loop((ttot,target_type,emi_type)$pm_regiCO2ETStarget(ttot,target_type,emi_type),
            if(sameas(target_type,"budget"),
-		   		pm_ETSTarget_dev(ETS_mkt) = (p47_emiCurrentETS(ETS_mkt) - pm_regiCO2ETStarget(ttot,target_type,emi_type))/pm_regiCO2ETStarget(ttot,target_type,emi_type);		 
+		   		pm_ETSTarget_dev(ETS_mkt) = (pm_emiCurrentETS(ETS_mkt) - pm_regiCO2ETStarget(ttot,target_type,emi_type))/pm_regiCO2ETStarget(ttot,target_type,emi_type);		 
 			);
 			if(sameas(target_type,"year"),
-	            pm_ETSTarget_dev(ETS_mkt) = (p47_emiCurrentETS(ETS_mkt) - pm_regiCO2ETStarget(ttot,target_type,emi_type))/pm_emissionsRefYearETS(ETS_mkt);		 
+	            pm_ETSTarget_dev(ETS_mkt) = (pm_emiCurrentETS(ETS_mkt) - pm_regiCO2ETStarget(ttot,target_type,emi_type))/pm_emissionsRefYearETS(ETS_mkt);		 
 			);	
 			pm_ETSTarget_dev_iter(iteration, ETS_mkt) = pm_ETSTarget_dev(ETS_mkt);
 			if(iteration.val lt 10,
@@ -97,7 +97,7 @@ $ENDIF.ETS_postTargetIncrease
 *** forcing floor price for UKI (UK has a CO2 price floor of ~€20 €/tCO2e since 2013). The Carbon Price Floor was introduced in 2013 at a rate of £16 (€18.05) per tonne of carbon dioxide-equivalent (tCO2e), and was set to increase to £30 (€33.85) by 2020. However, the government more recently decided to cap the Carbon Price Floor at £18.08 (€20.40) till 2021.
 ***     	pm_taxemiMkt(t,regi,"ETS")$((t.val ge 2015) AND (sameas(regi,"UKI")) AND ETS_regi(ETS_mkt,regi)) = max(20*sm_DptCO2_2_TDpGtC, pm_taxemiMkt(t,regi,"ETS"));
 		
-***    display pm_regiCO2ETStarget, p47_emiCurrentETS, pm_ETSTarget_dev, pm_emissionsRefYearETS, pm_emiRescaleCo2TaxETS;
+***    display pm_regiCO2ETStarget, pm_emiCurrentETS, pm_ETSTarget_dev, pm_emissionsRefYearETS, pm_emiRescaleCo2TaxETS;
 ***    display pm_taxemiMkt;
 
 $ENDIF.emiMktETS
