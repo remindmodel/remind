@@ -9,7 +9,6 @@ pm_ttot_val,input,questionnaire
 cm_optimisticMAC,input,questionnaire
 pm_macCostSwitch,input,questionnaire
 sm_MtCH4_2_TWa,input,questionnaire
-vm_demFeSector,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 cm_indst_H2costAddH2Inv,input,questionnaire
 cm_indst_costDecayStart,input,questionnaire

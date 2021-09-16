@@ -39,11 +39,9 @@ vm_cesIO,variable,???
 cm_TaxConvCheck,variable,??
 pm_taxCO2eq_iterationdiff,input,??
 pm_taxCO2eq_iterationdiff_tmp,input,??
-pm_regiTarget_dev,input,??
 sm_globalBudget_dev,input,??
 pm_factorRescaleCO2Tax,input,??
 pm_regiTarget_dev,input,??
-pm_emissionsCurrent,input,??
 pm_regiCO2target,input,??
 pm_emissionsRefYear,input,??
 pm_regiTarget_dev_iter,input,??
