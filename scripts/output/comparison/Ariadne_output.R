@@ -43,5 +43,5 @@ write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = 
 ## copy the markdown file
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
 ## run the markdown file
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+rmarkdown::render(file.path(outdir, md_template), output_format="pdf_document")
 

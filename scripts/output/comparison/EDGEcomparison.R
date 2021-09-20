@@ -52,8 +52,8 @@ alltosave = list(fleet_all = NULL,
                  demgdpcap_all = NULL)
 
 scenNames <- getScenNames(outputdirs)
-EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
-gdx_path  <- path(outputdirs,gdx_name)
+EDGEdata_path  <- file.path(outputdirs, "EDGE-T/")
+gdx_path  <- file.path(outputdirs,gdx_name)
 scenNames <- getScenNames(outputdirs)
 setConfig(regionmapping = gsub("(.*/\\s*(.*$))", "\\2", cfg$regionmapping))
 names(gdx_path) <- scenNames
@@ -546,7 +546,7 @@ write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = 
 
 
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+rmarkdown::render(file.path(outdir, md_template), output_format="pdf_document")
 
 
 

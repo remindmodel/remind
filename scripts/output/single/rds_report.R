@@ -19,15 +19,15 @@ if(!exists("source_include")) {
 }
 
 load(paste0(outputdir, "/config.Rdata"))
-gdx	     <- path(outputdir,"fulldata.gdx")
-gdx_ref  <- path(outputdir,"input_ref.gdx")
+gdx	     <- file.path(outputdir,"fulldata.gdx")
+gdx_ref  <- file.path(outputdir,"input_ref.gdx")
 if(!file.exists(gdx_ref)) gdx_ref <- NULL
 rds <- paste0(outputdir, "/report.rds")
 runstatistics <- paste0(outputdir,"/runstatistics.rda")
 resultsarchive <- "/p/projects/rd3mod/models/results/remind"
 ###############################################################################
 
-mif <- path(outputdir,paste0("REMIND_generic_",cfg$title,".mif"))
+mif <- file.path(outputdir,paste0("REMIND_generic_",cfg$title,".mif"))
 
 if(file.exists(mif)) {
   report <- read.quitte(mif)

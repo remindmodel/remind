@@ -98,7 +98,7 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 parameter f47_ESTarget(tall,all_regi)      "Effort Sharing emission reduction target (%)"
 /
 $ondelim
-$include "./modules/47_regipol/regiCarbonPrice/input/p47_EStarget.cs4r"
+$include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_target.cs4r"
 $offdelim
 /
 ;
@@ -106,8 +106,8 @@ $offdelim
 parameter f47_ESreferenceEmissions(tall,all_regi)      "Effort Sharing 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
 /
 $ondelim
-$if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ES_GHG_referenceEmissions.cs4r"
-$if %cm_emiMktES_type% == "netCO2"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ES_CO2_referenceEmissions.cs4r"
+$if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_GHG_referenceEmissions.cs4r"
+$if %cm_emiMktES_type% == "netCO2"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_CO2_referenceEmissions.cs4r"
 $offdelim
 /
 ;

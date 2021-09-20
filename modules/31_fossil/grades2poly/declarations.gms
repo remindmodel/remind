@@ -8,6 +8,7 @@
 scalars
 s31_debug                                         "debugging option to display more output"        /0/
 s31_max_disp_peur                                 "maximum amount of cumulative uranium production in Megatonnes of metal uranium (    U3O8, the stuff that is traded at 40-60US$/lb)."
+s31_fuEx_startyr                                  "base year for fossil extraction cost curves and fossil rent discounting"
 ;
 
 

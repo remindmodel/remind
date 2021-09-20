@@ -41,7 +41,6 @@ pm_cesdata_sigma(ttot,in)$ (pm_ttot_val(ttot) eq 2045  AND sameAs(in, "en")) = 0
 
 *** Specify the ces structure on which the calibration will run.
 ppf_29(all_in)
-*** FIXME should include set of "stationary" module, too
   = ppfen_dyn35(all_in)
   + cal_ppf_buildings_dyn36(all_in)
   + cal_ppf_industry_dyn37(all_in)
@@ -148,15 +147,8 @@ putty_compute_in(in)$((in_29(in) AND ppf_putty(in))
                                       = YES;
 
 *** End of Sets calculation
+
 Parameter
-p29_cesdata_price   "exogenous final energy prices"
-/
-$ondelim
-$include "./modules/29_CES_parameters/calibrate/input/p29_cesdata_price.cs4r"
-$offdelim
-/
-
-
 p29_esdemand       "energy service demand"
 /
 $ondelim

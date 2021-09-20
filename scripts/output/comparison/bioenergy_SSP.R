@@ -105,10 +105,10 @@ read_all<-function(gdx,func,as.list=TRUE,...){
 }
 
 # Set gdx path
-gdx_path       <- path(outputdirs,gdx_name)
+gdx_path       <- file.path(outputdirs,gdx_name)
 
 # retrieve run titles
-scenNames_path <- path(outputdirs,"config.Rdata")
+scenNames_path <- file.path(outputdirs,"config.Rdata")
 scenNames      <- c()
 for (i in scenNames_path) {
   load(i)
