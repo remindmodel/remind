@@ -601,5 +601,6 @@ display p47_implFETargetCurrent, p47_implFETarget, p47_implFETarget_extended, p4
 
 $endIf.cm_implicitFE
 
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
 

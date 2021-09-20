@@ -63,5 +63,8 @@ $IFTHEN.ESprice not "%cm_emiMktES%" == "off"
   );
 $ENDIF.ESprice
 $offtext
+
+
+v47_emiTarget.l(t,regi,"grossEnCO2_noBunkers")=0;
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 
