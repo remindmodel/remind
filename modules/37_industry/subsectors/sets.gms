@@ -39,6 +39,12 @@ Sets
     co2steel
   /
 
+  macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
+  /
+    (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
+    co2cement_process     . cement
+  /
+
   secInd37_2_emiInd37(secInd37,emiInd37)   "link industry sub-sectors to sector emissions"
   /
     cement    . (co2cement, co2cement_process)
@@ -254,6 +260,13 @@ Sets
     ue_cement          . en_cement
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
+  /
+
+  entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  /
+    fesos
+    fehos
+    fegas
   /
 ;
 
