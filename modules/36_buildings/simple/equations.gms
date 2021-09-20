@@ -20,12 +20,12 @@ q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 ;
 
 ***---------------------------------------------------------------------------
-*'  Calculate sector-specific demand-side cost: hydrogen phase-in cost + CES markup cost 
+*'  Calculate sector-specific additional t&d cost (here only cost of hydrogen t&d at low hydrogen penetration levels when grid is not yet developed)
 ***---------------------------------------------------------------------------
-q36_costAddTeInv(t,regi,te)$(tdTeMarkup36(te) OR sameAs(te,"tdh2s"))..
+q36_costAddTeInv(t,regi,te)$(sameAs(te,"tdh2s"))..
   vm_costAddTeInv(t,regi,te,"build")
   =e=
-  v36_costAddTeInvH2(t,regi,te) + v36_costCESMkup(t,regi,te)
+  v36_costAddTeInvH2(t,regi,te)
 ;
 
 ***---------------------------------------------------------------------------
@@ -71,15 +71,11 @@ q36_H2Share(t,regi)..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in buildings
 ***---------------------------------------------------------------------------
-q36_costCESmarkup(t,regi,te)$(tdTeMarkup36(te))..
-  v36_costCESMkup(t,regi,te)
+q36_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn36(in))..
+  vm_costCESMkup(t,regi,in)
   =e=
-  sum(in$(tdTe2In36(te,in)),
-  p36_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")))
+  p36_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
-
-
-
 
 
 *** calculate district heat share in FE buildings
