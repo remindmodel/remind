@@ -476,7 +476,6 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 			s47_freeYear = ttot3.val;
 			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
 		);
-display s47_freeYear;   
         loop(ttot3$(ttot3.val eq s47_freeYear),
 			pm_taxCO2eq(t,all_regi)$((t.val ge ttot3.val) AND (t.val lt ttot2.val))  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
 		);	
@@ -494,7 +493,6 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 			s47_freeYear = ttot3.val;
 			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
 		);
-display s47_freeYear;  
         loop(ttot3$(ttot3.val eq s47_freeYear),
 			pm_taxCO2eq(t,all_regi)$((t.val ge ttot3.val) AND (t.val lt ttot2.val))  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
 		);	
