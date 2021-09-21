@@ -255,6 +255,15 @@ Sets
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
   /
+
+ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
+  /
+    feelhth_chemicals
+    feelwlth_chemicals
+    feel_steel_secondary
+    feelwlth_otherInd
+    feelhth_otherInd
+  /
 ;
 
 *** ---------------------------------------------------------------------------
