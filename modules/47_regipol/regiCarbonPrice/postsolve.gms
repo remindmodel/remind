@@ -472,10 +472,14 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 *** terminal year price
 		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
 ***	linear price between first free year and terminal year
-		loop(ttot3, 
-			break$(ttot3.val ge ttot.val and ttot3.val ge cm_startyear); !!initial free price year
-			pm_taxCO2eq(t,all_regi)$(t.val ge cm_startyear AND t.val ge ttot3.val AND t.val lt ttot2.val)  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
-			);
+		loop(ttot3,
+			s47_freeYear = ttot3.val;
+			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
+		);
+display s47_freeYear;   
+        loop(ttot3$(ttot3.val eq s47_freeYear),
+			pm_taxCO2eq(t,all_regi)$((t.val ge ttot3.val) AND (t.val lt ttot2.val))  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+		);	
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
 	);
@@ -486,10 +490,14 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 *** terminal year price
 		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
 ***	linear price between first free year and terminal year
-		loop(ttot3, 
-            break$(ttot3.val ge ttot.val and ttot3.val ge cm_startyear); !!initial free price year
-			pm_taxCO2eq(t,all_regi)$(t.val ge cm_startyear AND t.val ge ttot3.val AND t.val lt ttot2.val)  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val);
-			);
+		loop(ttot3,
+			s47_freeYear = ttot3.val;
+			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
+		);
+display s47_freeYear;  
+        loop(ttot3$(ttot3.val eq s47_freeYear),
+			pm_taxCO2eq(t,all_regi)$((t.val ge ttot3.val) AND (t.val lt ttot2.val))  = ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+		);	
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
 	);

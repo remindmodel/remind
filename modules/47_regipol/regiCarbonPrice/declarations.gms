@@ -13,7 +13,8 @@ Parameter
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   pm_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
   pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
-  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
+  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)  "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
+  s47_freeYear                                 "value of the first free year for the carbon price trajectory"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
