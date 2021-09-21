@@ -193,11 +193,29 @@ prepare <- function() {
   cat("\n===== git info =====\nLatest commit: ")
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
-  cat("\n====================\n")
+  
+  # print version information of installed packages
+  cat("\n==== installed package versions =====\n")
+  installed.packages() %>%
+    # printing a tibble instead of a list makes for a table that is easier to
+    # compare
+    as_tibble() %>%
+    select(Package, Version) %>%
+    # using right_join instead of filter generates NA for packages that are not
+    # installed
+    right_join(
+	# list all packages of interest here
+        tribble(
+            ~Package, "data.table", "devtools", "dplyr", "edgeTrpLib",
+            "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
+            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "mip", "mrremind", "mrvalidation", "optparse", "parallel",
+            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse", 
+	    "tools"),
 
-  ## print the libraries version
-  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
-
+        'Package') %>%
+    print(n = Inf)
+  cat("==========\n")
 
   load("config.Rdata")
 
