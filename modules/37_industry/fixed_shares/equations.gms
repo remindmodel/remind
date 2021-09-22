@@ -152,14 +152,12 @@ q37_costAddTeInv(t,regi,te)$(sameAs(te,"tdh2s"))..
 q37_costAddH2PhaseIn(t,regi)..
   v37_costAddTeInvH2(t,regi,"tdh2s")
   =e=
-    ( 1 /(
-      1 + (3**v37_costExponent(t,regi))
-      )
-    ) * (
-      s37_costAddH2Inv * 8.76
-      * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
+    (1 / (1 + (3 ** v37_costExponent(t,regi)))) 
+  * ( s37_costAddH2Inv 
+    * sm_TWa_2_kWh / sm_trillion_2_non
+    * sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt))
     )
-    + (v37_expSlack(t,regi)*1e-8)
+  + (v37_expSlack(t,regi) * 1e-8)
 ;
 
 

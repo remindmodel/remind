@@ -19,3 +19,5 @@ pm_shfe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
 cm_ARIADNE_FeShareBounds,input,questionnaire
 
+sm_trillion_2_non,input,questionnaire
+sm_TWa_2_kWh,input,questionnaire

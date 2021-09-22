@@ -7,7 +7,7 @@
 *** SOF ./modules/36_buildings/simple/declarations.gms
 
 scalars
-  s36_costAddH2Inv   "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2$/Kwh)"
+  s36_costAddH2Inv   "additional h2 distribution costs for low diffusion levels [$/Kwh]"
   s36_costDecayStart "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
   s36_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
 ;

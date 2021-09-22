@@ -45,7 +45,9 @@ q36_costAddH2PhaseIn(t,regi)..
 q36_costAddH2LowPen(t,regi)..
   v36_costAddH2LowPen(t,regi)
   =e=
-  1 / (1 + 3**v36_costExponent(t,regi)) * s36_costAddH2Inv * 8.76
+  1 / (1 + 3**v36_costExponent(t,regi)) 
+  * s36_costAddH2Inv 
+  * sm_TWa_2_kWh / sm_trillion_2_non
 ;
 
 
