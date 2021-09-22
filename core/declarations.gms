@@ -221,6 +221,9 @@ pm_tempScaleGlob2Reg(tall,all_regi)                  "scaling factor from global
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
 pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
 pm_damageMarginal(tall,all_regi)                     "damage function derivative"
+pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
+pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
+pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
 pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) "
 
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages)"
