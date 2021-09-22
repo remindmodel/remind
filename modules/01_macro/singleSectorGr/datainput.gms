@@ -10,7 +10,7 @@
 pm_delta_kap(regi,"kap") = 0.05;
 
 *AL* initialize parameter (avoid compilation errors)
-pm_ppfen_ratios(t,regi,in,in2) = 0; 
+p01_ppfen_ratios(t,regi,in,in2) = 0; 
 pm_ppfen_shares(t,regi,in,in2) = 0; 
 *** load data for macro investments in 2005, used as bound
 parameter p01_boundInvMacro(all_regi)        "macro investments in 2005" 

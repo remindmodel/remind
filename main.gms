@@ -61,7 +61,8 @@
 *' * "s_" to designate scalars,
 *' * "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
 *' * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
-*' * "c_" to designate switches (parameters that enable different configuration choices),
+*' * "p_" to designate other parameters (parameters that were derived from "f_" parameters or defined in code),
+*' * "c_" to designate config switches (parameters that enable different configuration choices),
 *' * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
 *'                              through multiplication, e.g. s_GWh_2_EJ.
 *'
@@ -82,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.241
+* Input data revision: 6.2413
 * 
-* Last modification (input data): Mon Aug 30 11:13:24 2021
+* Last modification (input data): Mon Sep  6 15:38:51 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -187,8 +188,6 @@ $setGlobal transport  complex         !! def = complex
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  fixed_shares     !! def = simple
-***---------------------    38_stationary    --------------------------------------
-$setglobal stationary  off            !! def = simple
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -597,13 +596,13 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0    !! def = 0
+$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR

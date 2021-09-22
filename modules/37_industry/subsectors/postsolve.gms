@@ -60,11 +60,33 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
 );
 
 
+
+
+
 *** calculation of FE Industry Prices (useful for internal use and reporting 
 *** purposes)
 pm_FEPrice(t,regi,entyFE,"indst",emiMkt)$( abs (qm_budget.m(t,regi)) gt sm_eps )
   = q37_demFeIndst.m(t,regi,entyFE,emiMkt)
   / qm_budget.m(t,regi);
+
+
+*** calculate reporting parameters for FE per subsector and SE origin to make R
+*** reporting easier
+*** total FE per energy carrier in industry (sum over subsectors)
+o37_demFeIndTotEn(ttot,regi,entyFe)
+  = sum(fe2ppfEn37(entyFe,in), vm_cesIO.l(ttot,regi,in));
+
+*** FE share per subsector
+o37_shIndFE(ttot,regi,entyFe,secInd37)$( o37_demFeIndTotEn(ttot,regi,entyFe) )
+  = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in)), 
+      vm_cesIO.l(ttot,regi,in)
+    )
+  / o37_demFeIndTotEn(ttot,regi,entyFe);
+
+*** FE per subsector and energy carriers
+o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
+  = o37_shIndFE(ttot,regi,entyFe,secInd37)
+  * vm_demFeSector.l(ttot,regi,entySe,entyFe,"indst",emiMkt);
 
 *** EOF ./modules/37_industry/subsectors/postsolve.gms
 

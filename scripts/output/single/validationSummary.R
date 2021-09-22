@@ -17,10 +17,10 @@ if(!exists("source_include")) {
 } 
 
 scenario               <- getScenNames(outputdir)
-remind_reporting_file  <- path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
-gdx                    <- path(outputdir,"fulldata.gdx")
+remind_reporting_file  <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
+gdx                    <- file.path(outputdir,"fulldata.gdx")
 hist                   <- c(paste0(outputdir, "/historical.mif"), "./core/input/historical/historical.mif")
-name_of_output_pdf     <- path(outputdir,paste0("REMIND_summary_",scenario,".pdf"))
+name_of_output_pdf     <- file.path(outputdir,paste0("REMIND_summary_",scenario,".pdf"))
 
 #### Choose validation data ###
 # Use first hist file that can be found
