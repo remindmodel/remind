@@ -19,9 +19,5 @@ vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   / sm_C_2_CO2;
 
 
-
-*** initialize captured CO2 parameter
-o37_CO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
-
 *** EOF ./modules/37_industry/subsectors/presolve.gms
 

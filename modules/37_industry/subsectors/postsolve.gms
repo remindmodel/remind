@@ -98,7 +98,7 @@ o37_demFeIndSub_SecCC(ttot,regi,secInd37)
   = sum( (se2fe(entySe, entyFe, te), sector2emiMkt("indst",emiMkt))$(macBaseInd37(entyFe,secInd37)), o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt));
 
 *** industry captured CO2
-o37_CO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(entyFeCC37(entyFe) AND o37_demFeIndSub_SecCC(ttot,regi,secInd37) AND macBaseInd37(entyFe,secInd37)) 
+pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(entyFeCC37(entyFe) AND o37_demFeIndSub_SecCC(ttot,regi,secInd37) AND macBaseInd37(entyFe,secInd37)) 
   = sum( secInd37_2_emiInd37(secInd37,emiInd37)$(emiInd37_fuel(emiInd37)), vm_emiIndCCS.l(ttot,regi,emiInd37))
   * o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt) /
   o37_demFeIndSub_SecCC(ttot,regi,secInd37);
