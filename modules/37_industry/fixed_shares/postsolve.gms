@@ -91,10 +91,5 @@ o37_CO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(entyFeCC37(entyFe) AND
   o37_demFeIndSub_SecCC(ttot,regi,secInd37);
 
 
-*** test output parameter for industry CCS with biomass or synfuels
-***industry CCS with fuels from biomass (industry BECCS) or synthetic origin (all CCS not done with fossil fuels)
-o37_testIndBECCS(t,regi) =  sum( (sector2emiMkt(sector,emiMkt), se2fe(entySe,entyFe,te), secInd37)$(NOT entySeFos(entySe)),
-                        			o37_CO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))* pm_share_CCS_CCO2(t,regi);
-
 *** EOF ./modules/37_industry/fixed_shares/postsolve.gms
 

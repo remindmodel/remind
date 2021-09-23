@@ -1702,16 +1702,6 @@ entySeFos(all_enty)       "biomass secondary energy types"
 	segafos      "secondary energy gas from fossil origin"
 /
 
-entySeNoFos(all_enty)    "non-fossil secondary energy hydrocarbon energy carriers"
-/
-        sesobio
-        seliqbio
-        seliqsyn
-        segabio
-        segasyn
-/
-
-
 entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
 
 esty(all_esty)      "energy service types. Have to be added by modules."
