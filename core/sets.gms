@@ -1694,7 +1694,26 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
+entySeFos(all_enty) "secondary energy types from fossil primary energy"
+/
+	seliqfos     "secondary energy liquids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+/
+
+entyFe(all_enty)      "final energy types."
+/
+        fegas        "FE gas stationary"
+        fehos        "FE heating oil stationary"
+        fesos        "FE solids stationary"
+        feels        "FE electricity stationary"
+        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
+        feh2s        "FE hydrogen stationary"
+        fepet        "FE petrol transport"
+        fedie        "FE diesel transport"
+        feh2t        "FE hydrogen transport"
+	feelt        "FE electricity for transport"
+/
 
 esty(all_esty)      "energy service types. Have to be added by modules."
 //
@@ -1887,7 +1906,7 @@ emi_sectors  "comprehensive sector set used for more detailed emissions accounti
 sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
-        process "process sepecific part (and emissions) of the sector activity"
+        process "process specific part (and emissions) of the sector activity"
 /
 
 entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
@@ -2379,6 +2398,7 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
+sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
