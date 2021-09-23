@@ -20,8 +20,12 @@ cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
 all_POPscen     " all possible population scenarios"
 /
 pop_SDP         "SDP population scenario"
+pop_SDP_EI
+pop_SDP_MC
+pop_SDP_RC
 pop_SSP1        "SSP1 population scenario"
 pop_SSP2        "SSP2 population scenario"
+pop_SSP2Ariadne
 pop_SSP3        "SSP3 population scenario"
 pop_SSP4        "SSP4 population scenario"
 pop_SSP5        "SSP5 population scenario"
@@ -34,8 +38,12 @@ pop_b2
 all_GDPscen    "all possible GDP scenarios"
 /
 gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
 gdp_SSP1        "SSP1 fastGROWTH medCONV"
 gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2Ariadne
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
@@ -48,8 +56,12 @@ gdp_b2
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
 /
 SDP         "SDP scenario"
+SDP_EI
+SDP_MC
+SDP_RC
 SSP1        "SSP1 fastGROWTH medCONV"
 SSP2        "SSP2 medGROWTH medCONV"
+SSP2Ariadne
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
@@ -96,9 +108,13 @@ SLCF_building_transport
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
 /
     SDP         "very low emissions (from SDP scenario in MAgPIE)"
+          SDP_EI
+          SDP_MC
+          SDP_RC
     SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
     SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
-    SSP3        "currently not available"
+    SSP2Ariadne
+          SSP3        "currently not available"
     SSP4        "currently not available"
     SSP5        "high   emissions (from SSP5 scenario in MAgPIE)"
 /
@@ -839,7 +855,6 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R
 
 sets
 
@@ -879,7 +894,7 @@ sets
        codePerformance
        /
 
-module2realisation(modules,*) "mapping of modules and active realisations" /
+      module2realisation(modules,*) "mapping of modules and active realisations" /
        macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%

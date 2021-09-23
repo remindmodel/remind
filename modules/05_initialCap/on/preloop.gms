@@ -410,12 +410,12 @@ loop(regi,
 pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP);
 
 *AD* It looks like the dynamic etas in pm_dataeta are not used in pm_eta_conv, i.e.,
-**** they are not relevant for se->se or se->fe conversion.
-**** So if one adds a dynamic trajectory to generisdata_varying_eta.csv for a technology
-**** of this conversion type, it is ignored.
-**** As we need dynamic efficiencies for H2, we copy the values here explicitly.
-**** After checking with RP, I would however suggest to use the following:
-**** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
+*** they are not relevant for se->se or se->fe conversion.
+*** So if one adds a dynamic trajectory to generisdata_varying_eta.csv for a technology
+*** of this conversion type, it is ignored.
+*** As we need dynamic efficiencies for H2, we copy the values here explicitly.
+*** After checking with RP, I would however suggest to use the following:
+*** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
 
 pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
 display pm_eta_conv, fm_dataglob;
