@@ -47,25 +47,22 @@ $endif.new_structure
 *** In the first iteration with a changed CES structure, load ppf prices
 $ifthen.get_prices %c_CES_calibration_prices% == "load"
 
-*** Set CES prices that are not available in the input file p29_cesdata_price to the value specified by cm_CES_calibration_default_prices
-*** Will be slower than calculated values, but can get the calibration started.
-$ifthen.default_prices NOT %cm_CES_calibration_default_prices% == "0"
-pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
+*** Set CES prices to the value specified by cm_CES_calibration_default_prices
+*** and abort if cm_CES_calibration_default_prices == 0 
+$ifthen.default_prices %cm_CES_calibration_default_prices% == "0"
+   abort "Please set cm_CES_calibration_default_prices > 0 to get the calibration started";
 $endif.default_prices
-
-pm_cesdata(t,regi,in,"price")$(    (ppf(in) OR ppf_29(in)) 
-                               AND p29_cesdata_price(t,regi,in) )
-  = p29_cesdata_price(t,regi,in);
+pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
 
 pm_cesdata(t,regi,ipf_29,"price")
   = 1;
 pm_cesdata(t,regi,in_complements(in),"price") = 1;
 
-if (%cm_CES_calibration_default_prices% ne 0, 
-  pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
-                                            pm_cesdata(t,regi,in,"price") eq 1 )
+
+pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
+                                          pm_cesdata(t,regi,in,"price") eq 1 )
   = %cm_CES_calibration_default_prices%;
-);
+
 
 *** If not first iteration or known CES structure, compute ppf prices
 $else.get_prices
