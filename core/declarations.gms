@@ -202,10 +202,6 @@ pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from 
 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
 
-p_FeTot(ttot,all_regi,all_enty,sector,all_emiMkt)                 "total FE summed over all SE carrier origins"
-p_FeSeShare(ttot,all_regi,all_enty,all_enty,sector,all_emiMkt)    "share of SE origin in FE"
-
-
 * Fuel Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
