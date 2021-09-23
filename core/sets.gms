@@ -1695,7 +1695,7 @@ entySeBio(all_enty)       "biomass secondary energy types"
 /
 
 
-entySeFos(all_enty)       "biomass secondary energy types"
+entySeFos(all_enty)       "fossil secondary energy types"
 /
 	seliqfos     "secondary energy liquids from fossil origin"
 	sesofos      "secondary energy solids from fossil origin"
