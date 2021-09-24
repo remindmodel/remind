@@ -186,5 +186,18 @@ pm_ue_eff_target("ue_steel_primary")    = 0.0015;
 pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
 
+
+
+*** FS: CES markup cost industry
+*** default values of CES markup
+p37_CESMkup(t,regi,in) = 0;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+$endIf.CESMkup
+
+display p37_CESMkup;
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

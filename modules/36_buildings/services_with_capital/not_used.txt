@@ -18,3 +18,6 @@ pm_shfe_lo,parameter,not needed
 qm_balFe,input,questionnaire
 sm_TWa_2_MWh,input,questionnaire
 cm_CESMkup_build,input,questionnaire
+vm_costCESMkup,input,questionnaire
+sm_trillion_2_non,input,questionnaire
+sm_TWa_2_kWh,input,questionnaire
