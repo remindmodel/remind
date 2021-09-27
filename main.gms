@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.2413
+* Input data revision: 6.25
 * 
-* Last modification (input data): Mon Sep  6 15:38:51 2021
+* Last modification (input data): Mon Sep 27 11:04:59 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -345,6 +345,7 @@ cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in i
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
 c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
 cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
+c_LULUCFCountryAcc      "switch for shifting land-use change CO2 emissions to be in line with historic data from national accounting"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -650,6 +651,9 @@ $setglobal cm_seTradeScenario  off  !! def = off
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
 $setglobal cm_wind_offshore  0      !! def = 0
+
+$setglobal c_LULUCFCountryAcc  off      !! def = off
+
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
