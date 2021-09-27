@@ -60,10 +60,16 @@ enty_dyn35(all_enty)        "all types of quantities - transport module addition
     feelt
 /
 
-entyFeTrans_dyn35(all_enty)      "final energy types - transport module additions"
+notIn_entyFeTrans_dyn35(all_enty)      "final energy types - transport module additions"
 /
-    feelt
+    fegat
 /
+
+notIn_entyFe2Sector_dyn35(all_enty,emi_sectors)   "mapping final energy to transport sector"
+/
+    fegat.trans
+/
+
 
 transType_35  "transport type"
 /
@@ -191,8 +197,11 @@ fe2ue(fe2ue_dyn35)       = YES;
 teFe2rlf(teFe2rlf_dyn35) = YES;
 
 enty(enty_dyn35)                = YES;
-entyFeTrans(entyFeTrans_dyn35)  = YES;
 entyUe(entyUe_dyn35)            = YES;
+
+entyFeTrans(notIn_entyFeTrans_dyn35)  = NO;
+entyFe(notIn_entyFeTrans_dyn35)  = NO;
+entyFe2Sector(notIn_entyFe2Sector_dyn35) = NO;
 
 in(in_dyn35)             = YES;
 ppfEn(ppfen_dyn35)       = YES;
