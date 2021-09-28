@@ -601,5 +601,26 @@ display p47_implFETargetCurrent, p47_implFETarget, p47_implFETarget_extended, p4
 
 $endIf.cm_implicitFE
 
+
+*** parameter to track value of emissions in regipol module over iterations
+*** track "grossEnCO2_noBunkers" emissions as this calculation (see regiCarbonPrice/equations.gms) involves parameters from the last iteration
+*** such that v47_emiTarget level value may deviate from the value after the last iteration
+p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,t,regi) = 
+*** total net CO2 energy CO2 (w/o DAC accounting of synfuels) 
+	vm_emiTe.l(t,regi,"co2")
+*** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
+	+  vm_emiCdr.l(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
+*** add pe2se BECCS
+	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+*** add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin 
+	+  sum( (entySe,entyFe,secInd37,emiMkt)$(NOT (entySeFos(entySe))),
+		pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(t,regi)
+*** remove bunker emissions
+	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector.l(t,regi,enty,enty2,"trans","other"))
+;
+
+
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
 

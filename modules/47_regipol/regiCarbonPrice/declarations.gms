@@ -143,4 +143,9 @@ s47_initialCO2Price_year				"initial year of co2 price which should be unchanged
 
 $endIf.co2priceSlope
 
+*** parameters to track regipol emissions calculation
+Parameters
+p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"
+;
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms
