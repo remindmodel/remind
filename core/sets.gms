@@ -1713,9 +1713,6 @@ entyFe(all_enty)      "final energy types."
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
-$ifthen.edgeSet "%transport%" == "edge_esm"
-	fegat        "final energy nat. gas for transport"
-$endif.edgeSet
 /
 
 esty(all_esty)      "energy service types. Have to be added by modules."

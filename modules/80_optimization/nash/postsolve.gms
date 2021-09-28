@@ -354,6 +354,7 @@ $ifthen.regipol not "%cm_regiCO2target%" == "off"
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2015 emissions (or cm_startyear if data is not available for 2015).";
           display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2015 (or cm_startyear) emissions to reach convergence.";
           display pm_regiTarget_dev;
+          display pm_factorRescaleCO2Tax;
 ***          display pm_factorRescaleCO2Tax, pm_regiTarget_dev, pm_emissionsCurrent, pm_regiCO2target, pm_emissionsRefYear;
 ***          display pm_regiTarget_dev_iter;
 ***          display pm_taxCO2eq_iteration;
@@ -367,6 +368,7 @@ $ifthen.emiMktETS not "%cm_emiMktETS%" == "off"
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
           display pm_ETSTarget_dev;
+          display pm_emiRescaleCo2TaxETS;
 ***          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emiCurrentETS, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
 ***          display pm_ETSTarget_dev_iter;
 ***          display pm_taxemiMkt_iteration;
@@ -378,7 +380,8 @@ $ifthen.emiMktESR not "%cm_emiMktES%" == "off"
           display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
           display "#### The parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
           display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_ESRTarget_dev;          
+          display pm_ESRTarget_dev;     
+          display pm_emiRescaleCo2TaxESR;     
 ***          display pm_emiRescaleCo2TaxESR, pm_ESRTarget_dev, vm_emiTeMkt.l, pm_emiTargetESR, pm_emissionsRefYearESR;
 ***          display pm_ESRTarget_dev_iter;
 ***          display pm_taxemiMkt_iteration;
