@@ -2729,6 +2729,18 @@ $ENDIF.WindOff
         storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
 /
 
+
+sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies to which sector-specific t&d cost should be added"
+/
+        indst.tdh2s
+        build.tdh2s
+/
+
+ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
+/     
+/
+
+
 opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
 tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
 
