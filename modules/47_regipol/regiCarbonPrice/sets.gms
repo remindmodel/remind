@@ -18,9 +18,10 @@ ETS_mkt "ETS market"
 
 ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market"
 /
+$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
    EU_ETS.(ENC,EWN,ECS,ESC,ECE,FRA,DEU,ESW)  !!NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
+$endif.emiMktETS
 /
-
 
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
@@ -32,9 +33,11 @@ FEtarget_sector2entyFe(FEtarget_sector,all_enty)  "mapping final energy to stati
    trans.(fegat,fepet,fedie,feh2t,feelt)
 /
 
-$ENDIF.cm_implicitFE
+$endif.cm_implicitFE
 
 ;
+
+
 
 
 alias(emi_type,emi_type2);
