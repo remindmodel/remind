@@ -1694,15 +1694,26 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-
-entySeFos(all_enty)       "biomass secondary energy types"
+entySeFos(all_enty) "secondary energy types from fossil primary energy"
 /
-	seliqfos     "secondary energy liquids from fossil origin"
-	sesofos      "secondary energy solids from fossil origin"
-	segafos      "secondary energy gas from fossil origin"
+	seliqfos     "secondary energy liquids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
 /
 
-entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
+entyFe(all_enty)      "final energy types."
+/
+        fegas        "FE gas stationary"
+        fehos        "FE heating oil stationary"
+        fesos        "FE solids stationary"
+        feels        "FE electricity stationary"
+        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
+        feh2s        "FE hydrogen stationary"
+        fepet        "FE petrol transport"
+        fedie        "FE diesel transport"
+        feh2t        "FE hydrogen transport"
+	feelt        "FE electricity for transport"
+/
 
 esty(all_esty)      "energy service types. Have to be added by modules."
 //
@@ -1895,7 +1906,7 @@ emi_sectors  "comprehensive sector set used for more detailed emissions accounti
 sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
-        process "process sepecific part (and emissions) of the sector activity"
+        process "process specific part (and emissions) of the sector activity"
 /
 
 entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
@@ -2387,6 +2398,7 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
+sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
@@ -2713,6 +2725,18 @@ storwindoff,gridwindoff
 $ENDIF.WindOff
         storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
 /
+
+
+sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies to which sector-specific t&d cost should be added"
+/
+        indst.tdh2s
+        build.tdh2s
+/
+
+ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
+/     
+/
+
 
 opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
 tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"

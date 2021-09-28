@@ -29,7 +29,7 @@ q47_emiTarget_netCO2_noLULUCF_noBunkers(t, regi)..
 	=e=
 	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
 		vm_emiAllMkt(t,regi,"co2",emiMkt)
-	);
+	)
 ;
 
 
@@ -77,7 +77,7 @@ q47_emiTarget_netGHG_noLULUCF_noBunkers(t, regi)..
 	=e=
 	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
 		vm_co2eqMkt(t,regi,emiMkt)
-	);
+	)
 ;
 
 ***$endIf.regicarbonprice
@@ -104,7 +104,7 @@ q47_quantity_regiCO2target(t,ext_regi,emi_type)$p47_quantity_regiCO2target(t,ext
 		v47_emiTarget(t,regi,emi_type) 
 	)
 	=l=
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)
+	p47_quantity_regiCO2target(t,ext_regi,emi_type)/sm_c_2_co2
 ;
 
 $endIf.quantity_regiCO2target
