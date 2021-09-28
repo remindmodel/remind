@@ -855,6 +855,7 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
+*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R
 
 sets
 
@@ -894,7 +895,7 @@ sets
        codePerformance
        /
 
-      module2realisation(modules,*) "mapping of modules and active realisations" /
+module2realisation(modules,*) "mapping of modules and active realisations" /
        macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
@@ -1713,6 +1714,7 @@ entyFe(all_enty)      "final energy types."
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
 /
 
 esty(all_esty)      "energy service types. Have to be added by modules."
@@ -1737,6 +1739,7 @@ entyFeTrans(all_enty) "final energy types from transport sector"
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
 /
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
@@ -1927,6 +1930,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		fedie.trans
 		feh2t.trans
 		feelt.trans
+                fegat.trans
 		feels.cdr
 		fehes.cdr
                 fegas.cdr
@@ -2382,6 +2386,9 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
         segasyn.fegas.tdsyngas
+        segabio.fegat.tdbiogat
+        segafos.fegat.tdfosgat
+        segasyn.fegat.tdsyngat
         seliqbio.fehos.tdbiohos
         seliqfos.fehos.tdfoshos
         seliqsyn.fehos.tdsynhos
@@ -2546,6 +2553,8 @@ $endif
         seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
         seliqfos.fepet.tdfospet.oc
+        segabio.fegat.tdbiogat.ch4
+        segafos.fegat.tdfosgat.ch4
 
         segafos.fegas.tdfosgas.co2
         seliqfos.fehos.tdfoshos.co2
