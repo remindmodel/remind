@@ -69,7 +69,7 @@ The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are docum
 
 #### Sets
 
-* don't use set names with three capital letters (like "ETS" or "ESR"), otherwise the maglcass R library might interpret this as a region name when reading in GDX data
+* don't use set element names with three capital letters (like "ETS" or "ESR"), otherwise the maglcass R library might interpret this as a region name when reading in GDX data
 
 
 #### Equations:
