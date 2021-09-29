@@ -60,10 +60,30 @@ enty_dyn35(all_enty)        "all types of quantities - transport module addition
     feelt
 /
 
-entyFeTrans_dyn35(all_enty)      "final energy types - transport module additions"
+notIn_entyFeTrans_dyn35(all_enty)      "final energy types - transport module additions"
 /
-    feelt
+    fegat
 /
+
+notIn_entyFe2Sector_dyn35(all_enty,emi_sectors)   "mapping final energy to transport sector"
+/
+    fegat.trans
+/
+
+*** nat. gas is not used in complex, that's why these elements have to be defined here and not in core
+notIn_se2fe_dyn35(all_enty,all_enty,all_te) "gas techs for transport not used in complex"
+/
+segabio.fegat.tdbiogat
+segafos.fegat.tdfosgat
+segasyn.fegat.tdsyngat
+/
+
+notIn_emi2te_dyn35(all_enty,all_enty,all_te,all_enty) "remove emission pathways: CH4 from nat. gas"
+/
+segabio.fegat.tdbiogat.ch4
+segafos.fegat.tdfosgat.ch4
+/
+
 
 transType_35  "transport type"
 /
@@ -131,10 +151,6 @@ HydrHypeWise
 ***                  module specific mappings
 ***------------------------------------------------------------
 sets
-se2fe_dyn35(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using a technology - transport module additions"
-/
-   seel.feelt.tdelt
-/
 
 fe2ue_dyn35(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 /
@@ -186,13 +202,17 @@ sets
 te(te_dyn35)             = YES;
 teAdj(adjte_dyn35)       = YES;
 teLearn(learnte_dyn35)   = YES;
-se2fe(se2fe_dyn35)       = YES;
 fe2ue(fe2ue_dyn35)       = YES;
 teFe2rlf(teFe2rlf_dyn35) = YES;
 
 enty(enty_dyn35)                = YES;
-entyFeTrans(entyFeTrans_dyn35)  = YES;
 entyUe(entyUe_dyn35)            = YES;
+
+entyFeTrans(notIn_entyFeTrans_dyn35)  = NO;
+entyFe(notIn_entyFeTrans_dyn35)  = NO;
+entyFe2Sector(notIn_entyFe2Sector_dyn35) = NO;
+se2fe(notIn_se2fe_dyn35) = NO;
+emi2te(notIn_emi2te_dyn35) = NO;
 
 in(in_dyn35)             = YES;
 ppfEn(ppfen_dyn35)       = YES;
