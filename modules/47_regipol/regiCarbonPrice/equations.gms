@@ -32,18 +32,27 @@ q47_emiTarget_netCO2_noLULUCF_noBunkers(t, regi)..
 	)
 ;
 
+
+
 *** FS: gross energy CO2 emissions (excl. BECCS and bunkers)
 *** note: industry BECCS is still missing from this variable, to be added in the future
 q47_emiTarget_grossEnCO2(t,regi)..
 	v47_emiTarget(t,regi,"grossEnCO2_noBunkers")
 	=e=
-*** total net CO2 energy CO2 (w/o DAC accounting of synfuels) - DAC accounting of synfuels - captured bio CO2 * CCS share of captured CO2 - bunkers
+*** total net CO2 energy CO2 (w/o DAC accounting of synfuels) 
 	vm_emiTe(t,regi,"co2")
 *** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
 	+  vm_emiCdr(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
+*** add pe2se BECCS
 	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+*** add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin 
+	+  sum( (entySe,entyFe,secInd37,emiMkt)$(NOT (entySeFos(entySe))),
+		pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(t,regi)
+*** remove bunker emissions
 	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
+
+
 
 *** net GHG
 q47_emiTarget_netGHG(t, regi)..
