@@ -7,7 +7,7 @@
 *** SOF ./modules/36_buildings/simple/declarations.gms
 
 scalars
-  s36_costAddH2Inv   "additional h2 distribution costs for low diffusion levels (default value: 6.5$/kg = 0.2$/Kwh)"
+  s36_costAddH2Inv   "additional h2 distribution costs for low diffusion levels [$/kWh]"
   s36_costDecayStart "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
   s36_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
 ;
@@ -35,7 +35,6 @@ Positive Variables
   v36_Elshare(ttot,all_regi)      "electricity share in FE buildings"
   v36_costAddH2LowPen(ttot,all_regi) "low penetration H2 mark up component"
   v36_costAddTeInvH2(ttot,all_regi,all_te)         "Additional hydrogen phase-in cost at low H2 penetration levels [trUSD]"
-  v36_costCESMkup(ttot,all_regi,all_te)            "CES markup cost [trUSD]"
 ;
 
 Equations
@@ -46,7 +45,7 @@ Equations
   q36_costAddH2LowPen(ttot,all_regi) "additional buildings hydrogen annual investment costs under low technology diffusion"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"  
   q36_costAddH2PhaseIn(ttot,all_regi) "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in buildings" 
-  q36_costCESmarkup(ttot,all_regi,all_te) "calculation of additional CES markup cost to represent demand-side transformation cost, for example, investment cost of heat pumps"
+  q36_costCESmarkup(ttot,all_regi,all_in) "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
   q36_costAddTeInv(ttot,all_regi,all_te)  "summation of sector-specific demand-side cost"
 ;
 

@@ -110,6 +110,13 @@ Sets
     fehes
     feels
   /
+
+  entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  /
+    fesos
+    fehos
+    fegas
+  /
   
   secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
   /
@@ -134,17 +141,21 @@ tdTe2In37(all_te,all_in) "mapping of td technologies to CES nodes for CES markup
   /   /
   ppfKap_industry_dyn37(all_in)   "energy efficiency capital of industry"
   /   /
+
+
+
+ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
+/
+  feeli
+/
 ;
-
-
-
-
 *** add module specific sets and mappings to the global sets and mappings
 in(in_industry_dyn37)              = YES;
 ppfEn(ppfen_industry_dyn37)        = YES;
 cesOut2cesIn(ces_industry_dyn37)   = YES;
 fe2ppfEn(fe2ppfEn37)               = YES;
 fe_tax_sub_sbi(fe_tax_sub37)       = YES;
+ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
 
 *** EOF ./modules/37_industry/fixed_shares/sets.gms
 

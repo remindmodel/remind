@@ -67,7 +67,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     #   1/1000*12/44, # Mt CO2/yr -> Gt CO2/yr -> Gt C/yr
     map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
     if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
-      # MAgPIE 4
+      # MAgPIE 4 (up to date)
       map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -79,7 +79,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
     } else if("Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)" %in% getNames(mag)) {
-      # MAgPIE 4 new
+      # MAgPIE 4 (intermediate - wrong units)
       map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)",                       emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O-N/yr)",      emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -124,6 +124,23 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
         #if (map[i,]$emirem!="co2luc" &&  map[i,]$emirem!="n2ofertrb") {
         # tmp[tmp<0] <- 0
         #}
+        
+        # Check for negative values, since only "co2luc" is allowed to be 
+        # negative. All other emission variables are positive by definition.
+        if(map[i,]$emirem != "co2luc"){
+          if( !(all(tmp>=0)) ){
+            # Hotfix 2021-09-28: Raise warning and set negative values to zero.
+            # XXX Todo XXX: Make sure that MAgPIE is not reporting negative N2O
+            # or CH4 emissions and convert this warning into an error that 
+            # breaks the model instead of setting the values to zero.
+            print(paste0("Warning: Negative values detected for '", 
+                         map[i,]$emirem, "' / '", map[i,]$emimag, "'. ",
+                         "Hot fix: Set respective values to zero."))
+            tmp[tmp < 0] <- 0
+          }
+        }
+        
+        # Add emission variable to full dataframe
         out<-mbind(out,tmp)
     }
 

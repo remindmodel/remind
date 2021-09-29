@@ -137,12 +137,12 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Calculate sector-specific demand-side cost: hydrogen phase-in cost + CES markup cost 
+*'  Calculate sector-specific additional t&d cost (here only cost of hydrogen t&d at low hydrogen penetration levels when grid is not yet developed)
 ***---------------------------------------------------------------------------
-q37_costAddTeInv(t,regi,te)$(tdTeMarkup37(te) OR sameAs(te,"tdh2s"))..
+q37_costAddTeInv(t,regi,te)$(sameAs(te,"tdh2s"))..
   vm_costAddTeInv(t,regi,te,"indst")
   =e=
-  v37_costAddTeInvH2(t,regi,te) + v37_costCESMkup(t,regi,te)
+  v37_costAddTeInvH2(t,regi,te)
 ;
 
 
@@ -152,14 +152,12 @@ q37_costAddTeInv(t,regi,te)$(tdTeMarkup37(te) OR sameAs(te,"tdh2s"))..
 q37_costAddH2PhaseIn(t,regi)..
   v37_costAddTeInvH2(t,regi,"tdh2s")
   =e=
-    ( 1 /(
-      1 + (3**v37_costExponent(t,regi))
-      )
-    ) * (
-      s37_costAddH2Inv * 8.76
-      * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
+    (1 / (1 + (3 ** v37_costExponent(t,regi)))) 
+  * ( s37_costAddH2Inv 
+    * sm_TWa_2_kWh / sm_trillion_2_non
+    * sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt))
     )
-    + (v37_expSlack(t,regi)*1e-8)
+  + (v37_expSlack(t,regi) * 1e-8)
 ;
 
 
@@ -185,11 +183,10 @@ q37_H2Share(t,regi)..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in industry
 ***---------------------------------------------------------------------------
-q37_costCESmarkup(t,regi,te)$(tdTeMarkup37(te))..
-  v37_costCESMkup(t,regi,te)
+q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
+  vm_costCESMkup(t,regi,in)
   =e=
-  sum(in$(tdTe2In37(te,in)),
-  p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")))
+  p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms
