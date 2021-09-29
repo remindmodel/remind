@@ -24,11 +24,11 @@ $offdelim
 /
 ;
 
+$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 pm_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSreferenceEmissions("2005",regi)/1000);
 
 display f47_ETSreferenceEmissions, pm_emissionsRefYearETS;
 
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
   p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
