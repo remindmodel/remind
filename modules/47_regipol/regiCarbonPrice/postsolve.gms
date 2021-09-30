@@ -24,10 +24,10 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 
 *** Initializing emi market historical and reference prices
 		pm_taxemiMkt(ttot,regi,emiMkt)$(ETS_regi(ETS_mkt,regi) AND p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)) = p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt);
-		pm_taxemiMkt("2005",regi,"ETS")$ETS_regi(ETS_mkt,regi)$(cm_startyear le 2005) = 0;
-		pm_taxemiMkt("2010",regi,"ETS")$ETS_regi(ETS_mkt,regi)$(cm_startyear le 2010)  = 15*sm_DptCO2_2_TDpGtC;
-		pm_taxemiMkt("2015",regi,"ETS")$ETS_regi(ETS_mkt,regi)$(cm_startyear le 2015)  = 8*sm_DptCO2_2_TDpGtC;
-		pm_taxemiMkt("2020",regi,"ETS")$ETS_regi(ETS_mkt,regi)$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2005",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2005)) = 0;
+		pm_taxemiMkt("2010",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2010))  = 15*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2015",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2015))  = 8*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 30*sm_DptCO2_2_TDpGtC;
 
 ***  calculating ETS CO2 emission target
 		loop((ttot,target_type,emi_type)$pm_regiCO2ETStarget(ttot,target_type,emi_type),
