@@ -48,24 +48,10 @@ if(file.exists("fulldata.gdx"))
 load("config.Rdata")
 scenario <- cfg$gms$cm_GDPscen
 EDGE_scenario <- cfg$gms$cm_EDGEtr_scen
+smartlifestyle <- grepl("Wise", EDGE_scenario)
+tech_scen <- gsub("Wise", "", EDGE_scenario)
 # set regionmapping compatible with REMIND-EU and REMIND-H12 configs
 setConfig(regionmapping = sub('.*\\/', '', cfg$regionmapping))
-
-EDGEscenarios <- fread("EDGEscenario_description.csv")[scenario_name == EDGE_scenario]
-
-
-inconvenience <- EDGEscenarios[options == "inconvenience", switch]
-
-if (EDGE_scenario %in% c("ConvCase", "ConvCaseWise")) {
-  techswitch <- "Liquids"
-} else if (EDGE_scenario %in% c("ElecEra", "ElecEraWise")) {
-  techswitch <- "BEV"
-} else if (EDGE_scenario %in% c("HydrHype", "HydrHypeWise")) {
-  techswitch <- "FCEV"
-} else {
-  print("You selected a not allowed scenario. Scenarios allowed are: ConvCase, ConvCaseWise, ElecEra, ElecEraWise, HydrHype, HydrHypeWise")
-  quit()
-}
 
 ## learning is OFF by default
 learning = FALSE
@@ -132,10 +118,10 @@ if (file.exists(datapath("demand_previousiter.RDS")) & learning) {
   stations = readRDS(datapath("stations.RDS"))
   ## calculate non fuel costs for technologies subjected to learning and merge the resulting values with the historical values
   nonfuel_costs = merge(nonfuel_costs, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
-  if (techswitch == "BEV"){
+  if (tech_scen == "ElecEra"){
     rebates_febatesBEV = EDGEscenarios[options== "rebates_febates", switch]
     rebates_febatesFCEV = FALSE
-  } else if (techswitch == "FCEV") {
+  } else if (tech_scen == "HydrHype") {
     rebates_febatesFCEV = EDGEscenarios[options== "rebates_febates", switch]
     rebates_febatesBEV = FALSE
   } else {
@@ -216,7 +202,7 @@ logit_data <- calculate_logit_inconv_endog(
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
   totveh = if (!is.null(totveh)) totveh,
-  techswitch = techswitch)
+  tech_scen = tech_scen)
 
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
@@ -308,7 +294,7 @@ num_veh_stations = calc_num_vehicles_stations(
     c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
   intensity = intensity,
-  techswitch = techswitch,
+  tech_scen = tech_scen,
   loadFactor = loadFactor,
   EDGE2teESmap = EDGE2teESmap,
   rep = opt$reporting)
