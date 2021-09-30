@@ -1393,7 +1393,7 @@ $offdelim
 
 *** p_EmiLULUCFCountryAcc contains historic LULUCF emissions from PRIMAP hist database, 
 *** used for rescaling land-use change emissions in case c_LULUCFCountryAcc = "on" to follow national LULUCF emissions accounting
-parameter p_EmiLULUCFCountryAcc(tall,all_regi)                "historic co2 emissions from landuse change based on country accounting"
+parameter p_EmiLULUCFCountryAcc(tall,all_regi)                "historic co2 emissions from landuse change based on country accounting [Mt CO2/yr]"
 /
 $ondelim
 $include "./core/input/p_EmiLULUCFCountryAcc.cs4r"
@@ -1404,7 +1404,8 @@ $offdelim
 *** if c_LULUCFCountryAcc = "on" -> shift land-use change CO2 MAC baseline to align 2015 value with historic data from country accounting
 $ifthen.LULUCFCountryAcc not "%c_LULUCFCountryAcc%" == "off"
 p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val ge 2005) = p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val ge 2005) 
-                                                          - (p_macBaseMagpie("2015",regi,"co2luc") - p_EmiLULUCFCountryAcc("2015",regi)); 
+                                                          - (p_macBaseMagpie("2015",regi,"co2luc") - p_EmiLULUCFCountryAcc("2015",regi))
+                                                          * 1e-3/sm_c_2_co2; 
 $endif.LULUCFCountryAcc
 
 *** ----- Emission factor of final energy carriers -----------------------------------
