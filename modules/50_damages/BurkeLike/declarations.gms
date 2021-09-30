@@ -6,6 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/BurkeLike/declarations.gms
 parameters
+pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
+pm_damageMarginal(tall,all_regi)                     "damage function derivative"
 p50_damageFuncCoef1     "coef1 of damamge function",
 p50_damageFuncCoef2     "coef2 of damamge function"
 ;

@@ -22,6 +22,10 @@ p50_damageFuncCoefb2 = -0.000718;
 
 * initialize
 pm_damage(tall,regi) = 1;
+pm_damageGrowthRate(tall,regi)         = 0;
+pm_damageMarginalT(tall,regi)           = 0;
+pm_damageMarginalTm1(tall,regi)           = 0;
+pm_damageMarginalTm2(tall,regi)           = 0;
 
 
 *** EOF ./modules/50_damages/KWLike/datainput.gms

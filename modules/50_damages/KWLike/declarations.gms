@@ -7,6 +7,11 @@
 *** SOF ./modules/50_damages/KWLike/declarations.gms
 
 parameters
+pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
+pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
+pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
+pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
 p50_damageFuncCoefa1     "coef1 of damamge function",
 p50_damageFuncCoefa2     "coef2 of damamge function"
 p50_damageFuncCoefb1     "coef1 of damamge function",

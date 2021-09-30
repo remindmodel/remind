@@ -5,6 +5,10 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 
+pm_regionalTemperature(tall,regi)      = 0;
+pm_tempScaleGlob2Reg(tall,regi)        = 1;
+
+
 *** satisfy dependencies
 ***$ifi not %cm_rcp_scen% == 'rcp26' $ifi not %cm_rcp_scen% == 'rcp85' abort "module downscaleTemperature=CMIP5 requires cm_rcp_scen={rcp26,rcp85}. As the differences in downscaling are not large across RCPs, you may just want to comment out this abort.";
 

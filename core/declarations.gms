@@ -215,17 +215,10 @@ pm_globalMeanTemperature(tall)                       "global mean temperature an
 pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zeroed around 1900"
 pm_temperatureImpulseResponseCO2(tall,tall)          "temperature impulse response to CO2 [K/GtCO2]"
 
-pm_regionalTemperature(tall,all_regi)                "regional temperature"
-pm_tempScaleGlob2Reg(tall,all_regi)                  "scaling factor from global to regional temperature"
-pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
-pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
-pm_damageMarginal(tall,all_regi)                     "damage function derivative"
-pm_damageMarginalT(tall,all_regi)                    "damage function derivative for KW"
-pm_damageMarginalTm1(tall,all_regi)                  "damage function derivative for KW"
-pm_damageMarginalTm2(tall,all_regi)                  "damage function derivative for KW"
+*** damage related
 pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) "
-
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages)"
+
 ***----------------------------------------------------------------------------------------
 *** ----- Parameters needed for MAGICC ----------------------------------------------------
 p_MAGICC_emi(tall,RCP_regions_world_bunkers,emiRCP)  "emission data to export"
