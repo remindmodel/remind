@@ -472,4 +472,5 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 
 $endif.CO2priceDependent_AdjCosts
 
+
 *** EOF ./core/presolve.gms
