@@ -4,29 +4,28 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/50_damages/KWLike/datainput.gms
+
 * satisfy dependencies
-$ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=BurkeLike requires downscaleTemperature=CMIP5";
+$ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWLike requires downscaleTemperature=CMIP5";
 
 ** damage specification
     
 
-*Burke default lag0 damages:
-if(cm_damages_BurkeLike_specification eq 0,
-p50_damageFuncCoef1 =  0.01272;
-p50_damageFuncCoef2 = -0.00049;
-);
+*default specification:
+p50_damageFuncCoefa1 =  0.00641;
+p50_damageFuncCoefa2 =  0.00345;
+p50_damageFuncCoefb1 = -0.00109;
+p50_damageFuncCoefb2 = -0.000718;
 
-* 5lag specification:    
-if(cm_damages_BurkeLike_specification eq 5,
-p50_damageFuncCoef1 = -0.00371;
-p50_damageFuncCoef2 = -0.000097;
-);
-**
  
 
 * initialize
 pm_damage(tall,regi) = 1;
 pm_damageGrowthRate(tall,regi)         = 0;
-pm_damageMarginal(tall,regi)           = 0;
+pm_damageMarginalT(tall,regi)           = 0;
+pm_damageMarginalTm1(tall,regi)           = 0;
+pm_damageMarginalTm2(tall,regi)           = 0;
 
 
+*** EOF ./modules/50_damages/KWLike/datainput.gms
