@@ -294,7 +294,6 @@ num_veh_stations = calc_num_vehicles_stations(
     c("region", "year", "sector", "vehicle_type", "technology", "demand_F") ],
   ES_demand_all = ES_demand_all,
   intensity = intensity,
-  tech_scen = tech_scen,
   loadFactor = loadFactor,
   EDGE2teESmap = EDGE2teESmap,
   rep = opt$reporting)
