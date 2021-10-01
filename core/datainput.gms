@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+﻿*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -18,12 +18,6 @@ pm_capCum0(ttot,regi,teLearn)$( (ttot.val ge 2005) and  (pm_SolNonInfes(regi) eq
 pm_globalMeanTemperature(tall)              = 0;
 pm_globalMeanTemperatureZeroed1900(tall)    = 0;
 pm_temperatureImpulseResponseCO2(tall,tall) = 0;
-
-pm_regionalTemperature(tall,regi)      = 0;
-pm_tempScaleGlob2Reg(tall,regi)        = 1;
-pm_damage(tall,regi)                   = 1;
-pm_damageGrowthRate(tall,regi)         = 0;
-pm_damageMarginal(tall,regi)           = 0;
 
 *AL* Initialise to avoid compilation errors in presolve if variable not in input.gdx
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
