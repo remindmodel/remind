@@ -132,39 +132,10 @@ EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
 FE_Transp_fety35(all_enty) "FEs used in the transport module"  / fepet, fedie, feh2t, feelt, fegat/
 FE_Elec_fety35(all_enty)   "FE electricity sets (should be moved to core/sets asap)"  / feels, feelt /
 
-*** nat. gas is not used in complex, that's why these elements have to be defined here and not in core
-se2fe_dyn35(all_enty,all_enty,all_te) "nat. gas techs for transport, missing in se2fe in core/sets"
-/
-segabio.fegat.tdbiogat
-segafos.fegat.tdfosgat
-segasyn.fegat.tdsyngat
-/
-
-enty_dyn35(all_enty) "nat. gas FE used for transport, see comment above"
-/
-fegat        "final energy gas transport"
-/
-
-entyFeTrans_dyn35(all_enty) "nat. gas FE used for transport, see comment above"
-/
-fegat        "FE nat. gas transport"
-/
-
 fe_transport_liquids_dyn35(all_enty) "liquids used by the transport module"
 /
 fepet
 fedie
-/
-
-emi2te_dyn35(all_enty,all_enty,all_te,all_enty) "add. emission pathways: CH4 from nat. gas"
-/
-segabio.fegat.tdbiogat.ch4
-segafos.fegat.tdfosgat.ch4
-/
-
-entyFe2Sector_dyn35(all_enty,emi_sectors)   "mapping final energy to transport sector"
-/
-    fegat.trans
 /
 ;
 
@@ -177,13 +148,6 @@ esty(esty_dyn35)     = YES;
 fe2es(fe2es_dyn35)       = YES;
 es2ppfen(es2ppfen_dyn35) = YES;
 ppfEn(ppfen_dyn35)       = YES;
-
-*** compatibility set overwrites
-se2fe(se2fe_dyn35) = YES;
-enty(enty_dyn35) = YES;
-entyFeTrans(entyFeTrans_dyn35) = YES;
-emi2te(emi2te_dyn35) = YES;
-entyFe2Sector(entyFe2Sector_dyn35) = YES;
 
 cesOut2cesIn(ces_transport_dyn35)            = YES;
 

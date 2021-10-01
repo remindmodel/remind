@@ -29,16 +29,24 @@ q_costFu(t,regi)..
 q_costInv(t,regi)..
   v_costInv(t,regi)
   =e=
+*** investment cost of conversion technologies
   sum(en2en(enty,enty2,te),
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
   )
   +
-  sum((te,sector),
-    vm_costAddTeInv(t,regi,te,sector)
-  )
-  +
+*** investment cost of non-conversion technologies (storage, grid etc.)
   sum(teNoTransform,
     v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+  )
+*** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
+  +
+  sum(sector2te_addTDCost(sector,te),
+    vm_costAddTeInv(t,regi,te,sector)
+  )
+*** end-use technology cost placed on CES nodes to represent demand-side investment cost:
+  +
+  sum(in$(ppfen_CESMkup(in)),
+    vm_costCESMkup(t,regi,in)
   )
 ;
 

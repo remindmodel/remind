@@ -9,7 +9,6 @@ pm_ttot_val,input,questionnaire
 cm_optimisticMAC,input,questionnaire
 pm_macCostSwitch,input,questionnaire
 sm_MtCH4_2_TWa,input,questionnaire
-vm_demFeSector,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 cm_indst_H2costAddH2Inv,input,questionnaire
 cm_indst_costDecayStart,input,questionnaire
@@ -19,4 +18,6 @@ pm_shGasLiq_fe_up,parameter,not needed
 pm_shfe_lo,parameter,not needed
 pm_shfe_up,parameter,not needed
 cm_ARIADNE_FeShareBounds,input,questionnaire
-cm_CESMkup_ind,input,questionnaire
+
+sm_trillion_2_non,input,questionnaire
+sm_TWa_2_kWh,input,questionnaire

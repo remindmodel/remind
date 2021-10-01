@@ -14,16 +14,10 @@ emi_type "emission type used in regional target" / netCO2, netCO2_noBunkers, net
 ETS_mkt "ETS market"
 /
   EU_ETS
-/ 
+/
 
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market"
-/
-   EU_ETS.(ENC,EWN,ECS,ESC,ECE,FRA,DEU,ESW)  !!NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
-/
-$ENDIF.emiMktETS
-
-
+//
 
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
@@ -35,10 +29,14 @@ FEtarget_sector2entyFe(FEtarget_sector,all_enty)  "mapping final energy to stati
    trans.(fegat,fepet,fedie,feh2t,feelt)
 /
 
-$ENDIF.cm_implicitFE
-
+$endif.cm_implicitFE
 ;
 
+*** Defining EU ETS
+loop(all_regi$(regi_group("EUR_regi",all_regi) AND (NOT(sameas(all_regi,"UKI")))),
+  ETS_regi("EU_ETS",all_regi) = YES;
+);
+***NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
 
 alias(emi_type,emi_type2);
 
