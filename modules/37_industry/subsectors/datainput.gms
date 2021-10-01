@@ -199,6 +199,12 @@ $endIf.CESMkup
 
 display p37_CESMkup;
 
+* Parameter for the minimum share of primary steel in total steel production.
+* p37_min_primary_steel_share is pegged to historic values (from pm_fedemand)
+* unitl s37_min_primary_steel_share_from (2015, should be the last period with
+* data for all underlying years available) and converges linearly towards
+* s37_min_primary_steel_share_target (0.1) by s37_min_primary_steel_share_by
+* (2040).  Adjust parameters in decrlarations.gms.
 loop (t,
   sm_tmp
   = max(0, min(1,
