@@ -199,5 +199,33 @@ $endIf.CESMkup
 
 display p37_CESMkup;
 
+loop (t,
+  sm_tmp
+  = max(0, min(1,
+      (t.val - s37_min_primary_steel_share_from) 
+    / (s37_min_primary_steel_share_by - s37_min_primary_steel_share_from)
+    ));
+
+  p37_min_primary_steel_share(t,regi)$( 
+                                     t.val le s37_min_primary_steel_share_from )
+    = pm_fedemand(t,regi,"%cm_GDPscen%","ue_steel_primary")
+    / sum(cesOut2cesIn(in,out)$( cesOut2cesIn2(in,"ue_steel_primary") ),
+        pm_fedemand(t,regi,"%cm_GDPscen%",out)
+      );
+
+  p37_min_primary_steel_share(t,regi)$(
+                                     t.val gt s37_min_primary_steel_share_from )
+  = ( (1 - sm_tmp)
+    * sum(t2$( t2.val eq s37_min_primary_steel_share_from ),
+        p37_min_primary_steel_share(t2,regi)
+      )
+    )
+  + ( sm_tmp
+    * s37_min_primary_steel_share_target
+    );
+);
+
+display "calculated p37_min_primary_steel_share", p37_min_primary_steel_share;
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 
