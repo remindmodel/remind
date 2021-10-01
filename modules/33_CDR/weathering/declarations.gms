@@ -26,7 +26,7 @@ v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)     "total amount of ground roc
 ;
 
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf) "CCS emissions from CDR [GtC / a]"
+vm_ccs_cdr(ttot,all_regi,emiAll,all_enty,all_te,rlf) "CCS emissions from CDR [GtC / a]"
 v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC / a]"
 v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a] - fixed to 0, only defined for reporting reasons"
 ;

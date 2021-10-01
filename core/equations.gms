@@ -271,8 +271,8 @@ q_limitCapFe(t,regi,te)..
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for CCS technologies:
 ***---------------------------------------------------------------------------
-q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
-         vm_co2CCS(t,regi,enty,enty2,te,rlf)
+q_limitCapCCS(t,regi,ccs2te(emiAll,enty2,te),rlf)$teCCS2rlf(te,rlf)..
+         vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
          =e=
          sum(teCCS2rlf(te,rlf), vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf));
 
@@ -466,10 +466,10 @@ q_limitBiotrmod(t,regi)$(t.val > 2020)..
 *' from secondary to final energy transformation (some air pollutants), or
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
-q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  vm_emiTeDetail(t,regi,enty,enty2,te,enty3)
+q_emiTeDetail(t,regi,enty,enty2,te,emiAll)$(emi2te(enty,enty2,te,emiAll) OR (pe2se(enty,enty2,te) AND sameas(emiAll,"cco2")) ) ..
+  vm_emiTeDetail(t,regi,enty,enty2,te,emiAll)
   =e=
-  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
+  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt))
 ;
 
 ***--------------------------------------------------
@@ -489,22 +489,22 @@ q_emiTe(t,regi,emiTe)..
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
 
-q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+q_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt)$(emi2te(enty,enty2,te,emiAll) OR (pe2se(enty,enty2,te) AND sameas(emiAll,"cco2")) ) ..
+  v_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt)
   =e=
-    sum(emi2te(enty,enty2,te,enty3),
+    sum(emi2te(enty,enty2,te,emiAll),
       (
 	    sum(pe2se(enty,enty2,te),
-		  pm_emifac(t,regi,enty,enty2,te,enty3)
+		  pm_emifac(t,regi,enty,enty2,te,emiAll)
 		  * vm_demPE(t,regi,enty,enty2,te)
 		  )
-	    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
-		    pm_emifac(t,regi,enty,enty2,te,enty3)
-		    * vm_co2CCS(t,regi,enty,enty2,te,rlf)
+	    + sum((ccs2Leak(emiAll,enty2,te,emiAll),teCCS2rlf(te,rlf)),
+		    pm_emifac(t,regi,enty,enty2,te,emiAll)
+		    * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
 		  )
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
-          pm_emifac(t,regi,enty,enty2,te,enty3)
+          pm_emifac(t,regi,enty,enty2,te,emiAll)
 		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
 		)
 	)
@@ -635,7 +635,7 @@ q_emiMac(t,regi,emiMac) ..
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
        =e= !! BECC + DACC
-  (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
+  (sum(emiBECCS2te(enty,enty2,te,emiAll),vm_emiTeDetail(t,regi,enty,enty2,te,emiAll))
   + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
   !! scaled by the fraction that gets stored geologically
   * (sum(teCCS2rlf(te,rlf),
@@ -737,14 +737,14 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 ***---------------------------------------------------------------------------
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
-q_balcapture(t,regi,ccs2te(ccsCO2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
+q_balcapture(t,regi,ccs2te(ccsCO2(emiAll),enty2,te)) ..
+  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,emiAll,enty2,te,rlf))
   =e=
-    sum(emi2te(enty3,enty4,te2,enty),
-      vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
+    sum(emi2te(enty3,enty4,te2,emiAll),
+      vm_emiTeDetail(t,regi,enty3,enty4,te2,emiAll)
     )
   + sum(teCCS2rlf(te,rlf),
-      vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
+      vm_ccs_cdr(t,regi,emiAll,enty2,te,rlf)
     )
 ***   CCS from industry
   + sum(emiInd37,
@@ -769,13 +769,13 @@ q_balCCUvsCCS(t,regi) ..
 *' Definition of the CCS transformation chain:
 ***---------------------------------------------------------------------------
 *** no effect while CCS chain is limited to just one step (ccsinje)   
-q_transCCS(t,regi,ccs2te(enty,enty2,te),ccs2te2(enty2,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..    
-        (1-pm_emifac(t,regi,enty,enty2,te,"co2")) * vm_co2CCS(t,regi,enty,enty2,te,rlf)
+q_transCCS(t,regi,ccs2te(emiAll,enty2,te),ccs2te2(enty2,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..    
+        (1-pm_emifac(t,regi,enty,enty2,te,"co2")) * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
         =e=
-        vm_co2CCS(t,regi,enty2,enty3,te2,rlf);
+        vm_co2CCS(t,regi,emiAll,enty3,te2,rlf);
 
-q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
-        sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,enty,"ico2",te,rlf))
+q_limitCCS(regi,ccs2te2(emiAll,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
+        sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,emiAll,"ico2",te,rlf))
         =l=
         pm_dataccs(regi,"quan",rlf);
 

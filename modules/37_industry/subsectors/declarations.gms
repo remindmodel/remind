@@ -21,8 +21,8 @@ Parameters
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
 
 *** output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                    "industry CCS emissions [GtC/a]"
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)                      "cement process emissions [GtC/a]"
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,emiAll)                    "industry CCS emissions [GtC/a]"
+  o37_cementProcessEmissions(ttot,all_regi,emiAll)                      "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty)                               "total FE per energy carrier in industry, summed over subsectors"
   o37_shIndFE(ttot,all_regi,all_enty,secInd37)                            "share of FE carrier in total FE per industry subsector"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)    "FE demand per industry subsector"

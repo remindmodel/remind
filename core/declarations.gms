@@ -105,7 +105,7 @@ p_actualbudgetco2(tall)                              "actual level of cumulated 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
-pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
+pm_emifac(tall,all_regi,all_enty,all_enty,all_te,emiAll)  "emission factor by technology for all types of emissions in emiTe"
 pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
@@ -280,8 +280,8 @@ vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that he
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
 vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
-vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
-vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
+vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,emiAll)  "energy-related emissions per region and technology"
+vm_emiTe(ttot,all_regi,emiAll)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
 vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions due to CDR technologies of each region. [GtC]"
 vm_emiMac(ttot,all_regi,emiTe)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
@@ -303,7 +303,7 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
-v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from fuel combustion per region, technology and emission market. [GtC, Mt CH4, Mt N]"
+v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,emiAll,all_emiMkt) "emissions from fuel combustion per region, technology and emission market. [GtC, Mt CH4, Mt N]"
 vm_emiTeMkt(tall,all_regi,emiTe,all_emiMkt)       "total energy-emissions of each region and emission market. [GtC, Mt CH4, Mt N]"
 v_emiEnFuelEx(ttot,all_regi,emiTe)                 "energy emissions from fuel extraction [GtC, Mt CH4, Mt N]"
 vm_emiAllMkt(tall,all_regi,emiTe,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
@@ -345,9 +345,9 @@ v_costInv(ttot,all_regi)                             "investment costs"
 vm_costTeCapital(ttot,all_regi,all_te)               "investment costs"
 vm_costAddTeInv(tall,all_regi,all_te,emi_sectors)    "additional sector-specific investment cost of demand-side transformation"
 
-vm_co2CCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)       "all differenct ccs. [GtC/a]"
+vm_co2CCS(ttot,all_regi,emiAll,all_enty,all_te,rlf)       "all differenct ccs. [GtC/a]"
 
-vm_co2capture(ttot,all_regi,all_enty,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
+vm_co2capture(ttot,all_regi,emiAll,all_enty,all_te,rlf)   "all captured CO2. [GtC/a]"
 v_co2capturevalve(ttot,all_regi)                            "CO2 emitted right after capture [GtC/a] (in q_balCCUvsCCS to account for different lifetimes of capture and CCU/CCS te and capacities)"
 
 vm_prodUe(ttot,all_regi,all_enty,all_enty,all_te)    "Useful energy production [TWa]"
@@ -415,7 +415,7 @@ qm_fuel2pe(ttot,all_regi,all_enty)                   "constraint on cumulative f
 
 q_limitProd(ttot,all_regi,all_te,rlf)                "constraint on annual production"
 
-q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
+q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,emiAll) "determination of emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
 q_emiTe(ttot,all_regi,emiTe)                         "total energy-emissions per region"
@@ -429,19 +429,19 @@ q_co2eqGlob(ttot)                                    "global emissions in co2 eq
 qm_co2eqCum(all_regi)                                "cumulate regional emissions over time"
 q_budgetCO2eqGlob                                    "global emission budget balance"
 
-q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "detailed energy specific emissions per region and market"
+q_emiTeDetailMkt(ttot,all_regi,all_enty,all_enty,all_te,emiAll,all_emiMkt) "detailed energy specific emissions per region and market"
 q_emiTeMkt(ttot,all_regi,emiTe,all_emiMkt)			             "total energy-emissions per region and market"
 q_emiEnFuelEx(ttot,all_regi,emiTe)                "energy emissions from fuel extraction"
 q_emiAllMkt(ttot,all_regi,emiTe,all_emiMkt)       "total regional emissions for each emission market"
 
 
 q_transCCS(ttot,all_regi,all_enty,all_enty,all_te,all_enty,all_enty,all_te,rlf)        "transformation equation for ccs"
-q_limitCapCCS(ttot,all_regi,all_enty,all_enty,all_te,rlf)                              "capacity constraint for ccs"
-q_limitCCS(all_regi,all_enty,all_enty,all_te,rlf)                                      "ccs constraint for sequestration alternatives"
+q_limitCapCCS(ttot,all_regi,emiAll,all_enty,all_te,rlf)                              "capacity constraint for ccs"
+q_limitCCS(all_regi,emiAll,all_enty,all_te,rlf)                                      "ccs constraint for sequestration alternatives"
 
 q_emiCdrAll(ttot,all_regi)                           "summing over all CDR emissions"
 
-q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carbon capture"
+q_balcapture(ttot,all_regi,emiAll,all_enty,all_te)  "balance equation for carbon capture"
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
 
 q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"

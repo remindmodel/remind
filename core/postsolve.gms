@@ -772,9 +772,9 @@ o_emissions_energy_negative(ttot,regi,emiTe)$(ttot.val ge 2005) =
          * vm_demPE.l(ttot,regi,entyPe,entySe,te)
     )
     +
-    sum((ccs2Leak(enty,enty2,te,emiTe),teCCS2rlf(te,rlf)),
+    sum((ccs2Leak(emiAll,enty2,te,emiTe),teCCS2rlf(te,rlf)),
             pm_emifac(ttot,regi,enty,enty2,te,emiTe)
-            * vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf)
+            * vm_co2CCS.l(ttot,regi,emiAll,enty2,te,rlf)
           )
 ***   Industry CCS emissions
     - ( sum(emiMac2mac(emiInd37_fuel,enty2),

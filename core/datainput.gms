@@ -368,7 +368,7 @@ $offdelim
 *RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
 s_co2pipe_leakage = 0.01;
 
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
+loop(emi2te(enty,enty2,te,emiAll)$teCCS(te),
     fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
     fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
 );

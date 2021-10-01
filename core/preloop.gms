@@ -22,7 +22,7 @@ model hybrid /all/;
 
 *** Set level values, so that reference value is available even if gdx has no level value to overwrite. Gams complains if .l was never initialized.
 vm_emiMacSector.l(ttot,regi,enty)      = 0;
-vm_emiTe.l(ttot,regi,enty)      = 0;
+vm_emiTe.l(ttot,regi,emiAll)      = 0;
 vm_emiCdr.l(ttot,regi,enty)	     = 0;
 vm_prodFe.l(ttot,regi,entyFe2,entyFe2,te) = 0;
 vm_prodSe.l(ttot,regi,enty,enty2,te) = 0;
