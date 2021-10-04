@@ -124,6 +124,8 @@ ElecEra
 ElecEraWise
 HydrHype
 HydrHypeWise
+Mix
+MixWise
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
