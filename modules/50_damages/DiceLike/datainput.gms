@@ -26,5 +26,6 @@ $ifi %cm_damage_DiceLike_specification% == "KWpanelPop" p50_damageFuncCoef2 = 0.
 
 *initialize
 pm_damage(tall,regi) = 1;
+pm_damageMarginal(tall,regi)           = 0;
 
 

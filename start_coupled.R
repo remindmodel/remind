@@ -134,8 +134,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
         } else if (cfg_rem$gms$optimization == "nash") {
           if (as.numeric(modstat$s80_bool$val)!=1) cat("Warning: REMIND s80_bool not 1. Iteration continued though.\n")
         }
+      } else if (file.exists(paste0(outfolder_rem,"/non_optimal.gdx"))) {
+        stop("### COUPLING ### REMIND didn't find an optimal solution. Coupling iteration stopped!")
       } else {
-        stop("### COUPLING ### REMIND didn't produce 'fulldata.gdx'. Iteration stopped!")
+        stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
     }
 
