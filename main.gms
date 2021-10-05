@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.2413
+* Input data revision: 6.252
 * 
-* Last modification (input data): Mon Sep  6 15:38:51 2021
+* Last modification (input data): Tue Oct 05 09:24:54 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -183,11 +183,11 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
-$setglobal industry  fixed_shares     !! def = simple
+$setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -326,7 +326,6 @@ cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
@@ -392,6 +391,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
 cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
@@ -532,19 +532,14 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
 
-$setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
-
 cm_noPeFosCCDeu = 0; !! def 0
-
 
 cm_HeatLim_b = 1; !! def 1
 cm_ElLim_b = 1; !! def 1
 
 cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 
-
 cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
-
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
@@ -555,7 +550,6 @@ cm_ariadne_trade_syngas = 0; !! def 0
 
 $setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
-
 $setGlobal c_VREPot_Factor  off !! def = off
 
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
@@ -564,7 +558,6 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 $setGlobal cm_regipol_slope_beforeTarget  off !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
-
 
 $setGlobal cm_CESMkup_ind  standard !! def = standard
 $setGlobal cm_CESMkup_build  standard !! def = standard
@@ -596,7 +589,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-demTrsp_conv-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
