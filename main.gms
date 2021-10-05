@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.251
+* Input data revision: 6.252
 * 
-* Last modification (input data): Mon Oct 04 10:46:30 2021
+* Last modification (input data): Tue Oct 05 09:24:54 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -173,7 +173,7 @@ $setGlobal trade  standard     !! def = standard
 ***---------------------    26_agCosts ------------------------------------------
 $setGlobal agCosts  costs               !! def = costs
 ***---------------------    29_CES_parameters    --------------------------------
-$setglobal CES_parameters  calibrate       !! def = load
+$setglobal CES_parameters  load       !! def = load
 ***---------------------    30_biomass    ---------------------------------------
 $setGlobal biomass  magpie_40 !! def = magpie_40
 ***---------------------    31_fossil    ----------------------------------------
@@ -183,11 +183,11 @@ $setGlobal power  IntC               !! def = IntC
 ***---------------------    33_cdr       ----------------------------------------
 $setGlobal CDR  DAC                   !! def = DAC
 ***---------------------    35_transport    -------------------------------------
-$setGlobal transport  complex         !! def = complex
+$setGlobal transport  edge_esm         !! def = edge_esm
 ***---------------------    36_buildings    -------------------------------------
 $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
-$setglobal industry  fixed_shares     !! def = simple
+$setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    --------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
@@ -589,7 +589,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-demTrsp_conv-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10

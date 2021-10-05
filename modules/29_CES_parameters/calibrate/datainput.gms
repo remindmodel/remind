@@ -236,7 +236,7 @@ $offdelim
 /
 ;
 $ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","MixWise",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","ElecEraWise",in_dyn35);
 $elseif "%cm_calibration_FE%" == "medium"
   pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
 $elseif "%cm_calibration_FE%" == "high"
@@ -301,7 +301,7 @@ p29_capitalQuantity(tall,all_regi,"kap")
 
 *** Change EJ to TWa
 $ifthen.industry_subsectors "%industry%" == "subsectors"
-  pm_fedemand(tall,all_regi,,all_in)$( 
+  pm_fedemand(tall,all_regi,all_in)$( 
                               NOT industry_ue_calibration_target_dyn37(all_in) )
   = sm_EJ_2_TWa * pm_fedemand(tall,all_regi,all_in);
 $else.industry_subsectors

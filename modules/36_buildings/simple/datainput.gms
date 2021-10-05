@@ -34,7 +34,7 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 
 Parameter
 
-p36_floorspace_scen(ttot, all_regi, all_demScen)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
+p36_floorspace_scen(tall, all_regi, all_demScen)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
 /
 $ondelim
 $include "./modules/36_buildings/simple/input/p36_floorspace_scen.cs4r"

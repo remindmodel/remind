@@ -53,7 +53,7 @@ gdp_b1
 gdp_b2
 /
 
-all_demScen    "all possible GDP scenarios"
+all_demScen    "all possible demand scenarios"
 /
 gdp_SDP         "SDP fastGROWTH medCONV"
 gdp_SDP_EI

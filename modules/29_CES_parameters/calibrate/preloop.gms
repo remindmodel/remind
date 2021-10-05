@@ -1227,7 +1227,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
    );
 );
 
-option p29_efficiency_growth:4:3:1;
+option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 
 ***_______________________ COMPLEMENTARY CONSTRAINTS _____________________________
