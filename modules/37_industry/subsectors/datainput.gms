@@ -199,39 +199,5 @@ $endIf.CESMkup
 
 display p37_CESMkup;
 
-* Parameter for the minimum share of primary steel in total steel production.
-* p37_min_primary_steel_share is pegged to historic values (from pm_fedemand)
-* unitl s37_min_primary_steel_share_from (2015, should be the last period with
-* data for all underlying years available) and converges linearly towards
-* s37_min_primary_steel_share_target (0.1) by s37_min_primary_steel_share_by
-* (2040).  Adjust parameters in decrlarations.gms.
-loop (t,
-  sm_tmp
-  = max(0, min(1,
-      (t.val - s37_min_primary_steel_share_from) 
-    / (s37_min_primary_steel_share_by - s37_min_primary_steel_share_from)
-    ));
-
-  p37_min_primary_steel_share(t,regi)$( 
-                                     t.val le s37_min_primary_steel_share_from )
-    = pm_fedemand(t,regi,"ue_steel_primary")
-    / sum(cesOut2cesIn(in,out)$( cesOut2cesIn2(in,"ue_steel_primary") ),
-        pm_fedemand(t,regi,out)
-      );
-
-  p37_min_primary_steel_share(t,regi)$(
-                                     t.val gt s37_min_primary_steel_share_from )
-  = ( (1 - sm_tmp)
-    * sum(t2$( t2.val eq s37_min_primary_steel_share_from ),
-        p37_min_primary_steel_share(t2,regi)
-      )
-    )
-  + ( sm_tmp
-    * s37_min_primary_steel_share_target
-    );
-);
-
-display "calculated p37_min_primary_steel_share", p37_min_primary_steel_share;
-
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 
