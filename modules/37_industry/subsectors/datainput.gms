@@ -214,9 +214,9 @@ loop (t,
 
   p37_min_primary_steel_share(t,regi)$( 
                                      t.val le s37_min_primary_steel_share_from )
-    = pm_fedemand(t,regi,"%cm_GDPscen%","ue_steel_primary")
+    = pm_fedemand(t,regi,"ue_steel_primary")
     / sum(cesOut2cesIn(in,out)$( cesOut2cesIn2(in,"ue_steel_primary") ),
-        pm_fedemand(t,regi,"%cm_GDPscen%",out)
+        pm_fedemand(t,regi,out)
       );
 
   p37_min_primary_steel_share(t,regi)$(
