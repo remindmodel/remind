@@ -1471,7 +1471,8 @@ $offdelim
 /
 ;
 
-***XXX use cm_demScen for Industry and Buildings and cm_GDPscen for Transport?
+*** use cm_demScen for Industry and Buildings 
+*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 
 
