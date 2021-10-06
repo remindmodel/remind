@@ -7,29 +7,29 @@
 *** SOF ./modules/37_industry/subsectors/declarations.gms
 
 Scalar
-  s37_clinker_process_CO2              "CO2 emissions per unit of clinker production"
-  s37_min_primary_steel_share_target   "minimum share of primary steel production"                     / 0.1  /
-  s37_min_primary_steel_share_by       "period in which s37_min_primary_steel_share must be reached"   / 2040 /
-  s37_min_primary_steel_share_from     "period from which s37_min_primary_steel_share is faded in"     / 2015 /
+  s37_clinker_process_CO2   "CO2 emissions per unit of clinker production"
 ;
 
 Parameters
-  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                             "industry CCS MAC curves [ratio @ US$2005]"
-  p37_energy_limit(all_in)                                                   "thermodynamic/technical limits of energy use [GJ/product]"
-  p37_fctEmi(all_enty)                                                       "FE emission factors"
-  p37_clinker_cement_ratio(ttot,all_regi)                                    "clinker content per unit cement used"
-  pm_ue_eff_target(all_in)                                                   "energy efficiency target trajectories [% p.a.]"
-  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "Captured CO2 in industry by energy carrier, subsector and emissions market"
-  p37_min_primary_steel_share(ttot,all_regi)                                 "minimum share of primary steel production [0-1]"
-  p37_CESMkup(ttot,all_regi,all_in)                                          "CES markup cost parameter [trUSD/CES input]"
+  pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
+  p37_energy_limit(all_in)                               "thermodynamic/technical limits of energy use [GJ/product]"
+  p37_fctEmi(all_enty)                                   "FE emission factors"
 
-  !! output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                       "industry CCS emissions [GtC/a]"
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)                         "cement process emissions [GtC/a]"
-  o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                       "total FE per energy carrier and emissions market in industry (sum over subsectors)"
-  o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                    "share of subsector in FE industry energy carriers and emissions markets"
-  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)       "FE demand per industry subsector"
-  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)                              "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
+
+  p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
+
+  pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
+
+  p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
+
+*** output parameters only for reporting
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                    "industry CCS emissions [GtC/a]"
+  o37_cementProcessEmissions(ttot,all_regi,all_enty)                      "cement process emissions [GtC/a]"
+  o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                               "total FE per energy carrier and emissions market in industry (sum over subsectors)"
+  o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                            "share of subsector in FE industry energy carriers and emissions markets"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)    "FE demand per industry subsector"
+  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 ;
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
