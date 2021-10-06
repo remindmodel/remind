@@ -141,6 +141,13 @@ Sets
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
   /  
 
+  in_chemicals_feedstocks37(all_in)   "chemicals FE that can provide feedstocks"
+  /
+    feso_chemicals
+    feli_chemicals
+    fega_chemicals
+  /
+
   ces_eff_target_dyn37(all_in,all_in)   "limits to specific total energy use"
   /
     ue_cement . (feso_cement, feli_cement, fega_cement, feh2_cement, 

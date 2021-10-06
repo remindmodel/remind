@@ -22,6 +22,7 @@ Parameters
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
 
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
+  p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                    "industry CCS emissions [GtC/a]"
@@ -55,6 +56,7 @@ Equations
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q37_chemicals_feedstocks_limit(ttot,all_regi)           "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

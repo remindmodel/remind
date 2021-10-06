@@ -199,5 +199,13 @@ $endIf.CESMkup
 
 display p37_CESMkup;
 
+Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_chemicals_feedstock_share.cs4r";
+$offdelim
+  /
+;
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 
