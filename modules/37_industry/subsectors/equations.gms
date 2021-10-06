@@ -32,12 +32,12 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
 
 *** No more than 90% of steel from secondary production
 q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) .. 
-    vm_cesIO(ttot,regi,"ue_steel_primary")
-  * p37_min_primary_steel_share(ttot,regi)
+  vm_cesIO(ttot,regi,"ue_steel_primary")
   =g=
-  sum(cesOut2cesIn(out,in)$( cesOut2cesIn2(out,"ue_steel_primary") ),
-    vm_cesIO(ttot,regi,in)
-  )
+    sum(cesOut2cesIn(out,in)$( cesOut2cesIn2(out,"ue_steel_primary") ),
+      vm_cesIO(ttot,regi,in)
+    )
+  * p37_min_primary_steel_share(ttot,regi)
 ;
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
