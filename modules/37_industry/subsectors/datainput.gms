@@ -474,6 +474,10 @@ Parameter
   /
 $ondelim
 $include "./modules/37_industry/subsectors/input/p37_steel_secondary_max_share.cs4r";
+Parameter p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_chemicals_feedstock_share.cs4r";
 $offdelim
   /
 ;
@@ -506,6 +510,7 @@ if (smax((t,regi),
   );
 putclose logfile, " " /;
 );
+*** EOF ./modules/37_industry/subsectors/datainput.gms
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions
