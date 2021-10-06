@@ -306,24 +306,15 @@ prepare <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}
 
-  # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
-  if(cfg$gms$transport == "edge_esm"){
-    if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
-       demTrsp = "wise"
-    } else {
-       demTrsp = "conv"
-    }
-  }
-
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
+                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", cfg$gms$cm_EDGEtr_scen, "-"), ""),
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "En_",  cfg$gms$cm_demScen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
-                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
                                          "Reg_", regionscode(cfg$regionmapping))
 
