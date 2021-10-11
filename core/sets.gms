@@ -411,6 +411,7 @@ all_enty             "all types of quantities"
         CO           "carbon monoxide emissions"
         VOC          "volatile organic compound emissions"
         NH3          "ammonia emissions"
+		PM25         "PM25 primary emissions"
 
         !! emissions from industry sub-sectors
         co2cement      "CO2 emissions from clinker and cement production"
