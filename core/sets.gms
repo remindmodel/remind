@@ -25,7 +25,7 @@ pop_SDP_MC
 pop_SDP_RC
 pop_SSP1        "SSP1 population scenario"
 pop_SSP2        "SSP2 population scenario"
-pop_SSP2Ariadne
+pop_SSP2EU
 pop_SSP3        "SSP3 population scenario"
 pop_SSP4        "SSP4 population scenario"
 pop_SSP5        "SSP5 population scenario"
@@ -43,7 +43,7 @@ gdp_SDP_MC
 gdp_SDP_RC
 gdp_SSP1        "SSP1 fastGROWTH medCONV"
 gdp_SSP2        "SSP2 medGROWTH medCONV"
-gdp_SSP2Ariadne
+gdp_SSP2EU
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
@@ -51,6 +51,21 @@ gdp_a1
 gdp_a2
 gdp_b1
 gdp_b2
+/
+
+all_demScen    "all possible demand scenarios"
+/
+gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
+gdp_SSP1        "SSP1 fastGROWTH medCONV"
+gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2EU
+gdp_SSP3        "SSP3 slowGROWTH slowCONV"
+gdp_SSP4        "SSP4  medGROWTH mixedCONV"
+gdp_SSP5        "SSP5 fastGROWTH fastCONV"
+gdp_SSP2_lowEn   "SSP2 with low energy"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -61,7 +76,7 @@ SDP_MC
 SDP_RC
 SSP1        "SSP1 fastGROWTH medCONV"
 SSP2        "SSP2 medGROWTH medCONV"
-SSP2Ariadne
+SSP2EU
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
@@ -113,7 +128,7 @@ all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from
           SDP_RC
     SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
     SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
-    SSP2Ariadne
+    SSP2EU
           SSP3        "currently not available"
     SSP4        "currently not available"
     SSP5        "high   emissions (from SSP5 scenario in MAgPIE)"
@@ -855,6 +870,7 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
+*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R
 
 sets
 
@@ -894,7 +910,7 @@ sets
        codePerformance
        /
 
-      module2realisation(modules,*) "mapping of modules and active realisations" /
+module2realisation(modules,*) "mapping of modules and active realisations" /
        macro . %macro%
        welfare . %welfare%
        PE_FE_parameters . %PE_FE_parameters%
@@ -1713,6 +1729,7 @@ entyFe(all_enty)      "final energy types."
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
 /
 
 esty(all_esty)      "energy service types. Have to be added by modules."
@@ -1737,6 +1754,7 @@ entyFeTrans(all_enty) "final energy types from transport sector"
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
 /
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
@@ -1927,6 +1945,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		fedie.trans
 		feh2t.trans
 		feelt.trans
+                fegat.trans
 		feels.cdr
 		fehes.cdr
                 fegas.cdr
@@ -2382,6 +2401,9 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
         segasyn.fegas.tdsyngas
+        segabio.fegat.tdbiogat
+        segafos.fegat.tdfosgat
+        segasyn.fegat.tdsyngat
         seliqbio.fehos.tdbiohos
         seliqfos.fehos.tdfoshos
         seliqsyn.fehos.tdsynhos
@@ -2546,6 +2568,8 @@ $endif
         seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
         seliqfos.fepet.tdfospet.oc
+        segabio.fegat.tdbiogat.ch4
+        segafos.fegat.tdfosgat.ch4
 
         segafos.fegas.tdfosgas.co2
         seliqfos.fehos.tdfoshos.co2

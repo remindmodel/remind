@@ -6,6 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/DiceLike/declarations.gms
 parameters
+pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
+pm_damageMarginal(tall,all_regi)                     "damage function derivative"
 p50_damageFuncCoef1			"damage function coefficient, linear in temperature"
 p50_damageFuncCoef2 			"damage function coefficient, quadratic in temperture"
 ;

@@ -35,7 +35,7 @@ p_macPolCO2luc.cs4r
 pm_boundCapCCS.cs4r
 pm_boundCapEV.cs4r
 pm_dataccs.cs3r
-pm_fe_demand.cs4r
+f_fedemand.cs4r
 pm_NuclearConstraint.cs4r
 pm_risk_premium.cs4r
 pm_shPPPMER.cs4r

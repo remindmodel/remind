@@ -15,6 +15,7 @@
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%internalizeDamages%" == "BurkeLikeItr" $include "./modules/51_internalizeDamages/BurkeLikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "DiceLikeItr" $include "./modules/51_internalizeDamages/DiceLikeItr/realization.gms"
+$Ifi "%internalizeDamages%" == "KWlikeItr" $include "./modules/51_internalizeDamages/KWlikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "off" $include "./modules/51_internalizeDamages/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/51_internalizeDamages/51_internalizeDamages.gms

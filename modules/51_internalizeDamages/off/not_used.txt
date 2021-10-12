@@ -17,3 +17,6 @@ cm_startyear,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
 cm_damages_SccHorizon,input,questionnaire
 pm_ttot_2_tall,input,questionnaire
+pm_damageMarginalT,input,questionnaire
+pm_damageMarginalTm1,input,questionnaire
+pm_damageMarginalTm2,input,questionnaire

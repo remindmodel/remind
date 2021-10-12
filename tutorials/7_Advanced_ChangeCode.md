@@ -67,6 +67,11 @@ The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are docum
 * Don't use $+number combinations, e.g., $20 (this interferes with GAMS error codes).
 * Indicate the end of a file by inserting \*** EOF filename.inc \*** 
 
+#### Sets
+
+* don't use set element names with three capital letters (like "ETS" or "ESR"), otherwise the maglcass R library might interpret this as a region name when reading in GDX data
+
+
 #### Equations:
 The general idea is not to write code and equations as short as possible, but to write them in a way they can be read and understood as fast as possible. To that end:
 

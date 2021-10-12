@@ -6,3 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 pm_globalMeanTemperatureZeroed1900,input,questionnaire
+pm_damageMarginalT,input,questionnaire
+pm_damageMarginalTm1,input,questionnaire
+pm_damageMarginalTm2,input,questionnaire

@@ -83,5 +83,6 @@ if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
   = vm_macBase.lo(ttot,regi,"co2cement_process");
 );
 
+
 *** EOF ./modules/37_industry/fixed_shares/presolve.gms
 

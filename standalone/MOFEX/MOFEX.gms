@@ -227,7 +227,6 @@ cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 cm_logitCal_markup_conv_b   "value to which logit calibration markup of standard fe2ue technologies in detailed buildings module converges to"
 cm_logitCal_markup_newtech_conv_b "value to which logit calibration markup of new fe2ue technologies in detailed buildings module converges to"
-cm_demTcomplex              "switch used to select the source of demand trends for the complex transport realization. By default, temporary handmade trajectories; if set to fromEDGET, EDGE-T based mrremind results."
 cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
@@ -431,8 +430,6 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
-
-$setGlobal cm_demTcomplex  temporary_trend !! def = temporary_trend
 
 cm_noPeFosCCDeu = 0; !! def 0
 

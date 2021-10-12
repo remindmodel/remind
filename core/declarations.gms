@@ -197,11 +197,10 @@ o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average ad
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
 /   /
 
-pm_fedemand(tall,all_regi,all_GDPscen,all_in)         "final energy demand"
+pm_fedemand(tall,all_regi,all_in)                     "final energy demand"
 pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from total captured CO2"
 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
-
 
 * Fuel Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
@@ -216,14 +215,10 @@ pm_globalMeanTemperature(tall)                       "global mean temperature an
 pm_globalMeanTemperatureZeroed1900(tall)             "global mean temperature anomaly, zeroed around 1900"
 pm_temperatureImpulseResponseCO2(tall,tall)          "temperature impulse response to CO2 [K/GtCO2]"
 
-pm_regionalTemperature(tall,all_regi)                "regional temperature"
-pm_tempScaleGlob2Reg(tall,all_regi)                  "scaling factor from global to regional temperature"
-pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
-pm_damageGrowthRate(tall,all_regi)                   "damage function for growth rate of GDP"
-pm_damageMarginal(tall,all_regi)                     "damage function derivative"
+*** damage related
 pm_taxCO2eqSCC(ttot,all_regi)                        "carbon tax component due to damages (social cost of carbon) "
-
 pm_GDPGross(tall,all_regi)                           "gross GDP (before damages)"
+
 ***----------------------------------------------------------------------------------------
 *** ----- Parameters needed for MAGICC ----------------------------------------------------
 p_MAGICC_emi(tall,RCP_regions_world_bunkers,emiRCP)  "emission data to export"
