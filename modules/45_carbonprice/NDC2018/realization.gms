@@ -12,13 +12,13 @@
 *#' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of 
 *#' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
-*#' Next update (2022):
-*#' - Add NDC_2022.xlsx /p/projects/Rogelj2017/ on cluster
-*#' - Set switch default in default.cfg to new year
-*#' - Add new year six times in 45_carbonprice/NDC2018/input/files
-*#' - Add new year six times in 45_carbonprice/NDC2018/datainput.gms
-*#' - Add new year six times in mrremind in fullREMIND.R
-*#' - Add new else if condition to calcEmiTarget.R in mrremind
+*** Next update (2022):
+*** - Add NDC_2022.xlsx /p/projects/Rogelj2017/ on cluster
+*** - Set switch default in default.cfg to new year
+*** - Add new year six times in 45_carbonprice/NDC2018/input/files
+*** - Add new year six times in 45_carbonprice/NDC2018/datainput.gms
+*** - Add new year six times in mrremind in fullREMIND.R
+*** - Add new else if condition to calcEmiTarget.R in mrremind
 
 
 *####################### R SECTION START (PHASES) ##############################
