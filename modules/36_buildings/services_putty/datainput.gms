@@ -32,13 +32,16 @@ pm_delta_kap(regi,in)$nests_putty_dyn36(out,in) = pm_delta_kap(regi,out);
       
 parameter
 
-p36_floorspace_scen                    "floorspace"
+p36_floorspace_scen(tall,all_regi,all_demScen)              "floorspace"
 /
 $ondelim
 $include "./modules/36_buildings/services_putty/input/p36_floorspace_scen.cs4r"
 $offdelim
 /
+;
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3; !! from million to billion m2
 
+parameter
 p36_demFeForEs_scen  "final energy demand projections for FE-UE technologies"
 /
 $ondelim
@@ -66,8 +69,6 @@ $include "./modules/36_buildings/services_putty/input/generisdata_feCapCosts.prn
 table f36_dataeff(char,all_teEs)   "end-use (final energy) long term efficiency assumptions"
 $include "./modules/36_buildings/services_with_capital/input/generisdata_Eff.prn"
 ;
-
-p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2
 
 p36_demFeForEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_demFeForEs_scen(ttot,regi,"%cm_GDPscen%",entyFe,esty,teEs) * sm_EJ_2_TWa; !!  from EJ to TWa;
 p36_prodEs(ttot,regi,entyFe,esty,teEs)$fe2es_dyn36(entyFe,esty,teEs) = p36_prodEs_scen(ttot,regi,"%cm_GDPscen%",entyFe,esty,teEs) * sm_EJ_2_TWa; !! from EJ to TWa;

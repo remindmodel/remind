@@ -13,7 +13,6 @@ scalars
 ;
 
 Parameters
-  p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2, in simple realization only used for reporting"
   p36_CESMkup(ttot,all_regi,all_in)               "CES markup cost parameter [trUSD/CES input]"
   p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2, in simple realization only used for reporting"
 ;
