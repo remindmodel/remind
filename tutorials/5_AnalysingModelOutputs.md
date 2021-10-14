@@ -7,7 +7,7 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
 -   [3. Loading and analyzing model output in R](#loading-and-analyzing-model-output-in-r)
     - [3.1 Access Cluster](###Access-Cluster)
     - [3.2 Load mif-file as Magpie Object](#load-mif-file-as-magpie-object)
-    - [3.3 Load mif file as quitte Object](#load-mif-file-as-quitte object)
+    - [3.3 Load mif file as quitte Object](#load-mif-file-as-quitte-object)
     - [3.4 Load gdx file as magpie object](#load-gdx-file-as-magpie-object)
 -   [4. Automated model validation](#automated-model-validation)
     -   [4.1. Generation of validation pdfs](#generation-of-validation-pdfs)
@@ -19,8 +19,8 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
     -   [6.1. Execution of model-internal output scripts via the REMIND configuration file](#execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
     -   [6.2. Execution of model-internal output scripts in the command window](#execution-of-model-internal-output-scripts-in-the-command-window)
 
-1. Introduction
-===============
+
+## 1. Introduction
 
 After having successfully started and completed a scenario run, the next step is to evaluate the results. 
 
@@ -28,15 +28,13 @@ There are plentiful ways to look at and analyze REMIND results. This tutorial gi
 
 For each scenario, results are written to a folder that is created automatically as a combination of **scenario title** name and the **current date** inside the **output** folder of the model.
 
-2. Model output files
-=====================
+## 2. Model output files
 
 As mentioned in tutorial 2, the two main output files you will typically care about are the *fulldata.gdx* and the *REMIND_generic_NameofYourRun.mif* files in the *output* folder of your run. The *fulldata.gdx* is the actual technical output of the GAMS optimization and contains all the variables, parameters, sets etc. (the differences between these GAMS objects are explained in tutorial 2) of the REMIND model. However, this gdx-file is mainly interesting once you actually work on the GAMS code and want to check specific the variables and their values. If you simply want to look at REMIND results of your run or use it for further data analysis and plotting, you would open the *REMIND_generic_NameofYourRun.mif* which is basically a csv-file in a certain standardized format (called the model intercomparison file format) used in the Integrated Assessment Modeling community. Please refer to the `vignette("mif")` of the package *mip* (model intercomparison plots) to learn more about the mif format.
 
 Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides an three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore. 
 
-3. Loading and analyzing model output in R
-==============================
+## 3. Loading and analyzing model output in R
 
 ### 3.1 Access the Cluster
 
@@ -90,15 +88,14 @@ demPE  <- readGDX(gdx,name=c("vm_demPe","v_pedem"),field="l",restore_zeros=FALSE
 ```
 Here **gdx** is the path to the gdx file, while the second argument is the **name** of the GAMS object you want to load. It is possible to extract various GAMS objects like *"sets"*, *"equations"*, *"parameters"*, *"variables"* and *"aliases"* with **readGDX**. With the arguemtn *field="l"*, you can select the levels of endogenous variables. With *field="m"* you can extract the marginal values of these variables.
 
-**To learn how to produce nice graphs from the model output you read in above please refer to [8_Advanced_AnalysingModelOutputs](./8_Advanced_AnalysingModelOutputs.Rmd)**
+**To learn how to produce nice graphs from the model output you read in above please refer to [8_Advanced_AnalysingModelOutputs](./8_Advanced_AnalysingModelOutputs.Rmd).**
 
 ---
 
 **In the following, we present several other tools and scripts that were developed to facilitate the output analysis:**
 
 
-4. Automated model validation
-===============================
+## 4. Automated model validation
 
 ### 4.1. Generation of summary and validation pdfs
 The automated model analysis (summary and validation) is an important example of output analysis based on model-internal scripts (see section 6). If these scripts are executed (either by selection via cfg$output as explained in 6.1. or by execution via command window as explained in 6.2.), standard evaluation pdfs are created. They validate numerous model outputs with historical data, either visually or via statistical tests. 
@@ -110,8 +107,7 @@ For a first overview and for not getting lost in the huge amount of variables yo
 A standard validation PDF *REMIND_validation_[title].pdf* consists of hundreds of evaluation outputs. By evaluating the model outputs on such a broad level rather than focusing only on key outputs, it allows getting a more complete picture of the corresponding scenario. The table of contents of the validation pdf gives a good overview about the breadth of model outputs that can be generated with a REMIND standard scenario, even though the validation pdf only shows a subset of possible model outputs.
 
 
-5. Interactive scenario analysis
-==================================
+## 5. Interactive scenario analysis
 
 The automated model validation is a good tool for visually evaluating a broad range of model outputs. However, comparison between model runs, i.e. between different scenarios, is rather difficult and inconvenient if the model results are scattered across different large PDF files.
 
@@ -148,8 +144,7 @@ Another tool for analyzing model output on your local computer is the scenario t
 mip::scenTool()
 ```
 
-6. Model-internal R-scripts for output analysis
-=================================================
+## 6. Model-internal R-scripts for output analysis
 
 ### 6.1. Execution of model-internal output scripts via the REMIND configuration file
 
@@ -183,8 +178,7 @@ Now, the selected scripts are executed. After completion, the results are writte
 One recommended script for comparison of different scenarios is compareScenarios. How to create new plots is described in the tutorial 8_Advanced_AnalysingModelOutputs.Rmd. 
 
 
-7. Analysis of outputs with the remind package
-===============================================
+## 7. Analysis of outputs with the remind package
 
 If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind*. This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind/R**. 
 
@@ -202,6 +196,4 @@ library(remind2)
 ```
 
 You can click on the index and search for interesting functions. All functions used to generate the reporting start with "reporting*.R".
-
-
 
