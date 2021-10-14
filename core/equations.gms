@@ -84,6 +84,14 @@ q_costOM(t,regi)..
       * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2))
   )
+  sum(ccs2te(emiAll,enty2,te),
+    pm_data(regi,"omf",te) 
+    * sum(te2rlf(te,rlf), vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf) )
+    +
+    pm_data(regi,"omv",te)
+      * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
+         + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2))
+  )
   +
   sum(teNoTransform(te),
      pm_data(regi,"omf",te)
