@@ -38,7 +38,6 @@ $offdelim
 /
 ;
 *p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%cm_rcp_scen%",ttot);
-* p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%rcp26%",ttot);
 p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("rcp26",ttot);
 
 parameter p16_tempRegionalCalibrate2005(all_regi)  "XXX"
