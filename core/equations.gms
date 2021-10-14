@@ -34,6 +34,11 @@ q_costInv(t,regi)..
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
   )
   +
+*** investment cost of emission conversion technologies
+  sum(ccs2te(emiAll,enty2,te),
+    v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+  )
+  +
 *** investment cost of non-conversion technologies (storage, grid etc.)
   sum(teNoTransform,
     v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
@@ -84,6 +89,7 @@ q_costOM(t,regi)..
       * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2))
   )
+  +
   sum(ccs2te(emiAll,enty2,te),
     pm_data(regi,"omf",te) 
     * sum(te2rlf(te,rlf), vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf) )
