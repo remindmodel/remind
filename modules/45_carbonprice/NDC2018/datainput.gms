@@ -57,14 +57,20 @@ $offdelim
 Set regi_2025target(all_regi) "set of regions with predominantly 2025 GHG target"
   /
 $ondelim
-$include "./modules/45_carbonprice/NDC2018/input/set_regi2025.cs4r"
+$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2021_cond.cs4r"
+$if "%cm_NDC_version%" == "2021_uncond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2021_uncond.cs4r"
+$if "%cm_NDC_version%" == "2018_cond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2018_cond.cs4r"
+$if "%cm_NDC_version%" == "2018_uncond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2018_uncond.cs4r"
 $offdelim
   /             ;
 
 Set regi_2030target(all_regi) "set of regions with predominantly 2030 GHG target"
   /
 $ondelim
-$include "./modules/45_carbonprice/NDC2018/input/set_regi2030.cs4r"
+$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2021_cond.cs4r"
+$if "%cm_NDC_version%" == "2021_uncond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2021_uncond.cs4r"
+$if "%cm_NDC_version%" == "2018_cond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2018_cond.cs4r"
+$if "%cm_NDC_version%" == "2018_uncond" $include "./modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2018_uncond.cs4r"
 $offdelim
   /             ;
   
