@@ -5,6 +5,8 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 parameters
-p16_tempRegionalCMIP5(tall,all_regi)  "regional temperature",
+pm_regionalTemperature(tall,all_regi) "regional temperature"
+pm_tempScaleGlob2Reg(tall,all_regi)   "scaling factor from global to regional temperature"
+p16_tempRegionalCMIP5(tall,all_regi)  "regional temperature"
 p16_tempGlobalCMIP5(tall)             "global temperature"
 ;

@@ -4,8 +4,13 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+
+pm_regionalTemperature(tall,regi)      = 0;
+pm_tempScaleGlob2Reg(tall,regi)        = 1;
+
+
 *** satisfy dependencies
-$ifi not %cm_rcp_scen% == 'rcp26' $ifi not %cm_rcp_scen% == 'rcp85' abort "module downscaleTemperature=CMIP5 requires cm_rcp_scen={rcp26,rcp85}. As the differences in downscaling are not large across RCPs, you may just want to comment out this abort.";
+***$ifi not %cm_rcp_scen% == 'rcp26' $ifi not %cm_rcp_scen% == 'rcp85' abort "module downscaleTemperature=CMIP5 requires cm_rcp_scen={rcp26,rcp85}. As the differences in downscaling are not large across RCPs, you may just want to comment out this abort.";
 
 ***$ifi not (%cm_rcp_scen% == 'rcp26') abort "module downscaleTemperature=CMIP5 requires cm_rcp_scen={rcp26,rcp85}. As the differences in downscaling are not large across RCPs, you may just want to comment out this abort.";
 
@@ -22,7 +27,8 @@ $offdelim
 /
 ;
 
-p16_tempRegionalCMIP5(ttot,regi) = f16_tempRegionalCMIP5("%cm_rcp_scen%",ttot,regi);
+*p16_tempRegionalCMIP5(ttot,regi) = f16_tempRegionalCMIP5("%cm_rcp_scen%",ttot,regi);
+p16_tempRegionalCMIP5(ttot,regi) = f16_tempRegionalCMIP5("rcp26",ttot,regi);
 
 parameter f16_tempGlobalCMIP5(all_rcp_scen,ttot)  "XXX"
 /
@@ -31,7 +37,8 @@ $include "./modules/16_downscaleTemperature/CMIP5/input/p16_tempGlobal.inc"
 $offdelim
 /
 ;
-p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%cm_rcp_scen%",ttot);
+*p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%cm_rcp_scen%",ttot);
+p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("rcp26",ttot);
 
 parameter p16_tempRegionalCalibrate2005(all_regi)  "XXX"
 /

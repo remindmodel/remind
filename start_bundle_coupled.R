@@ -265,9 +265,11 @@ for(scen in common){
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
       cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
 
-      # If the preceding run has already finished (= their gdx files exist) start the current run immediately.
-      # This might be the case e.g. if you started the baseline and NDC runs in a first batch and now want to start the subsequent policy runs by hand after the baselines have finished
-      if (file.exists(cfg_rem$files2export$start['input_ref.gdx']) & file.exists(cfg_rem$files2export$start['input_bau.gdx'])) {
+      # If the preceding run has already finished (= its gdx file exist) start 
+      # the current run immediately. This might be the case e.g. if you started
+      # the NDC run in a first batch and now want to start the subsequent policy
+      # runs by hand after the NDC has finished.
+      if (file.exists(cfg_rem$files2export$start['input_ref.gdx'])) {
         start_now <- TRUE
       }
   }

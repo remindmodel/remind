@@ -1,0 +1,5 @@
+name,type,reason
+pm_globalMeanTemperatureZeroed1900,input,questionnaire
+cm_damages_BurkeLike_specification,input,questionnaire
+cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_damageMarginal,input,questionnaire

@@ -1,0 +1,12 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    -   id: check-case-conflict
+    -   id: check-json
+    -   id: check-yaml
+    -   id: check-merge-conflict
+    -   id: fix-byte-order-marker
+# these two are useful as well, but very much not followed in remind ATM
+#    -   id: end-of-file-fixer
+#    -   id: trailing-whitespace
