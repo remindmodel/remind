@@ -2451,10 +2451,13 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         segabio.fegas.tdbiogas.seel
 		segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
-        cco2.ico2.ccsinje.seel
         fedie.uedit.apCarDiEffT.feelt
         fedie.uedit.apCarDiEffH2T.feelt
         fedie.uedit.apCarDiEffH2T.feh2t
+/
+pc2emi(emiAll,all_enty,all_te,all_enty)    "mapping for own emission consumption of technologies"
+/
+        cco2.ico2.ccsinje.seel
 /
 *NB* mappings for emissions, capture and leakage
 emi2te(all_enty,all_enty,all_te,emiAll)    " map emissions to technologies"

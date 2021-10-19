@@ -10,6 +10,7 @@ pm_IO_input(all_regi,all_enty,all_enty,all_te)                 "Energy input bas
 p04_IO_output(all_regi,all_enty,all_enty,all_te)                "Energy output based on IEA data"
 p04_x_enty2te_dyn04(all_regi,all_enty,all_enty,all_te,all_te)   "parameter for the allocation of energy flow to technologies"
 pm_prodCouple(all_regi,all_enty,all_enty,all_te,all_enty)       "own consumption"
+pm_prodCoupleEmi(all_regi,emiAll,all_enty,all_te,all_enty)
 p04_aux_data(all_regi,char, all_te)                             "auxiliary parameter to store the initial mix0 and eta values for gas electricity before splitting it to ngcc and ngt (needed as long as calibration routine sets ngt to 0)"
 p04_shareNGTinGas(all_regi)                                     "Share of ngt in electricity produced from gas"
 pm_fuExtrOwnCons(all_regi, all_enty, all_enty)                  "energy own consumption in the extraction sector with first enty being the output produced and the second enty being the input required"

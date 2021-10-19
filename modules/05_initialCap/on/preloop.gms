@@ -80,6 +80,11 @@ q05_eedemini(regi,enty)..
     * pm_cf("2005",regi,te2)
     * v05_INIcap0(regi,te2)
     )
+  - sum(pc2emi(emiAll,enty4,te2,enty),
+      pm_prodCoupleEmi(regi,emiAll,enty4,te2,enty)
+    * pm_cf("2005",regi,te2)
+    * v05_INIcap0(regi,te2)
+    )
 ;
 
 *** capacity meets demand of the produced energy:

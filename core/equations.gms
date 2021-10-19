@@ -29,19 +29,9 @@ q_costFu(t,regi)..
 q_costInv(t,regi)..
   v_costInv(t,regi)
   =e=
-*** investment cost of conversion technologies
-  sum(en2en(enty,enty2,te),
+*** investment cost for technologies
+  sum(te$(not(sameas(te,"h2curt") or sameas(te,"tdh2b") or sameas(te,"tdh2i"))),
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
-  )
-  +
-*** investment cost of emission conversion technologies
-  sum(ccs2te(emiAll,enty2,te),
-    v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
-  )
-  +
-*** investment cost of non-conversion technologies (storage, grid etc.)
-  sum(teNoTransform,
-    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 *** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
   +
@@ -142,10 +132,10 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
       pm_prodCouple(regi,enty4,enty5,te,enty2) 
     * vm_prodFe(t,regi,enty4,enty5,te)
     )
-  + sum(pc2te(enty,enty3,te,enty2),
+  + sum(pc2emi(emiAll,enty3,te,enty2),
                 sum(teCCS2rlf(te,rlf),
-        pm_prodCouple(regi,enty,enty3,te,enty2) 
-      * vm_co2CCS(t,regi,enty,enty3,te,rlf)
+        pm_prodCoupleEmi(regi,emiAll,enty3,te,enty2) 
+      * vm_co2CCS(t,regi,emiAll,enty3,te,rlf)
                 )
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
