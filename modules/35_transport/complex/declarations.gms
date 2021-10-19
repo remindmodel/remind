@@ -12,7 +12,7 @@ v35_demFe(ttot,all_regi,all_enty,all_enty,all_te)      "fe demand [TWa]"
 v35_demTransType(ttot,all_regi,all_enty,all_emiMkt,transType_35) "Tranportation FE demand per type: LDV, nonLDV without Bunkers and nonLDV Bunkers"
 
 $ifthen.shLDVsales not "%cm_share_LDV_sales%" == "off"
-  v35_shLDVSales(ttot,all_regi,all_te) 
+  v35_shLDVSales(ttot,all_regi,all_te)       "share of LDV sales per tech"
 $endif.shLDVsales  
 ;
 
