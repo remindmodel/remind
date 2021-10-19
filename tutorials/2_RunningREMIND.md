@@ -165,7 +165,7 @@ cfg$regionmapping
 ``` bash
 cfg$revision
 ```
-the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded from from `/p/projects/rd3mod/inputdata/output/` and distributed. 
+the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded from `/p/projects/rd3mod/inputdata/output/` and distributed. 
 
 ## b) Optimization
 

@@ -2,159 +2,159 @@ cff-version: 1.0.3
 message: If you use this model, please cite it as below.
 authors:
 
-- family-names: Luderer
-  given-names:  Gunnar
+- family-names: "Luderer"
+  given-names:  "Gunnar"
   orcid: https://orcid.org/0000-0002-9057-6155
   affiliation: "Potsdam Institute for Climate Impact Research"
   
-- family-names: Bauer
-  given-names:  Nico
+- family-names: "Bauer"
+  given-names:  "Nico"
   orcid: https://orcid.org/0000-0002-0211-4162
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Baumstark
-  given-names:  Lavinia
+- family-names: "Baumstark"
+  given-names:  "Lavinia"
   orcid: https://orcid.org/0000-0002-6979-6671
   affiliation: "Potsdam Institute for Climate Impact Research"
   
-- family-names: Bertram
-  given-names:  Christoph
+- family-names: "Bertram"
+  given-names:  "Christoph"
   orcid: https://orcid.org/0000-0002-0933-4395
   affiliation: "Potsdam Institute for Climate Impact Research"
   
-- family-names: Leimbach
-  given-names:  Marian
+- family-names: "Leimbach"
+  given-names:  "Marian"
   affiliation: "Potsdam Institute for Climate Impact Research"
   
-- family-names: Pietzcker
-  given-names:  Robert
+- family-names: "Pietzcker"
+  given-names:  "Robert"
   orcid: https://orcid.org/0000-0002-9403-6711
   affiliation: "Potsdam Institute for Climate Impact Research"
   
-- family-names: Strefler
-  given-names:  Jessica
+- family-names: "Strefler"
+  given-names:  "Jessica"
   orcid: https://orcid.org/0000-0002-5279-4629
   affiliation: "Potsdam Institute for Climate Impact Research"  
 
-- family-names: Aboumahboub
-  given-names:  Tino
+- family-names: "Aboumahboub"
+  given-names:  "Tino"
 
-- family-names: Auer
-  given-names:  Cornelia
+- family-names: "Auer"
+  given-names:  "Cornelia"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Bi
-  given-names:  Stephen
+- family-names: "Bi"
+  given-names:  "Stephen"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Dietrich
-  given-names:  Jan
+- family-names: "Dietrich"
+  given-names:  "Jan"
   orcid: https://orcid.org/0000-0002-4309-6431
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Dirnaichner
-  given-names:  Alois
+- family-names: "Dirnaichner"
+  given-names:  "Alois"
   orcid: https://orcid.org/0000-0002-3240-2608
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Giannousakis
-  given-names:  Anastasis
+- family-names: "Giannousakis"
+  given-names:  "Anastasis"
   orcid: https://orcid.org/0000-0002-4225-0011
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Haller
-  given-names:  Markus
+- family-names: "Haller"
+  given-names:  "Markus"
 
-- family-names: Hilaire
-  given-names:  Jerome
+- family-names: "Hilaire"
+  given-names:  "Jerome"
   orcid: https://orcid.org/0000-0002-9879-6339
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Klein
-  given-names:  David
+- family-names: "Klein"
+  given-names:  "David"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Koch
-  given-names:  Johannes
+- family-names: "Koch"
+  given-names:  "Johannes"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Körner
-  given-names:  Alexander
+- family-names: "Körner"
+  given-names:  "Alexander"
 
-- family-names: Kriegler
-  given-names:  Elmar
+- family-names: "Kriegler"
+  given-names:  "Elmar"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Levesque
-  given-names:  Antoine
+- family-names: "Levesque"
+  given-names:  "Antoine"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Lorenz
-  given-names:  Alexander
+- family-names: "Lorenz"
+  given-names:  "Alexander"
 
-- family-names: Ludig
-  given-names:  Sylvie
+- family-names: "Ludig"
+  given-names:  "Sylvie"
 
-- family-names: Lüken
-  given-names:  Michael
+- family-names: "Lüken"
+  given-names:  "Michael"
 
-- family-names: Malik
-  given-names:  Aman
+- family-names: "Malik"
+  given-names:  "Aman"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Manger
-  given-names:  Susanne
+- family-names: "Manger"
+  given-names:  "Susanne"
 
-- family-names: Merfort
-  given-names:  Leon
+- family-names: "Merfort"
+  given-names:  "Leon"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Mouratiadou
-  given-names:  Ioanna
+- family-names: "Mouratiadou"
+  given-names:  "Ioanna"
 
-- family-names: Pehl
-  given-names:  Michaja
+- family-names: "Pehl"
+  given-names:  "Michaja"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Piontek
-  given-names:  Franziska
+- family-names: "Piontek"
+  given-names:  "Franziska"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Popin
-  given-names:  Laura
+- family-names: "Popin"
+  given-names:  "Laura"
 
-- family-names: Rauner
-  given-names:  Sebastian
+- family-names: "Rauner"
+  given-names:  "Sebastian"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Rodrigues
-  given-names:  Renato
+- family-names: "Rodrigues"
+  given-names:  "Renato"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Roming
-  given-names:  Niklas
+- family-names: "Roming"
+  given-names:  "Niklas"
 
-- family-names: Rottoli
-  given-names:  Marianna
+- family-names: "Rottoli"
+  given-names:  "Marianna"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Schmidt
-  given-names:  Eva
+- family-names: "Schmidt"
+  given-names:  "Eva"
 
-- family-names: Schreyer
-  given-names:  Felix
+- family-names: "Schreyer"
+  given-names:  "Felix"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Schultes
-  given-names:  Anselm
+- family-names: "Schultes"
+  given-names:  "Anselm"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Sörgel
-  given-names:  Björn
+- family-names: "Sörgel"
+  given-names:  "Björn"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: Ueckerdt
-  given-names:  Falko
+- family-names: "Ueckerdt"
+  given-names:  "Falko"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 
