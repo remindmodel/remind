@@ -33,7 +33,7 @@ q02_welfare(regi)..
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
-$if "%cm_INCONV_PENALTY_bioSwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
+$if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
             )
         )
 ;
@@ -63,7 +63,7 @@ $ENDIF.INCONV
 
 *** small inconvenience penalty for increasing/decreasing biomass/synfuel use between two time steps in buildings and industry and emissison markets
 *** necessary to avoid switching behavior in sectors and emissions markets between time steps as those sectors and markets do not have se2fe capcities
-$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$((ttot.val ge cm_startyear) 
                                                             AND se2fe(entySe,entyFe,te) 
                                                             AND entyFe2Sector(entyFe,sector) 

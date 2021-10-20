@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/02_welfare/utilitarian/postsolve.gms
 
-$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_bioSwitch%" == "on"
+$IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 *** track inconvenience penalty for bio/synfuel switching to check how large it is relative to consumption
 p02_inconvPen_Switch_Track(t,regi) = (sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) 
                                                                     AND entyFe2Sector(entyFe,sector) 
