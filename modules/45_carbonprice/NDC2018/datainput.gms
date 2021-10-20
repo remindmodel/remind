@@ -18,14 +18,20 @@ pm_taxCO2eq("2015",regi)$regi_group("EUR_regi",regi)= 5 * sm_DptCO2_2_TDpGtC;
 Parameter p45_factor_targetyear(ttot,all_regi,all_GDPscen) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
   /
 $ondelim
-$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_factor_targetyear.cs4r"
+$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_factor_targetyear_NDC2021_cond.cs4r"
+$if "%cm_NDC_version%" == "2021_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_factor_targetyear_NDC2021_uncond.cs4r"
+$if "%cm_NDC_version%" == "2018_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_factor_targetyear_NDC2018_cond.cs4r"
+$if "%cm_NDC_version%" == "2018_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_factor_targetyear_NDC2018_uncond.cs4r"
 $offdelim
   /             ;
 
 Parameter p45_2005share_target(ttot,all_regi,all_GDPscen) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
   /
 $ondelim
-$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_2005share_target.cs4r"
+$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2021_cond.cs4r"
+$if "%cm_NDC_version%" == "2021_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2021_uncond.cs4r"
+$if "%cm_NDC_version%" == "2018_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2018_cond.cs4r"
+$if "%cm_NDC_version%" == "2018_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2018_uncond.cs4r"
 $offdelim
   /             ;
 
@@ -33,7 +39,10 @@ $offdelim
 Parameter p45_hist_share(tall,all_regi) "GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record"
   /
 $ondelim
-$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_hist_share.cs4r"
+$if "%cm_NDC_version%" == "2021_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_hist_share_NDC2021_cond.cs4r"
+$if "%cm_NDC_version%" == "2021_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_hist_share_NDC2021_uncond.cs4r"
+$if "%cm_NDC_version%" == "2018_cond" $include "./modules/45_carbonprice/NDC2018/input/p45_hist_share_NDC2018_cond.cs4r"
+$if "%cm_NDC_version%" == "2018_uncond" $include "./modules/45_carbonprice/NDC2018/input/p45_hist_share_NDC2018_uncond.cs4r"
 $offdelim
   /             ;
   
