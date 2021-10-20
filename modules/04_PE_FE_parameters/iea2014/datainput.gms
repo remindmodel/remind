@@ -160,6 +160,18 @@ loop(pc2te(enty,enty2,te,enty3),
     );
 );
 display pm_prodCouple;
+
+*** define global values for couple production that can be used if the regional IEA data are 0
+p04_prodCoupleGlobEmi("cco2","ico2","ccsinje","seel")          = -0.005;
+loop(pc2emi(emiAll,enty,te,enty2),
+    loop(regi,
+        pm_prodCoupleEmi(regi,emiAll,enty,te,enty2)  =  p04_prodCoupleGlobEmi(emiAll,enty,te,enty2);
+    );
+);
+display pm_prodCoupleEmi;
+
+
+
 *** ----------------------------------------------------------------------------------------------------------
 ***--------------------------------------- calculate eta and mix0 --------------------------------------------
 *** ----------------------------------------------------------------------------------------------------------

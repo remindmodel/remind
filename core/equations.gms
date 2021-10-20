@@ -80,15 +80,6 @@ q_costOM(t,regi)..
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2))
   )
   +
-  sum(ccs2te(emiAll,enty2,te),
-    pm_data(regi,"omf",te) 
-    * sum(te2rlf(te,rlf), vm_costTeCapital(t,regi,te) * vm_cap(t,regi,te,rlf) )
-    +
-    pm_data(regi,"omv",te)
-      * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
-         + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2))
-  )
-  +
   sum(teNoTransform(te),
      pm_data(regi,"omf",te)
           * sum(te2rlf(te,rlf),
@@ -781,8 +772,8 @@ q_balCCUvsCCS(t,regi) ..
 *' Definition of the CCS transformation chain:
 ***---------------------------------------------------------------------------
 *** no effect while CCS chain is limited to just one step (ccsinje)   
-q_transCCS(t,regi,ccs2te(emiAll,enty2,te),ccs2te2(enty2,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..    
-        (1-pm_emifac(t,regi,enty,enty2,te,"co2")) * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
+q_transCCS(t,regi,ccs2te(emiAll,enty2,te),ccs2te2(emiAll,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..
+        (1-pm_emifac(t,regi,emiAll,enty2,te,"co2")) * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
         =e=
         vm_co2CCS(t,regi,emiAll,enty3,te2,rlf);
 

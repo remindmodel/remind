@@ -1527,16 +1527,4 @@ $ifthen.subsectors "%industry%" == "subsectors"   !! industry
 s_histBioShareTolerance = 0.3;
 $endif.subsectors
 
-*** define global values for couple production that can be used if the regional IEA data are 0
-pm_prodCoupleEmi("cco2","ico2","ccsinje","seel")          = -0.005;
-loop(pc2emi(enty,enty,te,enty2),
-    loop(regi,
-       if(pm_prodCoupleEmi(regi,emiAll,enty,te,enty2) eq 0,
-          pm_prodCoupleEmi(regi,emiAll,enty,te,enty2)  =  pm_prodCoupleEmi("cco2","ico2","ccsinje","seel");
-       );
-    );
-);
-display pm_prodCoupleEmi;
-
-
 *** EOF ./core/datainput.gms

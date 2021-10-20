@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/DAC/bounds.gms
-vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
+vm_emiCdr.fx(t,regi,emiAll)$(not sameas(emiAll,"co2")) = 0.0;
 vm_emiCdr.l(t,regi,"co2")$(t.val gt 2020 AND cm_ccapturescen ne 2) = -sm_eps;
 vm_omcosts_cdr.fx(t,regi) = 0.0;
 v33_emiEW.fx(t,regi) = 0.0;
