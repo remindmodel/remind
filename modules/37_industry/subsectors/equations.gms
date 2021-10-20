@@ -44,7 +44,7 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in)),
       vm_cesIO(ttot,regi,in)
-    * p37_fctEmi(entyFE)
+    * p37_fctEmi(ttot,regi,entyFE)
     )
 ;
 

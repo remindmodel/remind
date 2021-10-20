@@ -77,9 +77,10 @@ loop ((all_regi,ppfen_industry_dyn37(all_in)),
 
 display "calculated FE share of 'other' industry sector", p37_shIndFE;
 
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
+*' Emission factors for calculating industry emissions
+p37_fctEmi(t,regi,"fesos") = pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2");
+p37_fctEmi(t,regi,"fehos") = pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2");
+p37_fctEmi(t,regi,"fegas") = pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2");
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;

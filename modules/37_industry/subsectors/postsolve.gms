@@ -21,7 +21,7 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
               vm_cesIO.l(ttot,regi,in)
             )
           )
-        * p37_fctEmi(entyFE) !! convert energy to emissions
+        * p37_fctEmi(ttot,regi,entyFE) !! convert energy to emissions
         )
         !! share of PE in SE production
       * ( vm_prodSE.l(ttot,regi,entyPE,entySE,te)

@@ -32,7 +32,7 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
     * p37_shIndFE(regi,in,secInd37)
     )
-  * p37_fctEmi(entyFE)
+  * p37_fctEmi(ttot,regi,entyFE)
 ;
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
