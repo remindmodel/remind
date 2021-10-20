@@ -13,5 +13,6 @@ $Ifi "%phase%" == "declarations" $include "./modules/02_welfare/utilitarian/decl
 $Ifi "%phase%" == "datainput" $include "./modules/02_welfare/utilitarian/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/02_welfare/utilitarian/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/02_welfare/utilitarian/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/02_welfare/utilitarian/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/02_welfare/realization.gms
