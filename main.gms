@@ -85,7 +85,7 @@
 * 
 * Input data revision: 6.254
 * 
-* Last modification (input data): Fri Oct 08 19:27:16 2021
+* Last modification (input data): Wed Oct 20 17:30:02 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -577,7 +577,7 @@ $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
-$setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
+$setglobal cm_INCONV_PENALTY_FESwitch  off !! def = off
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
