@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 ### Function to create files with regional BAU emissions
 
-prepare_NDC2018<-function(gdx){
+prepare_NDC2018<-function(gdx, cfg){
   
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode2,quietly=TRUE,warn.conflicts =FALSE)
@@ -42,7 +42,15 @@ prepare_NDC2018<-function(gdx){
   #read current gdp_scen
   gdp_scen <- readGDX(gdx,"cm_GDPscen")
   
-  shares <- as.magpie(read.csv("modules/45_carbonprice/NDC2018/input/p45_2005share_target.cs4r",skip=4,header = F))
+  if (cfg$gms$cm_NDC_version == "2021_cond"){
+    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2021_cond.cs4r",skip=4,header = F))
+  } else if (cfg$gms$cm_NDC_version == "2021_uncond") {
+    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2021_uncond.cs4r",skip=4,header = F))
+  } else if (cfg$gms$cm_NDC_version == "2018_cond") {
+    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2018_cond.cs4r",skip=4,header = F))
+  } else if (cfg$gms$cm_NDC_version == "2018_uncond") {
+    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC2018/input/p45_2005share_target_NDC2018_uncond.cs4r",skip=4,header = F))
+  }
   r2025 <- NULL
   r2030 <- NULL
   for(r in getRegions(shares)){
@@ -57,6 +65,17 @@ prepare_NDC2018<-function(gdx){
   # to be done: add up the shares from both time-steps to the dominant time step and copy the target value to the other time step
   # (assuming that the target is similar for the other time step - likely the minor error in comparison to not considering country at all)
   
-  write.table(r2025,"modules/45_carbonprice/NDC2018/input/set_regi2025.cs4r", row.names = F,col.names=F,quote = F)
-  write.table(r2030,"modules/45_carbonprice/NDC2018/input/set_regi2030.cs4r", row.names = F,col.names=F,quote = F)
+  if (cfg$gms$cm_NDC_version == "2021_cond"){
+    write.table(r2025,"modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2021_cond.cs4r", row.names = F,col.names=F,quote = F)
+    write.table(r2030,"modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2021_cond.cs4r", row.names = F,col.names=F,quote = F)
+  } else if (cfg$gms$cm_NDC_version == "2021_uncond") {
+    write.table(r2025,"modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2021_uncond.cs4r", row.names = F,col.names=F,quote = F)
+    write.table(r2030,"modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2021_uncond.cs4r", row.names = F,col.names=F,quote = F)
+  } else if (cfg$gms$cm_NDC_version == "2018_cond") {
+    write.table(r2025,"modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2018_cond.cs4r", row.names = F,col.names=F,quote = F)
+    write.table(r2030,"modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2018_cond.cs4r", row.names = F,col.names=F,quote = F)
+  } else if (cfg$gms$cm_NDC_version == "2018_uncond") {
+    write.table(r2025,"modules/45_carbonprice/NDC2018/input/set_regi2025_NDC2018_uncond.cs4r", row.names = F,col.names=F,quote = F)
+    write.table(r2030,"modules/45_carbonprice/NDC2018/input/set_regi2030_NDC2018_uncond.cs4r", row.names = F,col.names=F,quote = F)
+  }
 }
