@@ -87,6 +87,8 @@ q05_eedemini(regi,enty)..
     )
 ;
 
+v05_INIcap0.fx(regi, "ccsinje") = 0;
+
 *** capacity meets demand of the produced energy:
 q05_ccapini(regi,en2en(enty,enty2,te)) ..
     pm_cf("2005",regi,te)
