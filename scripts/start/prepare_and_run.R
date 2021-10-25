@@ -286,7 +286,9 @@ prepare <- function() {
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
   lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  on.exit() # set the commands when exiting in the correct order
   on.exit(model_unlock(lock_id),add=TRUE)
+  on.exit(setwd(cfg$results_folder),add=TRUE)
   ################## M O D E L   L O C K ###################################
 
   ###########################################################
@@ -297,7 +299,7 @@ prepare <- function() {
   # ATTENTION: modifying gms files
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
     source("scripts/input/prepare_NDC2018.R")
-    prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
+    prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
   ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
@@ -306,32 +308,16 @@ prepare <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}
 
-  # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
-  if(cfg$gms$transport == "edge_esm"){
-    if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
-       demTrsp = "wise"
-    } else {
-       demTrsp = "conv"
-    }
-  }
-
-  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
-  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
-       demComplex = "fromEDGET"
-  }
-
-
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
+                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", cfg$gms$cm_EDGEtr_scen, "-"), ""),
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
+                                         "En_",  cfg$gms$cm_demScen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
-                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
-                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
                                          "Reg_", regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms

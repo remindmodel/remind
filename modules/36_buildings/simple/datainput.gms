@@ -34,14 +34,14 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 
 Parameter
 
-p36_floorspace_scen                    "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
+p36_floorspace_scen(tall, all_regi, all_demScen)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
 /
 $ondelim
 $include "./modules/36_buildings/simple/input/p36_floorspace_scen.cs4r"
 $offdelim
 /
 ;
-p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_POPscen%") * 1e-3; !! from million to billion m2
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3; !! from million to billion m2
 
 
 $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off" 

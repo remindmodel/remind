@@ -19,5 +19,6 @@ pm_gdp,input,questionnaire
 cm_CO2priceRegConvEndYr,input,questionnaire
 cm_peakBudgYr,input,questionnaire
 cm_taxCO2inc_after_peakBudgYr,input,questionnaire
+cm_NDC_version,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire

@@ -1,4 +1,4 @@
-﻿*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -1060,11 +1060,6 @@ p_emi_quan_conv_ar4("n2owaste")   = sm_tgn_2_pgc * (298/s_gwpN2O);
 pm_data(regi,"ccap0",te) = 1/card(regi)*fm_dataglob("ccap0",te);
 
 
-
-
-
-
-
 *** --------------------------------------------------------------------------------
 *** Adjust investment cost data
 *** -------------------------------------------------------------------------------
@@ -1107,11 +1102,6 @@ display p_tkpremused;
 ***$if %cm_techcosts% == "REG"   );
 
 ***$if %cm_techcosts% == "REG"   pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);
-
-
-
-
-
 
 pm_data(regi,"inco0",te)       = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"inco0",te);
 pm_data(regi,"incolearn",te)   = (1 + p_tkpremused(regi,te) ) * pm_data(regi,"incolearn",te);
@@ -1227,9 +1217,6 @@ $if %c_techcosts% == "REG"    );
 *                        / (f_datafecostsglob("lifetime",in) * f_datafecostsglob("usehr",in)) !! capital costs are levelled over the yearly use
 *                        * sm_day_2_hour * sm_year_2_day    !! from $/TWh to $/TWa.
 *                        ;
-
-
-
 
 *** -----------------------------------------------------------------------------
 *** ------------ emission budgets and their time periods ------------------------
@@ -1476,46 +1463,51 @@ o_reached_until2150pricepath(iteration) = 0;
 *** also used for limiting secondary steel demand in baseline and policy
 *** scenarios
 Parameter
-  pm_fedemand   "final energy demand"
-  /
+f_fedemand(tall,all_regi,all_demScen,all_in)   "final energy demand"
+/
 $ondelim
-$include "./core/input/pm_fe_demand.cs4r"
+$include "./core/input/f_fedemand.cs4r"
 $offdelim
-  /
+/
 ;
+
+*** use cm_demScen for Industry and Buildings 
+*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
+pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+
 
 $ifthen.subsectors "%industry%" == "subsectors"   !! industry
 *** Limit secondary steel production to 90 %.  This might be slightly off due
 *** to rounding in the mrremind package.
-if (9 lt smax((t,regi,all_GDPscen)$(
-                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
-           pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
-         / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+if (9 lt smax((t,regi)$(
+                           pm_fedemand(t,regi,"ue_steel_primary") ),
+           pm_fedemand(t,regi,"ue_steel_secondary")
+         / pm_fedemand(t,regi,"ue_steel_primary")
          ),
   put logfile;
   logfile.nd = 15;
   put ">>> rescaling steel production figures because of mrremind rounding" /;
 
-  loop ((t,regi,all_GDPscen)$(
-                           pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary") ),
-    if (9 lt ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
-             / pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")),
+  loop ((t,regi)$(
+                           pm_fedemand(t,regi,"ue_steel_primary") ),
+    if (9 lt ( pm_fedemand(t,regi,"ue_steel_secondary")
+             / pm_fedemand(t,regi,"ue_steel_primary")),
 
-      put t.tl, " ", regi.tl, " ", all_GDPscen.tl, ": ";
-      put @20 "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
-      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ") -> ";
+      put t.tl, " ", regi.tl, " ", ": ";
+      put @20 "(", pm_fedemand(t,regi,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,"ue_steel_secondary"), ") -> ";
 
-      pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
+      pm_fedemand(t,regi,"ue_steel_primary")
       = 0.1
-      * ( pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary")
-        + pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
+      * ( pm_fedemand(t,regi,"ue_steel_primary")
+        + pm_fedemand(t,regi,"ue_steel_secondary")
         );
 
-      pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary")
-      = 9 * pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary");
+      pm_fedemand(t,regi,"ue_steel_secondary")
+      = 9 * pm_fedemand(t,regi,"ue_steel_primary");
 
-      put "(", pm_fedemand(t,regi,all_GDPscen,"ue_steel_primary"), ",";
-      put pm_fedemand(t,regi,all_GDPscen,"ue_steel_secondary"), ")" /;
+      put "(", pm_fedemand(t,regi,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,"ue_steel_secondary"), ")" /;
     );
   );
 
@@ -1534,6 +1526,7 @@ s_histBioShareTolerance = 0.02;
 $ifthen.subsectors "%industry%" == "subsectors"   !! industry
 s_histBioShareTolerance = 0.3;
 $endif.subsectors
+
 
 
 *** EOF ./core/datainput.gms
