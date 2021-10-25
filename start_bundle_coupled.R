@@ -15,8 +15,8 @@ path_magpie <- "/p/projects/piam/runs/coupled-magpie/"
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
-path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
-path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
+path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_GCSF.csv")
+path_settings_remind  <- paste0(path_remind,"config/scenario_config_GCSF.csv")
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
@@ -254,16 +254,29 @@ for(scen in common){
   # add information on subsequent runs to start after the current run is finished
   # take rownames (which is the runname) of that row, that has the current scenario in its gdx_ref
   cfg_rem$subsequentruns <- intersect(rownames(settings_remind[settings_remind$path_gdx_ref == scen & !is.na(settings_remind$path_gdx_ref),]),common)
+  #Also add runs that will need the carbon price from this one
+  cfg_rem$subsequentruns <- c(cfg_rem$subsequentruns, intersect(rownames(settings_remind[settings_remind$path_gdx_carbonprice == scen & !is.na(settings_remind$path_gdx_carbonprice),]),common))
 
   # immediately start run if it has a real gdx file (not a runname) given (last four letters are ".gdx") in path_gdx_ref or where this field is empty (NA)
   start_now <- (substr(settings_remind[scen,"path_gdx_ref"], nchar(settings_remind[scen,"path_gdx_ref"])-3, nchar(settings_remind[scen,"path_gdx_ref"])) == ".gdx"
                | is.na(settings_remind[scen,"path_gdx_ref"]))
+
+  # perform the same checks for path_gdx_carbonprice and only start the run if both conditions are met
+  has_carbonprice_path <- !is.na(settings_remind[scen,"path_gdx_carbonprice"])
+  cp_start_now <- (substr(settings_remind[scen,"path_gdx_carbonprice"], nchar(settings_remind[scen,"path_gdx_carbonprice"])-3, nchar(settings_remind[scen,"path_gdx_carbonprice"])) == ".gdx"
+               | is.na(settings_remind[scen,"path_gdx_carbonprice"]))
+  start_now <- start_now & cp_start_now
 
   if (!start_now) {
       # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
       # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
       cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
+
+      # Also add path to carbon price gdx if given one 
+      if (has_carbonprice_path) {
+        cfg_rem$files2export$start['input_carbonprice.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_carbonprice"],"-rem-",max_iterations,"/fulldata.gdx")
+      }
 
       # If the preceding run has already finished (= its gdx file exist) start 
       # the current run immediately. This might be the case e.g. if you started
@@ -272,6 +285,14 @@ for(scen in common){
       if (file.exists(cfg_rem$files2export$start['input_ref.gdx'])) {
         start_now <- TRUE
       }
+
+      # Don't start it if a carbon price path was set and the file does not exist yet
+      if (!file.exists(cfg_rem$files2export$start['input_ref.gdx'])) {
+        start_now <- FALSE
+        cp_start_now <- FALSE
+        # cat("path_gdx_carbonprice set to ",settings_remind[scen,"path_gdx_carbonprice"]," but that run isn't finished yet","\n")
+      }
+      
   }
 
   save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
@@ -311,5 +332,8 @@ for(scen in common){
       else cat("Test mode: run NOT submitted to the cluster\n")
   } else {
      cat(paste0("Run ",runname," will start after preceding run ",prefix_runname,settings_remind[scen,"path_gdx_ref"]," has finished\n"))
+     if (!cp_start_now) {
+      cat(paste0("Run ",runname," must also wait for carbon prices from run ",prefix_runname,settings_remind[scen,"path_gdx_carbonprice"],"\n"))
+     }
   }
 }
