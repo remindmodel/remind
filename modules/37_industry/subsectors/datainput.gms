@@ -199,5 +199,14 @@ $endIf.CESMkup
 
 display p37_CESMkup;
 
+Parameter
+  p37_max_secondary_steel_share(tall,all_regi,all_GDPscen)   "maximum share of secondary steel production [0-1]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_max_secondary_steel_share.cs4r";
+$offdelim
+  /
+;
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 
