@@ -18,9 +18,16 @@ require(grid)
 
 
 if(!exists("source_include")) {
+  #if this script is not being sourced by another script but called from the command line via Rscript read the command line args
   #Define arguments that can be read from command line
-  outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
+  outputdir <- "dummy"
   readArgs("outputdir")
+  
+  if(!file.exists(file.path(outputdir))){
+    print(outputdir)
+    stop("specified path does not exist!")
+  }
+  
 }
 
 ## generate DIETER reporting if it is needed
@@ -30,7 +37,9 @@ if(file.exists(file.path(outputdir, DIETERGDX))){
   print("start generation of DIETER reporting")
   remind2::reportDIETER(DIETERGDX,outputdir)
   print("end generation of DIETER reporting")
-}																   
+}else {
+  stop("report_DIETER.gdx not found!")
+}						   
 
 
 
