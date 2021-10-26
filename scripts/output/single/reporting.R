@@ -77,7 +77,7 @@ print("end generation of LCOE reporting")
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
   print("start generation of DIETER reporting")
-  reportDIETER(DIETERGDX,outputdir)
+  remind2::reportDIETER(DIETERGDX,outputdir)
   print("end generation of DIETER reporting")
 }																   
 														
