@@ -148,10 +148,23 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         stop("Can't find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
       }
     }
+
+    # Determine whether we need a separate carbon price GDX or not
+    has_carbonprice_path <- FALSE
+    if ("path_gdx_carbonprice" %in% colnames(isettings)) { if (!is.na(isettings[iscen,"path_gdx_carbonprice"])) {
+      has_carbonprice_path <- TRUE
+    }}
+
+
     # Define path where the GDXs will be taken from
     gdxlist <- c(input.gdx     = isettings[iscen, "path_gdx"],
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
                  input_bau.gdx = isettings[iscen, "path_gdx_bau"])
+
+    # also export the carbon price gdx
+    if (has_carbonprice_path) {
+      gdxlist <- c(gdxlist, input_carbonprice.gdx = isettings[iscen, "path_gdx_carbonprice"])
+    }
 
     # add gdxlist to list of files2export
     icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
@@ -159,6 +172,11 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     # add gdx information for subsequent runs
     icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
     icfg$RunsUsingTHISgdxAsBAU <- rownames(isettings[isettings$path_gdx_bau == iscen & !is.na(isettings$path_gdx_bau) & isettings$start == 1,])
+
+    if (has_carbonprice_path) {
+      icfg$subsequentruns <- c(icfg$subsequentruns, rownames(isettings[isettings$path_gdx_carbonprice == iscen & !is.na(isettings$path_gdx_carbonprice) & isettings$start == 1,]))
+    }
+
 
     return(icfg)
 }
