@@ -262,10 +262,15 @@ for(scen in common){
                | is.na(settings_remind[scen,"path_gdx_ref"]))
 
   # perform the same checks for path_gdx_carbonprice and only start the run if both conditions are met
-  has_carbonprice_path <- !is.na(settings_remind[scen,"path_gdx_carbonprice"])
-  cp_start_now <- (substr(settings_remind[scen,"path_gdx_carbonprice"], nchar(settings_remind[scen,"path_gdx_carbonprice"])-3, nchar(settings_remind[scen,"path_gdx_carbonprice"])) == ".gdx"
-               | is.na(settings_remind[scen,"path_gdx_carbonprice"]))
-  start_now <- start_now & cp_start_now
+  has_carbonprice_path <- FALSE
+  if ("path_gdx_carbonprice" %in% colnames(settings_remind)) { if (!is.na(settings_remind[scen,"path_gdx_carbonprice"])){
+    has_carbonprice_path <- TRUE
+  }}
+  if (has_carbonprice_path) {
+    cp_start_now <- (substr(settings_remind[scen,"path_gdx_carbonprice"], nchar(settings_remind[scen,"path_gdx_carbonprice"])-3, nchar(settings_remind[scen,"path_gdx_carbonprice"])) == ".gdx"
+                | is.na(settings_remind[scen,"path_gdx_carbonprice"]))
+    start_now <- start_now & cp_start_now
+  }
 
   if (!start_now) {
       # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
