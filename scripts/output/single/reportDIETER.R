@@ -14,7 +14,7 @@ require(gms)
 require(colorspace)
 require(gdx)
 require(grid)
-library(remind2)
+
 
 
 if(!exists("source_include")) {
