@@ -20,12 +20,10 @@ require(grid)
 if(!exists("source_include")) {
   #if this script is not being sourced by another script but called from the command line via Rscript read the command line args
   #Define arguments that can be read from command line
-  outputdir <- "dummy"
   readArgs("outputdir")
   
   if(!file.exists(file.path(outputdir))){
-    print(outputdir)
-    stop("specified path does not exist!")
+    stop("specified path \"", outputdir, "\"does not exist!")
   }
   
 }
