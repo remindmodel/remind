@@ -272,11 +272,14 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
 
 ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
   /
-    feelhth_chemicals
     feelwlth_chemicals
-    feel_steel_secondary
+    feelhth_chemicals
+    feel_cement
     feelwlth_otherInd
     feelhth_otherInd
+    feel_steel_secondary
+    feel_steel_primary
+    feh2_steel
   /
 ;
 
@@ -292,6 +295,8 @@ fe_tax_sub_sbi(fe_tax_sub37) = YES;
 
 pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
 pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
+
+ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
 pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;
