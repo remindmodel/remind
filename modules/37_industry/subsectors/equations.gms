@@ -33,12 +33,13 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
 *' Limit the share of secondary steel production due to quality requirements and
 *' production capital inertia.
 q37_limit_secondary_steel_share(t,regi)$( t.val ge cm_startyear ) ..
-  vm_cesIO(t,regi,"ue_steel_secondary")
-  =l=
-    sum(cesOut2cesIn(out,in)$( cesOut2cesIn2(out,"ue_steel_secondary") ),
+    vm_cesIO(t,regi,"ue_steel_secondary")
+  / sum(cesOut2cesIn(out,in)$( cesOut2cesIn2(out,"ue_steel_secondary") ),
       vm_cesIO(t,regi,in)
     )
-  * p37_max_secondary_steel_share(t,regi,"%cm_GDPscen%")
+  =l=
+    p37_max_secondary_steel_share(t,regi,"%cm_GDPscen%")
+  + 1e-7  !! epsilon to account for rounding errors from mrremind
 ;
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
