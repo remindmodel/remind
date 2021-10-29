@@ -8,10 +8,10 @@
 parameter
 p11_emiFacAP(tall,all_regi,all_enty,all_enty,all_te,sectorEndoEmi,all_enty)           "air pollutant emission factors [Gt(species)/TWa]"
 p11_share_sector(tall,all_enty,all_enty,all_te,sectorEndoEmi,all_regi)                   "share of technology that goes into industry, residential, and transport sectorEndoEmi [1]"
-p11_costpollution(all_te,all_enty,sectorEndoEmi)                                         "pollutant abatement costs in [$/t]"
+p11_costpollution(all_te,emiAll,sectorEndoEmi)                                         "pollutant abatement costs in [$/t]"
 
-p11_EF_uncontr(all_enty,all_enty,all_te,all_regi,all_enty,sectorEndoEmi)                 "regional uncontrolled pollutant emission factor"
-p11_EF_mean(all_enty,all_enty,all_te,all_enty)                                           "global mean pollutant emission factor in 2005"
+p11_EF_uncontr(all_enty,all_enty,all_te,all_regi,emiAll,sectorEndoEmi)                 "regional uncontrolled pollutant emission factor"
+p11_EF_mean(all_enty,all_enty,all_te,emiAll)                                           "global mean pollutant emission factor in 2005"
 p11_cesIO(tall,all_regi,all_in)     "cesIO parameter specific for the module" 
 
 p11_emiAPexsolveGDX(tall,all_regi,all_sectorEmi,emiRCP)                                " parameter p11_emiAPexsolve loaded from the gdx"

@@ -7,9 +7,9 @@
 *** SOF ./modules/37_industry/subsectors/postsolve.gms
 
 *' Prepare industry emissions for post-processing
-loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
+loop (emiAll$( sameas(emiAll,"co2") OR sameas(emiAll,"cco2") ),
   !! emissions from fuel burning
-  o37_emiInd(ttot,regi,entyPE,secInd37,enty)$( ttot.val ge 2005 )
+  o37_emiInd(ttot,regi,entyPE,secInd37,emiAll)$( ttot.val ge 2005 )
     !! link sector to emissions (sector-specifc MAC)
   = sum(secInd37_2_emiInd37(secInd37,emiInd37(emiInd37_fuel)),
       !! link sector energy use to FE/SE/PE production
@@ -39,22 +39,22 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
         )
       )
       !! residual emissions for co2, abated emissions for cco2
-    * ( 1$( sameas(enty,"co2") )                   !! 1 for co2, 0 for cco2
+    * ( 1$( sameas(emiAll,"co2") )                   !! 1 for co2, 0 for cco2
       + ( pm_macSwitch(emiInd37)
         * pm_macAbatlev(ttot,regi,emiInd37)
-        * ((0.5 - 1$( sameas(enty,"co2") )) * 2)   !! -1 for co2, 1 for cco2
+        * ((0.5 - 1$( sameas(emiAll,"co2") )) * 2)   !! -1 for co2, 1 for cco2
         )
       )
     );
           
   !! cement process emissions
-  o37_cementProcessEmissions(ttot,regi,enty)$( ttot.val ge 2005 )
+  o37_cementProcessEmissions(ttot,regi,emiAll)$( ttot.val ge 2005 )
   = vm_macBaseInd.l(ttot,regi,"co2cement_process","cement")
     !! residual emissions for co2, abated emissions for cco2
-  * ( 1$( sameas(enty,"co2") )                   !! 1 for co2, 0 for cco2
+  * ( 1$( sameas(emiAll,"co2") )                   !! 1 for co2, 0 for cco2
     + ( pm_macSwitch("co2cement")
       * pm_macAbatLev(ttot,regi,"co2cement")
-      * ((0.5 - 1$( sameas(enty,"co2") )) * 2)   !! -1 for co2, 1 for cco2
+      * ((0.5 - 1$( sameas(emiAll,"co2") )) * 2)   !! -1 for co2, 1 for cco2
       )
     );
 );

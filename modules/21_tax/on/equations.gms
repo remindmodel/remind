@@ -73,8 +73,8 @@ v21_taxrevCO2luc(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + p
 q21_taxrevCCS(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevCCS(t,regi) 
 =e= cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(t,regi,"ccsinje") 
-    * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS(t,regi,enty,enty2,te,rlf) ) ) )
-    * (1/sm_ccsinjecrate) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS(t,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1")	!! fraction of injection constraint per year
+    * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(emiAll),enty2,te), vm_co2CCS(t,regi,emiAll,enty2,te,rlf) ) ) )
+    * (1/sm_ccsinjecrate) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(emiAll),enty2,te), vm_co2CCS(t,regi,emiAll,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1")	!! fraction of injection constraint per year
 	- p21_taxrevCCS0(t,regi);
 
 ***---------------------------------------------------------------------------

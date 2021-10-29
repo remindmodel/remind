@@ -147,7 +147,7 @@ p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
 p04_prodCoupleGlob("segabio","fegas","tdbiogas","seel")     = -0.05;
 p04_prodCoupleGlob("segafos","fegas","tdfosgas","seel")     = -0.05;
 p04_prodCoupleGlob("pegeo","sehe","geohe","seel")           = -0.3;
-p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
+***p04_prodCoupleGlob("cco2","ico2","ccsinje","seel")          = -0.005;
 p04_prodCoupleGlob("fedie","uedit","apcardiEffT","feelt")   = -0.1;
 p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feelt") = -0.2;
 p04_prodCoupleGlob("fedie","uedit","apcardiEffH2T","feh2t") = -0.1;
@@ -160,6 +160,18 @@ loop(pc2te(enty,enty2,te,enty3),
     );
 );
 display pm_prodCouple;
+
+*** define global values for couple production that can be used if the regional IEA data are 0
+p04_prodCoupleGlobEmi("cco2","ico2","ccsinje","seel")          = -0.005;
+loop(pc2emi(emiAll,enty,te,enty2),
+    loop(regi,
+        pm_prodCoupleEmi(regi,emiAll,enty,te,enty2)  =  p04_prodCoupleGlobEmi(emiAll,enty,te,enty2);
+    );
+);
+display pm_prodCoupleEmi;
+
+
+
 *** ----------------------------------------------------------------------------------------------------------
 ***--------------------------------------- calculate eta and mix0 --------------------------------------------
 *** ----------------------------------------------------------------------------------------------------------

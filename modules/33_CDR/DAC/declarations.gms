@@ -12,7 +12,7 @@ p33_dac_fedem_heat(all_enty)         "specific heat demand for direct air captur
 ;
 
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
+vm_ccs_cdr(ttot,all_regi,emiAll,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
 v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a]"
 v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC / a] - fixed to 0, only defined for reporting reasons"
 ;
@@ -29,7 +29,7 @@ q33_DacFEdemand_heat(ttot,all_regi,all_enty)        "calculates DAC FE demand fo
 q33_DacFEdemand_el(ttot,all_regi,all_enty)          "calculates DAC FE demand for electricity"
 q33_otherFEdemand(ttot,all_regi,all_enty)           "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
 q33_capconst_dac(ttot,all_regi)                     "calculates amount of carbon captured"
-q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
+q33_ccsbal(ttot,all_regi,emiAll,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_H2bio_lim(ttot,all_regi,all_te)                 "limits H2 from bioenergy to FE - otherFEdemand, i.e. no H2 from bioenergy for DAC"
 q33_emicdrregi(ttot,all_regi)                       "calculates the (negative) emissions due to CDR technologies"
 q33_demFeCDR(ttot,all_regi,all_enty)                "CDR demand balance for final energy"

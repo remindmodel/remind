@@ -13,9 +13,9 @@ q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
 		pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
 	+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
 		pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
-	+ sum(pc2te(enty,enty3,te,enty2),
+	+ sum(pc2emi(emiAll,enty3,te,enty2),
 		sum(teCCS2rlf(te,rlf),
-			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
+			pm_prodCoupleEmi(regi,emiAll,enty3,te,enty2) * vm_co2CCS(t,regi,emiAll,enty3,te,rlf) ) )
 	+ vm_Mport(t,regi,enty2)
 	=e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
@@ -57,9 +57,9 @@ q32_shTheo(t,regi,teVRE)..
 			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_prodSe(t,regi,enty,enty3,te) )
 		+ sum(pc2te(enty4,entyFE(enty5),te,enty2), 
 			pm_prodCouple(regi,enty4,enty5,te,enty2) * vm_prodFe(t,regi,enty4,enty5,te) )
-		+ sum(pc2te(enty,enty3,te,enty2),
+		+ sum(pc2emi(emiAll,enty3,te,enty2),
 			sum(teCCS2rlf(te,rlf),
-				pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
+				pm_prodCoupleEmi(regi,emiAll,enty3,te,enty2) * vm_co2CCS(t,regi,emiAll,enty3,te,rlf) ) )
 	)
 ;
 

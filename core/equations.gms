@@ -29,14 +29,9 @@ q_costFu(t,regi)..
 q_costInv(t,regi)..
   v_costInv(t,regi)
   =e=
-*** investment cost of conversion technologies
-  sum(en2en(enty,enty2,te),
+*** investment cost for technologies
+  sum(te$(not(sameas(te,"h2curt") or sameas(te,"tdh2b") or sameas(te,"tdh2i"))),
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
-  )
-  +
-*** investment cost of non-conversion technologies (storage, grid etc.)
-  sum(teNoTransform,
-    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 *** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
   +
@@ -128,10 +123,10 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
       pm_prodCouple(regi,enty4,enty5,te,enty2) 
     * vm_prodFe(t,regi,enty4,enty5,te)
     )
-  + sum(pc2te(enty,enty3,te,enty2),
+  + sum(pc2emi(emiAll,enty3,te,enty2),
                 sum(teCCS2rlf(te,rlf),
-        pm_prodCouple(regi,enty,enty3,te,enty2) 
-      * vm_co2CCS(t,regi,enty,enty3,te,rlf)
+        pm_prodCoupleEmi(regi,emiAll,enty3,te,enty2) 
+      * vm_co2CCS(t,regi,emiAll,enty3,te,rlf)
                 )
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
@@ -279,8 +274,8 @@ q_limitCapFe(t,regi,te)..
 ***---------------------------------------------------------------------------
 *' Definition of capacity constraints for CCS technologies:
 ***---------------------------------------------------------------------------
-q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
-         vm_co2CCS(t,regi,enty,enty2,te,rlf)
+q_limitCapCCS(t,regi,ccs2te(emiAll,enty2,te),rlf)$teCCS2rlf(te,rlf)..
+         vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
          =e=
          sum(teCCS2rlf(te,rlf), vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf));
 
@@ -474,20 +469,20 @@ q_limitBiotrmod(t,regi)$(t.val > 2020)..
 *' from secondary to final energy transformation (some air pollutants), or
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
-q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  vm_emiTeDetail(t,regi,enty,enty2,te,enty3)
+q_emiTeDetail(t,regi,enty,enty2,te,emiAll)$(emi2te(enty,enty2,te,emiAll) OR (pe2se(enty,enty2,te) AND sameas(emiAll,"cco2")) ) ..
+  vm_emiTeDetail(t,regi,enty,enty2,te,emiAll)
   =e=
-  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
+  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt))
 ;
 
 ***--------------------------------------------------
 *' Total energy-emissions:
 ***--------------------------------------------------
 *** calculate total energy system emissions for each region and timestep:
-q_emiTe(t,regi,emiTe(enty))..
-  vm_emiTe(t,regi,enty)
+q_emiTe(t,regi,emiTe)..
+  vm_emiTe(t,regi,emiTe)
   =e=
-  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, vm_emiTeMkt(t,regi,emiTe,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
@@ -497,22 +492,22 @@ q_emiTe(t,regi,emiTe(enty))..
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
 
-q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+q_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt)$(emi2te(enty,enty2,te,emiAll) OR (pe2se(enty,enty2,te) AND sameas(emiAll,"cco2")) ) ..
+  v_emiTeDetailMkt(t,regi,enty,enty2,te,emiAll,emiMkt)
   =e=
-    sum(emi2te(enty,enty2,te,enty3),
+    sum(emi2te(enty,enty2,te,emiAll),
       (
 	    sum(pe2se(enty,enty2,te),
-		  pm_emifac(t,regi,enty,enty2,te,enty3)
+		  pm_emifac(t,regi,enty,enty2,te,emiAll)
 		  * vm_demPE(t,regi,enty,enty2,te)
 		  )
-	    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
-		    pm_emifac(t,regi,enty,enty2,te,enty3)
-		    * vm_co2CCS(t,regi,enty,enty2,te,rlf)
+	    + sum((ccs2Leak(emiAll,enty2,te,emiAll),teCCS2rlf(te,rlf)),
+		    pm_emifac(t,regi,enty,enty2,te,emiAll)
+		    * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
 		  )
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
-          pm_emifac(t,regi,enty,enty2,te,enty3)
+          pm_emifac(t,regi,enty,enty2,te,emiAll)
 		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
 		)
 	)
@@ -522,20 +517,20 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 *' energy emissions from fuel extraction  
 ***--------------------------------------------------
 
-q_emiEnFuelEx(t,regi,emiTe(enty))..
-  v_emiEnFuelEx(t,regi,enty)
+q_emiEnFuelEx(t,regi,emiTe)..
+  v_emiEnFuelEx(t,regi,emiTe)
   =e=
 ***   emissions from non-conventional fuel extraction
-	sum(emi2fuelMine(enty,enty2,rlf),      
-		  p_cint(regi,enty,enty2,rlf)
-		* vm_fuExtr(t,regi,enty2,rlf)
+	sum(emi2fuelMine(emiTe,enty,rlf),      
+		  p_cint(regi,emiTe,enty,rlf)
+		* vm_fuExtr(t,regi,enty,rlf)
 		)$( c_cint_scen eq 1 )
 ***   emissions from conventional fuel extraction
-	+ (sum(pe2rlf(enty3,rlf2),
-      sum(enty2$(peFos(enty2)),   
-		    (p_cintraw(enty2)
-		     * pm_fuExtrOwnCons(regi, enty2, enty3) 
-		     * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))))$(sameas("co2",enty))
+	+ (sum(pe2rlf(enty2,rlf2),
+      sum(enty$(peFos(enty)),   
+		    (p_cintraw(enty)
+		     * pm_fuExtrOwnCons(regi, enty, enty2) 
+		     * vm_fuExtr(t,regi,enty2,rlf2))$(pm_fuExtrOwnCons(regi, enty, enty2) gt 0))))$(sameas("co2",emiTe))
 ;    
 		 
 
@@ -543,44 +538,44 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 ***--------------------------------------------------
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
-q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  vm_emiTeMkt(t,regi,enty,emiMkt)
+q_emiTeMkt(t,regi,emiTe,emiMkt)..
+  vm_emiTeMkt(t,regi,emiTe,emiMkt)
   =e=
 ***   emissions from fuel combustion
-    sum(emi2te(enty2,enty3,te,enty),     
-      v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
+    sum(emi2te(enty,enty2,te,emiTe),     
+      v_emiTeDetailMkt(t,regi,enty,enty2,te,emiTe,emiMkt)
     )
 ***   energy emissions fuel extraction
-	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
+	+ v_emiEnFuelEx(t,regi,emiTe)$(sameas(emiMkt,"ETS"))
 ***   Industry CCS emissions
-	- ( sum(emiMac2mac(emiInd37_fuel,enty2),
+	- ( sum(emiMac2mac(emiInd37_fuel,enty),
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
-		)$( sameas(enty,"co2") )
+		)$( sameas(emiTe,"co2") )
 	)$(sameas(emiMkt,"ETS"))
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
-  + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
+  + ( v_co2capturevalve(t,regi)$( sameas(emiTe,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
   + sum(teCCU2rlf(te2,rlf),
-		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
+		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(emiTe,"co2") ) 
 	)$(sameas(emiMkt,"ETS"))
 ;
 
 ***--------------------------------------------------
 *' Total emissions
 ***--------------------------------------------------
-q_emiAllMkt(t,regi,emi,emiMkt)..
-  vm_emiAllMkt(t,regi,emi,emiMkt)
+q_emiAllMkt(t,regi,emiTe,emiMkt)..
+  vm_emiAllMkt(t,regi,emiTe,emiMkt)
 	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
+	vm_emiTeMkt(t,regi,emiTe,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
-	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
+	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emiTe))$macSector2emiMkt(emiMacSector,emiMkt),
    	vm_emiMacSector(t,regi,emiMacSector)
   )
 *** CDR from CDR module
-	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
+	+ vm_emiCdr(t,regi,emiTe)$(sameas(emiTe,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
-  +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
+  +	pm_emiExog(t,regi,emiTe)$(sameas(emiMkt,"other"))
 ;
 
 
@@ -643,7 +638,7 @@ q_emiMac(t,regi,emiMac) ..
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
        =e= !! BECC + DACC
-  (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
+  (sum(emiBECCS2te(enty,enty2,te,emiAll),vm_emiTeDetail(t,regi,enty,enty2,te,emiAll))
   + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
   !! scaled by the fraction that gets stored geologically
   * (sum(teCCS2rlf(te,rlf),
@@ -661,25 +656,25 @@ q_emiCdrAll(t,regi)..
 *' Total regional emissions are the sum of emissions from technologies, MAC-curves, CDR-technologies and emissions that are exogenously given for REMIND.
 ***------------------------------------------------------
 *LB* calculate total emissions for each region at each time step
-q_emiAll(t,regi,emi(enty)).. 
-  vm_emiAll(t,regi,enty) 
+q_emiAll(t,regi,emiTe).. 
+  vm_emiAll(t,regi,emiTe) 
   =e= 
-    vm_emiTe(t,regi,enty) 
-  + vm_emiMac(t,regi,enty) 
-  + vm_emiCdr(t,regi,enty) 
-  + pm_emiExog(t,regi,enty)
+    vm_emiTe(t,regi,emiTe) 
+  + vm_emiMac(t,regi,emiTe) 
+  + vm_emiCdr(t,regi,emiTe) 
+  + pm_emiExog(t,regi,emiTe)
 ;
 
 ***------------------------------------------------------
 *' Total global emissions are calculated for each GHG emission type and links the energy system to the climate module.
 ***------------------------------------------------------
 *LB* calculate total global emissions for each timestep - link to the climate module
-q_emiAllGlob(t,emi(enty)).. 
-  vm_emiAllGlob(t,enty) 
+q_emiAllGlob(t,emiTe).. 
+  vm_emiAllGlob(t,emiTe) 
   =e= 
   sum(regi, 
-    vm_emiAll(t,regi,enty) 
-  + pm_emissionsForeign(t,regi,enty)
+    vm_emiAll(t,regi,emiTe) 
+  + pm_emissionsForeign(t,regi,emiTe)
   )
 ;
 
@@ -745,14 +740,14 @@ q_budgetCO2eqGlob$(cm_emiscen=6)..
 ***---------------------------------------------------------------------------
 *' Definition of carbon capture :
 ***---------------------------------------------------------------------------
-q_balcapture(t,regi,ccs2te(ccsCO2(enty),enty2,te)) ..
-  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,enty,enty2,te,rlf))
+q_balcapture(t,regi,ccs2te(ccsCO2(emiAll),enty2,te)) ..
+  sum(teCCS2rlf(te,rlf),vm_co2capture(t,regi,emiAll,enty2,te,rlf))
   =e=
-    sum(emi2te(enty3,enty4,te2,enty),
-      vm_emiTeDetail(t,regi,enty3,enty4,te2,enty)
+    sum(emi2te(enty3,enty4,te2,emiAll),
+      vm_emiTeDetail(t,regi,enty3,enty4,te2,emiAll)
     )
   + sum(teCCS2rlf(te,rlf),
-      vm_ccs_cdr(t,regi,enty,enty2,te,rlf)
+      vm_ccs_cdr(t,regi,emiAll,enty2,te,rlf)
     )
 ***   CCS from industry
   + sum(emiInd37,
@@ -777,13 +772,13 @@ q_balCCUvsCCS(t,regi) ..
 *' Definition of the CCS transformation chain:
 ***---------------------------------------------------------------------------
 *** no effect while CCS chain is limited to just one step (ccsinje)   
-q_transCCS(t,regi,ccs2te(enty,enty2,te),ccs2te2(enty2,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..    
-        (1-pm_emifac(t,regi,enty,enty2,te,"co2")) * vm_co2CCS(t,regi,enty,enty2,te,rlf)
+q_transCCS(t,regi,ccs2te(emiAll,enty2,te),ccs2te2(emiAll,enty3,te2),rlf)$teCCS2rlf(te2,rlf)..
+        (1-pm_emifac(t,regi,emiAll,enty2,te,"co2")) * vm_co2CCS(t,regi,emiAll,enty2,te,rlf)
         =e=
-        vm_co2CCS(t,regi,enty2,enty3,te2,rlf);
+        vm_co2CCS(t,regi,emiAll,enty3,te2,rlf);
 
-q_limitCCS(regi,ccs2te2(enty,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
-        sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,enty,"ico2",te,rlf))
+q_limitCCS(regi,ccs2te2(emiAll,"ico2",te),rlf)$teCCS2rlf(te,rlf)..
+        sum(ttot $(ttot.val ge 2005), pm_ts(ttot) * vm_co2CCS(ttot,regi,emiAll,"ico2",te,rlf))
         =l=
         pm_dataccs(regi,"quan",rlf);
 
