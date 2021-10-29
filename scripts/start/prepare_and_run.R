@@ -303,10 +303,10 @@ prepare <- function() {
   }
   ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
-  #if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
+  # if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
   #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
-  #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
-  #}
+  #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
+  # }
 
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
@@ -927,6 +927,7 @@ run <- function(start_subsequent_runs = TRUE) {
   #=================== END - Subsequent runs ========================
 
   # Copy important files into output_folder (after REMIND execution)
+  #TODO: Make an if for path_gdx_carbonprice so that it only copies what is needed
   for (file in cfg$files2export$end)
     file.copy(file, cfg$results_folder, overwrite = TRUE)
 
