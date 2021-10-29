@@ -292,11 +292,11 @@ for(scen in common){
       }
 
       # Don't start it if a carbon price path was set and the file does not exist yet
-      if (!file.exists(cfg_rem$files2export$start['input_ref.gdx'])) {
+      if ("path_gdx_carbonprice" %in% colnames(settings_remind)) {if (!file.exists(cfg_rem$files2export$start['input_carbonprice.gdx'])) {
         start_now <- FALSE
         cp_start_now <- FALSE
         # cat("path_gdx_carbonprice set to ",settings_remind[scen,"path_gdx_carbonprice"]," but that run isn't finished yet","\n")
-      }
+      }}
       
   }
 
