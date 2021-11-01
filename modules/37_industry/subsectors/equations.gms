@@ -39,7 +39,7 @@ q37_limit_secondary_steel_share(t,regi)$( t.val ge cm_startyear ) ..
     )
   =l=
     p37_max_secondary_steel_share(t,regi,"%cm_GDPscen%")
-  + 1e-7  !! epsilon to account for rounding errors from mrremind
+  + 1e-6  !! epsilon to account for rounding errors from mrremind
 ;
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
