@@ -45,6 +45,13 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
   * o01_CESderivatives(t,regi,in2,in3);
 );
 
+*** total CES efficiency as output parameter
+o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in), 
+                               pm_cesdata(ttot,regi,in,"xi") 
+                               ** (1/pm_cesdata(ttot,regi,out,"rho"))
+                               * pm_cesdata(ttot,regi,in,"eff")
+                               * vm_effGr.l(ttot,regi,in));
+
 
 *** marginal rate of subsitution of CES inputs in respective CES nests 
 *** MRS of in1 with respect to in2 gives by how much in2 would need to be increased 
