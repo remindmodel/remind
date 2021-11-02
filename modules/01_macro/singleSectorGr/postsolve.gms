@@ -64,13 +64,24 @@ loop( cesOut2cesIn(out,in),
 );
 
 
+*** marginal rate of subsitution of CES inputs in respective CES nests 
+*** weighted by CES efficiencies of inputs
+loop( cesOut2cesIn(out,in),
+  loop(in2$(cesOut2cesIn(out,in2)),
+    o01_CESmrs_eff(t,regi,in,in2) =  o01_CESderivatives(t,regi,"inco",in) 
+                                    / o01_CESderivatives(t,regi,"inco",in2)
+                                    * o01_totalCESEff(t,regi,in)
+                                    / o01_totalCESEff(t,regi,in2)
+  );
+);
 
-*** total CES efficiency as output parameter
-o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in), 
-                               pm_cesdata(ttot,regi,in,"xi")
-                               * ( pm_cesdata(ttot,regi,in,"eff")
-                               * vm_effGr.l(ttot,regi,in) )
-                               ** pm_cesdata(ttot,regi,out,"rho"));
+
+
+
+
+
+
+                               
                              
 
 *** EOF ./modules/01_macro/singleSectorGr/postsolve.gms

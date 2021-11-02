@@ -21,6 +21,7 @@ pm_consPC(tall,all_regi)                                        "Consumption per
 parameters
 o01_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
 o01_CESmrs(ttot,all_regi,all_in,all_in)                "marginal rate of subsitution of one CES input with respect to other CES inputs in the same CES nest"
+o01_CESmrs_eff(ttot,all_regi,all_in,all_in)            "marginal rate of subsitution of one CES input with respect to other CES inputs in the same CES nest weighted by the ratio of CES efficiencies"
 o01_totalCESEff(ttot,all_regi,all_in)                  "total CES efficiency" 
 ;
 
