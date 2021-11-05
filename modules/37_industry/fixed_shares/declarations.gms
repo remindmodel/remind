@@ -8,7 +8,7 @@
 
 
 scalars
-  s37_costAddH2Inv   "additional h2 distribution costs for low diffusion levels. [3.25$/kg = 0.1$/kWh]"
+  s37_costAddH2Inv   "additional h2 distribution costs for low diffusion levels. [$/kWh]"
   s37_costDecayStart "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]" 
   s37_costDecayEnd   "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
 ;
@@ -23,11 +23,15 @@ Parameters
 
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
 
+
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
+
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)   "industry CCS emissions [GtC/a]"
   o37_cementProcessEmissions(ttot,all_regi,all_enty)     "cement process emissions [GtC/a]"
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
-  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
+  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 ;
 
 
@@ -49,7 +53,6 @@ Positive Variables
   v37_expSlack(ttot,all_regi)                      "slack variable to avoid overflow on too high logistic function exponent"
   v37_H2share(ttot,all_regi)                       "H2 share in gases"
   v37_costAddTeInvH2(ttot,all_regi,all_te)         "Additional hydrogen phase-in cost at low H2 penetration levels [trUSD]"
-  v37_costCESMkup(ttot,all_regi,all_te)            "CES markup cost [trUSD]"
 ;
 
 Equations
@@ -62,7 +65,7 @@ Equations
   q37_H2Share(ttot,all_regi)                        "H2 share in gases"
   q37_auxCostAddTeInv(ttot,all_regi)                "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost" 
   q37_costAddH2PhaseIn(ttot,all_regi)               "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in industry"  
-  q37_costCESmarkup(ttot,all_regi,all_te)           "calculation of additional CES markup cost to represent demand-side transformation cost, for example, investment cost of electrification"
+  q37_costCESmarkup(ttot,all_regi,all_in)           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
   q37_costAddTeInv(ttot,all_regi,all_te)            "summation of sector-specific demand-side cost"
 ;
 

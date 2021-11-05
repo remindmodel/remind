@@ -135,10 +135,10 @@ $ENDIF.macPriceETS
 
 *** Redefine the MAC price for sectors and regions within the ES
 $IFTHEN.macPriceES not "%cm_emiMktES%" == "off" 
-  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"ES")),
+  loop((regi,enty)$(pm_emiTargetESR("2030",regi) AND macSector2emiMkt(enty,"ES")),
     p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ES")* 1000;
   );
-  loop((regi,enty)$(pm_emiTargetES("2030",regi) AND macSector2emiMkt(enty,"other")),
+  loop((regi,enty)$(pm_emiTargetESR("2030",regi) AND macSector2emiMkt(enty,"other")),
     p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
   );
 $ENDIF.macPriceES
@@ -471,5 +471,6 @@ loop(ttot$( (ttot.val > cm_startyear) AND (ttot.val > 2020) ),  !! only change v
 display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adjCoeff;
 
 $endif.CO2priceDependent_AdjCosts
+
 
 *** EOF ./core/presolve.gms
