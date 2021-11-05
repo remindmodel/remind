@@ -18,9 +18,9 @@ Parameters
 $ifthen.transpmodule "%transport%" == "edge_esm"
   p29_trpdemand(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in) "transport demand for the edge_esm transport module, unit: trillion passenger/ton km"
 $endif.transpmodule
-  p29_esdemand(tall,all_regi,all_GDPscen,all_in)                  "energy service demand"
-  p29_efficiency_growth(tall,all_regi,all_GDPscen,all_in)         "efficency level paths for ppf beyond calibration"
-  p29_capitalQuantity(tall,all_regi,all_GDPscen,all_in)            "capital quantities"
+  p29_esdemand(tall,all_regi,all_in)                  "energy service demand"
+  p29_efficiency_growth(tall,all_regi,all_in)         "efficency level paths for ppf beyond calibration"
+  p29_capitalQuantity(tall,all_regi,all_in)            "capital quantities"
   p29_capitalPrice(tall,all_regi)                "capital prices"
   
    p29_test_CES_recursive(tall,all_regi,all_in)      "test the technological consistency of pm_cesdata"
