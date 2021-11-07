@@ -5,7 +5,7 @@ David Klein (<dklein@pik-potsdam.de>), Kristine Karstens (<karstens@pik-potsdam.
 
 # 1 Introduction
 
-REMIND and related R packages are published as open source software on GitHub. 
+REMIND and related R packages are published as open-source software on GitHub. 
 There are various workflows, how to use GitHub for collaborative
 software development. We want to give some general remarks on our
 prefered one. Note the following:
@@ -26,8 +26,8 @@ prefered one. Note the following:
 The goal of this exercise is to set up REMIND for collaborative working.
 After completion of this exercise, you'll be able to:
 
-1.  Fork and clone your personal REMIND repository
-2.  Keep your personal repository upto date with the REMIND main repository
+1.  "Fork" and "clone" your personal REMIND repository
+2.  Keep your personal repository up-to-date with the REMIND main repository
 3.  Understand the basic workflow including pull requests and branches.
 4.  Have heard some very basic git commands and know where to find more help.
     
@@ -52,8 +52,8 @@ upstream repository (the original remindmodel fork).
 It is basically possible to change the code just using the GitHub
 interface, but since you want to test and run your code locally you have
 to clone the repository from your fork anyway. This can be done using
-the 'https' or 'ssh' adresse of your fork together with the `git clone`
-command (cmd/bash/GUI) at your machine. We recommand to upload an
+the 'https' or 'ssh' address of your fork together with the `git clone`
+command (cmd/bash/GUI) at your machine. We recommend to upload an
 ssh-key and use ssh to connect to GitHub.
 
 > **Exercise**: Visit your fork and clone the repository at your
@@ -64,8 +64,8 @@ ssh-key and use ssh to connect to GitHub.
 <img src="figures/git-2-pushing.PNG" width="100%" style="display: block; margin: auto;" />
 
 When you start making your first changes to the code at your local copy,
-we strongly recommend to do a tutorial to get familiar with the basic
-commands in git. We have compiled a typical workflow at the end of this tutorial (section 3) (you can also have a look on 'git cheat sheets' like
+we strongly recommend to read a tutorial to get familiar with the basic
+commands in Git. We have compiled a typical workflow at the end of this tutorial (section 3) (you can also have a look on 'git cheat sheets' like
 <https://about.gitlab.com/images/press/git-cheat-sheet.pdf>).
 
 After you have added your changes locally, push (upload) them to your personal remote repository.
@@ -94,8 +94,13 @@ After you have commited your changes locally, merged the latest updates from the
 pushed the result to your remote personal repository it is time to get it integrated
 into the remote main repository. Insted of pushing them directly into the remote main repository we use so called
 pull requests. Pull requests are proposed changes to a repository submitted by you and accepted or rejected by a 
-repository's collaborators. Like issues, pull requests each have their own discussion forum.
+repository collaborator. Like issues, pull requests each have their own discussion forum.
 
+**Note:** it is rather useful to do your work on feature branches rather than on the default `develop` branch. This
+helps you keep better track of your work and also helps your colleagues understand easier what your recent pull request
+was about. So naming your branch "bugfix_make_feature_XX_operational_again" will greatly help. See below for more on 
+working with branches.
+ 
 <img src="figures/git-5-pull-request.PNG" width="100%" style="display: block; margin: auto;" />
 <img src="figures/git-7-pull-request-github-1.PNG" width="100%" style="display: block; margin: auto;" />
 <img src="figures/git-8-pull-request-github-2.PNG" width="100%" style="display: block; margin: auto;" />
