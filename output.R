@@ -274,6 +274,11 @@ if (comp == TRUE) {
     # Execute R scripts
     ###################################################################################
 
+    # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+    if (is.na(output)) {
+      cat(paste("No output generation, as output was set to NA, as for example for --testOneRegi.\n"))
+    }
+
     for (rout in output) {
       name <- paste(rout, ".R", sep = "")
       if (file.exists(paste0("scripts/output/single/", name))) {

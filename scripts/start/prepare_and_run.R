@@ -385,9 +385,18 @@ prepare <- function() {
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
       ) ) 
     }
-    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
+    # ext_regi
+    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
+    content <- c(content, '      /')
+    content <- c(content, '        GLO,')
+    content <- c(content, '        ', paste(paste0(names(subsets),"_regi"),collapse=','),",")
+    content <- c(content, '        ', paste(regions,collapse=','))
+    content <- c(content, '      /')
+    content <- c(content, ' ')
+    # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
+    content <- c(content, '      ', paste('GLO.(',paste(regions,collapse=','),')'))
     for (i in 1:length(subsets)){
         content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
     }

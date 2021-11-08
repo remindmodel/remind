@@ -4,12 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/exogenous/declarations.gms
-parameters
-    p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level"
+*** SOF ./modules/32_power/IntC/postsolve.gms
 
-$if not "%cm_regiExoPrice%" == "off" p45_exo_co2_tax(ext_regi,ttot)   "Exogenous CO2 tax level from switch [$/tCO2]" / %cm_regiExoPrice% /
+*** calculation of SE electricity price (useful for internal use and reporting purposes)
+pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND sameas(entySE,"seel")) = 
+       q32_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
 
-;
+*** EOF ./modules/32_power/IntC/postsolve.gms
 
-*** EOF ./modules/45_carbonprice/exogenous/declarations.gms
