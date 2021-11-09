@@ -12,7 +12,6 @@ s36_logit         "switch for the inclusion of vintage equations. It should excl
 ;
 
 Parameter
-p36_floorspace_scen(tall,all_regi,all_POPscen)  "buildings floorspace, million m2"
 p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2"
 p36_floorspace_delta(tall,all_regi) "increase in floorspace, billion m2"
 p36_adjFactor(tall,all_regi)    "factor applied for the adjustment costs" 

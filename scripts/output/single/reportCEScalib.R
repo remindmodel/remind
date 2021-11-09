@@ -14,6 +14,8 @@ library(quitte)
 require(lucode2)
 require(gms)
 require(colorspace)
+require(gdx)
+require(grid)
 
 gdx_name     <- "fulldata.gdx"        # name of the gdx  
 gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
