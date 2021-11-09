@@ -851,6 +851,12 @@ run <- function(start_subsequent_runs = TRUE) {
   setwd(cfg$remind_folder)
 
   #====================== Subsequent runs ===========================
+
+  # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
+  coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
+  # Don't start subsequent runs form here if REMIND runs coupled. This is done in start_coupled.R
+  start_subsequent_runs <- !coupled_run
+	
   if (start_subsequent_runs) {
     # Note: step 1. and 2. below write to the same .RData file but are usually executed by different runs.
     # Step 1. is usually only executed by BASE runs, step 2 by every run that preceeds another run.
@@ -858,10 +864,7 @@ run <- function(start_subsequent_runs = TRUE) {
     # 1. Save the path to the fulldata.gdx of the current run to the cfg files
     # of the runs that use it as 'input_bau.gdx'
 
-    # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
-    coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
-
-    no_ref_runs <- identical(cfg$RunsUsingTHISgdxAsBAU,character(0)) | all(is.na(cfg$RunsUsingTHISgdxAsBAU)) | coupled_run
+    no_ref_runs <- identical(cfg$RunsUsingTHISgdxAsBAU,character(0)) | all(is.na(cfg$RunsUsingTHISgdxAsBAU))
 
     if(!no_ref_runs) {
       source("scripts/start/submit.R")
@@ -883,7 +886,7 @@ run <- function(start_subsequent_runs = TRUE) {
     # 2. Save the path to the fulldata.gdx of the current run to the cfg files
     # of the subsequent runs that use it as 'input_ref.gdx' and start these runs
 
-    no_subsequent_runs <- identical(cfg$subsequentruns,character(0)) | identical(cfg$subsequentruns,NULL) | coupled_run
+    no_subsequent_runs <- identical(cfg$subsequentruns,character(0)) | identical(cfg$subsequentruns,NULL)
 
     if(no_subsequent_runs){
       cat('\nNo subsequent run was set for this scenario\n')
