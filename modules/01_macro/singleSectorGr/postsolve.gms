@@ -45,43 +45,12 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
   * o01_CESderivatives(t,regi,in2,in3);
 );
 
-*** total CES efficiency as output parameter
+*** total CES efficiency as diagnostic output parameter
 o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in), 
                                pm_cesdata(ttot,regi,in,"xi") 
                                ** (1/pm_cesdata(ttot,regi,out,"rho"))
                                * pm_cesdata(ttot,regi,in,"eff")
                                * vm_effGr.l(ttot,regi,in));
-
-
-*** marginal rate of subsitution of CES inputs in respective CES nests 
-*** MRS of in1 with respect to in2 gives by how much in2 would need to be increased 
-*** for subsituting one unit of in1 to generate the same output of the CES function
-loop( cesOut2cesIn(out,in),
-  loop(in2$(cesOut2cesIn(out,in2)),
-    o01_CESmrs(t,regi,in,in2) =  o01_CESderivatives(t,regi,"inco",in) 
-                                / o01_CESderivatives(t,regi,"inco",in2)
-  );
-);
-
-
-*** marginal rate of subsitution of CES inputs in respective CES nests 
-*** weighted by CES efficiencies of inputs
-loop( cesOut2cesIn(out,in),
-  loop(in2$(cesOut2cesIn(out,in2)),
-    o01_CESmrs_eff(t,regi,in,in2) =  o01_CESderivatives(t,regi,"inco",in) 
-                                    / o01_CESderivatives(t,regi,"inco",in2)
-                                    * o01_totalCESEff(t,regi,in)
-                                    / o01_totalCESEff(t,regi,in2)
-  );
-);
-
-
-
-
-
-
-
-                               
+                      
                              
-
 *** EOF ./modules/01_macro/singleSectorGr/postsolve.gms
