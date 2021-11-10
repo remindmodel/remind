@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 ### Function to create files with price mark-ups (needed for cm_fetaxscen 102 - 116, ADVANCE WP2 price elasticity runs)
 
-create_ExogSameAsPrevious_CO2price_file<-function(gdx){
+create_input_for_45_carbonprice_exogenous<-function(gdx){
   
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(gms,quietly=TRUE,warn.conflicts =FALSE)
@@ -23,7 +23,7 @@ create_ExogSameAsPrevious_CO2price_file<-function(gdx){
   if (file.exists(gdx)) {
     pr <- reportPrices(gdx)
   } else {
-    stop("No gdx file found - please provide gdx from reference BAU run")
+    stop("No gdx file found to take the carbon price from - please provide gdx from a reference run in path_gdx_carbonprice in scenario_config file.")
   }
   
   #select right temporal/variable scope 
@@ -32,7 +32,5 @@ create_ExogSameAsPrevious_CO2price_file<-function(gdx){
   pr <- pr[,,1,drop=TRUE]
   
   #write out file for mark-ups applied on FE level
-  write.magpie(pr[seq(1,11),,],"modules/45_carbonprice/ExogSameAsPrevious/input/p45_ExogSameAsPrevious_CO2_tax.cs4r", comment="** description: Carbon prices from previous run for INDC2030_CO2price_DEF runs \n*** unit: $2005/t CO2 \n*** file created with scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
-  
-  
+  write.magpie(pr[seq(1,11),,],"modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc", comment="** description: Carbon prices from previous run \n*** unit: $2005/t CO2 \n*** file created with scripts/input/create_input_for_45_carbonprice_exogenous.R")
 }

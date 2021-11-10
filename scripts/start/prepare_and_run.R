@@ -301,12 +301,12 @@ prepare <- function() {
     source("scripts/input/prepare_NDC2018.R")
     prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
-  ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
-  ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
-  # if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "ExogSameAsPrevious")){
-  #  source("scripts/input/create_ExogSameAsPrevious_CO2price_file.R")
-  #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
-  # }
+
+  # Create input file with exogenous CO2 tax using the CO2 price form another run
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
+    source("scripts/input/create_input_for_45_carbonprice_exogenous.R")
+    create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
+  }
 
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",

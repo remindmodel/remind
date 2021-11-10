@@ -155,7 +155,6 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       has_carbonprice_path <- TRUE
     }}
 
-
     # Define path where the GDXs will be taken from
     gdxlist <- c(input.gdx     = isettings[iscen, "path_gdx"],
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
@@ -172,11 +171,6 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     # add gdx information for subsequent runs
     icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
     icfg$RunsUsingTHISgdxAsBAU <- rownames(isettings[isettings$path_gdx_bau == iscen & !is.na(isettings$path_gdx_bau) & isettings$start == 1,])
-
-    if (has_carbonprice_path) {
-      icfg$subsequentruns <- c(icfg$subsequentruns, rownames(isettings[isettings$path_gdx_carbonprice == iscen & !is.na(isettings$path_gdx_carbonprice) & isettings$start == 1,]))
-    }
-
 
     return(icfg)
 }
