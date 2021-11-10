@@ -1,4 +1,4 @@
-title;start;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt
+title;start;oldrun;path_report;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt
 SSP1-Base;1;;;SSP1,NPI;y2100;;;;
 SSP1-NDC;1;;;SSP1,NDC;y2100;;;;
 SSP1-NPi;1;;;SSP1,NPI;y2100;;;;

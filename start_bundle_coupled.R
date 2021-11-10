@@ -101,7 +101,6 @@ for(scen in common){
 
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
-  LU_pricing   <- scenarios_coupled[scen, "LU_pricing"]  # set the GHG prices to zero up to and including the year specified here
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
   if(is.null(qos)) qos <- "short"                        # if qos could not be found in scenarios_coupled use short
 
@@ -182,7 +181,26 @@ for(scen in common){
   # configure MAgPIE according to magpie_scen (scenario needs to be available in scenario_config.cfg)
   if(!is.null(scenarios_coupled[scen, "magpie_scen"])) cfg_mag <- setScenario(cfg_mag,c(trimws(unlist(strsplit(scenarios_coupled[scen, "magpie_scen"],split = ",|\\|"))),"coupling"),scenario_config=paste0(path_magpie,"config/scenario_config.csv"))
   cfg_mag <- check_config(cfg_mag, reference_file=paste0(path_magpie,"config/default.cfg"),modulepath = paste0(path_magpie,"modules/"))
+  
+  # set the GHG prices to zero up to and including the year specified here
+  cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"] 
 
+  # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+  if ("path_gdx_ghgprice_land" %in% names(scenarios_coupled)) {
+    if (!is.na(scenarios_coupled[scen, "path_gdx_ghgprice_land"])) {
+        if (substr(scenarios_coupled[scen, "path_gdx_ghgprice_land"], nchar(scenarios_coupled[scen, "path_gdx_ghgprice_land"])-3, nchar(scenarios_coupled[scen, "path_gdx_ghgprice_land"])) == ".gdx") {
+            # if real file is given (has ".gdx" at the end) take it for path_gdx_ghgprice_land
+            path_gdx_ghgprice_land <- scenarios_coupled[scen, "path_gdx_ghgprice_land"]
+        } else {
+            # if no real file is given but a reference to another scenario (that has to run first) create path for path_gdx_ghgprice_land
+            path_gdx_ghgprice_land <- paste0(path_remind,"output/",prefix_runname,scenarios_coupled[scen, "path_gdx_ghgprice_land"],"-rem-",max_iterations,"/fulldata.gdx")
+        }
+    }
+    cfg_mag$path_to_report_ghgprices <- path_gdx_ghgprice_land
+  } else {
+    path_gdx_ghgprice_land <- NULL
+  }
+  
   # How to provide the exogenous TC to MAgPIE:
   # Running MAgPIE with exogenous TC requires a path with exogenous TC. Using exo_indc_MAR17 the path is chosen via c13_tau_scen.
   # Using exo_JUN13 the path is given in the file modules/13_tc/exo_JUN13/input/tau_scenario.csv
@@ -254,8 +272,6 @@ for(scen in common){
   # add information on subsequent runs to start after the current run is finished
   # take rownames (which is the runname) of that row, that has the current scenario in its gdx_ref
   cfg_rem$subsequentruns <- intersect(rownames(settings_remind[settings_remind$path_gdx_ref == scen & !is.na(settings_remind$path_gdx_ref),]),common)
-  #Also add runs that will need the carbon price from this one
-  cfg_rem$subsequentruns <- c(cfg_rem$subsequentruns, intersect(rownames(settings_remind[settings_remind$path_gdx_carbonprice == scen & !is.na(settings_remind$path_gdx_carbonprice),]),common))
 
   # immediately start run if it has a real gdx file (not a runname) given (last four letters are ".gdx") in path_gdx_ref or where this field is empty (NA)
   start_now <- (substr(settings_remind[scen,"path_gdx_ref"], nchar(settings_remind[scen,"path_gdx_ref"])-3, nchar(settings_remind[scen,"path_gdx_ref"])) == ".gdx"
@@ -300,7 +316,7 @@ for(scen in common){
       
   }
 
-  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos,file=paste0(runname,".RData"))
+  save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,qos,file=paste0(runname,".RData"))
 
   # Define colors for output
   red   <- "\033[0;31m"
@@ -311,16 +327,17 @@ for(scen in common){
   path_report <- as.character(path_report)
 
   cat("\nSUMMARY\n")
-  cat("runname     :",runname,"\n")
-  cat("QOS         :",qos,"\n")
-  cat("start_iter  :",start_iter,"\n")
-  cat("path_remind : ",ifelse(dir.exists(path_remind),green,red), path_remind, NC, "\n",sep="")
-  cat("path_magpie : ",ifelse(dir.exists(path_magpie),green,red), path_magpie, NC, "\n",sep="")
-  cat("remind gdx  : ",ifelse(file.exists(cfg_rem$files2export$start["input.gdx"]),green,red), cfg_rem$files2export$start["input.gdx"], NC, "\n",sep="")
-  cat("ref_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_ref.gdx"]),green,red), cfg_rem$files2export$start["input_ref.gdx"], NC, "\n",sep="")
-  cat("bau_gdx     : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
-  cat("path_report : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
-  cat("LU_pricing  :",LU_pricing,"\n")
+  cat("runname       :",runname,"\n")
+  cat("QOS           :",qos,"\n")
+  cat("start_iter    :",start_iter,"\n")
+  cat("path_remind   : ",ifelse(dir.exists(path_remind),green,red), path_remind, NC, "\n",sep="")
+  cat("path_magpie   : ",ifelse(dir.exists(path_magpie),green,red), path_magpie, NC, "\n",sep="")
+  cat("remind gdx    : ",ifelse(file.exists(cfg_rem$files2export$start["input.gdx"]),green,red), cfg_rem$files2export$start["input.gdx"], NC, "\n",sep="")
+  cat("ref_gdx       : ",ifelse(file.exists(cfg_rem$files2export$start["input_ref.gdx"]),green,red), cfg_rem$files2export$start["input_ref.gdx"], NC, "\n",sep="")
+  cat("bau_gdx       : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
+  cat("ghg_price_mag : ",ifelse(file.exists(path_gdx_ghgprice_land),green,red), path_gdx_ghgprice_land, NC, "\n",sep="")
+  cat("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
+  cat("no_ghgprices_land_until    :",cfg_mag$mute_ghgprices_until,"\n")
 
   if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
     # for nash: set the number of CPUs per node to number of regions + 1

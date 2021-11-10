@@ -7,7 +7,7 @@
 ##################################################################
 ################# D E F I N E  start_coupled #####################
 ##################################################################
-start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE,qos) {
+start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,qos) {
   
   require(lucode2)
   require(gms)
@@ -174,8 +174,9 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     }
     
     cat("### COUPLING ### MAgPIE will be started with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
+    cfg_mag$path_to_report <- report
     ########### START MAGPIE #############
-    outfolder_mag <- start_run(cfg_mag,path_to_report=report,LU_pricing=LU_pricing,codeCheck=FALSE)
+    outfolder_mag <- start_run(cfg_mag, codeCheck=FALSE)
     ######################################
     cat("### COUPLING ### MAgPIE output was stored in ",outfolder_mag,"\n")
     report <- paste0(path_magpie,outfolder_mag,"/report.mif")
@@ -260,7 +261,7 @@ require(lucode2)
 
 readArgs("coupled_config")
 load(coupled_config)
-start_coupled(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,LU_pricing,qos)
+start_coupled(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,qos)
 
 # Manual call:
 # Rscript start_coupled.R coupled_config=runname
