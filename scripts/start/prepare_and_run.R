@@ -427,7 +427,7 @@ prepare <- function() {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+  input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -440,7 +440,7 @@ prepare <- function() {
     
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$revision)
+  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping,sep=";")
