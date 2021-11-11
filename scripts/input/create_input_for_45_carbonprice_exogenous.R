@@ -4,7 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-### Function to create files with price mark-ups (needed for cm_fetaxscen 102 - 116, ADVANCE WP2 price elasticity runs)
 
 create_input_for_45_carbonprice_exogenous<-function(gdx){
   
@@ -12,13 +11,9 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   library(gms,quietly=TRUE,warn.conflicts =FALSE)
   require(remind2,quietly = TRUE,warn.conflicts =FALSE)
   
-  ############################# BASIC CONFIGURATION #############################
+  p_fpath <- "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
   
-  #Define arguments that can be read from command line
-  #  gdx <- "fulldata.gdx"
-  #  readArgs("fulldata.gdx")
-  
-  ###############################################################################
+  # ---- Read data ----
   
   if (file.exists(gdx)) {
     pr <- reportPrices(gdx)
@@ -26,11 +21,41 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
     stop("No gdx file found to take the carbon price from - please provide gdx from a reference run in path_gdx_carbonprice in scenario_config file.")
   }
   
+  # ---- Convert data ----
+  
   #select right temporal/variable scope 
   pr <- pr[,,c( "Price|Carbon (US$2005/t CO2)")]
-  #get rid of variable name so that it is not printed
-  pr <- pr[,,1,drop=TRUE]
+  # convert from $/tCO2 to $/kgC (or T$/GtC)
+  pr <- pr / 1000 * 44/12
+  # remove GLO region if it exists
+  if ("GLO" %in% getRegions(pr)) {
+    pr <- pr["GLO",,,invert=TRUE]
+  }
+
+  # ---- Export data ----
   
-  #write out file for mark-ups applied on FE level
-  write.magpie(pr[seq(1,11),,],"modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc", comment="** description: Carbon prices from previous run \n*** unit: $2005/t CO2 \n*** file created with scripts/input/create_input_for_45_carbonprice_exogenous.R")
+  # Header
+  cat("*** SOF ",p_fpath,"\n", file = p_fpath, sep = "", append = FALSE)
+  cat("*=============================================================*\n", file = p_fpath, append = TRUE)
+  cat("*=              Exogenous CO2 tax level                      =*\n", file = p_fpath, append = TRUE)
+  cat("*=============================================================*\n", file = p_fpath, append = TRUE)
+  cat("*= author: dklein@pik-potsdam.de                             =*\n", file = p_fpath, append = TRUE)
+  cat(paste("*= date  : ", Sys.time(), "                               =*\n", sep=""), file = p_fpath, append = TRUE)
+  cat("*= generated with:                                           =*\n", file = p_fpath, append = TRUE)
+  cat("*= scripts/input/create_input_for_45_carbonprice_exogenous.R =*\n", file = p_fpath, append = TRUE)
+  cat(paste0("*= from file: ", normalizePath(gdx), " =*\n"), file = p_fpath, append = TRUE)
+  cat("*= unit: 10^12 US$(2005)/GtC                                 =*\n", file = p_fpath, append = TRUE)
+  cat("*=============================================================*\n", file = p_fpath, append = TRUE)
+  cat("\n", file = p_fpath, append = TRUE)
+  
+  # Content
+  # Loop over time dimension
+  for (y in getYears(pr)) {
+    for (r in getRegions(pr)) {
+      cat("p45_tau_co2_tax(\"",gsub("y","",y),"\",\"",r,"\")=",pr[r,y,],";\n", sep = "", file = p_fpath, append = TRUE)
+    }
+  }
+  
+  cat("*** EOF ",p_fpath,"\n", file = p_fpath, sep = "", append = TRUE)
+  
 }
