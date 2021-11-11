@@ -927,7 +927,6 @@ run <- function(start_subsequent_runs = TRUE) {
   #=================== END - Subsequent runs ========================
 
   # Copy important files into output_folder (after REMIND execution)
-  #TODO: Make an if for path_gdx_carbonprice so that it only copies what is needed
   for (file in cfg$files2export$end)
     file.copy(file, cfg$results_folder, overwrite = TRUE)
 

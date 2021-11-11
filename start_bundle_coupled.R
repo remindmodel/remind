@@ -311,9 +311,8 @@ for(scen in common){
       if ("path_gdx_carbonprice" %in% colnames(settings_remind)) {if (!file.exists(cfg_rem$files2export$start['input_carbonprice.gdx'])) {
         start_now <- FALSE
         cp_start_now <- FALSE
-        # cat("path_gdx_carbonprice set to ",settings_remind[scen,"path_gdx_carbonprice"]," but that run isn't finished yet","\n")
+        cat("Could not start ",runname," because I could not find",settings_remind[scen,"path_gdx_carbonprice"],"as specified in path_gdx_carbonprice!\n")
       }}
-      
   }
 
   save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,qos,file=paste0(runname,".RData"))
@@ -337,7 +336,7 @@ for(scen in common){
   cat("bau_gdx       : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
   cat("ghg_price_mag : ",ifelse(file.exists(path_gdx_ghgprice_land),green,red), path_gdx_ghgprice_land, NC, "\n",sep="")
   cat("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
-  cat("no_ghgprices_land_until    :",cfg_mag$mute_ghgprices_until,"\n")
+  cat("no_ghgprices_land_until:",cfg_mag$mute_ghgprices_until,"\n")
 
   if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
     # for nash: set the number of CPUs per node to number of regions + 1
