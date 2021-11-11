@@ -60,12 +60,6 @@ p37_energy_limit("ue_cement")          =  10000;
 p37_energy_limit("ue_steel_primary")   =  10000;
 p37_energy_limit("ue_steel_secondary") = 100000;
 
-*' Emission factors for calculating industry emissions
-p37_fctEmi(t,regi,"fesos") = pm_emifac(t,regi,"sesofos","fesos","tdfossos","co2");
-p37_fctEmi(t,regi,"fehos") = pm_emifac(t,regi,"seliqfos","fehos","tdfoshos","co2");
-p37_fctEmi(t,regi,"fegas") = pm_emifac(t,regi,"segafos","fegas","tdfosgas","co2");
-
-
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;

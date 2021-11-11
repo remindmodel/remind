@@ -31,9 +31,10 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
     sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in)),
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
     * p37_shIndFE(regi,in,secInd37)
-    )
-  * p37_fctEmi(ttot,regi,entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
+  )
 ;
+
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
 *' process) are calculated from the baseline emissions and the possible 
