@@ -1372,29 +1372,6 @@ $offdelim
 /
 ;
 
-*** p_EmiLULUCFCountryAcc contains historic LULUCF emissions from PRIMAP hist database, 
-*** used for rescaling land-use change emissions in case c_LULUCFCountryAcc = "on" to follow national LULUCF emissions accounting
-parameter p_EmiLULUCFCountryAcc(tall,all_regi)                "historic co2 emissions from landuse change based on country accounting [Mt CO2/yr]"
-/
-$ondelim
-$include "./core/input/p_EmiLULUCFCountryAcc.cs4r"
-$offdelim
-/
-;
-
-*** if c_LULUCFCountryAcc = "on" -> shift land-use change CO2 emissions to align 2015 value with historic data from country accounting
-$ifthen.LULUCFCountryAcc not "%c_LULUCFCountryAcc%" == "off"
-*** shift MAC baseline
-p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val ge 2005) = p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val ge 2005) 
-                                                          - (p_macBaseMagpie("2015",regi,"co2luc") - p_EmiLULUCFCountryAcc("2015",regi))
-                                                          * 1e-3/sm_c_2_co2; 
-
-*** shift MAC limit
-p_macPolCO2luc(ttot,regi) = p_macPolCO2luc(ttot,regi)$(ttot.val ge 2005) 
-                                - (p_macPolCO2luc("2015",regi) - p_EmiLULUCFCountryAcc("2015",regi))
-                                * 1e-3/sm_c_2_co2; 
-$endif.LULUCFCountryAcc
-
 *** ----- Emission factor of final energy carriers -----------------------------------
 *** demand side emission factor of final energy carriers in MtCO2/EJ
 *** www.eia.gov/oiaf/1605/excel/Fuel%20EFs_2.xls
