@@ -345,7 +345,6 @@ cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in i
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
 c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
 cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
-c_LULUCFCountryAcc      "switch for shifting land-use change CO2 emissions to be in line with historic data from national accounting"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -645,8 +644,6 @@ $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
-
-$setglobal c_LULUCFCountryAcc  off      !! def = off
 
 $setglobal cm_wind_offshore  1      !! def = 1
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
