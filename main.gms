@@ -646,10 +646,9 @@ $setglobal cm_seTradeScenario  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
-$setglobal cm_wind_offshore  0      !! def = 0
-
 $setglobal c_LULUCFCountryAcc  off      !! def = off
 
+$setglobal cm_wind_offshore  1      !! def = 1
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE

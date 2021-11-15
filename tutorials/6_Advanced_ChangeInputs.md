@@ -16,7 +16,7 @@ cfg$regionmapping
 ```
 (default setting: regionmapping <- "config/regionmappingH12.csv"). Based on the regional resolution and the input data revision 
 ``` bash
-cfg$revision
+cfg$inputRevision
 ```
 the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded from `/p/projects/rd3mod/inputdata/output/` and distributed.
 
