@@ -105,27 +105,27 @@ display p_taxCO2eq_until2150, pm_taxCO2eq;
 
 $ifthen setGlobal c_scaleEmiHistorical
 *re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
-display p_macBaseMagpie;
+display pm_macBaseMagpie;
 loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
-  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
-   p_macBaseMagpie(ttot,regi,enty) *
+  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
+   pm_macBaseMagpie(ttot,regi,enty) *
     ( (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
       /
-      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
+      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
     )
   ;
 );
 loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp")),
-  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
-    p_macBaseMagpie(ttot,regi,enty) *
+  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
+    pm_macBaseMagpie(ttot,regi,enty) *
     ( p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions)
 * eurostat uses 298 to convert N2O to CO2eq
       /
-      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
+      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
     )
   ;
 );
-display p_macBaseMagpie;
+display pm_macBaseMagpie;
 $endif
 
 *** FS: calculate total bioenregy primary energy demand from last iteration
@@ -135,7 +135,7 @@ pm_demPeBio(ttot,regi) =
 ;
 
 !! all net negative co2luc
-p_macBaseMagpieNegCo2(t,regi) = p_macBaseMagpie(t,regi,"co2luc")$(p_macBaseMagpie(t,regi,"co2luc") < 0);
+p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
 
 p_agriEmiPhaseOut(t) = 0;
 p_agriEmiPhaseOut("2025") = 0.25;
@@ -144,8 +144,8 @@ p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
 *** Rescale German non-co2 base line emissions from agriculture 
-p_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
-  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*p_macBaseMagpie(t,regi,enty);
+pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
+  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;

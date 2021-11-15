@@ -143,7 +143,7 @@ $endif.GerVRECapFac
 
 *** p_EmiLULUCFCountryAcc contains historic LULUCF emissions from UNFCCC, 
 *** used for rescaling land-use change emissions for emissions targets based on national accounting
-parameter p_EmiLULUCFCountryAcc(tall,all_regi)                "historic co2 emissions from landuse change based on country accounting [Mt CO2/yr]"
+parameter p47_EmiLULUCFCountryAcc(tall,all_regi)                "historic co2 emissions from landuse change based on country accounting [Mt CO2/yr]"
 /
 $ondelim
 $include "./modules/47_regipol/regiCarbonPrice/input/p_EmiLULUCFCountryAcc.cs4r"
@@ -152,6 +152,6 @@ $offdelim
 ;
 
 *** difference between 2015 land-use change emissions from Magpie and UNFCCC 2015 land-use change emissions
-p47_LULUCFEmi_GrassiShift(t,regi) = (p_macBaseMagpie("2015",regi,"co2luc") - p_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
+p47_LULUCFEmi_GrassiShift(t,regi) = (pm_macBaseMagpie("2015",regi,"co2luc") - p47_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
