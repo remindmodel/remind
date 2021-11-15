@@ -186,10 +186,6 @@ $include "./core/input/p_inco0.cs4r"
 $offdelim
 /
 ;
-*CG* setting regional technology cost to be the same for wind offshore as onshore
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-p_inco0(ttot,regi,"windoff") = p_inco0(ttot,regi,"wind");
-$ENDIF.WindOff
 
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
