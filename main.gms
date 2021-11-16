@@ -389,10 +389,10 @@ cm_1stgen_phaseout  = 0;         !! def = 0
 $setglobal cm_tradbio_phaseout  default  !! def = default
 cm_cprice_red_factor  = 1;         !! def = 1
 
-$setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
-$setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
+$setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
+$setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
 $setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
-$setglobal cm_demScen  gdp_SSP2     !! def = gdp_SSP2
+$setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
@@ -578,7 +578,7 @@ $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
-$setglobal cm_INCONV_PENALTY_FESwitch  off !! def = off
+$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
