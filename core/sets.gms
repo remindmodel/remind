@@ -190,9 +190,7 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
         windoff         "wind offshore power converters"
-$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
