@@ -1500,7 +1500,6 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        ngccc
        tnrs
        bioigcc
-       biogas
        biochp
        geohdr
        hydro
