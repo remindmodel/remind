@@ -603,7 +603,7 @@ q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
       p_efFossilFuelExtr(regi,enty2,enty) 
     * sum(pe2rlf(enty2,rlf), vm_fuExtr(t,regi,enty2,rlf))
     )$( emiFuEx(enty) )
-  + ( p_macBaseMagpie(t,regi,enty) 
+  + ( pm_macBaseMagpie(t,regi,enty) 
     + p_efFossilFuelExtr(regi,"pebiolc","n2obio") 
     * vm_fuExtr(t,regi,"pebiolc","1")
     )$( sameas(enty,"n2ofertin") )

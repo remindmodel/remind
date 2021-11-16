@@ -15,6 +15,7 @@ Parameter
   pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
   pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)  "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
   s47_prefreeYear                              "value of the last non-free year for the carbon price trajectory"
+  p47_LULUCFEmi_GrassiShift(ttot,all_regi)		"difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
@@ -39,6 +40,7 @@ equations
 	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
 	q47_emiTarget_mkt_netCO2(ttot, all_regi, all_emiMkt) "Calculates net CO2 emissions per emission market used for target [GtC]"
 	q47_emiTarget_mkt_netGHG(ttot, all_regi, all_emiMkt) "Calculates net GHG emissions per emission market used for target [GtC]"
+	q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and shifting LULUCF emissions to meet 2015 UNFCCC values"
 ;
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 

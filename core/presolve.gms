@@ -100,13 +100,13 @@ p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(
 display p_switch_cement;
 
 *** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
-***$if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = p_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - p_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
+***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
 
 *** make sure that minimum CO2 luc emissions given in p_macPolCO2luc do not exceed the baseline
 loop(regi,
      loop(ttot,
-          if( (p_macPolCO2luc(ttot,regi) > p_macBaseMagpie(ttot,regi,"co2luc")),
-                    p_macPolCO2luc(ttot,regi) = p_macBaseMagpie(ttot,regi,"co2luc")
+          if( (p_macPolCO2luc(ttot,regi) > pm_macBaseMagpie(ttot,regi,"co2luc")),
+                    p_macPolCO2luc(ttot,regi) = pm_macBaseMagpie(ttot,regi,"co2luc")
              );
           );
     );
@@ -257,9 +257,9 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 
 
 *** exogenous
-vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = p_macBaseMagpie(ttot,regi,enty);
+vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,"co2luc") = p_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
+vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
 vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
