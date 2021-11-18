@@ -297,9 +297,9 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
-    source("scripts/input/prepare_NDC2018.R")
-    prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
   ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run

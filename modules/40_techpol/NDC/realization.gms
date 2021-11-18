@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
+*** SOF ./modules/40_techpol/NDC/realization.gms
 
 *' @description Technology policy components of nationally determined contributions as submitted to UNFCCC between 2015-2017. 
 *' Soft-coded, with some semi-hardcoded constraints (for EU, USA, Japan, India and China, 
@@ -14,8 +14,10 @@
 
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/40_techpol/NDC2018plus/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/40_techpol/NDC2018plus/datainput.gms"
-$Ifi "%phase%" == "equations" $include "./modules/40_techpol/NDC2018plus/equations.gms"
-$Ifi "%phase%" == "bounds" $include "./modules/40_techpol/NDC2018plus/bounds.gms"
+$Ifi "%phase%" == "sets" $include "./modules/40_techpol/NDC/sets.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/40_techpol/NDC/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/40_techpol/NDC/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/40_techpol/NDC/equations.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/40_techpol/NDC/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
+*** EOF ./modules/40_techpol/NDC/realization.gms

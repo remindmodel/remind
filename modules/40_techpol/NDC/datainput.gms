@@ -4,17 +4,23 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NDC2018plus/datainput.gms 
+*** SOF ./modules/40_techpol/NDC/datainput.gms 
 *** SOF means start fo file and EOF means end of file. Use these before and after the body of the code
 
 Parameter p40_TechBound(ttot,all_regi,all_te) "NDC capacity targets for solar, wind, nuclear, hydro, and biomass (GW)"
   /
 $ondelim
-$include "./modules/40_techpol/NDC2018/input/f40_NDC+REN21+CHN_NUC.cs4r"
+$include "./modules/40_techpol/NDC/input/f40_NDC+REN21+CHN_NUC.cs4r"
 $offdelim
   /;
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
+
+*** FS: in scenario with limited energy crop production, 
+*** switch-off biomass capacity targets of NDC 
+if (cm_bioprod_histlim ge 0,
+  p40_ElecBioBound(t,regi) = 0;
+  );
 
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model
@@ -30,7 +36,7 @@ p40_CoalBound(t,iso_regi)                   = 0;
 Parameter   f40_FE_RenShare(tall,all_regi)     "Lower bound on ren share - EU lower bound on renewable share in gross  final energy (=secondary energy in REMIND)"
 /
 $ondelim
-$include "./modules/40_techpol/NDC2018/input/f40_FE_RenShare.cs4r"
+$include "./modules/40_techpol/NDC/input/f40_FE_RenShare.cs4r"
 $offdelim
 /;
 p40_FE_RenShare(tall,regi) = f40_FE_RenShare(tall,regi);  !! rescale unit from [million people] to [billion] people
@@ -64,6 +70,6 @@ p40_CoalBound(t,"USA")=999.99; !! 1000 - 999.99 GW =  10MW, interpretation of th
 display p40_ElecBioBound;
 display p40_TechBound; !! good to see if the input is displayed correctly
 
-*** EOF ./modules/40_techpol/NDC2018plus/datainput.gms
+*** EOF ./modules/40_techpol/NDC/datainput.gms
 
 
