@@ -34,7 +34,7 @@ source("scripts/start/choose_slurmConfig.R")
 ############## Define function: get_line ##############################
 
 get_line <- function(){
-	# gets characters (line) from the terminal of from a connection
+	# gets characters (line) from the terminal or from a connection
 	# and stores it in the return object
 	if(interactive()){
 		s <- readline()
@@ -268,8 +268,8 @@ if ('--restart' %in% argv) {
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
-      start_now <- (substr(scenarios[scen,"path_gdx_ref"], nchar(scenarios[scen,"path_gdx_ref"])-3, nchar(scenarios[scen,"path_gdx_ref"])) == ".gdx"
-                   | is.na(scenarios[scen,"path_gdx_ref"]))
+      start_now <- (substr(cfg$files2export$start['input_ref.gdx'], nchar(cfg$files2export$start['input_ref.gdx'])-3, nchar(cfg$files2export$start['input_ref.gdx'])) == ".gdx"
+                   | is.na(cfg$files2export$start['input_ref.gdx']))
     }
     
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
@@ -287,7 +287,7 @@ if ('--restart' %in% argv) {
     # print names of subsequent runs if there are any
     if (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
       if (any(cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen)) {
-      cat("   Subsequent runs:",rownames(cfg$RunsUsingTHISgdxAsInput$path_gdx_ref)[cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen],"\n")
+      cat("   Subsequent runs:",rownames(cfg$RunsUsingTHISgdxAsInput[cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen,]),"\n")
     }}
     
   }
