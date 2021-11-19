@@ -848,21 +848,14 @@ run <- function(start_subsequent_runs = TRUE) {
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
   start_subsequent_runs <- !coupled_run
  
-  # cfg$RunsUsingTHISgdxAsInput could look like this table:
-  #           path_gdx_ref path_gdx_bau path_gdx_carbonprice
-  # SSP2-NPi      SSP2-NDC    SSP2-Base                 <NA>
-  # SSP2-1.5C     SSP2-NDC    SSP2-Base                 <NA>
-  # SSP2-Land    SSP2-1.5C    SSP2-Base             SSP2-NDC
- 
   # if RunsUsingTHISgdxAsInput has at least one row
   if (start_subsequent_runs & (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0)) {
   
-    source("scripts/start/submit.R")
     # Save the current cfg settings into a different data object, so that they are not overwritten
     cfg_main <- cfg
     
     # Save the path to the fulldata.gdx of the current run (== cfg_main$title) to the cfg files of the runs that ... (see below at 1., 2., 3.)
-    for (run %in% rownames(cfg_main$RunsUsingTHISgdxAsInput)) {
+    for (run in rownames(cfg_main$RunsUsingTHISgdxAsInput)) {
        
        RData_file <- paste0(run,".RData")
        load(RData_file)
@@ -875,11 +868,15 @@ run <- function(start_subsequent_runs = TRUE) {
        }
        
        # 2. ... use it as 'input_carbonprice.gdx'
-       if ("path_gdx_carbonprice" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) { if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice == cfg_main$title) {
-          cat("Writing the path for input_carbonprice.gdx to ",RData_file,"\n")
-          # ...change the path_gdx_carbonprice field of the subsequent run to the fulldata gdx of the current run ...
-          cfg$files2export$start['input_carbonprice.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-       }}
+       if ("path_gdx_carbonprice" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) { 
+          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice)) {
+             if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice == cfg_main$title) {
+                cat("Writing the path for input_carbonprice.gdx to ",RData_file,"\n")
+                # ...change the path_gdx_carbonprice field of the subsequent run to the fulldata gdx of the current run ...
+                cfg$files2export$start['input_carbonprice.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
+             }
+          }
+       }
        
        save(cfg, file = RData_file)
 
@@ -892,6 +889,7 @@ run <- function(start_subsequent_runs = TRUE) {
           save(cfg, file = RData_file)
           # Subsequent runs will be started in submit.R using the RData files written above after the current run has finished.
           cat("Starting subsequent run ",run,"\n")
+          source("scripts/start/submit.R")
           submit(cfg)
        } else {
           cat('\nNo subsequent run was set for this scenario\n')
