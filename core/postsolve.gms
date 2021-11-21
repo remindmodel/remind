@@ -646,11 +646,11 @@ o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)
 o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 1E-22) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te) * 100;
 
 *** calculation of PE and SE Prices (useful for internal use and reporting purposes)
-pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
-       q_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
+pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
+       q_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
 
-p_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
-       q_balPe.m(t,regi,entyPe) / qm_budget.m(t,regi);
+p_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
 pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
