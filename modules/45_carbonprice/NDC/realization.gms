@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NDC2018.gms
+*** SOF ./modules/45_carbonprice/NDC/realization.gms
 
 *#' @description This realization implements a carbon price trajectory consistent with the NDC targets (up to 2030) and 
 *# a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). 
@@ -15,16 +15,16 @@
 *** Next update (2022):
 *** - Add NDC_2022.xlsx /p/projects/Rogelj2017/ on cluster
 *** - Set switch default in default.cfg to new year
-*** - Add new year six times in 45_carbonprice/NDC2018/input/files
-*** - Add new year six times in 45_carbonprice/NDC2018/datainput.gms
+*** - Add new year six times in 45_carbonprice/NDC/input/files
+*** - Add new year six times in 45_carbonprice/NDC/datainput.gms
 *** - Add new year six times in mrremind in fullREMIND.R
 *** - Add new else if condition to calcEmiTarget.R in mrremind
 
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/NDC2018/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NDC2018/datainput.gms"
-$Ifi "%phase%" == "preloop" $include "./modules/45_carbonprice/NDC2018/preloop.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/45_carbonprice/NDC2018/postsolve.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/NDC/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NDC/datainput.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/45_carbonprice/NDC/preloop.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/45_carbonprice/NDC/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/45_carbonprice/NDC2018.gms
+*** EOF ./modules/45_carbonprice/NDC/realization.gms

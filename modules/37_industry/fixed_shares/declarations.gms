@@ -14,7 +14,6 @@ scalars
 ;
 
 Parameters
-  p37_fctEmi(all_enty)                                   "emission factors of FE carriers [GtC/TWa]"
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
 
 

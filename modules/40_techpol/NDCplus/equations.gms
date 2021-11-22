@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NDC2018plus/equations.gms
+*** SOF ./modules/40_techpol/NDCplus/equations.gms
 
 q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 ***am minimum targets for certain technologies
@@ -82,4 +82,4 @@ q40_CoalBound(t,regi)$(t.val gt 2016 AND sameas(regi,"USA"))..
  + (sum(te$(sameas(te,"pc")), sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)))*1000)
  + (sum(te$(sameas(te,"coalchp")), sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)))*1000)
     =l= (1000-sum(iso_regi$map_iso_regi(iso_regi,regi),p40_CoalBound(t,iso_regi))) ;
-*** EOF ./modules/40_techpol/NDC2018plus/equations.gms
+*** EOF ./modules/40_techpol/NDCplus/equations.gms

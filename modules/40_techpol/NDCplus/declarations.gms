@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 
-*** SOF ./modules/40_techpol/NDC2018plus/declarations.gms
+*** SOF ./modules/40_techpol/NDCplus/declarations.gms
 Parameter p40_TechBound(ttot,all_regi,all_te)          "level for lower bound on absolute capacities, in GW, for solar and wind";
 Parameter p40_ElecBioBound(ttot,all_regi)              "level for lower bound on biomass tech. absolute capacities, in GW";
 Parameter p40_noncombust_acc_eff(ttot,iso_regi,all_te) "Efficiency used for the accounting of non-combustibles PE, e.g. 0.45 for 45% under substitution method, eq 1 for all carriers under direct accounting method";
@@ -26,6 +26,6 @@ Equation q40_CoalBound                                 "Restricting new coal pow
 Equation q40_ElCap_RenShare                            "Lower bound on low carbon share in total installed capacity";
 Equation q40_windBound				       "lower bound on combined wind onshore and offshore"
 
-*** EOF ./modules/40_techpol/NDC2018/plusdeclarations.gms
+*** EOF ./modules/40_techpol/NDCplus/plusdeclarations.gms
 
 

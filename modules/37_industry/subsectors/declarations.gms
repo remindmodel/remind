@@ -13,8 +13,6 @@ Scalar
 Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
   p37_energy_limit(all_in)                               "thermodynamic/technical limits of energy use [GJ/product]"
-  p37_fctEmi(all_enty)                                   "FE emission factors"
-
 
   p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
 
