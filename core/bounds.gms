@@ -551,4 +551,9 @@ vm_capEarlyReti.up(t,regi,te)$( (teFosNoCCS(te) OR sameAs(te,"tnrs")) AND (t.val
 *** FS temporarily to debug: allow early retirements of geohdr to avoid infeasibilities which weirdly arise due to different vm_deltaCap in 2000 time step of input.gdx and non_optimal.gdx
 vm_capEarlyReti.up(t,regi,te)$( sameAs(te,"geohdr") AND sameAs(regi,"REF")) = 1;
 
+
+*** FS: bounds for slack variable to solve small infeasiblities in capacity motion equation in order of +- 10MW
+v_slack_qcap.up(t,regi,te,rlf)=1e-5;
+v_slack_qcap.lo(t,regi,te,rlf)=-1e-5; 
+
 *** EOF ./core/bounds.gms
