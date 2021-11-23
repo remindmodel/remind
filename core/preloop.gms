@@ -144,4 +144,8 @@ option limrow = 0;
 option limcol = 0;
 $ENDIF.out
 
+
+*** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
+execute_load "input_ref.gdx", p_PEPrice, pm_SEPrice, pm_FEPrice;
+
 *** EOF ./core/preloop.gms
