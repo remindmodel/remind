@@ -1395,6 +1395,15 @@ $ENDIF.WindOff
         csp         "concentrating solar power"
 /
 
+teWind(all_te)        "Onshore and offshore wind technologies"
+/
+        wind        "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
+/
+
+
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
