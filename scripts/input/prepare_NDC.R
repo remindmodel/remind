@@ -5,7 +5,6 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 ### Function to create files with regional BAU emissions
-*** SOF ./scripts/input/prepare_NDC.gms
 
 prepare_NDC<-function(gdx, cfg){
   
@@ -80,4 +79,4 @@ prepare_NDC<-function(gdx, cfg){
     write.table(r2030,"modules/45_carbonprice/NDC/input/set_regi2030_NDC2018_uncond.cs4r", row.names = F,col.names=F,quote = F)
   }
 }
-*** EOF ./scripts/input/prepare_NDC.gms
+
