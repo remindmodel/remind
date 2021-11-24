@@ -1512,7 +1512,7 @@ sm_globalBudget_dev = 1;
 s_histBioShareTolerance = 0.02;
 *** temporary: until subsectors historical FE mix checked -> high tolerance for industry subsectors to make it run 
 $ifthen.subsectors "%industry%" == "subsectors"   !! industry
-s_histBioShareTolerance = 0.3;
+s_histBioShareTolerance = 0.02;
 $endif.subsectors
 
 
