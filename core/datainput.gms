@@ -138,6 +138,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
 $include "./core/input/generisdata_tech.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
