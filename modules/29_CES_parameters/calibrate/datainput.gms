@@ -221,7 +221,10 @@ $endif.cm_calibration_FE
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
-  parameter
+  Parameter
+    f29_fedemand_build(tall,all_regi,all_GDPscen,all_rcp_scen,all_in) "RCP-dependend final energy demand in buildings"
+  ;
+  Parameter
     f29_fedemand_build     "RCP-dependend final energy demand in buildings"
     /
       $ondelim
