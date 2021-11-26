@@ -444,7 +444,7 @@ $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
@@ -603,7 +603,7 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
+$setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
