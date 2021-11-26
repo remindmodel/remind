@@ -138,6 +138,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
 $include "./core/input/generisdata_tech.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
@@ -186,19 +187,6 @@ $include "./core/input/p_inco0.cs4r"
 $offdelim
 /
 ;
-*CG* setting regional technology cost to be the same for wind offshore as onshore
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("inco0","windoff") = 5000;
-fm_dataglob("constrTme","windoff") = 4;
-fm_dataglob("eta","windoff") = 1.00;
-fm_dataglob("omf","windoff") = 0.03;
-fm_dataglob("lifetime","windoff") = 25;
-fm_dataglob("incolearn","windoff") = 4000;
-fm_dataglob("ccap0","windoff") = 0.0007;
-fm_dataglob("learn","windoff") = 0.12;
-
-p_inco0(ttot,regi,"windoff") = p_inco0(ttot,regi,"wind");
-$ENDIF.WindOff
 
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
@@ -1294,7 +1282,7 @@ if(c_macscen eq 1,
 *pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "NDC2018"  pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"  pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1359,8 +1347,8 @@ $if %cm_MAgPIE_coupling% == "on"  $include "./core/input/f_macBaseMagpie_couplin
 $offdelim
 /
 ;
-$if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$if %cm_MAgPIE_coupling% == "on"  p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+$if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
 
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation

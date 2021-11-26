@@ -136,7 +136,7 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
 ***   emissions - it comes from biomass
-  + ( sm_MtCH4_2_TWa
+  + ( s_MtCH4_2_TWa
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
@@ -603,7 +603,7 @@ q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
       p_efFossilFuelExtr(regi,enty2,enty) 
     * sum(pe2rlf(enty2,rlf), vm_fuExtr(t,regi,enty2,rlf))
     )$( emiFuEx(enty) )
-  + ( p_macBaseMagpie(t,regi,enty) 
+  + ( pm_macBaseMagpie(t,regi,enty) 
     + p_efFossilFuelExtr(regi,"pebiolc","n2obio") 
     * vm_fuExtr(t,regi,"pebiolc","1")
     )$( sameas(enty,"n2ofertin") )
