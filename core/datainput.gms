@@ -499,15 +499,15 @@ $include "./core/input/p_earlyRetirementAdjFactor.cs3r"
 $offdelim
 ;
 
-$if.Base_Cprice %carbonprice% == "none"
-$if.Base_techpol %techpol% == "none"
+$ifthen.Base_Cprice %carbonprice% == "none"
+$ifthen.Base_techpol %techpol% == "none"
 *** Early retirement limits in historical timesteps
 p_earlyreti_lim(ttot,regi,te)$(ttot.val gt 2020) = 0;
 p_earlyreti_lim(ttot,regi,te)$(ttot.val le 2020) = 0.01 - cm_earlyreti_rate;
 p_earlyreti_lim(ttot,regi,"pc")$(ttot.val le 2020) = 0.05 - cm_earlyreti_rate - pm_earlyreti_adjRate(regi,"pc");
 p_earlyreti_lim(ttot,"EUR","pc")$(ttot.val le 2020) = 0.1 - cm_earlyreti_rate - pm_earlyreti_adjRate("EUR","pc");
-$endif.Base_Cprice
 $endif.Base_techpol
+$endif.Base_Cprice
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
