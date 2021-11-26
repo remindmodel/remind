@@ -649,7 +649,7 @@ o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 
 pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
        q_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
 
-p_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
+pm_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
        q_balPe.m(t,regi,entyPe) / qm_budget.m(t,regi);
 
 *** calculate share of stored CO2 from captured CO2

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NDC2018/preloop.gms
+*** SOF ./modules/45_carbonprice/NDC/preloop.gms
 
 *CB* special case SSA: maximum carbon price (after adjustment below) at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
 pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = 15 * sm_DptCO2_2_TDpGtC;
@@ -49,4 +49,4 @@ p45_ref_co2eq_woLU_regi(regi_2025target) = p45_BAU_reg_emi_wo_LU_bunkers("2005",
 
 	 
 display pm_taxCO2eq,p45_ref_co2eq_woLU_regi,regi_2025target,regi_2030target;
-*** EOF ./modules/45_carbonprice/NDC2018/preloop.gms
+*** EOF ./modules/45_carbonprice/NDC/preloop.gms

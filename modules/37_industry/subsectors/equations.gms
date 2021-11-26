@@ -42,9 +42,9 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear AND (pm_fe
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in))$(entyFeCC37(entyFe)),
       vm_cesIO(ttot,regi,in)
-    * p37_fctEmi(entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
     )
 ;
 

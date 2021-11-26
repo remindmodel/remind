@@ -1,0 +1,15 @@
+# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+pm_PEPrice, parameter, only used in capacity realization
+
+pm_omeg,parameter,only used in capacity realization
+pm_data,parameter,only used in capacity realization
+pm_tsu2opTimeYr,parameter,only used in capacity realization
+pm_ttot_val,parameter,only used in capacity realization
+pm_ts,parameter,only used in capacity realization
+pm_dt,parameter,only used in capacity realization
