@@ -8,9 +8,9 @@
 
 *** calculation of FE Industry Prices (useful for internal use and reporting 
 *** purposes)
-pm_FEPrice(t,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(t,regi)) gt sm_eps )
-  = q37_demFeIndst.m(t,regi,entyFE,emiMkt)
-  / qm_budget.m(t,regi);
+pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_eps )
+  = q37_demFeIndst.m(ttot,regi,entyFE,emiMkt)
+  / qm_budget.m(ttot,regi);
 
 
 *** calculate reporting parameters for FE per subsector and SE origin to make R 

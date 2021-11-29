@@ -31,13 +31,13 @@
 *' @authors Robert Pietzcker, Falko Ueckerdt, Renato Rodrigues
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/32_power/IntC/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/32_power/IntC/datainput.gms"
-$Ifi "%phase%" == "equations" $include "./modules/32_power/IntC/equations.gms"
-$Ifi "%phase%" == "preloop" $include "./modules/32_power/IntC/preloop.gms"
-$Ifi "%phase%" == "bounds" $include "./modules/32_power/IntC/bounds.gms"
-$Ifi "%phase%" == "presolve" $include "./modules/32_power/IntC/presolve.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/32_power/IntC/postsolve.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/32_power/DTcoup/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/32_power/DTcoup/datainput.gms"
+$Ifi "%phase%" == "equations" $include "./modules/32_power/DTcoup/equations.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/32_power/DTcoup/preloop.gms"
+$Ifi "%phase%" == "bounds" $include "./modules/32_power/DTcoup/bounds.gms"
+$Ifi "%phase%" == "presolve" $include "./modules/32_power/DTcoup/presolve.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/32_power/DTcoup/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
 *** EOF ./modules/32_power/IntC/realization.gms
