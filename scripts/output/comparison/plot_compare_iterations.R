@@ -17,9 +17,15 @@ library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
 ############################# BASIC CONFIGURATION #############################
 if(!exists("source_include")) {
+  cat("Script started from command line.\n")
+  print(ls())
   runs <- NULL
   folder <- "./output"
   readArgs("runs","folder")
+} else {
+  cat("Script was sourced.\n")
+  cat("runs  : ",runs,"\n")
+  cat("folder: ",folder,"\n")
 }
 
 ###############################################################################
@@ -116,10 +122,9 @@ plot_iterations <- function(runname) {
 	######################### COMMON SETTINGS ############################
 	TWa2EJ <- 31.5576      # TWa to EJ (1 a = 365.25*24*3600 s = 31557600 s)
 	txtsiz <- 10
-	r   <- c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA") #,"GLO")
+	r   <- sort(c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA"))
 	y   <- paste0("y",2000+10*(1:10))
   years <- c("y2005","y2010","y2015","y2020","y2025","y2030","y2035","y2040","y2045","y2050","y2055","y2060","y2070","y2080","y2090","y2100") # used for fillyears
-  r_sub  <- setdiff(c("SSA","CHA","EUR","IND","LAM","OAS","CAZ","REF","USA"),"GLO")
   sm_tdptwyr2dpgj <- 31.71 # multipl. factor to convert (TerraDollar per TWyear) to (Dollar per GJoule)
 	######################### IMPORT AND PLOT DATA #######################
 	
@@ -203,7 +208,7 @@ plot_iterations <- function(runname) {
   v_shift    <- fillyears(v_shift,years) # If there is no year dimension add it
   getNames(v_shift) <- gsub(".*rem-","",getNames(v_shift))
 
-  p_shift <- magpie2ggplot2(v_shift[r_sub,years,],geom='line',group=NULL,
+  p_shift <- magpie2ggplot2(v_shift[r,years,],geom='line',group=NULL,
                         ylab='$/GJ',color='Data1',#linetype="Data2",
                         scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price shift",sep="\n"))
@@ -213,7 +218,7 @@ plot_iterations <- function(runname) {
   #y_limreg  <- c(0,max(v_mult[,years,]))
   getNames(v_mult) <- gsub(".*rem-","",getNames(v_mult))
   
-  p_mult <- magpie2ggplot2(v_mult[r_sub,years,],geom='line',group=NULL,
+  p_mult <- magpie2ggplot2(v_mult[r,years,],geom='line',group=NULL,
                         ylab='',color='Data1',#linetype="Data2",
                         scales='free_y',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price mult factor",sep="\n"))
