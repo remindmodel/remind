@@ -15,8 +15,8 @@ path_magpie <- "/p/projects/piam/abrahao/GSCF_dk/magpie/"
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
-path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_GCS.csv")
-path_settings_remind  <- paste0(path_remind,"config/scenario_config_GCS.csv")
+path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
+path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
@@ -273,7 +273,6 @@ for(scen in common){
   # add table with information about runs that need the fulldata.gdx of the current run as input (will be further processed in start_coupled.R)
   cfg_rem$RunsUsingTHISgdxAsInput <- settings_remind[common,] %>%                 # select all scenarios that are going to be started
                                      select(contains("path_gdx_")) %>%            # select columns that have "path_gdx_" in their name
-                                     filter(rowSums(is.na(.)) != ncol(.)) %>%     # select rows that have at least one non-NA element
                                      filter(rowSums(. == scen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
 
   # immediately start run if it has a real gdx file (not a runname) given (last four letters are ".gdx") in path_gdx_ref or where this field is empty (NA)
@@ -343,7 +342,7 @@ for(scen in common){
   cat("ref_gdx       : ",ifelse(file.exists(cfg_rem$files2export$start["input_ref.gdx"]),green,red), cfg_rem$files2export$start["input_ref.gdx"], NC, "\n",sep="")
   cat("bau_gdx       : ",ifelse(file.exists(cfg_rem$files2export$start["input_bau.gdx"]),green,red), cfg_rem$files2export$start["input_bau.gdx"], NC, "\n",sep="")
   if(has_carbonprice_path) cat("carbonprice gdx : ",ifelse(file.exists(cfg_rem$files2export$start['input_carbonprice.gdx']),green,red), cfg_rem$files2export$start['input_carbonprice.gdx'], NC, "\n",sep="")
-  if(exists("path_mif_ghgprice_land")) cat("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land),green,red), path_mif_ghgprice_land, NC, "\n",sep="")
+  if(!is.null(path_mif_ghgprice_land)) cat("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land),green,red), path_mif_ghgprice_land, NC, "\n",sep="")
   cat("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC, "\n",sep="")
   cat("no_ghgprices_land_until:",cfg_mag$mute_ghgprices_until,"\n")
 
