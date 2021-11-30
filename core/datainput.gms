@@ -493,21 +493,29 @@ pm_cf(ttot,regi,"ngt")$(ttot.val ge 2045) = 0.4 * pm_cf(ttot,regi,"ngt");
 pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
-table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
-$ondelim
-$include "./core/input/p_earlyRetirementAdjFactor.cs3r"
-$offdelim
-;
 
-$if.Base_Cprice %carbonprice% == "none"
-$if.Base_techpol %techpol% == "none"
-*** Early retirement limits in historical timesteps
-p_earlyreti_lim(ttot,regi,te)$(ttot.val gt 2020) = 0;
-p_earlyreti_lim(ttot,regi,te)$(ttot.val le 2020) = 0.01 - cm_earlyreti_rate;
-p_earlyreti_lim(ttot,regi,"pc")$(ttot.val le 2020) = 0.05 - cm_earlyreti_rate - pm_earlyreti_adjRate(regi,"pc");
-p_earlyreti_lim(ttot,"EUR","pc")$(ttot.val le 2020) = 0.1 - cm_earlyreti_rate - pm_earlyreti_adjRate("EUR","pc");
-$endif.Base_Cprice
-$endif.Base_techpol
+*SB* Region- and tech-specific early retirement rates
+*Regional*
+loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
+  pm_regiEarlyRetiRate(regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+);
+*Tech-specific*
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
+  pm_regiEarlyRetiRate(regi,te)$(regi_group(ext_regi,regi)) = p_techEarlyRetiRate(ext_regi,te);
+);
+
+display pm_regiEarlyRetiRate;
+
+*Scenario-specific*
+* $if.Base_Cprice %carbonprice% == "none"
+* $if.Base_techpol %techpol% == "none"
+* *** Early retirement limits in historical timesteps
+* p_earlyreti_lim(ttot,regi,te)$(ttot.val gt 2020) = 0;
+* p_earlyreti_lim(ttot,regi,te)$(ttot.val le 2020) = 0.01 - pm_regiEarlyRetiRate;
+* p_earlyreti_lim(ttot,regi,"pc")$(ttot.val le 2020) = 0.05 - pm_regiEarlyRetiRate - pm_earlyreti_adjRate(regi,"pc");
+* p_earlyreti_lim(ttot,"EUR","pc")$(ttot.val le 2020) = 0.1 - pm_regiEarlyRetiRate - pm_earlyreti_adjRate("EUR","pc");
+* $endif.Base_Cprice
+* $endif.Base_techpol
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te

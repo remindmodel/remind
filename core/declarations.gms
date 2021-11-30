@@ -66,7 +66,6 @@ o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last 
 
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
-p_earlyreti_lim(tall,all_regi,all_te)                "Time-dependent upper bounds on early retirement of capacity"
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
 p_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
@@ -96,6 +95,12 @@ p_switch_cement(ttot,all_regi)                       "describes an s-curve to pr
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+
+* $ifthen not "%cm_earlyreti_rate%" == "off"
+pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions)" / %cm_regi_earlyreti_rate% /
+p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %cm_tech_earlyreti_rate% /
+* $endif
+pm_regiEarlyRetiRate(all_regi,all_te)                "regional early retirement rate (model native regions)"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"

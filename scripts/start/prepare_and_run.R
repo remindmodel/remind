@@ -67,8 +67,8 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     #   1/1000*12/44, # Mt CO2/yr -> Gt CO2/yr -> Gt C/yr
     map <- data.frame(emirem=NULL,emimag=NULL,factor_mag2rem=NULL,stringsAsFactors=FALSE)
     if("Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)" %in% getNames(mag)) {
-      # MAgPIE 4
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land (Mt CO2/yr)",                                                                 emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      # MAgPIE 4 (up to date)
+      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|+|Animal Waste Management (Mt N2O/yr)",                           emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O/yr)",          emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr)",    emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -79,8 +79,8 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
     } else if("Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)" %in% getNames(mag)) {
-      # MAgPIE 4 new
-      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land (Mt CO2/yr)",                                                                 emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
+      # MAgPIE 4 (intermediate - wrong units)
+      map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)",                       emirem="n2oanwstm", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Inorganic Fertilizers (Mt N2O-N/yr)",      emirem="n2ofertin", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O-N|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O-N/yr)",emirem="n2oanwstc", factor_mag2rem=28/44,stringsAsFactors=FALSE))
@@ -124,6 +124,23 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
         #if (map[i,]$emirem!="co2luc" &&  map[i,]$emirem!="n2ofertrb") {
         # tmp[tmp<0] <- 0
         #}
+        
+        # Check for negative values, since only "co2luc" is allowed to be 
+        # negative. All other emission variables are positive by definition.
+        if(map[i,]$emirem != "co2luc"){
+          if( !(all(tmp>=0)) ){
+            # Hotfix 2021-09-28: Raise warning and set negative values to zero.
+            # XXX Todo XXX: Make sure that MAgPIE is not reporting negative N2O
+            # or CH4 emissions and convert this warning into an error that 
+            # breaks the model instead of setting the values to zero.
+            print(paste0("Warning: Negative values detected for '", 
+                         map[i,]$emirem, "' / '", map[i,]$emimag, "'. ",
+                         "Hot fix: Set respective values to zero."))
+            tmp[tmp < 0] <- 0
+          }
+        }
+        
+        # Add emission variable to full dataframe
         out<-mbind(out,tmp)
     }
 
@@ -193,11 +210,29 @@ prepare <- function() {
   cat("\n===== git info =====\nLatest commit: ")
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
-  cat("\n====================\n")
+  
+  # print version information of installed packages
+  cat("\n==== installed package versions =====\n")
+  installed.packages() %>%
+    # printing a tibble instead of a list makes for a table that is easier to
+    # compare
+    as_tibble() %>%
+    select(Package, Version) %>%
+    # using right_join instead of filter generates NA for packages that are not
+    # installed
+    right_join(
+	# list all packages of interest here
+        tribble(
+            ~Package, "data.table", "devtools", "dplyr", "edgeTrpLib",
+            "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
+            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "mip", "mrremind", "mrvalidation", "optparse", "parallel",
+            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse", 
+	    "tools"),
 
-  ## print the libraries version
-  #installed.packages()[c("data.table", "devtools", "dplyr", "edgeTrpLib", "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools", "lucode", "luplot", "luscale", "magclass", "magpie", "methods", "mip", "mrremind", "mrvalidation", "optparse", "parallel", "plotly", "remind", "rlang", "rmndt", "tidyverse", "tools"),"Version"]
-
+        'Package') %>%
+    print(n = Inf)
+  cat("==========\n")
 
   load("config.Rdata")
 
@@ -237,20 +272,23 @@ prepare <- function() {
 	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
 
   if (file.exists(cfg$magicc_template)) {
-      cat("Copying MAGICC files from",cfg$magicc_template,"to ./core/magicc/\n")
-      system(paste0("cp -rp ",cfg$magicc_template,"/*.* ./core/magicc/"))
+      cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
+      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
     }
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
   if (on_cluster)
-    system("find ./core/magicc/ -type f | xargs dos2unix -q")
+    system(paste0("find ",cfg$results_folder,"/magicc/ -type f | xargs dos2unix -q"))
 
   ################## M O D E L   L O C K ###################################
-  # Lock the directory for other instances of the start scritps
-  lock_id <- model_lock(timeout1 = 1, oncluster=on_cluster)
-  on.exit(model_unlock(lock_id, oncluster=on_cluster))
+  # Lock the directory for other instances of the start scripts
+  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  on.exit() # set the commands when exiting in the correct order
+  on.exit(model_unlock(lock_id),add=TRUE)
+  on.exit(setwd(cfg$results_folder),add=TRUE)
   ################## M O D E L   L O C K ###################################
 
   ###########################################################
@@ -259,9 +297,9 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
-    source("scripts/input/prepare_NDC2018.R")
-    prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]))
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
   ## the following is outcommented because by now it has to be done by hand (currently only one gdx is handed to the next run, so it is impossible to fix to one run and use the tax from another run)
   ## Update CO2 tax information for exogenous carbon price runs with the same CO2 price as a previous run
@@ -270,33 +308,16 @@ prepare <- function() {
   #  create_ExogSameAsPrevious_CO2price_file(as.character(cfg$files2export$start["input_ref.gdx"]))
   #}
 
-  # select demand pathway for transportation: options are conv (conventional demand pathway) and wise (wiseways, limited demand)
-  if(cfg$gms$transport == "edge_esm"){
-    if(grepl("Wise", cfg$gms$cm_EDGEtr_scen)){
-       demTrsp = "wise"
-    } else {
-       demTrsp = "conv"
-    }
-  }
-
-  ## temporary switch: the transport demand of the transport complex realization can be based on EDGE-T values
-  if(cfg$gms$cm_demTcomplex == "fromEDGET"){
-       demComplex = "fromEDGET"
-  }
-
-
   # Calculate CES configuration string
-  cfg$gms$cm_CES_configuration <- paste0("stat_",cfg$gms$stationary,"-",
-                                         "indu_",cfg$gms$industry,"-",
+  cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
+                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", cfg$gms$cm_EDGEtr_scen, "-"), ""),
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
+                                         "En_",  cfg$gms$cm_demScen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
-                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", demTrsp, "-"), ""),
-                                         if(cfg$gms$cm_demTcomplex == "fromEDGET") "EDGET-" else "",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         if(cfg$gms$buildings == "services_putty") paste0("Esub_",cfg$gms$cm_esubGrowth, "-") else "" ,
                                          "Reg_", regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
@@ -358,9 +379,24 @@ prepare <- function() {
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
-    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
+    if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
+      subsets <- c(subsets,list(
+        "EU27"=c("ENC","EWN","ECS","ESC","ECE","FRA","DEU","ESW"), #EU27 (without Ireland)
+        "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
+      ) ) 
+    }
+    # ext_regi
+    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
+    content <- c(content, '      /')
+    content <- c(content, '        GLO,')
+    content <- c(content, '        ', paste(paste0(names(subsets),"_regi"),collapse=','),",")
+    content <- c(content, '        ', paste(regions,collapse=','))
+    content <- c(content, '      /')
+    content <- c(content, ' ')
+    # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
+    content <- c(content, '      ', paste('GLO.(',paste(regions,collapse=','),')'))
     for (i in 1:length(subsets)){
         content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
     }
@@ -391,7 +427,7 @@ prepare <- function() {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+  input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -404,7 +440,7 @@ prepare <- function() {
     
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$revision)
+  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping,sep=";")
@@ -431,7 +467,7 @@ prepare <- function() {
   
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
-  system(paste0('cp ',gdx_name,' ',path(cfg$results_folder, "input.gdx")))
+  system(paste0('cp ',gdx_name,' ',file.path(cfg$results_folder, "input.gdx")))
   
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
@@ -440,11 +476,11 @@ prepare <- function() {
   .copy.fromlist(cfg$files2export$start,cfg$results_folder)
 
   # Save configuration
-  save(cfg, file = path(cfg$results_folder, "config.Rdata"))
+  save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
   cat("Creating full.gms\n")
-  singleGAMSfile(mainfile=cfg$model,output = path(cfg$results_folder, "full.gms"))
+  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -457,7 +493,7 @@ prepare <- function() {
 
   ################## M O D E L   U N L O C K ###################################
   # After full.gms was produced remind folders have to be unlocked to allow setting up the next run
-  model_unlock(lock_id, oncluster=on_cluster)
+  model_unlock(lock_id)
   # Reset on.exit: Prevent model_unlock from being executed again at the end
   # and remove "setwd(cfg$results_folder)" from on.exit, becaue we change to it in the next line
   on.exit()
@@ -466,6 +502,10 @@ prepare <- function() {
   setwd(cfg$results_folder)
 
   write_yaml(cfg,file="cfg.txt")
+  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
+  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
+  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
+  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
 
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
