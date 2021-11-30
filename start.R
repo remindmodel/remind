@@ -171,12 +171,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx_")) %>%             # select columns that have "path_gdx_" in their name
-                                                   filter(rowSums(is.na(.)) != ncol(.)) %>%      # select rows that have at least one non-NA element
                                                    filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
                                                    
-    #icfg$subsequentruns <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
-    #icfg$RunsUsingTHISgdxAsBAU <- rownames(isettings[isettings$path_gdx_bau == iscen & !is.na(isettings$path_gdx_bau) & isettings$start == 1,])
-
     return(icfg)
 }
 
