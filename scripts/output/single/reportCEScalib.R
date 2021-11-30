@@ -14,6 +14,8 @@ library(quitte)
 require(lucode2)
 require(gms)
 require(colorspace)
+require(gdx)
+require(grid)
 
 gdx_name     <- "fulldata.gdx"        # name of the gdx  
 gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
@@ -23,8 +25,8 @@ if(!exists("source_include")) {
    outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
    readArgs("outputdir","gdx_name","gdx_ref_name")
 } 
-gdx      <- path(outputdir,gdx_name)
-gdx_ref  <- path(outputdir,gdx_ref_name)
+gdx      <- file.path(outputdir,gdx_name)
+gdx_ref  <- file.path(outputdir,gdx_ref_name)
 if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 
@@ -85,9 +87,9 @@ cat("Reading CES calibration output from ",filename,"\n")
 if (file.exists(filename)) {
   CES.cal.report <- read.table(filename, header = TRUE, sep = ",", quote = "\"") %>% 
     as.data.frame()
-} else if (file.exists(path(outputdir,filename))) {
+} else if (file.exists(file.path(outputdir,filename))) {
   
-  CES.cal.report <- read.table(path(outputdir,filename), header = TRUE, sep = ",", quote = "\"") %>% 
+  CES.cal.report <- read.table(file.path(outputdir,filename), header = TRUE, sep = ",", quote = "\"") %>%
     as.data.frame() 
 } else {
   stop("No CES_calibration.csv file found. CES_calibration.csv is normally produced during calibration runs")
@@ -154,7 +156,7 @@ iter.max = max(itr_num)
 #------------------------      PLOTS     ----------------------------------
 #---------------------------------------------------------------------------
 
-pdf(path(outputdir,paste0("CES calibration report_",scenario,".pdf")), 
+pdf(file.path(outputdir,paste0("CES calibration report_",scenario,".pdf")),
     width = 42 / 2.54, height = 29.7 / 2.54, title = "CES calibration report")
 
 

@@ -74,7 +74,7 @@ q33_emicdrregi(t,regi)..
 q33_DacFEdemand_el(t,regi,entyFe)..
     v33_DacFEdemand_el(t,regi,entyFe)
     =e=
-	- vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
+	- v33_emiDAC(t,regi) * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
     ;
 
 ***---------------------------------------------------------------------------

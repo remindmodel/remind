@@ -9,3 +9,6 @@ pm_regionalTemperature,input,questionnaire
 pm_damageGrowthRate,input,questionnaire
 cm_damages_BurkeLike_specification,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_damageMarginalT,input,questionnaire
+pm_damageMarginalTm1,input,questionnaire
+pm_damageMarginalTm2,input,questionnaire

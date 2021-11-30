@@ -31,7 +31,7 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
 ;
 
 *** No more than 90% of steel from secondary production
-q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) .. 
+q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear AND (pm_fedemand(ttot,regi,"ue_steel_primary") ge 1e-4)) .. 
   9 * vm_cesIO(ttot,regi,"ue_steel_primary")
   =g=
   vm_cesIO(ttot,regi,"ue_steel_secondary")
@@ -42,9 +42,9 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in))$(entyFeCC37(entyFe)),
       vm_cesIO(ttot,regi,in)
-    * p37_fctEmi(entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
     )
 ;
 
@@ -111,6 +111,17 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
         pm_macAbat(ttot,regi,enty,steps)
       )
     )
+;
+
+
+***---------------------------------------------------------------------------
+*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+***---------------------------------------------------------------------------
+q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
+  vm_costCESMkup(t,regi,in)
+  =e=
+    p37_CESMkup(t,regi,in) 
+  * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 *** EOF ./modules/37_industry/subsectors/equations.gms

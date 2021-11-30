@@ -37,7 +37,7 @@ q33_emicdrregi(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation of direct air capture.
 ***---------------------------------------------------------------------------
-q33_DacFEdemand_el(t,regi,entyFe)..
+q33_DacFEdemand_el(t,regi,entyFe)$(t.val ge 2025)..
     v33_DacFEdemand_el(t,regi,entyFe)
     =e=
 	- vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
@@ -47,7 +47,7 @@ q33_DacFEdemand_el(t,regi,entyFe)..
 *'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
 *'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
 ***---------------------------------------------------------------------------
-q33_DacFEdemand_heat(t,regi,entyFe)..
+q33_DacFEdemand_heat(t,regi,entyFe)$(t.val ge 2025)..
     v33_DacFEdemand_heat(t,regi,entyFe)
     =e=
     - vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)

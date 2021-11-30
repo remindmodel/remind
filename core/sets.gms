@@ -20,8 +20,12 @@ cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
 all_POPscen     " all possible population scenarios"
 /
 pop_SDP         "SDP population scenario"
+pop_SDP_EI
+pop_SDP_MC
+pop_SDP_RC
 pop_SSP1        "SSP1 population scenario"
 pop_SSP2        "SSP2 population scenario"
+pop_SSP2EU
 pop_SSP3        "SSP3 population scenario"
 pop_SSP4        "SSP4 population scenario"
 pop_SSP5        "SSP5 population scenario"
@@ -34,8 +38,12 @@ pop_b2
 all_GDPscen    "all possible GDP scenarios"
 /
 gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
 gdp_SSP1        "SSP1 fastGROWTH medCONV"
 gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2EU
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
@@ -45,11 +53,30 @@ gdp_b1
 gdp_b2
 /
 
+all_demScen    "all possible demand scenarios"
+/
+gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
+gdp_SSP1        "SSP1 fastGROWTH medCONV"
+gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2EU
+gdp_SSP3        "SSP3 slowGROWTH slowCONV"
+gdp_SSP4        "SSP4  medGROWTH mixedCONV"
+gdp_SSP5        "SSP5 fastGROWTH fastCONV"
+gdp_SSP2_lowEn   "SSP2 with low energy"
+/
+
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
 /
 SDP         "SDP scenario"
+SDP_EI
+SDP_MC
+SDP_RC
 SSP1        "SSP1 fastGROWTH medCONV"
 SSP2        "SSP2 medGROWTH medCONV"
+SSP2EU
 SSP3        "SSP3 slowGROWTH slowCONV"
 SSP4        "SSP4  medGROWTH mixedCONV"
 SSP5        "SSP5 fastGROWTH fastCONV"
@@ -96,9 +123,13 @@ SLCF_building_transport
 all_LU_emi_scen  "all emission baselines for CH4 and N2O land use emissions from MAgPIE"
 /
     SDP         "very low emissions (from SDP scenario in MAgPIE)"
+          SDP_EI
+          SDP_MC
+          SDP_RC
     SSP1        "low    emissions (from SSP1 scenario in MAgPIE)"
     SSP2        "medium emissions (from SSP2 scenario in MAgPIE)"
-    SSP3        "currently not available"
+    SSP2EU
+          SSP3        "currently not available"
     SSP4        "currently not available"
     SSP5        "high   emissions (from SSP5 scenario in MAgPIE)"
 /
@@ -159,9 +190,7 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
         windoff         "wind offshore power converters"
-$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -272,6 +301,12 @@ $ENDIF.WindOff
 *** FS: H2 transmission & distribution helper technologies for industry & buildings
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+*** technologies related to trading
+        gas_pipe     'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq      'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas      'LNG re-gasification facilities for transportation of NG.'
+        lng_ves      'LNG shipping vessels.'
+        coal_ves     'Vessels that can carry coal.'
 /
 
 all_enty             "all types of quantities"
@@ -484,8 +519,6 @@ all_in   "all inputs and outputs of the CES function"
   kap                     "capital input"
   en                      "energy input"
 
-  ens                     "stationary energy use"
-  ensh                    "stationary heat energy use"
   fesos                   "stationary use of solid energy carriers"
   fehos                   "stationary use of liquid energy carriers"
   fegas                   "stationary use of gaseous energy carriers"
@@ -802,7 +835,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***###############################################################################
 
 set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
-  / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW  /;
+  / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW, EU27_regi, NEU_UKI_regi /;
 
 *** FS: definition of regional sensitivity/scenario sets
 
@@ -868,7 +901,6 @@ sets
        transport
        buildings
        industry
-       stationary
        CCU
        techpol
        emicapregi
@@ -904,7 +936,6 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        transport . %transport%
        buildings . %buildings%
        industry . %industry%
-       stationary . %stationary%
        CCU . %CCU%
        techpol . %techpol%
        emicapregi . %emicapregi%
@@ -1160,6 +1191,11 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
+        gas_pipe      'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq       'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas       'LNG re-gasification facilities for transportation of NG.'
+        lng_ves       'LNG shipping vessels.'
+        coal_ves      'Vessels that can carry coal.'
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1279,6 +1315,7 @@ teEtaIncr(all_te)       "Technologies with time variable efficiency parameter et
   ngt
   bioigcc
   bioigccc
+  elh2
 /
 
 teEtaConst(all_te)      "Technologies with constant eta"
@@ -1369,6 +1406,15 @@ $ENDIF.WindOff
         csp         "concentrating solar power"
 /
 
+teWind(all_te)        "Onshore and offshore wind technologies"
+/
+        wind        "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
+/
+
+
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
@@ -1383,6 +1429,9 @@ teLoc(all_te)      "centralized technologies which require grid"
         wind        "wind power converters"
         spv         "solar photovoltaic"
         csp         "concentrating solar power"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
 /
 teGrid(all_te)      "grid between areas"
 /
@@ -1469,7 +1518,6 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        ngccc
        tnrs
        bioigcc
-       biogas
        biochp
        geohdr
        hydro
@@ -1679,7 +1727,34 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-entyFe(all_enty)      "final energy types. Calculated in sets_calculations"
+entySeSyn(all_enty)       "synfuel secondary energy types"
+/
+	seliqbio     "secondary energy liquids from biomass"
+	sesobio      "secondary energy solids from biomass"
+	segabio      "secondary energy gas from biomass"
+/
+
+entySeFos(all_enty) "secondary energy types from fossil primary energy"
+/
+	seliqfos     "secondary energy liquids from fossil primary energy"
+	sesofos      "secondary energy solids from fossil primary energy"
+	segafos      "secondary energy gas from fossil primary energy"
+/
+
+entyFe(all_enty)      "final energy types."
+/
+        fegas        "FE gas stationary"
+        fehos        "FE heating oil stationary"
+        fesos        "FE solids stationary"
+        feels        "FE electricity stationary"
+        fehes        "FE district heating (including combined heat and power), and heat pumps stationary"
+        feh2s        "FE hydrogen stationary"
+        fepet        "FE petrol transport"
+        fedie        "FE diesel transport"
+        feh2t        "FE hydrogen transport"
+	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
+/
 
 esty(all_esty)      "energy service types. Have to be added by modules."
 //
@@ -1703,6 +1778,7 @@ entyFeTrans(all_enty) "final energy types from transport sector"
         fedie        "FE diesel transport"
         feh2t        "FE hydrogen transport"
 	feelt        "FE electricity for transport"
+        fegat        "FE gases for transport"
 /
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
@@ -1872,7 +1948,7 @@ emi_sectors  "comprehensive sector set used for more detailed emissions accounti
 sector_types "differentiation of energy and process emissions in each sector"
 /
         energy "fuel combustion part (and emissions) of the sector activity"
-        process "process sepecific part (and emissions) of the sector activity"
+        process "process specific part (and emissions) of the sector activity"
 /
 
 entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation) mapping to sectors (industry, buildings, transportation and cdr)"
@@ -1893,6 +1969,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		fedie.trans
 		feh2t.trans
 		feelt.trans
+                fegat.trans
 		feels.cdr
 		fehes.cdr
                 fegas.cdr
@@ -1920,6 +1997,22 @@ ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to s
                 fehei.cdr
                 feh2i.cdr
                 fegai.cdr
+/
+
+entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary) and sector mapping to detailed final energy enty split by buildings and industry"
+/
+  fegas.build.fegab
+  fegas.indst.fegai
+  fehos.build.fehob
+  fehos.indst.fehoi
+  fesos.build.fesob
+  fesos.indst.fesoi
+  feels.build.feelb
+  feels.indst.feeli
+  fehes.build.feheb
+  fehes.indst.fehei
+***  feh2s.build.feh2b
+***  feh2s.indst.feh2i
 /
 
 all_emiMkt         "emission markets"
@@ -1987,7 +2080,7 @@ integ           "set of integers for looping etc"
 /
 xirog       "parameters decribing exhaustible extraction coss including long-run marginal costs and short term adjustment costs"
 /
-      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8
+      xi1, xi2, xi3, xi4, xi5, xi6, xi7, xi8, dec
 /
 *** emissions exported to MAGICC
   emiRCP "emission types exported to MAGICC"
@@ -2047,11 +2140,15 @@ char            "characteristics of technologies"
   mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
   ccap0           "cumulated installed capacity in t0. Unit: TW"
   inco0           "investment costs in t0. Unit: $/kW"
+  inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
   incolearn       "Investment costs that can be reduced through learning. Unit: $/kW"
   floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
   eta             "conversion efficiency"
+  eta_d           "conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km."
   omf             "fixed o&m"
+  omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
+  omv_d           "variable o&m per 1000km"
   tlt             "techical life time"
   delta           "depreciation rate"
   learn           "learning rate"
@@ -2171,7 +2268,7 @@ steps         "iterator for MAC steps"
 alias(t,t2,t3);
 alias(iteration,iteration2);
 alias(tall,tall2,tall3);
-alias(ttot,ttot2,ttot3);
+alias(ttot,ttot2,ttot3,ttot4,ttot5);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);
@@ -2303,7 +2400,7 @@ VRE2teGrid(all_te,teGrid)              "mapping to know which technology needs w
         spv.gridspv
         wind.gridwind
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-	      windoff.gridwindoff
+        windoff.gridwindoff
 $ENDIF.WindOff
         csp.gridcsp
 /
@@ -2312,6 +2409,10 @@ te2teLoclinked(teLoc,teLoc2)   "mapping between the technologies requiring grids
 /
         spv.csp
         csp.spv
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff.wind
+        wind.windoff
+$ENDIF.WindOff
 /
 
 se2se(all_enty,all_enty,all_te)  "map secondary energy to secondary energy using a technology"
@@ -2328,6 +2429,9 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         segabio.fegas.tdbiogas
         segafos.fegas.tdfosgas
         segasyn.fegas.tdsyngas
+        segabio.fegat.tdbiogat
+        segafos.fegat.tdfosgat
+        segasyn.fegat.tdsyngat
         seliqbio.fehos.tdbiohos
         seliqfos.fehos.tdfoshos
         seliqsyn.fehos.tdsynhos
@@ -2344,6 +2448,7 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
+sefe(all_enty,all_enty) "map secondary energy to final energy"
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
@@ -2491,6 +2596,8 @@ $endif
         seliqfos.fedie.tdfosdie.oc
         seliqbio.fepet.tdbiopet.oc
         seliqfos.fepet.tdfospet.oc
+        segabio.fegat.tdbiogat.ch4
+        segafos.fegat.tdfosgat.ch4
 
         segafos.fegas.tdfosgas.co2
         seliqfos.fehos.tdfoshos.co2
@@ -2557,6 +2664,12 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (co2luc).lulucf.process.co2
 /
 
+emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technology and captured emissions"
+/
+        pebiolc.seliqbio.bioftcrec.cco2
+        pebiolc. seel.bioigccc.cco2
+        pebiolc.seh2.bioh2c.cco2
+/
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
 emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
@@ -2664,6 +2777,18 @@ storwindoff,gridwindoff
 $ENDIF.WindOff
         storcsp,gridspv,gridwind,gridcsp,h2curt) . 1
 /
+
+
+sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies to which sector-specific t&d cost should be added"
+/
+        indst.tdh2s
+        build.tdh2s
+/
+
+ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
+/     
+/
+
 
 opTimeYr2te(all_te,opTimeYr)        "mapping for technologies to yearly lifetime - is filled automatically in generisdata.inc from the lifetime values in generisdata_tech.prn"
 tsu2opTimeYr(ttot, opTimeYr)     "mapping for opTimeYr to the used time ttot - will be filled automatically in generisdata.inc"
