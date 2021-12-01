@@ -25,15 +25,16 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 *' industry subsector are calculated from final energy use in industry, the 
 *' subsectors' shares in that final energy carriers use, and the emission 
 *' factor the final energy carrier. 
-q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
+q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear  ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in)),
+    sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in))$(entyFeCC37(entyFe)),
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
     * p37_shIndFE(regi,in,secInd37)
-    )
-  * p37_fctEmi(entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
+  )
 ;
+
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
 *' process) are calculated from the baseline emissions and the possible 

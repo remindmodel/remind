@@ -114,8 +114,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     }
 
     # Edit input data revision
-    if( "revision" %in% names(iscenarios)){
-      icfg$revision <- iscenarios[iscen,"revision"]
+    if( "inputRevision" %in% names(iscenarios)){
+      icfg$inputRevision <- iscenarios[iscen,"inputRevision"]
     }
 
     # Edit switches in default.cfg according to the values given in the scenarios table

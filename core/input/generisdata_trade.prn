@@ -1,0 +1,28 @@
+*** SOF ./core/input/generisdata_trade.prn
+$ontext
+IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
+tech_stat   Technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'.
+inco0       Initial investment costs given in $(2015)/kW(output) capacity. Independent of distance.
+inco0_d     Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km.
+constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
+eta         Conversion efficieny, i.e. the amount of energy NOT lost in transportation. Independent of distance (e.g. conversion processes etc).
+eta_d       Conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km.
+omf         Fixed operation and maintenance costs given as a fraction of investment costs inco0. Independent of distance.
+omf_d       Fixed operation and maintenance costs given as a fraction of investment costs inco0_d. Per 1000km.
+omv         Variable operation and maintenance costs given in $(2015)/kWa energy production. Independent of distance.
+omv_d       Variable operation and maintenance costs given in $(2015)/kWa energy production. Per 1000km.s
+lifetime    Given in years
+$offtext
++                        gas_pipe                 lng_liq                  lng_ves                 lng_gas              coal_ves
+tech_stat                     0                        0                        0                       0                     0
+inco0                        20                      167                        0                     0.1                     0
+inco0_d                     100                        0                        0                       0                     0
+constrTme                     3                        3                        0                       3                     0
+eta                        0.99                     0.99                     0.99                    0.99                  0.99
+eta_d                      0.99                     0.99                     0.99                    0.99                  0.99
+omf                        0.01                      3.3                        0                       0                     0
+omf_d                         0                        0                        0                       0                     0
+omv                           0                        0                        0                       0                     0
+omv_d                         0                        0                      2.3                       0                   2.3
+lifetime                     35                       35                      999                      35                   999
+*** EOF ./core/input/generisdata_trade.prn

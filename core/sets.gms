@@ -190,9 +190,7 @@ $endif
         geohe           "geothermal heat"
         hydro           "hydro electric"
         wind            "wind power converters"
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
         windoff         "wind offshore power converters"
-$ENDIF.WindOff
         spv             "solar photovoltaic"
         csp             "concentrating solar power"
         solhe           "solar thermal heat generation"
@@ -303,6 +301,12 @@ $ENDIF.WindOff
 *** FS: H2 transmission & distribution helper technologies for industry & buildings
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
+*** technologies related to trading
+        gas_pipe     'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq      'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas      'LNG re-gasification facilities for transportation of NG.'
+        lng_ves      'LNG shipping vessels.'
+        coal_ves     'Vessels that can carry coal.'
 /
 
 all_enty             "all types of quantities"
@@ -1186,6 +1190,11 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
+        gas_pipe      'Gas pipelines that can be used for both natural gas and hydrogen.'
+        lng_liq       'Natural gas liquification facilities for transportation as LNG.'
+        lng_gas       'LNG re-gasification facilities for transportation of NG.'
+        lng_ves       'LNG shipping vessels.'
+        coal_ves      'Vessels that can carry coal.'
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -1396,6 +1405,15 @@ $ENDIF.WindOff
         csp         "concentrating solar power"
 /
 
+teWind(all_te)        "Onshore and offshore wind technologies"
+/
+        wind        "wind power converters"
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+        windoff     "wind offshore power converters"
+$ENDIF.WindOff
+/
+
+
 teStor(all_te)        "storage technologies"
 /
         storspv     "storage technology for spv"
@@ -1499,7 +1517,6 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        ngccc
        tnrs
        bioigcc
-       biogas
        biochp
        geohdr
        hydro
@@ -2122,11 +2139,15 @@ char            "characteristics of technologies"
   mix0            "share in the production of v*_INIdemEn0, which is the energy demand in t0 minus the energy produced by couple production"
   ccap0           "cumulated installed capacity in t0. Unit: TW"
   inco0           "investment costs in t0. Unit: $/kW"
+  inco0_d         "Initial investment costs given in $(2015)/kW(output) capacity. Per 1000km."
   incolearn       "Investment costs that can be reduced through learning. Unit: $/kW"
   floorcost       "Floor investment costs for learning technologies. Unit: $/kW"
   eta             "conversion efficiency"
+  eta_d           "conversion efficieny, i.e. the amount of energy NOT lost in transportation. Per 1000km."
   omf             "fixed o&m"
+  omf_d           "fixed o&m per 1000km"
   omv             "variable o&m"
+  omv_d           "variable o&m per 1000km"
   tlt             "techical life time"
   delta           "depreciation rate"
   learn           "learning rate"

@@ -239,7 +239,7 @@ if (comp == TRUE) {
       title <- cfg$title
       gms <- cfg$gms
       input <- cfg$input
-      revision <- cfg$revision
+      revision <- cfg$inputRevision
       magpie_folder <- cfg$magpie_folder
     }
 
@@ -252,7 +252,7 @@ if (comp == TRUE) {
         title <- cfg$title
         gms <- cfg$gms
         input <- cfg$input
-        revision <- cfg$revision
+        revision <- cfg$inputRevision
       } else {
         config <- grep("\\.cfg$", list.files(outputdir), value = TRUE)
         l <- readLines(file.path(outputdir, config))
@@ -260,7 +260,7 @@ if (comp == TRUE) {
         gms <- list()
         gms$scenarios <- strsplit(grep("(cfg\\$|)gms\\$scenarios +<-", l, value = TRUE), "\"")[[1]][2]
         input <- strsplit(grep("(cfg\\$|)input +<-", l, value = TRUE), "\"")[[1]][2]
-        revision <- as.numeric(unlist(strsplit(grep("(cfg\\$|)revision +<-", l, value = TRUE), "<-[ \t]*"))[2])
+        revision <- as.numeric(unlist(strsplit(grep("(cfg\\$|)inputRevision +<-", l, value = TRUE), "<-[ \t]*"))[2])
       }
     }
 
@@ -273,6 +273,11 @@ if (comp == TRUE) {
     ###################################################################################
     # Execute R scripts
     ###################################################################################
+
+    # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+    if (is.na(output)) {
+      cat(paste("No output generation, as output was set to NA, as for example for --testOneRegi.\n"))
+    }
 
     for (rout in output) {
       name <- paste(rout, ".R", sep = "")

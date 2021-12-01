@@ -297,9 +297,9 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC2018")){
-    source("scripts/input/prepare_NDC2018.R")
-    prepare_NDC2018(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
+  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
 
   # Create input file with exogenous CO2 tax using the CO2 price form another run
@@ -385,9 +385,18 @@ prepare <- function() {
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
       ) ) 
     }
-    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)" / ', paste(c(paste0(names(subsets),"_regi"),regions),collapse=','),' /',sep=''),'')
+    # ext_regi
+    content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
+    content <- c(content, '      /')
+    content <- c(content, '        GLO,')
+    content <- c(content, '        ', paste(paste0(names(subsets),"_regi"),collapse=','),",")
+    content <- c(content, '        ', paste(regions,collapse=','))
+    content <- c(content, '      /')
+    content <- c(content, ' ')
+    # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
+    content <- c(content, '      ', paste('GLO.(',paste(regions,collapse=','),')'))
     for (i in 1:length(subsets)){
         content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
     }
@@ -418,7 +427,7 @@ prepare <- function() {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$revision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+  input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -431,7 +440,7 @@ prepare <- function() {
     
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$revision)
+  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping,sep=";")
