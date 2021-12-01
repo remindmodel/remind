@@ -1,4 +1,4 @@
-title;start;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
+title;start;oldrun;path_report;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
 NoPolicy;1;NoPolicy;;SSP2,CDL_base,coupling;y2010;;baseline;;
 NPi;1;NPi;;SSP2,CDL_NPI,coupling;y2150;;BAU;;
 INDCi;1;INDCi;;SSP2,CDL_INDC,coupling;y2150;;BAU;;
