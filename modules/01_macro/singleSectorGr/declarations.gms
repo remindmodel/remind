@@ -16,6 +16,13 @@ p01_ppfen_ratios(ttot,all_regi,all_in,all_in)                   "Limit ratio of 
 pm_ppfen_shares(ttot,all_regi,all_in,all_in)                    "Limit the share of one ppfEn in total CES nest inputs."
 pm_consPC(tall,all_regi)                                        "Consumption per capita"
 ;   
+
+*** output parameters
+parameters
+o01_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
+o01_totalCESEff(ttot,all_regi,all_in)                  "total CES efficiency" 
+;
+
 ***------------------------------------------------------------ -------------------
 ***                                   VARIABLES 
 ***------------------------------------------------------------ -------------------
