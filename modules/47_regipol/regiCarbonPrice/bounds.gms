@@ -15,7 +15,7 @@ vm_cap.fx("2020",regi,"tnrs","1")$((cm_startyear le 2020) and (sameas(regi,"DEU"
 
 $IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off" 
 
-***Germany Nuclear phase-out
+***Germany Nuclear phase-out (early retirement speed now controlled via cm_tech_earlyreti_rate)
     vm_cap.up(t,regi,"tnrs","1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(regi,"DEU"))) = 1E-6;
 
 *** ESC -> no new Nuclear capacity (Italy had a plebiscite for this and Greece should not have any new capacity)
