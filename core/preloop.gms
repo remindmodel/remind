@@ -35,8 +35,9 @@ vm_pebiolc_price.l(ttot,regi)$(ttot.val ge 2005)         = 0;
 vm_emiAllMkt.l(t,regi,enty,emiMkt) = 0;
 vm_co2eqMkt.l(ttot,regi,emiMkt) = 0;
 
-vm_shfe.l(t,regi,enty,sector) = 0;
-vm_shGasLiq_fe.l(t,regi,sector) = 0;   
+v_shfe.l(t,regi,enty,sector) = 0;
+v_shGasLiq_fe.l(t,regi,sector) = 0;  
+pm_share_CCS_CCO2(t,regi) = 0; 
   
 *** overwrite default targets with gdx values if wanted
 Execute_Loadpoint 'input' p_emi_budget1_gdx = sm_budgetCO2eqGlob;
@@ -45,6 +46,7 @@ Execute_Loadpoint 'input' q_balPe.m = q_balPe.m;
 Execute_Loadpoint 'input' qm_budget.m = qm_budget.m;
 Execute_Loadpoint 'input' pm_pvpRegi = pm_pvpRegi;
 Execute_Loadpoint 'input' pm_pvp = pm_pvp;
+Execute_Loadpoint 'input' vm_demFeSector.l = vm_demFeSector.l;
 
 if (cm_gdximport_target eq 1,
   if ( ((p_emi_budget1_gdx < 1.5 * sm_budgetCO2eqGlob) AND (p_emi_budget1_gdx > 0.5 * sm_budgetCO2eqGlob)),
@@ -92,27 +94,27 @@ display p_taxCO2eq_until2150, pm_taxCO2eq;
 
 $ifthen setGlobal c_scaleEmiHistorical
 *re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
-display p_macBaseMagpie;
+display pm_macBaseMagpie;
 loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
-  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
-   p_macBaseMagpie(ttot,regi,enty) *
+  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
+   pm_macBaseMagpie(ttot,regi,enty) *
     ( (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
       /
-      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
+      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
     )
   ;
 );
 loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp")),
-  p_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
-    p_macBaseMagpie(ttot,regi,enty) *
+  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
+    pm_macBaseMagpie(ttot,regi,enty) *
     ( p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions)
 * eurostat uses 298 to convert N2O to CO2eq
       /
-      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), p_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
+      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
     )
   ;
 );
-display p_macBaseMagpie;
+display pm_macBaseMagpie;
 $endif
 
 *** FS: calculate total bioenregy primary energy demand from last iteration
@@ -121,5 +123,31 @@ pm_demPeBio(ttot,regi) =
     vm_demPe.l(ttot,regi,enty,enty2,te))
 ;
 
+!! all net negative co2luc
+p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
+
+p_agriEmiPhaseOut(t) = 0;
+p_agriEmiPhaseOut("2025") = 0.25;
+p_agriEmiPhaseOut("2030") = 0.5;
+p_agriEmiPhaseOut("2035") = 0.75;
+p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
+
+*** Rescale German non-co2 base line emissions from agriculture 
+pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
+  = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
+
+$IFTHEN.out "%cm_debug_preloop%" == "on" 
+option limrow = 70;
+option limcol = 70;
+$ELSE.out
+option limrow = 0;
+option limcol = 0;
+$ENDIF.out
+
+
+*** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
+if (cm_startyear gt 2005,
+execute_load "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
+);
 
 *** EOF ./core/preloop.gms

@@ -106,12 +106,14 @@ pkgs <- c("gdxrrw",
           "magclass",
           "madrat",
           "mip",
-          "lucode",
+          "lucode2",
+          "gms",
           "remind2",
           "lusweave",
           "luscale",
           "goxygen",
-          "luplot")
+          "luplot",
+          "yaml")
 install.packages(pkgs)
 ```
 Updating R is recommended if problems arise at package installation, please write

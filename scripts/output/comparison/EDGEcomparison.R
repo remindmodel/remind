@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(rmarkdown)
-require(lucode)
+library(gms)
+library(lucode2)
 require(quitte)
 require(data.table)
 require(rmndt)
@@ -43,6 +44,7 @@ alltosave = list(fleet_all = NULL,
                  EJModeFuel_all = NULL,
                  ESmodecap_all = NULL,
                  emidem_all = NULL,
+                 emiDemMode_all = NULL,
                  EJfuelsPass = NULL,
                  EJfuelsFrgt = NULL,
                  costs_all = NULL,
@@ -50,10 +52,10 @@ alltosave = list(fleet_all = NULL,
                  demgdpcap_all = NULL)
 
 scenNames <- getScenNames(outputdirs)
-EDGEdata_path  <- path(outputdirs, paste("EDGE-T/"))
-gdx_path  <- path(outputdirs,gdx_name)
+EDGEdata_path  <- file.path(outputdirs, "EDGE-T/")
+gdx_path  <- file.path(outputdirs,gdx_name)
 scenNames <- getScenNames(outputdirs)
-
+setConfig(regionmapping = gsub("(.*/\\s*(.*$))", "\\2", cfg$regionmapping))
 names(gdx_path) <- scenNames
 names(EDGEdata_path) <- scenNames
 
@@ -89,7 +91,7 @@ SalesFun = function(shares_LDV, newcomp, sharesVS1){
 }
 
 
-fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
+fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor, annual_mileage){
   vintcomp = vintcomp[,.(totdem, region, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
   newcomp = newcomp[,.(region, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
@@ -102,8 +104,9 @@ fleetFun = function(vintcomp, newcomp, sharesVS1, loadFactor){
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
   allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
-  annual_mileage = 13000
-  allfleet = allfleet[,.(value = sum(value/1.5/annual_mileage)), by = c("region", "technology", "variable", "year")]
+  allfleet = merge(allfleet, annual_mileage, all.x = TRUE, by = c("region", "vehicle_type", "year"))
+
+  allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("region", "technology", "variable", "year")]
 
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
   allfleet[,alphaval := ifelse(variable =="vintdem", 1,0)]
@@ -264,9 +267,31 @@ EJfuelsFun = function(demandEJ, FEliq_source_val){
 }
 
 emidemFun = function(miffile){
-  emidem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Short-Medium Distance|Demand", "Emi|CO2|Transport|Pass|Long Distance|Demand","Emi|CO2|Transport|Freight|Short-Medium Distance|Demand", "Emi|CO2|Transport|Freight|Long Distance|Demand"),]
+  emidem = miffile[variable %in% c("Emi|CO2|Transport|Freight|Demand", "Emi|CO2|Transport|Pass|Rail|Demand","Emi|CO2|Transport|Pass|Road|Demand", "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand", "Emi|CO2|Transport|Pass|Aviation|International|Demand"),]
   return(emidem)
 }
+
+emiDemModeFun = function(miffile){
+ emiDem = miffile[variable %in% c("Emi|CO2|Transport|Pass|Road|Bus|Demand",
+                                  "Emi|CO2|Transport|Pass|Road|LDV|Demand",
+                                  "Emi|CO2|Transport|Pass|Rail|Demand",
+                                  "Emi|CO2|Transport|Pass|Aviation|Domestic|Demand",
+                                  "Emi|CO2|Transport|Pass|Aviation|International|Demand",
+                                  "Emi|CO2|Transport|Freight|International Shipping|Demand",
+                                  "Emi|CO2|Transport|Freight|Road|Demand",
+                                  "Emi|CO2|Transport|Freight|Navigation|Demand",
+                                  "Emi|CO2|Transport|Freight|Rail|Demand"),]
+ return(emiDem)
+}
+
+
+#FEFun = function(miffile){
+# FEMWh = miffile[variable %in% c(),]
+# FEMWh[, value := value*   ## in EJ
+#                  ]        ## in MWh
+# return(FEMWh)
+#}
+
 
 costscompFun = function(newcomp, sharesVS1,  pref_FV, capcost4Wall, capcost4W_BEVFCEV, nonf, totp){
 
@@ -375,7 +400,7 @@ for (outputdir in outputdirs) {
   miffile[, region := as.character(region)]
   miffile[, year := period]
   miffile[, period := NULL]
-  miffile = miffile[region != "World" & year >= 2015 & year <= 2100]
+  miffile = miffile[year >= 2015 & year <= 2100]
   miffile[, variable := as.character(variable)]
   ## load gdx file
   gdx = paste0(outputdir, "/fulldata.gdx")
@@ -389,11 +414,21 @@ for (outputdir in outputdirs) {
   demandkm = readRDS(paste0(outputdir, "/EDGE-T/demandF_plot_pkm.RDS"))
   mj_km_data = readRDS(paste0(outputdir, "/EDGE-T/mj_km_data.RDS"))
   loadFactor = readRDS(paste0(outputdir, "/EDGE-T/loadFactor.RDS"))
+  annual_mileage = readRDS(paste0(outputdir, "/EDGE-T/annual_mileage.RDS"))
   pref_FV = readRDS(paste0(outputdir, "/EDGE-T/pref_output.RDS"))[["FV_final_pref"]]
-  nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
+  ## if learning is ON, load the corresponding costs
+  if (file.exists(paste0(outputdir, "/nonfuel_costs_learning.RDS")) ) {
+    nonf = readRDS(paste0(outputdir, "/nonfuel_costs_learning.RDS"))
+  } else {
+    nonf = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "totalNE_cost"][,price_component := NULL]
+  }
   capcost4Wall = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[(price_component == "Capital_costs_purchase") & ((!technology %in% c("BEV", "FCEV"))|(technology %in% c("BEV", "FCEV") & year < 2020))]
-  capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
-
+  ## if learning is ON, load the corresponding costs
+  if (file.exists(paste0(outputdir, "/capcost_learning.RDS")) ) {
+    capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/capcost_learning.RDS")) ## starts at 2020
+  } else {
+      capcost4W_BEVFCEV = readRDS(paste0(outputdir, "/EDGE-T/UCD_NEC_iso.RDS"))[price_component == "Capital_costs_purchase" & technology %in% c("BEV", "FCEV") & year > 2020]
+  }
   ## read in fuel prices
   files<- list.files(path = paste0(outputdir, "/EDGE-T"), pattern = "REMINDprices")
   ## only the last iteration is to be used
@@ -407,90 +442,47 @@ for (outputdir in outputdirs) {
   POP=calcOutput("Population", aggregate = T)[,, "pop_SSP2"]
   POP <- magpie2dt(POP, regioncol = "region",
                    yearcol = "year", datacols = "POP")
-  gdp <- getRMNDGDP(scenario = "gdp_SSP2", to_aggregate = T, isocol = "region", usecache = T, gdpfile = "GDPcache.RDS")
-  GDPcap <- getRMNDGDPcap(scenario = "gdp_SSP2", usecache = TRUE, isocol = "region", to_aggregate = T, gdpCapfile = "GDPcapCache.RDS")
-  if (nrow(miffile[variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting")])==0) {
-    TWa_2_EJ     <- 31.536
-    prodFE  <- readGDX(gdx,name=c("vm_prodFe"),field="l",restore_zeros=FALSE,format="first_found")*TWa_2_EJ
-    tmp1=mbind(setNames(collapseNames(prodFE[,,"seliqbio.fepet.tdbiopet"]),
-                        "FE|Transport|Liquids|LDV|Biomass|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqfos.fepet.tdfospet"]),
-                        "FE|Transport|Liquids|LDV|Fossil|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqbio.fedie.tdbiodie"]),
-                        "FE|Transport|Liquids|HDV|Biomass|New Reporting"),
-               setNames(collapseNames(prodFE[,,"seliqfos.fedie.tdfosdie"]),
-                        "FE|Transport|Liquids|HDV|Fossil|New Reporting"))
+  GDP=calcOutput("GDPppp", aggregate = T)[,, "gdp_SSP2"]
+  GDP <- as.data.table(GDP)
+  GDP[, year := as.numeric(gsub("y", "", Year))][, Year := NULL]
+  setnames(GDP, old = c("ISO3","value"), new = c("region","weight"))
+  GDP = GDP[,.(weight = sum(weight)), by = c("region", "year")]
 
+  GDPcap=merge(GDP,POP[,.(region,year,POP_val=value)],all = TRUE,by=c("region","year"))
+  GDPcap[,GDP_cap:=weight/POP_val]
 
+  ## select useful entries from mif file
+  FEliq_source = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Liquids",
+                                         "FE|Transport|Liquids|LDV|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|LDV|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|LDV|Fossil|New Reporting",
+                                         "FE|Transport|Liquids",
+                                         "FE|Transport|Liquids|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|Fossil|New Reporting",
+                                         "FE|Transport|Pass|Road|HDV|Liquids",
+                                         "FE|Transport|Liquids|HDV|Biomass|New Reporting",
+                                         "FE|Transport|Liquids|HDV|Synthetic|New Reporting",
+                                         "FE|Transport|Liquids|HDV|Fossil|New Reporting"),]
 
-    tmp1=magpie2dt(tmp1)
-    setnames(tmp1, old = c("all_regi", "ttot", "data"), new = c("region", "year", "variable"))
-    tmp1[, model := unique(miffile$model)]
-    tmp1[, scenario := unique(miffile$scenario)]
-    tmp1[, unit := "EJ/yr"]
-    feliqsyn = tmp1[variable %in% c("FE|Transport|Liquids|LDV|Fossil|New Reporting", "FE|Transport|Liquids|HDV|Fossil|New Reporting")]
-    feliqsyn[, c("value", "variable") := list(0, gsub("Fossil", "Synfuel", variable ))]
-    FEliq_source=rbind(tmp1, feliqsyn)
-    ## add the totals
-    FEliq_source_tot = copy(FEliq_source)
-    FEliq_source_tot[, tech := str_extract(variable, "Biomass|Fossil|Synfuel")]
-    FEliq_source_tot = FEliq_source_tot[,.(value = sum(value)), by = .(region, year,model,scenario, unit, tech)]
-    FEliq_source_tot[, variable:= paste0("FE|Transport|Liquids|", tech, "|New Reporting")][, tech := NULL]
-    FEliq_source = rbind(FEliq_source, FEliq_source_tot)
-    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
-                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
-                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|LDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|LDV|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting"), value := 0]
 
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|HDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|HDV|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|HDV|Biomass|New Reporting", "FE|Transport|Liquids|HDV|Synthetic|New Reporting"), value := 0]
 
+  FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|Fossil|New Reporting", value[variable == "FE|Transport|Liquids"],value), by = c("region", "year")]
+  FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|Biomass|New Reporting", "FE|Transport|Liquids|Synthetic|New Reporting"), value := 0]
 
-  } else {
-    ## select useful entries from mif file
-    FEliq_source = miffile[variable %in% c("FE|Transport|Pass|Road|LDV|Liquids",
-                                           "FE|Transport|Liquids|LDV|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|LDV|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|LDV|Fossil|New Reporting",
-                                           "FE|Transport|Liquids",
-                                           "FE|Transport|Liquids|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|Fossil|New Reporting",
-                                           "FE|Transport|Pass|Road|HDV|Liquids",
-                                           "FE|Transport|Liquids|HDV|Biomass|New Reporting",
-                                           "FE|Transport|Liquids|HDV|Synthetic|New Reporting",
-                                           "FE|Transport|Liquids|HDV|Fossil|New Reporting"),]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|LDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|LDV|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|LDV|Biomass|New Reporting", "FE|Transport|Liquids|LDV|Synthetic|New Reporting"), value := 0]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|HDV|Fossil|New Reporting", value[variable == "FE|Transport|Pass|Road|HDV|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|HDV|Biomass|New Reporting", "FE|Transport|Liquids|HDV|Synthetic|New Reporting"), value := 0]
-
-    FEliq_source[year <= 2020 , value := ifelse(variable == "FE|Transport|Liquids|Fossil|New Reporting", value[variable == "FE|Transport|Liquids"],value), by = c("region", "year")]
-    FEliq_source[year <= 2020 & variable %in% c("FE|Transport|Liquids|Biomass|New Reporting", "FE|Transport|Liquids|Synthetic|New Reporting"), value := 0]
-
-
-
-    ## remove the value that was used to repair the NAs
-    FEliq_source = FEliq_source[!variable %in% c("FE|Transport|Pass|Road|LDV|Liquids", "FE|Transport|Pass|Road|HDV|Liquids", "FE|Transport|Liquids")]
-    FEliq_source_tot=FEliq_source[variable %in% c("FE|Transport|Liquids|Biomass|New Reporting",
-                                                  "FE|Transport|Liquids|Synthetic|New Reporting",
-                                                  "FE|Transport|Liquids|Fossil|New Reporting")]
-
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Fossil|New Reporting", "FE|Transport|Pass|Road|LDV|Liquids"), "Oil", NA)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Biomass|New Reporting"), "Biomass", technology)]
-    FEliq_source_tot[, technology := ifelse(variable %in% c("FE|Transport|Liquids|Synthetic|New Reporting"), "Synfuel", technology)]
-
-  }
-
+  ## remove the value that was used to repair the NAs
+  FEliq_source = FEliq_source[!variable %in% c("FE|Transport|Pass|Road|LDV|Liquids", "FE|Transport|Pass|Road|HDV|Liquids", "FE|Transport|Liquids")]
 
   ## modify mif file entries to be used in the functions
   FEliq_source = FEliq_sourceFun(FEliq_source)
   ## calculate sales
   salescomp = SalesFun(shares_LDV, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1)
   ## calculate fleet compositons
-  fleet = fleetFun(vintcomp, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1, loadFactor)
+  fleet = fleetFun(vintcomp, newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1, loadFactor, annual_mileage)
   ## calculate EJ from LDVs by technology
   EJroad = EJroadFun(demandEJ)
   ## calculate FE demand by mode
@@ -505,6 +497,8 @@ for (outputdir in outputdirs) {
   EJfuelsFrgt = EJfuels[["demandEJfrgt"]]
   ## calculate demand emissions
   emidem = emidemFun(miffile)
+  ## emissions from demand by mode
+  emiDemMode = emiDemModeFun(miffile)
   ## calculate costs by component
   costs = costscompFun(newcomp = newcomp[subsector_L1 == "trn_pass_road_LDV_4W"], sharesVS1 = sharesVS1, pref_FV = pref_FV, capcost4Wall = capcost4Wall, capcost4W_BEVFCEV = capcost4W_BEVFCEV, nonf = nonf, totp = totp)
   ## per capita demand-gdp per capita
@@ -517,6 +511,7 @@ for (outputdir in outputdirs) {
                     EJModeFuel = EJModeFuel,
                     ESmodecap = ESmodecap,
                     emidem = emidem,
+                    emiDemMode = emiDemMode,
                     EJfuelsPass = EJfuelsPass,
                     EJfuelsFrgt = EJfuelsFrgt,
                     costs = costs,
@@ -551,7 +546,7 @@ write.table(outputdirs, paste0(outdir, "/run_names.txt"), append = FALSE, sep = 
 
 
 file.copy(file.path("./scripts/output/comparison/notebook_templates", md_template), outdir)
-rmarkdown::render(path(outdir, md_template), output_format="pdf_document")
+rmarkdown::render(file.path(outdir, md_template), output_format="pdf_document")
 
 
 

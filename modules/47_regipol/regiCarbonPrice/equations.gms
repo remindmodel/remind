@@ -19,21 +19,40 @@ q47_emiTarget_netCO2_noBunkers(t, regi)..
 	v47_emiTarget(t,regi,"netCO2_noBunkers")
 	=e=
 	vm_emiAll(t,regi,"co2")
-	-
-	sum(se2fe(enty,enty2,te),
+	- sum(se2fe(enty,enty2,te),
 		pm_emifac(t,regi,enty,enty2,te,"co2")
-		* vm_demFeSector(t,regi,enty,enty2,"trans","other")
+		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+;
+
+q47_emiTarget_netCO2_noLULUCF_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netCO2_noLULUCF_noBunkers")
+	=e=
+	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
+		vm_emiAllMkt(t,regi,"co2",emiMkt)
 	)
 ;
 
-*** gross Fossil Fuel and Industry co2 emissions: net energy co2 + cement co2 + BECCS
-q47_emiTarget_grossFFaI(t, regi)..
-	v47_emiTarget(t,regi,"grossFFaI")
+
+
+*** FS: gross energy CO2 emissions (excl. BECCS and bunkers)
+*** note: industry BECCS is still missing from this variable, to be added in the future
+q47_emiTarget_grossEnCO2(t,regi)..
+	v47_emiTarget(t,regi,"grossEnCO2_noBunkers")
 	=e=
-	  vm_emiTe(t,regi,"co2") 
-	+ vm_emiMacSector(t,regi,"co2cement_process")
-	+ sum( (enty,enty2,te)$(pe2se(enty,enty2,te) AND teBio(te)), vm_emiTeDetail(t,regi,enty,enty2,te,"cco2"))
+*** total net CO2 energy CO2 (w/o DAC accounting of synfuels) 
+	vm_emiTe(t,regi,"co2")
+*** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
+	+  vm_emiCdr(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
+*** add pe2se BECCS
+	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+*** add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin 
+	+  sum( (entySe,entyFe,secInd37,emiMkt)$(NOT (entySeFos(entySe))),
+		pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(t,regi)
+*** remove bunker emissions
+	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
 ;
+
+
 
 *** net GHG
 q47_emiTarget_netGHG(t, regi)..
@@ -46,14 +65,32 @@ q47_emiTarget_netGHG_noBunkers(t, regi)..
 	v47_emiTarget(t,regi,"netGHG_noBunkers")
 	=e=
 	vm_co2eq(t,regi)
-	-
-	sum(se2fe(enty,enty2,te),
-		(
-		pm_emifac(t,regi,enty,enty2,te,"co2")
+	- 	sum(se2fe(enty,enty2,te),
+		(pm_emifac(t,regi,enty,enty2,te,"co2")
 		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
-		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc
-		) * vm_demFeSector(t,regi,enty,enty2,"trans","other")
+		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
+		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+;
+
+q47_emiTarget_netGHG_noLULUCF_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netGHG_noLULUCF_noBunkers")
+	=e=
+	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
+		vm_co2eqMkt(t,regi,emiMkt)
 	)
+;
+
+
+q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(t, regi)..
+	v47_emiTarget(t,regi,"netGHG_LULUCFGrassi_noBunkers")
+	=e=
+	vm_co2eq(t,regi)
+	- 	sum(se2fe(enty,enty2,te),
+		(pm_emifac(t,regi,enty,enty2,te,"co2")
+		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
+		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
+		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+	- p47_LULUCFEmi_GrassiShift(t,regi)
 ;
 
 ***$endIf.regicarbonprice
@@ -80,7 +117,7 @@ q47_quantity_regiCO2target(t,ext_regi,emi_type)$p47_quantity_regiCO2target(t,ext
 		v47_emiTarget(t,regi,emi_type) 
 	)
 	=l=
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)
+	p47_quantity_regiCO2target(t,ext_regi,emi_type)/sm_c_2_co2
 ;
 
 $endIf.quantity_regiCO2target

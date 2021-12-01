@@ -39,6 +39,12 @@ Sets
     co2steel
   /
 
+  macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
+  /
+    (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
+    co2cement_process     . cement
+  /
+
   secInd37_2_emiInd37(secInd37,emiInd37)   "link industry sub-sectors to sector emissions"
   /
     cement    . (co2cement, co2cement_process)
@@ -249,11 +255,31 @@ Sets
              feelwlth_otherInd)
   /
   
-  energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
+energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
+  /
+
+entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  /
+    fesos
+    fehos
+    fegas
+  /
+
+
+ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
+  /
+    feelwlth_chemicals
+    feelhth_chemicals
+    feel_cement
+    feelwlth_otherInd
+    feelhth_otherInd
+    feel_steel_secondary
+    feel_steel_primary
+    feh2_steel
   /
 ;
 
@@ -269,6 +295,8 @@ fe_tax_sub_sbi(fe_tax_sub37) = YES;
 
 pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
 pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
+
+ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
 pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;

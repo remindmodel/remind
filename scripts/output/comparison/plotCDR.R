@@ -5,7 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-library(lucode)
+library(gms)
+library(lucode2)
 library(remind2)
 library(lusweave)
 library(mip)
@@ -24,8 +25,8 @@ if(!exists("source_include")) {
 
 # Set mif path
 scenNames <- getScenNames(outputdirs)
-mif_path  <- path(outputdirs,paste("REMIND_generic_",scenNames,".mif",sep=""))
-hist_path <- path(outputdirs[1],"historical.mif")
+mif_path  <- file.path(outputdirs,paste("REMIND_generic_",scenNames,".mif",sep=""))
+hist_path <- file.path(outputdirs[1],"historical.mif")
 
 # make comparision based on mif files
 plotCDR(mif=mif_path, hist=hist_path, reg="all_reg")

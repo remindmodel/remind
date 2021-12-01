@@ -7,9 +7,5 @@
 *** SOF ./modules/32_power/RLDC/presolve.gms
 
 
-*** FS: calculate electricity price of last iteration in trUSD2005/TWa
-p32_priceSeel(t,regi)=q32_balSe.m(t,regi,"seel")/(qm_budget.m(t,regi)+sm_eps);
-
-Display "electricity price", p32_priceSeel;
 
 *** EOF ./modules/32_power/RLDC/presolve.gms

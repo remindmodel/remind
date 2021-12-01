@@ -8,7 +8,8 @@
 library(magclass, quietly = TRUE,warn.conflicts =FALSE)
 library(luplot, quietly = TRUE,warn.conflicts =FALSE)
 library(lusweave, quietly = TRUE,warn.conflicts =FALSE)
-library(lucode, quietly = TRUE,warn.conflicts =FALSE)
+library(gms, quietly = TRUE,warn.conflicts =FALSE)
+library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(gdx, quietly = TRUE,warn.conflicts =FALSE)
 library(magpie, quietly = TRUE,warn.conflicts =FALSE)
 library(remind2, quietly = TRUE,warn.conflicts =FALSE)
@@ -102,7 +103,7 @@ plot_iterations <- function(runname) {
 		return("No gdx files found")
 	}
 
-	scenNames_path <- path(outputdirs,"config.Rdata")
+	scenNames_path <- file.path(outputdirs,"config.Rdata")
 	scenNames <- c()
 	for (i in scenNames_path) {
 	  load(i)

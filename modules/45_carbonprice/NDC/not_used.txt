@@ -1,0 +1,22 @@
+name,type,reason
+cm_emiscen, switch, ???
+cm_co2_tax_2020, switch, ???
+pm_pvp,parameter,???
+pm_ttot_val,parameter,???
+pm_ts,parameter,???
+cm_co2_tax_growth,switch,???
+cm_expoLinear_yearStart,switch,???
+vm_cesIO,variable,???
+pm_globalMeanTemperature,input,questionnaire
+pm_temperatureImpulseResponseCO2,input,questionnaire
+pm_consPC,input,questionnaire
+pm_GDPGross,input,questionnaire
+pm_prtp,input,questionnaire
+cm_carbonprice_temperatureLimit,input,questionnaire
+pm_ttot_2_tall,input,questionnaire
+pm_shPPPMER,input,questionnaire
+pm_pop,input,questionnaire
+pm_gdp,input,questionnaire
+cm_CO2priceRegConvEndYr,input,questionnaire
+cm_peakBudgYr,input,questionnaire
+cm_taxCO2inc_after_peakBudgYr,input,questionnaire

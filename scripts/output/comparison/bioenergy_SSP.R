@@ -5,7 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(luplot)
-library(lucode)
+library(lucode2)
+library(gms)
 library(gdx)
 library(magpie)
 library(remind2)
@@ -104,10 +105,10 @@ read_all<-function(gdx,func,as.list=TRUE,...){
 }
 
 # Set gdx path
-gdx_path       <- path(outputdirs,gdx_name)
+gdx_path       <- file.path(outputdirs,gdx_name)
 
 # retrieve run titles
-scenNames_path <- path(outputdirs,"config.Rdata")
+scenNames_path <- file.path(outputdirs,"config.Rdata")
 scenNames      <- c()
 for (i in scenNames_path) {
   load(i)

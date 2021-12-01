@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode) # getScenNames
+library(lucode2) # getScenNames
 library(remind2)
 
 if(!exists("source_include")) {
@@ -19,8 +19,8 @@ wrap_to_have_a_clean_exit <- function(outputdirs,shortTerm,outfilename,regionLis
   # Set mif path
   scenNames <- getScenNames(outputdirs)
   # Note: add '../' infront of the paths because the compareScenario functions will be run in individual temporary subfolders (see below for explanation)
-  mif_path  <- path("../",outputdirs,paste("REMIND_generic_",scenNames,".mif",sep=""))
-  hist_path <- path("../",outputdirs[1],"historical.mif")
+  mif_path  <- file.path("../",outputdirs,paste("REMIND_generic_",scenNames,".mif",sep=""))
+  hist_path <- file.path("../",outputdirs[1],"historical.mif")
 
   # Create temporary folder. This is necessary because each compareScenario creates a folder names 'figure'.
   # If multiple compareScenario run in parallel they would interfere with the others' figure folder.

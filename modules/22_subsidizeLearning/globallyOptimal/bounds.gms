@@ -12,7 +12,7 @@ vm_deltaCap.fx("2015",regi,"storspv","1") = 0;
 vm_deltaCap.fx("2015",regi,"storcsp","1") = 0;
 
 loop((ttot,regi,teLearn),
-    vm_deltaCap.lo(ttot,regi,teLearn,"1")$(ttot.val ge max(2020,cm_startyear)) = 1e-7;  !! was -5
+    vm_deltaCap.lo(ttot,regi,teLearn,"1")$(ttot.val ge max(2025,cm_startyear)) = 1e-7;  !! was -5
 );
 
 

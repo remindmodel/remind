@@ -41,6 +41,10 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
         )$( ttot.val ge max(2010, cm_startyear) )
       )
     )
+  + sum(tradeSe, pm_MPortsPrice(ttot,regi,tradeSe) * vm_Mport(ttot,regi,tradeSe)) 
+  - sum(tradeSe, pm_XPortsPrice(ttot,regi,tradeSe) * vm_Xport(ttot,regi,tradeSe)) 
+  + vm_budgetTradeM(ttot,regi)
+  - vm_budgetTradeX(ttot,regi)
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
   + sum(in_enerSerAdj(in), vm_enerSerAdj(ttot,regi,in))
@@ -162,10 +166,10 @@ q01_limitShPpfen(t,regi,out,in)$( pm_ppfen_shares(t,regi,out,in) ) ..
 ;
 
 *' Limit the ratio of two ppfEn:
-q01_limtRatioPpfen(t,regi,in,in2)$( pm_ppfen_ratios(t,regi,in,in2) ) ..
+q01_limtRatioPpfen(t,regi,in,in2)$( p01_ppfen_ratios(t,regi,in,in2) ) ..
     vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
   =l=
-    pm_ppfen_ratios(t,regi,in,in2)
+    p01_ppfen_ratios(t,regi,in,in2)
   * (vm_cesIO(t,regi,in2) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 

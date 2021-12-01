@@ -47,8 +47,8 @@ $ENDIF.cm_INNOPATHS_eni
 *** assuming a maximum 20% of heat pumps in heat industry to be more in line with industry subsectors
 pm_ppfen_shares(t,regi,"enhi","fehei") = 0.2;
 *** exception or the above: REF. Assuming a maximum 30% of heat pumps in heat industry. reduced lineraly from initial year levels to be more in line with industry subsectors (2030 and afterwards = 30% maximum, 2005 = 50% to avoid infeasiblities)
-pm_ppfen_shares(t,"REF","enhi","fehei") = 0.3;
-pm_ppfen_shares(t,"REF","enhi","fehei")$(t.val le 2030) = 0.50 - (0.20/25)*(t.val-2005);
+pm_ppfen_shares(t,regi,"enhi","fehei")$(sameas(regi,"REF")) = 0.3; 
+pm_ppfen_shares(t,regi,"enhi","fehei")$((t.val le 2030) and (sameas(regi,"REF"))) = 0.50 - (0.20/25)*(t.val-2005); 
 
 Table p37_shIndFE(all_regi,all_in,secInd37)   "share of industry sub-sectors in FE use [ratio]"
 $ondelim
@@ -76,10 +76,6 @@ loop ((all_regi,ppfen_industry_dyn37(all_in)),
 );
 
 display "calculated FE share of 'other' industry sector", p37_shIndFE;
-
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -120,6 +116,60 @@ s37_costAddH2Inv = cm_indst_H2costAddH2Inv;
 s37_costDecayStart = cm_indst_costDecayStart;
 s37_costDecayEnd = cm_indst_H2costDecayEnd;
 
+
+*** FE Share Bounds
+*** intialize industry FE share bounds as non-activated
+pm_shfe_up(ttot,regi,entyFe,"indst")=0;
+pm_shfe_lo(ttot,regi,entyFe,"indst")=0;
+pm_shGasLiq_fe_up(ttot,regi,"indst")=0;
+pm_shGasLiq_fe_lo(ttot,regi,"indst")=0;
+
+
+*** Upper bound for electricity share in industry
+$IFTHEN.feShare not "%cm_feShareLimits%" == "off" 
+
+$ifthen.feShareScenario "%cm_feShareLimits%" == "electric"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.6;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.57;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.52;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.45;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.40;
+$elseif.feShareScenario "%cm_feShareLimits%" == "incumbents"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.4;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.38;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.33;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.30;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.27;
+$elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
+  pm_shfe_up(t,regi,"feels","indst")$(t.val ge 2050) = 0.5;
+  pm_shfe_up("2045",regi,"feels","indst") = 0.47;
+  pm_shfe_up("2040",regi,"feels","indst") = 0.42;
+  pm_shfe_up("2035",regi,"feels","indst") = 0.37;
+  pm_shfe_up("2030",regi,"feels","indst") = 0.35;
+$endif.feShareScenario
+
+$ENDIF.feShare
+
+*** ARIADNE-specific EU switches bounds on gases+liquids share and H2 share in industry
+$ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on" 
+*** at least 10% liquids+gases in industry FE up to midcentury to guarantee feedstocks input
+  pm_shGasLiq_fe_lo(t,regi,"indst")$(t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1; 
+*** at least 10% H2 in industry FE from 2040 onwards
+*** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
+$endif.feShareAriad
+
+*** FS: CES markup cost industry
+p37_CESMkup(t,regi,in) = 0;
+*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent demand-side cost of electrification and 
+*** obtain a higher efficiency in calibration to mimic energy efficiency gains with increasing electricity share
+p37_CESMkup(t,regi,"feeli") = 0.5;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+$endIf.CESMkup
+
+display p37_CESMkup;
 
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

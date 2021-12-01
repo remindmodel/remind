@@ -7,7 +7,7 @@
 *** SOF ./modules/39_CCU/off/presolve.gms
 
 vm_co2CCUshort.l(t,regi,"cco2","ccuco2short",teCCU2rlf(te2,rlf)) = 0;
-vm_prodSe.l(t,regi,"seh2","segabio","h22ch4") = 0;
-vm_prodSe.l(t,regi,"seh2","seliqbio","MeOH") = 0;
+vm_prodSe.l(t,regi,"seh2","segasyn","h22ch4") = 0;
+vm_prodSe.l(t,regi,"seh2","seliqsyn","MeOH") = 0;
 
 *** EOF ./modules/39_CCU/off/presolve.gms

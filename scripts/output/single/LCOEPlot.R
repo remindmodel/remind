@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-library(lucode)
+library(lucode2)
 library(remind2)
 library(lusweave)
 
@@ -18,16 +18,16 @@ if(!exists("source_include")) {
   #Define arguments that can be read from command line
   outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder 
   # path to the output folder
-  lucode::readArgs("outputdir","gdx_name")
+  lucode2::readArgs("outputdir","gdx_name")
 } 
 
-gdx <- path(outputdir,gdx_name)
+gdx <- file.path(outputdir,gdx_name)
 ###############################################################################
 
 # Set mif path
 scenNames <- getScenNames(outputdir)
-LCOE_path  <- path(outputdir,paste("REMIND_LCOE_",scenNames,".csv",sep=""))
-reportFile <- path(outputdir, paste("LCOE_Plot_",scenNames,".pdf",sep=""))
+LCOE_path  <- file.path(outputdir,paste("REMIND_LCOE_",scenNames,".csv",sep=""))
+reportFile <- file.path(outputdir, paste("LCOE_Plot_",scenNames,".pdf",sep=""))
 
 
 # run plot LCOE function

@@ -1,6 +1,6 @@
 title;start;regionmapping;cm_MAgPIE_coupling;cm_rcp_scen;cm_iterative_target_adj;c_budgetCO2;carbonprice;cm_co2_tax_2020;techpol;cm_multigasscen;climate;optimization;cm_bioenergy_tax;CDR;cm_frac_NetNegEmi;cm_LimRock;c_ccsinjecratescen;cm_ccapturescen;cm_bioenergymaxscen;cm_co2_tax_growth;cm_emiscen;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
 SSP2-Base;1;./config/regionmappingH12.csv;1;none;0;0;none;-1;none;2;magicc;nash;1.5;off;0.5;1000;1;1;0;1.05;1;2005;./config/input_H12.gdx;;
-SSP2-NDC;1;./config/regionmappingH12.csv;1;rcp45;3;0;NDC2018;1;NDC2018;3;magicc;nash;1.5;off;0.5;1000;1;3;0;1.05;9;2015;./config/input_H12.gdx;SSP2-Base;SSP2-Base
+SSP2-NDC;1;./config/regionmappingH12.csv;1;rcp45;3;0;NDC;1;NDC;3;magicc;nash;1.5;off;0.5;1000;1;3;0;1.05;9;2015;./config/input_H12.gdx;SSP2-Base;SSP2-Base
 SSP2-Npi;1;./config/regionmappingH12.csv;1;rcp45;3;0;NPi2018;1;NPi2018;3;magicc;nash;1.5;off;0.5;1000;1;3;0;1.05;9;2025;./config/input_H12.gdx;SSP2-NDC;SSP2-Base
 SSP2-1500-SPA0-BECCS-only-RefAff;1;./config/regionmappingH12.csv;1;rcp26;5;1350;expoLinear;30;none;2;magicc;nash;1.5;off;0.5;1000;1;1;0;1.05;9;2025;./config/input_H12.gdx;SSP2-NDC;SSP2-Base
 SSP2-1500-SPA0-vegC50-only;1;./config/regionmappingH12.csv;1;rcp26;5;1350;expoLinear;30;none;2;magicc;nash;1.5;off;0.5;1000;1;3;0;1.05;9;2025;./config/input_H12.gdx;SSP2-NDC;SSP2-Base

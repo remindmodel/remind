@@ -43,7 +43,7 @@ Rscript start.R -----> choose_slurmConfig()               [scripts/start/choose_
                         - change to main folder                                          - load config.RData
                                                                                          - cd mainfolder
                                                                                          - LOCK model
-                                                                                         - prepare NDC [scripts/input/prepareNDC2018.R]
+                                                                                         - prepare NDC [scripts/input/prepare_NDC.R]
                                                                                          - prepare calibration
                                                                                          - if coupled get MAgPIE data
                                                                                          - download and distribute input data

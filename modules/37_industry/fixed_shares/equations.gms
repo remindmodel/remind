@@ -25,15 +25,16 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
 *' industry subsector are calculated from final energy use in industry, the 
 *' subsectors' shares in that final energy carriers use, and the emission 
 *' factor the final energy carrier. 
-q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
+q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear  ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in)),
+    sum((fe2ppfEn(entyFE,in),ces_industry_dyn37("enhi",in))$(entyFeCC37(entyFe)),
       ( vm_cesIO(ttot,regi,in) + pm_cesdata(ttot,regi,in,"offset_quantity") )
     * p37_shIndFE(regi,in,secInd37)
-    )
-  * p37_fctEmi(entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
+  )
 ;
+
 
 *' The maximum abatable emissions of a given type (industry subsector, fuel or
 *' process) are calculated from the baseline emissions and the possible 
@@ -137,20 +138,29 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 ***---------------------------------------------------------------------------
-*'  Additional hydrogen cost at low penetration level
+*'  Calculate sector-specific additional t&d cost (here only cost of hydrogen t&d at low hydrogen penetration levels when grid is not yet developed)
 ***---------------------------------------------------------------------------
-q37_costAddTeInv(t,regi)..
-  vm_costAddTeInv(t,regi,"tdh2s","indst")
+q37_costAddTeInv(t,regi,te)$(sameAs(te,"tdh2s"))..
+  vm_costAddTeInv(t,regi,te,"indst")
   =e=
-  ( 1 /(
-        1 + (3**v37_costExponent(t,regi))
-      )
-  ) * (
-    s37_costAddH2Inv * 8.76 
-    * ( sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt)))
-  )
-  + (v37_expSlack(t,regi)*1e-8)
+  v37_costAddTeInvH2(t,regi,te)
 ;
+
+
+***---------------------------------------------------------------------------
+*'  Additional hydrogen phase-in cost at low H2 penetration levels 
+***---------------------------------------------------------------------------
+q37_costAddH2PhaseIn(t,regi)..
+  v37_costAddTeInvH2(t,regi,"tdh2s")
+  =e=
+    (1 / (1 + (3 ** v37_costExponent(t,regi)))) 
+  * ( s37_costAddH2Inv 
+    * sm_TWa_2_kWh / sm_trillion_2_non
+    * sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt))
+    )
+  + (v37_expSlack(t,regi) * 1e-8)
+;
+
 
 *' Logistic function exponent for additional hydrogen low penetration cost equation
 q37_auxCostAddTeInv(t,regi)..
@@ -171,17 +181,13 @@ q37_H2Share(t,regi)..
         vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
-*** carbonaceous Fe share in industry (solids, gases, liquids)
-*** needed to provide a lower bound for ensuring feedstock supply
-q37_CFuelShare(t,regi)..
-  v37_CFuelshare(t,regi) 
-  * sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$( entyFe37(entyFe)),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
+***---------------------------------------------------------------------------
+*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+***---------------------------------------------------------------------------
+q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
+  vm_costCESMkup(t,regi,in)
   =e=
-  sum(emiMkt, 
-      sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fesos") OR SAMEAS(entyFe,"fegas")  OR SAMEAS(entyFe,"fehos") ),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
+  p37_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 *** EOF ./modules/37_industry/fixed_shares/equations.gms

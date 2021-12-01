@@ -16,11 +16,12 @@ q32_balSe(t,regi,enty2)$(sameas(enty2,"seel"))..
 	+ sum(pc2te(enty,enty3,te,enty2),
 		sum(teCCS2rlf(te,rlf),
 			pm_prodCouple(regi,enty,enty3,te,enty2) * vm_co2CCS(t,regi,enty,enty3,te,rlf) ) )
+	+ vm_Mport(t,regi,enty2)
 	=e=
     sum(se2fe(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
 	+ sum(se2se(enty2,enty3,te), vm_demSe(t,regi,enty2,enty3,te) )
-    + sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! don't use in 2005 because this demand is not contained in 05_initialCap
-
+    + sum(pe2rlf(enty3,rlf2), (pm_fuExtrOwnCons(regi, enty2, enty3) * vm_fuExtr(t,regi,enty3,rlf2))$(pm_fuExtrOwnCons(regi, enty2, enty3) gt 0))$(t.val > 2005) !! do not use in 2005 because this demand is not contained in 05_initialCap
+	+ vm_Xport(t,regi,enty2)
 	;
 	
 q32_usableSe(t,regi,entySe)$(sameas(entySe,"seel"))..
@@ -314,13 +315,16 @@ q32_limitCapTeChp(t,regi)..
 ***---------------------------------------------------------------------------
 *** Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
-q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
-	vm_cap(t,regi,"gridwind",'1')       !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
-	/ p32_grid_factor(regi)        !! It is assumed that large regions require higher grid investment 
-	=g=
-	vm_prodSe(t,regi,"pesol","seel","spv")                
-	+ vm_prodSe(t,regi,"pesol","seel","csp")
-	+ 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")        !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) ..
+   vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+    / p32_grid_factor(regi)                     !! It is assumed that large regions require higher grid investment
+    =g=
+    vm_prodSe(t,regi,"pesol","seel","spv")
+    + vm_prodSe(t,regi,"pesol","seel","csp")
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")                 !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windoff")
+$ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------

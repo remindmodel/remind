@@ -72,7 +72,7 @@ cols <- c("NG" = "#d11141",
           "Motorbikes" = "#1874cd", #"dodgerblue3",
           "Small Cars" = "#87cefa",
           "Large Cars" = "#6495ed",
-          "Van" = "     #40e0d0",
+          "Van" = "#40e0d0",
           "LDV" = "#00bfff",
           "Non motorized" = "#da70d6",
           "Freight"="#ff0000",
@@ -92,7 +92,7 @@ cols <- c("NG" = "#d11141",
           "ElecEra" = "#00b159",
           "ElecEraWise" = "#68c6a4",
           "HydrHype" = "#00aedb",
-          "HydrHypeWise" = "#o3878f",
+          "HydrHypeWise" = "#03878f",
           "Hydrogen_push" = "#00aedb",
           "Smart_lifestyles_Electricity_push" = "#68c6a4",
           # "Smart_lyfestiles_Electricity_push" = "#03878f", ##maybe "#o3878f"
@@ -105,7 +105,7 @@ cols <- c("NG" = "#d11141",
           "Emi|CO2|Energy|Supply|Gross" = "#f2b531",
           "Emi|CO2|CDR|BECCS" = "#ed5958",
           "Emi|CO2|Land-Use Change" = "#66a182",
-          "Cons. + Synfuels" = "orchid",
+          # "Cons. + Synfuels" = "orchid",
           "Ctax_Conservative" = "#d11141")
 
 datapath <- function(fname){
@@ -129,8 +129,8 @@ newcomp <- readRDS(datapath(fname = "newcomp.RDS"))
 shares <- readRDS(datapath(fname = "shares.RDS"))
 pref <- readRDS(datapath(fname = "pref_output.RDS"))
 annual_sales <- readRDS(datapath(fname = "annual_sales.RDS"))
+annual_mileage <- readRDS(datapath(fname = "annual_mileage.RDS"))
 mj_km_data <- readRDS(datapath(fname = "mj_km_data.RDS"))
-stations <- readRDS(datapath(fname = "stations.RDS"))
 loadFactor <- readRDS(datapath(fname = "loadFactor.RDS"))
 ## Load population to calculate per capita values
 POP_country=calcOutput("Population", aggregate = T)[,, "pop_SSP2"]
@@ -140,22 +140,6 @@ POP <- magpie2dt(POP_country, regioncol = "region",
 name_mif = list.files(pattern = "REMIND_generic", full.names = F)
 name_mif = name_mif[!grepl("withoutPlu", name_mif)]
 miffile <- as.data.table(read.quitte(name_mif))
-```
-
-# Share of stations
-
-```{r, echo=FALSE, warning=FALSE}
-
-stationsplot = function(stations){
-  p = ggplot()+
-    geom_line(data = stations, aes(x= year, y = fracst))+
-    facet_grid(region~technology)+
-    theme_minimal()
-
-  return(p)
-}
-
-stationsplot(stations)
 ```
 
 # Energy services demand
@@ -300,34 +284,6 @@ demandkmplotf = function(demandkm, POP){
 ## energy services demand
 demandkmplotf(demand_km, POP)
 ```
-
-
-# Inconvenience cost trend
-
-```{r, echo=FALSE, warning=FALSE}
-
-plotinconv = function(inco_tech, vt){
-  p=ggplot()+
-    geom_bar(data = inco_tech[subsector_L1 == "trn_pass_road_LDV_4W" & vehicle_type == vt & year<=2100 & year>=2010], aes(x = as.character(year), y = value, group = logit_type, fill = logit_type), position = position_stack(), stat = "identity")+
-    facet_grid(region~technology, scales = "free")+
-    theme_minimal()+
-    expand_limits(y = c(0,0.8))+
-    scale_x_discrete(breaks = c(2015,2050,2100))+
-    theme(axis.text.x = element_text(angle = 90, vjust = +0.1),
-          strip.background = element_rect(color = "grey"))+
-    scale_fill_manual(values = cols)+
-    labs(x = "", y = "Inconvenience cost [$/pkm]", title = paste0("Example of ", vt))
-
-  return(p)
-}
-
-plotinconv(inco_tech = pref$FV_final_pref, vt = "Large Car and SUV")
-plotinconv(inco_tech = pref$FV_final_pref, vt = "Midsize Car")
-plotinconv(inco_tech = pref$FV_final_pref, vt = "Subcompact Car")
-
-```
-
-
 # Final energy demand
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -437,6 +393,97 @@ demandEJplotf = function(demandEJ, POP){
 demEJ = demandEJplotf(demand_ej, POP)
 demEJ
 ```
+
+# Efficieny Indicators
+```{r, echo=FALSE, warning=FALSE}
+plot_efficiency <- function(){
+  gdx <- "fulldata.gdx"
+  TWa_2_EJ     <- 31.536
+  minyr <- 2010
+  maxyr <- 2100
+
+  FEdem <- readgdx(gdx, "vm_demFeForEs")[, value := value*TWa_2_EJ][ttot <= maxyr & ttot >= minyr]
+  ES <- readgdx(gdx, "vm_cesIO")[tall <= maxyr & tall >= minyr]
+  setnames(ES, c("tall", "value"), c("ttot", "es_demand"))
+
+  FEdem <- rbindlist(list(
+	FEdem[grepl("_pass_sm", all_esty), .(all_in="entrp_pass_sm", fe_demand=sum(value)), by=c("ttot", "all_regi")],
+	FEdem[grepl("_pass_lo", all_esty), .(all_in="entrp_pass_lo", fe_demand=sum(value)), by=c("ttot", "all_regi")],
+	FEdem[grepl("_frgt_sm", all_esty), .(all_in="entrp_frgt_sm", fe_demand=sum(value)), by=c("ttot", "all_regi")],
+	FEdem[grepl("_frgt_lo", all_esty), .(all_in="entrp_frgt_lo", fe_demand=sum(value)), by=c("ttot", "all_regi")]))
+
+  dt <- ES[FEdem, on=c("ttot", "all_regi", "all_in")]
+  dt[, effc := fe_demand/es_demand] # MJ/pkm, MJ/tkm
+  dt[, year := as.numeric(as.character(ttot))]
+
+  ## passenger
+  toplot <- dt[grepl("_pass_", all_in)]
+
+  ppass <- ggplot(toplot)+
+	geom_line(aes(x=year, y=effc, color=all_in, group=all_in)) +
+	facet_wrap(~all_regi, nrow = 4, scales = "free")+
+	labs(x = "", y = "energy intensity of pass. mobility [MJ/pkm]")+
+	theme_minimal()+
+	# scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+	theme(axis.text.x = element_text(size = 8),
+		  axis.text.y = element_text(size=8),
+		  axis.title = element_text(size = 9),
+		  title = element_text(size = 9),
+		  legend.text = element_text(size = 9),
+		  legend.title = element_text(size =9),
+		  strip.text = element_text(size=9))
+
+  ## freight
+  toplot <- dt[grepl("_frgt_", all_in)]
+
+  pfreight <- ggplot(toplot)+
+	geom_line(aes(x=year, y=effc, color=all_in, group=all_in)) +
+	facet_wrap(~all_regi, nrow = 4, scales = "free")+
+	labs(x = "", y = "energy intensity of freight transportation [MJ/pkm]")+
+	theme_minimal()+
+	# scale_fill_manual("Vehicle Type",values = cols, breaks=legend_ord)+
+	theme(axis.text.x = element_text(size = 8),
+		  axis.text.y = element_text(size=8),
+		  axis.title = element_text(size = 9),
+		  title = element_text(size = 9),
+		  legend.text = element_text(size = 9),
+		  legend.title = element_text(size =9),
+		  strip.text = element_text(size=9))
+
+  return(list(ppass=ppass, pfreight=pfreight))
+
+}
+plot_efficiency()
+```
+
+
+
+# Inconvenience cost trend
+
+```{r, echo=FALSE, warning=FALSE}
+
+plotinconv = function(inco_tech, vt){
+  p=ggplot()+
+    geom_bar(data = inco_tech[subsector_L1 == "trn_pass_road_LDV_4W" & vehicle_type == vt & year<=2100 & year>=2010], aes(x = as.character(year), y = value, group = logit_type, fill = logit_type), position = position_stack(), stat = "identity")+
+    facet_grid(region~technology, scales = "free")+
+    theme_minimal()+
+    expand_limits(y = c(0,0.8))+
+    scale_x_discrete(breaks = c(2015,2050,2100))+
+    theme(axis.text.x = element_text(angle = 90, vjust = +0.1),
+          strip.background = element_rect(color = "grey"))+
+    scale_fill_manual(values = cols)+
+    labs(x = "", y = "Inconvenience cost [$/pkm]", title = paste0("Example of ", vt))
+
+  return(p)
+}
+
+plotinconv(inco_tech = pref$FV_final_pref, vt = "Large Car and SUV")
+plotinconv(inco_tech = pref$FV_final_pref, vt = "Midsize Car")
+plotinconv(inco_tech = pref$FV_final_pref, vt = "Subcompact Car")
+
+```
+
+
 
 # LDVs final energy demand
 
@@ -625,7 +672,7 @@ demandkmplotf(demand_km, POP)
 
 ```{r, echo=FALSE, warning=FALSE}
 
-plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
+plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor, annual_mileage){
   vintcomp = vintcomp[,.(totdem, region, subsector_L1, year, technology,vehicle_type, sector, sharetech_vint)]
   newcomp = newcomp[,.(region, subsector_L1, year, technology,vehicle_type, sector, sharetech_new)]
 
@@ -637,9 +684,8 @@ plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
                                       "year"), measure.vars = c("vintdem", "newdem"))
   allfleet[,alpha:=ifelse(variable == "vintdem", 0, 1)]
 
-  # allfleet = merge(allfleet[region=="EUR"], loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
-  annual_mileage = 13000
-  loadFactor = 1.5
+  allfleet = merge(allfleet, loadFactor, all.x = TRUE, by = c("region", "vehicle_type", "year"))
+  allfleet = merge(allfleet, annual_mileage, all.x = TRUE, by = c("region", "vehicle_type", "year"))
   allfleet = allfleet[,.(value = sum(value/loadFactor/annual_mileage)), by = c("region", "technology", "variable", "year")]
   allfleet = allfleet[,.(value = sum(value)), by = c("region", "technology", "variable", "year")]
   allfleet[,alphaval := ifelse(variable =="vintdem", 1,0)]
@@ -673,7 +719,7 @@ plotVint = function(vintcomp, newcomp, sharesVS1, loadFactor){
   }
 
 
-p = plotVint(vintcomp, newcomp, sharesVS1 = shares$VS1_shares, loadFactor)
+p = plotVint(vintcomp, newcomp, sharesVS1 = shares$VS1_shares, loadFactor, annual_mileage)
 
 p
 

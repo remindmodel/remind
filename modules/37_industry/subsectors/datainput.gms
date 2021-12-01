@@ -60,11 +60,6 @@ p37_energy_limit("ue_cement")          =  10000;
 p37_energy_limit("ue_steel_primary")   =  10000;
 p37_energy_limit("ue_steel_secondary") = 100000;
 
-*' Emission factors for calculating industry emissions
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
-
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
@@ -109,28 +104,15 @@ $offdelim
 
 s37_clinker_process_CO2 = 0.5262;
 
-*** FIXME *** this needs to be in mrremind
-p37_clinker_cement_ratio("2005","CAZ") = 0.81;
-p37_clinker_cement_ratio("2005","CHA") = 0.58;
-p37_clinker_cement_ratio("2005","DEU") = 0.73;
-p37_clinker_cement_ratio("2005","ECE") = 0.73;
-p37_clinker_cement_ratio("2005","ECS") = 0.73;
-p37_clinker_cement_ratio("2005","ENC") = 0.73;
-p37_clinker_cement_ratio("2005","ESC") = 0.73;
-p37_clinker_cement_ratio("2005","ESW") = 0.73;
-p37_clinker_cement_ratio("2005","EWN") = 0.73;
-p37_clinker_cement_ratio("2005","FRA") = 0.73;
-p37_clinker_cement_ratio("2005","UKI") = 0.73;
-p37_clinker_cement_ratio("2005","IND") = 0.71;
-p37_clinker_cement_ratio("2005","JPN") = 0.80;
-p37_clinker_cement_ratio("2005","LAM") = 0.70;
-p37_clinker_cement_ratio("2005","MEA") = 0.81;
-p37_clinker_cement_ratio("2005","NEN") = 0.81;
-p37_clinker_cement_ratio("2005","NES") = 0.81;
-p37_clinker_cement_ratio("2005","OAS") = 0.80;
-p37_clinker_cement_ratio("2005","REF") = 0.80;
-p37_clinker_cement_ratio("2005","SSA") = 0.77;
-p37_clinker_cement_ratio("2005","USA") = 0.82;
+*** Clinker-to-cement ratio
+Parameter
+  p37_clinker_cement_ratio(ttot,all_regi)   "clinker content per unit cement used"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_clinker-to-cement-ratio.cs3r"
+$offdelim
+  /
+;
 
 *' Clinker-to-cement ratios converge to the lowest regional 2005 value by 2100.
 p37_clinker_cement_ratio(t,regi)
@@ -198,6 +180,23 @@ pm_ue_eff_target("ue_chemicals")        = 0.008;
 pm_ue_eff_target("ue_steel_primary")    = 0.0015;
 pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
+
+
+
+*** FS: CES markup cost industry
+*** default values of CES markup
+p37_CESMkup(t,regi,in) = 0;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+$endIf.CESMkup
+
+display p37_CESMkup;
+
+
+
+
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

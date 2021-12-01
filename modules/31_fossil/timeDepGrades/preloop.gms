@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -14,9 +14,11 @@
 *   oil, gas and coal. This enables to take into account exogenous technological
 *   change for example.
 *===========================================
-* Authors...: JH, NB, TAC, CB
+* Authors...: JH, NB, TAC, CB, SB
 * Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
+*   - 2020-04-15 : Created moinput functions for input data handling, including region-specific constraints
+*                  previously in the GAMS code. Data aggregated to H12 regions.
 *   - 2015-12-03 : Cleaning up
 *   - 2015-06-05 : Add test for runs with cm_startyear > 2010, so that fuelex_cum does not create problems
 *   - 2015-02-06 : Add abort command to stop REMIND if MOFEX does not converge
@@ -46,61 +48,26 @@ if (s31_debug eq 1,
   display pm_prodIni;
 );
 
-***--------------------------------------
-*** ADDITIONAL HIGH/LOW COSTS OIL SCENARIOS
-***--------------------------------------
-* High cost oil scenario with learning (from ADVANCE WP3.1)
 
-$IFTHEN.cm_oil_scen not "%cm_oil_scen%" == "6" 
+*** Decline and incline rate equation offsets from FFECCM
+* Additional factor entering the decline rate equation 
+parameter f31_decoffset(all_regi,all_enty,rlf)    "Decline rate equation offset"
+/
+$ondelim
+$include "./modules/31_fossil/timeDepGrades/input/f31_decoffset.cs4r"
+$offdelim
+/
+;
+p31_datafosdyn(all_regi,all_enty,rlf,"decoffset")$(not sameas(all_enty,"pecoal")) = f31_decoffset(all_regi,all_enty,rlf);
 
-if ( (cm_startyear le 2005),
-  v31_fuExtrCum.l("2010","LAM","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","OAS","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","USA","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","IND","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","IND","peoil","4") = 0;
-  v31_fuExtrCum.l("2010","CHA","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","EUR","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","CAZ","peoil","2") = 0;
-  v31_fuExtrCum.l("2010","JPN","pegas","3") = 0;
-); 
-if ( (cm_startyear le 2015),
-  p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2010","LAM","peoil","2"));
-  p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","OAS","peoil","2"));
-  p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2010","USA","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2010","IND","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
-  p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CHA","peoil","2"));
-  p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2010","EUR","peoil","2"));
-  p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","CAZ","peoil","2"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2010","JPN","pegas","3"));
-);
-if ( (cm_startyear gt 2015),
-  p31_grades(t,"LAM","xi3","peoil","2") = max(p31_grades(t,"LAM","xi3","peoil","2"), 1.9*v31_fuExtrCum.l("2020","LAM","peoil","2"));
-  p31_grades(t,"OAS","xi3","peoil","2") = max(p31_grades(t,"OAS","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","OAS","peoil","2"));
-  p31_grades(t,"USA","xi3","peoil","2") = max(p31_grades(t,"USA","xi3","peoil","2"), 1.5*v31_fuExtrCum.l("2020","USA","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","2") = max(p31_grades(t,"IND","xi3","peoil","2"), 2.0*v31_fuExtrCum.l("2020","IND","peoil","2"));
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
-  p31_grades(t,"CHA","xi3","peoil","2") = max(p31_grades(t,"CHA","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CHA","peoil","2"));
-  p31_grades(t,"EUR","xi3","peoil","2") = max(p31_grades(t,"EUR","xi3","peoil","2"), 1.3*v31_fuExtrCum.l("2020","EUR","peoil","2"));
-  p31_grades(t,"CAZ","xi3","peoil","2") = max(p31_grades(t,"CAZ","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","CAZ","peoil","2"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.3*v31_fuExtrCum.l("2020","JPN","pegas","3"));
-); 
-*** Low cost oil scenario with learning (from ADVANCE WP3.1)
-$ELSEIF.cm_oil_scen %cm_oil_scen% == "5"
-if (cm_startyear le 2015,
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2010","IND","peoil","4"));
-  p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2010","JPN","peoil","2"));
-  p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2010","JPN","peoil","3"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2010","JPN","pegas","3"));
-);
-if (cm_startyear gt 2015,
-  p31_grades(t,"IND","xi3","peoil","4") = max(p31_grades(t,"IND","xi3","peoil","4"), 1.3*v31_fuExtrCum.l("2020","IND","peoil","4"));
-  p31_grades(t,"JPN","xi3","peoil","2") = max(p31_grades(t,"JPN","xi3","peoil","2"), 1.6*v31_fuExtrCum.l("2020","JPN","peoil","2"));
-  p31_grades(t,"JPN","xi3","peoil","3") = max(p31_grades(t,"JPN","xi3","peoil","3"), 1.4*v31_fuExtrCum.l("2020","JPN","peoil","3"));
-  p31_grades(t,"JPN","xi3","pegas","3") = max(p31_grades(t,"JPN","xi3","pegas","3"), 1.4*v31_fuExtrCum.l("2020","JPN","pegas","3"));
-);
-$ENDIF.cm_oil_scen
+* Additional factor entering the increase rate equation
+p31_datafosdyn(regi, "pegas",  rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "pegas",  rlf);
+p31_datafosdyn(regi, "peoil",  rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "peoil",  rlf);
+p31_datafosdyn(regi, "pecoal", rlf, "incoffset") = 0.002 * p31_grades("2005", regi, "xi3", "pecoal", rlf);
+
+* Factor for quadratic adjustment cost function
+p31_datafosdyn(regi, enty, rlf, "alph") = 20;
+
 
 ***--------------------------------------
 *** MOFEX

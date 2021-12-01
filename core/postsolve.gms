@@ -12,7 +12,7 @@ pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
 *RP* added the historic 2010/2015 CO2 prices 
-if (cm_emiscen eq 9,
+if (cm_emiscen eq 9 or (cm_emiscen eq 10),
  pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
 elseif ((cm_emiscen eq 2) OR (cm_emiscen eq 5) OR (cm_emiscen eq 8)),
  pm_pvpRegi(ttot,regi,"perm") =  pm_pricePerm(ttot) / pm_ts(ttot) + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
@@ -128,23 +128,24 @@ display s_actualbudgetco2;
 		display sm_budgetCO2eqGlob;
 	elseif cm_emiscen eq 9,
 	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
-		display pm_taxCO2eq;		
+		  sm_globalBudget_dev = s_actualbudgetco2 / c_budgetCO2; 
+    display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2 > 1200,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				p_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
-				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
-				p_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
-			    p_taxCO2eq_iterationdiff(t,regi) = p_taxCO2eq_iterationdiff_tmp(t,regi);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
-      o_taxCO2eq_iterDiff_Itr(iteration,regi) = p_taxCO2eq_iterationdiff("2030",regi);
+      o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
 			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
@@ -185,18 +186,18 @@ display s_actualbudgetco2;
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2 > 1200,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				p_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
-				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
-				p_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
-			    p_taxCO2eq_iterationdiff(t,regi) = p_taxCO2eq_iterationdiff_tmp(t,regi);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
-      o_taxCO2eq_iterDiff_Itr(iteration,regi) = p_taxCO2eq_iterationdiff("2030",regi);
+      o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
 			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
@@ -242,23 +243,23 @@ display p_actualbudgetco2;
 *** use multiplicative for budgets higher than 1600 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2 > 1600,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				p_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
-				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
-				p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + p_taxCO2eq_iterationdiff(t,regi) ;
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
+				p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
 				!! until cm_peakBudgYr: expolinear price trajectory
-				p_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 			    p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + 
-				                      max(p_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-p_taxCO2eq_until2150(t,regi)/2);
-				p_taxCO2eq_iterationdiff(t,regi) = p_taxCO2eq_iterationdiff_tmp(t,regi);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-p_taxCO2eq_until2150(t,regi)/2);
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 				!! after cm_peakBudgYr: adjustment so that emissions become zero: increase/decrease tax in each time step after cm_peakBudgYr by percentage of that year's total CO2 emissions of 2015 emissions
 			);
-      o_taxCO2eq_iterDiff_Itr(iteration,regi) = p_taxCO2eq_iterationdiff("2030",regi);
+      o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
 			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
@@ -372,7 +373,7 @@ if(cm_iterative_target_adj eq 9,
                         1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
                 );
 
-      p_taxCO2eq_iterationdiff(t,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) ) - pm_taxCO2eq(t,regi);
+      pm_taxCO2eq_iterationdiff(t,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) ) - pm_taxCO2eq(t,regi);
       p_taxCO2eq_until2150(t,regi) = max(1* sm_DptCO2_2_TDpGtC, p_taxCO2eq_until2150(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) );
       pm_taxCO2eq(t,regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq(t,regi) * p_factorRescale_taxCO2_Funneled(iteration) );  !! rescale co2tax
       loop(t2$(t2.val eq cm_peakBudgYr),
@@ -381,7 +382,7 @@ if(cm_iterative_target_adj eq 9,
 
       display p_factorRescale_taxCO2, p_factorRescale_taxCO2_Funneled;
 
-      o_taxCO2eq_iterDiff_Itr(iteration,regi) = p_taxCO2eq_iterationdiff("2030",regi);
+      o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       loop(regi, !! not a nice solution to having only the price of one regi display (for better visibility), but this way it overwrites again and again until the value from the last regi remain
 	    o_taxCO2eq_Itr_1regi(t,iteration+1) = pm_taxCO2eq(t,regi); 
 	  );
@@ -563,31 +564,6 @@ loop ((ttot,regi),
 DISPLAY  p_share_seliq_s, p_share_seh2_s, p_share_seel_s;
 
 
-*GL*calculation of a bioshare for each FE carrier
-*NB* the following is only relevant for reporting. As reporting is moved to R the following will be obsolete.
-p_bioshare(ttot,regi,entyFe)$(sum(se2fe(entySe,entyFe,te),
-                                  sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-                                  + sum(pc2te(entyPe,entySe2,te2,entySe),
-                                       max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-                                     )
-                             ) ne 0) 
-  = sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(peBio,entySe,te2), vm_prodSe.l(ttot,regi,peBio,entySe,te2))
-        + sum(pc2te(peBio,entySe2,te2,entySe),
-               max(0, pm_prodCouple(regi,peBio,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,peBio,entySe2,te2)
-             )
-    ) 
-    /
-    sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-        + sum(pc2te(entyPe,entySe2,te2,entySe),
-             max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-           )
-    )
-;
-
-display p_bioshare;
-
 *LB* update parameter that are used for variables during the run
 pm_gdp_gdx(ttot,regi)$(ttot.val ge 2005)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)$(ttot.val ge 2005)     = vm_invMacro.l(ttot,regi,"kap");
@@ -654,6 +630,30 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 $endif.CO2priceDependent_AdjCosts
 
 
+*** CG: calculate marginal adjustment cost for capacity investment: d(v_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
+o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
+    * 2
+    * (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf))) / power((pm_ttot_val(ttot)-pm_ttot_val(ttot-1)),2)
+    /( sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
+    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+    )
+;
+
+*** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 )) 
+    = v_costInvTeAdj.l(ttot,regi,te) / sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf));
+*** and ratio between average adjCost and direct investment cost
+o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 1E-22) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te) * 100;
+
+*** calculation of PE and SE Prices (useful for internal use and reporting purposes)
+pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
+       q_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
+
+pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
+
+*** calculate share of stored CO2 from captured CO2
+pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
 
 *** INNOPATHS emissions reporting
 o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 
@@ -878,5 +878,6 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
      v_co2capturevalve.l(ttot,regi)	
      *o_emi_conv("co2") 	
 ;
+
 
 *** EOF ./core/postsolve.gms

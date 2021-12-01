@@ -16,20 +16,22 @@ Sets
     fegab   "buildings use of gaseous energy carriers"
     feh2b   "buildings use of hydrogen"
     feheb   "buildings use of district heat"
-    feelb   "buildings use of electricity"
+    feelcb  "buildings use of conventional electricity (all but space heating)"
+    feelhpb "buildings use of electricity for space heating with heat pumps"
+    feelrhb "buildings use of electricity for space heating with resistive heating"    
   /
 
    
   ppfen_buildings_dyn36(all_in)   "primary production factors energy - buildings"
-  / fesob, fehob, fegab, feh2b, feheb, feelb /
+  / fesob, fehob, fegab, feh2b, feheb, feelcb, feelhpb, feelrhb /
 
   cal_ppf_buildings_dyn36(all_in)   "primary production factors for calibration - buildings"
  
   ces_buildings_dyn36(all_in,all_in)   "CES tree structure - buildings"
   /
     en    . enb
-    enb   . (enhb, feelb)
-    enhb  . (fesob, fehob, feheb, enhgab)
+    enb   . (enhb, feelcb)
+    enhb  . (fesob, fehob, feheb, feelhpb, feelrhb, enhgab)
     enhgab . (fegab, feh2b)
   /
 
@@ -51,7 +53,7 @@ Sets
     fegas . fegab
     feh2s . feh2b
     fehes . feheb
-    feels . feelb
+    feels . (feelcb,feelhpb,feelrhb)
   /
   
   fe_tax_sub36(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
@@ -61,11 +63,30 @@ Sets
   fegab . fegab
   feh2b . feh2b
   feheb . feheb
-  feelb . feelb
+  feelb . (feelcb,feelhpb,feelrhb)
   /
   
  ue_dyn36(all_in)  "useful energy items"
  //
+
+ tdTeMarkup36(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
+  /
+  tdels
+  tdhes
+  /
+
+tdTe2In36(all_te,all_in) "mapping of td technologies to CES nodes for CES markup cost"
+  /
+  tdels.feelhpb
+  tdhes.feheb
+  /
+
+ppfen_CESMkup_dyn36(all_in)                   "buildings production factors of CES function to which CES markup cost can be applied"
+/
+  feelhpb
+  feheb
+/
+
 ;
 
 cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;
@@ -78,4 +99,6 @@ ppfEn(ppfen_buildings_dyn36)      = YES;
 cesOut2cesIn(ces_buildings_dyn36) = YES;
 fe2ppfEn(fe2ppfEn36)              = YES;
 fe_tax_sub_sbi(fe_tax_sub36) = YES;
+ppfen_CESMkup(ppfen_CESMkup_dyn36) = YES;
+
 *** EOF ./modules/36_buildings/simple/sets.gms

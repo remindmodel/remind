@@ -4,7 +4,8 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(lucode)
+library(lucode2)
+library(gms)
 library(tidyverse)
 library(quitte)
 library(reshape2)
@@ -25,8 +26,8 @@ if(!exists("source_include")) {
 filename = "Logit_buildings.csv"
 if (file.exists(filename)) {
   df = read.csv(filename, stringsAsFactors = F)
-}else if (file.exists(path(output_folder,filename))) {
-  df = read.csv(path(output_folder,filename), stringsAsFactors = F)
+}else if (file.exists(file.path(output_folder,filename))) {
+  df = read.csv(file.path(output_folder,filename), stringsAsFactors = F)
   
 } else {
   stop("No capital_unit.csv file found - please perform postprocessing first!")
@@ -41,7 +42,7 @@ hist_period = 2015
 
 
 #---------------PROCESS DATA ----------------------------
-pdf(path(outputdir,paste0("reportLogit.pdf")), width = 10, height = 7)
+pdf(file.path(outputdir,paste0("reportLogit.pdf")), width = 10, height = 7)
 
 for (regi in getRegs(df)){
 

@@ -7,7 +7,8 @@
 
 library(lusweave)
 library(luplot)
-library(lucode)
+library(lucode2)
+library(gms)
 library(gdx)
 library(magpie)
 library(remind2)
@@ -36,7 +37,7 @@ r_plot <- c("ROW","EUR","CHN","IND","JPN","RUS","USA","OAS","MEA","LAM","AFR")
 ###############################################################################
 
 # Set gdx path
-gdx_path  <- path(outputdirs,gdx_name)
+gdx_path  <- file.path(outputdirs,gdx_name)
 scenNames <- getScenNames(outputdirs)
 #scenNames <- c("SSP1_ModPol","SSP2_ModPol","SSP5_ModPol");  # scenario names
 names(gdx_path) <- scenNames

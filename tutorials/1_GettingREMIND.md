@@ -37,7 +37,8 @@ pkgs <- c("curl",
           "gdxrrw",
           "ggplot2",
           "goxygen",
-          "lucode",
+          "lucode2",
+          "gms",
           "luplot",
           "luscale",
           "lusweave",
@@ -48,7 +49,6 @@ pkgs <- c("curl",
           "mrremind",
           "remind2",
           "remulator",
-          "rhdf5",
           "shinyresults")
 install.packages(pkgs)
 ```

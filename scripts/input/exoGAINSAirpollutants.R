@@ -6,11 +6,12 @@
 # |  Contact: remind@pik-potsdam.de
 
 # Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
-if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
-  firstIteration = TRUE
-  cat("\nExoGAINS - log for first iteration...\n\n")
-} else {
-  firstIteration = FALSE
+firstIteration = FALSE
+if (file.exists("log.txt")){
+  if(!any(grepl("ExoGAINS - log for first iteration...", readLines("log.txt")))){
+    firstIteration = TRUE
+    cat("\nExoGAINS - log for first iteration...\n\n")
+  }
 }
 
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
@@ -137,8 +138,11 @@ E <- mbind(E,dimSums(E,dim=1))
 # E_calibrated <- E * E(2015) / E_CEDS(2015)
 
 # read mapping from GAINS sectors to REMIND sectors
-#map_GAINSsec2REMINDsec <- read.csv(madrat:::toolMappingFile("sectoral", "mappingGAINStoREMINDsectors.csv"), stringsAsFactors=FALSE,na.strings = "")
-map_GAINSsec2REMINDsec <- read.csv("mappingGAINStoREMINDsectors.csv", stringsAsFactors=FALSE,na.strings = "")
+map_GAINSsec2REMINDsec <- read.csv(
+  madrat::toolGetMapping(type = "sectoral", name = "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE),
+  stringsAsFactors = FALSE,
+  na.strings = ""
+)
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
@@ -220,4 +224,3 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 if(firstIteration){
   cat("\nExoGAINS - end of first iteration.\n\n")
 }
-

@@ -6,7 +6,8 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(rmarkdown)
-require(lucode)
+require(lucode2)
+require(gms)
 
 if(!exists("source_include")) {
   ## Define arguments that can be read from command line
@@ -19,10 +20,10 @@ load(file.path(outputdir, "config.Rdata"))
 if(cfg$gms$transport == "edge_esm"){
   md_template <- "EDGETransportReport.Rmd"
   file.copy(file.path("./scripts/output/single/notebook_templates", md_template), outputdir)
-  rmarkdown::render(path(outputdir, md_template), output_format="pdf_document")
+  rmarkdown::render(file.path(outputdir, md_template), output_format="pdf_document")
   if(cfg$gms$c_keep_iteration_gdxes == 1){
     md_template <- "EDGETransportMultiIterationAnalysis.Rmd"
     file.copy(file.path("./scripts/output/single/notebook_templates", md_template), outputdir)
-    rmarkdown::render(path(outputdir, md_template), output_format="pdf_document")
+    rmarkdown::render(file.path(outputdir, md_template), output_format="pdf_document")
   }
 }

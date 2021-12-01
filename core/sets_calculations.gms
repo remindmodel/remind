@@ -28,7 +28,6 @@ teNoLearn(te)   = not teLearn(te);
 teEtaConst(te)  = not teEtaIncr(te);
 teNoCCS(te)     = not teCCS(te);
 
-entyFe(enty)         = entyFeStat(enty) + entyFeTrans(enty);
 trade(enty)          = tradePe(enty) + tradeSe(enty) + tradeMacro(enty);
 emi(enty)            = emiTe(enty) + emiMac(enty) + emiExog(enty); 
 emiMacMagpie(enty)   = emiMacMagpieCH4(enty) + emiMacMagpieN2O(enty) + emiMacMagpieCO2(enty);
@@ -38,8 +37,7 @@ peRicardian(enty)    = peBio(enty) + peEx(enty);
 en2se(enty,enty2,te) = pe2se(enty,enty2,te) + se2se(enty,enty2,te);
 
 en2en(enty,enty2,te) = pe2se(enty,enty2,te) + se2se(enty,enty2,te) + se2fe(enty,enty2,te) + fe2ue(enty,enty2,te) + ccs2te(enty,enty2,te);
-te2rlf(te,rlf)       = teFe2rlf(te,rlf) + teSe2rlf(te,rlf) + teue2rlf(te,rlf) + teCCS2rlf(te,rlf) + teCCU2rlf2(te,rlf) +teNoTransform2rlf(te,rlf);
-
+te2rlf(te,rlf)       = teFe2rlf(te,rlf) + teSe2rlf(te,rlf) + teue2rlf(te,rlf) + teCCS2rlf(te,rlf) + teCCU2rlf2(te,rlf) +teNoTransform2rlf(te,rlf) + teFe2rlfH2BI(te,rlf);
 ***----------------------------------------------------------------------------
 *** Fill sets that were created empty and should be filled from the mappings above
 ***----------------------------------------------------------------------------
@@ -171,6 +169,7 @@ display "ES layer sets:", ppfenFromEs, feForEs, feViaEs2ppfen;
 
 loop ( se2fe(entySe,entyFe,te),
 fete(entyFe,te) = YES;
+sefe(entySe,entyFe) = YES;
 );
 
 *** MAGICC related sets

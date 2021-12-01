@@ -9,7 +9,8 @@
 ##################################################################
 start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations=5,start_iter=1,n600_iterations=0,report=NULL,LU_pricing=TRUE,qos) {
   
-  require(lucode)
+  require(lucode2)
+  require(gms)
   require(magclass)
   require(gdx)
   library(methods)
@@ -28,7 +29,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_rem <- check_config(cfg_rem,paste0(path_remind,"config/default.cfg"),paste0(path_remind,"modules")) 
   cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
-  cfg_rem_original <- cfg_rem$output
+  cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing
 
   # retrieve MAgPIE settings
   cfg_mag <- check_config(cfg_mag,paste0(path_magpie,"config/default.cfg"),paste0(path_magpie,"modules")) 
@@ -133,8 +134,10 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
         } else if (cfg_rem$gms$optimization == "nash") {
           if (as.numeric(modstat$s80_bool$val)!=1) cat("Warning: REMIND s80_bool not 1. Iteration continued though.\n")
         }
+      } else if (file.exists(paste0(outfolder_rem,"/non_optimal.gdx"))) {
+        stop("### COUPLING ### REMIND didn't find an optimal solution. Coupling iteration stopped!")
       } else {
-        stop("### COUPLING ### REMIND didn't produce 'fulldata.gdx'. Iteration stopped!")
+        stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
     }
 
@@ -253,7 +256,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
 ##################################################################
 ################# E X E C U T E  start_coupled ###################
 ##################################################################
-require(lucode)
+require(lucode2)
 
 readArgs("coupled_config")
 load(coupled_config)
