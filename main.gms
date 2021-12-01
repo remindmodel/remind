@@ -329,9 +329,6 @@ c_H2tdCapCost_stat          "factor to scale H2 transmission and distribution ca
 cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
-c_inco0_biogasc             "factor for biogasc investment cost (fraction of cost for biogas)"
-c_biogasc_fixed_inco0       "switch to fix biogasc investment cost to gobal time-invariant value" 
-
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -150,10 +150,6 @@ $offdelim
 /
 ;
 
-*RK* manual introduction of biogasc that has to be implemented in in mrremind later
-if(c_biogasc_fixed_inco0 ne 0, 
-  p_inco0(ttot,all_regi,"biogasc") = c_inco0_biogasc * p_inco0(ttot,all_regi,"biogas");  !! average of biogas in p_inco0.cs4r
-);
 
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
@@ -409,6 +405,9 @@ $offdelim
 ;
 $Onlisting
 pm_cf(ttot,regi,te) =  f_cf(ttot,regi,te);
+
+*RK: temporal input for biogasc
+pm_cf(ttot,regi,"biogasc") = 0.91;
 
 *RP short-term fix: set capacity factors here by hand, because the input data procudure won't be updated in time
 pm_cf(ttot,regi,"apcardiefft") = 1;
