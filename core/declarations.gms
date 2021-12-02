@@ -195,7 +195,6 @@ o_avgAdjCostInv(ttot,all_regi,all_te)                "average adjustment cost ca
 o_avgAdjCost_2_InvCost_ratioPc(ttot,all_regi,all_te)   "ratio in % of average adj cost compared to direct inv costs"
 
 pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scaling efficiencies in CES calibration"
-/   /
 
 pm_fedemand(tall,all_regi,all_in)                     "final energy demand"
 pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from total captured CO2"
