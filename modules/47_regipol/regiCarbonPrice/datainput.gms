@@ -74,10 +74,10 @@ display pm_emiTargetESR;
 $ENDIF.emiMktES
 
 *** Region-specific datainput (with hard-coded regions)
-***Germany Nuclear phase-out
-$IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off" 
-       pm_regiEarlyRetiRate(regi,"tnrs")$(sameas(regi,"DEU")) = 0.2;
-$ENDIF.NucRegiPol
+****Germany Nuclear phase-out
+*$IFTHEN.NucRegiPol not "%cm_NucRegiPol%" == "off" 
+*       pm_regiEarlyRetiRate(regi,"tnrs")$(sameas(regi,"DEU")) = 0.2;
+*$ENDIF.NucRegiPol
 
 
 $IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
