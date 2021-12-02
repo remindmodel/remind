@@ -81,11 +81,11 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
-* Regionscode: 62eff8f7
+* Regionscode: 2b1450bc
 * 
-* Input data revision: 6.254
+* Input data revision: 6.266
 * 
-* Last modification (input data): Wed Oct 20 17:30:02 2021
+* Last modification (input data): Wed Dec  1 21:00:37 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -140,7 +140,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  SSP2-Base
+$setGlobal c_expname  bIT_Base_cha
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -199,13 +199,13 @@ $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
 ***---------------------    47_regipol  -------------------------------------
-$setglobal regipol  none              !! def = none
+$setglobal regipol  regiCarbonPrice              !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------
 $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
-$setglobal water  heat                 !! def = off
+$setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
 $setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
@@ -260,7 +260,6 @@ cm_rentconvgas        "[grades2poly] number of years required to converge to the
 cm_rentdisccoal       "[grades2poly] discount factor for the coal rent"
 cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved in 2100"
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
-cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
 cm_damage              "cm_damage factor for forcing overshoot"
@@ -391,7 +390,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
@@ -416,8 +415,8 @@ cm_rentconvgas      = 50;        !! def 50
 cm_rentdisccoal     = 0.4;       !! def 0.4
 cm_rentdisccoal2    = 0.6;       !! def 0.6
 cm_rentconvcoal     = 50;        !! def 50
-$setglobal cm_regi_earlyreti_rate     GLO 0.09, EUR_regi 0.15      !! def = EUR_regi 0.15
-$setglobal cm_tech_earlyreti_rate     GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15)
+$setglobal cm_regi_earlyreti_rate  GLO 0.09, CHA_regi 0.06, EUR_regi 0.15      !! def = EUR_regi 0.15
+$setglobal cm_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15) !! def = GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15)
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
@@ -439,7 +438,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1350;   !! def = 1300
+c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
@@ -450,20 +449,20 @@ cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
 
-$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
+$setGlobal cm_ETS_postTargetIncrease  2 !! def = linear
 $setGlobal cm_ETS_post2055Increase  2      !! def = 2
 
 $setGlobal cm_emiMktES  off        !! def = off	
-$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
+$setGlobal cm_emiMktES_type  off !! def = netGHG	
 
-$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
-$setGlobal cm_ESD_post2055Increase  2 !! def = 2
+$setGlobal cm_ESD_postTargetIncrease  off !! def = 8
+$setGlobal cm_ESD_post2055Increase  off !! def = 2
 
 $setGlobal cm_emiMktEScoop  off    !! def = off	
-$setGlobal cm_emiMktES2020price  30 !! def = 30
+$setGlobal cm_emiMktES2020price  off !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
-$setGlobal cm_NucRegiPol	 off   !! def = off		
-$setGlobal cm_CoalRegiPol	 off   !! def = off		
+$setGlobal cm_NucRegiPol	 on   !! def = off		
+$setGlobal cm_CoalRegiPol	 on   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
 $setGlobal cm_implicitFE  off !! def = off
@@ -577,7 +576,7 @@ $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = on
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -593,16 +592,16 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_2b1450bc   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
+$setglobal cm_CES_calibration_default_prices  0    !! def = 0.01
 $setglobal cm_calibration_string  off      !! def = off
 
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  DEU       !! def = EUR
 
 $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
