@@ -516,16 +516,13 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 
 display pm_regiEarlyRetiRate;
 
-***SB* Scenario-specific
-*$if.Base_Cprice %carbonprice% == "none"
-*$if.Base_techpol %techpol% == "none"
-**** Early retirement limits in historical timesteps
-*pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2020) = 0;
-*pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val le 2020) = 0.01;
-*pm_regiEarlyRetiRate(ttot,regi,"pc")$(ttot.val le 2020) = 0.05;
-*pm_regiEarlyRetiRate(ttot,"EUR_regi","pc")$(ttot.val le 2020) = 0.1;
-*$endif.Base_Cprice
-*$endif.Base_techpol
+*SB* Time-dependent early retirement rates in Baseline scenarios
+$if.Base_Cprice %carbonprice% == "none"
+$if.Base_techpol %techpol% == "none"
+*** Allow very little early retirement future periods
+pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2020) = 0.01;
+$endif.Base_Cprice
+$endif.Base_techpol
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
