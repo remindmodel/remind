@@ -81,11 +81,11 @@
 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
-* Regionscode: 2b1450bc
+* Regionscode: 62eff8f7
 * 
-* Input data revision: 6.266
+* Input data revision: 6.254
 * 
-* Last modification (input data): Wed Dec  1 21:00:37 2021
+* Last modification (input data): Wed Oct 20 17:30:02 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -140,7 +140,7 @@ option profile = 0;
 
 
 ***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  bIT_Base_cha
+$setGlobal c_expname  default
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -199,7 +199,7 @@ $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
 ***---------------------    47_regipol  -------------------------------------
-$setglobal regipol  regiCarbonPrice              !! def = none
+$setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------
@@ -260,6 +260,8 @@ cm_rentconvgas        "[grades2poly] number of years required to converge to the
 cm_rentdisccoal       "[grades2poly] discount factor for the coal rent"
 cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved in 2100"
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
+cm_regi_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region"
+cm_tech_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region for a technology"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
 cm_damage              "cm_damage factor for forcing overshoot"
@@ -331,10 +333,6 @@ cm_HeatLim_b                "switch to set maximum share of district heating in 
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
-cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
-cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
-cm_ariadne_trade_synliq        "switch for enabling synfuel liquids imports to Germany for ARIADNE project"
-cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Germany for ARIADNE project"
 cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -390,7 +388,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
-$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
@@ -438,7 +436,7 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 0;   !! def = 1300
+c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
@@ -449,20 +447,20 @@ cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
 
-$setGlobal cm_ETS_postTargetIncrease  2 !! def = linear
+$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
 $setGlobal cm_ETS_post2055Increase  2      !! def = 2
 
 $setGlobal cm_emiMktES  off        !! def = off	
-$setGlobal cm_emiMktES_type  off !! def = netGHG	
+$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
 
-$setGlobal cm_ESD_postTargetIncrease  off !! def = 8
-$setGlobal cm_ESD_post2055Increase  off !! def = 2
+$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
+$setGlobal cm_ESD_post2055Increase  2 !! def = 2
 
 $setGlobal cm_emiMktEScoop  off    !! def = off	
-$setGlobal cm_emiMktES2020price  off !! def = 30
+$setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
-$setGlobal cm_NucRegiPol	 on   !! def = off		
-$setGlobal cm_CoalRegiPol	 on   !! def = off		
+$setGlobal cm_NucRegiPol	 off   !! def = off		
+$setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
 $setGlobal cm_implicitFE  off !! def = off
@@ -546,11 +544,6 @@ cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
-cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 0; !! def 0
-cm_ariadne_trade_synliq = 0; !! def 0
-cm_ariadne_trade_syngas = 0; !! def 0
-
 $setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
 $setGlobal c_VREPot_Factor  off !! def = off
@@ -592,16 +585,16 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_2b1450bc   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
 $setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0    !! def = 0.01
+$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 $setglobal cm_calibration_string  off      !! def = off
 
-$setglobal c_testOneRegi_region  DEU       !! def = EUR
+$setglobal c_testOneRegi_region  EUR       !! def = EUR
 
 $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
@@ -639,8 +632,6 @@ $setglobal cm_INNOPATHS_sehe_upper  off !! def = off
 $setglobal cm_fixCO2price  off !! def = off
 
 $setglobal cm_feShareLimits  off  !! def = off
-
-$setglobal cm_seTradeScenario  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
@@ -718,3 +709,4 @@ $include "./core/magicc.gms";    !!connection to MAGICC, needed for post-process
 $endif.c_skip_output
 
 *** EOF ./main.gms
+
