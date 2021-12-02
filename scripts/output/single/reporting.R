@@ -21,15 +21,15 @@ if(!exists("source_include")) {
    readArgs("outputdir","gdx_name","gdx_ref_name")
 } 
 
-gdx      <- path(outputdir,gdx_name)
-gdx_ref  <- path(outputdir,gdx_ref_name)
+gdx      <- file.path(outputdir,gdx_name)
+gdx_ref  <- file.path(outputdir,gdx_ref_name)
 if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
-remind_reporting_file <- path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
-magicc_reporting_file <- path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
-LCOE_reporting_file   <- path(outputdir,paste0("REMIND_LCOE_", scenario, ".csv"))
+remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
+magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
+LCOE_reporting_file   <- file.path(outputdir,paste0("REMIND_LCOE_", scenario, ".csv"))
 
 # produce REMIND reporting *.mif based on gdx information
 print("start generation of mif files")
@@ -72,5 +72,12 @@ print("start generation of LCOE reporting")
 tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
 print("end generation of LCOE reporting")
 										
-															   
+## generate DIETER reporting if it is needed
+## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory 
+DIETERGDX <- "report_DIETER.gdx"
+if(file.exists(file.path(outputdir, DIETERGDX))){
+  print("start generation of DIETER reporting")
+  remind2::reportDIETER(DIETERGDX,outputdir)
+  print("end generation of DIETER reporting")
+}																   
 														

@@ -12,7 +12,7 @@ pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
 *RP* added the historic 2010/2015 CO2 prices 
-if (cm_emiscen eq 9,
+if (cm_emiscen eq 9 or (cm_emiscen eq 10),
  pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
 elseif ((cm_emiscen eq 2) OR (cm_emiscen eq 5) OR (cm_emiscen eq 8)),
  pm_pvpRegi(ttot,regi,"perm") =  pm_pricePerm(ttot) / pm_ts(ttot) + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
@@ -564,31 +564,6 @@ loop ((ttot,regi),
 DISPLAY  p_share_seliq_s, p_share_seh2_s, p_share_seel_s;
 
 
-*GL*calculation of a bioshare for each FE carrier
-*NB* the following is only relevant for reporting. As reporting is moved to R the following will be obsolete.
-p_bioshare(ttot,regi,entyFe)$(sum(se2fe(entySe,entyFe,te),
-                                  sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-                                  + sum(pc2te(entyPe,entySe2,te2,entySe),
-                                       max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-                                     )
-                             ) ne 0) 
-  = sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(peBio,entySe,te2), vm_prodSe.l(ttot,regi,peBio,entySe,te2))
-        + sum(pc2te(peBio,entySe2,te2,entySe),
-               max(0, pm_prodCouple(regi,peBio,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,peBio,entySe2,te2)
-             )
-    ) 
-    /
-    sum(se2fe(entySe,entyFe,te),
-        sum(pe2se(entyPe,entySe,te2), vm_prodSe.l(ttot,regi,entyPe,entySe,te2))
-        + sum(pc2te(entyPe,entySe2,te2,entySe),
-             max(0, pm_prodCouple(regi,entyPe,entySe2,te2,entySe)) * vm_prodSe.l(ttot,regi,entyPe,entySe2,te2)
-           )
-    )
-;
-
-display p_bioshare;
-
 *LB* update parameter that are used for variables during the run
 pm_gdp_gdx(ttot,regi)$(ttot.val ge 2005)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)$(ttot.val ge 2005)     = vm_invMacro.l(ttot,regi,"kap");
@@ -656,7 +631,7 @@ $endif.CO2priceDependent_AdjCosts
 
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(v_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
-o_adjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
+o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
     * 2
     * (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf))) / power((pm_ttot_val(ttot)-pm_ttot_val(ttot-1)),2)
     /( sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
@@ -664,12 +639,18 @@ o_adjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =
     )
 ;
 
-*** calculation of PE and SE Prices (useful for internal use and reporting purposes)
-pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
-       q_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
+*** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
+o_avgAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te) AND (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) ne 0 )) 
+    = v_costInvTeAdj.l(ttot,regi,te) / sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf));
+*** and ratio between average adjCost and direct investment cost
+o_avgAdjCost_2_InvCost_ratioPc(ttot,regi,te)$(v_costInvTeDir.l(ttot,regi,te) ge 1E-22) = v_costInvTeAdj.l(ttot,regi,te)/v_costInvTeDir.l(ttot,regi,te) * 100;
 
-p_PEPrice(t,regi,entyPe)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
-       q_balPe.m(t,regi,entyPe) / qm_budget.m(t,regi);
+*** calculation of PE and SE Prices (useful for internal use and reporting purposes)
+pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND (NOT (sameas(entySE,"seel")))) = 
+       q_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
+
+pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q_balPe.m(ttot,regi,entyPe) / qm_budget.m(ttot,regi);
 
 *** calculate share of stored CO2 from captured CO2
 pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);

@@ -20,6 +20,7 @@ path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
+# !Currently not working for prefixes different from "C_". "C_" is hard-coded elsewhere!
 prefix_runname <- "C_"
 
 # If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below.
@@ -146,7 +147,7 @@ for(scen in common){
       # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
       start_iter  <- iter_rem
       path_run    <- gsub("/fulldata.gdx","",already_rem)
-      path_report <- Sys.glob(paste0(path_run,"/REMIND_generic_*","withoutPlus.mif"))
+      path_report <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))
       if (identical(path_report,character(0))) stop("There is a fulldata.gdx but no REMIND_generic_.mif in",path_run)
       cat("Found REMIND report here: ",path_report,"\n")
       cat("Continuing with MAgPIE in iteration ",start_iter,"\n")
@@ -264,9 +265,11 @@ for(scen in common){
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
       cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
 
-      # If the preceding run has already finished (= their gdx files exist) start the current run immediately.
-      # This might be the case e.g. if you started the baseline and NDC runs in a first batch and now want to start the subsequent policy runs by hand after the baselines have finished
-      if (file.exists(cfg_rem$files2export$start['input_ref.gdx']) & file.exists(cfg_rem$files2export$start['input_bau.gdx'])) {
+      # If the preceding run has already finished (= its gdx file exist) start 
+      # the current run immediately. This might be the case e.g. if you started
+      # the NDC run in a first batch and now want to start the subsequent policy
+      # runs by hand after the NDC has finished.
+      if (file.exists(cfg_rem$files2export$start['input_ref.gdx'])) {
         start_now <- TRUE
       }
   }

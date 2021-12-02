@@ -77,10 +77,6 @@ loop ((all_regi,ppfen_industry_dyn37(all_in)),
 
 display "calculated FE share of 'other' industry sector", p37_shIndFE;
 
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
-
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
@@ -161,6 +157,19 @@ $ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on"
 *** at least 10% H2 in industry FE from 2040 onwards
 *** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
 $endif.feShareAriad
+
+*** FS: CES markup cost industry
+p37_CESMkup(t,regi,in) = 0;
+*** in standard case, apply markup-cost of 0.5 trUSD/TWa to feeli to represent demand-side cost of electrification and 
+*** obtain a higher efficiency in calibration to mimic energy efficiency gains with increasing electricity share
+p37_CESMkup(t,regi,"feeli") = 0.5;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+$endIf.CESMkup
+
+display p37_CESMkup;
 
 *** EOF ./modules/37_industry/fixed_shares/datainput.gms
 

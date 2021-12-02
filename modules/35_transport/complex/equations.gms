@@ -92,6 +92,10 @@ q35_limitCapUe(t,regi,fe2ue(entyFe,entyUe,te))..
     )
 ;
 
+***------------------------------------------------------
+*' Share of LDV stock
+***------------------------------------------------------
+
 q35_shUePeT(t,regi,te)$LDV35(te) ..       !! calculate the share of different LDV types in total LDV usage
   sum(fe2ue(entyFe,"uepet",te2)$LDV35(te2), vm_prodUe(t,regi,entyFe,"uepet",te2) )
   * vm_shUePeT(t,regi,te) / 100
@@ -106,5 +110,18 @@ q35_shUePeTbal(t,regi) ..
   100
 ;
 
-*** EOF ./modules/35_transport/complex/equations.gms
+***------------------------------------------------------
+*' Share of LDV sales
+***------------------------------------------------------
+$ifthen.shLDVsales not "%cm_share_LDV_sales%" == "off"
+q35_shLDVSales(t,regi,te)$LDV35(te) ..      
+  v35_shLDVSales(t,regi,te) 
+  * sum((te2,rlf)$(te2rlf(te2,rlf) and LDV35(te2)), vm_deltaCap(t,regi,te2,rlf) )
+  / 100 
+  =e= 
+  sum(rlf$te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf) )
+;
+$endif.shLDVsales   
 
+
+*** EOF ./modules/35_transport/complex/equations.gms

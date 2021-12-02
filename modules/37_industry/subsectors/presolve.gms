@@ -17,5 +17,9 @@ vm_macBaseInd.fx(ttot,regi,"co2cement_process","cement")$( ttot.val ge 2005 )
   * p37_clinker_cement_ratio(ttot,regi)
   * vm_cesIO.l(ttot,regi,"ue_cement")
   / sm_C_2_CO2;
+
+
+***p37_emiFac(ttot,regi,entyFe) = sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"));
+
 *** EOF ./modules/37_industry/subsectors/presolve.gms
 

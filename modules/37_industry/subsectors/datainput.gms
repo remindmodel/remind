@@ -60,11 +60,6 @@ p37_energy_limit("ue_cement")          =  10000;
 p37_energy_limit("ue_steel_primary")   =  10000;
 p37_energy_limit("ue_steel_secondary") = 100000;
 
-*' Emission factors for calculating industry emissions
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
-
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
@@ -185,6 +180,23 @@ pm_ue_eff_target("ue_chemicals")        = 0.008;
 pm_ue_eff_target("ue_steel_primary")    = 0.0015;
 pm_ue_eff_target("ue_steel_secondary")  = 0.0015;
 pm_ue_eff_target("ue_otherInd")         = 0.008;
+
+
+
+*** FS: CES markup cost industry
+*** default values of CES markup
+p37_CESMkup(t,regi,in) = 0;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+$endIf.CESMkup
+
+display p37_CESMkup;
+
+
+
+
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

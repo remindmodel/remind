@@ -39,6 +39,12 @@ Sets
     co2steel
   /
 
+  macBaseInd37(all_enty,secInd37)   "FE and industry combinations that have emissions"
+  /
+    (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
+    co2cement_process     . cement
+  /
+
   secInd37_2_emiInd37(secInd37,emiInd37)   "link industry sub-sectors to sector emissions"
   /
     cement    . (co2cement, co2cement_process)
@@ -249,11 +255,28 @@ Sets
              feelwlth_otherInd)
   /
   
-  energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
+energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
     ue_steel_primary   . en_steel_primary
     ue_steel_secondary . feel_steel_secondary
+  /
+
+entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+  /
+    fesos
+    fehos
+    fegas
+  /
+
+
+ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
+  /
+    feelhth_chemicals
+    feelwlth_chemicals
+    feel_steel_secondary
+    feelwlth_otherInd
+    feelhth_otherInd
   /
 ;
 
