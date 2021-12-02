@@ -187,6 +187,7 @@ for(scen in common){
   cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"] 
 
   # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+  path_mif_ghgprice_land <- NULL
   if ("path_mif_ghgprice_land" %in% names(scenarios_coupled)) {
     if (!is.na(scenarios_coupled[scen, "path_mif_ghgprice_land"])) {
         if (substr(scenarios_coupled[scen, "path_mif_ghgprice_land"], nchar(scenarios_coupled[scen, "path_mif_ghgprice_land"])-3, nchar(scenarios_coupled[scen, "path_mif_ghgprice_land"])) == ".mif") {
@@ -198,8 +199,6 @@ for(scen in common){
         }
         cfg_mag$path_to_report_ghgprices <- path_mif_ghgprice_land
     }
-  } else {
-    path_mif_ghgprice_land <- NULL
   }
   
   # How to provide the exogenous TC to MAgPIE:
