@@ -1185,45 +1185,35 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
                           AND NOT industry_ue_calibration_target_dyn37(out)
                           AND NOT cesOut2cesIn_below("ue_steel_secondary",in) ),
   !! in2 is the reference energy input (gas if 'in' is H2)
-  loop (in2$( pm_calibrate_eff_scale(in,in2,"level") ),
+  loop ((t_29hist_last,in2)$( pm_calibrate_eff_scale(in,in2,"level") ),
     !! compute the parameter describing the speed of convergence towards in2
-    p29_t_tmp(t)$( t_29scen(t) )
+    p29_t_tmp(t)
     = pm_calibrate_eff_scale(in,in2,"level")
-    / ( 1
-      + exp((pm_calibrate_eff_scale(in,in2,"midperiod") - t.val)
-          / pm_calibrate_eff_scale(in,in2,"width")
-          )
-      );
+    * (t.val - t_29hist_last.val)
+    / (pm_calibrate_eff_scale(in,in2,"period") - t_29hist_last.val);
 
-    p29_t_tmp(t) = p29_t_tmp(t) - sum(t0, p29_t_tmp(t0));
-    p29_t_tmp(t) = min(1, max(0, p29_t_tmp(t)));
+    p29_t_tmp(t)
+    = max(0, min(pm_calibrate_eff_scale(in,in2,"level"), p29_t_tmp(t)));
 
+    !! modify the total efficiency of in according to convergence towards in2
     pm_cesdata(t_29scen(t),regi_dyn29(regi),in,"effGr")
-    =  1 
-       / ( pm_cesdata(t,regi,in,"eff")
-          * pm_cesdata(t,regi,in,"xi")
-          ** (1
-              / pm_cesdata(t,regi,out,"rho")
-              )
+    = 1 
+    / ( pm_cesdata(t,regi,in,"eff")
+      * pm_cesdata(t,regi,in,"xi") ** (1 / pm_cesdata(t,regi,out,"rho"))
+      )
+    * ( ( (1 - p29_t_tmp(t))
+        * ( pm_cesdata(t,regi,in,"xi") ** ( 1 / pm_cesdata(t,regi,out,"rho"))
+          * pm_cesdata(t,regi,in,"eff")
+          * pm_cesdata(t,regi,in,"effGr")
           )
-       * (
-          (1 - p29_t_tmp(t))
-           * ( pm_cesdata(t,regi,in,"xi")
-               ** ( 1
-                     / pm_cesdata(t,regi,out,"rho")
-                   )
-             * pm_cesdata(t,regi,in,"eff")
-             * pm_cesdata(t,regi,in,"effGr")
-             )
-          + p29_t_tmp(t)
-           * ( pm_cesdata(t,regi,in2,"xi")
-               ** ( 1
-                     / pm_cesdata(t,regi,out,"rho")
-                   )
-             * pm_cesdata(t,regi,in2,"eff")
-             * pm_cesdata(t,regi,in2,"effGr")
-             )
-         );
+	)
+      + ( p29_t_tmp(t)
+        * ( pm_cesdata(t,regi,in2,"xi") ** ( 1 / pm_cesdata(t,regi,out,"rho"))
+          * pm_cesdata(t,regi,in2,"eff")
+          * pm_cesdata(t,regi,in2,"effGr")
+	  )
+        )
+      );
    );
 );
 
