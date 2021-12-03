@@ -507,22 +507,22 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 *SB* Region- and tech-specific early retirement rates
 *Regional*
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
-  pm_regiEarlyRetiRate(regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+  pm_regiEarlyRetiRate(ttot,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
 );
 *Tech-specific*
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
-  pm_regiEarlyRetiRate(regi,te)$(regi_group(ext_regi,regi)) = p_techEarlyRetiRate(ext_regi,te);
+  pm_regiEarlyRetiRate(ttot,regi,te)$(regi_group(ext_regi,regi)) = p_techEarlyRetiRate(ext_regi,te);
 );
 
 display pm_regiEarlyRetiRate;
 
 *SB* Time-dependent early retirement rates in Baseline scenarios
-$if.Base_Cprice %carbonprice% == "none"
-$if.Base_techpol %techpol% == "none"
+$ifthen.Base_Cprice %carbonprice% == "none"
+$ifthen.Base_techpol %techpol% == "none"
 *** Allow very little early retirement future periods
-pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2020) = 0.01;
-$endif.Base_Cprice
+pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2025) = 0.01;
 $endif.Base_techpol
+$endif.Base_Cprice
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te

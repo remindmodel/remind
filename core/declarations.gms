@@ -100,7 +100,7 @@ pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for tec
 
 pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions)" / %cm_regi_earlyreti_rate% /
 p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %cm_tech_earlyreti_rate% /
-pm_regiEarlyRetiRate(all_regi,all_te)                "regional early retirement rate (model native regions)"
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
