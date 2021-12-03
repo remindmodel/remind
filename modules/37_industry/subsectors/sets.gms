@@ -272,11 +272,9 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
 
 ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
   /
-    feelwlth_chemicals
     feelhth_chemicals
-    feel_cement
-    feelwlth_otherInd
     feelhth_otherInd
+    feh2_otherInd
     feel_steel_secondary
     feel_steel_primary
     feh2_steel
