@@ -5,11 +5,15 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
+pm_PEPrice, parameter, only used in capacity realization
 pm_SEPrice, parameter, only necessary for secondary energy trade
 
 pm_gdp,input,questionnaire
 cm_import_EU,input,questionnaire
-cm_ariadne_trade_el,input,questionnaire
-cm_ariadne_trade_h2,input,questionnaire
-cm_ariadne_trade_synliq,input,questionnaire
-cm_ariadne_trade_syngas,input,questionnaire
+
+pm_omeg,parameter,only used in capacity realization
+pm_data,parameter,only used in capacity realization
+pm_tsu2opTimeYr,parameter,only used in capacity realization
+pm_ttot_val,parameter,only used in capacity realization
+pm_ts,parameter,only used in capacity realization
+pm_dt,parameter,only used in capacity realization

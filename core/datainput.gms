@@ -138,6 +138,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
 $include "./core/input/generisdata_tech.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
@@ -190,9 +191,11 @@ $offdelim
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 *JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,

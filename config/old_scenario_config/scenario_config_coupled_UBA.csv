@@ -1,4 +1,4 @@
-title;start;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
+title;start;oldrun;path_report;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
 REF_Def05;1;REF_Def05;;SSP2, UBA_def, coupling;y2010;;baseline;;
 NPi05;0;NPi05;;SSP2, UBA_def, coupling;y2100;;;;
 NPi_uba;1;NPi_uba;;SSP2, UBA_def, coupling;y2100;;BAU;;

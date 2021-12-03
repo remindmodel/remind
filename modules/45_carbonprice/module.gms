@@ -16,7 +16,6 @@
 *' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%carbonprice%" == "ExogSameAsPrevious" $include "./modules/45_carbonprice/ExogSameAsPrevious/realization.gms"
 $Ifi "%carbonprice%" == "NDC" $include "./modules/45_carbonprice/NDC/realization.gms"
 $Ifi "%carbonprice%" == "NDC2constant" $include "./modules/45_carbonprice/NDC2constant/realization.gms"
 $Ifi "%carbonprice%" == "NPi2018" $include "./modules/45_carbonprice/NPi2018/realization.gms"

@@ -205,7 +205,7 @@ pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data o
 * Fuel Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
-p_PEPrice(ttot,all_regi,all_enty)                     "parameter to capture all PE prices (tr$2005/TWa)"
+pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
 
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"

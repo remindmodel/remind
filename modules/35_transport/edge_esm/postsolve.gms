@@ -7,7 +7,7 @@
 *** SOF ./modules/35_transport/edge_esm/postsolve.gms
 
 *** calculation of FE Transport Prices (useful for internal use and reporting purposes)
-pm_FEPrice(t,regi,entyFE,"trans",emiMkt)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
-       q35_demFeTrans.m(t,regi,entyFE,emiMkt) / qm_budget.m(t,regi);
+pm_FEPrice(ttot,regi,entyFE,"trans",emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q35_demFeTrans.m(ttot,regi,entyFE,emiMkt) / qm_budget.m(ttot,regi);
 
 *** EOF ./modules/35_transport/edge_esm/postsolve.gms
