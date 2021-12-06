@@ -514,7 +514,6 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
   pm_regiEarlyRetiRate(ttot,regi,te)$(regi_group(ext_regi,regi)) = p_techEarlyRetiRate(ext_regi,te);
 );
 
-display pm_regiEarlyRetiRate;
 
 *SB* Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
@@ -523,6 +522,9 @@ $ifthen.Base_techpol %techpol% == "none"
 pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2025) = 0.01;
 $endif.Base_techpol
 $endif.Base_Cprice
+
+display pm_regiEarlyRetiRate;
+
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
