@@ -44,82 +44,88 @@ p24_seTradeCapacity(t,regi2,regi,entySe) = 0;
 *** Secondary Energy exogenously defined trade scenarios
 
 
-*** Scenario Assumptions for Imports to the EU
-$ifthen.import_h2_EU "%cm_import_EU%" == "low_h2"
-loop(regi2$(regi_group("EUR_regi",regi2)),
-  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.5*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*0.75*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND t.val ge 2055) = 1*sm_EJ_2_TWa*1.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-);
+*** Scenario Assumptions for Imports to the EU from MEA (Ariadne Scenarios)
+p24_seTrade_Quantity(regi,regi2,entySe) = 0;
+
+$ifthen.import_h2_EU "%cm_import_EU%" == "bal"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seh2")$(regi_group("EU27_regi",regi2)) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTrade_Quantity("MEA",regi2,"seliqsyn")$(regi_group("EU27_regi",regi2)) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+
+*** Germany (overrides value from EU above)  
+  p24_seTrade_Quantity("MEA","DEU","seel") = 0.25*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 0.75*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.75*sm_EJ_2_TWa;
 $endif.import_h2_EU
 
+
+$ifthen.import_h2_EU "%cm_import_EU%" == "low_elec"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seh2")$(regi_group("EU27_regi",regi2)) = 0.5*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTrade_Quantity("MEA",regi2,"seliqsyn")$(regi_group("EU27_regi",regi2)) = 0.5*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+
+*** Germany (overrides value from EU above)  
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 0.5*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.3*sm_EJ_2_TWa;
+$endif.import_h2_EU
+
+$ifthen.import_h2_EU "%cm_import_EU%" == "high_elec"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seh2")$(regi_group("EU27_regi",regi2)) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTrade_Quantity("MEA",regi2,"seliqsyn")$(regi_group("EU27_regi",regi2)) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+
+*** Germany (overrides value from EU above)  
+  p24_seTrade_Quantity("MEA","DEU","seel") = 0.5*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 1*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.3*sm_EJ_2_TWa;
+$endif.import_h2_EU
+
+$ifthen.import_h2_EU "%cm_import_EU%" == "low_h2"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seh2")$(regi_group("EU27_regi",regi2)) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+
+*** Germany (overrides value from EU above)  
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 0.5*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.3*sm_EJ_2_TWa;
+$endif.import_h2_EU
 
 $ifthen.import_h2_EU "%cm_import_EU%" == "high_h2"
-loop(regi2$(regi_group("EUR_regi",regi2)),
-  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.5*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*0.75*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA")) = 4*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND t.val ge 2055) = 4*sm_EJ_2_TWa*1.25*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EUR_regi",regi3)),pm_gdp("2015",regi3));
-);
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seh2")$(regi_group("EU27_regi",regi2)) = 4*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+
+*** Germany (overrides value from EU above)  
+  p24_seTrade_Quantity("MEA","DEU","seel") = 0.3*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 2*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.5*sm_EJ_2_TWa;
 $endif.import_h2_EU
 
+$ifthen.import_h2_EU "%cm_import_EU%" == "low_synf"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seliqsyn")$(regi_group("EU27_regi",regi2)) = 0.75*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTrade_Quantity("MEA",regi2,"segasyn")$(regi_group("EU27_regi",regi2)) = 0.25*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
 
+*** Germany (overrides value from EU above) 
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.5*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","segasyn") = 0.1*sm_EJ_2_TWa;
+$endif.import_h2_EU
 
+$ifthen.import_h2_EU "%cm_import_EU%" == "high_synf"
+*** EU
+  p24_seTrade_Quantity("MEA",regi2,"seliqsyn")$(regi_group("EU27_regi",regi2)) = 3*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
+  p24_seTrade_Quantity("MEA",regi2,"segasyn")$(regi_group("EU27_regi",regi2))) = 1*sm_EJ_2_TWa*pm_gdp("2015",regi2) / sum(regi3$(regi_group("EU27_regi",regi3)),pm_gdp("2015",regi3));
 
-*** Scenario Assumptions for Imports to Germany (overwrites EU-wide import assumptions above)
-$ifthen.seTradeScenario "%cm_seTradeScenario%" == "DEU_Low_H2"
-*Low Hydrogen trade in Germany only (all imports from MEA)
-  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 10/8760; !! TWh to TWa
-  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 30/8760;
-  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 100/8760;
-  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2055) = 150/8760;
-$elseif.seTradeScenario "%cm_seTradeScenario%" == "DEU_High_H2"
-  p24_seTradeCapacity("2030",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 30/8760;
-  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 100/8760;
-  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 200/8760;
-  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 400/8760;
-  p24_seTradeCapacity("2050",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = 500/8760;
-  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2055) = 600/8760;
-$endif.seTradeScenario
+*** Germany (overrides value from EU above) 
+  p24_seTrade_Quantity("MEA","DEU","seel") = 0.3*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","seh2") = 0.5*sm_EJ_2_TWa; 
+  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 1.6*sm_EJ_2_TWa;
+  p24_seTrade_Quantity("MEA","DEU","segasyn") = 0.36*sm_EJ_2_TWa;
+$endif.import_h2_EU
 
-if( cm_ariadne_trade_el gt 0,
-*** cm_ariadne_trade_el is fix electricity import from ENC to Germany from 2050 onwards in TWh/yr
-  p24_seTradeCapacity(t,regi,regi2,"seel")$(sameas(regi,"ENC") AND sameas(regi2,"DEU") AND t.val ge 2050) = cm_ariadne_trade_el/8760; 
-*** phase in of imports before 2050
-  p24_seTradeCapacity("2045",regi,regi2,"seel")$(sameas(regi,"ENC") AND sameas(regi2,"DEU")) = cm_ariadne_trade_el/8760*3/4; 
-  p24_seTradeCapacity("2040",regi,regi2,"seel")$(sameas(regi,"ENC") AND sameas(regi2,"DEU")) = cm_ariadne_trade_el/8760*2/4;
-  p24_seTradeCapacity("2035",regi,regi2,"seel")$(sameas(regi,"ENC") AND sameas(regi2,"DEU")) = cm_ariadne_trade_el/8760*1/4;
-);
-
-if( cm_ariadne_trade_h2 gt 0,
-*** cm_ariadne_trade_h2 is fix h2 import from MEA to Germany from 2050 onwards in TWh/yr
-  p24_seTradeCapacity(t,regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2050) = cm_ariadne_trade_h2/8760; 
-*** phase in of imports before 2050
-  p24_seTradeCapacity("2045",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_h2/8760*3/4; 
-  p24_seTradeCapacity("2040",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_h2/8760*2/4;
-  p24_seTradeCapacity("2035",regi,regi2,"seh2")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_h2/8760*1/4;
-);
-
-if( cm_ariadne_trade_synliq gt 0,
-*** cm_ariadne_trade_synliq is fix liquid synfuel import from MEA to Germany from 2050 onwards in TWh/yr
-  p24_seTradeCapacity(t,regi,regi2,"seliqsyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2050) = cm_ariadne_trade_synliq/8760; 
-*** phase in of imports before 2050
-  p24_seTradeCapacity("2045",regi,regi2,"seliqsyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_synliq/8760*3/4; 
-  p24_seTradeCapacity("2040",regi,regi2,"seliqsyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_synliq/8760*2/4;
-  p24_seTradeCapacity("2035",regi,regi2,"seliqsyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_synliq/8760*1/4;
-);
-
-if( cm_ariadne_trade_syngas gt 0,
-*** cm_ariadne_trade_syngas is fix liquid synfuel import from MEA to Germany from 2050 onwards in TWh/yr
-  p24_seTradeCapacity(t,regi,regi2,"segasyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU") AND t.val ge 2050) = cm_ariadne_trade_syngas/8760; 
-*** phase in of imports before 2050
-  p24_seTradeCapacity("2045",regi,regi2,"segasyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_syngas/8760*3/4; 
-  p24_seTradeCapacity("2040",regi,regi2,"segasyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_syngas/8760*2/4;
-  p24_seTradeCapacity("2035",regi,regi2,"segasyn")$(sameas(regi,"MEA") AND sameas(regi2,"DEU")) = cm_ariadne_trade_syngas/8760*1/4;
-);
+*** phase in import quantities given by p24_seTrade_Quantity linearly from 2035 to 2050
+p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge 2050) = p24_seTrade_Quantity(regi,regi2,entySe);
+p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2045) = p24_seTrade_Quantity(regi,regi2,entySe)*0.75;
+p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2040) = p24_seTrade_Quantity(regi,regi2,entySe)*0.5;
+p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.25;
 
 
 *** EOF ./modules/24_trade/se_trade/datainput.gms

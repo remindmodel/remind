@@ -332,10 +332,6 @@ cm_HeatLim_b                "switch to set maximum share of district heating in 
 cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
 cm_startIter_EDGET          "starting iteration of EDGE-T"
 cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
-cm_ariadne_trade_el         "switch for enabling electricity imports to Germany for ARIADNE project"
-cm_ariadne_trade_h2         "switch for enabling H2 imports to Germany for ARIADNE project"
-cm_ariadne_trade_synliq        "switch for enabling synfuel liquids imports to Germany for ARIADNE project"
-cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Germany for ARIADNE project"
 cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -444,7 +440,7 @@ $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
-cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
+cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
 $setGlobal cm_emiMktETS_type  off  !! def = off
@@ -546,11 +542,6 @@ cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
 
-cm_ariadne_trade_el = 0; !! def 0
-cm_ariadne_trade_h2 = 0; !! def 0
-cm_ariadne_trade_synliq = 0; !! def 0
-cm_ariadne_trade_syngas = 0; !! def 0
-
 $setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
 $setGlobal c_VREPot_Factor  off !! def = off
@@ -603,7 +594,7 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
+$setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
@@ -639,9 +630,6 @@ $setglobal cm_INNOPATHS_sehe_upper  off !! def = off
 $setglobal cm_fixCO2price  off !! def = off
 
 $setglobal cm_feShareLimits  off  !! def = off
-
-$setglobal c_fuelprice_init  off !! def = off
-$setglobal cm_seTradeScenario  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 

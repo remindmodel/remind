@@ -49,7 +49,6 @@ pkgs <- c("curl",
           "mrremind",
           "remind2",
           "remulator",
-          "rhdf5",
           "shinyresults")
 install.packages(pkgs)
 ```

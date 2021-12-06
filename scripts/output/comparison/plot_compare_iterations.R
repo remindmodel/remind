@@ -16,9 +16,17 @@ library(remind2, quietly = TRUE,warn.conflicts =FALSE)
 library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
 ############################# BASIC CONFIGURATION #############################
-runs <- NULL
-folder <- "./output"
-readArgs("runs","folder")
+if(!exists("source_include")) {
+  cat("Script started from command line.\n")
+  print(ls())
+  runs <- NULL
+  folder <- "./output"
+  readArgs("runs","folder")
+} else {
+  cat("Script was sourced.\n")
+  cat("runs  : ",runs,"\n")
+  cat("folder: ",folder,"\n")
+}
 
 ###############################################################################
 
@@ -114,17 +122,16 @@ plot_iterations <- function(runname) {
 	######################### COMMON SETTINGS ############################
 	TWa2EJ <- 31.5576      # TWa to EJ (1 a = 365.25*24*3600 s = 31557600 s)
 	txtsiz <- 10
-	r   <- c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA","GLO")
+	r   <- sort(c("SSA","CHA","EUR","NEU","IND","JPN","LAM","MEA","OAS","CAZ","REF","USA"))
 	y   <- paste0("y",2000+10*(1:10))
   years <- c("y2005","y2010","y2015","y2020","y2025","y2030","y2035","y2040","y2045","y2050","y2055","y2060","y2070","y2080","y2090","y2100") # used for fillyears
-  r_sub  <- setdiff(c("SSA","CHA","EUR","IND","LAM","OAS","CAZ","REF","USA"),"GLO")
   sm_tdptwyr2dpgj <- 31.71 # multipl. factor to convert (TerraDollar per TWyear) to (Dollar per GJoule)
 	######################### IMPORT AND PLOT DATA #######################
 	
 	### PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ###
 	price <- read_all(gdx_path,readbioprice,name="p30_pebiolc_pricemag",as.list=FALSE)
   price <- price / TWa2EJ * 1000
-  price <- mbind(price,new.magpie("GLO",getYears(price),getNames(price),fill=c(0)))
+  #price <- mbind(price,new.magpie("GLO",getYears(price),getNames(price),fill=c(0)))
   getNames(price) <- gsub(".*rem-","",getNames(price))
 
 	v  <- paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n")
@@ -161,7 +168,7 @@ plot_iterations <- function(runname) {
   p_it_fuelex <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
-  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,years,]["GLO",,,invert=TRUE],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
+  p_it_fuelex_fix <- magpie2ggplot2(fuelex_bio[r,years,],scenario=1,group="Year",ylab="EJ/yr",color="Year",xaxis="Scenario",facet_x="Region",show_grid=TRUE,title=v,
                        scales="fixed",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
                        
@@ -186,7 +193,7 @@ plot_iterations <- function(runname) {
 
   ### PRICE SHIFT FACTOR IN 2060 ###
 	shift <- read_all(gdx_path,readshift,as.list=FALSE)* sm_tdptwyr2dpgj
-  shift <- mbind(shift,new.magpie("GLO",getYears(shift),getNames(shift),fill=c(0)))
+  #shift <- mbind(shift,new.magpie("GLO",getYears(shift),getNames(shift),fill=c(0)))
   shift <- fillyears(shift,years)
   getNames(shift) <- gsub(".*rem-","",getNames(shift))
   
@@ -201,7 +208,7 @@ plot_iterations <- function(runname) {
   v_shift    <- fillyears(v_shift,years) # If there is no year dimension add it
   getNames(v_shift) <- gsub(".*rem-","",getNames(v_shift))
 
-  p_shift <- magpie2ggplot2(v_shift[r_sub,years,],geom='line',group=NULL,
+  p_shift <- magpie2ggplot2(v_shift[r,years,],geom='line',group=NULL,
                         ylab='$/GJ',color='Data1',#linetype="Data2",
                         scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price shift",sep="\n"))
@@ -211,7 +218,7 @@ plot_iterations <- function(runname) {
   #y_limreg  <- c(0,max(v_mult[,years,]))
   getNames(v_mult) <- gsub(".*rem-","",getNames(v_mult))
   
-  p_mult <- magpie2ggplot2(v_mult[r_sub,years,],geom='line',group=NULL,
+  p_mult <- magpie2ggplot2(v_mult[r,years,],geom='line',group=NULL,
                         ylab='',color='Data1',#linetype="Data2",
                         scales='free_y',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price mult factor",sep="\n"))
