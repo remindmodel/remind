@@ -519,7 +519,7 @@ loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te),
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
 *** Allow very little early retirement future periods
-pm_regiEarlyRetiRate(ttot,regi,te)$(ttot.val gt 2025) = 0.01;
+pm_regiEarlyRetiRate(ttot,regi,"pc")$(ttot.val gt 2025) = 0.01;
 $endif.Base_techpol
 $endif.Base_Cprice
 
