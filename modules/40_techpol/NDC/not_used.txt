@@ -8,3 +8,4 @@ name,type,reason
 pm_ttot_val,parameter,???
 pm_NuclearConstraint,input,questionnaire
 vm_capEarlyReti,input,questionnaire
+pm_regiEarlyRetiRate,input,questionnaire
