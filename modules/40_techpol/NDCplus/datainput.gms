@@ -15,7 +15,7 @@ $offdelim
 $onlisting
 ;
 
-p40_TechBound(ttot,all_regi,all_te) = p40_TechBound_new_Table(ttot,all_regi,"%cm_NDC_version%",all_te);
+p40_TechBound(ttot,all_regi,all_te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",all_te);
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
