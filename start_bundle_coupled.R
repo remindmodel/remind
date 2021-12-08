@@ -288,6 +288,7 @@ for(scen in common){
     cp_start_now <- (substr(settings_remind[scen,"path_gdx_carbonprice"], nchar(settings_remind[scen,"path_gdx_carbonprice"])-3, nchar(settings_remind[scen,"path_gdx_carbonprice"])) == ".gdx"
                 | is.na(settings_remind[scen,"path_gdx_carbonprice"]))
     start_now <- start_now & cp_start_now
+    cfg_rem$files2export$start['input_carbonprice.gdx'] <- settings_remind[scen,"path_gdx_carbonprice"]
   }
 
   if (!start_now) {
