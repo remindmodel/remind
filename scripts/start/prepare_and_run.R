@@ -857,8 +857,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
   start_subsequent_runs <- !coupled_run
  
-  # if RunsUsingTHISgdxAsInput has at least one row
-  if (start_subsequent_runs & (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0)) {
+  if (start_subsequent_runs & (length(cfg$RunsUsingTHISgdxAsInput)[1] != 0)) {
   
     # Save the current cfg settings into a different data object, so that they are not overwritten
     cfg_main <- cfg
