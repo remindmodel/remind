@@ -44,14 +44,6 @@ p45_factorRescaleCO2TaxTrack(iteration,ttot,regi) = p45_factorRescaleCO2Tax(ttot
 
 display p45_factorRescaleCO2TaxTrack;
 
-***carbon price safety valve for low-income and lower-middle income regions: max 1/4 of EUR carbon price
-***pm_taxCO2eq(t,"IND")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"IND"),0.25*pm_taxCO2eq(t,"EUR"));
-***pm_taxCO2eq(t,"AFR")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"AFR"),0.25*pm_taxCO2eq(t,"EUR"));
-***regions with some low-income or lower-middle income regions: max 50%
-***pm_taxCO2eq(t,"LAM")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"LAM"),0.5*pm_taxCO2eq(t,"EUR"));
-***pm_taxCO2eq(t,"MEA")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"MEA"),0.5*pm_taxCO2eq(t,"EUR"));
-***pm_taxCO2eq(t,"OAS")$(t.val gt 2014 AND t.val lt 2036) = min(pm_taxCO2eq(t,"OAS"),0.5*pm_taxCO2eq(t,"EUR"));
-***new hard-coded safety valve for SSA: 7.5$ in 2005, 30 in 2025, 45 in 2030
 *CB* special case SSA: maximum carbon price at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
 pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")),7.5 * sm_DptCO2_2_TDpGtC);
 pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")),30 * sm_DptCO2_2_TDpGtC);
@@ -81,21 +73,6 @@ pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = max(pm_taxCO2eq(ttot,regi),1*sm_DptC
 
 *** new 2020 carbon price definition: weighted average of 2015 and 2025, with triple weight for 2015 (which is zero for all non-eu regions).
 pm_taxCO2eq("2020",regi) = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
-
-***
-***special treatment for 2020 (not relevant if cm_startyear for NDC scenario is 2020, but relevant if earlier)
-***pm_taxCO2eq("2020","EUR") = 5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","USA") = 3 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","JPN") = 3 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","ROW") = 3 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","CHN") = 1 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","IND") = 0.5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","LAM") = 0.5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","OAS") = 0.5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","AFR") = 0.5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","MEA") = 0.5 * sm_DptCO2_2_TDpGtC;
-***pm_taxCO2eq("2020","RUS") = 0.5 * sm_DptCO2_2_TDpGtC;
-
 
         display pm_taxCO2eq;
 );
