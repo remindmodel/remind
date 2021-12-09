@@ -116,8 +116,7 @@ f04_IO_output("2005",regi,"segafos","fegai","tdfosgai")$(p04_IO_output_beforeFix
 
 
 *** industry heat
-p04_IO_output_beforeFix_Total(t,regi,"fehei") = p04_IO_output_beforeFix(t,regi,"sehe","fehei","tdhei")
-                                                  + p04_IO_output_beforeFix(t,regi,"sehe","fehei","tdhei");
+p04_IO_output_beforeFix_Total(t,regi,"fehei") = p04_IO_output_beforeFix(t,regi,"sehe","fehei","tdhei");
 
 
 f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total("2005",regi,"fehei")) = p04_IO_output_beforeFix("2005",regi,"sehe","fehei","tdhei")  
