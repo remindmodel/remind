@@ -281,12 +281,10 @@ if ('--restart' %in% argv) {
     }
   
     # print names of subsequent runs if there are any
-    # we have to check first is there is a cfg$RunsUsingTHISgdxAsInput, since there won't be if this is a default run 
-    if (!is.null(dim(cfg$RunsUsingTHISgdxAsInput))) { 
-    if (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
+    if (length(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
       if (any(cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen)) {
       cat("   Subsequent runs:",rownames(cfg$RunsUsingTHISgdxAsInput[cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen,]),"\n")
-    }}}
+    }}
     
   }
 }
