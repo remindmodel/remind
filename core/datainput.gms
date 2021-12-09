@@ -1507,14 +1507,4 @@ $endif.subsectors
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
-*** define tolerance level by how much biomass share needs to comply with 2005 historical values
-*** low tolerance for fixed_shares, there is works
-s_histBioShareTolerance = 0.02;
-*** temporary: until subsectors historical FE mix checked -> high tolerance for industry subsectors to make it run 
-$ifthen.subsectors "%industry%" == "subsectors"   !! industry
-s_histBioShareTolerance = 0.02;
-$endif.subsectors
-
-
-
 *** EOF ./core/datainput.gms
