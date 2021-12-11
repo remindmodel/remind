@@ -507,11 +507,14 @@ pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 *SB* Region- and tech-specific early retirement rates
 *Regional*
 loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and t.val ge 2020) = pm_extRegiEarlyRetiRate(ext_regi);
 );
 *Tech-specific*
 loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
-  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = p_techEarlyRetiRate(ext_regi,te);
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and t.val ge 2020) = p_techEarlyRetiRate(ext_regi,te);
+
+*  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and not sameas(ext_regi,"EUR_regi") and t.val ge 2035 and p_techEarlyRetiRate(ext_regi,te) gt p_techEarlyRetiRate("GLO",te)) = p_techEarlyRetiRate("GLO",te);
+
 );
 
 
