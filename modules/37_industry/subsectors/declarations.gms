@@ -7,7 +7,7 @@
 *** SOF ./modules/37_industry/subsectors/declarations.gms
 
 Scalar
-  s37_clinker_process_CO2   "CO2 emissions per unit of clinker production"
+  s37_clinker_process_CO2              "CO2 emissions per unit of clinker production"
 ;
 
 Parameters
@@ -18,7 +18,7 @@ Parameters
 
   pm_ue_eff_target(all_in)   "energy efficiency target trajectories [% p.a.]"
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt) "Captured CO2 in industry by energy carrier, subsector and emissions market"
-
+  p37_max_secondary_steel_share(tall,all_regi,all_GDPscen)                   "maximum share of secondary steel production [0-1]"
   p37_CESMkup(ttot,all_regi,all_in)  "CES markup cost parameter [trUSD/CES input]"
   p37_chemicals_feedstock_share(ttot,all_regi)   "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
 
