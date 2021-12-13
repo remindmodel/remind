@@ -318,7 +318,7 @@ $ifthen setGlobal END2110
       )$ (ord(ttot) eq card(ttot) )				   
 $endif
 )
-    + v_slack_qcap(ttot,regi,te,rlf);
+;
 
 
 
