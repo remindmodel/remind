@@ -85,6 +85,10 @@ ppfen_CESMkup_dyn36(all_in)                   "buildings production factors of C
 /
   feelhpb
   feheb
+  feelrhb
+  fehob
+  fesob
+  fegab
 /
 
 ;

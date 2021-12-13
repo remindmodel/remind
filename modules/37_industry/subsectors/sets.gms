@@ -285,6 +285,7 @@ ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CE
     feel_steel_secondary
     feel_steel_primary
     feh2_steel
+    fehe_otherInd
   /
 ;
 
