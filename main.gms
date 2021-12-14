@@ -585,12 +585,13 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure  0    !! def =  0
-$setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
-$setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
-$setglobal cm_calibration_string  off      !! def = off
+$setglobal c_CES_calibration_new_structure        0     !!  def  =  0
+$setglobal c_CES_calibration_iterations          10     !!  def  =  10
+$setglobal c_CES_calibration_iteration            1     !!  def  =  1
+$setglobal c_CES_calibration_write_prices         0     !!  def  =  0
+$setglobal cm_CES_calibration_default_prices      0.01  !!  def  =  0.01
+$setglobal c_CES_calibration_industry_FE_target   0                 
+$setglobal cm_calibration_string                 off    !!  def  =  off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
