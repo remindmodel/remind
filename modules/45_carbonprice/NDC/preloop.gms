@@ -6,47 +6,39 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/preloop.gms
 
-*CB* special case SSA: maximum carbon price (after adjustment below) at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
+***CB* special case SSA: maximum carbon price (after adjustment below) at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
 pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = 15 * sm_DptCO2_2_TDpGtC;
 
-*CB* calculate tax path until 2030 - linear increase
-pm_taxCO2eq(ttot,regi)$(ttot.val gt 2016 AND ttot.val le 2030) = pm_taxCO2eq("2020",regi)*(ttot.val-2015)/5;
+*** first calculate tax path until last NDC target year - linear increase
+pm_taxCO2eq(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p45_last_NDC_year(regi)) = pm_taxCO2eq("2020",regi)*(ttot.val-2015)/5;
 
-*** convergence scheme post 2030: exponential increase with 1.25% AND regional convergence
-pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = (pm_taxCO2eq("2030",regi)*1.0125**(ttot.val-2030)*max(70-ttot.val+2030,0) + 30 * sm_DptCO2_2_TDpGtC * 1.0125**(ttot.val-2030)*min(ttot.val-2030,70))/70;
-***special case USA: already after 2025 shift to convergence
-pm_taxCO2eq(ttot,regi_2025target)$(ttot.val gt 2025) = (pm_taxCO2eq("2025",regi_2025target)*1.0125**(ttot.val-2025)*max(75-ttot.val+2025,0) + 30 * sm_DptCO2_2_TDpGtC * 1.0125**(ttot.val-2030)*min(ttot.val-2025,75))/75;
+*** convergence scheme after the last NDC target year: exponential increase with 1.25% AND regional convergence until p45_taxCO2eq_convergence_year
+p45_taxCO2eq_last_NDC_year(regi) = smax(ttot$(ttot.val = p45_last_NDC_year(regi)), pm_taxCO2eq(ttot,regi));
+
+pm_taxCO2eq(ttot,regi)$(ttot.val gt p45_last_NDC_year(regi))
+   = (  !! regional, weight going from 1 in last NDC target year to 0 in 2100
+        p45_taxCO2eq_last_NDC_year(regi) * 1.0125**(ttot.val-p45_last_NDC_year(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
+        !! global, weight going from 0 in NDC target year to 1 in and after 2100
+      + p45_taxCO2eq_global2030          * 1.0125**(ttot.val-2030)                    * (min(p45_taxCO2eq_convergence_year,ttot.val) - p45_last_NDC_year(regi))
+      )/(p45_taxCO2eq_convergence_year - p45_last_NDC_year(regi));
+
+display pm_taxCO2eq;
+
 ***as a minimum, have linear price increase starting from 1$ in 2030
-pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = max(pm_taxCO2eq(ttot,regi),1*sm_DptCO2_2_TDpGtC * (1+(ttot.val-2030)*9/7));
+pm_taxCO2eq(ttot,regi)$(ttot.val gt p45_last_NDC_year(regi)) = max(pm_taxCO2eq(ttot,regi),1*sm_DptCO2_2_TDpGtC * (1+(ttot.val-2030)*9/7));
 
 *** new 2020 carbon price definition: weighted average of 2015 and 2025, with triple weight for 2015 (which is zero for all non-eu regions).
 pm_taxCO2eq("2020",regi) = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
 
+display pm_taxCO2eq;
 
 *#' @equations 
-*#'  calculate level of emission target that it should converge to, two types of targets
-*#'  emission target relative to 2005 emissions (target multiplier)
-*#'  emission target relative to baseline emissions (baseline multiplier)
-p45_ref_co2eq_woLU_regi(regi_2030target) = p45_BAU_reg_emi_wo_LU_bunkers("2005",regi_2030target) !!calculation: 2005 times multiplier, calculated as weighted average of                                             
-											* (!! target multiplier 
-                                               p45_2005share_target("2030",regi_2030target,"%cm_GDPscen%") 
-                                               * p45_factor_targetyear("2030",regi_2030target,"%cm_GDPscen%")
-											   !! and baseline multiplier
-    										   + (1-p45_2005share_target("2030",regi_2030target,"%cm_GDPscen%")) 
-                                                 *  p45_BAU_reg_emi_wo_LU_bunkers("2030",regi_2030target) 
-                                                 /  p45_BAU_reg_emi_wo_LU_bunkers("2005",regi_2030target)
-                                            );
+*#'  calculate level of emission target that it should converge to, composed of:
+*#'  emission target relative to 2005 emissions (factor_targetyear) for part of region with NDC target
+*#'  baseline for the rest of the countries
+p45_ref_co2eq_woLU_regi(p45_NDC_year_set(ttot,regi)) = 
+          p45_2005share_target(ttot,regi)     * p45_BAU_reg_emi_wo_LU_bunkers("2005",regi) * p45_factor_targetyear(ttot,regi)    !! share with NDC target
+        + (1-p45_2005share_target(ttot,regi)) * p45_BAU_reg_emi_wo_LU_bunkers(ttot,regi);            !! baseline for share of countries without NDC target
 
-p45_ref_co2eq_woLU_regi(regi_2025target) = p45_BAU_reg_emi_wo_LU_bunkers("2005",regi_2025target) !!calculation: 2005 times multiplier, calculated as weighted average of 
-											* ( !! target multiplier 
-                                               p45_2005share_target("2025",regi_2025target,"%cm_GDPscen%") 
-                                               * p45_factor_targetyear("2025",regi_2025target,"%cm_GDPscen%")
-											   !! and baseline multiplier
-											+ (1-p45_2005share_target("2025",regi_2025target,"%cm_GDPscen%")) 
-                                              * p45_BAU_reg_emi_wo_LU_bunkers("2025",regi_2025target)
-                                              / p45_BAU_reg_emi_wo_LU_bunkers("2005",regi_2025target)
-                                            );
-
-	 
-display pm_taxCO2eq,p45_ref_co2eq_woLU_regi,regi_2025target,regi_2030target;
+display pm_taxCO2eq,p45_ref_co2eq_woLU_regi;
 *** EOF ./modules/45_carbonprice/NDC/preloop.gms
