@@ -819,7 +819,7 @@ q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2109 AND pm_ttot_val(ttot+1) ge m
         =g=
         vm_capEarlyReti(ttot,regi,te);
 
-q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear))..
+q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) gt max(2010, cm_startyear))..
         vm_capEarlyReti(ttot+1,regi,te)
         =l=
         vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * 
