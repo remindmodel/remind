@@ -547,6 +547,6 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
 
 *** FS: for debugging small infes in q_cap
-vm_cap.fx(t,"ECS","coalh2","1")$(t.val ge 2040)=0;
+***vm_cap.fx(t,"ECS","coalh2","1")$(t.val ge 2040)=0;
 
 *** EOF ./core/bounds.gms
