@@ -195,14 +195,36 @@ $offdelim
   /
 ;
 
+$ontext
 Parameter
   p37_max_secondary_steel_share(tall,all_regi,all_GDPscen)   "maximum share of secondary steel production [0-1]"
   /
 $ondelim
-$include "./modules/37_industry/subsectors/input/p37_max_secondary_steel_share.cs4r";
+$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
 $offdelim
   /
 ;
+$offtext
 
+*** FS: set maximum sec. steel share to 0.9 or config assumptions 
+*** default at 90% as before
+p37_max_secondary_steel_share(t,regi,"%cm_GDPscen%") = 0.9;
+*** switch cm_SecSteel_MaxShare to explicitly control secondary steel share in total steel
+$ifthen.secsteel not "%cm_SecSteel_MaxShare%" == "off" 
+*** from year given in cm_SecSteel_MaxShare, set secondary steel share to level specified by cm_SecSteel_MaxShare
+  loop((ttot,regi)$p37_SecSteel_MaxShare(ttot,regi),
+    loop(ttot2$(ttot2.val ge ttot.val),
+    p37_max_secondary_steel_share(ttot2,regi,"%cm_GDPscen%") = p37_SecSteel_MaxShare(ttot,regi);
+    );
+*** phase-in secondary steel share linearly before from 2020 onwards
+    loop(ttot2$(ttot2.val eq max(cm_startyear,2020)),
+    p37_max_secondary_steel_share(t,regi,"%cm_GDPscen%")$(t.val lt ttot.val and t.val ge ttot2.val)  = 
+      (p37_max_secondary_steel_share(ttot,regi,"%cm_GDPscen%") - p37_max_secondary_steel_share(ttot2,regi,"%cm_GDPscen%"))
+      /(ttot.val - ttot2.val) 
+      * (t.val - ttot2.val) 
+      + p37_max_secondary_steel_share(ttot2,regi,"%cm_GDPscen%");
+    );
+  );
+$endif.secsteel
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

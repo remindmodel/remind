@@ -37,6 +37,13 @@ Parameter
 ;
 $endIf.CESMkup
 
+
+$ifthen.secsteel not "%cm_SecSteel_MaxShare%" == "off" 
+Parameters
+    p37_SecSteel_MaxShare(ttot,all_regi)     "maximum share of secondary steel from ttot onwards"  / %cm_SecSteel_MaxShare% /   
+;
+$endif.secsteel
+
 Positive Variables
   vm_macBaseInd(ttot,all_regi,all_enty,secInd37)   "industry CCS baseline emissions [GtC/a]"
   vm_emiIndCCS(ttot,all_regi,all_enty)             "industry CCS emissions [GtC/a]"

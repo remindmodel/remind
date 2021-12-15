@@ -555,6 +555,11 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 
 $setGlobal cm_CESMkup_ind  standard !! def = standard
 $setGlobal cm_CESMkup_build  standard !! def = standard
+
+*** industry
+*** minimum secondary steel share
+$setglobal cm_SecSteel_MaxShare  2040.EUR 0.6 !! def = off
+
 c_BaselineAgriEmiRed = 0; !! def = 0
 
 cm_deuCDRmax = -1; !! def = -1
