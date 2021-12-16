@@ -7,12 +7,15 @@
 *** SOF ./modules/40_techpol/NPi2018/datainput.gms 
 *** SOF means start fo file and EOF means end of file. Use these before and after the body of the code
 
-Parameter p40_TechBound(ttot,all_regi,all_te) "NDC capacity targets for solar, wind, nuclear, hydro, and biomass (GW)"
-  /
+Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+$offlisting
 $ondelim
-$include "./modules/40_techpol/NPi2018/input/f40_NDC+REN21+CHN_NUC.cs4r"
+$include "./modules/40_techpol/NPi2018/input/f40_NDC+REN21+CHN_NUC.cs3r"
 $offdelim
-  /;
+$onlisting
+;
+
+p40_TechBound(ttot,all_regi,all_te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",all_te);
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 

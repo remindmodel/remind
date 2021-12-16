@@ -6,19 +6,17 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/45_carbonprice/NDC/realization.gms
 
-*#' @description This realization implements a carbon price trajectory consistent with the NDC targets (up to 2030) and 
-*# a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). 
+*' @description This realization implements a carbon price trajectory consistent with the NDC targets (up to 2030) and
+*' a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price).
 
-*#' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of 
-*#' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
+*' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of
+*' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
 *** Next update (2022):
-*** - Add NDC_2022.xlsx /p/projects/Rogelj2017/ on cluster
-*** - Set switch default in default.cfg to new year
-*** - Add new year six times in 45_carbonprice/NDC/input/files
-*** - Add new year six times in 45_carbonprice/NDC/datainput.gms
-*** - Add new year six times in mrremind in fullREMIND.R
-*** - Add new else if condition to calcEmiTarget.R in mrremind
+*** - Add NDC_2022.xlsx in /p/projects/rd3mod/inputdata/sources/UNFCCC_NDC/ on cluster, see README.txt in this folder
+*** - Set switch cm_NDC_version in /config/default.cfg to new year
+*** - add 2022_cond, 2022_uncond to set NDC_version in /core/sets.gms
+*** - Add new 2022 option in mrremind: calcEmiTarget, calcCapTarget, readUNFCCC_NDC
 
 
 *####################### R SECTION START (PHASES) ##############################
@@ -27,4 +25,5 @@ $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/NDC/datainput.g
 $Ifi "%phase%" == "preloop" $include "./modules/45_carbonprice/NDC/preloop.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/45_carbonprice/NDC/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
+
 *** EOF ./modules/45_carbonprice/NDC/realization.gms

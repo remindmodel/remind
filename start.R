@@ -264,8 +264,10 @@ if ('--restart' %in% argv) {
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
-      start_now <- (substr(cfg$files2export$start['input_ref.gdx'], nchar(cfg$files2export$start['input_ref.gdx'])-3, nchar(cfg$files2export$start['input_ref.gdx'])) == ".gdx"
+      gdx_exists <- (substr(cfg$files2export$start['input_ref.gdx'], nchar(cfg$files2export$start['input_ref.gdx'])-3, nchar(cfg$files2export$start['input_ref.gdx'])) == ".gdx"
                    | is.na(cfg$files2export$start['input_ref.gdx']))
+      start_now <- gdx_exists
+      if (gdx_exists) cat("   Using input_ref.gdx found here:", cfg$files2export$start['input_ref.gdx'], "\n")
     }
     
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
@@ -281,7 +283,7 @@ if ('--restart' %in% argv) {
     }
   
     # print names of subsequent runs if there are any
-    if (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
+    if (length(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
       if (any(cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen)) {
       cat("   Subsequent runs:",rownames(cfg$RunsUsingTHISgdxAsInput[cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen,]),"\n")
     }}
