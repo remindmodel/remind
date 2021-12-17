@@ -187,6 +187,12 @@ Sets
     feelhth_otherInd, feelwlth_otherInd
   /
 
+  ppf_industry_dyn37(all_in)   "primary production factors - industry"
+  /   /
+
+  ipf_industry_dyn37(all_in)   "intermediate production factors - industry"
+  /   /
+
   !! Calibration Sets
   pf_eff_target_dyn37(all_in)    "production factors with efficiency target"
   pf_quan_target_dyn37(all_in)   "production factors with quantity target"
@@ -220,6 +226,26 @@ Sets
     otherInd . (ue_otherInd, en_otherInd, kap_otherInd, en_otherInd_hth,
                 feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd,
                 fehe_otherInd, feelhth_otherInd, feelwlth_otherInd)
+  /
+
+  ue_industry_2_pf(all_in,all_in)   "link industry sub-sectors activity to pf"
+  /
+    ue_cement . (en_cement, kap_cement, en_cement_non_electric, feso_cement,
+                 feli_cement, fega_cement, feh2_cement, feel_cement)
+
+    ue_chemicals . (en_chemicals, kap_chemicals, en_chemicals_fhth, 
+                    feso_chemicals, feli_chemicals, fega_chemicals,
+		    feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
+
+    ue_steel_primary . (en_steel_primary, kap_steel_primary, en_steel_furnace,
+                        feso_steel, feli_steel, fega_steel, feh2_steel, 
+			feel_steel_primary)
+    
+    ue_steel_secondary . (kap_steel_secondary, feel_steel_secondary)
+
+    ue_otherInd . (en_otherInd, kap_otherInd, en_otherInd_hth, feso_otherInd,
+                   feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
+		   feelhth_otherInd, feelwlth_otherInd)
   /
 
   cal_ppf_industry_dyn37(all_in)   "primary production factors for calibration - industry"
@@ -286,21 +312,23 @@ ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CE
 *** ---------------------------------------------------------------------------
 ***        add module-specifc sets and mappings to the global ones
 *** ---------------------------------------------------------------------------
-ppfKap(ppfKap_industry_dyn37)                 = YES;
-in(in_industry_dyn37)                         = YES;
-ppfen(ppfen_industry_dyn37)                   = YES;
-cesOut2cesIn(ces_industry_dyn37)              = YES;
-fe2ppfen(fe2ppfen37)                          = YES;
-fe_tax_sub_sbi(fe_tax_sub37) = YES;
-
+ppf_industry_dyn37(ppfKap_industry_dyn37)   = YES;
+ppf_industry_dyn37(ppfen_industry_dyn37)    = YES;
+ipf_industry_dyn37(in_industry_dyn37)       = YES;
+ipf_industry_dyn37(ppf_industry_dyn37)      = NO;
+in(in_industry_dyn37)                       = YES;
+ppfKap(ppfKap_industry_dyn37)               = YES;
+ppfen(ppfen_industry_dyn37)                 = YES;
+cesOut2cesIn(ces_industry_dyn37)            = YES;
+fe2ppfen(fe2ppfen37)                        = YES;
+fe_tax_sub_sbi(fe_tax_sub37)                = YES;
 pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
 pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
-
-ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
+ppfen_CESMkup(ppfen_CESMkup_dyn37)          = YES;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
-pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;
-pf_quan_target_dyn29(pf_quan_target_dyn37) = YES;
+pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
+pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 alias(secInd37_2_pf,secInd37_2_pf2);

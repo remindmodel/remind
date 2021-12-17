@@ -69,4 +69,14 @@ vm_cesIO.lo(t,regi,in_industry_dyn37(in))$(
 vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
   = pm_cesdata("2005",regi,in,"quantity");
 
+$ifthen.calibration "%CES_parameters%" == "calibrate" !! CES_parameters
+$ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
+$ifthen.first_iteration "%c_CES_calibration_iteration%" == "1" !! c_CES_calibration_iteration
+vm_cesIO.fx(t_29(t),regi,ppf_industry_dyn37(in))
+  = pm_cesdata(t,regi,in,"quantity");
+$endif.first_iteration
+$endif.FE_target
+$endif.calibration
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms
+
