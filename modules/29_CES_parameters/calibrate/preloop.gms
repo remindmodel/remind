@@ -1239,7 +1239,7 @@ loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
 $endif.industry_FE_target
 
 !! - adjust efficiency parameters for feelhth_X and feh2_X
-$ifthen.first_iteration NOT "%c_CES_calibration_iteration%" == "1" !! c_CES_calibration_iteration
+$ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "0"
 loop (cesOut2cesIn(in_industry_dyn37(out),in)$( 
                               (ppfen(in) OR ipf(in))
                           AND NOT industry_ue_calibration_target_dyn37(out)
@@ -1286,7 +1286,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
          );
    );
 );
-$endif.first_iteration
+$endif.industry_FE_target
 
 option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
