@@ -819,14 +819,13 @@ q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2109 AND pm_ttot_val(ttot+1) ge m
         =g=
         vm_capEarlyReti(ttot,regi,te);
 
-q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear))..
+q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) gt max(2010, cm_startyear))..
         vm_capEarlyReti(ttot+1,regi,te)
         =l=
-        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (cm_earlyreti_rate 
-*** more retirement possible for coal power plants in early time steps for Europe and USA, to account for relatively old fleet 
-		+ pm_earlyreti_adjRate(regi,te)$(ttot.val lt 2035)
-*** more retirement possible for first generation biofuels		
-		+ 0.05$(sameas(te,"biodiesel") or sameas(te, "bioeths")));
+        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * 
+*** Region- and tech-specific max early retirement rates, e.g. more retirement possible for coal power plants in CHA, EUR, REF and USA to account for relatively old fleet or short historical lifespans
+        pm_regiEarlyRetiRate(ttot,regi,te) 
+    ;
 
 
 

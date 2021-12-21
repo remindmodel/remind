@@ -98,6 +98,12 @@ p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GH
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
 
+pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions)" / %c_regi_earlyreti_rate% /
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
+$ENDIF.tech_earlyreti
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
+
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions [GtCO2]"

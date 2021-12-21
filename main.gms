@@ -260,7 +260,8 @@ cm_rentconvgas        "[grades2poly] number of years required to converge to the
 cm_rentdisccoal       "[grades2poly] discount factor for the coal rent"
 cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved in 2100"
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
-cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
+c_regi_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region"
+c_tech_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region for a technology"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
 cm_damage              "cm_damage factor for forcing overshoot"
@@ -412,7 +413,8 @@ cm_rentconvgas      = 50;        !! def 50
 cm_rentdisccoal     = 0.4;       !! def 0.4
 cm_rentdisccoal2    = 0.6;       !! def 0.6
 cm_rentconvcoal     = 50;        !! def 50
-cm_earlyreti_rate   = 0.09;      !! def 0.09
+$setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
+$setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13 !! def = GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
@@ -707,3 +709,4 @@ $include "./core/magicc.gms";    !!connection to MAGICC, needed for post-process
 $endif.c_skip_output
 
 *** EOF ./main.gms
+
