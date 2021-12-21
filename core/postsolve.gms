@@ -879,5 +879,12 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
      *o_emi_conv("co2") 	
 ;
 
+*CG**ML*: capital interest rate
+p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2150)
+    = (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
+      (vm_cons.l(ttot-1,regi)/pm_pop(ttot-1,regi)) )
+      ** (1 / ( pm_ttot_val(ttot+1)- pm_ttot_val(ttot-1))) - 1) + pm_prtp(regi)
+;
+
 
 *** EOF ./core/postsolve.gms
