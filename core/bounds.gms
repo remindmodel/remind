@@ -546,7 +546,11 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
 
+*** FS: no electrolysis capacities before 2020
+vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
+
 *** FS: for debugging small infes in q_cap
 ***vm_cap.fx(t,"ECS","coalh2","1")$(t.val ge 2040)=0;
+
 
 *** EOF ./core/bounds.gms

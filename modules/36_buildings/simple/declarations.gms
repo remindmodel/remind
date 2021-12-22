@@ -14,8 +14,9 @@ scalars
 
 Parameters
   p36_CESMkup(ttot,all_regi,all_in)               "CES markup cost parameter [trUSD/CES input]"
-  p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2, in simple realization only used for reporting"
-;
+  p36_floorspace(tall,all_regi)                   "buildings floorspace, billion m2, in simple realization only used for reporting"
+  p36_uedemand_build(tall,all_regi,all_in)        "useful energy demand in buildings in TWh/a, in simple realization only used for reporting"
+  ;
 
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
 Parameter

@@ -17,10 +17,13 @@ if (file.exists("log.txt")){
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
 
-suppressMessages(library(dplyr, quietly = TRUE,warn.conflicts =FALSE))
-suppressMessages(library(luscale, quietly = TRUE,warn.conflicts =FALSE)) # rename_dimnames
-suppressMessages(library(remind2, quietly = TRUE,warn.conflicts =FALSE))
-suppressMessages(library(gdx, quietly = TRUE,warn.conflicts =FALSE)) # writeGDX
+# load required packages
+for (pkg in c('madrat', 'dplyr', 'luscale', 'remind2', 'gdx')) {
+  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
+}
+
+# stop madrat reporting its default settings _every damn time_
+invisible(getConfig(option = NULL, verbose = firstIteration))
 
 # read SSP scenario
 load("config.Rdata")
@@ -139,7 +142,7 @@ E <- mbind(E,dimSums(E,dim=1))
 
 # read mapping from GAINS sectors to REMIND sectors
 map_GAINSsec2REMINDsec <- read.csv(
-  madrat::toolGetMapping(type = "sectoral", name = "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE),
+  toolGetMapping(type = "sectoral", name = "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE),
   stringsAsFactors = FALSE,
   na.strings = ""
 )

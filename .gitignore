@@ -20,6 +20,11 @@ input/
 # Ignore everything in root "output" folder
 /output/
 
+# Ignore compare scenario files
+compScen-*.pdf
+compScen-*.err
+compScen-*.out
+
 # Ignore everything in "doc" folders, except for 3 specific files
 doc/
 !doc/literature.bib
