@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.254
+* Input data revision: 6.276
 * 
-* Last modification (input data): Wed Oct 20 17:30:02 2021
+* Last modification (input data): Thu Dec 23 10:57:10 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -388,7 +388,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
@@ -585,7 +585,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
@@ -635,7 +635,7 @@ $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
-$setglobal cm_wind_offshore  0      !! def = 0
+$setglobal cm_wind_offshore  1      !! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
