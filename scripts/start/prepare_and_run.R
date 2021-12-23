@@ -312,7 +312,6 @@ prepare <- function() {
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
-                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", cfg$gms$cm_EDGEtr_scen, "-"), ""),
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "En_",  cfg$gms$cm_demScen, "-",

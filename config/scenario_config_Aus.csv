@@ -1,8 +1,0 @@
-title;start;CES_parameters;cm_iteration_max;cm_techcosts;cm_emiscen;cm_rcp_scen;cm_multigasscen;cm_iterative_target_adj;c_budgetCO2;carbonprice;techpol;regipol;cm_regiCO2target;cm_co2_tax_growth;cm_co2_tax_2020;climate;optimization;c_testOneRegi_region;cm_nash_mode;capitalMarket;buildings;cm_startyear;path_gdx;path_gdx_ref;path_gdx_bau
-TestOneRegi_AUS;0;calibrate;0;REG;1;none;2;0;0;none;none;none;off;1.05;-1;off;testOneRegi;AUS;debug;perfect;simple;2005;./config/input_Aus.gdx;;
-Calibrate;0;calibrate;0;REG;1;none;2;0;0;none;none;none;off;1.05;-1;off;nash;;parallel;perfect;simple;2005;./config/input_Aus.gdx;;
-BAU;0;load;1;REG;1;none;2;0;0;none;none;none;off;1.05;-1;off;nash;;parallel;perfect;simple;2005;./config/input_Aus.gdx;;
-NDC;0;load;1;REG;9;rcp45;3;3;0;NDC;NDC;none;off;1.05;1;off;nash;;parallel;perfect;simple;2015;./config/input_Aus.gdx;./config/BAU_Aus.gdx;./config/BAU_Aus.gdx
-B600;1;load;1;REG;9;rcp20;2;5;600;expoLinear;NDC;none;off;1.05;30;off;nash;;parallel;perfect;simple;2025;./config/input_Aus.gdx;./config/NDC_Aus.gdx;./config/BAU_Aus.gdx
-B950;1;load;1;REG;9;rcp26;2;5;950;expoLinear;NDC;none;off;1.05;30;off;nash;;parallel;perfect;simple;2025;./config/input_Aus.gdx;./config/NDC_Aus.gdx;./config/BAU_Aus.gdx
-B1300;1;load;1;REG;9;rcp26;2;5;1300;expoLinear;NDC;none;off;1.05;30;off;nash;;parallel;perfect;simple;2025;./config/input_Aus.gdx;./config/NDC_Aus.gdx;./config/BAU_Aus.gdx
