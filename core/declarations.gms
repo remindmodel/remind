@@ -48,6 +48,7 @@ f_lab(tall,all_regi,all_POPscen)                     "labour data for all possib
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
+p_r(ttot,all_regi)				     "calculating capital interest rate"
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
@@ -67,7 +68,7 @@ o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last 
 ***----------------------------------------------------------------------------------------
 ***-----------------------------------------------ESM module-------------------------------
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
-p_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
+pm_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
 p_agriEmiPhaseOut(tall)                              "phase in parameter for baseline agricultural process ch4 and no2 reduction"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
@@ -97,6 +98,12 @@ p_switch_cement(ttot,all_regi)                       "describes an s-curve to pr
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+
+pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions)" / %c_regi_earlyreti_rate% /
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
+$ENDIF.tech_earlyreti
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
@@ -205,7 +212,7 @@ pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data o
 * Fuel Prices
 pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
-p_PEPrice(ttot,all_regi,all_enty)                     "parameter to capture all PE prices (tr$2005/TWa)"
+pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
 
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
@@ -525,7 +532,7 @@ s_macChange                                           "maximum yearly increase o
 sm_tgn_2_pgc                                           "conversion factor 100-yr GWP from TgN to PgCeq"
 sm_tgch4_2_pgc                                         "conversion factor 100-yr GWP from TgCH4 to PgCeq"
 
-sm_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
+s_MtCH4_2_TWa                                        "Energy content of methane. MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 TWa (BP statistical review)"  /0.001638/
 
 sm_D2015_2_D2005                                      "Convert $2015 to $2005 by dividing by 1.2: 1/1.2 = 0.8333"      /0.8333/
 sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to go from $/tCO2 to T$/GtC: 44/12/1000"     /0.00366667/
@@ -552,7 +559,6 @@ sm_globalBudget_dev                                   "actual level of global cu
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
-s_histBioShareTolerance                               "tolerance range of percentage points by how much the biomass share in solids, liquids and gases in industry and buildings can deviate from the historical value in 2005"
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;

@@ -5,9 +5,9 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
+pm_extRegiEarlyRetiRate, parameter, ??
 pm_IO_trade, parameter, ??
 pm_EN_demand_from_initialcap2, parameter, ??
-cm_earlyreti_rate, scalar, ??
 vm_prodPe, variable, ??
 vm_Xport, variable, ??
 vm_Mport, variable, ??

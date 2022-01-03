@@ -24,11 +24,109 @@ $offdelim
 /
 ;
 
+
+
+
 *** making sure f04_IO_output is compatible with pm_fedemand values in 2005  
 *** this will become irrelevant to the model once the input data routines can be fixed so that pm_fedemand is again the same as f04_IO_output
 *** these lines should be removed once this is fixed at mrremind side.
-f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") = f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob") * (pm_fedemand("2005",regi,"fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
-f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") = f04_IO_output("2005",regi,"sesofos","fesob","tdfossob") * (pm_fedemand("2005",regi,"fesob"))/(f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob"));
+
+
+*** save original input data
+p04_IO_output_beforeFix(t,regi,all_enty,all_enty2,all_te) = f04_IO_output(t,regi,all_enty,all_enty2,all_te);
+
+p04_IO_output_beforeFix_Total(t,regi,"fesob") = p04_IO_output_beforeFix(t,regi,"sesobio","fesob","tdbiosob")
+                                                  + p04_IO_output_beforeFix(t,regi,"sesofos","fesob","tdfossob");
+
+p04_IO_output_beforeFix_Total(t,regi,"fehob") = p04_IO_output_beforeFix(t,regi,"seliqbio","fehob","tdbiohob")
+                                                  + p04_IO_output_beforeFix(t,regi,"seliqfos","fehob","tdfoshob");
+
+*** adjust buildings solids
+f04_IO_output("2005",regi,"sesobio","fesob","tdbiosob")$(p04_IO_output_beforeFix_Total("2005",regi,"fesob")) = p04_IO_output_beforeFix("2005",regi,"sesobio","fesob","tdbiosob") * pm_fedemand("2005",regi,"fesob")/p04_IO_output_beforeFix_Total("2005",regi,"fesob");
+f04_IO_output("2005",regi,"sesofos","fesob","tdfossob")$(p04_IO_output_beforeFix_Total("2005",regi,"fesob")) = p04_IO_output_beforeFix("2005",regi,"sesofos","fesob","tdfossob") * pm_fedemand("2005",regi,"fesob")/p04_IO_output_beforeFix_Total("2005",regi,"fesob");
+
+*** adjust buildings liquids
+f04_IO_output("2005",regi,"seliqbio","fehob","tdbiohob")$(p04_IO_output_beforeFix_Total("2005",regi,"fehob")) = p04_IO_output_beforeFix("2005",regi,"seliqbio","fehob","tdbiohob") * pm_fedemand("2005",regi,"fehob")/p04_IO_output_beforeFix_Total("2005",regi,"fehob");
+f04_IO_output("2005",regi,"seliqfos","fehob","tdfoshob")$(p04_IO_output_beforeFix_Total("2005",regi,"fehob")) = p04_IO_output_beforeFix("2005",regi,"seliqfos","fehob","tdfoshob") * pm_fedemand("2005",regi,"fehob")/p04_IO_output_beforeFix_Total("2005",regi,"fehob");
+
+
+
+$ifthen.subsectors "%industry%" == "subsectors"   !! industry
+
+*** industry solids
+p04_IO_output_beforeFix_Total(t,regi,"fesoi") = p04_IO_output_beforeFix(t,regi,"sesobio","fesoi","tdbiosoi")
+                                                  + p04_IO_output_beforeFix(t,regi,"sesofos","fesoi","tdfossoi");
+
+
+f04_IO_output("2005",regi,"sesobio","fesoi","tdbiosoi")$(p04_IO_output_beforeFix_Total("2005",regi,"fesoi")) = p04_IO_output_beforeFix("2005",regi,"sesobio","fesoi","tdbiosoi")  
+                                                            *  ( pm_fedemand("2005",regi,"feso_otherInd")
+                                                               + pm_fedemand("2005",regi,"feso_cement")
+                                                               + pm_fedemand("2005",regi,"feso_steel")
+                                                               + pm_fedemand("2005",regi,"feso_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fesoi");
+
+
+f04_IO_output("2005",regi,"sesofos","fesoi","tdfossoi")$(p04_IO_output_beforeFix_Total("2005",regi,"fesoi")) = p04_IO_output_beforeFix("2005",regi,"sesofos","fesoi","tdfossoi")  
+                                                            *  ( pm_fedemand("2005",regi,"feso_otherInd")
+                                                               + pm_fedemand("2005",regi,"feso_cement")
+                                                               + pm_fedemand("2005",regi,"feso_steel")
+                                                               + pm_fedemand("2005",regi,"feso_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fesoi");
+
+*** industry liquids
+p04_IO_output_beforeFix_Total(t,regi,"fehoi") = p04_IO_output_beforeFix(t,regi,"seliqbio","fehoi","tdbiohoi")
+                                                  + p04_IO_output_beforeFix(t,regi,"seliqfos","fehoi","tdfoshoi");
+
+
+f04_IO_output("2005",regi,"seliqbio","fehoi","tdbiohoi")$(p04_IO_output_beforeFix_Total("2005",regi,"fehoi")) = p04_IO_output_beforeFix("2005",regi,"seliqbio","fehoi","tdbiohoi")  
+                                                            *  ( pm_fedemand("2005",regi,"feli_otherInd")
+                                                               + pm_fedemand("2005",regi,"feli_cement")
+                                                               + pm_fedemand("2005",regi,"feli_steel")
+                                                               + pm_fedemand("2005",regi,"feli_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fehoi");
+
+
+f04_IO_output("2005",regi,"seliqfos","fehoi","tdfoshoi")$(p04_IO_output_beforeFix_Total("2005",regi,"fehoi")) = p04_IO_output_beforeFix("2005",regi,"seliqfos","fehoi","tdfoshoi")  
+                                                            *  ( pm_fedemand("2005",regi,"feli_otherInd")
+                                                               + pm_fedemand("2005",regi,"feli_cement")
+                                                               + pm_fedemand("2005",regi,"feli_steel")
+                                                               + pm_fedemand("2005",regi,"feli_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fehoi");
+
+*** industry gases
+p04_IO_output_beforeFix_Total(t,regi,"fegai") = p04_IO_output_beforeFix(t,regi,"segabio","fegai","tdbiogai")
+                                                  + p04_IO_output_beforeFix(t,regi,"segafos","fegai","tdfosgai");
+
+
+f04_IO_output("2005",regi,"segabio","fegai","tdbiogai")$(p04_IO_output_beforeFix_Total("2005",regi,"fegai")) = p04_IO_output_beforeFix("2005",regi,"segabio","fegai","tdbiogai")  
+                                                            *  ( pm_fedemand("2005",regi,"fega_otherInd")
+                                                               + pm_fedemand("2005",regi,"fega_cement")
+                                                               + pm_fedemand("2005",regi,"fega_steel")
+                                                               + pm_fedemand("2005",regi,"fega_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fegai");
+
+
+f04_IO_output("2005",regi,"segafos","fegai","tdfosgai")$(p04_IO_output_beforeFix_Total("2005",regi,"fegai")) = p04_IO_output_beforeFix("2005",regi,"segafos","fegai","tdfosgai")  
+                                                            *  ( pm_fedemand("2005",regi,"fega_otherInd")
+                                                               + pm_fedemand("2005",regi,"fega_cement")
+                                                               + pm_fedemand("2005",regi,"fega_steel")
+                                                               + pm_fedemand("2005",regi,"fega_chemicals"))
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fegai");
+
+
+
+*** industry heat
+p04_IO_output_beforeFix_Total(t,regi,"fehei") = p04_IO_output_beforeFix(t,regi,"sehe","fehei","tdhei");
+
+
+f04_IO_output("2005",regi,"sehe","fehei","tdhei")$(p04_IO_output_beforeFix_Total("2005",regi,"fehei")) = p04_IO_output_beforeFix("2005",regi,"sehe","fehei","tdhei")  
+                                                            *  ( pm_fedemand("2005",regi,"fehe_otherInd")
+                                                              )
+                                                            /  p04_IO_output_beforeFix_Total("2005",regi,"fehei");
+
+$endif.subsectors
+
+*** end adjustment of f04_IO_output to pm_fedemand values
 
 *** convert data from EJ to TWa
 f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) = f04_IO_input(ttot,regi,all_enty,all_enty2,all_te) * sm_EJ_2_TWa;

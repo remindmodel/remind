@@ -7,12 +7,15 @@
 *** SOF ./modules/40_techpol/NPi2018/datainput.gms 
 *** SOF means start fo file and EOF means end of file. Use these before and after the body of the code
 
-Parameter p40_TechBound(ttot,all_regi,all_te) "NDC capacity targets for solar, wind, nuclear, hydro, and biomass (GW)"
-  /
+Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
+$offlisting
 $ondelim
-$include "./modules/40_techpol/NPi2018/input/f40_NDC+REN21+CHN_NUC.cs4r"
+$include "./modules/40_techpol/NPi2018/input/f40_NDC+REN21+CHN_NUC.cs3r"
 $offdelim
-  /;
+$onlisting
+;
+
+p40_TechBound(ttot,all_regi,all_te) = f40_TechBound(ttot,all_regi,"%cm_NDC_version%",all_te);
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
@@ -27,8 +30,8 @@ p40_CoalBound(t,iso_regi)                   = 0;
 p40_FE_RenShare(t,iso_regi)              = 0;
 
 *** Chinese PE targets are defined with substitution accounting method
-p40_noncombust_acc_eff(t,"CHN",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
-p40_noncombust_acc_eff(t,"CHA",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
+p40_noncombust_acc_eff(t,"CHN",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"windoff") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
+p40_noncombust_acc_eff(t,"CHA",te)$(sameas(te,"spv") OR sameas(te,"csp") OR sameas(te,"wind") OR sameas(te,"windoff") OR sameas(te,"tnrs") OR sameas(te,"spv") OR sameas(te,"geohdr") OR sameas(te,"hydro")) = 0.38; !! substitution accounting for low-carbon electricity generation at coal efficiency of 38%
 *** lower bound on gas share in PE
 p40_PEgasBound("2020","CHN") = 0.1; 
 p40_PEgasBound(t,"CHN")$(t.val gt 2020) = min(0.1 ,0.1 - (t.val - 2050) * 0.005 ); !! 10% until 2050 and then declining again, to allow for high LC shares (no bound on gas after 2080)

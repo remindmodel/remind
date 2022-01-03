@@ -9,7 +9,7 @@
 SETS
 target_type "CO2 policy target type" / budget , year /
 
-emi_type "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, grossEnCO2_noBunkers /
+emi_type "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG_LULUCFGrassi_noBunkers /
 
 ETS_mkt "ETS market"
 /

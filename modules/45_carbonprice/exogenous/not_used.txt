@@ -6,11 +6,9 @@ pm_pvp,parameter,???
 pm_ttot_val,parameter,???
 pm_ts,parameter,???
 cm_co2_tax_growth,switch,???
-cm_startyear,switch,???
 cm_iterative_target_adj,switch,???
 cm_expoLinear_yearStart,switch,???
 vm_co2eq,variable,???
-sm_DptCO2_2_TDpGtC,scalar,???
 vm_emiFgas,input,questionnaire
 pm_globalMeanTemperature,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire

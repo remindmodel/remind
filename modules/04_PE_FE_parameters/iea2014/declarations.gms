@@ -17,4 +17,8 @@ p04_shOilGasEx(all_regi, all_enty)                              "share of oil an
 p04_fuExtr(all_regi, all_enty)                                  "regional fuel extraction for the base year calibration"
 pm_histfegrowth(all_regi,all_enty)                              "average growth rate of fe use from 1995 to 2005"
 p04_prodCoupleGlob(all_enty,all_enty,all_te,all_enty)           "global couple products"
+
+
+p04_IO_output_beforeFix(ttot,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data as read in from input data before correction from FE trajectories"
+p04_IO_output_beforeFix_Total(ttot,all_regi,all_enty)                         "Energy output based on IEA data as read in from input data before correction from FE trajectories summed over SE"
 ;

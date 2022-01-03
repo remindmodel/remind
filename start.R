@@ -6,6 +6,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(gms)
+library(dplyr)
 
 #' Usage:
 #' Rscript start.R [options]
@@ -33,7 +34,7 @@ source("scripts/start/choose_slurmConfig.R")
 ############## Define function: get_line ##############################
 
 get_line <- function(){
-	# gets characters (line) from the terminal of from a connection
+	# gets characters (line) from the terminal or from a connection
 	# and stores it in the return object
 	if(interactive()){
 		s <- readline()
@@ -113,8 +114,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     }
 
     # Edit input data revision
-    if( "revision" %in% names(iscenarios)){
-      icfg$revision <- iscenarios[iscen,"revision"]
+    if( "inputRevision" %in% names(iscenarios)){
+      icfg$inputRevision <- iscenarios[iscen,"inputRevision"]
     }
 
     # Edit switches in default.cfg according to the values given in the scenarios table
@@ -148,18 +149,30 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         stop("Can't find a gdx under path_gdx, please specify full path to gdx or else location of output folder that contains previous run")
       }
     }
+
+    # Determine whether we need a separate carbon price GDX or not
+    has_carbonprice_path <- FALSE
+    if ("path_gdx_carbonprice" %in% colnames(isettings)) { if (!is.na(isettings[iscen,"path_gdx_carbonprice"])) {
+      has_carbonprice_path <- TRUE
+    }}
+
     # Define path where the GDXs will be taken from
     gdxlist <- c(input.gdx     = isettings[iscen, "path_gdx"],
                  input_ref.gdx = isettings[iscen, "path_gdx_ref"],
                  input_bau.gdx = isettings[iscen, "path_gdx_bau"])
 
+    # also export the carbon price gdx
+    if (has_carbonprice_path) {
+      gdxlist <- c(gdxlist, input_carbonprice.gdx = isettings[iscen, "path_gdx_carbonprice"])
+    }
+
     # add gdxlist to list of files2export
     icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
 
-    # add gdx information for subsequent runs
-    icfg$subsequentruns        <- rownames(isettings[isettings$path_gdx_ref == iscen & !is.na(isettings$path_gdx_ref) & isettings$start == 1,])
-    icfg$RunsUsingTHISgdxAsBAU <- rownames(isettings[isettings$path_gdx_bau == iscen & !is.na(isettings$path_gdx_bau) & isettings$start == 1,])
-
+    # add table with information about runs that need the fulldata.gdx of the current run as input
+    icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx_")) %>%             # select columns that have "path_gdx_" in their name
+                                                   filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
+                                                   
     return(icfg)
 }
 
@@ -251,8 +264,10 @@ if ('--restart' %in% argv) {
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # Directly start runs that have a gdx file location given as path_gdx_ref or where this field is empty
-      start_now <- (substr(scenarios[scen,"path_gdx_ref"], nchar(scenarios[scen,"path_gdx_ref"])-3, nchar(scenarios[scen,"path_gdx_ref"])) == ".gdx"
-                   | is.na(scenarios[scen,"path_gdx_ref"]))
+      gdx_exists <- (substr(cfg$files2export$start['input_ref.gdx'], nchar(cfg$files2export$start['input_ref.gdx'])-3, nchar(cfg$files2export$start['input_ref.gdx'])) == ".gdx"
+                   | is.na(cfg$files2export$start['input_ref.gdx']))
+      start_now <- gdx_exists
+      if (gdx_exists) cat("   Using input_ref.gdx found here:", cfg$files2export$start['input_ref.gdx'], "\n")
     }
     
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
@@ -266,8 +281,12 @@ if ('--restart' %in% argv) {
       } else {
       cat("   Waiting for", scenarios[scen,'path_gdx_ref'] ,"\n")
     }
-
-    if (!identical(cfg$subsequentruns,character(0))) cat("   Subsequent runs:",cfg$subsequentruns,"\n")
+  
+    # print names of subsequent runs if there are any
+    if (length(cfg$RunsUsingTHISgdxAsInput)[1] != 0) { 
+      if (any(cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen)) {
+      cat("   Subsequent runs:",rownames(cfg$RunsUsingTHISgdxAsInput[cfg$RunsUsingTHISgdxAsInput$path_gdx_ref == scen,]),"\n")
+    }}
     
   }
 }

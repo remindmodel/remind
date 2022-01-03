@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/45_carbonprice.gms
+*** SOF ./modules/45_carbonprice/module.gms
 
 *' @title Carbonprice
 *'
@@ -16,8 +16,7 @@
 *' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
 
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%carbonprice%" == "ExogSameAsPrevious" $include "./modules/45_carbonprice/ExogSameAsPrevious/realization.gms"
-$Ifi "%carbonprice%" == "NDC2018" $include "./modules/45_carbonprice/NDC2018/realization.gms"
+$Ifi "%carbonprice%" == "NDC" $include "./modules/45_carbonprice/NDC/realization.gms"
 $Ifi "%carbonprice%" == "NDC2constant" $include "./modules/45_carbonprice/NDC2constant/realization.gms"
 $Ifi "%carbonprice%" == "NPi2018" $include "./modules/45_carbonprice/NPi2018/realization.gms"
 $Ifi "%carbonprice%" == "diffCurvPhaseIn2Lin" $include "./modules/45_carbonprice/diffCurvPhaseIn2Lin/realization.gms"

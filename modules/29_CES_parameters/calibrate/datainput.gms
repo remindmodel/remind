@@ -197,6 +197,19 @@ $offdelim
 ;
 p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
+*** fix industry energy efficiency capital for mrremind rounding
+loop ((ttot,regi,ppfKap_industry_dyn37(in))$( 
+                                          t(ttot) AND ord(ttot) lt card(ttot) ),
+  p29_capitalQuantity(ttot+1,regi,in)
+  = min(p29_capitalQuantity(ttot,regi,in),
+        ( p29_capitalQuantity(ttot,regi,in)
+        * ( (1 - pm_delta_kap(regi,in)) 
+	 ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
+	  )
+	)
+    );
+);
+
 *** ---- PRELIMINARY ALTERNATIVE FE TRAJECTORIES FOR INDUSTRY ----------------START----------
 ** Alternative ("handmade") FE trajectory
 display pm_fedemand;
@@ -222,10 +235,7 @@ $endif.cm_calibration_FE
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
   Parameter
-    f29_fedemand_build(tall,all_regi,all_GDPscen,all_rcp_scen,all_in) "RCP-dependend final energy demand in buildings"
-  ;
-  Parameter
-    f29_fedemand_build     "RCP-dependend final energy demand in buildings"
+    f29_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
     /
       $ondelim
         $include "./modules/29_CES_parameters/calibrate/input/f29_fedemand_build.cs4r"
@@ -233,7 +243,7 @@ $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
     /;
 
   pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
-    f29_fedemand_build(t,regi,"%cm_GDPscen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+    f29_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
 *** Transport alternative FE trajectory 
