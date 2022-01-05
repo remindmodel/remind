@@ -27,3 +27,5 @@ cm_NDC_version,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_emifac,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
+cm_startyear,input,questionnaire
+
