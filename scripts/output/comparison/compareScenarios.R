@@ -75,16 +75,20 @@ if("EUR" %in% names(regionSubsetList)){
 for (r in listofruns) {
   # Create multiple pdf files for H12 and subregions of H12
   for (reg in c("H12",names(regionSubsetList))){
-    fileName <- paste0(r$set, "-" , reg)
-	if (reg=="H12")
-	  regionList <- c("GLO","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
-	else
-	  regionList <- c(reg,regionSubsetList[[reg]])
-	if (reg=="H12")
-	  mainRegName <- c("GLO")
-	else
-	  mainRegName <- c(reg)
-	if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = fileName, regionList=regionList, mainReg=mainRegName)
-	if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = fileName, regionList=regionList, mainReg=mainRegName)
+    if (exists("filename_identifier")) {
+      fileName <- paste0(filename_identifier, ifelse(filename_identifier=="","","-") ,r$set, "-" , reg)
+    } else {
+      fileName <- paste0(r$set, "-" , reg)
+    }
+    if (reg=="H12")
+      regionList <- c("GLO","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
+    else
+      regionList <- c(reg,regionSubsetList[[reg]])
+    if (reg=="H12")
+      mainRegName <- c("GLO")
+    else
+      mainRegName <- c(reg)
+    if (r$period == "short" | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = TRUE,  outfilename = fileName, regionList=regionList, mainReg=mainRegName)
+    if (r$period == "long"  | r$period == "both") start_comp(outputdirs = r$dirs, shortTerm = FALSE, outfilename = fileName, regionList=regionList, mainReg=mainRegName)
   }
 }
