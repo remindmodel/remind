@@ -651,6 +651,7 @@ p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,t,regi) =
 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
+  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
   pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
 );
 $endIf.regiExoPrice
