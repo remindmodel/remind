@@ -220,7 +220,6 @@ Parameter
 p29_fedemand_alt       "alt final energy demand"
 /
 $ondelim
-$if "%cm_calibration_FE%" == "low" $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_low.cs4r"
 $if "%cm_calibration_FE%" == "medium" $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_medium.cs4r"
 $offdelim
 /
