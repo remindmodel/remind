@@ -72,8 +72,16 @@ vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
 $ifthen.calibration "%CES_parameters%" == "calibrate" !! CES_parameters
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
 $ifthen.first_iteration "%c_CES_calibration_iteration%" == "1" !! c_CES_calibration_iteration
-vm_cesIO.fx(t_29(t),regi,ppf_industry_dyn37(in))
-  = pm_cesdata(t,regi,in,"quantity");
+!! vm_cesIO.fx(t_29(t),regi,ppf_industry_dyn37(in))
+!!   = pm_cesdata(t,regi,in,"quantity");
+
+vm_cesIO.lo(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))
+  = pm_cesdata(t,regi,in,"quantity")
+  * 0.9;
+
+vm_cesIO.up(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))
+  = pm_cesdata(t,regi,in,"quantity")
+  * 1.1;
 $endif.first_iteration
 $endif.FE_target
 $endif.calibration
