@@ -45,10 +45,13 @@ for (i in 1:length(listofruns)) {
 # ---- Start compareScenarios either on the cluster or locally ----
 
 start_comp <- function(outputdirs,shortTerm,outfilename,regionList,mainReg) {
+  if(!exists("slurmConfig")) {
+    slurmConfig <- "--qos=standby"
+  }
   jobname <- paste0("compScen",ifelse(outfilename=="","","-"),outfilename,ifelse(shortTerm, "-shortTerm", ""))
   cat("Starting ",jobname,"\n")
   on_cluster <- file.exists("/p/projects/")
-  cat(paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regionList=",paste(regionList,collapse=",")," mainRegName=",mainReg,"\""))
+  cat(paste0("sbatch ", slurmConfig, " --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regionList=",paste(regionList,collapse=",")," mainRegName=",mainReg,"\""))
   if (on_cluster) {
     clcom <- paste0("sbatch --qos=standby --job-name=",jobname," --output=",jobname,".out --error=",jobname,".err --mail-type=END --time=200 --mem-per-cpu=8000 --wrap=\"Rscript scripts/utils/run_compareScenarios.R outputdirs=",paste(outputdirs,collapse=",")," shortTerm=",shortTerm," outfilename=",jobname," regionList=",paste(regionList,collapse=",")," mainRegName=",mainReg,"\"")
     system(clcom)
@@ -75,8 +78,8 @@ if("EUR" %in% names(regionSubsetList)){
 for (r in listofruns) {
   # Create multiple pdf files for H12 and subregions of H12
   for (reg in c("H12",names(regionSubsetList))){
-    if (exists("filename_identifier")) {
-      fileName <- paste0(filename_identifier, ifelse(filename_identifier=="","","-") ,r$set, "-" , reg)
+    if (exists("filename_prefix")) {
+      fileName <- paste0(filename_prefix, ifelse(filename_prefix=="","","-") ,r$set, "-" , reg)
     } else {
       fileName <- paste0(r$set, "-" , reg)
     }
