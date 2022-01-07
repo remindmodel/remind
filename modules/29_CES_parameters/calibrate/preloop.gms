@@ -118,6 +118,12 @@ p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
 pm_cesdata(t,regi_dyn29(regi), in, "price") =
  p29_CESderivative(t,regi,"inco",in);
 
+*** Set minimum price on ppf_industry
+if (%c_CES_calibration_industry_FE_target% eq 1,   !! c_CES_calibration_industry_FE_target
+  pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+  = max(pm_cesdata(t,regi,in,"price"), 1e-5);
+);
+
 option
   p29_CESderivative:3:3:1
   pm_cesdata:3:3:1
