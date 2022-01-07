@@ -138,7 +138,7 @@ choose_mode <- function(title = "Please choose the output mode") {
 }
 
 choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c("--qos=priority", "--qos=standby")
+  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), slurm_options, sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -202,13 +202,8 @@ if (comp == TRUE) {
   modules_using_filename_prefix <- c("compareScenarios")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
-      filename_prefix <- choose_filename_prefix(modules = modules_using_filename_prefix[modules_using_filename_prefix %in% output])
+      filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
     } else {
-      filename_prefix <- ""
-    }
-  } else {
-    # because readArgs cannot treat empty strings, `no prefix` is specified by `-`
-    if (filename_prefix == "-") {
       filename_prefix <- ""
     }
   }
@@ -218,7 +213,7 @@ if (comp == TRUE) {
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_priority_standby()
   }
-  if (slurmConfig %in% c("priority", "standby")) {
+  if (slurmConfig %in% c("priority", "short", "standby")) {
     slurmConfig <- paste0("--qos=", slurmConfig)
   }
 

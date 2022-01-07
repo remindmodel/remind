@@ -179,8 +179,8 @@ One recommended script for comparison of different scenarios is `compareScenario
 
 You can also specify the parameters in the command line, for example starting a `compareScenario` run without any prefix as:
 
-```
-Rscript output.R comp=TRUE filename_prefix=- output=compareScenarios slurmConfig=priority
+``` bash
+Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=priority
 ```
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
