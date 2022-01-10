@@ -138,7 +138,7 @@ choose_mode <- function(title = "Please choose the output mode") {
 }
 
 choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby")
+  slurm_options <- c("priority", "short", "standby")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), slurm_options, sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -213,8 +213,10 @@ if (comp == TRUE) {
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_priority_standby()
   }
-  if (slurmConfig %in% c("priority", "short", "standby")) {
-    slurmConfig <- paste0("--qos=", slurmConfig)
+  if (exists("slurmConfig")) {
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig)
+    }
   }
 
   # Set value source_include so that loaded scripts know, that they are
