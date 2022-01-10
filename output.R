@@ -29,7 +29,7 @@ library(gms)
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
-  readArgs("outputdir", "output", "comp", "remind_dir")
+  readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix")
 }
 
 # Setting relevant paths
@@ -132,9 +132,34 @@ choose_mode <- function(title = "Please choose the output mode") {
   } else if (identifier == 2) {
     comp <- TRUE
   } else {
-    stop("This mode is invalid. Please choose a valid mode")
+    stop("This mode is invalid. Please choose a valid mode.")
   }
   return(comp)
+}
+
+choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
+  slurm_options <- c("priority", "short", "standby")
+  cat("\n\n", title, ":\n\n")
+  cat(paste(seq_along(slurm_options), slurm_options, sep = ": "), sep = "\n")
+  cat("\nNumber: ")
+  identifier <- get_line()
+  if (identifier == "") {
+    identifier <- 1
+  }
+  if (!identifier %in% seq(length(slurm_options))) {
+    stop("This slurm mode is invalid. Please choose a valid mode.")
+  }
+  return(slurm_options[as.numeric(identifier)])
+}
+
+choose_filename_prefix <- function(modules, title = "") {
+  cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
+  cat(" For example compareScenarios uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
+  filename_prefix <- get_line()
+  if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
+    filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
+  }
+  return(filename_prefix)
 }
 
 if (exists("source_include")) {
@@ -171,6 +196,27 @@ if (comp == TRUE) {
     }
   } else {
     outputdirs <- outputdir
+  }
+
+  # ask for filename_prefix, if one of the modules that use it is selected
+  modules_using_filename_prefix <- c("compareScenarios")
+  if (!exists("filename_prefix")) {
+    if (any(modules_using_filename_prefix %in% output)) {
+      filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
+    } else {
+      filename_prefix <- ""
+    }
+  }
+
+  # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
+  modules_using_slurmConfig <- c("compareScenarios")
+  if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
+    slurmConfig <- choose_slurmConfig_priority_standby()
+  }
+  if (exists("slurmConfig")) {
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig)
+    }
   }
 
   # Set value source_include so that loaded scripts know, that they are
