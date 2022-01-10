@@ -853,10 +853,14 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
   = 1;
   
   display "check p29_CESderivative", p29_CESderivative;
+
+  !! set pf prices hitherto unset
+  loop ((t,regi_dyn29(regi),
+         cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in)))$(
+	                      (NOT ppf_industry_dyn37(in)) OR (t.val gt 2100) ),
   
-  loop ((cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in)),regi_dyn29(regi)),
     pm_cesdata(t,regi,in,"price")
-    =  p29_CESderivative(t,regi,out,in);
+    = p29_CESderivative(t,regi,out,in);
   );
   
   !! smooth historical prices

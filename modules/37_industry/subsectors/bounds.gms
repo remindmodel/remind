@@ -75,13 +75,15 @@ $ifthen.first_iteration "%c_CES_calibration_iteration%" == "1" !! c_CES_calibrat
 !! vm_cesIO.fx(t_29(t),regi,ppf_industry_dyn37(in))
 !!   = pm_cesdata(t,regi,in,"quantity");
 
-vm_cesIO.lo(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))
-  = pm_cesdata(t,regi,in,"quantity")
-  * 0.9;
-
-vm_cesIO.up(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))
-  = pm_cesdata(t,regi,in,"quantity")
-  * 1.1;
+loop (t0,
+  vm_cesIO.lo(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))$( NOT t0(t) )
+    = pm_cesdata(t,regi,in,"quantity")
+    * 0.9;
+  
+  vm_cesIO.up(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in))$( NOT t0(t) )
+    = pm_cesdata(t,regi,in,"quantity")
+    * 1.1;
+);
 $endif.first_iteration
 $endif.FE_target
 $endif.calibration
