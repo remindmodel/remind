@@ -241,6 +241,10 @@ if ('--restart' %in% argv) {
     # Read-in the switches table, use first column as row names
     settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1, comment.char = "#", na.strings = "")
 
+    # Add empty path_gdx_... columns if they are missing
+    path_gdx_required <- c("path_gdx", "path_gdx_ref", "path_gdx_bau")
+    settings[, path_gdx_required[! path_gdx_required %in% names(settings)]] <- NA
+    
     # state if columns are unknown and cannot be used
     source("config/default.cfg")
     unknown_columns <- names(settings)[! names(settings) %in% c(names(cfg$gms), "start", "path_gdx_carbonprice", "path_gdx", "path_gdx_ref", "path_gdx_bau")]
