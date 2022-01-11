@@ -611,6 +611,7 @@ $setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
 $setglobal cm_share_LDV_sales  off !! def = off
 $setglobal cm_INNOPATHS_incolearn  off !! def = off
 $setglobal cm_INNOPATHS_storageFactor  off !! def = off
+$setglobal cm_learnRate  off !! def = off
 
 $setglobal cm_INNOPATHS_adj_seed  off
 $setglobal cm_INNOPATHS_adj_seed_cont  off
