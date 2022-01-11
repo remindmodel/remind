@@ -118,12 +118,6 @@ p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
 pm_cesdata(t,regi_dyn29(regi), in, "price") =
  p29_CESderivative(t,regi,"inco",in);
 
-*** Set minimum price on ppf_industry
-if (%c_CES_calibration_industry_FE_target% eq 1,   !! c_CES_calibration_industry_FE_target
-  pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
-  = max(pm_cesdata(t,regi,in,"price"), 1e-5);
-);
-
 option
   p29_CESderivative:3:3:1
   pm_cesdata:3:3:1
@@ -854,15 +848,18 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
   
   display "check p29_CESderivative", p29_CESderivative;
 
-  !! set pf prices hitherto unset
-  loop ((t,regi_dyn29(regi),
-         cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in)))$(
-	                      (NOT ppf_industry_dyn37(in)) OR (t.val gt 2100) ),
-  
+  loop ((regi_dyn29(regi),
+         cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in))),
     pm_cesdata(t,regi,in,"price")
     = p29_CESderivative(t,regi,out,in);
   );
   
+  !! set minimum price on ppf_industry
+  if (%c_CES_calibration_industry_FE_target% eq 1,   !! c_CES_calibration_industry_FE_target
+    pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+    = max(pm_cesdata(t,regi,in,"price"), 1e-5);
+  );
+
   !! smooth historical prices
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
                                             in_beyond_calib_29_excludeRoot(in) )
@@ -1185,7 +1182,6 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   * p29_efficiency_growth(t_29,regi,in)
   / p29_efficiency_growth(t2,regi,in);
 );
-
 
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** scale industry input prices as a slack variable to make the Euler identity
