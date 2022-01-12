@@ -132,7 +132,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     # for columns path_gdx, path_gdx_bau, path_gdx_ref, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
     for (path_to_gdx in c("path_gdx", "path_gdx_ref", "path_gdx_bau")) {
-      if (!is.na(isettings[iscen, path_to_gdx]) && ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
+      if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
         if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
           # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
           # may include folders that only _start_ with this string. They are sorted out later.
@@ -149,7 +149,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
             # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
             # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
             datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-            dirs <- dirs[unlist(lapply(dirs, didremindfinish)) && grep(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+            dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
             # if anything found, pick latest
             if(length(dirs) > 0 && ! all(is.na(dirs))) {
               lapply(dirs, str_sub, -32, -14) %>%
@@ -243,7 +243,7 @@ if ('--restart' %in% argv) {
 
     # state if columns are unknown and cannot be used
     source("config/default.cfg")
-    unknown_columns <- names(settings)[! names(settings) %in% c(names(cfg$gms), "start", "path_gdx_carbonprice", "path_gdx", "path_gdx_ref", "path_gdx_bau")]
+    unknown_columns <- names(settings)[! names(settings) %in% c(names(cfg$gms), "start", "path_gdx_carbonprice", "path_gdx", "path_gdx_ref", "path_gdx_bau", "output", "model", "regionmapping", "inputRevision")]
     if (length(unknown_columns) > 0) {
       cat(paste("Those columns have no counterpart in default.cfg and will be ignored:", paste(unknown_columns, collapse = ", "), "\n"))
     }
