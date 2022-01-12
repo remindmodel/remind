@@ -585,35 +585,27 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 
 
 ***--------------------------------------------------
-*' Sectoral energy-emissions
+*' Sectoral energy-emissions used for taxation markup with cm_co2_tax_sector_markup
 ***--------------------------------------------------
 
-* calculate direct industry emissions for each region and timestep:
-q_co2_sector(t,regi,"indst") ..
-vm_co2_sector(t,regi,"indst")
+*** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
+q_emiCO2_sector(t,regi,sector)$(sameAs(sector, "build") OR
+                                sameAs(sector, "trans"))..
+vm_emiCO2_sector(t,regi,sector)
   =e=
-10
-*  sum(se2fe2sec(entySe,entyFeStat2(entyFe),te,entyFeB,entyFeI),
-*    p_ef_dem(entyFe) *
-*    (1 - p_bioshare(t,regi,entyFe)) *
-*    vm_cesIO(t,regi,entyFeI)/(vm_cesIO(t,regi,entyFeB) + vm_cesIO(t,regi,*entyFeI)) *
-*    vm_prodFe(t,regi,entySe,entyFe,te)) *
-*    1/sm_EJ_2_TWa *
-*    1/sm_c_2_co2 * 1e-3
+*** calculate direct CO2 emissions per end-use sector
+    sum(se2fe(entySe,entyFe,te),
+      sum(emiMkt$(sector2emiMkt(sector,emiMkt)),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+    )
+  )
+*** substract emissions of bunker fuels for transport sector
+  - sum(se2fe(entySe,entyFe,te),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,"other")
+  )$(sameAs(sector, "trans"))
 ;
-
-q_co2_sector(t,regi,"build") ..
-vm_co2_sector(t,regi,"build")
-  =e=
-20
-;
-
-q_co2_sector(t,regi,"trans") ..
-vm_co2_sector(t,regi,"trans")
-  =e=
-30
-;
-
 
 ***------------------------------------------------------
 *' Mitigation options that are independent of energy consumption are represented
