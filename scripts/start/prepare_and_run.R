@@ -868,16 +868,20 @@ run <- function(start_subsequent_runs = TRUE) {
        load(RData_file)
        
        # 1. ... use it as 'input_bau.gdx'
-       if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_bau == cfg_main$title) {
+       if ("path_gdx_bau" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) {
+          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_bau)) {
+             if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_bau == cfg_main$title) {
           cat("Writing the path for input_bau.gdx to ",RData_file,"\n")
           # ...change the path_gdx_bau field of the subsequent run to the fulldata gdx of the current run ...
           cfg$files2export$start['input_bau.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
        }
+          }
+       }
        
        # 2. ... use it as 'input_carbonprice.gdx'
        if ("path_gdx_carbonprice" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) { 
-          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice)) {
-             if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice == cfg_main$title) {
+          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_carbonprice)) {
+             if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_carbonprice == cfg_main$title) {
                 cat("Writing the path for input_carbonprice.gdx to ",RData_file,"\n")
                 # ...change the path_gdx_carbonprice field of the subsequent run to the fulldata gdx of the current run ...
                 cfg$files2export$start['input_carbonprice.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
@@ -888,7 +892,7 @@ run <- function(start_subsequent_runs = TRUE) {
        save(cfg, file = RData_file)
 
        # 3. ... use it as 'input_ref.gdx' and start these runs (known as subsequent runs).
-       if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_ref == cfg_main$title) {
+       if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_ref == cfg_main$title) {
           load(RData_file)
           cat("Writing the path for input_ref.gdx to ",RData_file,"\n")
           # ...change the path_gdx_ref field of the subsequent run to the fulldata gdx of the current run ...
