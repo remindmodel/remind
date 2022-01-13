@@ -428,7 +428,7 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 $setglobal cm_NDC_version  2022_cond   !! def = 2022_cond
 cm_NDC_divergent_scenario = 0;     !! def = 0
-$setglobal cm_co2_tax_sector_markup  off   !! def = off
+$setglobal cm_CO2_tax_sector_markup  off   !! def = off
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 $setglobal c_delayPolicy  SPA0           !! def = SPA0

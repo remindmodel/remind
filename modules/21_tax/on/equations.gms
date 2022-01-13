@@ -29,7 +29,7 @@
     vm_taxrev(t,regi)
     =e=
       v21_taxrevGHG(t,regi)
-    + sum(emi_sectors, v21_taxrevGHG_sector(t,regi,emi_sectors))
+    + sum(emi_sectors, v21_taxrevCO2_sector(t,regi,emi_sectors))
     + v21_taxrevCO2luc(t,regi)
     + v21_taxrevCCS(t,regi) 
     + v21_taxrevNetNegEmi(t,regi)  
@@ -65,9 +65,9 @@ v21_taxrevGHG(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_t
 *' Sectoral CO2 emissions are multiplied by a predefined factor
 ***---------------------------------------------------------------------------
 
-q21_taxrevGHG_sector(t,regi,emi_sectors)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevGHG_sector(t,regi,emi_sectors) =e= (p21_co2_tax_sector_markup(regi,emi_sectors) * pm_taxCO2eq(t,regi)) * (vm_emico2_sector(t,regi,emi_sectors))
-                             - p21_taxrevGHG_sector0(t,regi,emi_sectors);
+q21_taxrevCO2_sector(t,regi,emi_sectors)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevCO2_sector(t,regi,emi_sectors) =e= (p21_CO2_tax_sector_markup(regi,emi_sectors) * pm_taxCO2eq(t,regi)) * (vm_emiCO2_sector(t,regi,emi_sectors))
+                             - p21_taxrevCO2_sector0(t,regi,emi_sectors);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of greenhouse gas taxes: tax rate (combination of 3 components) times land use co2 emissions

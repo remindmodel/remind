@@ -585,7 +585,7 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 
 
 ***--------------------------------------------------
-*' Sectoral energy-emissions used for taxation markup with cm_co2_tax_sector_markup
+*' Sectoral energy-emissions used for taxation markup with cm_CO2_tax_sector_markup
 ***--------------------------------------------------
 
 *** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
