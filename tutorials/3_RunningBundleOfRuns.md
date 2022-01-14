@@ -28,15 +28,11 @@ Those two columns are mandatory and usually placed at the beginning:
 Further columns are the configurations that you can choose for the specific runs.
 They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../develop/config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
-Note that the cell need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../develop/modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
-
-To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
-
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
-An example is a base run without climate policies and a policy run with carbon taxes.
-Such a "subsequent run" has to wait for the run it builds on to be finished.
+Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
+Such a “subsequent run“ has to wait until its “base run“ is finished, and then will be started automatically using the data from the base run.
 
-Note: Do not make changes to the REMIND code until the last run has started running GAMS (including subsequent runs). Don't `git checkout` other branches or manually edit REMIND files.
+Important: Do not make changes to the REMIND code until the last run has started running GAMS (including subsequent runs). Don't `git checkout` other branches or manually edit REMIND files.
 
 <img src="figures/scenario-config-explanation.png" width="100%" style="display: block; margin: auto;" />
 <p class="caption">
@@ -55,8 +51,19 @@ These three columns starting with `path…` can point to either finished runs or
   * If the run with this `title` is set to `start = 1`, then runs that point to this `title` are turned into “subsequent runs“ that will be started after the linked one is finished. Note that in this case, the REMIND code must not change until the `full.gms` file of the last subsequent run was generated.
   * If the run with this `title` is set to `start = 0` or does not exist in the `scenario_config_XYZ.csv` file, the function `configure_cfg` of [`start.R`](../start.R) searches in `./output` for folder with that title which contain a `fulldata.gdx` and whose `log.txt` states `REMIND run finished!`, and then picks the one with the latest date and time in the folder name. Appending a `_` to a `path_gdx…` entry, yielding for example `BAU_Nash_`, forces REMIND to take `fulldata.gdx` from earlier `BAU_Nash` runs, but avoids to be counted as a subsequent run. This way, you can quickly switch between the two options.
 
-The image above shows these possibilities used for `path_gdx_ref`. Run `RCP20` has a complete path specified but will not be executed because `start = 0`. `RCP37` provides only the folder name, `RCP26_subsequent` waits for `SSP2-Base` to be finished, and `RCP26_forceoldrun` selects the latest already finished `SSP2-Base` run in the output folder and starts immediately. If you set `start = 0` also for `SSP2-Base`, then `RCP26_subsequent` will also try to find an old run in a folder that looks like `SSP2-Base_YYYY-MM-DD_HH.MM.SS`.
+The image above shows these possibilities used for `path_gdx_ref`. Run `RCP20` has a complete path specified but will not be executed because `start = 0`. `RCP37` provides a complete folder name and therefore starts immediately using the `fulldata.gdx` from this folder, `RCP26_subsequent` waits for `SSP2-Base` to be finished, and `RCP26_forceoldrun` selects the latest already finished `SSP2-Base` run in the output folder and starts immediately. If you set `start = 0` also for `SSP2-Base`, then `RCP26_subsequent` will also try to find an old run in a folder that looks like `SSP2-Base_YYYY-MM-DD_HH.MM.SS`. Note that the fact that “subsequent“ is part of the `title` is only to ease the understanding, you can name these runs however you want.
 
-Everything in the row after a `#` is interpreted as comment. Best use it as first character in the first column to structure the file. Using `#` elsewhere else can lead to unexpected data losses of the cells that follow in the row.
+Everything in the row after a `#` is interpreted as comment. Best use it as first character in the first column to structure the file. Using `#` elsewhere else can lead to unexpected data losses of the cells that follow in the row. If you want to switch off the use of a column, either temporarily or to add some comments, add a dot before the parameter name, which then may read `.cm_startyear` and is then ignored.
 
-If you want to switch off the use of a column, either temporarily or to add some comments, add a dot before the parameter name, which then may read `.cm_startyear` and is then ignored. Don't use that for the five mandatory columns.
+Further notes:
+--------------
+
+The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../develop/modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+
+To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
+
+To compare two `scenario_config*.csv` files, for example after a change, these commands are useful:
+``` bash
+git diffmif scenario_config_1.csv scenario_config_2.csv
+git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
+```
