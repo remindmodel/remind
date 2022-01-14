@@ -6,7 +6,8 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/calibrate/bounds.gms
 
-vm_cesIO.fx(t0,regi_dyn29(regi),in_industry_dyn37(in))
+vm_cesIO.fx(t0,regi_dyn29(regi),in_industry_dyn37(in))$( 
+                                              NOT sameas(in,"en_otherInd_hth") )
   = pm_cesdata(t0,regi,in,"quantity");
 
 *** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. 
