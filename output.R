@@ -84,7 +84,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   }
   identifier <- tmp
   # PATTERN
-  if (length(identifier == 1) && identifier == (length(dirs) + 1)) {
+  if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
     cat("\nInsert the search pattern or the regular expression: ")
     pattern <- get_line()
     id <- grep(pattern = pattern, dirs[-1])
