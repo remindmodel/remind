@@ -80,7 +80,7 @@ Sets
     en_chemicals         "energy use of chemicals production"
     kap_chemicals        "energy efficiency capital of chemicals production"
     en_chemicals_fhth    "feedstock and high temperature heat energy use of chemicals production"
-    feso_chemicals       "solids energy use of cement production"
+    feso_chemicals       "solids energy use of chemicals production"
     feli_chemicals       "liquids energy use of chemicals production"
     fega_chemicals       "gases energy use of chemicals production"
     feh2_chemicals       "hydrogen energy use of chemicals production"
@@ -141,7 +141,7 @@ Sets
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
   /  
 
-  in_chemicals_feedstocks37(all_in)   "chemicals FE that can provide feedstocks"
+  in_chemicals_37(all_in)   "chemicals FE that can provide feedstocks"
   /
     feso_chemicals
     feli_chemicals

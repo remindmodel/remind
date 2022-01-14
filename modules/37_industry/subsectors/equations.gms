@@ -126,10 +126,26 @@ q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
 
 * lower bound on feso/feli/fega in chemicals FE input for feedstocks
 q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
-  sum(in_chemicals_feedstocks37(in), vm_cesIO(t,regi,in))
+  sum(in_chemicals_feedstocks37(in), vm_cesIO(t,regi,in)) !!why "in" and not "all_in"?
   =g=
     sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
   * p37_chemicals_feedstock_share(t,regi)
+;
+*Correction factor for non-energy feedstock emissions
+q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
+                                         AND entyFe2Sector(entyFe,"indst") ) .. 
+  sum(se2fe(entySE,entyFE,te),
+    !!vm_demFeNonEnergy    (t,regi,entySe,entyFe,sector,emiMkt)
+    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+  )
+  =e=
+  sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              !!check this mapping
+       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), !!apply these set only to chem indu, and only for relevant vectors: so li ga --> in_chemicals_feedstocks37(in)
+    (vm_cesIO(ttot,regi,in) 
+    + pm_cesdata(ttot,regi,in,"offset_quantity")
+    )
+    * p37_chemicals_feedstock_share(t,regi)
+  )
 ;
 
 *** EOF ./modules/37_industry/subsectors/equations.gms

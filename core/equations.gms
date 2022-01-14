@@ -490,6 +490,35 @@ q_emiTe(t,regi,emiTe(enty))..
   sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
+$ontext
+***-----------------------------------------------------------------------------
+*' Calculate terms to correct the emissions from non-energy feedstocks in the 
+*' industry. ALTERNATIVE IMPLEMENTATION TO DISTINGUISH BETWEEN FE FORMS
+*' NOT IN USE YET. CURRENT FIX IMPLEMENTED IN q_emiTeDetailMkt()
+***-----------------------------------------------------------------------------
+q_emiNEFeedstockDiscount()..
+  vm_discountFeedstock !!def!
+  =e=
+  sum(t, 
+    - ( !!discount emissions of NE feedstocks that are not combusted but are assumed to be combusted in the previous sum
+        !!why is vm_cesIO used for definig related bound in industry/subsectors? ---> vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+      vm_demFeSector(t,regi,enty,"feso_chemicals","indst","ETS")
+      * p37_chemicals_feedstock_share(t,regi) !!gotta fix p37->pm
+      + vm_demFeSector(t,regi,enty,enty2,"indst","ETS")
+      * p37_chemicals_feedstock_share(t,regi)
+      + vm_demFeSector(t,regi,enty,enty2,"indst","ETS")
+      * p37_chemicals_feedstock_share(t,regi)
+    )
+;
+
+Add feedstock emissions with right emi factor. This can be included in q_emiTeDetailMkt
+q_emiNEFeedstock()..
+  vm_emiNEFeedstock !!def
+  =e=
+    + vm_emiNEFeedstock(t,regi,...) !!add process emissions from NE feedstocks that are not combusted
+;
+$offtext
+
 ***-----------------------------------------------------------------------------
 *' Emissions per market
 *' from primary to secondary energy transformation,
@@ -513,9 +542,11 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
-		)
+		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)-vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)) 
+		!!emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
+    )
 	)
+
 ;
 
 ***--------------------------------------------------

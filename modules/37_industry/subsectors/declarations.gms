@@ -38,10 +38,11 @@ Parameter
 $endIf.CESMkup
 
 Positive Variables
-  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)   "industry CCS baseline emissions [GtC/a]"
-  vm_emiIndCCS(ttot,all_regi,all_enty)             "industry CCS emissions [GtC/a]"
-  vm_IndCCSCost(ttot,alL_regi,all_enty)            "industry CCS cost"
-  v37_emIIndCCSmax(ttot,all_regi,emiInd37)         "maximum abatable industry emissions"
+  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)                      "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndCCS(ttot,all_regi,all_enty)                                "industry CCS emissions [GtC/a]"
+  vm_IndCCSCost(ttot,alL_regi,all_enty)                               "industry CCS cost"
+  vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flow of non-energy feedstocks for the chemicals industry [Twa]"    !!check sets!
+  v37_emIIndCCSmax(ttot,all_regi,emiInd37)                            "maximum abatable industry emissions"
 ;
 
 Equations
@@ -55,6 +56,7 @@ Equations
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
   q37_chemicals_feedstocks_limit(ttot,all_regi)           "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
+  q37_demFeFeedstockChemIndst                             "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
