@@ -228,14 +228,14 @@ elseif (cm_DiscRateScen eq 4),
 p21_tau_BioImport(t,regi) = 0;
 p21_tau_BioImport(t,regi)$(regi_group("EUR_regi",regi) AND t.val ge 2030) = cm_BioImportTax_EU;
 
-*** sector-specific CO2eq tax markup
+*** sector-specific CO2eq tax markup. Loop over ext_regi to set GLO values to individual countries etc.
 $ifThen.cm_CO2_tax_sector_markup not "%cm_CO2_tax_sector_markup%" == "off"
-Parameter
-    p21_CO2_tax_sector_markup(all_regi,emi_sectors) "CO2eq tax markup in buildings or transport sector" / %cm_CO2_tax_sector_markup% /
-;
+  Parameter p21_extRegi_CO2_tax_sector_markup(ext_regi,emi_sectors) "CO2eq tax markup in building, industry or transport sector (extended regions)" / %cm_CO2_tax_sector_markup% /;
+  loop((ext_regi,emi_sectors)$p21_extRegi_CO2_tax_sector_markup(ext_regi,emi_sectors),
+    p21_CO2_tax_sector_markup(regi,emi_sectors)$(regi_group(ext_regi,regi)) = p21_extRegi_CO2_tax_sector_markup(ext_regi,emi_sectors);
+  );
 $else.cm_CO2_tax_sector_markup
-Parameter
-    p21_CO2_tax_sector_markup(all_regi,emi_sectors) "CO2eq tax markup in buildings or transport sector" / set.all_regi.set.emi_sectors 0 /
+  p21_CO2_tax_sector_markup(regi,emi_sectors) = 0;
 ;
 $endIf.cm_CO2_tax_sector_markup
 
