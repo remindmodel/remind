@@ -17,9 +17,9 @@ p45_taxCO2eq_last_NDC_year(regi) = smax(ttot$(ttot.val = p45_last_NDC_year(regi)
 
 pm_taxCO2eq(ttot,regi)$(ttot.val gt p45_last_NDC_year(regi))
    = (  !! regional, weight going from 1 in last NDC target year to 0 in 2100
-        p45_taxCO2eq_last_NDC_year(regi) * 1.0125**(ttot.val-p45_last_NDC_year(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
+        p45_taxCO2eq_last_NDC_year(regi) * p45_taxCO2eq_yearly_increase**(ttot.val-p45_last_NDC_year(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
         !! global, weight going from 0 in NDC target year to 1 in and after 2100
-      + p45_taxCO2eq_global2030          * 1.0125**(ttot.val-2030)                    * (min(p45_taxCO2eq_convergence_year,ttot.val) - p45_last_NDC_year(regi))
+      + p45_taxCO2eq_global2030          * p45_taxCO2eq_yearly_increase**(ttot.val-2030)                    * (min(p45_taxCO2eq_convergence_year,ttot.val) - p45_last_NDC_year(regi))
       )/(p45_taxCO2eq_convergence_year - p45_last_NDC_year(regi));
 
 display pm_taxCO2eq;

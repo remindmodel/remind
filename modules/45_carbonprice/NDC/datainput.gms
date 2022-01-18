@@ -19,6 +19,7 @@ pm_taxCO2eq("2015",regi)$regi_group("EUR_regi",regi)= 5 * sm_DptCO2_2_TDpGtC;
 *** parameters for exponential increase after NDC targets
 Scalar p45_taxCO2eq_global2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
 p45_taxCO2eq_global2030 = 30 * sm_DptCO2_2_TDpGtC;
+Scalar p45_taxCO2eq_yearly_increase "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1.0125/;
 
 Scalar p45_taxCO2eq_convergence_year "year until which CO2eq taxes have converged globally" /2100/;
 *** set Years for CO2eq taxes to converge after 2030
@@ -73,7 +74,7 @@ display p45_hist_share;
 Parameter p45_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario"
   /
 $ondelim
-$include "./modules/45_carbonprice/NDC/input/p45_BAU_reg_emi_wo_LU_bunkers.cs4r"
+$include "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
 $offdelim
   /             ;
 

@@ -297,7 +297,7 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
+  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
     source("scripts/input/prepare_NDC.R")
     prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }

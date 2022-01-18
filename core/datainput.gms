@@ -21,6 +21,9 @@ pm_globalMeanTemperature(tall)              = 0;
 pm_globalMeanTemperatureZeroed1900(tall)    = 0;
 pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 
+*OR* initialize regional tax that is only required in 48_carbonpriceRegi
+pm_taxCO2eq_regi(ttot,regi)                 = 0;
+
 *AL* Initialise to avoid compilation errors in presolve if variable not in input.gdx
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;

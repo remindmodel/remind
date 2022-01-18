@@ -58,14 +58,14 @@ loop( p45_NDC_year_set(ttot2,regi) ,
   pm_taxCO2eq(ttot,regi)$(ttot.val > ttot2.val AND not p45_NDC_year_set(ttot,regi)) = pm_taxCO2eq(ttot2,regi);
 ) ;
 
-*** convergence scheme post NDC target year: exponential increase with 1.25% AND regional convergence until p45_taxCO2eq_convergence_year
+*** convergence scheme post NDC target year: exponential increase AND regional convergence until p45_taxCO2eq_convergence_year
 p45_taxCO2eq_last_NDC_year(regi) = smax(ttot$(ttot.val = p45_last_NDC_year(regi)), pm_taxCO2eq(ttot,regi));
 
 pm_taxCO2eq(ttot,regi)$(ttot.val gt p45_last_NDC_year(regi))
    = (  !! regional, weight going from 1 in NDC target year to 0  in 2100
-        p45_taxCO2eq_last_NDC_year(regi) * 1.0125**(ttot.val-p45_last_NDC_year(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
+        p45_taxCO2eq_last_NDC_year(regi) * p45_taxCO2eq_yearly_increase**(ttot.val-p45_last_NDC_year(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
         !! global, weight going from 0 in NDC target year to 1 in and after 2100
-      + p45_taxCO2eq_global2030          * 1.0125**(ttot.val-2030)                    * (min(ttot.val,p45_taxCO2eq_convergence_year) - p45_last_NDC_year(regi))
+      + p45_taxCO2eq_global2030          * p45_taxCO2eq_yearly_increase**(ttot.val-2030)                    * (min(ttot.val,p45_taxCO2eq_convergence_year) - p45_last_NDC_year(regi))
       )/(p45_taxCO2eq_convergence_year - p45_last_NDC_year(regi));
 
 ***as a minimum, have linear price increase starting from 1$ in 2030
