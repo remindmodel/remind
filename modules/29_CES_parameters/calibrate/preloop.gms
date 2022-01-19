@@ -854,11 +854,11 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
     = p29_CESderivative(t,regi,out,in);
   );
   
+$ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
   !! set minimum price on ppf_industry
-  if (%c_CES_calibration_industry_FE_target% eq 1,   !! c_CES_calibration_industry_FE_target
-    pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
-    = max(pm_cesdata(t,regi,in,"price"), 1e-5);
-  );
+  pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+  = max(pm_cesdata(t,regi,in,"price"), 1e-5);
+$endif.FE_target
 
   !! smooth historical prices
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
