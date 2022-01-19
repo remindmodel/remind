@@ -245,11 +245,16 @@ if ('--restart' %in% argv) {
     path_gdx_required <- c("path_gdx", "path_gdx_ref", "path_gdx_bau")
     settings[, path_gdx_required[! path_gdx_required %in% names(settings)]] <- NA
     
-    # state if columns are unknown and cannot be used
+    # state if columns are unknown and probably will be ignored. If you find false positives, add them to knownColumnNames
     source("config/default.cfg")
-    unknown_columns <- names(settings)[! names(settings) %in% c(names(cfg$gms), "start", "path_gdx_carbonprice", "path_gdx", "path_gdx_ref", "path_gdx_bau", "output", "model", "regionmapping", "inputRevision")]
-    if (length(unknown_columns) > 0) {
-      cat(paste("Those columns have no counterpart in default.cfg and will be ignored:", paste(unknown_columns, collapse = ", "), "\n"))
+    knownColumnNames <- c(names(cfg$gms), "start", "path_gdx_carbonprice", "path_gdx", "path_gdx_ref",
+                          "path_gdx_bau", "output", "model", "regionmapping", "inputRevision")
+    unknownColumns <- names(settings)[! names(settings) %in% knownColumnNames]
+    if (length(unknownColumns) > 0) {
+      cat("\nAutomated checks did not find counterparts in default.cfg for these config file columns:\n  ")
+      cat(paste(unknownColumns, collapse = ", "))
+      cat("\nstart.R might simply ignore them. Please check if these switches are not deprecated.\n")
+      cat("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
     }
 
     # Select scenarios that are flagged to start
