@@ -82,13 +82,14 @@ start_comp <- function(outputdirs,
     )
   cat("Starting ", jobname, "\n")
   on_cluster <- file.exists("/p/projects/")
+  script <- "scripts/utils/run_compareScenarios2.R"
   clcom <- paste0(
-    "sbatch --qos=standby",
+    "sbatch ", slurmConfig,
     " --job-name=", jobname,
     " --output=", jobname, ".out",
     " --error=", jobname, ".err",
     " --mail-type=END --time=200 --mem-per-cpu=8000",
-    " --wrap=\"Rscript scripts/utils/run_compareScenarios2.R",
+    " --wrap=\"Rscript ", script,
     " outputdirs=", paste(outputdirs, collapse = ","),
     " shortTerm=", shortTerm,
     " outfilename=", jobname,
@@ -100,7 +101,6 @@ start_comp <- function(outputdirs,
   } else {
     outfilename <- jobname
     tmp.env <- new.env()
-    script <- "scripts/utils/run_compareScenarios2.R"
     tmp.error <- try(sys.source(script, envir = tmp.env))
     if (!is.null(tmp.error))
       warning("Script ", script, " was stopped by an error and not executed properly!")
