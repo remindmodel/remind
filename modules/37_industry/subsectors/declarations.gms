@@ -41,7 +41,6 @@ Positive Variables
   vm_macBaseInd(ttot,all_regi,all_enty,secInd37)                      "industry CCS baseline emissions [GtC/a]"
   vm_emiIndCCS(ttot,all_regi,all_enty)                                "industry CCS emissions [GtC/a]"
   vm_IndCCSCost(ttot,alL_regi,all_enty)                               "industry CCS cost"
-  vm_demFENonEnergySector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "energy flow of non-energy feedstocks for the chemicals industry [Twa]"    !!check sets!
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                            "maximum abatable industry emissions"
 ;
 

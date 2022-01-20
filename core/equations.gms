@@ -542,8 +542,10 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)-vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)) 
-		!!emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
+		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
+            vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+            -vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt)) 
+*emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
     )
 	)
 
