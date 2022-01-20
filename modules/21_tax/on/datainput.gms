@@ -227,5 +227,19 @@ elseif (cm_DiscRateScen eq 4),
 *** EU subregions pay cm_BioImportTax_EU of the world market price in addition after 2030 due to sustainability concerns in the Global South
 p21_tau_BioImport(t,regi) = 0;
 p21_tau_BioImport(t,regi)$(regi_group("EUR_regi",regi) AND t.val ge 2030) = cm_BioImportTax_EU;
- 
+
+*** sector-specific CO2 tax markup. Loop over ext_regi to set GLO values to individual countries etc.
+$ifThen.cm_CO2TaxSectorMarkup not "%cm_CO2TaxSectorMarkup%" == "off"
+Parameter
+  p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors) "CO2 tax markup in building, industry or transport sector (extended regions)" / %cm_CO2TaxSectorMarkup% /
+;
+  loop((ext_regi,emi_sectors)$p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors),
+    p21_CO2TaxSectorMarkup(regi,emi_sectors)$(regi_group(ext_regi,regi)) = p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors);
+  );
+$else.cm_CO2TaxSectorMarkup
+  p21_CO2TaxSectorMarkup(regi,emi_sectors) = 0;
+;
+$endIf.cm_CO2TaxSectorMarkup
+
+
 *** EOF ./modules/21_tax/on/datainput.gms

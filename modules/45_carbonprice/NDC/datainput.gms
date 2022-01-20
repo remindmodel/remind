@@ -17,9 +17,18 @@ pm_taxCO2eq("2015",regi)= 0;
 pm_taxCO2eq("2015",regi)$regi_group("EUR_regi",regi)= 5 * sm_DptCO2_2_TDpGtC;
 
 *** parameters for exponential increase after NDC targets
-Scalar p45_taxCO2eq_convergence_year "year until which CO2eq taxes have converged globally" /2100/;
 Scalar p45_taxCO2eq_global2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
 p45_taxCO2eq_global2030 = 30 * sm_DptCO2_2_TDpGtC;
+
+Scalar p45_taxCO2eq_convergence_year "year until which CO2eq taxes have converged globally" /2100/;
+*** set Years for CO2eq taxes to converge after 2030
+if(cm_NDC_divergentScenario = 0,
+    p45_taxCO2eq_convergence_year = 2100;
+elseif cm_NDC_divergentScenario = 1,
+    p45_taxCO2eq_convergence_year = 2150;
+elseif cm_NDC_divergentScenario = 2,
+    p45_taxCO2eq_convergence_year = 3000;
+);
 
 *** load NDC data
 Table f45_factor_targetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
