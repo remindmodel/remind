@@ -60,7 +60,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   # Detect all output folders containing fulldata.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/fulldata\\.gdx$", "", sub("^\\./output/", "", Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
+  dirs <- basename(dirname(Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
 
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- findCoupledruns(folder)
