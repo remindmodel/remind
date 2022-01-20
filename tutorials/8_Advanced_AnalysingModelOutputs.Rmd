@@ -69,7 +69,7 @@ var_PE <- c("PE|+|Coal",
             "PE|+|Solar",
             "PE|+|Geothermal")
 
-# add same unit for all variables (works onyl if units are identical for all variables, otherwiese you would have to provide the units idividually)
+# add same unit for all variables (works only if units are identical for all variables, otherwise you would have to provide the units individually)
 var_PE <- paste(var_PE,"(EJ/yr)")
 
 rem_PE <- rem[,,var_PE]
@@ -100,7 +100,7 @@ library(ggplot2)
 ggsave(filename = "PE.png",plot = p, width=15, height=10, scale = 2, units = "cm")
 ```
 
-`mipArea` retuns a regular ggplot object you can customize. To demonstrate this we override the default theme with theme_grey and a tiny font size, move the legend to the top, and reverse the facetting. This gives a nice ugly plot:
+`mipArea` returns a regular ggplot object you can customize. To demonstrate this we override the default theme with theme_grey and a tiny font size, move the legend to the top, and reverse the faceting. This gives a rather ugly plot:
 
 ```{r}
 p + theme_grey(base_size=8) + theme(legend.position="top") + facet_grid(region~scenario)
@@ -129,7 +129,7 @@ Generate a raw bar plot without specific adjustments
 ggplot() + geom_col(data=dat,aes(x=Data1,y=Value,fill=Data3))
 ```
 
-We use the `plotstyle` function to define default colors for our entities. This ensures that in all our plots a particular entitiy will be displayed with the same color. Now, retrieve these default colors for the primary energy carriers using `plotstyle`. Therefore, shorten variable names, so that they match the names defined in plotstyle. The full names of the elements stored in the third dimension of the magpie object would be
+We use the `plotstyle` function to define default colors for our entities. This ensures that in all our plots a particular entity will be displayed with the same color. Now, retrieve these default colors for the primary energy carriers using `plotstyle`. Therefore, shorten variable names, so that they match the names defined in plotstyle. The full names of the elements stored in the third dimension of the magpie object would be
 ```{r}
 head(getNames(rem_PE))
 ```
@@ -209,7 +209,7 @@ mipLineHistorical(x = rem[,,"Emi|CO2 (Mt CO2/yr)"][,,"BAU"]["GLO",,,invert=TRUE]
 
 # Calculating and adding a new variable
 
-Let's see whether we can calcualte per capita emissions. First, we have to find out, if our dataset contains something like population data. We apply `pmatch` and `getNames` to find out if there is a variable that has 'pop' in its name.
+Let's see whether we can calculate per capita emissions. First, we have to find out, if our data set contains something like population data. We apply `pmatch` and `getNames` to find out if there is a variable that has 'pop' in its name.
 ```{r}
 getNames(rem[,,"Pop",pmatch=TRUE])
 ```
@@ -251,7 +251,7 @@ Now we can add the new variable to the full report
 rem <- mbind(rem,emi_cap)
 ```
 
-Finally, plot the freshly calculated per-capita emissions. When selecting the variables use `pmatch=TRUE` to retrieve all variables that have this string in their name. Useful in this case, because we do not need to provide the detailled sector names. Distinguish scenarios (column "Data1" in the data frame that `as.ggplot` produces) by line type and variables (Data3) by color.
+Finally, plot the freshly calculated per-capita emissions. When selecting the variables use `pmatch=TRUE` to retrieve all variables that have this string in their name. Useful in this case, because we do not need to provide the detailed sector names. Distinguish scenarios (column "Data1" in the data frame that `as.ggplot` produces) by line type and variables (Data3) by color.
 
 ```{r}
 ggplot (as.ggplot(rem[,,"Per capita emissions",pmatch=TRUE])) + 
@@ -294,10 +294,11 @@ rem_gdx <- readGDX(gdx = "fulldata.gdx","vm_emiAll",field = "l",format = "first_
 str(rem_gdx)
 ```
 
-*vm_emiAll* does not include global values. We calcualte them with `dimSums` summing over the regions (first dimension) and apennd them using `mbind`.
+*vm_emiAll* does not include global values. We calculate them with `dimSums` summing over the regions (first dimension) and append them using `mbind`.
 
 ```{r}
 rem_gdx <- mbind(rem_gdx,dimSums(rem_gdx,dim = 1))
+getItems(rem_gdx,dim = 1)<-sub("dummy","GLO",getRegions(rem_gdx))
 ```
 
 *vm_emiAll* is defined for all entities, but for most of them it is zero. Let's find the entities for which it contains data. We use the year 2050 as an indicator:
@@ -321,7 +322,7 @@ Now, let's pick Kyoto gases only and get the units right. Define vector with nam
 kyo <- c("co2","n2o","ch4")
 ```
 
-Create a new magclass object with the same regions and years as *rem_gdx* and kyoto gases as variables 
+Create a new magclass object with the same regions and years as *rem_gdx* and Kyoto gases as variables 
 
 ```{r}
 conversion <- new.magpie(cells_and_regions = getRegions(rem_gdx),years = getYears(rem_gdx),names = kyo)

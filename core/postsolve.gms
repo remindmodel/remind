@@ -879,5 +879,14 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
      *o_emi_conv("co2") 	
 ;
 
+*CG**ML*: capital interest rate
+p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
+    = (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
+      (vm_cons.l(ttot-1,regi)/pm_pop(ttot-1,regi)) )
+      ** (1 / ( pm_ttot_val(ttot+1)- pm_ttot_val(ttot-1))) - 1) + pm_prtp(regi)
+;
+
+*** CG: growth rate after 2100 is very small (0.02 instead of around 0.05) due to various artefact, we simply set interest rates to 0.05 after 2100
+p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 
 *** EOF ./core/postsolve.gms

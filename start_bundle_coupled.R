@@ -194,7 +194,7 @@ for(scen in common){
             # if real file is given (has ".mif" at the end) take it for path_mif_ghgprice_land
             path_mif_ghgprice_land <- scenarios_coupled[scen, "path_mif_ghgprice_land"]
         } else {
-            # if no real file is given but a reference to another scenario (that has to run first) create path for path_mif_ghgprice_land
+            # if no real file is given but a reference to another scenario (that has to run first) create path to the reference scenario
             path_mif_ghgprice_land <- paste0(path_remind,"output/",prefix_runname,scenarios_coupled[scen, "path_mif_ghgprice_land"],"-rem-",max_iterations,"/REMIND_generic_",prefix_runname,scenarios_coupled[scen, "path_mif_ghgprice_land"],"-rem-",max_iterations,".mif")
         }
         cfg_mag$path_to_report_ghgprices <- path_mif_ghgprice_land
@@ -288,6 +288,7 @@ for(scen in common){
     cp_start_now <- (substr(settings_remind[scen,"path_gdx_carbonprice"], nchar(settings_remind[scen,"path_gdx_carbonprice"])-3, nchar(settings_remind[scen,"path_gdx_carbonprice"])) == ".gdx"
                 | is.na(settings_remind[scen,"path_gdx_carbonprice"]))
     start_now <- start_now & cp_start_now
+    cfg_rem$files2export$start['input_carbonprice.gdx'] <- settings_remind[scen,"path_gdx_carbonprice"]
   }
 
   if (!start_now) {

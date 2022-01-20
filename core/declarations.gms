@@ -48,6 +48,7 @@ f_lab(tall,all_regi,all_POPscen)                     "labour data for all possib
 pm_lab(tall,all_regi)                                "data for labour [bn people]"
 pm_esCapCost(tall,all_regi,all_teEs)                 "Capital energy cost per unit of consumption for end-use capital (energy service layer)"
 pm_cesdata_sigma(ttot,all_in)                        "elasticities of substitution"
+p_r(ttot,all_regi)				     "calculating capital interest rate"
 
 o_diff_to_Budg(iteration)                             "Difference between actual CO2 budget and target CO2 budget"
 o_totCO2emi_peakBudgYr(iteration)                     "Total CO2 emissions in the peakBudgYr"
@@ -97,6 +98,12 @@ p_switch_cement(ttot,all_regi)                       "describes an s-curve to pr
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
+
+pm_extRegiEarlyRetiRate(ext_regi)                    "regional early retirement rate (extended regions)" / %c_regi_earlyreti_rate% /
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+p_techEarlyRetiRate(ext_regi,all_te)                 "Technology specific early retirement rate" / %c_tech_earlyreti_rate% /
+$ENDIF.tech_earlyreti
+pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retirement rate (model native regions)"
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
@@ -552,7 +559,6 @@ sm_globalBudget_dev                                   "actual level of global cu
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
-s_histBioShareTolerance                               "tolerance range of percentage points by how much the biomass share in solids, liquids and gases in industry and buildings can deviate from the historical value in 2005"
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;

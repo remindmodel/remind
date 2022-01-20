@@ -78,11 +78,11 @@ vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("
 
 loop(regi,
        if( ( pm_gdp("2010",regi)/pm_pop("2010",regi) ) > 3,
-             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
-             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 5 * pm_regiEarlyRetiRate("2020",regi,te) + 5 * pm_regiEarlyRetiRate("2025",regi,te) - 0.001, 0.9);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 5 * pm_regiEarlyRetiRate("2010",regi,te) + 5 * pm_regiEarlyRetiRate("2015",regi,te) - 0.001, 0.8);
         else
-             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.5);
-             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 5 * pm_regiEarlyRetiRate("2020",regi,te) + 5 * pm_regiEarlyRetiRate("2025",regi,te) - 0.001, 0.5);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 5 * pm_regiEarlyRetiRate("2010",regi,te) + 5 * pm_regiEarlyRetiRate("2015",regi,te) - 0.001, 0.8);
           );
      );
 

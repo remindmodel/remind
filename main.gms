@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.254
+* Input data revision: 6.276
 * 
-* Last modification (input data): Wed Oct 20 17:30:02 2021
+* Last modification (input data): Thu Dec 23 10:57:10 2021
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -260,7 +260,8 @@ cm_rentconvgas        "[grades2poly] number of years required to converge to the
 cm_rentdisccoal       "[grades2poly] discount factor for the coal rent"
 cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved in 2100"
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
-cm_earlyreti_rate     "maximum portion of capital stock that can be retired in one year"
+c_regi_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region"
+c_tech_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region for a technology"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
 cm_damage              "cm_damage factor for forcing overshoot"
@@ -387,7 +388,7 @@ cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
@@ -412,7 +413,8 @@ cm_rentconvgas      = 50;        !! def 50
 cm_rentdisccoal     = 0.4;       !! def 0.4
 cm_rentdisccoal2    = 0.6;       !! def 0.6
 cm_rentconvcoal     = 50;        !! def 50
-cm_earlyreti_rate   = 0.09;      !! def 0.09
+$setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
+$setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13 !! def = GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
@@ -583,14 +585,15 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 
-$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure  0    !! def =  0
-$setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
-$setglobal c_CES_calibration_write_prices  0    !! def =  0
-$setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
-$setglobal cm_calibration_string  off      !! def = off
+$setglobal c_CES_calibration_new_structure        0     !!  def  =  0
+$setglobal c_CES_calibration_iterations          10     !!  def  =  10
+$setglobal c_CES_calibration_iteration            1     !!  def  =  1
+$setglobal c_CES_calibration_write_prices         0     !!  def  =  0
+$setglobal cm_CES_calibration_default_prices      0.01  !!  def  =  0.01
+$setglobal c_CES_calibration_industry_FE_target   0                 
+$setglobal cm_calibration_string                 off    !!  def  =  off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
@@ -633,7 +636,7 @@ $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
-$setglobal cm_wind_offshore  0      !! def = 0
+$setglobal cm_wind_offshore  1      !! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
@@ -707,3 +710,4 @@ $include "./core/magicc.gms";    !!connection to MAGICC, needed for post-process
 $endif.c_skip_output
 
 *** EOF ./main.gms
+
