@@ -708,7 +708,7 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 ***######################## R SECTION START (SETS) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R
+*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R
 
 sets
 
@@ -997,6 +997,7 @@ RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world
 ***-----------------------------------------------------------------------------
 Sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
+  NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"  /2018_cond, 2018_uncond, 2021_cond, 2021_uncond, 2022_cond, 2022_uncond/
 ;
 
 ***-----------------------------------------------------------------------------

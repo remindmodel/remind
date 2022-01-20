@@ -111,10 +111,11 @@ $if not setglobal test_TS   + (1-p31_datafosdyn(regi,enty,rlf,"dec"))**(pm_ttot_
 $if setglobal test_TS       + (1-p31_datafosdyn(regi,enty,rlf,"dec")-0.002)**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
 
 $IFTHEN.cm_OILRETIRE %cm_OILRETIRE% == "on"
+***CG: replacing earlyreti_lim with regional early retirement rate pm_extRegiEarlyRetiRate(ext_regi)
 q31_smoothoilphaseout(ttot,regi,enty2rlf_dec(enty,rlf))$( (ttot.val ge cm_startyear) AND (ttot.val lt 2120) AND (sameas(enty,"peoil")) )..
     v31_fuSlack(ttot+1,regi,enty,rlf)
     =l=
-    v31_fuSlack(ttot,regi,enty,rlf) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * cm_earlyreti_rate * 0.3 * p31_max_oil_extraction(regi,enty,rlf); !! 0.3 is an arbitrarily chosen number to make the retirement of oil comparable to retirement of other sectors- the "max_oil_extraction" is alsways higher than the real extraction, so some decrease of this limit makes the results smoother. 
+    v31_fuSlack(ttot,regi,enty,rlf) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * sum(regi_group(ext_regi,regi), pm_extRegiEarlyRetiRate(ext_regi)) * 0.3 * p31_max_oil_extraction(regi,enty,rlf); !! 0.3 is an arbitrarily chosen number to make the retirement of oil comparable to retirement of other sectors- the "max_oil_extraction" is alsways higher than the real extraction, so some decrease of this limit makes the results smoother. 
 ;
 $ENDIF.cm_OILRETIRE
 

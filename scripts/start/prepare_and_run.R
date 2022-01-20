@@ -212,7 +212,7 @@ prepare <- function() {
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
   
   # print version information of installed packages
-  cat("\n==== installed package versions =====\n")
+  cat("\n\n==== installed package versions =====\n")
   installed.packages() %>%
     # printing a tibble instead of a list makes for a table that is easier to
     # compare
@@ -221,18 +221,18 @@ prepare <- function() {
     # using right_join instead of filter generates NA for packages that are not
     # installed
     right_join(
-	# list all packages of interest here
+    # list all packages of interest here
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTrpLib",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse", 
-	    "tools"),
+            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse",
+            "tools"),
 
         'Package') %>%
     print(n = Inf)
-  cat("==========\n")
+  cat("\n==========\n")
 
   load("config.Rdata")
 
@@ -269,7 +269,7 @@ prepare <- function() {
   # Copy MAGICC
   if ( !file.exists(cfg$magicc_template) 
      & file.exists(path.expand(Sys.getenv('MAGICC'))))
-	  cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
+      cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
 
   if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
@@ -298,12 +298,14 @@ prepare <- function() {
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
+    cat("\nRun scripts/input/prepare_NDC.R.\n")
     source("scripts/input/prepare_NDC.R")
     prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
 
-  # Create input file with exogenous CO2 tax using the CO2 price form another run
+  # Create input file with exogenous CO2 tax using the CO2 price from another run
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
+    cat("\nRun scripts/input/create_input_for_45_carbonprice_exogenous.R to create input file with exogenous CO2 tax from another run.\n")
     source("scripts/input/create_input_for_45_carbonprice_exogenous.R")
     create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
   }
@@ -312,7 +314,6 @@ prepare <- function() {
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
                                          "tran_",cfg$gms$transport,"-",
-                                         ifelse(cfg$gms$transport == "edge_esm", paste0( "demTrsp_", cfg$gms$cm_EDGEtr_scen, "-"), ""),
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
                                          "En_",  cfg$gms$cm_demScen, "-",
@@ -325,7 +326,7 @@ prepare <- function() {
                   content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
                   subject = "CES INPUT")
 
-  # If a path to a MAgPIE report is supplied use it as REMIND intput (used for REMIND-MAgPIE coupling)
+  # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
   # ATTENTION: modifying gms files
   if (!is.null(cfg$pathToMagpieReport)) {
     getReportData(path_to_report = cfg$pathToMagpieReport,inputpath_mag=cfg$gms$biomass,inputpath_acc=cfg$gms$agCosts)
@@ -371,7 +372,7 @@ prepare <- function() {
     modification_warning <- c(
       '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
       '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD',
-      '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R')
+      '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R')
     content <- c(modification_warning,'','sets')
     # write iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
@@ -403,7 +404,7 @@ prepare <- function() {
     content <- c(content, '      /')
     content <- c(content, ' ')
     # iso countries set
-	  content <- c(content,'   iso "list of iso countries" /')
+    content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
     content <- c(content,'   regi2iso(all_regi,iso) "mapping regions to iso countries"','      /')
     for(i in as.character(unique(map$RegionCode))) {
@@ -455,7 +456,7 @@ prepare <- function() {
   modification_warning <- c(
     '*** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY',
     '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START',
-    '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start_functions.R')
+    '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R')
   content <- c(modification_warning,'','sets')
   content <- c(content,'','       modules "all the available modules"')
   content <- c(content,'       /',paste0("       ",getModules("modules/")[,"name"]),'       /')
@@ -475,11 +476,16 @@ prepare <- function() {
   # Copy important files into output_folder (before REMIND execution)
   .copy.fromlist(cfg$files2export$start,cfg$results_folder)
 
+  namedfiles <- names(cfg$files2export$start)["" != names(cfg$files2export$start)]
+  for (namedfile in namedfiles) {
+    message("Copied to ", namedfile, ": ", cfg$files2export$start[namedfile])
+  }
+
   # Save configuration
   save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
 
   # Merge GAMS files
-  cat("Creating full.gms\n")
+  message("\nCreating full.gms")
   singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
@@ -717,7 +723,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # Save start time
   timeGAMSStart <- Sys.time()
 
-  # De-compress finxing files if they have already been zipped (only valid if run is restarted)
+  # De-compress fixing files if they have already been zipped (only valid if run is restarted)
   if (cfg$gms$cm_startyear > 2005) {
       if (file.exists("levs.gms.gz")) {
         cat("Unzip fixing files\n")
@@ -731,6 +737,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   # Print message
   cat("\nStarting REMIND...\n")
+  cat("GAMS will provide logging in full.log.\n")
 
   # Call GAMS
   if (cfg$gms$CES_parameters == "load") {
@@ -832,12 +839,37 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  # Print REMIND runtime
-  cat("\n gams_runtime is ", gams_runtime, "\n")
 
-  # Collect and submit run statistics to central data base
+  # to facilitate debugging, look which files were created.
+  message("Model summary:")
+  # Print REMIND runtime
+  message("  gams_runtime is ", gams_runtime, "")
+  if (! file.exists("full.gms")) {
+    message("! full.gms does not exist, so the REMIND GAMS code was not generated.")
+  } else {
+    message("  full.gms exists, so the REMIND GAMS code was generated.")
+    if (! file.exists("full.lst") | ! file.exists("full.log")) {
+      message("- full.log or full.lst does not exist, so GAMS did not run.")
+    } else {
+      message("  full.log and full.lst exist, so GAMS did run.")
+      if (! file.exists("abort.gdx")) {
+        message("  abort.gdx does not exist, which is a file written automatically for some types of errors.")
+      } else {
+        message("! abort.gdx exists, which is a file written automatically for some types of errors.")
+      }
+      if(! file.exists("fulldata.gdx")) {
+        message("! fulldata.gdx does not exist, so output generation will fail.")
+      } else {
+        message("  fulldata.gdx exists, so at least one iteration was successful.")
+      }
+      logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
+      message(ifelse(logStatus == "*** Status: Normal completion", " ", "!"), " full.log states: ", logStatus)
+    }
+  }
+
+  message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
-                        modelstat  = readGDX(gdx="fulldata.gdx","o_modelstat", format="first_found"),
+                        modelstat  = readGDX(gdx="fulldata.gdx", "o_modelstat", format="first_found"),
                         config     = cfg,
                         runtime    = gams_runtime,
                         setup_info = lucode2::setup_info(),
@@ -855,11 +887,10 @@ run <- function(start_subsequent_runs = TRUE) {
   # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
   coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
-  start_subsequent_runs <- !coupled_run
+  start_subsequent_runs <- start_subsequent_runs & !coupled_run
  
-  # if RunsUsingTHISgdxAsInput has at least one row
-  if (start_subsequent_runs & (dim(cfg$RunsUsingTHISgdxAsInput)[1] != 0)) {
-  
+  if (start_subsequent_runs & (length(cfg$RunsUsingTHISgdxAsInput)[1] != 0)) {
+
     # Save the current cfg settings into a different data object, so that they are not overwritten
     cfg_main <- cfg
     
@@ -870,16 +901,20 @@ run <- function(start_subsequent_runs = TRUE) {
        load(RData_file)
        
        # 1. ... use it as 'input_bau.gdx'
-       if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_bau == cfg_main$title) {
+       if ("path_gdx_bau" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) {
+          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_bau)) {
+             if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_bau == cfg_main$title) {
           cat("Writing the path for input_bau.gdx to ",RData_file,"\n")
           # ...change the path_gdx_bau field of the subsequent run to the fulldata gdx of the current run ...
           cfg$files2export$start['input_bau.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
        }
+          }
+       }
        
        # 2. ... use it as 'input_carbonprice.gdx'
        if ("path_gdx_carbonprice" %in% names(cfg_main$RunsUsingTHISgdxAsInput)) { 
-          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice)) {
-             if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_carbonprice == cfg_main$title) {
+          if (!is.na(cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_carbonprice)) {
+             if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_carbonprice == cfg_main$title) {
                 cat("Writing the path for input_carbonprice.gdx to ",RData_file,"\n")
                 # ...change the path_gdx_carbonprice field of the subsequent run to the fulldata gdx of the current run ...
                 cfg$files2export$start['input_carbonprice.gdx'] <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
@@ -890,7 +925,7 @@ run <- function(start_subsequent_runs = TRUE) {
        save(cfg, file = RData_file)
 
        # 3. ... use it as 'input_ref.gdx' and start these runs (known as subsequent runs).
-       if (cfg_main$RunsUsingTHISgdxAsInput[run,]$path_gdx_ref == cfg_main$title) {
+       if (cfg_main$RunsUsingTHISgdxAsInput[run,,drop=FALSE]$path_gdx_ref == cfg_main$title) {
           load(RData_file)
           cat("Writing the path for input_ref.gdx to ",RData_file,"\n")
           # ...change the path_gdx_ref field of the subsequent run to the fulldata gdx of the current run ...
@@ -951,7 +986,7 @@ run <- function(start_subsequent_runs = TRUE) {
   timeOutputEnd <- Sys.time()
 
   # Save run statistics to local file
-  cat("Saving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
+  cat("\nSaving timeGAMSStart, timeGAMSEnd, timeOutputStart and timeOutputStart to runstatistics.rda\n")
   lucode2::runstatistics(file           = paste0(cfg$results_folder, "/runstatistics.rda"),
                        timeGAMSStart   = timeGAMSStart,
                        timeGAMSEnd     = timeGAMSEnd,

@@ -8,7 +8,9 @@
 ################# D E F I N E  debug_coupled #####################
 ##################################################################
 
-# This function will be called if in start_coupled() the debug is set to TRUE.
+# This function will be called in start_coupled() instead of the regular
+# submit() (for REMIND) and start_run (for MAgPIE) functions if the debug 
+# mode is set to TRUE in start_coupled().
 # It creates empty output folders and copies dummy reports into them 
 # without calling the start scripts of the models.
 
@@ -21,7 +23,7 @@ debug_coupled <- function(model = NULL,cfg) {
    } else if (!cfg$force_replace) {
      stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
    } else {
-     cat("    Deleting results folder because it alreay exists:",cfg$results_folder,"\n")
+     cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
      unlink(cfg$results_folder, recursive = TRUE)
      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
    }
@@ -220,7 +222,9 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     }
     
     cat("### COUPLING ### MAgPIE will be started with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
-    cfg_mag$path_to_report <- report
+    cfg_mag$path_to_report_bioenergy <- report
+    # if no different mif was set for GHG prices use the same as for bioenergy
+    if(is.na(cfg_mag$path_to_report_ghgprices)) cfg_mag$path_to_report_ghgprices <- report
     ########### START MAGPIE #############
     outfolder_mag <- ifelse(debug, debug_coupled(model="mag",cfg_mag), start_run(cfg_mag, codeCheck=FALSE))
     ######################################

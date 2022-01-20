@@ -24,7 +24,6 @@ pm_ts,input,questionnaire
 cm_startyear,input,questionnaire
 cm_postTargetIncrease,input,questionnaire
 pm_histCap,input,questionnaire
-pm_earlyreti_adjRate,input,questionnaire
 pm_emiTargetESR,input,questionnaire
 vm_emiCdr,input,questionnaire
 pm_share_CCS_CCO2,input,questionnaire

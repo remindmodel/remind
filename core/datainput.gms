@@ -504,11 +504,30 @@ pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
-table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
-$ondelim
-$include "./core/input/p_earlyRetirementAdjFactor.cs3r"
-$offdelim
-;
+*SB* Region- and tech-specific early retirement rates
+*Regional*
+loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+);
+*Tech-specific*
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+);
+$ENDIF.tech_earlyreti
+
+
+
+*SB* Time-dependent early retirement rates in Baseline scenarios
+$ifthen.Base_Cprice %carbonprice% == "none"
+$ifthen.Base_techpol %techpol% == "none"
+*** Allow very little early retirement future periods
+pm_regiEarlyRetiRate(t,regi,"pc")$(t.val gt 2025) = 0.01;
+$endif.Base_techpol
+$endif.Base_Cprice
+
+display pm_regiEarlyRetiRate;
+
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
@@ -1508,15 +1527,5 @@ $endif.subsectors
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
-
-*** define tolerance level by how much biomass share needs to comply with 2005 historical values
-*** low tolerance for fixed_shares, there is works
-s_histBioShareTolerance = 0.02;
-*** temporary: until subsectors historical FE mix checked -> high tolerance for industry subsectors to make it run 
-$ifthen.subsectors "%industry%" == "subsectors"   !! industry
-s_histBioShareTolerance = 0.3;
-$endif.subsectors
-
-
 
 *** EOF ./core/datainput.gms

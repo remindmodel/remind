@@ -7,18 +7,18 @@
 ### Function to create files with regional BAU emissions
 
 prepare_NDC<-function(gdx, cfg){
-  
+
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode2,quietly=TRUE,warn.conflicts =FALSE)
   library(gdx,quietly=TRUE,warn.conflicts =FALSE)
   library(remind2,quietly = TRUE,warn.conflicts =FALSE)
-  
+
   ############################# BASIC CONFIGURATION #############################
-  
+
   #Define arguments that can be read from command line
   #  gdx <- "fulldata.gdx"
   #  readArgs("fulldata.gdx")
-  
+
   ###############################################################################
   
   if (file.exists(gdx)) {
@@ -36,47 +36,6 @@ prepare_NDC<-function(gdx, cfg){
   }
 
   getNames(p45_BAU_reg_emi_wo_LU_bunkers) <- NULL
-  write.magpie(p45_BAU_reg_emi_wo_LU_bunkers,"modules/45_carbonprice/NDC/input/p45_BAU_reg_emi_wo_LU_bunkers.cs4r", comment="** description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \n*** unit: Mt CO2eq/yr \n*** file created with scripts/input/create_BAU_reg_emi_wo_LU_bunkers.R")
-  #   
-  
-  #read current gdp_scen
-  gdp_scen <- readGDX(gdx,"cm_GDPscen")
-  
-  if (cfg$gms$cm_NDC_version == "2021_cond"){
-    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC/input/p45_2005share_target_NDC2021_cond.cs4r",skip=4,header = F))
-  } else if (cfg$gms$cm_NDC_version == "2021_uncond") {
-    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC/input/p45_2005share_target_NDC2021_uncond.cs4r",skip=4,header = F))
-  } else if (cfg$gms$cm_NDC_version == "2018_cond") {
-    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC/input/p45_2005share_target_NDC2018_cond.cs4r",skip=4,header = F))
-  } else if (cfg$gms$cm_NDC_version == "2018_uncond") {
-    shares <- as.magpie(read.csv("modules/45_carbonprice/NDC/input/p45_2005share_target_NDC2018_uncond.cs4r",skip=4,header = F))
-  }
-  r2025 <- NULL
-  r2030 <- NULL
-  for(r in getRegions(shares)){
-    ## depending on which target has the higher share of emissions, assign region to group with either 2025 or 2030 target year
-    if(as.numeric(shares[r,2025,gdp_scen])>as.numeric(shares[r,2030,gdp_scen])){
-      r2025 <- c(r2025,r)
-    } else {
-      r2030 <- c(r2030,r)
-    }
-  }
-  
-  # to be done: add up the shares from both time-steps to the dominant time step and copy the target value to the other time step
-  # (assuming that the target is similar for the other time step - likely the minor error in comparison to not considering country at all)
-  
-  if (cfg$gms$cm_NDC_version == "2021_cond"){
-    write.table(r2025,"modules/45_carbonprice/NDC/input/set_regi2025_NDC2021_cond.cs4r", row.names = F,col.names=F,quote = F)
-    write.table(r2030,"modules/45_carbonprice/NDC/input/set_regi2030_NDC2021_cond.cs4r", row.names = F,col.names=F,quote = F)
-  } else if (cfg$gms$cm_NDC_version == "2021_uncond") {
-    write.table(r2025,"modules/45_carbonprice/NDC/input/set_regi2025_NDC2021_uncond.cs4r", row.names = F,col.names=F,quote = F)
-    write.table(r2030,"modules/45_carbonprice/NDC/input/set_regi2030_NDC2021_uncond.cs4r", row.names = F,col.names=F,quote = F)
-  } else if (cfg$gms$cm_NDC_version == "2018_cond") {
-    write.table(r2025,"modules/45_carbonprice/NDC/input/set_regi2025_NDC2018_cond.cs4r", row.names = F,col.names=F,quote = F)
-    write.table(r2030,"modules/45_carbonprice/NDC/input/set_regi2030_NDC2018_cond.cs4r", row.names = F,col.names=F,quote = F)
-  } else if (cfg$gms$cm_NDC_version == "2018_uncond") {
-    write.table(r2025,"modules/45_carbonprice/NDC/input/set_regi2025_NDC2018_uncond.cs4r", row.names = F,col.names=F,quote = F)
-    write.table(r2030,"modules/45_carbonprice/NDC/input/set_regi2030_NDC2018_uncond.cs4r", row.names = F,col.names=F,quote = F)
-  }
-}
+  write.magpie(p45_BAU_reg_emi_wo_LU_bunkers,"./modules/45_carbonprice/NDC/input/p45_BAU_reg_emi_wo_LU_bunkers.cs4r", comment="** description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \n*** unit: Mt CO2eq/yr \n*** file created with scripts/input/prepare_NDC.R")
 
+}
