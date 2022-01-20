@@ -22,11 +22,11 @@ p45_taxCO2eq_global2030 = 30 * sm_DptCO2_2_TDpGtC;
 
 Scalar p45_taxCO2eq_convergence_year "year until which CO2eq taxes have converged globally" /2100/;
 *** set Years for CO2eq taxes to converge after 2030
-if(cm_NDC_divergent_scenario = 0,
+if(cm_NDC_divergentScenario = 0,
     p45_taxCO2eq_convergence_year = 2100;
-elseif cm_NDC_divergent_scenario = 1,
+elseif cm_NDC_divergentScenario = 1,
     p45_taxCO2eq_convergence_year = 2150;
-elseif cm_NDC_divergent_scenario = 2,
+elseif cm_NDC_divergentScenario = 2,
     p45_taxCO2eq_convergence_year = 3000;
 );
 

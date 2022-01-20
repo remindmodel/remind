@@ -9,7 +9,7 @@
 *AJS* technical. initialize parameters so that they are read from gdx
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
-vm_emiCO2_sector.l(ttot,all_regi,emi_sectors) = 0;
+vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
 
 
 *AJS* initialize parameter (avoid compilation errors)

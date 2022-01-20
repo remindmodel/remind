@@ -585,13 +585,13 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 
 
 ***--------------------------------------------------
-*' Sectoral energy-emissions used for taxation markup with cm_CO2_tax_sector_markup
+*' Sectoral energy-emissions used for taxation markup with cm_CO2TaxSectorMarkup
 ***--------------------------------------------------
 
 *** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
-q_emiCO2_sector(t,regi,sector)$(sameAs(sector, "build") OR
+q_emiCO2Sector(t,regi,sector)$(sameAs(sector, "build") OR
                                 sameAs(sector, "trans"))..
-vm_emiCO2_sector(t,regi,sector)
+vm_emiCO2Sector(t,regi,sector)
   =e=
 *** calculate direct CO2 emissions per end-use sector
     sum(se2fe(entySe,entyFe,te),

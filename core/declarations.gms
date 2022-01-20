@@ -282,7 +282,7 @@ vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that he
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
 vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
-vm_emiCO2_sector(ttot,all_regi,emi_sectors)          "total CO2 emissions from individual sectors [GtC]"
+vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from individual sectors [GtC]"
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
 vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
@@ -422,7 +422,7 @@ qm_fuel2pe(ttot,all_regi,all_enty)                   "constraint on cumulative f
 
 q_limitProd(ttot,all_regi,all_te,rlf)                "constraint on annual production"
 
-q_emiCO2_sector(ttot,all_regi,emi_sectors)               "CO2eq emissions from different sectors"
+q_emiCO2Sector(ttot,all_regi,emi_sectors)            "CO2 emissions from different sectors"
 q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
