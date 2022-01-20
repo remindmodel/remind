@@ -381,6 +381,24 @@ loop ((t_29hist(t),regi_dyn29(regi))$(
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
 );
+
+*** Use offset quantity for regions with no production/energy use in certain
+*** subsectors (e.g. no primary steel production in NEN)
+loop ((t,regi_dyn29(regi)),
+  loop (ue_industry_dyn37(out)$( pm_cesdata(t,regi,out,"quantity") eq 0 ),
+    pm_cesdata(t,regi,out,"quantity") = 1e-6;
+    pm_cesdata(t,regi,out,"offset_quantity")
+    = -pm_cesdata(t,regi,out,"quantity");
+
+    if (sum(ces_eff_target_dyn37(out,in), pm_cesdata(t,regi,in,"quantity")) eq 0,
+      loop (ces_eff_target_dyn37(out,in),
+        pm_cesdata(t,regi,in,"quantity") = 1e-6;
+	pm_cesdata(t,regi,in,"offset_quantity")
+	= -pm_cesdata(t,regi,in,"quantity");
+      );
+    );
+  );
+);
 $endif.subsectors
 
 $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
