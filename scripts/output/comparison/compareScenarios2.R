@@ -75,7 +75,7 @@ start_comp <- function(outputdirs,
     slurmConfig <- "--qos=standby"
   }
   jobname <- paste0(
-      "cs2",
+      "compScen",
       ifelse(outfilename == "", "", "-"),
       outfilename,
       ifelse(shortTerm, "-shortTerm", "")
