@@ -11,6 +11,8 @@
 ***                  Negishi procedure
 ***   -------------------------------------------------------------------
 
+o_iterationNumber = iteration.val;
+
 pm_pvp(ttot,trade)$(ttot.val ge cm_startyear) = abs(q80_balTrade.m(ttot,trade))/(pm_ts(ttot) * pm_welf(ttot));
 
 *-----------------------------------------------------------------------------------------------
