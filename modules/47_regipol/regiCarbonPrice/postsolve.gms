@@ -654,7 +654,7 @@ loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
   pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
   pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
 );
-display pm_taxCO2eq;
+display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
