@@ -60,7 +60,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   # Detect all output folders containing fulldata.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/fulldata.gdx", "", sub("./output/", "", Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
+  dirs <- basename(dirname(Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
 
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- findCoupledruns(folder)
@@ -84,7 +84,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   }
   identifier <- tmp
   # PATTERN
-  if (length(identifier == 1) && identifier == (length(dirs) + 1)) {
+  if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
     cat("\nInsert the search pattern or the regular expression: ")
     pattern <- get_line()
     id <- grep(pattern = pattern, dirs[-1])
@@ -199,7 +199,7 @@ if (comp == TRUE) {
   }
 
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios")
+  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -209,7 +209,7 @@ if (comp == TRUE) {
   }
 
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-  modules_using_slurmConfig <- c("compareScenarios")
+  modules_using_slurmConfig <- c("compareScenarios", "compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_priority_standby()
   }
@@ -223,7 +223,7 @@ if (comp == TRUE) {
   # included as source (instead of a load from command line)
   source_include <- TRUE
 
-  # Execute output scripts over all choosen folders
+  # Execute output scripts over all chosen folders
   for (rout in output) {
     name <- paste(rout, ".R", sep = "")
     if (file.exists(paste("scripts/output/comparison/", name, sep = ""))) {

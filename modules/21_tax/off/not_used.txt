@@ -54,3 +54,5 @@ vm_deltaCap, variable, ???
 sm_TWa_2_MWh,input,questionnaire
 cm_FEtax_trajectory_abs,input,questionnaire
 cm_FEtax_trajectory_rel,input,questionnaire
+cm_CO2TaxSectorMarkup,input,questionnaire
+vm_emiCO2Sector,input,questionnaire

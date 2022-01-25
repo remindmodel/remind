@@ -147,6 +147,6 @@ $offdelim
 ;
 
 *** difference between 2015 land-use change emissions from Magpie and UNFCCC 2015 land-use change emissions
-p47_LULUCFEmi_GrassiShift(t,regi) = (pm_macBaseMagpie("2015",regi,"co2luc") - p47_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
+p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_macBaseMagpie("2015",regi,"co2luc") - p47_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
