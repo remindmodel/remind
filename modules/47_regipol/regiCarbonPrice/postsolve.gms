@@ -27,7 +27,7 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 		pm_taxemiMkt("2005",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2005)) = 0;
 		pm_taxemiMkt("2010",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2010))  = 15*sm_DptCO2_2_TDpGtC;
 		pm_taxemiMkt("2015",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2015))  = 8*sm_DptCO2_2_TDpGtC;
-		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 30*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
 
 ***  calculating ETS CO2 emission target
 		loop((ttot,target_type,emi_type)$pm_regiCO2ETStarget(ttot,target_type,emi_type),
@@ -645,7 +645,17 @@ p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,t,regi) =
 ;
 
 
+***---------------------------------------------------------------------------
+*** Exogenous CO2 tax level:
+***---------------------------------------------------------------------------
 
+$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
+loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
+  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
+);
+display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
+$endIf.regiExoPrice
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
 
