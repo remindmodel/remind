@@ -20,7 +20,7 @@ p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing ta
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 
 p21_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
-p21_taxrevCO2_sector0(ttot,all_regi,emi_sectors) "reference level value of CO2 sector markup tax"
+p21_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
 p21_taxrevCO2luc0(ttot,all_regi)                 "reference level value of co2luc emission tax"
 p21_taxrevCCS0(ttot,all_regi)                    "reference level value of CCS tax"
 p21_taxrevNetNegEmi0(ttot,all_regi)              "reference level value of net-negative emissions tax"
@@ -51,8 +51,7 @@ p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level valu
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
 
-p21_extRegi_CO2_tax_sector_markup(ext_regi,emi_sectors)    "CO2eq tax markup in building, industry or transport sector (extended regions)"
-p21_CO2_tax_sector_markup(all_regi,emi_sectors)            "CO2eq tax markup in building, industry or transport sector"
+p21_CO2TaxSectorMarkup(all_regi,emi_sectors)            "CO2 tax markup in building, industry or transport sector"
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 
@@ -84,7 +83,7 @@ s21_tax_value                                "target level of tax, sub, inconv i
 variables
 v21_tau_bio(ttot)                               "demand-dependent bioenergy tax"
 v21_taxrevGHG(ttot,all_regi)                    "tax on greenhouse gas emissions"
-v21_taxrevCO2_sector(ttot,all_regi,emi_sectors) "sector markup tax on CO2 emissions"
+v21_taxrevCO2Sector(ttot,all_regi,emi_sectors)  "sector markup tax on CO2 emissions"
 v21_taxrevCO2luc(ttot,all_regi)                 "tax on co2luc emissions"
 v21_taxrevCCS(ttot,all_regi)                    "tax on CCS (to reflect leakage risk)"
 v21_taxrevNetNegEmi(ttot,all_regi)              "tax on net-negative emissions (to reflect climate damages due to overshoot)"
@@ -111,7 +110,7 @@ q21_taxrev(ttot,all_regi)                       "calculation of difference in ta
 q21_emiAllco2neg(ttot,all_regi)                 "calculates negative part of CO2 emissions"
 q21_tau_bio(ttot)                               "calculation of demand-dependent bioenergy tax"
 q21_taxrevGHG(ttot,all_regi)                    "calculation of tax on greenhouse gas emissions"
-q21_taxrevCO2_sector(ttot,all_regi,emi_sectors) "calculation of sector markup tax on CO2 emissions"
+q21_taxrevCO2Sector(ttot,all_regi,emi_sectors)  "calculation of sector markup tax on CO2 emissions"
 q21_taxrevCO2luc(ttot,all_regi)                 "calculation of tax on co2luc emissions"
 q21_taxrevCCS(ttot,all_regi)                    "calculation of tax on CCS"
 q21_taxrevNetNegEmi(ttot,all_regi)              "calculation of tax on net-negative emissions"

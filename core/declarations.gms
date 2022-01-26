@@ -108,7 +108,7 @@ pm_regiEarlyRetiRate(ttot,all_regi,all_te)                "regional early retire
 
 pm_EN_demand_from_initialcap2(all_regi,all_enty)     "PE demand resulting from the initialcap routine. [EJ, Uranium: MT U3O8]"
 pm_budgetCO2eq(all_regi)                             "budget for regional energy-emissions in period 1"
-p_actualbudgetco2(tall)                              "actual level of cumulated emissions [GtCO2]"
+p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
@@ -283,7 +283,7 @@ vm_dummyBudget(ttot,all_regi)                        "auxiliary variable that he
 ***----------------------------------------------------------------------------------------
 ***-------------------------------------------------ESM module-----------------------------
 vm_macBase(ttot,all_regi,all_enty)                   "baseline emissions for all emissions subject to MACCs (type emismac)"
-vm_emiCO2_sector(ttot,all_regi,emi_sectors)          "total CO2 emissions from individual sectors [GtC]"
+vm_emiCO2Sector(ttot,all_regi,emi_sectors)           "total CO2 emissions from individual sectors [GtC]"
 vm_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty)  "energy-related emissions per region and technology"
 vm_emiTe(ttot,all_regi,all_enty)                     "total energy-related emissions of each region. [GtC, Mt CH4, Mt N]"
 vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
@@ -423,7 +423,7 @@ qm_fuel2pe(ttot,all_regi,all_enty)                   "constraint on cumulative f
 
 q_limitProd(ttot,all_regi,all_te,rlf)                "constraint on annual production"
 
-q_emiCO2_sector(ttot,all_regi,emi_sectors)               "CO2eq emissions from different sectors"
+q_emiCO2Sector(ttot,all_regi,emi_sectors)            "CO2 emissions from different sectors"
 q_emiTeDetail(ttot,all_regi,all_enty,all_enty,all_te,all_enty) "determination of emissions"
 q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all emissions subject to MACCs (type emiMacSector)"
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
@@ -552,11 +552,8 @@ sm_endBudgetCO2eq                                     "end time step of emission
 sm_budgetCO2eqGlob                                    "budget for global energy-emissions in period 1"
 p_emi_budget1_gdx                                     "budget for global energy-emissions in period 1 from gdx, may overwrite default values"
 
-s_reference2030co2eq                                  "reference level of 2030 GHG emissions for AWP2 myopic scenarios in GtCO2eq p.a., all Kyoto gases"
-s_referencebudgetco2                                  "reference level of 2000-2100 cumulated emissions for AWP2 myopic scenarios in GtCO2, including all CO2"
-s_actual2030co2eq                                     "actual level of 2030 GHG emissions for AWP2 myopic scenarios in GtCO2eq p.a., all Kyoto gases for last iteration"
-s_actualbudgetco2                                     "actual level of 2000-2100 cumulated emissions for AWP2 myopic scenarios in GtCO2, including all CO2 for last iteration"
-s_actualbudgetco2_last                                "actual level of 2000-2100 cumulated emissions for previous iteration" /0/
+s_actualbudgetco2                                     "actual level of 2020-2100 cumulated emissions, including all CO2 for last iteration"
+s_actualbudgetco2_last                                "actual level of 2020-2100 cumulated emissions for previous iteration" /0/
 
 sm_globalBudget_dev                                   "actual level of global cumulated emissions budget divided by target budget"
 
