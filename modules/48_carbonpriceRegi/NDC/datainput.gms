@@ -107,4 +107,7 @@ p48_last_NDC_year(regi)  = smax( p48_NDC_year_set(ttot, regi), ttot.val );
 
 display p48_NDC_year_set,p48_first_NDC_year,p48_last_NDC_year;
 
+***initialize parameter
+p48_taxCO2eqLast(t,regi) = 0;
+
 *** EOF ./modules/48_carbonpriceRegi/NDC/datainput.gms

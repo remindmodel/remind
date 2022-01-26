@@ -7,7 +7,7 @@
 *** SOF ./modules/48_carbonpriceRegi/NDC/preloop.gms
 
 *** first calculate tax path until last NDC target year - linear increase
-pm_taxCO2eq_regi(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p48_last_NDC_year(regi)) = pm_taxCO2eq("2020",regi)*(ttot.val-2015)/5;
+pm_taxCO2eq_regi(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p48_last_NDC_year(regi)) = max(pm_taxCO2eq("2020",regi), 0.1 * sm_DptCO2_2_TDpGtC)*(ttot.val-2015)/5;
 
 *** convergence scheme after the last NDC target year: exponential increase AND regional convergence until p48_taxCO2eq_convergence_year
 *** note that with p48_taxCO2eq_yearly_increase = 1 and p48_taxCO2eq_global2030, the tax decreases linearly to zero in 2100
