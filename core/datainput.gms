@@ -1275,22 +1275,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
 );
 
-if(cm_iterative_target_adj eq 1,
-***only one long budget period for scenarios with iterative adjustment of budget, so that p_referencebudgetco2 is met from 2000-2100
-sm_endBudgetCO2eq      = 2150;
-s_referencebudgetco2    = 1500;
-sm_budgetCO2eqGlob = 700;
-);
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
 p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of fm_dataemiglob
-
-
-
-*cb 20120405 reference CO2eq emissions in 2030 from all Kyoto gases, in Gt CO2eq, for iterative modPol scenario
-if(cm_emiscen eq 9 AND cm_iterative_target_adj eq 1, s_reference2030co2eq    = 60.8;
-);
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data
