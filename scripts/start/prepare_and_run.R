@@ -432,13 +432,15 @@ prepare <- function() {
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
-      cat("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed. \n")
+      message("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed.")
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE) 
-  } 
-    
+                          debug        = FALSE)
+  } else {
+      message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
+  }
+
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
@@ -474,12 +476,12 @@ prepare <- function() {
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
 
   # Copy important files into output_folder (before REMIND execution)
-  .copy.fromlist(cfg$files2export$start,cfg$results_folder)
-
   namedfiles <- names(cfg$files2export$start)["" != names(cfg$files2export$start)]
   for (namedfile in namedfiles) {
-    message("Copied to ", namedfile, ": ", cfg$files2export$start[namedfile])
+    message("Try to copy ", namedfile, " to ", cfg$files2export$start[namedfile])
   }
+
+  .copy.fromlist(cfg$files2export$start,cfg$results_folder)
 
   # Save configuration
   save(cfg, file = file.path(cfg$results_folder, "config.Rdata"))
@@ -828,8 +830,8 @@ run <- function(start_subsequent_runs = TRUE) {
   # If REMIND actually did run
   if (cfg$action == "ce" && cfg$gms$c_skip_output != "on") {
 
-    # Print Message. Don't change the message as start.R searches for this string to identify finished runs
-    cat("\nREMIND run finished!\n")
+    # Print Message.
+    cat("\nREMIND run finished!\n\n")
 
     # Create solution report for Nash runs
     if (cfg$gms$optimization == "nash" && cfg$gms$cm_nash_mode != "debug" && file.exists("fulldata.gdx")) {
