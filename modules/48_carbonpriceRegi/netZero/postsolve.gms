@@ -9,16 +9,16 @@
 
 if(ord(iteration)>10, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
 
-p48_2020_regi(regi)=vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
+p48_vm_CO2eq_2020(regi)=vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
 
-p48_actual_co2eq_regi(nz_reg2050) = vm_co2eq.l("2050",nz_reg2050)*sm_c_2_co2*1000 + vm_emiFgas.L("2050",nz_reg2050,"emiFgasTotal")
+p48_CO2eq_actual(nz_reg2050) = vm_co2eq.l("2050",nz_reg2050)*sm_c_2_co2*1000 + vm_emiFgas.L("2050",nz_reg2050,"emiFgasTotal")
 ***or*    substract the bunker emissions
     - sum(se2fe(enty,enty2,te),
         pm_emifac("2050",nz_reg2050,enty,enty2,te,"co2")
         * vm_demFeSector.l("2050",nz_reg2050,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
       ); 
 
-p48_actual_co2eq_regi(nz_reg2060) = vm_co2eq.l("2060",nz_reg2060)*sm_c_2_co2*1000 + vm_emiFgas.L("2060",nz_reg2060,"emiFgasTotal")
+p48_CO2eq_actual(nz_reg2060) = vm_co2eq.l("2060",nz_reg2060)*sm_c_2_co2*1000 + vm_emiFgas.L("2060",nz_reg2060,"emiFgasTotal")
 ***or*    substract the bunker emissions
     - sum(se2fe(enty,enty2,te),
         pm_emifac("2060",nz_reg2060,enty,enty2,te,"co2")
@@ -26,24 +26,24 @@ p48_actual_co2eq_regi(nz_reg2060) = vm_co2eq.l("2060",nz_reg2060)*sm_c_2_co2*100
       ); 
 
 ***calculate relative change of overall price required to bring emissions to zero
-p48_taxCO2eq_factor(nz_reg)=(1+(p48_actual_co2eq_regi(nz_reg)/p48_2020_regi(nz_reg)))**2;
+p48_factorRescaleCO2Tax(nz_reg)=(1+(p48_CO2eq_actual(nz_reg)/p48_vm_CO2eq_2020(nz_reg)))**2;
 
 ***calculate relative change in markup, taking into account change in tax:
-p48_taxCO2eq_regi_factor(nz_reg) = max(1-0.75*1.01**(-iteration.val),((p48_taxCO2eq_last("2050",nz_reg)+p48_taxCO2eq_regi_last("2050",nz_reg))*p48_taxCO2eq_factor(nz_reg)-pm_taxCO2eq("2050",nz_reg))
-                               /(p48_taxCO2eq_regi_last("2050",nz_reg)+0.0001));!!to avoid division by zero in case of mark-up being not necessary
+p48_factorRescaleCO2TaxRegi(nz_reg) = max(1-0.75*1.01**(-iteration.val),((p48_taxCO2eqLast("2050",nz_reg)+p48_taxCO2eqRegiLast("2050",nz_reg))*p48_factorRescaleCO2Tax(nz_reg)-pm_taxCO2eq("2050",nz_reg))
+                               /(p48_taxCO2eqRegiLast("2050",nz_reg)+0.0001));!!to avoid division by zero in case of mark-up being not necessary
 
 
 
 ***calculate new mark-up:
-pm_taxCO2eq_regi(t,nz_reg)=pm_taxCO2eq_regi(t,nz_reg)*p48_taxCO2eq_regi_factor(nz_reg);
+pm_taxCO2eqRegi(t,nz_reg)=pm_taxCO2eqRegi(t,nz_reg)*p48_factorRescaleCO2TaxRegi(nz_reg);
 
 
 
 );!! ord(iteration)>10
 
-display p48_actual_co2eq_regi,p48_2020_regi,p48_taxCO2eq_factor, p48_taxCO2eq_regi_factor, pm_taxCO2eq_regi, p48_taxCO2eq_regi_last;
+display p48_CO2eq_actual,p48_vm_CO2eq_2020,p48_factorRescaleCO2Tax, p48_factorRescaleCO2TaxRegi, pm_taxCO2eqRegi, p48_taxCO2eqRegiLast;
 
-p48_taxCO2eq_regi_last(t,regi) = pm_taxCO2eq_regi(t,regi);
-p48_taxCO2eq_last(t,regi) = pm_taxCO2eq(t,regi);
+p48_taxCO2eqRegiLast(t,regi) = pm_taxCO2eqRegi(t,regi);
+p48_taxCO2eqLast(t,regi) = pm_taxCO2eq(t,regi);
 
 *** EOF ./modules/48_carbonpriceRegi/netZero/postsolve.gms
