@@ -280,10 +280,10 @@ cm_LimRock             "limit amount of rock spread each year [Gt]"
 c_tau_so2_xmpt       "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
 cm_expoLinear_yearStart "time at which carbon price increases lineraly instead of exponentially"
 
-c_budgetCO2FFI        "carbon budget for CO2 emissions starting from 2020 from FFI (in GtCO2)"
+c_budgetCO2FFIfrom2020 "carbon budget for CO2 emissions starting from 2020 from FFI (in GtCO2)"
 c_abtrdy              "first year in which advanced bio-energy technology are ready (unit is year; e.g. 2050)"
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
-c_budgetCO2           "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
+c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
 
 cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
@@ -437,10 +437,10 @@ cm_gs_ew                 = 20;     !! def = 20
 cm_LimRock               = 1000;   !! def = 1000
 c_tau_so2_xmpt           = 0;      !! def = 0
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
-c_budgetCO2FFI           = 700;    !! def = 700 
+c_budgetCO2FFIfrom2020   = 700;    !! def = 700 
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2              = 1150;   !! def = 1150
+c_budgetCO2from2020      = 1150;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
