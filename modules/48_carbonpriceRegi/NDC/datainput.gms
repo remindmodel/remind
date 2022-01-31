@@ -16,7 +16,7 @@ Scalar p48_taxCO2eq_yearly_increase "yearly multiplicative increase of co2 tax, 
 Table f48_factorTargetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
 $offlisting
 $ondelim
-$include "./modules/48_carbonpriceRegi/NDC/input/f45_factor_targetyear.cs3r"
+$include "./modules/48_carbonpriceRegi/NDC/input/fm_factorTargetyear.cs3r"
 $offdelim
 $onlisting
 ;
@@ -29,7 +29,7 @@ display p48_factorTargetyear;
 Table f48_2005shareTarget(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
 $offlisting
 $ondelim
-$include "./modules/48_carbonpriceRegi/NDC/input/f45_2005share_target.cs3r"
+$include "./modules/48_carbonpriceRegi/NDC/input/fm_2005shareTarget.cs3r"
 $offdelim
 $onlisting
 ;
@@ -42,7 +42,7 @@ display p48_2005shareTarget;
 Table f48_histShare(tall,all_regi,NDC_version) "Table for all NDC versions with GHG emissions share of countries with quantifyable 2030 target, time dimension specifies historic record"
 $offlisting
 $ondelim
-$include "./modules/48_carbonpriceRegi/NDC/input/f45_hist_share.cs3r"
+$include "./modules/48_carbonpriceRegi/NDC/input/fm_histShare.cs3r"
 $offdelim
 $onlisting
 ;
@@ -78,10 +78,10 @@ p48_2005shareTarget(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 1;
 
 
 *** parameters for selecting NDC years
-Scalar p48_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2050/;
+Scalar p48_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2020/;
 Scalar p48_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2070/;
-Scalar p48_minRatioOfCoverageToMax  "only targets whose coverage is this times p48_bestNDCcoverage are considered. Use 1 for only best." /1.0/;
-Scalar p48_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /2050.4/;
+Scalar p48_minRatioOfCoverageToMax  "only targets whose coverage is this times p48_bestNDCcoverage are considered. Use 1 for only best." /0.8/;
+Scalar p48_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /0/;
 
 Set p48_NDCyearSet(ttot,all_regi)               "YES for years whose NDC targets is used";
 Parameter p48_bestNDCcoverage(all_regi)         "highest coverage of NDC targets within region";

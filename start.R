@@ -139,14 +139,11 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
           dirs <- Sys.glob(file.path(paste0("./output/",isettings[iscen, path_to_gdx],"*/fulldata.gdx")))
           # if path_to_gdx cell content exactly matches folder name, use this one
           if (paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx") %in% dirs) {
-            message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+            cat(paste0("   For ", path_to_gdx, " stated as ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found.\n"))
             isettings[iscen, path_to_gdx] <- paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx")
           } else {
-            # didremindfinish is TRUE if full.log exists with status: Normal completion
-            didremindfinish <- function(fulldatapath) {
-              logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath), fixed = TRUE)))
-            }
+            # didremindfinish is TRUE if log.txt states that remind finished
+            didremindfinish <- function(fulldatapath) return(any(grep("REMIND run finished!", readLines(paste0(str_sub(fulldatapath,1,-14),"/log.txt")))))
             # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
             # for folder names only allows: cell content, an optional _, datetimepattern
             # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
@@ -159,7 +156,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                 strptime(format='%Y-%m-%d_%H.%M.%S') %>%
                 as.numeric %>%
                 which.max -> latest_fulldata
-              message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],10,-14)))
+              cat(paste0("   For ", path_to_gdx, " stated as ", isettings[iscen, path_to_gdx], ", this run was the newest:\n     ", dirs[latest_fulldata], "\n   Its log.txt contains 'REMIND run finished!', but please check yourself whether it converged etc.\n"))
               isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
             }
           }
@@ -258,11 +255,6 @@ if ('--restart' %in% argv) {
       cat(paste(unknownColumns, collapse = ", "))
       cat("\nstart.R might simply ignore them. Please check if these switches are not deprecated.\n")
       cat("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
-      if (any(c("c_budgetCO2", "c_budgetCO2FFI") %in% unknownColumns)) {
-        stop("You have c_budgetCO2 or c_budgetCO2FFI in your scenario_config. ",
-        "Rename them to c_budgetCO2from2020 and c_budgetCO2from2020FFI and reduce the emission budgets by 200 Gt. ",
-        "See https://github.com/remindmodel/remind/pull/640")
-      }
     }
 
     # Select scenarios that are flagged to start

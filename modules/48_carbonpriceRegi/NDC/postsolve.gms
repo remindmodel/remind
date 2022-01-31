@@ -61,17 +61,17 @@ pm_taxCO2eqRegi(p48_NDCyearSet(t,regi)) =
       - pm_taxCO2eq(t,regi)
      );
 
-p48_previousYearInLoop = 2015;
+p48_previousYearInLoop = 2020;
 
-*** interpolate taxCO2eq linearly from 0 in 2015 to first NDC target and between NDC targets
+*** interpolate taxCO2eq linearly from 0 in 2020 to first NDC target and between NDC targets
 loop(regi,
-  p48_previousYearInLoop = 2015;
-  p48_taxPreviousYearInLoop = smax(t$(t.val = p48_previousYearInLoop), pm_taxCO2eqRegi(t,regi) );
-  loop(p48_NDCyearSet(t2,regi) ,
-    pm_taxCO2eqRegi(t,regi)$(t.val > p48_previousYearInLoop AND t.val < t2.val)
-      = p48_taxPreviousYearInLoop + (t.val - p48_previousYearInLoop) * (pm_taxCO2eqRegi(t2,regi) - p48_taxPreviousYearInLoop)/(t2.val - p48_previousYearInLoop);
-    p48_previousYearInLoop = t2.val;
-    p48_taxPreviousYearInLoop = smax(t$(t.val = p48_previousYearInLoop), pm_taxCO2eqRegi(t,regi) );
+  p48_previousYearInLoop = 2020;
+  p48_taxPreviousYearInLoop = smax(ttot$(ttot.val = p48_previousYearInLoop), pm_taxCO2eqRegi(ttot,regi) );
+  loop(p48_NDCyearSet(t,regi) ,
+    pm_taxCO2eqRegi(ttot,regi)$(ttot.val > p48_previousYearInLoop AND ttot.val < t.val)
+      = p48_taxPreviousYearInLoop + (ttot.val - p48_previousYearInLoop) * (pm_taxCO2eqRegi(t,regi) - p48_taxPreviousYearInLoop)/(t.val - p48_previousYearInLoop);
+    p48_previousYearInLoop = t.val;
+    p48_taxPreviousYearInLoop = smax(ttot$(ttot.val = p48_previousYearInLoop), pm_taxCO2eqRegi(ttot,regi) );
   );
 );
 
