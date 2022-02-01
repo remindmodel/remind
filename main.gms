@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.276
+* Input data revision: 6.28
 * 
-* Last modification (input data): Thu Dec 23 10:57:10 2021
+* Last modification (input data): Mon Jan 31 16:27:44 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -591,13 +591,13 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
-$setglobal c_CES_calibration_new_structure        0     !!  def  =  0
-$setglobal c_CES_calibration_iterations          10     !!  def  =  10
+$setglobal c_CES_calibration_new_structure  0     !!  def  =  0
+$setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_iteration            1     !!  def  =  1
-$setglobal c_CES_calibration_write_prices         0     !!  def  =  0
-$setglobal cm_CES_calibration_default_prices      0.01  !!  def  =  0.01
-$setglobal c_CES_calibration_industry_FE_target   0                 
-$setglobal cm_calibration_string                 off    !!  def  =  off
+$setglobal c_CES_calibration_write_prices  0     !!  def  =  0
+$setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
+$setglobal c_CES_calibration_industry_FE_target  0
+$setglobal cm_calibration_string  off    !!  def  =  off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
