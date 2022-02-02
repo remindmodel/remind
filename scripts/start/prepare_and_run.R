@@ -424,11 +424,12 @@ prepare <- function() {
   ############ download and distribute input data ########
   # check whether the regional resolution and input data revision are outdated and update data if needed
   if(file.exists("input/source_files.log")) {
-      input_old     <- readLines("input/source_files.log")[c(1,2)]
+      input_old     <- readLines("input/source_files.log")[c(1,2,3)]
   } else {
       input_old     <- "no_data"
   }
   input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
