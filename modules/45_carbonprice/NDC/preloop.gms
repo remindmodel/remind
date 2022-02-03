@@ -12,15 +12,15 @@ pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = 15 * sm_DptCO2_2_TDpGtC;
 *** first calculate tax path until last NDC target year - linear increase
 pm_taxCO2eq(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p45_lastNDCyear(regi)) = pm_taxCO2eq("2020",regi)*(ttot.val-2015)/5;
 
-*** convergence scheme after the last NDC target year: exponential increase with 1.25% AND regional convergence until p45_taxCO2eq_convergence_year
+*** convergence scheme after the last NDC target year: exponential increase with 1.25% AND regional convergence until p45_taxCO2eqConvergenceYear
 p45_taxCO2eqLastNDCyear(regi) = smax(ttot$(ttot.val = p45_lastNDCyear(regi)), pm_taxCO2eq(ttot,regi));
 
 pm_taxCO2eq(ttot,regi)$(ttot.val gt p45_lastNDCyear(regi))
    = (  !! regional, weight going from 1 in last NDC target year to 0 in 2100
-        p45_taxCO2eqLastNDCyear(regi) * p45_taxCO2eq_yearly_increase**(ttot.val-p45_lastNDCyear(regi)) * (max(p45_taxCO2eq_convergence_year,ttot.val) - ttot.val)
+        p45_taxCO2eqLastNDCyear(regi) * p45_taxCO2eqYearlyIncrease**(ttot.val-p45_lastNDCyear(regi)) * (max(p45_taxCO2eqConvergenceYear,ttot.val) - ttot.val)
         !! global, weight going from 0 in NDC target year to 1 in and after 2100
-      + p45_taxCO2eq_global2030          * p45_taxCO2eq_yearly_increase**(ttot.val-2030)                    * (min(p45_taxCO2eq_convergence_year,ttot.val) - p45_lastNDCyear(regi))
-      )/(p45_taxCO2eq_convergence_year - p45_lastNDCyear(regi));
+      + p45_taxCO2eqGlobal2030          * p45_taxCO2eqYearlyIncrease**(ttot.val-2030)                    * (min(p45_taxCO2eqConvergenceYear,ttot.val) - p45_lastNDCyear(regi))
+      )/(p45_taxCO2eqConvergenceYear - p45_lastNDCyear(regi));
 
 display pm_taxCO2eq;
 

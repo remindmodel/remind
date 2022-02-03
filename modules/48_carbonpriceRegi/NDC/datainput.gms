@@ -7,10 +7,10 @@
 *** SOF ./modules/48_carbonpriceRegi/NDC/datainput.gms
 
 *** parameters for exponential increase after NDC targets
-Scalar p48_taxCO2eq_convergence_year "year until which CO2eq taxes have converged globally" /2100/;
-Scalar p48_taxCO2eq_global2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
-p48_taxCO2eq_global2030 = 0 * sm_DptCO2_2_TDpGtC;
-Scalar p48_taxCO2eq_yearly_increase "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
+Scalar p48_taxCO2eqConvergenceYear "year until which CO2eq taxes have converged globally" /2100/;
+Scalar p48_taxCO2eqGlobal2030 "startprice in 2030 (unit TDpGtC) of global CO2eq taxes towards which countries converge";
+p48_taxCO2eqGlobal2030 = 0 * sm_DptCO2_2_TDpGtC;
+Scalar p48_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
 
 *** load NDC data
 Table f48_factorTargetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"

@@ -75,15 +75,15 @@ loop(regi,
   );
 );
 
-*** convergence scheme after last NDC target year: exponential increase AND regional convergence until p48_taxCO2eq_convergence_year
+*** convergence scheme after last NDC target year: exponential increase AND regional convergence until p48_taxCO2eqConvergenceYear
 p48_taxCO2eqLastNDCyear(regi) = smax(t$(t.val = p48_lastNDCyear(regi)), pm_taxCO2eqRegi(t,regi));
 
 pm_taxCO2eqRegi(t,regi)$(t.val gt p48_lastNDCyear(regi))
    = (  !! regional, weight going from 1 in NDC target year to 0 in 2100
-        p48_taxCO2eqLastNDCyear(regi) * p48_taxCO2eq_yearly_increase**(t.val-p48_lastNDCyear(regi)) * (max(p48_taxCO2eq_convergence_year,t.val) - t.val)
+        p48_taxCO2eqLastNDCyear(regi) * p48_taxCO2eqYearlyIncrease**(t.val-p48_lastNDCyear(regi)) * (max(p48_taxCO2eqConvergenceYear,t.val) - t.val)
         !! global, weight going from 0 in NDC target year to 1 in and after 2100
-      + p48_taxCO2eq_global2030          * p48_taxCO2eq_yearly_increase**(t.val-2030)                    * (min(t.val,p48_taxCO2eq_convergence_year) - p48_lastNDCyear(regi))
-      )/(p48_taxCO2eq_convergence_year - p48_lastNDCyear(regi));
+      + p48_taxCO2eqGlobal2030          * p48_taxCO2eqYearlyIncrease**(t.val-2030)                    * (min(t.val,p48_taxCO2eqConvergenceYear) - p48_lastNDCyear(regi))
+      )/(p48_taxCO2eqConvergenceYear - p48_lastNDCyear(regi));
 
 
 display p48_factorRescaleCO2TaxLimited, pm_taxCO2eqRegi;
