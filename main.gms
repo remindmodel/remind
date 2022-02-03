@@ -510,6 +510,8 @@ cm_H2targets = 0; !! def 0
 
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
+*** switch for ariadne import scenarios (needs cm_import_EU to be not off)
+$setGlobal cm_import_ariadne  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
