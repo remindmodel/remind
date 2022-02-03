@@ -398,7 +398,12 @@ loop ((t,regi_dyn29(regi)),
       );
     );
   );
+*** set input quantity to small value if 0 but output non-zero, leave offset at zero  
+  loop (ces_eff_target_dyn37(out,in)$( pm_cesdata(t,regi,in,"quantity") eq 0 ),
+      pm_cesdata(t,regi,in,"quantity") = 1e-6;
+    );
 );
+
 $endif.subsectors
 
 $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
