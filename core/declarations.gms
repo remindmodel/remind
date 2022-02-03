@@ -214,6 +214,11 @@ pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all 
 pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
 pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
 
+* diagnostic parameters to save fuel prices over iterations
+pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets across iterations (tr$2005/TWa)"
+pm_SEPrice_iter(iteration,ttot,all_regi,all_enty)                    "parameter to capture all SE prices across iterations (tr$2005/TWa)"
+pm_PEPrice_iter(iteration,ttot,all_regi,all_enty)                    "parameter to capture all PE prices across iterations (tr$2005/TWa)"
+
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
 

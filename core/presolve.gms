@@ -473,4 +473,9 @@ display p_adj_seed_te, p_adj_coeff, p_varyAdj_mult_adjSeedTe, p_varyAdj_mult_adj
 $endif.CO2priceDependent_AdjCosts
 
 
+if (iteration.val gt 1,
+  pm_SEPrice_iter(iteration-1,ttot,regi,entySE) = pm_SEPrice(ttot,regi,entySE);
+  pm_PEPrice_iter(iteration-1,ttot,regi,entyPe) = pm_PEPrice(ttot,regi,entyPe);
+  pm_FEPrice_iter(iteration-1,ttot,all_regi,all_enty,sector,emiMkt) = pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt);
+);  
 *** EOF ./core/presolve.gms
