@@ -614,6 +614,10 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
+*ADD here non energy emi fro chem sector:
+  + sum(sector$sector2emiMkt(sector,emiMkt), sum(se2fe(entySe,entyFe,te), 
+       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)*pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    ))
 ;
 
 
