@@ -6,7 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/48_carbonpriceRegi/NDC/postsolve.gms
 
-if(ord(iteration)>10, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
+if(sameas("%carbonprice%","none"), p48_startInIteration = 0);
+
+if(ord(iteration) > p48_startInIteration, !!start only after p48_startInIteration iterations, so to already have some stability of the overall carbon price trajectory
 
 *#' @equations
 *#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
@@ -31,25 +33,18 @@ p48_vm_co2eq_2020(regi) = vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
 *#' nash compatible convergence scheme: adjustment of co2 tax for next iteration based on deviation of emissions in this iteration (actual) from target emissions (ref)
 *#' maximum possible change between iterations decreases with increase of iteration number
 
-*** currently not used!
-if(       iteration.val-10 lt  8, p48_adjustExponent = 4;
-   elseif iteration.val-10 lt 15, p48_adjustExponent = 3;
-   elseif iteration.val-10 lt 23, p48_adjustExponent = 2;
-   else                           p48_adjustExponent = 1;
-);
-
 *** rescale regi tax by comparing the required emission reduction with 2020 emission levels
 p48_factorRescaleCO2Tax(p48_NDCyearSet(t,regi)) = 1+(p48_CO2eqwoLU_actual(t,regi) - p48_CO2eqwoLU_goal(t,regi))/p48_vm_co2eq_2020(regi);
 
 p48_factorRescaleCO2TaxLimited(p48_NDCyearSet(t,regi)) =
   min(
 *** sets upper bound that decreases with iterations
-     max(2-(iteration.val-10)/15,1.01-(iteration.val-10)/10000),
+     max(2-(iteration.val-p48_startInIteration)/15,1.01-(iteration.val-p48_startInIteration)/10000),
 *** sets lower bound of 0.1
      max(0.1, p48_factorRescaleCO2Tax(t,regi)
   ));
 
-***  min((( max(0.1, (p48_CO2eqwoLU_actual(t,regi)+0.0001)/(p48_CO2eqwoLU_goal(t,regi)+0.0001) ) )**p48_adjustExponent),max(2-(iteration.val-10)/15,1.01-(iteration.val-10)/10000));
+***  min((( max(0.1, (p48_CO2eqwoLU_actual(t,regi)+0.0001)/(p48_CO2eqwoLU_goal(t,regi)+0.0001) ) )**p48_adjustExponent),max(2-(iteration.val-p48_startInIteration)/15,1.01-(iteration.val-p48_startInIteration)/10000));
 *** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 
 pm_taxCO2eqRegi(p48_NDCyearSet(t,regi)) =
@@ -88,15 +83,16 @@ pm_taxCO2eqRegi(t,regi)$(t.val gt p48_lastNDCyear(regi))
 
 display p48_factorRescaleCO2TaxLimited, pm_taxCO2eqRegi;
 
-p48_factorRescaleCO2TaxTrack(iteration,p48_NDCyearSet(t,regi)) = p48_factorRescaleCO2Tax(t,regi);
-p48_factorRescaleCO2TaxLtdTrack(iteration,p48_NDCyearSet(t,regi)) = p48_factorRescaleCO2TaxLimited(t,regi);
+p48_factorRescaleCO2Tax_iter(iteration,p48_NDCyearSet(t,regi)) = p48_factorRescaleCO2Tax(t,regi);
+p48_factorRescaleCO2TaxLtd_iter(iteration,p48_NDCyearSet(t,regi)) = p48_factorRescaleCO2TaxLimited(t,regi);
 
 
-); !! end ord(iteration) > 10
+); !! end ord(iteration) > p48_startInIteration
 
 p48_taxCO2eqLast(t,regi) = pm_taxCO2eq(t,regi);
 
-p48_taxCO2eqRegiTrack(iteration,p48_NDCyearSet(t,regi)) = pm_taxCO2eqRegi(t,regi);
-p48_taxCO2eqTrack(iteration,p48_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
+p48_taxCO2eqRegi_iter(iteration,p48_NDCyearSet(t,regi)) = pm_taxCO2eqRegi(t,regi);
+p48_taxCO2eq_iter(iteration,p48_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
+p48_vm_co2eq_iter(iteration,p48_NDCyearSet(t,regi)) = vm_co2eq.l(t,regi);
 
 *** EOF ./modules/48_carbonpriceRegi/NDC/postsolve.gms

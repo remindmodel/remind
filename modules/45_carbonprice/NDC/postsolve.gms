@@ -8,7 +8,7 @@
 
 if(cm_iterative_target_adj eq 3,
 
-    display pm_taxCO2eq;
+display pm_taxCO2eq;
 
 *#' @equations 
 *#' calculate emission variable to be used for NDC target: GHG emissions w/o land-use change and w/o transport bunker emissions, unit [Mt CO2eq/yr]
@@ -40,9 +40,9 @@ p45_factorRescaleCO2Tax(p45_NDCyearSet(ttot,regi)) =
 *** use max(0.1, ...) to make sure that negative emission values cause no problem, use +0.0001 such that net zero targets cause no problem
 
 pm_taxCO2eq(t,regi)$(t.val gt 2016 AND t.val ge cm_startyear AND t.val le p45_lastNDCyear(regi)) = max(1* sm_DptCO2_2_TDpGtC,pm_taxCO2eq(t,regi) * p45_factorRescaleCO2Tax(t,regi) );
-p45_factorRescaleCO2TaxTrack(iteration,ttot,regi) = p45_factorRescaleCO2Tax(ttot,regi);
+p45_factorRescaleCO2Tax_iter(iteration,ttot,regi) = p45_factorRescaleCO2Tax(ttot,regi);
 
-display p45_factorRescaleCO2TaxTrack;
+display p45_factorRescaleCO2Tax_iter;
 
 *CB* special case SSA: maximum carbon price at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
 pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")),7.5 * sm_DptCO2_2_TDpGtC);
@@ -75,6 +75,8 @@ pm_taxCO2eq(ttot,regi)$(ttot.val gt 2030) = max(pm_taxCO2eq(ttot,regi),1*sm_DptC
 pm_taxCO2eq("2020",regi) = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
 
         display pm_taxCO2eq;
+
+p45_vm_co2eq_iter(iteration,p45_NDCyearSet(t,regi)) = vm_co2eq.l(t,regi);
 );
 
 *** EOF ./modules/45_carbonprice/NDC/postsolve.gms

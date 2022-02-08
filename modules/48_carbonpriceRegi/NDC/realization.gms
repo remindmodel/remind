@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/48_carbonpriceRegi/NDC/realization.gms
 
-*' @description This realization implements a regional carbon markup consistent with the NDC targets (after 2050, in particular net zero targets).
+*' @description This realization implements a regional carbon markup consistent with the NDC targets
 
 *' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of
 *' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!

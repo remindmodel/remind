@@ -6,8 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/48_carbonpriceRegi/NDC/preloop.gms
 
-*** first calculate tax path until last NDC target year - linear increase
-pm_taxCO2eqRegi(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p48_lastNDCyear(regi)) = max(pm_taxCO2eq("2020",regi), 0.1 * sm_DptCO2_2_TDpGtC)*(ttot.val-2015)/5;
+*** first calculate tax path until last NDC target year - linear increase, set total tax to 30$/t for fully covered countries
+pm_taxCO2eqRegi(ttot,regi)$(ttot.val gt 2016 AND ttot.val le p48_lastNDCyear(regi))
+  = max(
+        0.1 * sm_DptCO2_2_TDpGtC,
+        (30 * p48_bestNDCcoverage(regi) - pm_taxCO2eq(ttot,regi)) * sm_DptCO2_2_TDpGtC
+       )*(ttot.val-2015)/5;
 
 *** convergence scheme after the last NDC target year: exponential increase AND regional convergence until p48_taxCO2eqConvergenceYear
 *** note that with p48_taxCO2eqYearlyIncrease = 1 and p48_taxCO2eqGlobal2030, the tax decreases linearly to zero in 2100
@@ -34,4 +38,5 @@ p48_CO2eqwoLU_goal(p48_NDCyearSet(ttot,regi)) =
         + (1-p48_2005shareTarget(ttot,regi)) * p48_BAU_reg_emi_wo_LU_bunkers(ttot,regi);            !! baseline for share of countries without NDC target
 
 display pm_taxCO2eqRegi,p48_CO2eqwoLU_goal;
+
 *** EOF ./modules/48_carbonpriceRegi/NDC/preloop.gms

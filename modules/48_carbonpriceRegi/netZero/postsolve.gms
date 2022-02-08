@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/48_carbonpriceRegi/netZero/postsolve.gms
 
+if(sameas("%carbonprice%","none"), p48_startInIteration = 0);
 
-if(ord(iteration)>10, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
+if(ord(iteration) > p48_startInIteration, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
 
 p48_vm_CO2eq_2020(regi)=vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
 
@@ -32,18 +33,25 @@ p48_factorRescaleCO2Tax(nz_reg)=(1+(p48_CO2eq_actual(nz_reg)/p48_vm_CO2eq_2020(n
 p48_factorRescaleCO2TaxRegi(nz_reg) = max(1-0.75*1.01**(-iteration.val),((p48_taxCO2eqLast("2050",nz_reg)+p48_taxCO2eqRegiLast("2050",nz_reg))*p48_factorRescaleCO2Tax(nz_reg)-pm_taxCO2eq("2050",nz_reg))
                                /(p48_taxCO2eqRegiLast("2050",nz_reg)+0.0001));!!to avoid division by zero in case of mark-up being not necessary
 
-
+p48_factorRescaleCO2TaxLtd_iter(iteration,nz_reg) = p48_factorRescaleCO2TaxRegi(nz_reg);
 
 ***calculate new mark-up:
 pm_taxCO2eqRegi(t,nz_reg)=pm_taxCO2eqRegi(t,nz_reg)*p48_factorRescaleCO2TaxRegi(nz_reg);
 
 
 
-);!! ord(iteration)>10
+);!! ord(iteration) > p48_startInIteration
 
 display p48_CO2eq_actual,p48_vm_CO2eq_2020,p48_factorRescaleCO2Tax, p48_factorRescaleCO2TaxRegi, pm_taxCO2eqRegi, p48_taxCO2eqRegiLast;
 
 p48_taxCO2eqRegiLast(t,regi) = pm_taxCO2eqRegi(t,regi);
 p48_taxCO2eqLast(t,regi) = pm_taxCO2eq(t,regi);
+
+p48_taxCO2eqRegi_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = pm_taxCO2eqRegi(t,nz_reg2050);
+p48_taxCO2eqRegi_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = pm_taxCO2eqRegi(t,nz_reg2060);
+p48_taxCO2eq_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = pm_taxCO2eq(t,nz_reg2050);
+p48_taxCO2eq_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = pm_taxCO2eq(t,nz_reg2060);
+p48_vm_co2eq_iter(iteration,t,nz_reg2050)$sameas(t,"2050") = vm_co2eq.l(t,nz_reg2050);
+p48_vm_co2eq_iter(iteration,t,nz_reg2060)$sameas(t,"2060") = vm_co2eq.l(t,nz_reg2060);
 
 *** EOF ./modules/48_carbonpriceRegi/netZero/postsolve.gms

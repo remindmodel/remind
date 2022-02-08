@@ -57,7 +57,7 @@ Parameter p48_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (
 $ondelim
 $include "./modules/48_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
 $offdelim
-  /             ;
+  /;
 
 *** adjust reduction value for LAM based on the assumption that Brazilian reduction targets are only from landuse, see https://climateactiontracker.org/countries/brazil/
 *** the adjustment were calculated such that Brazil is assumed to maintain its 2015 non-landuse emissions, as follows:
