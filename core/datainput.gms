@@ -1482,9 +1482,41 @@ $offdelim
 /
 ;
 
+
+
+
+
 *** use cm_demScen for Industry and Buildings 
 *** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+
+*** FS: quick fix for getting in H2 and hth electricity in industry
+*** set H2 baseline trajectories in industry to 20%, 
+*** electricity hth to 20% of wlth electricity, 
+*** phase-in until 2050
+$ifthen.industry_subsectors "%industry%" == "subsectors"
+
+*** H2 demand
+pm_fedemand(t,regi,"feh2_otherInd")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"fega_otherInd");
+pm_fedemand(t,regi,"feh2_otherInd")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"fega_otherInd") * 1/ ( ((2050 - t.val) / 5)+1);
+
+pm_fedemand(t,regi,"feh2_chemicals")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"fega_chemicals");
+pm_fedemand(t,regi,"feh2_chemicals")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"fega_chemicals") * 1/ ( ((2050 - t.val) / 5)+1);
+
+pm_fedemand(t,regi,"feh2_cement")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"fega_cement");
+pm_fedemand(t,regi,"feh2_cement")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"fega_cement") * 1/ ( ((2050 - t.val) / 5)+1);
+
+pm_fedemand(t,regi,"feh2_steel")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"fega_steel");
+pm_fedemand(t,regi,"feh2_steel")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"fega_steel") * 1/ ( ((2050 - t.val) / 5)+1);
+
+*** electricity hth demand
+pm_fedemand(t,regi,"feelhth_otherInd")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"feelwlth_otherInd");
+pm_fedemand(t,regi,"feelhth_otherInd")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"feelwlth_otherInd") * 1/ ( ((2050 - t.val) / 5)+1);
+
+pm_fedemand(t,regi,"feelhth_chemicals")$(t.val ge 2050) = 0.2 * pm_fedemand(t,regi,"feelwlth_chemicals");
+pm_fedemand(t,regi,"feelhth_chemicals")$(t.val ge 2020 AND t.val lt 2050) = 0.2 * pm_fedemand(t,regi,"feelwlth_chemicals") * 1/ ( ((2050 - t.val) / 5)+1);
+
+$endif.industry_subsectors
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
