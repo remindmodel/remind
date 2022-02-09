@@ -4,10 +4,10 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/48_carbonpriceRegi/none/realization.gms
+*** SOF ./modules/48_carbonpriceRegi/none/datainput.gms
 
-*####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "datainput" $include "./modules/48_carbonpriceRegi/none/datainput.gms"
-*######################## R SECTION END (PHASES) ###############################
+pm_taxCO2eqRegi(ttot,regi) = 0;
 
-*** EOF ./modules/48_carbonpriceRegi/none/realization.gms
+*** EOF ./modules/48_carbonpriceRegi/none/datainput.gms
+
+
