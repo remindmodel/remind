@@ -510,6 +510,7 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
     put pm_cesdata(t,regi,in,"quantity") /;
   );
 
+$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
   loop((t_29scen(t),regi_dyn29(regi),in)$(   ppfen_industry_dyn37(in)
                                           OR ppfKap_industry_dyn37(in) ),
@@ -517,6 +518,7 @@ $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
     put pm_cesdata(t,regi,in,"quantity") /;
   );
 $endif.industry_FE_target
+$endif.subsectors
 
   putclose file_CES_calibration;
 );
@@ -854,11 +856,13 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
     = p29_CESderivative(t,regi,out,in);
   );
   
+$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
   !! set minimum price on ppf_industry
   pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
   = max(pm_cesdata(t,regi,in,"price"), 1e-5);
 $endif.FE_target
+$endif.subsectors
 
   !! smooth historical prices
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
@@ -1183,6 +1187,7 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   / p29_efficiency_growth(t2,regi,in);
 );
 
+$ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
 *** scale industry input prices as a slack variable to make the Euler identity
 *** hold
@@ -1293,6 +1298,7 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
    );
 );
 $endif.industry_FE_target
+$endif.subsectors
 
 option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;

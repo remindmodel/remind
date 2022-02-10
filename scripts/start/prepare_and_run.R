@@ -297,11 +297,6 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
-    cat("\nRun scripts/input/prepare_NDC.R.\n")
-    source("scripts/input/prepare_NDC.R")
-    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
-  }
 
   # Create input file with exogenous CO2 tax using the CO2 price from another run
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
@@ -442,6 +437,13 @@ prepare <- function() {
       message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
   }
 
+  # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
+  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
+    cat("\nRun scripts/input/prepare_NDC.R.\n")
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
+  }
+
   ############ update information ########################
   # update_info, which regional resolution and input data revision in cfg$model
   update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
@@ -471,7 +473,10 @@ prepare <- function() {
   
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
-  system(paste0('cp ',gdx_name,' ',file.path(cfg$results_folder, "input.gdx")))
+  if (0 != system(paste('cp', gdx_name, 
+			file.path(cfg$results_folder, 'input.gdx')))) {
+    stop('Could not copy gdx file ', gdx_name)
+  }
   
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
