@@ -26,10 +26,10 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
   system(paste0("mkdir ", outfilename))
-  outfilename <- normalizePath(outfilename) # Make path absolute.
+  outfilepath <- normalizePath(outfilename) # Make path absolute.
   wd <- getwd()
 
-  setwd(outfilename)
+  setwd(outfilepath)
   # remove temporary folder
   on.exit(system(paste0("mv ", outfilename, ".pdf ..")))
   on.exit(setwd(wd), add = TRUE)
@@ -39,16 +39,12 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   mif_path <- normalizePath(mif_path)
   hist_path <- normalizePath(hist_path)
 
-  splt <- strsplit(outfilename, "/", fixed=TRUE)[[1]]
-  outputFile <- splt[length(splt)]
-  outputDir <- paste(splt[-length(splt)], collapse="/")
-
   if (!shortTerm) {
     try(compareScenarios2(
       mifScen = mif_path,
       mifHist = hist_path,
-      outputDir = outputDir,
-      outputFile = outputFile,
+      outputDir = outfilepath,
+      outputFile = outfilename,
       outputFormat = "PDF",
       reg = regionList,
       mainReg = mainRegName))
@@ -56,8 +52,8 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
     try(compareScenarios2(
       mifScen = mif_path,
       mifHist = hist_path,
-      outputDir = outputDir,
-      outputFile = outputFile,
+      outputDir = outfilepath,
+      outputFile = outfilename,
       outputFormat = "PDF",
       reg = regionList,
       mainReg = mainRegName,
