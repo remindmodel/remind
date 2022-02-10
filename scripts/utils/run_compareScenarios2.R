@@ -41,7 +41,7 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
 
   splt <- strsplit(outfilename, "/", fixed=TRUE)[[1]]
   outputFile <- splt[length(splt)]
-  outputDir <- paste(splt[-length(splt)], collapse="/")
+  outputDir <- outfilename
 
   if (!shortTerm) {
     try(compareScenarios2(
