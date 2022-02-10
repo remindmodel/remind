@@ -472,7 +472,7 @@ prepare <- function() {
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
   if (0 != system(paste('cp', gdx_name, 
-			file.path(cfg$results_folder, 'input.dx')))) {
+			file.path(cfg$results_folder, 'input.gdx')))) {
     stop('Could not copy gdx file ', gdx_name)
   }
   
