@@ -132,7 +132,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
     if (any(iscen %in% isettings[iscen, path_gdx_list])) {
-      stop("Self-reference: ", scen , " refers to itself in a path_gdx... column.")
+      stop("Self-reference: ", iscen , " refers to itself in a path_gdx... column.")
     }
     for (path_to_gdx in path_gdx_list) {
       if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
@@ -256,8 +256,8 @@ if ('--restart' %in% argv) {
       message("start.R might simply ignore them. Please check if these switches are not deprecated.")
       message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
       forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
-        "c_budgetCO2" = "Rename to c_budgetCO2from2020, reduce emission budgets by 200Gt, see https://github.com/remindmodel/remind/pull/640",
-        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, reduce emission budgets by 200Gt, see https://github.com/remindmodel/remind/pull/640"
+        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640"
       )
       for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
         message("Column name ", i, " in ", config.file , " is outdated. ", forbiddenColumnNames[i])

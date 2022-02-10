@@ -13,10 +13,10 @@
 *' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
 *** Next update (2022):
-*** - Add NDC_2022.xlsx in /p/projects/rd3mod/inputdata/sources/UNFCCC_NDC/ on cluster, see README.txt in this folder
-*** - Set switch cm_NDC_version in /config/default.cfg to new year
-*** - add 2022_cond, 2022_uncond to set NDC_version in /core/sets.gms
-*** - Add new 2022 option in mrremind: calcEmiTarget, calcCapTarget, readUNFCCC_NDC
+*** - Add NDC_2023.xlsx in /p/projects/rd3mod/inputdata/sources/UNFCCC_NDC/ on cluster, see README.txt in this folder
+*** - Set switch cm_NDC_version in /config/default.cfg and /main.gms to new year
+*** - add 2023_cond, 2023_uncond to set NDC_version in /core/sets.gms
+*** - Add new 2023 option in mrremind: calcEmiTarget, calcCapTarget, readUNFCCC_NDC
 
 
 *####################### R SECTION START (PHASES) ##############################
