@@ -471,7 +471,10 @@ prepare <- function() {
   
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
-  system(paste0('cp ',gdx_name,' ',file.path(cfg$results_folder, "input.gdx")))
+  if (0 != system(paste('cp', gdx_name, 
+			file.path(cfg$results_folder, 'input.dx')))) {
+    stop('Could not copy gdx file ', gdx_name)
+  }
   
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
