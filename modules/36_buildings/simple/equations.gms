@@ -73,7 +73,7 @@ q36_H2Share(t,regi)..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in buildings
 ***---------------------------------------------------------------------------
-q36_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn36(in))..
+q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
   vm_costCESMkup(t,regi,in)
   =e=
   p36_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
