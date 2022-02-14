@@ -40,6 +40,10 @@ if((o_modelstat eq 2),
   );
 );
 
+*** if solution infes, write abort.gdx
+if(NOT(o_modelstat eq 2),
+  execute_unload "abort.gdx";
+);
 
 *LB*AJS* Activate all regions again, otherwise the reporting will fail.
 ***Warning: All reported values from regions except regi_dyn80 are just dummies ! 
