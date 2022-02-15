@@ -1479,6 +1479,48 @@ $offdelim
 *** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 
+
+
+$ifthen.subsectors "%industry%" == "subsectors"   !! industry
+*** Limit secondary steel production to 90 %.  This might be slightly off due
+*** to rounding in the mrremind package.
+if (9 lt smax((t,regi)$(
+                           pm_fedemand(t,regi,"ue_steel_primary") ),
+           pm_fedemand(t,regi,"ue_steel_secondary")
+         / pm_fedemand(t,regi,"ue_steel_primary")
+         ),
+  put logfile;
+  logfile.nd = 15;
+  put ">>> rescaling steel production figures because of mrremind rounding" /;
+
+  loop ((t,regi)$(
+                           pm_fedemand(t,regi,"ue_steel_primary") ),
+    if (9 lt ( pm_fedemand(t,regi,"ue_steel_secondary")
+             / pm_fedemand(t,regi,"ue_steel_primary")),
+
+      put t.tl, " ", regi.tl, " ", ": ";
+      put @20 "(", pm_fedemand(t,regi,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,"ue_steel_secondary"), ") -> ";
+
+      pm_fedemand(t,regi,"ue_steel_primary")
+      = 0.1
+      * ( pm_fedemand(t,regi,"ue_steel_primary")
+        + pm_fedemand(t,regi,"ue_steel_secondary")
+        );
+
+      pm_fedemand(t,regi,"ue_steel_secondary")
+      = 9 * pm_fedemand(t,regi,"ue_steel_primary");
+
+      put "(", pm_fedemand(t,regi,"ue_steel_primary"), ",";
+      put pm_fedemand(t,regi,"ue_steel_secondary"), ")" /;
+    );
+  );
+
+  logfile.nd = 3;
+  putclose logfile;
+);
+$endif.subsectors
+
 *** FS: quick fix for getting in H2 and hth electricity in industry
 *** set H2 baseline trajectories in industry to 20%, 
 *** electricity hth to 20% of wlth electricity, 
