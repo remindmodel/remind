@@ -145,7 +145,7 @@ Parameter
 ;
 
 Equations
-	q47_implEnergyBoundTax(ttot,all_regi)      "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
+	q47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)  "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
 ;
 $endIf.cm_implicitEnergyBound
 
