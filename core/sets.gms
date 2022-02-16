@@ -1818,14 +1818,14 @@ energyType "energy type aggregated categories"
 energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty)
 /
 *** Primary energy type categories
-  PE.all.(entyPe)
+***  PE.all.(entyPe) !! defined at sets calculations
   PE.biomass.(pebiolc,pebios,pebioil)
   PE.fossil.(peoil,pegas,pecoal)
   PE.VRE.(pewin,pesol)
   PE.renewables.(pegeo,pehyd,pewin,pesol,pebiolc,pebios,pebioil)
   PE.renewablesNoBio.(pegeo,pehyd,pewin,pesol)  
 *** Secondary energy type categories
-  SE.all.(entySe)
+***  SE.all.(entySe) !! defined at sets calculations
   SE.biomass.(seliqbio,sesobio,segabio)
   SE.fossil.(seliqfos,sesofos,segafos)
   SE.synthetic.(seliqsyn,segasyn)
@@ -1833,7 +1833,7 @@ energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty)
   SE.electricity.(seel)
   SE.heat.(sehe)
 *** Final energy type categories
-  FE.all.(entySe)
+***  FE.all.(entySe) !! defined at sets calculations
   FE.biomass.(seliqbio,sesobio,segabio)
   FE.fossil.(seliqfos,sesofos,segafos)
   FE.synthetic.(seliqsyn,segasyn)
