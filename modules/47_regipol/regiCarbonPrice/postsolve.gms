@@ -657,14 +657,14 @@ p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType)$
 *** initialize tax value for first iteration
 if(iteration.val eq 1,
 ***		for region groups
-	loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
+	loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
 		loop(all_regi$regi_group(ext_regi,all_regi),
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
 		);
 	);
 ***		for single regions (overwrites region groups)  
-	loop((ttot,ext_regi,target_type,emi_type)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
+	loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
 		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
@@ -684,7 +684,7 @@ p47_implEnergyBoundTax0(t,regi,energyCarrierLevel,energyType) =
 
 ***  Calculating current PE, SE and/or FE energy type level
 ***		for region groups
-loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
+loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
   p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
     sum(all_regi$regi_group(ext_regi,all_regi), 
 	  ( sum(energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe.l(t,regi,entyPe)) )$(sameas(energyCarrierLevel,"PE")) 
@@ -696,7 +696,7 @@ loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel
   ;
 );
 ***		for single regions (overwrites region groups)  
-loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
+loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
   p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
     sum(all_regi$sameas(ext_regi,all_regi),
 	  ( sum(energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe.l(t,regi,entyPe)) )$(sameas(energyCarrierLevel,"PE")) 
@@ -709,7 +709,7 @@ loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel
 );
 
 ***  calculating targets implicit tax rescale
-loop((ttot,ext_regi)$p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType),	
+loop((ttot,ext_regi,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType),	
   if(iteration.val lt 10,
   		p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = max(0.1, ( p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) / p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType) )) ** 3; !! current final energy levels minus target 
   elseif(iteration.val lt 15),
@@ -725,14 +725,14 @@ loop((ttot,ext_regi)$p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,
 
 ***	updating efficiency directive targets implicit tax
 ***		for region groups
-loop((ttot,ext_regi)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
+loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
 	loop(all_regi$regi_group(ext_regi,all_regi),
     	p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(t,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
   );
 );
 ***		for single regions (overwrites region groups)
-loop((ttot,ext_regi,target_type,emi_type)$(p47_implFETarget(ttot,ext_regi) AND (all_regi(ext_regi))),
+loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
     	p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(t,ext_regi,energyCarrierLevel,energyType));
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
