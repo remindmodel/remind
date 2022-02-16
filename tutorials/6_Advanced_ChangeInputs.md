@@ -48,7 +48,7 @@ How to Update Input Data
 ========================
 
 
-1. Check for the current input data revision number in this cluster folder: `/p/projects/rd3mod/inputdata/cache`
+1. Check for the current input data revision number in this cluster folder: `/p/projects/rd3mod/inputdata/cache`. Alternatively, run the helper tool `lastRev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five revX.XXX*_remind.tgz items in the default moinput output directory.
 2. Clone the repo `https://gitlab.pik-potsdam.de/REMIND/preprocessing-remind` to your tmp folder on the cluster and edit the `start.R` file by inserting the next revision number. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information.
 
 3. Start the script with 
