@@ -99,6 +99,14 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
 $endIf.cm_implicitFE
 
+*** intialize energy type bound implicit target parameters
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+
+	p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) = 0;
+	p47_implEnergyBoundTax0(ttot,all_regi,energyCarrierLevel,energyType) = 0;
+
+$endIf.cm_implicitEnergyBound
+
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
 *** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
 loop(ext_regi$altFeEmiFac_regi(ext_regi), 
