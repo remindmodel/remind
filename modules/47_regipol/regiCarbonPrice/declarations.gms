@@ -136,9 +136,9 @@ Parameter
 	p47_implEnergyBoundTax_prevIter(ttot,all_regi,energyCarrierLevel,energyType)  "previous iteration implicit energy bound target tax"
 	p47_implEnergyBoundTax0(ttot,all_regi,energyCarrierLevel,energyType)          "previous iteration implicit energy bound target tax revenue"
 
-	p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)      "energy bound implicit tax per iteration"
-	p47_implEnergyBoundTax_Rescale_iter(iteration,ext_regi,energyCarrierLevel,energyType)   "energy bound implicit tax rescale factor per iteration"    
-	p47_implEnergyBoundTargetCurrent_iter(iteration,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
+	p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)           "energy bound implicit tax per iteration"
+	p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)   "energy bound implicit tax rescale factor per iteration"    
+	p47_implEnergyBoundTargetCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
 
 	p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType)           "Energy bound target [TWa]"  / %cm_implicitEnergyBound% /
 	p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType)  "Energy bound target with added bunkers and non-energy use for FE [TWa]" 
