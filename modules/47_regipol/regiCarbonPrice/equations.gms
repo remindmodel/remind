@@ -139,4 +139,27 @@ q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
 
 $endIf.cm_implicitFE
 
+***---------------------------------------------------------------------------
+*'  Calculation of implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+***---------------------------------------------------------------------------
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+
+q47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType)$(t.val ge max(2010,cm_startyear) and p47_implEnergyBoundTarget(t,regi,energyCarrierLevel,energyType))..
+  vm_taxrevimplEnergyBoundTax(t,regi,energyCarrierLevel,energyType)
+  =e=
+  sum(energyCarrierLevel$(sameas(energyCarrierLevel,"PE"),
+  	p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe(t,regi,entyPe))
+  ) +
+  sum(energyCarrierLevel$(sameas(energyCarrierLevel,"SE"),
+    p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(energyCarrierANDtype2enty("SE",energyType,entySe), sum(pe2se(entyPe,entySe,te),  vm_prodSe(t,regi,entyPe,entySe,te)) )
+  ) +
+  sum(energyCarrierLevel$(sameas(energyCarrierLevel,"FE"),
+    p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_prodFe(t,regi,entySe,entyFe,te)) )
+  )
+  -
+  p47_implEnergyBoundTax0(t,regi,energyCarrierLevel,energyType)
+;
+
+$endIf.cm_implicitEnergyBound
+
 *** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms

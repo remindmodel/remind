@@ -9,6 +9,7 @@ vm_co2eq,input,questionnaire
 vm_co2eqMkt,input,questionnaire
 vm_emiAllMkt,input,questionnaire
 vm_taxrevimplFETax,input,questionnaire
+vm_taxrevimplEnergyBoundTax,input,questionnaire
 vm_cap,input,questionnaire
 vm_prodFe,input,questionnaire
 vm_demFeSector,input,questionnaire

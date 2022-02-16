@@ -82,6 +82,9 @@ equations
 $endIf.quantity_regiCO2target    
 
 
+Parameter
+	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28" / 2030.EUR_regi 0.1194863, 2030.EU27_regi 0.11 /
+;
 *** Efficiency final energy target induced by implicit tax
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 Parameter
@@ -100,7 +103,6 @@ Parameter
 $ifthen.implicitFEtarget "%cm_implicitFE%" == "FEtarget"
 Parameter
 	p47_implFETarget(ttot,ext_regi)                  "final energy target [TWa]"  		  / %cm_implFETarget% /
-	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28" / 2030.EUR_regi 0.1194863, 2030.EU27_regi 0.11 /
 	p47_implFETarget_extended(ttot,ext_regi)         "final energy target with added bunkers and non-energy use [TWa]" 
 ;
 $endIf.implicitFEtarget
@@ -124,6 +126,28 @@ equations
 	q47_implFETax(ttot,all_regi)      "implicit final energy tax to represent non CO2-price-driven final energy policies"
 ;
 $endIf.cm_implicitFE
+
+*** Implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets per specific energy type
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+Parameter
+	p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)           "tax/subsidy level on PE, SE and/or FE for an specific energy type"
+  	p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) "current iteration total PE, SE and/or FE for an specific energy type"
+  	p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)   "rescale factor for current implicit energy bound tax" 
+	p47_implEnergyBoundTax_prevIter(ttot,all_regi,energyCarrierLevel,energyType)  "previous iteration implicit energy bound target tax"
+	p47_implEnergyBoundTax0(ttot,all_regi,energyCarrierLevel,energyType)          "previous iteration implicit energy bound target tax revenue"
+
+	p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)      "energy bound implicit tax per iteration"
+	p47_implEnergyBoundTax_Rescale_iter(iteration,ext_regi,energyCarrierLevel,energyType)   "energy bound implicit tax rescale factor per iteration"    
+	p47_implEnergyBoundTargetCurrent_iter(iteration,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
+
+	p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType)           "Energy bound target [TWa]"  / %cm_implEnergyBoundTarget% /
+	p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType)  "Energy bound target with added bunkers and non-energy use for FE [TWa]" 
+;
+
+Equations
+	q47_implEnergyBoundTax(ttot,all_regi)      "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
+;
+$endIf.cm_implicitEnergyBound
 
 
 $ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 

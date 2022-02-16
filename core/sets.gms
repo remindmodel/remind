@@ -1794,6 +1794,54 @@ entyFeTrans(all_enty) "final energy types from transport sector"
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
 
+energyCarrierLevel "energy carrier Level"
+/
+  PE  "Primary Energy"
+  SE  "Secondary Energy"
+  FE  "Final Energy"
+/
+
+energyType "energy type aggregated categories"
+/
+  all
+  biomass
+  fossil
+  VRE
+  renewables
+  renewablesNoBio
+  synthetic
+  hydrogen
+  electricity
+  heat
+/
+
+energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty)
+/
+*** Primary energy type categories
+  PE.all.(entyPe)
+  PE.biomass.(pebiolc,pebios,pebioil)
+  PE.fossil.(peoil,pegas,pecoal)
+  PE.VRE.(pewin,pesol)
+  PE.renewables.(pegeo,pehyd,pewin,pesol,pebiolc,pebios,pebioil)
+  PE.renewablesNoBio.(pegeo,pehyd,pewin,pesol)  
+*** Secondary energy type categories
+  SE.all.(entySe)
+  SE.biomass.(seliqbio,sesobio,segabio)
+  SE.fossil.(seliqfos,sesofos,segafos)
+  SE.synthetic.(seliqsyn,segasyn)
+  SE.hydrogen.(seh2)
+  SE.electricity.(seel)
+  SE.heat.(sehe)
+*** Final energy type categories
+  FE.all.(entySe)
+  FE.biomass.(seliqbio,sesobio,segabio)
+  FE.fossil.(seliqfos,sesofos,segafos)
+  FE.synthetic.(seliqsyn,segasyn)
+  FE.hydrogen.(seh2)
+  FE.electricity.(seel)
+  FE.heat.(sehe)
+/
+
 emi(all_enty)      "types of emissions, these emissions are given to the climate module"
 
 emiTe(all_enty)   "types of climate-relevant energy emissions for climate coupling and reporting"
