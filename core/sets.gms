@@ -916,8 +916,8 @@ sets
        emicapregi
        banking
        carbonprice
-       regipol
        carbonpriceRegi
+       regipol
        damages
        internalizeDamages
        water
@@ -952,8 +952,8 @@ module2realisation(modules,*) "mapping of modules and active realisations" /
        emicapregi . %emicapregi%
        banking . %banking%
        carbonprice . %carbonprice%
-       regipol . %regipol%
        carbonpriceRegi . %carbonpriceRegi%
+       regipol . %regipol%
        damages . %damages%
        internalizeDamages . %internalizeDamages%
        water . %water%

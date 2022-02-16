@@ -148,7 +148,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
             # didremindfinish is TRUE if full.log exists with status: Normal completion
             didremindfinish <- function(fulldatapath) {
               logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath), fixed = TRUE)))
+              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
             }
             # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
             # for folder names only allows: cell content, an optional _, datetimepattern

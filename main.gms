@@ -198,10 +198,10 @@ $setglobal emicapregi  none           !! def = none
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
+***---------------------    46_carbonpriceRegi  -------------------------------------
+$setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  none              !! def = none
-***---------------------    48_carbonpriceRegi  -------------------------------------
-$setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    50_damages    ---------------------------------------
 $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------

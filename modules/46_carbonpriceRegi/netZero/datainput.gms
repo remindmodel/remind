@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/48_carbonpriceRegi/netZero/datainput.gms
+*** SOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
 
 ***profile for countries with 2050 target
 pm_taxCO2eqRegi("2035",nz_reg2050)=5;
@@ -40,9 +40,9 @@ pm_taxCO2eqRegi("2095",nz_reg2060)=2;
 pm_taxCO2eqRegi(ttot,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(ttot,regi);
 
 ***initialize parameter
-p48_taxCO2eqRegiLast(t,regi) =0;
-p48_taxCO2eqLast(t,regi)      =0;
+p46_taxCO2eqRegiLast(t,regi) =0;
+p46_taxCO2eqLast(t,regi)      =0;
 
-*** EOF ./modules/48_carbonpriceRegi/netZero/datainput.gms
+*** EOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
 
 

@@ -4,10 +4,10 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/48_carbonpriceRegi/none/datainput.gms
+*** SOF ./modules/46_carbonpriceRegi/none/datainput.gms
 
 pm_taxCO2eqRegi(ttot,regi) = 0;
 
-*** EOF ./modules/48_carbonpriceRegi/none/datainput.gms
+*** EOF ./modules/46_carbonpriceRegi/none/datainput.gms
 
 

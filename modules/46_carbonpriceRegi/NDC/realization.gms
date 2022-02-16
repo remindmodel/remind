@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/48_carbonpriceRegi/NDC/realization.gms
+*** SOF ./modules/46_carbonpriceRegi/NDC/realization.gms
 
 *' @description This realization implements a regional carbon markup consistent with the NDC targets
 
@@ -12,10 +12,10 @@
 *' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/48_carbonpriceRegi/NDC/declarations.gms"
-$Ifi "%phase%" == "datainput" $include "./modules/48_carbonpriceRegi/NDC/datainput.gms"
-$Ifi "%phase%" == "preloop" $include "./modules/48_carbonpriceRegi/NDC/preloop.gms"
-$Ifi "%phase%" == "postsolve" $include "./modules/48_carbonpriceRegi/NDC/postsolve.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/46_carbonpriceRegi/NDC/declarations.gms"
+$Ifi "%phase%" == "datainput" $include "./modules/46_carbonpriceRegi/NDC/datainput.gms"
+$Ifi "%phase%" == "preloop" $include "./modules/46_carbonpriceRegi/NDC/preloop.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/46_carbonpriceRegi/NDC/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/48_carbonpriceRegi/NDC/realization.gms
+*** EOF ./modules/46_carbonpriceRegi/NDC/realization.gms
