@@ -94,4 +94,17 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables share in electricity:
+***---------------------------------------------------------------------------
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
+  loop((ttot,ext_regi)$(p47_VREminShare(ttot,ext_regi) and ttot.val ge cm_startyear),
+    loop(regi$(regi_group(ext_regi,regi)),
+      v47_VREshare.lo(ttot,regi) = p47_VREminShare(ttot,ext_regi);
+    )
+  )
+;
+$endIf.cm_VREminShare
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

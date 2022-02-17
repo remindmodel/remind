@@ -177,12 +177,14 @@ $endIf.co2priceSlope
 ***---------------------------------------------------------------------------
 $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 
+Variable
+  v47_VREshare(ttot,regi) "share of variable renewables (wind and solar) in electricity"
+;
 Parameter
   p47_VREminShare(ttot,ext_regi) "per region minimun share of variable renewables (wind and solar) in electricity. Applied to yaers greater or equal to ttot. Unit [0..1]" / %cm_VREminShare% /  
 ;
-
 Equation
-  q47_VREminShare(t,ext_Regi) "per region minimun share of variable renewables (wind and solar) from ttot year onward"
+  q47_VREShare(ttot,regi) "per region minimun share of variable renewables (wind and solar) from ttot year onward"
 ;
 
 $endIf.cm_VREminShare
