@@ -674,11 +674,11 @@ if(iteration.val eq 1,
 *** saving previous iteration value for implicit tax revenue recycling
 p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
 p47_implEnergyBoundTax0(t,regi,energyCarrierLevel,energyType) = 
-  ( p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe.l(t,regi,entyPe)) )$(sameas(energyCarrierLevel,"PE")) 
+  ( p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) )$(sameas(energyCarrierLevel,"PE")) 
   +
-  ( p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(pe2se(entyPe,entySe,te),  vm_prodSe.l(t,regi,entyPe,entySe,te)) ) )$(sameas(energyCarrierLevel,"SE")) 
+  ( p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) )$(sameas(energyCarrierLevel,"SE")) 
   +
-  ( p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_prodFe.l(t,regi,entySe,entyFe,te)) ) )$(sameas(energyCarrierLevel,"FE")) 
+  ( p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) )$(sameas(energyCarrierLevel,"FE")) 
 ;
 
 ***  Calculating current PE, SE and/or FE energy type level
@@ -686,11 +686,11 @@ p47_implEnergyBoundTax0(t,regi,energyCarrierLevel,energyType) =
 loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
   p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
     sum(all_regi$regi_group(ext_regi,all_regi), 
-	  ( sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe.l(ttot,all_regi,entyPe)) )$(sameas(energyCarrierLevel,"PE")) 
-	  +
-	  ( sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(pe2se(entyPe,entySe,te),  vm_prodSe.l(ttot,all_regi,entyPe,entySe,te)) ) )$(sameas(energyCarrierLevel,"SE")) 
-	  +
-	  ( sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_prodFe.l(ttot,all_regi,entySe,entyFe,te)) ) )$(sameas(energyCarrierLevel,"FE")) 
+		( sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,all_regi,entyPe,entySe,te))) )$(sameas(energyCarrierLevel,"PE")) 
+		+
+		( sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,all_regi,entySe,entyFe,te))) )$(sameas(energyCarrierLevel,"SE")) 
+		+
+		( sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,all_regi,entySe,entyFe,sector,emiMkt)))) )$(sameas(energyCarrierLevel,"FE")) 
     )
   ;
 );
@@ -698,11 +698,11 @@ loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(tt
 loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
   p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
     sum(all_regi$sameas(ext_regi,all_regi),
-	  ( sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), vm_prodPe.l(ttot,all_regi,entyPe)) )$(sameas(energyCarrierLevel,"PE")) 
-	  +
-	  ( sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(pe2se(entyPe,entySe,te),  vm_prodSe.l(ttot,all_regi,entyPe,entySe,te)) ) )$(sameas(energyCarrierLevel,"SE")) 
-	  +
-	  ( sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_prodFe.l(ttot,all_regi,entySe,entyFe,te)) ) )$(sameas(energyCarrierLevel,"FE")) 
+		( sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,all_regi,entyPe,entySe,te))) )$(sameas(energyCarrierLevel,"PE")) 
+		+
+		( sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,all_regi,entySe,entyFe,te))) )$(sameas(energyCarrierLevel,"SE")) 
+		+
+		( sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,all_regi,entySe,entyFe,sector,emiMkt)))) )$(sameas(energyCarrierLevel,"FE")) 
     )
   ;
 );
