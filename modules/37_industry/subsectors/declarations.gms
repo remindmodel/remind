@@ -29,6 +29,9 @@ Parameters
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                            "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)    "FE demand per industry subsector"
   o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
+
+  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt) "testing parameter for FE without non-energy use" 
+  p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)           "testing parameter for process emissions from chemical feedstocks"
 ;
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 

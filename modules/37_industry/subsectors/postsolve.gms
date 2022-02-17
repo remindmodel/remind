@@ -59,5 +59,26 @@ pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt)$(
   / o37_demFeIndSub_SecCC(ttot,regi,secInd37);
 
 
+
+display vm_demFENonEnergySector.l;
+
+*** to be deleted before merge of feedstocks implementation, just checking the values
+*** check FE w/o non-energy use calculation
+p37_FE_noNonEn(t,regi,enty,enty2,emiMkt) = 		  
+          sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
+            vm_demFeSector.l(t,regi,enty,enty2,sector,emiMkt)
+            - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+              vm_demFENonEnergySector.l(t,regi,enty,enty2,sector,emiMkt)));
+
+
+*** check chemical process emissions calculation
+p37_Emi_ChemProcess(t,regi,emi,emiMkt) =
+    sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
+        se2fe(entySe,entyFe,te)), 
+      vm_demFENonEnergySector.l(t,regi,entySe,entyFe,sector,emiMkt)
+       * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    );
+
+
 *** EOF ./modules/37_industry/subsectors/postsolve.gms
 
