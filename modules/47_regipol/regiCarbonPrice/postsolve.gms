@@ -10,7 +10,6 @@
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
 
-
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 
 	loop(ETS_mkt,
@@ -748,6 +747,22 @@ p47_implEnergyBoundTargetCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel
 
 $endIf.cm_implicitEnergyBound
 
+***---------------------------------------------------------------------------
+*** Exogenous CO2 tax level:
+***---------------------------------------------------------------------------
+
+$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
+loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
+  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
+);
+display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
+$endIf.regiExoPrice
+
+
+***---------------------------------------------------------------------------
+*** Auxiliar parameters:
+***---------------------------------------------------------------------------
 
 *** parameter to track value of emissions in regipol module over iterations
 *** track "grossEnCO2_noBunkers" emissions as this calculation (see regiCarbonPrice/equations.gms) involves parameters from the last iteration
@@ -766,18 +781,6 @@ p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,t,regi) =
 	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector.l(t,regi,enty,enty2,"trans","other"))
 ;
 
-
-***---------------------------------------------------------------------------
-*** Exogenous CO2 tax level:
-***---------------------------------------------------------------------------
-
-$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
-loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
-  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
-  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
-);
-display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
-$endIf.regiExoPrice
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
 

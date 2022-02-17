@@ -164,4 +164,17 @@ q47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType)$(t.val ge max(2010,
 
 $endIf.cm_implicitEnergyBound
 
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables share in electricity:
+***---------------------------------------------------------------------------
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
+
+q47_VREminShare(t,ext_regi)$(p47_VREminShare(t,ext_regi))..
+  sum(regi$(regi_group(ext_regi,regi)), sum(teVRE, v32_shSeEl(t,regi,teVRE))) 
+  =g= 
+  p47_VREminShare(t,ext_regi)
+;
+
+$endIf.cm_VREminShare
+
 *** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms

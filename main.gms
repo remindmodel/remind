@@ -460,18 +460,19 @@ $setGlobal cm_emiMktES_type  netGHG !! def = netGHG
 $setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
 $setGlobal cm_ESD_post2055Increase  2 !! def = 2
 
-$setGlobal cm_emiMktEScoop  off    !! def = off	
+$setGlobal cm_emiMktEScoop   off    !! def = off	
 $setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
-$setGlobal cm_implicitFE  off !! def = off
+$setGlobal cm_implicitFE     off !! def = off
 $setGlobal cm_implFETarget  2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
-$setGlobal cm_implFEExoTax  off   !! def = off
-$setGlobal cm_vehiclesSubsidies  off !! def = off
+$setGlobal cm_implFEExoTax   off   !! def = off
+$setGlobal cm_vehiclesSubsidies off !! def = off
 $setGlobal cm_implicitEnergyBound  off !! def = off
+$setGlobal cm_VREminShare    off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5

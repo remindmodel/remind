@@ -170,6 +170,27 @@ s47_initialCO2Price_year				"initial year of co2 price which should be unchanged
 
 $endIf.co2priceSlope
 
+
+
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables share in electricity:
+***---------------------------------------------------------------------------
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
+
+Parameter
+  p47_VREminShare(ttot,ext_regi) "per region minimun share of variable renewables (wind and solar) in electricity. Applied to yaers greater or equal to ttot. Unit [0..1]" / %cm_VREminShare% /  
+;
+
+Equation
+  q47_VREminShare(t,ext_Regi) "per region minimun share of variable renewables (wind and solar) from ttot year onward"
+;
+
+$endIf.cm_VREminShare
+
+
+***---------------------------------------------------------------------------
+*** Auxiliar parameters:
+***---------------------------------------------------------------------------
 *** parameters to track regipol emissions calculation
 Parameters
 p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"
