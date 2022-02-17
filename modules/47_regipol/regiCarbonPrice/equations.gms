@@ -170,9 +170,9 @@ $endIf.cm_implicitEnergyBound
 $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 
 q47_VREShare(ttot,regi)..
-  v47_VREshare(t,regi);
+  v47_VREshare(ttot,regi);
   =g=
-  sum(teVRE, v32_shSeEl(t,regi,teVRE))) 
+  sum(teVRE, v32_shSeEl(ttot,regi,teVRE))) 
 ;
 
 $endIf.cm_VREminShare
