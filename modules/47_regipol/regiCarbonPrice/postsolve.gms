@@ -260,14 +260,15 @@ $IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off"
 
 *** display pm_taxCO2eq;
 
-
 *** Initializing co2eq historical and reference prices
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
 	pm_taxCO2eq(t,regi)$(regi_group(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
+    pm_taxCO2eqRegi(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	);
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))), !!for single regions
 	pm_taxCO2eq(t,regi)$(sameas(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
-	);	
+    pm_taxCO2eqRegi(t,regi)$(sameas(ext_regi,regi)) = 0;
+	);
 
 ** Fixing European 2020 carbon price to 20€/t CO2
 pm_taxCO2eq("2020",regi)$(regi_group("EUR_regi",regi) and (cm_startyear le 2020)) =  20*sm_DptCO2_2_TDpGtC;

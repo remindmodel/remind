@@ -12,11 +12,13 @@ p21_tau_so2_tax("2005",regi)=0;
 p21_tau_so2_tax("2100",regi)=s21_so2_tax_2010*pm_gdp_gdx("2100",regi)/pm_pop("2100",regi);
 p21_tau_so2_tax(ttot,regi)$(ttot.val>2100)=p21_tau_so2_tax("2100",regi);
 
+*** sum all 4 CO2eq tax components
+pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi);
+
 *GL* save reference level value of taxed variables for revenue recycling
 *JH* !!Warning!! The same allocation block exists in postsolve.gms. 
 ***                Do not forget to update the other file.
 *** save level value of all taxes
-pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi);
 p21_taxrevGHG0(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * (vm_co2eq.l(ttot,regi) - vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3));
 p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eqSum(ttot,regi) * vm_emiCO2Sector.l(ttot,regi,emi_sectors);
 p21_taxrevCO2luc0(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * cm_cprice_red_factor * vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3);
