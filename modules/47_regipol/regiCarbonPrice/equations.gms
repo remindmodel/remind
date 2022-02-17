@@ -172,7 +172,7 @@ $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 q47_VREShare(ttot,regi)..
   v47_VREshare(ttot,regi)
   =g=
-  sum(teVRE, v32_shSeEl(ttot,regi,teVRE))) 
+  sum(teVRE, v32_shSeEl(ttot,regi,teVRE))
 ;
 
 $endIf.cm_VREminShare
