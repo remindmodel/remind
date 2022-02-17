@@ -4,3 +4,4 @@ cm_shSynTrans,input,questionnaire
 pm_emifac,input,questionnaire
 cm_emiscen,input,questionnaire
 cm_shSynGas,input,questionnaire
+vm_demFeSector,input,questionnaire

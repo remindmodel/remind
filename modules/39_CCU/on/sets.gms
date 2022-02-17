@@ -23,6 +23,18 @@ te_ccu39(all_te)                            "CCU technologies"
 	MeOH									"conversion technology of secondary energy hydrogen to secondary energy liquids by the H2-Fischer-Tropsch route/Methanol route using captured CO2"
 /
 
+
+enty_BioSyn_39(all_enty,emi_sectors,emiMkt)	"FE, sector and emissions markets to which constraint on equal share of synfuels in biofuels+synfuels should be applied"
+/
+	fedie.trans.ETS
+	fedie.trans.ES
+	fedie.trans.other
+	fepet.trans.ETS
+	fepet.trans.ES
+	fepet.trans.other
+
+/
+
 ***-------------------------------------------------------------------------
 ***                  module specific mappings
 ***-------------------------------------------------------------------------

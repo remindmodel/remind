@@ -2297,8 +2297,8 @@ alias(esty,esty2);
 alias(rlf,rlf2);
 alias(regi,regi2,regi3);
 alias(steps,steps2);
-alias(all_emiMkt,emiMkt);
-alias(emi_sectors,sector);
+alias(all_emiMkt,emiMkt,emiMkt2);
+alias(emi_sectors,sector,sector2);
 alias(sector_types,type)
 
 ***-----------------------------------------------------------------------------
