@@ -14,6 +14,7 @@ vm_prodFe,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_taxCO2eqHist,input,questionnaire
 pm_taxCO2eq,input,questionnaire
+pm_taxCO2eqRegi,input,questionnaire
 pm_taxCO2eq_iteration,input,questionnaire
 pm_taxemiMkt,input,questionnaire
 pm_taxemiMkt_iteration,input,questionnaire
