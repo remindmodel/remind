@@ -134,7 +134,7 @@ Parameter
   	p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) "current iteration total PE, SE and/or FE for an specific energy type"
   	p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)   "rescale factor for current implicit energy bound tax" 
 	p47_implEnergyBoundTax_prevIter(ttot,all_regi,energyCarrierLevel,energyType)  "previous iteration implicit energy bound target tax"
-	p47_implEnergyBoundTax0(ttot,all_regi,energyCarrierLevel,energyType)          "previous iteration implicit energy bound target tax revenue"
+	p47_implEnergyBoundTax0(ttot,all_regi)                                        "previous iteration implicit energy bound target tax revenue"
 
 	p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)           "energy bound implicit tax per iteration"
 	p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)   "energy bound implicit tax rescale factor per iteration"    
@@ -145,7 +145,7 @@ Parameter
 ;
 
 Equations
-	q47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)  "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
+	q47_implEnergyBoundTax(ttot,all_regi)  "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
 ;
 $endIf.cm_implicitEnergyBound
 

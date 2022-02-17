@@ -103,7 +103,7 @@ $endIf.cm_implicitFE
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 
 	p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) = 0;
-	p47_implEnergyBoundTax0(ttot,all_regi,energyCarrierLevel,energyType) = 0;
+	p47_implEnergyBoundTax0(ttot,all_regi) = 0;
 
 $endIf.cm_implicitEnergyBound
 

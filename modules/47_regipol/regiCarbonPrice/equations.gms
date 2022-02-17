@@ -144,22 +144,24 @@ $endIf.cm_implicitFE
 ***---------------------------------------------------------------------------
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 
-q47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType)$(t.val ge max(2010,cm_startyear) and p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType))..
-  vm_taxrevimplEnergyBoundTax(t,regi,energyCarrierLevel,energyType)
+q47_implEnergyBoundTax(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplEnergyBoundTax(t,regi)
   =e=
-  ( 
-	p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
-  )$(sameas(energyCarrierLevel,"PE")) 
-  +
-  ( 
-	p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
-  )$(sameas(energyCarrierLevel,"SE")) 
-  +
-  ( 
-	p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
-  )$(sameas(energyCarrierLevel,"FE")) 
+  sum((energyCarrierLevel,energyType)$p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType),
+	( 
+		p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
+	)$(sameas(energyCarrierLevel,"PE")) 
+	+
+	( 
+		p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
+	)$(sameas(energyCarrierLevel,"SE")) 
+	+
+	( 
+		p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
+	)$(sameas(energyCarrierLevel,"FE"))
+  ) 
   -
-  p47_implEnergyBoundTax0(t,regi,energyCarrierLevel,energyType)
+  p47_implEnergyBoundTax0(t,regi)
 ;
 
 $endIf.cm_implicitEnergyBound

@@ -49,7 +49,7 @@ $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
     + vm_taxrevimplFETax(t,regi)
 $endif.cm_implicitFE   
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-    + sum((energyCarrierLevel,energyType), vm_taxrevimplEnergyBoundTax(t,regi,energyCarrierLevel,energyType))
+    + vm_taxrevimplEnergyBoundTax(t,regi)
 $endif.cm_implicitEnergyBound  
  ;
 
