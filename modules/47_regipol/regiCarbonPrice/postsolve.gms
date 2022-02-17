@@ -649,7 +649,7 @@ p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType)$
 *** removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
   +
   (	  
-   + p47_nonEnergyUse(ttot,ext_regi)
+    p47_nonEnergyUse(ttot,ext_regi)
   )$(sameas(energyCarrierLevel,"FE") and (sameas(energytype,"all") or sameas(energytype,"fossil")))
 ;
 
@@ -727,14 +727,14 @@ loop((ttot,ext_regi,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(tto
 loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
 	loop(all_regi$regi_group(ext_regi,all_regi),
     	p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)/2;
   );
 );
 ***		for single regions (overwrites region groups)
 loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
     	p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType));
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)/2;
   );
 );
 
