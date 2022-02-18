@@ -14,6 +14,8 @@ parameters
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
+    o32_dispatchDownPe2se(ttot,all_regi,all_te)           "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
+
 ;
 
 scalars
