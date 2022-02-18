@@ -9,9 +9,9 @@
 *' @title Carbonprice
 *'
 *' @description
-*' The carbonpriceRegi module defines a CO2eq tax markup to satisfy NDC or netZero targets.
-*' The carbon price markup is interpolated linearly between the years with policy goals
-*' It can be used jointly with the 45_carbonprice module.
+*' The carbonpriceRegi module defines a regional CO2eq tax markup pm_taxCO2eqRegi to satisfy NDC or netZero targets.
+*' The carbon price markup is interpolated linearly between the years with policy goals.
+*' It can be used jointly with the 45_carbonprice module and adds to the carbonprice calculated there.
 
 *' @authors Oliver Richters
 
