@@ -133,7 +133,7 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
 ;
 *Correction factor for non-energy feedstock emissions
 q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
-                                                      AND entyFe2Sector(entyFe,"indst") ) .. 
+                                                      AND entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) .. 
  
   sum(se2fe(entySE,entyFE,te),
 

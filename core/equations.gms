@@ -544,11 +544,12 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
           pm_emifac(t,regi,enty,enty2,te,enty3)
 		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
             vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-            -vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt)) 
+            - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+              vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+            )
+          )
 *emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
     )
-	)
-
 ;
 
 ***--------------------------------------------------
@@ -615,9 +616,11 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 *** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
 *ADD here non energy emi fro chem sector:
-  + sum(sector$sector2emiMkt(sector,emiMkt), sum(se2fe(entySe,entyFe,te), 
-       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)*pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
-    ))
+  + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
+        se2fe(entySe,entyFe,te)), 
+      vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+       * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    )
 ;
 
 
