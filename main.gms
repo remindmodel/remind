@@ -465,6 +465,9 @@ $setGlobal cm_ESD_post2055Increase  2 !! def = 2
 $setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
+$setGlobal cm_dispatchSetyDown       off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+$setGlobal cm_dispatchSeelDown       off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
+
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off

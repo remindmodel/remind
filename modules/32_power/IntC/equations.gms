@@ -49,7 +49,7 @@ q32_usableSeTe(t,regi,entySe,te)$(sameas(entySe,"seel") AND teVRE(te))..
 ***---------------------------------------------------------------------------
 *** Definition of capacity constraints for storage:
 ***---------------------------------------------------------------------------
-q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
+q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
     ( 0.5$( cm_VRE_supply_assumptions eq 1 )
     + 1$(   cm_VRE_supply_assumptions ne 1 )
     )
@@ -99,7 +99,7 @@ q32_limitCapTeChp(t,regi)..
 ***---------------------------------------------------------------------------
 *** Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
-q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
+q32_limitCapTeGrid(t,regi)$( t.val ge 2020 ) .. 
     vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
     / p32_grid_factor(regi)        		!! It is assumed that large regions require higher grid investment 
     =g=
@@ -134,7 +134,7 @@ q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
 	)
 ;
 
-q32_storloss(t,regi,teVRE)$(t.val ge 2015)..
+q32_storloss(t,regi,teVRE)$(t.val ge 2020)..
 	v32_storloss(t,regi,teVRE)
 	=e=
 	v32_shStor(t,regi,teVRE) / 93    !! corrects for the 7%-shift in v32_shStor: at 100% the value is correct again
