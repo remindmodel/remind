@@ -13,7 +13,7 @@ pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiM
 
 *RP* added the historic 2010/2015 CO2 prices 
 if (cm_emiscen eq 9 or (cm_emiscen eq 10),
- pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
+ pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
 elseif ((cm_emiscen eq 2) OR (cm_emiscen eq 5) OR (cm_emiscen eq 8)),
  pm_pvpRegi(ttot,regi,"perm") =  pm_pricePerm(ttot) / pm_ts(ttot) + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
  

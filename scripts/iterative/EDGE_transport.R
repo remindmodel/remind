@@ -60,7 +60,7 @@ REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode
 EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 ## input data loading
-input_folder = paste0("../../modules/35_transport/edge_esm/input/")
+input_folder = paste0("./")
 
 if (length(list.files(path = data_folder, pattern = "RDS")) < 7) {
   createRDS(input_folder, data_folder,

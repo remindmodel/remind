@@ -11,6 +11,19 @@
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
 
+$IFTHEN.dispatchSetyDown not "%cm_dispatchSetyDown%" == "off"
+  loop(pe2se(enty,enty2,te),
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSetyDown% / 100 ) * pm_cf(t,regi,te);
+  );
+$ENDIF.dispatchSetyDown
+
+$IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
+  loop(pe2se(enty,enty2,te)$sameas(enty2,"seel"),  
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSeelDown% / 100 ) * pm_cf(t,regi,te);  
+  );
+$ENDIF.dispatchSeelDown
+
+
 *** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
 *** to avoid infeasibilities with vintage biomass capacities
 *** allow bio techs to reduce capacity factor

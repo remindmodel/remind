@@ -1,7 +1,6 @@
 Running more than one REMIND scenario
 ================
-Oliver Richters
-10 January, 2022
+Oliver Richters, 10 January, 2022
 
 The folder **[config](../config)** in your REMIND folder contains a number of csv files that start with **scenario_config**. Those files are used to start a bundle of runs each with different configurations.
 
@@ -26,7 +25,7 @@ Those two columns are mandatory and usually placed at the beginning:
 * `start` is a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0.
 
 Further columns are the configurations that you can choose for the specific runs.
-They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../develop/config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
+They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
 Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
@@ -58,7 +57,7 @@ Everything in the row after a `#` is interpreted as comment. Best use it as firs
 Further notes:
 --------------
 
-The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../develop/modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
 To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
 

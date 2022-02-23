@@ -100,33 +100,25 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Edit run title
     icfg$title <- iscen
-    cat("   Configuring cfg for", iscen,"\n")
+    message("   Configuring cfg for ", iscen)
 
-    # Edit main file of model
-    if( "model" %in% names(iscenarios)){
-      icfg$model <- iscenarios[iscen,"model"]
-    }
-
-    # Edit regional aggregation
-    if( "regionmapping" %in% names(iscenarios)){
-      icfg$regionmapping <- iscenarios[iscen,"regionmapping"]
-    }
-
-    # Edit input data revision
-    if( "inputRevision" %in% names(iscenarios)){
-      icfg$inputRevision <- iscenarios[iscen,"inputRevision"]
-    }
-
-    # Edit switches in default.cfg according to the values given in the scenarios table, if non-empty
-    for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
+    # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
+    for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(iscenarios))) {
       if ( !is.na(iscenarios[iscen,switchname] )) {
-        icfg$gms[[switchname]] <- iscenarios[iscen,switchname]
+        icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
 
     # Set reporting script
-    if( "output" %in% names(iscenarios)){
+    if ("output" %in% names(iscenarios) && !is.na(iscenarios[iscen,"output"])) {
       icfg$output <- gsub('c\\("|\\)|"','',strsplit(iscenarios[iscen,"output"],',')[[1]])
+    }
+
+    # Edit switches in default.cfg based on scenarios table, if cell non-empty
+    for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
+      if ( !is.na(iscenarios[iscen,switchname] )) {
+        icfg$gms[[switchname]] <- iscenarios[iscen, switchname]
+      }
     }
 
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
@@ -148,7 +140,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
             # didremindfinish is TRUE if full.log exists with status: Normal completion
             didremindfinish <- function(fulldatapath) {
               logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath), fixed = TRUE)))
+              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
             }
             # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
             # for folder names only allows: cell content, an optional _, datetimepattern

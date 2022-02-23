@@ -297,11 +297,6 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
-    cat("\nRun scripts/input/prepare_NDC.R.\n")
-    source("scripts/input/prepare_NDC.R")
-    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
-  }
 
   # Create input file with exogenous CO2 tax using the CO2 price from another run
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
@@ -440,6 +435,13 @@ prepare <- function() {
                           debug        = FALSE)
   } else {
       message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
+  }
+
+  # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
+  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
+    cat("\nRun scripts/input/prepare_NDC.R.\n")
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
 
   ############ update information ########################
