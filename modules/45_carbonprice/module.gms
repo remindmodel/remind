@@ -9,9 +9,14 @@
 *' @title Carbonprice
 *'
 *' @description
-*' The carbonprice module sets (exogenously given price path or predefined 2020 level and linear/exponential increase afterwards) 
+*' The carbonprice module sets (exogenously given price path or predefined 2020 level and linear/exponential increase afterwards)
 *' or adjusts carbon price trajectories between iterations s.t. the desired climate policy targets are met. The carbon price is the main indicator
-*' to reflect the increase in climate policy ambition over time. 
+*' to reflect the increase in climate policy ambition over time.
+
+*' Carbon prices are potentially defined by three modules:
+*' - 45_carbonprice: define the carbon price necessary to reach global emission targets following specific price trajectories.
+*' - 46_carbonpriceRegi: add a markup pm_taxCO2eqRegi to 45_carbonprice estimations to reach specific NDC or net zero targets
+*' - 47_regipol: under the regiCarbonPrice realisation, define more detailed region or emissions market specific targets, overwriting the all other carbon prices for selected regions.
 
 *' @authors Christoph Bertram, Gunnar Luderer, Robert Pietzcker
 
