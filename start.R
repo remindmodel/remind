@@ -167,10 +167,11 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     }
 
     # Define path where the GDXs will be taken from
-    gdxlist <- c(input.gdx             = isettings[iscen, "path_gdx"],
-                 input_ref.gdx         = isettings[iscen, "path_gdx_ref"],
-                 input_bau.gdx         = isettings[iscen, "path_gdx_bau"],
-                 input_carbonprice.gdx = isettings[iscen, "path_gdx_carbonprice"]
+    gdxlist <- c(input.gdx               = isettings[iscen, "path_gdx"],
+                 input_ref.gdx           = isettings[iscen, "path_gdx_ref"],
+                 input_refpolicycost.gdx = isettings[iscen, "path_gdx_refpolicycost"],
+                 input_bau.gdx           = isettings[iscen, "path_gdx_bau"],
+                 input_carbonprice.gdx   = isettings[iscen, "path_gdx_carbonprice"]
                  )
 
     # add gdxlist to list of files2export
@@ -235,7 +236,11 @@ if ('--restart' %in% argv) {
     settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1, comment.char = "#", na.strings = "")
 
     # Add empty path_gdx_... columns if they are missing
-    path_gdx_list <- c("path_gdx", "path_gdx_ref", "path_gdx_bau", "path_gdx_carbonprice")
+    path_gdx_list <- c("path_gdx", "path_gdx_ref", "path_gdx_refpolicycost", "path_gdx_bau", "path_gdx_carbonprice")
+    if ("path_gdx_ref" %in% names(settings) && ! "path_gdx_refpolicycost" %in% names(settings)) {
+      settings$path_gdx_refpolicycost <- settings$path_gdx_ref
+      message("No column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
+    }
     settings[, path_gdx_list[! path_gdx_list %in% names(settings)]] <- NA
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.

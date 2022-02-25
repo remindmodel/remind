@@ -41,8 +41,10 @@ Example with comments and different ways to specify subsequent runs.
 The columns to implement subsequent runs are usually found at the end, starting with `path_gdx`:
 
 * `path_gdx` allows to specify initial conditions for the run, overwriting the usual initial conditions taken from the calibration files found in [`./config/gdx-files/`](../config/gdx-files/files). If it points to an unconverged run, this can be used to restart runs, similar to `Rscript start.R --restart`.
-* `path_gdx_ref` points to the run used for all `t < cm_startyear`, which can be used for example for delayed transition scenarios, and which is also used as a comparison for the policy cost calculation.
 * `path_gdx_bau` points to the run used as business as usual (BAU) scenario, for example for runs using [`45_carbonprice/NDC`](../modules/45_carbonprice/NDC), where some countries specify emission as percentage reduction compared to BAU.
+* `path_gdx_carbonprice` can be used to use a carbon tax path from an earlier run with realization [`45_carbonprice/exogenous`](../modules/45_carbonprice/exogenous).
+* `path_gdx_ref` points to the run used for all `t < cm_startyear`, which can be used for example for delayed transition scenarios.
+* `path_gdx_refpolicycost` points to the run that is used as a comparison for the policy cost calculation. If no such column exists, `path_gdx_ref` is used instead.
 
 These three columns starting with `path…` can point to either finished runs or other rows of the current model execution:
 * provide a path to an existing `gdx` file such as `./output/SSP2-Base_2021-12-24_19.30.00/fulldata.gdx`. For subfolders of `./output/`, writing the folder name `SSP2-Base_2021-12-24_19.30.00` is sufficient.
