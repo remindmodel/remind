@@ -852,7 +852,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # to facilitate debugging, look which files were created.
   message("Model summary:")
   # Print REMIND runtime
-  message("  gams_runtime is ", gams_runtime, "")
+  message("  gams_runtime is ", round(gams_runtime,1), " ", units(gams_runtime), ".")
   if (! file.exists("full.gms")) {
     message("! full.gms does not exist, so the REMIND GAMS code was not generated.")
   } else {
