@@ -205,11 +205,15 @@ if(!exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
 if ('--restart' %in% argv) {
   # choose results folder from list
   outputdirs <- choose_folder("./output","Please choose the runs to be restarted")
+  message("\nAlso restart subsequent runs? Enter Y, else leave empty:")
+  restart_subsequent_runs <- get_line() %in% c("Y", "y")
   for (outputdir in outputdirs) {
-    cat("Restarting",outputdir,"\n")
+    message("Restarting ", outputdir)
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    cfg$restart_subsequent_runs <- restart_subsequent_runs
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
+    save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
     submit(cfg, restart = TRUE)
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }

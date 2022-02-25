@@ -57,12 +57,13 @@ Everything in the row after a `#` is interpreted as comment. Best use it as firs
 Further notes:
 --------------
 
-The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+* To check the functioning of the `scenario_config*.csv`, edit [`default.cfg`](./config/default.cfg) and set `cfg$gms$optimization` to `testOneRegi` which runs one iteration in one region for each run.
 
-To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
+* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
-To compare two `scenario_config*.csv` files, for example after a change, these commands are useful:
-``` bash
-git diffmif scenario_config_1.csv scenario_config_2.csv
-git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
-```
+* To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
+
+* To compare two `scenario_config*.csv` files, for example after a change, these commands are useful:
+
+        git diffmif scenario_config_1.csv scenario_config_2.csv
+        git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
