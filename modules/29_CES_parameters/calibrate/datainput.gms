@@ -365,13 +365,13 @@ $endif.edgesm
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Assume H2 and feelhth demand at 10% of gases and feelwlth demand from 2050
+*** Assume H2 and feelhth demand at 100% of gases and feelwlth demand from 2050
 *** linear phase-in between 2025 and 2050
 loop (pf_quantity_shares_37(in,in2),
 
-*** 10% from 2050
+*** 100% from 2050
   pm_cesdata(t,regi_dyn29(regi),in,"quantity")$(t.val ge 2050) 
-  = 0.1 * pm_cesdata(t,regi,in2,"quantity");
+  = pm_cesdata(t,regi,in2,"quantity");
 *** 0.1% before 2025
   pm_cesdata(t,regi_dyn29(regi),in,"quantity")$(t.val lt 2025) 
   = 0.001 * pm_cesdata(t,regi,in2,"quantity");
