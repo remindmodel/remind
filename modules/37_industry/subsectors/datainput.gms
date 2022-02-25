@@ -187,7 +187,7 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 *** default values of CES markup
 p37_CESMkup(t,regi,in) = 0;
 
-
+$ontext
 *** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
 *** to represent demand-side cost of electrification and reach higher subsitution rates
 p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
@@ -201,7 +201,7 @@ p37_CESMkup(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feh2_otherInd") = 100* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feh2_steel") = 100* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
-
+$offtext
 
 *** overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
