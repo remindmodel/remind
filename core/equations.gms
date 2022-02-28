@@ -885,7 +885,7 @@ q_limitSeel2fehes(t,regi)..
     - vm_prodSe(t,regi,"pegeo","sehe","geohe") * pm_prodCouple(regi,"pegeo","sehe","geohe","seel")
 ;
 
-*' Requires minimum share of liquids from oil in total liquids of 5%:
+*' Requires minimum share of liquids from oil in total fossil liquids of 5%:
 q_limitShOil(t,regi)..
     sum(pe2se("peoil",enty2,te)$(sameas(te,"refliq") ), 
        vm_prodSe(t,regi,"peoil",enty2,te) 
