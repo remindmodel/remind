@@ -11,8 +11,8 @@ library(lucode2)
 library(gms)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"        # name of the gdx  
-gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
+gdx_name     <- "fulldata.gdx"             # name of the gdx
+gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
  
 
 if(!exists("source_include")) {
