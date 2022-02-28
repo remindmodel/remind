@@ -80,25 +80,4 @@ q36_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn36(in))..
 ;
 
 
-*** calculate district heat share in FE buildings
-q36_HeatShare(t,regi)..
-  v36_Heatshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-  =e=
-  sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fehes")),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-;
-
-*** calculate electricity share in FE buildings
-q36_ElShare(t,regi)..
-  v36_Elshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-  =e=
-  sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feels")),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-;
-
-
 *** EOF ./modules/36_buildings/simple/equations.gms
