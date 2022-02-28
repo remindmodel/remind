@@ -27,8 +27,6 @@ pm_histCap,input,questionnaire
 pm_emiTargetESR,input,questionnaire
 vm_emiCdr,input,questionnaire
 pm_share_CCS_CCO2,input,questionnaire
-pm_dt,input,questionnaire
-cm_regipol_slope_beforeTarget,input,questionnaire
 pm_regiTarget_dev_iter,input,questionnaire
 pm_emissionsCurrent,input,questionnaire
 pm_emissionsRefYear,input,questionnaire
