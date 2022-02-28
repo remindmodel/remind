@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.281
+* Input data revision: 6.284
 * 
-* Last modification (input data): Tue Feb 08 16:54:00 2022
+* Last modification (input data): Mon Feb 28 12:15:08 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -379,7 +379,7 @@ cm_CCS_cement          = 1;        !! def = 1
 cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
-$setglobal cm_secondary_steel_bound  none   !! def = "scenario"
+$setglobal cm_secondary_steel_bound  scenario   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
@@ -464,8 +464,8 @@ $setGlobal cm_ESD_post2055Increase  2 !! def = 2
 $setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
-$setGlobal cm_dispatchSetyDown       off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
-$setGlobal cm_dispatchSeelDown       off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
+$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
 
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
@@ -598,7 +598,7 @@ $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_iteration            1     !!  def  =  1
 $setglobal c_CES_calibration_write_prices  0     !!  def  =  0
 $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
-$setglobal c_CES_calibration_industry_FE_target  0
+$setglobal c_CES_calibration_industry_FE_target  1
 $setglobal cm_calibration_string  off    !!  def  =  off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
