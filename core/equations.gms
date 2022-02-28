@@ -977,17 +977,10 @@ q_heat_limit(t,regi)$(t.val gt 2020)..
 ;
 $ENDIF.sehe_upper
 
-$ontext
-q_H2BICouple(ttot,regi)$(ttot.val ge max(2010, cm_startyear))..
-    sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"build")), 
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  * sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"indst")),
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  =g=
-  0
-;
-$offtext
 
+***---------------------------------------------------------------------------
+*' H2 t&d capacities in buildings and industry to avoid switching behavior between both sectors
+***---------------------------------------------------------------------------
 
 q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
   vm_cap(t,regi,"tdh2i","1") + vm_cap(t,regi,"tdh2b","1")
