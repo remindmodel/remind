@@ -114,7 +114,15 @@ The automated model validation is a good tool for visually evaluating a broad ra
 
 ### 5.1. AppResults
 
-To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables. You can use this tool by running the following R command, which will automatically collect all runs and visualize them:
+To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables. 
+
+The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in your computer. The `appResults` tool also runs in your computer, but it's meant for remote access to runs made on the cluster computer at the [Potsdam Institute for Climate Impact Researck (PIK)](www.pik-potsdam.de), and therefore requires specific credentials. If you are not an authorized user at PIK, you should use `appResultsLocal`, which has the same functionalities.
+
+#### appResults(): runs made on the PIK cluster
+
+To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Configuration_for_AppResults) (login with your PIK account required). 
+
+You can then use the tool by running the following R command in your computer, which will automatically collect all runs made on the cluster (regardless of where in the cluster) and visualize them:
 
 ``` r
 shinyresults::appResults()
@@ -135,7 +143,9 @@ You can use filters to select a subset of all runs stored in the output folder o
 Run selection by using a filter
 </p>
 
-If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder:
+#### Interactive results on a local computer
+
+If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder. Usage is similar to that of `appResults` above:
 ``` r
 shinyresults::appResultsLocal()
 ```
