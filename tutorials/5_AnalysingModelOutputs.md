@@ -18,6 +18,7 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
 -   [6. Model-internal R-scripts for output analysis](#6-model-internal-r-scripts-for-output-analysis)
     -   [6.1. Execution of model-internal output scripts via the REMIND configuration file](#61-execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
     -   [6.2. Execution of model-internal output scripts in the command window](#62-execution-of-model-internal-output-scripts-in-the-command-window)
+-   [7.  Analysis of outputs with the remind2 R package](#7-analysis-of-outputs-with-the-remind2-r-package)
 
 
 ## 1. Introduction
@@ -185,9 +186,9 @@ Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
 
-## 7. Analysis of outputs with the remind package
+## 7. Analysis of outputs with the remind2 R package
 
-If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind*. This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind/R**. 
+If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind2* (https://github.com/pik-piam/remind2). This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind2/R** of the remind2 package source code. 
 
 For making yourself familiar with this package, you can open a R/RStudio session and set the REMIND model folder as working directory. This can be done by using the following command:
 
@@ -202,4 +203,4 @@ library(remind2)
 ?remind2
 ```
 
-You can click on the index and search for interesting functions. All functions used to generate the reporting start with "reporting*.R".
+You can click on the index and search for interesting functions. All functions used to generate the reporting start with "report*.R".
