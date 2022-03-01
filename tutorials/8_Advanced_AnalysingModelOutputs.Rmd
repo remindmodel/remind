@@ -21,7 +21,7 @@ This is a [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute 
 
 # Download demonstration data
 
-Before starting the tutorial we need to download the input data we are going to use from PIK's RSE server.
+Before starting the tutorial we need to download the sample data that we are going to use from PIK's RSE server. A REMIND run normally produces/contains these files.
 
 ```{r}
 download.file("http://rse.pik-potsdam.de/data/example/fulldata.gdx", "fulldata.gdx", mode="wb")
