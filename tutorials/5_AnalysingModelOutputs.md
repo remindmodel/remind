@@ -185,6 +185,7 @@ Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=
 ```
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
+https://github.com/UTokyo-mip/mipplot is another useful and compatible resource for generating plots (e.g. box plots) from REMIND results.
 
 ## 7. Analysis of outputs with the remind2 R package
 
