@@ -49,7 +49,6 @@ $ENDIF.emiMktES
 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 *** initialize tax value for first iteration
-if(iteration.val eq 1,
 ***		for region groups
 	loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
 		loop(all_regi$regi_group(ext_regi,all_regi),
@@ -64,7 +63,6 @@ if(iteration.val eq 1,
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
 		);
 	);	
-);
 $endif.cm_implicitEnergyBound
 
 $ontext
