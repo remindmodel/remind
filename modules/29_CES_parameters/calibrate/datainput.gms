@@ -252,11 +252,11 @@ $offdelim
 /
 ;
 $ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","ElecEraWise",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","Mix1Wise",in_dyn35);
 $elseif "%cm_calibration_FE%" == "medium"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $elseif "%cm_calibration_FE%" == "high"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $endif
 
 Parameter

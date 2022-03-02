@@ -8,7 +8,7 @@
 
 
 *** Removing economy wide co2 tax parameters for regions within the ETS
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
+$ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 
 loop(ETS_mkt,
 	pm_taxCO2eqSum(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
@@ -16,14 +16,14 @@ loop(ETS_mkt,
 	pm_taxCO2eqRegi(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 	pm_taxCO2eqHist(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 	pm_taxCO2eqSCC(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
-
+	
 	p21_taxrevGHG0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 	p21_taxrevCO2Sector0(ttot,regi,emi_sectors)$(ETS_regi(ETS_mkt,regi)) = 0;
 	p21_taxrevCO2LUC0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 	p21_taxrevNetNegEmi0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 );
 
-$ENDIF.emiMktETS	
+$endIf.emiMktETS
 
 *** Removing economy wide co2 tax parameters for regions within the ES
 $ifThen.emiMktES not "%cm_emiMktES%" == "off" 
