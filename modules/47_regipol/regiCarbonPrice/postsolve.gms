@@ -20,6 +20,11 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 		pm_taxCO2eqHist(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 		pm_taxCO2eqSCC(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 
+		p21_taxrevGHG0(ttot,regi) = 0;
+		p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = 0;
+		p21_taxrevCO2LUC0(ttot,regi) = 0;
+		p21_taxrevNetNegEmi0(ttot,regi) = 0;
+
 ***		pm_taxCO2eq(t,regi)$((t.val ge cm_startyear) and ETS_regi(ETS_mkt,regi)) = 0;
 ***		pm_taxCO2eqHist(t,regi)$((t.val ge cm_startyear) and ETS_regi(ETS_mkt,regi)) = 0;
 
@@ -118,6 +123,11 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 		pm_taxCO2eqRegi(ttot,regi) = 0;
 		pm_taxCO2eqHist(ttot,regi) = 0;
 		pm_taxCO2eqSCC(ttot,regi) = 0;
+
+		p21_taxrevGHG0(ttot,regi) = 0;
+		p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = 0;
+		p21_taxrevCO2LUC0(ttot,regi) = 0;
+		p21_taxrevNetNegEmi0(ttot,regi) = 0;
 
 ***  calculating the ES CO2 tax rescale factor
 ***		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetESR(t,regi))/pm_emiTargetESR(t,regi);
@@ -270,6 +280,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 	pm_taxCO2eqRegi(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	pm_taxCO2eqHist(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	pm_taxCO2eqSCC(t,regi)$(regi_group(ext_regi,regi)) = 0;
+	
+	p21_taxrevGHG0(t,regi)$(regi_group(ext_regi,regi)) = 0;
+	p21_taxrevCO2Sector0(t,regi,emi_sectors)$(regi_group(ext_regi,regi)) = 0;
+	p21_taxrevCO2LUC0(t,regi)$(regi_group(ext_regi,regi)) = 0;
+	p21_taxrevNetNegEmi0(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	);
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))), !!for single regions
 	pm_taxCO2eq(t,regi)$(sameas(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
@@ -279,6 +294,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 	pm_taxCO2eqRegi(t,regi)$(sameas(ext_regi,regi)) = 0;
 	pm_taxCO2eqHist(t,regi)$(sameas(ext_regi,regi)) = 0;
 	pm_taxCO2eqSCC(t,regi)$(sameas(ext_regi,regi)) = 0;
+	
+	p21_taxrevGHG0(t,regi)$(sameas(ext_regi,regi)) = 0;
+	p21_taxrevCO2Sector0(t,regi,emi_sectors)$(sameas(ext_regi,regi)) = 0;
+	p21_taxrevCO2LUC0(t,regi)$(sameas(ext_regi,regi)) = 0;
+	p21_taxrevNetNegEmi0(t,regi)$(sameas(ext_regi,regi)) = 0;
 	);
 
 ** Fixing European 2020 carbon price to 20€/t CO2
