@@ -668,24 +668,6 @@ p47_implEnergyBoundTarget_extended(ttot,ext_regi,energyCarrierLevel,energyType)$
   )$(sameas(energyCarrierLevel,"FE") and (sameas(energytype,"all") or sameas(energytype,"fossil")))
 ;
 
-*** initialize tax value for first iteration
-if(iteration.val eq 1,
-***		for region groups
-	loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
-		loop(all_regi$regi_group(ext_regi,all_regi),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
-		);
-	);
-***		for single regions (overwrites region groups)  
-	loop((ttot,ext_regi,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
-		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
-		);
-	);	
-);
-
 *** saving previous iteration value for implicit tax revenue recycling
 p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
 p47_implEnergyBoundTax0(t,regi) =

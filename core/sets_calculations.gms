@@ -193,7 +193,7 @@ loop(entySe,
  energyCarrierANDtype2enty("SE","all",entySe) = YES;
 );
 loop(entyFe,
- energyCarrierANDtype2enty("FE","all",entyPe) = YES;
+ energyCarrierANDtype2enty("FE","all",entySe) = YES;
 );
 
 *** EOF ./core/sets_calculations.gms
