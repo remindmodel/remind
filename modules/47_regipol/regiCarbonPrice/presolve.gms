@@ -7,43 +7,45 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
 
 
-
-
-
-*** Removing the economy wide co2 tax parameters for regions within the ETS
+*** Removing economy wide co2 tax parameters for regions within the ETS
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
-	loop(ETS_mkt,
-		pm_taxCO2eqSum(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
-		pm_taxCO2eq(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
-		pm_taxCO2eqRegi(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
-		pm_taxCO2eqHist(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
-		pm_taxCO2eqSCC(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 
-		p21_taxrevGHG0(ttot,regi) = 0;
-		p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = 0;
-		p21_taxrevCO2LUC0(ttot,regi) = 0;
-		p21_taxrevNetNegEmi0(ttot,regi) = 0;
-	);
-$endIf.emiMktETS	
+loop(ETS_mkt,
+	pm_taxCO2eqSum(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	pm_taxCO2eq(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	pm_taxCO2eqRegi(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	pm_taxCO2eqHist(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	pm_taxCO2eqSCC(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
 
-*** Removing the economy wide co2 tax parameters for regions within the ES
-$IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 
-	loop((regi)$pm_emiTargetESR("2030",regi),
-		pm_taxCO2eqSum(ttot,regi) = 0;
-		pm_taxCO2eq(ttot,regi) = 0;
-		pm_taxCO2eqRegi(ttot,regi) = 0;
-		pm_taxCO2eqHist(ttot,regi) = 0;
-		pm_taxCO2eqSCC(ttot,regi) = 0;
+	p21_taxrevGHG0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	p21_taxrevCO2Sector0(ttot,regi,emi_sectors)$(ETS_regi(ETS_mkt,regi)) = 0;
+	p21_taxrevCO2LUC0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+	p21_taxrevNetNegEmi0(ttot,regi)$(ETS_regi(ETS_mkt,regi)) = 0;
+);
 
-		p21_taxrevGHG0(ttot,regi) = 0;
-		p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = 0;
-		p21_taxrevCO2LUC0(ttot,regi) = 0;
-		p21_taxrevNetNegEmi0(ttot,regi) = 0;
-	);
+$ENDIF.emiMktETS	
+
+*** Removing economy wide co2 tax parameters for regions within the ES
+$ifThen.emiMktES not "%cm_emiMktES%" == "off" 
+
+loop((regi)$pm_emiTargetESR("2030",regi),
+	pm_taxCO2eqSum(ttot,regi) = 0;
+	pm_taxCO2eq(ttot,regi) = 0;
+	pm_taxCO2eqRegi(ttot,regi) = 0;
+	pm_taxCO2eqHist(ttot,regi) = 0;
+	pm_taxCO2eqSCC(ttot,regi) = 0;
+
+	p21_taxrevGHG0(ttot,regi) = 0;
+	p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = 0;
+	p21_taxrevCO2LUC0(ttot,regi) = 0;
+	p21_taxrevNetNegEmi0(ttot,regi) = 0;
+);
+
 $endIf.emiMktES
 
 *** removing co2 taxes for regions controlled by the regipol module   
-$IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off" 
+$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
+
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
 	loop(regi$regi_group(ext_regi,regi),
 		pm_taxCO2eqSum(t,regi) = 0;
@@ -73,6 +75,7 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 		p21_taxrevNetNegEmi0(t,regi) = 0;
 	);
 );
+
 $endIf.regicarbonprice
 
 
