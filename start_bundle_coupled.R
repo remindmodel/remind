@@ -304,7 +304,9 @@ for(scen in common){
       # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
       # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
-      cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
+      if (! grepl(".gdx", cfg_rem$files2export$start['input_bau.gdx'], fixed = TRUE)) {
+        cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
+      }
 
       # Also add path to carbon price gdx if given one 
       if (has_carbonprice_path) {
