@@ -131,7 +131,8 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
     sum(ces_eff_target_dyn37("ue_chemicals",in), vm_cesIO(t,regi,in))
   * p37_chemicals_feedstock_share(t,regi)
 ;
-*Correction factor for non-energy feedstock emissions
+
+*Flow of non-energy feedstocks. It is used for emissions accounting 
 q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
                                                       AND entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) .. 
  
@@ -147,8 +148,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
     + pm_cesdata(ttot,regi,in,"offset_quantity")
     )
     * p37_chemicals_feedstock_share(ttot,regi)
-*apply this only to chem indu, and only for relevant vectors: so li ga --> in_chemicals_feedstocks37(in)
-*dummy
+
   )
 ;
 
