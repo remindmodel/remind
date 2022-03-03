@@ -10,7 +10,7 @@ Parameter
 p46_CO2eqwoLU_actual(ttot,all_regi)                      "actual level of regional GHG emissions in previous iteration"
 p46_CO2eqwoLU_goal(ttot,all_regi)                        "regional NDC target level of GHG"
 p46_factorRescaleCO2Tax(ttot,all_regi)                   "multiplicative factor to rescale CO2 taxes to achieve the climate targets"
-p46_factorRescaleCO2TaxLimited(ttot,all_regi)            "multiplicative factor to rescale CO2 taxes to achieve the climate targets limited to not-so-fast adaption"
+p46_factorRescaleCO2TaxLtd(ttot,all_regi)                "multiplicative factor to rescale CO2 taxes to achieve the climate targets limited to not-so-fast adaption"
 p46_factorRescaleCO2Tax_iter(iteration,ttot,all_regi)    "Track the changes of p46_factorRescaleCO2Tax over the iterations"
 p46_factorRescaleCO2TaxLtd_iter(iteration,ttot,all_regi) "Track the changes of p46_factorRescaleCO2TaxLimited over the iterations"
 p46_vm_co2eq_iter(iteration,ttot,all_regi)               "Track the changes of vm_co2eq over the iterations"

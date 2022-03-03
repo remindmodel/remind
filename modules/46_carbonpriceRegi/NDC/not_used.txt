@@ -1,1 +1,4 @@
 name,type,reason
+vm_emiTe,variable,only used for CO2 targets
+vm_emiCdr,variable,only used for CO2 targets
+vm_emiMac,variable,only used for CO2 targets

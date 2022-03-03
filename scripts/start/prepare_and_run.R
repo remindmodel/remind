@@ -662,6 +662,19 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis, 
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
 
+    # OR: renamed for sectoral taxation
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
+                             list(c("v21_taxrevCO2_sector.L", "v21_taxrevCO2Sector.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiCO2_sector.M", "vm_emiCO2Sector.M")),
+                             list(c("v21_taxrevCO2_sector.M", "v21_taxrevCO2Sector.M")),
+                             list(c("q_emiCO2_sector.M", "q_emiCO2Sector.M")),
+                             list(c("q21_taxrevCO2_sector.M", "q21_taxrevCO2Sector.M")))
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                             list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
+                             list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
+
     #RP filter out regipol items
     if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,
@@ -683,7 +696,6 @@ prepare <- function() {
                                                                "$include \"fixings.gms\";",
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
-
 
     # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
     # single, respective, parses of the texts.

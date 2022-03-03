@@ -1,2 +1,2 @@
 name,type,reason
-cm_NDC_version,input,questionnaire
+cm_NDC_version,input,does not rely on UNFCCC_NDC database
