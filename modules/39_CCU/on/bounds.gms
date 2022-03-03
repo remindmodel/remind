@@ -9,7 +9,7 @@
 *** -------------------------------------------------------------------------------------------------------------
 ***LP* Narrowing down the solution space for vm_co2capture for CCU
 *** -------------------------------------------------------------------------------------------------------------
-vm_co2capture.lo(t,regi,"cco2","ico2","ccsinje","1") = 0;
+
 vm_co2capture.up(t,regi,"cco2","ico2","ccsinje","1") = 50;
 
 *** FS: overwrite bounds of se2se technologies in core/bounds.gms and set synfuel lower bounds only from 2035 on
