@@ -33,7 +33,8 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 		pm_taxemiMkt("2005",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2005)) = 0;
 		pm_taxemiMkt("2010",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2010))  = 15*sm_DptCO2_2_TDpGtC;
 		pm_taxemiMkt("2015",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2015))  = 8*sm_DptCO2_2_TDpGtC;
-		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+***		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+		pm_taxemiMkt("2020",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2020))  = 30*sm_DptCO2_2_TDpGtC;
 
 ***  calculating ETS CO2 emission target
 		loop((ttot,target_type,emi_type)$pm_regiCO2ETStarget(ttot,target_type,emi_type),
