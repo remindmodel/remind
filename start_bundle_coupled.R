@@ -259,6 +259,13 @@ for(scen in common){
     }
   }
 
+  # Set description
+  if ("description" %in% names(settings_remind) && ! is.na(settings_remind[scen, "description"])) {
+    cfg_rem$description <- settings_remind[scen, "description"]
+  } else {
+    cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
+  }
+
   # If provided replace gdx paths given in scenario_config with paths given in scenario_config_coupled
   if (!is.na(scenarios_coupled[scen, "path_gdx_bau"])) {
           settings_remind[scen, "path_gdx_bau"] <- scenarios_coupled[scen, "path_gdx_bau"]

@@ -104,19 +104,26 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
     for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(iscenarios))) {
-      if ( !is.na(iscenarios[iscen,switchname] )) {
+      if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
 
+    # Set description
+    if ("description" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "description"])) {
+      icfg$description <- iscenarios[iscen, "description"]
+    } else {
+      icfg$description <- paste0("REMIND run ", iscen, " started by ", config.file, ".")
+    }
+
     # Set reporting script
-    if ("output" %in% names(iscenarios) && !is.na(iscenarios[iscen,"output"])) {
-      icfg$output <- gsub('c\\("|\\)|"','',strsplit(iscenarios[iscen,"output"],',')[[1]])
+    if ("output" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "output"])) {
+      icfg$output <- gsub('c\\("|\\)|"', '', strsplit(iscenarios[iscen, "output"],',')[[1]])
     }
 
     # Edit switches in default.cfg based on scenarios table, if cell non-empty
     for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
-      if ( !is.na(iscenarios[iscen,switchname] )) {
+      if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg$gms[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
@@ -249,7 +256,7 @@ if ('--restart' %in% argv) {
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
-    knownColumnNames <- c(names(cfg$gms), path_gdx_list, "start", "output", "model", "regionmapping", "inputRevision")
+    knownColumnNames <- c(names(cfg$gms), path_gdx_list, "start", "output", "description", "model", "regionmapping", "inputRevision")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -268,8 +275,9 @@ if ('--restart' %in% argv) {
       }
     }
 
-    # Select scenarios that are flagged to start
+    # Select scenarios that are flagged to start, some checks for titles
     scenarios <- settings[settings$start==1,]
+    if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
@@ -291,10 +299,11 @@ if ('--restart' %in% argv) {
 
     # testOneRegi settings
     if (testOneRegi) {
-      cfg$title            <- 'testOneRegi'
-      cfg$gms$optimization <- 'testOneRegi'
+      cfg$title            <- "testOneRegi"
+      cfg$description      <- "A REMIND run using testOneRegi"
+      cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
-      cfg$results_folder   <- 'output/testOneRegi'
+      cfg$results_folder   <- "output/testOneRegi"
 
       # delete existing Results directory
       cfg$force_replace    <- TRUE

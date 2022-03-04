@@ -66,7 +66,7 @@ for (scen in rownames(scenarios)) {
   cfg$slurmConfig <- slurmConfig
   cfg$logoption  <- 2
   cfg$sequential <- NA
-  
+
   # Edit run title
   cfg$title <- scen
   cat("\n", scen, "\n")
@@ -76,6 +76,13 @@ for (scen in rownames(scenarios)) {
     if ( !is.na(scenarios[scen, switchname] )) {
       cfg[[switchname]] <- scenarios[scen, switchname]
     }
+  }
+
+  # Set description
+  if ("description" %in% names(scenarios) && ! is.na(scenarios[scen, "description"])) {
+    cfg$description <- scenarios[scen, "description"]
+  } else {
+    cfg$description <- paste0("REMIND climate run ", scen, " started by ", config.file, ".")
   }
 
   # Edit switches in default.cfg based on scenarios table, if cell non-empty
