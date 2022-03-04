@@ -22,6 +22,13 @@ p46_CO2eqwoLU_actual(p46_NDCyearSet(ttot,regi)) =
         * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
       );
 
+*** there is some debate whether Chinas net zero goal is not CO2eq, but CO2. Then use CO2 emissions minus substract bunker emissions
+*** p46_CO2eqwoLU_actual(p46_NDCyearSet(ttot,regi))$(sameas(regi,"CHA") AND sameas(ttot,"2055")) =
+***  (vm_emiTe.l(ttot,regi,"co2") + vm_emiMac.L(ttot,regi,"co2") + vm_emiCdr.L(ttot,regi,"co2"))*sm_c_2_co2*1000
+***    - sum(se2fe(enty,enty2,te),
+***        pm_emifac(ttot,regi,enty,enty2,te,"co2")
+***        * vm_demFeSector.l(ttot,regi,enty,enty2,"trans","other") * sm_c_2_co2 * 1000
+***      );
 
 display vm_co2eq.l;
 display p46_CO2eqwoLU_actual;
@@ -36,7 +43,7 @@ p46_vm_co2eq_2020(regi) = vm_co2eq.l("2020",regi)*sm_c_2_co2*1000;
 *** rescale regi tax by comparing the required emission reduction with 2020 emission levels
 p46_factorRescaleCO2Tax(p46_NDCyearSet(t,regi)) = 1+(p46_CO2eqwoLU_actual(t,regi) - p46_CO2eqwoLU_goal(t,regi))/p46_vm_co2eq_2020(regi);
 
-p46_factorRescaleCO2TaxLimited(p46_NDCyearSet(t,regi)) =
+p46_factorRescaleCO2TaxLtd(p46_NDCyearSet(t,regi)) =
   min(
 *** sets upper bound that decreases with iterations
      max(2-(iteration.val-p46_startInIteration)/15,1.01-(iteration.val-p46_startInIteration)/10000),
@@ -52,7 +59,7 @@ pm_taxCO2eqRegi(p46_NDCyearSet(t,regi)) =
       !! set lower bound of 0.1 $/t to avoid that the model never gets the carbon price back up
       0.1 * sm_DptCO2_2_TDpGtC,
       !! set regi tax such that total CO2 tax changes by desired factor, taking into account changed pm_taxCO2eq taxes
-      p46_factorRescaleCO2TaxLimited(t,regi) * (pm_taxCO2eqRegi(t,regi) + p46_taxCO2eqLast(t,regi))
+      p46_factorRescaleCO2TaxLtd(t,regi) * (pm_taxCO2eqRegi(t,regi) + p46_taxCO2eqLast(t,regi))
       - pm_taxCO2eq(t,regi)
      );
 
@@ -81,10 +88,10 @@ pm_taxCO2eqRegi(t,regi)$(t.val gt p46_lastNDCyear(regi))
       )/(p46_taxCO2eqConvergenceYear - p46_lastNDCyear(regi));
 
 
-display p46_factorRescaleCO2TaxLimited, pm_taxCO2eqRegi;
+display p46_factorRescaleCO2TaxLtd, pm_taxCO2eqRegi;
 
 p46_factorRescaleCO2Tax_iter(iteration,p46_NDCyearSet(t,regi)) = p46_factorRescaleCO2Tax(t,regi);
-p46_factorRescaleCO2TaxLtd_iter(iteration,p46_NDCyearSet(t,regi)) = p46_factorRescaleCO2TaxLimited(t,regi);
+p46_factorRescaleCO2TaxLtd_iter(iteration,p46_NDCyearSet(t,regi)) = p46_factorRescaleCO2TaxLtd(t,regi);
 
 
 ); !! end ord(iteration) > p46_startInIteration

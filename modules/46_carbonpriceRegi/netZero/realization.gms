@@ -6,6 +6,13 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/46_CarbonPriceRegi/netZero/realization.gms
 
+*' @description This realization adds a regional CO2 tax markup to satisfy the net-zero targets
+*' the carbon price follows a triangular trajectory, increasing until the net-zero year and going back to zero in 2100.
+*' this realization should best be combined with a global CO2 trajectory defined in 45_carbonprice
+
+*' @limitations Only regions where all countries have the same target are considered
+*' If you require this partial targets, use 46/NDC, but this has issues differentiating CO2 and GHG goals
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/46_carbonpriceRegi/netZero/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/46_carbonpriceRegi/netZero/declarations.gms"
