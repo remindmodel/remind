@@ -276,30 +276,16 @@ $IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off"
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
 	pm_taxCO2eq(t,regi)$(regi_group(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
 *** removing co2 taxes for regions controlled by the regipol module     
-	pm_taxCO2eqSum(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	pm_taxCO2eq(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	pm_taxCO2eqRegi(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	pm_taxCO2eqHist(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	pm_taxCO2eqSCC(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	
-	p21_taxrevGHG0(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	p21_taxrevCO2Sector0(t,regi,emi_sectors)$(regi_group(ext_regi,regi)) = 0;
-	p21_taxrevCO2LUC0(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	p21_taxrevNetNegEmi0(t,regi)$(regi_group(ext_regi,regi)) = 0;
 	);
 loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))), !!for single regions
 	pm_taxCO2eq(t,regi)$(sameas(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
 *** removing co2 taxes for regions controlled by the regipol module     
-	pm_taxCO2eqSum(t,regi)$(sameas(ext_regi,regi)) = 0;
-	pm_taxCO2eq(t,regi)$(sameas(ext_regi,regi)) = 0;
 	pm_taxCO2eqRegi(t,regi)$(sameas(ext_regi,regi)) = 0;
 	pm_taxCO2eqHist(t,regi)$(sameas(ext_regi,regi)) = 0;
 	pm_taxCO2eqSCC(t,regi)$(sameas(ext_regi,regi)) = 0;
-	
-	p21_taxrevGHG0(t,regi)$(sameas(ext_regi,regi)) = 0;
-	p21_taxrevCO2Sector0(t,regi,emi_sectors)$(sameas(ext_regi,regi)) = 0;
-	p21_taxrevCO2LUC0(t,regi)$(sameas(ext_regi,regi)) = 0;
-	p21_taxrevNetNegEmi0(t,regi)$(sameas(ext_regi,regi)) = 0;
 	);
 
 ** Fixing European 2020 carbon price to 20€/t CO2
@@ -509,6 +495,7 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 	loop(all_regi$regi_group(ext_regi,all_regi),
 *** terminal year price
 		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
+		pm_taxCO2eqSum(ttot2,all_regi) = pm_taxCO2eq(ttot2,all_regi);
 ***	linear price between first free year and terminal year
 		loop(ttot3,
 			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
@@ -516,9 +503,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 		);
         loop(ttot3$(ttot3.val eq s47_prefreeYear),
 			pm_taxCO2eq(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = (pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+			pm_taxCO2eqSum(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val)) = pm_taxCO2eq(t,all_regi);
 		);	
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+		pm_taxCO2eqSum(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(t,all_regi);
 	);
 );
 ***		for single regions (overwrites region groups)
@@ -526,6 +515,7 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
 *** terminal year price
 		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
+		pm_taxCO2eqSum(ttot2,all_regi) = pm_taxCO2eq(ttot2,all_regi);
 ***	linear price between first free year and terminal year
 		loop(ttot3,
 			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
@@ -533,9 +523,11 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 		);
 		loop(ttot3$(ttot3.val eq s47_prefreeYear),
 			pm_taxCO2eq(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = (pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+			pm_taxCO2eqSum(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val)) = pm_taxCO2eq(t,all_regi);
 		);
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+		pm_taxCO2eqSum(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(t,all_regi);
 	);
 );
 
@@ -774,7 +766,10 @@ $endIf.cm_implicitEnergyBound
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
   pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eqRegi(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
+  pm_taxCO2eqSCC(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
   pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
+  pm_taxCO2eqSum(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = pm_taxCO2eq(ttot,regi));
 );
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice
