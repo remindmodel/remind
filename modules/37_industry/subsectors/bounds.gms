@@ -6,8 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/bounds.gms
 
-*** FIXME
-!! $include "./modules/37_industry/subsectors/input/vm_cesIO_scales.inc";
+*** $include "./modules/37_industry/subsectors/input/vm_cesIO_scales.inc";
 $ontext
 vm_cesIO.scale(ttot(t2),regi,in_industry_dyn37(in))$(
                                         NOT tsu(t2) AND vm_cesIO.l(t2,regi,in) )
