@@ -21,7 +21,7 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val lt 2100) = 1e-7;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val lt 2150) = 1e-7;
 );
 
 
@@ -228,7 +228,7 @@ if (cm_nucscen eq 3,
 
 * no new nuclear investments after 2020, until then all currently planned plants are built
 if (cm_nucscen eq 5,
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 1e-6;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
 
@@ -258,8 +258,6 @@ if (cm_emiscen ne 1,
     vm_cap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"fnrs",rlf);
   );
 );
-
-
 
 *** -----------------------------------------------------------
 *mh bounds that narrow the solution space to help the conopt solver:
