@@ -308,6 +308,11 @@ for(scen in common){
         cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
       }
 
+      # Do the same for "input.gdx"
+      if ((! grepl(".gdx", cfg_rem$files2export$start['input.gdx'], fixed = TRUE)) & !is.na(cfg_rem$files2export$start['input.gdx'])) {
+        cfg_rem$files2export$start['input.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx"],"-rem-",max_iterations,"/fulldata.gdx")
+      }      
+
       # Also add path to carbon price gdx if given one 
       if (has_carbonprice_path) {
         cfg_rem$files2export$start['input_carbonprice.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_carbonprice"],"-rem-",max_iterations,"/fulldata.gdx")
