@@ -791,7 +791,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		if(sameas(taxType,"subsidy"),
     		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
 		);
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val eq ttot.val-5) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)/2;
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
   );
 );
 ***		for single regions (overwrites region groups)
@@ -803,7 +803,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		if(sameas(taxType,"subsidy"),
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType));
 		);
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val eq ttot.val-5) = p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)/2;
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
   );
 );
 
@@ -822,10 +822,10 @@ $endIf.cm_implicitEnergyBound
 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
-  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
-  pm_taxCO2eqRegi(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
-  pm_taxCO2eqSCC(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = 0;
-  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and ttot.val ge cm_startyear) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
+  pm_taxCO2eqHist(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+  pm_taxCO2eqRegi(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+  pm_taxCO2eqSCC(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = 0;
+  pm_taxCO2eq(ttot,regi)$(regi_group(ext_regi,regi) and (ttot.val ge cm_startyear)) = p47_exoCo2tax(ext_regi,ttot)*sm_DptCO2_2_TDpGtC;
 );
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice
