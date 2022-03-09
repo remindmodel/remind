@@ -155,5 +155,17 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
   )
 ;
 
+
+*** in baseline runs, all industrial feedstocks should come from fossil energy carriers, no biofuels or synfuels
+q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                                              AND cm_emiscen eq 1)..
+  sum(entySE,
+    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
+  =e=
+  sum(entySE$(entySeFos(entySE)),
+    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
+;
+
+
 *** EOF ./modules/37_industry/subsectors/equations.gms
 
