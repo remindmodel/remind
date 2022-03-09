@@ -30,7 +30,83 @@ FEtarget_sector2entyFe(FEtarget_sector,all_enty)  "mapping final energy to stati
 /
 
 $endif.cm_implicitFE
+
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+
+taxType "PE, SE or FE tax type"
+/
+tax
+subsidy
+/
+
+targetType "PE, SE or FE target type"
+/
+  total  "absolute target"
+  share  "relative target"
+/
+
+energyCarrierLevel "energy carrier Level"
+/
+  PE  "Primary Energy"
+  SE  "Secondary Energy"
+  FE  "Final Energy"
+/
+
+energyType "energy type aggregated categories"
+/
+  all
+  biomass
+  fossil
+  VRE
+  renewables
+  renewablesNoBio
+  synthetic
+  hydrogen
+  electricity
+  heat
+/
+
+energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty)
+/
+*** Primary energy type categories
+***  PE.all.(entyPe) !! defined below as set calculation
+  PE.biomass.(pebiolc,pebios,pebioil)
+  PE.fossil.(peoil,pegas,pecoal)
+  PE.VRE.(pewin,pesol)
+  PE.renewables.(pegeo,pehyd,pewin,pesol,pebiolc,pebios,pebioil)
+  PE.renewablesNoBio.(pegeo,pehyd,pewin,pesol)  
+*** Secondary energy type categories
+***  SE.all.(entySe) !! defined below as set calculation
+  SE.biomass.(seliqbio,sesobio,segabio)
+  SE.fossil.(seliqfos,sesofos,segafos)
+  SE.synthetic.(seliqsyn,segasyn)
+  SE.hydrogen.(seh2)
+  SE.electricity.(seel)
+  SE.heat.(sehe)
+*** Final energy type categories
+***  FE.all.(entySe) !! defined below as set calculation
+  FE.biomass.(seliqbio,sesobio,segabio)
+  FE.fossil.(seliqfos,sesofos,segafos)
+  FE.synthetic.(seliqsyn,segasyn)
+  FE.hydrogen.(seh2)
+  FE.electricity.(seel)
+  FE.heat.(sehe)
+/
+$endIf.cm_implicitEnergyBound
 ;
+
+*** Defining extra energyCarrierANDtype2enty set elements
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+loop(entyPe,
+ energyCarrierANDtype2enty("PE","all",entyPe) = YES;
+);
+loop(entySe,
+ energyCarrierANDtype2enty("SE","all",entySe) = YES;
+);
+loop(entyFe,
+ energyCarrierANDtype2enty("FE","all",entySe) = YES;
+);
+$endIf.cm_implicitEnergyBound
 
 *** Defining EU ETS
 loop(all_regi$(regi_group("EUR_regi",all_regi) AND (NOT(sameas(all_regi,"UKI")))),

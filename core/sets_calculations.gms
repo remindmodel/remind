@@ -185,15 +185,5 @@ t_interpolate(ttot) = t(ttot) - t_input_gdx(ttot);
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 
-*** Defining extra energyCarrierANDtype2enty set elements
-loop(entyPe,
- energyCarrierANDtype2enty("PE","all",entyPe) = YES;
-);
-loop(entySe,
- energyCarrierANDtype2enty("SE","all",entySe) = YES;
-);
-loop(entyFe,
- energyCarrierANDtype2enty("FE","all",entySe) = YES;
-);
 
 *** EOF ./core/sets_calculations.gms

@@ -63,7 +63,6 @@ loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext
 );
 
 $endIf.regicarbonprice
-$offtext
 
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
