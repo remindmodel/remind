@@ -685,6 +685,11 @@ prepare <- function() {
                                 list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
                                 list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M"))
                                 )
+
+      fixings_manipulateThis <- c(fixings_manipulateThis, 
+                                list(c("v39_shSynTrans.FX","!!v39_shSynTrans.FX")),
+                                list(c("v39_shSynGas.FX","!!v39_shSynGas.FX"))
+                                )                           
     }
 
     # Include fixings (levels) and marginals in full.gms at predefined position 
