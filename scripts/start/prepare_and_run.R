@@ -672,6 +672,21 @@ prepare <- function() {
                                 list(c("q47_implFETax.M", "!!q47_implFETax.M")))
     }
 
+    # filter out CCU items
+    if(cfg$gms$CCU == 'off'){
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v39_shSynTrans.L","!!v39_shSynTrans.L")),
+                               list(c("v39_shSynGas.L","!!v39_shSynGas.L"))
+                              )
+                               
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
+                                list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
+                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
+                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M"))
+                                )
+    }
+
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
