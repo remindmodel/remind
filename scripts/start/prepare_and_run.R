@@ -683,7 +683,9 @@ prepare <- function() {
                                 list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
                                 list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
                                 list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
-                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M"))
+                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")),
+                                list(c("v39_shSynTrans.M", "!!v39_shSynTrans.M")),
+                                list(c("v39_shSynGas.M", "!!v39_shSynGas.M"))
                                 )
 
       fixings_manipulateThis <- c(fixings_manipulateThis, 
