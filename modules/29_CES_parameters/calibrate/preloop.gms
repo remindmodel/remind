@@ -379,11 +379,11 @@ display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
           AND %c_CES_calibration_iteration% eq 1 ),
-  vm_cesIO.lo(t,regi,in)$( t.val ne 2005 )
+  vm_cesIO.lo(t_29(t),regi,in)$( t.val ne 2005 )
   = pm_cesdata(t,regi,in,"quantity")
   * max(0, (1 - max(0, %c_CES_calibration_iteration% - 2) / 8));
 
-  vm_cesIO.up(t,regi,in)$( t.val ne 2005 )
+  vm_cesIO.up(t_29(t),regi,in)$( t.val ne 2005 )
   = pm_cesdata(t,regi,in,"quantity")
   * (1 + max(0, %c_CES_calibration_iteration% - 2) / 8);
 );
