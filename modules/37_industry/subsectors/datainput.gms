@@ -93,14 +93,11 @@ pm_macSwitch("co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
-Parameter 
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
-$offdelim
-  /
-;
+*** The steel recycling rate limit is assumed to increase from 90 to 99 %.
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  / 0.9
+  * 0.99;
 
 s37_clinker_process_CO2 = 0.5262;
 
