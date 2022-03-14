@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/22_subsidizeLearning/22_subsidizeLearning.gms
+*** SOF ./modules/22_subsidizeLearning/module.gms
 *' @title Subsidies on learning technologies
 *'
 *' @description
@@ -19,4 +19,4 @@
 $Ifi "%subsidizeLearning%" == "globallyOptimal" $include "./modules/22_subsidizeLearning/globallyOptimal/realization.gms"
 $Ifi "%subsidizeLearning%" == "off" $include "./modules/22_subsidizeLearning/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/22_subsidizeLearning/22_subsidizeLearning.gms
+*** EOF ./modules/22_subsidizeLearning/module.gms

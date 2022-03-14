@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/36_buildings/services_putty.gms
+*** SOF ./modules/36_buildings/services_putty/realization.gms
 
 *' @description 
 *' 
@@ -33,4 +33,4 @@ $Ifi "%phase%" == "bounds" $include "./modules/36_buildings/services_putty/bound
 $Ifi "%phase%" == "presolve" $include "./modules/36_buildings/services_putty/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/36_buildings/services_putty/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/36_buildings/services_putty.gms
+*** EOF ./modules/36_buildings/services_putty/realization.gms

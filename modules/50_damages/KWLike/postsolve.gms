@@ -46,4 +46,4 @@ pm_damageMarginalTm2(tall,regi)$(tall.val ge 2000 and tall.val le 2300) =
 
 display pm_damageGrowthRate,pm_damage;
 
-***EOF ./modules/50_damages/KWLike/postsolve.gms
+*** EOF ./modules/50_damages/KWLike/postsolve.gms

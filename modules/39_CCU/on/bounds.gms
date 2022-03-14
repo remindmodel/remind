@@ -42,4 +42,4 @@ v39_shSynGas.lo(t,regi)$(t.val eq 2035) = cm_shSynGas / 4;
 v39_shSynGas.lo(t,regi)$(t.val eq 2040) = cm_shSynGas / 2;
 v39_shSynGas.lo(t,regi)$(t.val ge 2045) = cm_shSynGas;
 
-*** EOF ./modules/39_CCU/39_CCU.gms
+*** EOF ./modules/39_CCU/on/bounds.gms

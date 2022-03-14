@@ -23,4 +23,4 @@ $Ifi "%techpol%" == "coalPhaseoutRegional" $include "./modules/40_techpol/coalPh
 $Ifi "%techpol%" == "lowCarbonPush" $include "./modules/40_techpol/lowCarbonPush/realization.gms"
 $Ifi "%techpol%" == "none" $include "./modules/40_techpol/none/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/40_techpol/40_techpol.gms
+*** EOF ./modules/40_techpol/module.gms

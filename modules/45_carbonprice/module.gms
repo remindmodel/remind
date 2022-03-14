@@ -36,4 +36,4 @@ $Ifi "%carbonprice%" == "linear" $include "./modules/45_carbonprice/linear/reali
 $Ifi "%carbonprice%" == "none" $include "./modules/45_carbonprice/none/realization.gms"
 $Ifi "%carbonprice%" == "temperatureNotToExceed" $include "./modules/45_carbonprice/temperatureNotToExceed/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/45_carbonprice/45_carbonprice.gms
+*** EOF ./modules/45_carbonprice/module.gms

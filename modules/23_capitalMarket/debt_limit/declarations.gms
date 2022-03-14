@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/23_capitalMarket/perfect/declarations.gms
+*** SOF ./modules/23_capitalMarket/debt_limit/declarations.gms
 
 Parameters
 
@@ -21,4 +21,4 @@ Equations
   q23_limit_surplus_growth(ttot,all_regi)     "surplus growth constraint"
 ;
 
-*** EOF ./modules/23_capitalMarket/perfect/declarations.gms
+*** EOF ./modules/23_capitalMarket/debt_limit/declarations.gms

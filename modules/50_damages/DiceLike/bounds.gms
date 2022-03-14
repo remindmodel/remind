@@ -4,6 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/50_damages/DiceLike/bounds.gms
 
 vm_damageFactor.fx("2005",regi) = 1;
 
@@ -12,8 +13,4 @@ loop(ttot$(ttot.val ge 2010),
 	    vm_damageFactor.fx(ttot,regi) = pm_damage(tall,regi);
 ));
 
-
-
-
-
-
+*** EOF ./modules/50_damages/DiceLike/bounds.gms
