@@ -4,8 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/81_codePerformance/off.gms
+*** SOF ./modules/81_codePerformance/off/realization.gms
 
 *####################### R SECTION START (PHASES) ##############################
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/81_codePerformance/off.gms
+*** EOF ./modules/81_codePerformance/off/realization.gms

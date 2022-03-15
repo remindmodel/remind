@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/45_carbonprice/temperatureNotToExceed/declarations.gms
+
 parameters
 p45_taxTempLimit(tall) "tax for Temperature limit [1000 $/tC]"
 p45_taxTempLimitLastItr(tall) "tax for Temperature limit, last iteration [1000 $/tC]"
@@ -12,3 +14,5 @@ s45_taxTempLimitConvMaxDeviation  "limit for temperature deviation"
 s45_eta              "inverse steepness of damage function at temperature limit (logistic function). Raise if no convergence" 
 s45_itrAdjExp       "exponent for iterative adjustment of taxes. Lower if no convergence."
 ;
+
+*** EOF ./modules/45_carbonprice/temperatureNotToExceed/declarations.gms

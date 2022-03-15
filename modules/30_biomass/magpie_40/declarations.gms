@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/declarations.gms
+*** SOF ./modules/30_biomass/magpie_40/declarations.gms
 
 scalars
 s30_D2TD                "Multiplicative factor to convert from Dollar to TeraDollar"     /1.0e-12/
@@ -69,4 +69,4 @@ q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to refer
 q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production to multiple of cm_bioprod_histlim times 2015 level, active if cm_bioprod_histlim >= 0"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
 ;
-*** EOF ./modules/30_biomass/magpie_4/declarations.gms
+*** EOF ./modules/30_biomass/magpie_40/declarations.gms

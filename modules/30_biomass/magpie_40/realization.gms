@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_linear.gms
+*** SOF ./modules/30_biomass/magpie_40/realization.gms
 
 *' @description
 *' The costs for purpose grown ligno-cellulosic biomass 
@@ -21,4 +21,4 @@ $Ifi "%phase%" == "presolve" $include "./modules/30_biomass/magpie_40/presolve.g
 $Ifi "%phase%" == "postsolve" $include "./modules/30_biomass/magpie_40/postsolve.gms"
 $Ifi "%phase%" == "output" $include "./modules/30_biomass/magpie_40/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/30_biomass/magpie_linear.gms
+*** EOF ./modules/30_biomass/magpie_40/realization.gms

@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/50_damages/BurkeLike/postsolve.gms
+
 * Damage function based on Burke et al. (2015), extended by finite persistence/adaptation parameterization
 * For details refer to Schultes et al. (2018) supplementary material
 * time index mapping from supplement to code:  tall = t ; tall2 = t' ; tall3 = t''
@@ -32,7 +34,6 @@ pm_damage(tall,regi)$(tall.val ge 2000 and tall.val le 2300) =
 pm_damageMarginal(tall,regi)$(tall.val ge 2000 and tall.val le 2300) = 
   ( p50_damageFuncCoef1  + 2 * p50_damageFuncCoef2 * pm_regionalTemperature(tall,regi) );
 
-
-
-
 display pm_damage;
+
+*** EOF ./modules/50_damages/BurkeLike/postsolve.gms

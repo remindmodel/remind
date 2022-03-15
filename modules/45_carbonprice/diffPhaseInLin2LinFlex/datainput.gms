@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/diffPhaseIn2LinFlex/datainput.gms
+*** SOF ./modules/45_carbonprice/diffPhaseInLin2LinFlex/datainput.gms
 ***------------------------------------------------------------------------------------------------------------------------
 *** *BS* 20190930 linear convergence with starting points differentiated by GDP/capita, global price from 2040
 ***-----------------------------------------------------------------------------------------------------------------------
@@ -82,4 +82,4 @@ pm_taxCO2eq(t,regi) = p45_regCO2priceFactor(t,regi) * p45_CO2priceTrajDeveloped(
 
 display p45_regCO2priceFactor, p45_CO2priceTrajDeveloped, pm_taxCO2eq;
 
-*** EOF ./modules/45_carbonprice/diffPhaseIn2LinFlex/datainput.gms
+*** EOF ./modules/45_carbonprice/diffPhaseInLin2LinFlex/datainput.gms

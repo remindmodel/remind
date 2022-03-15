@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/46_CarbonPriceRegi/netZero/realization.gms
+*** SOF ./modules/46_carbonpriceRegi/netZero/realization.gms
 
 *' @description This realization adds a regional CO2 tax markup to satisfy the net-zero targets
 *' the carbon price follows a triangular trajectory, increasing until the net-zero year and going back to zero in 2100.
@@ -20,4 +20,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/46_carbonpriceRegi/netZero/dat
 $Ifi "%phase%" == "postsolve" $include "./modules/46_carbonpriceRegi/netZero/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/46_CarbonPriceRegi/netZero/realization.gms
+*** EOF ./modules/46_carbonpriceRegi/netZero/realization.gms

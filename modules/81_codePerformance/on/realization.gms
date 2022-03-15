@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/81_codePerformance/on.gms
+*** SOF ./modules/81_codePerformance/on/realization.gms
 
 
 *' @description BAU, tax30, and tax150 runs are set in a loop of 30 runs in total.
@@ -17,4 +17,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/81_codePerformance/on/datainpu
 $Ifi "%phase%" == "presolve" $include "./modules/81_codePerformance/on/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/81_codePerformance/on/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/81_codePerformance/on.gms
+*** EOF ./modules/81_codePerformance/on/realization.gms

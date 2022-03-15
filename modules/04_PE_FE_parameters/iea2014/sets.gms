@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/04_PE_FE_parameters/iea2014/sets.gms
+
 sets
 *** the mappings of the input data are for the CES-Structure (all_in) and in this module all_in is mapped to all_enty
 bi2s(all_enty,all_enty,all_te,all_te)   "match ESM fe for buildings and industry to stationary"
@@ -40,3 +42,5 @@ in2enty2(all_enty,all_enty,all_te,all_te)  "alias of in2enty"
 in2enty(all_enty,all_enty2,all_te,all_te2) = bi2s(all_enty,all_enty2,all_te,all_te2) + uet2fet(all_enty,all_enty2,all_te,all_te2);
 
 in2enty2(all_enty,all_enty2,all_te,all_te2) = in2enty(all_enty,all_enty2,all_te,all_te2);
+
+*** EOF ./modules/04_PE_FE_parameters/iea2014/sets.gms

@@ -334,5 +334,5 @@ $endif.calibrate
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 
-*** EOF ./modules/37_industry_four_sectors/sets.gms
+*** EOF ./modules/37_industry/subsectors/sets.gms
 

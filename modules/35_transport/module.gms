@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/35_transport/35_transport.gms
+*** SOF ./modules/35_transport/module.gms
 
 *' @title Transport
 *'
@@ -16,4 +16,4 @@
 $Ifi "%transport%" == "complex" $include "./modules/35_transport/complex/realization.gms"
 $Ifi "%transport%" == "edge_esm" $include "./modules/35_transport/edge_esm/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/35_transport/35_transport.gms
+*** EOF ./modules/35_transport/module.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/41_emicapregi/GDPint.gms
+*** SOF ./modules/41_emicapregi/GDPint/realization.gms
 
 *' @description
 *' Emission caps/permits are allocated according to GDP intensity
@@ -14,4 +14,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/41_emicapregi/GDPint/declar
 $Ifi "%phase%" == "datainput" $include "./modules/41_emicapregi/GDPint/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/41_emicapregi/GDPint/equations.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/41_emicapregi/GDPint.gms
+*** EOF ./modules/41_emicapregi/GDPint/realization.gms

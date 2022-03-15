@@ -4,6 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/45_carbonprice/temperatureNotToExceed/realization.gms
 
 *#' @description This realization chooses a carbon price trajectory consistent with a (non-overshoot) temperature target  
 *#' by staying within a peak budget of cumulative CO2 emissions. 
@@ -13,3 +14,5 @@ $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/temperatureN
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/temperatureNotToExceed/datainput.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/45_carbonprice/temperatureNotToExceed/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
+
+*** EOF ./modules/45_carbonprice/temperatureNotToExceed/realization.gms

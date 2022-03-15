@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/31_fossil/timeDepGrades.gms
+*** SOF ./modules/31_fossil/timeDepGrades/realization.gms
 
 *' @description This realization represents fossil fuel resources as a time-dependent cost grade structure. The grades are each defined   
 *' by a minimum and a maximum price, and these cost brackets change over time based on the rate of technological change as prescribed 
@@ -26,4 +26,4 @@ $Ifi "%phase%" == "preloop" $include "./modules/31_fossil/timeDepGrades/preloop.
 $Ifi "%phase%" == "bounds" $include "./modules/31_fossil/timeDepGrades/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/31_fossil/timeDepGrades/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/31_fossil/timeDepGrades.gms
+*** EOF ./modules/31_fossil/timeDepGrades/realization.gms

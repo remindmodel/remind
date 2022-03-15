@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/weathering.gms
+*** SOF ./modules/33_CDR/weathering/realization.gms
 
 *' @description 
 *' In this realization, enhanced weathering of rocks can be used to remove CO2 from the atmosphere in addition to BECCS and afforestation. 
@@ -17,4 +17,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/33_CDR/weathering/datainput.gm
 $Ifi "%phase%" == "equations" $include "./modules/33_CDR/weathering/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/33_CDR/weathering/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/33_CDR/weathering.gms
+*** EOF ./modules/33_CDR/weathering/realization.gms

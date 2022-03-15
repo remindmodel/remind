@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/05_initalCap/on/realization.gms
+*** SOF ./modules/05_initialCap/on/realization.gms
 
 *' @description This realisation computes the initial capital stocks using a 
 *' constrained non-linear model that ensures the production from capacities 
@@ -29,5 +29,5 @@ $Ifi "%phase%" == "declarations" $include "./modules/05_initialCap/on/declaratio
 $Ifi "%phase%" == "preloop" $include "./modules/05_initialCap/on/preloop.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/05_initalCap/on/realization.gms
+*** EOF ./modules/05_initialCap/on/realization.gms
 

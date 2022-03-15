@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NPi2018/bounds.gms 
+*** SOF ./modules/40_techpol/NPi2018/bounds.gms
 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 *NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
