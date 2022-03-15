@@ -287,6 +287,11 @@ if ('--restart' %in% argv) {
 
   ###################### Loop over scenarios ###############################
 
+  # Tell user that model is currently locked
+  if (file.exists(".lock")) {
+    message("\nThe file .lock exists, so model runs will have to queue.")
+  }
+
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
