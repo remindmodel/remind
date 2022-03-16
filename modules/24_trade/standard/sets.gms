@@ -30,6 +30,11 @@ tradeSe(all_enty)           "Traded secondary energy commodities"
 /
     null
 /
+
+tradeCap(all_enty)          "Commodities traded via capacity mode."
+/
+    null
+/
 ;
 
 *** EOF ./modules/24_trade/standard/sets.gms

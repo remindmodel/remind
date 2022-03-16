@@ -2284,6 +2284,7 @@ alias(t,t2,t3);
 alias(iteration,iteration2);
 alias(tall,tall2,tall3);
 alias(ttot,ttot2,ttot3,ttot4,ttot5);
+alias(all_regi,trade_regi);
 alias(opTimeYr,opTimeYr2);
 alias(teVRE,teVRE2);
 alias(teLoc,teLoc2);

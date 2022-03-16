@@ -36,7 +36,6 @@ tradeSe(all_enty)                           "Traded secondary energy commodities
 
 tradeCap(all_enty)                          "Commodities traded via capacity mode."
 /
-  pecoal,
   pegas
 /
 
