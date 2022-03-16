@@ -135,7 +135,7 @@ write_new_reporting <- function(mif_path,
   my_data <- magclass::add_dimension(my_data,dim=3.1,add = "model",nm = "REMIND")
   my_data <- magclass::add_dimension(my_data,dim=3.1,add = "scenario",nm = scen_name)
   
-  magclass::write.report(my_data, file = new_mif_path, ndigit = 7, skipempty = FALSE)
+  magclass::write.report(my_data, file = new_mif_path, ndigit = 7)
   
   return(new_mif_path)
 }
