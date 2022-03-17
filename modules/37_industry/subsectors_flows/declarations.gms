@@ -18,6 +18,9 @@ Parameters
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "Captured CO2 in industry by energy carrier, subsector and emissions market"   
   p37_CESMkup(ttot,all_regi,all_in)                                          "CES markup cost parameter [trUSD/CES input]"                                  
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                    "upper limit to secondary steel production based on scrap availability"        
+  
+**  p37_specMatsDem(mats,all_te,opModes)                                       "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+**  p37_specFeDem(all_enty,all_te,opModes)                                     "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
@@ -33,10 +36,15 @@ $endIf.CESMkup
 ;
 
 Positive Variables
-  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)   "industry CCS baseline emissions [GtC/a]"
-  vm_emiIndCCS(ttot,all_regi,all_enty)             "industry CCS emissions [GtC/a]"
-  vm_IndCCSCost(ttot,alL_regi,all_enty)            "industry CCS cost"
-  v37_emIIndCCSmax(ttot,all_regi,emiInd37)         "maximum abatable industry emissions"
+  vm_macBaseInd(ttot,all_regi,all_enty,secInd37)                            "industry CCS baseline emissions [GtC/a]"
+  vm_emiIndCCS(ttot,all_regi,all_enty)                                      "industry CCS emissions [GtC/a]"
+  vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
+  v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
+  
+  v37_demMatsEcon(tall,all_regi,all_enty)                                   "External demand of materials from economy"
+  v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
+  v37_prodMats(tall,all_regi,all_enty,all_te,opModes)                       "Production of materials"
+  v37_demFEMats(tall,all_regi,all_enty,all_emiMkt)                          "Final-energy demand of material-flow model"
 ;
 
 Equations
@@ -49,6 +57,11 @@ Equations
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  
+  q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
+  q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
+  q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
+  q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
 ;
 
 *** EOF ./modules/37_industry/subsectors_flows/declarations.gms

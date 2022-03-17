@@ -6,6 +6,66 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors_flows/equations.gms
 
+
+***-------------------------------------------------------------------------------
+***                         MATERIAL-FLOW IMPLEMENTATION
+***-------------------------------------------------------------------------------
+* Balance equation: Demand of materials equals to production of those materials, 
+* accounting for trade. Demand of materials arises either due to external demand 
+* from the economy (i.e. steel) or due to internal demand of the processes modelled
+* in the materials-flow model (i.e. directly reduced iron).
+*
+* For the moment the only group of materials considered here belong to any of the
+* production routes of steel. Trade is also currently forced to zero.
+q37_balMats(t,regi,mats)..
+    v37_demMatsEcon(t,regi,mats)
+  + v37_demMatsProc(t,regi,mats)
+  =e=
+    sum((matsOut2teMats(mats,teMats),teMats2opModes(teMats,opModes)),
+      v37_prodMats(t,regi,mats,teMats,opModes)
+    )
+  + vm_Mport(t,regi,mats)
+  - vm_Xport(t,regi,mats)
+;
+
+* The production of a material determined by the installed capacity of 
+* a technology that can produce that material, multiplied by the capacity
+* factor of that tech.
+q37_limitCapMat(t,regi,matsOut,teMats)$(matsOut2teMats(matsOut,teMats))..
+    sum(teMats2opModes(teMats,opModes),
+      v37_prodMats(t,regi,matsOut,teMats,opModes)
+    )
+  =e=
+    vm_capFac(t,regi,teMats) * vm_cap(t,regi,teMats,"1")
+;
+
+* Process demand of materials.
+q37_demMatsProc(t,regi,matsIn)..
+    v37_demMatsProc(t,regi,matsIn)
+  =e=
+    sum((teMats2matsIn(teMats,matsIn),matsOut2teMats(matsOut,teMats),teMats2opModes(teMats,opModes)),
+      p37_specMatsDem(matsIn,teMats,opModes) * v37_prodMats(t,regi,matsOut,teMats,opModes)
+    )
+;
+
+* Determine the final-energy demand of technologies operated in the 
+* materials-flow model.
+q37_demFEMats(t,regi,entyFe,emiMkt)..
+    v37_demFEMats(t,regi,entyFe,emiMkt)
+  =e=
+    sum(secInd37_emiMkt(secInd37,emiMkt),
+      sum(secInd37_teMats(secInd37,teMats),
+        sum((teMats2opModes(teMats,opModes),matsOut2teMats(matsOut,teMats)),
+          p37_specFEDem(entyFe,teMats,opModes) * v37_prodMats(t,regi,matsOut,teMats,opModes)
+        )
+      )
+    )
+;
+
+
+***-------------------------------------------------------------------------------
+***                     REST OF SUBSECTOR INDUSTRY MODULE
+***-------------------------------------------------------------------------------
 *' Industry final energy balance
 q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
                                          AND entyFe2Sector(entyFe,"indst") ) .. 
@@ -18,6 +78,7 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
     vm_cesIO(ttot,regi,in)
   + pm_cesdata(ttot,regi,in,"offset_quantity")
   )
+  + v37_demFeMats(ttot,regi,entyFe,emiMkt)
 ;
 
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 

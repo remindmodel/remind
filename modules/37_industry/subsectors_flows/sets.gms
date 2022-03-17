@@ -7,12 +7,63 @@
 *** SOF ./modules/37_industry/subsectors_flows/sets.gms
 
 Sets
+  mats(all_enty)        "Materials considered in material-flow model"
+  /
+    steel               "Steel"
+    dri                 "Directly reduced iron"
+    scrap               "Steel scrap"
+    iore                "Iron ore"
+  /
+  
+  teMats(all_te)        "Technologies used in material-flow model"
+  /
+    idr                 "Iron direct reduction"
+    eaf                 "Electric-arc furnace"
+    bfbof               "Blast furnace/basic-oxygen furnace"
+  /
+  
+  opModes               "Operation modes for technologies in material-flow model"
+  /
+    ng                  "Direct reduction using natural gas"
+    h2                  "Direct reduction using hydrogen"
+    pri                 "Primary production of steel (based on iron ore or DRI)"
+    sec                 "Secondary production of steel (based on scrap)"
+  /
+  
+  teMats2matsIn(teMats,mats)
+  /
+    idr . iore
+    eaf . (dri,scrap)
+    bfbof . (iore,scrap)
+  /
+  
+  teMats2opModes(teMats,opModes)
+  /
+    idr . (ng,h2)
+    eaf . (pri,sec)
+    bfbof . (pri,sec)
+  /
+  
+  matsOut2teMats(mats,teMats)
+  /
+    dri . idr
+    steel . eaf
+    steel . bfbof
+  /
+
   secInd37   "industry sub-sectors"
   /
     cement      "clinker and cement production"
     chemicals   "chemicals production"
     steel       "iron and steel production"
     otherInd    "aggregated other industry sub-sectors"
+  /
+  
+  secInd37_teMats(secInd37,teMats)
+  /
+    steel . idr
+    steel . eaf
+    steel . bfbof
   /
 
   emiInd37(all_enty)   "industry emissions"
@@ -331,6 +382,7 @@ pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
+alias(mats,mats2,matsIn,matsOut);
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 

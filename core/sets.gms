@@ -325,6 +325,11 @@ $ENDIF.WindOff
         termX_nh3   "Export terminals for liquid ammonia (liquification)"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
+*** PCV: technologies related to steel
+        ironMine     "Mining of iron ore"
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bfbof        "Blast furnace/basic-oxygen furnace"
 /
 
 all_enty             "all types of quantities"
@@ -391,6 +396,12 @@ all_enty             "all types of quantities"
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
         ueelTt       "transport useful energy for electric trains"
+
+        !! materials, feedstock, and industrial goods
+        steel        "Steel"
+        dri          "Directly reduced iron"
+        scrap        "Steel scrap"
+        iore         "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"
