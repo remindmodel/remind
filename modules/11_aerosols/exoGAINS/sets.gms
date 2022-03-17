@@ -15,6 +15,7 @@ emisForEmiFac(all_enty)	"types of emissions that are only calculated in a post-p
         BC
         OC
         NH3
+		PM25
 /
 
 sectorEndoEmi2te_dyn11(all_enty,all_enty,all_te,sectorEndoEmi)	 "map sectors to technologies"
