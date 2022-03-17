@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/11_aerosols/11_aerosols.gms
+*** SOF ./modules/11_aerosols/module.gms
 
 *' @title aerosols
 *'
@@ -15,4 +15,4 @@
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%aerosols%" == "exoGAINS" $include "./modules/11_aerosols/exoGAINS/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/11_aerosols/11_aerosols.gms
+*** EOF ./modules/11_aerosols/module.gms

@@ -77,10 +77,6 @@ loop ((all_regi,ppfen_industry_dyn37(all_in)),
 
 display "calculated FE share of 'other' industry sector", p37_shIndFE;
 
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
-
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;

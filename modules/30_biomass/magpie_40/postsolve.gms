@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 
-*** SOF ./modules/30_biomass/magpie_40/postsolve.gm
+*** SOF ./modules/30_biomass/magpie_40/postsolve.gms
 
 p30_demPe(ttot,regi) =
   sum(pe2se(enty,enty2,te)$(sameas(enty,"peoil") OR sameas(enty,"pecoal") OR sameas(enty,"pegas") OR sameas(enty,"pebiolc") OR sameas(enty,"pebios") OR sameas(enty,"pebioil")),

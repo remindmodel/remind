@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/45_carbonprice/temperatureNotToExceed/datainput.gms
+
 * satisfy dependencies
 $ifi not %climate% == 'magicc' abort "module carbonprice=temperatureNotToExceed requires climate=magicc";
 $ifi not %cm_magicc_temperatureImpulseResponse% == 'on' abort "module carbonprice=temperatureNotToExceed requires cm_magicc_temperatureImpulseResponse=on";
@@ -18,3 +20,5 @@ s45_itrAdjExp =  0.04; !! Lower if no convergence
 
 * initialize
 p45_taxTempLimitLastItr(tall) = 0;
+
+*** EOF ./modules/45_carbonprice/temperatureNotToExceed/datainput.gms

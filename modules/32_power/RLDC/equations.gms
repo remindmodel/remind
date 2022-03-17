@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/RLDC/equations.gms
+
 ***---------------------------------------------------------------------------
 *** Balance equation for electricity secondary energy type:
 ***---------------------------------------------------------------------------
@@ -335,3 +337,5 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	=l=
 	0.2 * vm_usableSe(t,regi,"seel")
 ;
+
+*** EOF ./modules/32_power/RLDC/equations.gms

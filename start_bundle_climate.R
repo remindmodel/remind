@@ -34,7 +34,10 @@ settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1,
 # Select scenarios that are flagged to start
 scenarios  <- settings[settings$start==1,]
 
-if (length(grep("\\.",rownames(scenarios))) > 0) stop("One or more titles contain dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
+# some checks for title
+if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
+if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
+if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start_bundle_climate.R to select wrong gdx files. Stopping now."))
 
 #AJS runs all scenarios as all SSPs, as specified in this file:
 meta_tcre = read.csv('config/scenario_meta_rcp.csv',stringsAsFactors = FALSE,comment.char = "#")
@@ -58,26 +61,37 @@ settings = scenarios
 for (scen in rownames(scenarios)) {
   #source cfg file for each scenario to avoid duplication of gdx entries in files2export
   source("config/default.cfg")
-  
+
   # Have the log output written in a file (not on the screen)
   cfg$slurmConfig <- slurmConfig
   cfg$logoption  <- 2
   cfg$sequential <- NA
-  
+
   # Edit run title
   cfg$title <- scen
   cat("\n", scen, "\n")
 
-  # Edit regional aggregation
-  if( "regionmapping" %in% names(scenarios)){
-    cfg$regionmapping <- scenarios[scen,"regionmapping"] 
+  # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
+  for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(scenarios))) {
+    if ( !is.na(scenarios[scen, switchname] )) {
+      cfg[[switchname]] <- scenarios[scen, switchname]
+    }
   }
-  
-  # Edit switches in default.cfg according to the values given in the scenarios table
+
+  # Set description
+  if ("description" %in% names(scenarios) && ! is.na(scenarios[scen, "description"])) {
+    cfg$description <- scenarios[scen, "description"]
+  } else {
+    cfg$description <- paste0("REMIND climate run ", scen, " started by ", config.file, ".")
+  }
+
+  # Edit switches in default.cfg based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg$gms), names(scenarios))) {
-    cfg$gms[[switchname]] <- scenarios[scen,switchname]
+    if ( !is.na(scenarios[scen, switchname] )) {
+      cfg$gms[[switchname]] <- scenarios[scen, switchname]
+    }
   }
-  
+
   # check if full input.gdx path is provided and, if not, search for correct path
   if (!substr(settings[scen,"path_gdx"], nchar(settings[scen,"path_gdx"])-3, nchar(settings[scen,"path_gdx"])) == ".gdx"){
     #if there is no correct scenario folder within the output folder path provided, take the config/input.gdx

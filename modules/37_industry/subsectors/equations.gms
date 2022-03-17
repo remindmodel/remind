@@ -22,16 +22,14 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
                         ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
-    sum(ces_eff_target_dyn37(out,in), 
-      vm_cesIO(ttot,regi,in)
-    )
-  * p37_energy_limit(out)
+  sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
-  vm_cesIO(ttot,regi,out)
+    vm_cesIO(ttot,regi,out)
+  * p37_energy_limit(out)
 ;
 
 *** No more than 90% of steel from secondary production
-q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) .. 
+q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear AND (pm_fedemand(ttot,regi,"ue_steel_primary") ge 1e-4)) .. 
   9 * vm_cesIO(ttot,regi,"ue_steel_primary")
   =g=
   vm_cesIO(ttot,regi,"ue_steel_secondary")
@@ -42,9 +40,9 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in))$(entyFeCC37(entyFe)),
       vm_cesIO(ttot,regi,in)
-    * p37_fctEmi(entyFE)
+    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
     )
 ;
 

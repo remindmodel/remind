@@ -4,6 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/26_agCosts/costs/presolve.gms
 
 *' @code
 *' **Total agricultural costs (excluding MAC costs)**
@@ -20,3 +21,5 @@ pm_totLUcosts(ttot,regi) =  p26_totLUcosts_withMAC(ttot,regi) - p26_macCostLu(tt
 *' while including the variable v30_pebiolc_costs.
 
 *' @stop
+
+*** EOF ./modules/26_agCosts/costs/presolve.gms

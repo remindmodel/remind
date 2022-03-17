@@ -135,4 +135,30 @@ vm_cap.lo(t,regi,"apCarDiEffT","1")$(t.val > 2090) = 0.001;
 vm_cap.lo(t,regi,"apCarDiEffH2T","1")$(t.val > 2090) = 0.001;
 
 $endif.cm_GDPScen
+
+$ifthen.shLDVsales not "%cm_share_LDV_sales%" == "off"
+loop((ttot,ttot2,ext_regi,te,bound_type)$(p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,bound_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
+  if(sameas(bound_type,"upper"),
+    v35_shLDVSales.up(t,regi,te)$(regi_group(ext_regi,regi) AND (t.val ge ttot.val) AND (t.val le ttot2.val)) = p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,"upper");
+  );
+  if(sameas(bound_type,"lower"),
+    v35_shLDVSales.lo(t,regi,te)$(regi_group(ext_regi,regi) AND (t.val ge ttot.val) AND (t.val le ttot2.val)) = p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,"lower");
+  );
+);
+loop((ttot,ttot2,ext_regi,te,bound_type)$(p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,bound_type) AND (all_regi(ext_regi))), !!for single regions
+  if(sameas(bound_type,"upper"),
+    v35_shLDVSales.up(t,regi,te)$(sameas(ext_regi,regi) AND (t.val ge ttot.val) AND (t.val le ttot2.val)) = p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,"upper");
+  );
+  if(sameas(bound_type,"lower"),
+    v35_shLDVSales.lo(t,regi,te)$(sameas(ext_regi,regi) AND (t.val ge ttot.val) AND (t.val le ttot2.val)) = p35_shLDVSales_bound(ttot,ttot2,ext_regi,te,"lower");
+  );
+);
+
+*** avoiding corner solution (all zeros) if sales share bounds are forced in the model
+vm_deltaCap.lo(t,regi,"apCarPeT","1")$(t.val < 2030) = 1e-6;
+vm_deltaCap.lo(t,regi,"apCarElT","1")$(t.val >= 2030) = 1e-6;
+
+$endif.shLDVsales  
+
+
 *** EOF ./modules/35_transport/complex/bounds.gms

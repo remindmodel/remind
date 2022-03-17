@@ -7,8 +7,8 @@
 *** SOF ./modules/36_buildings/services_with_capital/postsolve.gms
 
 *** calculation of FE Buildings Prices (useful for internal use and reporting purposes)
-pm_FEPrice(t,regi,entyFE,"build",emiMkt)$(abs (qm_budget.m(t,regi)) gt sm_eps) = 
-       q36_demFeBuild.m(t,regi,entyFE,emiMkt) / qm_budget.m(t,regi);
+pm_FEPrice(ttot,regi,entyFE,"build",emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) = 
+       q36_demFeBuild.m(ttot,regi,entyFE,emiMkt) / qm_budget.m(ttot,regi);
 
 p36_fePrice(t,regi_dyn36(regi),entyFe)=pm_FEPrice(t,regi,entyFE,"build","ES");
 

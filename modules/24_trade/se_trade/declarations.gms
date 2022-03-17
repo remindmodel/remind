@@ -15,6 +15,7 @@ pm_IO_trade(tall,all_regi,all_enty,char)    "Energy trade bounds based on IEA da
 p24_Mport2005correct(all_regi,all_enty)     "Correction factor to match fossil supply and internal region energy demand in the initial year"
 
 p24_seTradeCapacity(tall,all_regi,all_regi,all_enty) "Secondary energy international yearly trade capacity potential from regi to regi2 [TWa]"
+p24_seTrade_Quantity(all_regi,all_regi,all_enty)      "Maximum import quantity in import scenarios with fixed quantities [TWa]"
 
 p24_MportsRegi(tall,all_regi,all_regi,tradeSe)      "Mports to regi from regi2, assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [TWa]"
 p24_XportsRegi(tall,all_regi,all_regi,tradeSe)      "Exports from regi to regi2. Defined in the postsolve as a result of p24_MportsRegi calculation [TWa]"
@@ -28,6 +29,8 @@ pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export pric
 positive VARIABLES
 vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
+vm_budgetTradeX(ttot,all_regi)              "Export budget of regions - only used in capacity realization."
+vm_budgetTradeM(ttot,all_regi)              "Import budget of regions - only used in capacity realization."
 ;
 
 *** EOF ./modules/24_trade/se_trade/declarations.gms

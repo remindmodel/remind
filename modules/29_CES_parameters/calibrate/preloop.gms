@@ -379,11 +379,11 @@ display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 *** ----- relaxing fixings for the first couple of periods --------------------
 loop (in$(    industry_ue_calibration_target_dyn37(in) 
           AND %c_CES_calibration_iteration% eq 1 ),
-  vm_cesIO.lo(t,regi,in)$( t.val ne 2005 )
+  vm_cesIO.lo(t_29(t),regi,in)$( t.val ne 2005 )
   = pm_cesdata(t,regi,in,"quantity")
   * max(0, (1 - max(0, %c_CES_calibration_iteration% - 2) / 8));
 
-  vm_cesIO.up(t,regi,in)$( t.val ne 2005 )
+  vm_cesIO.up(t_29(t),regi,in)$( t.val ne 2005 )
   = pm_cesdata(t,regi,in,"quantity")
   * (1 + max(0, %c_CES_calibration_iteration% - 2) / 8);
 );
@@ -509,6 +509,16 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
     put "%c_expname%", "target", t.tl, regi.tl, "quantity", in.tl;
     put pm_cesdata(t,regi,in,"quantity") /;
   );
+
+$ifthen.subsectors "%industry%" == "subsectors"
+$ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
+  loop((t_29scen(t),regi_dyn29(regi),in)$(   ppfen_industry_dyn37(in)
+                                          OR ppfKap_industry_dyn37(in) ),
+    put "%c_expname%", "target", t.tl, regi.tl, "quantity", in.tl;
+    put pm_cesdata(t,regi,in,"quantity") /;
+  );
+$endif.industry_FE_target
+$endif.subsectors
 
   putclose file_CES_calibration;
 );
@@ -839,12 +849,21 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
   = 1;
   
   display "check p29_CESderivative", p29_CESderivative;
-  
-  loop ((cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in)),regi_dyn29(regi)),
+
+  loop ((regi_dyn29(regi),
+         cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in))),
     pm_cesdata(t,regi,in,"price")
-    =  p29_CESderivative(t,regi,out,in);
+    = p29_CESderivative(t,regi,out,in);
   );
   
+$ifthen.subsectors "%industry%" == "subsectors"
+$ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
+  !! set minimum price on ppf_industry
+  pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+  = max(pm_cesdata(t,regi,in,"price"), 1e-5);
+$endif.FE_target
+$endif.subsectors
+
   !! smooth historical prices
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
                                             in_beyond_calib_29_excludeRoot(in) )
@@ -1168,7 +1187,57 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   / p29_efficiency_growth(t2,regi,in);
 );
 
+$ifthen.subsectors "%industry%" == "subsectors"
+$ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
+*** scale industry input prices as a slack variable to make the Euler identity
+*** hold
+loop ((t,regi_dyn29(regi),ue_industry_dyn37(out)),
+  sm_tmp
+  = pm_cesdata(t,regi,out,"quantity")
+  / sum(ue_industry_2_pf(out,ppf_industry_dyn37(in)),
+      pm_cesdata(t,regi,in,"price")
+    * pm_cesdata(t,regi,in,"quantity")
+    );
 
+  loop (ue_industry_2_pf(out,ppf_industry_dyn37(in)),
+    pm_cesdata(t,regi,in,"price")
+    = pm_cesdata(t,regi,in,"price")
+    * sm_tmp;
+  );
+);
+
+*** recompute all ipf from Euler equation
+loop (cesRev2cesIO(counter,ipf_industry_dyn37(out))$( 
+                                                   NOT ue_industry_dyn37(out) ),
+  pm_cesdata(t,regi_dyn29(regi),out,"quantity")
+  = sum(cesOut2cesIn(out,in),
+      pm_cesdata(t,regi,in,"price")
+    * pm_cesdata(t,regi,in,"quantity")
+    );
+);
+
+loop ((t_29(t),regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$( 
+                                                    NOT ue_industry_dyn37(in) ),
+  pm_cesdata(t,regi,in,"xi")
+  = pm_cesdata(t,regi,in,"price")
+  * pm_cesdata(t,regi,in,"quantity")
+  / pm_cesdata(t,regi,out,"quantity");
+
+  pm_cesdata(t,regi,in,"eff")
+  = pm_cesdata(t,regi,out,"quantity")
+  / pm_cesdata(t,regi,in,"quantity");
+
+  loop (t0,
+    pm_cesdata(t,regi,in,"effGr")$( pm_cesdata(t,regi,in,"quantity") gt 0 )
+    = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
+    * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
+   ** (1 / pm_cesdata(t,regi,out,"rho"));
+
+    pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
+    pm_cesdata(t,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
+  );
+);
+$else.industry_FE_target
 *** Apply efficiency improvements assumptions to industrial final energy and capital inputs
 loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
                                             industry_ue_calibration_target_dyn37(out) 
@@ -1178,8 +1247,10 @@ loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
   * ((1 + pm_ue_eff_target(out)) ** (t_29.val - pm_ttot_val(t2)))
   ;
 );
+$endif.industry_FE_target
 
 !! - adjust efficiency parameters for feelhth_X and feh2_X
+$ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "0"
 loop (cesOut2cesIn(in_industry_dyn37(out),in)$( 
                               (ppfen(in) OR ipf(in))
                           AND NOT industry_ue_calibration_target_dyn37(out)
@@ -1226,6 +1297,8 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
          );
    );
 );
+$endif.industry_FE_target
+$endif.subsectors
 
 option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;

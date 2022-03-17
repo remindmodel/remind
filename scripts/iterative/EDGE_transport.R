@@ -21,7 +21,7 @@ library(edgeTrpLib)
 require(devtools)
 library(rmndt)
 library(mrremind)
-print("Start of the EDGE-T iterative model run")
+print(paste("---", Sys.time(), "Start of the EDGE-T iterative model run."))
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
@@ -60,7 +60,7 @@ REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode
 EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 ## input data loading
-input_folder = paste0("../../modules/35_transport/edge_esm/input/")
+input_folder = paste0("./")
 
 if (length(list.files(path = data_folder, pattern = "RDS")) < 7) {
   createRDS(input_folder, data_folder,
@@ -354,4 +354,5 @@ writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
 
-print("End of the EDGE-T iterative model run")
+print(paste("---", Sys.time(), "End of the EDGE-T iterative model run."))
+

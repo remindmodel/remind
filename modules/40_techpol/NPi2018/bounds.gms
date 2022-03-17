@@ -4,14 +4,14 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NPi2018/bounds.gms 
+*** SOF ./modules/40_techpol/NPi2018/bounds.gms
 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
-vm_cap.lo(t,regi,"spv","1") = p40_TechBound(t,regi,"spv")*0.001; 
-vm_cap.lo(t,regi,"wind","1") = p40_TechBound(t,regi,"wind")*0.001; 
-vm_cap.lo(t,regi,"tnrs","1") = p40_TechBound(t,regi,"tnrs")*0.001;
-vm_cap.lo(t,regi,"hydro","1") = p40_TechBound(t,regi,"hydro")*0.001;
-vm_cap.lo(t,regi,"apCarElT","1") = p40_TechBound(t,regi,"apCarElT");
+*NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
+vm_cap.lo(t,regi,"spv","1")$(t.val gt 2020) = p40_TechBound(t,regi,"spv")*0.001; 
+vm_cap.lo(t,regi,"tnrs","1")$(t.val gt 2020) = p40_TechBound(t,regi,"tnrs")*0.001;
+vm_cap.lo(t,regi,"hydro","1")$(t.val gt 2020) = p40_TechBound(t,regi,"hydro")*0.001;
+vm_cap.lo(t,regi,"apCarElT","1")$(t.val gt 2020) = p40_TechBound(t,regi,"apCarElT");
 
 display vm_cap.lo;
 

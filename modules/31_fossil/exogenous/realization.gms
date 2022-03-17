@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/31_fossil/exogenous.gms
+*** SOF ./modules/31_fossil/exogenous/realization.gms
 
 *' @description For this realization exogenous fossil extraction and costs are used. The data are from a baseline run.
 *' 
@@ -15,4 +15,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/31_fossil/exogenous/declara
 $Ifi "%phase%" == "datainput" $include "./modules/31_fossil/exogenous/datainput.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/31_fossil/exogenous/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/31_fossil/exogenous.gms
+*** EOF ./modules/31_fossil/exogenous/realization.gms

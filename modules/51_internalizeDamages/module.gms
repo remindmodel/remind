@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/51_internalizeDamages.gms
+*** SOF ./modules/51_internalizeDamages/module.gms
 
 *' @title internalizeDamages
 *'
@@ -18,4 +18,4 @@ $Ifi "%internalizeDamages%" == "DiceLikeItr" $include "./modules/51_internalizeD
 $Ifi "%internalizeDamages%" == "KWlikeItr" $include "./modules/51_internalizeDamages/KWlikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "off" $include "./modules/51_internalizeDamages/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/51_internalizeDamages/51_internalizeDamages.gms
+*** EOF ./modules/51_internalizeDamages/module.gms

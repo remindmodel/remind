@@ -56,14 +56,16 @@ if (cm_IndCCSscen eq 1,
 pm_delta_kap(regi,ppfKap_industry_dyn37) = -log(1 / 4) / 50;
 
 *** FIXME: this is temporary data, insert meaningful figures!
-p37_energy_limit("ue_cement")          =  10000;
-p37_energy_limit("ue_steel_primary")   =  10000;
-p37_energy_limit("ue_steel_secondary") = 100000;
+p37_energy_limit("ue_cement")          = 1.8;
+p37_energy_limit("ue_steel_primary")   = 8;
+p37_energy_limit("ue_steel_secondary") = 1.3;
 
-*' Emission factors for calculating industry emissions
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
+p37_energy_limit(in)
+  = p37_energy_limit(in)   !! GJ/t
+  * 1e-3                   !! * TJ/GJ
+  / (8760 * 3600)          !! * s/year
+  * 1e9;                   !! * t/Gt
+                           !! = TWa/Gt
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -98,14 +100,11 @@ pm_macSwitch("co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
-Parameter 
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
-$offdelim
-  /
-;
+*** The steel recycling rate limit is assumed to increase from 90 to 99 %.
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  / 0.9
+  * 0.99;
 
 s37_clinker_process_CO2 = 0.5262;
 
@@ -198,6 +197,10 @@ $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
 $endIf.CESMkup
 
 display p37_CESMkup;
+
+
+
+
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
 

@@ -4,11 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/CombLowCandCoalPO.gms
+*** SOF ./modules/40_techpol/CombLowCandCoalPO/realization.gms
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/40_techpol/CombLowCandCoalPO/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/40_techpol/CombLowCandCoalPO/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/40_techpol/CombLowCandCoalPO/equations.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/40_techpol/CombLowCandCoalPO.gms
+*** EOF ./modules/40_techpol/CombLowCandCoalPO/realization.gms

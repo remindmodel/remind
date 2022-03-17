@@ -11,8 +11,8 @@ library(lucode2)
 library(gms)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"        # name of the gdx  
-gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
+gdx_name     <- "fulldata.gdx"             # name of the gdx
+gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
  
 
 if(!exists("source_include")) {
@@ -72,5 +72,12 @@ print("start generation of LCOE reporting")
 tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
 print("end generation of LCOE reporting")
 										
-															   
+## generate DIETER reporting if it is needed
+## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory 
+DIETERGDX <- "report_DIETER.gdx"
+if(file.exists(file.path(outputdir, DIETERGDX))){
+  print("start generation of DIETER reporting")
+  remind2::reportDIETER(DIETERGDX,outputdir)
+  print("end generation of DIETER reporting")
+}																   
 														

@@ -4,6 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/16_downscaleTemperature/CMIP5/datainput.gms
 
 pm_regionalTemperature(tall,regi)      = 0;
 pm_tempScaleGlob2Reg(tall,regi)        = 1;
@@ -38,7 +39,7 @@ $offdelim
 /
 ;
 *p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%cm_rcp_scen%",ttot);
-p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("%rcp26%",ttot);
+p16_tempGlobalCMIP5(ttot) = f16_tempGlobalCMIP5("rcp26",ttot);
 
 parameter p16_tempRegionalCalibrate2005(all_regi)  "XXX"
 /
@@ -68,5 +69,4 @@ loop(ttot$(ttot.val ge 2005) ,
 *** keep constant from 2090 on
 pm_tempScaleGlob2Reg(tall,regi)$(tall.val gt 2090) = pm_tempScaleGlob2Reg("2090",regi);
 
-
-
+*** EOF ./modules/16_downscaleTemperature/CMIP5/datainput.gms

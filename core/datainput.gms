@@ -9,6 +9,8 @@
 *AJS* technical. initialize parameters so that they are read from gdx
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
+vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
+
 
 *AJS* initialize parameter (avoid compilation errors)
 * do this at the start of datainput to prevent accidental overwriting
@@ -138,6 +140,7 @@ pm_shGasLiq_fe_lo(ttot,regi,sector)=0;
 ***---------------------------------------------------------------------------
 table fm_dataglob(char,all_te)  "energy technology characteristics: investment costs, O&M costs, efficiency, learning rates ..."
 $include "./core/input/generisdata_tech.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
@@ -186,26 +189,15 @@ $include "./core/input/p_inco0.cs4r"
 $offdelim
 /
 ;
-*CG* setting regional technology cost to be the same for wind offshore as onshore
-$IFTHEN.WindOff %cm_wind_offshore% == "1"
-fm_dataglob("inco0","windoff") = 5000;
-fm_dataglob("constrTme","windoff") = 4;
-fm_dataglob("eta","windoff") = 1.00;
-fm_dataglob("omf","windoff") = 0.03;
-fm_dataglob("lifetime","windoff") = 25;
-fm_dataglob("incolearn","windoff") = 4000;
-fm_dataglob("ccap0","windoff") = 0.0007;
-fm_dataglob("learn","windoff") = 0.12;
-
-p_inco0(ttot,regi,"windoff") = p_inco0(ttot,regi,"wind");
-$ENDIF.WindOff
 
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 table f_dataglob_SSP5(char,all_te)        "Techno-economic assumptions consistent with SSP5"
 $include "./core/input/generisdata_tech_SSP5.prn"
+$include "./core/input/generisdata_trade.prn"
 ;
 *JH* New nuclear assumption for SSP5
 if (cm_nucscen eq 6,
@@ -220,12 +212,13 @@ if (c_techAssumptScen eq 3,
 
 display fm_dataglob;
 
-***INNOPATHS
+*** Overwrite default technology parameter values based on specific scenario configs
 $if not "%cm_INNOPATHS_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_INNOPATHS_incolearn% /;
 $if not "%cm_INNOPATHS_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_INNOPATHS_inco0Factor% /;
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
-
+$if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
+$if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
 fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
@@ -514,11 +507,30 @@ pm_cf(ttot,regi,"tdh2b") = pm_cf(ttot,regi,"tdh2s");
 pm_cf(ttot,regi,"tdh2i") = pm_cf(ttot,regi,"tdh2s");
 
 
-table pm_earlyreti_adjRate(all_regi,all_te)  "extra retirement rate for technologies in countries with relatively old fleet"
-$ondelim
-$include "./core/input/p_earlyRetirementAdjFactor.cs3r"
-$offdelim
-;
+*SB* Region- and tech-specific early retirement rates
+*Regional*
+loop(ext_regi$pm_extRegiEarlyRetiRate(ext_regi), 
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi)) = pm_extRegiEarlyRetiRate(ext_regi);
+);
+*Tech-specific*
+$IFTHEN.tech_earlyreti not "%c_tech_earlyreti_rate%" == "off"
+loop((ext_regi,te)$p_techEarlyRetiRate(ext_regi,te), 
+  pm_regiEarlyRetiRate(t,regi,te)$(regi_group(ext_regi,regi) and (t.val lt 2035 or sameas(ext_regi,"GLO"))) = p_techEarlyRetiRate(ext_regi,te);
+);
+$ENDIF.tech_earlyreti
+
+
+
+*SB* Time-dependent early retirement rates in Baseline scenarios
+$ifthen.Base_Cprice %carbonprice% == "none"
+$ifthen.Base_techpol %techpol% == "none"
+*** Allow very little early retirement future periods
+pm_regiEarlyRetiRate(t,regi,"pc")$(t.val gt 2025) = 0.01;
+$endif.Base_techpol
+$endif.Base_Cprice
+
+display pm_regiEarlyRetiRate;
+
 
 ***---------------------------------------------------------------------------
 *RP* calculate omegs and opTimeYr2te
@@ -1263,22 +1275,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
 );
 
-if(cm_iterative_target_adj eq 1,
-***only one long budget period for scenarios with iterative adjustment of budget, so that p_referencebudgetco2 is met from 2000-2100
-sm_endBudgetCO2eq      = 2150;
-s_referencebudgetco2    = 1500;
-sm_budgetCO2eqGlob = 700;
-);
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
 p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of fm_dataemiglob
-
-
-
-*cb 20120405 reference CO2eq emissions in 2030 from all Kyoto gases, in Gt CO2eq, for iterative modPol scenario
-if(cm_emiscen eq 9 AND cm_iterative_target_adj eq 1, s_reference2030co2eq    = 60.8;
-);
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data
@@ -1294,7 +1294,7 @@ if(c_macscen eq 1,
 *pm_macCostSwitch(enty)=pm_macSwitch(enty);
 
 *** for NDC and NPi switch off landuse MACs
-$if %carbonprice% == "NDC2018"  pm_macSwitch(emiMacMagpie) = 0;
+$if %carbonprice% == "NDC"  pm_macSwitch(emiMacMagpie) = 0;
 $if %carbonprice% == "NPi2018"  pm_macSwitch(emiMacMagpie) = 0;
 
 *DK* LU emissions are abated in MAgPIE in coupling mode
@@ -1359,8 +1359,8 @@ $if %cm_MAgPIE_coupling% == "on"  $include "./core/input/f_macBaseMagpie_couplin
 $offdelim
 /
 ;
-$if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
-$if %cm_MAgPIE_coupling% == "on"  p_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie(ttot,regi,emiMacMagpie,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+$if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
 
 *** p_macPolCO2luc defines the lower limit for abatement of CO2 landuse change emissions in REMIND
 *** The values are derived from MAgPIE runs with very strong mitigation
@@ -1518,15 +1518,5 @@ $endif.subsectors
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
-
-*** define tolerance level by how much biomass share needs to comply with 2005 historical values
-*** low tolerance for fixed_shares, there is works
-s_histBioShareTolerance = 0.02;
-*** temporary: until subsectors historical FE mix checked -> high tolerance for industry subsectors to make it run 
-$ifthen.subsectors "%industry%" == "subsectors"   !! industry
-s_histBioShareTolerance = 0.3;
-$endif.subsectors
-
-
 
 *** EOF ./core/datainput.gms

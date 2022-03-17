@@ -9,17 +9,14 @@
 *** CO2 Tax level
 ***----------------------------
 
-*** Include exogenous tax level
 if((cm_emiscen eq 9),
 
 $include "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
-
 pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = p45_tau_co2_tax(ttot,regi);
 
 else
-pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = 0;
+  pm_taxCO2eq(ttot,regi)$(ttot.val ge 2005) = 0;
 abort "Error: Please set cm_emiscen to 9";
 );
-
 
 *** EOF ./modules/45_carbonprice/exogenous/datainput.gms

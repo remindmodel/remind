@@ -4,8 +4,11 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/16_downscaleTemperature/CMIP5/postsolve.gms
 
 ***update regional temperature based on GMT
 pm_regionalTemperature(tall,regi)$(tall.val ge 2005) =
   p16_tempRegionalCalibrate2005(regi)
   + pm_tempScaleGlob2Reg(tall,regi) * ( pm_globalMeanTemperature(tall) - pm_globalMeanTemperature("2005"));
+
+*** EOF ./modules/16_downscaleTemperature/CMIP5/postsolve.gms
