@@ -26,9 +26,7 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   default_config_path  <- file.path("..", "config", "default.cfg")
 
   # Use adjustedPolicyCosts mif, if available
-  if (file.exists(mif_path_polCosts)) {
-    mif_path <- mif_path_polCosts
-  }
+  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
  
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
