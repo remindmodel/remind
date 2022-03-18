@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/22_subsidizeLearning/off.gms
+*** SOF ./modules/22_subsidizeLearning/off/realization.gms
 
 *' @description
 *' There is no subsidizing of learning technologies (fixed to zero). Under this realization we get different results from Negishi and Nash solutions.
@@ -23,4 +23,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/22_subsidizeLearning/off/de
 $Ifi "%phase%" == "bounds" $include "./modules/22_subsidizeLearning/off/bounds.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/22_subsidizeLearning/off/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/22_subsidizeLearning/off.gms
+*** EOF ./modules/22_subsidizeLearning/off/realization.gms

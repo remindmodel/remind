@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/39_CCU/on.gms
+*** SOF ./modules/39_CCU/on/realization.gms
 
 *' @description Standard CCU realization including the possibility to produce synthetic gas and synthetic liquids 
 *' from hydrogen and captured CO2.  
@@ -21,4 +21,4 @@ $Ifi "%phase%" == "equations" $include "./modules/39_CCU/on/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/39_CCU/on/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/39_CCU/on.gms
+*** EOF ./modules/39_CCU/on/realization.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/80_optimization/nash.gms
+*** SOF ./modules/80_optimization/nash/realization.gms
 
 *' @description
 *' Unlike in Negishi-mode, each region forms its own optimization problem in Nash mode.
@@ -33,4 +33,4 @@ $Ifi "%phase%" == "solve" $include "./modules/80_optimization/nash/solve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/80_optimization/nash/postsolve.gms"
 $Ifi "%phase%" == "output" $include "./modules/80_optimization/nash/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/80_optimization/nash.gms
+*** EOF ./modules/80_optimization/nash/realization.gms

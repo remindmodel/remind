@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/EVmandates/datainput.gms 
+*** SOF ./modules/40_techpol/EVmandates/datainput.gms
 * values chosen with view on fig. 10 of www.iea.org/publications/freepublications/publication/Global_EV_Outlook_2016.pdf
 p40_EV_share("2020",regi)$(sameas(regi,"EUR") OR sameas(regi,"JPN")  OR sameas(regi,"CHN"))  = 0.08; !! upper tier 
 p40_EV_share("2020",regi)$(sameas(regi,"OAS") OR sameas(regi,"USA")  OR sameas(regi,"ROW")) = 0.05; 		!!middle tier

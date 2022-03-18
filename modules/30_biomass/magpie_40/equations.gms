@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/equations.gms
+*** SOF ./modules/30_biomass/magpie_40/equations.gms
 ***---------------------------------------------------------------------------
 ***                      FUEL COSTS FOR BIOENERGY
 ***---------------------------------------------------------------------------
@@ -136,4 +136,4 @@ q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge cm_startyear A
 
 
  
-*** EOF ./modules/30_biomass/magpie_4/equations.gms
+*** EOF ./modules/30_biomass/magpie_40/equations.gms

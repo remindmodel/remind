@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/expoLinear.gms
+*** SOF ./modules/45_carbonprice/expoLinear/realization.gms
 
 *' @description  The exponential price path goes back to the “Hotelling rule”:  
 *' a price path that rises exponentially with the discount rate is economically optimal for extracting a finite resource, 
@@ -20,4 +20,4 @@
 $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/expoLinear/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/expoLinear/datainput.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/45_carbonprice/expoLinear.gms
+*** EOF ./modules/45_carbonprice/expoLinear/realization.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/70_water/exogenous.gms
+*** SOF ./modules/70_water/exogenous/realization.gms
 
 *' @description Exogenous water demand is calculated based on data on water demand coefficients and cooling shares.
 *' @limitations Water demand is calculated in a post-processing of REMIND and not part of the optimization.
@@ -15,4 +15,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/70_water/exogenous/declarat
 $Ifi "%phase%" == "datainput" $include "./modules/70_water/exogenous/datainput.gms"
 $Ifi "%phase%" == "output" $include "./modules/70_water/exogenous/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/70_water/exogenous.gms
+*** EOF ./modules/70_water/exogenous/realization.gms

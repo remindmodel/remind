@@ -23,7 +23,7 @@ require(stringr)
 #'
 #' --restart: Restart a run.
 #'
-#' -- test: Test configuration
+#' --test: Test configuration
 #'
 #' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
 #'
@@ -295,6 +295,11 @@ if ('--restart' %in% argv) {
 
   ###################### Loop over scenarios ###############################
 
+  # Tell user that model is currently locked
+  if (file.exists(".lock")) {
+    message("\nThe file .lock exists, so model runs will have to queue.")
+  }
+
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
@@ -343,7 +348,7 @@ if ('--restart' %in% argv) {
       if (! '--test' %in% argv) {
         submit(cfg)
       } else {
-        message("   If this wasn't test mode, I would submit ", scen, ".")
+        message("   If this wasn't --test mode, I would submit ", scen, ".")
       }
     } else {
       message("   Waiting for: ", paste(unique(cfg$files2export$start[check_gdx][! gdx_specified & ! gdx_na]), collapse = ", "))

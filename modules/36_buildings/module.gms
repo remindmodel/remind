@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/36_buildings/36_buildings.gms
+*** SOF ./modules/36_buildings/module.gms
 *' @title Buildings
 *'
 *' @description  The 36_buildings module calculates the demand for energy from buildings.
@@ -19,4 +19,4 @@ $Ifi "%buildings%" == "services_putty" $include "./modules/36_buildings/services
 $Ifi "%buildings%" == "services_with_capital" $include "./modules/36_buildings/services_with_capital/realization.gms"
 $Ifi "%buildings%" == "simple" $include "./modules/36_buildings/simple/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/36_buildings/36_buildings.gms
+*** EOF ./modules/36_buildings/module.gms
