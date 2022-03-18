@@ -61,8 +61,7 @@ EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 ## input data loading
 input_folder = paste0("./")
-
-if (length(list.files(path = data_folder, pattern = "RDS")) < 7) {
+if (length(list.files(path = data_folder, pattern = "RDS")) < 8) {
   createRDS(input_folder, data_folder,
             SSP_scenario = scenario,
             EDGE_scenario = EDGE_scenario)
@@ -78,8 +77,9 @@ capcost4W = inputdata$capcost4W
 loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
+preftab4W = inputdata$preftab4W
 
-## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
+## mrremind produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
 prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
 pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
@@ -190,6 +190,7 @@ logit_data <- calculate_logit_inconv_endog(
   logit_params = logit_params,
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
+  ptab4W = preftab4W,
   totveh = if (!is.null(totveh)) totveh,
   tech_scen = tech_scen)
 
