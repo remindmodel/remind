@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/RLDC/datainput.gms
+
 *------------------------------------------------------------------------------------
 ***                        RLDC specific data input
 *------------------------------------------------------------------------------------
@@ -102,3 +104,4 @@ if (cm_solwindenergyscen = 8,  !! RI No Integration scenario
 
 ***display p32_capFacDem, p32_capFacLoB, p32_RLDCcoeff, p32_avCapFac, p32_ResMarg, p32_curtOn, p32_shCHP, p32_grid_factor;
 
+*** EOF ./modules/32_power/RLDC/datainput.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/diffPriceSameCost.gms
+*** SOF ./modules/45_carbonprice/diffPriceSameCost/realization.gms
 
 *#' @description This realization implements carbon price trajectories compatible with respect to a global target but with equal regional relative (NPV) mitigation cost. 
 
@@ -14,4 +14,4 @@ $Ifi "%phase%" == "declarations" $include "./modules/45_carbonprice/diffPriceSam
 $Ifi "%phase%" == "datainput" $include "./modules/45_carbonprice/diffPriceSameCost/datainput.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/45_carbonprice/diffPriceSameCost/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/45_carbonprice/diffPriceSameCost.gms
+*** EOF ./modules/45_carbonprice/diffPriceSameCost/realization.gms

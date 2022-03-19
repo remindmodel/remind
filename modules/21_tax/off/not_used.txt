@@ -56,3 +56,5 @@ cm_FEtax_trajectory_abs,input,questionnaire
 cm_FEtax_trajectory_rel,input,questionnaire
 cm_CO2TaxSectorMarkup,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
+pm_taxCO2eqRegi,input,questionnare
+pm_taxCO2eqSum,input,questionnare

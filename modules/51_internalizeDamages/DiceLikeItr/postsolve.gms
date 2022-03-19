@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
+*** SOF ./modules/51_internalizeDamages/DiceLikeItr/postsolve.gms
 
 p51_sccLastItr(tall) = p51_scc(tall);
 p51_scc(tall)$((tall.val ge 2010) and (tall.val le 2150)) = 1000 *
@@ -40,4 +40,4 @@ display p51_scc,pm_taxCO2eqSCC;
 p51_sccConvergenceMaxDeviation = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall)/max(p51_sccLastItr(tall),1e-8) - 1) );
 display p51_sccConvergenceMaxDeviation;
 
-
+*** EOF ./modules/51_internalizeDamages/DiceLikeItr/postsolve.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/preloop.gms
+*** SOF ./modules/30_biomass/magpie_40/preloop.gms
 
 ***=============================================================
 ***  BEGIN: calculate shift factors for bioenergy prices 
@@ -117,5 +117,5 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demandmag(ttot,regi);
 ***  END: calculate shift factors
 ***-------------------------------------------------------------
 
-*** EOF ./modules/30_biomass/magpie_4/preloop.gms
+*** EOF ./modules/30_biomass/magpie_40/preloop.gms
 

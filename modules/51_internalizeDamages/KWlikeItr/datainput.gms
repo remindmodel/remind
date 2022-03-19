@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/KWlikeItr/bounds.gms
+*** SOF ./modules/51_internalizeDamages/KWlikeItr/datainput.gms
 
 * satisfy dependencies
 $ifi not %damages% == 'KWLike' abort "module internalizeDamages=KWlikeItr requires module damages=KWLike";
@@ -21,4 +21,4 @@ loop(ttot$(ttot.val ge 2010),
 	));
 
 
-*** EOF ./modules/51_internalizeDamages/KWlikeItr/bounds.gms
+*** EOF ./modules/51_internalizeDamages/KWlikeItr/datainput.gms

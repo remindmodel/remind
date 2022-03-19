@@ -18,6 +18,7 @@ Felix Scheyer (<felix.schreyer@pik-potsdam.de>), Isabelle Weindl (<weindl@pik-po
 -   [6. Model-internal R-scripts for output analysis](#6-model-internal-r-scripts-for-output-analysis)
     -   [6.1. Execution of model-internal output scripts via the REMIND configuration file](#61-execution-of-model-internal-output-scripts-via-the-remind-configuration-file)
     -   [6.2. Execution of model-internal output scripts in the command window](#62-execution-of-model-internal-output-scripts-in-the-command-window)
+-   [7.  Analysis of outputs with the remind2 R package](#7-analysis-of-outputs-with-the-remind2-r-package)
 
 
 ## 1. Introduction
@@ -113,7 +114,15 @@ The automated model validation is a good tool for visually evaluating a broad ra
 
 ### 5.1. AppResults
 
-To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables. You can use this tool by running the following R command, which will automatically collect all runs and visualize them:
+To overcome this issue, we developed the interactive scenario analysis and evaluation tools appResults and appResultsLocal as part of the package **shinyresults** (<https://github.com/pik-piam/shinyresults>), which show evaluation plots for multiple scenarios including historical data and other projections based on an interactive selection of regions and variables. 
+
+The `appResultsLocal` tool is meant to work on a local REMIND ouput folder in your computer. The `appResults` tool also runs in your computer, but it's meant for remote access to runs made on the cluster computer at the [Potsdam Institute for Climate Impact Researck (PIK)](www.pik-potsdam.de), and therefore requires specific credentials. If you are not an authorized user at PIK, you should use `appResultsLocal`, which has the same functionalities.
+
+#### appResults(): runs made on the PIK cluster
+
+To use this tool, you first have to set up authentication in your `.Rprofile`. PIK-internal instructions on how to do this can be found in [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Configuration_for_AppResults) (login with your PIK account required). 
+
+You can then use the tool by running the following R command in your computer, which will automatically collect all runs made on the cluster (regardless of where in the cluster) and visualize them:
 
 ``` r
 shinyresults::appResults()
@@ -134,7 +143,9 @@ You can use filters to select a subset of all runs stored in the output folder o
 Run selection by using a filter
 </p>
 
-If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder:
+#### Interactive results on a local computer
+
+If you run the following command in the output folder of your local computer you get an interactive window containing the results of this output folder. Usage is similar to that of `appResults` above:
 ``` r
 shinyresults::appResultsLocal()
 ```
@@ -184,10 +195,11 @@ Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=
 ```
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
+Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.
 
-## 7. Analysis of outputs with the remind package
+## 7. Analysis of outputs with the remind2 R package
 
-If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind*. This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind/R**. 
+If you want to go beyond visual output analysis and predefined output evaluation facilitated by scripts in the model folders **scripts/output/single** and **scripts/output/comparison**, you can use the functionality of the R package *remind2* (https://github.com/pik-piam/remind2). This package contains a list of common functions for extracting outputs from the REMIND model which are also the basis for the generation of the automated validation pdf. For a quick overview on the functions which are included in the package, you can scan the folder **remind2/R** of the remind2 package source code. 
 
 For making yourself familiar with this package, you can open a R/RStudio session and set the REMIND model folder as working directory. This can be done by using the following command:
 
@@ -202,4 +214,4 @@ library(remind2)
 ?remind2
 ```
 
-You can click on the index and search for interesting functions. All functions used to generate the reporting start with "reporting*.R".
+You can click on the index and search for interesting functions. All functions used to generate the reporting start with "report*.R".

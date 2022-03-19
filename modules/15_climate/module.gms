@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/15_climate/15_climate.gms
+*** SOF ./modules/15_climate/module.gms
 
 *' @title climate
 *'
@@ -17,4 +17,4 @@ $Ifi "%climate%" == "box" $include "./modules/15_climate/box/realization.gms"
 $Ifi "%climate%" == "magicc" $include "./modules/15_climate/magicc/realization.gms"
 $Ifi "%climate%" == "off" $include "./modules/15_climate/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/15_climate/15_climate.gms
+*** EOF ./modules/15_climate/module.gms

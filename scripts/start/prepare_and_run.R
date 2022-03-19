@@ -297,11 +297,6 @@ prepare <- function() {
 
   # update input files based on previous runs if applicable
   # ATTENTION: modifying gms files
-  if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")){
-    cat("\nRun scripts/input/prepare_NDC.R.\n")
-    source("scripts/input/prepare_NDC.R")
-    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
-  }
 
   # Create input file with exogenous CO2 tax using the CO2 price from another run
   if(!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "exogenous") && (!is.na(cfg$files2export$start["input_carbonprice.gdx"]))){
@@ -340,6 +335,7 @@ prepare <- function() {
 
   # configure main model gms file (cfg$model) based on settings of cfg file
   cfg$gms$c_expname <- cfg$title
+  cfg$gms$c_description <- cfg$description
   # run main.gms if not further specified
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
@@ -440,6 +436,13 @@ prepare <- function() {
                           debug        = FALSE)
   } else {
       message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
+  }
+
+  # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
+  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
+    cat("\nRun scripts/input/prepare_NDC.R.\n")
+    source("scripts/input/prepare_NDC.R")
+    prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)
   }
 
   ############ update information ########################
@@ -660,6 +663,19 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis, 
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
 
+    # OR: renamed for sectoral taxation
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
+                             list(c("v21_taxrevCO2_sector.L", "v21_taxrevCO2Sector.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiCO2_sector.M", "vm_emiCO2Sector.M")),
+                             list(c("v21_taxrevCO2_sector.M", "v21_taxrevCO2Sector.M")),
+                             list(c("q_emiCO2_sector.M", "q_emiCO2Sector.M")),
+                             list(c("q21_taxrevCO2_sector.M", "q21_taxrevCO2Sector.M")))
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                             list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
+                             list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
+
     #RP filter out regipol items
     if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,
@@ -681,7 +697,6 @@ prepare <- function() {
                                                                "$include \"fixings.gms\";",
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
-
 
     # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
     # single, respective, parses of the texts.
@@ -850,7 +865,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # to facilitate debugging, look which files were created.
   message("Model summary:")
   # Print REMIND runtime
-  message("  gams_runtime is ", gams_runtime, "")
+  message("  gams_runtime is ", round(gams_runtime,1), " ", units(gams_runtime), ".")
   if (! file.exists("full.gms")) {
     message("! full.gms does not exist, so the REMIND GAMS code was not generated.")
   } else {
@@ -894,7 +909,7 @@ run <- function(start_subsequent_runs = TRUE) {
   # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
   coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
-  start_subsequent_runs <- start_subsequent_runs & !coupled_run
+  start_subsequent_runs <- (start_subsequent_runs | isTRUE(cfg$restart_subsequent_runs)) & !coupled_run
 
   if (start_subsequent_runs & (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0)) {
     # track whether any subsequent run was actually started
@@ -905,7 +920,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_main$title) to their cfg files
 

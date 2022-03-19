@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/41_emicapregi/41_emicapregi.gms
+*** SOF ./modules/41_emicapregi/module.gms
 
 *' @title Regional Emission Caps 
 *'
@@ -29,4 +29,4 @@ $Ifi "%emicapregi%" == "PerCapitaConvergence" $include "./modules/41_emicapregi/
 $Ifi "%emicapregi%" == "exog" $include "./modules/41_emicapregi/exog/realization.gms"
 $Ifi "%emicapregi%" == "none" $include "./modules/41_emicapregi/none/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/41_emicapregi/41_emicapregi.gms
+*** EOF ./modules/41_emicapregi/module.gms

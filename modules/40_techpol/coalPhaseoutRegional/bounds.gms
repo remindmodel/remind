@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/coalPhaseoutRegional.gms
+*** SOF ./modules/40_techpol/coalPhaseoutRegional/bounds.gms
 vm_deltaCap.up(t,regi,"pc","1")$(t.val gt 2023)        =0.000001;
 vm_deltaCap.up(t,regi,"igcc","1")$(t.val gt 2023)      =0.000001;
 vm_deltaCap.up(t,regi,"coalchp","1")$(t.val gt 2023)   =0.000001;

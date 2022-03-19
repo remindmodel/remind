@@ -52,29 +52,29 @@ $endif.cm_implicitFE
 
 
 ***---------------------------------------------------------------------------
-*'  Calculation of greenhouse gas taxes: tax rate (combination of 3 components) times ghg emissions
+*'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times ghg emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevGHG(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevGHG(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi)) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
+v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
                            - p21_taxrevGHG0(t,regi);
 
 
 ***---------------------------------------------------------------------------
-*' Calculation of sectoral CO2 taxes on top of GHG taxes
+*' Calculation of sectoral CO2 taxes as markup to GHG taxes (combination of 4 components)
 *' Sectoral CO2 emissions are multiplied by a predefined factor
 ***---------------------------------------------------------------------------
 
 q21_taxrevCO2Sector(t,regi,emi_sectors)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCO2Sector(t,regi,emi_sectors) =e= (p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eq(t,regi)) * (vm_emiCO2Sector(t,regi,emi_sectors))
+v21_taxrevCO2Sector(t,regi,emi_sectors) =e= p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eqSum(t,regi) * vm_emiCO2Sector(t,regi,emi_sectors)
                              - p21_taxrevCO2Sector0(t,regi,emi_sectors);
 
 ***---------------------------------------------------------------------------
-*'  Calculation of greenhouse gas taxes: tax rate (combination of 3 components) times land use co2 emissions
+*'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times land use co2 emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCO2luc(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCO2luc(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi))* cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
+v21_taxrevCO2luc(t,regi) =e= pm_taxCO2eqSum(t,regi) * cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
                            - p21_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ v21_taxrevCCS(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevNetNegEmi(t,regi) =e=  cm_frac_NetNegEmi * pm_taxCO2eq(t,regi) * v21_emiALLco2neg(t,regi)
+v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
                                  - p21_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -193,7 +193,7 @@ q21_implicitDiscRate(t,regi)$(t.val ge max(2010,cm_startyear))..
 						  
 ***---------------------------------------------------------------------------
 *'  Calculation of specific emission market taxes
-*'  calculation is done via additional budget emission contraints defined in regiplo module
+*'  calculation is done via additional budget emission constraints defined in regipol module
 ***---------------------------------------------------------------------------
 q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
   v21_taxemiMkt(t,regi,emiMkt) 

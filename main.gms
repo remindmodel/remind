@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.281
+* Input data revision: 6.284
 * 
-* Last modification (input data): Tue Feb 08 16:54:00 2022
+* Last modification (input data): Mon Feb 28 12:15:08 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -139,8 +139,9 @@ option profile = 0;
 ***------------------------------------------------------------------------------------------------
 
 
-***---------------------    Run name    -----------------------------------------
+***---------------------    Run name and description    -------------------------
 $setGlobal c_expname  default
+$setGlobal c_description  "REMIND run with default settings"
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -198,6 +199,8 @@ $setglobal emicapregi  none           !! def = none
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
 $setglobal carbonprice  none          !! def = none
+***---------------------    46_carbonpriceRegi  -------------------------------------
+$setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
@@ -339,7 +342,6 @@ cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity fac
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
-cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year" 
 cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
 c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
@@ -378,7 +380,7 @@ cm_CCS_cement          = 1;        !! def = 1
 cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
-$setglobal cm_secondary_steel_bound  none   !! def = "scenario"
+$setglobal cm_secondary_steel_bound  scenario   !! def = "scenario"
 
 cm_bioenergy_tax    = 1.5;       !! def = 1.5
 cm_bioenergymaxscen = 0;         !! def = 0
@@ -463,6 +465,9 @@ $setGlobal cm_ESD_post2055Increase  2 !! def = 2
 $setGlobal cm_emiMktEScoop  off    !! def = off	
 $setGlobal cm_emiMktES2020price  30 !! def = 30
 $setGlobal cm_emiMktES2050	 off   !! def = off	
+$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
+
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
@@ -555,8 +560,6 @@ $setGlobal c_VREPot_Factor  off !! def = off
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 
-$setGlobal cm_regipol_slope_beforeTarget  off !! def = off
-
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 $setGlobal cm_CESMkup_ind  standard !! def = standard
@@ -598,7 +601,7 @@ $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_iteration            1     !!  def  =  1
 $setglobal c_CES_calibration_write_prices  0     !!  def  =  0
 $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
-$setglobal c_CES_calibration_industry_FE_target  0
+$setglobal c_CES_calibration_industry_FE_target  1
 $setglobal cm_calibration_string  off    !!  def  =  off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR

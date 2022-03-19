@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/04_PE_FE_parameters/iea2014/datainput.gms
+
 parameter f04_IO_input(tall,all_regi,all_enty,all_enty,all_te)        "Energy input based on IEA data"
 /
 $ondelim
@@ -423,3 +425,5 @@ loop(regi,
 );
 
 display pm_histfegrowth, pm_data;
+
+*** EOF ./modules/04_PE_FE_parameters/iea2014/datainput.gms

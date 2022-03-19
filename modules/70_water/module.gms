@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/70_water/70_water.gms
+*** SOF ./modules/70_water/module.gms
 
 *' @title Water
 *'
@@ -17,4 +17,4 @@ $Ifi "%water%" == "exogenous" $include "./modules/70_water/exogenous/realization
 $Ifi "%water%" == "heat" $include "./modules/70_water/heat/realization.gms"
 $Ifi "%water%" == "off" $include "./modules/70_water/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/70_water/70_water.gms
+*** EOF ./modules/70_water/module.gms

@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/31_fossil/MOFEX.gms
+*** SOF ./modules/31_fossil/MOFEX/realization.gms
 
 *' @description This realization is dedicated to the running the standalone version of MOFEX (Model Of Fossil EXtraction), 
 *' which minimizes the discounted extraction and trade costs of fossils while balancing trade for each time step. 
@@ -21,4 +21,4 @@ $Ifi "%phase%" == "bounds" $include "./modules/31_fossil/MOFEX/bounds.gms"
 $Ifi "%phase%" == "solve" $include "./modules/31_fossil/MOFEX/solve.gms"
 $Ifi "%phase%" == "output" $include "./modules/31_fossil/MOFEX/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/31_fossil/MOFEX.gms
+*** EOF ./modules/31_fossil/MOFEX/realization.gms

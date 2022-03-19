@@ -10,5 +10,16 @@
 pm_SEPrice(ttot,regi,entySE)$(abs (qm_budget.m(ttot,regi)) gt sm_eps AND sameas(entySE,"seel")) = 
        q32_balSe.m(ttot,regi,entySE) / qm_budget.m(ttot,regi);
 
+loop(t,
+  loop(regi,
+    loop(pe2se(enty,enty2,te),
+      if ( ( vm_capFac.l(t,regi,te) < (0.999 * vm_capFac.up(t,regi,te) ) ),
+        o32_dispatchDownPe2se(t,regi,te) = round ( 100 * (vm_capFac.up(t,regi,te) - vm_capFac.l(t,regi,te) ) / (vm_capFac.up(t,regi,te) + 1e-10) );
+      );
+    );
+  );
+);
+
+
 *** EOF ./modules/32_power/IntC/postsolve.gms
 

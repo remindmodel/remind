@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/23_capitalMarket/imperfect/equations.gms
+*** SOF ./modules/23_capitalMarket/debt_limit/equations.gms
 
 q23_limit_debt_growth(t,regi)..
   vm_cesIO(t,regi,"inco") * p23_debt_growthCoeff(regi)
@@ -26,4 +26,4 @@ q23_limit_surplus_growth(t,regi)..
   + vm_budgetTradeM(t,regi) - vm_budgetTradeX(t,regi)
 ;
 
-*** EOF ./modules/23_capitalMarket/imperfect/equations.gms 
+*** EOF ./modules/23_capitalMarket/debt_limit/equations.gms

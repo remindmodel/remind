@@ -40,8 +40,9 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
-***---------------------    Run name    -----------------------------------------
-$setGlobal c_expname  Base_MOFEX_SSP2
+***---------------------    Run name and description    -------------------------
+$setGlobal c_expname      Base_MOFEX_SSP2
+$setGlobal c_description  "standalone version of MOFEX (Model Of Fossil EXtraction)"
 
 ***------------------------------------------------------------------------------
 ***                           MODULES

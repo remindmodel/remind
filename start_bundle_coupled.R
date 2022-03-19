@@ -80,7 +80,12 @@ settings_remind <- read.csv2(path_settings_remind, stringsAsFactors = FALSE, row
 
 # Choose which scenarios to start: select rows according to "subset" and columns according to "select" (not used in the moment)
 scenarios_coupled  <- subset(scenarios_coupled, subset=(start == "1"))
-if (length(grep("\\.",rownames(scenarios_coupled))) > 0) stop("One or more titles contain dots - GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now. ")
+
+# some checks for title
+if (any(nchar(rownames(scenarios_coupled)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios_coupled)[nchar(rownames(scenarios_coupled)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
+if (length(grep("\\.", rownames(scenarios_coupled))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios_coupled)[grep("\\.", rownames(scenarios_coupled))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
+if (length(grep("_$", rownames(scenarios_coupled))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios_coupled)[grep("_$", rownames(scenarios_coupled))], collapse = ", "), ". This may lead start_bundle_coupled.R to select wrong gdx files. Stopping now."))
+
 
 missing <- setdiff(rownames(scenarios_coupled),rownames(settings_remind))
 if (!identical(missing, character(0))) {
@@ -159,7 +164,7 @@ for(scen in common){
 
   cat(paste0("Set start iteration to: ",start_iter,"\n"))
 
-	# If a gdx is provided in scenario_config_coupled.csv use it instead of any previously found
+  # If a gdx is provided in scenario_config_coupled.csv use it instead of any previously found
   if (!is.na(scenarios_coupled[scen, "path_gdx"])) {
     settings_remind[scen, "path_gdx"] <- scenarios_coupled[scen, "path_gdx"]
     cat("Using gdx specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx"],"\n")
@@ -240,20 +245,31 @@ for(scen in common){
 
   #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
 
-  # Add non-gms-switches manually
-  if( "regionmapping" %in% names(settings_remind)){
-    cfg_rem$regionmapping <- settings_remind[scen,"regionmapping"]
+  # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
+  for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(settings_remind))) {
+    if ( ! is.na(settings_remind[scen, switchname] )) {
+      cfg_rem[[switchname]] <- settings_remind[scen, switchname]
+    }
   }
 
-  # Edit default.cfg settings according to the SSP scenarios only for elements in 'scenarios' that exist in the cfg
-  for (switchname in intersect(names(cfg_rem$gms),names(settings_remind))){
-    cfg_rem$gms[[switchname]] <- settings_remind[scen,switchname]
+  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  for (switchname in intersect(names(cfg_rem$gms), names(settings_remind))) {
+    if ( ! is.na(settings_remind[scen, switchname] )) {
+      cfg_rem$gms[[switchname]] <- settings_remind[scen, switchname]
+    }
+  }
+
+  # Set description
+  if ("description" %in% names(settings_remind) && ! is.na(settings_remind[scen, "description"])) {
+    cfg_rem$description <- settings_remind[scen, "description"]
+  } else {
+    cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
 
   # If provided replace gdx paths given in scenario_config with paths given in scenario_config_coupled
   if (!is.na(scenarios_coupled[scen, "path_gdx_bau"])) {
-	  settings_remind[scen, "path_gdx_bau"] <- scenarios_coupled[scen, "path_gdx_bau"]
-	  cat("Replacing gdx_bau information with those specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx_bau"],"\n")
+          settings_remind[scen, "path_gdx_bau"] <- scenarios_coupled[scen, "path_gdx_bau"]
+          cat("Replacing gdx_bau information with those specified in\n  ",path_settings_coupled,"\n  ",settings_remind[scen, "path_gdx_bau"],"\n")
   }
 
   if (!is.na(scenarios_coupled[scen, "path_gdx_ref"])) {
@@ -295,7 +311,14 @@ for(scen in common){
       # if no real file is given but a reference to another scenario (that has to run first) create path for input_ref and input_bau
       # using the scenario names given in the columns path_gdx_ref and path_gdx_ref in the REMIND standalone scenario config
       cfg_rem$files2export$start['input_ref.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_ref"],"-rem-",max_iterations,"/fulldata.gdx")
-      cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
+      if (! grepl(".gdx", cfg_rem$files2export$start['input_bau.gdx'], fixed = TRUE)) {
+        cfg_rem$files2export$start['input_bau.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx_bau"],"-rem-",max_iterations,"/fulldata.gdx")
+      }
+
+      # Do the same for "input.gdx"
+      if ((! grepl(".gdx", cfg_rem$files2export$start['input.gdx'], fixed = TRUE)) & !is.na(cfg_rem$files2export$start['input.gdx'])) {
+        cfg_rem$files2export$start['input.gdx'] <- paste0(path_remind,"output/",prefix_runname,settings_remind[scen,"path_gdx"],"-rem-",max_iterations,"/fulldata.gdx")
+      }      
 
       # Also add path to carbon price gdx if given one 
       if (has_carbonprice_path) {

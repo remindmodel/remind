@@ -126,26 +126,6 @@ equations
 $endIf.cm_implicitFE
 
 
-$ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 
-Parameter
-	p47_slope_beforeTarget(ttot,ext_regi) "parameter to scale slope of co2 price trajectory in years before target year" / %cm_regipol_slope_beforeTarget% /
-	p47_slope_beforeTarget_timeStep(ttot)	  "helper parameter to make loops shorter in implementation"
-	p47_slope_beforeTarget_regi(ext_regi)	  "helper paramter to hold regions to which second slope adjustment before Target should apply"
-	p47_slope_firstYears(all_regi)		  "helper parameter to hold co2 price trajectory slope of first years [USD/tC/yr]"
-
-	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
-	p47_ttot_display					 "helper parameter to display ttot in loop"
-
-
-	o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type)	"diagnostic output parameter holding the CO2 budget up to the target year [GtCO2]"
-;
-
-Scalar
-s47_initialCO2Price_year				"initial year of co2 price which should be unchanged by co2 price adjustment"
-;
-
-$endIf.co2priceSlope
-
 *** parameters to track regipol emissions calculation
 Parameters
 p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"

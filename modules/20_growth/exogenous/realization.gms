@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/20_growth/exogenous.gms
+*** SOF ./modules/20_growth/exogenous/realization.gms
 
 *' @description
 *' The exogenous growth realization makes no changes to the (macroeconomic) efficiency growth rate parameters.
@@ -19,4 +19,4 @@
 $Ifi "%phase%" == "declarations" $include "./modules/20_growth/exogenous/declarations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/20_growth/exogenous/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/20_growth/exogenous.gms
+*** EOF ./modules/20_growth/exogenous/realization.gms

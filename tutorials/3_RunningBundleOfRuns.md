@@ -1,7 +1,6 @@
 Running more than one REMIND scenario
 ================
-Oliver Richters
-10 January, 2022
+Oliver Richters, 10 January, 2022
 
 The folder **[config](../config)** in your REMIND folder contains a number of csv files that start with **scenario_config**. Those files are used to start a bundle of runs each with different configurations.
 
@@ -26,7 +25,7 @@ Those two columns are mandatory and usually placed at the beginning:
 * `start` is a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0.
 
 Further columns are the configurations that you can choose for the specific runs.
-They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../develop/config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
+They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
 Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
@@ -42,8 +41,10 @@ Example with comments and different ways to specify subsequent runs.
 The columns to implement subsequent runs are usually found at the end, starting with `path_gdx`:
 
 * `path_gdx` allows to specify initial conditions for the run, overwriting the usual initial conditions taken from the calibration files found in [`./config/gdx-files/`](../config/gdx-files/files). If it points to an unconverged run, this can be used to restart runs, similar to `Rscript start.R --restart`.
-* `path_gdx_ref` points to the run used for all `t < cm_startyear`, which can be used for example for delayed transition scenarios, and which is also used as a comparison for the policy cost calculation.
 * `path_gdx_bau` points to the run used as business as usual (BAU) scenario, for example for runs using [`45_carbonprice/NDC`](../modules/45_carbonprice/NDC), where some countries specify emission as percentage reduction compared to BAU.
+* `path_gdx_carbonprice` can be used to use a carbon tax path from an earlier run with realization [`45_carbonprice/exogenous`](../modules/45_carbonprice/exogenous).
+* `path_gdx_ref` points to the run used for all `t < cm_startyear`, which can be used for example for delayed transition scenarios.
+* `path_gdx_refpolicycost` points to the run that is used as a comparison for the policy cost calculation. If no such column exists, `path_gdx_ref` is used instead.
 
 These three columns starting with `path…` can point to either finished runs or other rows of the current model execution:
 * provide a path to an existing `gdx` file such as `./output/SSP2-Base_2021-12-24_19.30.00/fulldata.gdx`. For subfolders of `./output/`, writing the folder name `SSP2-Base_2021-12-24_19.30.00` is sufficient.
@@ -58,12 +59,13 @@ Everything in the row after a `#` is interpreted as comment. Best use it as firs
 Further notes:
 --------------
 
-The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../develop/modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+* To check the functioning of the `scenario_config*.csv`, edit [`default.cfg`](./config/default.cfg) and set `cfg$gms$optimization` to `testOneRegi` which runs one iteration in one region for each run.
 
-To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
+* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
-To compare two `scenario_config*.csv` files, for example after a change, these commands are useful:
-``` bash
-git diffmif scenario_config_1.csv scenario_config_2.csv
-git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
-```
+* To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
+
+* To compare two `scenario_config*.csv` files, for example after a change, these commands are useful:
+
+        git diffmif scenario_config_1.csv scenario_config_2.csv
+        git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
