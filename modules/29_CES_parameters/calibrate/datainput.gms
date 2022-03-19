@@ -384,9 +384,9 @@ loop (pf_quantity_shares_37(in,in2),
   + pm_cesdata("2020",regi,in,"quantity");
 
 
-*** set CES offset quantity to remove FE demand from H2 an feelhth in baseline
-  pm_cesdata(t,regi_dyn29(regi),in,"offset_quantity") 
-  = -pm_cesdata(t,regi,in,"quantity");
+*** set CES offset quantity to remove 80% of FE demand from H2 an feelhth in baseline
+***  pm_cesdata(t,regi_dyn29(regi),in,"offset_quantity") 
+***  = -0.8*pm_cesdata(t,regi,in,"quantity");
 
 );
 
