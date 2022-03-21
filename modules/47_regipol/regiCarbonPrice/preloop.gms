@@ -48,6 +48,10 @@ $ENDIF.emiMktES
 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 *** initialize tax value for first iteration
+p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
+*** if you want to load results from a previous run, uncomment this
+*** This should be uncommented by default once input gdx includes p47 values
+$ontext
 Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
 *** disable tax values for inexistent targets
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (NOT(all_regi(ext_regi)))),
@@ -60,6 +64,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
 	);
 );
+$offtext
 $endif.cm_implicitEnergyBound
 
 $ontext
