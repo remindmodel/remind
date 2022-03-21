@@ -295,8 +295,10 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   if( (p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0.01 OR p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt -0.01),
     if(NOT ((sameas(taxType,"tax") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt 0) OR (sameas(taxType,"subsidy") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0)),
-      s80_bool = 0;
-      p80_messageShow("implicitEnergyTarget") = YES;
+      if(NOT(p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) eq p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType))), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
+        s80_bool = 0;
+        p80_messageShow("implicitEnergyTarget") = YES;
+      );
     );
   );
 );
