@@ -671,7 +671,7 @@ p47_implEnergyBoundTax0(t,regi) =
 ***		for region groups
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
   if(sameas(targetType,"total"),
-    p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
+    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
 		(
 			sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
 		)$(sameas(energyCarrierLevel,"PE")) 
@@ -688,7 +688,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 	;
   ); 
   if(sameas(targetType,"share"),
-    p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
+    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
 		(
 			( sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
 			/
@@ -720,7 +720,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 ***		for single regions (overwrites region groups)  
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
   if(sameas(targetType,"total"),
-    p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
+    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
 		(
 			sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
 		)$(sameas(energyCarrierLevel,"PE")) 
@@ -737,7 +737,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 	;
   ); 
   if(sameas(targetType,"share"),
-    p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
+    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
 		(
 			( sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
 			/
@@ -765,54 +765,105 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 	;
   ); 
 );
+p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType);
 
-***  calculating targets implicit tax rescale
+*** calculate target deviation
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+	if(sameas(targetType,"total"),
+		p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = ( p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) ) / p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+	);
+	if(sameas(targetType,"share"),
+		p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+	);
+* save regional target deviation across iterations for debugging of target convergence issues
+	p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType);
+);
+
+***  calculating targets implicit tax rescale factor
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),	
-  if(iteration.val lt 10,
-  		p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = max(0.1, ( p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) / p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) )) ** 3; !! current final energy levels minus target 
-  elseif(iteration.val lt 15),
-  		p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = max(0.1, ( p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) / p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) )) ** 2; !! current final energy levels minus target 
-  else 
-        p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = max(0.1, p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) / p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType));
-  );  
-  p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) =
-	max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)),
-		1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01)
+	if(sameas(taxType,"tax"),
+		if(iteration.val lt 15,
+			p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+		else
+			p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+		);  
+	);
+	if(sameas(taxType,"subsidy"),
+		if(iteration.val lt 15,
+			p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+		else
+			p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+		);  
+	);
+*** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
+	if((iteration.val gt 3) and (p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType)*p47_implEnergyBoundTarget_dev_iter(iteration-1, ttot,ext_regi,energyCarrierLevel,energyType) < 0),
+	p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) =
+		max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
 	);
 );
 
+p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType);
+
 ***	updating energy targets implicit tax
+
 ***		for region groups
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
 	loop(all_regi$regi_group(ext_regi,all_regi),
-	    if(sameas(taxType,"tax"),
-    		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
+*** terminal year onward tax
+		if(sameas(taxType,"tax"),
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
 		);
 		if(sameas(taxType,"subsidy"),
-    		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
 		);
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
-  );
+***	linear price between 2025 (or first free year) and terminal year	
+		loop(ttot2,
+			break$((ttot2.val ge 2025) and (ttot2.val ge cm_startyear)); !!initial free price year
+			s47_prefreeYear = ttot2.val;
+		);
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
+*** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
+*** if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
+		if((iteration.val gt 4),
+			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) OR (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
+				and (NOT( p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) lt 0.0001 and p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) gt -0.0001 )),
+				p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType);
+			);
+		);
+	);
 );
+
 ***		for single regions (overwrites region groups)
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
 	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-    	if(sameas(taxType,"tax"),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType));
+*** terminal year onward tax
+		if(sameas(taxType,"tax"),
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
 		);
 		if(sameas(taxType,"subsidy"),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType));
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
 		);
-		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)/2;
-  );
+***	linear price between 2025 (or first free year) and terminal year	
+		loop(ttot2,
+			break$((ttot2.val ge 2025) and (ttot2.val ge cm_startyear)); !!initial free price year
+			s47_prefreeYear = ttot2.val;
+		);
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
+*** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
+*** if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
+		if((iteration.val gt 4),
+			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) OR (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
+				and (NOT( p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) lt 0.0001 and p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) gt -0.0001 )),
+				p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType);
+			);
+		);
+	);
 );
 
-*** saving iteration level for efficiency directive targets implicit tax (for debugging purposes only)
 p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType);
-p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType);
-p47_implEnergyBoundTargetCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType);
 
-display p47_implEnergyBoundTargetCurrent, p47_implEnergyBoundTarget, p47_implEnergyBoundTax_prevIter, p47_implEnergyBoundTax, p47_implEnergyBoundTax_Rescale, p47_implEnergyBoundTax_Rescale_iter, p47_implEnergyBoundTax_iter, p47_implEnergyBoundTargetCurrent_iter, p47_implEnergyBoundTax0;
+display p47_implEnergyBoundCurrent, p47_implEnergyBoundTarget, p47_implEnergyBoundTax_prevIter, p47_implEnergyBoundTarget_dev, p47_implEnergyBoundTarget_dev_iter, p47_implEnergyBoundTax, p47_implEnergyBoundTax_Rescale, p47_implEnergyBoundTax_Rescale_iter, p47_implEnergyBoundTax_iter, p47_implEnergyBoundCurrent_iter, p47_implEnergyBoundTax0;
+
 
 $endIf.cm_implicitEnergyBound
 

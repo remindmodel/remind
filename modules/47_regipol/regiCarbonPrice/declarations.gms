@@ -131,14 +131,16 @@ $endIf.cm_implicitFE
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 Parameter
 	p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)           "tax/subsidy level on PE, SE and/or FE for an specific energy type"
-  	p47_implEnergyBoundTargetCurrent(ttot,ext_regi,energyCarrierLevel,energyType) "current iteration total PE, SE and/or FE for an specific energy type"
+  	p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) "current iteration total PE, SE and/or FE for an specific energy type"
   	p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)   "rescale factor for current implicit energy bound tax" 
 	p47_implEnergyBoundTax_prevIter(ttot,all_regi,energyCarrierLevel,energyType)  "previous iteration implicit energy bound target tax"
 	p47_implEnergyBoundTax0(ttot,all_regi)                                        "previous iteration implicit energy bound target tax revenue"
 
 	p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)           "energy bound implicit tax per iteration"
+	p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType)                   "energy bound implicit tax deviation of current iteration from target"
+	p47_implEnergyBoundTarget_dev_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)    "parameter to save p47_implEnergyBoundTarget_dev across iterations"
 	p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)   "energy bound implicit tax rescale factor per iteration"    
-	p47_implEnergyBoundTargetCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
+	p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
 
 	p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)           "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
 ;

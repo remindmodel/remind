@@ -290,6 +290,18 @@ loop((ttot,regi)$pm_emiTargetESR(ttot,regi),
 );
 $endif.emiMktESR
 
+*** additional criterion: Were implicit tax/subsidy primary, secondary and/or final energy targets reached? 
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+  if( (p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0.01 OR p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt -0.01),
+    if(NOT ((sameas(taxType,"tax") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt 0) OR (sameas(taxType,"subsidy") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0)),
+      s80_bool = 0;
+      p80_messageShow("implicitEnergyTarget") = YES;
+    );
+  );
+);
+$endif.cm_implicitEnergyBound
+
 *** check global budget target from core/postsolve, must be within 1% of target value
 if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
   s80_bool = 0;
@@ -386,7 +398,15 @@ $ifthen.emiMktESR not "%cm_emiMktES%" == "off"
 ***          display pm_ESRTarget_dev_iter;
 ***          display pm_taxemiMkt_iteration;
 	      ); 
-$endif.emiMktESR       
+$endif.emiMktESR   
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
+        if(sameas(convMessage80, "implicitEnergyTarget"),
+		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
+          display "#### Check out the p47_implEnergyBoundTarget_dev parameter of 47_regipol module.";
+          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display p47_implEnergyBoundTarget_dev;
+	      );
+$endif.cm_implicitEnergyBound
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
@@ -487,7 +507,15 @@ $ifthen.emiMktESR not "%cm_emiMktES%" == "off"
           display pm_ESRTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
-$endif.emiMktESR   
+$endif.emiMktESR  
+$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
+        if(sameas(convMessage80, "implicitEnergyTarget"),
+		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
+          display "#### Check out the p47_implEnergyBoundTarget_dev parameter of 47_regipol module.";
+          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display p47_implEnergyBoundTarget_dev;
+	      );
+$endif.cm_implicitEnergyBound
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;

@@ -46,23 +46,20 @@ if ( (cm_startyear gt 2005),
 );
 $ENDIF.emiMktES
 
-
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 *** initialize tax value for first iteration
-***		for region groups
-	loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
-		loop(all_regi$regi_group(ext_regi,all_regi),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
-		);
+Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
+*** disable tax values for inexistent targets
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (NOT(all_regi(ext_regi)))),
+	loop(all_regi$regi_group(ext_regi,all_regi),
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
 	);
-***		for single regions (overwrites region groups)  
-	loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
-		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val eq ttot.val-5)) = 0.05;
-		);
-	);	
+);
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (all_regi(ext_regi))),
+	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
+	);
+);
 $endif.cm_implicitEnergyBound
 
 $ontext
