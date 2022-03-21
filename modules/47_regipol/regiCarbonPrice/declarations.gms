@@ -143,6 +143,8 @@ Parameter
 	p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "total PE, SE and/or FE level for an specific energy type per iteration"   
 
 	p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)           "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
+
+	cm_implEnergyBoundLimited  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the energy usage"
 ;
 
 Equations
