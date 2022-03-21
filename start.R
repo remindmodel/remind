@@ -23,6 +23,8 @@ require(stringr)
 #'
 #' --restart: Restart a run.
 #'
+#' --test: Test configuration
+#'
 #' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
 #'
 #'   Rscript start.R config/scenario_config_XYZ.csv
@@ -103,11 +105,13 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
-    for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(iscenarios))) {
+    for (switchname in intersect(c("model", "regionmapping", "inputRevision", "slurmConfig"), names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
+    if (icfg$slurmConfig %in% paste(seq(1:16))) icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
+    if (icfg$slurmConfig %in% c(NA, "")) icfg$slurmConfig <- slurmConfig
 
     # Set description
     if ("description" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "description"])) {
@@ -196,8 +200,12 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 config.file <- argv[1]
 
+if (config.file == "--test") {
+  stop("--test mode works only with scenario_config file provided as first argument.")
+}
+
 # define arguments that are accepted
-accepted <- c('--restart','--testOneRegi')
+accepted <- c('--restart','--testOneRegi','--test')
 
 # check if user provided any unknown arguments or config files that do not exist
 known <-  argv %in% accepted
@@ -287,6 +295,11 @@ if ('--restart' %in% argv) {
 
   ###################### Loop over scenarios ###############################
 
+  # Tell user that model is currently locked
+  if (file.exists(".lock")) {
+    message("\nThe file .lock exists, so model runs will have to queue.")
+  }
+
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
@@ -332,8 +345,12 @@ if ('--restart' %in% argv) {
 
     if (start_now){
       # Create results folder and start run
-      submit(cfg)
+      if (! '--test' %in% argv) {
+        submit(cfg)
       } else {
+        message("   If this wasn't --test mode, I would submit ", scen, ".")
+      }
+    } else {
       message("   Waiting for: ", paste(unique(cfg$files2export$start[check_gdx][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
 
@@ -344,3 +361,5 @@ if ('--restart' %in% argv) {
 
   }
 }
+
+if ('--test' %in% argv) message("\nFinished --test mode, no runs were started.")
