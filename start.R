@@ -200,22 +200,25 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 config.file <- argv[1]
 
-if (config.file == "--test") {
+if (config.file %in% c("--test")) {
   stop("--test mode works only with scenario_config file provided as first argument.")
 }
 
 # define arguments that are accepted
-accepted <- c('--restart','--testOneRegi','--test')
+accepted <- c("--restart", "--test", "--testOneRegi")
 
 # check if user provided any unknown arguments or config files that do not exist
 known <-  argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown parameter provided: ",paste(argv[!known][!file_exists]," "))
+  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!known][!file_exists], " "))
 }
 
 ###################### Choose submission type #########################
-if(!exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+
+if ('--testOneRegi' %in% argv[-1]) message("Your slurmConfig selection will overwrite the settings in your scenario_config file.")
+
 
 # Restart REMIND in existing results folder (if required by user)
 if ('--restart' %in% argv) {
@@ -236,8 +239,8 @@ if ('--restart' %in% argv) {
 
 } else {
 
-  # If testOneRegi was selected, set up a testOneRegi run.
-  if ('--testOneRegi' %in% argv) {
+  # If testOneRegi is first argument, set up a testOneRegi run.
+  if ("--testOneRegi" %in% c(config.file)) {
     testOneRegi <- TRUE
     config.file <- NA
   } else {
@@ -248,7 +251,7 @@ if ('--restart' %in% argv) {
 
   # If a scenario_config.csv file was provided, set cfg according to it.
 
-  if (!is.na(config.file)) {
+  if (! is.na(config.file)) {
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names
@@ -327,6 +330,14 @@ if ('--restart' %in% argv) {
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
+      # set optimization mode to testOneRegi, if specified as command line argument
+      if ('--testOneRegi' %in% argv) {
+        cfg$description      <- paste("testOneRegi:", cfg$description)
+        cfg$gms$optimization <- "testOneRegi"
+        cfg$output           <- NA
+        # overwrite slurmConfig settings provided in scenario config file with those selected by user
+        cfg$slurmConfig      <- slurmConfig
+      }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       check_gdx <- c("input.gdx", "input_ref.gdx", "input_bau.gdx", "input_carbonprice.gdx")
       gdx_specified <- grepl(".gdx", cfg$files2export$start[check_gdx], fixed = TRUE)
@@ -362,4 +373,4 @@ if ('--restart' %in% argv) {
   }
 }
 
-if ('--test' %in% argv) message("\nFinished --test mode, no runs were started.")
+if ('--test' %in% argv) message("\nFinished --test mode: Rdata files written to main REMIND folder, but no runs were started.")
