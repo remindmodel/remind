@@ -80,5 +80,49 @@ p37_Emi_ChemProcess(t,regi,emi,emiMkt) =
     );
 
 
+*** check biogenic and synthetic carbon in feedstocks that generate negative emissions
+p37_CarbonFeed_CDR(t,regi,emiMkt) = sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+                                      sum( se2fe(entySe, entyFe, te)$(entySeBio(entySe) OR entySeSyn(entySe)),
+                                        vm_FeedstocksCarbon.l(t,regi,entySe,entyFe,emiMkt)
+                                    ));
+
+
+*** check feedstock correction term of left hand-side of Indst FE2CES equation 
+p37_IndFeBal_FeedStock_LH(ttot,regi,entyFe,emiMkt) = sum(se2fe(entySE,entyFe,te),
+                                                        vm_demFENonEnergySector.l(ttot,regi,entySE,entyFE,"indst",emiMkt)
+                                                          );
+*** check feedstock correction term of left right-side of Indst FE2CES equation 
+p37_IndFeBal_FeedStock_RH(ttot,regi,entyFe,emiMkt) = sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
+                                                          secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
+       
+      ( vm_cesIO.l(ttot,regi,in) 
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
+      )
+      * p37_chemicals_feedstock_share(ttot,regi)
+      );
+
+*** check FE combustion emissions with non-energy use correction
+p37_EmiEnDemand_NonEnCorr(t,regi) = sum(emiMkt,
+                                    sum(se2fe(enty,enty2,te),
+                                      pm_emifac(t,regi,enty,enty2,te,"co2")
+		                                  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
+                                          vm_demFeSector.l(t,regi,enty,enty2,sector,emiMkt)
+*** substract FE used for non-energy, does not lead to energy-related emissions
+                                      - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+                                          vm_demFENonEnergySector.l(t,regi,enty,enty2,sector,emiMkt))
+                                        )
+                                      )
+                                    );
+
+p37_EmiEnDemand(t,regi) = sum(emiMkt,
+                            sum(se2fe(enty,enty2,te),
+                                      pm_emifac(t,regi,enty,enty2,te,"co2")
+		                                  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
+                                          vm_demFeSector.l(t,regi,enty,enty2,sector,emiMkt)
+                                        )
+                                      )
+                                    );
+
+
 *** EOF ./modules/37_industry/subsectors/postsolve.gms
 

@@ -34,6 +34,11 @@ Parameters
 
   p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt) "testing parameter for FE without non-energy use" 
   p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)           "testing parameter for process emissions from chemical feedstocks"
+  p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)         "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
+  p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt) "testing parameter Ind FE Balance left-hand side feedstock term"
+  p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)       "testing parameter Ind FE Balance right-hand side feedstock term"
+  p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                        "energy demand co2 emissions with non-energy correction"
+  p37_EmiEnDemand(ttot,all_regi)                                  "energy demand co2 emissions without non-energy correction"
 ;
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
