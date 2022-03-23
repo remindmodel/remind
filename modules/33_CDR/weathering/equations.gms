@@ -70,7 +70,7 @@ q33_emicdrregi(t,regi)..
 ***---------------------------------------------------------------------------
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
 ***---------------------------------------------------------------------------	
-q33_omcosts_onfield(t,regi)..
+q33_omcosts(t,regi)..
 	vm_omcosts_cdr(t,regi)
 	=e=
 	sum(rlf$(rlf.val le 2), 
