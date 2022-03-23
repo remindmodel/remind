@@ -18,14 +18,20 @@ s33_step                    "size of bins in v33_grindrock_onfield [Gt stone]"
 parameters
 p33_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt stone]"
 p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annual reduction of total carbon removal potential], multiplied with grade factor"
+p33_dac_fedem(all_enty)                  "specific final energy demand for direct air capture [EJ per Gt of C captured]"
+p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
+
+*** remove me
 p33_dac_fedem_el(all_enty)           "specific electricity demand for direct air capture [EJ per Gt of C captured] - ventilation"
 p33_dac_fedem_heat(all_enty)         "specific heat demand for direct air capture [EJ per Gt of C captured] - absorption material recovery"
-p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
 ;
 
 positive variables
 v33_grindrock_onfield(ttot,all_regi,rlf,rlf)      "amount of ground rock spread on fields in each timestep [Gt]"
 v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields [Gt]"
+v33_DacFEdemand(ttot,all_regi,all_enty, all_enty) "DAC FE demand [TWa]"
+
+*** remove me
 v33_DacFEdemand_el(ttot,all_regi,all_enty)          "DAC FE electricity demand [TWa]"
 v33_DacFEdemand_heat(ttot,all_regi,all_enty)        "DAC FE heat demand [TWa]"
 ;
@@ -38,9 +44,7 @@ v33_emiEW(ttot,all_regi)                                "negative CO2 emission f
 
 equations
 q33_demFeCDR(ttot,all_regi,all_enty)                "CDR demand balance for final energy"
-q33_otherFEdemand(ttot,all_regi,all_enty)           "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
-q33_DacFEdemand_heat(ttot,all_regi,all_enty)        "calculates DAC FE demand for heat"
-q33_DacFEdemand_el(ttot,all_regi,all_enty)          "calculates DAC FE demand for electricity"
+q33_DacFEdemand(ttot,all_regi,all_enty)             "calculates DAC FE demand"
 q33_capconst_grindrock(ttot,all_regi)               "calculates amount of ground rock spred on fields"
 q33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)    "total amount of ground rock on fields"
 q33_omcosts(ttot,all_regi)                          "calculates O&M costs for spreading ground rocks on fields"
@@ -51,6 +55,11 @@ q33_capconst_dac(ttot,all_regi)                     "calculates amount of carbon
 q33_emicdrregi(ttot,all_regi)                       "calculates the (negative) emissions due to CDR technologies"
 q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_H2bio_lim(ttot,all_regi,all_te)                 "limits H2 from bioenergy to FE - otherFEdemand, i.e. no H2 from bioenergy for DAC"
+
+*** remove me
+q33_otherFEdemand(ttot,all_regi,all_enty)           "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
+q33_DacFEdemand_heat(ttot,all_regi)        "calculates DAC FE demand for heat"
+q33_DacFEdemand_el(ttot,all_regi,all_enty)          "calculates DAC FE demand for electricity"
 ;
 
 *** EOF ./modules/33_CDR/all/declarations.gms

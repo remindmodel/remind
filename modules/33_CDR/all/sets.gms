@@ -7,22 +7,31 @@
 *** SOF ./modules/33_CDR/all/sets.gms
 sets
 
-te_dyn33(all_te)  "all technologies"
+te_dyn33(all_te) "all technologies"
 /
-		rockgrind		"grinding rock for enhanced weathering"
-		dac		"direct air capture"
+	rockgrind		"grinding rock for enhanced weathering"
+	dac		      "direct air capture"
 /
 
 teNoTransform_dyn33(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
-       rockgrind       "grinding rock for enhanced weathering"
-	   dac       "grinding rock for enhanced weathering"
+      rockgrind         "grinding rock for enhanced weathering"
+	dac               "direct air capture"
 /
 
-teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
+teNoTransform2rlf_dyn33(all_te,rlf) "mapping for final energy to grades"
 /
       (rockgrind) . 1
-	  (dac) . 1
+	(dac) . 1
+/
+
+fe2fe_dac(entyFe, entyFe) "final energy to final energy mapping for heat and electricity generation for DAC"
+/
+	feels.feels
+	feels.fehes
+	fehes.fehes
+	fegas.fehes
+	feh2s.fehes
 /
 
 adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"

@@ -7,13 +7,18 @@
 *** SOF ./modules/33_CDR/all/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  CDR Final Energy Balance
-***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
-  vm_otherFEdemand(t,regi,entyFe)
-  =e=
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
-;
+*'  CDR Final Energy Balance.
+*'  The first part of the equation describes the electricity demand for grinding, 
+*'  the second part the diesel demand for transportation and spreading on crop fields.
+*'  The third part is DAC final energy demand
+***---------------------------------------------------------------------------	
+q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr").. 
+	sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
+	=e=
+	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
+    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
+    + sum(entyFe2, v33_DacFEdemand(t, regi, entyFe, entyFe2))
+	;	
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
@@ -55,7 +60,7 @@ q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
 	-sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
-	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * vm_otherFEdemand(t,regi,"fegas")	
+ 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_DacFEdemand(t,regi,"fegas", "fehes")
 	;
 
 ***---------------------------------------------------------------------------
@@ -67,44 +72,14 @@ q33_emicdrregi(t,regi)..
 	v33_emiEW(t,regi) + v33_emiDAC(t,regi)
 	;
 
-
 ***---------------------------------------------------------------------------
-*'  Calculation of electricity demand for ventilation of direct air capture.
+*'  Calculation of electricity demand for ventilation and heat demand for absorption material recovery of direct air capture.
 ***---------------------------------------------------------------------------
-q33_DacFEdemand_el(t,regi,entyFe)..
-    v33_DacFEdemand_el(t,regi,entyFe)
-    =e=
-	- v33_emiDAC(t,regi) * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
-    ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
-*'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
-***---------------------------------------------------------------------------
-q33_DacFEdemand_heat(t,regi,entyFe)..
-    v33_DacFEdemand_heat(t,regi,entyFe)
-    =e=
-    - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
-    - v33_DacFEdemand_heat(t,regi,"feh2s")$((sameas(entyFe,"fegas"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels"))) 
-	- v33_DacFEdemand_heat(t,regi,"fegas")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels")))
-	- v33_DacFEdemand_heat(t,regi,"feels")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"fegas")))
-	- v33_DacFEdemand_heat(t,regi,"fehes")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fegas"))OR(sameas(entyFe,"feels")))
-    ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of energy demand of DAC and EW. 
-*'  The first part of the equation describes the electricity demand for grinding, 
-*'  the second part the diesel demand for transportation and spreading on crop fields.
-*'  The third part is DAC final energy demand
-***---------------------------------------------------------------------------	
-q33_otherFEdemand(t,regi,entyFe)..
-	vm_otherFEdemand(t,regi,entyFe)
+q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_dac(entyFe, entyFe2))..
+	sum(entyFe$fe2fe_dac(entyFe, entyFe2), v33_DacFEdemand(t, regi, entyFe, entyFe2))
 	=e=
-	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-   + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-   + v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
-	;	
-	
+	- v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
+	;
 
 ***---------------------------------------------------------------------------
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
@@ -114,7 +89,7 @@ q33_omcosts(t,regi)..
 	=e=
 	sum(rlf$(rlf.val le 2), 
 	    sum(rlf2,
-	       (s33_costs_fix + p33_transport_costs(regi,rlf,rlf2))  
+	       (s33_costs_fix + p33_transport_costs(regi,rlf,rlf2))
 	       * v33_grindrock_onfield(t,regi,rlf,rlf2)
 		)
 	)
@@ -150,9 +125,42 @@ q33_LimEmiEW(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi,te)..	         
+q33_H2bio_lim(t,regi,te)..
 	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
 	=l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - vm_otherFEdemand(t,regi,"feh2s")
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_DacFEdemand(t,regi,"feh2s", entyFe2))
 	;		
+
+
+
+*** remove me
+*** only kept to be able to use BAU runs with this equation declared	
+q33_otherFEdemand(t,regi,entyFe)..
+    vm_otherFEdemand(t,regi,entyFe)
+    =e=
+	v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
+    ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of electricity demand for ventilation of direct air capture.
+***---------------------------------------------------------------------------
+q33_DacFEdemand_el(t,regi,entyFe)..
+    v33_DacFEdemand_el(t,regi,entyFe)
+    =e=
+	- v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_el(entyFe)
+    ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
+*'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
+***---------------------------------------------------------------------------
+q33_DacFEdemand_heat(t,regi)..
+    sum(entyFe$fe2fe_dac(entyFe,"fehes"), v33_DacFEdemand_heat(t,regi,entyFe))
+    =e=
+    - v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem_heat("fehes")
+	;
+
+
+
+
 *** EOF ./modules/33_CDR/all/equations.gms

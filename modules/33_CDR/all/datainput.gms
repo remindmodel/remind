@@ -7,12 +7,9 @@
 *** SOF ./modules/33_CDR/all/datainput.gms
 !! Beutler et al. 2019 (Climeworks)
 !!fe demand electricity for ventilation
-p33_dac_fedem_el("feels") = 5.28;
+p33_dac_fedem("feels") = 5.28;
 !!fe demand heat for material recovery
-p33_dac_fedem_heat("fehes") = 21.12;
-p33_dac_fedem_heat("fegas") = 21.12;
-p33_dac_fedem_heat("feh2s") = 21.12;
-p33_dac_fedem_heat("feels") = 21.12;
+p33_dac_fedem("fehes") = 21.12;
 
 *** enhanced weatering data
 table f33_maxProdGradeRegiWeathering(all_regi,rlf)                                      "regional maximum potentials for enhanced weathering in Gt of grinded stone/a for different grades"
@@ -38,5 +35,10 @@ p33_co2_rem_rate("2") = -log(1-s33_co2_rem_rate * 0.29);
 s33_rockgrind_fedem = 6.62 * cm_gs_ew**(-1.16);
 
 p33_LimRock(regi) = pm_pop("2005",regi)/sum(regi2,pm_pop("2005",regi2));
+
+
+*** remove me
+p33_dac_fedem_el("feels") = 5.28;
+p33_dac_fedem_heat("feels") = 21.12;
 
 *** EOF ./modules/33_CDR/all/datainput.gms
