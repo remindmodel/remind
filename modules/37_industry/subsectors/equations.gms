@@ -115,7 +115,7 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in industry
 ***---------------------------------------------------------------------------
-q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
+q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)
   =e=
     p37_CESMkup(t,regi,in) 

@@ -364,12 +364,44 @@ $endif.edgesm
 *** Load capital quantities
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 
+
+
+*** define H2 and electricity HTH baseline trajectories
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
+
 loop (pf_quantity_shares_37(in,in2),
-  pm_cesdata(t,regi_dyn29(regi),in,"quantity")
-  = 1e-4 * pm_cesdata(t,regi,in2,"quantity");
+
+*** Assume H2 and feelhth industry demand at 30% of gases and feelwlth demand from 2050 by default
+*** linear phase-in between 2025 and 2050
+  p29_share_H2HTH_traj_indst(t,regi,in) = 0.3;
+
+*** overwrite H2 or feelhth industry demand share contained in cm_Ind_H2HTH_Traj if cm_Ind_H2HTH_Traj is not "standard"
+$ifThen.H2HTH_traj_indst not "%cm_Ind_H2HTH_Traj%" == "standard" 
+  p29_share_H2HTH_traj_indst(t,regi,in)$(p29_share_H2HTH_traj_indst_input(in)) = p29_share_H2HTH_traj_indst_input(in);
+$endIf.H2HTH_traj_indst
+
+*** p29_share_H2HTH_traj_indst share from 2050
+  pm_cesdata(t,regi_dyn29(regi),in,"quantity")$(t.val ge 2050) 
+  = p29_share_H2HTH_traj_indst(t,regi,in) * pm_cesdata(t,regi,in2,"quantity");
+*** 0.1% before 2025
+  pm_cesdata(t,regi_dyn29(regi),in,"quantity")$(t.val lt 2025) 
+  = 0.001 * pm_cesdata(t,regi,in2,"quantity");
+*** linear phase-in 2025-2050
+  pm_cesdata(t,regi_dyn29(regi),in,"quantity")$(t.val ge 2025 AND t.val lt 2050) 
+  = (pm_cesdata("2050",regi,in,"quantity") 
+  - pm_cesdata("2020",regi,in,"quantity")) 
+  / (2050-2020)
+  * (t.val - 2020) 
+  + pm_cesdata("2020",regi,in,"quantity");
+
+
+*** set CES offset quantity to remove 80% of FE demand from H2 an feelhth in baseline
+***  pm_cesdata(t,regi_dyn29(regi),in,"offset_quantity") 
+***  = -0.8*pm_cesdata(t,regi,in,"quantity");
+
 );
+
+display p29_share_H2HTH_traj_indst;
 
 *** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero 
 *** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
