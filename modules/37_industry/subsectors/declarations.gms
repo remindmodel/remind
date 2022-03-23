@@ -30,6 +30,8 @@ Parameters
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)    "FE demand per industry subsector"
   o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 
+  p37_FeedstockCarbonContent(ttot,all_regi,all_enty)            "carbon content of feedstocks [GtC/TWa]"
+
   p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt) "testing parameter for FE without non-energy use" 
   p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)           "testing parameter for process emissions from chemical feedstocks"
 ;
@@ -60,6 +62,7 @@ Equations
   q37_chemicals_feedstocks_limit(ttot,all_regi)                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
   q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
   q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)       "in baseline runs feedstocks only come from fossil energy carriers"
+  q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

@@ -544,11 +544,11 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
           pm_emifac(t,regi,enty,enty2,te,enty3)
 		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
             vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+*** substract FE used for non-energy, does not lead to energy-related emissions
             - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
               vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
             )
           )
-*emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
     )
 ;
 
@@ -591,6 +591,12 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
 		)$( sameas(enty,"co2") )
 	)$(sameas(emiMkt,"ETS"))
+*** substract carbon in feedstocks from biogenic or synthetic origin, generates negative emissions
+  - sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum( se2fe(entySe, entyFe, te)$(entySeBio(entySe) OR entySeSyn(entySe)),
+        vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+    )
+  )$( sameas(enty,"co2") )    
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)

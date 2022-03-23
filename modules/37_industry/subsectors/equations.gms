@@ -156,6 +156,16 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
 ;
 
 
+*** calculate carbon contained in chemical feedstocks
+q37_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)$(    entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                                                      AND entySe2entyFe(entySe,entyFe)  ) .. 
+  vm_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)
+  =e=
+  vm_demFENonEnergySector(ttot,regi,entySe,entyFe,"indst",emiMkt)
+    * p37_FeedstockCarbonContent(ttot,regi,entyFe);
+;
+
+
 *** in baseline runs, all industrial feedstocks should come from fossil energy carriers, no biofuels or synfuels
 q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
                                               AND cm_emiscen eq 1)..
