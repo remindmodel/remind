@@ -272,11 +272,15 @@ if (comp == TRUE) {
   }
 
   # define slurm class or direct execution
-  if (!exists("source_include")) {
+  if (! exists("source_include")) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
-    source("scripts/start/choose_slurmConfig.R")
-    slurmConfig <- choose_slurmConfig()
+    if (! exists("slurmConfig")) {
+      slurmConfig <- choose_slurmConfig_priority_standby()
+    }
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+    }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
     slurmConfig <- "direct"
