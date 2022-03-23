@@ -12,12 +12,26 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   sum(se2fe(entySE,entyFE,te),
     vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
+*** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
+  - sum(se2fe(entySE,entyFE,te),
+    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+    )
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
        secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
     vm_cesIO(ttot,regi,in)
   + pm_cesdata(ttot,regi,in,"offset_quantity")
   )
+
+*** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
+  -   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
+       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
+       
+      ( vm_cesIO(ttot,regi,in) 
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
+      )
+      * p37_chemicals_feedstock_share(ttot,regi)
+      )
 ;
 
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
