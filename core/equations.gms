@@ -490,34 +490,6 @@ q_emiTe(t,regi,emiTe(enty))..
   sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
-$ontext
-***-----------------------------------------------------------------------------
-*' Calculate terms to correct the emissions from non-energy feedstocks in the 
-*' industry. ALTERNATIVE IMPLEMENTATION TO DISTINGUISH BETWEEN FE FORMS
-*' NOT IN USE YET. CURRENT FIX IMPLEMENTED IN q_emiTeDetailMkt()
-***-----------------------------------------------------------------------------
-q_emiNEFeedstockDiscount()..
-  vm_discountFeedstock !!def!
-  =e=
-  sum(t, 
-    - ( !!discount emissions of NE feedstocks that are not combusted but are assumed to be combusted in the previous sum
-        !!why is vm_cesIO used for definig related bound in industry/subsectors? ---> vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
-      vm_demFeSector(t,regi,enty,"feso_chemicals","indst","ETS")
-      * p37_chemicals_feedstock_share(t,regi) !!gotta fix p37->pm
-      + vm_demFeSector(t,regi,enty,enty2,"indst","ETS")
-      * p37_chemicals_feedstock_share(t,regi)
-      + vm_demFeSector(t,regi,enty,enty2,"indst","ETS")
-      * p37_chemicals_feedstock_share(t,regi)
-    )
-;
-
-Add feedstock emissions with right emi factor. This can be included in q_emiTeDetailMkt
-q_emiNEFeedstock()..
-  vm_emiNEFeedstock !!def
-  =e=
-    + vm_emiNEFeedstock(t,regi,...) !!add process emissions from NE feedstocks that are not combusted
-;
-$offtext
 
 ***-----------------------------------------------------------------------------
 *' Emissions per market
@@ -548,8 +520,8 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
               vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
             )
           )
-*emissions from (non-energy) feedstocks are still missing: + vm_demFENonEnergySector(ttot,regi,entySE,entyFE,sector,emiMkt)*pm_emifacFeedstock(..)
-    )
+*later we can add a term to represent waste incineration and the diff between using synfuels and fossil fuels as feedstocks
+      )  
 ;
 
 ***--------------------------------------------------
@@ -615,7 +587,7 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
-*ADD here non energy emi fro chem sector:
+*ADD here non energy emi from chem sector (feedstock emissions):
   + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
         se2fe(entySe,entyFe,te)), 
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
