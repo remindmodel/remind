@@ -54,7 +54,11 @@ These three columns starting with `path…` can point to either finished runs or
 
 The image above shows these possibilities used for `path_gdx_ref`. Run `RCP20` has a complete path specified but will not be executed because `start = 0`. `RCP37` provides a complete folder name and therefore starts immediately using the `fulldata.gdx` from this folder, `RCP26_subsequent` waits for `SSP2-Base` to be finished, and `RCP26_forceoldrun` selects the latest already finished `SSP2-Base` run in the output folder and starts immediately. If you set `start = 0` also for `SSP2-Base`, then `RCP26_subsequent` will also try to find an old run in a folder that looks like `SSP2-Base_YYYY-MM-DD_HH.MM.SS`. Note that the fact that “subsequent“ is part of the `title` is only to ease the understanding, you can name these runs however you want.
 
+The column `slurmConfig` can be used to specify the slurm configuration, either as a string or as an integer that selects the corresponding mode from [`choose_slurmConfig.R`](../scripts/start/choose_slurmConfig.R).
+
 Everything in the row after a `#` is interpreted as comment. Best use it as first character in the first column to structure the file. Using `#` elsewhere else can lead to unexpected data losses of the cells that follow in the row. If you want to switch off the use of a column, either temporarily or to add some comments, add a dot before the parameter name, which then may read `.cm_startyear` and is then ignored.
+
+Before you start the runs, you can test the setting by running `Rscript start.R config/scenario_config_XYZ.csv --test`.
 
 Further notes:
 --------------

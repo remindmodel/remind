@@ -20,10 +20,14 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   scenNames <- getScenNames(outputdirs)
   # Add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
   mif_path  <- file.path("..", outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
+  mif_path_polCosts  <- file.path("..", outputdirs, paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
   hist_path <- file.path("..", outputdirs[1], "historical.mif")
   scen_config_path  <- file.path("..", outputdirs, "config.Rdata")
   default_config_path  <- file.path("..", "config", "default.cfg")
 
+  # Use adjustedPolicyCosts mif, if available
+  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
+ 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
