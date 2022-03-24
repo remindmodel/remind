@@ -243,7 +243,8 @@ prepare <- function() {
   setwd(cfg$remind_folder)
 
   # Check configuration for consistency
-  cfg <- check_config(cfg, reference_file="config/default.cfg", settings_config = "config/settings_config.csv")
+  cfg <- check_config(cfg, reference_file="config/default.cfg",
+                      settings_config = "config/settings_config.csv", extras = c("remind_folder"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -862,16 +863,20 @@ run <- function(start_subsequent_runs = TRUE) {
     cat("\nREMIND was compiled but not executed, because cfg$action was set to 'c'\n\n")
   }
 
+  stoprun <- FALSE
+
   # to facilitate debugging, look which files were created.
   message("Model summary:")
   # Print REMIND runtime
   message("  gams_runtime is ", round(gams_runtime,1), " ", units(gams_runtime), ".")
   if (! file.exists("full.gms")) {
     message("! full.gms does not exist, so the REMIND GAMS code was not generated.")
+    stoprun <- TRUE
   } else {
     message("  full.gms exists, so the REMIND GAMS code was generated.")
     if (! file.exists("full.lst") | ! file.exists("full.log")) {
-      message("- full.log or full.lst does not exist, so GAMS did not run.")
+      message("! full.log or full.lst does not exist, so GAMS did not run.")
+      stoprun <- TRUE
     } else {
       message("  full.log and full.lst exist, so GAMS did run.")
       if (! file.exists("abort.gdx")) {
@@ -881,12 +886,34 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
+        stoprun <- TRUE
       } else {
         message("  fulldata.gdx exists, so at least one iteration was successful.")
+        message("  Number of iterations: ",
+                         as.numeric(readGDX(gdx="fulldata.gdx", "o_iterationNumber", format = "simplest")))
+        message("  Modelstat: ", as.numeric(readGDX(gdx="fulldata.gdx", "o_modelstat", format="simplest")),
+                " (see https://www.gams.com/mccarlGuide/modelstat_tmodstat.htm).")
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
-      message(ifelse(logStatus == "*** Status: Normal completion", " ", "!"), " full.log states: ", logStatus)
+      message("  full.log states: ", paste(logStatus, collapse = ", "))
+      if (! all("*** Status: Normal completion" == logStatus)) stoprun <- TRUE
     }
+  }
+
+  if ( file.exists("full.lst")) {
+    message("Infeasibilities extracted from full.lst with nashstat -F:")
+    command <- paste("li=$(nashstat -F | wc -l); cat",
+               "<(if (($li < 2)); then echo no infeasibilities found; fi)",
+               "<(if (($li > 1)); then nashstat -F | head -n 2; fi)",
+               "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
+               "<(if (($li > 2)); then nashstat -F | tail -n 1; fi)")
+    nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
+    if (nashstatres != 0) message("Error: nashstat not found, search for p80_repy in full.lst yourself.")
+    message("")
+  }
+
+  if (stoprun) {
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.")
   }
 
   message("\nCollect and submit run statistics to central data base.")
