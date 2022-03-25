@@ -36,8 +36,8 @@ q33_capconst_grindrock(t,regi)..
 q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startyear))..
 	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) +
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) +
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) + 
+	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) + 
 	v33_grindrock_onfield(ttot,regi,rlf,rlf2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val))))
 ;  
 
@@ -125,42 +125,10 @@ q33_LimEmiEW(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi,te)..
-	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
+q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
+	vm_prodSE(t,regi,"pebiolc","seh2",te)
 	=l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_DacFEdemand(t,regi,"feh2s", entyFe2))
 	;		
-
-
-
-*** remove me
-*** only kept to be able to use BAU runs with this equation declared	
-q33_otherFEdemand(t,regi,entyFe)..
-    vm_otherFEdemand(t,regi,entyFe)
-    =e=
-	v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
-    ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of electricity demand for ventilation of direct air capture.
-***---------------------------------------------------------------------------
-q33_DacFEdemand_el(t,regi,entyFe)..
-    v33_DacFEdemand_el(t,regi,entyFe)
-    =e=
-	- v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_el(entyFe)
-    ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
-*'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
-***---------------------------------------------------------------------------
-q33_DacFEdemand_heat(t,regi)..
-    sum(entyFe$fe2fe_dac(entyFe,"fehes"), v33_DacFEdemand_heat(t,regi,entyFe))
-    =e=
-    - v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem_heat("fehes")
-	;
-
-
-
 
 *** EOF ./modules/33_CDR/all/equations.gms

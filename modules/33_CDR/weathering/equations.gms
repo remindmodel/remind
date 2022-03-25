@@ -8,22 +8,14 @@
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance
-***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
-  vm_otherFEdemand(t,regi,entyFe)
-  =e=
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
-;
-
-***---------------------------------------------------------------------------
 *'  Calculation of the energy demand of enhanced weathering. The first part of the equation describes the electricity demand for grinding, 
 *'  the second part the diesel demand for transportation and spreading on crop fields.
 ***---------------------------------------------------------------------------
-q33_otherFEdemand(t,regi,entyFe)$(sameas(entyFe,"feels") OR sameas(entyFe,"fedie"))..
-	vm_otherFEdemand(t,regi,entyFe)$(sameas(entyFe,"feels") OR sameas(entyFe,"fedie"))
+q33_demFeCDR(t,regi,entyFe)$(sameas(entyFe,"feels") OR sameas(entyFe,"fedie"))..
+    sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
-	sum(rlf$(rlf.val le 2), s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-   + sum(rlf$(rlf.val le 2), s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
+	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
+    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
 	;
 
 ***---------------------------------------------------------------------------
@@ -42,8 +34,8 @@ q33_capconst_grindrock(t,regi)..
 q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$((ttot.val ge max(2010, cm_startyear))$(rlf.val le 2))..
 	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(rlf.val le 2)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * pm_ts(ttot)) +
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val)))) +
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * pm_ts(ttot)) + 
+	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val)))) + 
 	v33_grindrock_onfield(ttot,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val))))
 ;  
 

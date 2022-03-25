@@ -9,12 +9,12 @@ sets
 
 te_dyn33(all_te)   "all technologies"
 /
-		rockgrind		"grinding rock for enhanced weathering"
+	rockgrind		"grinding rock for enhanced weathering"
 /
 
 teNoTransform_dyn33(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
-       rockgrind       "grinding rock for enhanced weathering"
+      rockgrind       "grinding rock for enhanced weathering"
 /
 
 teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
@@ -26,7 +26,7 @@ teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
-te(te_dyn33)								   = YES;
+te(te_dyn33)					     = YES;
 teNoTransform(teNoTransform_dyn33)             = YES;
 teNoTransform2rlf(teNoTransform2rlf_dyn33)     = YES;
 

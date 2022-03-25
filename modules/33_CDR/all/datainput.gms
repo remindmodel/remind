@@ -36,9 +36,4 @@ s33_rockgrind_fedem = 6.62 * cm_gs_ew**(-1.16);
 
 p33_LimRock(regi) = pm_pop("2005",regi)/sum(regi2,pm_pop("2005",regi2));
 
-
-*** remove me
-p33_dac_fedem_el("feels") = 5.28;
-p33_dac_fedem_heat("feels") = 21.12;
-
 *** EOF ./modules/33_CDR/all/datainput.gms

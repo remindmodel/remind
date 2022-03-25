@@ -56,46 +56,10 @@ q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi,te)..	         
-	vm_prodSE(t,regi,"pebiolc","seh2",te)$pe2se("pebiolc","seh2",te)
+q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..	         
+	vm_prodSE(t,regi,"pebiolc","seh2",te)
 	=l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_DacFEdemand(t,regi,"feh2s", entyFe2))
 	;
 
-
-	
-*** remove me	
-***---------------------------------------------------------------------------
-*'  Calculation of electricity demand for ventilation of direct air capture.
-***---------------------------------------------------------------------------
-q33_DacFEdemand_el(t,regi,entyFe)$(t.val ge 2025)..
-    v33_DacFEdemand_el(t,regi,entyFe)
-    =e=
-	- vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
-    ;
-
-***---------------------------------------------------------------------------
-*'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
-*'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
-***---------------------------------------------------------------------------
-q33_DacFEdemand_heat(t,regi,entyFe)$(t.val ge 2025)..
-    v33_DacFEdemand_heat(t,regi,entyFe)
-    =e=
-    - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
-    - v33_DacFEdemand_heat(t,regi,"feh2s")$((sameas(entyFe,"fegas"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels"))) 
-	- v33_DacFEdemand_heat(t,regi,"fegas")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels")))
-	- v33_DacFEdemand_heat(t,regi,"feels")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"fegas")))
-	- v33_DacFEdemand_heat(t,regi,"fehes")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fegas"))OR(sameas(entyFe,"feels")))
-    ;
-
-
-***---------------------------------------------------------------------------
-*'  Calculation of total energy demand of direct air capture. 
-***---------------------------------------------------------------------------
-q33_otherFEdemand(t,regi,entyFe)..
-    vm_otherFEdemand(t,regi,entyFe)
-    =e=
-	v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
-    ;
-	
 *** EOF ./modules/33_CDR/DAC/equations.gms

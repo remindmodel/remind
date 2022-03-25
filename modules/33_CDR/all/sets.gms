@@ -15,13 +15,13 @@ te_dyn33(all_te) "all technologies"
 
 teNoTransform_dyn33(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
-      rockgrind         "grinding rock for enhanced weathering"
+    rockgrind         "grinding rock for enhanced weathering"
 	dac               "direct air capture"
 /
 
 teNoTransform2rlf_dyn33(all_te,rlf) "mapping for final energy to grades"
 /
-      (rockgrind) . 1
+    (rockgrind) . 1
 	(dac) . 1
 /
 

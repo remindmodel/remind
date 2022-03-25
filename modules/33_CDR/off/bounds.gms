@@ -5,7 +5,7 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/off/bounds.gms
-vm_otherFEdemand.fx(t,regi,entyFe) = 0;
+vm_demFeSector.fx(t, regi, entySe, entyFe, "cdr", "ETS") = 0;
 vm_cap.fx(t,regi,"rockgrind",rlf) = 0;
 vm_emiCdr.fx(t,regi,enty) = 0;   
 vm_omcosts_cdr.fx(t,regi) = 0;
