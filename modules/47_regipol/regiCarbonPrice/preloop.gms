@@ -49,19 +49,45 @@ $ENDIF.emiMktES
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 *** initialize tax value for first iteration
 p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
+	loop(all_regi$regi_group(ext_regi,all_regi),
+	    p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
+		loop(ttot2,
+			s47_prefreeYear = ttot2.val;
+		);
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
+		if(sameas(taxType,"subsidy"),
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = - p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
+		);
+	);
+);
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (all_regi(ext_regi))),
+	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+	    p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val)) = 0.1;
+		loop(ttot2,
+			break$((ttot2.val ge 2025) and (ttot2.val ge cm_startyear)); !!initial free price year
+			s47_prefreeYear = ttot2.val;
+		);
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
+		if(sameas(taxType,"subsidy"),
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = - p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
+		);
+	);
+);
+*** load tax from gdx
 $ifthen.loadFromGDX_implEnergyBoundTax not "%cm_loadFromGDX_implEnergyBoundTax%" == "off"
-	Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
+Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
 *** disable tax values for inexistent targets
-	loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (NOT(all_regi(ext_regi)))),
-		loop(all_regi$regi_group(ext_regi,all_regi),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
-		);
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (NOT(all_regi(ext_regi)))),
+	loop(all_regi$regi_group(ext_regi,all_regi),
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
 	);
-	loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (all_regi(ext_regi))),
-		loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
-		);
+);
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$((NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))) AND (all_regi(ext_regi))),
+	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
 	);
+);
 $endif.loadFromGDX_implEnergyBoundTax
 $endif.cm_implicitEnergyBound
 

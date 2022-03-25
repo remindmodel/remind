@@ -101,10 +101,7 @@ $endIf.cm_implicitFE
 
 *** intialize energy type bound implicit target parameters
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-
-	p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) = 0;
-	p47_implEnergyBoundTax0(ttot,all_regi) = 0;
-
+	p47_implEnergyBoundTax0(t,all_regi) = 0;
 $endIf.cm_implicitEnergyBound
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 

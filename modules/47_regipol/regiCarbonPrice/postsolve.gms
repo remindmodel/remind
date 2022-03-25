@@ -805,7 +805,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEn
 p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType);
 
 ***	updating energy targets implicit tax
-cm_implEnergyBoundLimited = 0;
+pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 0;
 
 ***		for region groups
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) AND (NOT(all_regi(ext_regi)))),
@@ -825,11 +825,11 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
 *** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
 *** if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
-		if((iteration.val gt 4),
-			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) OR (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
+		if((iteration.val gt 3),
+			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) AND (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
 				and (NOT( p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) lt 0.0001 and p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) gt -0.0001 )),
 				p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType);
-				cm_implEnergyBoundLimited = 1;
+				pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 1;
 			);
 		);
 	);
@@ -853,11 +853,11 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
 *** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
 *** if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
-		if((iteration.val gt 4),
-			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) OR (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
+		if((iteration.val gt 3),
+			if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) AND (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
 				and (NOT( p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) lt 0.0001 and p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) gt -0.0001 )),
 				p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType);
-				cm_implEnergyBoundLimited = 1;
+				pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 1;
 			);
 		);
 	);
