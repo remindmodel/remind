@@ -261,7 +261,7 @@ for(scen in common){
 
   # Set description
   if ("description" %in% names(settings_remind) && ! is.na(settings_remind[scen, "description"])) {
-    cfg_rem$description <- settings_remind[scen, "description"]
+    cfg_rem$description <- gsub('"', '', settings_remind[scen, "description"])
   } else {
     cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
