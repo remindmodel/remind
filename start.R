@@ -12,22 +12,22 @@ require(stringr)
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
+#' Rscript start.R --test --testOneRegi file
 #'
-#' Without additional arguments this starts a single REMIND run using the settings
-#' from `config/default.cfg`.
-#'
-#' Control the script's behavior by providing additional arguments:
-#'
-#' --testOneRegi: Starting a single REMIND run in OneRegi mode using the
-#'   settings from `config/default.cfg`
-#'
-#' --restart: Restart a run.
-#'
-#' --test: Test configuration
+#' Without additional arguments this starts a single REMIND run
+#' using the settings from `config/default.cfg`.
 #'
 #' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
 #'
 #'   Rscript start.R config/scenario_config_XYZ.csv
+#'
+#' Control the script's behavior by providing additional arguments:
+#'
+#' --restart: interactively restart run(s).
+#'
+#' --test: Test configuration#'
+#'
+#' --testOneRegi: Starting the REMIND run(s) in testOneRegi mode.
 
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
@@ -196,29 +196,31 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 }
 
 
-# check command-line arguments for testOneRegi and scenario_config file
+# load command-line arguments
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-config.file <- argv[1]
-
-if (config.file %in% c("--test")) {
-  stop("--test mode works only with scenario_config file provided as first argument.")
-}
 
 # define arguments that are accepted
-accepted <- c("--restart", "--test", "--testOneRegi")
+accepted <- c("--restart", "--testOneRegi", "--test")
+
+# initialize config.file
+config.file <- NA
 
 # check if user provided any unknown arguments or config files that do not exist
-known <-  argv %in% accepted
+known <- argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!known][!file_exists], " "))
+  if (length(file_exists) > 1) stop("You provided two files, start.R can only handle one.")
+  if (!all(file_exists)) stop("Unknown parameter provided: ",paste(argv[!known][!file_exists]," "))
+  # set config file to not known parameter where the file actually exists
+  config.file <- argv[!known][[1]] 
 }
 
 ###################### Choose submission type #########################
 if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
 
-if ('--testOneRegi' %in% argv[-1]) message("Your slurmConfig selection will overwrite the settings in your scenario_config file.")
-
+if ('--testOneRegi' %in% argv && !is.na(config.file)) {
+  message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
+}
 
 # Restart REMIND in existing results folder (if required by user)
 if ('--restart' %in% argv) {
@@ -239,14 +241,6 @@ if ('--restart' %in% argv) {
 
 } else {
 
-  # If testOneRegi is first argument, set up a testOneRegi run.
-  if ("--testOneRegi" %in% c(config.file)) {
-    testOneRegi <- TRUE
-    config.file <- NA
-  } else {
-    testOneRegi <- FALSE
-  }
-
   ###################### Load csv if provided  ##########################
 
   # If a scenario_config.csv file was provided, set cfg according to it.
@@ -261,7 +255,7 @@ if ('--restart' %in% argv) {
     path_gdx_list <- c("path_gdx", "path_gdx_ref", "path_gdx_refpolicycost", "path_gdx_bau", "path_gdx_carbonprice")
     if ("path_gdx_ref" %in% names(settings) && ! "path_gdx_refpolicycost" %in% names(settings)) {
       settings$path_gdx_refpolicycost <- settings$path_gdx_ref
-      message("No column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
+      message("\nNo column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
     }
     settings[, path_gdx_list[! path_gdx_list %in% names(settings)]] <- NA
     
@@ -292,8 +286,12 @@ if ('--restart' %in% argv) {
     if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
-    # if no csv was provided create dummy list with default as the only scenario
-    scenarios <- data.frame("default" = "default", row.names = "default")
+    # if no csv was provided create dummy list with default/testOneRegi as the only scenario
+    if ("--testOneRegi" %in% argv) {
+      scenarios <- data.frame("testOneRegi" = "testOneRegi", row.names = "testOneRegi")
+    } else {
+      scenarios <- data.frame("default" = "default", row.names = "default")
+    }
   }
 
   ###################### Loop over scenarios ###############################
@@ -314,13 +312,11 @@ if ('--restart' %in% argv) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if (testOneRegi) {
-      cfg$title            <- "testOneRegi"
-      cfg$description      <- "A REMIND run using testOneRegi"
+    if ("--testOneRegi" %in% argv & is.na(config.file)) {
+      cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
       cfg$results_folder   <- "output/testOneRegi"
-
       # delete existing Results directory
       cfg$force_replace    <- TRUE
     }
@@ -339,7 +335,7 @@ if ('--restart' %in% argv) {
         cfg$slurmConfig      <- slurmConfig
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
-      check_gdx <- c("input.gdx", "input_ref.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+      check_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
       gdx_specified <- grepl(".gdx", cfg$files2export$start[check_gdx], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[check_gdx])
       start_now <- all(gdx_specified | gdx_na)

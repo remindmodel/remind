@@ -77,7 +77,9 @@ capcost4W = inputdata$capcost4W
 loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
-preftab4W = inputdata$preftab4W
+preftab4W = inputdata$ptab4W
+
+setnames(preftab4W, old = "ptab4W", new = "value")
 
 ## mrremind produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]

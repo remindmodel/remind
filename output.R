@@ -138,7 +138,7 @@ choose_mode <- function(title = "Please choose the output mode") {
 }
 
 choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c("priority", "short", "standby")
+  slurm_options <- c("priority", "short", "standby", "priority --mem=8000", "priority --mem=32000")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), slurm_options, sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -149,7 +149,7 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
   if (!identifier %in% seq(length(slurm_options))) {
     stop("This slurm mode is invalid. Please choose a valid mode.")
   }
-  return(slurm_options[as.numeric(identifier)])
+  return(paste0("--qos=", slurm_options[as.numeric(identifier)]))
 }
 
 choose_filename_prefix <- function(modules, title = "") {
@@ -272,11 +272,15 @@ if (comp == TRUE) {
   }
 
   # define slurm class or direct execution
-  if (!exists("source_include")) {
+  if (! exists("source_include")) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
-    source("scripts/start/choose_slurmConfig.R")
-    slurmConfig <- choose_slurmConfig()
+    if (! exists("slurmConfig")) {
+      slurmConfig <- paste0(choose_slurmConfig_priority_standby(), " --nodes=1 --tasks-per-node=1")
+    }
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+    }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
     slurmConfig <- "direct"

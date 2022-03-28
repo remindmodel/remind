@@ -60,11 +60,11 @@ Everything in the row after a `#` is interpreted as comment. Best use it as firs
 
 Before you start the runs, you can test whether the right runs would be started and whether the `.Rdata` files created for each run in the REMIND main folder by running
 ```bash
-Rscript start.R config/scenario_config_XYZ.csv --test
+Rscript start.R --test config/scenario_config_XYZ.csv
 ```
 Running the complete chain of runs, but with only one iteration and one region each can be started with:
 ```bash
-Rscript start.R config/scenario_config_XYZ.csv --testOneRegi
+Rscript start.R --testOneRegi config/scenario_config_XYZ.csv
 ```
 
 Further notes:
