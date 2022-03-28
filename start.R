@@ -200,7 +200,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 config.file <- argv[1]
 
-if (config.file == "--test") {
+if (any("--test" %in% config.file)) {
   stop("--test mode works only with scenario_config file provided as first argument.")
 }
 
