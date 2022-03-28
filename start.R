@@ -115,7 +115,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # Set description
     if ("description" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "description"])) {
-      icfg$description <- iscenarios[iscen, "description"]
+      icfg$description <- gsub('"', '', iscenarios[iscen, "description"])
     } else {
       icfg$description <- paste0("REMIND run ", iscen, " started by ", config.file, ".")
     }
