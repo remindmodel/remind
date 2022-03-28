@@ -21,7 +21,7 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 ;
 
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
-                        ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
+                                 ttot.val gt 2015 AND p37_energy_limit(out) ) .. 
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
