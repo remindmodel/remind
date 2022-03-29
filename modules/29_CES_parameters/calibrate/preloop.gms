@@ -400,7 +400,7 @@ display "start consistency", pm_cesdata;
 
 *** All effGr, are set to one, so that we can focus on efficiencies
 *** we will split xi and eff evolutions later and pass it on to effGr
-pm_cesdata(t_29,regi_dyn29, in_29, "effGr") = 1;
+pm_cesdata(t,regi_dyn29,in_29,"effGr") = 1;
 
 *** First, using the prices and quantities of the ppfEn, the prices of ipf
 *** we compute thanks to the Euler equation the quantities of the ipf.
@@ -697,14 +697,14 @@ if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,i
 loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$( 
                                                     NOT sameas(out,"inco") ),
   if (NOT ipf_putty(out),
-    pm_cesdata(t_29,regi_dyn29, in,"xi")
-      = pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
-      / pm_cesdata(t_29,regi_dyn29,out,"quantity");
+    pm_cesdata(t,regi_dyn29, in,"xi")
+      = pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
+      / pm_cesdata(t,regi_dyn29,out,"quantity");
 
-    pm_cesdata(t_29,regi_dyn29,in,"eff")
-      = pm_cesdata(t_29,regi_dyn29,out, "quantity")
-      / pm_cesdata(t_29,regi_dyn29,in, "quantity");
+   pm_cesdata(t,regi_dyn29,in,"eff")
+      = pm_cesdata(t,regi_dyn29,out, "quantity")
+      / pm_cesdata(t,regi_dyn29,in, "quantity");
     );
 
   if (ipf_putty(out),
@@ -724,14 +724,14 @@ display "after change up to en consistency", pm_cesdata;
 * have specific restrictions.  Capital works as for the other ppfen, Labour
 * will be the adjustment variable to meet inco.  xi will not be equal to the
 * income share of capital (from equation price = derivative)
-pm_cesdata(t_29,regi_dyn29, "kap","xi")
-  = pm_cesdata(t_29,regi_dyn29,"kap","price")
-  * pm_cesdata(t_29,regi_dyn29,"kap","quantity")
-  / pm_cesdata(t_29,regi_dyn29,"inco","quantity");
+pm_cesdata(t,regi_dyn29,"kap","xi")
+  = pm_cesdata(t,regi_dyn29,"kap","price")
+  * pm_cesdata(t,regi_dyn29,"kap","quantity")
+  / pm_cesdata(t,regi_dyn29,"inco","quantity");
 
-pm_cesdata(t_29,regi_dyn29,"kap","eff")
-  = pm_cesdata(t_29,regi_dyn29,"inco", "quantity")
-  / pm_cesdata(t_29,regi_dyn29,"kap", "quantity");
+pm_cesdata(t,regi_dyn29,"kap","eff")
+  = pm_cesdata(t,regi_dyn29,"inco", "quantity")
+  / pm_cesdata(t,regi_dyn29,"kap", "quantity");
 
 display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 
@@ -744,41 +744,41 @@ display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 $ifthen.CES_cal_itr "%c_CES_calibration_iteration%" == "1"   !! c_CES_calibration_iteration
 * Adjust the price of labour, so that, whithout changing the price of energy,
 * the Euler equation holds.
-pm_cesdata(t_29,regi_dyn29,"lab","price")
-  = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+pm_cesdata(t,regi_dyn29,"lab","price")
+  = ( pm_cesdata(t,regi_dyn29,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
-        pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
       )
     )
-  / pm_cesdata(t_29,regi_dyn29,"lab","quantity")
+  / pm_cesdata(t,regi_dyn29,"lab","quantity")
 ;
 
 * Adjust eff and xi of labour and energy so that the price matches the
 * derivative.
 loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
-  pm_cesdata(t_29,regi_dyn29,in,"xi") 
-  = pm_cesdata(t_29,regi_dyn29,in,"price")
-  * pm_cesdata(t_29,regi_dyn29,in,"quantity")
-  / pm_cesdata(t_29,regi_dyn29,"inco","quantity");
+  pm_cesdata(t,regi_dyn29,in,"xi") 
+  = pm_cesdata(t,regi_dyn29,in,"price")
+  * pm_cesdata(t,regi_dyn29,in,"quantity")
+  / pm_cesdata(t,regi_dyn29,"inco","quantity");
 
-  pm_cesdata(t_29,regi_dyn29,in,"eff")
-  = pm_cesdata(t_29,regi_dyn29,"inco","quantity")
-  / pm_cesdata(t_29,regi_dyn29,in,"quantity");
+  pm_cesdata(t,regi_dyn29,in,"eff")
+  = pm_cesdata(t,regi_dyn29,"inco","quantity")
+  / pm_cesdata(t,regi_dyn29,in,"quantity");
 );
 $else.CES_cal_itr
 
 * Test if negative labour prices would result.
 sm_tmp = 0;
-loop ((t_29,regi_dyn29),
+loop ((t,regi_dyn29),
   sm_tmp2
-  = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+  = ( pm_cesdata(t,regi_dyn29,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
-        pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
       )
     )
-  / pm_cesdata(t_29,regi_dyn29,"lab","quantity");
+  / pm_cesdata(t,regi_dyn29,"lab","quantity");
 
   if (sm_tmp2 le 0,
     sm_tmp = 1;
@@ -787,18 +787,18 @@ loop ((t_29,regi_dyn29),
 
 * If no negative labour prices would result adjust the labour prices.
 if (sm_tmp eq 0,
-  pm_cesdata(t_29,regi_dyn29,"lab","price")
-  = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+  pm_cesdata(t,regi_dyn29,"lab","price")
+  = ( pm_cesdata(t,regi_dyn29,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
-        pm_cesdata(t_29,regi_dyn29,in,"price")
-      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+        pm_cesdata(t,regi_dyn29,in,"price")
+      * pm_cesdata(t,regi_dyn29,in,"quantity")
       )
     )
-  / pm_cesdata(t_29,regi_dyn29,"lab","quantity")
+  / pm_cesdata(t,regi_dyn29,"lab","quantity")
   ;
 * Else, adjust the price of energy.
 else
-  pm_cesdata(t_29(t),regi_dyn29(regi),"en","price")
+  pm_cesdata(t,regi_dyn29(regi),"en","price")
   = ( pm_cesdata(t,regi,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"en") ),
         pm_cesdata(t,regi,in,"price")
@@ -811,44 +811,44 @@ else
 * Then adjust eff and xi of labor and energy, such that prices match the
 * derivatives.
 loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
-  pm_cesdata(t_29,regi_dyn29,in,"xi") 
-  = pm_cesdata(t_29,regi_dyn29,in,"price")
-  * pm_cesdata(t_29,regi_dyn29,in,"quantity")
-  / pm_cesdata(t_29,regi_dyn29,"inco","quantity");
+  pm_cesdata(t,regi_dyn29,in,"xi") 
+  = pm_cesdata(t,regi_dyn29,in,"price")
+  * pm_cesdata(t,regi_dyn29,in,"quantity")
+  / pm_cesdata(t,regi_dyn29,"inco","quantity");
 
-  pm_cesdata(t_29,regi_dyn29,in,"eff")
-  = pm_cesdata(t_29,regi_dyn29,"inco","quantity")
-  / pm_cesdata(t_29,regi_dyn29,in,"quantity");
+  pm_cesdata(t,regi_dyn29,in,"eff")
+  = pm_cesdata(t,regi_dyn29,"inco","quantity")
+  / pm_cesdata(t,regi_dyn29,in,"quantity");
 );
 $endif.CES_cal_itr
 
 * Assert that all xi are above 0.
 sm_tmp = 0;
-loop ((t_29,regi_dyn29(regi),in_29)$(
-                                 pm_cesdata(t_29,regi,in_29,"xi")       le 0
-                             AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
-                             AND NOT sameas(in_29,"inco")                     ),
+loop ((t,regi_dyn29(regi),in_29)$(    
+                                     pm_cesdata(t,regi,in_29,"xi")       le 0
+                                 AND pm_cesdata(t,regi,in_29,"quantity") gt 0
+                                 AND NOT sameas(in_29,"inco")                 ),
   sm_tmp = 1;
 );
 
 if (sm_tmp,
   put logfile;
-  loop ((t_29,regi_dyn29(regi),in_29)$(
-                                 pm_cesdata(t_29,regi,in_29,"xi")       le 0
-                             AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
-                             AND NOT sameas(in_29,"inco")                     ),
-    put pm_cesdata.tn(t_29,regi,in_29,"xi"), " = ";
-    put pm_cesdata(t_29,regi,in_29,"xi") /;
+  loop ((t,regi_dyn29(regi),in_29)$(    
+                                     pm_cesdata(t,regi,in_29,"xi")       le 0
+                                 AND pm_cesdata(t,regi,in_29,"quantity") gt 0
+                                 AND NOT sameas(in_29,"inco")                 ),
+    put pm_cesdata.tn(t,regi,in_29,"xi"), " = ";
+    put pm_cesdata(t,regi,in_29,"xi") /;
 
     loop (cesOut2cesIn(out,in_29),
-      put @3, pm_cesdata.tn(t_29,regi,out,"quantity"), " = ",
-          pm_cesdata(t_29,regi,out,"quantity") /;
+      put @3, pm_cesdata.tn(t,regi,out,"quantity"), " = ",
+          pm_cesdata(t,regi,out,"quantity") /;
 
       loop (cesOut2cesIn2(out,in),
-        put @5, pm_cesdata.tn(t_29,regi,in,"price"), " = ",
-            pm_cesdata(t_29,regi,in,"price") /;
-        put @5, pm_cesdata.tn(t_29,regi,in,"quantity"), " = ",
-            pm_cesdata(t_29,regi,in,"quantity") /;
+        put @5, pm_cesdata.tn(t,regi,in,"price"), " = ",
+            pm_cesdata(t,regi,in,"price") /;
+        put @5, pm_cesdata.tn(t,regi,in,"quantity"), " = ",
+            pm_cesdata(t,regi,in,"quantity") /;
       );
     );
   );
@@ -926,7 +926,7 @@ $ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
 $ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
   !! set minimum price on ppf_industry
-  pm_cesdata(t_29(t),regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+  pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")
   = max(pm_cesdata(t,regi,in,"price"), 1e-5);
 $endif.FE_target
 $endif.subsectors
@@ -1202,17 +1202,17 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min (
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
 *** (a) for items in ces_29
-loop ((t_29,regi_dyn29(regi),ces_29(out,in),t0),
-  pm_cesdata(t_29,regi,in,"effgr")$( pm_cesdata(t_29,regi,in,"quantity") gt 0 )
-  = (pm_cesdata(t_29,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
-  * (pm_cesdata(t_29,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
- ** (1 / pm_cesdata(t_29,regi,out,"rho"));
+loop ((t,regi_dyn29(regi),ces_29(out,in),t0),
+  pm_cesdata(t,regi,in,"effgr")$( pm_cesdata(t,regi,in,"quantity") gt 0 )
+  = (pm_cesdata(t,regi,in,"eff") / pm_cesdata(t0,regi,in,"eff"))
+  * (pm_cesdata(t,regi,in,"xi")  / pm_cesdata(t0,regi,in,"xi"))
+ ** (1 / pm_cesdata(t,regi,out,"rho"));
 
-  pm_cesdata(t_29,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
-  pm_cesdata(t_29,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
+  pm_cesdata(t,regi,in,"eff") = pm_cesdata(t0,regi,in,"eff");
+  pm_cesdata(t,regi,in,"xi")  = pm_cesdata(t0,regi,in,"xi");
 );
 
-pm_cesdata(t_29,regi_dyn29(regi),"inco","effgr") = 1;
+pm_cesdata(t,regi_dyn29(regi),"inco","effgr") = 1;
 
 *** (b) for items beyond calibration, whose growth beyond t_29hist is treated 
 *** below
@@ -1283,7 +1283,7 @@ loop (cesRev2cesIO(counter,ipf_industry_dyn37(out))$(
     );
 );
 
-loop ((t_29(t),regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$( 
+loop ((t,regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$( 
                                                     NOT ue_industry_dyn37(in) ),
   pm_cesdata(t,regi,in,"xi")
   = pm_cesdata(t,regi,in,"price")
@@ -1391,10 +1391,18 @@ loop (complements_ref(in, in2),
 *** All efficiences after t_29_last are set to their t_29_last values. This is 
 *** done in order to avoid xi negative in the latest periods. Should not be 
 *** necessary to split pre and post-t_29_last with reasonable FE pathways
-loop ((t_29_last,in),
-pm_cesdata(t,regi_dyn29(regi),in,"effgr")$(t.val gt pm_ttot_val(t_29_last)) = pm_cesdata(t_29_last,regi,in,"effgr");
-pm_cesdata(t,regi_dyn29(regi),in,"eff")$(t.val gt pm_ttot_val(t_29_last)) = pm_cesdata(t_29_last,regi,in,"eff");
-pm_cesdata(t,regi_dyn29(regi),in,"xi")$(t.val gt pm_ttot_val(t_29_last)) = pm_cesdata(t_29_last,regi,in,"xi");
+* Exclude industry from this, since it may lead to infeasibilities.
+loop ((t,t_29_last,in)$(    t.val gt t_29_last.val 
+                        AND NOT in_industry_dyn37(in) ),
+  pm_cesdata(t,regi_dyn29(regi),in,"effGr")
+  = pm_cesdata(t_29_last,regi,in,"effGr");
+
+  pm_cesdata(t,regi_dyn29(regi),in,"eff")
+  = pm_cesdata(t_29_last,regi,in,"eff");
+
+  pm_cesdata(t,regi_dyn29(regi),in,"xi")
+  = pm_cesdata(t_29_last,regi,in,"xi");
+
 );
 
 ***_______________________ REPORTING FOR THE ELASTICITIES OF SUBSTITUTION_______________
