@@ -720,9 +720,10 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
 );
 display "after change up to en consistency", pm_cesdata;
 
-*** Then, we consider the bottom level of the CES tree, where capital and labor have specific restrictions
-*** Capital works as for the other ppfen, Labour will be the adjustment variable to meet inco
-*** xi will not be equal to the income share of capital (from equation price=derivative)
+* Then, we consider the bottom level of the CES tree, where capital and labor
+* have specific restrictions.  Capital works as for the other ppfen, Labour
+* will be the adjustment variable to meet inco.  xi will not be equal to the
+* income share of capital (from equation price = derivative)
 pm_cesdata(t_29,regi_dyn29, "kap","xi")
   = pm_cesdata(t_29,regi_dyn29,"kap","price")
   * pm_cesdata(t_29,regi_dyn29,"kap","quantity")
@@ -734,9 +735,16 @@ pm_cesdata(t_29,regi_dyn29,"kap","eff")
 
 display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 
-*** Second, adjust the price of labour, so that, whithout changing the price of
-*** energy, the Euler equation holds.
-pm_cesdata(t_29, regi_dyn29,"lab","price")
+* In the first CES calibration iteration, the price of lobour is adjusted such
+* that, without changing the price of energy, the Euler identity holds.
+* If the labour price becomes negative, this is an indication of unsuitable
+* ppfen prices, which need to be addressed in the calibration setup.
+* In subsequent iterations, the labour price is only adjusted if it would not
+* become negative, but the energy price will be adjusted otherwise.
+$ifthen.CES_cal_itr "%c_CES_calibration_iteration%" == "1"   !! c_CES_calibration_iteration
+* Adjust the price of labour, so that, whithout changing the price of energy,
+* the Euler equation holds.
+pm_cesdata(t_29,regi_dyn29,"lab","price")
   = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
         pm_cesdata(t_29,regi_dyn29,in,"price")
@@ -746,28 +754,89 @@ pm_cesdata(t_29, regi_dyn29,"lab","price")
   / pm_cesdata(t_29,regi_dyn29,"lab","quantity")
 ;
 
-*** Fourth, adjust eff and xi  of labour and energy so that the price matches the derivative.
-loop ((ces_29("inco",in))$( Not sameas(in, "kap")),
-pm_cesdata(t_29, regi_dyn29,in,"xi") = pm_cesdata(t_29, regi_dyn29,in,"price")
-                                       * pm_cesdata(t_29, regi_dyn29,in,"quantity")
-                                    / pm_cesdata(t_29, regi_dyn29,"inco","quantity");
-pm_cesdata(t_29, regi_dyn29,in,"eff") = pm_cesdata(t_29, regi_dyn29,"inco","quantity")
-                                     / pm_cesdata(t_29, regi_dyn29,in,"quantity");
- );
+* Adjust eff and xi of labour and energy so that the price matches the
+* derivative.
+loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
+  pm_cesdata(t_29,regi_dyn29,in,"xi") 
+  = pm_cesdata(t_29,regi_dyn29,in,"price")
+  * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+  / pm_cesdata(t_29,regi_dyn29,"inco","quantity");
 
-*** Assert xi gt 0
+  pm_cesdata(t_29,regi_dyn29,in,"eff")
+  = pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+  / pm_cesdata(t_29,regi_dyn29,in,"quantity");
+);
+$else.CES_cal_itr
+
+* Test if negative labour prices would result.
 sm_tmp = 0;
-loop ((t_29,regi_dyn29(regi),in_29)$(    pm_cesdata(t_29,regi,in_29,"xi")       le 0
-                                     AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
-                                     AND NOT sameas(in_29,"inco")                     ),
+loop ((t_29,regi_dyn29),
+  sm_tmp2
+  = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+    - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+        pm_cesdata(t_29,regi_dyn29,in,"price")
+      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+      )
+    )
+  / pm_cesdata(t_29,regi_dyn29,"lab","quantity");
+
+  if (sm_tmp2 le 0,
+    sm_tmp = 1;
+  );
+);
+
+* If no negative labour prices would result adjust the labour prices.
+if (sm_tmp eq 0,
+  pm_cesdata(t_29,regi_dyn29,"lab","price")
+  = ( pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+    - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+        pm_cesdata(t_29,regi_dyn29,in,"price")
+      * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+      )
+    )
+  / pm_cesdata(t_29,regi_dyn29,"lab","quantity")
+  ;
+* Else, adjust the price of energy.
+else
+  pm_cesdata(t_29(t),regi_dyn29(regi),"en","price")
+  = ( pm_cesdata(t,regi,"inco","quantity")
+    - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"en") ),
+        pm_cesdata(t,regi,in,"price")
+      * pm_cesdata(t,regi,in,"quantity")
+      )
+    )
+  / pm_cesdata(t,regi,"en","quantity");
+);
+
+* Then adjust eff and xi of labor and energy, such that prices match the
+* derivatives.
+loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
+  pm_cesdata(t_29,regi_dyn29,in,"xi") 
+  = pm_cesdata(t_29,regi_dyn29,in,"price")
+  * pm_cesdata(t_29,regi_dyn29,in,"quantity")
+  / pm_cesdata(t_29,regi_dyn29,"inco","quantity");
+
+  pm_cesdata(t_29,regi_dyn29,in,"eff")
+  = pm_cesdata(t_29,regi_dyn29,"inco","quantity")
+  / pm_cesdata(t_29,regi_dyn29,in,"quantity");
+);
+$endif.CES_cal_itr
+
+* Assert that all xi are above 0.
+sm_tmp = 0;
+loop ((t_29,regi_dyn29(regi),in_29)$(
+                                 pm_cesdata(t_29,regi,in_29,"xi")       le 0
+                             AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
+                             AND NOT sameas(in_29,"inco")                     ),
   sm_tmp = 1;
 );
 
 if (sm_tmp,
   put logfile;
-  loop ((t_29,regi_dyn29(regi),in_29)$(    pm_cesdata(t_29,regi,in_29,"xi")       le 0
-                                       AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
-                                       AND NOT sameas(in_29,"inco")                     ),
+  loop ((t_29,regi_dyn29(regi),in_29)$(
+                                 pm_cesdata(t_29,regi,in_29,"xi")       le 0
+                             AND pm_cesdata(t_29,regi,in_29,"quantity") gt 0
+                             AND NOT sameas(in_29,"inco")                     ),
     put pm_cesdata.tn(t_29,regi,in_29,"xi"), " = ";
     put pm_cesdata(t_29,regi,in_29,"xi") /;
 
@@ -783,8 +852,6 @@ if (sm_tmp,
       );
     );
   );
-
-  execute_unload "pm_cesdata.gdx", pm_cesdata, cesOut2cesIn;
 
   execute_unload "abort.gdx";
   abort "assertion xi gt 0 failed, see .log file for details";
