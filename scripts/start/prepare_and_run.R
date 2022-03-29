@@ -629,6 +629,26 @@ prepare <- function() {
                                 list(c("q80_balTrade.M", "!!q80_balTrade.M")),
                                 list(c("q80_budget_helper.M", "!!q80_budget_helper.M")))
     }
+
+    #KK filter out module 39 CCU fixings
+    if(cfg$gms$CCU == 'off') {
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v39_shSynTrans.L", "!!v39_shSynTrans.L")),
+                               list(c("v39_shSynGas.L", "!!v39_shSynGas.L")))
+
+      fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("v39_shSynTrans.FX", "!!v39_shSynTrans.FX")),
+                                  list(c("v39_shSynGas.FX", "!!v39_shSynGas.FX")))
+
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("v39_shSynTrans.M", "!!v39_shSynTrans.M")),
+                                list(c("v39_shSynGas.M", "!!v39_shSynGas.M")),
+                                list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
+                                list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
+                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
+                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
+    }
+
     #RP filter out module 40 techpol fixings
     if(cfg$gms$techpol == 'none'){
       margs_manipulateThis <- c(margs_manipulateThis,
