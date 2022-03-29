@@ -23,9 +23,11 @@ require(stringr)
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
+#' --debug: start a debug run with cm_nash_mode = debug
+#'
 #' --restart: interactively restart run(s).
 #'
-#' --test: Test configuration#'
+#' --test: Test configuration
 #'
 #' --testOneRegi: Starting the REMIND run(s) in testOneRegi mode.
 
@@ -200,7 +202,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("--restart", "--testOneRegi", "--test")
+accepted <- c("--debug", "--restart", "--testOneRegi", "--test")
 
 # initialize config.file
 config.file <- NA
@@ -209,7 +211,7 @@ config.file <- NA
 known <- argv %in% accepted
 if (!all(known)) {
   file_exists <- file.exists(argv[!known])
-  if (length(file_exists) > 1) stop("You provided two files, start.R can only handle one.")
+  if (sum(file_exists) > 1) stop("You provided two files, start.R can only handle one.")
   if (!all(file_exists)) stop("Unknown parameter provided: ",paste(argv[!known][!file_exists]," "))
   # set config file to not known parameter where the file actually exists
   config.file <- argv[!known][[1]] 
@@ -232,10 +234,16 @@ if ('--restart' %in% argv) {
     message("Restarting ", outputdir)
     load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
+    if ("--debug" %in% argv)       cfg$gms$cm_nash_mode <- "debug"
+    if ("--testOneRegi" %in% argv) cfg$gms$optimization <- "testOneRegi"
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
-    submit(cfg, restart = TRUE)
+    if (! '--test' %in% argv) {
+      submit(cfg, restart = TRUE)
+    } else {
+      message("   If this wasn't --test mode, I would have restarted ", cfg$title, ".")
+    }
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
 
@@ -345,6 +353,8 @@ if ('--restart' %in% argv) {
       }
     }
 
+    if ("--debug" %in% argv) cfg$gms$cm_nash_mode <- "debug"
+
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     filename <- paste0(scen,".RData")
     message("   Writing cfg to file ", filename)
@@ -369,4 +379,6 @@ if ('--restart' %in% argv) {
   }
 }
 
-if ('--test' %in% argv) message("\nFinished --test mode: Rdata files written to main REMIND folder, but no runs were started.")
+if ('--test' %in% argv) {
+  message("\nFinished --test mode: Rdata files were written, but no runs were started.")
+}
