@@ -80,7 +80,7 @@ for (scen in rownames(scenarios)) {
 
   # Set description
   if ("description" %in% names(scenarios) && ! is.na(scenarios[scen, "description"])) {
-    cfg$description <- scenarios[scen, "description"]
+    cfg$description <- gsub('"', '', scenarios[scen, "description"])
   } else {
     cfg$description <- paste0("REMIND climate run ", scen, " started by ", config.file, ".")
   }
