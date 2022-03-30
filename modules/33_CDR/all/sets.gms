@@ -25,6 +25,11 @@ teNoTransform2rlf_dyn33(all_te,rlf) "mapping for final energy to grades"
 	(dac) . 1
 /
 
+adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"
+/
+      dac
+/
+
 fe2fe_dac(entyFe, entyFe) "final energy to final energy mapping for heat and electricity generation for DAC"
 /
 	feels.feels
