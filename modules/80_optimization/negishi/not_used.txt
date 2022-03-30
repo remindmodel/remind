@@ -17,6 +17,7 @@ pm_Xport0,                      parameter,  ???
 pm_shPerm,                      parameter,  ???
 pm_emicapglob,                  parameter,  ???
 cm_iteration_max,               switch,     ???
+cm_abortOnConsecFail,           switch,     ???
 cm_nash_autoconverge,           switch,     ???
 sm_eps,                         scalar,     ???
 pm_emissions0,                  parameter,  ???
