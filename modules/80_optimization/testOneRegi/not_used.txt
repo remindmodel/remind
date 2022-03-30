@@ -13,6 +13,7 @@ vm_effGr,                       variable,   ???
 pm_welf,                        parameter,  ???
 pm_prtp,                        parameter,  ???
 cm_iteration_max,               switch,     ???
+cm_abortOnConsecFail,           switch,     ???
 cm_nash_autoconverge,           switch,     ???
 sm_eps,                         scalar,     ???
 pm_emissions0,                  parameter,  ???
