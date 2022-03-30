@@ -659,11 +659,14 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 p47_implEnergyBoundTax_prevIter(t,regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType);
 p47_implEnergyBoundTax0(t,regi) =
   sum((energyCarrierLevel,energyType)$p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType),
-	( p47_implEnergyBoundTax(t,regi,"PE",energyType) * sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) )$(sameas(energyCarrierLevel,"PE")) 
+	( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entyPe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
+	)$(sameas(energyCarrierLevel,"PE")) 
 	+
-	( p47_implEnergyBoundTax(t,regi,"SE",energyType) * sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) )$(sameas(energyCarrierLevel,"SE")) 
+	( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
+	)$(sameas(energyCarrierLevel,"SE")) 
 	+
-	( p47_implEnergyBoundTax(t,regi,"FE",energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) )$(sameas(energyCarrierLevel,"FE")) 
+	( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
+	)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
   )
 ;
 
@@ -673,18 +676,21 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
   if(sameas(targetType,"total"),
     p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
 		(
-			sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
+			sum(regi$regi_group(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
 		)$(sameas(energyCarrierLevel,"PE")) 
 		+
 		( 
-			sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
+			sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
 		)$(sameas(energyCarrierLevel,"SE")) 
 		+
 		( 
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-		)$(sameas(energyCarrierLevel,"FE")) 
+			+ ( - ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
+			+
+			( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			)$(sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
+		)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
 	;
   ); 
   if(sameas(targetType,"share"),
@@ -703,16 +709,22 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		+
 		( 	(
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			+ ( - ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
+			+
+			( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
 		  	)
 			/
 			(
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)	
+			+ ( - ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
+			+
+			(	- ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)	
+			)$(sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
 			)  
-		)$(sameas(energyCarrierLevel,"FE")) 
+		)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
 	;
   ); 
 );
@@ -731,9 +743,12 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		+
 		( 
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-		)$(sameas(energyCarrierLevel,"FE")) 
+			+ ( - ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
+			+
+			(	- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			)$(sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
+		)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
 	;
   ); 
   if(sameas(targetType,"share"),
@@ -752,16 +767,22 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 		+
 		( 	(
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			+ ( - ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
+			+
+			(	- ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+			)$(sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
 		  	)
 			/
 			(
 			sum(regi$regi_group(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
 			- ( sum(regi$regi_group(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-			- ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)	
+			)$(sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
+			+
+			(	- ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)	
+			)$(sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy")) 
 			)  
-		)$(sameas(energyCarrierLevel,"FE")) 
+		)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
 	;
   ); 
 );

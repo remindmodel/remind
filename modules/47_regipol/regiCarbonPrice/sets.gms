@@ -47,9 +47,12 @@ targetType "PE, SE or FE target type"
 
 energyCarrierLevel "energy carrier Level"
 /
-  PE  "Primary Energy"
-  SE  "Secondary Energy"
-  FE  "Final Energy"
+  PE                                 "Primary Energy"
+  SE                                 "Secondary Energy"
+  FE                                 "Final Energy"
+  FE_without_bunkers                 "Final Energy without bunkers"
+  FE_without_non_energy              "Final Energy without non-energy"
+  FE_without_bunkers_and_non_energy  "Final Energy without bunkers and non-energy"
 /
 
 energyType "energy type aggregated categories"
