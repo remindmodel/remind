@@ -316,7 +316,6 @@ cm_H2targets                "switches on capacity targets for electrolysis in ND
 cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
-cm_rcp_scen_build           "RCP scenario for energy demands in buildings"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
 cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
@@ -355,11 +354,12 @@ c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 1;         !! def = 1
-$setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
-c_macscen         = 1;         !! def = 1
+cm_emiscen        = 1;               !! def = 1
+$setglobal cm_rcp_scen  none         !! def = "none"
+$setglobal cm_rcp_scen_build  none   !! def = "none"
+cm_co2_tax_2020   = -1;              !! def = -1
+cm_co2_tax_growth = 1.05;            !! def = 1.05
+c_macscen         = 1;               !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1

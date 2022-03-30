@@ -1485,6 +1485,21 @@ $offdelim
 pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 
 
+*** RCP-dependent demands in buildings (climate impact)
+$ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
+Parameter
+f29_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
+/
+$ondelim
+$include "./modules/29_CES_parameters/calibrate/input/f29_fedemand_build.cs4r"
+$offdelim
+/;
+
+pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
+  f29_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+$endif.cm_rcp_scen_build
+
+
 $ifthen.subsectors "%industry%" == "subsectors"   !! industry
 *** Limit secondary steel production to 90 %.  This might be slightly off due
 *** to rounding in the mrremind package.

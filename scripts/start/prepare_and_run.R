@@ -311,7 +311,6 @@ prepare <- function() {
   # Calculate CES configuration string
   cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
                                          "buil_",cfg$gms$buildings,"-",
-                                         ifelse(cfg$gms$cm_rcp_scen_build != "none", paste0("demBuild_", cfg$gms$cm_rcp_scen_build, "-"), ""),
                                          "tran_",cfg$gms$transport,"-",
                                          "POP_", cfg$gms$cm_POPscen, "-",
                                          "GDP_", cfg$gms$cm_GDPscen, "-",
