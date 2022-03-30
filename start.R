@@ -25,7 +25,11 @@ require(stringr)
 #'
 #' --debug: start a debug run with cm_nash_mode = debug
 #'
-#' --restart: interactively restart run(s).
+#' --interactive: interactively select run(s) to be started
+#'
+#' --reprepare: rewrite full.gms and restart run
+#'
+#' --restart: interactively restart run(s)
 #'
 #' --test: Test configuration
 #'
@@ -51,52 +55,47 @@ get_line <- function(){
 
 ############## Define function: choose_folder #########################
 
-choose_folder <- function(folder,title="Please choose a folder") {
-  dirs <- NULL
-
-  # Detect all output folders containing fulldata.gdx
-  # For coupled runs please use the outcommented text block below
-
-  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
-
-  # DK: The following outcommented lines are specially made for listing results of coupled runs
-  #runs <- findCoupledruns(folder)
-  #dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
-  #dirs <- sub("./output/","",dirs)
-
-  dirs <- c("all",dirs)
-  cat("\n\n",title,":\n\n")
-  cat(paste(1:length(dirs), dirs, sep=": " ),sep="\n")
-    cat(paste(length(dirs)+1, "Search by the pattern.\n", sep=": "))
-  cat("\nNumber: ")
-    identifier <- get_line()
-  identifier <- strsplit(identifier,",")[[1]]
+chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE) {
+  booleanlist <- numeric(length(thelist)) # set to zero
+  thelist <- c("all", thelist)
+  message("\n\nPlease choose ", type,":\n\n")
+  message(paste(paste(1:length(thelist), thelist, sep=": " ), collapse="\n"))
+  message(paste(length(thelist)+1, "Search by pattern...", sep=": "))
+  message("\nNumber: ")
+  identifier <- strsplit(get_line(), ",")[[1]]
   tmp <- NULL
-  for (i in 1:length(identifier)) {
+  for (i in 1:length(identifier)) { # turns 2:5 into 2,3,4,5
     if (length(strsplit(identifier,":")[[i]]) > 1) tmp <- c(tmp,as.numeric(strsplit(identifier,":")[[i]])[1]:as.numeric(strsplit(identifier,":")[[i]])[2])
     else tmp <- c(tmp,as.numeric(identifier[i]))
   }
   identifier <- tmp
+  if (any(! identifier %in% seq(length(thelist)+1))) {
+    message("Try again, invalid choice: ", identifier)
+    return(chooseFromList(thelist[-1], type, returnboolean))
+  }
   # PATTERN
-    if(length(identifier==1) && identifier==(length(dirs)+1)){
-        cat("\nInsert the search pattern or the regular expression: ")
-        pattern <- get_line()
-        id <- grep(pattern=pattern, dirs[-1])
-        # lists all chosen directories and ask for the confirmation of the made choice
-        cat("\n\nYou have chosen the following directories:\n")
-        cat(paste(1:length(id), dirs[id+1], sep=": "), sep="\n")
-        cat("\nAre you sure these are the right directories?(y/n): ")
-        answer <- get_line()
-        if(answer=="y"){
-            return(dirs[id+1])
-        } else choose_folder(folder,title)
-    #
-    } else if(any(dirs[identifier] == "all")){
-        identifier <- 2:length(dirs)
-        return(dirs[identifier])
-    } else return(dirs[identifier])
+  if(length(identifier == 1) && identifier == (length(thelist)+1)){
+    message("\nInsert the search pattern or the regular expression: ")
+    pattern <- get_line()
+    id <- grep(pattern=pattern, thelist[-1])
+    # lists all chosen and ask for the confirmation of the made choice
+    message("\n\nYou have chosen the following ", type, ":")
+    message(paste(paste(1:length(id), thelist[id+1], sep=": "), collapse="\n"))
+    message("\nAre you sure these are the right ", type, "? (y/n): ")
+    if(get_line() == "y"){
+      identifier <- id+1
+      booleanlist[id] <- 1
+    } else {
+      return(chooseFromList(thelist[-1], type, returnboolean))
+    }
+  } else if(any(thelist[identifier] == "all")){
+    booleanlist[] <- 1
+    identifier <- 2:length(thelist)
+  } else {
+    booleanlist[identifier-1] <- 1
+  }
+  if (returnboolean) return(booleanlist) else return(thelist[identifier])
 }
-
 
 ############## Define function: configure_cfg #########################
 
@@ -174,7 +173,11 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         }
         # if the above has not created a path to a valid gdx, stop
         if (!file.exists(isettings[iscen, path_to_gdx])){
-          stop(paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ". Please specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run."))
+          stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
+          if (! "--test" %in% argv) stop(stoptext) else {
+            ignorederrors <<- ignorederrors + 1
+            message("Error: ", stoptext)
+          }
         }
       }
     }
@@ -202,7 +205,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("--debug", "--restart", "--testOneRegi", "--test")
+accepted <- c("--debug", "--interactive", "--reprepare", "--restart", "--testOneRegi", "--test")
 
 # initialize config.file
 config.file <- NA
@@ -217,25 +220,43 @@ if (!all(known)) {
   config.file <- argv[!known][[1]] 
 }
 
+if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
+  message("\nIt is impossible to combine --restart with --testOneRegi or --debug because full.gms has to be rewritten.\n",
+  "If this is what you want, use --reprepare instead, or answer with y:")
+  if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
+}
+ignorederrors <- 0 # counts ignored errors in --test mode
+
 ###################### Choose submission type #########################
 if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
 
-if ('--testOneRegi' %in% argv && !is.na(config.file)) {
+if ("--testOneRegi" %in% argv && !is.na(config.file)) {
   message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
 }
 
 # Restart REMIND in existing results folder (if required by user)
-if ('--restart' %in% argv) {
+if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  outputdirs <- choose_folder("./output","Please choose the runs to be restarted")
-  message("\nAlso restart subsequent runs? Enter Y, else leave empty:")
+  possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
+  # DK: The following outcommented lines are specially made for listing results of coupled runs
+  # runs <- lucode2::findCoupledruns("./output/")
+  # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
+  outputdirs <- chooseFromList(possibledirs, "runs", returnboolean = FALSE)
+  if ("--reprepare" %in% argv) {
+    message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
+  }
+  message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- get_line() %in% c("Y", "y")
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
-    load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
     if ("--debug" %in% argv)       cfg$gms$cm_nash_mode <- "debug"
     if ("--testOneRegi" %in% argv) cfg$gms$optimization <- "testOneRegi"
+    if (any(c("--debug", "--reprepare", "--testOneRegi") %in% argv) & ! "--test" %in% argv) {
+      system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms"))
+      system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx"))
+    }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
@@ -289,6 +310,7 @@ if ('--restart' %in% argv) {
     }
 
     # Select scenarios that are flagged to start, some checks for titles
+    if("--interactive" %in% argv) settings$start <- chooseFromList(rownames(settings), type = "runs", returnboolean = TRUE)
     scenarios <- settings[settings$start==1,]
     if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
@@ -380,5 +402,5 @@ if ('--restart' %in% argv) {
 }
 
 if ('--test' %in% argv) {
-  message("\nFinished --test mode: Rdata files were written, but no runs were started.")
+  message("\nFinished --test mode with ", ignorederrors, " errors. Rdata files were written, but no runs were started.")
 }
