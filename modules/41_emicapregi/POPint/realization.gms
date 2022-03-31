@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/41_emicapregi/POPint.gms
+*** SOF ./modules/41_emicapregi/POPint/realization.gms
 
 *' @description
 *' Emission caps/permits are allocated according to each region's share on
@@ -18,4 +18,4 @@ $Ifi "%phase%" == "equations" $include "./modules/41_emicapregi/POPint/equations
 $Ifi "%phase%" == "preloop" $include "./modules/41_emicapregi/POPint/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/41_emicapregi/POPint/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/41_emicapregi/POPint.gms
+*** EOF ./modules/41_emicapregi/POPint/realization.gms

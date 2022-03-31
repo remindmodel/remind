@@ -56,9 +56,16 @@ if (cm_IndCCSscen eq 1,
 pm_delta_kap(regi,ppfKap_industry_dyn37) = -log(1 / 4) / 50;
 
 *** FIXME: this is temporary data, insert meaningful figures!
-p37_energy_limit("ue_cement")          =  10000;
-p37_energy_limit("ue_steel_primary")   =  10000;
-p37_energy_limit("ue_steel_secondary") = 100000;
+p37_energy_limit("ue_cement")          = 1.8;
+p37_energy_limit("ue_steel_primary")   = 8;
+p37_energy_limit("ue_steel_secondary") = 1.3;
+
+p37_energy_limit(in)
+  = p37_energy_limit(in)   !! GJ/t
+  * 1e-3                   !! * TJ/GJ
+  / (8760 * 3600)          !! * s/year
+  * 1e9;                   !! * t/Gt
+                           !! = TWa/Gt
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -93,14 +100,11 @@ pm_macSwitch("co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
-Parameter 
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
-$offdelim
-  /
-;
+*** The steel recycling rate limit is assumed to increase from 90 to 99 %.
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  / 0.9
+  * 0.99;
 
 s37_clinker_process_CO2 = 0.5262;
 
@@ -186,6 +190,22 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 *** FS: CES markup cost industry
 *** default values of CES markup
 p37_CESMkup(t,regi,in) = 0;
+
+
+*** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
+*** to represent demand-side cost of electrification and reach higher subsitution rates
+p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feel_steel_secondary") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feel_steel_primary") = 200* sm_TWa_2_MWh * 1e-12;
+
+*** place markup cost of 100 USD/MWh(H2) on H2 nodes
+*** to represent demand-side cost of hydrogen usage and reach higher subsitution rates
+p37_CESMkup(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_otherInd") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_steel") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
+
 
 *** overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 

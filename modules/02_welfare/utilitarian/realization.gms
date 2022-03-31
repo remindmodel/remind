@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/02_welfare/realization.gms
+*** SOF ./modules/02_welfare/utilitarian/realization.gms
 
 *' @description
 *' The utilitarian realization loads the utilitarian aka. Benthamite social welfare function, in which social welfare is equal to the discounted intertemporal sum of utility, which itself is a function of per capita consumption.
@@ -15,4 +15,4 @@ $Ifi "%phase%" == "equations" $include "./modules/02_welfare/utilitarian/equatio
 $Ifi "%phase%" == "bounds" $include "./modules/02_welfare/utilitarian/bounds.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/02_welfare/utilitarian/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/02_welfare/realization.gms
+*** EOF ./modules/02_welfare/utilitarian/realization.gms

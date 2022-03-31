@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/50_damages/BurkeLike.gms
+*** SOF ./modules/50_damages/BurkeLike/realization.gms
 
 *' @description Output damages are calculated based on the damage function from @Burke2015, extended by a finite persistence term. The details are described in @Schultes2020. The persistence is a parameter to be specified in the config file (cm_damages_BurkeLike_persistenceTime). Two different damage realizations can be chosen via the switch cm_damages_BurkeLike_specification. "0" uses the short-run specification without lags, "1" the long-run specification. Damages are calculated on the regional level, the global temperature path from MAGICC is scaled to REMIND regions in module 16_downscaleTemperature, requiring the setting downscaleTemperature=CMIP5. 
 
@@ -16,4 +16,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/50_damages/BurkeLike/datainput
 $Ifi "%phase%" == "bounds" $include "./modules/50_damages/BurkeLike/bounds.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/50_damages/BurkeLike/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/50_damages/BurkeLike.gms
+*** EOF ./modules/50_damages/BurkeLike/realization.gms

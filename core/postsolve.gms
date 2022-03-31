@@ -13,7 +13,7 @@ pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiM
 
 *RP* added the historic 2010/2015 CO2 prices 
 if (cm_emiscen eq 9 or (cm_emiscen eq 10),
- pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
+ pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
 elseif ((cm_emiscen eq 2) OR (cm_emiscen eq 5) OR (cm_emiscen eq 8)),
  pm_pvpRegi(ttot,regi,"perm") =  pm_pricePerm(ttot) / pm_ts(ttot) + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
  
@@ -44,54 +44,23 @@ loop(ttot$(ttot.val ge 2005),
   );
 );
 
-
-if(cm_iterative_target_adj eq 1,
-***cb 20140212 Update tax levels/ multigasbudget values to reach the emission target / CO2 budget (s_actualbudgetco2 runs from 2000-2100)
-	if (cm_emiscen eq 6,
-		display sm_budgetCO2eqGlob;
-***cb from awp2 20140212: budget calculated as 2005-2095*pm_ts (92.5 years)  + 2100*5 + 2000*2.5; 
-*for the period 2000.5 until the end of 2002 (therefore the factor 2.5 in line 11) we have to use historical data:  6.9 GtC CO2 in 2001 according to http://cdiac.ornl.gov/ftp/ndp030/global.1751_2008.ems + 1.4GtC luc http://cdiac.ornl.gov/trends/landuse/houghton/1850-2005.txt
-		s_actualbudgetco2 =    sum(ttot$(ttot.val < 2100 AND ttot.val ge 2005), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2")))*sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2"))*sm_c_2_co2 * pm_ts("2100")/2
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiCdr.l("2090",regi,"co2") + vm_emiMac.l("2090",regi,"co2"))*sm_c_2_co2 * pm_ts("2090")/2
-                              + (6.9 + 1.4)*sm_c_2_co2 * 2.5;
-		display s_actualbudgetco2;
-		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,!!only for optimal iterations, and not after the last one
-			sm_budgetCO2eqGlob=sm_budgetCO2eqGlob*(s_referencebudgetco2/s_actualbudgetco2);
-			pm_budgetCO2eq(regi)=pm_budgetCO2eq(regi)*(s_referencebudgetco2/s_actualbudgetco2);
-		else
-			sm_budgetCO2eqGlob=sm_budgetCO2eqGlob;
-		);
-		display sm_budgetCO2eqGlob;
-	elseif cm_emiscen eq 9,
-		display pm_taxCO2eq;
-***cb from awp2 20140212: Kyoto emissions in 2030 to update tax level: unit [Gt CO2eq/yr]
-		s_actual2030co2eq = (sum(regi, vm_co2eq.l("2030",regi)*sm_c_2_co2 + vm_emiFgas.L("2030",regi,"emiFgasTotal")/1000));
-		display vm_co2eq.l;
-		display s_actual2030co2eq;
-		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max,!!only for optimal iterations, and not after the last one
-			pm_taxCO2eq(t,regi)=pm_taxCO2eq(t,regi)*min(((s_actual2030co2eq/s_reference2030co2eq)**8),2);
-		);
-    pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
-		display pm_taxCO2eq;
-	 );
-);
-
 if(cm_iterative_target_adj eq 4,
-*JeS* Update tax levels/ multigasbudget values to reach the CO2 FF&I budget (s_actualbudgetco2 runs from 2010-2100)
-
-*** budget calculated as 2015-2095 + 2100*5 + 2010*2.5 in Gt CO2; 
-s_actualbudgetco2 =           sum(ttot$(ttot.val < 2100 AND ttot.val > 2010), (sum(regi, vm_emiTe.l(ttot,regi,"co2") + vm_emiMacSector.l(ttot,regi,"co2cement_process")) * sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiMacSector.l("2100",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2100")/2
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiMacSector.l("2090",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2090")/2
-                              + sum(regi, vm_emiTe.l("2010",regi,"co2") + vm_emiMacSector.l("2010",regi,"co2cement_process"))*sm_c_2_co2 * pm_ts("2010")/2;
+*JeS* Update tax levels/ multigasbudget values to reach the CO2 FF&I budget (s_actualbudgetco2 runs from 2020-2100)
+*KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
+*** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
+*** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
+*** if test_TS is set, ttot = 2100 doesn't exist and the timestep for 2090 is equal to 20 years, hence 0.5 year of emissions for 2090 is added.
+s_actualbudgetco2 =           sum(ttot$(ttot.val le 2090 AND ttot.val > 2020), (sum(regi, vm_emiTe.l(ttot,regi,"co2") + vm_emiMacSector.l(ttot,regi,"co2cement_process")) * sm_c_2_co2 * pm_ts(ttot)))
+$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiMacSector.l("2100",regi,"co2cement_process")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
+$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiMacSector.l("2090",regi,"co2cement_process")) * sm_c_2_co2 * 0.5
+                              + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiMacSector.l("2020",regi,"co2cement_process")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
 display s_actualbudgetco2;
 		
 	if (cm_emiscen eq 6,
 		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
 		display sm_budgetCO2eqGlob;		
-			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob + ((1/sm_c_2_co2) * (c_budgetCO2FFI - s_actualbudgetco2));
-			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) + ((1/sm_c_2_co2) * (c_budgetCO2FFI - s_actualbudgetco2) / card(regi));
+			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob + ((1/sm_c_2_co2) * (c_budgetCO2from2020FFI - s_actualbudgetco2));
+			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) + ((1/sm_c_2_co2) * (c_budgetCO2from2020FFI - s_actualbudgetco2) / card(regi));
 		else
 			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob;
 		);
@@ -99,7 +68,7 @@ display s_actualbudgetco2;
 	elseif cm_emiscen eq 9,
 	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
 		display pm_taxCO2eq;		
-			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) * (s_actualbudgetco2/c_budgetCO2FFI);
+			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) * (s_actualbudgetco2/c_budgetCO2from2020FFI);
 		else
 			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
 		);
@@ -109,46 +78,50 @@ display s_actualbudgetco2;
 );
 
 if(cm_iterative_target_adj eq 5,
-*JeS* Update tax levels/ multigasbudget values to reach the CO2 budget (s_actualbudgetco2 runs from 2011-2100)
+*JeS* Update tax levels/ multigasbudget values to reach the CO2 budget (s_actualbudgetco2 runs from 2020-2100)
+*KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
+*** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
+*** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
+*** if test_TS is set, ttot = 2100 doesn't exist and the timestep for 2090 is equal to 20 years, hence 0.5 year of emissions for 2090 is added.
+s_actualbudgetco2 =           sum(ttot$(ttot.val le 2090 AND ttot.val > 2020), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
+$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
+$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiCdr.l("2090",regi,"co2") + vm_emiMac.l("2090",regi,"co2")) * sm_c_2_co2 * 0.5
+                              + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
 
-*** budget calculated as 2015-2095 + 2100*5.5 + 2010*2 in Gt CO2; 
-s_actualbudgetco2 =           sum(ttot$(ttot.val < 2100 AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, (vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2")))*sm_c_2_co2 * 5.5
-                              + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
 display s_actualbudgetco2;
 		
 	if (cm_emiscen eq 6,
 		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
 		display sm_budgetCO2eqGlob;		
-			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob * (c_budgetCO2/s_actualbudgetco2);
-			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) * (c_budgetCO2/s_actualbudgetco2);
+			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob * (c_budgetCO2from2020/s_actualbudgetco2);
+			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) * (c_budgetCO2from2020/s_actualbudgetco2);
 		else
 			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob;
 		);
 		display sm_budgetCO2eqGlob;
 	elseif cm_emiscen eq 9,
-	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
-		  sm_globalBudget_dev = s_actualbudgetco2 / c_budgetCO2; 
+	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
+		  sm_globalBudget_dev = s_actualbudgetco2 / c_budgetCO2from2020; 
     display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
-			if(ord(iteration) lt 3 or c_budgetCO2 > 1200,
+			if(ord(iteration) lt 3 or c_budgetCO2from2020 > 1200,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2from2020)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
 				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
-			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
+			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
 			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
 			else
 *** if budget has turned negative, reduce CO2 price by 20%
@@ -163,44 +136,48 @@ display s_actualbudgetco2;
 
 if(cm_iterative_target_adj eq 6,
 *JeS* Update tax levels/ multigasbudget values to reach the peak CO2 budget
- 
-p_actualbudgetco2(t) =           sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
-                              + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
-                              + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
-s_actualbudgetco2 = smax(t,p_actualbudgetco2(t));							  
+
+*KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
+*** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
+*** 0.5 year of emissions is added for the two boundaries, such that the budget includes emissions in ttot.
+p_actualbudgetco2(ttot)$(ttot.val > 2020) = sum(ttot2$(ttot2.val < ttot.val AND ttot2.val > 2020), (sum(regi, (vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot2)))
+                       + sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * ((pm_ttot_val(ttot)-pm_ttot_val(ttot-1))/2 + 0.5)
+                       + sum(regi, (vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2"))) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
+
+s_actualbudgetco2 = smax(t,p_actualbudgetco2(t));
 display s_actualbudgetco2;
 		
 	if (cm_emiscen eq 6,
 		if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max ,   !!only for optimal iterations, and not after the last one
 		display sm_budgetCO2eqGlob;		
-			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob * (c_budgetCO2/s_actualbudgetco2);
-			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) * (c_budgetCO2/s_actualbudgetco2);
+			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob * (c_budgetCO2from2020/s_actualbudgetco2);
+			pm_budgetCO2eq(regi) = pm_budgetCO2eq(regi) * (c_budgetCO2from2020/s_actualbudgetco2);
 		else
 			sm_budgetCO2eqGlob = sm_budgetCO2eqGlob;
 		);
 		display sm_budgetCO2eqGlob;
 	elseif cm_emiscen eq 9,
-	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
+	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
 		display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
-			if(ord(iteration) lt 3 or c_budgetCO2 > 1200,
+			if(ord(iteration) lt 3 or c_budgetCO2from2020 > 1200,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2from2020)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
 			else
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
 				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
-			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
+			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
 			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
 			else
 *** if budget has turned negative, reduce CO2 price by 20%
@@ -224,10 +201,13 @@ if(cm_iterative_target_adj eq 7,
   if( iteration.val eq 1, 
     p_taxCO2eq_until2150(t,regi) = pm_taxCO2eq(t,regi);
 	); 
- 
-p_actualbudgetco2(t) =           sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
-                              + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
-                              + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
+
+*KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
+*** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
+*** 0.5 year of emissions is added for the two boundaries, such that the budget includes emissions in ttot.
+p_actualbudgetco2(ttot)$(ttot.val > 2020) = sum(ttot2$(ttot2.val < ttot.val AND ttot2.val > 2020), (sum(regi, (vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot2)))
+                       + sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * ((pm_ttot_val(ttot)-pm_ttot_val(ttot-1))/2 + 0.5)
+                       + sum(regi, (vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2"))) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
 s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr AND t.val le 2100),p_actualbudgetco2(t));
 							
 
@@ -237,13 +217,13 @@ display s_actualbudgetco2;
 display p_actualbudgetco2;
 
 	if (cm_emiscen eq 9,
-	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
+	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
 		display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1600 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
-			if(ord(iteration) lt 3 or c_budgetCO2 > 1600,
+			if(ord(iteration) lt 3 or c_budgetCO2from2020 > 1600,
 			    !! change in CO2 price through adjustment: new price - old price; needed for adjustment option 2
-				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
+				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq(t,regi) * min(max((s_actualbudgetco2/c_budgetCO2from2020)** (25/(2 * iteration.val + 23)),0.5+iteration.val/208),2 - iteration.val/102)  - pm_taxCO2eq(t,regi);
 				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 				p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + pm_taxCO2eq_iterationdiff(t,regi) ;
 *** then switch to triangle-approximation based on last two iteration data points			
@@ -251,18 +231,18 @@ display p_actualbudgetco2;
 			    !! change in CO2 price through adjustment: new price - old price; the two instances of "pm_taxCO2eq" cancel out -> only the difference term
 				!! until cm_peakBudgYr: expolinear price trajectory
 				pm_taxCO2eq_iterationdiff_tmp(t,regi) = 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 				pm_taxCO2eq(t,regi)$(t.val le cm_peakBudgYr) = pm_taxCO2eq(t,regi) + 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-pm_taxCO2eq(t,regi)/2);
 			    p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi) + 
-				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-p_taxCO2eq_until2150(t,regi)/2);
+				                      max(pm_taxCO2eq_iterationdiff(t,regi) * min(max((c_budgetCO2from2020 - s_actualbudgetco2)/(s_actualbudgetco2 - s_actualbudgetco2_last),-2),2),-p_taxCO2eq_until2150(t,regi)/2);
 				pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 				!! after cm_peakBudgYr: adjustment so that emissions become zero: increase/decrease tax in each time step after cm_peakBudgYr by percentage of that year's total CO2 emissions of 2015 emissions
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
       display o_taxCO2eq_iterDiff_Itr;
 		else
-			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
+			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
 			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
 			else
 *** if budget has turned negative, reduce CO2 price by 20%
@@ -275,7 +255,7 @@ display p_actualbudgetco2;
 
 *** check if cm_peakBudgYr is correct: if global emissions already negative, move cm_peakBudgYr forward
 *** similar code block as used in iterative-adjust 9 below (credit to RP)
-    o_diff_to_Budg(iteration) = (c_budgetCO2 - s_actualbudgetco2);
+    o_diff_to_Budg(iteration) = (c_budgetCO2from2020 - s_actualbudgetco2);
     o_totCO2emi_peakBudgYr(iteration) = sum(t$(t.val = cm_peakBudgYr), sum(regi2, vm_emiAll.l(t,regi2,"co2")) );
     o_totCO2emi_allYrs(t,iteration) = sum(regi2, vm_emiAll.l(t,regi2,"co2") );
     o_change_totCO2emi_peakBudgYr(iteration) = sum(ttot$(ttot.val = cm_peakBudgYr), (o_totCO2emi_allYrs(ttot-1,iteration) - o_totCO2emi_allYrs(ttot+1,iteration) )/4 );  !! Only gives a tolerance range, exact value not important. Division by 4 somewhat arbitrary - could be 3 or 5 as well. 
@@ -333,9 +313,12 @@ if(cm_iterative_target_adj eq 9,
 *RP* Update tax levels/ multigasbudget values to reach the peak CO2 budget, with a linear increase afterwards given by cm_taxCO2inc_after_peakBudgYr
 *** The PeakBudgYr is found automatically by the algorithm (within the time window 2040-2100)
 
-  p_actualbudgetco2(t) =  sum(ttot$(ttot.val < t.val AND ttot.val > 2010), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
-                          + sum(regi, (vm_emiTe.l(t,regi,"co2") + vm_emiCdr.l(t,regi,"co2") + vm_emiMac.l(t,regi,"co2")))*sm_c_2_co2 * (pm_ts(t) * 0.5 + 0.5)
-                          + sum(regi, (vm_emiTe.l("2010",regi,"co2") + vm_emiCdr.l("2010",regi,"co2") + vm_emiMac.l("2010",regi,"co2")))*sm_c_2_co2 * 2;
+*KK* p_actualbudgetco2 for ttot > 2020. It includes emissions from 2020 to ttot (including ttot).
+*** (ttot.val - (ttot - 1).val)/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot2.
+*** 0.5 year of emissions is added for the two boundaries, such that the budget includes emissions in ttot.
+  p_actualbudgetco2(ttot)$(ttot.val > 2020) = sum(ttot2$(ttot2.val < ttot.val AND ttot2.val > 2020), (sum(regi, (vm_emiTe.l(ttot2,regi,"co2") + vm_emiCdr.l(ttot2,regi,"co2") + vm_emiMac.l(ttot2,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot2)))
+                       + sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * ((pm_ttot_val(ttot)-pm_ttot_val(ttot-1))/2 + 0.5)
+                       + sum(regi, (vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2"))) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
   s_actualbudgetco2 = smax(t$(t.val le cm_peakBudgYr),p_actualbudgetco2(t));
   
   o_peakBudgYr_Itr(iteration) = cm_peakBudgYr;
@@ -348,10 +331,10 @@ if(cm_iterative_target_adj eq 9,
   
 *** --------A: calculate the new CO2 price path,  the CO2 tax rescale factor----------------------------------------------------------  
   
-    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
+    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 2,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
       display pm_taxCO2eq;
 
-      if( ( ( p_actualbudgetco2("2100") > 1.1 * s_actualbudgetco2 ) AND ( abs(c_budgetCO2 - s_actualbudgetco2) < 50 ) AND (iteration.val < 12) ), 
+      if( ( ( p_actualbudgetco2("2100") > 1.1 * s_actualbudgetco2 ) AND ( abs(c_budgetCO2from2020 - s_actualbudgetco2) < 50 ) AND (iteration.val < 12) ), 
         display iteration;
 *** if end-of-century budget is higher than budget at peak point, AND end-of-century budget is already in the range of the target budget (+/- 50 GtC), treat as end-of-century budget 
 *** for this iteration. Only do this rough approach (jump to 2100) for the first iterations - at later iterations the slower adjustment of the peaking time should work better
@@ -364,9 +347,9 @@ if(cm_iterative_target_adj eq 9,
 *** --------A1: for that, calculate the CO2 tax rescale factor---
 
       if(iteration.val lt 10,
-        p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2) ) ** 3;
+        p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2from2020) ) ** 3;
       else
-        p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2) ) ** 2;
+        p_factorRescale_taxCO2(iteration) = max(0.1, (s_actualbudgetco2/c_budgetCO2from2020) ) ** 2;
       );
       p_factorRescale_taxCO2_Funneled(iteration) =
                 max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p_factorRescale_taxCO2(iteration)),
@@ -390,8 +373,8 @@ if(cm_iterative_target_adj eq 9,
       display o_taxCO2eq_iterDiff_Itr, o_taxCO2eq_Itr_1regi;
 	  
   
-    else !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 ))
-      if(s_actualbudgetco2 > 0 or abs(c_budgetCO2 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
+    else !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 ))
+      if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
         p_factorRescale_taxCO2(iteration)          = 1;
         p_factorRescale_taxCO2_Funneled(iteration) = 1;
         p_taxCO2eq_until2150(t,regi) = p_taxCO2eq_until2150(t,regi); !! nothing changes
@@ -403,14 +386,14 @@ if(cm_iterative_target_adj eq 9,
       p_taxCO2eq_until2150(t,regi) = p_factorRescale_taxCO2(iteration) * p_taxCO2eq_until2150(t,regi);
       pm_taxCO2eq(t,regi) = p_factorRescale_taxCO2(iteration) * pm_taxCO2eq(t,regi);
       );  
-    ); !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2 - s_actualbudgetco2) ge 2,
+    ); !! if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 2,
     
     display pm_taxCO2eq, p_taxCO2eq_until2150;
 
 	
 *** -------B: checking the peak timing, if cm_peakBudgYr is still correct or needs to be shifted-----------------------
 
-    o_diff_to_Budg(iteration) = (c_budgetCO2 - s_actualbudgetco2);
+    o_diff_to_Budg(iteration) = (c_budgetCO2from2020 - s_actualbudgetco2);
     o_totCO2emi_peakBudgYr(iteration) = sum(t$(t.val = cm_peakBudgYr), sum(regi2, vm_emiAll.l(t,regi2,"co2")) );
     o_totCO2emi_allYrs(t,iteration) = sum(regi2, vm_emiAll.l(t,regi2,"co2") );
 	
@@ -880,11 +863,13 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
 ;
 
 *CG**ML*: capital interest rate
-***p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2150)
-***    = (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
-***      (vm_cons.l(ttot-1,regi)/pm_pop(ttot-1,regi)) )
-***      ** (1 / ( pm_ttot_val(ttot+1)- pm_ttot_val(ttot-1))) - 1) + pm_prtp(regi)
-***;
+p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
+    = (( (vm_cons.l(ttot+1,regi)/pm_pop(ttot+1,regi)) /
+      (vm_cons.l(ttot-1,regi)/pm_pop(ttot-1,regi)) )
+      ** (1 / ( pm_ttot_val(ttot+1)- pm_ttot_val(ttot-1))) - 1) + pm_prtp(regi)
+;
 
+*** CG: growth rate after 2100 is very small (0.02 instead of around 0.05) due to various artefact, we simply set interest rates to 0.05 after 2100
+p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 
 *** EOF ./core/postsolve.gms

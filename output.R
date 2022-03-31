@@ -29,7 +29,7 @@ library(gms)
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
-  readArgs("outputdir", "output", "comp", "remind_dir")
+  readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix")
 }
 
 # Setting relevant paths
@@ -60,7 +60,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   # Detect all output folders containing fulldata.gdx
   # For coupled runs please use the outcommented text block below
 
-  dirs <- sub("/fulldata.gdx", "", sub("./output/", "", Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
+  dirs <- basename(dirname(Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
 
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- findCoupledruns(folder)
@@ -84,7 +84,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   }
   identifier <- tmp
   # PATTERN
-  if (length(identifier == 1) && identifier == (length(dirs) + 1)) {
+  if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
     cat("\nInsert the search pattern or the regular expression: ")
     pattern <- get_line()
     id <- grep(pattern = pattern, dirs[-1])
@@ -132,9 +132,34 @@ choose_mode <- function(title = "Please choose the output mode") {
   } else if (identifier == 2) {
     comp <- TRUE
   } else {
-    stop("This mode is invalid. Please choose a valid mode")
+    stop("This mode is invalid. Please choose a valid mode.")
   }
   return(comp)
+}
+
+choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
+  slurm_options <- c("priority", "short", "standby", "priority --mem=8000", "priority --mem=32000")
+  cat("\n\n", title, ":\n\n")
+  cat(paste(seq_along(slurm_options), slurm_options, sep = ": "), sep = "\n")
+  cat("\nNumber: ")
+  identifier <- get_line()
+  if (identifier == "") {
+    identifier <- 1
+  }
+  if (!identifier %in% seq(length(slurm_options))) {
+    stop("This slurm mode is invalid. Please choose a valid mode.")
+  }
+  return(paste0("--qos=", slurm_options[as.numeric(identifier)]))
+}
+
+choose_filename_prefix <- function(modules, title = "") {
+  cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
+  cat(" For example compareScenarios uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
+  filename_prefix <- get_line()
+  if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
+    filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
+  }
+  return(filename_prefix)
 }
 
 if (exists("source_include")) {
@@ -152,6 +177,10 @@ if (comp == TRUE) {
   }
   # Select output directories if not defined by readArgs
   if (!exists("outputdir")) {
+    if ("policyCosts" %in% output) {
+      message("\nFor policyCosts, specify policy runs and reference runs alternatingly:")
+      message("3,1,4,1 compares runs 3 and 4 with 1.")
+    }
     if (!exists("remind_dir")) {
       temp <- choose_folder("./output", "Please choose the runs to be used for output generation")
       outputdirs <- temp
@@ -173,11 +202,32 @@ if (comp == TRUE) {
     outputdirs <- outputdir
   }
 
+  # ask for filename_prefix, if one of the modules that use it is selected
+  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2")
+  if (!exists("filename_prefix")) {
+    if (any(modules_using_filename_prefix %in% output)) {
+      filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
+    } else {
+      filename_prefix <- ""
+    }
+  }
+
+  # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
+  modules_using_slurmConfig <- c("compareScenarios", "compareScenarios2")
+  if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
+    slurmConfig <- choose_slurmConfig_priority_standby()
+  }
+  if (exists("slurmConfig")) {
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig)
+    }
+  }
+
   # Set value source_include so that loaded scripts know, that they are
   # included as source (instead of a load from command line)
   source_include <- TRUE
 
-  # Execute output scripts over all choosen folders
+  # Execute output scripts over all chosen folders
   for (rout in output) {
     name <- paste(rout, ".R", sep = "")
     if (file.exists(paste("scripts/output/comparison/", name, sep = ""))) {
@@ -192,6 +242,12 @@ if (comp == TRUE) {
     }
   }
 } else {
+  # Select an output module if not defined by readArgs
+  if (!exists("output")) {
+    output <- choose_module("./scripts/output/single",
+                            "Please choose the output module to be used for output generation")
+  }
+
   # Select an output directory if not defined by readArgs
   if (!exists("outputdir")) {
     if (!exists("remind_dir")) {
@@ -216,11 +272,15 @@ if (comp == TRUE) {
   }
 
   # define slurm class or direct execution
-  if (!exists("source_include")) {
+  if (! exists("source_include")) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
-    source("scripts/start/choose_slurmConfig.R")
-    slurmConfig <- choose_slurmConfig()
+    if (! exists("slurmConfig")) {
+      slurmConfig <- paste0(choose_slurmConfig_priority_standby(), " --nodes=1 --tasks-per-node=1")
+    }
+    if (slurmConfig %in% c("priority", "short", "standby")) {
+      slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
+    }
   } else {
     # if being sourced by another script execute the output scripts directly without sending them to the cluster
     slurmConfig <- "direct"
@@ -228,12 +288,6 @@ if (comp == TRUE) {
 
   # Execute outputscripts for all choosen folders
   for (outputdir in outputdirs) {
-
-    # Select an output module if not defined by readArgs
-    if (!exists("output")) {
-      output <- choose_module("./scripts/output/single",
-                              "Please choose the output module to be used for output generation")
-    }
 
     if (exists("cfg")) {
       title <- cfg$title
@@ -276,36 +330,37 @@ if (comp == TRUE) {
 
     # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
     if (all(is.na(output))) {
-      cat(paste("No output generation, as output was set to NA, as for example for --testOneRegi.\n"))
-    }
-
-    for (rout in output) {
-      name <- paste(rout, ".R", sep = "")
-      if (file.exists(paste0("scripts/output/single/", name))) {
-        if (slurmConfig == "direct") {
-          # execute output script directly (without sending it to slurm)
-          print(paste("Executing", name))
-          tmp.env <- new.env()
-          tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
-          #        rm(list=ls(tmp.env),envir=tmp.env)
-          rm(tmp.env)
-          gc()
-          if (!is.null(tmp.error)) {
-            warning("Script ", name, " was stopped by an error and not executed properly!")
+      message("No output generation, as output was set to NA, as for example for --testOneRegi.")
+    } else {
+      for (rout in output) {
+        name <- paste(rout, ".R", sep = "")
+        if (file.exists(paste0("scripts/output/single/", name))) {
+          if (slurmConfig == "direct") {
+            # execute output script directly (without sending it to slurm)
+            message("Executing ", name)
+            tmp.env <- new.env()
+            tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
+            #        rm(list=ls(tmp.env),envir=tmp.env)
+            rm(tmp.env)
+            gc()
+            if (!is.null(tmp.error)) {
+              warning("Script ", name, " was stopped by an error and not executed properly!")
+            }
+          } else {
+            # send the output script to slurm
+            slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", outputdir, " --output=", outputdir,
+                               ".txt --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
+                               ".R  outputdir=", outputdir, "\"")
+            message("Sending to slurm: ", name)
+            system(slurmcmd)
+            Sys.sleep(1)
           }
-        } else {
-          # send the output script to slurm
-          slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", outputdir, " --output=", outputdir,
-                             ".txt --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
-                             ".R  outputdir=", outputdir, "\"")
-          cat("Sending to slurm: ", name, "\n")
-          system(slurmcmd)
-          Sys.sleep(1)
         }
       }
+      # finished
+      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting "), "output generation for ", outputdir, "!\n")
     }
-    # finished
-    cat(paste("\nFinished output generation for", outputdir, "!\n\n"))
+
     rm(source_include)
     if (!is.null(warnings())) {
       print(warnings())

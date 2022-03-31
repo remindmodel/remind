@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/16_downscaleTemperature/16_downscaleTemperature.gms
+*** SOF ./modules/16_downscaleTemperature/module.gms
 
 *' @title downscaleTemperature
 *'
@@ -16,4 +16,4 @@
 $Ifi "%downscaleTemperature%" == "CMIP5" $include "./modules/16_downscaleTemperature/CMIP5/realization.gms"
 $Ifi "%downscaleTemperature%" == "off" $include "./modules/16_downscaleTemperature/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/16_downscaleTemperature/16_downscaleTemperature.gms
+*** EOF ./modules/16_downscaleTemperature/module.gms

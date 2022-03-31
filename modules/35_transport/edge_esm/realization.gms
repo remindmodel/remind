@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/35_transport/edge_esm.gms
+*** SOF ./modules/35_transport/edge_esm/realization.gms
 
 *' @description Transport demand composition is calculated based on the EDGE-transport model.
 *' This realization allows the EDGE-transport model to interact with REMIND. EDGE is set to run in between iterations. 
@@ -27,4 +27,4 @@ $Ifi "%phase%" == "presolve" $include "./modules/35_transport/edge_esm/presolve.
 $Ifi "%phase%" == "postsolve" $include "./modules/35_transport/edge_esm/postsolve.gms"
 $Ifi "%phase%" == "output" $include "./modules/35_transport/edge_esm/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/35_transport/edge_esm.gms
+*** EOF ./modules/35_transport/edge_esm/realization.gms

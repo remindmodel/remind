@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
+*** SOF ./modules/47_regipol/regiCarbonPrice/equations.gms
 
 ***$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off"
 *** FS: calculate emissions used in regional target
@@ -139,4 +139,4 @@ q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
 
 $endIf.cm_implicitFE
 
-*** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
+*** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

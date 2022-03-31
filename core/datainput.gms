@@ -9,6 +9,8 @@
 *AJS* technical. initialize parameters so that they are read from gdx
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
+vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
+
 
 *AJS* initialize parameter (avoid compilation errors)
 * do this at the start of datainput to prevent accidental overwriting
@@ -210,12 +212,13 @@ if (c_techAssumptScen eq 3,
 
 display fm_dataglob;
 
-***INNOPATHS
+*** Overwrite default technology parameter values based on specific scenario configs
 $if not "%cm_INNOPATHS_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_INNOPATHS_incolearn% /;
 $if not "%cm_INNOPATHS_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_INNOPATHS_inco0Factor% /;
 $if not "%cm_INNOPATHS_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
-
+$if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
+$if not "%cm_learnRate%" == "off" fm_dataglob("learn",te)$p_new_learnRate(te)=p_new_learnRate(te);
 
 *RP* the new cost data in generisdata_tech is now in $2015. As long as the model runs in $2005, these values have first to be converted to D2005 by dividing by 1.2 downwards
 fm_dataglob("inco0",te)              = sm_D2015_2_D2005 * fm_dataglob("inco0",te);
@@ -1272,22 +1275,10 @@ $if  "%cm_rcp_scen%" == "none"    sm_budgetCO2eqGlob = 20000.0000;
   );
 );
 
-if(cm_iterative_target_adj eq 1,
-***only one long budget period for scenarios with iterative adjustment of budget, so that p_referencebudgetco2 is met from 2000-2100
-sm_endBudgetCO2eq      = 2150;
-s_referencebudgetco2    = 1500;
-sm_budgetCO2eqGlob = 700;
-);
 display sm_budgetCO2eqGlob;
 ***-----------------------------------------------------------------------------
 
 p_datacs(regi,"peoil") = 0;   !! RP: 0 turn off the explicit calculation of non-energy use, as it is included in the oil total. Emission correction happens through rescaling of fm_dataemiglob
-
-
-
-*cb 20120405 reference CO2eq emissions in 2030 from all Kyoto gases, in Gt CO2eq, for iterative modPol scenario
-if(cm_emiscen eq 9 AND cm_iterative_target_adj eq 1, s_reference2030co2eq    = 60.8;
-);
 
 ***------------------------------------------------------------------------------------
 ***                                ESM  MAC data
@@ -1488,15 +1479,15 @@ pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
 Parameter
-f29_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
+f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
 /
 $ondelim
-$include "./modules/29_CES_parameters/calibrate/input/f29_fedemand_build.cs4r"
+$include "./core/input/f_fedemand_build.cs4r"
 $offdelim
 /;
 
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
-  f29_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+  f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
 

@@ -4,12 +4,27 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/IntC/bounds.gms
+
 ***-----------------------------------------------------------
 ***                  module specific bounds
 ***------------------------------------------------------------
 
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
+
+$IFTHEN.dispatchSetyDown not "%cm_dispatchSetyDown%" == "off"
+  loop(pe2se(enty,enty2,te),
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSetyDown% / 100 ) * pm_cf(t,regi,te);
+  );
+$ENDIF.dispatchSetyDown
+
+$IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
+  loop(pe2se(enty,enty2,te)$sameas(enty2,"seel"),  
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSeelDown% / 100 ) * pm_cf(t,regi,te);  
+  );
+$ENDIF.dispatchSeelDown
+
 
 *** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
 *** to avoid infeasibilities with vintage biomass capacities
@@ -61,5 +76,4 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
 *** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1
 vm_cap.fx(t,regi,"elh2VRE",rlf) = 0;
 
-
-
+*** EOF ./modules/32_power/IntC/bounds.gms

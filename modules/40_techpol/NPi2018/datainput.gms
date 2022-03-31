@@ -4,8 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NPi2018/datainput.gms 
-*** SOF means start fo file and EOF means end of file. Use these before and after the body of the code
+*** SOF ./modules/40_techpol/NPi2018/datainput.gms
 
 Table f40_TechBound(ttot,all_regi,NDC_version,all_te) "Table for all NDC versions with NDC capacity targets (GW)"
 $offlisting

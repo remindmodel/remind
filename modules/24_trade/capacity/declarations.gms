@@ -84,4 +84,4 @@ EQUATIONS
   q24_costTradePrice(ttot,all_regi,all_enty)                                  "Total income or expense generated from trade"
 ;
 
-*** EOF ./modules/24_trade/capacity/declarations
+*** EOF ./modules/24_trade/capacity/declarations.gms

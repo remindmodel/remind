@@ -584,6 +584,29 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 ;
 
 
+***--------------------------------------------------
+*' Sectoral energy-emissions used for taxation markup with cm_CO2TaxSectorMarkup
+***--------------------------------------------------
+
+*** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
+q_emiCO2Sector(t,regi,sector)$(sameAs(sector, "build") OR
+                                sameAs(sector, "trans"))..
+vm_emiCO2Sector(t,regi,sector)
+  =e=
+*** calculate direct CO2 emissions per end-use sector
+    sum(se2fe(entySe,entyFe,te),
+      sum(emiMkt$(sector2emiMkt(sector,emiMkt)),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+    )
+  )
+*** substract emissions of bunker fuels for transport sector
+  - sum(se2fe(entySe,entyFe,te),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,"other")
+  )$(sameAs(sector, "trans"))
+;
+
 ***------------------------------------------------------
 *' Mitigation options that are independent of energy consumption are represented
 *' using marginal abatement cost (MAC) curves, which describe the
@@ -862,7 +885,7 @@ q_limitSeel2fehes(t,regi)..
     - vm_prodSe(t,regi,"pegeo","sehe","geohe") * pm_prodCouple(regi,"pegeo","sehe","geohe","seel")
 ;
 
-*' Requires minimum share of liquids from oil in total liquids of 5%:
+*' Requires minimum share of liquids from oil in total fossil liquids of 5%:
 q_limitShOil(t,regi)..
     sum(pe2se("peoil",enty2,te)$(sameas(te,"refliq") ), 
        vm_prodSe(t,regi,"peoil",enty2,te) 
@@ -954,17 +977,10 @@ q_heat_limit(t,regi)$(t.val gt 2020)..
 ;
 $ENDIF.sehe_upper
 
-$ontext
-q_H2BICouple(ttot,regi)$(ttot.val ge max(2010, cm_startyear))..
-    sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"build")), 
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  * sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"indst")),
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  =g=
-  0
-;
-$offtext
 
+***---------------------------------------------------------------------------
+*' H2 t&d capacities in buildings and industry to avoid switching behavior between both sectors
+***---------------------------------------------------------------------------
 
 q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
   vm_cap(t,regi,"tdh2i","1") + vm_cap(t,regi,"tdh2b","1")

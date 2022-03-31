@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/33_CDR/all.gms
+*** SOF ./modules/33_CDR/all/realization.gms
 
 *' @description 
 *' In this realization, direct air capture and enhanced weathering can be used to remove CO2 from the atmosphere in addition to BECCS and afforestation. Based on Broehm et al. we assume an energy demand of 
@@ -18,4 +18,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/33_CDR/all/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/33_CDR/all/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/33_CDR/all/bounds.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/33_CDR/all.gms
+*** EOF ./modules/33_CDR/all/realization.gms
