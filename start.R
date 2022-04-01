@@ -234,6 +234,12 @@ if ("--testOneRegi" %in% argv && !is.na(config.file)) {
   message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
 }
 
+if ("--testOneRegi" %in% argv) {
+  message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
+  "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
+  testOneRegi_region <- get_line()
+}
+
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
@@ -242,17 +248,20 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
   outputdirs <- chooseFromList(possibledirs, "runs", returnboolean = FALSE)
+  message("\nAlso restart subsequent runs? Enter y, else leave empty:")
+  restart_subsequent_runs <- get_line() %in% c("Y", "y")
   if ("--reprepare" %in% argv) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
   }
-  message("\nAlso restart subsequent runs? Enter y, else leave empty:")
-  restart_subsequent_runs <- get_line() %in% c("Y", "y")
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
     load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
     if ("--debug" %in% argv)       cfg$gms$cm_nash_mode <- "debug"
-    if ("--testOneRegi" %in% argv) cfg$gms$optimization <- "testOneRegi"
+    if ("--testOneRegi" %in% argv) {
+      cfg$gms$optimization <- "testOneRegi"
+      if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+    }
     if (any(c("--debug", "--reprepare", "--testOneRegi") %in% argv) & ! "--test" %in% argv) {
       system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms"))
       system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx"))
@@ -349,6 +358,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$results_folder   <- "output/testOneRegi"
       # delete existing Results directory
       cfg$force_replace    <- TRUE
+      if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
 
     cat("\n",scen,"\n")
@@ -363,6 +373,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         cfg$output           <- NA
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
+        if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       check_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
