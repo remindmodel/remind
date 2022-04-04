@@ -36,13 +36,13 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 taxType "PE, SE or FE tax type"
 /
 tax
-subsidy
+sub
 /
 
 targetType "PE, SE or FE target type"
 /
-  total  "absolute target"
-  share  "relative target"
+  t  "absolute target (t=total)"
+  s  "relative target (s=share)"
 /
 
 energyCarrierLevel "energy carrier Level"
@@ -50,9 +50,9 @@ energyCarrierLevel "energy carrier Level"
   PE                                 "Primary Energy"
   SE                                 "Secondary Energy"
   FE                                 "Final Energy"
-  FE_without_bunkers                 "Final Energy without bunkers"
-  FE_without_non_energy              "Final Energy without non-energy"
-  FE_without_bunkers_and_non_energy  "Final Energy without bunkers and non-energy"
+  FE_wo_b                 "Final Energy without bunkers"
+  FE_wo_n_e              "Final Energy without non-energy"
+  FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
 /
 
 energyType "energy type aggregated categories"

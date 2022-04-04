@@ -56,7 +56,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 			s47_prefreeYear = ttot2.val;
 		);
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
-		if(sameas(taxType,"subsidy"),
+		if(sameas(taxType,"sub"),
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = - p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
 		);
 	);
@@ -69,7 +69,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(p47_implE
 			s47_prefreeYear = ttot2.val;
 		);
 		p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_prefreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) * ((t.val-s47_prefreeYear)/(ttot.val-s47_prefreeYear));
-		if(sameas(taxType,"subsidy"),
+		if(sameas(taxType,"sub"),
 			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = - p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType);
 		);
 	);

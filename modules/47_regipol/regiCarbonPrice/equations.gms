@@ -158,7 +158,7 @@ q47_implEnergyBoundTax(t,regi)$(t.val ge max(2010,cm_startyear))..
 	+
 	( 
 		p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
-	)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_without_bunkers") or sameas(energyCarrierLevel,"FE_without_non_energy") or sameas(energyCarrierLevel,"FE_without_bunkers_and_non_energy"))
+	)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
   ) 
   -
   p47_implEnergyBoundTax0(t,regi)
