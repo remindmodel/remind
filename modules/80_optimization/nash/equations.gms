@@ -13,7 +13,7 @@ q80_budg_intertemp(regi)..
   + SUM(ttot$(ttot.val ge 2005),
      pm_ts(ttot)
       * (
-        SUM(trade$(NOT tradeSe(trade)),
+        SUM(trade$(NOT tradeSe(trade) and NOT tradeCap(trade)),
               (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade)) * pm_pvp(ttot,trade)
            * ( 1 +  sm_fadeoutPriceAnticip*p80_etaXp(trade)
                    * ( (pm_Xport0(ttot,regi,trade) - p80_Mport0(ttot,regi,trade)) - (vm_Xport(ttot,regi,trade) - vm_Mport(ttot,regi,trade))
@@ -21,6 +21,10 @@ q80_budg_intertemp(regi)..
 		     )
                    / (p80_normalize0(ttot,regi,trade) + sm_eps)
               )
+        )
+      + SUM(tradeCap, 
+          + sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,regi,trade_regi,tradeModes)  ) * pm_XPortsPrice(ttot,regi,tradeCap) )
+          - sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,trade_regi,regi,tradeModes)  ) * pm_XPortsPrice(ttot,trade_regi,tradeCap) )
         )
 	  + pm_pvp(ttot,"good") * pm_NXagr(ttot,regi)
       )

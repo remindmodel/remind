@@ -39,13 +39,18 @@ q24_limitCapTradeXport(t,regi,teTradeXport)..
     v24_capTrade(t,regi,regi,teTradeXport)
 ;
 q24_limitCapTradeMport(t,regi,teTradeMport)..
-    sum( tradeMode2te(tradeModes, teTradeMport) , sum(trade_regi$(not sameAs(trade_regi,regi)),v24_trade(t,trade_regi,regi,tradeModes)) )
+    sum( tradeMode2te(tradeModes, teTradeMport) , sum(trade_regi$(not sameAs(trade_regi,regi)), v24_trade(t,trade_regi,regi,tradeModes)) )
   =l=
     v24_capTrade(t,regi,regi,teTradeMport)
 ;
 
 *** capacity can be built over years, but also depreciates
-q24_capTrade(ttot,trade_regi,regi,teTrade)$( (ttot.val ge cm_startyear) )..
+q24_capTrade(ttot,trade_regi,regi,teTrade)$( 
+      (ttot.val ge cm_startyear)
+  and ((teTradeBilat(teTrade) and not sameAs(regi,trade_regi))
+  or   (teTradeMport(teTrade) and sameAs(regi,trade_regi))
+  or   (teTradeXport(teTrade) and sameAs(regi,trade_regi)))
+)..
     v24_capTrade(ttot,trade_regi,regi,teTrade)
   =e=
 ***    (1 - v24_capEarlyRetiTrade(ttot,trade_regi,regi,tradeCap,teTradeTransp))
@@ -64,8 +69,13 @@ q24_capTrade(ttot,trade_regi,regi,teTrade)$( (ttot.val ge cm_startyear) )..
 ;
 
 *** delta cap constrained to small increase
-q24_limitDeltaCap(ttot,trade_regi,regi,teTrade)$( (ttot.val gt cm_startyear) )..
-    v24_deltaCapTrade(ttot,trade_regi,regi,teTrade)
+q24_limitDeltaCap(ttot,trade_regi,regi,teTrade)$( 
+      (ttot.val ge cm_startyear)
+  and ((teTradeBilat(teTrade) and not sameAs(regi,trade_regi))
+  or   (teTradeMport(teTrade) and sameAs(regi,trade_regi))
+  or   (teTradeXport(teTrade) and sameAs(regi,trade_regi)))
+)..
+v24_deltaCapTrade(ttot,trade_regi,regi,teTrade)
   =l=
     v24_capTrade(ttot-1,trade_regi,regi,teTrade)
   * (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
@@ -78,28 +88,22 @@ q24_limitDeltaCap(ttot,trade_regi,regi,teTrade)$( (ttot.val gt cm_startyear) )..
 ***             TRADE MODEL EQUATIONS -- COST AND BUDGET TERMS
 ***-------------------------------------------------------------------------------
 
-*** cost from purchasing/buying
-q24_costTradeBuyMport(t,regi,tradeCap)..
-    v24_costTradeBuyMport(t,regi,tradeCap) =e= sum(  (trade_regi,tradeEnty2Mode(tradeCap,tradeModes)), v24_trade(t,trade_regi,regi,tradeModes) * pm_XPortsPrice(t,trade_regi,tradeCap)  )
-;
-
-q24_costTradeBuyXport(t,regi,tradeCap)..
-    v24_costTradeBuyXport(t,regi,tradeCap) =e= sum(  (trade_regi,tradeEnty2Mode(tradeCap,tradeModes)), v24_trade(t,trade_regi,regi,tradeModes) * pm_XPortsPrice(t,regi,tradeCap)  )
-;
-
 *** cost from transportation capacities
 *** cost for a tradeCap enty for importer regi = sum over all modes carrying that enty, 
 *** sum over all technologies involved in those trade modes, sum over regi2 (exporter), 
 *** sum over inco0,omf,omv, and sum over per distance or not
-q24_costTradeCapMport(t,regi,tradeCap)..
-    v24_costTradeCapMport(t,regi,tradeCap)
+q24_costTradeCap(t,regi,tradeCap)..
+    vm_costTradeCap(t,regi,tradeCap)
   =e=
     sum( tradeEnty2Mode(tradeCap, tradeModes),
       sum( tradeMode2te(tradeModes, teTradeBilat),
         sum( trade_regi,
-          v24_deltaCapTrade(t,trade_regi,regi,teTradeBilat)      * (pm_data(regi,'inco0',teTradeBilat)   + pm_data(regi,'inco0_d',teTradeBilat)  * p24_distance(trade_regi,regi))
-        + v24_capTrade(t,trade_regi,regi,teTradeBilat)           * (pm_data(regi,'omf'  ,teTradeBilat)   + pm_data(regi,'omf_d'  ,teTradeBilat)  * p24_distance(trade_regi,regi))
-        + v24_trade(t,trade_regi,regi,tradeModes)                * (pm_data(regi,'omv'  ,teTradeBilat)   + pm_data(regi,'omv_d'  ,teTradeBilat)  * p24_distance(trade_regi,regi))
+          v24_deltaCapTrade(t,trade_regi,regi,teTradeBilat)      * (pm_data(regi,'inco0',  teTradeBilat)
+                                                                  + pm_data(regi,'inco0_d',teTradeBilat)  * p24_distance(trade_regi,regi))
+        + v24_capTrade(t,trade_regi,regi,teTradeBilat)           * (pm_data(regi,'omf'  ,  teTradeBilat)
+                                                                  + pm_data(regi,'omf_d'  ,teTradeBilat)  * p24_distance(trade_regi,regi))
+        + v24_trade(t,trade_regi,regi,tradeModes)                * (pm_data(regi,'omv'  ,  teTradeBilat)
+                                                                  + pm_data(regi,'omv_d'  ,teTradeBilat)  * p24_distance(trade_regi,regi))
         )
       )
     + sum( tradeMode2te(tradeModes, teTradeMport),
@@ -107,35 +111,12 @@ q24_costTradeCapMport(t,regi,tradeCap)..
       + v24_capTrade(t,regi,regi,teTradeMport)                   *  pm_data(regi,'omf'  ,teTradeMport)
       + sum(trade_regi,v24_trade(t,trade_regi,regi,tradeModes))  *  pm_data(regi,'omv'  ,teTradeMport)
       )
-    )
-;
-
-q24_costTradeCapXport(t, regi, tradeCap)..
-    v24_costTradeCapXport(t,regi,tradeCap)
-  =e=
-    sum( tradeEnty2Mode(tradeCap, tradeModes),
-      sum( tradeMode2te(tradeModes, teTradeXport),
+    + sum( tradeMode2te(tradeModes, teTradeXport),
         v24_deltaCapTrade(t,regi,regi,teTradeXport)              *  pm_data(regi,'inco0',teTradeXport)
       + v24_capTrade(t,regi,regi,teTradeXport)                   *  pm_data(regi,'omf'  ,teTradeXport)
-      + sum(trade_regi,v24_trade(t,regi,trade_regi,tradeModes))  *  pm_data(regi,'omv'  ,teTradeXport)
-      )
+      + sum(trade_regi,v24_trade(t,trade_regi,regi,tradeModes))  *  pm_data(regi,'omv'  ,teTradeXport)
     )
-;
-
-*** total budget from purchasing cost plus transportation cost
-q24_budgetTradeM(t,regi)..
-    vm_budgetTradeM(t,regi)
-  =e=
-  + sum(tradeCap, v24_costTradeBuyMport(t,regi,tradeCap))
-  + sum(tradeCap, v24_costTradeCapMport(t,regi,tradeCap))
-;
-
-*** total budget from purchasing cost plus transportation cost
-q24_budgetTradeX(t,regi)..
-    vm_budgetTradeX(t,regi)
-  =e=
-  - sum(tradeCap, v24_costTradeBuyXport(t,regi,tradeCap))
-  + sum(tradeCap, v24_costTradeCapXport(t,regi,tradeCap))
+  )
 ;
 
 *** EOF ./modules/24_trade/capacity/equations.gms

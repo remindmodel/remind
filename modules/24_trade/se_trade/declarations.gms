@@ -29,8 +29,7 @@ pm_XPortsPrice(tall,all_regi,tradeSe)              "Secondary energy export pric
 positive VARIABLES
 vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
-vm_budgetTradeX(ttot,all_regi)              "Export budget of regions - only used in capacity realization."
-vm_budgetTradeM(ttot,all_regi)              "Import budget of regions - only used in capacity realization."
+vm_costTradeCap(ttot,all_regi,all_enty)     "Trade technology and transportation cost"
 ;
 
 *** EOF ./modules/24_trade/se_trade/declarations.gms

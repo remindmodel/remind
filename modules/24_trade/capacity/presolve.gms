@@ -38,6 +38,6 @@ p24_Xport_iter(iteration,t,regi,tradeCap) = vm_Xport.l(t,regi,tradeCap);
 p24_Mport_iter(iteration,t,regi,tradeCap) = vm_Mport.l(t,regi,tradeCap);
 p24_shipment_quan_iter(iteration,t,regi,regi2,tradeModes) = v24_trade.l(t,regi,regi2,tradeModes);
 p24_cap_tradeTransp_iter(iteration,t,regi,regi2,teTrade) = v24_capTrade.l(t,regi,regi2,teTrade);
-***p24_XPortsPrice_iter(iteration,t,regi,tradeCap) = pm_XPortsPrice(t,regi,tradeCap);
+p24_XPortsPrice_iter(iteration,t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap);
 
 *** EOF ./modules/24_trade/capacity/presolve.gms

@@ -16,8 +16,10 @@
 *** trade parameters
 pm_MPortsPrice(ttot,regi,tradeSe) = 0;
 pm_XPortsPrice(ttot,regi,tradeSe) = 0;
-pm_PEPrice(ttot,regi,entySe) = 0;
-pm_SEPrice(ttot,regi,entySe) = 0;
+***pm_PEPrice(ttot,regi,tradeCap) = 0;
+pm_SEPrice(ttot,regi,tradeSe) = 0;
+
+***pm_PEprice(ttot,regi,entyPe)$(NOT(pm_PEprice(ttot,regi,entyPe)) = 1e-10; 
 
 *** iteration variables
 p24_Xport_iter(iteration,ttot,all_regi,all_enty) = 0;
