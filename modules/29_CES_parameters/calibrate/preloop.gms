@@ -942,7 +942,8 @@ $endif.subsectors
   
 $else.prices_beyond
   
-  pm_cesdata(t,regi,ipf_beyond_29,"price") = 1;
+  pm_cesdata(t,regi,ipf_beyond_29(in),"price")$( NOT ue_industry_dyn37(in) )
+  = 1;
   !! complements are not treated in the first iteration
   
 $endif.prices_beyond
