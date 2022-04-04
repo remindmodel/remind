@@ -70,7 +70,11 @@ If you want to manually start runs instead of editing the `start` column in the 
 ```bash
 Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
-You can combine all these options.
+In interactive mode, the scripts lets you select a config files if you do not specify one. You can combine all these options and use
+```bash
+Rscript start.R -1it
+```
+as a shortcut, meaning `1` for `--testOneRegi`, `i` for `--interactive`, `t` for `--test`.
 
 
 Further notes:
