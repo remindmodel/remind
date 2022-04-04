@@ -7,19 +7,19 @@
 *** SOF ./modules/50_damages/TC/declarations.gms
 
 parameters
-p50_damageFuncCoef1
-p50_damageFuncCoef2
-p50_damageFuncCoefTC0(isoTC)
-p50_damageFuncCoefTC1(isoTC)			"damage function coefficient, linear in temperature"
-p50_damageFuncCoefTC2(isoTC) 			"damage function coefficient, quadratic in temperture"
+p50_damageFuncCoef1			"damage function coefficient"
+p50_damageFuncCoef2			"damage function coefficient"
+p50_damageFuncCoefTC0(isoTC)		"damage function coefficient for TC, constant"
+p50_damageFuncCoefTC1(isoTC)			"damage function coefficient for TC, linear in temperature"
+p50_damageFuncCoefTC2(isoTC) 			"damage function coefficient for TC, quadratic in temperture"
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
-p50_damage(tall,iso)                             "damage factor (reduces GDP)"
+pm_damageIso(tall,iso)                             "damage factor (reduces GDP)"
 *p50_damageAllIso(tall,iso)                             "damage factor (reduces GDP)"
-p50_damageGrowthRate(tall,iso)                   "damage function for growth rate of GDP"
+pm_damageGrowthRateIso(tall,iso)                   "damage function for growth rate of GDP"
 pm_damageMarginal(tall,iso)                     "damage function derivative"
-p50_GDPfrac(tall,iso)				"fraction of GDP of a country in its region"
-pm_GDPGrossIso(tall,iso)
-p50_test(tall,iso)
+pm_GDPfrac(tall,iso)				"fraction of GDP of a country in its region"
+pm_GDPGrossIso(tall,iso)	"gross GDP on country level"
+p50_test(tall,iso)		"to check regional sum of GDP"
 ;
 
 positive variable

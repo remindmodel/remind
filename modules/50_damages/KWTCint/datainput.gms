@@ -23,13 +23,13 @@ p50_damageFuncCoefTC0(isoTC) = 0;
 p50_damageFuncCoefTC1(isoTC) = 0;
 
 *** load TC damage parameter data
-table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)
+table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter constant"
 $ondelim
 $include "./modules/50_damages/TC/input/TC_df_parameters_const.csv"
 $offdelim
 ;
 
-table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)
+table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter, linear with temperature"
 $ondelim
 $include "./modules/50_damages/TC/input/TC_df_parameters_tasK.csv"
 $offdelim
@@ -45,13 +45,13 @@ pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
-table f50_countryGDPfrac(tall,iso,all_GDPscen)
+table f50_countryGDPfrac(tall,iso,all_GDPscen)	"ratio country to regional GDP"
 $ondelim
 $include "./modules/50_damages/TC/input/gdp_countryFrac_ann.csv"
 $offdelim
 ;
-*p50_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
-p50_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
-p50_GDPfrac(tall,iso)$(tall.val ge 2150) = p50_GDPfrac("2150",iso);
+*pm_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
+pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
+pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 
 *** EOF ./modules/50_damages/KWTCint/datainput.gms

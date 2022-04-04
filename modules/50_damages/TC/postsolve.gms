@@ -27,17 +27,17 @@ display pm_globalMeanTemperatureZeroed1900,p50_damage;
 
 *regional damage
 pm_damage(tall,regi)$(tall.val ge 2000 and tall.val le 2300) = 
-	sum(regi2iso(regi,iso),p50_damage(tall,iso)*p50_GDPfrac(tall,iso));
+	sum(regi2iso(regi,iso),p50_damage(tall,iso)*pm_GDPfrac(tall,iso));
 
 *gross GDP on country level
-pm_GDPGrossIso(tall,iso)=sum(regi2iso(regi,iso),pm_GDPGross(tall,regi))*p50_GDPfrac(tall,iso);
+pm_GDPGrossIso(tall,iso)=sum(regi2iso(regi,iso),pm_GDPGross(tall,regi))*pm_GDPfrac(tall,iso);
 
 * update the country fraction
-*p50_GDPfracTC(tall,isoTC)$regi2isoTC(regi,isoTC) = p50_damage(tall,isoTC)*p50_GDPfracTC(tall,isoTC)/pm_damage(tall,regi);
-*p50_GDPfrac(tall,iso)$(tall.val ge 2000 and tall.val le 2300) = p50_damage(tall,iso)*p50_GDPfrac(tall,iso)/sum(regi2iso(regi,iso),pm_damage(tall,regi));
+*pm_GDPfracTC(tall,isoTC)$regi2isoTC(regi,isoTC) = p50_damage(tall,isoTC)*pm_GDPfracTC(tall,isoTC)/pm_damage(tall,regi);
+*pm_GDPfrac(tall,iso)$(tall.val ge 2000 and tall.val le 2300) = p50_damage(tall,iso)*pm_GDPfrac(tall,iso)/sum(regi2iso(regi,iso),pm_damage(tall,regi));
 p50_test(tall,iso)$(tall.val ge 2005 and tall.val le 2100) = sum(regi2iso(regi,iso),pm_damage(tall,regi));
 
-display pm_damage,p50_GDPfrac,p50_test;
+display pm_damage,pm_GDPfrac,p50_test;
 
 * derivative of damage function w.r.t. temperature (used in 51_internalizeDamages)
 pm_damageMarginal(tall,iso)=0;

@@ -14,28 +14,28 @@ p51_marginalDamageCumulKW(tall,tall2,regi2)$((tall2.val ge tall.val) and (tall.v
 	  + pm_temperatureImpulseResponseCO2(tall3-2,tall)*pm_tempScaleGlob2Reg(tall3-2,regi2)*pm_damageMarginalTm2(tall3,regi2))*(-1)
       / ( 1 + pm_damageGrowthRate(tall3,regi2))
     )
-    * sum(regi2iso(regi2,iso),p50_damageTC(tall,iso)*p50_GDPfrac(tall,iso))
+    * sum(regi2iso(regi2,iso),pm_damageTC(tall,iso)*pm_GDPfrac(tall,iso))
 ;
 
 p51_marginalDamageCumulTC(tall,tall2,iso) = 0;
 p51_marginalDamageCumulTC(tall,tall2,isoTC)$((tall2.val ge tall.val) and (tall.val le 2250) and (tall2.val le 2250)) = 
     sum(tall3$((tall3.val ge tall.val) and (tall3.val le tall2.val)), 
 	pm_temperatureImpulseResponseCO2(tall3,tall) * pm_damageMarginalTC(tall3,isoTC)
-	/ (1+p50_damageGrowthRateTC(tall3,isoTC))*(-1)
+	/ (1+pm_damageGrowthRateTC(tall3,isoTC))*(-1)
     )
 ;
 
 p51_sccPartsTC(tall,tall2,regi2) = 0;
 p51_sccPartsTC(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (tall2.val ge tall.val) and (tall2.val le 2250)) = 
      sum(regi2iso(regi2,iso), 
-        p50_damageTC(tall2,iso) * p50_GDPfrac(tall2,iso) * p51_marginalDamageCumulTC(tall,tall2,iso)
+        pm_damageTC(tall2,iso) * pm_GDPfrac(tall2,iso) * p51_marginalDamageCumulTC(tall,tall2,iso)
      ) 
 ;
 
 p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (tall2.val ge tall.val) and (tall2.val le 2250)) = 
 	 (1 + pm_prtp(regi2) )**(-(tall2.val - tall.val))
 	* pm_consPC(tall,regi2)/pm_consPC(tall2,regi2) 
-        * p50_damage(tall2,regi2) * pm_GDPGross(tall2,regi2) 
+        * pm_damageProd(tall2,regi2) * pm_GDPGross(tall2,regi2) 
 	* (p51_marginalDamageCumulKW(tall,tall2,regi2)+p51_sccPartsTC(tall,tall2,regi2)) 
 ;
 
@@ -60,13 +60,13 @@ p51_scc(tall) = p51_sccLastItr(tall) *  min(max( (p51_scc(tall)/max(p51_sccLastI
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
 
-*loop(ttot$(ttot.val ge 2010),
-*	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-*	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
+loop(ttot$(ttot.val ge 2010),
+	loop(tall$(pm_ttot_2_tall(ttot,tall)),
+	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
 *FIXME this is stupid:
-*	    pm_taxCO2eqSCC(ttot,regi) = max(pm_taxCO2eqSCC(ttot,regi),0);
+	    pm_taxCO2eqSCC(ttot,regi) = max(pm_taxCO2eqSCC(ttot,regi),0);
 
-*	));
+	));
 	    
 *);
 

@@ -47,11 +47,11 @@ display p50_damageTC;
 
 *combined regional damage
 pm_damage(tall,regi)$(tall.val ge 2000 and tall.val le 2300) = 
-    p50_damage(tall,regi)*sum(regi2iso(regi,iso),p50_damageTC(tall,iso)*p50_GDPfrac(tall,iso))
+    p50_damage(tall,regi)*sum(regi2iso(regi,iso),p50_damageTC(tall,iso)*pm_GDPfrac(tall,iso))
 ;
 
 *gross GDP on country level
-pm_GDPGrossIso(tall,iso)=sum(regi2iso(regi,iso),pm_GDPGross(tall,regi))*p50_GDPfrac(tall,iso);
+pm_GDPGrossIso(tall,iso)=sum(regi2iso(regi,iso),pm_GDPGross(tall,regi))*pm_GDPfrac(tall,iso);
 
 display pm_damage;
 

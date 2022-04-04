@@ -16,14 +16,14 @@ p50_damageFuncCoefa1     "coef1 of damamge function",
 p50_damageFuncCoefa2     "coef2 of damamge function"
 p50_damageFuncCoefb1     "coef1 of damamge function",
 p50_damageFuncCoefb2     "coef2 of damamge function"
-p50_damageFuncCoefTC0(isoTC)
-p50_damageFuncCoefTC1(isoTC)
-p50_damage(tall,all_regi)
-p50_damageTC(tall,iso)
-p50_damageGrowthRateTC(tall,iso)
-p50_GDPfrac(tall,iso)
-pm_damageMarginalTC(tall,iso)
-pm_GDPGrossIso(tall,iso)
+p50_damageFuncCoefTC0(isoTC)	"coef0 for tropical cyclone damage function"
+p50_damageFuncCoefTC1(isoTC)	"coef1 for tropical cyclone damage function"
+pm_damageProd(tall,all_regi)	"damage from aggregate damage function"
+pm_damageTC(tall,iso)		"tropical cyclone damages"
+pm_damageGrowthRateTC(tall,iso)	"growth rate damage from tropical cyclones"
+pm_GDPfrac(tall,iso)			"ratio of country to region GDP"
+pm_damageMarginalTC(tall,iso)		"marginal damage of tropical cyclones"
+pm_GDPGrossIso(tall,iso)		"gross GDP on country level"
 ;
 
 positive variable

@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.284
+* Input data revision: 6.288
 * 
-* Last modification (input data): Mon Feb 28 12:15:08 2022
+* Last modification (input data): Thu Mar 31 18:34:29 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -140,8 +140,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  default
-$setGlobal c_description  "REMIND run with default settings"
+$setGlobal c_expname  SSP2EU-Base_KWscc
+$setGlobal c_description  REMIND run SSP2EU-Base_KWscc started by config/scenario_config_GCS.csv.
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -158,9 +158,9 @@ $setGlobal initialCap  on             !! def = on
 ***---------------------    11_aerosols    --------------------------------------
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
-$setGlobal climate  off               !! def = off
+$setGlobal climate  magicc               !! def = off
 ***---------------------    16_downscaleTemperature    --------------------------
-$setGlobal downscaleTemperature  off  !! def = off
+$setGlobal downscaleTemperature  CMIP5  !! def = off
 ***---------------------    20_growth    ----------------------------------------
 $setGlobal growth  exogenous          !! def = exogenous
 ***---------------------    21_tax    -------------------------------------------
@@ -190,7 +190,7 @@ $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    --------------------------------------
-$setglobal CCU  on !! def = on
+$setglobal CCU  off !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -204,9 +204,9 @@ $setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    47_regipol  -------------------------------------
 $setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
-$setGlobal damages  off               !! def = off
+$setGlobal damages  KWLike               !! def = off
 ***---------------------    51_internalizeDamages    ---------------------------------------
-$setGlobal internalizeDamages  off               !! def = off
+$setGlobal internalizeDamages  KWlikeItr               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
@@ -298,6 +298,7 @@ c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
 cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
+cm_damage_KWSE		"standard error for Kalkuhl & Wenz damages"
 cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
 cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
 cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
@@ -365,7 +366,7 @@ cm_co2_tax_growth = 1.05;      !! def = 1.05
 c_macscen         = 1;         !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 1;        !! def = 1
+cm_ccapturescen  = 2;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
@@ -425,7 +426,7 @@ c_cint_scen           = 1;         !! def = 1
 cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
-c_ccsinjecratescen    = 1;         !! def = 1
+c_ccsinjecratescen    = 0;         !! def = 1
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
@@ -442,12 +443,12 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2from2020FFI   = 700;    !! def = 700 
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2from2020      = 1150;   !! def = 1150
+c_budgetCO2from2020      = 0;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
-cm_peakBudgYr            = 2050;   !! def = 2050
+cm_peakBudgYr            = 2100;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
@@ -487,7 +488,7 @@ cm_damages_BurkeLike_specification    = 0;     !! def = 0
 cm_damages_BurkeLike_persistenceTime  = 30;    !! def = 30
 cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
-
+cm_damage_KWSE			      = 0;     !! def = 0
 
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
@@ -578,7 +579,7 @@ $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  on        !! def = on
+$setGlobal cm_OILRETIRE  off        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -588,11 +589,15 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 $setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
-$setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT
-$setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
+$setGlobal cm_magicc_calibrateTemperature2000  HADCRUT4  !! def=uncalibrated
+$setGlobal cm_magicc_config  RCP26_50    !! def = OLDDEFAULT
+$setGlobal cm_magicc_temperatureImpulseResponse  on           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
+$setGlobal cm_damage_Labor_exposure  low    !!def = low
+$setGlobal cm_TCssp  SSP2  !! def = SSP2
+$setGlobal cm_TCpers  0  !! def = 8
+$setGlobal cm_TCspec  estimates_mean  !! def = estimates_mean
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 

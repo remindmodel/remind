@@ -12,7 +12,7 @@ p51_marginalDamageCumul(tall,tall2,iso) = 0;
 p51_marginalDamageCumul(tall,tall2,isoTC)$((tall2.val ge tall.val) and (tall.val le 2250) and (tall2.val le 2250)) = 
     sum(tall3$((tall3.val ge tall.val) and (tall3.val le tall2.val)), 
 	pm_temperatureImpulseResponseCO2(tall3,tall) * pm_damageMarginal(tall3,isoTC)
-	/ (1+p50_damageGrowthRate(tall3,isoTC))*(-1)
+	/ (1+pm_damageGrowthRateIso(tall3,isoTC))*(-1)
     )
 ;
 
@@ -23,7 +23,7 @@ p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (t
 *     sum(regi2isoTC(regi2,isoTC), 
 *        p50_damage(tall2,isoTC) * pm_GDPGrossIso(tall2,isoTC) * p51_marginalDamageCumul(tall,tall2,isoTC)
      sum(regi2iso(regi2,iso), 
-        p50_damage(tall2,iso) * pm_GDPGrossIso(tall2,iso) * p51_marginalDamageCumul(tall,tall2,iso)
+        pm_damageIso(tall2,iso) * pm_GDPGrossIso(tall2,iso) * p51_marginalDamageCumul(tall,tall2,iso)
      ) 
 ;
 

@@ -12,13 +12,13 @@ p50_damageFuncCoefTC2(isoTC) = 0;
 
 *** load TC damage parameter data
 
-table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)
+table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter for TC, constant"
 $ondelim
 $include "./modules/50_damages/TC/input/TC_df_parameters_const.csv"
 $offdelim
 ;
 
-table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)
+table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter for TC, linear with temperature"
 $ondelim
 $include "./modules/50_damages/TC/input/TC_df_parameters_tasK.csv"
 $offdelim
@@ -39,8 +39,6 @@ display p50_damageFuncCoefTC0;
 
 *initialize
 pm_damage(tall,regi) = 1;
-*p50_damage(tall,isoTC) = 1;
-*p50_damageAllIso(tall,iso) = 1;
 
 * calculate initial GDP ratio for countries in region --> actually just read this in!
 * load PPP-MER conversion factor data for countries
@@ -62,14 +60,14 @@ pm_damage(tall,regi) = 1;
 *p50_countryGDP(tall,iso) = f_countryGDP(tall,iso,"%cm_GDPscen%"); 
 * pm_shPPPMER(iso) / 1000000; 
 
-table f50_countryGDPfrac(tall,iso,all_GDPscen)
+table f50_countryGDPfrac(tall,iso,all_GDPscen)	"ratio of country to regional GDP"
 $ondelim
 $include "./modules/50_damages/TC/input/gdp_countryFrac_ann.csv"
 $offdelim
 ;
-*p50_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
-p50_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
-p50_GDPfrac(tall,iso)$(tall.val ge 2150) = p50_GDPfrac("2150",iso);
+*pm_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
+pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
+pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 
 
 *** EOF ./modules/50_damages/TC/datainput.gms
