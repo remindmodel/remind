@@ -56,12 +56,12 @@ if (cm_IndCCSscen eq 1,
 pm_delta_kap(regi,ppfKap_industry_dyn37) = -log(1 / 4) / 50;
 
 *** FIXME: this is temporary data, insert meaningful figures!
-p37_energy_limit("ue_cement")          = 1.8;
-p37_energy_limit("ue_steel_primary")   = 8;
-p37_energy_limit("ue_steel_secondary") = 1.3;
+pm_energy_limit("ue_cement")          = 1.8;
+pm_energy_limit("ue_steel_primary")   = 8;
+pm_energy_limit("ue_steel_secondary") = 1.3;
 
-p37_energy_limit(in)
-  = p37_energy_limit(in)   !! GJ/t
+pm_energy_limit(in)
+  = pm_energy_limit(in)   !! GJ/t
   * 1e-3                   !! * TJ/GJ
   / (8760 * 3600)          !! * s/year
   * 1e9;                   !! * t/Gt

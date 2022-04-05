@@ -1626,5 +1626,42 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
     );
 
 $ONorder
+
+* Assert that q37_energy_limits is feasible for calibration runs
+sm_tmp = 0;
+loop ((ttot(t),regi_dyn29(regi),industry_ue_calibration_target_dyn37(out))$( 
+                                      t.val gt 2015 AND pm_energy_limit(out) ),
+  sm_tmp2 = sum(ces_eff_target_dyn37(out,in), pm_cesdata(t,regi,in,"quantity"));
+  if (sm_tmp2 le pm_cesdata(t,regi,out,"quantity") * pm_energy_limit(out),
+    sm_tmp = 1;
+  );
+);
+
+$ifthen.subsectors "%industry%" == "subsectors"   !! subsectors
+if (sm_tmp eq 1,
+  put logfile, "Assertion of industry energy limits failed: " /;
+  loop ((regi_dyn29(regi),ttot(t),industry_ue_calibration_target_dyn37(out))$( 
+                                      t.val gt 2015 AND pm_energy_limit(out) ),
+    sm_tmp
+    = sum(ces_eff_target_dyn37(out,in), pm_cesdata(t,regi,in,"quantity"));
+
+    if (sm_tmp le pm_cesdata(t,regi,out,"quantity") * pm_energy_limit(out),
+      put pm_cesdata.tn(t,regi,out,"quantity"), " * ", pm_energy_limit.tn(out);
+      put @80 " = " (pm_cesdata(t,regi,out,"quantity") * pm_energy_limit(out));
+      put " > ", sm_tmp /;
+      loop (ces_eff_target_dyn37(out,in)$( pm_cesdata(t,regi,in,"quantity") ),
+        put @3 pm_cesdata.tn(t,regi,in,"quantity"), @73 " = ";
+	put pm_cesdata(t,regi,in,"quantity") /;
+      );
+      put " " /;
+    );
+  );
+  putclose logfile, " " /;
+
+  execute_unload "abort.gdx";
+  abort "Assertion of industry energy limits failed. See .log file for details.";
+);
+$endif.subsectors
+      
 *** EOF ./modules/29_CES_parameters/calibrate/preloop.gms
 
