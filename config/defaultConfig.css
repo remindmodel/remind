@@ -1,0 +1,45 @@
+.tocify-subheader .tocify-subheader .tocify-item {
+  text-indent: 20px;
+  line-height: 5px;
+  font-family: monospace;
+}
+
+h3 {
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+p {
+  margin-left: 10px;
+}
+
+.toc-content {
+  padding-right: 5px;
+  padding-left: 10px;
+}
+
+div.tocify {
+  width: 25%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (min-width: 768px)
+  .col-sm-8 {
+      width: 75%;
+}
+
+.r {
+  padding: 3px;
+  margin: 0 0 10px 10px;
+  border-radius: 0;
+}
