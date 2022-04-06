@@ -18,6 +18,7 @@ Parameters
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "Captured CO2 in industry by energy carrier, subsector and emissions market"   
   p37_CESMkup(ttot,all_regi,all_in)                                          "CES markup cost parameter [trUSD/CES input]"                                  
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                    "upper limit to secondary steel production based on scrap availability"        
+  p37_steel_secondary_max_share(tall,all_regi)                               "maximum share of secondary steel production"
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
