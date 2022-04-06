@@ -60,12 +60,12 @@ p51_scc(tall)$((tall.val ge 2010) and (tall.val le 2150)) = 1000 *
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
 
-*loop(ttot$(ttot.val ge 2010),
-*	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-*	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
-*	));
-*	    
-*);
+loop(ttot$(ttot.val ge 2020),
+	loop(tall$(pm_ttot_2_tall(ttot,tall)),
+	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = p51_scc(tall)   * (44/12)/1000;
+	));
+	    
+);
 
 * prevent drastic decline towards the final periods
 pm_taxCO2eqSCC(ttot,regi)$(ttot.val gt 2100) = pm_taxCO2eqSCC("2100",regi); 
