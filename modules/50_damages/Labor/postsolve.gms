@@ -7,8 +7,9 @@
 
 *** SOF ./modules/50_damages/Labor/postsolve.gms
 
-
-pm_damage(tall,regi)$(tall.val ge 2010 and tall.val le 2300) = 
+* damage function, match observed GDP in 2020, i.e. assume no climate change until then
+* coefficients estimated as differences to baseline
+pm_damage(tall,regi)$(tall.val gt 2020 and tall.val le 2300) = 
 1 
 + p50_damageFuncCoef1(regi) * (pm_regionalTemperature(tall,regi)-pm_regionalTemperature("2005",regi)) 
 + p50_damageFuncCoef2(regi) * (pm_regionalTemperature(tall,regi)**2-pm_regionalTemperature("2005",regi)**2); 

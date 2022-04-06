@@ -12,12 +12,13 @@ $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWTCint require
 ** damage specification
     
 
-*default specification:
+*default specification from Kalkuhl & Wenz 2020:
 p50_damageFuncCoefa1 =  0.00641;
 p50_damageFuncCoefa2 =  0.00345;
 p50_damageFuncCoefb1 = -0.00109;
 p50_damageFuncCoefb2 = -0.000718;
 
+* TC damage coefficients from Krichene et al. 2022 
  
 p50_damageFuncCoefTC0(isoTC) = 0;
 p50_damageFuncCoefTC1(isoTC) = 0;
@@ -50,7 +51,6 @@ $ondelim
 $include "./modules/50_damages/TC/input/gdp_countryFrac_ann.csv"
 $offdelim
 ;
-*pm_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
 pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 

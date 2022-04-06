@@ -10,7 +10,7 @@ p50_damageFuncCoefTC0(isoTC) = 0;
 p50_damageFuncCoefTC1(isoTC) = 0;
 p50_damageFuncCoefTC2(isoTC) = 0;
 
-*** load TC damage parameter data
+*** load TC damage parameter data (Krichene et al. 2022)
 
 table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter for TC, constant"
 $ondelim
@@ -26,46 +26,20 @@ $offdelim
 
 p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"%cm_TCssp%","%cm_TCpers%","%cm_TCspec%")/100;
 p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"%cm_TCssp%","%cm_TCpers%","%cm_TCspec%")/100;
-*p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"SSP2","0","estimates_mean")/100;
-*p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"SSP2","0","estimates_mean")/100;
-*p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"SSP2","8","estimates_mean")/100;
-*p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"SSP2","8","estimates_mean")/100;
-*p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"SSP2","8","estimates_95")/100;
-*p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"SSP2","8","estimates_95")/100;
-*p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"SSP2","8","estimates_05")/100;
-*p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"SSP2","8","estimates_05")/100;
 
 display p50_damageFuncCoefTC0;
 
 *initialize
 pm_damage(tall,regi) = 1;
 
-* calculate initial GDP ratio for countries in region --> actually just read this in!
-* load PPP-MER conversion factor data for countries
-*parameter pm_shPPPMERcountry(iso)
-*/
-*$ondelim
-*$include "./modules/50_damages/TC/input/..."
-*$offdelim
-*/
-*;
-
-* load country GDP data
-*table f50_countryGDP(tall,iso,all_GDPscen)
-*$ondelim
-*$include "./modules/50_damages/TC/input/gdp_Inga.cs3r"
-*$offdelim
-*;
-
-*p50_countryGDP(tall,iso) = f_countryGDP(tall,iso,"%cm_GDPscen%"); 
-* pm_shPPPMER(iso) / 1000000; 
+* read in GDP fraction of countries in region 
 
 table f50_countryGDPfrac(tall,iso,all_GDPscen)	"ratio of country to regional GDP"
 $ondelim
 $include "./modules/50_damages/TC/input/gdp_countryFrac_ann.csv"
 $offdelim
 ;
-*pm_GDPfracTC(tall,isoTC,all_regi) = f50_countryGDPfrac(tall,iso,all_regi,"%cm_GDPscen%");
+
 pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 

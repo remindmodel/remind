@@ -13,17 +13,17 @@ $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=Labor requires 
 p50_damageFuncCoef1(regi) = 0;
 p50_damageFuncCoef2(regi) = 0;
 
-* Shouro, global value, low exposure
+* Dasgupta et al. 2021, global value, low exposure
 $ifi %cm_damage_Labor_exposure% == "low" p50_damageFuncCoef1(regi) = 0.079;
 $ifi %cm_damage_Labor_exposure% == "low" p50_damageFuncCoef2(regi) = -0.002;
 
-* Shouro, global value, high exposure
+* Dasgupta et al. 2021, global value, high exposure
 $ifi %cm_damage_Labor_exposure% == "high" p50_damageFuncCoef1(regi) = 0.157;
 $ifi %cm_damage_Labor_exposure% == "high" p50_damageFuncCoef2(regi) = -0.005;
 
-* Shouro, global value, mean of low and high exposure
+* coefficients estimated specifically for REMIND regions (private communication with Shouro Dasgupta, CMCC)
+* for CAZ the regression was not significant - we can set it to zero or use the global value for now
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("CAZ") = 0;
-*$ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("CAZ") = 0.157;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("CHA") = 0.1034222;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("EUR") = 0.062799;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("IND") = 0.1718675;
@@ -36,7 +36,6 @@ $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("REF") = 0.03954
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("SSA") = 0.0894126;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef1("USA") = 0.0141667;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("CAZ") = 0;
-*$ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("CAZ") = -0.0035;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("CHA") = -0.0038031;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("EUR") = -0.0033926;
 $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("IND") = -0.0045641;

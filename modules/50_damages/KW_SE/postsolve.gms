@@ -11,11 +11,11 @@
 
 display pm_regionalTemperature;
 
+*calculate regional temperature based on emission pathway with an emission pulse
 *tirf in K/GtCO2, pulse=1GtC
 pm_regionalTemperatureImp(tall,tall2,regi) = pm_regionalTemperature(tall2,regi)+pm_temperatureImpulseResponseCO2(tall2,tall)*pm_tempScaleGlob2Reg(tall2,regi)*44/12;  
 
-*display pm_regionalTemperatureImp;
-
+* annual temperature differences for easier readibility below
 p50_delT(tall,regi) = 0;
 p50_delT2(tall,regi) = 0;
 p50_delT(tall,regi)$(tall.val ge 2005 and tall.val le 2300)=pm_regionalTemperature(tall,regi)-pm_regionalTemperature(tall-1,regi);
@@ -87,16 +87,19 @@ pm_damageGrowthRate(tall,regi)$(tall.val gt 2150) = 0;
 pm_damageGrowthRateImp(tall,tall2,regi)$(tall.val gt 2150) = 0;
 
 *damage function. match observed 2020 GDP, that is, assume that no climate damages unitl then.
+*damage factor for budget equation
 pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
     prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),  
 	(1 + pm_damageGrowthRate(tall2,regi))    
     )
 ;
+*damage used in SCC calculation
 pm_damageScc(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.val ge 2020 and tall2.val le 2300) = 
     prod(tall3$(tall3.val gt tall.val AND tall3.val le tall2.val),  
 	(1 + pm_damageGrowthRate(tall3,regi))    
     )
 ;
+*damage with emission pulse for SCC calculation
 pm_damageImp(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.val ge 2020 and tall2.val le 2300) = 
     prod(tall3$(tall3.val gt tall.val AND tall3.val le tall2.val),  
 	(1 + pm_damageGrowthRateImp(tall,tall3,regi))    
@@ -104,7 +107,6 @@ pm_damageImp(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.v
 ;
 
 
-*display pm_damageGrowthRate,pm_damage,pm_damageScc,pm_damageImp;
 display pm_damage;
 
 ***EOF ./modules/50_damages/KWLike/postsolve.gms

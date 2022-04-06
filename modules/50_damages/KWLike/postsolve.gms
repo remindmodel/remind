@@ -11,44 +11,14 @@
 
 display pm_regionalTemperature;
 
-p50_delT(tall,regi) = 0;
-p50_delT2(tall,regi) = 0;
-p50_delT(tall,regi)$(tall.val ge 2005 and tall.val le 2300)=pm_regionalTemperature(tall,regi)-pm_regionalTemperature(tall-1,regi);
-p50_delT2(tall,regi)$(tall.val ge 2005 and tall.val le 2300)=pm_regionalTemperature(tall-1,regi)-pm_regionalTemperature(tall-2,regi);
-p50_delT("2005",regi) = 0;
-p50_delT2("2006",regi) = 0;
-
-* for high damages - standard error
-p50_se(tall,regi)$(tall.val ge 2005 and tall.val le 2300) = 
-	(p50_var_a1*p50_delT(tall,regi)*p50_delT(tall,regi)+p50_var_a2*p50_delT2(tall,regi)*p50_delT2(tall,regi)
-	+p50_var_b1*p50_delT(tall,regi)*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)**2
-	+ p50_var_b2*p50_delT2(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)**2
-	+ 2*(p50_cov_a1_a2*p50_delT(tall,regi)*p50_delT2(tall,regi)
-	+ p50_cov_a1_b1*p50_delT(tall,regi)*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ p50_cov_a1_b2*p50_delT(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ p50_cov_a2_b1*p50_delT(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ p50_cov_a2_b2*p50_delT2(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ p50_cov_b1_b2*p50_delT(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)**2
-	)
-);
-
-display p50_se;
-
 *calculate growth rate damages
 pm_damageGrowthRate(tall,regi) = 0;
 
-*pm_damageGrowthRate(tall,regi)$(tall.val ge 2005 and tall.val le 2300) =
-*(    p50_damageFuncCoefa1 * ( pm_regionalTemperature(tall,regi) - pm_regionalTemperature(tall-1,regi) )
-*  + p50_damageFuncCoefa2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi) )
-*  + p50_damageFuncCoefb1 * ( pm_regionalTemperature(tall,regi) - pm_regionalTemperature(tall-1,regi))*pm_regionalTemperature(tall-1,regi)
-*  + p50_damageFuncCoefb2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi))*pm_regionalTemperature(tall-1,regi)
-*  - p50_se(tall,regi)**0.5*cm_damage_KWSE
-*);
 pm_damageGrowthRate(tall,regi)$(tall.val ge 2005 and tall.val le 2300) =
-(    p50_damageFuncCoefa1 * p50_delT(tall,regi)
-  + p50_damageFuncCoefa2 * p50_delT2(tall,regi)
-  + p50_damageFuncCoefb1 * p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)
-  + p50_damageFuncCoefb2 * p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
+(    p50_damageFuncCoefa1 * ( pm_regionalTemperature(tall,regi) - pm_regionalTemperature(tall-1,regi) )
+  + p50_damageFuncCoefa2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi) )
+  + p50_damageFuncCoefb1 * ( pm_regionalTemperature(tall,regi) - pm_regionalTemperature(tall-1,regi))*pm_regionalTemperature(tall-1,regi)
+  + p50_damageFuncCoefb2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi))*pm_regionalTemperature(tall-1,regi)
   - p50_se(tall,regi)**0.5*cm_damage_KWSE
 );
 
@@ -68,35 +38,13 @@ pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) =
 * derivative of damage function w.r.t. teperature (used in 51_internalizeDamages)
 pm_damageMarginalT(tall,regi)$(tall.val gt 2005 and tall.val le 2300) = 
   ( p50_damageFuncCoefa1 + p50_damageFuncCoefb1 * pm_regionalTemperature(tall-1,regi) ) 
-  - cm_damage_KWSE/2/p50_se(tall,regi)**0.5*(p50_var_a1*2*p50_delT(tall,regi)+p50_var_b1*2*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)**2
-	+ 2*(p50_cov_a1_a2*p50_delT2(tall,regi)+p50_cov_a1_b1*2*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ (p50_cov_a1_b2+p50_cov_a2_b1)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	+ p50_cov_b1_b2*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)**2)
-   )
 ;
 pm_damageMarginalTm1(tall,regi)$(tall.val gt 2005 and tall.val le 2300) = 
   (p50_damageFuncCoefa2-p50_damageFuncCoefa1)+p50_damageFuncCoefb1*pm_regionalTemperature(tall,regi) + 2*(p50_damageFuncCoefb2-p50_damageFuncCoefb1)*pm_regionalTemperature(tall-1,regi) - p50_damageFuncCoefb2*pm_regionalTemperature(tall-2,regi) 
-  - cm_damage_KWSE/2/p50_se(tall,regi)**0.5 * (p50_var_a1*(-2)*p50_delT(tall,regi)+p50_var_a2*2*p50_delT2(tall,regi)
-	+ p50_var_b1*(2*p50_delT(tall,regi)*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)-2*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)**2)
-	+ p50_var_b2*(2*p50_delT2(tall,regi)*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)-2*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)**2)
-	+ 2*(p50_cov_a1_a2*(p50_delT(tall,regi)-p50_delT2(tall,regi))
-	+ p50_cov_a1_b1*(p50_delT(tall,regi)*p50_delT(tall,regi)-2*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi))
-	+ (p50_cov_a1_b2+p50_cov_a2_b1)*((p50_delT(tall,regi)-p50_delT2(tall,regi))*pm_regionalTemperature(tall-1,regi)+p50_delT(tall,regi)*p50_delT2(tall,regi))
-	+ p50_cov_a2_b2*(2*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)+ p50_delT2(tall,regi)*p50_delT2(tall,regi))
-	+ p50_cov_b1_b2*((p50_delT(tall,regi)-p50_delT2(tall,regi))*pm_regionalTemperature(tall-1,regi)**2+p50_delT(tall,regi)*p50_delT2(tall,regi)*2*pm_regionalTemperature(tall-1,regi))
-  )) 
 ;
 pm_damageMarginalTm2(tall,regi)$(tall.val gt 2005 and tall.val le 2300) = 
  (-1)*p50_damageFuncCoefa2 - p50_damageFuncCoefb2 * pm_regionalTemperature(tall-1,regi)
-   - cm_damage_KWSE/2/p50_se(tall,regi)**0.5*(p50_var_a2*(-2)*p50_delT2(tall,regi)-p50_var_b2*2*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)**2
-	+ 2*(p50_cov_a1_a2*(-1)*p50_delT(tall,regi) - (p50_cov_a1_b2+p50_cov_a2_b1)*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	- p50_cov_a2_b2*2*p50_delT2(tall,regi)*pm_regionalTemperature(tall-1,regi)
-	- p50_cov_b1_b2*p50_delT(tall,regi)*pm_regionalTemperature(tall-1,regi)**2)
- )
 ;
-
-
-
 
 display pm_damageGrowthRate,pm_damage;
 

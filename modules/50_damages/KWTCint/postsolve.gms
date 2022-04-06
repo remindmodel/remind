@@ -19,28 +19,32 @@ pm_damageGrowthRate(tall,regi)$(tall.val ge 2005 and tall.val le 2300) =
   + p50_damageFuncCoefb2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi))*pm_regionalTemperature(tall-1,regi)
 );
 
-* keep value in 2005 and 2006 equal to 2007 as no values for regional temperature are available
-pm_damageGrowthRate(tall,regi)$(tall.val lt 2007) = pm_damageGrowthRate("2007",regi);
+
+*no growth rate damages before 2020 to match observed GDP 
+pm_damageGrowthRate(tall,regi)$(tall.val le 2020) = 0;
 
 *no growth rate damages after 2150 to prevent extreme runaway damages
 pm_damageGrowthRate(tall,regi)$(tall.val gt 2150) = 0;
 
-*damage function. match observed 2005 GDP, that is, assume that no climate damages unitl then.
-p50_damage(tall,regi)$(tall.val ge 2000 and tall.val le 2300) = 
-    prod(tall2$(tall2.val gt 2005 AND tall2.val le tall.val),  
+*damage function. match observed 2020 GDP, that is, assume that no climate damages until then.
+p50_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
+    prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),  
 	(1 + pm_damageGrowthRate(tall2,regi)))    
 ;
 display p50_damage;
 
 *################## TC damages ##########################################
+* see module TC
+
 p50_damageGrowthRateTC(tall,iso) = 0;
 p50_damageGrowthRateTC(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) = p50_damageFuncCoefTC1(isoTC) * (pm_globalMeanTemperatureZeroed1900(tall)-pm_globalMeanTemperatureZeroed1900("2000")); 
 
+p50_damageGrowthRateTC(tall,iso)$(tall.val le 2020) = 0;
 p50_damageGrowthRateTC(tall,iso)$(tall.val gt 2150) = 0;
 
 p50_damageTC(tall,iso) = 1;
-p50_damageTC(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) = 
-   prod(tall2$(tall2.val gt 2005 AND tall2.val le tall.val),
+p50_damageTC(tall,isoTC)$(tall.val ge 2020 and tall.val le 2300) = 
+   prod(tall2$(tall2.val ge 2020 AND tall2.val le tall.val),
 	(1+p50_damageGrowthRateTC(tall2,isoTC))
 );
 display p50_damageTC;

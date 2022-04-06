@@ -12,13 +12,13 @@ $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWLike requires
 ** damage specification
     
 
-*default specification:
+*default specification from Kalkuhl & Wenz 2020:
 p50_damageFuncCoefa1 =  0.00641;
 p50_damageFuncCoefa2 =  0.00345;
 p50_damageFuncCoefb1 = -0.00109;
 p50_damageFuncCoefb2 = -0.000718;
 
-* variance parameters
+* variance parameters based on Kalkuhl & Wenz 2020 (personal communication with Leonie Wenz)
 p50_var_a1 = 0.00003811;
 p50_var_a2 = 0.00002616;
 p50_var_b1 = 2.88e-7;
