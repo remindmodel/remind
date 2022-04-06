@@ -9,6 +9,7 @@ require(lucode2, quietly = TRUE, warn.conflicts = FALSE)
 
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
+source("scripts/config/readCfgFromRmd.R")
 
 # Choose submission type
 slurmConfig <- choose_slurmConfig()

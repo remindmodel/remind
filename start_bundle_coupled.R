@@ -53,6 +53,7 @@ require(gms)
 require(remind2)
 require(gtools) # required for mixedsort()
 require(dplyr) # for filter, secelt, %>%
+source("scripts/config/readCfgFromRmd.R")
 
 ####################################################
 ############## F U N C T I O N S ###################

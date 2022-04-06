@@ -31,6 +31,7 @@ require(stringr)
 
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
+source("scripts/config/readCfgFromRmd.R")
 
 ############## Define function: get_line ##############################
 
