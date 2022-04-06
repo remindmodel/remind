@@ -14,12 +14,12 @@ require(stringr)
 #' Rscript start.R file
 #'
 #' Without additional arguments this starts a single REMIND run using the settings
-#' from `config/default.cfg`.
+#' from `config/defaultConfig.Rmd`.
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
 #' --testOneRegi: Starting a single REMIND run in OneRegi mode using the
-#'   settings from `config/default.cfg`
+#'   settings from `config/defaultConfig.Rmd`
 #'
 #' --restart: Restart a run.
 #'
@@ -125,7 +125,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       icfg$output <- gsub('c\\("|\\)|"', '', strsplit(iscenarios[iscen, "output"],',')[[1]])
     }
 
-    # Edit switches in default.cfg based on scenarios table, if cell non-empty
+    # Edit switches in defaultConfig based on scenarios table, if cell non-empty
     for (switchname in intersect(names(icfg$gms), names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg$gms[[switchname]] <- iscenarios[iscen, switchname]
@@ -263,11 +263,11 @@ if ('--restart' %in% argv) {
     settings[, path_gdx_list[! path_gdx_list %in% names(settings)]] <- NA
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
-    source("config/default.cfg")
+    cfg <- readCfgFromRmd("config/defaultConfig.Rmd")
     knownColumnNames <- c(names(cfg$gms), path_gdx_list, "start", "output", "description", "model", "regionmapping", "inputRevision")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
-      message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
+      message("\nAutomated checks did not find counterparts in defaultConfig.Rmd for these config file columns:")
       message("  ", paste(unknownColumnNames, collapse = ", "))
       message("start.R might simply ignore them. Please check if these switches are not deprecated.")
       message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
@@ -302,8 +302,8 @@ if ('--restart' %in% argv) {
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
-    #source cfg file for each scenario to avoid duplication of gdx entries in files2export
-    source("config/default.cfg")
+    # get cfg from defaultConfig for each scenario to avoid duplication of gdx entries in files2export
+    cfg <- readCfgFromRmd("config/defaultConfig.Rmd")
 
     # Have the log output written in a file (not on the screen)
     cfg$slurmConfig <- slurmConfig

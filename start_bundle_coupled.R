@@ -133,12 +133,12 @@ for (scen in common) {
 
 # check REMIND settings
 
-source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND default settings
+cfg <- readCfgFromRmd(paste0(path_remind,"config/defaultConfig.Rmd")) # retrieve REMIND default settings
 
 knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "model", "regionmapping", "inputRevision")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
-  message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
+  message("\nAutomated checks did not find counterparts in defaultConfig.Rmd for these config file columns:")
   message("  ", paste(unknownColumnNames, collapse = ", "))
   message("start.R might simply ignore them. Please check if these switches are not deprecated.")
   message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
@@ -227,9 +227,7 @@ for(scen in common){
       cat("Replacing path to MAgPIE report with that one specified in\n  ",path_settings_coupled,"\n  ",scenarios_coupled[scen, "path_report"],"\n")
   }
 
-  source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
-  cfg_rem <- cfg
-  rm(cfg)
+  cfg_rem <- readCfgFromRmd(paste0(path_remind,"config/defaultConfig.Rmd")) # retrieve REMIND settings
   cfg_rem$title <- scen
 
   source(paste0(path_magpie,"config/default.cfg")) # retrieve MAgPIE settings
@@ -305,7 +303,7 @@ for(scen in common){
     }
   }
 
-  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  # Edit switches in defaultConfig.Rmd based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg_rem$gms), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem$gms[[switchname]] <- settings_remind[scen, switchname]

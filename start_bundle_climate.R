@@ -59,8 +59,8 @@ settings = scenarios
 
 # Modify and save cfg for all runs
 for (scen in rownames(scenarios)) {
-  #source cfg file for each scenario to avoid duplication of gdx entries in files2export
-  source("config/default.cfg")
+  # get cfg from defaultConfig for each scenario to avoid duplication of gdx entries in files2export
+  cfg <- readCfgFromRmd("config/defaultConfig.Rmd")
 
   # Have the log output written in a file (not on the screen)
   cfg$slurmConfig <- slurmConfig
@@ -85,7 +85,7 @@ for (scen in rownames(scenarios)) {
     cfg$description <- paste0("REMIND climate run ", scen, " started by ", config.file, ".")
   }
 
-  # Edit switches in default.cfg based on scenarios table, if cell non-empty
+  # Edit switches in defaultConfig.Rmd based on scenarios table, if cell non-empty
   for (switchname in intersect(names(cfg$gms), names(scenarios))) {
     if ( !is.na(scenarios[scen, switchname] )) {
       cfg$gms[[switchname]] <- scenarios[scen, switchname]
