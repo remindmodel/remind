@@ -12,7 +12,7 @@ Scalar
 
 Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                             "industry CCS MAC curves [ratio @ US$2005]"
-  p37_energy_limit(all_in)                                                   "thermodynamic/technical limits of energy use [GJ/product]"                    
+  pm_energy_limit(all_in)                                                   "thermodynamic/technical limits of energy use [GJ/product]"                    
   p37_clinker_cement_ratio(ttot,all_regi)                                    "clinker content per unit cement used"                                         
   pm_ue_eff_target(all_in)                                                   "energy efficiency target trajectories [% p.a.]"                               
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "Captured CO2 in industry by energy carrier, subsector and emissions market"   
