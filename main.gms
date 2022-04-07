@@ -140,8 +140,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  default
-$setGlobal c_description  "REMIND run with default settings"
+$setGlobal c_expname  C_run9test-rem-1
+$setGlobal c_description  Coupled REMIND and MAgPIE run run9test started by /p/tmp/oliverr/remind/config/scenario_config_test.csv and /p/tmp/oliverr/remind/config/scenario_config_coupled_test.csv.
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -355,7 +355,7 @@ cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germa
 cm_iteration_max       = 1;     !! def = 1
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
-cm_nash_autoconverge   = 1;     !! def = 1
+cm_nash_autoconverge   = 0;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
 cm_emiscen        = 1;         !! def = 1
