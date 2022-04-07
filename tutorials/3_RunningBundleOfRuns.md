@@ -58,7 +58,24 @@ The column `slurmConfig` can be used to specify the slurm configuration, either 
 
 Everything in the row after a `#` is interpreted as comment. Best use it as first character in the first column to structure the file. Using `#` elsewhere else can lead to unexpected data losses of the cells that follow in the row. If you want to switch off the use of a column, either temporarily or to add some comments, add a dot before the parameter name, which then may read `.cm_startyear` and is then ignored.
 
-Before you start the runs, you can test the setting by running `Rscript start.R config/scenario_config_XYZ.csv --test`.
+Before you start the runs, you can test whether the right runs would be started and find all necessary gdx files. This also writes the `.Rdata` files in the REMIND main folder:
+```bash
+Rscript start.R --test config/scenario_config_XYZ.csv
+```
+Running the complete chain of runs, but with only one iteration and one region each can be started with:
+```bash
+Rscript start.R --testOneRegi config/scenario_config_XYZ.csv
+```
+If you want to manually start runs instead of editing the `start` column in the config file, start:
+```bash
+Rscript start.R --interactive config/scenario_config_XYZ.csv
+```
+In interactive mode, the scripts lets you select a config files if you do not specify one. You can combine all these options and use
+```bash
+Rscript start.R -1it
+```
+as a shortcut, meaning `1` for `--testOneRegi`, `i` for `--interactive`, `t` for `--test`.
+
 
 Further notes:
 --------------

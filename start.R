@@ -12,22 +12,28 @@ require(stringr)
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
+#' Rscript start.R --test --testOneRegi file
 #'
-#' Without additional arguments this starts a single REMIND run using the settings
-#' from `config/default.cfg`.
-#'
-#' Control the script's behavior by providing additional arguments:
-#'
-#' --testOneRegi: Starting a single REMIND run in OneRegi mode using the
-#'   settings from `config/default.cfg`
-#'
-#' --restart: Restart a run.
-#'
-#' --test: Test configuration
+#' Without additional arguments this starts a single REMIND run
+#' using the settings from `config/default.cfg`.
 #'
 #' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
 #'
 #'   Rscript start.R config/scenario_config_XYZ.csv
+#'
+#' Control the script's behavior by providing additional arguments:
+#'
+#' --debug, -d: start a debug run with cm_nash_mode = debug
+#'
+#' --interactive, -i: interactively select run(s) to be started
+#'
+#' --reprepare, -R: rewrite full.gms and restart run
+#'
+#' --restart, -r: interactively restart run(s)
+#'
+#' --test, -t: Test configuration
+#'
+#' --testOneRegi, -1: Starting the REMIND run(s) in testOneRegi mode.
 
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
@@ -47,54 +53,86 @@ get_line <- function(){
     return(s);
 }
 
-############## Define function: choose_folder #########################
+############## Define function: chooseFromList #########################
+# thelist: list to be selected from
+# group: list with same dimension as thelist with group names to allow to select whole groups
+# returnboolean: TRUE: returns list with dimension of thelist with 0 or 1
+# returnboolean: FALSE: returns selected entries of thelist
+# multiple: TRUE: allows to select multiple entries. FALSE: no
+# allowempty: TRUE: allows you not to select anything (returns NA). FALSE: must select something
+# type: string to be shown to user to understand what he chooses
 
-choose_folder <- function(folder,title="Please choose a folder") {
-  dirs <- NULL
-
-  # Detect all output folders containing fulldata.gdx
-  # For coupled runs please use the outcommented text block below
-
-  dirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path(folder,"*","non_optimal.gdx"),file.path(folder,"*","fulldata.gdx")))))
-
-  # DK: The following outcommented lines are specially made for listing results of coupled runs
-  #runs <- findCoupledruns(folder)
-  #dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
-  #dirs <- sub("./output/","",dirs)
-
-  dirs <- c("all",dirs)
-  cat("\n\n",title,":\n\n")
-  cat(paste(1:length(dirs), dirs, sep=": " ),sep="\n")
-    cat(paste(length(dirs)+1, "Search by the pattern.\n", sep=": "))
-  cat("\nNumber: ")
-    identifier <- get_line()
-  identifier <- strsplit(identifier,",")[[1]]
+chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multiple = TRUE,
+                           allowempty = FALSE, group = FALSE) {
+  originallist <- thelist
+  booleanlist <- numeric(length(originallist)) # set to zero
+  if (! isFALSE(group) && (length(group) != length(originallist) | isFALSE(multiple))) {
+    message("group must have same dimension as thelist, or multiple not allowed. Group mode disabled")
+    group <- FALSE
+  }
+  message("\n\nPlease choose ", type,":\n\n")
+  if (! isFALSE(group)) {
+    groups <- sort(unique(group))
+    groupsids <- seq(length(originallist)+2, length(originallist)+length(groups)+1)
+    thelist <- c(paste0(str_pad(thelist, max(nchar(originallist)), side = "right"), " ", group), paste("Group:", groups))
+    message(str_pad("", max(nchar(originallist)) + nchar(length(thelist)+2)+2, side = "right"), " Group")
+  }
+  if(multiple)   thelist <- c("all", thelist, "Search by pattern...")
+  message(paste(paste(str_pad(1:length(thelist), nchar(length(thelist)), side = "left"), thelist, sep=": " ), collapse="\n"))
+  message("\nNumber", ifelse(multiple,"s entered as 2,4:6,9",""),
+          ifelse(allowempty, " or leave empty", ""), " (", type, "): ")
+  identifier <- strsplit(get_line(), ",")[[1]]
+  if (allowempty & length(identifier) == 0) return(NA)
+  if (length(identifier) == 0 | ! all(grepl("^[0-9,:]*$", identifier))) {
+    message("Try again, you have to choose some numbers.")
+    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
+  }
   tmp <- NULL
-  for (i in 1:length(identifier)) {
-    if (length(strsplit(identifier,":")[[i]]) > 1) tmp <- c(tmp,as.numeric(strsplit(identifier,":")[[i]])[1]:as.numeric(strsplit(identifier,":")[[i]])[2])
-    else tmp <- c(tmp,as.numeric(identifier[i]))
+  for (i in 1:length(identifier)) { # turns 2:5 into 2,3,4,5
+    if (length(strsplit(identifier,":")[[i]]) > 1) {
+      tmp <- c(tmp,as.numeric(strsplit(identifier,":")[[i]])[1]:as.numeric(strsplit(identifier,":")[[i]])[2])
+    }
+    else {
+      tmp <- c(tmp,as.numeric(identifier[i]))
+    }
   }
   identifier <- tmp
+  if (! multiple & length(identifier) > 1) {
+    message("Try again, not in list or multiple chosen: ", paste(identifier, collapse = ", "))
+    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
+  }
+  if (any(! identifier %in% seq(length(thelist)))) {
+    message("Try again, not all in list: ", paste(identifier, collapse = ", "))
+    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
+  }
+  if (! isFALSE(group)) {
+    selectedgroups <- sub("^Group: ", "", thelist[intersect(identifier, groupsids)])
+    identifier <- unique(c(identifier[! identifier %in% groupsids], which(group %in% selectedgroups)+1))
+  }
   # PATTERN
-    if(length(identifier==1) && identifier==(length(dirs)+1)){
-        cat("\nInsert the search pattern or the regular expression: ")
-        pattern <- get_line()
-        id <- grep(pattern=pattern, dirs[-1])
-        # lists all chosen directories and ask for the confirmation of the made choice
-        cat("\n\nYou have chosen the following directories:\n")
-        cat(paste(1:length(id), dirs[id+1], sep=": "), sep="\n")
-        cat("\nAre you sure these are the right directories?(y/n): ")
-        answer <- get_line()
-        if(answer=="y"){
-            return(dirs[id+1])
-        } else choose_folder(folder,title)
-    #
-    } else if(any(dirs[identifier] == "all")){
-        identifier <- 2:length(dirs)
-        return(dirs[identifier])
-    } else return(dirs[identifier])
+  if(multiple && length(identifier == 1) && identifier == length(thelist) ){
+    message("\nInsert the search pattern or the regular expression: ")
+    pattern <- get_line()
+    id <- grep(pattern=pattern, originallist)
+    # lists all chosen and ask for the confirmation of the made choice
+    message("\n\nYou have chosen the following ", type, ":")
+    if (length(id) > 0) message(paste(paste(1:length(id), originallist[id], sep=": "), collapse="\n"))
+    message("\nAre you sure these are the right ", type, "? (y/n): ")
+    if(get_line() == "y"){
+      identifier <- id
+      booleanlist[id] <- 1
+    } else {
+      return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
+    }
+  } else if(any(thelist[identifier] == "all")){
+    booleanlist[] <- 1
+    identifier <- 1:length(originallist)
+  } else {
+    if (multiple) identifier <- identifier - 1
+    booleanlist[identifier] <- 1
+  }
+  if (returnboolean) return(booleanlist) else return(originallist[identifier])
 }
-
 
 ############## Define function: configure_cfg #########################
 
@@ -111,7 +149,10 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       }
     }
     if (icfg$slurmConfig %in% paste(seq(1:16))) icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
-    if (icfg$slurmConfig %in% c(NA, "")) icfg$slurmConfig <- slurmConfig
+    if (icfg$slurmConfig %in% c(NA, ""))       {
+      if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+      icfg$slurmConfig <- slurmConfig
+    }
 
     # Set description
     if ("description" %in% names(iscenarios) && ! is.na(iscenarios[iscen, "description"])) {
@@ -134,10 +175,10 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
-    if (any(iscen %in% isettings[iscen, path_gdx_list])) {
+    if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
       stop("Self-reference: ", iscen , " refers to itself in a path_gdx... column.")
     }
-    for (path_to_gdx in path_gdx_list) {
+    for (path_to_gdx in names(path_gdx_list)) {
       if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
         if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
           # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
@@ -172,18 +213,18 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         }
         # if the above has not created a path to a valid gdx, stop
         if (!file.exists(isettings[iscen, path_to_gdx])){
-          stop(paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ". Please specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run."))
+          stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
+          if (! "--test" %in% argv) stop(stoptext) else {
+            ignorederrors <<- ignorederrors + 1
+            message("Error: ", stoptext)
+          }
         }
       }
     }
 
     # Define path where the GDXs will be taken from
-    gdxlist <- c(input.gdx               = isettings[iscen, "path_gdx"],
-                 input_ref.gdx           = isettings[iscen, "path_gdx_ref"],
-                 input_refpolicycost.gdx = isettings[iscen, "path_gdx_refpolicycost"],
-                 input_bau.gdx           = isettings[iscen, "path_gdx_bau"],
-                 input_carbonprice.gdx   = isettings[iscen, "path_gdx_carbonprice"]
-                 )
+    gdxlist <- unlist(settings[scen, names(path_gdx_list)])
+    names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
     icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
@@ -196,75 +237,123 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 }
 
 
-# check command-line arguments for testOneRegi and scenario_config file
+# load command-line arguments
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-config.file <- argv[1]
-
-if (any("--test" %in% config.file)) {
-  stop("--test mode works only with scenario_config file provided as first argument.")
-}
 
 # define arguments that are accepted
-accepted <- c('--restart','--testOneRegi','--test')
+accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test")
 
-# check if user provided any unknown arguments or config files that do not exist
-known <-  argv %in% accepted
-if (!all(known)) {
-  file_exists <- file.exists(argv[!known])
-  if (!all(file_exists)) stop("Unknown parameter provided: ",paste(argv[!known][!file_exists]," "))
+# search for strings that look like -i1asrR and transform them into long flags
+onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
+argv <- unique(c(argv[! grepl("^-[a-zA-Z0-9]*$", argv)], unlist(accepted[names(accepted) %in% onedashflags])))
+message("\nAll flags: ", paste(argv, collapse = ", "))
+if (sum(! onedashflags %in% c(names(accepted), "-")) > 0) {
+  stop("Unknown single character flags: ", onedashflags[! onedashflags %in% c(names(accepted), "-")],
+  ". Only available: ", paste0("-", names(accepted), collapse = ", ") )
 }
 
+# initialize config.file
+config.file <- NA
+
+# check if user provided any unknown arguments or config files that do not exist
+known <- argv %in% accepted
+if (!all(known)) {
+  file_exists <- file.exists(argv[!known])
+  if (sum(file_exists) > 1) stop("You provided two files, start.R can only handle one.")
+  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!known][!file_exists], collapse = ", "),
+  ".\nAccepted parameters: [config file], ", paste(accepted, collapse = ", "))
+  # set config file to not known parameter where the file actually exists
+  config.file <- argv[!known][[1]] 
+}
+
+if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
+  message("\nIt is impossible to combine --restart with --testOneRegi or --debug because full.gms has to be rewritten.\n",
+  "If this is what you want, use --reprepare instead, or answer with y:")
+  if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
+}
+ignorederrors <- 0 # counts ignored errors in --test mode
+
 ###################### Choose submission type #########################
-if(!exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+
+if ("--testOneRegi" %in% argv) {
+  message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
+  "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
+  testOneRegi_region <- get_line()
+}
 
 # Restart REMIND in existing results folder (if required by user)
-if ('--restart' %in% argv) {
+if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  outputdirs <- choose_folder("./output","Please choose the runs to be restarted")
-  message("\nAlso restart subsequent runs? Enter Y, else leave empty:")
+  possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
+  # DK: The following outcommented lines are specially made for listing results of coupled runs
+  # runs <- lucode2::findCoupledruns("./output/")
+  # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
+  outputdirs <- chooseFromList(possibledirs, "runs to be restarted", returnboolean = FALSE)
+  message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- get_line() %in% c("Y", "y")
+  if ("--reprepare" %in% argv) {
+    message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
+  }
+  if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+  message()
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
-    load(paste0("output/",outputdir,"/config.Rdata")) # read config.Rdata from results folder
+    load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
+    if ("--debug" %in% argv)       cfg$gms$cm_nash_mode <- "debug"
+    if ("--testOneRegi" %in% argv) {
+      cfg$gms$optimization <- "testOneRegi"
+      if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+    }
+    if ("--reprepare" %in% argv & ! "--test" %in% argv) {
+      try(system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms")))
+      try(system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx")))
+    }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
-    submit(cfg, restart = TRUE)
+    if (! '--test' %in% argv) {
+      submit(cfg, restart = TRUE)
+    } else {
+      message("   If this wasn't --test mode, I would have restarted ", cfg$title, ".")
+    }
     #cat(paste0("output/",outputdir,"/config.Rdata"),"\n")
   }
 
 } else {
 
-  # If testOneRegi was selected, set up a testOneRegi run.
-  if ('--testOneRegi' %in% argv) {
-    testOneRegi <- TRUE
-    config.file <- NA
-  } else {
-    testOneRegi <- FALSE
+  if (is.na(config.file) & "--interactive" %in% argv) {
+    possiblecsv <- Sys.glob(c(file.path("./config/scenario_config*.csv"), file.path("./config","*","scenario_config*.csv")))
+    possiblecsv <- possiblecsv[! grepl(".*scenario_config_coupled.*csv$", possiblecsv)]
+    config.file <- chooseFromList(possiblecsv, type = "one config file", returnboolean = FALSE, multiple = FALSE, allowempty = TRUE)
   }
 
-  ###################### Load csv if provided  ##########################
+  ###################### Load csv if provided  ###########################
 
   # If a scenario_config.csv file was provided, set cfg according to it.
 
-  if (!is.na(config.file)) {
+  if (! is.na(config.file)) {
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names
     settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1, comment.char = "#", na.strings = "")
 
     # Add empty path_gdx_... columns if they are missing
-    path_gdx_list <- c("path_gdx", "path_gdx_ref", "path_gdx_refpolicycost", "path_gdx_bau", "path_gdx_carbonprice")
+    path_gdx_list <- c("path_gdx" = "input.gdx",
+                       "path_gdx_ref" = "input_ref.gdx",
+                       "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
+                       "path_gdx_bau" = "input_bau.gdx",
+                       "path_gdx_carbonprice" = "input_carbonprice.gdx")
+
     if ("path_gdx_ref" %in% names(settings) && ! "path_gdx_refpolicycost" %in% names(settings)) {
       settings$path_gdx_refpolicycost <- settings$path_gdx_ref
-      message("No column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
+      message("\nNo column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
     }
-    settings[, path_gdx_list[! path_gdx_list %in% names(settings)]] <- NA
+    settings[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings)]] <- NA
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
-    knownColumnNames <- c(names(cfg$gms), path_gdx_list, "start", "output", "description", "model", "regionmapping", "inputRevision")
+    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -284,16 +373,31 @@ if ('--restart' %in% argv) {
     }
 
     # Select scenarios that are flagged to start, some checks for titles
+    if ("--interactive" %in% argv | ! any(settings$start == 1)) {
+      settings$start <- chooseFromList(rownames(settings), type = "runs", returnboolean = TRUE, group = settings$start)
+    }
     scenarios <- settings[settings$start==1,]
     if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
-    # if no csv was provided create dummy list with default as the only scenario
-    scenarios <- data.frame("default" = "default", row.names = "default")
+    # if no csv was provided create dummy list with default/testOneRegi as the only scenario
+    if ("--testOneRegi" %in% argv) {
+      scenarios <- data.frame("testOneRegi" = "testOneRegi", row.names = "testOneRegi")
+    } else {
+      scenarios <- data.frame("default" = "default", row.names = "default")
+    }
   }
 
   ###################### Loop over scenarios ###############################
+
+  # ask for slurmConfig if not specified for every run
+  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+    slurmConfig <- choose_slurmConfig()
+    if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
+      message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
+    }
+  }
 
   # Tell user that model is currently locked
   if (file.exists(".lock")) {
@@ -306,20 +410,18 @@ if ('--restart' %in% argv) {
     source("config/default.cfg")
 
     # Have the log output written in a file (not on the screen)
-    cfg$slurmConfig <- slurmConfig
     cfg$logoption   <- 2
     start_now       <- TRUE
 
     # testOneRegi settings
-    if (testOneRegi) {
-      cfg$title            <- "testOneRegi"
-      cfg$description      <- "A REMIND run using testOneRegi"
+    if ("--testOneRegi" %in% argv & is.na(config.file)) {
+      cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
       cfg$results_folder   <- "output/testOneRegi"
-
       # delete existing Results directory
       cfg$force_replace    <- TRUE
+      if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
 
     cat("\n",scen,"\n")
@@ -327,15 +429,28 @@ if ('--restart' %in% argv) {
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
+      # set optimization mode to testOneRegi, if specified as command line argument
+      if ('--testOneRegi' %in% argv) {
+        cfg$description      <- paste("testOneRegi:", cfg$description)
+        cfg$gms$optimization <- "testOneRegi"
+        cfg$output           <- NA
+        # overwrite slurmConfig settings provided in scenario config file with those selected by user
+        cfg$slurmConfig      <- slurmConfig
+        if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+      }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
-      check_gdx <- c("input.gdx", "input_ref.gdx", "input_bau.gdx", "input_carbonprice.gdx")
-      gdx_specified <- grepl(".gdx", cfg$files2export$start[check_gdx], fixed = TRUE)
-      gdx_na <- is.na(cfg$files2export$start[check_gdx])
+      gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
+      gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
       start_now <- all(gdx_specified | gdx_na)
       if (start_now) {
         message("   Run can be started using ", sum(gdx_specified), " specified gdx file(s).")
-        if (sum(gdx_specified) > 0) message("     ", paste0(check_gdx[gdx_specified], ": ", cfg$files2export$start[check_gdx][gdx_specified], collapse = "\n     "))
+        if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
       }
+    }
+
+    if ("--debug" %in% argv) {
+      cfg$gms$cm_nash_mode <- "debug"
+      cfg$slurmConfig      <- slurmConfig
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
@@ -351,7 +466,7 @@ if ('--restart' %in% argv) {
         message("   If this wasn't --test mode, I would submit ", scen, ".")
       }
     } else {
-      message("   Waiting for: ", paste(unique(cfg$files2export$start[check_gdx][! gdx_specified & ! gdx_na]), collapse = ", "))
+       message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
 
     # print names of subsequent runs if there are any
@@ -362,4 +477,6 @@ if ('--restart' %in% argv) {
   }
 }
 
-if ('--test' %in% argv) message("\nFinished --test mode, no runs were started.")
+if ('--test' %in% argv) {
+  message("\nFinished --test mode with ", ignorederrors, " errors. Rdata files were written, but no runs were started.")
+}
