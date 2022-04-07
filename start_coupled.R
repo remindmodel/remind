@@ -14,7 +14,7 @@
 # It creates empty output folders and copies dummy reports into them 
 # without calling the start scripts of the models.
 
-debug_coupled <- function(model = NULL,cfg) {
+debug_coupled <- function(model = NULL, cfg) {
    if(is.null(model)) stop("COUPLING DEBUG: Coupling was run in debug mode but no model was specified")
    
    cat("   Creating results folder",cfg$results_folder,"\n")
@@ -147,6 +147,11 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cfg_rem$output <- c("reporting","emulator","rds_report")
     } else {
       cfg_rem$output <- cfg_rem_original
+    }
+
+    # change precision only for last run if setup in coupled config
+    if (i == max_iterations && ! is.null(cfg_rem$cm_nash_autoconverge_lastrun)) {
+      cfg_rem$gms$cm_nash_autoconverge <- cfg_rem$cm_nash_autoconverge_lastrun
     }
 
     ############ DECIDE IF AND HOW TO START REMIND ###################
