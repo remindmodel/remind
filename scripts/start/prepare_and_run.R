@@ -338,8 +338,15 @@ prepare <- function() {
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # run main.gms if not further specified
-  if(is.null(cfg$model)) cfg$model <- "main.gms"
-  manipulateConfig(cfg$model, cfg$gms)
+  if (is.null(cfg$model)) cfg$model <- "main.gms"
+  if (cfg$title == "default") {
+    tmpmodelfile <- cfg$model
+  } else {
+    tmpmodelfile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
+    system(paste("cp", cfg$model, tmpmodelfile))
+    message("Temporary model file ", tmpmodelfile, " will later be moved to main.gms in output folder.")
+  }
+  manipulateConfig(tmpmodelfile, cfg$gms)
 
   ######## declare functions for updating information ####
   update_info <- function(regionscode,revision) {
@@ -352,7 +359,7 @@ prepare <- function() {
       '',
       paste('Last modification (input data):',date()),
       '')
-    replace_in_file(cfg$model,paste('*',content),subject)
+    replace_in_file(tmpmodelfile, paste('*', content), subject)
   }
 
   update_sets <- function(map) {
@@ -447,11 +454,11 @@ prepare <- function() {
   }
 
   ############ update information ########################
-  # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
+  # update_info, which regional resolution and input data revision in tmpmodelfile
+  update_info(regionscode(cfg$regionmapping), cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
-  map <- read.csv(cfg$regionmapping,sep=";")
+  map <- read.csv(cfg$regionmapping, sep=";")
   update_sets(map)
 
   ########################################################
@@ -495,7 +502,10 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
+  singleGAMSfile(mainfile=tmpmodelfile, output = file.path(cfg$results_folder, "full.gms"))
+  # Move/Copy tmpmodelfile as main.gms to output folder
+  system(paste(ifelse(cfg$title == "default", "cp", "mv"),
+               tmpmodelfile, file.path(cfg$results_folder, "main.gms")))
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
