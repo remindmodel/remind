@@ -223,7 +223,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     }
 
     # Define path where the GDXs will be taken from
-    gdxlist <- unlist(settings[scen, names(path_gdx_list)])
+    gdxlist <- unlist(isettings[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
