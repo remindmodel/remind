@@ -336,7 +336,7 @@ prepare <- function() {
 
   # configure main model gms file (cfg$model) based on settings of cfg file
   cfg$gms$c_expname <- cfg$title
-  cfg$gms$c_description <- cfg$description
+  cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # run main.gms if not further specified
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
