@@ -275,11 +275,7 @@ ignorederrors <- 0 # counts ignored errors in --test mode
 
 ###################### Choose submission type #########################
 
-if ("--testOneRegi" %in% argv) {
-  message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
-  "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
-  testOneRegi_region <- get_line()
-}
+testOneRegi_region <- ""
 
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
@@ -291,6 +287,11 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   outputdirs <- chooseFromList(possibledirs, "runs to be restarted", returnboolean = FALSE)
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- get_line() %in% c("Y", "y")
+  if ("--testOneRegi" %in% argv) {
+    message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
+    "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
+    testOneRegi_region <- get_line()
+  }
   if ("--reprepare" %in% argv) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
   }
@@ -451,6 +452,11 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     if ("--debug" %in% argv) {
       cfg$gms$cm_nash_mode <- "debug"
       cfg$slurmConfig      <- slurmConfig
+    }
+
+    if (cfg$slurmConfig %in% c(NA, "")) {
+      if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+      cfg$slurmConfig <- slurmConfig
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
