@@ -302,12 +302,24 @@ $ENDIF.WindOff
 *** FS: H2 transmission & distribution helper technologies for industry & buildings
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
-*** technologies related to trading
-        gas_pipe     'Gas pipelines that can be used for both natural gas and hydrogen.'
-        lng_liq      'Natural gas liquification facilities for transportation as LNG.'
-        lng_gas      'LNG re-gasification facilities for transportation of NG.'
-        lng_ves      'LNG shipping vessels.'
-        coal_ves     'Vessels that can carry coal.'
+*** PCV: technologies related to trading
+        pipe_gas    'Pipelines transporting natural gas'
+        termX_lng   'Export terminals for LNG (liquification)'
+        termM_lng   'Import terminals for LNG (regasification)'
+        vess_lng    'Vessels transporting LNG'
+        vess_coal   'Vessels transporting coal'
+        pipe_oil    'Pipelines transporting oil'
+        vess_oil    'Vessels transporting oil'
+        pipe_h2     'Pipelines transporting hydrogen'
+        termX_lh2   'Export terminals for liquid hydrogen (liquification)'
+        termM_lh2   'Import terminals for liquid hydrogen (regasification)'
+        vess_lh2    'Vessels transporting liquid hydrogen'
+        termX_lohc  'Export terminals for liquid hydrogen (liquification)'
+        termM_lohc  'Import terminals for liquid hydrogen (regasification)'
+        vess_lohc   'Vessels transporting liquid hydrogen'
+        termX_nh3   'Export terminals for liquid hydrogen (liquification)'
+        termM_nh3   'Import terminals for liquid hydrogen (regasification)'
+        vess_nh3    'Vessels transporting liquid hydrogen'
 /
 
 all_enty             "all types of quantities"
@@ -1205,11 +1217,10 @@ $ENDIF.WindOff
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
         gridwindoff     "grid between areas with high wind offshore production and the rest"
 $ENDIF.WindOff
-        gas_pipe      'Gas pipelines that can be used for both natural gas and hydrogen.'
-        lng_liq       'Natural gas liquification facilities for transportation as LNG.'
-        lng_gas       'LNG re-gasification facilities for transportation of NG.'
-        lng_ves       'LNG shipping vessels.'
-        coal_ves      'Vessels that can carry coal.'
+        pipe_gas    'Pipelines transporting natural gas'
+        termX_lng   'Export terminals for LNG (liquification)'
+        termM_lng   'Import terminals for LNG (regasification)'
+        vess_lng    'Vessels transporting LNG'
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
