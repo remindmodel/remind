@@ -38,10 +38,6 @@ pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(reg
 pm_costsTradePeFinancial(regi,"Xport", "pegas") = cm_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
 pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
-*set trase se prices to zero
-pm_MPortsPrice(ttot,regi,tradeSe)=0;
-pm_XPortsPrice(ttot,regi,tradeSe)=0;
-
 ***-------------------------------------------------------------------------------
 ***                            Data for trade model
 ***-------------------------------------------------------------------------------

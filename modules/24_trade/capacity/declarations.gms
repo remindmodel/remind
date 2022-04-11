@@ -21,20 +21,21 @@ PARAMETERS
   pm_Xport0(tall,all_regi,all_enty)                                           "Reference level value of export." 
   pm_IO_trade(tall,all_regi,all_enty,char)                                    "Energy trade bounds based on IEA data."
   p24_Mport2005correct(all_regi,all_enty)                                     "Correction factor to match fossil supply and internal region energy demand in the initial year"
+  
+  pm_MPortsPrice(tall,all_regi,all_enty)                                      "Secondary energy import price for region (only used in se_trade realisation)."
 
-  pm_MPortsPrice(tall,all_regi,all_enty)                                      "Secondary energy import price for region. Calculated in the postsolve and assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [T$/TWa]"
-  pm_XPortsPrice(tall,all_regi,all_enty)                                      "Secondary energy export price for region. Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
-
+  pm_XPortsPrice(tall,all_regi,all_enty)                                      "Export price for region (capacity realisation). Calculated in the postsolve and corresponding to the region secondary energy price [T$/TWa]"
   p24_Xport(ttot,all_regi,all_enty)                                           "Export of traded commodity."
-  p24_Mport(ttot,all_regi,all_enty)                                           "Import of traded commodity."
-  p24_XportEff(ttot,all_regi,all_enty)                                        "Export of traded commodity effective (computed from imports)."
-  p24_XMportPipe(all_regi,all_regi,all_enty)                                  "Export and imports of traded commodity via pipeline."
-
+  
+*** tracking iterative values of parameters and variables for diagnostics
+  p24_XPortsPrice_iter(iteration,ttot,all_regi,all_enty)                      "Iterative values of pm_XPortsPrice for diagnostics."
+  
   p24_Xport_iter(iteration,ttot,all_regi,all_enty)                            "Iterative values of vm_Xport for diagnostics."
   p24_Mport_iter(iteration,ttot,all_regi,all_enty)                            "Iterative values of vm_Mport for diagnostics."
-  p24_shipment_quan_iter(iteration,ttot,all_regi,all_regi,tradeModes)         "Iterative values of v24_trade for diagnostics."
-  p24_cap_tradeTransp_iter(iteration,ttot,all_regi,all_regi,teTrade)          "Iterative values of v24_capTrade for diagnostics."
-  p24_XPortsPrice_iter(iteration,ttot,all_regi,all_enty)                      "Iterative values of pm_XPortsPrice for diagnostics."
+  
+  p24_trade_iter(iteration,ttot,all_regi,all_regi,tradeModes)                 "Iterative values of v24_trade for diagnostics."
+  
+  p24_capTrade_iter(iteration,ttot,all_regi,all_regi,teTrade)                 "Iterative values of v24_capTrade for diagnostics."
 ;
 
 ***-------------------------------------------------------------------------------

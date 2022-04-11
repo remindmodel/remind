@@ -13,8 +13,6 @@ pm_Xport0(ttot,regi,tradePe) = vm_Xport.l(ttot,regi,tradePe);
 ***-------------------------------------------------------------------------------
 *** get Mports and Xports from REMIND
 
-p24_Mport(t,regi,tradeCap) = vm_Mport.l(t,regi,tradeCap);
-
 *** Xport prices
 pm_XPortsPrice(t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap);
 ***this will need fixing and has to become something more like this: pm_XPortsPrice(t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap) or pm_SEPrice(t,regi,tradeCap);
@@ -30,14 +28,5 @@ vm_Xport.fx(t,regi,tradeCap) = p24_Xport(t,regi,tradeCap);
 *** Setting Xport price bound to avoid unrealists trading prices.
 *** Lower bound: avoiding epsilon values (caused by using equation marginals for setting prices) or unrealistic small value for H2 exporting prices -> minimun price = 1$/kg (1$/kg = 0.030769231 $/Kwh = 0.030769231 / (10^12/10^9*8760) T$/TWa = 0.26953846356 T$/TWa) 
 ***pm_XPortsPrice(t,regi,"seh2") = min(0.26953846356,pm_XPortsPrice(t,regi,"seh2"));
-
-***-------------------------------------------------------------------------------
-***                    SAVING RESULTS TO ITERATION VARIABLES
-***-------------------------------------------------------------------------------
-p24_Xport_iter(iteration,t,regi,tradeCap) = vm_Xport.l(t,regi,tradeCap);
-p24_Mport_iter(iteration,t,regi,tradeCap) = vm_Mport.l(t,regi,tradeCap);
-p24_shipment_quan_iter(iteration,t,regi,regi2,tradeModes) = v24_trade.l(t,regi,regi2,tradeModes);
-p24_cap_tradeTransp_iter(iteration,t,regi,regi2,teTrade) = v24_capTrade.l(t,regi,regi2,teTrade);
-p24_XPortsPrice_iter(iteration,t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap);
 
 *** EOF ./modules/24_trade/capacity/presolve.gms
