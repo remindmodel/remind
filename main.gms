@@ -83,9 +83,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.298
+* Input data revision: 6.298001
 * 
-* Last modification (input data): Fri Apr  8 08:28:35 2022
+* Last modification (input data): Mon Apr 11 14:41:17 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -567,8 +567,6 @@ $setGlobal cm_CESMkup_build  standard !! def = standard
 c_BaselineAgriEmiRed = 0; !! def = 0
 
 cm_deuCDRmax = -1; !! def = -1
-
-$setGlobal cm_Ind_H2HTH_Traj  standard !! def = standard
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                           YOU ARE IN THE WARNING ZONE (DON'T DO CHANGES HERE)
