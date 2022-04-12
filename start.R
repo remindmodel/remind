@@ -280,7 +280,13 @@ testOneRegi_region <- ""
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
+  if ("--reprepare" %in% argv) {
+    possibledirs <- sort(unique(sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
+    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))))
+  } else {
+    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",
+    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
+  }
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
@@ -301,10 +307,18 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     message("Restarting ", outputdir)
     load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
-    if ("--debug" %in% argv)       cfg$gms$cm_nash_mode <- "debug"
+    if ("--debug" %in% argv) {
+      if (is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$backup$cm_nash_mode <- cfg$gms$cm_nash_mode
+      cfg$gms$cm_nash_mode <- "debug"
+    } else {
+      if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
+    }
     if ("--testOneRegi" %in% argv) {
+      if (is.null(cfg[["backup"]][["optimization"]])) cfg$backup$optimization <- cfg$gms$optimization
       cfg$gms$optimization <- "testOneRegi"
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+    } else {
+      if (! is.null(cfg[["backup"]][["optimization"]])) cfg$gms$optimization <- cfg$backup$optimization
     }
     if ("--reprepare" %in% argv & ! "--test" %in% argv) {
       try(system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms")))
