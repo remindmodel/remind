@@ -32,13 +32,13 @@ teLearn_dyn33(all_te)         "learning technologies"
       dac
 /
 
-fe2fe_dac(entyFe, entyFe) "final energy to final energy mapping for heat and electricity generation for DAC"
+fe2fe_cdr(entyFe, entyFe, all_te) "final energy to final energy mapping for available cdr technologies"
 /
-      feels.feels
-      feels.fehes
-      fehes.fehes
-      fegas.fehes
-      feh2s.fehes
+      feels.feels.dac
+      feels.fehes.dac
+      fehes.fehes.dac
+      fegas.fehes.dac
+      feh2s.fehes.dac
 /
 ;
 

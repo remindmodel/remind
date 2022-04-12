@@ -8,8 +8,6 @@
 scalars
 s33_co2_rem_pot             "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_co2_rem_rate            "carbon removal rate [fraction of annual reduction of total carbon removal potential]"
-s33_rockgrind_fedem         "specific energy demand for grinding rocks [EJ per Gt of ground rock]"
-s33_rockfield_fedem         "specific energy demand for spreading rocks on field [EJ per Gt of ground rock]"
 s33_costs_fix               "fixed costs for mining, grinding, spreading [T$/Gt stone]"
 s33_step                    "size of bins in v33_grindrock_onfield [Gt stone]"
 *JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C. Numbers from Report from Micah Broehm.
@@ -19,13 +17,14 @@ parameters
 p33_transport_costs(all_regi,rlf,rlf)    "transport costs [T$/Gt stone]"
 p33_co2_rem_rate(rlf)                    "carbon removal rate [fraction of annual reduction of total carbon removal potential], multiplied with grade factor"
 p33_dac_fedem(all_enty)                  "specific final energy demand for direct air capture [EJ per Gt of C captured]"
+p33_rockgrind_fedem(all_enty)            "specific final energy demand for grinding and spreading rocks [EJ per Gt of ground rock]"
 p33_LimRock(all_regi)                    "regional share of EW limit [fraction], calculated ex ante for a maximal annual amount of 8 Gt rock in D:\projects\CEMICS\paper_technical\supply_curve_transport_remind_regions.m"
 ;
 
 positive variables
-v33_grindrock_onfield(ttot,all_regi,rlf,rlf)      "amount of ground rock spread on fields in each timestep [Gt]"
-v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields [Gt]"
-v33_DacFEdemand(ttot,all_regi,all_enty, all_enty) "DAC FE demand [TWa]"
+v33_grindrock_onfield(ttot,all_regi,rlf,rlf)              "amount of ground rock spread on fields in each timestep [Gt]"
+v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)          "total amount of ground rock on fields [Gt]"
+v33_FEdemand(ttot,all_regi,all_enty, all_enty, all_te)    "CDR final energy demand [TWa]"
 ;
 
 variables
@@ -37,6 +36,7 @@ v33_emiEW(ttot,all_regi)                                "negative CO2 emission f
 equations
 q33_demFeCDR(ttot,all_regi,all_enty)                "CDR demand balance for final energy"
 q33_DacFEdemand(ttot,all_regi,all_enty)             "calculates DAC FE demand"
+q33_weatheringFEdemand(ttot, all_regi, all_enty)    "calculates EW FE demand"
 q33_capconst_grindrock(ttot,all_regi)               "calculates amount of ground rock spred on fields"
 q33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)    "total amount of ground rock on fields"
 q33_omcosts(ttot,all_regi)                          "calculates O&M costs for spreading ground rocks on fields"

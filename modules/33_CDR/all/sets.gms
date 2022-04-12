@@ -27,16 +27,24 @@ teNoTransform2rlf_dyn33(all_te,rlf) "mapping for final energy to grades"
 
 adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"
 /
-      dac
+    dac
 /
 
-fe2fe_dac(entyFe, entyFe) "final energy to final energy mapping for heat and electricity generation for DAC"
+rlf_temp(rlf) "grades representing weathering rates according to Strefler, Amann et al. (2017)"
 /
-	feels.feels
-	feels.fehes
-	fehes.fehes
-	fegas.fehes
-	feh2s.fehes
+	1		"warm regions"
+	2		"temperate regions"
+/
+
+fe2fe_cdr(entyFe, entyFe, all_te) "final energy to final energy mapping for available cdr technologies"
+/
+	feels.feels.dac
+	feels.fehes.dac
+	fehes.fehes.dac
+	fegas.fehes.dac
+	feh2s.fehes.dac
+	feels.feels.rockgrind
+	fedie.fedie.rockgrind
 /
 
 adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"

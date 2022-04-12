@@ -16,7 +16,7 @@ v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a]"
 ;
 
 positive variables
-v33_DacFEdemand(ttot,all_regi,all_enty, all_enty)    "DAC FE demand [TWa]"
+v33_FEdemand(ttot,all_regi,all_enty, all_enty, all_te)    "DAC FE demand [TWa]"
 ;
 
 equations

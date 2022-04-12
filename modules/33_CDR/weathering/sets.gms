@@ -7,19 +7,31 @@
 *** SOF ./modules/33_CDR/weathering/sets.gms
 sets
 
-te_dyn33(all_te)   "all technologies"
+te_dyn33(all_te)	"all technologies"
 /
 	rockgrind		"grinding rock for enhanced weathering"
 /
 
 teNoTransform_dyn33(all_te) "all technologies that do not transform energy but still have investment and O&M costs (like storage or grid)"
 /
-      rockgrind       "grinding rock for enhanced weathering"
+    rockgrind       "grinding rock for enhanced weathering"
 /
 
 teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
 /
-      (rockgrind) . 1
+    (rockgrind) . 1
+/
+
+rlf_temp(rlf)		"grades representing weathering rates according to Strefler, Amann et al. (2017)"
+/
+	1		"warm regions"
+	2		"temperate regions"
+/
+
+fe2fe_cdr(entyFe, entyFe2, all_te) "final energy to final energy mapping for available cdr technologies"
+/
+	feels.feels.rockgrind
+	fedie.fedie.rockgrind
 /
 ;
 

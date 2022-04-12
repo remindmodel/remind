@@ -8,35 +8,42 @@
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance
-*'  Calculation of the energy demand of enhanced weathering. The first part of the equation describes the electricity demand for grinding, 
-*'  the second part the diesel demand for transportation and spreading on crop fields.
+*'  Calculation of the energy demand of enhanced weathering.
 ***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$(sameas(entyFe,"feels") OR sameas(entyFe,"fedie"))..
+q33_demFeCDR(t,regi,entyFe)$sum(entyFe2, fe2fe_cdr(entyFe, entyFe2, "rockgrind"))..
     sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
-	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
+	sum(entyFe2, v33_FEdemand(t, regi, entyFe, entyFe2, "rockgrind"))
+	;
+
+***---------------------------------------------------------------------------
+*'  Calculation of electricity demand for grinding and diesel demand for transportation and spreading rock on the fields.
+***---------------------------------------------------------------------------
+q33_weatheringFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "rockgrind"))..
+	sum(entyFe, v33_FEdemand(t, regi, entyFe, entyFe2, "rockgrind"))
+	=e=
+	p33_rockgrind_fedem(entyFe2) * sm_EJ_2_TWa * sum((rlf_temp, rlf), v33_grindrock_onfield(t,regi,rlf_temp,rlf)))
 	;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
 ***---------------------------------------------------------------------------
 q33_capconst_grindrock(t,regi)..
-	sum(rlf2,sum(rlf$(rlf.val le 2), v33_grindrock_onfield(t,regi,rlf,rlf2)))
+	sum((rlf, rlf_temp), v33_grindrock_onfield(t,regi,rlf_temp,rlf)))
 	=l=
-	sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf2))
+	sum(teNoTransform2rlf_dyn33("rockgrind",rlf), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf))
 	;
-	
+
 ***---------------------------------------------------------------------------
 *'  Calculation of the total amount of ground rock on the fields in timestep t. The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
 ***---------------------------------------------------------------------------
-q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$((ttot.val ge max(2010, cm_startyear))$(rlf.val le 2))..
-	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(rlf.val le 2)
+q33_grindrock_onfield_tot(ttot,regi,rlf_temp,rlf)$(ttot.val ge max(2010, cm_startyear))..
+	v33_grindrock_onfield_tot(ttot,regi,rlf_temp,rlf)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * pm_ts(ttot)) + 
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val)))) + 
-	v33_grindrock_onfield(ttot,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val))))
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf_temp,rlf) * exp(-p33_co2_rem_rate(rlf_temp) * pm_ts(ttot)) +
+	v33_grindrock_onfield(ttot-1,regi,rlf_temp,rlf) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_temp) * (ttot.val-tall.val)))) +
+	v33_grindrock_onfield(ttot,regi,rlf_temp,rlf) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf_temp) * (ttot.val-tall.val))))
 ;  
 
 ***---------------------------------------------------------------------------
@@ -45,8 +52,8 @@ q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$((ttot.val ge max(2010, cm_startye
 q33_emiEW(t,regi)..
 	v33_emiEW(t,regi)
 	=e=
-	sum(rlf$(rlf.val le 2),
-		- sum(rlf2,v33_grindrock_onfield_tot(t,regi,rlf,rlf2)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf)))
+	sum(rlf_temp,
+		- sum(rlf,v33_grindrock_onfield_tot(t,regi,rlf_temp,rlf)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_temp)))
 	)
 	;
 
@@ -65,10 +72,10 @@ q33_emicdrregi(t,regi)..
 q33_omcosts(t,regi)..
 	vm_omcosts_cdr(t,regi)
 	=e=
-	sum(rlf$(rlf.val le 2), 
-	    sum(rlf2,
-	       (s33_costs_fix + p33_transport_costs(regi,rlf,rlf2))  
-	       * v33_grindrock_onfield(t,regi,rlf,rlf2)
+	sum(rlf_temp, 
+	    sum(rlf,
+	       (s33_costs_fix + p33_transport_costs(regi,rlf_temp,rlf))  
+	       * v33_grindrock_onfield(t,regi,rlf_temp,rlf)
 		)
 	)
 	;
@@ -76,19 +83,17 @@ q33_omcosts(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Limit total amount of ground rock on the fields to regional maximum potentials.
 ***---------------------------------------------------------------------------	
-q33_potential(t,regi,rlf)$(rlf.val le 2)..	
-	sum(rlf2,v33_grindrock_onfield_tot(t,regi,rlf,rlf2)$(rlf.val le 2))
+q33_potential(t,regi,rlf_temp)..
+	sum(rlf,v33_grindrock_onfield_tot(t,regi,rlf_temp,rlf))
 	=l=
-	f33_maxProdGradeRegiWeathering(regi,rlf)$(rlf.val le 2);
+	f33_maxProdGradeRegiWeathering(regi,rlf_temp);
 
 ***---------------------------------------------------------------------------
 *'  An annual limit for the maximum amount of rocks spred [Gt] can be set via cm_LimRock, e.g. due to sustainability concerns.
 ***---------------------------------------------------------------------------
 q33_LimEmiEW(t,regi)..
-             sum(rlf,
-                  sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2))
-                )
-        =l=
-        cm_LimRock*p33_LimRock(regi);
+	sum((rlf_temp, rlf), v33_grindrock_onfield(t,regi,rlf_temp,rlf))
+	=l=
+	cm_LimRock*p33_LimRock(regi);
 		
 *** EOF ./modules/33_CDR/weathering/equations.gms

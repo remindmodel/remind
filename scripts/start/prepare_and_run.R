@@ -609,6 +609,26 @@ prepare <- function() {
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
 
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
+                             list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")),
+                             list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")))
+
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
+                             list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_el.M")),
+                             list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")),
+                             list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
+                             list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
+                             list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")))
+
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                             list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
+                             list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")),
+                             list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")))
+
+
+
     #AJS filter out nash marginals in negishi case, as they would lead to a crash when trying to fix on them:
     if(cfg$gms$optimization == 'negishi'){
       margs_manipulateThis <- c(margs_manipulateThis, list(c("q80_costAdjNash.M", "!!q80_costAdjNash.M")))

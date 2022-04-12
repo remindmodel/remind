@@ -8,37 +8,32 @@
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance.
-*'  The first part of the equation describes the electricity demand for grinding, 
-*'  the second part the diesel demand for transportation and spreading on crop fields.
-*'  The third part is DAC final energy demand
 ***---------------------------------------------------------------------------	
 q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr").. 
-	sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
+	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
-	sum(rlf, s33_rockgrind_fedem$(sameas(entyFe,"feels")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-    + sum(rlf, s33_rockfield_fedem$(sameas(entyFe,"fedie")) * sm_EJ_2_TWa * sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2)))
-    + sum(entyFe2, v33_DacFEdemand(t, regi, entyFe, entyFe2))
+	sum((entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
 	;	
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
 ***---------------------------------------------------------------------------
 q33_capconst_grindrock(t,regi)..
-	sum(rlf2,sum(rlf, v33_grindrock_onfield(t,regi,rlf,rlf2)))
+	sum((rlf, rlf_temp), v33_grindrock_onfield(t,regi,rlf_temp,rlf))
 	=l=
-	sum(teNoTransform2rlf_dyn33("rockgrind",rlf2), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf2))
+	sum(teNoTransform2rlf_dyn33("rockgrind",rlf), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf))
 	;
-	
+
 ***---------------------------------------------------------------------------
 *'  Calculation of the total amount of ground rock on the fields in timestep t. The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
 ***---------------------------------------------------------------------------
-q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startyear))..
-	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)
+q33_grindrock_onfield_tot(ttot,regi,rlf_temp,rlf)$(ttot.val ge max(2010, cm_startyear))..
+	v33_grindrock_onfield_tot(ttot,regi,rlf_temp,rlf)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) + 
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) + 
-	v33_grindrock_onfield(ttot,regi,rlf,rlf2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val))))
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf_temp,rlf) * exp(-p33_co2_rem_rate(rlf_temp) * pm_ts(ttot)) +
+	v33_grindrock_onfield(ttot-1,regi,rlf_temp,rlf) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_temp) * (ttot.val-tall.val)))) +
+	v33_grindrock_onfield(ttot,regi,rlf_temp,rlf) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf_temp) * (ttot.val-tall.val))))
 ;  
 
 ***---------------------------------------------------------------------------
@@ -47,8 +42,8 @@ q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startyea
 q33_emiEW(t,regi)..
 	v33_emiEW(t,regi)
 	=e=
-	sum(rlf,
-		- sum(rlf2,v33_grindrock_onfield_tot(t,regi,rlf,rlf2)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf)))
+	sum(rlf_temp,
+		- sum(rlf,v33_grindrock_onfield_tot(t,regi,rlf_temp,rlf)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_temp)))
 		)
 	;	
 
@@ -59,8 +54,8 @@ q33_emiEW(t,regi)..
 q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
-	-sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
- 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_DacFEdemand(t,regi,"fegas", "fehes")
+	-sum(teNoTransform2rlf_dyn33("dac",rlf), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf))
+ 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_FEdemand(t,regi,"fegas", "fehes", "dac")
 	;
 
 ***---------------------------------------------------------------------------
@@ -75,10 +70,19 @@ q33_emicdrregi(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation and heat demand for absorption material recovery of direct air capture.
 ***---------------------------------------------------------------------------
-q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_dac(entyFe, entyFe2))..
-	sum(entyFe$fe2fe_dac(entyFe, entyFe2), v33_DacFEdemand(t, regi, entyFe, entyFe2))
+q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac"))..
+	sum(fe2fe_cdr(entyFe, entyFe2, "dac"), v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
 	=e=
 	- v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
+	;
+
+***---------------------------------------------------------------------------
+*'  Calculation of electricity demand for grinding and diesel demand for spreading rock on the fields.
+***---------------------------------------------------------------------------
+q33_weatheringFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "rockgrind"))..
+	sum(fe2fe_cdr(entyFe, entyFe2, "rockgrind"), v33_FEdemand(t, regi, entyFe, entyFe2, "rockgrind"))
+	=e=
+	p33_rockgrind_fedem(entyFe2) * sm_EJ_2_TWa * sum((rlf_temp, rlf), v33_grindrock_onfield(t,regi,rlf_temp,rlf))
 	;
 
 ***---------------------------------------------------------------------------
@@ -87,10 +91,10 @@ q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_dac(entyFe, entyFe2))..
 q33_omcosts(t,regi)..
 	vm_omcosts_cdr(t,regi)
 	=e=
-	sum(rlf$(rlf.val le 2), 
-	    sum(rlf2,
-	       (s33_costs_fix + p33_transport_costs(regi,rlf,rlf2))
-	       * v33_grindrock_onfield(t,regi,rlf,rlf2)
+	sum(rlf_temp,
+	    sum(rlf,
+	       (s33_costs_fix + p33_transport_costs(regi,rlf_temp,rlf))
+	       * v33_grindrock_onfield(t,regi,rlf_temp,rlf)
 		)
 	)
 	;
@@ -98,10 +102,10 @@ q33_omcosts(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Limit total amount of ground rock on the fields to regional maximum potentials.
 ***---------------------------------------------------------------------------		
-q33_potential(t,regi,rlf)..	
-	sum(rlf2,v33_grindrock_onfield_tot(t,regi,rlf,rlf2))
+q33_potential(t,regi,rlf_temp)..
+	sum(rlf,v33_grindrock_onfield_tot(t,regi,rlf_temp,rlf))
 	=l=
-	f33_maxProdGradeRegiWeathering(regi,rlf);	
+	f33_maxProdGradeRegiWeathering(regi,rlf_temp);
 
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCS chain.
@@ -116,11 +120,9 @@ q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 *'  An annual limit for the maximum amount of rocks spred [Gt] can be set via cm_LimRock, e.g. due to sustainability concerns.
 ***---------------------------------------------------------------------------  
 q33_LimEmiEW(t,regi)..
-             sum(rlf,
-                  sum(rlf2,v33_grindrock_onfield(t,regi,rlf,rlf2))
-                )
-        =l=
-        cm_LimRock*p33_LimRock(regi);
+    sum((rlf_temp, rlf), v33_grindrock_onfield(t,regi,rlf_temp,rlf))
+    =l=
+    cm_LimRock*p33_LimRock(regi);
 
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
@@ -128,7 +130,7 @@ q33_LimEmiEW(t,regi)..
 q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
 	vm_prodSE(t,regi,"pebiolc","seh2",te)
 	=l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_DacFEdemand(t,regi,"feh2s", entyFe2))
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_FEdemand(t,regi,"feh2s", entyFe2, "dac"))
 	;		
 
 *** EOF ./modules/33_CDR/all/equations.gms
