@@ -538,6 +538,10 @@ cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
 cm_indst_costDecayStart = 0.05; !! def 5%
 cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
+*** industry
+* minimum secondary steel share
+$setglobal cm_steel_secondary_max_share_scenario  2050.EUR 0.5 !! def off
+
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
 cm_BioImportTax_EU = 1; !! def 0.25
