@@ -11,12 +11,28 @@
 *--------------------------------------------------------------------------
 *** write the fulldata.gdx file after each optimal iteration
 ***AJS* in Nash status 7 is considered optimal in that respect (see definition of o_modelstat in solve.gms)
-if((o_modelstat le 2),
+if (iteration.val eq 1,
+  !! in the first iteration, use the input.gdx, since some output data is 
+  !! computed only after exoGAINS and therefore missing, breaking the script
+  sm_tmp  = logfile.nr;
+  sm_tmp2 = logfile.nd;
+  logfile.nr = 1;
+  logfile.nd = 0;
+
+  put_utility logfile, "shell" /
+    "cp input.gdx fulldata.gdx";
+
+  logfile.nr = sm_tmp;
+  logfile.nd = sm_tmp2;
+else 
+  !! in subsequent iterations, write out data, which contains last iteration's
+  !! data from postsolve statementes of modules with higher numbers
+  if (o_modelstat le 2,
     Execute_Unload 'fulldata';
-  );  
-if((o_modelstat gt 2),
+  else
     Execute_Unload 'non_optimal';
   );
+);
 
 *** Calcualte AP emissions
 Execute "Rscript exoGAINSAirpollutants.R";
