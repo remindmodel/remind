@@ -846,7 +846,6 @@ prepare <- function() {
 run <- function(start_subsequent_runs = TRUE) {
 
   load("config.Rdata")
-  on.exit(setwd(cfg$results_folder))
 
   # Save start time
   timeGAMSStart <- Sys.time()
@@ -1037,6 +1036,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   # go up to the main folder, where the cfg files for subsequent runs are stored and the output scripts are executed from
   setwd(cfg$remind_folder)
+  on.exit(setwd(cfg$results_folder))
 
   #====================== Subsequent runs ===========================
 
