@@ -8,12 +8,12 @@
 
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance.
-***---------------------------------------------------------------------------	
-q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr").. 
+***---------------------------------------------------------------------------
+q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
 	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
-	sum((entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
-	;	
+	sum(fe2fe_cdr(entyFe, entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
+	;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
@@ -54,8 +54,8 @@ q33_emiEW(t,regi)..
 q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
-	-sum(teNoTransform2rlf_dyn33("dac",rlf), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf))
- 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_FEdemand(t,regi,"fegas", "fehes", "dac")
+	- sum(teNoTransform2rlf_dyn33("dac",rlf), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf))
+ 	- (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_FEdemand(t,regi,"fegas", "fehes", "dac")
 	;
 
 ***---------------------------------------------------------------------------

@@ -7,13 +7,13 @@
 *** SOF ./modules/33_CDR/DAC/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  CDR Final Energy Balance
+*'  CDR Final Energy Balance.
 ***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
-  =e=
-  sum(entyFe2, v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
-  ;
+q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
+	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
+	=e=
+	sum(fe2fe_cdr(entyFe, entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
+	;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation and heat demand for absorption material recovery of direct air capture.
@@ -56,7 +56,7 @@ q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..	         
+q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
 	vm_prodSE(t,regi,"pebiolc","seh2",te)
 	=l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_FEdemand(t,regi,"feh2s", entyFe2, "dac"))

@@ -7,13 +7,12 @@
 *** SOF ./modules/33_CDR/weathering/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  CDR Final Energy Balance
-*'  Calculation of the energy demand of enhanced weathering.
+*'  CDR Final Energy Balance.
 ***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$sum(entyFe2, fe2fe_cdr(entyFe, entyFe2, "rockgrind"))..
-    sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
+q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
+	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
-	sum(entyFe2, v33_FEdemand(t, regi, entyFe, entyFe2, "rockgrind"))
+	sum(fe2fe_cdr(entyFe, entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
 	;
 
 ***---------------------------------------------------------------------------
