@@ -1838,7 +1838,7 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         ch4wstl    "ch4 emissions from solid waste disposal on land"
         ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
-        ch4peatland "ch4 emissions from peatlands peatland_ch4)"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
         ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
@@ -1889,8 +1889,10 @@ MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIN
         ch4rice    "rice cultivation"
         ch4animals "enteric fermentation of ruminants"
         ch4anmlwst "animal waste management"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         n2ofert    "Inorganic fertilizers"
         n2oanwst   "manure applied to croplands"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"        
         co2luc     "land use change"
 /
 
