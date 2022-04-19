@@ -114,9 +114,7 @@ p29_CESderivative(t,regi_dyn29(regi),out,ppf_29(in2))$(
 p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
 
 *** Transfer prices
-
-pm_cesdata(t,regi_dyn29(regi), in, "price") =
- p29_CESderivative(t,regi,"inco",in);
+pm_cesdata(t,regi_dyn29(regi),in,"price") = p29_CESderivative(t,regi,"inco",in);
 
 option
   p29_CESderivative:3:3:1
@@ -128,9 +126,12 @@ option
 *** substitution. To avoid this situation, the price of the capital stock
 *** is increased
 if (%c_CES_calibration_iteration% eq 1,
- loop (cesOut2cesIn(out,in)$(pm_cesdata_sigma("2015",out) eq -1 AND ppfKap(in) AND in_29(in)),
-       pm_cesdata(t,regi,in,"price") = pm_cesdata(t,regi,in,"price") *1.3;
-       );
+ loop (cesOut2cesIn(out,ppfKap(in_29(in)))$(
+                                           pm_cesdata_sigma("2015",out) eq -1 ),
+   pm_cesdata(t,regi,in,"price") 
+   = pm_cesdata(t,regi,in,"price")
+   * 1.3;
+ );
 );
 
 display "derivatives", p29_CESderivative, p29_effGr, p29_cesIO_load;
@@ -170,8 +171,7 @@ if (smin((t,regi_dyn29(regi),ppf_29(in)), pm_cesdata(t,regi,in,"price")) le 0,
   abort "Some ppf prices are <= 0. Check ./modules/29_CES_parameters/calibrate/input/pm_cesdata_price_XXX.inc!";
 );
 
-
-
+*** Write origin data to CES_calibration.csv
 if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   put file_CES_calibration;
 
@@ -257,6 +257,47 @@ if (sm_tmp eq 1,
   abort "some prices are negative. See log file";
 );
 
+*** Check for labour xi < 0.1 and scale all ppf prices to prevent it.
+p29_ppf_price_multiplicator(t,regi_dyn29(regi))
+  = pm_cesdata(t,regi,"inco","quantity")
+  * (1 - 0.1) !! minimum share of lab in inco
+  / sum(ppf$( NOT sameas(ppf,"lab") ),
+      pm_cesdata(t,regi,ppf,"quantity")
+    * pm_cesdata(t,regi,ppf,"price")
+    );
+
+if (smin((t,regi_dyn29(regi)), p29_ppf_price_multiplicator(t,regi)) lt 1,
+  put logfile, ">>> Scaling ppf prices to ensure xi labour >= 0.1 <<<" /;
+  loop ((t,regi_dyn29(regi))$( p29_ppf_price_multiplicator(t,regi) lt 1 ),
+    put p29_ppf_price_multiplicator.tn(t,regi), " = ";
+    put p29_ppf_price_multiplicator(t,regi) /;
+    
+    pm_cesdata(t,regi,ppf,"price")$( NOT sameas(ppf,"lab") )
+    = pm_cesdata(t,regi,ppf,"price")
+    * p29_ppf_price_multiplicator(t,regi);
+  );
+
+$ontext
+  if (%c_CES_calibration_iteration% gt 3,   !! c_CES_calibration_iteration
+    execute_unload "abort.gdx";
+    abort "Too low labour xi after third CES iteration.  CALIBRATION PANIC!";
+  );
+$offtext
+
+  loop ((t,regi_dyn29(regi))$( p29_ppf_price_multiplicator(t,regi) lt 1 ),
+    put pm_cesdata.tn(t,regi,"inco","quantity"), " = ";
+    put pm_cesdata(t,regi,"inco","quantity"), "   [";
+    put sum(ppf$( NOT sameas(ppf,"lab") ),
+          pm_cesdata(t,regi,ppf,"quantity")
+	* pm_cesdata(t,regi,ppf,"price")
+	), "]" /;
+  );
+
+  putclose logfile, " " /;
+
+  display "after ppf price multiplicator",
+    p29_ppf_price_multiplicator, pm_cesdata;
+);
 
 display "before price smoothing", cesOut2cesIn_below, pm_cesdata;
 *** Smooth 2005 prices
