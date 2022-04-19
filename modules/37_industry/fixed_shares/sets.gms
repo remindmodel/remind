@@ -126,29 +126,27 @@ Sets
     otherInd.ES  
   / 
 
-tdTeMarkup37(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
+  tdTeMarkup37(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
   /
-  tdels
-  /
-
-tdTe2In37(all_te,all_in) "mapping of td technologies to CES nodes for CES markup cost"
-  /
-  tdels.feeli
+    tdels
   /
 
-  !! empty sets from the subsectors realisation
+  tdTe2In37(all_te,all_in)   "mapping of td technologies to CES nodes for CES markup cost"
+  /
+    tdels.feeli
+  /
+
+  ppfen_CESMkup_dyn37(all_in)   "industry production factors of CES function to which CES markup cost can be applied"
+  /
+    feeli
+  /
+
+  !! empty sets for subsectors compatibility
   industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
-  /   /
-  ppfKap_industry_dyn37(all_in)   "energy efficiency capital of industry"
-  /   /
-
-
-
-ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
-/
-  feeli
-/
+  ppfKap_industry_dyn37(all_in)                  "energy efficiency capital of industry"
+  ue_industry_dyn37(all_in)                      "industry production in physical or monetary values"
 ;
+
 *** add module specific sets and mappings to the global sets and mappings
 in(in_industry_dyn37)              = YES;
 ppfEn(ppfen_industry_dyn37)        = YES;
