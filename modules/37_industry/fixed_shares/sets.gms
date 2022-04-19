@@ -142,9 +142,10 @@ Sets
   /
 
   !! empty sets for subsectors compatibility
-  industry_ue_calibration_target_dyn37(all_in)   "target values of industry calibration"
-  ppfKap_industry_dyn37(all_in)                  "energy efficiency capital of industry"
-  ue_industry_dyn37(all_in)                      "industry production in physical or monetary values"
+  industry_ue_calibration_target_dyn37(all_in)   ""   / /
+  ppfKap_industry_dyn37(all_in)                  ""   / /
+  ue_industry_dyn37(all_in)                      ""   / /
+  ces_eff_target_dyn37(all_in,all_in)            ""   / /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings
