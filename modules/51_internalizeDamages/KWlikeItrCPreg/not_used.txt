@@ -1,0 +1,17 @@
+name,type,reason
+cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_damageMarginal,input,questionnaire
+pm_cesdata,input,questionnaire
+pm_lab,input,questionnaire
+pm_interpolWeight_ttot_tall,input,questionnaire
+pm_damageProd,input,questionnaire
+pm_damageTC,input,questionnaire
+pm_tall_2_ttot,input,questionnaire
+pm_damageGrowthRateTC,input,questionnaire
+pm_GDPfrac,input,questionnaire
+pm_damageMarginalTC,input,questionnaire
+pm_GDPGrossIso,input,questionnaire
+pm_damageImp,input,questionnaire
+pm_damageScc,input,questionnaire
+pm_damageIso,input,questionnaire
+pm_damageGrowthRateIso,input,questionnaire

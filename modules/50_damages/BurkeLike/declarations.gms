@@ -15,5 +15,6 @@ p50_damageFuncCoef2     "coef2 of damamge function"
 
 positive variable
 vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
+vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
 *** EOF ./modules/50_damages/BurkeLike/declarations.gms

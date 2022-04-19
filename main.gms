@@ -297,8 +297,9 @@ parameters
   c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
   
   cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
-  cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
-  cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
+  cm_damages_BurkeLike_persistenceTime    "persistence time in years for Burke-like damage functions"
+  cm_damages_SccHorizon                   "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
+  cm_damage_KWSE                          "standard error for Kalkuhl & Wenz damages"
   cm_carbonprice_temperatureLimit "not-to-exceed temperature target in degree above pre-industrial"
   cm_frac_CCS          "tax on CCS to reflect risk of leakage, formulated as fraction of ccs O&M costs"
   cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as fraction of carbon price"
@@ -489,7 +490,7 @@ cm_damages_BurkeLike_specification    = 0;     !! def = 0
 cm_damages_BurkeLike_persistenceTime  = 30;    !! def = 30
 cm_damages_SccHorizon                 = 100;   !! def = 100
 cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
-
+cm_damage_KWSE			                  = 0;     !! def = 0
 
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
@@ -597,6 +598,10 @@ $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT
 $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
+$setGlobal cm_damage_Labor_exposure  low    !!def = low
+$setGlobal cm_TCssp  SSP2  !! def = SSP2
+$setGlobal cm_TCpers  0  !! def = 8
+$setGlobal cm_TCspec  estimates_mean  !! def = estimates_mean
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
