@@ -71,4 +71,4 @@ pm_damageMarginalTm2(tall,regi)$(tall.val ge 2000 and tall.val le 2300) =
 pm_damageMarginalTC(tall,iso)=0;
 pm_damageMarginalTC(tall,isoTC)$(tall.val ge 2000 and tall.val le 2300) =  p50_damageFuncCoefTC1(isoTC);
 
-***EOF ./modules/50_damages/KWTCint/postsolve.gms
+*** EOF ./modules/50_damages/KWTCint/postsolve.gms

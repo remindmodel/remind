@@ -4,8 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
-***SOF ./modules/50_damages/Labor/datainput.gms 
+*** SOF ./modules/50_damages/Labor/datainput.gms
 
 *satisfy dependencies
 $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=Labor requires downscaleTemperature=CMIP5";
@@ -52,5 +51,5 @@ $ifi %cm_damage_Labor_exposure% == "remind" p50_damageFuncCoef2("USA") = -0.0005
 pm_damage(tall,regi) = 1;
 pm_damageMarginal(tall,regi)           = 0;
 
-***EOF ./modules/50_damages/Labor/datainput.gms 
+*** EOF ./modules/50_damages/Labor/datainput.gms
 

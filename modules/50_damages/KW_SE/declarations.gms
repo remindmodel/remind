@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/50_damages/KWLike/declarations.gms
+*** SOF ./modules/50_damages/KW_SE/declarations.gms
 
 parameters
 p50_regionalTemperatureImp(tall,tall,all_regi)	     "regional temperature with emission pulse"
@@ -43,4 +43,4 @@ positive variable
 vm_damageFactor(ttot,all_regi)      "damage factor reducing GDP"
 vm_damageProdFactor(ttot,all_regi,all_in)      "damage factor reducing production factors"
 ;
-*** EOF ./modules/50_damages/KWLike/declarations.gms
+*** EOF ./modules/50_damages/KW_SE/declarations.gms
