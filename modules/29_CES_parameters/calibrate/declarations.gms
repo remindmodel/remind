@@ -37,12 +37,6 @@ $endif.transpmodule
   p29_share_H2HTH_traj_indst(ttot,all_regi,all_in)  "H2 and electricity HTH baseline trajectories as share of gas (for H2) and low-temperature electricity (for HTH electricity) trajectories in industry"
 ;
 
-$ifThen.Ind_H2HTH_Traj not "%cm_Ind_H2HTH_Traj%" == "standard" 
-Parameter
-  p29_share_H2HTH_traj_indst_input(all_in)  "Config input parameter for H2 and electricity HTH baseline trajectories as share of gas (for H2) and low-temperature electricity (for HTH electricity) trajectories in industry" / %cm_Ind_H2HTH_Traj% /
-;
-$endIf.Ind_H2HTH_Traj
-
 *** in case of a putty formulation, the model putty_paths will try to 
 *** find a pathway of variations which fits approximately the exogenous trajectories
 *** the underlying variables (e.g. the consumption of useful energy in the whole buildings stock)

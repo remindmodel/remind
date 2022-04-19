@@ -12,13 +12,47 @@ library(stringr)
 
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- paste0(getwd(),"/")   # provide path to REMIND. Default: the actual path which the script is started from
-path_magpie <- "/p/projects/piam/abrahao/GSCF_dk/magpie/"
+path_magpie <- paste0(getwd(), "/../magpie/")
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
-path_settings_coupled <- paste0(path_remind,"config/scenario_config_coupled_SSPSDP.csv")
-path_settings_remind  <- paste0(path_remind,"config/scenario_config_SSPSDP.csv")
+# these settings will be overwritten if you provide the path to the coupled file as first command line argument
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled.csv")
+path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
+                         # paste0(path_remind, "config/scenario_config.csv")
+
+# load arguments from command line
+if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
+
+# define arguments that are accepted (test for backward compatibility)
+if ("test" %in% argv) argv <- unique(c(argv[! argv %in% c("test")], "--test"))
+accepted <- c(t = "--test")
+
+# search for strings that look like -i1asrR and transform them into long flags
+onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
+argv <- unique(c(argv[! grepl("^-[a-zA-Z0-9]*$", argv)], unlist(accepted[names(accepted) %in% onedashflags])))
+message("\nAll command line arguments: ", paste(argv, collapse = ", "))
+if (sum(! onedashflags %in% c(names(accepted), "-")) > 0) {
+  stop("Unknown single character flags: ", onedashflags[! onedashflags %in% c(names(accepted), "-")],
+  ". Only available: ", paste0("-", names(accepted), collapse = ", ") )
+}
+
+# check if user provided any unknown arguments or config files that do not exist
+known <- argv %in% accepted
+if (!all(known)) {
+  file_exists <- file.exists(argv[!known])
+  if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
+  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!known][!file_exists], collapse = ", "),
+  ".\nAccepted parameters: [config file], ", paste(accepted, collapse = ", "))
+  # set config file to not known parameter where the file actually exists
+  path_settings_coupled <- paste0(path_remind, argv[!known][[1]])
+  if (! grep("scenario_config_coupled", path_settings_coupled))
+    stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
+  path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
+}
+
+
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
@@ -63,11 +97,6 @@ require(dplyr) # for filter, secelt, %>%
   out <- c(stack[!matches],new)
   return(out)
 }
-
-####################################################
-##############  READ FROM COMMAND LINE #############
-####################################################
-readArgs("test")
 
 ####################################################
 ##############  READ SCENARIO FILES ################
@@ -135,13 +164,13 @@ for (scen in common) {
 
 source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND default settings
 
-knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "model", "regionmapping", "inputRevision")
+knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
   message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
   message("  ", paste(unknownColumnNames, collapse = ", "))
-  message("start.R might simply ignore them. Please check if these switches are not deprecated.")
-  message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
+  message("The start script might simply ignore them. Please check if these switches are not deprecated.")
+  message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start_bundle_coupled.R.\n")
   forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
      "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
      "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640"
@@ -165,7 +194,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname,scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos)) qos <- "short"                        # if qos could not be found in scenarios_coupled use short
+  if(is.null(qos)) qos <- "medium"                       # if qos could not be found in scenarios_coupled use medium
 
   start_iter <- 1 # iteration to start the coupling with
 
@@ -330,6 +359,9 @@ for(scen in common){
   cfg_rem$RunsUsingTHISgdxAsInput <- settings_remind[common,] %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
                                                  filter(rowSums(. == scen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
 
+  # save cm_nash_autoconverge to be used for last REMIND run
+  cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
+
   gdx_specified <- grepl(".gdx", cfg_rem$files2export$start[path_gdx_list], fixed = TRUE)
   gdx_na <- is.na(cfg_rem$files2export$start[path_gdx_list])
   start_now <- all(gdx_specified | gdx_na)
@@ -388,9 +420,10 @@ for(scen in common){
   if (start_now){
       # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
       #qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
-      if (!exists("test")) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
+      if (! "--test" %in% argv) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
       else message("Test mode: run ", runname, " NOT submitted to the cluster.")
   } else {
-    message("   Waiting for: ", paste(unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+      message(ifelse("--test" %in% argv, "Test mode: ", "   "),
+        "Waiting for: ", paste(unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
   }
 }
