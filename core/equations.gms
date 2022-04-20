@@ -874,7 +874,7 @@ q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_star
   sum (fe2es(entyFe,esty,teEs)$entyFeTrans(entyFe), !!edge transport
     vm_transpGDPscale(ttot,regi) * pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
   ) +
-  sum (fe2es(entyFe,esty,teEs)$(not(entyFeTrans(entyFe)), 
+  sum (fe2es(entyFe,esty,teEs)$(not(entyFeTrans(entyFe))), 
     pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
   )
 ;
