@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/51_internalizeDamages/LabItr/declarations.gms
+
 parameters
 p51_scc(tall) "Social cost of carbon (due to GDP damages) [$ per tCO2eq]"
 p51_sccLastItr(tall) "Social cost of carbon (due to GDP damages) from last iteration [$ per tCO2eq]"
@@ -19,3 +21,5 @@ p51_labEffgr(tall,all_regi)	"ces parameter effgr for labor, needed for extension
 p51_lab(tall,all_regi)		"labor for extension beyond 2150"
 p51_ynet(tall,all_regi)		"GDP net of labor damage"
 ;
+
+*** EOF ./modules/51_internalizeDamages/LabItr/declarations.gms

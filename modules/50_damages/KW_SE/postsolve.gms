@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/50_damages/KWLike/postsolve.gms
+*** SOF ./modules/50_damages/KW_SE/postsolve.gms
 
 * Damage function based on Kalkuhl & Wenz (2020)
 * time index mapping from supplement to code:  tall = t ; tall2 = t' ; tall3 = t''
@@ -109,4 +109,4 @@ pm_damageImp(tall,tall2,regi)$(tall.val ge 2020 and tall.val le 2300 and tall2.v
 
 display pm_damage;
 
-***EOF ./modules/50_damages/KWLike/postsolve.gms
+*** EOF ./modules/50_damages/KW_SE/postsolve.gms

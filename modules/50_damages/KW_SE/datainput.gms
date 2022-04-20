@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/50_damages/KWLike/datainput.gms
+*** SOF ./modules/50_damages/KW_SE/datainput.gms
 
 * satisfy dependencies
 $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=KWLike requires downscaleTemperature=CMIP5";
@@ -41,4 +41,4 @@ pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
 
-*** EOF ./modules/50_damages/KWLike/datainput.gms
+*** EOF ./modules/50_damages/KW_SE/datainput.gms
