@@ -276,7 +276,8 @@ if (comp == TRUE) {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (! exists("slurmConfig")) {
-      slurmConfig <- paste0(choose_slurmConfig_priority_standby(), " --nodes=1 --tasks-per-node=1")
+      slurmConfig <- choose_slurmConfig_priority_standby()
+      if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
       slurmConfig <- paste0("--qos=", slurmConfig, " --nodes=1 --tasks-per-node=1")
