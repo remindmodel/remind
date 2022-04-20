@@ -869,14 +869,15 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
 *' Investment equation for end-use capital investments (energy service layer):
 ***---------------------------------------------------------------------------
 q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_startyear) ..
-    vm_esCapInv(ttot,regi,teEs)
-    =e=
-    sum (fe2es(entyFe,esty,teEs),
+  vm_esCapInv(ttot,regi,teEs)
+  =e=
+  sum (fe2es(entyFe,esty,teEs)$entyFeTrans(all_enty), #edge transport
+    vm_transpGDPscale(ttot,regi) * pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
+  ) +
+  sum (fe2es(entyFe,esty,teEs)$(not(entyFeTrans(all_enty)), 
     pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
-    );
-    ;
-
-
+  )
+;
 
 *' Limit electricity use for fehes to 1/4th of total electricity use:
 q_limitSeel2fehes(t,regi)..
