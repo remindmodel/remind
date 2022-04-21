@@ -15,12 +15,11 @@
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%internalizeDamages%" == "BurkeLikeItr" $include "./modules/51_internalizeDamages/BurkeLikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "DiceLikeItr" $include "./modules/51_internalizeDamages/DiceLikeItr/realization.gms"
-$Ifi "%internalizeDamages%" == "KWlikeItr" $include "./modules/51_internalizeDamages/KWlikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "KWTCintItr" $include "./modules/51_internalizeDamages/KWTCintItr/realization.gms"
+$Ifi "%internalizeDamages%" == "KW_SEitr" $include "./modules/51_internalizeDamages/KW_SEitr/realization.gms"
 $Ifi "%internalizeDamages%" == "KWlikeItr" $include "./modules/51_internalizeDamages/KWlikeItr/realization.gms"
 $Ifi "%internalizeDamages%" == "KWlikeItrCPnash" $include "./modules/51_internalizeDamages/KWlikeItrCPnash/realization.gms"
 $Ifi "%internalizeDamages%" == "KWlikeItrCPreg" $include "./modules/51_internalizeDamages/KWlikeItrCPreg/realization.gms"
-$Ifi "%internalizeDamages%" == "KW_SEitr" $include "./modules/51_internalizeDamages/KW_SEitr/realization.gms"
 $Ifi "%internalizeDamages%" == "LabItr" $include "./modules/51_internalizeDamages/LabItr/realization.gms"
 $Ifi "%internalizeDamages%" == "TCitr" $include "./modules/51_internalizeDamages/TCitr/realization.gms"
 $Ifi "%internalizeDamages%" == "off" $include "./modules/51_internalizeDamages/off/realization.gms"

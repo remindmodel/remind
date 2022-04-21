@@ -545,7 +545,7 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 
 *** industry
 * minimum secondary steel share
-$setglobal cm_steel_secondary_max_share_scenario  2050.EUR 0.5 !! def off
+$setglobal cm_steel_secondary_max_share_scenario  off !! def off
 
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
@@ -602,7 +602,7 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 $setGlobal cm_damage_Labor_exposure  low    !!def = low
 $setGlobal cm_TCssp  SSP2  !! def = SSP2
-$setGlobal cm_TCpers  0  !! def = 8
+$setGlobal cm_TCpers  8  !! def = 8
 $setGlobal cm_TCspec  estimates_mean  !! def = estimates_mean
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()

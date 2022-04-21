@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/KWlikeItr/postsolve.gms
+*** SOF ./modules/51_internalizeDamages/KW_SEitr/postsolve.gms
 
 
 p51_sccLastItr(tall) = p51_scc(tall);
@@ -61,4 +61,4 @@ display p51_sccConvergenceMaxDeviation;
 
 
 
-*** EOF ./modules/51_internalizeDamages/KWlikeItr/postsolve.gms
+*** EOF ./modules/51_internalizeDamages/KW_SEitr/postsolve.gms

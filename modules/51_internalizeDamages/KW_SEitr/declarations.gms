@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/51_internalizeDamages/KWlikeItr/declarations.gms
+*** SOF ./modules/51_internalizeDamages/KW_SEitr/declarations.gms
 
 parameters
 
@@ -16,4 +16,4 @@ p51_sccParts(tall,tall,all_regi) "Social cost of carbon components (time, region
 p51_sccConvergenceMaxDeviation "max deviation of SCC from last iteration [percent]"
 ;
 
-*** EOF ./modules/51_internalizeDamages/KWlikeItr/declarations.gms
+*** EOF ./modules/51_internalizeDamages/KW_SEitr/declarations.gms
