@@ -13,12 +13,30 @@ vm_cesIO.fx(t0,regi_dyn29(regi),in_industry_dyn37(in))$(
 *' Reduce the lower limit on the CES function to accommodate less utilised
 *' production factors in (energetically) small regions.  (Example: gas heating
 *' in Sub-Sahara Africa -- SSA/enhgab).
-vm_cesIO.lo(t,regi_dyn29(regi),in)
-  = min(
-      vm_cesIO.lo(t,regi,in),
-      ( pm_cesdata(t,regi,in,"quantity")
-      * 0.95
-      ));
+
+if (smax((t,regi_dyn29(regi),in)$(    t.val gt 2005 
+                                  AND NOT ue_industry_dyn37(in) ),
+      vm_cesIO.lo(t,regi,in)
+    - (0.95 * pm_cesdata(t,regi,in,"quantity"))) gt 0,
+
+  put logfile, ">>> Modifying vm_cesIO lower bounds <<<" /;
+  loop ((regi_dyn29(regi),in,t)$( t.val gt 2005 AND NOT ue_industry_dyn37(in) ),
+    if (vm_cesIO.lo(t,regi,in) gt 0.95 * pm_cesdata(t,regi,in,"quantity"),
+      put "vm_cesIO.lo(", t.tl, ",", regi.tl, ",", in.tl, ")   ";
+      put vm_cesIO.lo(t,regi,in), " -> ";
+      put (0.95 * pm_cesdata(t,regi,in,"quantity")) /;
+  
+      vm_cesIO.lo(t,regi,in)
+      = min(
+          vm_cesIO.lo(t,regi,in),
+          ( pm_cesdata(t,regi,in,"quantity")
+          * 0.95
+          ));
+    );
+  );
+
+  putclose logfile, " " /;
+);
 
 *** EOF ./modules/29_CES_parameters/calibrate/bounds.gms
 
