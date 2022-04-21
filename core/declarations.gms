@@ -373,7 +373,7 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
-v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
+vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
 
 *** CES markup to represent end-use technology cost

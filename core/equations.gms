@@ -223,13 +223,13 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 q_transFe2Es(t,regi,fe2es(entyFe,esty,teEs))..
     pm_fe2es(t,regi,teEs) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
     =e=
-    v_prodEs(t,regi,entyFe,esty,teEs);
+    vm_prodEs(t,regi,entyFe,esty,teEs);
 
 *' Hand-over to CES:
 q_es2ppfen(t,regi,in)$ppfenFromEs(in)..
     vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
     =e=
-    sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in), v_prodEs(t,regi,entyFe,esty,teEs))
+    sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in), vm_prodEs(t,regi,entyFe,esty,teEs))
 ;
 
 *' Shares of FE carriers w.r.t. a CES node:
@@ -872,10 +872,10 @@ q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_star
   vm_esCapInv(ttot,regi,teEs)
   =e=
   sum (fe2es(entyFe,esty,teEs)$entyFeTrans(entyFe), !!edge transport
-    vm_transpGDPscale(ttot,regi) * pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
+    vm_transpGDPscale(ttot,regi) * pm_esCapCost(ttot,regi,teEs) * vm_prodEs(ttot,regi,entyFe,esty,teEs)
   ) +
   sum (fe2es(entyFe,esty,teEs)$(not(entyFeTrans(entyFe))), 
-    pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
+    pm_esCapCost(ttot,regi,teEs) * vm_prodEs(ttot,regi,entyFe,esty,teEs)
   )
 ;
 
