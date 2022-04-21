@@ -11,6 +11,19 @@ vm_cons.lo(t,regi)     = 1e-3;
 vm_cesIO.lo(t,regi,in)$( NOT in_industry_dyn37(in) ) = 1e-6;
 vm_cesIOdelta.lo(t,regi,in_putty) = 1e-6;
 
+*** 201[05]/SSA/enhgab seems to need lower bounds
+$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
+$ifthen.first_CES_itr "%c_CES_calibration_iteration%" == "1"   !! c_CES_calibration_iteration
+loop ((t,regi)$( t.val ge 2010 AND t.val le 2015 AND sameas(regi,"SSA") ),
+  vm_cesIO.lo(t,regi,"enhgab") = 1e-7;
+
+  loop (cesOut2cesIn("enhgab",in),
+    vm_cesIO.fx(t,regi,in) = pm_cesdata(t,regi,in,"quantity");
+  );
+);
+$endif.first_CES_itr
+$endif.calibration
+
 *** fix energy inputs to CES structure in t0 to the parameter values
 vm_cesIO.fx(t0(tall),regi,in)$(   ppfEn(in) 
                                OR ppfIO_putty(in) 
