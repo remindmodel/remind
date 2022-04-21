@@ -16,7 +16,7 @@ vm_cesIO.fx(t0,regi_dyn29(regi),in_industry_dyn37(in))$(
 vm_cesIO.lo(t,regi_dyn29(regi),in)
   = min(
       vm_cesIO.lo(t,regi,in),
-      ( pm_cesdata(t,regi,in,"quantiy")
+      ( pm_cesdata(t,regi,in,"quantity")
       * 0.95
       ));
 
