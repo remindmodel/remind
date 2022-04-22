@@ -146,6 +146,7 @@ Sets
   ppfKap_industry_dyn37(all_in)                  ""   / /
   ue_industry_dyn37(all_in)                      ""   / /
   ces_eff_target_dyn37(all_in,all_in)            ""   / /
+  pf_industry_relaxed_bounds_dyn37(all_in)       ""   / /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings

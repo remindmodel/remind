@@ -208,6 +208,8 @@ Sets
     feelhth_otherInd  . feelwlth_otherInd
   /
 
+  pf_industry_relaxed_bounds_dyn37(all_in)   "production factors with progressively relaxed bounds during the calibration"
+
 
   secInd37_2_pf(secInd37,all_in)   "link industry sub-sectors to energy to production factors"
   /
@@ -299,18 +301,20 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
 *** ---------------------------------------------------------------------------
 ***        add module-specifc sets and mappings to the global ones
 *** ---------------------------------------------------------------------------
-ppf_industry_dyn37(ppfKap_industry_dyn37)   = YES;
-ppf_industry_dyn37(ppfen_industry_dyn37)    = YES;
-ipf_industry_dyn37(in_industry_dyn37)       = YES;
-ipf_industry_dyn37(ppf_industry_dyn37)      = NO;
-in(in_industry_dyn37)                       = YES;
-ppfKap(ppfKap_industry_dyn37)               = YES;
-ppfen(ppfen_industry_dyn37)                 = YES;
-cesOut2cesIn(ces_industry_dyn37)            = YES;
-fe2ppfen(fe2ppfen37)                        = YES;
-fe_tax_sub_sbi(fe_tax_sub37)                = YES;
-pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
-pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
+ppf_industry_dyn37(ppfKap_industry_dyn37)                              = YES;
+ppf_industry_dyn37(ppfen_industry_dyn37)                               = YES;
+ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
+ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
+in(in_industry_dyn37)                                                  = YES;
+ppfKap(ppfKap_industry_dyn37)                                          = YES;
+ppfen(ppfen_industry_dyn37)                                            = YES;
+cesOut2cesIn(ces_industry_dyn37)                                       = YES;
+fe2ppfen(fe2ppfen37)                                                   = YES;
+fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
+pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
+pf_quan_target_dyn37(ppfkap_industry_dyn37)                            = YES;
+pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;
+pf_industry_relaxed_bounds_dyn37(industry_ue_calibration_target_dyn37) = YES;
 
 ppfen_CESMkup(ppfen_industry_dyn37) = YES;
 
