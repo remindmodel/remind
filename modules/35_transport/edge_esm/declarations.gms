@@ -10,8 +10,8 @@ p35_fe2es_aux(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_teEs) "Aggregate e
 ;
 Equations
 q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
-q35_transGDPshare(ttot,all_regi) "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data"
-q35_transGDPshare0(all_regi)     "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data for 2005"
+q35_transGDPshare(ttot,all_regi)  "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data"
+q35_transGDPshare0(ttot,all_regi) "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data for 2005"
 ;
 
 *** EOF ./modules/35_transport/edge_esm/declarations.gms
