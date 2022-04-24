@@ -8,11 +8,7 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputdirs")
-  readArgs("shortTerm")
-  readArgs("outfilename")
-  readArgs("regionList")
-  readArgs("mainRegName")
+  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName")
 }
 
 run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName) {
