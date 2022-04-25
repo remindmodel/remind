@@ -84,7 +84,7 @@ vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
 
-
+$IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
 *** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
 loop(regi$(sameAs(regi,"DEU")),
 vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
@@ -93,5 +93,6 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 *** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
+$ENDIF.CoalRegiPol
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
