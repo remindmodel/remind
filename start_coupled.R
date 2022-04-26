@@ -82,6 +82,8 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
   cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
+  # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+  use_external_ghgprices <- if(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
 
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
@@ -234,7 +236,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     cat("### COUPLING ### MAgPIE will be started with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
     cfg_mag$path_to_report_bioenergy <- report
     # if no different mif was set for GHG prices use the same as for bioenergy
-    if(is.na(cfg_mag$path_to_report_ghgprices)) cfg_mag$path_to_report_ghgprices <- report
+    if(!use_external_ghgprices) cfg_mag$path_to_report_ghgprices <- report
     ########### START MAGPIE #############
     outfolder_mag <- ifelse(debug, debug_coupled(model="mag",cfg_mag), start_run(cfg_mag, codeCheck=FALSE))
     ######################################
