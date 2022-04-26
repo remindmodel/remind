@@ -8,21 +8,18 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputdirs")
-  readArgs("shortTerm")
-  readArgs("outfilename")
-  readArgs("regionList")
-  readArgs("mainRegName")
+  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName")
 }
 
 run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName) {
 
   scenNames <- getScenNames(outputdirs)
-  # Add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
-  mif_path  <- file.path("..", outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
-  mif_path_polCosts  <- file.path("..", outputdirs, paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
-  hist_path <- file.path("..", outputdirs[1], "historical.mif")
-  scen_config_path  <- file.path("..", outputdirs, "config.Rdata")
+  # for non-absolute paths, add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
+  outputdirs <- ifelse(substr(outputdirs,1,1) == "/", outputdirs, file.path("..", outputdirs))
+  mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
+  mif_path_polCosts  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
+  hist_path <- file.path(outputdirs[1], "historical.mif")
+  scen_config_path  <- file.path(outputdirs, "config.Rdata")
   default_config_path  <- file.path("..", "config", "default.cfg")
 
   # Use adjustedPolicyCosts mif, if available

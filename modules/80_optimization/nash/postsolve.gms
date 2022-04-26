@@ -316,7 +316,7 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 
 	 loop(convMessage80$(p80_messageShow(convMessage80)),
 	      if(sameas(convMessage80, "infes"),
-          display "#### 1.) Infeasibilities found in at least some regions in the last iteration. Plase check parameter p80_repy for details. ";
+          display "#### 1.) Infeasibilities found in at least some regions in the last iteration. Please check parameter p80_repy for details. ";
 		      display "#### Try a different gdx, or re-run the optimization with cm_nash_mode set to debug in order to debug the infes.";
         );
         if(sameas(convMessage80, "surplus"),
