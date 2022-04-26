@@ -83,7 +83,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag$force_replace <- TRUE
   cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
   # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
-  use_external_ghgprices <- if(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
+  use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
 
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
 
