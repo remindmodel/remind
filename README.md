@@ -83,7 +83,7 @@ In addition *R* (https://www.r-project.org/) is required for pre- and
 postprocessing and run management (needs to be added to the PATH variable
 as well).
 
-Some R packages are required to run REMIND. All except of one (`gdxrrw`) are
+Some R packages are required to run REMIND. All of them are
 either distributed via the offical R CRAN or via a separate repository hosted at
 PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
 available repositories via:
@@ -96,25 +96,20 @@ On Windows you need to install Rtools
 variable. After that you can run the following lines of code:
 
 
-All packages can be installed via `install.packages`
+Now the required packages can be installed with:
 
 ```
-pkgs <- c("gdxrrw",
-          "ggplot2",
-          "curl",
-          "gdx",
-          "magclass",
-          "madrat",
-          "mip",
-          "lucode2",
-          "gms",
-          "remind2",
-          "lusweave",
-          "luscale",
-          "goxygen",
-          "luplot",
-          "yaml")
-install.packages(pkgs)
+if (!requireNamespace("renv", quietly = TRUE)) {
+  install.packages("renv")
+}
+depsDataframe <- renv::dependencies(dev = TRUE)
+extraDeps <- c("curl", "madrat", "goxygen")
+deps <- unique(c(depsDataframe[["Package"]], extraDeps))
+deps <- setdiff(deps, c("magpie", "ludata"))
+missingPackages <- Filter(x = deps, f = function(x) !requireNamespace(x, quietly = TRUE))
+message("installing the following packages:\n",
+        paste(missingPackages, collapse = ", "))
+install.packages(missingPackages)
 ```
 Updating R is recommended if problems arise at package installation, please write
 us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
