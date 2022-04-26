@@ -394,6 +394,14 @@ loop ((t,regi_dyn29(regi)),
     );
   );
 );
+
+* Use offset quantities for historic industry H2/HTH_el use, since it actually
+* didn't happen.
+loop (pf_quantity_shares_37(in,in2),
+  pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
+                                  pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
+  = -pm_cesdata(t,regi,in,"quantity");
+);
 $endif.subsectors
 
 $ifthen.indst_H2_offset "%industry%" == "fixed_shares"
