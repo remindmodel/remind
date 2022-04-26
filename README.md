@@ -107,9 +107,11 @@ extraDeps <- c("curl", "madrat", "goxygen")
 deps <- unique(c(depsDataframe[["Package"]], extraDeps))
 deps <- setdiff(deps, c("magpie", "ludata"))
 missingPackages <- Filter(x = deps, f = function(x) !requireNamespace(x, quietly = TRUE))
-message("installing the following packages:\n",
-        paste(missingPackages, collapse = ", "))
-install.packages(missingPackages)
+if (length(missingPackages) > 0) {
+  message("installing the following packages:\n",
+          paste(missingPackages, collapse = ", "))
+  install.packages(missingPackages)
+}
 ```
 Updating R is recommended if problems arise at package installation, please write
 us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
