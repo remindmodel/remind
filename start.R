@@ -430,6 +430,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
     # testOneRegi settings
     if ("--testOneRegi" %in% argv & is.na(config.file)) {
+      cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
       cfg$output           <- NA
