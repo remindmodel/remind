@@ -152,11 +152,10 @@ scenarios_coupled[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scena
 
 # If provided replace gdx paths given in scenario_config with paths given in scenario_config_coupled
 for (scen in common) {
-  for (path_gdx in names(path_gdx_list)) {
-    if (!is.na(scenarios_coupled[scen, path_gdx])) {
-      settings_remind[scen, path_gdx] <- scenarios_coupled[scen, path_gdx]
-      message("Replacing ", path_gdx, " information with those specified in coupled config: ",settings_remind[scen, path_gdx])
-    }
+  use_path_gdx <- names(path_gdx_list)[! is.na(scenarios_coupled[scen, names(path_gdx_list)])]
+  if (length(use_path_gdx) > 0) {
+    settings_remind[scen, use_path_gdx] <- scenarios_coupled[scen, use_path_gdx]
+    message("For ", scen, ", use data specified in coupled config for: ", paste(use_path_gdx, collapse = ", "), ".")
   }
 }
 
@@ -164,7 +163,8 @@ for (scen in common) {
 
 source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND default settings
 
-knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
+knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
+                      "regionmapping", "inputRevision", "slurmConfig")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
   message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -417,10 +417,17 @@ for(scen in common){
     nr_of_regions <- 1
   }
 
+  date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   if (start_now){
       # Start SSP2-Base and SSP2-NDC as priority jobs since ALL subsequent runs depend on them
       #qos <- ifelse(grepl("SSP2-(NDC|Base)",runname),"priority","short")
-      if (! "--test" %in% argv) system(paste0("sbatch --qos=",qos," --job-name=",runname," --output=",runname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
+      if (! "--test" %in% argv) {
+        system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
+        message("Copied REMIND .Rprofile to MAgPIE folder.")
+        system(paste0("sbatch --qos=", qos, " --job-name=", runname, " --output=", runname, date,
+                      ".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
+                      " --wrap=\"Rscript start_coupled.R coupled_config=",runname,".RData\""))
+      }
       else message("Test mode: run ", runname, " NOT submitted to the cluster.")
   } else {
       message(ifelse("--test" %in% argv, "Test mode: ", "   "),

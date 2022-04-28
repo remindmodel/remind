@@ -8,14 +8,10 @@
 
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
 
-loop(ttot$(ttot.val ge 2020),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    vm_damageFactor.fx(ttot,regi) = pm_damage(tall,regi);
+loop(ttot$(ttot.val ge 2005),
+    loop(tall$(pm_ttot_2_tall(ttot,tall)),
+        vm_damageFactor.fx(ttot,regi) = pm_damage(tall,regi);
 ));
 
 
 *** EOF ./modules/50_damages/KW_SE/bounds.gms
-
-
-
-
