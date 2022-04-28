@@ -21,7 +21,7 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) ..
 q33_capconst_grindrock(t,regi)..
 	sum(rlf2,sum(rlf, v33_grindrock_onfield(t,regi,rlf,rlf2)))
 	=l=
-	sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf2))
+	sum(teNoTransform2rlf_dyn33("rockgrind",rlf2), vm_capFac(t,regi,"rockgrind") * vm_cap(t,regi,"rockgrind",rlf2))
 	;
 	
 ***---------------------------------------------------------------------------
@@ -31,8 +31,8 @@ q33_capconst_grindrock(t,regi)..
 q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startyear))..
 	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) + 
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val gt (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) + 
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) +
+	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) +
 	v33_grindrock_onfield(ttot,regi,rlf,rlf2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val))))
 ;  
 
@@ -54,7 +54,7 @@ q33_emiEW(t,regi)..
 q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
-	-sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
+	-sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * vm_otherFEdemand(t,regi,"fegas")	
 	;
 
@@ -84,7 +84,7 @@ q33_DacFEdemand_el(t,regi,entyFe)..
 q33_DacFEdemand_heat(t,regi,entyFe)..
     v33_DacFEdemand_heat(t,regi,entyFe)
     =e=
-    - vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
+    - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
     - v33_DacFEdemand_heat(t,regi,"feh2s")$((sameas(entyFe,"fegas"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels"))) 
 	- v33_DacFEdemand_heat(t,regi,"fegas")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels")))
 	- v33_DacFEdemand_heat(t,regi,"feels")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"fegas")))
