@@ -536,8 +536,8 @@ if(s80_bool eq 1,
 *** check if any region has failed to solve consecutively for a certain number of times
 if(cm_abortOnConsecFail, !! execute only if consecutive failures switch is non-zero
     loop(regi,
-        if(((p80_repy(regi,'modelstat') eq 1) and (p80_repy(regi,'solvestat') eq 2))
-        or ((p80_repy(regi,'modelstat') eq 4) and (p80_repy(regi,'solvestat') eq 7)), !! region was solved successfully
+        if(((p80_repy(regi,"solvestat") eq 1) and (p80_repy(regi,"modelstat") eq 2))
+        or ((p80_repy(regi,"solvestat") eq 4) and (p80_repy(regi,"modelstat") eq 7)), !! region was solved successfully
             p80_trackConsecFail(regi) = 0;
         else
             p80_trackConsecFail(regi) = p80_trackConsecFail(regi) + 1;
