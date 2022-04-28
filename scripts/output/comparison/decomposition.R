@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-library(magpie)
+library(magpie4)
 library(remind2)
 library(luplot)
 

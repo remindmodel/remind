@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(remind2)
-library(magpie)
+library(magpie4)
 library(luplot)
 
 ############################# BASIC CONFIGURATION #############################
