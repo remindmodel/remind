@@ -25,7 +25,7 @@ require(mrremind)
 require(rmndt)
 require(quitte)
 library(lucode2)
-library(magpie)
+library(magpie4)
 library(quitte)
 library(cowplot)
 ```
@@ -179,7 +179,7 @@ vintcomparisonpf = function(dt){
     scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
     guides(linetype=FALSE,
            fill=guide_legend(reverse=FALSE, title="Transport mode"))+
-    scale_fill_manual(values = cols[match(cols2use, names(cols))]))+
+    scale_fill_manual(values = cols[match(cols2use, names(cols))])+
     labs(y = "[million Veh]", x="", title = "LDV fleet")
 
    plot1 = ggplot()+
@@ -195,7 +195,7 @@ vintcomparisonpf = function(dt){
     scale_alpha_discrete(breaks = c(1,0), name = "Status", labels = c("Vintages","New additions")) +
     guides(linetype=FALSE,
            fill=guide_legend(reverse=FALSE, title="Transport mode"))+
-    scale_fill_manual(values = cols[match(cols2use, names(cols))]))+
+    scale_fill_manual(values = cols[match(cols2use, names(cols))])+
     labs(y = "[million Veh]", x="", title = "LDV new sales fleet")
 
 return(list(plot=plot, plot1=plot1))
