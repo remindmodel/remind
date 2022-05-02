@@ -25,7 +25,7 @@ require(mrremind)
 require(rmndt)
 require(quitte)
 library(lucode2)
-library(magpie)
+library(magpie4)
 library(quitte)
 library(cowplot)
 ```
