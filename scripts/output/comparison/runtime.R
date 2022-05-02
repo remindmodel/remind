@@ -8,7 +8,7 @@
 library(magclass, quietly = TRUE,warn.conflicts =FALSE)
 library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
-library(magpie, quietly = TRUE,warn.conflicts =FALSE)
+library(magpie4, quietly = TRUE,warn.conflicts =FALSE)
 
 if(!exists("source_include")) {
  outputdirs <- c("output/default_2015-01-14_11.41.17",
