@@ -374,7 +374,7 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
-vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
+vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"
 
 *** CES markup to represent end-use technology cost
 vm_costCESMkup(ttot,all_regi,all_in)                                   "CES markup cost to represent demand-side technology cost of end-use transformation [trUSD/TWa]"
@@ -620,5 +620,4 @@ o_carbon_reemitted(ttot,all_regi,all_enty)   "output parameter"
 
 o_emi_conv(all_enty)    "output parameter" / co2 3666.6666666666666666666666666667, ch4 28, n2o 416.4286, so2 1,	bc  1, oc  1 /
 ;
-
 *** EOF ./core/declarations.gms

@@ -718,16 +718,16 @@ sets
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
-        
+
 LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi
 ,
-        
+
 LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
       /
- 
+
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
-      
+
 GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
         LAM_regi .(LAM)
         OAS_regi .(OAS)
@@ -742,7 +742,7 @@ GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
         JPN_regi .(JPN)
         USA_regi .(USA)
       /
- 
+
    iso "list of iso countries" /
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
@@ -2801,7 +2801,7 @@ sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies 
 /
 
 ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
-/     
+/
 /
 
 
@@ -2938,7 +2938,6 @@ ue2ppfen(all_enty,all_in)      "matching UE in ESM to ppfEn in MACRO"
 
 es2ppfen(all_esty,all_in)      "matching ES in ESM to ppfEn in MACRO"
 //
-
 ;
 
 ***-----------------------------------------------------------------------------

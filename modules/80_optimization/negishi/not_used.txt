@@ -58,4 +58,4 @@ pm_emissionsRefYearESR,         input,      ??
 pm_ESRTarget_dev_iter,          input,      ??
 pm_emiCurrentETS,               input,      ??
 cm_keep_presolve_gdxes,         switch,     not needed
-
+cm_auto_switch_debug,           switch,     not needed

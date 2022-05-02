@@ -60,3 +60,4 @@ pm_emiTargetESR,                input,      ??
 pm_emissionsRefYearESR,         input,      ??
 pm_ESRTarget_dev_iter,          input,      ??
 pm_emiCurrentETS,               input,      ??
+cm_auto_switch_debug,           switch,     not needed

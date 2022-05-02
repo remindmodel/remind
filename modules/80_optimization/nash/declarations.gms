@@ -12,14 +12,14 @@ p80_etaXp(all_enty)                         "Parameter governing price anticipat
 
 
 *LB* parameters for ajustments between different iterations
-p80_etaLT(all_enty)                         "long term price ajustment elasticity " 
-p80_etaST(all_enty)                         "short term price ajustment elasticity" 
+p80_etaLT(all_enty)                         "long term price ajustment elasticity "
+p80_etaST(all_enty)                         "short term price ajustment elasticity"
 
 *AJS*  adjustment costs between iterations
 p80_etaAdj(all_enty)                        "Adjustment costs for changes of trade pattern between iterations"
 
 ***prices
-p80_pvp_itr(ttot,all_enty,iteration)        "Price on commodity markets per iteration", 
+p80_pvp_itr(ttot,all_enty,iteration)        "Price on commodity markets per iteration",
 p80_pvpFallback(ttot,all_enty)              "Helper parameter. Price path from input/prices_NASH.inc. Only used if reading prices from gdx fails.",
 
 p80_normalizeLT(all_enty)                   "Aggregated intertemporal  market volume", 
@@ -27,9 +27,9 @@ p80_normalize0(ttot,all_regi,all_enty)      "Normalization parameter for market 
 
 ***parameter containing the respective level values from last iteration (the first set of values taken from gdx in the first iteration, respectively)
 p80_Mport0(tall,all_regi,all_enty)          "Imports in last iteration"
-p80_surplus(tall,all_enty,iteration)        "Surplus on commodity market", 
-p80_defic_trade(all_enty)                   "Surplus in monetary terms over all times on commodity markets [trillion US$2005]", 
-p80_defic_sum(iteration)                    "Surplus in monetary terms over all times on all commodity markets combined [trillion US$2005] (NOTE: to compare this number with the Negishi defic_sum, divide by around 100)", 
+p80_surplus(tall,all_enty,iteration)        "Surplus on commodity market",
+p80_defic_trade(all_enty)                   "Surplus in monetary terms over all times on commodity markets [trillion US$2005]",
+p80_defic_sum(iteration)                    "Surplus in monetary terms over all times on all commodity markets combined [trillion US$2005] (NOTE: to compare this number with the Negishi defic_sum, divide by around 100)",
 p80_defic_sum_rel(iteration)                "Surplus monetary value over all times on all commodity markets combined, normalized to consumption [%]",
 
 *LB* diagnostic parameters 
@@ -66,7 +66,7 @@ pm_cumEff(tall,all_regi,all_in)            "parameter for spillover externality 
 
 *EMIOPT relevant
 p80_eoMargPermBudg(all_regi)               "marginal of permit budget restriction"
-p80_eoMargEmiCum(all_regi)                 "marginal of cumulative emissions" 
+p80_eoMargEmiCum(all_regi)                 "marginal of cumulative emissions"
 
 p80_eoMargAverage                          "global average of marginals from nash budget equation" 
 p80_eoMargDiff(all_regi)                   "scaled deviation of regional marginals from global average"
@@ -85,11 +85,14 @@ p80_taxrev_dev(ttot,all_regi)              "deviation of tax revenue normalized 
 
 pm_fuExtrForeign(ttot,all_regi,all_enty,rlf) "foreign fuel extraction"
 p80_taxrev_dev(ttot,all_regi)                "deviation of tax revenue in percent GDP"
+
+p80_nash_mode(nash_modes)   "tracking active nash mode" 
+  / %cm_nash_mode% YES /;
 ;
 
 positive variable
 *AJS* Adjustment costs for Nash trade algorithm.  Only non-zero in the Nash_test realization of 80_optimization module.
-vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from the trade structure of the last iteration." 
+vm_costAdjNash(ttot,all_regi)               "Adjustment costs for deviation from the trade structure of the last iteration."
 ;
 
 equations
