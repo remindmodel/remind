@@ -48,8 +48,8 @@ p80_etaLT_correct(trade,iteration)$(NOT tradeSe(trade)) =
 p80_etaST_correct(ttot,trade,iteration)$((ttot.val ge 2005) AND (NOT tradeSe(trade))) = 
            p80_etaST(trade)
          * ( (  (1-sm_fadeoutPriceAnticip) + sm_fadeoutPriceAnticip * sqrt(pm_pvp(ttot,"good")/pm_pvp("2100","good"))  )$(sameas(trade,"perm")) + 1$(NOT sameas(trade,"perm")) )
-      * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,"good")/pm_pvp('2040',"good")) )$(sameas(trade,"perm")) + 1$(NOT sameas(trade,"perm")) )
-      * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,trade)/pm_pvp('2050',trade)) )$(tradePe(trade)) + 1$(NOT tradePe(trade)) )
+      * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,"good")/pm_pvp("2040","good")) )$(sameas(trade,"perm")) + 1$(NOT sameas(trade,"perm")) )
+      * ((sm_fadeoutPriceAnticip + (1-sm_fadeoutPriceAnticip) * (pm_pvp(ttot,trade)/pm_pvp("2050",trade)) )$(tradePe(trade)) + 1$(NOT tradePe(trade)) )
          * p80_surplus(ttot,trade,iteration)
          / max(sm_eps , sum(regi, p80_normalize0(ttot,regi,trade)));
 
@@ -176,9 +176,9 @@ p80_defic_sum_rel(iteration) =  100 * p80_defic_sum(iteration) / (p80_normalizeL
 ***adjust parameters for next iteration 
 ***Decide on when to fade out price anticipation terms (doing this too early leads to diverging markets)
 ***if markets are reasonably cleared
-if( (smax(tradePe,p80_surplusMax(tradePe,iteration,'2150')) lt (10 * 0.05))
-    AND ( p80_surplusMax("good",iteration,'2150') lt (10 * 0.1) )            !!
-    AND ( p80_surplusMax("perm",iteration,'2150') lt (5 * 0.2) )
+if( (smax(tradePe,p80_surplusMax(tradePe,iteration,"2150")) lt (10 * 0.05))
+    AND ( p80_surplusMax("good",iteration,"2150") lt (10 * 0.1) )            !!
+    AND ( p80_surplusMax("perm",iteration,"2150") lt (5 * 0.2) )
     AND (s80_fadeoutPriceAnticipStartingPeriod eq 0),                  !! as long as we are not fading out already
      s80_fadeoutPriceAnticipStartingPeriod = iteration.val;
 );
@@ -221,17 +221,17 @@ loop(trade$(NOT tradeSe(trade)),
 
 ***critertion "infes": and are all solutions optimal?
 loop(regi,
- if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
+ if((p80_repy(regi,"modelstat") ne 2) and (p80_repy(regi,"modelstat") ne 7),
      s80_bool = 0;
      p80_messageShow("infes") = YES;
   );
 
 ***critertion "nonopt": The next lines are a workaround for the status 7 problem. If the objective value does not differ too much from the last known optimal solution, accept this solution as if it were optimal. 
- if( (p80_repy(regi,'modelstat') eq 7) and ((p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval')) lt - 1E-4) ,   !! The 1E-4 are quite arbitrary. One should do more research on how the solution differs over iteration when status 7 occurs.
+ if( (p80_repy(regi,"modelstat") eq 7) and ((p80_repy(regi,"objval") - p80_repyLastOptim(regi,"objval")) lt - 1E-4) ,   !! The 1E-4 are quite arbitrary. One should do more research on how the solution differs over iteration when status 7 occurs.
      s80_bool = 0;
      p80_messageShow("nonopt") = YES;
      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-     s80_dummy= (p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval'));
+     s80_dummy= (p80_repy(regi,"objval") - p80_repyLastOptim(regi,"objval"));
      display s80_dummy;
    );
 );
@@ -436,7 +436,7 @@ if( (s80_bool eq 0) and (iteration.val eq cm_iteration_max),     !! reached max 
 	     if(sameas(convMessage80, "nonopt"),
 		 display "####";
 		 display "#### 3.) Found a feasible, but non-optimal solution. This is the infamous status-7 problem: ";
-		 display "#### We can't accept this solution, because it is non-optimal, and too far away from the last known optimal solution. ";
+		 display "#### We can"t accept this solution, because it is non-optimal, and too far away from the last known optimal solution. ";
 		 display "#### Just trying a different gdx may help.";
 	     );
 	     if(sameas(convMessage80, "taxconv"),
@@ -521,7 +521,7 @@ if(s80_bool eq 1,
      display  p80_surplusMaxTolerance;
      display "#### Info: These residual market surplusses in monetary are :";
      display  p80_defic_trade;
-     display "#### Info: And the sum of those (equivalent to Negishi's defic_sum):";
+     display "#### Info: And the sum of those (equivalent to Negishi"s defic_sum):";
      display  p80_defic_sum;
      display "#### This value in percent of the NPV of consumption is: ";
      display  p80_defic_sum_rel;
@@ -575,7 +575,7 @@ if (cm_auto_switch_debug,
 ***--------------------------
 ***  EMIOPT implementation
 ***--------------------------
-$ifthen.emiopt %emicapregi% == 'none'
+$ifthen.emiopt %emicapregi% == "none"
 if(cm_emiscen eq 6,
 
 *mlb 20150609* nash emiopt algorithm

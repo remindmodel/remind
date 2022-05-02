@@ -18,8 +18,8 @@ else
   hybrid.solvelink = 3;
 );
 
-p80_repy(all_regi,'solvestat') = na;
-p80_repy(all_regi,'modelstat') = na;
+p80_repy(all_regi,"solvestat") = na;
+p80_repy(all_regi,"modelstat") = na;
 
 loop(all_regi,
   regi(all_regi) = yes;
@@ -52,12 +52,12 @@ solve hybrid using nlp maximizing vm_welfareGlob;
 ***      -------------------------------------------------------------------
 
   if (p80_nash_mode("serial") OR p80_nash_mode("debug"),
-    p80_repy(all_regi,'solvestat') = hybrid.solvestat;
-    p80_repy(all_regi,'modelstat') = hybrid.modelstat;
-    p80_repy(all_regi,'resusd'   ) = hybrid.resusd;
-    p80_repy(all_regi,'objval')    = hybrid.objval;
-    if (p80_repy(all_regi,'modelstat') eq 2,
-      p80_repyLastOptim(all_regi,'objval') = p80_repy(all_regi,'objval');
+    p80_repy(all_regi,"solvestat") = hybrid.solvestat;
+    p80_repy(all_regi,"modelstat") = hybrid.modelstat;
+    p80_repy(all_regi,"resusd"   ) = hybrid.resusd;
+    p80_repy(all_regi,"objval")    = hybrid.objval;
+    if (p80_repy(all_regi,"modelstat") eq 2,
+      p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
     );
   );
 
@@ -68,17 +68,17 @@ solve hybrid using nlp maximizing vm_welfareGlob;
 if (p80_nash_mode("parallel"),
   repeat
     loop (all_regi$handlecollect(p80_handle(all_regi)),
-      p80_repy(all_regi,'solvestat') = hybrid.solvestat;
-      p80_repy(all_regi,'modelstat') = hybrid.modelstat;
-      p80_repy(all_regi,'resusd'   ) = hybrid.resusd;
-      p80_repy(all_regi,'objval')    = hybrid.objval;
-      if (p80_repy(all_regi,'modelstat') eq 2,
-        p80_repyLastOptim(all_regi,'objval') = p80_repy(all_regi,'objval');
+      p80_repy(all_regi,"solvestat") = hybrid.solvestat;
+      p80_repy(all_regi,"modelstat") = hybrid.modelstat;
+      p80_repy(all_regi,"resusd"   ) = hybrid.resusd;
+      p80_repy(all_regi,"objval")    = hybrid.objval;
+      if (p80_repy(all_regi,"modelstat") eq 2,
+        p80_repyLastOptim(all_regi,"objval") = p80_repy(all_regi,"objval");
       );
-    display$( handledelete(p80_handle(all_regi)) ) 'trouble deleting handles';
+    display$( handledelete(p80_handle(all_regi)) ) "trouble deleting handles";
     p80_handle(all_regi) = 0
     ) ;
-    display$( sleep(5) ) 'sleep some time';
+    display$( sleep(5) ) "sleep some time";
   until card(p80_handle) = 0;
 );
 
@@ -88,10 +88,10 @@ regi(all_regi) = yes;
 pm_SolNonInfes(regi) = 0;
 p80_SolNonOpt(regi) = 0;
 loop(regi,
-  if (p80_repy(regi,'modelstat') eq 2 OR p80_repy(regi,'modelstat') eq 7,
+  if (p80_repy(regi,"modelstat") eq 2 OR p80_repy(regi,"modelstat") eq 7,
     pm_SolNonInfes(regi) = 1;
   );
-  if (p80_repy(regi,'modelstat') eq 7,
+  if (p80_repy(regi,"modelstat") eq 7,
     p80_SolNonOpt(regi) = 1
   );
 );
@@ -99,7 +99,7 @@ loop(regi,
 *** set o_modelstat to the highest value across all regions, ignoring status 7 
 o_modelstat
   = smax(regi$( p80_repy(regi,"modelstat") ne 7 ),
-      p80_repy(regi,'modelstat')
+      p80_repy(regi,"modelstat")
     );
 
 *** in cm_nash_mode=debug mode, enable solprint for next sol_itr when last
