@@ -384,7 +384,7 @@ loop (pf_industry_relaxed_bounds_dyn37(in),
 
   vm_cesIO.up(t,regi_dyn29(regi),in)
   = ( pm_cesdata(t,regi,in,"quantity")
-    * (1 + max(0, (1 - %c_CES_calibration_iteration%) / sm_tmp))
+    * (1 + max(0, (%c_CES_calibration_iteration% - 1) / sm_tmp))
     )$( %c_CES_calibration_iteration% le sm_tmp )
   + INF$( %c_CES_calibration_iteration% gt sm_tmp );
 );
