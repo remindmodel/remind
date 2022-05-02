@@ -360,7 +360,9 @@ for(scen in common){
                                                  filter(rowSums(. == scen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
 
   # save cm_nash_autoconverge to be used for last REMIND run
-  cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
+  if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
+    cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
+  }
 
   gdx_specified <- grepl(".gdx", cfg_rem$files2export$start[path_gdx_list], fixed = TRUE)
   gdx_na <- is.na(cfg_rem$files2export$start[path_gdx_list])

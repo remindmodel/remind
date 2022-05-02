@@ -152,7 +152,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     }
 
     # change precision only for last run if setup in coupled config
-    if (i == max_iterations && ! is.na(cfg_rem$cm_nash_autoconverge_lastrun)) {
+    if (i == max_iterations && ! is.null(cfg_rem$cm_nash_autoconvergence_lastrun) && ! is.na(cfg_rem$cm_nash_autoconverge_lastrun)) {
       cfg_rem$gms$cm_nash_autoconverge <- cfg_rem$cm_nash_autoconverge_lastrun
     }
 
