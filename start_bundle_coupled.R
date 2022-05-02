@@ -90,6 +90,8 @@ if (!all(known)) {
   path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
 }
 
+if (! file.exists("output")) dir.create("output")
+
 parallel <- ifelse("--parallel" %in% argv, TRUE, FALSE)
 errorsfound <- 0
 startedRuns <- 0
@@ -218,11 +220,13 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)           # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos)) qos <- "medium"                       # if qos could not be found in scenarios_coupled use medium
+  if(is.null(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
   start_iter_first <- 1                                  # iteration to start the coupling with
 
   # look whether there is already a REMIND run (check for old name if provided)
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
+  path_report_found <- NULL
+  start_magpie <- FALSE
   if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/fulldata.gdx") &&
       file.exists(scenarios_coupled[scen, "oldrun"])) {
         already_rem <- c(scenarios_coupled[scen, "oldrun"])
@@ -248,11 +252,11 @@ for(scen in common){
     # is there already a MAgPIE run with this name?
     suche <- paste0(path_magpie_oldruns,prefix_oldruns,needle,"-mag-*/report.mif")
     already_mag <- Sys.glob(suche)
-    if(identical(already_mag,character(0))) message("Nothing found for", suche)
+    if(identical(already_mag,character(0))) message("Nothing found for ", suche)
     iter_mag <- 0
     if (!identical(already_mag, character(0))) {
       already_mag <- mixedsort(already_mag)[1]
-      path_report <- normalizePath(already_mag)
+      path_report_found <- normalizePath(already_mag)
       message(paste0("Found MAgPIE report here: ", normalizePath(already_mag)))
       iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
     }
@@ -261,10 +265,11 @@ for(scen in common){
       # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
       start_iter_first  <- iter_rem
       path_run    <- gsub("/fulldata.gdx","",already_rem)
-      path_report <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))[1] # take the first entry to ignore REMIND_generic_*_withoutPlus.mif
-      if (is.na(path_report)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
-      message("Found REMIND report here: ", path_report)
+      path_report_found <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))[1] # take the first entry to ignore REMIND_generic_*_withoutPlus.mif
+      if (is.na(path_report_found)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
+      message("Found REMIND report here: ", path_report_found)
       message("Continuing with MAgPIE in iteration ", start_iter_first)
+      start_magpie <- TRUE
     } else {
       # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
       start_iter_first <- iter_rem + 1
@@ -272,16 +277,11 @@ for(scen in common){
     }
   }
 
-  # If provided replace the path to the MAgPIE report found automatically with path given in scenario_config_coupled.csv
-  if (!is.na(scenarios_coupled[scen, "path_report"])) {
-    path_report  <- scenarios_coupled[scen, "path_report"] # sets the path to the report REMIND is started with in the first loop
-      message("Replacing path to MAgPIE report with that one specified in\n  ",path_settings_coupled,"\n  ",scenarios_coupled[scen, "path_report"],"\n")
-  }
-
   source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen
+  rem_filesstart <- cfg_rem$files2export$start     # save to reset it to that later
 
   source(paste0(path_magpie,"config/default.cfg")) # retrieve MAgPIE settings
   cfg_mag <- cfg
@@ -311,26 +311,26 @@ for(scen in common){
   #  write.magpie(tn,"modules/13_tc/exo_JUN13/input/tau_scenario.csv")
 
   # Switch REMIND and MAgPIE to endogenous TC
-  #cat("Setting MAgPIE to endogenous TC\n")
+  #message("Setting MAgPIE to endogenous TC")
   #cfg_mag$gms$tc      <- "inputlib"
   #cfg_rem$gms$biomass <- "magpie_linear"
 
   # Configure Afforestation in MAgPIE
   # if (grepl("-aff760",scen)) {
-  #    cat("Setting MAgPIE max_aff_area to 760\n")
+  #    message("Setting MAgPIE max_aff_area to 760")
   #    cfg_mag$gms$s32_max_aff_area <- 760
   #} else if (grepl("-aff900",scen)) {
-  #    cat("Setting MAgPIE max_aff_area to 900\n")
+  #    message("Setting MAgPIE max_aff_area to 900")
   #    cfg_mag$gms$s32_max_aff_area <- 900
   #} else if (grepl("-affInf",scen)) {
-  #    cat("Setting MAgPIE max_aff_area to Inf\n")
+  #    message("Setting MAgPIE max_aff_area to Inf")
   #    cfg_mag$gms$s32_max_aff_area <- Inf
   #} else if (grepl("-cost2",scen)) {
-  #    cat("Setting MAgPIE cprice_red_factor to 0.2\n")
+  #    message("Setting MAgPIE cprice_red_factor to 0.2")
   #    cfg_mag$gms$s56_cprice_red_factor <- 0.2
   #    cfg_mag$gms$s32_max_aff_area <- Inf
   #} else if (grepl("-cost3",scen)) {
-  #    cat("Setting MAgPIE cprice_red_factor to 0.3\n")
+  #    message("Setting MAgPIE cprice_red_factor to 0.3")
   #    cfg_mag$gms$s56_cprice_red_factor <- 0.3
   #    cfg_mag$gms$s32_max_aff_area <- Inf
   #}
@@ -368,6 +368,18 @@ for(scen in common){
     fullrunname <- paste0(runname, ifelse(parallel, paste0("-rem-", i), ""))
     start_iter <- i
 
+    # If provided replace the path to the MAgPIE report found automatically with path given in scenario_config_coupled.csv
+    if (i == start_iter) {
+      if (! is.na(scenarios_coupled[scen, "path_report"])) {
+        path_report <- scenarios_coupled[scen, "path_report"] # sets the path to the report REMIND is started with in the first loop
+        message("Replacing path to MAgPIE report with that one specified in\n  ", path_settings_coupled, "\n  ", scenarios_coupled[scen, "path_report"], "\n")
+      } else {
+        path_report <- path_report_found
+      }
+    } else {
+      path_report <- runname
+    }
+
     # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
     path_mif_ghgprice_land <- NULL
     if (i == 1 && "path_mif_ghgprice_land" %in% names(scenarios_coupled)) {
@@ -389,11 +401,10 @@ for(scen in common){
     names(gdxlist) <- path_gdx_list
     if (parallel) {
       gdxlist[gdxlist %in% common] <- paste0(prefix_runname, gdxlist[gdxlist %in% common], "-rem-", i)
-      possibleFulldata <- paste0(path_remind, "/output/", gdxlist, "/fulldata.gdx")
+      possibleFulldata <- paste0(path_remind, "output/", prefix_runname, gdxlist, "-rem-", i, "/fulldata.gdx")
       # if file fulldata.gdx already exists because run was already finished, use it directly as input
       gdxlist[file.exists(possibleFulldata)] <- possibleFulldata[file.exists(possibleFulldata)]
     }
-
 
     if (i == start_iter_first) {
       gdx_specified <- grepl(".gdx", gdxlist, fixed = TRUE)
@@ -401,8 +412,8 @@ for(scen in common){
       start_now <- all(gdx_specified | gdx_na)
     }
 
-    # in parallel mode, remove gdxlist from i-1
-    if (parallel) cfg_rem$files2export$start <- cfg_rem$files2export$start[! names(cfg_rem$files2export$start) %in% names(gdxlist)] 
+    # in parallel mode, remove gdxlist generated by earlier i
+    if (parallel) cfg_rem$files2export$start <- rem_filesstart
     # Remove potential elements that contain ".gdx" and append gdxlist
     cfg_rem$files2export$start <- .setgdxcopy(".gdx", cfg_rem$files2export$start, gdxlist)
 
@@ -467,7 +478,7 @@ for(scen in common){
       gdxfound <- (is.na(gdxname) || file.exists(gdxname) || gdxname %in% knownRefRuns)
       message("  ", str_pad(path_gdx, 23, "right"), ": ", ifelse(gdxfound, green, red), gdxname, NC)
   }
-  if(!is.null(path_mif_ghgprice_land)) cat("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land),green,red), path_mif_ghgprice_land, NC, "\n",sep="")
+  if(!is.null(path_mif_ghgprice_land)) message("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land), green,red), path_mif_ghgprice_land, NC, "\n",sep="")
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
   message("no_ghgprices_land_until: ", cfg_mag$mute_ghgprices_until)
 
@@ -482,11 +493,11 @@ for(scen in common){
   knownRefRuns <- c(knownRefRuns, paste0(fullrunname, if (parallel) "" else paste0("-rem-", max_iterations)))
   if (start_now){
       startedRuns <- startedRuns + 1
+      logfile <- file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), if(! parallel) stamp, ".txt"))
+      message("Find logging in ", logfile)
       if (! "--test" %in% argv) {
         system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
         message("Copied REMIND .Rprofile to MAgPIE folder.")
-        logfile <- paste0(fullrunname, if (parallel) "" else stamp, ".log")
-        message("Find logging in ", logfile)
         system(paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))

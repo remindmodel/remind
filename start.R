@@ -60,7 +60,7 @@ get_line <- function(){
 # returnboolean: FALSE: returns selected entries of thelist
 # multiple: TRUE: allows to select multiple entries. FALSE: no
 # allowempty: TRUE: allows you not to select anything (returns NA). FALSE: must select something
-# type: string to be shown to user to understand what he chooses
+# type: string to be shown to user to understand what they choose
 
 chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multiple = TRUE,
                            allowempty = FALSE, group = FALSE) {
@@ -440,8 +440,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
 
-    cat("\n",scen,"\n")
-
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
@@ -464,6 +462,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       }
     }
 
+    cat("\n",cfg$title,"\n")
+
     if ("--debug" %in% argv) {
       cfg$gms$cm_nash_mode <- "debug"
       cfg$slurmConfig      <- slurmConfig
@@ -475,7 +475,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
-    filename <- paste0(scen,".RData")
+    filename <- paste0(cfg$title,".RData")
     message("   Writing cfg to file ", filename)
     save(cfg, file=filename)
 

@@ -11,7 +11,7 @@ library(lusweave, quietly = TRUE,warn.conflicts =FALSE)
 library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
 library(gdx, quietly = TRUE,warn.conflicts =FALSE)
-library(magpie, quietly = TRUE,warn.conflicts =FALSE)
+library(magpie4, quietly = TRUE,warn.conflicts =FALSE)
 library(remind2, quietly = TRUE,warn.conflicts =FALSE)
 library(gtools, quietly = TRUE,warn.conflicts =FALSE)
 
@@ -129,7 +129,7 @@ plot_iterations <- function(runname) {
 	######################### IMPORT AND PLOT DATA #######################
 	
 	### PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ###
-	price <- read_all(gdx_path,readbioprice,name="p30_pebiolc_pricemag",as.list=FALSE)
+	price <- readAll(gdx_path,readbioprice,name="p30_pebiolc_pricemag",as.list=FALSE)
   price <- price / TWa2EJ * 1000
   #price <- mbind(price,new.magpie("GLO",getYears(price),getNames(price),fill=c(0)))
   getNames(price) <- gsub(".*rem-","",getNames(price))
@@ -142,7 +142,7 @@ plot_iterations <- function(runname) {
 						 legend_position="right")
 
 	### LUC EMISSIONS (MAgPIE) ###
-	emi <- read_all(gdx_path,readpar,name="pm_macBaseMagpie",as.list=FALSE)[,,"co2luc"]*1000*44/12
+	emi <- readAll(gdx_path,readpar,name="pm_macBaseMagpie",as.list=FALSE)[,,"co2luc"]*1000*44/12
   emi <- mbind(emi,dimSums(emi,dim=1))
   getNames(emi) <- gsub(".*rem-","",getNames(emi))
 
@@ -153,7 +153,7 @@ plot_iterations <- function(runname) {
 						 legend_position="right")
 
   ### DEMAND FOR PURPOSE GROWN BIOENERGY ###
-	fuelex           <- read_all(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
+	fuelex           <- readAll(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
 	fuelex_bio       <- collapseNames(fuelex[,,"1"]) * TWa2EJ
 	fuelex_bio       <- mbind(fuelex_bio,dimSums(fuelex_bio,dim=1))
   getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
@@ -177,7 +177,7 @@ plot_iterations <- function(runname) {
 	           					 title=paste0(v," in 2060"),xlab="Scenario",ncol=4)
 
   ### DEMAND
-	fuelex           <- read_all(gdx_path,readprodPE,enty="pebiolc",as.list=FALSE)
+	fuelex           <- readAll(gdx_path,readprodPE,enty="pebiolc",as.list=FALSE)
 	fuelex_bio       <- collapseNames(fuelex) * TWa2EJ
 	fuelex_bio       <- mbind(fuelex_bio,dimSums(fuelex_bio,dim=1))
   getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
@@ -192,7 +192,7 @@ plot_iterations <- function(runname) {
                        scales="free_y",text_size=10,ncol=4,pointwidth=1,linewidth=1,asDate=FALSE,legend_position="right")
 
   ### PRICE SHIFT FACTOR IN 2060 ###
-	shift <- read_all(gdx_path,readshift,as.list=FALSE)* sm_tdptwyr2dpgj
+	shift <- readAll(gdx_path,readshift,as.list=FALSE)* sm_tdptwyr2dpgj
   #shift <- mbind(shift,new.magpie("GLO",getYears(shift),getNames(shift),fill=c(0)))
   shift <- fillyears(shift,years)
   getNames(shift) <- gsub(".*rem-","",getNames(shift))
@@ -204,7 +204,7 @@ plot_iterations <- function(runname) {
 
   ### Price shift and mult factor over time ###
 
-  v_shift    <- read_all(gdx_path,readvar,name="v30_priceshift",as.list=FALSE) * sm_tdptwyr2dpgj
+  v_shift    <- readAll(gdx_path,readvar,name="v30_priceshift",as.list=FALSE) * sm_tdptwyr2dpgj
   v_shift    <- fillyears(v_shift,years) # If there is no year dimension add it
   getNames(v_shift) <- gsub(".*rem-","",getNames(v_shift))
 
@@ -213,7 +213,7 @@ plot_iterations <- function(runname) {
                         scales='free',show_grid=TRUE,ncol=3,text_size=txtsiz,#ylim=y_limreg,
                         title=paste(runname,"Price shift",sep="\n"))
 
-  v_mult    <- read_all(gdx_path,readvar,name="v30_pricemult",as.list=FALSE)
+  v_mult    <- readAll(gdx_path,readvar,name="v30_pricemult",as.list=FALSE)
   v_mult    <- fillyears(v_mult,years) # If there is no year dimension add it
   #y_limreg  <- c(0,max(v_mult[,years,]))
   getNames(v_mult) <- gsub(".*rem-","",getNames(v_mult))

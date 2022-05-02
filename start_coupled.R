@@ -17,32 +17,32 @@
 debug_coupled <- function(model = NULL, cfg) {
    if(is.null(model)) stop("COUPLING DEBUG: Coupling was run in debug mode but no model was specified")
    
-   cat("   Creating results folder",cfg$results_folder,"\n")
+   message("   Creating results folder ", cfg$results_folder)
    if (!file.exists(cfg$results_folder)) {
      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
    } else if (!cfg$force_replace) {
      stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
    } else {
-     cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
+     message("    Deleting results folder because it already exists: ", cfg$results_folder)
      unlink(cfg$results_folder, recursive = TRUE)
      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
    }
  
    if (model == "rem") {
-      cat("COUPLING DEBUG: assuming REMIND\n")
+      message("COUPLING DEBUG: assuming REMIND")
       report <- "/home/dklein/REMIND_generic_C_SSP2EU-Tall-PkBudg1020-imp-rem-5.mif"
       to <- paste0(cfg$results_folder,"/REMIND_generic_",cfg$title,".mif")
    } else if (model == "mag") {
-      cat("COUPLING DEBUG: assuming MAGPIE\n")
+      message("COUPLING DEBUG: assuming MAGPIE")
       report <- "/home/dklein/report.mif"
       to <- paste0(cfg$results_folder,"/report.mif")
    } else {
      stop("COUPLING DEBUG: Coupling was started in debug mode but model is unknown")
    }
    
-   cat("COUPLING DEBUG: to =",to,"\n")
+   message("COUPLING DEBUG: to = ",to)
    
-   if(!file.copy(from = report, to = to)) cat(paste0("Could not copy ",report," to ",to,"\n"))
+   if(!file.copy(from = report, to = to)) message("Could not copy ", report, " to ", to)
    return(cfg$results_folder)
 }
 
@@ -146,7 +146,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       # Set negishi iterations back to the value defined in the config file
       cfg_rem$gms$cm_iteration_max <- cm_iteration_max_tmp
     }
-    cat("Set Negishi iterations to",cfg_rem$gms$cm_iteration_max,"\n")
+    message("Set Negishi iterations to ",cfg_rem$gms$cm_iteration_max)
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
@@ -165,14 +165,14 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     if (is.null(report)) {
       ######### S T A R T   R E M I N D   S T A N D A L O N E ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "off"
-      cat("### COUPLING ### No MAgPIE report for REMIND input provided.\n")
-      cat("### COUPLING ### REMIND will be started in stand-alone mode with\n    ",runname,"\n    ",cfg_rem$results_folder,"\n")
+      message("### COUPLING ### No MAgPIE report for REMIND input provided.")
+      message("### COUPLING ### REMIND will be started in stand-alone mode with\n    ", runname, "\n    ", cfg_rem$results_folder)
       outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem))
-    } else if (grepl(paste0("report.mif"),report)) { # if it is a MAgPIE report
+    } else if (grepl(paste0("report.mif"), report)) { # if it is a MAgPIE report
       ######### S T A R T   R E M I N D   C O U P L E D ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "on"
       if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
-      cat("### COUPLING ### Starting REMIND in coupled mode with\n    Report=",report,"\n    Folder=",cfg_rem$results_folder,"\n")
+      message("### COUPLING ### Starting REMIND in coupled mode with\n    Report = ", report, "\n    Folder = ", cfg_rem$results_folder)
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
       cfg_rem$pathToMagpieReport <- report
@@ -180,7 +180,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       ############################
     } else if (grepl("REMIND_generic_",report)) { # if it is a REMIND report
       ############### O M I T   R E M I N D  ###############################
-      cat("### COUPLING ### Omitting REMIND in this iteration\n    Report=",report,"\n")
+      message("### COUPLING ### Omitting REMIND in this iteration\n    Report = ", report)
       report <- report
     } else {
       stop(paste0("### COUPLING ### Could not decide whether ",report," is REMIND or MAgPIE output.\n"))
@@ -188,13 +188,13 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     if(!is.null(outfolder_rem)) {
       report    <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
-      cat("### COUPLING ### REMIND output was stored in ",outfolder_rem,"\n")
+      message("### COUPLING ### REMIND output was stored in ",outfolder_rem)
       if (file.exists(paste0(outfolder_rem,"/fulldata.gdx"))) {
         modstat <- readGDX(paste0(outfolder_rem,"/fulldata.gdx"),types="parameters",format="raw",c("s80_bool","o_modelstat"))
         if (cfg_rem$gms$optimization == "negishi") {
           if (as.numeric(modstat$o_modelstat$val)!=2 && as.numeric(modstat$o_modelstat$val)!=7) stop("Iteration stopped! REMIND o_modelstat was ",modstat," but is required to be 2 or 7.\n")
         } else if (cfg_rem$gms$optimization == "nash") {
-          if (as.numeric(modstat$s80_bool$val)!=1) cat("Warning: REMIND s80_bool not 1. Iteration continued though.\n")
+          if (as.numeric(modstat$s80_bool$val)!=1) message("Warning: REMIND s80_bool not 1. Iteration continued though.")
         }
       } else if (file.exists(paste0(outfolder_rem,"/non_optimal.gdx"))) {
         stop("### COUPLING ### REMIND didn't find an optimal solution. Coupling iteration stopped!")
@@ -208,7 +208,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
     
     # If in the last iteration don't run MAgPIE
-    if (i == max_iterations) break
+    if (i == max_iterations) {
+      report_mag <- mag_report_keep_in_mind
+      break
+    }
 
     ##################################################################
     #################### M A G P I E #################################
@@ -245,8 +248,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     outfolder_mag <- ifelse(debug, debug_coupled(model="mag", cfg_mag), start_run(cfg_mag, codeCheck=FALSE))
     ######################################
     message("### COUPLING ### MAgPIE output was stored in ", outfolder_mag)
-    report <- paste0(path_magpie, outfolder_mag, "/report.mif")
-      
+    report_mag <- paste0(path_magpie, outfolder_mag, "/report.mif")
+    report <- report_mag
+
     # Checking whether MAgPIE is optimal in all years
     file_modstat <- paste0(outfolder_mag, "/glo.magpie_modelstat.csv")
     if (debug) {
@@ -256,7 +260,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     } else {
       modstat_mag <- readGDX(paste0(outfolder_mag, "/fulldata.gdx"), "p80_modelstat", "o_modelstat", format="first_found")
     }
-    
+
     if (!all((modstat_mag == 2) | (modstat_mag == 7)))
       stop("Iteration stopped! MAgPIE modelstat is not 2 or 7 for all years.\n")
 
@@ -281,6 +285,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   if (length(rownames(cfg_rem$RunsUsingTHISgdxAsInput)) > 0) {
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(path_remind, cfg_rem$results_folder, "/fulldata.gdx")
+    stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_rem$title) to their cfg files
 
@@ -288,7 +293,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       message("\nPrepare subsequent run ", run, ":")
       subseq.env <- new.env()
-      RData_file <- if (parallel) paste0(run, ".RData") else paste0(prefix_runname, run, ".RData")
+      RData_file <- paste0(if (! parallel) prefix_runname, run, ".RData")
       load(RData_file, envir=subseq.env)
 
       pathes_to_gdx <- intersect(possible_pathes_to_gdx, names(subseq.env$cfg_rem$files2export$start))
@@ -300,6 +305,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
       subseq.env$cfg_rem$files2export$start[needfulldatagdx] <- fulldatapath
 
+      if (isTRUE(subseq.env$path_report == runname)) subseq.env$path_report <- report_mag
       save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations,
            start_iter, n600_iterations, path_report, qos, parallel, prefix_runname, file = RData_file, envir=subseq.env)
 
@@ -308,7 +314,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       if (all(gdx_exist | gdx_na)) {
         message("Starting subsequent run ", run)
-        system(paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", subseq.env$fullrunname,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\""))
+        system(paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=output/log_", subseq.env$fullrunname,
+        if (parallel) "" else stamp, ".txt --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
+        " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\""))
       } else {
         message(run, " is still waiting for: ",
         paste(unique(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][!(gdx_exist | gdx_na)]), collapse = ", "), ".")
@@ -316,49 +324,52 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     } # end of loop through possible subsequent runs
   }
 
-  # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
-  remindpath <- paste0(path_remind, "output")
-  magpiepath <- paste0(path_magpie, "output")
-
-  message("\n### COUPLING ### Preparing runtime.pdf");
-  runs <- findCoupledruns(resultsfolder = remindpath)
-  ret  <- findIterations(runs, modelpath=c(remindpath,magpiepath), latest=FALSE)
-  readRuntime(ret, plot=TRUE, coupled=TRUE)
-  unlink(c("runtime.log", "runtime.out", "runtime.rda"))
-
-  # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
-  report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
-  if (exists("outfolder_mag")) {
-    # If MAgPIE has run use its regular outputfolder
-    report_mag <- paste0(path_magpie, outfolder_mag, "/report.mif")
-  } else {
-    # If MAgPIE did not run, because coupling has been restarted with the last REMIND iteration,
-    # use the path to the MAgPIE report REMIND has been restarted with.
-    report_mag <- mag_report_keep_in_mind
-  }
-  message("Joining to a common reporting file:\n    ", report_rem, "\n    ", report_mag)
-  tmp1 <- read.report(report_rem,as.list=FALSE)
-  tmp2 <- read.report(report_mag,as.list=FALSE)[,getYears(tmp1),]
-  tmp3 <- mbind(tmp1,tmp2)
-  getNames(tmp3,dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
-  # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
-  if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
-    msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
-    cat(msg)
-    warning(msg)
-  } else {
-    # Replace REMIND and MAgPIE with REMIND-MAgPIE
-    #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
-    write.report(tmp3,file=paste0("output/",runname,".mif"))
-  }
-  
   if (i == max_iterations) {
-    # set required variables and execute script to create convergence plots
-    cat("### COUPLING ### Preparing convergence pdf\n");
-    source_include <- TRUE
-    runs <- runname
-    folder <- "./output"
-    source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
+
+    # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
+    remindpath <- paste0(path_remind, "output")
+    magpiepath <- paste0(path_magpie, "output")
+
+    message("\n### COUPLING ### Preparing runtime.pdf");
+    runs <- findCoupledruns(resultsfolder = remindpath)
+    ret  <- findIterations(runs, modelpath=c(remindpath, magpiepath), latest=FALSE)
+    readRuntime(ret, plot=TRUE, coupled=TRUE)
+    unlink(c("runtime.log", "runtime.out", "runtime.rda"))
+
+    # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
+    report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
+    if (exists("outfolder_mag")) {
+      # If MAgPIE has run use its regular outputfolder
+      report_mag <- paste0(path_magpie, outfolder_mag, "/report.mif")
+    } else {
+      # If MAgPIE did not run, because coupling has been restarted with the last REMIND iteration,
+      # use the path to the MAgPIE report REMIND has been restarted with.
+      report_mag <- mag_report_keep_in_mind
+    }
+    message("Joining to a common reporting file:\n    ", report_rem, "\n    ", report_mag)
+    tmp1 <- read.report(report_rem,as.list=FALSE)
+    tmp2 <- read.report(report_mag,as.list=FALSE)[,getYears(tmp1),]
+    tmp3 <- mbind(tmp1,tmp2)
+    getNames(tmp3,dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
+    # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
+    if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
+      msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
+      message(msg)
+      warning(msg)
+    } else {
+      # Replace REMIND and MAgPIE with REMIND-MAgPIE
+      #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
+      write.report(tmp3,file=paste0("output/",runname,".mif"))
+    }
+
+    if (max_iterations > 1) {
+      # set required variables and execute script to create convergence plots
+      message("### COUPLING ### Preparing convergence pdf");
+      source_include <- TRUE
+      runs <- runname
+      folder <- "./output"
+      source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
+    }
   }
 }
 
