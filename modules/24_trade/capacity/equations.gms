@@ -119,4 +119,14 @@ q24_costTradeCap(t,regi,tradeCap)..
   )
 ;
 
+
+q24_tradeBalanceTerms(ttot,regi)$(ttot.val ge 2005)..
+    vm_capacityTradeBalance(ttot,regi)
+  =e=
+    sum(tradeCap, 
+        + sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,regi,trade_regi,tradeModes)  ) * pm_XPortsPrice(ttot,regi,tradeCap) )
+        - sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,trade_regi,regi,tradeModes)  ) * pm_XPortsPrice(ttot,trade_regi,tradeCap) )
+    )
+;
+
 *** EOF ./modules/24_trade/capacity/equations.gms

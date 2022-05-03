@@ -45,13 +45,14 @@ POSITIVE VARIABLES
   vm_Xport(tall,all_regi,all_enty)                                            "Export of traded commodity."
   vm_Mport(tall,all_regi,all_enty)                                            "Import of traded commodity."
 
-  vm_costTradeCap(ttot,all_regi,all_enty)                                     "Trade technology and transportation cost"
+  vm_costTradeCap(tall,all_regi,all_enty)                                     "Trade technology and transportation cost"
+  vm_capacityTradeBalance(tall,all_regi)                                      "Capacity trade balance term"
 
-  v24_trade(ttot,all_regi,all_regi,tradeModes)                                "Shipment quantities for different transportation modes"
+  v24_trade(tall,all_regi,all_regi,tradeModes)                                "Shipment quantities for different transportation modes"
 
-  v24_capTrade(ttot,all_regi,all_regi,teTrade)                                "Net total capacities for transportation"
-  v24_capEarlyRetiTrade(ttot,all_regi,all_regi,teTrade)                       "Early retired capacity"
-  v24_deltaCapTrade(ttot,all_regi,all_regi,teTrade)                           "Capacity additions for transportation"
+  v24_capTrade(tall,all_regi,all_regi,teTrade)                                "Net total capacities for transportation"
+  v24_capEarlyRetiTrade(tall,all_regi,all_regi,teTrade)                       "Early retired capacity"
+  v24_deltaCapTrade(tall,all_regi,all_regi,teTrade)                           "Capacity additions for transportation"
 ;
 
 ***-----------------------------------------------------------------------------
@@ -69,6 +70,7 @@ EQUATIONS
   q24_limitDeltaCap(ttot,all_regi,all_regi,teTrade)                           "Limit deltaCap."
 
   q24_costTradeCap(ttot,all_regi,tradeCap)                                    "Trade technology and transportation cost"
+  q24_tradeBalanceTerms(ttot,all_regi)                                        "Capacity trade balance term"
 ;
 
 *** EOF ./modules/24_trade/capacity/declarations.gms

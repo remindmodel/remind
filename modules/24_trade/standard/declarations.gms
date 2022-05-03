@@ -24,6 +24,7 @@ positive VARIABLES
 vm_Xport(tall,all_regi,all_enty)            "Export of traded commodity."
 vm_Mport(tall,all_regi,all_enty)            "Import of traded commodity."
 vm_costTradeCap(ttot,all_regi,all_enty)     "Trade technology and transportation cost"
+vm_capacityTradeBalance(tall,all_regi)      "Capacity trade balance term"
 ;
 
 *** EOF ./modules/24_trade/standard/declarations.gms

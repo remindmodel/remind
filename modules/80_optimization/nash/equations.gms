@@ -22,10 +22,7 @@ q80_budg_intertemp(regi)..
                    / (p80_normalize0(ttot,regi,trade) + sm_eps)
               )
         )
-      + SUM(tradeCap, 
-          + sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,regi,trade_regi,tradeModes)  ) * pm_XPortsPrice(ttot,regi,tradeCap) )
-          - sum(trade_regi, sum(  tradeEnty2Mode(tradeCap,tradeModes), v24_trade(ttot,trade_regi,regi,tradeModes)  ) * pm_XPortsPrice(ttot,trade_regi,tradeCap) )
-        )
+      + vm_capacityTradeBalance(ttot,regi)
 	  + pm_pvp(ttot,"good") * pm_NXagr(ttot,regi)
       )
     );
