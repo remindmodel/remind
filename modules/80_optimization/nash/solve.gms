@@ -65,7 +65,8 @@ solve hybrid using nlp maximizing vm_welfareGlob;
   p80_handle(all_regi) = hybrid.handle;
 );  !! close regi loop
 
-if (p80_nash_mode("parallel"),
+if (    p80_nash_mode("parallel")
+    AND NOT (p80_nash_mode("serial") OR p80_nash_mode("debug")),
   repeat
     loop (all_regi$handlecollect(p80_handle(all_regi)),
       p80_repy(all_regi,"solvestat") = hybrid.solvestat;
@@ -106,6 +107,8 @@ o_modelstat
 *** iteration was non-optimal:
 if (p80_nash_mode("debug") AND o_modelstat ne 2,
   option solprint = on;
+else
+  option solprint = off;
 );
 
 p80_repy_iteration(all_regi,solveinfo80,iteration)

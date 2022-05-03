@@ -555,7 +555,9 @@ if (cm_auto_switch_debug,
 *** Auto-switch to Nash/debug if more than cm_auto_switch_debug Nash iterations
 *** failed in a row.
   if (smax(regi, p80_trackConsecFail(regi)) ge cm_auto_switch_debug,
-    p80_nash_mode("parallel") = YES;
+    p80_nash_mode("debug") = YES;
+    putclose logfile, ">>> Switching on Nash debug mode after ",
+      cm_auto_switch_debug, " consecutive failed iterations <<<" /;
   );
 
 *** Turn Nash/debug off again if it was turned on automatically and the last
@@ -564,6 +566,7 @@ if (cm_auto_switch_debug,
       AND p80_nash_mode("debug")
       AND smax(regi, p80_trackConsecFail(regi)) eq 0,
     p80_nash_mode("debug") = NO;
+    putclose logfile ">>> Switching off Nash debug mode after successful iteration <<<" /;
   );
 );
 
