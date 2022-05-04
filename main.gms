@@ -342,7 +342,6 @@ parameters
   cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
   cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
   cm_startIter_EDGET          "starting iteration of EDGE-T"
-  cm_transpGDPscale           "on = activate dampening factor to align edge-t non-energy transportation costs with historical GDP data"
   cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
   cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
   c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
