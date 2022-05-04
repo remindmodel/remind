@@ -13,4 +13,3 @@ pm_cf,input,questionnaire
 cm_startIter_EDGET,input,questionnaire
 vm_transpGDPscale,input,questionnaire
 vm_prodEs,input,questionnaire
-cm_transpGDPscale,input,questionnaire

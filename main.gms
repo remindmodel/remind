@@ -560,8 +560,6 @@ cm_ElLim_b = 1; !! def 1
 
 cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 
-$setglobal cm_transpGDPscale on  !! def = on
-
 cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
 $setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
@@ -624,6 +622,8 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
+
+$setglobal cm_transpGDPscale on  !! def = on
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off
