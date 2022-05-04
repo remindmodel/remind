@@ -371,7 +371,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
-    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
+    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
+                          "regionmapping", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -424,6 +425,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
+
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
     source("config/default.cfg")
 
@@ -442,6 +444,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
+
+    message("\n", if (cfg$title == "testOneRegi") cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
@@ -464,8 +468,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
       }
     }
-
-    cat("\n",cfg$title,"\n")
 
     if ("--debug" %in% argv) {
       cfg$gms$cm_nash_mode <- "debug"
