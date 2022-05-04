@@ -72,7 +72,7 @@ if (not sameas("%cm_NDC_version%","2018_uncond"),
     p46_factorTargetyear(ttot,regi)$(sameas(regi,"LAM") AND sameas(ttot,"2030")) = p46_factorTargetyear(ttot,regi) + 0.2;
 );
 
-*** add 2060 net zero target for China, not yet in the UNFCCC_NDC database
+*** add 2060 GHG net zero target for China, not yet in the UNFCCC_NDC database
 p46_factorTargetyear(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 0;
 p46_2005shareTarget(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 1;
 

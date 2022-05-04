@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/22_subsidizeLearning/globallyOptimal.gms
+*** SOF ./modules/22_subsidizeLearning/globallyOptimal/realization.gms
 
 *' @description
 *' This realization is meaningful in order to find the global optimal solution or co-operative solution w.r.t. learning spillovers under the Nash algorithm.
@@ -22,4 +22,4 @@ $Ifi "%phase%" == "bounds" $include "./modules/22_subsidizeLearning/globallyOpti
 $Ifi "%phase%" == "presolve" $include "./modules/22_subsidizeLearning/globallyOptimal/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/22_subsidizeLearning/globallyOptimal/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/22_subsidizeLearning/globallyOptimal.gms
+*** EOF ./modules/22_subsidizeLearning/globallyOptimal/realization.gms

@@ -365,18 +365,13 @@ $endif.edgesm
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
-loop (pf_quantity_shares_37(in,in2),
-  pm_cesdata(t,regi_dyn29(regi),in,"quantity")
-  = 1e-4 * pm_cesdata(t,regi,in2,"quantity");
-);
-
 *** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero 
 *** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
 loop ((t_29hist(t),regi_dyn29(regi))$( 
                            pm_cesdata(t,regi,"fehe_otherInd","quantity") eq 0 ),
   pm_cesdata(t,regi,"fehe_otherInd","quantity")
-  = 1e-4 * pm_cesdata(t,regi,"fega_otherInd","quantity");
+  = 1e-4
+  * pm_cesdata(t,regi,"fega_otherInd","quantity");
 
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
@@ -398,6 +393,14 @@ loop ((t,regi_dyn29(regi)),
       );
     );
   );
+);
+
+* Use offset quantities for historic industry H2/HTH_el use, since it actually
+* didn't happen.
+loop (pf_quantity_shares_37(in,in2),
+  pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
+                                  pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
+  = -pm_cesdata(t,regi,in,"quantity");
 );
 $endif.subsectors
 

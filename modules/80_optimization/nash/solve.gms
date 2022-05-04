@@ -31,6 +31,18 @@ if (execError > 0,
   abort "at least one execution error occured, possibly in the loop";
 );
 
+if (cm_keep_presolve_gdxes eq 1,
+  execute_unload "presolve_nash.gdx";
+  sm_tmp  = logfile.nr;
+  sm_tmp2 = logfile.nd;
+  logfile.nr = 1;
+  logfile.nd = 0;
+  put_utility logfile, "shell" /
+    "mv presolve_nash.gdx presolve_nash_" all_regi.tl "_CES-%c_CES_calibration_iteration%_Nash-" iteration.val "_Sol-" sol_itr.val ".gdx";
+  logfile.nr = sm_tmp;
+  logfile.nd = sm_tmp2;
+);
+
 solve hybrid using nlp maximizing vm_welfareGlob;
 
 

@@ -7,3 +7,6 @@ vm_emiFgas,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_taxCO2eq,input,questionnaire
 pm_emifac,input,questionnaire
+vm_emiTe,input,questionnaire
+vm_emiCdr,input,questionnaire
+vm_emiMac,input,questionnaire

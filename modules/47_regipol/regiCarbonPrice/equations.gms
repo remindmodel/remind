@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
+*** SOF ./modules/47_regipol/regiCarbonPrice/equations.gms
 
 ***$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off"
 *** FS: calculate emissions used in regional target
@@ -139,32 +139,6 @@ q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
 
 $endIf.cm_implicitFE
 
-***---------------------------------------------------------------------------
-*'  Calculation of implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
-***---------------------------------------------------------------------------
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-
-q47_implEnergyBoundTax(t,regi)$(t.val ge max(2010,cm_startyear))..
-  vm_taxrevimplEnergyBoundTax(t,regi)
-  =e=
-  sum((energyCarrierLevel,energyType)$p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType),
-	( 
-		p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entyPe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
-	)$(sameas(energyCarrierLevel,"PE")) 
-	+
-	( 
-		p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
-	)$(sameas(energyCarrierLevel,"SE")) 
-	+
-	( 
-		p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
-	)$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
-  ) 
-  -
-  p47_implEnergyBoundTax0(t,regi)
-;
-
-$endIf.cm_implicitEnergyBound
 
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:

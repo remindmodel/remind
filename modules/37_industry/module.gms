@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/37_industry/37_industry.gms
+*** SOF ./modules/37_industry/module.gms
 
 *' @title Industry
 *'
@@ -18,5 +18,5 @@
 $Ifi "%industry%" == "fixed_shares" $include "./modules/37_industry/fixed_shares/realization.gms"
 $Ifi "%industry%" == "subsectors" $include "./modules/37_industry/subsectors/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/37_industry/37_industry.gms
+*** EOF ./modules/37_industry/module.gms
 

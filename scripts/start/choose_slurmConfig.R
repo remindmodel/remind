@@ -21,7 +21,7 @@ get_line <- function(){
   return(s);
 }
 
-choose_slurmConfig <- function() {
+choose_slurmConfig <- function(identifier = FALSE) {
 
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
   if (slurm) { 
@@ -46,28 +46,29 @@ choose_slurmConfig <- function() {
                "-----------------------------------------------------------------------",
                "16: direct, without SLURM")
 
-    cat("\nCurrent cluster utilization:\n")
-    system("sclass")
-    cat("\n")
-
-    cat("\nPlease choose the SLURM configuration for your submission:\n")
-    cat("    QOS             tasks per node   suitable for\n=======================================================================\n")
-    #cat(paste(1:length(modes), modes, sep=": " ),sep="\n")
-    cat(modes,sep="\n")
-    cat("=======================================================================\n")
-    cat("Number: ")
-    identifier <- get_line()
-    identifier <- as.numeric(strsplit(identifier,",")[[1]])
-    comp <- switch(identifier,
-                   "1" = "--qos=standby --nodes=1 --tasks-per-node=12"  , # SLURM standby  - task per node: 12 (nash H12) [recommended]
-                   "2" = "--qos=standby --nodes=1 --tasks-per-node=13"  , # SLURM standby  - task per node: 13 (nash H12 coupled)
-                   "3" = "--qos=standby --nodes=1 --tasks-per-node=16"  , # SLURM standby  - task per node: 16 (nash H12+)
-                   "4" = "--qos=standby --nodes=1 --tasks-per-node=1"   , # SLURM standby  - task per node:  1 (nash debug, test one regi)
-                   "5" = "--qos=priority --nodes=1 --tasks-per-node=12" , # SLURM priority - task per node: 12 (nash H12) [recommended]
-                   "6" = "--qos=priority --nodes=1 --tasks-per-node=13" , # SLURM priority - task per node: 13 (nash H12 coupled)
-                   "7" = "--qos=priority --nodes=1 --tasks-per-node=16" , # SLURM priority - task per node: 16 (nash H12+)
-                   "8" = "--qos=priority --nodes=1 --tasks-per-node=1"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
-                   "9" = "--qos=short --nodes=1 --tasks-per-node=12"    , # SLURM short    - task per node: 12 (nash H12)
+    if (! identifier %in% paste(seq(1:16))) {
+      wasselect <- TRUE
+      cat("\nCurrent cluster utilization:\n")
+      system("sclass")
+      cat("\n")
+      cat("\nPlease choose the SLURM configuration for your submission:\n")
+      cat("    QOS             tasks per node   suitable for\n=======================================================================\n")
+      #cat(paste(1:length(modes), modes, sep=": " ),sep="\n")
+      cat(modes,sep="\n")
+      cat("=======================================================================\n")
+      cat("Number: ")
+      identifier <- strsplit(get_line(), ",")[[1]]
+    }
+    comp <- switch(as.integer(identifier),
+                    "1" = "--qos=standby --nodes=1 --tasks-per-node=12"  , # SLURM standby  - task per node: 12 (nash H12) [recommended]
+                    "2" = "--qos=standby --nodes=1 --tasks-per-node=13"  , # SLURM standby  - task per node: 13 (nash H12 coupled)
+                    "3" = "--qos=standby --nodes=1 --tasks-per-node=16"  , # SLURM standby  - task per node: 16 (nash H12+)
+                    "4" = "--qos=standby --nodes=1 --tasks-per-node=1"   , # SLURM standby  - task per node:  1 (nash debug, test one regi)
+                    "5" = "--qos=priority --nodes=1 --tasks-per-node=12" , # SLURM priority - task per node: 12 (nash H12) [recommended]
+                    "6" = "--qos=priority --nodes=1 --tasks-per-node=13" , # SLURM priority - task per node: 13 (nash H12 coupled)
+                    "7" = "--qos=priority --nodes=1 --tasks-per-node=16" , # SLURM priority - task per node: 16 (nash H12+)
+                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
+                    "9" = "--qos=short --nodes=1 --tasks-per-node=12"    , # SLURM short    - task per node: 12 (nash H12)
                    "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
                    "11" = "--qos=short --nodes=1 --tasks-per-node=1"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
                    "12" = "--qos=medium --nodes=1 --tasks-per-node=1"    , # SLURM medium   - task per node:  1 (negishi)
@@ -75,7 +76,9 @@ choose_slurmConfig <- function() {
                    "14" = "--qos=medium --nodes=1 --tasks-per-node=12"   , # SLURM medium   - task per node: 12 (nash long calibration)
                    "15" = "--qos=medium --nodes=1 --tasks-per-node=16"   , # SLURM medium   - task per node: 16 (nash long calibration)
                    "16" = "direct")
-
+    if (! exists("wasselect")) {
+      message("   SLURM option ", identifier, " selected: ", gsub("--", "", comp))
+    }
     if (is.null(comp)) {
       stop("This type is invalid. Please choose a valid type")
     }

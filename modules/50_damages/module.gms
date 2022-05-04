@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/50_damages/50_damages.gms
+*** SOF ./modules/50_damages/module.gms
 
 *' @title Damages
 *'
@@ -16,6 +16,10 @@
 $Ifi "%damages%" == "BurkeLike" $include "./modules/50_damages/BurkeLike/realization.gms"
 $Ifi "%damages%" == "DiceLike" $include "./modules/50_damages/DiceLike/realization.gms"
 $Ifi "%damages%" == "KWLike" $include "./modules/50_damages/KWLike/realization.gms"
+$Ifi "%damages%" == "KWTCint" $include "./modules/50_damages/KWTCint/realization.gms"
+$Ifi "%damages%" == "KW_SE" $include "./modules/50_damages/KW_SE/realization.gms"
+$Ifi "%damages%" == "Labor" $include "./modules/50_damages/Labor/realization.gms"
+$Ifi "%damages%" == "TC" $include "./modules/50_damages/TC/realization.gms"
 $Ifi "%damages%" == "off" $include "./modules/50_damages/off/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
-*** EOF ./modules/50_damages/50_damages.gms
+*** EOF ./modules/50_damages/module.gms

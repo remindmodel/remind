@@ -44,9 +44,9 @@ p51_scc(tall) = p51_sccLastItr(tall) *  min(max( (p51_scc(tall)/max(p51_sccLastI
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
 
-loop(ttot$(ttot.val ge 2010),
+loop(ttot$(ttot.val ge 2020),
 	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
+	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = p51_scc(tall)   * (44/12)/1000;
 *FIXME this is stupid:
 	    pm_taxCO2eqSCC(ttot,regi) = max(pm_taxCO2eqSCC(ttot,regi),0);
 

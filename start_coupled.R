@@ -14,7 +14,7 @@
 # It creates empty output folders and copies dummy reports into them 
 # without calling the start scripts of the models.
 
-debug_coupled <- function(model = NULL,cfg) {
+debug_coupled <- function(model = NULL, cfg) {
    if(is.null(model)) stop("COUPLING DEBUG: Coupling was run in debug mode but no model was specified")
    
    cat("   Creating results folder",cfg$results_folder,"\n")
@@ -82,8 +82,13 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
   cfg_mag$sequential <- TRUE
   cfg_mag$force_replace <- TRUE
   cfg_mag$output     <- c("rds_report") # ,"remind","report") # rds_report: MAgPIE4; remind,report: MAgPIE3 (glo.modelstat.csv)
-  
+  # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
+  use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
+
   if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
+
+  possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
+                              "input_bau.gdx", "input_carbonprice.gdx")
 
   # Start REMIND and MAgPIE iteratively
   for (i in start_iter:max_iterations) {
@@ -111,9 +116,11 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cat("### COUPLING ### gdx in first iteration taken from files2export$start \n")
     } else {
       cat("### COUPLING ### gdx taken from previous iteration\n")
-      cfg_rem$files2export$start["input.gdx"]     <- paste0("output/",runname,"-rem-",i-1,"/fulldata.gdx")
-      cfg_rem$files2export$start["input_bau.gdx"] <- paste0("output/",runname,"-rem-",i-1,"/input_bau.gdx")
-      cfg_rem$files2export$start["input_ref.gdx"] <- paste0("output/",runname,"-rem-",i-1,"/input_ref.gdx")
+      for (path_gdx in possible_pathes_to_gdx) {
+        cfg_rem$files2export$start[path_gdx]  <- paste0("output/",runname,"-rem-",i-1,"/", path_gdx)
+      }
+      # use fulldata.gdx as input.gdx
+      cfg_rem$files2export$start["input.gdx"] <- paste0("output/",runname,"-rem-",i-1,"/fulldata.gdx")
     }
     
     # Control Negishi iterations
@@ -142,6 +149,11 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
       cfg_rem$output <- c("reporting","emulator","rds_report")
     } else {
       cfg_rem$output <- cfg_rem_original
+    }
+
+    # change precision only for last run if setup in coupled config
+    if (i == max_iterations && ! is.null(cfg_rem$cm_nash_autoconvergence_lastrun) && ! is.na(cfg_rem$cm_nash_autoconverge_lastrun)) {
+      cfg_rem$gms$cm_nash_autoconverge <- cfg_rem$cm_nash_autoconverge_lastrun
     }
 
     ############ DECIDE IF AND HOW TO START REMIND ###################
@@ -224,7 +236,7 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     cat("### COUPLING ### MAgPIE will be started with\n    Report = ",report,"\n    Folder=",cfg_mag$results_folder,"\n")
     cfg_mag$path_to_report_bioenergy <- report
     # if no different mif was set for GHG prices use the same as for bioenergy
-    if(is.na(cfg_mag$path_to_report_ghgprices)) cfg_mag$path_to_report_ghgprices <- report
+    if(!use_external_ghgprices) cfg_mag$path_to_report_ghgprices <- report
     ########### START MAGPIE #############
     outfolder_mag <- ifelse(debug, debug_coupled(model="mag",cfg_mag), start_run(cfg_mag, codeCheck=FALSE))
     ######################################
@@ -262,18 +274,42 @@ start_coupled <- function(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_it
     nr_of_regions <- 1
   }
 
-  # extract subsequent runs from list: take the name of the rows that have the current scenario (= runname without "C_") in the path_gdx_ref column
-  subsequent_runs <- rownames(cfg_rem$RunsUsingTHISgdxAsInput[cfg_rem$RunsUsingTHISgdxAsInput[,"path_gdx_ref"] == gsub("^C_","",runname),])
-  
-  # Start subsequent runs via sbatch
-  for(run in subsequent_runs){
-    cat("Submitting subsequent run",run,"\n")
-    # load the config of the subsequent run to provide the correct qos setting (use new environmet to not overwrite the cfg_rem of the current run)
-    subseq.env <- new.env()
-    load(paste0("C_",run,".RData"),envir=subseq.env)
-    system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+
+  if (length(rownames(cfg_rem$RunsUsingTHISgdxAsInput)) > 0) {
+    # fulldatapath may be written into gdx paths of subsequent runs
+    fulldatapath <- paste0(path_remind,cfg_rem$results_folder,"/fulldata.gdx")
+
+    # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_rem$title) to their cfg files
+
+    for (run in rownames(cfg_rem$RunsUsingTHISgdxAsInput)) {
+
+      message("\nPrepare subsequent run ", run, ":")
+      subseq.env <- new.env()
+      RData_file <- paste0("C_",run,".RData")
+      load(RData_file, envir=subseq.env)
+
+      pathes_to_gdx <- intersect(possible_pathes_to_gdx, names(subseq.env$cfg_rem$files2export$start))
+
+      gdx_na <- is.na(subseq.env$cfg_rem$files2export$start[pathes_to_gdx])
+      needfulldatagdx <- names(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][subseq.env$cfg_rem$files2export$start[pathes_to_gdx] == paste0(runname, "-rem-", max_iterations) & !gdx_na])
+      message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
+      subseq.env$cfg_rem$files2export$start[needfulldatagdx] <- fulldatapath
+
+      save(path_remind,path_magpie,cfg_rem,cfg_mag,runname,max_iterations,start_iter,n600_iterations,path_report,qos, file = RData_file, envir=subseq.env)
+
+      # Subsequent runs will be started using submit.R, if all necessary gdx files were generated
+      gdx_exist <- grepl(".gdx", subseq.env$cfg_rem$files2export$start[pathes_to_gdx])
+
+      if (all(gdx_exist | gdx_na)) {
+        message("Starting subsequent run ",run)
+        system(paste0("sbatch --qos=",subseq.env$qos," --job-name=C_",run," --output=C_",run,".log --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=",nr_of_regions," --wrap=\"Rscript start_coupled.R coupled_config=C_",run,".RData\""))
+      } else {
+        message(run, " is still waiting for: ",
+        paste(unique(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][!(gdx_exist | gdx_na)]), collapse = ", "), ".")
+      }
+    } # end of loop through possible subsequent runs
   }
-  
+
   # Read runtime of ALL coupled runs (not just the current scenario) and produce comparison pdf
   remindpath <- paste0(path_remind,"output")
   magpiepath <- paste0(path_magpie,"output")

@@ -24,6 +24,11 @@ teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
       (rockgrind) . 1
 	  (dac) . 1
 /
+
+adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"
+/
+      dac
+/
 ;
 
 ***-------------------------------------------------------------------------
@@ -32,5 +37,6 @@ teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
 te(te_dyn33)								   = YES;
 teNoTransform(teNoTransform_dyn33)             = YES;
 teNoTransform2rlf(teNoTransform2rlf_dyn33)     = YES;
+teAdj(adjte_dyn33)                             = YES;
 
 *** EOF ./modules/33_CDR/all/sets.gms

@@ -14,6 +14,7 @@
 SETS
 * Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
+c_description   "%c_description%"   /"for model description, see explanatory text"/
 cm_GDPscen      "cm_GDPscen as set for use in GDX"      /%cm_GDPscen%/
 *
 
@@ -503,7 +504,7 @@ all_sectorEmi     "all sectors with emissions"
 
 all_exogEmi     " all exogenous emission types"
 /       Aviation         "Exog emi from Aviation"
-        InternationalShipping "Ecog emi from Int. Shipping"
+        InternationalShipping "Exog emi from Int. Shipping"
         Waste            "Exogenous emissions from Waste treatment"
         Agriculture      "Exogenous emissions from Agriculture"
         AgWasteBurning   "Exogenous emissions from Ag Waste Burning"
@@ -622,8 +623,8 @@ all_in   "all inputs and outputs of the CES function"
   ue_chemicals            "useful energy of chemicals production"
   en_chemicals            "energy use of chemicals production"
   kap_chemicals           "energy efficiency capital of chemicals production"
-  en_chemicals_fhth       "feedstock and high temperature heat enery use of chemicals production"
-  feso_chemicals          "solids energy use of cement production"
+  en_chemicals_fhth       "feedstock and high temperature heat energy use of chemicals production"
+  feso_chemicals          "solids energy use of chemicals production"
   feli_chemicals          "liquids energy use of chemicals production"
   fega_chemicals          "gases energy use of chemicals production"
   feh2_chemicals          "hydrogen energy use of chemicals production"
@@ -1989,6 +1990,7 @@ entyFe2Sector(all_enty,emi_sectors) "final energy (stationary and transportation
 		fehes.cdr
                 fegas.cdr
                 feh2s.cdr
+                fedie.cdr
 /
 
 ppfEn2Sector(all_in,emi_sectors) "primary energy production factors mapping to sectors"

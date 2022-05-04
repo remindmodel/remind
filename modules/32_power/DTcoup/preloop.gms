@@ -5,11 +5,11 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 
-*** SOF ./modules/32_power/IntC/preloop.gms
+*** SOF ./modules/32_power/DTcoup/preloop.gms
 
 *** read marginal of seel balance equation
 Execute_Loadpoint 'input' q32_balSe.m = q32_balSe.m;
 
 
 
-*** EOF ./modules/32_power/IntC/preloop.gms
+*** EOF ./modules/32_power/DTcoup/preloop.gms

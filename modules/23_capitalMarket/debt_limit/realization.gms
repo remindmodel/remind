@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./module/23_capitalMarket/perfect.gms
+*** SOF ./modules/23_capitalMarket/debt_limit/realization.gms
 
 *'
 *' @description
@@ -21,4 +21,4 @@ $Ifi "%phase%" == "datainput" $include "./modules/23_capitalMarket/debt_limit/da
 $Ifi "%phase%" == "equations" $include "./modules/23_capitalMarket/debt_limit/equations.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./module/23_capitalMarket/perfect.gms
+*** EOF ./modules/23_capitalMarket/debt_limit/realization.gms

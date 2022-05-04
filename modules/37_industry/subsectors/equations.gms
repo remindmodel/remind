@@ -20,21 +20,23 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
 ;
 
+*' Thermodynamic limits on subsector energy demand
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
-                        ttot.val gt cm_startyear AND p37_energy_limit(out) ) .. 
-    sum(ces_eff_target_dyn37(out,in), 
-      vm_cesIO(ttot,regi,in)
-    )
-  * p37_energy_limit(out)
+                                 ttot.val gt 2015 AND pm_energy_limit(out) ) .. 
+  sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
-  vm_cesIO(ttot,regi,out)
+    vm_cesIO(ttot,regi,out)
+  * pm_energy_limit(out)
 ;
 
-*** No more than 90% of steel from secondary production
-q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear AND (pm_fedemand(ttot,regi,"ue_steel_primary") ge 1e-4)) .. 
-  9 * vm_cesIO(ttot,regi,"ue_steel_primary")
-  =g=
+*' Limit the share of secondary steel to historic values, fading to 90 % in 2050
+q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
+  =l=
+    ( vm_cesIO(ttot,regi,"ue_steel_primary")
+    + vm_cesIO(ttot,regi,"ue_steel_secondary")
+    )
+  * p37_steel_secondary_max_share(ttot,regi)
 ;
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
@@ -117,7 +119,7 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in industry
 ***---------------------------------------------------------------------------
-q37_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn37(in))..
+q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)
   =e=
     p37_CESMkup(t,regi,in) 

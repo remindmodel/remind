@@ -1,9 +1,3 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
-# |  authors, and contributors see CITATION.cff file. This file is part
-# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-# |  AGPL-3.0, you are granted additional permissions described in the
-# |  REMIND License Exception, version 1.0 (see LICENSE file).
-# |  Contact: remind@pik-potsdam.de
 name,type,reason
 pm_globalMeanTemperatureZeroed1900,input,questionnaire
 pm_regionalTemperature,input,questionnaire
@@ -16,3 +10,17 @@ pm_ttot_2_tall,input,questionnaire
 pm_damageMarginalT,input,questionnaire
 pm_damageMarginalTm1,input,questionnaire
 pm_damageMarginalTm2,input,questionnaire
+pm_temperatureImpulseResponseCO2,input,questionnaire
+pm_GDPGross,input,questionnaire
+cm_damage_KWSE,input,questionnaire
+pm_tempScaleGlob2Reg,input,questionnaire
+pm_damageMarginalTC,input,questionnaire
+pm_GDPGrossIso,input,questionnaire
+pm_damageImp,input,questionnaire
+pm_damageProd,input,questionnaire
+pm_damageGrowthRateTC,input,questionnaire
+pm_GDPfrac,input,questionnaire
+pm_damageIso,input,questionnaire
+pm_damageGrowthRateIso,input,questionnaire
+pm_damageTC,input,questionnaire
+pm_damageScc,input,questionnaire

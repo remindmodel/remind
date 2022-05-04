@@ -96,6 +96,7 @@ q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
       pm_cesdata(t,regi,in,"xi")
     * ( pm_cesdata(t,regi,in,"eff")
       * vm_effGr(t,regi,in)
+      * vm_damageProdFactor(t,regi,in)
       * vm_cesIO(t,regi,in)
       )
    ** pm_cesdata(t,regi,out,"rho")

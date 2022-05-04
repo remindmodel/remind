@@ -10,7 +10,7 @@ library(gms)
 library(lucode2)
 library(methods)
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"        # name of the gdx  
+gdx_name     <- "fulldata.gdx"        # name of the gdx
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line

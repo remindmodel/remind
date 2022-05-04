@@ -243,7 +243,8 @@ prepare <- function() {
   setwd(cfg$remind_folder)
 
   # Check configuration for consistency
-  cfg <- check_config(cfg, reference_file="config/default.cfg", settings_config = "config/settings_config.csv")
+  cfg <- check_config(cfg, reference_file="config/default.cfg",
+                      settings_config = "config/settings_config.csv", extras = c("remind_folder"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -335,6 +336,7 @@ prepare <- function() {
 
   # configure main model gms file (cfg$model) based on settings of cfg file
   cfg$gms$c_expname <- cfg$title
+  cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # run main.gms if not further specified
   if(is.null(cfg$model)) cfg$model <- "main.gms"
   manipulateConfig(cfg$model, cfg$gms)
@@ -628,6 +630,26 @@ prepare <- function() {
                                 list(c("q80_balTrade.M", "!!q80_balTrade.M")),
                                 list(c("q80_budget_helper.M", "!!q80_budget_helper.M")))
     }
+
+    #KK filter out module 39 CCU fixings
+    if(cfg$gms$CCU == 'off') {
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v39_shSynTrans.L", "!!v39_shSynTrans.L")),
+                               list(c("v39_shSynGas.L", "!!v39_shSynGas.L")))
+
+      fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("v39_shSynTrans.FX", "!!v39_shSynTrans.FX")),
+                                  list(c("v39_shSynGas.FX", "!!v39_shSynGas.FX")))
+
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("v39_shSynTrans.M", "!!v39_shSynTrans.M")),
+                                list(c("v39_shSynGas.M", "!!v39_shSynGas.M")),
+                                list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
+                                list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
+                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
+                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
+    }
+
     #RP filter out module 40 techpol fixings
     if(cfg$gms$techpol == 'none'){
       margs_manipulateThis <- c(margs_manipulateThis,
@@ -655,6 +677,93 @@ prepare <- function() {
                                 list(c("q40_CoalBound.M", "!!q40_CoalBound.M")))
     }
 
+    #KK CDR module realizations
+    if(cfg$gms$CDR == 'DAC'){
+      fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
+                                  list(c("v33_grindrock_onfield.FX", "!!v33_grindrock_onfield.FX")),
+                                  list(c("v33_grindrock_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
+
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
+                               list(c("v33_grindrock_onfield.L", "!!v33_grindrock_onfield.L")),
+                               list(c("v33_grindrock_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
+
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
+                                list(c("v33_grindrock_onfield.M", "!!v33_grindrock_onfield.M")),
+                                list(c("v33_grindrock_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
+                                list(c("q33_capconst_grindrock.M", "!!q33_capconst_grindrock.M")),
+                                list(c("q33_grindrock_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
+                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
+                                list(c("q33_potential.M", "!!q33_potential.M")),
+                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
+                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")))
+    }
+
+    if(cfg$gms$CDR == 'weathering'){
+      fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
+                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
+                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")))
+
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
+                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
+                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")))
+
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("v33_emiDAC.M", "!!v33_emiDAC.")),
+                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
+                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
+                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
+                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
+                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
+                                list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
+                                list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")))
+    }
+
+    if(cfg$gms$CDR == 'off'){
+      fixings_manipulateThis <- c(fixings_manipulateThis,
+                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
+                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
+                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
+                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")),
+                                  list(c("v33_grindrock_onfield.FX", "!!v33_grindrock_onfield.FX")),
+                                  list(c("v33_grindrock_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
+
+      levs_manipulateThis <- c(levs_manipulateThis,
+                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
+                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
+                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
+                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")),
+                               list(c("v33_grindrock_onfield.L", "!!v33_grindrock_onfield.L")),
+                               list(c("v33_grindrock_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
+
+      margs_manipulateThis <- c(margs_manipulateThis,
+                                list(c("v33_emiDAC.M", "!!v33_emiDAC.M")),
+                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
+                                list(c("v33_grindrock_onfield.M", "!!v33_grindrock_onfield.M")),
+                                list(c("v33_grindrock_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
+                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
+                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
+                                list(c("q33_capconst_grindrock.M", "!!q33_capconst_grindrock.M")),
+                                list(c("q33_grindrock_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
+                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
+                                list(c("q33_potential.M", "!!q33_potential.M")),
+                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
+                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")),
+                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
+                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
+                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
+                                list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
+                                list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
+                                list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),
+                                list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")),
+                                list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")))
+    }
+    # end of CDR module realizations
+
     levs_manipulateThis <- c(levs_manipulateThis, 
                                list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
     fixings_manipulateThis <- c(fixings_manipulateThis, 
@@ -667,6 +776,20 @@ prepare <- function() {
       margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")))
     }
+    # OR: renamed for sectoral taxation
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
+                             list(c("v21_taxrevCO2_sector.L", "v21_taxrevCO2Sector.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiCO2_sector.M", "vm_emiCO2Sector.M")),
+                             list(c("v21_taxrevCO2_sector.M", "v21_taxrevCO2Sector.M")),
+                             list(c("q_emiCO2_sector.M", "q_emiCO2Sector.M")),
+                             list(c("q21_taxrevCO2_sector.M", "q21_taxrevCO2Sector.M")))
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                             list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
+                             list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
+
+    #RP filter out regipol items
     if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q47_implFETax.M", "!!q47_implFETax.M")))
@@ -710,15 +833,14 @@ prepare <- function() {
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
 
-
     # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
     # single, respective, parses of the texts.
-    manipulateFile("levs.gms", levs_manipulateThis)
-    manipulateFile("fixings.gms", fixings_manipulateThis)
-    manipulateFile("margs.gms", margs_manipulateThis)
+    manipulateFile("levs.gms", levs_manipulateThis, fixed = TRUE)
+    manipulateFile("fixings.gms", fixings_manipulateThis, fixed = TRUE)
+    manipulateFile("margs.gms", margs_manipulateThis, fixed = TRUE)
 
     # Perform actual manipulation on full.gms, in single parse of the text.
-    manipulateFile("full.gms", full_manipulateThis)
+    manipulateFile("full.gms", full_manipulateThis, fixed = TRUE)
   }
 
   #AJS set MAGCFG file
@@ -751,7 +873,6 @@ prepare <- function() {
 run <- function(start_subsequent_runs = TRUE) {
 
   load("config.Rdata")
-  on.exit(setwd(cfg$results_folder))
 
   # Save start time
   timeGAMSStart <- Sys.time()
@@ -875,16 +996,20 @@ run <- function(start_subsequent_runs = TRUE) {
     cat("\nREMIND was compiled but not executed, because cfg$action was set to 'c'\n\n")
   }
 
+  stoprun <- FALSE
+
   # to facilitate debugging, look which files were created.
   message("Model summary:")
   # Print REMIND runtime
-  message("  gams_runtime is ", gams_runtime, "")
+  message("  gams_runtime is ", round(gams_runtime,1), " ", units(gams_runtime), ".")
   if (! file.exists("full.gms")) {
     message("! full.gms does not exist, so the REMIND GAMS code was not generated.")
+    stoprun <- TRUE
   } else {
     message("  full.gms exists, so the REMIND GAMS code was generated.")
     if (! file.exists("full.lst") | ! file.exists("full.log")) {
-      message("- full.log or full.lst does not exist, so GAMS did not run.")
+      message("! full.log or full.lst does not exist, so GAMS did not run.")
+      stoprun <- TRUE
     } else {
       message("  full.log and full.lst exist, so GAMS did run.")
       if (! file.exists("abort.gdx")) {
@@ -894,12 +1019,34 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
+        stoprun <- TRUE
       } else {
         message("  fulldata.gdx exists, so at least one iteration was successful.")
+        message("  Number of iterations: ",
+                         as.numeric(readGDX(gdx="fulldata.gdx", "o_iterationNumber", format = "simplest")))
+        message("  Modelstat: ", as.numeric(readGDX(gdx="fulldata.gdx", "o_modelstat", format="simplest")),
+                " (see https://www.gams.com/mccarlGuide/modelstat_tmodstat.htm).")
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
-      message(ifelse(logStatus == "*** Status: Normal completion", " ", "!"), " full.log states: ", logStatus)
+      message("  full.log states: ", paste(logStatus, collapse = ", "))
+      if (! all("*** Status: Normal completion" == logStatus)) stoprun <- TRUE
     }
+  }
+
+  if ( file.exists("full.lst")) {
+    message("Infeasibilities extracted from full.lst with nashstat -F:")
+    command <- paste("li=$(nashstat -F | wc -l); cat",
+               "<(if (($li < 2)); then echo no infeasibilities found; fi)",
+               "<(if (($li > 1)); then nashstat -F | head -n 2; fi)",
+               "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
+               "<(if (($li > 2)); then nashstat -F | tail -n 1; fi)")
+    nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
+    if (nashstatres != 0) message("Error: nashstat not found, search for p80_repy in full.lst yourself.")
+    message("")
+  }
+
+  if (stoprun) {
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.")
   }
 
   message("\nCollect and submit run statistics to central data base.")
@@ -916,13 +1063,14 @@ run <- function(start_subsequent_runs = TRUE) {
 
   # go up to the main folder, where the cfg files for subsequent runs are stored and the output scripts are executed from
   setwd(cfg$remind_folder)
+  on.exit(setwd(cfg$results_folder))
 
   #====================== Subsequent runs ===========================
 
   # Use the name to check whether it is a coupled run (TRUE if the name ends with "-rem-xx")
   coupled_run <- grepl("-rem-[0-9]{1,2}$",cfg$title)
   # Don't start subsequent runs form here if REMIND runs coupled. They are started in start_coupled.R instead.
-  start_subsequent_runs <- start_subsequent_runs & !coupled_run
+  start_subsequent_runs <- (start_subsequent_runs | isTRUE(cfg$restart_subsequent_runs)) & !coupled_run
 
   if (start_subsequent_runs & (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0)) {
     # track whether any subsequent run was actually started
@@ -933,7 +1081,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(cfg_main$remind_folder,"/",cfg_main$results_folder,"/fulldata.gdx")
-    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_bau.gdx", "input_carbonprice.gdx")
+    possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx", "input_bau.gdx", "input_carbonprice.gdx")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_main$title) to their cfg files
 

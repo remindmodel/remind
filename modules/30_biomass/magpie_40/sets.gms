@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/sets.gms
+*** SOF ./modules/30_biomass/magpie_40/sets.gms
 
 sets
 all_charScen                 "coefficients of the emulator formulas"   
@@ -24,4 +24,4 @@ peren2cont30(all_enty,rlf)   "map biomass energy to grades with continous supply
 
 ;
 
-*** EOF ./modules/30_biomass/magpie_4/sets.gms
+*** EOF ./modules/30_biomass/magpie_40/sets.gms

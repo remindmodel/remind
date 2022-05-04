@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/50_damages/BurkeLike/datainput.gms
+
 * satisfy dependencies
 $ifi not %downscaleTemperature% == 'CMIP5' abort "module damages=BurkeLike requires downscaleTemperature=CMIP5";
 
@@ -29,4 +31,4 @@ pm_damage(tall,regi) = 1;
 pm_damageGrowthRate(tall,regi)         = 0;
 pm_damageMarginal(tall,regi)           = 0;
 
-
+*** EOF ./modules/50_damages/BurkeLike/datainput.gms

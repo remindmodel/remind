@@ -10,7 +10,7 @@ library(luplot)
 library(lucode2)
 library(gms)
 library(gdx)
-library(magpie)
+library(magpie4)
 library(remind2)
 
 ############################# BASIC CONFIGURATION #############################

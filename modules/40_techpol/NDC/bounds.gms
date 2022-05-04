@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NDC/bounds.gms 
+*** SOF ./modules/40_techpol/NDC/bounds.gms
 
 *AM the lowbound of solar and pv for 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 *** FS: activate capacity tarets only from 2025 on to be better in line with current trends
