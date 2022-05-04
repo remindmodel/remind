@@ -26,21 +26,20 @@ loop(ttot$(ttot.val ge 2010),
 				     + pm_interpolWeight_ttot_tall(tall) * pm_lab(ttot+1,regi);
 ));
 
-*calculate damage shift factor
-p51_ynet(tall,regi)$((tall.val ge 2010)) = 
+*calculate damage shift factor, pm_GDPGross is already the GDP net of the labor damage, s I calculate the actual gross GDP
+p51_ygross(tall,regi)$((tall.val ge 2010)) = 
 	(pm_GDPGross(tall,regi)**p51_labRho(tall,regi)
-	- p51_labXi(tall,regi)*(p51_labEff(tall,regi)*p51_labEffgr(tall,regi)*p51_lab(tall,regi))**p51_labRho(tall,regi)
+	+ p51_labXi(tall,regi)*(p51_labEff(tall,regi)*p51_labEffgr(tall,regi)*p51_lab(tall,regi))**p51_labRho(tall,regi)
         *(1-pm_damage(tall,regi)**p51_labRho(tall,regi))
 	)**(1/p51_labRho(tall,regi))
 ;
 
-p51_ynet(tall,regi)$(tall.val ge 2150) = p51_ynet("2150",regi);
-p51_dy(tall,regi)$((tall.val ge 2010) and (tall.val le 2150)) = p51_ynet(tall,regi)/pm_GDPGross(tall,regi);
+p51_dy(tall,regi)$((tall.val ge 2010) and (tall.val le 2150)) = pm_GDPGross(tall,regi)/p51_ygross(tall,regi);
 
 display p51_dy;
 
 p51_sccParts(tall,tall2,regi2)$((tall.val ge 2010) and (tall.val le 2150) and (tall2.val ge tall.val) and (tall2.val le 2250)) = 
-        p51_ynet(tall2,regi2)**(1-p51_labRho(tall2,regi2))* p51_labXi(tall2,regi2)*(p51_labEff(tall2,regi2)*p51_labEffgr(tall2,regi2)*p51_lab(tall2,regi2))**p51_labRho(tall2,regi2)
+        pm_GDPGross(tall2,regi2)**(1-p51_labRho(tall2,regi2))* p51_labXi(tall2,regi2)*(p51_labEff(tall2,regi2)*p51_labEffgr(tall2,regi2)*p51_lab(tall2,regi2))**p51_labRho(tall2,regi2)
 	* pm_damage(tall2,regi2)**(p51_labRho(tall2,regi2)-1)
 	* pm_temperatureImpulseResponseCO2(tall2,tall) * pm_tempScaleGlob2Reg(tall2,regi2)
 	* pm_damageMarginal(tall2,regi2)*(-1) 
