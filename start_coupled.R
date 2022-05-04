@@ -271,17 +271,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   setwd(mainwd)
   message(" to",getwd(),"\n")
 
-  # for the sbatch command of the subsequent runs below set the number of tasks per node
-  # this not clean, because we use the number of regions of the *current* run to set the number of tasks for the *subsequent* runs
-  # but it is sufficiently clean, since the number of regions should not differ between current and subsequent
-  if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
-    # for nash: set the number of CPUs per node to number of regions + 1
-    nr_of_regions <- length(levels(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1 
-  } else {
-    # for negishi: use only one CPU
-    nr_of_regions <- 1
-  }
-
   if (length(rownames(cfg_rem$RunsUsingTHISgdxAsInput)) > 0) {
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(path_remind, cfg_rem$results_folder, "/fulldata.gdx")
@@ -314,15 +303,27 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       if (all(gdx_exist | gdx_na)) {
         message("Starting subsequent run ", run)
-        system(paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=output/log_", subseq.env$fullrunname,
+        # for the sbatch command set the number of tasks per node
+        if (subseq.env$cfg_rem$gms$optimization == "nash" && subseq.env$cfg_rem$gms$cm_nash_mode == "parallel") {
+          # for nash: set the number of CPUs per node to number of regions + 1
+          nr_of_regions <- length(levels(read.csv2(subseq.env$cfg_rem$regionmapping)$RegionCode)) + 1
+        } else {
+          # for negishi: use only one CPU
+          nr_of_regions <- 1
+        }
+        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=output/log_", subseq.env$fullrunname,
         if (parallel) "" else stamp, ".txt --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
-        " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\""))
+        " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
+        message(subsequentcommand)
+        system(subsequentcommand)
       } else {
         message(run, " is still waiting for: ",
         paste(unique(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][!(gdx_exist | gdx_na)]), collapse = ", "), ".")
       }
     } # end of loop through possible subsequent runs
   }
+
+  message("\nEnd of starting subsequent runs\n")
 
   if (i == max_iterations) {
 

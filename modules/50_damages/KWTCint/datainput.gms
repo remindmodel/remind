@@ -41,6 +41,8 @@ p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"%cm_TCssp%","%cm_TCpers%","%cm_
 
 * initialize
 pm_damage(tall,regi) = 1;
+pm_damageTC(tall,iso) = 1;
+pm_damageProd(tall,regi) = 1;
 pm_damageGrowthRate(tall,regi)         = 0;
 pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;

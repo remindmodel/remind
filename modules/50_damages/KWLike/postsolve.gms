@@ -19,7 +19,6 @@ pm_damageGrowthRate(tall,regi)$(tall.val ge 2005 and tall.val le 2300) =
   + p50_damageFuncCoefa2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi) )
   + p50_damageFuncCoefb1 * ( pm_regionalTemperature(tall,regi) - pm_regionalTemperature(tall-1,regi))*pm_regionalTemperature(tall-1,regi)
   + p50_damageFuncCoefb2 * ( pm_regionalTemperature(tall-1,regi) - pm_regionalTemperature(tall-2,regi))*pm_regionalTemperature(tall-1,regi)
-  - p50_se(tall,regi)**0.5*cm_damage_KWSE
 );
 
 *no damages until 2020 (as observed GDP should already include damages)
