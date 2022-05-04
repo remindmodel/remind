@@ -81,7 +81,7 @@ equations
 ;
 $endIf.quantity_regiCO2target    
 
-
+*** RR this should be replaced as soon as non-energy is treated endoegenously in the model
 Parameter
 	p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28" / 2030.EUR_regi 0.1194863, 2030.EU27_regi 0.11 /
 ;
