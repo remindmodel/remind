@@ -553,7 +553,7 @@ vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
 ***----------------------------------------------------------------------------
 $IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
-  vm_transpGDPscale.fx(ttot,regi) = 1;
+  vm_transpGDPscale.fx(t,regi) = 1;
 $ENDIF.transpGDPscale
 
 

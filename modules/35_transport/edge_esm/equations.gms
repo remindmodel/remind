@@ -17,7 +17,7 @@ q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2
   sum(fe2es(entyFe,esty,teEs)$es_lo35(esty), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"other"));
 
 
-$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
+$IFTHEN.transpGDPscale "%cm_transpGDPscale%" == "on" 
 *' Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data
 q35_transGDPshare(ttot,regi)$(ttot.val ge cm_startyear)..
   vm_transpGDPscale(ttot,regi) * (sum(fe2es(entyFe,esty,teEs)$entyFeTrans(entyFe), pm_esCapCost("2005",regi,teEs) * vm_prodEs("2005",regi,entyFe,esty,teEs)))
