@@ -230,7 +230,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
-    icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
+    icfg$files2export$start <- c(icfg$files2export$start, gdxlist, config.file)
 
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
