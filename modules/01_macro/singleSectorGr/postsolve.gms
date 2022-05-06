@@ -45,6 +45,16 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
   * o01_CESderivatives(t,regi,in2,in3);
 );
 
+
+*** compute marginal rate of substitution between primary production factors as ratio of CES prices
+*** provides the amount of in2 needed to subsitute one unit of in to generate the same economic value
+loop((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(ppfen(in)),
+  o01_CESmrs(t,regi,in,in2)
+  =
+  o01_CESderivatives(t,regi,"inco",in) /
+  o01_CESderivatives(t,regi,"inco",in2)
+  );
+
 *** total CES efficiency as diagnostic output parameter
 o01_totalCESEff(ttot,regi,in) = sum(cesOut2cesIn(out,in), 
                                pm_cesdata(ttot,regi,in,"xi") 
