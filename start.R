@@ -131,6 +131,7 @@ chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multip
     if (multiple) identifier <- identifier - 1
     booleanlist[identifier] <- 1
   }
+  message("Selected: ", paste(originallist[identifier], collapse = ", "))
   if (returnboolean) return(booleanlist) else return(originallist[identifier])
 }
 
@@ -148,7 +149,9 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
-    if (icfg$slurmConfig %in% paste(seq(1:16))) icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
+    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--testOneRegi", "--debug") %in% argv)) {
+      icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
+    }
     if (icfg$slurmConfig %in% c(NA, ""))       {
       if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
       icfg$slurmConfig <- slurmConfig
@@ -227,7 +230,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
-    icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
+    icfg$files2export$start <- c(icfg$files2export$start, gdxlist, config.file)
 
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
@@ -281,8 +284,8 @@ testOneRegi_region <- ""
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
   if ("--reprepare" %in% argv) {
-    possibledirs <- sort(unique(sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))))
+    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
+    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))
   } else {
     possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",
     Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
@@ -290,7 +293,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
-  outputdirs <- chooseFromList(possibledirs, "runs to be restarted", returnboolean = FALSE)
+  outputdirs <- chooseFromList(sort(unique(possibledirs)), "runs to be restarted", returnboolean = FALSE)
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- get_line() %in% c("Y", "y")
   if ("--testOneRegi" %in% argv) {
@@ -325,6 +328,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       try(system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx")))
     }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
+    cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
     if (! '--test' %in% argv) {
@@ -368,7 +372,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
-    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
+    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
+                          "regionmapping", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -421,6 +426,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
+
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
     source("config/default.cfg")
 
@@ -439,6 +445,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
+
+    message("\n", if (cfg$title == "testOneRegi") cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
@@ -461,8 +469,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
       }
     }
-
-    cat("\n",cfg$title,"\n")
 
     if ("--debug" %in% argv) {
       cfg$gms$cm_nash_mode <- "debug"

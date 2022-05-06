@@ -19,7 +19,7 @@ p51_labXi(tall,all_regi)	"ces parameter xi for labor, needed for extension beyon
 p51_labEff(tall,all_regi)	"ces parameter eff for labor, needed for extension beyond 2150"
 p51_labEffgr(tall,all_regi)	"ces parameter effgr for labor, needed for extension beyond 2150"
 p51_lab(tall,all_regi)		"labor for extension beyond 2150"
-p51_ynet(tall,all_regi)		"GDP net of labor damage"
+p51_ygross(tall,all_regi)		"GDP net of labor damage"
 ;
 
 *** EOF ./modules/51_internalizeDamages/LabItr/declarations.gms
