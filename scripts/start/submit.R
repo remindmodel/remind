@@ -37,9 +37,17 @@ submit <- function(cfg, restart = FALSE) {
       unlink(cfg$results_folder, recursive = TRUE)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
-    
+
     # remember main folder
-    cfg$remind_folder <- getwd()
+    cfg$remind_folder <- normalizePath(getwd())
+
+    initRenv <- function(config) {
+      renv::init(config$results_folder, bare = TRUE)
+      renv::restore(lockfile = file.path(config$remind_folder, "renv.lock"))
+      renv::snapshot(type = "all")
+    }
+    # init renv in a separate session so the libPaths of the current session remain unchanged
+    callr::r(initRenv, list(cfg), show = TRUE)
     
     # Save the cfg (with the updated name of the result folder) into the results folder. 
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
@@ -52,7 +60,7 @@ submit <- function(cfg, restart = FALSE) {
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)
-    
+
     # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
   }
   
