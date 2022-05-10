@@ -115,7 +115,7 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 ####################################################
 # Read-in the switches table, use first column as row names
 
-scenarios_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
+settings_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
 
 # Read in
 
@@ -128,7 +128,7 @@ path_gdx_list <- c("path_gdx" = "input.gdx",
                    "path_gdx_carbonprice" = "input_carbonprice.gdx")
 
 # Choose which scenarios to start: select rows according to "subset" and columns according to "select" (not used in the moment)
-scenarios_coupled  <- subset(scenarios_coupled, subset = (start == startnow))
+scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
 
 # some checks for title
 if (any(nchar(rownames(scenarios_coupled)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios_coupled)[nchar(rownames(scenarios_coupled)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
@@ -227,38 +227,48 @@ for(scen in common){
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   path_report_found <- NULL
   start_magpie <- FALSE
-  if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/fulldata.gdx") &&
-      file.exists(scenarios_coupled[scen, "oldrun"])) {
-        already_rem <- c(scenarios_coupled[scen, "oldrun"])
+  iter_rem <- 0
+  needle <- scen
+  suche <- paste0(path_remind, "output/", prefix_runname, needle, "-rem-*/REMIND_generic_", prefix_runname, needle, "-rem-*.mif")
+  possibleRemindReport <- mixedsort(Sys.glob(suche))[1]
+  already_rem <- sub(paste0("REMIND_generic_", prefix_runname, needle, "-rem-.*\\.mif"), "fulldata.gdx", possibleRemindReport)
+  if (! is.na(already_rem)) {
+    if (! file.exists(already_rem)) stop(possibleRemindReport, " exists, but ", already_rem, " not!")
+    iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1", already_rem))
   } else {
-    needle <- ifelse(is.na(scenarios_coupled[scen, "oldrun"]), scen, scenarios_coupled[scen, "oldrun"])
-    suche <- paste0(path_remind_oldruns,prefix_oldruns,needle,"-rem-*/fulldata.gdx")
-    already_rem <- Sys.glob(suche)
+    message("Nothing found for ", suche, ", continue with oldrun.")
+    if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/fulldata.gdx") &&
+        file.exists(scenarios_coupled[scen, "oldrun"])) {
+          already_rem <- c(scenarios_coupled[scen, "oldrun"])
+    } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
+      needle <- scenarios_coupled[scen, "oldrun"]
+      suche <- paste0(path_remind_oldruns, prefix_oldruns, needle, "-rem-*/fulldata.gdx")
+      already_rem <- mixedsort(Sys.glob(suche))[1]
+    }
   }
-  if (identical(already_rem, character(0))) {
+  if (is.na(already_rem)) {
     message("Nothing found for ", suche, ", starting with ", runname, "-rem-1.")
   } else {
     # if there is an existing REMIND run, use its gdx for the run to be started
-    already_rem <- mixedsort(already_rem)[1]
     settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
     message("Found gdx here: ", normalizePath(already_rem))
-    iter_rem <- 0
-    # is there a coupling iteration that could be continued?
-    if (identical(paste0(path_remind,"output/"),path_remind_oldruns) && identical(prefix_runname,prefix_oldruns) && is.na(scenarios_coupled[scen, "oldrun"])) {
-      # continue counting only if remind is started in the same directoy the gdxes are taken from
-      iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1",already_rem))
-    }
 
     # is there already a MAgPIE run with this name?
-    suche <- paste0(path_magpie_oldruns,prefix_oldruns,needle,"-mag-*/report.mif")
-    already_mag <- Sys.glob(suche)
-    if(identical(already_mag,character(0))) message("Nothing found for ", suche)
-    iter_mag <- 0
-    if (!identical(already_mag, character(0))) {
-      already_mag <- mixedsort(already_mag)[1]
-      path_report_found <- normalizePath(already_mag)
+    suche <- paste0(path_magpie, "output/", prefix_runname, needle,"-mag-*/report.mif")
+    already_mag <- mixedsort(Sys.glob(suche))[1]
+    if(! is.na(already_mag)) {
       message(paste0("Found MAgPIE report here: ", normalizePath(already_mag)))
       iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
+    } else {
+      message("Nothing found for ", suche, ", continue with oldrun")
+      suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
+      already_mag <- mixedsort(Sys.glob(suche))[1]
+      iter_mag <- 0
+    }
+    if (is.na(already_mag)) {
+      message("Nothing found for ", suche)
+    } else {
+      path_report_found <- normalizePath(already_mag)
     }
     # decide whether to continue with REMIND or MAgPIE
     if (iter_rem > iter_mag) {
@@ -270,10 +280,12 @@ for(scen in common){
       message("Found REMIND report here: ", path_report_found)
       message("Continuing with MAgPIE in iteration ", start_iter_first)
       start_magpie <- TRUE
+    } else if (iter_rem < iter_mag) {
+      stop("REMIND has finished only ", iter_rem, ", but MAgPIE already ", iter_mag, " runs. Something is wrong!")
     } else {
       # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
       start_iter_first <- iter_rem + 1
-      message("Both REMIND and MAgPIE have finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
+      message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
     }
   }
 
@@ -369,8 +381,8 @@ for(scen in common){
     start_iter <- i
 
     # If provided replace the path to the MAgPIE report found automatically with path given in scenario_config_coupled.csv
-    if (i == start_iter) {
-      if (! is.na(scenarios_coupled[scen, "path_report"])) {
+    if (i == start_iter_first) {
+      if (! is.na(scenarios_coupled[scen, "path_report"]) & i == 1) {
         path_report <- scenarios_coupled[scen, "path_report"] # sets the path to the report REMIND is started with in the first loop
         message("Replacing path to MAgPIE report with that one specified in\n  ", path_settings_coupled, "\n  ", scenarios_coupled[scen, "path_report"], "\n")
       } else {
@@ -400,10 +412,12 @@ for(scen in common){
     gdxlist <- unlist(settings_remind[scen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
     if (parallel) {
-      gdxlist[gdxlist %in% common] <- paste0(prefix_runname, gdxlist[gdxlist %in% common], "-rem-", i)
-      possibleFulldata <- paste0(path_remind, "output/", prefix_runname, gdxlist, "-rem-", i, "/fulldata.gdx")
-      # if file fulldata.gdx already exists because run was already finished, use it directly as input
-      gdxlist[file.exists(possibleFulldata)] <- possibleFulldata[file.exists(possibleFulldata)]
+      gdxlist[gdxlist %in% rownames(settings_coupled)] <- paste0(prefix_runname, gdxlist[gdxlist %in% rownames(settings_coupled)], "-rem-", i)
+      possibleFulldata <- paste0(path_remind, "output/", gdxlist, "/fulldata.gdx")
+      possibleRemindReport <- paste0(path_remind, "output/", gdxlist, "/REMIND_generic_", gdxlist, ".mif")
+      # if file fulldata.gdx and report already exists because run was already finished, use it directly as input
+      replaceByFulldata <- file.exists(possibleFulldata) & file.exists(possibleRemindReport)
+      gdxlist[replaceByFulldata] <- possibleFulldata[replaceByFulldata]
     }
 
     if (i == start_iter_first) {
@@ -415,7 +429,7 @@ for(scen in common){
     # in parallel mode, remove gdxlist generated by earlier i
     if (parallel) cfg_rem$files2export$start <- rem_filesstart
     # Remove potential elements that contain ".gdx" and append gdxlist
-    cfg_rem$files2export$start <- c(.setgdxcopy(".gdx", cfg_rem$files2export$start, gdxlist), path_settings_coupled, path_settings_remind)
+    cfg_rem$files2export$start <- .setgdxcopy(".gdx", cfg_rem$files2export$start, gdxlist)
 
     # add table with information about runs that need the fulldata.gdx of the current run as input (will be further processed in start_coupled.R)
     cfg_rem$RunsUsingTHISgdxAsInput <- settings_remind[common, ] %>% select(contains("path_gdx")) %>%    # select columns that have "path_gdx" in their name
