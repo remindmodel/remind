@@ -203,6 +203,7 @@ p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feel_steel_secondary") = 200* sm_TWa_2_MWh * 1e-12;
 p37_CESMkup(t,regi,"feel_steel_primary") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feel_cement") = 200* sm_TWa_2_MWh * 1e-12;
 
 *** place markup cost of 100 USD/MWh(H2) on H2 nodes
 *** to represent demand-side cost of hydrogen usage and reach higher subsitution rates
