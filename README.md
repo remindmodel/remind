@@ -17,7 +17,7 @@ in which intertemporal global welfare is optimized subject to equilibrium constr
 ## DOCUMENTATION
 The model documentation for version 2.1.3 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.3.
 
-A most recent version of the documentation can also be extracted from the
+The most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
 package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15))`
@@ -83,7 +83,7 @@ In addition *R* (https://www.r-project.org/) is required for pre- and
 postprocessing and run management (needs to be added to the PATH variable
 as well).
 
-Some R packages are required to run REMIND. All except of one (`gdxrrw`) are
+Some R packages are required to run REMIND. All of them are
 either distributed via the offical R CRAN or via a separate repository hosted at
 PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
 available repositories via:
@@ -99,20 +99,46 @@ variable. After that you can run the following lines of code:
 All packages can be installed via `install.packages`
 
 ```
-pkgs <- c("gdxrrw",
-          "ggplot2",
-          "curl",
+pkgs <- c("colorspace",
+          "crayon",
+          "data.table",
+          "devtools",
+          "dplyr",
+          "edgeTrpLib",
+          "flexdashboard",
           "gdx",
-          "magclass",
-          "madrat",
-          "mip",
-          "lucode2",
+          "gdxdt",
+          "gdxrrw",
+          "ggplot2",
           "gms",
-          "remind2",
-          "lusweave",
-          "luscale",
           "goxygen",
+          "gridExtra",
+          "gtools",
+          "htmltools",
+          "knitr",
+          "lazyeval",
+          "lucode2",
           "luplot",
+          "luscale",
+          "lusweave",
+          "magclass",
+          "magpie4",
+          "mip",
+          "mrremind",
+          "mrvalidation",
+          "optparse",
+          "plotly",
+          "quitte",
+          "remind",
+          "remind2",
+          "reshape2",
+          "rlang",
+          "rmarkdown",
+          "rmndt",
+          "stringr",
+          "tidyr",
+          "tidyverse",
+          "withr",
           "yaml")
 install.packages(pkgs)
 ```
