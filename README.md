@@ -65,88 +65,8 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-**Please note: You need input data to run REMIND. At present, there are
-still legal issues with sharing this data, so we can not publish them yet
-(but we are working on it, please bear with us). If you have access to the
-necessary data sources (IEA, etc.) you can generate the input data on your own,
-we are happy to assist you in doing so.**
+Please refer to the [installation guide](tutorials/1_GettingREMIND.md).
 
-
-REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
-solvers *CONOPT* for its core calculations. As the model
-benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
-recommended to work with the most recent versions of both.
-Please make sure that the GAMS installation path is added to the PATH variable
-of the system.
-
-In addition *R* (https://www.r-project.org/) is required for pre- and
-postprocessing and run management (needs to be added to the PATH variable
-as well).
-
-Some R packages are required to run REMIND. All of them are
-either distributed via the offical R CRAN or via a separate repository hosted at
-PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
-available repositories via:
-```
-options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
-```
-
-On Windows you need to install Rtools
-(https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH
-variable. After that you can run the following lines of code:
-
-
-All packages can be installed via `install.packages`
-
-```
-pkgs <- c("colorspace",
-          "crayon",
-          "data.table",
-          "devtools",
-          "dplyr",
-          "edgeTrpLib",
-          "flexdashboard",
-          "gdx",
-          "gdxdt",
-          "gdxrrw",
-          "ggplot2",
-          "gms",
-          "goxygen",
-          "gridExtra",
-          "gtools",
-          "htmltools",
-          "knitr",
-          "lazyeval",
-          "lucode2",
-          "luplot",
-          "luscale",
-          "lusweave",
-          "magclass",
-          "magpie4",
-          "mip",
-          "mrremind",
-          "mrvalidation",
-          "optparse",
-          "plotly",
-          "quitte",
-          "remind",
-          "remind2",
-          "reshape2",
-          "rlang",
-          "rmarkdown",
-          "rmndt",
-          "stringr",
-          "tidyr",
-          "tidyverse",
-          "withr",
-          "yaml")
-install.packages(pkgs)
-```
-Updating R is recommended if problems arise at package installation, please write
-us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
-For post-processing model outputs *Latex* is required
-(https://www.latex-project.org/get/). To be seen by the model it also needs to
-added to the PATH variable of your system.
 
 ## HOW TO CONFIGURE
 Model run settings are set in `config/default.cfg` (or another config file of

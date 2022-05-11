@@ -1,7 +1,9 @@
-Install the REMIND model and all software/data required
+Install the REMIND model and all requirements
 ================
 Anastasis Giannousakis (<giannou@pik-potsdam.de>), Felix Schreyer (<felix.schreyer@pik-potsdam.de>)
 16 February, 2020
+
+**Please note: You need input data to run REMIND. At present, there are still legal issues with sharing this data, so we can not publish them yet (but we are working on it, please bear with us). If you have access to the necessary data sources (IEA, etc.) you can generate the input data on your own, we are happy to assist you in doing so.**
 
 HOW TO INSTALL
 --------------
@@ -29,7 +31,8 @@ For R, some packages are required to run REMIND. All are either distributed via 
 options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
 ```
 
-After that all remaining packages can be installed via `install.packages`
+On Windows you need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH
+variable. After that all required packages can be installed via `install.packages`:
 
 ``` r
 pkgs <- c("colorspace",
@@ -76,7 +79,7 @@ pkgs <- c("colorspace",
 install.packages(pkgs)
 ```
 
-For post-processing model outputs *Latex* is required (<https://www.latex-project.org/get/>). To be seen by the model it also needs to be added to the PATH variable of your system.
+Updating R is recommended if problems arise at package installation, please write us at remind@pik-potsdam.de to discuss alternatives if this is not possible. For post-processing model outputs *Latex* is required (<https://www.latex-project.org/get/>). To be seen by the model it also needs to be added to the PATH variable of your system.
 
 If the following lines of code are executed without error, then you are all set!
 
