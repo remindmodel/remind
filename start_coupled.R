@@ -163,11 +163,15 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     ############ DECIDE IF AND HOW TO START REMIND ###################
     outfolder_rem <- NULL
     if (is.null(report)) {
-      ######### S T A R T   R E M I N D   S T A N D A L O N E ##############
-      cfg_rem$gms$cm_MAgPIE_coupling <- "off"
-      message("### COUPLING ### No MAgPIE report for REMIND input provided.")
-      message("### COUPLING ### REMIND will be started in stand-alone mode with\n    ", runname, "\n    ", cfg_rem$results_folder)
-      outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem))
+      if (i == 1) {
+        ######### S T A R T   R E M I N D   S T A N D A L O N E ##############
+        cfg_rem$gms$cm_MAgPIE_coupling <- "off"
+        message("### COUPLING ### No MAgPIE report for REMIND input provided.")
+        message("### COUPLING ### REMIND will be started in stand-alone mode with\n    ", runname, "\n    ", cfg_rem$results_folder)
+        outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem))
+      } else {
+        stop("I'm in coupling iteration ", i, ", but no REMIND or MAgPIE report from earlier iterations found. That should never have happened.")
+      }
     } else if (grepl(paste0("report.mif"), report)) { # if it is a MAgPIE report
       ######### S T A R T   R E M I N D   C O U P L E D ##############
       cfg_rem$gms$cm_MAgPIE_coupling <- "on"

@@ -115,6 +115,9 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 ####################################################
 # Read-in the switches table, use first column as row names
 
+message("\nREMIND directory: ", path_remind, ". MAgPIE directory: ", path_magpie)
+message("Reading ", path_settings_coupled, " and ", path_settings_remind, ".\n")
+
 settings_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
 
 # Read in
@@ -271,21 +274,24 @@ for(scen in common){
       path_report_found <- normalizePath(already_mag)
     }
     # decide whether to continue with REMIND or MAgPIE
-    if (iter_rem > iter_mag) {
+    if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
       # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
       start_iter_first  <- iter_rem
       path_run    <- gsub("/fulldata.gdx","",already_rem)
       path_report_found <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))[1] # take the first entry to ignore REMIND_generic_*_withoutPlus.mif
       if (is.na(path_report_found)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
       message("Found REMIND report here: ", path_report_found)
-      message("Continuing with MAgPIE in iteration ", start_iter_first)
+      message("Continuing with MAgPIE with mag-", start_iter_first)
       start_magpie <- TRUE
-    } else if (iter_rem < iter_mag) {
-      stop("REMIND has finished only ", iter_rem, ", but MAgPIE already ", iter_mag, " runs. Something is wrong!")
-    } else {
+    } else if (iter_rem == iter_mag) {
       # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
       start_iter_first <- iter_rem + 1
       message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
+    } else if (iter_rem == max_iterations & iter_mag == max_iterations - 1) {
+      message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, ".")
+      next
+    } else {
+      stop("REMIND has finished ", iter_rem, "runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
     }
   }
 
@@ -509,12 +515,13 @@ for(scen in common){
   knownRefRuns <- c(knownRefRuns, paste0(fullrunname, if (parallel) "" else paste0("-rem-", max_iterations)))
   if (start_now){
       startedRuns <- startedRuns + 1
-      logfile <- file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), if(! parallel) stamp, ".txt"))
-      message("Find logging in ", logfile)
       if (! "--test" %in% argv) {
+        logfile <- if (parallel) file.path("output", fullrunname, if (start_magpie) "log-mag.txt" else "log.txt") else file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), stamp, ".txt"))
+        if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
+        message("Find logging in ", logfile)
         system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
         message("Copied REMIND .Rprofile to MAgPIE folder.")
-        system(paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
+        system(paste0("sbatch --qos=", qos, " --job-name=", if (parallel) fullrunname else runname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
       } else {
@@ -532,5 +539,5 @@ for(scen in common){
   }
 }
 
-message("\nFinished", ifelse("--test" %in% argv, " in test mode", ""), ": ", startedRuns, " runs started, ",
-        waitingRuns, " runs are waiting. Number of problems: ", errorsfound, ".")
+message("\nFinished: ", startedRuns, " runs started, ", waitingRuns, " runs are waiting. Number of problems: ",
+        errorsfound, ".", ifelse("--test" %in% argv, " You are in TEST mode, only RData files were written.", ""))
