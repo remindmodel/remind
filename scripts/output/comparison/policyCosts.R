@@ -304,7 +304,7 @@ while (!happy_with_input) {
 
 # Get Policy costs for every policy-reference pair
 cat(crayon::blue("\nComputing Policy costs:\n"))
-tmp_policy_costs_magpie <- mapply(remind::reportPolicyCosts, pol_gdxs, ref_gdxs, SIMPLIFY = FALSE) 
+tmp_policy_costs_magpie <- mapply(remind2::reportPolicyCosts, pol_gdxs, ref_gdxs, SIMPLIFY = FALSE)
 cat(crayon::green("Done!\n"))
 
 
