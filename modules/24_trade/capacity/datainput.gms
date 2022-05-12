@@ -38,27 +38,21 @@ pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(reg
 pm_costsTradePeFinancial(regi,"Xport", "pegas") = cm_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
 pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
-*set trase se prices to zero
-pm_MPortsPrice(ttot,regi,tradeSe)=0;
-pm_XPortsPrice(ttot,regi,tradeSe)=0;
-
 ***-------------------------------------------------------------------------------
 ***                            Data for trade model
 ***-------------------------------------------------------------------------------
 
 PARAMETERS
   p24_cap_absMaxGrowthRate(teTrade)                                             "Absolute maximum yearly growth rate for trade transportation capacity (TWa)"
-      / gas_pipe 0.0
-        lng_liq 0.020
-        lng_gas 100.0
-        lng_ves 999999.0
-        coal_ves 999999.0 /
+      / pipe_gas 0.0
+        termX_lng 0.020
+        termM_lng 100.0
+        vess_lng 999999.0 /
   p24_cap_relMaxGrowthRate(teTrade)                                             "Relative maximum yearly growth rate for trade transportation capacity (percent)"
-      / gas_pipe 0.0
-        lng_liq 0.01
-        lng_gas 0.03
-        lng_ves 999999.0
-        coal_ves 999999.0 /
+      / pipe_gas 0.0
+        termX_lng 0.01
+        termM_lng 0.03
+        vess_lng 999999.0 /
 ;
 
 TABLE p24_disallowed(all_regi,all_regi,tradeModes)                    "Trade routes that are explicitly disallowed."
