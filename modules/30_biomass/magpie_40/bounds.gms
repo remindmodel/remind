@@ -122,7 +122,7 @@ vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res
 ***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
 
 *** -------------------------------------------------------------
-*** Phase out capacities of bioenergy technologies that use 
+*** Phase out capacities of bioenergy technologies that use
 *** pebiolc as feedstock, if defined in config
 *** -------------------------------------------------------------
 if (cm_biolc_tech_phaseout eq 1,
