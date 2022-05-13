@@ -121,4 +121,23 @@ vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res
 *** FS: test regional bounds on pebiolc.1 production
 ***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
 
+*** -------------------------------------------------------------
+*** Phase out capacities of bioenergy technologies that use
+*** pebiolc as feedstock, if defined in config
+*** -------------------------------------------------------------
+if (cm_biolc_tech_phaseout eq 1,
+    loop(t$(t.val ge max(2025, cm_startyear)),
+        loop(regi,
+            loop(te(teBioPebiolc),
+                loop(rlf,
+                    if(vm_deltaCap.up(t,regi,te,rlf) eq INF,
+                       vm_deltaCap.up(t,regi,te,rlf) = 1e-5;
+                    );
+                );
+            );
+        );
+    );
+);
+
+
 *** EOF ./modules/30_biomass/magpie_40/bounds.gms
