@@ -243,7 +243,6 @@ cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Ger
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
-cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year" 
 cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
 c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
@@ -341,6 +340,7 @@ c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiCO2target  off   !! def = off
+$setGlobal cm_emiMktTarget  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
@@ -461,8 +461,6 @@ $setGlobal c_VREPot_Factor  off !! def = off
 
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
-
-$setGlobal cm_regipol_slope_beforeTarget  off !! def = off
 
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 

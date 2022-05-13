@@ -295,7 +295,7 @@ parameters
   cm_trdcst              "parameter to scale trade export cost for gas"
   cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
   
-  cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
+  cm_postTargetIncrease "carbon price increase per year after target is reached (euro per tCO2)"
   
   c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
   
@@ -452,6 +452,8 @@ c_abtcst                 = 1;      !! def = 1
 c_budgetCO2from2020      = 1150;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
+$setGlobal cm_emiMktTarget  off    !! def = off
+$setGlobal cm_prioRescaleFactor off !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050

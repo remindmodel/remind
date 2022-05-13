@@ -2038,6 +2038,22 @@ all_emiMkt         "emission markets"
 	other	"other market configurations"
 /
 
+all_emiMktExt   "extended emission market defineitions"
+/	
+        ETS     "ETS emission market"
+	ESR     "Effort sharing emission market"
+	other	"other market configurations"
+        all     "economy wide emission market"
+/
+
+emiMktGroup(all_emiMktExt,all_emiMkt) 
+/
+        ETS.(ETS)
+        ESR.(ES)
+        other.(other)
+        all.(ETS,ES,other)
+/
+
 sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
 /
         indst.ETS
@@ -2302,6 +2318,7 @@ alias(rlf,rlf2);
 alias(regi,regi2,regi3);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
+alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
 alias(sector_types,type)
 

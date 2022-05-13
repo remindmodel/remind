@@ -8,21 +8,27 @@
 
 	
 Parameter
-  pm_regiTarget_dev(ext_regi,ttot,ttot2)       "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2015 emissions [%]"
-  pm_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)  "parameter to save pm_regiTarget_dev across iterations [%]"
-  p47_taxCO2eqBeforeStartYear(ttot,all_regi)   "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-  pm_emissionsCurrent(ext_regi,ttot,ttot2)	   "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2]"
-  pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
-  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)  "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
-  s47_prefreeYear                              "value of the last non-free year for the carbon price trajectory"
+  s47_prefreeYear                               "value of the last non-free year for the carbon price trajectory"
   p47_LULUCFEmi_GrassiShift(ttot,all_regi)		"difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
+  pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
 ;
 
-$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
+$ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
-  pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
+  p47_taxemiMktBeforeStartYear(ttot,all_regi,emiMkt) "emiMkt CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+  p47_taxCO2eqBeforeStartYear(ttot,all_regi)         "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+  pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
+  pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
+  pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
+  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
+  pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
+
+$if not "%cm_prioRescaleFactor%" == "off" s47_prioRescaleFactor "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
+
 ;  
-$endIf.regicarbonprice
+$endIf.emiMkt
+
 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 Parameter
@@ -33,28 +39,34 @@ $endIf.regiExoPrice
 *** It does not need to be a variable (and equations) because is only dealt in between iterations!!!!
 variables
 	v47_emiTarget(ttot,all_regi,emi_type)      "CO2 or GHG Emissions used for target level [GtC]"
-	v47_emiTargetMkt(ttot,all_regi,all_emiMkt,emi_type) "CO2 or GHG Emissions per emission market used for target level [GtC]"
+	v47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type) "CO2 or GHG Emissions per emission market used for target level [GtC]"
 ;
 
 equations
 	q47_emiTarget_grossEnCO2(ttot, all_regi)	   "Calculates gross energy-related co2 emissions [GtC]"
-	q47_emiTarget_netCO2(ttot, all_regi)	       "Calculates net co2 emissions used for target [GtC]"
-	q47_emiTarget_netCO2_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers used for target [GtC]"
-	q47_emiTarget_netCO2_noLULUCF_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
-	q47_emiTarget_netGHG(ttot, all_regi)		   "Calculates net GHG emissions used for target [GtC]"
-	q47_emiTarget_netGHG_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers used for target [GtC]"
-	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
-	q47_emiTarget_mkt_netCO2(ttot, all_regi, all_emiMkt) "Calculates net CO2 emissions per emission market used for target [GtC]"
-	q47_emiTarget_mkt_netGHG(ttot, all_regi, all_emiMkt) "Calculates net GHG emissions per emission market used for target [GtC]"
-	q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and shifting LULUCF emissions to meet 2015 UNFCCC values"
+*	q47_emiTarget_netCO2(ttot, all_regi)	       "Calculates net co2 emissions used for target [GtC]"
+*	q47_emiTarget_netCO2_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers used for target [GtC]"
+*	q47_emiTarget_netCO2_noLULUCF_noBunkers(ttot, all_regi) "Calculates net CO2 emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
+*	q47_emiTarget_netGHG(ttot, all_regi)		   "Calculates net GHG emissions used for target [GtC]"
+*	q47_emiTarget_netGHG_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers used for target [GtC]"
+*	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
+*	q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and shifting LULUCF emissions to meet 2015 UNFCCC values"
+	
+	q47_emiTarget_mkt_netCO2(ttot, all_regi, emiMktExt)                    "Calculates net CO2 emissions per emission market used for target [GtC]"
+	q47_emiTarget_mkt_netCO2_noBunkers(ttot, all_regi, emiMktExt)          "Calculates net CO2 emissions per emission market  excluding bunkers used for target [GtC]"
+	q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers(ttot, all_regi, emiMktExt) "Calculates net CO2 emissions per emission market  excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
+
+	q47_emiTarget_mkt_netGHG(ttot, all_regi, emiMktExt)                    "Calculates net GHG emissions per emission market used for target [GtC]"
+	q47_emiTarget_mkt_netGHG_noBunkers(ttot, all_regi, emiMktExt)          "Calculates net GHG emissions per emission market  excluding bunkers used for target [GtC]"
+	q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers(ttot, all_regi, emiMktExt) "Calculates net GHG emissions per emission market  excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
+	q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers(ttot, all_regi, emiMktExt) "Calculates net GHG emissions per emission market  excluding bunkers and shifting LULUCF emissions to meet 2015 UNFCCC values"
 ;
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 Parameter
-	p47_taxemiMktBeforeStartYear(ttot,all_regi,all_emiMkt) "CO2eq mkt prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-	pm_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
-	pm_ETSTarget_dev(ETS_mkt)				    "ETS emissions deviation of current iteration from target emissions [%]"
-	pm_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations [%]"
+  pm_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
+  pm_ETSTarget_dev(ETS_mkt)				    "ETS emissions deviation of current iteration from target emissions [%]"
+  pm_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations [%]"
 	
 ;
 $endIf.emiMktETS    

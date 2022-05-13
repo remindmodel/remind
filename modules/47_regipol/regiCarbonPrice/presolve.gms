@@ -6,6 +6,24 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
 
+*** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+	loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+		loop(regi$regi_groupExt(ext_regi,regi),
+*** Removing the economy wide co2 tax parameters for regions within the ETS markets
+			pm_taxCO2eqSum(t,regi) = 0;
+			pm_taxCO2eq(t,regi) = 0;
+			pm_taxCO2eqRegi(t,regi) = 0;
+			pm_taxCO2eqHist(t,regi) = 0;
+			pm_taxCO2eqSCC(t,regi) = 0;
+
+			p21_taxrevGHG0(t,regi) = 0;
+			p21_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+			p21_taxrevCO2LUC0(t,regi) = 0;
+			p21_taxrevNetNegEmi0(t,regi) = 0;
+		);
+	);
+$ENDIF.emiMkt
 
 *** Removing economy wide co2 tax parameters for regions within the ETS
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
@@ -42,27 +60,6 @@ loop((regi)$pm_emiTargetESR("2030",regi),
 );
 
 $endIf.emiMktES
-
-*** removing co2 taxes for regions controlled by the regipol module   
-$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
-
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
-	loop(regi$regi_group(ext_regi,regi),
-		pm_taxCO2eqRegi(t,regi) = 0;
-		pm_taxCO2eqHist(t,regi) = 0;
-		pm_taxCO2eqSCC(t,regi) = 0;
-	);
-);
-
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))), !!for single regions
-	loop(regi$(sameas(ext_regi,regi)),
-		pm_taxCO2eqRegi(t,regi) = 0;
-		pm_taxCO2eqHist(t,regi) = 0;
-		pm_taxCO2eqSCC(t,regi) = 0;
-	);
-);
-
-$endIf.regicarbonprice
 
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 

@@ -8,13 +8,23 @@
 
 
 * initialize regipol target deviation parameter
-pm_regiTarget_dev(ext_regi,ttot,ttot2) = 0;
+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
-*** if the bau or ref gdx has been run with a carbon tax  
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+
+* initialize carbon taxes before start year 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxCO2eqBeforeStartYear = pm_taxCO2eq;
+  Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
+  
   p47_taxCO2eqBeforeStartYear(ttot,regi)$((ttot.val ge cm_startyear)) = 0;
+  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
+
+  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$(NOT(p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt))) = p47_taxCO2eqBeforeStartYear(ttot,regi);
 );
+
+$ENDIF.emiMkt
+
 
 parameter f47_ETSreferenceEmissions(tall,all_regi)      "ETS 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
 /
@@ -29,10 +39,6 @@ pm_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSrefere
 
 display f47_ETSreferenceEmissions, pm_emissionsRefYearETS;
 
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
-  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
-);
 $ENDIF.emiMktETS
 
 $IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 

@@ -29,7 +29,7 @@ $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off"
 ***		pm_taxCO2eqHist(t,regi)$((t.val ge cm_startyear) and ETS_regi(ETS_mkt,regi)) = 0;
 
 *** Initializing emi market historical and reference prices
-		pm_taxemiMkt(ttot,regi,emiMkt)$(ETS_regi(ETS_mkt,regi) AND p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)) = p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt);
+***		pm_taxemiMkt(ttot,regi,emiMkt)$(ETS_regi(ETS_mkt,regi) AND p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)) = p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt);
 		pm_taxemiMkt("2005",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2005)) = 0;
 		pm_taxemiMkt("2010",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2010))  = 15*sm_DptCO2_2_TDpGtC;
 		pm_taxemiMkt("2015",regi,"ETS")$(ETS_regi(ETS_mkt,regi) and (cm_startyear le 2015))  = 8*sm_DptCO2_2_TDpGtC;
@@ -131,8 +131,8 @@ $IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
 		p21_taxrevNetNegEmi0(ttot,regi) = 0;
 
 ***  calculating the ES CO2 tax rescale factor
-***		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetESR(t,regi))/pm_emiTargetESR(t,regi);
-		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = (v47_emiTargetMkt.l(t,regi,"ES","%cm_emiMktES_type%")-pm_emiTargetESR(t,regi))/(pm_emissionsRefYearESR("2005",regi)/sm_c_2_co2);
+***		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = (v47_emiTargetMkt.l(t,regi,"ESR","%cm_emiMktES_type%")-pm_emiTargetESR(t,regi))/pm_emiTargetESR(t,regi);
+		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = (v47_emiTargetMkt.l(t,regi,"ESR","%cm_emiMktES_type%")-pm_emiTargetESR(t,regi))/(pm_emissionsRefYearESR("2005",regi)/sm_c_2_co2);
 		pm_ESRTarget_dev_iter(iteration, t,regi) = pm_ESRTarget_dev(t,regi);	
 		if(iteration.val lt 15,
 			pm_emiRescaleCo2TaxESR("2020",regi)$((cm_startyear le 2020) AND (pm_emiTargetESR("2020",regi))) = max(0.1, 1+pm_ESRTarget_dev("2020",regi) ) ** 4;
@@ -160,7 +160,7 @@ $IFTHEN.emiMktEScoop not "%cm_emiMktEScoop%" == "off"
 *** alternative cooperative ES solution: calculating the ES CO2 tax rescale factor
 		pm_ESRTarget_dev(t,regi)$pm_emiTargetESR(t,regi) = 
 			( sum(regi2$regi_group("EU27_regi",regi2),
-  				v47_emiTargetMkt.l(t,regi2,"ES","%cm_emiMktES_type%")
+  				v47_emiTargetMkt.l(t,regi2,"ESR","%cm_emiMktES_type%")
 			  ) - 
 			  sum(regi2$regi_group("EU27_regi",regi2),
   				pm_emiTargetESR(t,regi2)
@@ -264,162 +264,195 @@ $ENDIF.emiMktES2050
 
 $ENDIF.emiMktES
 
+
 ***--------------------------------------------------
-*** Regional carbon princing
+*** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
 
-$IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off" 
 
-*** display pm_taxCO2eq;
+*** START OF NEW CODE
 
-*** Initializing co2eq historical and reference prices
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))), !!for region groups
-	pm_taxCO2eq(t,regi)$(regi_group(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
-*** removing co2 taxes for regions controlled by the regipol module     
-	pm_taxCO2eqRegi(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	pm_taxCO2eqHist(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	pm_taxCO2eqSCC(t,regi)$(regi_group(ext_regi,regi)) = 0;
-	);
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))), !!for single regions
-	pm_taxCO2eq(t,regi)$(sameas(ext_regi,regi) AND p47_taxCO2eqBeforeStartYear(t,regi)) = p47_taxCO2eqBeforeStartYear(t,regi);
-*** removing co2 taxes for regions controlled by the regipol module     
-	pm_taxCO2eqRegi(t,regi)$(sameas(ext_regi,regi)) = 0;
-	pm_taxCO2eqHist(t,regi)$(sameas(ext_regi,regi)) = 0;
-	pm_taxCO2eqSCC(t,regi)$(sameas(ext_regi,regi)) = 0;
-	);
+$ontext
+cm_emiMktTarget
+pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) <- pm_regiCO2ETStarget, 
+pm_emiMktCurrent(ttot,ext_regi,ttot2,emiMktExt)
+pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)
+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)
+pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt)
+pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)
+pm_taxemiMkt_iteration(iteration,ttot2,all_regi,emiMkt)
 
-*** Fixing European 2020 carbon price to 20€/t CO2
-***pm_taxCO2eq("2020",regi)$(regi_group("EUR_regi",regi) and (cm_startyear le 2020)) =  20*sm_DptCO2_2_TDpGtC;
+DONE
+-> declare all parameters and variables -> done?
+-> search the code for other parts that I need to intialize those -> done?
+-> change emiMkt to use a emiMktExt -> all, ETS, ESR, other. Define groupemiMktExt and add loops to calculate the targets and rescale factors with all and single emiMkts
 
-***  Calculating the current emission levels
-***		for region groups
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))),
-	if(sameas(target_type,"budget"), !! budget total CO2 target
-		pm_emissionsCurrent(ext_regi,ttot,ttot2) =
-			sum(all_regi$regi_group(ext_regi,all_regi),
-				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
-					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
-					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)
-			));		
-	elseif sameas(target_type,"year"), !! year total CO2 target
-* calculate emissions in target year
-		pm_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
-* calculate emissions in 2015 (or cm_startyear), used to determine target compliance for year targets
-        pm_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$regi_group(ext_regi,all_regi), 
-			sum(ttot3$(ttot3.val eq max(2015,cm_startyear)), !! v47_emiTarget is not defined for years before cm_startyear
-				v47_emiTarget.l(ttot3, all_regi,emi_type)
-			)*sm_c_2_co2)
-		;	
+emiMktGroup(all_emiMktExt,all_emiMkt) 
+/
+        all.(ETS,ES,other)
+        ETS.(ETS)
+        ESR.(ES)
+        other.(other)
+
+/
+alias(all_emiMktExt,emiMktExt);
+-> apply rescale modifier to prioritize short term goals
+
+TODO
+
+-> redefine the ETS and ESR targets to use emission values instead
+-> make scenario config with 2030 and 2050 targets
+
+-> check reference values definition
+-> add switch to define per region ESR targets
+-> if it works, remove ETS, ESR and economy wide formulation
+
+$offtext
+
+
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+
+*** Initialization
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+	loop(regi$regi_groupExt(ext_regi,regi),
+*** Removing the economy wide co2 tax parameters for regions within the ETS markets
+		pm_taxCO2eqSum(t,regi) = 0;
+		pm_taxCO2eq(t,regi) = 0;
+		pm_taxCO2eqRegi(t,regi) = 0;
+		pm_taxCO2eqHist(t,regi) = 0;
+		pm_taxCO2eqSCC(t,regi) = 0;
+
+		p21_taxrevGHG0(t,regi) = 0;
+		p21_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+		p21_taxrevCO2LUC0(t,regi) = 0;
+		p21_taxrevNetNegEmi0(t,regi) = 0;
+
+		loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+*** Initializing emi market historical and reference prices
+			pm_taxemiMkt(ttot3,regi,emiMkt)$(ttot3.val le cm_startyear) = p47_taxemiMktBeforeStartYear(ttot3,regi,emiMkt);
+		);
+	 
+*** Initializing ETS historical and reference prices
+		pm_taxemiMkt("2005",regi,"ETS")$(cm_startyear le 2005) = 0;
+		pm_taxemiMkt("2010",regi,"ETS")$(cm_startyear le 2010)  = 15*sm_DptCO2_2_TDpGtC;
+		pm_taxemiMkt("2015",regi,"ETS")$(cm_startyear le 2015)  = 8*sm_DptCO2_2_TDpGtC;
+***		pm_taxemiMkt("2020",regi,"ETS")$(cm_startyear le 2020)  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+		pm_taxemiMkt("2020",regi,"ETS")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+
+*** Initializing ESR historical and reference prices
+		pm_taxemiMkt("2020",regi,"ES")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
 	);
 );
 
-***		for single regions (overwrites region groups)  
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))),
-	if(sameas(target_type,"budget"), !! budget target
-		pm_emissionsCurrent(ext_regi,ttot,ttot2) =
-			sum(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
+***  Calculating the current emission levels
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+	if(sameas(target_type,"budget"), !! budget total CO2 target
+		pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt) =
+			sum(regi$regi_groupExt(ext_regi,regi),
 				sum(ttot3$((ttot3.val ge ttot.val) AND (ttot3.val le ttot2.val)),
 					pm_ts(ttot3) * (1 -0.5$(ttot3.val eq ttot.val OR ttot3.val eq ttot2.val))
-					*(v47_emiTarget.l(ttot3, all_regi,emi_type)*sm_c_2_co2)
-			));
-	elseif sameas(target_type,"year"),
-* calculate emissions in target year
-		pm_emissionsCurrent(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), v47_emiTarget.l(ttot2, all_regi,emi_type)*sm_c_2_co2);
-* calculate emissions in 2015, used to determine target compliance for year targets
-		pm_emissionsRefYear(ext_regi,ttot,ttot2) = sum(all_regi$sameas(ext_regi,all_regi), 
-			sum(ttot3$(ttot3.val eq max(2015,cm_startyear)), !! v47_emiTarget is not defined for years before cm_startyear
-				v47_emiTarget.l(ttot3, all_regi,emi_type)
-			)*sm_c_2_co2)
-		;
+					*(v47_emiTargetMkt.l(ttot3, regi,emiMktExt,emi_type)*sm_c_2_co2)
+			));		
+	elseif sameas(target_type,"year"), !! year total CO2 target
+*** calculate emissions in target year
+		pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt) = sum(regi$regi_groupExt(ext_regi,regi), v47_emiTargetMkt.l(ttot2, regi,emiMktExt,emi_type)*sm_c_2_co2);
+*** calculate emissions in 2005, used to determine target compliance for year targets
+		pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) = sum(regi$regi_groupExt(ext_regi,regi), v47_emiTargetMkt.l("2005", regi,emiMktExt,emi_type)*sm_c_2_co2);	
 	);
 );
 
 *** calculate target deviation
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type)),
-* for budget targets, target deviation is difference of current budget to target budget normalized by target budget
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+*** for budget targets, target deviation is difference of current budget to target budget normalized by target budget
 	if(sameas(target_type,"budget"),
-		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (pm_emissionsCurrent(ext_regi,ttot,ttot2)-pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type);
+		pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = (pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)-pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) ) / pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type);
 	);
-* for year targets, target deviation is difference of current emissions in target year to target emissions normalized by 2015 emissions
+*** for year targets, target deviation is difference of current emissions in target year to target emissions normalized by 2015 emissions
 	if(sameas(target_type,"year"),
-		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (pm_emissionsCurrent(ext_regi,ttot,ttot2)-pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / pm_emissionsRefYear(ext_regi,ttot,ttot2);
-***		pm_regiTarget_dev(ext_regi, ttot, ttot2) = (pm_emissionsCurrent(ext_regi,ttot,ttot2)-pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) ) / pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type);
+		pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = (pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)-pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) ) / pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt);
+***		pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = (pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)-ppm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) ) / pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type);
 	);
-* save regional target deviation across iterations for debugging of target convergence issues
-	pm_regiTarget_dev_iter(iteration, ext_regi, ttot, ttot2) = pm_regiTarget_dev(ext_regi, ttot, ttot2);
+*** save regional target deviation across iterations for debugging of target convergence issues
+	pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt);
 );
 
-
 ***  calculating the CO2 tax rescale factor
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
 *** co2 price updating rule for budget targets
 	if(sameas(target_type,"budget"), !! budget target
 		if(iteration.val lt 10,
-			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
 		else
-			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 1;
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 1;
 		);
 	);
 *** co2 price updating rule for year targets
 	if(sameas(target_type,"year"), !! year target
 		if(iteration.val lt 10,
 *** rescale factor for year targets a bit higher given a certain target deviation because pm_regiTarget_dev is normalized to reference year emissions such that it will usually not be higher than 1 at maximum
-			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 4;
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 4;
 		else
-			pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) = (1+pm_regiTarget_dev(ext_regi, ttot, ttot2)) ** 2;
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
 		);
 	);
 *** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
-	if((iteration.val gt 3) and (pm_regiTarget_dev_iter(iteration,ext_regi,ttot,ttot2)*pm_regiTarget_dev_iter(iteration-1,ext_regi,ttot,ttot2) < 0),
-	  pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2) =
-	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+	if((iteration.val gt 3) and (pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt)*pm_emiMktTarget_dev_iter(iteration-1, ttot,ttot2,ext_regi,emiMktExt) < 0),
+	  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
+	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
 	);
+*** prioritizing short term targets rescaling in the initial iterations (vice versa for latter iterations). e.g. multiplicative factor equal to 1 if target is 2030 or lower, and equal to 0.1 if target is 2050 or higher.
+$ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
+		if(iteration.val gt 20,
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+		);
+$ontext
+		if(iteration.val lt 15,
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(max(1-((ttot2.val-2030)/(20/(1-s47_prioRescaleFactor))),s47_prioRescaleFactor),1)*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+		else
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+		);
+$offtext
+$endIf.prioRescaleFactor
+*** save rescale factor across iterations for debugging of target convergence issues
+	pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
 );
 
-***display pm_taxCO2eq_iteration;
-  
-***	updating the co2 tax
-***		for region groups
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (NOT(all_regi(ext_regi)))),
-	loop(all_regi$regi_group(ext_regi,all_regi),
+***	updating the emiMkt co2 tax
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+	loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+		loop(regi$regi_groupExt(ext_regi,regi),
 *** terminal year price
-		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
+			pm_taxemiMkt(ttot2,regi,emiMkt) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
 ***	linear price between first free year and terminal year
-		loop(ttot3,
-			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
-			s47_prefreeYear = ttot3.val;
-		);
-        loop(ttot3$(ttot3.val eq s47_prefreeYear),
-			pm_taxCO2eq(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = (pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
-		);	
+			loop(ttot3,
+				break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
+				s47_prefreeYear = ttot3.val;
+			);
+			loop(ttot3$(ttot3.val eq s47_prefreeYear),
+				pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+			);	
 *** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
-		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
-	);
-);
-***		for single regions (overwrites region groups)
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$(pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) AND (all_regi(ext_regi))),
-	loop(all_regi$sameas(ext_regi,all_regi), !! trick to translate the ext_regi value to the all_regi set
-*** terminal year price
-		pm_taxCO2eq(ttot2,all_regi) = max(1* sm_DptCO2_2_TDpGtC, pm_taxCO2eq_iteration(iteration,ttot2,all_regi) * pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2));
-***	linear price between first free year and terminal year
-		loop(ttot3,
-			break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
-			s47_prefreeYear = ttot3.val;
+			pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+*** Set price after 2030 to 2030 price in the first 15 iterations		
+$ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
+		if(iteration.val le 20,
+			pm_taxemiMkt(t,regi,emiMkt)$(t.val gt 2030) = pm_taxemiMkt("2030",regi,emiMkt);
 		);
-		loop(ttot3$(ttot3.val eq s47_prefreeYear),
-			pm_taxCO2eq(t,all_regi)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = (pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)) + ((pm_taxCO2eq(ttot2,all_regi) - ( pm_taxCO2eq(ttot3,all_regi) + pm_taxCO2eqHist(ttot3,all_regi)))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+$endIf.prioRescaleFactor		
 		);
-*** fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
-		pm_taxCO2eq(t,all_regi)$(t.val gt ttot2.val) = pm_taxCO2eq(ttot2,all_regi) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
 	);
 );
 
+***		assuming that other emissions outside the ESR and ETS see prices equal to the ESR prices
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,"ESR",target_type,emi_type),
+	loop(regi$regi_groupExt(ext_regi,regi),
+		pm_taxemiMkt(t,regi,"other") = pm_taxemiMkt(t,regi,"ES");
+	);
+);
 
-*** display pm_regiCO2target,pm_emissionsCurrent,pm_emissionsRefYear,pm_regiTarget_dev,pm_factorRescaleCO2Tax;
-*** display pm_taxCO2eq;
+*** display pm_emiMktTarget,pm_emiMktCurrent,pm_emiMktRefYear,pm_emiMktTarget_dev,pm_factorRescaleemiMktCO2Tax;
 
-$ENDIF.regicarbonprice
-
+$ENDIF.emiMkt
 
 
 ***---------------------------------------------------------------------------

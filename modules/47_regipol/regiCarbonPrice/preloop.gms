@@ -6,20 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 
-$IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off" 
-
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),
-	loop(all_regi$(sameas(ext_regi,all_regi) OR (regi_group(ext_regi,all_regi))),
-*** 		Initialize EU tax path until 2050
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val le 2050) = pm_taxCO2eq("2020",all_regi)*1.05**(t.val-2020);		
-*** 		convergence scheme post 2050: exponential increase with 1.25%
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050);
-	);
-);
-
-$ENDIF.regicarbonprice
-
-
 ***--------------------------------------------------
 *** Emission markets
 ***--------------------------------------------------
@@ -30,6 +16,16 @@ pm_emiRescaleCo2TaxESR(ttot,regi) = 0;
 
 *** Initialize tax path
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)),
+	loop(regi$regi_groupExt(ext_regi,regi),
+		loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+    		pm_taxemiMkt(ttot3,regi,emiMkt)$(ttot3.val le cm_startyear) = p47_taxemiMktBeforeStartYear(ttot3,regi,emiMkt);
+		);
+	);
+  );
+$ENDIF.emiMkt
 
 $IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
 if ( (cm_startyear gt 2005),
