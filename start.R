@@ -230,7 +230,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
-    icfg$files2export$start <- c(icfg$files2export$start, gdxlist)
+    icfg$files2export$start <- c(icfg$files2export$start, gdxlist, config.file)
 
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
@@ -328,6 +328,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       try(system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx")))
     }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
+    cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
     if (! '--test' %in% argv) {
@@ -371,7 +372,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
-    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model", "regionmapping", "inputRevision")
+    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
+                          "regionmapping", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
@@ -424,6 +426,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
+
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
     source("config/default.cfg")
 
@@ -442,6 +445,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
+
+    message("\n", if (cfg$title == "testOneRegi") cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
@@ -464,8 +469,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
       }
     }
-
-    cat("\n",cfg$title,"\n")
 
     if ("--debug" %in% argv) {
       cfg$gms$cm_nash_mode <- "debug"

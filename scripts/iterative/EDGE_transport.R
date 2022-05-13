@@ -243,6 +243,8 @@ if (opt$reporting) {
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
+  saveRDS(logit_params, file = datapath("logit_params.RDS"))
+  saveRDS(logit_data, file = datapath("logit_data.RDS"))
 
   vint <- vintages[["vintcomp_startyear"]]
   newd <- vintages[["newcomp"]]
@@ -257,7 +259,6 @@ if (opt$reporting) {
 
   vint <- newd[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
   vint <- vint[!is.na(demNew)]
-  
   vint <- vint[, c("year", "region", "vehicle_type", "technology", "variable", "demNew", "demVintEachYear")]
   vint[, demand_F := demNew + sum(demVintEachYear), by=c("region", "year", "vehicle_type", "technology")]
 
@@ -266,7 +267,7 @@ if (opt$reporting) {
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
   vint[, c("demand_F", "demVintEachYear", "loadFactor", "demNew") := NULL]
-  
+
   setnames(vint, "variable", "construction_year")
 
   vintfile <- "vintcomp.csv"

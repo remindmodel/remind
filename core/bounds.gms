@@ -548,4 +548,13 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 *** FS: no electrolysis capacities before 2020
 vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
 
+
+***----------------------------------------------------------------------------
+***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
+***----------------------------------------------------------------------------
+$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
+  vm_transpGDPscale.fx(t,regi) = 1;
+$ENDIF.transpGDPscale
+
+
 *** EOF ./core/bounds.gms

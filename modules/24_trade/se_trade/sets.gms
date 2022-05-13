@@ -31,6 +31,11 @@ tradeSe(all_enty)           "Traded secondary energy commodities"
 ***    seel,
     seh2
 /
+
+tradeCap(all_enty)          "Commodities traded via capacity mode."
+/
+    null
+/
 ;
 
 *** EOF ./modules/24_trade/se_trade/sets.gms
