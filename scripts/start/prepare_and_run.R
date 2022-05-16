@@ -991,7 +991,7 @@ run <- function(start_subsequent_runs = TRUE) {
       if (! file.exists("abort.gdx")) {
         message("  abort.gdx does not exist, which is a file written automatically for some types of errors.")
       } else {
-        message("! abort.gdx exists, containing the latest GAMS data including changes after the last solve statement.")
+        message("! abort.gdx exists, which is a file containing the latest data at the point GAMS aborted execution.")
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
@@ -1009,15 +1009,17 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  message("Infeasibilities extracted from full.lst with nashstat -F:")
-  command <- paste(
-    "li=$(nashstat -F | wc -l); cat",
-    "<(if (($li < 2)); then echo no infeasibilities found; fi)",
-    "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
-    "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-    "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
-  nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
-  if (nashstatres != 0) message("Error: nashstat not found, search for p80_repy in full.lst yourself.")
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+    message("\nInfeasibilities extracted from full.lst with nashstat -F:")
+    command <- paste(
+      "li=$(nashstat -F | wc -l); cat",
+      "<(if (($li < 2)); then echo no infeasibilities found; fi)",
+      "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
+    nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
+    if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
+  }
   message("")
 
   if (stoprun) {
