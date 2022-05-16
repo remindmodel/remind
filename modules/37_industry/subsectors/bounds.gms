@@ -49,40 +49,11 @@ else
 );
 $endif.secondary_steel_bound
 
-$ontext
-loop ((t,in_industry_dyn37(in))$( 
-                      NOT (t0(t) OR industry_ue_calibration_target_dyn37(in)) ),
-  vm_cesIO.lo(t,regi,in)$(    vm_cesIO.lo(t,regi,in) ne 0 
-                          AND vm_cesIO.lo(t,regi,in) ne vm_cesIO.up(t,regi,in) )
-  = 1e-12$( NOT pm_cesdata(t,regi,in,"offset_quantity") )
-  - pm_cesdata(t,regi,in,"offset_quantity")$(
-                                      pm_cesdata(t,regi,in,"offset_quantity") );
-);
-$offtext
-
-vm_cesIO.lo(t,regi,in_industry_dyn37(in))$( 
-               NOT (t0(t) OR vm_cesIO.lo(t,regi,in) eq vm_cesIO.up(t,regi,in)) )
-  = 1e-12$( NOT pm_cesdata(t,regi,in,"offset_quantity") )
-  - pm_cesdata(t,regi,in,"offset_quantity");
-
 vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
   = pm_cesdata("2005",regi,in,"quantity");
 
-$ifthen.calibration "%CES_parameters%" == "calibrate" !! CES_parameters
-$ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
-$ifthen.first_iteration "%c_CES_calibration_iteration%" == "1" !! c_CES_calibration_iteration
-loop (t0,
-  vm_cesIO.lo(t,regi_dyn29(regi),ppf_industry_dyn37(in))$( NOT t0(t) )
-    = pm_cesdata(t,regi,in,"quantity")
-    * 0.9;
-  
-  vm_cesIO.up(t,regi_dyn29(regi),ppf_industry_dyn37(in))$( NOT t0(t) )
-    = pm_cesdata(t,regi,in,"quantity")
-    * 1.1;
-);
-$endif.first_iteration
-$endif.FE_target
-$endif.calibration
+vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$( 
+                                                  0 eq vm_cesIO.lo(t,regi,in) )
+  = sm_eps;
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms
-

@@ -375,25 +375,6 @@ loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
 
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
-
-*** ----- relaxing fixings for the first couple of periods --------------------
-loop (in$(    industry_ue_calibration_target_dyn37(in) 
-          AND %c_CES_calibration_iteration% eq 1 ),
-  vm_cesIO.lo(t_29(t),regi,in)$( t.val ne 2005 )
-  = pm_cesdata(t,regi,in,"quantity")
-  * max(0, (1 - max(0, %c_CES_calibration_iteration% - 2) / 8));
-
-  vm_cesIO.up(t_29(t),regi,in)$( t.val ne 2005 )
-  = pm_cesdata(t,regi,in,"quantity")
-  * (1 + max(0, %c_CES_calibration_iteration% - 2) / 8);
-);
-
-*** FIXME fix secondary steel for the calibration
-*** see discussion w/ Gunnar & Antoine 2020-07-09
-*vm_cesIO.fx(t,regi_dyn29(regi),"ue_steel_secondary")
-*  = pm_cesdata(t,regi,"ue_steel_secondary","quantity");
-*** end FIXME fix secondary steel for the calibration
-
 *** Finalize calibration by ensuring the consistency of pm_cesdata ***
 
 display "start consistency", pm_cesdata;
