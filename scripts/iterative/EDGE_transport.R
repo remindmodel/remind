@@ -222,7 +222,6 @@ EDGE2CESmap <- fread("mapping_CESnodes_EDGE.csv")
 shares_int_dem <- shares_intensity_and_demand(
   logit_shares=shares,
   MJ_km_base=mj_km_data,
-  EDGE2CESmap=EDGE2CESmap,
   REMINDyears=REMINDyears,
   scenario=scenario,
   demand_input = if (opt$reporting) ES_demand_all)
