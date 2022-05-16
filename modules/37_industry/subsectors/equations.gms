@@ -7,8 +7,8 @@
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
 *' Industry final energy balance
-q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
-                                         AND entyFe2Sector(entyFe,"indst") ) .. 
+q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
+                                         AND entyFe2Sector(entyFe,"indst") ) ..
   sum(se2fe(entySE,entyFE,te),
     vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
@@ -21,8 +21,8 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 ;
 
 *' Thermodynamic limits on subsector energy demand
-q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
-                                 ttot.val gt 2015 AND pm_energy_limit(out) ) .. 
+q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
+                                 ttot.val gt 2015 AND pm_energy_limit(out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
@@ -41,7 +41,7 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
 *' use with fuel-specific emission factors.
-q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) .. 
+q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in))$(entyFeCC37(entyFe)),
@@ -52,7 +52,7 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
 
 *' Compute maximum possible CCS level in industry sub-sectors given the current
 *' CO2 price.
-q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
   =e=
     !! map sub-sector emissions to sub-sector MACs
@@ -73,7 +73,7 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 ;
 
 *' Limit industry CCS to maximum possible CCS level.
-q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
@@ -82,7 +82,7 @@ q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 *' Fix cement fuel and cement process emissions to the same abatement level.
 q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
                           AND pm_macswitch("co2cement")
-                          AND pm_macAbatLev(ttot,regi,"co2cement") ) .. 
+                          AND pm_macAbatLev(ttot,regi,"co2cement") ) ..
     vm_emiIndCCS(ttot,regi,"co2cement")
   * v37_emiIndCCSmax(ttot,regi,"co2cement_process")
   =e=
@@ -91,7 +91,7 @@ q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
 ;
 
 *' Calculate industry CCS costs.
-q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) .. 
+q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=
     1e-3
@@ -122,9 +122,8 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)
   =e=
-    p37_CESMkup(t,regi,in) 
+    p37_CESMkup(t,regi,in)
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
 *** EOF ./modules/37_industry/subsectors/equations.gms
-
