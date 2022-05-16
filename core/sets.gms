@@ -1325,7 +1325,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
         storwindoff "storage technology for wind offshore"
 $ENDIF.WindOff
         storcsp     "storage technology for csp"
-        dac         "direct air capture"
         elh2        "hydrogen elecrolysis"
 /
 
