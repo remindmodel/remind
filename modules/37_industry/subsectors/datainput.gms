@@ -233,7 +233,7 @@ p37_steel_secondary_max_share(t,regi)
   = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
 
 $ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
-Parameter p37_steel_secondary_share(tall,all_regi);
+Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 
 p37_steel_secondary_share(t,regi_dyn29(regi))
   = pm_cesdata(t,regi,"ue_steel_secondary","quantity")
