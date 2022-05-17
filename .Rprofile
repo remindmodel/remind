@@ -7,9 +7,9 @@ if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")
     !file.exists("renv.lock")) {
   message("renv (project package library) is empty, installing dependencies...")
   # only one non-core package is installed: renv
-  renv::install("yaml") # yaml is required to find dependencies in Rmd
+  renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
-  renv::snapshot() # create renv.lock
+  renv::snapshot(prompt = FALSE) # create renv.lock
 }
 
 local({
