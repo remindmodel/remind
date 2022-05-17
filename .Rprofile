@@ -1,10 +1,15 @@
 source("renv/activate.R")
 
+options(repos = c(pikruniverse = "https://pik-piam.r-universe.dev", CRAN = "https://cran.rstudio.com/"))
+
 # bootstrapping, will only run once after remind is freshly cloned
-if (nrow(installed.packages(priority = "NA")) == 1) {
-  # only one package is installed, presumably renv
+if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")) &&
+    !file.exists("renv.lock")) {
+  message("renv (project package library) is empty, installing dependencies...")
+  # only one non-core package is installed: renv
   renv::install("yaml") # yaml is required to find dependencies in Rmd
   renv::hydrate() # auto-detect and install all dependencies
+  renv::snapshot() # create renv.lock
 }
 
 local({
