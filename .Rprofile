@@ -2,6 +2,7 @@ source("renv/activate.R")
 
 options(repos = c(pikruniverse = "https://pik-piam.r-universe.dev", CRAN = "https://cran.rstudio.com/"))
 
+# TODO do we want this bootstrapping?
 # bootstrapping, will only run once after remind is freshly cloned
 if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")) &&
     !file.exists("renv.lock")) {
@@ -10,17 +11,10 @@ if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")
   renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
   renv::snapshot(prompt = FALSE) # create renv.lock
+  # TODO if this bootstrapping procedure is used, adapt 1_GettingREMIND.md
 }
 
-local({
-  packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-  pikPiamPackages <- sub("Package: ", "", grep("Package: ", readLines(packagesUrl), value = TRUE))
-
-  # TODO should this be on or off by default?
-  # comment out the following line to disable auto-updates
-  # renv::update(intersect(utils::installed.packages()[, "Package"], pikPiamPackages))
-})
-
+# TODO This lowers reproducibility, do we really want this?
 # TODO is this coming last ok?
 if (file.exists("~/.Rprofile")) {
   source("~/.Rprofile")
