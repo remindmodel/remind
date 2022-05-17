@@ -516,7 +516,7 @@ for(scen in common){
   if (start_now){
       startedRuns <- startedRuns + 1
       if (! "--test" %in% argv) {
-        logfile <- if (parallel) file.path("output", fullrunname, if (start_magpie) "log-mag.txt" else "log.txt") else file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), stamp, ".txt"))
+        logfile <- file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), if (! parallel) stamp, ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
         system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))

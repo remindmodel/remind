@@ -85,7 +85,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
   use_external_ghgprices <- ifelse(is.na(cfg_mag$path_to_report_ghgprices), FALSE, TRUE)
 
-  if (start_iter > max_iterations ) stop("### COUPLING ### start_iter > max_iterations")
+  if (start_iter > max_iterations) stop("### COUPLING ### start_iter > max_iterations")
 
   possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
                               "input_bau.gdx", "input_carbonprice.gdx")
@@ -107,7 +107,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     setwd(path_remind)
     message(" to ", getwd())
     source("scripts/start/submit.R") # provide source of "get_magpie_data" and "start_run"
-    
+
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
     cfg_rem$force_replace  <- TRUE # overwrite existing output folders
@@ -139,9 +139,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       # Set negisgi iteration to 1 for the first run
       cfg_rem$gms$cm_iteration_max <- 1*double_iterations
     #} else if (i==itr_offset+1) {
-    #	cfg_rem$gms$cm_iteration_max <- 2*double_iterations
+    #  cfg_rem$gms$cm_iteration_max <- 2*double_iterations
     #} else if (i==itr_offset+2) {
-    #	cfg_rem$gms$cm_iteration_max <- 3*double_iterations
+    #  cfg_rem$gms$cm_iteration_max <- 3*double_iterations
     } else {
       # Set negishi iterations back to the value defined in the config file
       cfg_rem$gms$cm_iteration_max <- cm_iteration_max_tmp
@@ -192,7 +192,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     if(!is.null(outfolder_rem)) {
       report    <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
-      message("### COUPLING ### REMIND output was stored in ",outfolder_rem)
+      message("### COUPLING ### REMIND output was stored in ", outfolder_rem)
       if (file.exists(paste0(outfolder_rem,"/fulldata.gdx"))) {
         modstat <- readGDX(paste0(outfolder_rem,"/fulldata.gdx"),types="parameters",format="raw",c("s80_bool","o_modelstat"))
         if (cfg_rem$gms$optimization == "negishi") {
@@ -315,11 +315,17 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           # for negishi: use only one CPU
           nr_of_regions <- 1
         }
-        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=output/log_", subseq.env$fullrunname,
+        logfile <- if (parallel) file.path("output", paste0("log_", subseq.env$fullrunname, ".txt")) else file.path("output", paste0("log_", subseq.env$fullrunname, stamp, ".txt"))
+        if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
+        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         if (parallel) "" else stamp, ".txt --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
-        system(subsequentcommand)
+        if (length(needfulldatagdx) > 0) {
+          system(subsequentcommand)
+        } else {
+          message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")
+        }
       } else {
         message(run, " is still waiting for: ",
         paste(unique(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][!(gdx_exist | gdx_na)]), collapse = ", "), ".")
@@ -337,7 +343,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     message("\n### COUPLING ### Preparing runtime.pdf");
     runs <- findCoupledruns(resultsfolder = remindpath)
-    ret  <- findIterations(runs, modelpath=c(remindpath, magpiepath), latest=FALSE)
+    ret  <- findIterations(runs, modelpath = c(remindpath, magpiepath), latest = FALSE)
     readRuntime(ret, plot=TRUE, coupled=TRUE)
     unlink(c("runtime.log", "runtime.out", "runtime.rda"))
 
@@ -352,10 +358,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       report_mag <- mag_report_keep_in_mind
     }
     message("Joining to a common reporting file:\n    ", report_rem, "\n    ", report_mag)
-    tmp1 <- read.report(report_rem,as.list=FALSE)
-    tmp2 <- read.report(report_mag,as.list=FALSE)[,getYears(tmp1),]
+    tmp1 <- read.report(report_rem, as.list=FALSE)
+    tmp2 <- read.report(report_mag, as.list=FALSE)[, getYears(tmp1), ]
     tmp3 <- mbind(tmp1,tmp2)
-    getNames(tmp3,dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
+    getNames(tmp3, dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
     # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
     if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
       msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
@@ -374,6 +380,12 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       runs <- runname
       folder <- "./output"
       source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
+      cs2_runs <- findIterations(runname, modelpath = remindpath, latest = FALSE)
+      cs2qos <- if (qos == "priority") qos else "short"
+      cs2prefix <- paste0("rem-1-", max_iterations, "_", runname)
+      message("### Coupling ### Start compareScenario with prefix ", cs2prefix)
+      system(paste0("Rscript output.R slurmConfig=", cs2qos, " comp=TRUE output=compareScenarios2 outputdir=",
+             paste(cs2_runs, collapse=","), " filename_prefix=", cs2prefix))
     }
   }
 }
