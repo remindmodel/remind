@@ -59,3 +59,6 @@ config/gdx-files/*.gdx
 plotRuntime*.html
 plotRuntimeDependencies/
 .Rproj.user
+
+# main renv.lock should only be commited for releases
+renv.lock
