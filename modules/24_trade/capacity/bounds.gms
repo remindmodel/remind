@@ -127,4 +127,21 @@ if ( cm_biotrade_phaseout eq 1,
 vm_Mport.fx(t,regi,entySe) = 0;
 vm_Xport.fx(t,regi,entySe) = 0;
 
+
+***-------------------------------------------------------------------------------
+***                        TRADE MODEL BOUNDS GENERAL
+***-------------------------------------------------------------------------------
+*** shipments constrained: no self-imports or self-exports
+v24_trade.fx(t,regi,regi2,tradeModes)$sameAs(regi,regi2) = 0.0;
+
+*** shipments constrained: trade only allowed between defined regions
+v24_trade.fx(t,regi,regi2,tradeModes)$(p24_disallowed(regi,regi2,tradeModes) gt 0.0) = 0.0;
+
+*** trade capacities for terminals live on the diagonal
+v24_capTrade.fx(t,regi,regi2,teTradeXport)$(not sameAs(regi,regi2)) = 0.0;
+v24_capTrade.fx(t,regi,regi2,teTradeMport)$(not sameAs(regi,regi2)) = 0.0;
+
+*** trade capacities for pipelines live on the off-diagonal
+v24_capTrade.fx(t,regi,regi2,teTradeBilat)$(sameAs(regi,regi2)) = 0.0;
+
 *** EOF ./modules/24_trade/capacity/bounds.gms

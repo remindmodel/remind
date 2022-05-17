@@ -301,7 +301,7 @@ if (comp == TRUE) {
     # Get values of config if output.R is called standalone
     if (!exists("source_include")) {
       magpie_folder <- getwd()
-      print(file.path(outputdir, "config.Rdata"))
+      message("Load data from ", file.path(outputdir, "config.Rdata"))
       if (file.exists(file.path(outputdir, "config.Rdata"))) {
         load(file.path(outputdir, "config.Rdata"))
         title <- cfg$title
@@ -323,7 +323,7 @@ if (comp == TRUE) {
     # included as source (instead of a load from command line)
     source_include <- TRUE
 
-    cat(paste("\nStarting output generation for", outputdir, "\n\n"))
+    message("\nStarting output generation for ", outputdir, "\n")
 
     ###################################################################################
     # Execute R scripts
@@ -349,17 +349,18 @@ if (comp == TRUE) {
             }
           } else {
             # send the output script to slurm
-            slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", outputdir, " --output=", outputdir,
-                               ".txt --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
+            logfile <- paste0(outputdir, "/log_", rout, ".txt")
+            slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                               " --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
                                ".R  outputdir=", outputdir, "\"")
-            message("Sending to slurm: ", name)
+            message("Sending to slurm: ", name, ". Find log in ", logfile)
             system(slurmcmd)
             Sys.sleep(1)
           }
         }
       }
       # finished
-      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting "), "output generation for ", outputdir, "!\n")
+      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting jobs for "), "output generation for ", outputdir, "!\n")
     }
 
     rm(source_include)

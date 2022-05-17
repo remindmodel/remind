@@ -7,3 +7,5 @@
 name,type,reason
 pm_gdp,input,questionnaire
 cm_import_EU,input,questionnaire
+
+pm_SEPrice, parameter, not yet used in capacity realization
