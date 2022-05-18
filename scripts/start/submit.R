@@ -17,7 +17,7 @@
   }
 }
 
-############## Define function: runsubmit #########################
+############## Define function: submit #########################
 
 submit <- function(cfg, restart = FALSE) {
   
@@ -38,22 +38,29 @@ submit <- function(cfg, restart = FALSE) {
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
 
-    # remember main folder
-    cfg$remind_folder <- normalizePath(getwd())
+    if (is.null(renv::project())) {
+      warning("No active renv project found, not using renv.")
+    } else {
+      if (!renv::status()$synchronized) {
+        stop("The renv.lock file does not represent the current package environment.")
+      }
+      file.copy("renv.lock", cfg$results_folder)
 
-    initRenv <- function(config) {
-      renv::init(config$results_folder, bare = TRUE)
-      renv::restore(lockfile = file.path(config$remind_folder, "renv.lock"))
-      renv::snapshot(type = "all")
+      createResultsfolderRenv <- function(resultsfolder) {
+        renv::init(resultsfolder, bare = TRUE)
+        renv::restore()
+      }
+      # init renv in a separate session so the libPaths of the current session remain unchanged
+      callr::r(createResultsfolderRenv, list(cfg$results_folder), show = TRUE)
     }
-    # init renv in a separate session so the libPaths of the current session remain unchanged
-    callr::r(initRenv, list(cfg), show = TRUE)
-    
+
     # Save the cfg (with the updated name of the result folder) into the results folder. 
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
     filename <- paste0(cfg$results_folder,"/config.Rdata")
     cat("   Writing cfg to file",filename,"\n")
+    # remember main folder
+    cfg$remind_folder <- normalizePath(".")
     save(cfg,file=filename)
     
     # Copy files required to configure and start a run
@@ -63,10 +70,10 @@ submit <- function(cfg, restart = FALSE) {
 
     # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
   }
-  
+
+  on.exit(setwd(cfg$remind_folder))
   # Change to run folder
   setwd(cfg$results_folder)
-  on.exit(setwd(cfg$remind_folder))
   
   # send prepare_and_run.R to cluster 
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")

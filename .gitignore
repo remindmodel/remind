@@ -61,4 +61,4 @@ plotRuntimeDependencies/
 .Rproj.user
 
 # main renv.lock should only be commited for releases
-renv.lock
+/renv.lock
