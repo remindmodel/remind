@@ -221,7 +221,7 @@ $setGlobal codePerformance  off       !! def = off
 ***-----------------------------------------------------------------------------
 ***--------------- declaration of parameters for switches ----------------------
 parameters
-  cm_iteration_max          "number of Negishi iterations"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
   cm_abortOnConsecFail      "number of iterations of consecutive failures of one region after which to abort"
   c_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
