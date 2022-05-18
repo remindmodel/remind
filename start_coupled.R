@@ -51,7 +51,8 @@ debug_coupled <- function(model = NULL, cfg) {
 ##################################################################
 
 start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations = 5, start_iter = 1,
-                          n600_iterations = 0, report = NULL, qos, parallel = FALSE, fullrunname = FALSE, prefix_runname = "C_") {
+                          n600_iterations = 0, report = NULL, qos, parallel = FALSE, fullrunname = FALSE,
+                          prefix_runname = "C_", run_compareScenarios = TRUE) {
   require(lucode2)
   require(gms)
   require(magclass)
@@ -380,14 +381,22 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       runs <- runname
       folder <- "./output"
       source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
-      cs2_runs <- findIterations(runname, modelpath = remindpath, latest = FALSE)
-      cs2qos <- if (qos == "priority") qos else "short"
-      cs2prefix <- paste0("rem-1-", max_iterations, "_", runname)
-      message("### Coupling ### Start compareScenario with prefix ", cs2prefix)
-      system(paste0("Rscript output.R slurmConfig=", cs2qos, " comp=TRUE output=compareScenarios2 outputdir=",
-             paste(cs2_runs, collapse=","), " filename_prefix=", cs2prefix))
+      cs_runs <- findIterations(runname, modelpath = remindpath, latest = FALSE)
+      cs_prefix <- paste0("rem-1-", max_iterations, "_", runname)
+      cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
+      cs_command <- paste0("Rscript output.R slurmConfig=", cs_qos, " comp=TRUE output=compareScenarios2 outputdir=",
+             paste(cs_runs, collapse=","), " filename_prefix=", cs_prefix)
+      if (! isFALSE(run_compareScenarios)) {
+        message("### Coupling ### Start compareScenario with prefix ", cs_prefix)
+        message(cs_command)
+        system(cs_command)
+      } else {
+        message("### Coupling ### If you want a compareScenario with prefix ", cs_prefix, ", run:")
+        message(cs_command)
+      }
     }
   }
+  message("### start_coupled() finished. ###")
 }
 
 ##################################################################
@@ -404,6 +413,10 @@ load(coupled_config)
 if (! exists("parallel")) parallel <- FALSE
 if (! exists("fullrunname")) fullrunname <- runname
 if (! exists("prefix_runname")) prefix_runname <- "C_"
-
+if (! exists("run_compareScenarios")) run_compareScenarios <- TRUE
 start_coupled(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations, start_iter,
-              n600_iterations, path_report, qos, parallel, fullrunname, prefix_runname)
+              n600_iterations, path_report, qos, parallel, fullrunname, prefix_runname, run_compareScenarios)
+
+message("### Print warnings ###")
+warnings()
+message("### End start_coupled.R ###")

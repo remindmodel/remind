@@ -46,6 +46,9 @@ max_iterations <- 5
 # Afterwards REMIND runs for "n600_iterations" iterations with results from higher resolution.
 n600_iterations <- 0 # max_iterations
 
+# run a compareScenario for each scenario comparing all rem-x: Choose qos (short, priority) or set to FALSE
+run_compareScenarios <- "short"
+
 ########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
@@ -473,8 +476,8 @@ for(scen in common){
 
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
-    save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations,
-         start_iter, n600_iterations, path_report, qos, parallel, prefix_runname, file = Rdatafile)
+    save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
+         n600_iterations, path_report, qos, parallel, prefix_runname, run_compareScenarios, file = Rdatafile)
 
   } # end for (i %in% configureIterations)
 
