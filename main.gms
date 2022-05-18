@@ -246,11 +246,12 @@ parameters
   cm_CCS_chemicals          "CCS for chemicals sub-sector"
   cm_CCS_steel              "CCS for steel sub-sector"
   c_solscen                 "solar option choice"
-  cm_bioenergy_tax          "level of bioenergy tax in fraction of bioenergy price"
+  cm_bioenergy_tax          "level of bioenergy sustainability tax in fraction of bioenergy price"
   cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
   cm_tradecost_bio          "choose financal tradecosts for biomass (purpose grown pebiolc)"
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
   cm_tradbio_phaseout       "Switch that allows for a faster phase out of traditional biomass"
+  cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
   cm_cprice_red_factor      "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
   cm_startyear              "first optimized modelling time step [year]"
   c_start_budget            "start of GHG budget limit"
@@ -395,6 +396,7 @@ cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
 $setglobal cm_tradbio_phaseout  default  !! def = default
+cm_biolc_tech_phaseout = 0;        !! def = 0
 cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
