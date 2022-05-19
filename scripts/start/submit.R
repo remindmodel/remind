@@ -46,19 +46,14 @@ submit <- function(cfg, restart = FALSE) {
       }
       autoUpdatesEnabled <- TRUE # TODO read from somewhere else
       if (autoUpdatesEnabled) {
-        # get all packages in pik-piam r-universe
-        packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-        pikPiamPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
-
-        # update pik-piam packages only
-        renv::update(intersect(utils::installed.packages()[, "Package"], pikPiamPackages), prompt = FALSE)
-        renv::snapshot(prompt = FALSE)
+        source("scripts/utils/updateRenv.R")
+        updateRenv()
       }
       file.copy("renv.lock", cfg$results_folder)
 
       createResultsfolderRenv <- function(resultsfolder) {
         renv::init(resultsfolder, bare = TRUE)
-        renv::restore()
+        renv::restore() # will restore using the renv.lock copied from the main renv
       }
       # init renv in a separate session so the libPaths of the current session remain unchanged
       callr::r(createResultsfolderRenv, list(cfg$results_folder), show = TRUE)

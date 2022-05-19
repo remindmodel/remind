@@ -162,6 +162,10 @@ choose_filename_prefix <- function(modules, title = "") {
   return(filename_prefix)
 }
 
+if (!exists("argv")) {
+  argv <- commandArgs(trailingOnly = TRUE)
+}
+
 if (exists("source_include")) {
   comp <- FALSE
 } else if (!exists("comp")) {
@@ -337,6 +341,10 @@ if (comp == TRUE) {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {
           if (slurmConfig == "direct") {
+            if ("--update" %in% argv) {
+              source("scripts/utils/updateRenv.R")
+              updateRenv()
+            }
             # execute output script directly (without sending it to slurm)
             message("Executing ", name)
             tmp.env <- new.env()
