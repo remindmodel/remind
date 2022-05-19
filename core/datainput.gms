@@ -239,6 +239,19 @@ if (c_ccsinjecratescen eq 3, sm_ccsinjecrate = sm_ccsinjecrate *   1.50 ); !! Up
 if (c_ccsinjecratescen eq 4, sm_ccsinjecrate = sm_ccsinjecrate * 200    ); !! remove flow constraint for DAC runs
 if (c_ccsinjecratescen eq 5, sm_ccsinjecrate = sm_ccsinjecrate *   0.20 ); !! sustainable estimate
 
+*** OR: regional reduction of ccs injection rate
+$ifThen.c_ccsinjecrateRegi not "%c_ccsinjecrateRegi%" == "off"
+Parameter
+  p_extRegiccsinjecrateRegi(ext_regi) "regional factor that limits CCS injection: 1 means no change, 0.6 means 40% reduction of CCS injection rate factor in respective region (extended regions)" / %c_ccsinjecrateRegi% /
+;
+  loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
+    pm_ccsinjecrateRegi(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
+  );
+$else.c_ccsinjecrateRegi
+  pm_ccsinjecrateRegi(regi) = 1.0;
+;
+$endIf.c_ccsinjecrateRegi
+
 $include "./core/input/generisdata_flexibility.prn"
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 fm_dataglob("flexibility","storwindoff")  = 1.93;

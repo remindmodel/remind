@@ -112,6 +112,7 @@ pm_budgetCO2eq(all_regi)                             "budget for regional energy
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
+pm_ccsinjecrateRegi(all_regi)                               "Regional CCS injection rate factor. No change if 1."
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
