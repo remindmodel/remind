@@ -32,7 +32,8 @@
     + sum(emi_sectors, v21_taxrevCO2Sector(t,regi,emi_sectors))
     + v21_taxrevCO2luc(t,regi)
     + v21_taxrevCCS(t,regi) 
-    + v21_taxrevNetNegEmi(t,regi)  
+    + v21_taxrevNetNegEmi(t,regi)
+    + v21_taxrevPE(t,regi)
     + v21_taxrevFE(t,regi) 
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
@@ -44,7 +45,7 @@
     + v21_implicitDiscRate(t,regi)
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
-    + v21_taxrevBioImport(t,regi)  
+    + v21_taxrevBioImport(t,regi)
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
     + vm_taxrevimplFETax(t,regi)
 $endif.cm_implicitFE    
@@ -106,6 +107,14 @@ q21_emiAllco2neg(t,regi)..
 v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi);
 
 ***---------------------------------------------------------------------------
+*'  Calculation of PE tax: tax rate times primary energy
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevPE(t,regi)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevPE(t,regi) =e= p21_tau_pe_tax(t,regi) * vm_prodPe(t,regi,enty)
+                          - p21_taxrevPE(t,regi);
+
+***---------------------------------------------------------------------------
 *'  Calculation of final Energy taxes: effective tax rate (tax - subsidy) times FE use in the specific sector
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
@@ -141,7 +150,7 @@ v21_taxrevPE2SE(t,regi)
 =e= SUM(pe2se(enty,enty2,te),
           (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te) + p21_tau_pe2se_inconv(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
        )
-	- p21_taxrevPE2SE0(t,regi) ; 
+	- p21_taxrevPE2SE0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of technology specific subsidies and taxes. Tax incidency applied only over new capacity (deltaCap)
@@ -152,7 +161,7 @@ v21_taxrevTech(t,regi)
 =e= sum(te2rlf(te,rlf),
           (p21_tech_tax(t,regi,te,rlf) + p21_tech_sub(t,regi,te,rlf)) * vm_deltaCap(t,regi,te,rlf)
        )
-	- p21_taxrevTech0(t,regi) ;   
+	- p21_taxrevTech0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of export taxes: tax rate times export volume

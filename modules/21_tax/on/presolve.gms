@@ -38,6 +38,7 @@ p21_taxrevFE0(ttot,regi) = sum((entyFe,sector)$entyFe2Sector(entyFe,sector),
   )
 ;
 p21_taxrevResEx0(ttot,regi) = sum(pe2rlf(peEx(enty),rlf), p21_tau_fuEx_sub(ttot,regi,enty) * vm_fuExtr.l(ttot,regi,enty,rlf));
+p21_taxrevPE0(ttot,regi) = p21_tau_pe_tax(ttot,regi,enty) * vm_prodPe.l(t,regi,"pegas")
 p21_taxrevPE2SE0(ttot,regi) = SUM(pe2se(enty,enty2,te),
                                     (p21_tau_pe2se_tax(ttot,regi,te) + p21_tau_pe2se_sub(ttot,regi,te) + p21_tau_pe2se_inconv(ttot,regi,te)) * vm_prodSe.l(ttot,regi,enty,enty2,te)
                                   ); 

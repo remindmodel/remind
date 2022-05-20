@@ -139,9 +139,24 @@ $offdelim
 *** converted to T$/TWyr   
 p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
 *LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;  
+p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
 
-           
+
+*** -------------------------Primary Energy Tax--------------------------
+*** initialize tax to zero
+p21_tau_pe_tax(tall,regi,allenty) = 0;
+
+*PW* choose tax path for gas in Germany
+if((cm_EnSecScen eq "on")  !!
+  p21_tau_pe_tax(2020,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2025,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2030,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2035,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2040,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2045,sameas(regi,"DEU"),"pegas") = 0.5;
+  p21_tau_pe_tax(2050,sameas(regi,"DEU"),"pegas") = 0.5;
+);
+
 *** --------------------
 *** CO2 prices
 *** --------------------    
