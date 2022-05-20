@@ -1,8 +1,8 @@
 Debugging REMIND
 ================
-Collaborative effort, coordinated by Oliver Richters, 31 March, 2022
+Collaborative effort, coordinated by Oliver Richters, March–May, 2022
 
-When running and changing REMIND, a multitude of errors may occur. In such a collaborative effort, they need not have been created by you and the REMIND team will help you solve them. So an important part of debugging is to find out whether something you changed created the error, or whether you were unfortunate enough to find errors you are not responsible for.
+When running and changing REMIND, a multitude of errors may occur. In such a collaborative effort, they need not have been created by you. So an important part of debugging is to find out whether something you changed created the error, or whether there is a general problem. The `develop` branch is permanently developed and may temporarily contain bugs, so use a release instead.
 
 First, find out the state of your run by executing this in the run directory:
 ```bash
@@ -58,9 +58,9 @@ less full.lst
 ```
 Hit `G` to go to the end of the file and search backwards for errors whose lines start with four asterisks by typing:
 ```
-/^\*\*\*\*
+?^\*\*\*\*
 ```
-(You can also use `vi full.lst`, and if you add `map f /*\*\*\*<CR>` to your `/home/username/.vimrc` file, you can simply press `f`).
+(You can also use `vi full.lst`, and if you add `map f /*\*\*\*<CR>` to your `/home/username/.vimrc` file, you can simply press `f`, which overwrites the search for single characters. In text editors such as `notepad++`, search for `****`).
 Going upwards to the next matches using `N`, you should eventually find an error message (`n` searches downwards).
 The error is indicated directly at the point in the code where it occurs.
 It is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation.
@@ -80,7 +80,7 @@ Rscript start.R --restart
 ### Case 2b: execution errors
 
 For execution errors, again try to identify the location of the error in the `full.lst` file.
-If it points to a specific line number where the error occured, mark this number, then type `/` and paste it into the editor which is then searching for this number, and typing `n` (eventually multiple times) should bring you to the source code part at the beginning of the file.
+If it points to a specific line number where the error occured, mark this number, then type `?` and paste it into the editor which is then searching backwards for this number, and typing `n` (eventually multiple times) should bring you to the source code part at the beginning of the file.
 You should now see the equation where the error was created. If you recently changed this equation, this may have caused the error.
 Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mccarlGuide/) may be helpful.
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
@@ -177,6 +177,7 @@ Asking for help
 
 In any case, don't hesitate to ask for help in [pik-piam/discussions](https://github.com/pik-piam/discussions). Please provide:
 
+- which version of REMIND was used
 - as much information on your run, such as the scenario config file and the run name
 - PIK cluster users should supply the path on the cluster
 - a summary of things you already checked or found out
