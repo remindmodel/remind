@@ -24,6 +24,12 @@ if (cm_bioprod_histlim ge 0,
   p40_ElecBioBound(t,regi) = 0;
   );
 
+*** In scenarios with 2nd generation bioenergy technology phaseout,
+*** switch-off biomass capacity targets of NDC
+if (cm_biolc_tech_phaseout eq 1,
+  p40_ElecBioBound(t,regi) = 0;
+  );
+
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model
 *** to add further targets, include both the respective parameter value below, and extend the equation domain in equations.gms

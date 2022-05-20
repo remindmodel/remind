@@ -398,6 +398,7 @@ all_enty             "all types of quantities"
         ch4wstl    "ch4 emissions from solid waste disposal on land"
         ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
         ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
@@ -418,6 +419,7 @@ all_enty             "all types of quantities"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
         n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1323,7 +1325,6 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
         storwindoff "storage technology for wind offshore"
 $ENDIF.WindOff
         storcsp     "storage technology for csp"
-        dac         "direct air capture"
         elh2        "hydrogen elecrolysis"
 /
 
@@ -1624,6 +1625,7 @@ enty(all_enty)       "all types of quantities"
         ch4wstl    "ch4 emissions from solid waste disposal on land"
         ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
         ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
@@ -1644,6 +1646,7 @@ enty(all_enty)       "all types of quantities"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
         n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"        
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1845,6 +1848,7 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         ch4wstl    "ch4 emissions from solid waste disposal on land"
         ch4wsts    "ch4 emissions from waste water"
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
         ch4agwaste "ch4 emissions from agricultural waste burning (no MAC available)"
@@ -1862,6 +1866,7 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
         n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"        
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1894,8 +1899,10 @@ MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIN
         ch4rice    "rice cultivation"
         ch4animals "enteric fermentation of ruminants"
         ch4anmlwst "animal waste management"
+        ch4peatland "ch4 emissions from peatlands (no MAC available)"
         n2ofert    "Inorganic fertilizers"
         n2oanwst   "manure applied to croplands"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"        
         co2luc     "land use change"
 /
 
@@ -1906,7 +1913,9 @@ emiMacMagpieN2O(all_enty)  "types of climate-relevant non-energy N2O emissions w
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
         n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
+        ch4peatland "ch4 emissions from peatlands (peatland_ch4)"        
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
+        n2opeatland "n2o emissions from peatlands (no MAC available)"        
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
 /
 emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
@@ -1914,6 +1923,7 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
+        ch4peatland "ch4 emissions from peatlands peatland_ch4)"        
 /
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
@@ -2074,6 +2084,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         ch4animals.ES
         ch4anmlwst.ES
         ch4agwaste.ES
+        ch4peatland.other        
         ch4forest.other
         ch4savan.other
         n2oforest.other
@@ -2089,6 +2100,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         n2oanwstp.ES
         n2oagwaste.ES
         n2owaste.ES
+        n2opeatland.other        
         co2luc.other
         co2cement_process.ETS
 /
@@ -2642,8 +2654,8 @@ emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
 emiMacSector2emiMac(all_enty,all_enty)   "mapping of sub-emissions to their sum"
 /
         (co2luc,co2cement_process)                          .co2
-        (n2otrans,n2oadac,n2onitac,n2ofertin,n2ofertcr, n2ofertsom, n2oanwstc,n2oanwstm, n2oanwstp,n2oagwaste,n2oforest,n2osavan,n2owaste).n2o
-        (ch4coal,ch4gas,ch4oil,ch4rice,ch4animals,ch4anmlwst,ch4agwaste,ch4forest,ch4savan,ch4wstl,ch4wsts).ch4
+        (n2otrans,n2oadac,n2onitac,n2ofertin,n2ofertcr, n2ofertsom, n2oanwstc,n2oanwstm,n2opeatland,n2oanwstp,n2oagwaste,n2oforest,n2osavan,n2owaste).n2o
+        (ch4coal,ch4gas,ch4oil,ch4rice,ch4animals,ch4anmlwst,ch4agwaste,ch4peatland,ch4forest,ch4savan,ch4wstl,ch4wsts).ch4
 /
 emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - caution: not all MACs exist, in that case they are zero"
 /
@@ -2656,6 +2668,7 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         ch4animals.ch4animals
         ch4anmlwst.ch4anmlwst
         ch4agwaste.ch4agwaste
+        ch4peatland.ch4peatland
         ch4forest.ch4forest
         ch4savan.ch4savan
         n2otrans.n2otrans
@@ -2664,6 +2677,7 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         (n2ofertin, n2ofertcr, n2ofertsom).n2ofert
         (n2oanwstc, n2oanwstm, n2oanwstp).n2oanwst
         n2oagwaste.n2oagwaste
+        n2opeatland.n2opeatland
         n2owaste.n2owaste
         n2osavan.n2osavan
         n2oforest.n2oforest
@@ -2679,13 +2693,13 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (ch4coal, ch4gas, ch4oil).extraction.process.ch4
         (ch4wstl, ch4wsts).waste.process.ch4
         (ch4rice, ch4animals, ch4anmlwst, ch4agwaste).agriculture.process.ch4
-        (ch4forest, ch4savan).lulucf.process.ch4
+        (ch4forest, ch4savan, ch4peatland).lulucf.process.ch4
 
         (n2otrans).trans.process.n2o
         (n2oadac, n2onitac).indst.process.n2o
         (n2owaste).waste.process.n2o
         (n2ofertin, n2ofertcr, n2ofertsom, n2oanwstc, n2oanwstm, n2oanwstp, n2oagwaste).agriculture.process.n2o
-        (n2oforest, n2osavan).lulucf.process.n2o
+        (n2oforest, n2osavan, n2opeatland).lulucf.process.n2o
 
         (co2cement_process,co2cement,co2chemicals,co2steel).indst.process.co2
         (co2luc).lulucf.process.co2
