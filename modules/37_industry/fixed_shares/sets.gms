@@ -52,7 +52,7 @@ Sets
     (fesos, fehos, fegas) . (cement, chemicals, steel, otherInd)
     co2cement_process     . cement
   /
- 
+
   in_industry_dyn37(all_in)   "all inputs and outputs of the CES function - industry"
   /
     eni     "industry energy use"
@@ -90,7 +90,7 @@ Sets
     fehes . fehei
     feels . feeli
   /
-  
+
   fe_tax_sub37(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
   /
   fesoi . fesoi
@@ -103,8 +103,8 @@ Sets
 
   entyFe37(all_enty)   "FE carriers used in industry"
   /
-    fesos 
-    fehos 
+    fesos
+    fehos
     fegas
     feh2s
     fehes
@@ -117,14 +117,14 @@ Sets
     fehos
     fegas
   /
-  
+
   secInd37_emiMkt(secInd37,all_emiMkt)   "industry and emission market mapping"
   /
     cement.ETS
     chemicals.ETS
     steel.ETS
-    otherInd.ES  
-  / 
+    otherInd.ES
+  /
 
   tdTeMarkup37(all_te)   "td technologies to which CES markup cost should be attributed to as investment cost"
   /
@@ -146,6 +146,7 @@ Sets
   ppfKap_industry_dyn37(all_in)                  ""   / /
   ue_industry_dyn37(all_in)                      ""   / /
   ces_eff_target_dyn37(all_in,all_in)            ""   / /
+  pf_industry_relaxed_bounds_dyn37(all_in)       ""   / /
 ;
 
 *** add module specific sets and mappings to the global sets and mappings
@@ -157,4 +158,3 @@ fe_tax_sub_sbi(fe_tax_sub37)       = YES;
 ppfen_CESMkup(ppfen_CESMkup_dyn37) = YES;
 
 *** EOF ./modules/37_industry/fixed_shares/sets.gms
-
