@@ -85,9 +85,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.298001
+* Input data revision: 6.304
 * 
-* Last modification (input data): Mon Apr 11 14:41:17 2022
+* Last modification (input data): Fri May 20 12:34:46 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -142,8 +142,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  default
-$setGlobal c_description  REMIND run with default settings
+$setGlobal c_expname  testOneRegi
+$setGlobal c_description  A REMIND run with default settings using testOneRegi
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -212,7 +212,7 @@ $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
-$setGlobal optimization  nash         !! def = nash
+$setGlobal optimization  testOneRegi         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 $setGlobal codePerformance  off       !! def = off
 
@@ -526,7 +526,7 @@ $setGlobal cm_import_EU  off !! def off
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
-$setGlobal cm_EnSecScen off !! def off
+$setGlobal cm_EnSecScen  on !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
@@ -628,7 +628,7 @@ $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_transpGDPscale on  !! def = on
+$setglobal cm_transpGDPscale  off  !! def = on
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off
