@@ -786,6 +786,25 @@ prepare <- function() {
                              list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
                              list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
 
+    # renamed because of https://github.com/remindmodel/remind/pull/796
+    manipulate_tradesets <- c(list(c("'gas_pipe'", "'pipe_gas'")),
+                              list(c("'lng_liq'", "'termX_lng'")),
+                              list(c("'lng_gas'", "'termX_lng'")),
+                              list(c("'lng_ves'", "'vess_lng'")),
+                              list(c("'coal_ves'", "'vess_coal'")),
+                              list(c("vm_budgetTradeX", "!! vm_budgetTradeX")),
+                              list(c("vm_budgetTradeM", "!! vm_budgetTradeM"))  )
+    levs_manipulateThis <- c(levs_manipulateThis, manipulate_tradesets)
+    margs_manipulateThis <- c(margs_manipulateThis, manipulate_tradesets)
+    fixings_manipulateThis <- c(fixings_manipulateThis, manipulate_tradesets)
+
+    # because of https://github.com/remindmodel/remind/pull/800
+    if (cfg$gms$cm_transpGDPscale != "on") {
+      levs_manipulateThis <- c(levs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+      margs_manipulateThis <- c(margs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+      fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+    }
+
     #RP filter out regipol items
     if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,

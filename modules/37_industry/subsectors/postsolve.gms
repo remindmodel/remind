@@ -19,17 +19,21 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
   = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
                          secInd37_emiMkt(secInd37,emiMkt)), 
-      vm_cesIO.l(ttot,regi,in)
+      (vm_cesIO.l(ttot,regi,in)
+      +pm_cesdata(ttot,regi,in,"offset_quantity"))
     );
 
 *** share of subsector in FE industry energy carriers and emissions markets
 o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$( 
                                     o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
-  = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt)), 
-      vm_cesIO.l(ttot,regi,in)
+  = sum(( fe2ppfEn37(entyFe,in),
+          secInd37_2_pf(secInd37,in),
+          secInd37_emiMkt(secInd37,emiMkt)), 
+      (vm_cesIO.l(ttot,regi,in)
+      +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
   / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt);
+
 
 *** FE per subsector and energy carriers
 o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
