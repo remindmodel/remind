@@ -446,7 +446,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
 
-    message("\n", if (cfg$title == "testOneRegi") cfg$title else scen)
+    message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
