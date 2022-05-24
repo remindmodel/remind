@@ -246,7 +246,10 @@ prepare <- function() {
 
   # Check configuration for consistency
   cfg <- check_config(cfg, reference_file="config/default.cfg",
-                      settings_config = "config/settings_config.csv", extras = c("remind_folder"))
+                      settings_config = "config/settings_config.csv",
+                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+                                 "gms$cm_CES_configuration", "gms$c_description"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -1009,7 +1012,7 @@ run <- function(start_subsequent_runs = TRUE) {
       if (! file.exists("abort.gdx")) {
         message("  abort.gdx does not exist, which is a file written automatically for some types of errors.")
       } else {
-        message("! abort.gdx exists, which is a file written automatically for some types of errors.")
+        message("! abort.gdx exists, which is a file containing the latest data at the point GAMS aborted execution.")
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
@@ -1019,7 +1022,7 @@ run <- function(start_subsequent_runs = TRUE) {
         message("  Number of iterations: ",
                          as.numeric(readGDX(gdx="fulldata.gdx", "o_iterationNumber", format = "simplest")))
         message("  Modelstat: ", as.numeric(readGDX(gdx="fulldata.gdx", "o_modelstat", format="simplest")),
-                " (see https://www.gams.com/mccarlGuide/modelstat_tmodstat.htm).")
+                " (see https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md).")
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
       message("  full.log states: ", paste(logStatus, collapse = ", "))
@@ -1027,20 +1030,22 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if ( file.exists("full.lst")) {
-    message("Infeasibilities extracted from full.lst with nashstat -F:")
-    command <- paste("li=$(nashstat -F | wc -l); cat",
-               "<(if (($li < 2)); then echo no infeasibilities found; fi)",
-               "<(if (($li > 1)); then nashstat -F | head -n 2; fi)",
-               "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-               "<(if (($li > 2)); then nashstat -F | tail -n 1; fi)")
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+    message("\nInfeasibilities extracted from full.lst with nashstat -F:")
+    command <- paste(
+      "li=$(nashstat -F | wc -l); cat",
+      "<(if (($li < 2)); then echo no infeasibilities found; fi)",
+      "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
-    if (nashstatres != 0) message("Error: nashstat not found, search for p80_repy in full.lst yourself.")
-    message("")
+    if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }
+  message("")
 
   if (stoprun) {
-    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.")
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
+         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
   }
 
   message("\nCollect and submit run statistics to central data base.")
