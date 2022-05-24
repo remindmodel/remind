@@ -293,7 +293,6 @@ if (comp == TRUE) {
     if (exists("cfg")) {
       title <- cfg$title
       gms <- cfg$gms
-      input <- cfg$input
       revision <- cfg$inputRevision
       magpie_folder <- cfg$magpie_folder
     }
@@ -306,7 +305,6 @@ if (comp == TRUE) {
         load(file.path(outputdir, "config.Rdata"))
         title <- cfg$title
         gms <- cfg$gms
-        input <- cfg$input
         revision <- cfg$inputRevision
       } else {
         config <- grep("\\.cfg$", list.files(outputdir), value = TRUE)
@@ -314,7 +312,6 @@ if (comp == TRUE) {
         title <- strsplit(grep("(cfg\\$|)title +<-", l, value = TRUE), "\"")[[1]][2]
         gms <- list()
         gms$scenarios <- strsplit(grep("(cfg\\$|)gms\\$scenarios +<-", l, value = TRUE), "\"")[[1]][2]
-        input <- strsplit(grep("(cfg\\$|)input +<-", l, value = TRUE), "\"")[[1]][2]
         revision <- as.numeric(unlist(strsplit(grep("(cfg\\$|)inputRevision +<-", l, value = TRUE), "<-[ \t]*"))[2])
       }
     }
