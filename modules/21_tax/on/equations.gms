@@ -110,9 +110,9 @@ v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t
 *'  Calculation of PE tax: tax rate times primary energy
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
-q21_taxrevPE(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevPE(t,regi) =e= p21_tau_pe_tax(t,regi,"pegas") * vm_prodPe(t,regi,"pegas")
-                          - p21_taxrevPE0(t,regi);
+q21_taxrevPE(t,regi,entyPe)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevPE(t,regi,entyPe) =e= p21_tau_pe_tax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+                          - p21_taxrevPE0(t,regi,entyPe);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of final Energy taxes: effective tax rate (tax - subsidy) times FE use in the specific sector

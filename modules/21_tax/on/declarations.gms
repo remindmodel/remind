@@ -7,7 +7,6 @@
 *** SOF ./modules/21_tax/on/declarations.gms
 Parameters
 p21_tau_so2_tax(tall,all_regi)               "so2 tax path"
-p21_tau_pe_tax(tall,all_regi,all_enty)       "pe tax path"
 p21_tau_pe2se_tax(tall,all_regi,all_te)      "tax path for primary energy technologies"
 p21_tau_pe2se_inconv(tall,all_regi,all_te)   "inconvenience cost path for primary energy technologies"
 p21_tech_tax(tall,all_regi,all_te,rlf)       "tax path for technology specific new capacity"
@@ -26,7 +25,7 @@ p21_taxrevCO2luc0(ttot,all_regi)                 "reference level value of co2lu
 p21_taxrevCCS0(ttot,all_regi)                    "reference level value of CCS tax"
 p21_taxrevNetNegEmi0(ttot,all_regi)              "reference level value of net-negative emissions tax"
 p21_emiALLco2neg0(ttot,all_regi)                 "reference level value of negative CO2 emissions for taxes"
-p21_taxrevPE0(ttot,all_regi)                     "reference level value of primary energy tax"
+p21_taxrevPE0(ttot,all_regi,all_enty)            "reference level value of primary energy tax"
 p21_taxrevFE0(ttot,all_regi)                     "reference level value of final energy tax"
 p21_taxrevResEx0(ttot,all_regi)                  "reference level value of resource extraction tax"
 p21_taxrevPE2SE0(ttot,all_regi)                  "reference level value of pe2se technologies tax"
