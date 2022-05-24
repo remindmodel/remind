@@ -72,3 +72,8 @@ plotRuntimeDependencies/
 
 # ignore RStudio project files
 /*.Rproj
+
+# Main Python virtual environment
+.venv/
+# venv.lock (renv.lock equivalent for Python)
+venv.lock
