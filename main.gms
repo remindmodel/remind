@@ -142,8 +142,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  testOneRegi
-$setGlobal c_description  A REMIND run with default settings using testOneRegi
+$setGlobal c_expname  default
+$setGlobal c_description  REMIND run with default settings
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -212,7 +212,7 @@ $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 $setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
-$setGlobal optimization  testOneRegi         !! def = nash
+$setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 $setGlobal codePerformance  off       !! def = off
 
@@ -528,7 +528,7 @@ $setGlobal cm_import_EU  off !! def off
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
-$setGlobal cm_EnSecScen  on !! def off
+$setGlobal cm_EnSecScen  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
