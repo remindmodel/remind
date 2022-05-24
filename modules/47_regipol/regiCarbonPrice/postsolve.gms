@@ -359,6 +359,8 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,t
 *** calculate emissions in 2005, used to determine target compliance for year targets
 		pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) = sum(regi$regi_groupExt(ext_regi,regi), v47_emiTargetMkt.l("2005", regi,emiMktExt,emi_type)*sm_c_2_co2);	
 	);
+*** save current emission levels across iterations 
+	pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt);
 );
 
 *** calculate target deviation
@@ -376,6 +378,49 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,t
 	pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt);
 );
 
+***  calculating the CO2 tax rescale factor based on previous iterations emission reduction
+loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+	loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+		loop(regi$regi_groupExt(ext_regi,regi),
+			if(iteration.val gt 2,
+				pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
+					(pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - pm_emiMktCurrent_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt))
+					/
+					(pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration-1,ttot2,regi,emiMkt))
+				;
+				pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) = 
+					pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)*pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt)
+				;
+				pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
+					(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) - pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt))
+					/ 
+					pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
+					/
+					pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt)
+				;
+			else
+				pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;			
+			);	
+		);
+	);
+*** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
+	if((iteration.val gt 3) and (pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt)*pm_emiMktTarget_dev_iter(iteration-1, ttot,ttot2,ext_regi,emiMktExt) < 0),
+	  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) =
+	    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+	);
+*** prioritizing short term targets rescaling in the initial iterations (vice versa for latter iterations). e.g. multiplicative factor equal to 1 if target is 2030 or lower, and equal to 0.1 if target is 2050 or higher.
+$ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
+		if(iteration.val lt 15,
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(max(1-((ttot2.val-2030)/(20/(1-s47_prioRescaleFactor))),s47_prioRescaleFactor),1)*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+		else
+			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+		);
+$endIf.prioRescaleFactor
+*** save rescale factor across iterations for debugging of target convergence issues
+	pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
+);
+
+$ontext
 ***  calculating the CO2 tax rescale factor
 loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
 *** co2 price updating rule for budget targets
@@ -405,17 +450,18 @@ $ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off"
 		if(iteration.val gt 20,
 			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
 		);
-$ontext
-		if(iteration.val lt 15,
-			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(max(1-((ttot2.val-2030)/(20/(1-s47_prioRescaleFactor))),s47_prioRescaleFactor),1)*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
-		else
-			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
-		);
-$offtext
+***$ontext
+***		if(iteration.val lt 15,
+***			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(max(1-((ttot2.val-2030)/(20/(1-s47_prioRescaleFactor))),s47_prioRescaleFactor),1)*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+***		else
+***			pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = ((1+s47_prioRescaleFactor)-min(max(1-((ttot2.val-2030)/(1-s47_prioRescaleFactor)),s47_prioRescaleFactor),1))*(pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)-1)+1;
+***		);
+***$offtext
 $endIf.prioRescaleFactor
 *** save rescale factor across iterations for debugging of target convergence issues
 	pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
 );
+$offtext
 
 ***	updating the emiMkt co2 tax
 loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),

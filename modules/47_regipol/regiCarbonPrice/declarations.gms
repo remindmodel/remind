@@ -19,16 +19,19 @@ Parameter
   p47_taxCO2eqBeforeStartYear(ttot,all_regi)         "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
+  pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
 
+  pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
+  pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt)
+
 $if not "%cm_prioRescaleFactor%" == "off" s47_prioRescaleFactor "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
 
 ;  
 $endIf.emiMkt
-
 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 Parameter
