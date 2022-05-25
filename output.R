@@ -138,7 +138,8 @@ choose_mode <- function(title = "Please choose the output mode") {
 }
 
 choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby", "--qos=priority --mem=8000", "--qos=priority --mem=32000", "direct")
+  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby", "--qos=priority --mem=8000", "--qos=short --mem=8000",
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
