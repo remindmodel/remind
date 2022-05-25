@@ -258,46 +258,48 @@ for(scen in common){
   } else {
     # if there is an existing REMIND run, use its gdx for the run to be started
     settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
-    message("Found gdx here: ", normalizePath(already_rem))
-
-    # is there already a MAgPIE run with this name?
-    suche <- paste0(path_magpie, "output/", prefix_runname, needle,"-mag-*/report.mif")
-    already_mag <- mixedsort(Sys.glob(suche))[1]
-    if(! is.na(already_mag)) {
-      message(paste0("Found MAgPIE report here: ", normalizePath(already_mag)))
-      iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
-    } else {
-      message("Nothing found for ", suche, ", continue with oldrun")
-      suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
-      already_mag <- mixedsort(Sys.glob(suche))[1]
-      iter_mag <- 0
-    }
-    if (is.na(already_mag)) {
-      message("Nothing found for ", suche)
-    } else {
-      path_report_found <- normalizePath(already_mag)
-    }
-    # decide whether to continue with REMIND or MAgPIE
-    if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
-      # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
-      start_iter_first  <- iter_rem
-      path_run    <- gsub("/fulldata.gdx","",already_rem)
-      path_report_found <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))[1] # take the first entry to ignore REMIND_generic_*_withoutPlus.mif
-      if (is.na(path_report_found)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
-      message("Found REMIND report here: ", path_report_found)
-      message("Continuing with MAgPIE with mag-", start_iter_first)
-      start_magpie <- TRUE
-    } else if (iter_rem == iter_mag) {
-      # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
-      start_iter_first <- iter_rem + 1
-      message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
-    } else if (iter_rem == max_iterations & iter_mag == max_iterations - 1) {
-      message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, ".")
-      next
-    } else {
-      stop("REMIND has finished ", iter_rem, "runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
-    }
+    message("Found REMIND gdx here: ", normalizePath(already_rem))
   }
+  # is there already a MAgPIE run with this name?
+  needle <- scen
+  suche <- paste0(path_magpie, "output/", prefix_runname, needle,"-mag-*/report.mif")
+  already_mag <- mixedsort(Sys.glob(suche))[1]
+  if(! is.na(already_mag)) {
+    iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
+  } else {
+    message("Nothing found for ", suche, ", continue with oldrun")
+    needle <- scenarios_coupled[scen, "oldrun"]
+    suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
+    already_mag <- mixedsort(Sys.glob(suche))[1]
+    iter_mag <- 0
+  }
+  if (is.na(already_mag)) {
+    message("Nothing found for ", suche, ", starting REMIND standalone.")
+  } else {
+    path_report_found <- normalizePath(already_mag)
+    message("Found MAgPIE report here: ", path_report_found)
+  }
+  # decide whether to continue with REMIND or MAgPIE
+  if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
+    # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
+    start_iter_first  <- iter_rem
+    path_run    <- gsub("/fulldata.gdx","",already_rem)
+    path_report_found <- Sys.glob(paste0(path_run,"/REMIND_generic_*"))[1] # take the first entry to ignore REMIND_generic_*_withoutPlus.mif
+    if (is.na(path_report_found)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
+    message("Found REMIND report here: ", path_report_found)
+    message("Continuing with MAgPIE with mag-", start_iter_first)
+    start_magpie <- TRUE
+  } else if (iter_rem == iter_mag) {
+    # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
+    start_iter_first <- iter_rem + 1
+    message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
+  } else if (iter_rem == max_iterations & iter_mag == max_iterations - 1) {
+    message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, ".")
+    next
+  } else {
+    stop("REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
+  }
+
 
   source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
   cfg_rem <- cfg
