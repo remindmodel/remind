@@ -13,13 +13,13 @@ require(lucode2)
 
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- paste0(getwd(),"/")   # provide path to REMIND. Default: the actual path which the script is started from
-path_magpie <- paste0(getwd(), "/../magpie-smallfix/")
+path_magpie <- paste0(getwd(), "/../magpie/")
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_test.csv")
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v3.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # paste0(path_remind, "config/scenario_config.csv")
 
