@@ -231,7 +231,7 @@ prepare <- function() {
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -926,6 +926,17 @@ prepare <- function() {
 run <- function(start_subsequent_runs = TRUE) {
 
   load("config.Rdata")
+
+  # Set environment variables so that reticulate finds the configured Python virtual env
+  if (.Platform$OS.type == "windows") {
+    python_absolute_path <- file.path(
+      normalizePath(cfg$remind_folder, cfg$python_venv, mustWork = TRUE), "Scripts", "python")
+  }
+  else {
+    python_absolute_path <- file.path(
+      normalizePath(cfg$remind_folder, cfg$python_venv, mustWork = TRUE), "bin", "python")
+  }
+  Sys.setenv(RETICULATE_PYTHON = python_absolute_path)
 
   # Save start time
   timeGAMSStart <- Sys.time()
