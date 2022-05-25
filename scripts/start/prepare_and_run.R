@@ -928,14 +928,12 @@ run <- function(start_subsequent_runs = TRUE) {
   load("config.Rdata")
 
   # Set environment variables so that reticulate finds the configured Python virtual env
+  binName <- "bin"
   if (.Platform$OS.type == "windows") {
-    python_absolute_path <- file.path(
-      normalizePath(cfg$remind_folder, cfg$python_venv, mustWork = TRUE), "Scripts", "python")
+    binName <- "Scripts"
   }
-  else {
-    python_absolute_path <- file.path(
-      normalizePath(cfg$remind_folder, cfg$python_venv, mustWork = TRUE), "bin", "python")
-  }
+  python_absolute_path <- file.path(
+    normalizePath(file.path(cfg$remind_folder, cfg$python_venv), mustWork = TRUE), binName, "python")
   Sys.setenv(RETICULATE_PYTHON = python_absolute_path)
 
   # Save start time
