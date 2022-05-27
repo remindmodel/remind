@@ -993,6 +993,19 @@ run <- function(start_subsequent_runs = TRUE) {
     cat("\nREMIND was compiled but not executed, because cfg$action was set to 'c'\n\n")
   }
 
+  explain_modelstat <- c("1" = "Optimal", "2" = "Locally Optimal", "3" = "Unbounded", "4" = "Infeasible",
+                         "5" = "Locally Infeasible", "6" = "Intermediate Infeasible", "7" = "Intermediate Nonoptimal")
+
+  modelstat <- NA
+  max_iter <- 0
+  modelstat_files <- c("fulldata.gdx", "non_optimal.gdx")
+  for (filename in modelstat_files[file.exists(modelstat_files)]) {
+    modelstat <- c(modelstat, as.numeric(readGDX(gdx = filename, "o_modelstat", format = "simplest")))
+    max_iter <- c(max_iter, as.numeric(readGDX(gdx = filename, "o_iterationNumber", format = "simplest")))
+  }
+  modelstat <- modelstat[which.max(max_iter)]
+  max_iter <- max(max_iter)
+
   stoprun <- FALSE
 
   # to facilitate debugging, look which files were created.
@@ -1010,19 +1023,22 @@ run <- function(start_subsequent_runs = TRUE) {
     } else {
       message("  full.log and full.lst exist, so GAMS did run.")
       if (! file.exists("abort.gdx")) {
-        message("  abort.gdx does not exist, which is a file written automatically for some types of errors.")
+        message("  abort.gdx does not exist, a file written automatically for some types of errors.")
       } else {
-        message("! abort.gdx exists, which is a file containing the latest data at the point GAMS aborted execution.")
+        message("! abort.gdx exists, a file containing the latest data at the point GAMS aborted execution.")
+      }
+      if (! file.exists("non_optimal.gdx")) {
+        message("  non_optimal.gdx does not exist, a file written if at least one iteration did not find a locally optimal solution.")
+      } else {
+        message("  non_optimal.gdx exists, so at least one iteration did not find a locally optimal solution.")
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
         stoprun <- TRUE
       } else {
         message("  fulldata.gdx exists, so at least one iteration was successful.")
-        message("  Number of iterations: ",
-                         as.numeric(readGDX(gdx="fulldata.gdx", "o_iterationNumber", format = "simplest")))
-        message("  Modelstat: ", as.numeric(readGDX(gdx="fulldata.gdx", "o_modelstat", format="simplest")),
-                " (see https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md).")
+        message("  Modelstat after ", max_iter, " iterations: ", modelstat,
+                if (modelstat %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat], ")"))
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
       message("  full.log states: ", paste(logStatus, collapse = ", "))
@@ -1050,11 +1066,11 @@ run <- function(start_subsequent_runs = TRUE) {
 
   message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
-                        modelstat  = readGDX(gdx="fulldata.gdx", "o_modelstat", format="first_found"),
-                        config     = cfg,
-                        runtime    = gams_runtime,
-                        setup_info = lucode2::setup_info(),
-                        submit     = cfg$runstatistics)
+                         modelstat  = modelstat,
+                         config     = cfg,
+                         runtime    = gams_runtime,
+                         setup_info = lucode2::setup_info(),
+                         submit     = cfg$runstatistics)
 
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)
