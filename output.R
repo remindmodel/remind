@@ -137,8 +137,11 @@ choose_mode <- function(title = "Please choose the output mode") {
   return(comp)
 }
 
-choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby", "--qos=priority --mem=8000", "--qos=priority --mem=32000", "direct")
+choose_slurmConfig_priority_standby <- function(high_mem = FALSE,
+                                                title = "Please enter the slurm mode, uses priority if empty") {
+  slurm_options <- c(if (! high_mem) c("--qos=priority", "--qos=short", "--qos=standby"),
+                     "--qos=priority --mem=8000", "--qos=short --mem=8000",
+                     "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -273,10 +276,12 @@ if (comp == TRUE) {
 
   # define slurm class or direct execution
   if (! exists("source_include")) {
+    modules_using_high_mem <- c("reporting")
+    need_high_mem <- isTRUE(any(modules_using_high_mem %in% output))
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (! exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_priority_standby()
+      slurmConfig <- choose_slurmConfig_priority_standby(high_mem = need_high_mem)
       if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -293,7 +298,6 @@ if (comp == TRUE) {
     if (exists("cfg")) {
       title <- cfg$title
       gms <- cfg$gms
-      input <- cfg$input
       revision <- cfg$inputRevision
       magpie_folder <- cfg$magpie_folder
     }
@@ -306,7 +310,6 @@ if (comp == TRUE) {
         load(file.path(outputdir, "config.Rdata"))
         title <- cfg$title
         gms <- cfg$gms
-        input <- cfg$input
         revision <- cfg$inputRevision
       } else {
         config <- grep("\\.cfg$", list.files(outputdir), value = TRUE)
@@ -314,7 +317,6 @@ if (comp == TRUE) {
         title <- strsplit(grep("(cfg\\$|)title +<-", l, value = TRUE), "\"")[[1]][2]
         gms <- list()
         gms$scenarios <- strsplit(grep("(cfg\\$|)gms\\$scenarios +<-", l, value = TRUE), "\"")[[1]][2]
-        input <- strsplit(grep("(cfg\\$|)input +<-", l, value = TRUE), "\"")[[1]][2]
         revision <- as.numeric(unlist(strsplit(grep("(cfg\\$|)inputRevision +<-", l, value = TRUE), "<-[ \t]*"))[2])
       }
     }

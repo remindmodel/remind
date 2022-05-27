@@ -303,23 +303,23 @@ $ENDIF.WindOff
         tdh2i   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
         tdh2b   "helper technologies (without cost) to avoid sudden H2 use switching in buildings and industry"
 *** PCV: technologies related to trading
-        pipe_gas    'Pipelines transporting natural gas'
-        termX_lng   'Export terminals for LNG (liquification)'
-        termM_lng   'Import terminals for LNG (regasification)'
-        vess_lng    'Vessels transporting LNG'
-        vess_coal   'Vessels transporting coal'
-        pipe_oil    'Pipelines transporting oil'
-        vess_oil    'Vessels transporting oil'
-        pipe_h2     'Pipelines transporting hydrogen'
-        termX_lh2   'Export terminals for liquid hydrogen (liquification)'
-        termM_lh2   'Import terminals for liquid hydrogen (regasification)'
-        vess_lh2    'Vessels transporting liquid hydrogen'
-        termX_lohc  'Export terminals for liquid hydrogen (liquification)'
-        termM_lohc  'Import terminals for liquid hydrogen (regasification)'
-        vess_lohc   'Vessels transporting liquid hydrogen'
-        termX_nh3   'Export terminals for liquid hydrogen (liquification)'
-        termM_nh3   'Import terminals for liquid hydrogen (regasification)'
-        vess_nh3    'Vessels transporting liquid hydrogen'
+        pipe_gas    "Pipelines transporting natural gas"
+        termX_lng   "Export terminals for LNG (liquification)"
+        termM_lng   "Import terminals for LNG (regasification)"
+        vess_lng    "Vessels transporting LNG"
+        vess_coal   "Vessels transporting coal"
+        pipe_oil    "Pipelines transporting oil"
+        vess_oil    "Vessels transporting oil"
+        pipe_h2     "Pipelines transporting hydrogen"
+        termX_lh2   "Export terminals for liquid hydrogen (liquification)"
+        termM_lh2   "Import terminals for liquid hydrogen (regasification)"
+        vess_lh2    "Vessels transporting liquid hydrogen"
+        termX_lohc  "Export terminals for liquid organic hydrogen carriers (liquification)"
+        termM_lohc  "Import terminals for liquid organic hydrogen carriers (regasification)"
+        vess_lohc   "Vessels transporting liquid organic hydrogen carriers"
+        termX_nh3   "Export terminals for liquid ammonia (liquification)"
+        termM_nh3   "Import terminals for liquid ammonia (regasification)"
+        vess_nh3    "Vessels transporting liquid ammonia"
 /
 
 all_enty             "all types of quantities"
