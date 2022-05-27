@@ -69,7 +69,20 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 
 if(file.exists(file.path(outputdir, "EDGE-T"))){
 message("start generation of EDGE-T reporting")
-  reportEDGETransport(outputdir)
+  EDGET_output <- reportEDGETransport2(outputdir, sub_folder = "EDGE-T",
+                                            extendedReporting = FALSE,
+                                            scenario_title = scenario, model_name = "REMIND",
+                                            gdx = paste0(outputdir,"/fulldata.gdx"))
+
+  name_mif <- list.files(outputdir, pattern = "REMIND_generic", full.names = F) %>%
+    .[!grepl("withoutPlu|adjustedPolicy", .)]
+  stopifnot(!is.na(name_mif) && length(name_mif) == 1)
+
+  name_mif <- file.path(outputdir, name_mif)
+
+
+  writeMIF(EDGET_output, name_mif, append=T)
+  deletePlus(name_mif, writemif=T)
 message("end generation of EDGE-T reporting")
 }
 
@@ -81,7 +94,7 @@ tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execu
 message("end generation of LCOE reporting")
 
 ## generate DIETER reporting if it is needed
-## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory 
+## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
   message("start generation of DIETER reporting")
