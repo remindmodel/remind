@@ -241,5 +241,8 @@ $else.cm_CO2TaxSectorMarkup
 ;
 $endIf.cm_CO2TaxSectorMarkup
 
+*** by default PE tax is zero
+pm_tau_pe_tax(ttot,regi,all_enty) = 0;
+
 
 *** EOF ./modules/21_tax/on/datainput.gms

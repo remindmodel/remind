@@ -151,18 +151,17 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_m
 
 
 *** -------------------------Primary Energy Tax--------------------------
-*** initialize tax to zero
-pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 
-*PW* choose tax path for gas in Germany
+*PW* charge tax on PE gas in energy security scenario for Germany (in trUSD/TWa)
 $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
-  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2020",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
-  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.5;
+  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.4;
+  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.3;
+  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.25;
+  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.15;
+  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.1;
 $endIf.cm_EnSecScen
 
 

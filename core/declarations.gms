@@ -217,8 +217,9 @@ pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all 
 pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
 
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
-pm_tau_pe_tax(tall,all_regi,all_enty)                "pe tax path"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
+
+
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"

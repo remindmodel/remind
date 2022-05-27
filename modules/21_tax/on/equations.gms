@@ -33,7 +33,7 @@
     + v21_taxrevCO2luc(t,regi)
     + v21_taxrevCCS(t,regi) 
     + v21_taxrevNetNegEmi(t,regi)
-    + v21_taxrevPE(t,regi)
+    + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
     + v21_taxrevFE(t,regi) 
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
@@ -111,7 +111,7 @@ v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevPE(t,regi,entyPe)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevPE(t,regi,entyPe) =e= p21_tau_pe_tax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+v21_taxrevPE(t,regi,entyPe) =e= pm_tau_pe_tax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
                           - p21_taxrevPE0(t,regi,entyPe);
 
 ***---------------------------------------------------------------------------
