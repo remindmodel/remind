@@ -34,7 +34,7 @@ if (any(grepl("^00LOCK.*", list.files(.libPaths()[1])))) {
 
     # Give user diagnosis
     message("\nThe following lock folders were found at ", .libPaths()[1], ":\n  ", lock_folders)
-    message("That means that the ", bad_packages, "package(s) is(are) currently being updated.")
+    message("That means that the ", bad_packages, " package(s) is(are) currently being updated.")
     message("All packages will be loaded from the library's latest snapshot instead:\n  ", latest_snapshot)
     message("(If the lock folder isn't deleted automatically in the next couple of minutes, that means the package failed to update/install and that the folder has to be removed manually!)")
     message("To avoid this automatic choice, specify a snapshot in your .Rprofile instead.")

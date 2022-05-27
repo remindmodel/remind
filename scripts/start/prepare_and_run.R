@@ -995,17 +995,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   explain_modelstat <- c("1" = "Optimal", "2" = "Locally Optimal", "3" = "Unbounded", "4" = "Infeasible",
                          "5" = "Locally Infeasible", "6" = "Intermediate Infeasible", "7" = "Intermediate Nonoptimal")
-
-  modelstat <- NA
-  max_iter <- 0
-  modelstat_files <- c("fulldata.gdx", "non_optimal.gdx")
-  for (filename in modelstat_files[file.exists(modelstat_files)]) {
-    modelstat <- c(modelstat, as.numeric(readGDX(gdx = filename, "o_modelstat", format = "simplest")))
-    max_iter <- c(max_iter, as.numeric(readGDX(gdx = filename, "o_iterationNumber", format = "simplest")))
-  }
-  modelstat <- modelstat[which.max(max_iter)]
-  max_iter <- max(max_iter)
-
+  modelstat <- NULL
   stoprun <- FALSE
 
   # to facilitate debugging, look which files were created.
@@ -1030,14 +1020,25 @@ run <- function(start_subsequent_runs = TRUE) {
       if (! file.exists("non_optimal.gdx")) {
         message("  non_optimal.gdx does not exist, a file written if at least one iteration did not find a locally optimal solution.")
       } else {
-        message("  non_optimal.gdx exists, so at least one iteration did not find a locally optimal solution.")
+        modelstat_no <- as.numeric(readGDX(gdx = "non_optimal.gdx", "o_modelstat", format = "simplest"))
+        max_iter_no  <- as.numeric(readGDX(gdx = "non_optimal.gdx", "o_iterationNumber", format = "simplest"))
+        message("  non_optimal.gdx exists, because iteration ", max_iter_no, " did not find a locally optimal solution. ",
+          "modelstat: ", modelstat_no, if (modelstat_no %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat_no], ")"))
+        modelstat[[as.character(max_iter_no)]] <- modelstat_no
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
         stoprun <- TRUE
       } else {
-        message("  fulldata.gdx exists, so at least one iteration was successful.")
-        message("  Modelstat after ", max_iter, " iterations: ", modelstat,
+        modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
+        max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
+        message("  fulldata.gdx exists, because iteration ", max_iter_fd, " was successful. ",
+          "modelstat: ", modelstat_fd, if (modelstat_fd %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat_fd], ")"))
+        modelstat[[as.character(max_iter_fd)]] <- modelstat_fd
+      }
+      if (length(modelstat) > 0) {
+        modelstat <- modelstat[which.max(names(modelstat))]
+        message("  Modelstat after ", as.numeric(names(modelstat)), " iterations: ", modelstat,
                 if (modelstat %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat], ")"))
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
