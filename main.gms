@@ -629,7 +629,7 @@ $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_transpGDPscale on  !! def = on
+$setglobal cm_transpGDPscale off  !! def = off
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off
