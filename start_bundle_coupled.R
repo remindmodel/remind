@@ -100,6 +100,7 @@ parallel <- ifelse("--parallel" %in% argv, TRUE, FALSE)
 errorsfound <- 0
 startedRuns <- 0
 waitingRuns <- 0
+deletedFolders <- 0
 knownRefRuns <- NULL
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -476,7 +477,12 @@ for(scen in common){
     if (i == start_iter_first && ! start_now && all(file.exists(cfg_rem$files2export$start[path_gdx_list]) | unlist(gdx_na))) {
         start_now <- TRUE
     }
-
+    foldername <- file.path("output", fullrunname)
+    if (parallel && (i > start_iter_first | !start_magpie) && file.exists(foldername)) {
+      if (! "--test" %in% argv) unlink(foldername, recursive = TRUE, force = TRUE)
+      message("Delete ", foldername, if ("--test" %in% argv) " if not in test mode", ". ", appendLF = FALSE)
+      deletedFolders <- deletedFolders + 1
+    }
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
@@ -522,11 +528,10 @@ for(scen in common){
   if (start_now){
       startedRuns <- startedRuns + 1
       if (! "--test" %in% argv) {
-        logfile <- file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), if (! parallel) stamp, ".txt"))
+        logfile <- if (parallel) file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
+                   else file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), stamp, ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
-        message("Copied REMIND .Rprofile to MAgPIE folder.")
         system(paste0("sbatch --qos=", qos, " --job-name=", if (parallel) fullrunname else runname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
@@ -545,5 +550,19 @@ for(scen in common){
   }
 }
 
-message("\nFinished: ", startedRuns, " runs started, ", waitingRuns, " runs are waiting. Number of problems: ",
+if (! "--test" %in% argv) {
+ system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
+ message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  cs_runs <- paste0(common, "-rem-", max_iterations, collapse = ",")
+  cs_name <- paste0("compScen-all-rem-", max_iterations)
+  cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
+  cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
+    cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/utils/run_compareScenarios2.R outputdirs=",
+    paste(cs_runs, collapse=","), " shortTerm=FALSE outfilename=", cs_name,
+    " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
+  message("\n### To start a compareScenario once everything is finished, run:")
+  message(cs_command)
+}
+
+message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. Number of problems: ",
         errorsfound, ".", ifelse("--test" %in% argv, " You are in TEST mode, only RData files were written.", ""))

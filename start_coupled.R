@@ -73,7 +73,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   mainwd <- getwd() # save folder in which this script is executed
 
   # Retrieve REMIND settings
-  cfg_rem <- check_config(cfg_rem,paste0(path_remind,"config/default.cfg"),paste0(path_remind,"modules")) 
+  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
+                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+                                     "gms$cm_CES_configuration", "gms$c_description"))
   cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
   cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing
@@ -111,7 +114,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
-    cfg_rem$force_replace  <- TRUE # overwrite existing output folders
+    cfg_rem$force_replace  <- if (parallel & ! debug) FALSE else TRUE # overwrite existing output folders
     #cfg_rem$gms$biomass    <- "magpie_linear"
 
     # define gdx paths. In case of parallel mode, they are already in cfg_rem
@@ -169,7 +172,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         cfg_rem$gms$cm_MAgPIE_coupling <- "off"
         message("### COUPLING ### No MAgPIE report for REMIND input provided.")
         message("### COUPLING ### REMIND will be started in stand-alone mode with\n    ", runname, "\n    ", cfg_rem$results_folder)
-        outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem))
+        outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem, stopOnDeleteError = FALSE))
       } else {
         stop("I'm in coupling iteration ", i, ", but no REMIND or MAgPIE report from earlier iterations found. That should never have happened.")
       }
@@ -181,7 +184,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
       cfg_rem$pathToMagpieReport <- report
-      outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem))
+      outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem, stopOnDeleteError = FALSE))
       ############################
     } else if (grepl("REMIND_generic_",report)) { # if it is a REMIND report
       ############### O M I T   R E M I N D  ###############################
@@ -315,7 +318,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           # for negishi: use only one CPU
           nr_of_regions <- 1
         }
-        logfile <- if (parallel) file.path("output", paste0("log_", subseq.env$fullrunname, ".txt")) else file.path("output", paste0("log_", subseq.env$fullrunname, stamp, ".txt"))
+        logfile <- if (parallel) file.path("output", subseq.env$fullrunname, "log.txt")
+                   else file.path("output", paste0("log_", subseq.env$fullrunname, stamp, ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,

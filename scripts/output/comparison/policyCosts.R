@@ -306,7 +306,7 @@ while (!happy_with_input) {
 message("Copy fulldata.gdx of policy refs to input_refpolicycost.gdx in output folders, overwriting these files if they exist.")
 message("If you rerun the reporting, the policy run specified here will be used from now on.")
 copiedfiles <- file.copy(ref_gdxs, cp_ref_gdxs_to, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
-if (any(! copiedfiles)) message(paste(ref_gdx[! copiedfiles], collapse = ", "), " could not be copied")
+if (any(! copiedfiles)) message(paste(ref_gdxs[! copiedfiles], collapse = ", "), " could not be copied")
 
 # Get Policy costs for every policy-reference pair
 message(crayon::blue("\nComputing Policy costs:\n"))
