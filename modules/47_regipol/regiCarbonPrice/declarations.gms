@@ -15,8 +15,8 @@ Parameter
 
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
-  p47_taxemiMktBeforeStartYear(ttot,all_regi,emiMkt) "emiMkt CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-  p47_taxCO2eqBeforeStartYear(ttot,all_regi)         "CO2eq prices before start year in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+  p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
+  p47_taxCO2eq_ref(ttot,all_regi)           "CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
   pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
@@ -27,10 +27,16 @@ Parameter
 
   pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
   pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt)
+;
 
-$if not "%cm_prioRescaleFactor%" == "off" s47_prioRescaleFactor "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
-
-;  
+$ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
+Parameter
+  s47_prioRescaleFactor   "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
+  s47_2030taxemiMktConv   "boolean to store information if all targets set for years equal or lower than 2030 converged [0 or 1]" /0/
+  s47_up2030taxemiMktConv "boolean to store information if all targets set for years above 2030 converged [0 or 1]" /0/
+; 
+$endIf.prioRescaleFactor
+ 
 $endIf.emiMkt
 
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"

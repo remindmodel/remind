@@ -14,13 +14,24 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 
 * initialize carbon taxes before start year 
 if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p47_taxCO2eqBeforeStartYear = pm_taxCO2eq;
-  Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
-  
-  p47_taxCO2eqBeforeStartYear(ttot,regi)$((ttot.val ge cm_startyear)) = 0;
-  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
+  Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
+  Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
 
-  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$(NOT(p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt))) = p47_taxCO2eqBeforeStartYear(ttot,regi);
+*** copying taxCO2eq value to emiMkt tax parameter for fixed years that contain no pm_taxemiMkt value
+  p47_taxemiMkt_init(ttot,regi,emiMkt)$((p47_taxCO2eq_ref(ttot,regi)) and (ttot.val le cm_startyear) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
+
+*** Initializing European ETS historical and reference prices
+	loop(regi$regi_groupExt("EUR_regi",regi),
+		p47_taxemiMkt_init("2005",regi,"ETS")$(cm_startyear le 2005) = 0;
+		p47_taxemiMkt_init("2010",regi,"ETS")$(cm_startyear le 2010)  = 15*sm_DptCO2_2_TDpGtC;
+		p47_taxemiMkt_init("2015",regi,"ETS")$(cm_startyear le 2015)  = 8*sm_DptCO2_2_TDpGtC;
+***		p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+		p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+
+*** Initializing European ESR historical and reference prices
+		p47_taxemiMkt_init("2020",regi,"ES")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+    p47_taxemiMkt_init("2020",regi,"other")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+	);
 );
 
 $ENDIF.emiMkt
