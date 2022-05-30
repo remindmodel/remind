@@ -74,15 +74,9 @@ message("start generation of EDGE-T reporting")
                                             scenario_title = scenario, model_name = "REMIND",
                                             gdx = paste0(outputdir,"/fulldata.gdx"))
 
-  name_mif <- list.files(outputdir, pattern = "REMIND_generic", full.names = F) %>%
-    .[!grepl("withoutPlu|adjustedPolicy", .)]
-  stopifnot(!is.na(name_mif) && length(name_mif) == 1)
+  writeMIF(EDGET_output, remind_reporting_file, append=T)
+  deletePlus(remind_reporting_file, writemif=T)
 
-  name_mif <- file.path(outputdir, name_mif)
-
-
-  writeMIF(EDGET_output, name_mif, append=T)
-  deletePlus(name_mif, writemif=T)
 message("end generation of EDGE-T reporting")
 }
 
