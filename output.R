@@ -121,7 +121,7 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
 }
 
 choose_mode <- function(title = "Please choose the output mode") {
-  modes <- c("Output for single run ", "Comparison across runs")
+  modes <- c("Output for single run ", "Comparison across runs", "Exit")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -131,6 +131,8 @@ choose_mode <- function(title = "Please choose the output mode") {
     comp <- FALSE
   } else if (identifier == 2) {
     comp <- TRUE
+  } else if (identifier == 3) {
+    comp <- "Exit"
   } else {
     stop("This mode is invalid. Please choose a valid mode.")
   }
@@ -171,7 +173,9 @@ if (exists("source_include")) {
   comp <- choose_mode("Please choose the output mode")
 }
 
-if (comp == TRUE) {
+if (comp == "Exit") {
+  q()
+} else if (comp == TRUE) {
   print("comparison")
   # Select output modules if not defined by readArgs
   if (!exists("output")) {
