@@ -28,6 +28,7 @@ activateSnapshot <- function(snapshot) {
     # setting include.site to FALSE makes sure that only the snapshot and system libraries are used
     .libPaths(snapshot, include.site = FALSE)
   }
+  message("libPaths was set to: ", snapshot)
 }
 
 # Just uncomment the following line and set the snapshot path
@@ -42,7 +43,6 @@ activateSnapshot <- function(snapshot) {
 # snapshot <- latestSnapshot
 
 if (exists("snapshot")) {
-  message("libPaths was manually set to: ", snapshot)
   activateSnapshot(snapshot)
 }
 
