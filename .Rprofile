@@ -8,7 +8,7 @@ if (file.exists("~/.Rprofile")) {
 # (e.g. if your model version is from an older date and does not work with the
 # newest libraries anymore). By default it is not active.
 
-local({ # prevent vairables defined here from ending up in the global env
+local({ # prevent variables defined here from ending up in the global env
 
 # snapshots created with R 4.1 have a _R4 postfix
 maybeR4 <- if (R.version$major == 4) "_R4" else ""
