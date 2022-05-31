@@ -53,7 +53,7 @@ if (any(grepl("^00LOCK.*", list.files(.libPaths())))) {
 
   # Give user diagnosis
   message("\nThe following lock folders were found in your libPaths:\n  ", lockFolders)
-  message("That means that the ", badPackages, "package(s) is(are) currently being updated.")
+  message("That means that the ", badPackages, " package(s) is(are) currently being updated.")
   message("All packages will be loaded from the library's latest snapshot instead:\n  ", latestSnapshot)
   message("(If the lock folder isn't deleted automatically in the next couple of minutes, ",
           "that means the package failed to update/install and that the folder has to be removed manually!)")
