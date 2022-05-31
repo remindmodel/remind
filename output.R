@@ -132,7 +132,7 @@ choose_mode <- function(title = "Please choose the output mode") {
   } else if (identifier == 2) {
     comp <- TRUE
   } else if (identifier == 3) {
-    comp <- NULL
+    comp <- "Exit"
   } else {
     stop("This mode is invalid. Please choose a valid mode.")
   }
@@ -173,7 +173,9 @@ if (exists("source_include")) {
   comp <- choose_mode("Please choose the output mode")
 }
 
-if (comp == TRUE) {
+if (comp == "Exit") {
+  q()
+} else if (comp == TRUE) {
   print("comparison")
   # Select output modules if not defined by readArgs
   if (!exists("output")) {
@@ -246,8 +248,6 @@ if (comp == TRUE) {
       }
     }
   }
-} else if (is.null(comp)) {
-}
 } else {
   # Select an output module if not defined by readArgs
   if (!exists("output")) {
