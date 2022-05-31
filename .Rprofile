@@ -19,12 +19,12 @@ snapshots <- sort(list.files(path = '/p/projects/rd3mod/R/libraries/snapshots',
 latestSnapshot <- if (length(snapshots) > 0) snapshots[[1]] else NA
 
 activateSnapshot <- function(snapshot) {
-  if (!file.exists(snapshot)) {
-    return()
-  }
+  stopifnot(file.exists(snapshot))
   if (R.version$major <= 3) { # include.site is not available before R 4.0
+    stopifnot(!endsWith(snapshot, "_R4"))
     .libPaths(snapshot)
   } else {
+    stopifnot(endsWith(snapshot, "_R4"))
     # setting include.site to FALSE makes sure that only the snapshot and system libraries are used
     .libPaths(snapshot, include.site = FALSE)
   }
@@ -39,7 +39,7 @@ activateSnapshot <- function(snapshot) {
 # Snapshots must be compatible to the R version used. If you are using R 4.1
 # make sure the selected snapshot's name ends with '_R4'.
 
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_03"
+# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_31_R4"
 # snapshot <- latestSnapshot
 
 if (exists("snapshot")) {
