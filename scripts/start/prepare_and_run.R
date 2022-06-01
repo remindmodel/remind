@@ -995,7 +995,7 @@ run <- function(start_subsequent_runs = TRUE) {
 
   explain_modelstat <- c("1" = "Optimal", "2" = "Locally Optimal", "3" = "Unbounded", "4" = "Infeasible",
                          "5" = "Locally Infeasible", "6" = "Intermediate Infeasible", "7" = "Intermediate Nonoptimal")
-  modelstat <- NULL
+  modelstat <- numeric(0)
   stoprun <- FALSE
 
   # to facilitate debugging, look which files were created.
