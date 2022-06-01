@@ -20,10 +20,7 @@ p51_labEffgr(ttot,regi) = pm_cesdata(ttot,regi,"lab","effgr");
 p51_scc("2020") = 20;
 p51_scc(tall)$(tall.val ge 2010 and tall.val le 2150) = p51_scc("2020")*(1+0.025*(tall.val-2020));
 
-loop(ttot$(ttot.val ge 2010),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
-	));
+pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(ttot) * (44/12)/1000;
 
 *** EOF ./modules/51_internalizeDamages/LabItr/datainput.gms
 
