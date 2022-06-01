@@ -62,7 +62,7 @@ Before you start the runs, you can test whether the right runs would be started 
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```
-Running the complete chain of runs, but with only one iteration and one region each can be started with:
+Running the complete chain of runs, but only for one region and one iteration (as long as `cm_iteration_max = 1` wasn't changed), can be started with:
 ```bash
 Rscript start.R --testOneRegi config/scenario_config_XYZ.csv
 ```
@@ -79,8 +79,6 @@ as a shortcut, meaning `1` for `--testOneRegi`, `i` for `--interactive`, `t` for
 
 Further notes:
 --------------
-
-* To check the functioning of the `scenario_config*.csv`, edit [`default.cfg`](./config/default.cfg) and set `cfg$gms$optimization` to `testOneRegi` which runs one iteration in one region for each run.
 
 * The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 

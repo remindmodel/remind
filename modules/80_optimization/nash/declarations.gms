@@ -57,6 +57,7 @@ p80_repy_iteration(all_regi,solveinfo80,iteration) "summary report from solver i
 p80_repyLastOptim(all_regi,solveinfo80)    "p80_repy from last iteration"
 p80_messageFailedMarket(tall,all_enty)     "nash display helper"
 p80_messageShow(convMessage80)             "nash display helper"
+p80_trackConsecFail(all_regi)              "Parameter to keep track of consecutive solve failurs of regions in Nash mode."
 
 p80_curracc(ttot,all_regi)                 "current account"
 p80_t_interpolate(tall,tall)               "weights to interpolate from t_input_gdx to t"

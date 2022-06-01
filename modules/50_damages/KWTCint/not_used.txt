@@ -1,0 +1,11 @@
+name,type,reason
+cm_damages_BurkeLike_specification,input,questionnaire
+cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_damageMarginal,input,questionnaire
+pm_temperatureImpulseResponseCO2,input,questionnaire
+cm_damage_KWSE,input,questionnaire
+pm_tempScaleGlob2Reg,input,questionnaire
+pm_damageImp,input,questionnaire
+pm_damageScc,input,questionnaire
+pm_damageIso,input,questionnaire
+pm_damageGrowthRateIso,input,questionnaire

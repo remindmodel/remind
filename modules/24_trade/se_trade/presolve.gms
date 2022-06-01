@@ -8,8 +8,8 @@
 
 pm_Xport0(ttot,regi,tradePe) = vm_Xport.l(ttot,regi,tradePe);
 
-vm_budgetTradeX.fx(ttot,all_regi) = 0.0;
-vm_budgetTradeM.fx(ttot,all_regi) = 0.0;
+vm_costTradeCap.fx(ttot,all_regi,tradeCap) = 0.0;
+vm_capacityTradeBalance.fx(ttot,all_regi) = 0.0;
 
 *** Secondary energy trade
 

@@ -156,7 +156,7 @@ p36_prodUEintern(ttot,regi,entyFe,esty,teEs) = p36_prodEs(ttot,regi,entyFe,esty,
 );
 
 if (cm_startyear gt 2005,
-Execute_Loadpoint 'input_ref' p36_prodUEintern_load = v_prodEs.L;
+Execute_Loadpoint 'input_ref' p36_prodUEintern_load = vm_prodEs.L;
 p36_prodUEintern(ttot,regi,enty,esty,teEs)$(ttot.val gt 2005 and ttot.val lt cm_startyear) = p36_prodUEintern_load(ttot,regi,enty,esty,teEs);
 );
 

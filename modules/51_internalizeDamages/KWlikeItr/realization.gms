@@ -6,10 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/51_internalizeDamages/KWlikeItr/realization.gms
 
-*' @description Output damages are calculated based on the damage function from
-*' Matthias Kalkuhl, Leonie Wenz: The impact of climate conditions on economic production.
-*' Evidence from a global panel of regions. Journal of Environmental Economics and Management,
-*' Volume 103, 2020, 102360, DOI: 10.1016/j.jeem.2020.102360
+*' @description Based on the analytic expression derived in @Schultes2020 the global social cost of carbon corresponding to the Kalkuhl&Wenz (2020) damages calculated in module 50_damages/KWLike are calculated. The global solution is derived assuming Negishi weights.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/51_internalizeDamages/KWlikeItr/declarations.gms"

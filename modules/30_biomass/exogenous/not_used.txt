@@ -21,3 +21,5 @@ vm_prodSe,variable,not needed
 cm_emiscen,variable,not needed
 cm_bioprod_histlim,input,questionnaire
 cm_BioSupply_Adjust_EU,input,questionnaire
+cm_biolc_tech_phaseout,input,questionnaire
+vm_deltaCap,variable,no needed

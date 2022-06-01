@@ -6,11 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/50_damages/DiceLike/bounds.gms
 
-vm_damageFactor.fx("2005",regi) = 1;
-
-loop(ttot$(ttot.val ge 2010),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    vm_damageFactor.fx(ttot,regi) = pm_damage(tall,regi);
-));
+vm_damageProdFactor.fx(ttot,regi,in) = 1;
+vm_damageFactor.fx(ttot,regi)$(ttot.val ge 2005) = pm_damage(ttot,regi);
 
 *** EOF ./modules/50_damages/DiceLike/bounds.gms
