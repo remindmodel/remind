@@ -21,6 +21,15 @@ options(error = quote({
   q()
 }))
 
+if (!exists("argv")) {
+  argv <- commandArgs(trailingOnly = TRUE)
+}
+
+# run updates before loading any packages
+if ("--update" %in% argv) {
+  source("scripts/utils/updateRenv.R")
+}
+
 # load landuse library
 library(lucode2)
 library(gms)
@@ -165,10 +174,6 @@ choose_filename_prefix <- function(modules, title = "") {
     filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
   }
   return(filename_prefix)
-}
-
-if (!exists("argv")) {
-  argv <- commandArgs(trailingOnly = TRUE)
 }
 
 if (exists("source_include")) {
@@ -347,10 +352,6 @@ if (comp == "Exit") {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {
           if (slurmConfig == "direct") {
-            if ("--update" %in% argv) {
-              source("scripts/utils/updateRenv.R")
-              updateRenv()
-            }
             # execute output script directly (without sending it to slurm)
             message("Executing ", name)
             tmp.env <- new.env()

@@ -51,10 +51,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       if (!renv::status()$synchronized) {
         stop("The renv.lock file does not represent the current package environment.")
       }
-      autoUpdatesEnabled <- TRUE # TODO read from somewhere else
-      if (autoUpdatesEnabled) {
+      if (getOption("autoRenvUpdates", TRUE)) { # TODO put this setting into untracked config file
         source("scripts/utils/updateRenv.R")
-        updateRenv()
       }
       file.copy("renv.lock", cfg$results_folder)
 

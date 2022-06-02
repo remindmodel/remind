@@ -10,8 +10,8 @@ if (file.exists("~/.Rprofile")) {
 # bootstrapping, will only run once after remind is freshly cloned
 if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")) &&
     !file.exists("renv.lock")) {
-  message("renv (project package library) is empty, installing dependencies...")
   # only one non-core package is installed: renv
+  message("renv (project package library) is empty, installing dependencies...")
   renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
   renv::snapshot(prompt = FALSE) # create renv.lock
