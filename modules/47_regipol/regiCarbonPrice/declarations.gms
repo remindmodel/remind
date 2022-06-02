@@ -15,25 +15,40 @@ Parameter
 
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
 Parameter
+  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+
+*** Initialization parameters (load data from the gdx)
   p47_taxemiMkt_init(ttot,all_regi,emiMkt)  "emiMkt CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
   p47_taxCO2eq_ref(ttot,all_regi)           "CO2eq prices loaded from ref gdx, in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-  pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type) "region emissions target [GtCO2 or GtCO2eq]" / %cm_emiMktTarget% /
+
+*** Parameters necessary to calculate current emission target deviations
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
   pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
+
+*** Parameters necessary to calculate the emission tax rescaling factor
+  pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliar parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
+  pm_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope [#]"
+  pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) "auxiliar parameter to save the intersect value of the linear projection of previous iterations mitigation levels when compared to relative price difference [#]" 
+  pm_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve intersect [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
 
-  pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
-  pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt)
+*** Parameters necessary to define the CO2 tax curve shape   
+  p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
+  p47_targetConverged_iter(iteration,ttot,ext_regi)  "parameter to save p47_targetConverged across iterations [0 or 1]"
+  p47_allTargetsConverged(ext_regi)                  "boolean to store if all emission targets converged at least once [0 or 1]"
+  p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
+  p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
+  p47_currentConvergencePeriod(ext_regi)             "auxiliar parameter to store the current target year being executed by the convergence algorithm [year]"
+  p47_nextConvergencePeriod(ext_regi)                "auxiliar parameter to store the next target year being executed by the convergence algorithm [year]"
+  p47_averagetaxemiMkt(ttot,all_regi)                "auxiliar parameter to store the weighted average convergence price between the current target terminal year and the next target year. Only applied for target years different than p47_lastTargetYear"
 ;
 
 $ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
 Parameter
   s47_prioRescaleFactor   "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
-  s47_2030taxemiMktConv   "boolean to store information if all targets set for years equal or lower than 2030 converged [0 or 1]" /0/
-  s47_up2030taxemiMktConv "boolean to store information if all targets set for years above 2030 converged [0 or 1]" /0/
 ; 
 $endIf.prioRescaleFactor
  
@@ -47,8 +62,8 @@ $endIf.regiExoPrice
 
 *** It does not need to be a variable (and equations) because is only dealt in between iterations!!!!
 variables
-	v47_emiTarget(ttot,all_regi,emi_type)      "CO2 or GHG Emissions used for target level [GtC]"
-	v47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type) "CO2 or GHG Emissions per emission market used for target level [GtC]"
+	v47_emiTarget(ttot,all_regi,emi_type_47)      "CO2 or GHG Emissions used for target level [GtC]"
+	v47_emiTargetMkt(ttot,all_regi,emiMktExt,emi_type_47) "CO2 or GHG Emissions per emission market used for target level [GtC]"
 ;
 
 equations
@@ -73,7 +88,7 @@ equations
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
 Parameter
-  pm_regiCO2ETStarget(ttot,target_type,emi_type) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
+  pm_regiCO2ETStarget(ttot,target_type_47,emi_type_47) "ETS emissions target [GtCO2]" / %cm_emiMktETS% /
   pm_ETSTarget_dev(ETS_mkt)				    "ETS emissions deviation of current iteration from target emissions [%]"
   pm_ETSTarget_dev_iter(iteration, ETS_mkt)  "parameter to save pm_ETSTarget_dev across iterations [%]"
 	
@@ -95,10 +110,10 @@ Parameter
 *** Emission reduction quantity target
 $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
 Parameter
-	p47_quantity_regiCO2target(ttot,ext_regi,emi_type) "Exogenously emissions quantity constrain [GtCO2]" / %cm_quantity_regiCO2target% /
+	p47_quantity_regiCO2target(ttot,ext_regi,emi_type_47) "Exogenously emissions quantity constrain [GtCO2]" / %cm_quantity_regiCO2target% /
 ;
 equations
-	q47_quantity_regiCO2target(ttot,ext_regi,emi_type) "Exogenously emissions quantity constrain [GtC]"
+	q47_quantity_regiCO2target(ttot,ext_regi,emi_type_47) "Exogenously emissions quantity constrain [GtC]"
 ;
 $endIf.quantity_regiCO2target    
 
@@ -197,7 +212,7 @@ $endIf.cm_VREminShare
 ***---------------------------------------------------------------------------
 *** parameters to track regipol emissions calculation
 Parameters
-p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"
+  p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"
 ;
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms

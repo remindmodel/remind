@@ -8,7 +8,7 @@
 
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
-	loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type),
+	loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
 		loop(regi$regi_groupExt(ext_regi,regi),
 *** Removing the economy wide co2 tax parameters for regions within the ETS markets
 			pm_taxCO2eqSum(t,regi) = 0;

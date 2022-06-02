@@ -174,12 +174,12 @@ q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers(t, regi, emiMktExt)..
 
 $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
 
-q47_quantity_regiCO2target(t,ext_regi,emi_type)$p47_quantity_regiCO2target(t,ext_regi,emi_type)..
+q47_quantity_regiCO2target(t,ext_regi,emi_type_47)$p47_quantity_regiCO2target(t,ext_regi,emi_type_47)..
 	sum(regi$regi_group(ext_regi,regi),
-		v47_emiTarget(t,regi,emi_type) 
+		v47_emiTarget(t,regi,emi_type_47) 
 	)
 	=l=
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)/sm_c_2_co2
+	p47_quantity_regiCO2target(t,ext_regi,emi_type_47)/sm_c_2_co2
 ;
 
 $endIf.quantity_regiCO2target

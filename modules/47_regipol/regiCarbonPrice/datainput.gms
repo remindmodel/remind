@@ -7,12 +7,15 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
 
-* initialize regipol target deviation parameter
+*** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-* initialize carbon taxes before start year 
+*** initialize emiMkt Target parameters
+  p47_targetConverged(ttot2,ext_regi) = 0;
+
+*** initialize carbon taxes before start year 
 if ( (cm_startyear gt 2005),
   Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
   Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
@@ -34,8 +37,24 @@ if ( (cm_startyear gt 2005),
 	);
 );
 
-$ENDIF.emiMkt
+*** Auxiliar parameters based on emission targets information 
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
+    regiEmiMktTarget_47(ext_regi) = yes;
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes;
+  );
 
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
+    p47_lastTargetYear(ext_regi) = ttot2.val;
+  );
+
+  loop(ext_regi,
+    loop(ttot$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
+      p47_firstTargetYear(ext_regi) = ttot.val;
+      break$(p47_firstTargetYear(ext_regi));
+  	);
+  );
+
+$ENDIF.emiMkt
 
 parameter f47_ETSreferenceEmissions(tall,all_regi)      "ETS 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
 /
@@ -103,8 +122,8 @@ $ENDIF.renewablesFloorCost
 
 
 $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
-loop((ttot,ext_regi,emi_type)$p47_quantity_regiCO2target(ttot,ext_regi,emi_type),
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)$(t.val ge ttot.val) = p47_quantity_regiCO2target(ttot,ext_regi,emi_type); 
+loop((ttot,ext_regi,emi_type_47)$p47_quantity_regiCO2target(ttot,ext_regi,emi_type_47),
+	p47_quantity_regiCO2target(t,ext_regi,emi_type_47)$(t.val ge ttot.val) = p47_quantity_regiCO2target(ttot,ext_regi,emi_type_47); 
 );
 $ENDIF.quantity_regiCO2target
 

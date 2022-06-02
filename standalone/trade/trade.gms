@@ -341,7 +341,7 @@ c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_regiCO2target  off   !! def = off
 $setGlobal cm_emiMktTarget  off   !! def = off
-cm_postTargetIncrease    = 2;      !! def = 2
+cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2

@@ -18,16 +18,14 @@ pm_emiRescaleCo2TaxESR(ttot,regi) = 0;
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
-
 *** Initializing emi market historical and reference prices
-	loop((ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type,emi_type)),
+	loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)),
 		loop(regi$regi_groupExt(ext_regi,regi),
 			loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
 				pm_taxemiMkt(ttot3,regi,emiMkt) = p47_taxemiMkt_init(ttot3,regi,emiMkt);
 			);
 		);
 	);
-
 $ENDIF.emiMkt
 
 

@@ -7,17 +7,21 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 
 SETS
-target_type "CO2 policy target type" / budget , year /
+target_type_47 "CO2 policy target type" / budget , year /
 
-emi_type "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG_LULUCFGrassi_noBunkers /
+emi_type_47 "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG_LULUCFGrassi_noBunkers /
+
+$ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
+  regiEmiMktTarget_47(ext_regi)               "regions with emiMkt targets" / /
+  regiANDperiodEmiMktTarget_47(ttot,ext_regi) "regions and periods with emiMkt targets" / /
+$ENDIF.emiMkt
 
 ETS_mkt "ETS market"
 /
   EU_ETS
 /
 
-ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market"
-//
+ETS_regi(ETS_mkt,all_regi) "regions that belong to the same ETS market" / /
 
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
 
@@ -117,7 +121,6 @@ loop(all_regi$(regi_group("EUR_regi",all_regi) AND (NOT(sameas(all_regi,"UKI")))
 );
 ***NEN (to include NEN I need to disable only partially the pm_taxCO2eq tax (because if not the ESD emissions would be without tax).   
 
-alias(emi_type,emi_type2);
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms
 
