@@ -67,7 +67,7 @@ choose_slurmConfig <- function(identifier = FALSE) {
                     "5" = "--qos=priority --nodes=1 --tasks-per-node=12" , # SLURM priority - task per node: 12 (nash H12) [recommended]
                     "6" = "--qos=priority --nodes=1 --tasks-per-node=13" , # SLURM priority - task per node: 13 (nash H12 coupled)
                     "7" = "--qos=priority --nodes=1 --tasks-per-node=16" , # SLURM priority - task per node: 16 (nash H12+)
-                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
+                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
                     "9" = "--qos=short --nodes=1 --tasks-per-node=12"    , # SLURM short    - task per node: 12 (nash H12)
                    "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
                    "11" = "--qos=short --nodes=1 --tasks-per-node=1 --mem=8000"     , # SLURM short    - task per node:  1 (nash debug, test one regi)
