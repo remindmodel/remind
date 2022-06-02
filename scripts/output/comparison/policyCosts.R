@@ -66,7 +66,7 @@ policy_costs_pdf <- function(policy_costs,
                  "options(width=110)",
                  "@")
   
-  # Create temporaray folder in which to create the policyCost pdf
+  # Create temporary folder in which to create the policyCost pdf
   system("mkdir tmp_policyCost")
 
   # Open stream in tmp_folder
@@ -222,7 +222,7 @@ if (!exists("source_include")) {
                   "base_allT_lab_1point25_2020-03-27_16.12.35/",
                   "base_noEffChange_2020-03-09_17.16.28/")
   special_requests <- c("2")
-  # Make over-writtable from command line
+  # Make over-writable from command line
   lucode2::readArgs("outputdirs","special_requests")
 }
 
@@ -305,8 +305,8 @@ while (!happy_with_input) {
 
 message("Copy fulldata.gdx of policy refs to input_refpolicycost.gdx in output folders, overwriting these files if they exist.")
 message("If you rerun the reporting, the policy run specified here will be used from now on.")
-file.copy(ref_gdxs, cp_ref_gdxs_to, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
-
+copiedfiles <- file.copy(ref_gdxs, cp_ref_gdxs_to, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
+if (any(! copiedfiles)) message(paste(ref_gdxs[! copiedfiles], collapse = ", "), " could not be copied")
 
 # Get Policy costs for every policy-reference pair
 message(crayon::blue("\nComputing Policy costs:\n"))
