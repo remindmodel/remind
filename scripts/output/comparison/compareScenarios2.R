@@ -70,7 +70,8 @@ start_comp <- function(outputdirs,
                        shortTerm,
                        outfilename,
                        regionList,
-                       mainReg) {
+                       mainReg,
+                       modelsHistExclude=c()) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
   }
@@ -94,7 +95,8 @@ start_comp <- function(outputdirs,
     " shortTerm=", shortTerm,
     " outfilename=", jobname,
     " regionList=", paste(regionList, collapse = ","),
-    " mainRegName=", mainReg, "\"")
+    " mainRegName=", mainReg,
+    " modelsHistExclude=", paste(modelsHistExclude, collapse = ","), "\"")
   cat(clcom, "\n")
   if (on_cluster) {
     system(clcom)
@@ -136,5 +138,18 @@ for (r in listofruns) {
       start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
     if (r$period == "long" | r$period == "both")
       start_comp(outputdirs=r$dirs, shortTerm=FALSE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
+
+    # plot additional pdf with Germany as focus region and exclusion of non-meaningful references in that context
+    if (reg == "EUR") {
+      ref.exclude <- c(
+        "IEA ETP B2DS", "IEA ETP 2DS", "IEA ETP RTS",
+        "EDGE_SSP1", "EDGE_SSP2", "CEDS", "IRENA",
+        "IEA WEO 2021 APS", "IEA WEO 2021 SDS", "IEA WEO 2021 SPS"
+      )
+      fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-DEU")
+      start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=paste0(fileName, "-", "Ariadne"), regionList=regionList, mainReg="DEU", modelsHistExclude=ref.exclude)
+    }
+
+
   }
 }
