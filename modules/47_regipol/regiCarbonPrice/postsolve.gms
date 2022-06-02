@@ -409,14 +409,15 @@ loop(ext_regi$regiEmiMktTarget_47(ext_regi),
 					);
 ***					linear price between first free year and current target terminal year
 					loop(ttot3,
+					    s47_firstFreeYear = ttot3.val; 
 						break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
 						s47_prefreeYear = ttot3.val;
 					);
 					if(not(ttot2.val eq p47_firstTargetYear(ext_regi)), !! delay price change by cm_emiMktTargetDelay years for later targets
-						s47_prefreeYear = max(s47_prefreeYear,ttot.val+cm_emiMktTargetDelay)
+						s47_firstFreeYear = max(s47_firstFreeYear,ttot.val+cm_emiMktTargetDelay)
 					);
 					loop(ttot3$(ttot3.val eq s47_prefreeYear), !! ttot3 = beginning of slope; ttot2 = end of slope
-						pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+						pm_taxemiMkt(t,regi,emiMkt)$((t.val ge s47_firstFreeYear) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
 					);	
 *** 				if not last year target, then assume weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
 					if((not(ttot2.val eq p47_lastTargetYear(ext_regi))),
@@ -444,15 +445,16 @@ loop(ext_regi$regiEmiMktTarget_47(ext_regi),
 *** 				terminal year price
 					pm_taxemiMkt(ttot2,regi,emiMkt) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
 ***					linear price between first free year and terminal year
-					if(not(ttot2.val eq p47_firstTargetYear(ext_regi)), !! delay price change by cm_emiMktTargetDelay years for later targets
-						s47_prefreeYear = max(s47_prefreeYear,ttot.val+cm_emiMktTargetDelay)
-					);
 					loop(ttot3,
+					    s47_firstFreeYear = ttot3.val; 
 						break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
 						s47_prefreeYear = ttot3.val;
 					);
+					if(not(ttot2.val eq p47_firstTargetYear(ext_regi)), !! delay price change by cm_emiMktTargetDelay years for later targets
+						s47_firstFreeYear = max(s47_firstFreeYear,ttot.val+cm_emiMktTargetDelay)
+					);
 					loop(ttot3$(ttot3.val eq s47_prefreeYear), !! ttot3 = beginning of slope; ttot2 = end of slope
-						pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot3.val) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
+						pm_taxemiMkt(t,regi,emiMkt)$((t.val ge s47_firstFreeYear) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
 					);	
 *** 				fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
 					pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
@@ -716,11 +718,12 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEn
 		);
 ***	linear price between first free year and terminal year	
 		loop(ttot2,
+			s47_firstFreeYear = ttot2.val; 
 			break$((ttot2.val ge ttot.val) and (ttot2.val ge cm_startyear)); !!initial free price year
 			s47_prefreeYear = ttot2.val;
 		);
 		loop(ttot2$(ttot2.val eq s47_prefreeYear),
-			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
+			p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_firstFreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
 		   		p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType) +
 				(
 					p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType)
