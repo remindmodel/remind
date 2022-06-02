@@ -1,6 +1,10 @@
 source("renv/activate.R")
 
-options(repos = c(pikruniverse = "https://pik-piam.r-universe.dev", CRAN = "https://cran.rstudio.com/"))
+# source global .Rprofile (very important to load user specific settings)
+# DO NOT EDIT THIS LINE!
+if (file.exists("~/.Rprofile")) {
+  source("~/.Rprofile")
+}
 
 # TODO do we want this bootstrapping?
 # bootstrapping, will only run once after remind is freshly cloned
@@ -12,10 +16,4 @@ if (identical(rownames(installed.packages(priority = "NA")), c(Package = "renv")
   renv::hydrate() # auto-detect and install all dependencies
   renv::snapshot(prompt = FALSE) # create renv.lock
   # TODO if this bootstrapping procedure is used, adapt 1_GettingREMIND.md
-}
-
-# TODO This lowers reproducibility, do we really want this?
-# TODO is this coming last ok?
-if (file.exists("~/.Rprofile")) {
-  source("~/.Rprofile")
 }
