@@ -11,7 +11,7 @@ if (!exists("source_include")) {
   readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude")
 }
 
-run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude = modelsHistExclude) {
+run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude) {
 
   scenNames <- getScenNames(outputdirs)
   # for non-absolute paths, add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).

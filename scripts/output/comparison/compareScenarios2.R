@@ -96,7 +96,8 @@ start_comp <- function(outputdirs,
     " outfilename=", jobname,
     " regionList=", paste(regionList, collapse = ","),
     " mainRegName=", mainReg,
-    " modelsHistExclude=", paste(modelsHistExclude, collapse = ","), "\"")
+    " modelsHistExclude=", paste(modelsHistExclude, collapse = ","),
+    "\"")
   cat(clcom, "\n")
   if (on_cluster) {
     system(clcom)
@@ -146,10 +147,12 @@ for (r in listofruns) {
         "EDGE_SSP1", "EDGE_SSP2", "CEDS", "IRENA",
         "IEA WEO 2021 APS", "IEA WEO 2021 SDS", "IEA WEO 2021 SPS"
       )
+      ref.exclude <- sapply(ref.exclude, function(x) {
+        paste0("'", x, "'")
+      }, USE.NAMES = F)
       fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-DEU")
-      start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=paste0(fileName, "-", "Ariadne"), regionList=regionList, mainReg="DEU", modelsHistExclude=ref.exclude)
+      start_comp(outputdirs = r$dirs, shortTerm = TRUE, outfilename = paste0(fileName, "-", "Ariadne"), regionList = regionList, mainReg = "DEU", modelsHistExclude = ref.exclude)
     }
-
 
   }
 }
