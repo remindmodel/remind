@@ -75,9 +75,11 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues (Mt N2O/yr)",         emirem="n2ofertcr", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O/yr)",       emirem="n2ofertsom",factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O/yr)",                        emirem="n2oanwstp", factor_mag2rem=28/44,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|+|Peatland (Mt N2O/yr)",                                                      emirem="n2opeatland", factor_mag2rem=28/44,stringsAsFactors=FALSE))      
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Rice (Mt CH4/yr)",                                              emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
+      map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|+|Peatland (Mt CH4/yr)",                                                      emirem="ch4peatland",factor_mag2rem=1,stringsAsFactors=FALSE))
     } else if("Emissions|N2O-N|Land|Agriculture|+|Animal Waste Management (Mt N2O-N/yr)" %in% getNames(mag)) {
       # MAgPIE 4 (intermediate - wrong units)
       map <- rbind(map,data.frame(emimag="Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)",                                               emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
@@ -244,7 +246,10 @@ prepare <- function() {
 
   # Check configuration for consistency
   cfg <- check_config(cfg, reference_file="config/default.cfg",
-                      settings_config = "config/settings_config.csv", extras = c("remind_folder"))
+                      settings_config = "config/settings_config.csv",
+                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+                                 "gms$cm_CES_configuration", "gms$c_description"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -801,7 +806,26 @@ prepare <- function() {
                              list(c("vm_emiCO2_sector.FX", "vm_emiCO2Sector.FX")),
                              list(c("v21_taxrevCO2_sector.FX", "v21_taxrevCO2Sector.FX")))
 
-    #filter out regipol items
+    # renamed because of https://github.com/remindmodel/remind/pull/796
+    manipulate_tradesets <- c(list(c("'gas_pipe'", "'pipe_gas'")),
+                              list(c("'lng_liq'", "'termX_lng'")),
+                              list(c("'lng_gas'", "'termX_lng'")),
+                              list(c("'lng_ves'", "'vess_lng'")),
+                              list(c("'coal_ves'", "'vess_coal'")),
+                              list(c("vm_budgetTradeX", "!! vm_budgetTradeX")),
+                              list(c("vm_budgetTradeM", "!! vm_budgetTradeM"))  )
+    levs_manipulateThis <- c(levs_manipulateThis, manipulate_tradesets)
+    margs_manipulateThis <- c(margs_manipulateThis, manipulate_tradesets)
+    fixings_manipulateThis <- c(fixings_manipulateThis, manipulate_tradesets)
+
+    # because of https://github.com/remindmodel/remind/pull/800
+    if (cfg$gms$cm_transpGDPscale != "on") {
+      levs_manipulateThis <- c(levs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+      margs_manipulateThis <- c(margs_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+      fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
+    }
+
+    #RP filter out regipol items
     if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("q47_implFETax.M", "!!q47_implFETax.M")))
@@ -992,6 +1016,9 @@ run <- function(start_subsequent_runs = TRUE) {
     cat("\nREMIND was compiled but not executed, because cfg$action was set to 'c'\n\n")
   }
 
+  explain_modelstat <- c("1" = "Optimal", "2" = "Locally Optimal", "3" = "Unbounded", "4" = "Infeasible",
+                         "5" = "Locally Infeasible", "6" = "Intermediate Infeasible", "7" = "Intermediate Nonoptimal")
+  modelstat <- numeric(0)
   stoprun <- FALSE
 
   # to facilitate debugging, look which files were created.
@@ -1009,19 +1036,33 @@ run <- function(start_subsequent_runs = TRUE) {
     } else {
       message("  full.log and full.lst exist, so GAMS did run.")
       if (! file.exists("abort.gdx")) {
-        message("  abort.gdx does not exist, which is a file written automatically for some types of errors.")
+        message("  abort.gdx does not exist, a file written automatically for some types of errors.")
       } else {
-        message("! abort.gdx exists, which is a file written automatically for some types of errors.")
+        message("! abort.gdx exists, a file containing the latest data at the point GAMS aborted execution.")
+      }
+      if (! file.exists("non_optimal.gdx")) {
+        message("  non_optimal.gdx does not exist, a file written if at least one iteration did not find a locally optimal solution.")
+      } else {
+        modelstat_no <- as.numeric(readGDX(gdx = "non_optimal.gdx", "o_modelstat", format = "simplest"))
+        max_iter_no  <- as.numeric(readGDX(gdx = "non_optimal.gdx", "o_iterationNumber", format = "simplest"))
+        message("  non_optimal.gdx exists, because iteration ", max_iter_no, " did not find a locally optimal solution. ",
+          "modelstat: ", modelstat_no, if (modelstat_no %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat_no], ")"))
+        modelstat[[as.character(max_iter_no)]] <- modelstat_no
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
         stoprun <- TRUE
       } else {
-        message("  fulldata.gdx exists, so at least one iteration was successful.")
-        message("  Number of iterations: ",
-                         as.numeric(readGDX(gdx="fulldata.gdx", "o_iterationNumber", format = "simplest")))
-        message("  Modelstat: ", as.numeric(readGDX(gdx="fulldata.gdx", "o_modelstat", format="simplest")),
-                " (see https://www.gams.com/mccarlGuide/modelstat_tmodstat.htm).")
+        modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
+        max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
+        message("  fulldata.gdx exists, because iteration ", max_iter_fd, " was successful. ",
+          "modelstat: ", modelstat_fd, if (modelstat_fd %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat_fd], ")"))
+        modelstat[[as.character(max_iter_fd)]] <- modelstat_fd
+      }
+      if (length(modelstat) > 0) {
+        modelstat <- modelstat[which.max(names(modelstat))]
+        message("  Modelstat after ", as.numeric(names(modelstat)), " iterations: ", modelstat,
+                if (modelstat %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat], ")"))
       }
       logStatus <- grep("*** Status", readLines("full.log"), fixed = TRUE, value = TRUE)
       message("  full.log states: ", paste(logStatus, collapse = ", "))
@@ -1029,29 +1070,31 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if ( file.exists("full.lst")) {
-    message("Infeasibilities extracted from full.lst with nashstat -F:")
-    command <- paste("li=$(nashstat -F | wc -l); cat",
-               "<(if (($li < 2)); then echo no infeasibilities found; fi)",
-               "<(if (($li > 1)); then nashstat -F | head -n 2; fi)",
-               "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-               "<(if (($li > 2)); then nashstat -F | tail -n 1; fi)")
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+    message("\nInfeasibilities extracted from full.lst with nashstat -F:")
+    command <- paste(
+      "li=$(nashstat -F | wc -l); cat",
+      "<(if (($li < 2)); then echo no infeasibilities found; fi)",
+      "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
-    if (nashstatres != 0) message("Error: nashstat not found, search for p80_repy in full.lst yourself.")
-    message("")
+    if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }
+  message("")
 
   if (stoprun) {
-    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.")
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
+         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
   }
 
   message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
-                        modelstat  = readGDX(gdx="fulldata.gdx", "o_modelstat", format="first_found"),
-                        config     = cfg,
-                        runtime    = gams_runtime,
-                        setup_info = lucode2::setup_info(),
-                        submit     = cfg$runstatistics)
+                         modelstat  = modelstat,
+                         config     = cfg,
+                         runtime    = gams_runtime,
+                         setup_info = lucode2::setup_info(),
+                         submit     = cfg$runstatistics)
 
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)

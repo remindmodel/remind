@@ -368,7 +368,7 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 ***---------------------------------------------------------------------------
 *' Initial values for cumulated capacities (learning technologies only):
 ***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)$(cm_startyear LE t0.val)..
+q_capCumNet(t0,regi,teLearn)..
   vm_capCum(t0,regi,teLearn)
   =e=
   pm_data(regi,"ccap0",teLearn);

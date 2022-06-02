@@ -85,9 +85,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.298001
+* Input data revision: 6.304
 * 
-* Last modification (input data): Mon Apr 11 14:41:17 2022
+* Last modification (input data): Thu May 19 12:35:05 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -221,7 +221,7 @@ $setGlobal codePerformance  off       !! def = off
 ***-----------------------------------------------------------------------------
 ***--------------- declaration of parameters for switches ----------------------
 parameters
-  cm_iteration_max          "number of Negishi iterations"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
   cm_abortOnConsecFail      "number of iterations of consecutive failures of one region after which to abort"
   c_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
@@ -246,11 +246,12 @@ parameters
   cm_CCS_chemicals          "CCS for chemicals sub-sector"
   cm_CCS_steel              "CCS for steel sub-sector"
   c_solscen                 "solar option choice"
-  cm_bioenergy_tax          "level of bioenergy tax in fraction of bioenergy price"
+  cm_bioenergy_tax          "level of bioenergy sustainability tax in fraction of bioenergy price"
   cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
   cm_tradecost_bio          "choose financal tradecosts for biomass (purpose grown pebiolc)"
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
   cm_tradbio_phaseout       "Switch that allows for a faster phase out of traditional biomass"
+  cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
   cm_cprice_red_factor      "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
   cm_startyear              "first optimized modelling time step [year]"
   c_start_budget            "start of GHG budget limit"
@@ -276,6 +277,7 @@ parameters
   cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
   c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
   c_ccsinjecratescen        "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
+  c_ccsinjecrateRegi        "regional upper bound of the CCS injection rate, overwrites settings set with c_ccsinjectratescen"
   c_ccscapratescen          "CCS capture rate"
   c_export_tax_scen         "choose which oil export tax is used in the model. 0 = none, 1 = fix"
   cm_iterative_target_adj   "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
@@ -395,6 +397,7 @@ cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 cm_1stgen_phaseout  = 0;         !! def = 0
 $setglobal cm_tradbio_phaseout  default  !! def = default
+cm_biolc_tech_phaseout = 0;        !! def = 0
 cm_cprice_red_factor  = 1;         !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
@@ -433,6 +436,7 @@ cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
+$setglobal c_ccsinjecrateRegi  off  !! def = "off"
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
@@ -528,6 +532,8 @@ cm_H2targets = 0; !! def 0
 
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
+*** switch for ariadne import scenarios (needs cm_import_EU to be not off)
+$setGlobal cm_import_ariadne  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
@@ -628,6 +634,8 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
+
+$setglobal cm_transpGDPscale off  !! def = off
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off

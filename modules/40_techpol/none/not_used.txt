@@ -23,3 +23,4 @@ cm_startyear,input,questionnaire
 cm_bioprod_histlim,input,questionnaire
 cm_H2targets,input,questionnaire
 cm_NDC_version,input,questionnaire
+cm_biolc_tech_phaseout,input,questionnaire
