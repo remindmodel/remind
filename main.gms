@@ -87,7 +87,7 @@
 * 
 * Input data revision: 6.304
 * 
-* Last modification (input data): Fri Jun  3 11:16:18 2022
+* Last modification (input data): Thu May 19 12:35:05 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -277,6 +277,7 @@ parameters
   cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
   c_techAssumptScen         "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
   c_ccsinjecratescen        "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
+  c_ccsinjecrateRegi        "regional upper bound of the CCS injection rate, overwrites settings set with c_ccsinjectratescen"
   c_ccscapratescen          "CCS capture rate"
   c_export_tax_scen         "choose which oil export tax is used in the model. 0 = none, 1 = fix"
   cm_iterative_target_adj   "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
@@ -436,6 +437,7 @@ cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
+$setglobal c_ccsinjecrateRegi  off  !! def = "off"
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
@@ -630,7 +632,7 @@ $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_transpGDPscale  off  !! def = on
+$setglobal cm_transpGDPscale off  !! def = off
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off

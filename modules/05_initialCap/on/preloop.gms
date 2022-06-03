@@ -6,26 +6,6 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/05_initialCap/on/preloop.gms
 
-***------------------------------------------------------------------------------
-*** Normalization of historical vintage structure - ESM
-***------------------------------------------------------------------------------
-*RP* Rescale vintages to 1 so they can be multiplied with the actual 2005 capacities coming from the intialization routine initialcap2
-loop(regi,
-  loop(te,
-*--- Sum all historical capacities
-    p05_aux_vintage_renormalization(regi,te)
-      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val > 1) ),
-          (pm_vintage_in(regi,opTimeYr,te) * pm_omeg(regi,opTimeYr+1,te))
-        )
-        + pm_vintage_in(regi,"1",te) * pm_omeg(regi,"2",te) * 0.5;
-*--- Normalization
-    if(p05_aux_vintage_renormalization(regi,te) gt 0,
-      p05_vintage(regi,opTimeYr,te) = pm_vintage_in(regi,opTimeYr,te)/p05_aux_vintage_renormalization(regi,te);
-    );
-  );
-);
-display p05_vintage;
-
 ***---------------------------------------------------------------------------
 ***           MODEL    initialcap2         START
 ***---------------------------------------------------------------------------
@@ -87,10 +67,38 @@ q05_ccapini(regi,en2en(enty,enty2,te)) ..
   * v05_INIdemEn0(regi,enty2)
 ;
 
-display pm_data;
-
 *** model definition
 model initialcap2 / q05_eedemini, q05_ccapini /;
+
+***---------------------------------------------------------------------------
+***           MODEL    initialcap2         END
+***---------------------------------------------------------------------------
+
+*** only run intialcap model if startyear is 2005
+if (cm_startyear eq 2005,
+
+***------------------------------------------------------------------------------
+*** Normalization of historical vintage structure - ESM
+***------------------------------------------------------------------------------
+*RP* Rescale vintages to 1 so they can be multiplied with the actual 2005 capacities coming from the intialization routine initialcap2
+loop(regi,
+  loop(te,
+*--- Sum all historical capacities
+    p05_aux_vintage_renormalization(regi,te)
+      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val > 1) ),
+          (pm_vintage_in(regi,opTimeYr,te) * pm_omeg(regi,opTimeYr+1,te))
+        )
+        + pm_vintage_in(regi,"1",te) * pm_omeg(regi,"2",te) * 0.5;
+*--- Normalization
+    if(p05_aux_vintage_renormalization(regi,te) gt 0,
+      p05_vintage(regi,opTimeYr,te) = pm_vintage_in(regi,opTimeYr,te)/p05_aux_vintage_renormalization(regi,te);
+    );
+  );
+);
+display p05_vintage;
+
+display pm_data;
+
 
 *** solve statement
 if (execError > 0,
@@ -108,7 +116,6 @@ pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);
 
 *** write report about v05_INIcap0:
-file report_capini;
 put report_capini;
 put "v05_INIcap0.l:" /;
      loop(regi,loop(te,
@@ -116,7 +123,6 @@ put "v05_INIcap0.l:" /;
      ));
 putclose report_capini;
 *** write report on v05_INIdemEn0
-file check_INIdemEn0 / check_INIdemEn0.csv /;
 put check_INIdemEn0;
 put "regi;enty;value";
 put /;
@@ -524,6 +530,24 @@ loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(ent
 );
 
 display pm_emifac;
+
+);
+
+*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
+if (cm_startyear gt 2005,
+  Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
+  Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
+  Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
+  Execute_Loadpoint 'input_ref' pm_EN_demand_from_initialcap2 = pm_EN_demand_from_initialcap2;
+  Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
+  Execute_Loadpoint 'input_ref' pm_inco0_t = pm_inco0_t;
+  Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
+  Execute_Loadpoint 'input_ref' pm_data = pm_data;
+  Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
+);
 
 
 *** EOF ./modules/05_initialCap/on/preloop.gms

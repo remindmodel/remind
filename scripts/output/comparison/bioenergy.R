@@ -53,7 +53,7 @@ readfuelex <- function(gdx,enty) {
 }
 
 ############### read and calculate data ################################
-fuelex <- read_all(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
+fuelex <- readAll(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
 
 fuelex_bio <- dimSums(fuelex,dims=4) * TWa2EJ # grades are in fourth dimension
 
