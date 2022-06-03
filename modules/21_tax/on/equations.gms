@@ -45,9 +45,6 @@
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
     + v21_taxrevBioImport(t,regi)  
-$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
-    + vm_taxrevimplFETax(t,regi)
-$endif.cm_implicitFE   
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
     + vm_taxrevimplEnergyBoundTax(t,regi)
 $endif.cm_implicitEnergyBound  

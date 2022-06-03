@@ -346,28 +346,11 @@ $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
-$setGlobal cm_emiMktETS  off       !! def = off
-$setGlobal cm_emiMktETS_type  off  !! def = off
 
-$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
-$setGlobal cm_ETS_post2055Increase  2      !! def = 2
-
-$setGlobal cm_emiMktES  off        !! def = off	
-$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
-
-$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
-$setGlobal cm_ESD_post2055Increase  2 !! def = 2
-
-$setGlobal cm_emiMktEScoop  off    !! def = off	
-$setGlobal cm_emiMktES2020price  30 !! def = 30
-$setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
-$setGlobal cm_implicitFE  off !! def = off
-$setGlobal cm_implFETarget  2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
-$setGlobal cm_implFEExoTax  off   !! def = off
 $setGlobal cm_vehiclesSubsidies  off !! def = off
 $setGlobal cm_implicitEnergyBound  off !! def = off
 

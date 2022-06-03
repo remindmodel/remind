@@ -270,26 +270,6 @@ loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emi
 );
 $endif.emiMkt
 
-$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
-*** regipol ETS targets must be met within 1% of target deviation
-loop(ETS_mkt,
-  if( (pm_ETSTarget_dev(ETS_mkt) gt 0.01 OR pm_ETSTarget_dev(ETS_mkt) lt -0.01),
-    s80_bool = 0;
-    p80_messageShow("ETStarget") = YES;
-  );
-);
-$endif.emiMktETS
-
-$ifthen.emiMktESR not "%cm_emiMktES%" == "off" 
-*** regipol ESR targets must be met within 1% of target deviation
-loop((ttot,regi)$pm_emiTargetESR(ttot,regi),
-  if( (pm_ESRTarget_dev(ttot,regi) gt 0.01 OR pm_ESRTarget_dev(ttot,regi) lt -0.01),
-    s80_bool = 0;
-    p80_messageShow("ESRtarget") = YES;
-  );
-);
-$endif.emiMktESR
-
 *** additional criterion: Were implicit tax/subsidy primary, secondary and/or final energy targets reached? 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
@@ -371,34 +351,7 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
-$endif.emiMkt
-$ifthen.emiMktETS not "%cm_emiMktETS%" == "off"         
-        if(sameas(convMessage80, "ETStarget"),
-		      display "#### 8) The ETS regional climate target has not been reached yet.";
-          display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
-          display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
-          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
-          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_ETSTarget_dev;
-          display pm_emiRescaleCo2TaxETS;
-***          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emiCurrentETS, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
-***          display pm_ETSTarget_dev_iter;
-***          display pm_taxemiMkt_iteration;
-	      );
-$endif.emiMktETS
-$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
-        if(sameas(convMessage80, "ESRtarget"),
-		      display "#### 9) The ESR regional climate target has not been reached yet.";
-          display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
-          display "#### The parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
-          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_ESRTarget_dev;     
-          display pm_emiRescaleCo2TaxESR;     
-***          display pm_emiRescaleCo2TaxESR, pm_ESRTarget_dev, vm_emiTeMkt.l, pm_emiTargetESR, pm_emissionsRefYearESR;
-***          display pm_ESRTarget_dev_iter;
-***          display pm_taxemiMkt_iteration;
-	      ); 
-$endif.emiMktESR   
+$endif.emiMkt  
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
@@ -485,29 +438,6 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display pm_taxemiMkt_iteration;
 	      );
 $endif.emiMkt
-$ifthen.emiMktETS not "%cm_emiMktETS%" == "off" 
-        if(sameas(convMessage80, "ETStarget"),
-		      display "#### 8) The ETS regional climate target has not been reached yet.";
-          display "#### Check out the ETS target of 47_regipol module and pm_ETSTarget_dev parameter.";
-          display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
-          display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
-          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_emiRescaleCo2TaxETS, pm_ETSTarget_dev, pm_emiCurrentETS, pm_regiCO2ETStarget, pm_emissionsRefYearETS;
-          display pm_ETSTarget_dev_iter;
-          display pm_taxemiMkt_iteration;
-	      );
-$endif.emiMktETS
-$ifthen.emiMktESR not "%cm_emiMktES%" == "off"
-        if(sameas(convMessage80, "ESRtarget"),
-		      display "#### 9) The ESR regional climate target has not been reached yet.";
-          display "#### Check out the ESR target of 47_regipol module and pm_ESRTarget_dev parameter.";
-          display "#### The parameter gives the current emissions minus the target value in relative terms to 2005 emissions.";
-          display "#### It must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_emiRescaleCo2TaxESR, pm_ESRTarget_dev, vm_emiTeMkt.l, pm_emiTargetESR, pm_emissionsRefYearESR;
-          display pm_ESRTarget_dev_iter;
-          display pm_taxemiMkt_iteration;
-	      );
-$endif.emiMktESR  
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
