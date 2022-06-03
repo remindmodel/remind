@@ -14,7 +14,6 @@ pm_ts, parameter, ???
 cm_bioenergy_tax, switch, ???
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
-cm_EnSecScen, switch, ???
 cm_gdximport_target, switch, ???
 pm_gdp_gdx,parameter,???
 pm_pop,parameter,???
@@ -60,3 +59,4 @@ cm_CO2TaxSectorMarkup,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
 pm_taxCO2eqRegi,input,questionnare
 pm_taxCO2eqSum,input,questionnare
+pm_tau_pe_tax,input,questionnaire
