@@ -139,9 +139,9 @@ $offdelim
 *** converted to T$/TWyr   
 p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
 *LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;  
+p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
 
-           
+
 *** --------------------
 *** CO2 prices
 *** --------------------    
@@ -240,6 +240,9 @@ $else.cm_CO2TaxSectorMarkup
   p21_CO2TaxSectorMarkup(regi,emi_sectors) = 0;
 ;
 $endIf.cm_CO2TaxSectorMarkup
+
+*** by default PE tax is zero
+pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 
 
 *** EOF ./modules/21_tax/on/datainput.gms
