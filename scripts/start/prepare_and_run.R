@@ -225,7 +225,7 @@ prepare <- function() {
     right_join(
     # list all packages of interest here
         tribble(
-            ~Package, "data.table", "devtools", "dplyr", "edgeTrpLib",
+            ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
