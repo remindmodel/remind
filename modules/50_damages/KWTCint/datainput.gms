@@ -26,13 +26,13 @@ p50_damageFuncCoefTC1(isoTC) = 0;
 *** load TC damage parameter data
 table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter constant"
 $ondelim
-$include "./modules/50_damages/TC/input/TC_df_parameters_const.csv"
+$include "./modules/50_damages/KWTCint/input/TC_df_parameters_const.csv"
 $offdelim
 ;
 
 table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter, linear with temperature"
 $ondelim
-$include "./modules/50_damages/TC/input/TC_df_parameters_tasK.csv"
+$include "./modules/50_damages/KWTCint/input/TC_df_parameters_tasK.csv"
 $offdelim
 ;
 
@@ -50,7 +50,7 @@ pm_damageMarginalTm2(tall,regi)           = 0;
 
 table f50_countryGDPfrac(tall,iso,all_GDPscen)	"ratio country to regional GDP"
 $ondelim
-$include "./modules/50_damages/TC/input/gdp_countryFrac_ann.csv"
+$include "./modules/50_damages/KWTCint/input/gdp_countryFrac_ann.csv"
 $offdelim
 ;
 pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
