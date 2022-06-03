@@ -122,6 +122,7 @@ ConvCase
 ConvCaseWise
 ElecEra
 ElecEraWise
+HydrHype
 HydrHype4
 HydrHypeWise
 Mix
