@@ -112,6 +112,8 @@ pm_budgetCO2eq(all_regi)                             "budget for regional energy
 p_actualbudgetco2(tall)                              "actual level of cumulated emissions starting from 2020 [GtCO2]"
 
 pm_dataccs(all_regi,char,rlf)                               "maximum CO2 storage capacity using CCS technology. [GtC]"
+pm_ccsinjecrate(all_regi)                                   "Regional CCS injection rate factor. 1/a."
+p_extRegiccsinjecrateRegi(ext_regi)                         "Regional CCS injection rate factor. 1/a. (extended regions)"
 pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
@@ -218,8 +220,6 @@ pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all 
 
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
-
-
 
 *** climate related
 pm_globalMeanTemperature(tall)                       "global mean temperature anomaly"
@@ -547,7 +547,7 @@ sm_DptCO2_2_TDpGtC                                    "Conversion multiplier to 
 s_co2pipe_leakage                                     "Leakage rate of CO2 pipelines. [0..1]"
 s_tau_cement                                          "range of per capita investments for switching from short-term to long-term behavior in CO2 cement emissions"                / 12000 /
 s_c_so2                                               "constant, see S. Smith, 2004, Future Sulfur Dioxide Emissions"    /4.39445/
-sm_ccsinjecrate                                       "CCS injection rate factor. [1/a]"
+s_ccsinjecrate                                        "CCS injection rate factor. [1/a]"
 
 s_t_start                                             "start year of emission budget"
 cm_peakBudgYr                                         "date of net-zero CO2 emissions for peak budget runs without overshoot"
