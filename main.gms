@@ -455,7 +455,6 @@ c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2from2020      = 1150;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
-$setGlobal cm_regiCO2target  off   !! def = off
 $setGlobal cm_emiMktTarget  off    !! def = off
 $setGlobal cm_prioRescaleFactor off !! def = off
 cm_postTargetIncrease    = 0;      !! def = 0

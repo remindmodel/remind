@@ -80,7 +80,7 @@ as a shortcut, meaning `1` for `--testOneRegi`, `i` for `--interactive`, `t` for
 Further notes:
 --------------
 
-* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_emiMktTarget` to enter comma separated values `2020.2050.USA.all.year.netGHG 1, 2020.2050.all.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
 * To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your remind directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
 
