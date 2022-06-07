@@ -353,6 +353,7 @@ parameters
   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
   c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
+  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on pegas in Germany from 2020 to 2050"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -528,6 +529,8 @@ cm_H2targets = 0; !! def 0
 $setGlobal cm_import_EU  off !! def off
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 $setGlobal cm_import_ariadne  off !! def off
+*** switch for ariadne energy security scenario
+$setGlobal cm_EnSecScen  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
