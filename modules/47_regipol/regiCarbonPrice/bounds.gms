@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
 
-
+***---------------------------------------------------------------------------
 *** region-specific bounds (with hard-coded regions)
+***---------------------------------------------------------------------------
 
 ** Force historical bounds on nuclear
 vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
@@ -89,6 +90,11 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 *** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
+
+*** energy security scenario assumes 5GW(el) electrolysis installed by 2030 in Germany at minimum
+$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
+    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5/pm_eta_conv("2030",regi,"elh2")/1000;
+$endIf.cm_EnSecScen
 
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:

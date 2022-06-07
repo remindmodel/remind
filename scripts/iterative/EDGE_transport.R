@@ -17,7 +17,7 @@ opt = parse_args(opt_parser);
 library(data.table)
 library(gdx)
 library(gdxdt)
-library(edgeTrpLib)
+library(edgeTransport)
 require(devtools)
 library(rmndt)
 library(mrremind)
