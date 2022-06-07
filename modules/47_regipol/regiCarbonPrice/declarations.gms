@@ -39,17 +39,17 @@ Parameter
 
 *** Parameters necessary to calculate current emission target deviations
   pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt)    "previous iteration region emissions (from year ttot to ttot2 for budget) [GtCO2 or GtCO2eq]"
-  pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
+  p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktCurrent across iterations  [GtCO2 or GtCO2eq]"
   pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt)    "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2 or GtCO2eq]"
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
-  pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliar parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
-  pm_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope [#]"
-  pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) "auxiliar parameter to save the intersect value of the linear projection of previous iterations mitigation levels when compared to relative price difference [#]" 
-  pm_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve intersect [#]"
+  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliar parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
+  p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope [#]"
+  p47_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) "auxiliar parameter to save the intersect value of the linear projection of previous iterations mitigation levels when compared to relative price difference [#]" 
+  p47_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve intersect [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
-  pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
+  p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
@@ -83,12 +83,12 @@ Parameter
   p47_implEnergyBoundTax0(ttot,all_regi)                                       "previous iteration implicit energy bound target tax revenue"
 
   p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)         "energy bound implicit tax per iteration"
-  p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType)                 "energy bound implicit tax deviation of current iteration from target"
-  p47_implEnergyBoundTarget_dev_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)  "parameter to save p47_implEnergyBoundTarget_dev across iterations"
+  pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType)                 "energy bound implicit tax deviation of current iteration from target"
+  p47_implEnergyBoundTarget_dev_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)  "parameter to save pm_implEnergyBoundTarget_dev across iterations"
   p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "energy bound implicit tax rescale factor per iteration"    
   p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)     "total PE, SE and/or FE level for an specific energy type per iteration"   
 
-  p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)  "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
+  pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)  "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
 
   pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the energy usage"
 ;

@@ -2053,13 +2053,13 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
 ***  feh2s.indst.feh2i
 /
 
-all_emiMkt         "emission markets"
+all_emiMkt      "emission markets"
 /	ETS     "ETS emission market"
 	ES      "Effort sharing emission market"
 	other	"other market configurations"
 /
 
-all_emiMktExt   "extended emission market defineitions"
+all_emiMktExt   "extended emission market definitions"
 /	
         ETS     "ETS emission market"
 	ESR     "Effort sharing emission market"
@@ -2067,7 +2067,7 @@ all_emiMktExt   "extended emission market defineitions"
         all     "economy wide emission market"
 /
 
-emiMktGroup(all_emiMktExt,all_emiMkt) 
+emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"
 /
         ETS.(ETS)
         ESR.(ES)

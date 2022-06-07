@@ -34,6 +34,7 @@ positive variables
     v32_H2cof_Lob3(ttot,all_regi)				"Amount of cofiring of gas/H2 to CSP needed due to use of CSP in LoB 3, which has a high CF" 
     v32_H2cof_CSPsh(ttot,all_regi)				"Amount of cofiring of gas/H2 to CSP needed due to self-correlation of CSP"
     v32_sqrtCurt(ttot,all_regi)					"Helper variable: share of the year for which curtailment is higher than 1/3 of maximum curtailment - this is the amount that we assume we can use for producing H2. Because we assume a 1-to-3 ratio of time to capacity for curtailment, it is also used to calculate the curtailed capacity" 
+    vm_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
 ;
 
 variables	
@@ -72,6 +73,7 @@ equations
     q32_limitCapTeChp(ttot,all_regi)  			"Capacitiy constraint for chp electricity generation"
     q32_limitCapTeGrid(ttot,all_regi)   		"Calculate the additional grid capacity required by VRE"
     q32_limitSolarWind(tall,all_regi)    		"Limits on fluctuating renewables, only turned on for special EMF27 scenarios"
+    q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
 ;
 
 *** EOF ./modules/32_power/RLDC/declarations.gms

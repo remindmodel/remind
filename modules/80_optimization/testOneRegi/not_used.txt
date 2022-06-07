@@ -41,11 +41,12 @@ pm_taxCO2eq_iterationdiff,      input,      ??
 pm_taxCO2eq_iterationdiff_tmp,  input,      ??
 sm_globalBudget_dev,            input,      ??
 pm_factorRescaleemiMktCO2Tax,   input,      ??
-pm_regiTarget_dev,              input,      ??
 pm_emiMktTarget,                input,      ??
-pm_emissionsRefYear,            input,      ??
 pm_emiMktTarget_dev_iter,       input,      ??
-pm_taxCO2eq_iteration,          input,      ??
 pm_emiMktCurrent,               input,      ??
 pm_taxemiMkt_iteration,         input,      ??
-vm_emiTeMkt,                    variable,   ??
+pm_emiMktTarget_dev,            parameter,  ???
+pm_emiMktRefYear,               parameter,  ???
+pm_implEnergyBoundLimited,      parameter,  ???
+pm_implEnergyBoundTarget_dev,   parameter,  ???
+pm_implEnergyBoundTarget,       parameter,  ???

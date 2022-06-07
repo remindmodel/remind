@@ -36,7 +36,7 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 $ifthen.loadFromGDX_implEnergyBoundTax not "%cm_loadFromGDX_implEnergyBoundTax%" == "off"
 Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
 *** disable tax values for inexistent targets
-  loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(NOT (p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))),
+  loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(NOT (pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))),
     loop(all_regi$regi_groupExt(ext_regi,all_regi),
       p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
     );
@@ -44,7 +44,7 @@ Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
 $endif.loadFromGDX_implEnergyBoundTax
 
 *** initialize values if not loaded from gdx
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
     if(sameas(taxType,"tax"),
       p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val) and (NOT(p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)))) = 0.1;

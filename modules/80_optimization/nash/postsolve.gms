@@ -272,9 +272,9 @@ $endif.emiMkt
 
 *** additional criterion: Were implicit tax/subsidy primary, secondary and/or final energy targets reached? 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
-  if( (p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0.01 OR p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt -0.01),
-    if(NOT ((sameas(taxType,"tax") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt 0) OR (sameas(taxType,"sub") and p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0)),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+  if( (pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0.01 OR pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt -0.01),
+    if(NOT ((sameas(taxType,"tax") and pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt 0) OR (sameas(taxType,"sub") and pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0)),
       if(NOT(pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
@@ -355,9 +355,9 @@ $endif.emiMkt
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
-          display "#### Check out the p47_implEnergyBoundTarget_dev parameter of 47_regipol module.";
+          display "#### Check out the pm_implEnergyBoundTarget_dev parameter of 47_regipol module.";
           display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display p47_implEnergyBoundTarget_dev;
+          display pm_implEnergyBoundTarget_dev;
 	      );
 $endif.cm_implicitEnergyBound
    );
@@ -441,9 +441,9 @@ $endif.emiMkt
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
-          display "#### Check out the p47_implEnergyBoundTarget_dev parameter of 47_regipol module.";
+          display "#### Check out the pm_implEnergyBoundTarget_dev parameter of 47_regipol module.";
           display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display p47_implEnergyBoundTarget_dev;
+          display pm_implEnergyBoundTarget_dev;
 	      );
 $endif.cm_implicitEnergyBound
 	 );

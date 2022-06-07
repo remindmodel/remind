@@ -8,7 +8,7 @@
 
 *-------------------------------calculate regional permit prices-----------------------------------
 *** saving CO2 tax used in this iteration
-pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
+p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
 
 *RP* added the historic 2010/2015 CO2 prices 
@@ -651,7 +651,7 @@ o_emissions(ttot,regi,emi)$(ttot.val ge 2005) =
 
 *** note! this still excludes industry CCS and CCU. To fix. 
 o_emissions_energy(ttot,regi,emi)$(ttot.val ge 2005) = 
-    sum(emiMkt, vm_emiTeMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
+    sum(emiMkt, v_emiTeMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
     - o_emissions_bunkers(ttot,regi,emi);
 
 *** note! this still excludes industry CCS. To fix. 

@@ -96,7 +96,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
     pm_emiMktRefYear(ttot,ttot2,ext_regi,emiMktExt) = sum(regi$regi_groupExt(ext_regi,regi), p47_emiTargetMkt("2005", regi,emiMktExt,emi_type_47)*sm_c_2_co2);  
   );
 );
-pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt); !!save current emission levels across iterations 
+p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktCurrent(ttot,ttot2,ext_regi,emiMktExt); !!save current emission levels across iterations 
 
 *** Calculate target deviation...
 loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
@@ -160,18 +160,18 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
           pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
 ***     else calculate rescale factor based on slope of previous iterations mitigation levels when compared to relative price difference          
         else
-          pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
-            (pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - pm_emiMktCurrent_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt))
+          p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) =
+            (p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_emiMktCurrent_iter(iteration-1,ttot,ttot2,ext_regi,emiMktExt))
             /
             (pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) - pm_taxemiMkt_iteration(iteration-1,ttot2,regi,emiMkt))
           ;
-          pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) = 
-            pm_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)*pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt)
+          p47_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) = 
+            p47_emiMktCurrent_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) - p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)*pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt)
           ;
           pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 
-            (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt))
+            (pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) - p47_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt))
             / 
-            pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
+            p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)
             /
             pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt)
           ;		  
@@ -180,8 +180,8 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
     );
   );
 );
-pm_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
-pm_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt);
+p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
+p47_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt);
 
 *** if sequential target achieved a solution and cm_prioRescaleFactor != off, prioritize short term targets rescaling. e.g. multiplicative factor equal to 1 if target is 2030 or lower, and equal to 0.2 (s47_prioRescaleFactor) if target is 2050 or higher.
 $ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
@@ -192,7 +192,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
 );
 $endIf.prioRescaleFactor
 pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)$pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = min(max(0.1,pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt)),10); !! clamp the rescale factor between 0.1 (to avoid negative values) and 10 (extremely high price change in between iterations)
-pm_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
+p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
 
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
@@ -306,7 +306,7 @@ p47_implEnergyBoundTax0(t,regi) =
 ;
 
 ***  Calculating current PE, SE and/or FE energy type level
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   if(sameas(targetType,"t"), !!absolute target (t=total) 
     p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
     (
@@ -365,31 +365,31 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEn
 p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType);
 
 *** calculate target deviation
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   if(sameas(targetType,"t"),
-    p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = ( p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) ) / p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+    pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = ( p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) ) / pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
   );
   if(sameas(targetType,"s"),
-    p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+    pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
   );
 * save regional target deviation across iterations for debugging of target convergence issues
-  p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType);
+  p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType) = pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType);
 );
 
 ***  calculating targets implicit tax rescale factor
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   if(sameas(taxType,"tax"),
     if(iteration.val lt 15,
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
     else
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
     );  
   );
   if(sameas(taxType,"sub"),
     if(iteration.val lt 15,
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
     else
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - p47_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
     );  
   );
 *** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
@@ -403,7 +403,7 @@ p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,e
 
 *** updating energy targets implicit tax
 pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 0;
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
 *** terminal year onward tax
     if(sameas(taxType,"tax"),
@@ -441,7 +441,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$p47_implEn
 
 p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType);
 
-display p47_implEnergyBoundCurrent, p47_implEnergyBoundTarget, p47_implEnergyBoundTax_prevIter, p47_implEnergyBoundTarget_dev, p47_implEnergyBoundTarget_dev_iter, p47_implEnergyBoundTax, p47_implEnergyBoundTax_Rescale, p47_implEnergyBoundTax_Rescale_iter, p47_implEnergyBoundTax_iter, p47_implEnergyBoundCurrent_iter, p47_implEnergyBoundTax0;
+display p47_implEnergyBoundCurrent, p47_implEnergyBoundTarget, p47_implEnergyBoundTax_prevIter, pm_implEnergyBoundTarget_dev, p47_implEnergyBoundTarget_dev_iter, p47_implEnergyBoundTax, p47_implEnergyBoundTax_Rescale, p47_implEnergyBoundTax_Rescale_iter, p47_implEnergyBoundTax_iter, p47_implEnergyBoundCurrent_iter, p47_implEnergyBoundTax0;
 
 
 $endIf.cm_implicitEnergyBound

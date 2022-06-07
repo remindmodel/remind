@@ -21,10 +21,10 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       pm_taxCO2eqHist(t,regi) = 0;
       pm_taxCO2eqSCC(t,regi) = 0;
 
-      p21_taxrevGHG0(t,regi) = 0;
-      p21_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
-      p21_taxrevCO2LUC0(t,regi) = 0;
-      p21_taxrevNetNegEmi0(t,regi) = 0;
+      pm_taxrevGHG0(t,regi) = 0;
+      pm_taxrevCO2Sector0(t,regi,emi_sectors) = 0;
+      pm_taxrevCO2LUC0(t,regi) = 0;
+      pm_taxrevNetNegEmi0(t,regi) = 0;
     );
   );
 $ENDIF.emiMkt

@@ -487,7 +487,7 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se
 q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, v_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
@@ -544,7 +544,7 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
 q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  vm_emiTeMkt(t,regi,enty,emiMkt)
+  v_emiTeMkt(t,regi,enty,emiMkt)
   =e=
 ***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
@@ -571,7 +571,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
 	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
+	v_emiTeMkt(t,regi,emi,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
 	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),

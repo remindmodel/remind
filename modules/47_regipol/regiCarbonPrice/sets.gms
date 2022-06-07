@@ -56,7 +56,7 @@ energyType "energy type aggregated categories"
   heat
 /
 
-energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty)
+energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty) "set combining possible energy level (PE, SE or FE), energy types and energy carriers"
 /
 *** Primary energy type categories
 ***  PE.all.(entyPe) !! defined below as calculated set
