@@ -242,12 +242,11 @@ pm_ccsinjecrate(regi) = s_ccsinjecrate;
 
 *** OR: overwrite with regional values of ccs injection rate
 $ifThen.c_ccsinjecrateRegi not "%c_ccsinjecrateRegi%" == "off"
-  Parameter
-  p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate factor. 1/a. (extended regions)" / %c_ccsinjecrateRegi% /;
-  loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
-    pm_ccsinjecrate(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
-  );
-  pm_ccsinjecrate(regi) = s_ccsinjecrate;
+Parameter p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate factor. 1/a. (extended regions)" / %c_ccsinjecrateRegi% /;
+loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
+  pm_ccsinjecrate(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
+);
+pm_ccsinjecrate(regi) = s_ccsinjecrate;
 ;
 $endIf.c_ccsinjecrateRegi
 
@@ -1490,8 +1489,7 @@ pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
-Parameter
-f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
+Parameter f_fedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in) "RCP-dependent final energy demand in buildings"
 /
 $ondelim
 $include "./core/input/f_fedemand_build.cs4r"
