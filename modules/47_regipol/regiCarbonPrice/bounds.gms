@@ -94,4 +94,12 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
+
+
+*** energy security scenario assumes 5GW(el) electrolysis installed by 2030 in Germany at minimum
+$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
+    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5/pm_eta_conv("2030",regi,"elh2")/1000;
+$endIf.cm_EnSecScen
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

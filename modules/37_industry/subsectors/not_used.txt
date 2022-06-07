@@ -1,5 +1,4 @@
 name,type,reason
-sm_tmp,input,questionnaire
 vm_effGr,input,questionnaire
 pm_ppfen_shares,input,questionnaire
 pm_priceCO2,input,questionnaire

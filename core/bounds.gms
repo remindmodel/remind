@@ -386,8 +386,8 @@ vm_deltaCap.up(t,regi,"dot","1")$( (t.val gt 2005) AND regi_group("EUR_regi",reg
 if ( c_ccsinjecratescen gt 0,
 
 	loop(regi,
-***vm_co2CCS.up(t,regi,"tco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1")*sm_ccsinjecrate
-		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * sm_ccsinjecrate;
+***vm_co2CCS.up(t,regi,"tco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1")*pm_ccsinjecrate(regi)
+		vm_co2CCS.up(t,regi,"cco2","ico2","ccsinje","1") = pm_dataccs(regi,"quan","1") * pm_ccsinjecrate(regi);
 	);
 
 );
@@ -547,5 +547,14 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
 *** FS: no electrolysis capacities before 2020
 vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
+
+
+***----------------------------------------------------------------------------
+***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
+***----------------------------------------------------------------------------
+$IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
+  vm_transpGDPscale.fx(t,regi) = 1;
+$ENDIF.transpGDPscale
+
 
 *** EOF ./core/bounds.gms

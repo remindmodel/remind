@@ -28,7 +28,6 @@ v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)     "total amount of ground roc
 variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf) "CCS emissions from CDR [GtC / a]"
 v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC / a]"
-v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a] - fixed to 0, only defined for reporting reasons"
 ;
 
 equations
@@ -37,7 +36,7 @@ q33_otherFEdemand(ttot,all_regi,all_enty)              "calculates final energy 
 q33_capconst_grindrock(ttot,all_regi)                  "calculates amount of ground rock spread on fields"
 q33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)       "calculates total amount of ground rock on fields"
 q33_emicdrregi(ttot,all_regi)                          "calculates the (negative) emissions due to CDR technologies"
-q33_omcosts_onfield(ttot,all_regi)                     "calculates O&M costs for spreading ground rocks on fields"
+q33_omcosts(ttot,all_regi)                             "calculates O&M costs for spreading ground rocks on fields"
 q33_potential(ttot,all_regi,rlf)                       "limits the total potential per region and grade"
 q33_emiEW(ttot,all_regi)                               "calculates amount of carbon captured by EW"
 q33_LimEmiEW(ttot,all_regi)                            "limits EW to a maximal annual amount of ground rock of cm_LimRock"

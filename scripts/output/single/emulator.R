@@ -99,13 +99,13 @@ regions <- sort(getRegions(x$supplycurve))
 for (y in years) {
 
   title <- paste0(y) 
-  dat <- gginput(x$supplycurve[regions,y,],scatter="type")
+  dat <- gginput(x$supplycurve[regions,y,], scatter = "type", verbose = FALSE)
   dat$year<-factor(dat$year)
 
   p <- ggplot(dat, aes(x=.value.x,y=.value.y)) +
     geom_line(aes(colour=scenario, linetype=curve)) + #geom_line(size=0.5) + 
-    geom_point(data=gginput(x$rem_point[regions,y,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
-    geom_point(data=gginput(x$mag_point[regions,y,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
+    geom_point(data=gginput(x$rem_point[regions,y,],scatter = "variable", verbose = FALSE),aes(x=.value.x,y=.value.y,colour=scenario)) +
+    geom_point(data=gginput(x$mag_point[regions,y,],scatter = "variable", verbose = FALSE),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
     facet_wrap(~region) +
     ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,80),ylim=c(0,30)) +
     theme(legend.position="top") + guides(linetype=guide_legend(nrow=2,byrow=TRUE, title.position = "top")) + 

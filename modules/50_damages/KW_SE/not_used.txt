@@ -1,0 +1,14 @@
+name,type,reason
+pm_GDPGross,input,questionnaire
+pm_damageMarginalTC,input,questionnaire
+pm_GDPGrossIso,input,questionnaire
+pm_damageProd,input,questionnaire
+pm_damageTC,input,questionnaire
+pm_damageGrowthRateTC,input,questionnaire
+pm_GDPfrac,input,questionnaire
+pm_damageIso,input,questionnaire
+pm_damageGrowthRateIso,input,questionnaire
+pm_globalMeanTemperatureZeroed1900,input,questionnaire
+cm_damages_BurkeLike_specification,input,questionnaire
+cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_damageMarginal,input,questionnaire

@@ -14,12 +14,9 @@ p33_dac_fedem_heat(all_enty)         "specific heat demand for direct air captur
 variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
 v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a]"
-v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC / a] - fixed to 0, only defined for reporting reasons"
 ;
 
 positive variables
-v33_grindrock_onfield(ttot,all_regi,rlf,rlf)         "amount of ground rock spread on fields in each timestep [Gt]"
-v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)     "total amount of ground rock on fields [Gt]"
 v33_DacFEdemand_el(ttot,all_regi,all_enty)          "DAC FE electricity demand [TWa]"
 v33_DacFEdemand_heat(ttot,all_regi,all_enty)        "DAC FE heat demand [TWa]"
 ;

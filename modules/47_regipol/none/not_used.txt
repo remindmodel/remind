@@ -45,3 +45,6 @@ pm_emiCurrentETS,input,questionnaire
 pm_IndstCO2Captured,input,questionnaire
 pm_macBaseMagpie,input,questionnaire
 cm_startyear,input,questionnaire
+pm_eta_conv,input,questionnaire
+cm_EnSecScen,input,questionnaire
+pm_tau_pe_tax,input,questionnaire

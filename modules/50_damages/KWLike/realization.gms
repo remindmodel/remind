@@ -10,6 +10,9 @@
 *' Matthias Kalkuhl, Leonie Wenz: The impact of climate conditions on economic production.
 *' Evidence from a global panel of regions. Journal of Environmental Economics and Management,
 *' Volume 103, 2020, 102360, DOI: 10.1016/j.jeem.2020.102360
+*' It is implemented similar to the Burke damage module, as a one-time growth effect
+
+*' @limitations: Unless the realization "KWlikeItr" is used for module 51_internalizeDamages, the damages are not actually part of the optimization, but just enter as a fixed variable reducing output, updated in between iterations.  
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/50_damages/KWLike/declarations.gms"

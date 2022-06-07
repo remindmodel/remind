@@ -31,6 +31,9 @@ Parameters
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
   o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
+
+  !! empty parameters from subsectors
+  pm_energy_limit(all_in)    ""   / /
 ;
 
 

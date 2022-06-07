@@ -17,7 +17,7 @@ in which intertemporal global welfare is optimized subject to equilibrium constr
 ## DOCUMENTATION
 The model documentation for version 2.1.3 can be found at https://rse.pik-potsdam.de/doc/remind/2.1.3.
 
-A most recent version of the documentation can also be extracted from the
+The most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
 (https://github.com/pik-piam/goxygen). To extract the documentation, install the
 package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15))`
@@ -65,62 +65,8 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-**Please note: You need input data to run REMIND. At present, there are
-still legal issues with sharing this data, so we can not publish them yet
-(but we are working on it, please bear with us). If you have access to the
-necessary data sources (IEA, etc.) you can generate the input data on your own,
-we are happy to assist you in doing so.**
+Please refer to the [installation guide](tutorials/1_GettingREMIND.md).
 
-
-REMIND requires *GAMS* (https://www.gams.com/) including licenses for the
-solvers *CONOPT* for its core calculations. As the model
-benefits significantly of recent improvements in *GAMS* and *CONOPT* it is
-recommended to work with the most recent versions of both.
-Please make sure that the GAMS installation path is added to the PATH variable
-of the system.
-
-In addition *R* (https://www.r-project.org/) is required for pre- and
-postprocessing and run management (needs to be added to the PATH variable
-as well).
-
-Some R packages are required to run REMIND. All except of one (`gdxrrw`) are
-either distributed via the offical R CRAN or via a separate repository hosted at
-PIK (PIK-CRAN). Before proceeding PIK-CRAN should be added to the list of
-available repositories via:
-```
-options(repos = c(CRAN = "@CRAN@", pik = "https://rse.pik-potsdam.de/r/packages"))
-```
-
-On Windows you need to install Rtools
-(https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH
-variable. After that you can run the following lines of code:
-
-
-All packages can be installed via `install.packages`
-
-```
-pkgs <- c("gdxrrw",
-          "ggplot2",
-          "curl",
-          "gdx",
-          "magclass",
-          "madrat",
-          "mip",
-          "lucode2",
-          "gms",
-          "remind2",
-          "lusweave",
-          "luscale",
-          "goxygen",
-          "luplot",
-          "yaml")
-install.packages(pkgs)
-```
-Updating R is recommended if problems arise at package installation, please write
-us at remind@pik-potsdam.de to discuss alternatives if this is not possible. 
-For post-processing model outputs *Latex* is required
-(https://www.latex-project.org/get/). To be seen by the model it also needs to
-added to the PATH variable of your system.
 
 ## HOW TO CONFIGURE
 Model run settings are set in `config/default.cfg` (or another config file of

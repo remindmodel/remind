@@ -35,13 +35,13 @@ if (file.exists("fulldata.gdx")){gdx <- "fulldata.gdx"} else {if (file.exists("f
 
 t <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
 rem_in_mo <- NULL
-message("exoGAINSAirpollutants.R calls remind2::reportMacroEconomy")
+message("exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportMacroEconomy(gdx)[,t,])
-message("exoGAINSAirpollutants.R calls remind2::reportPE")
+message("- reportPE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
-message("exoGAINSAirpollutants.R calls remind2::reportSE")
+message("- reportSE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportSE(gdx)[,t,])
-message("exoGAINSAirpollutants.R calls remind2::reportFE")
+message("- reportFE")
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
 # delete "+" and "++" from variable names

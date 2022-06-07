@@ -5,6 +5,7 @@ vm_emiTe, variable, ???
 vm_emiMac, variable, ???
 vm_fuExtr, variable, ???
 vm_prodSe, variable, ???
+vm_prodPe, variable, ???
 vm_Xport, variable, ???
 pm_taxCO2eq, parameter, ???
 pm_tau_fe_sub, parameter, ???
@@ -23,7 +24,6 @@ vm_co2eq,variable,???
 cm_emiscen,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
-sm_ccsinjecrate,input,questionnaire
 vm_emiAll,input,questionnaire
 vm_co2CCS,input,questionnaire
 pm_taxCO2eqHist,input,questionnaire
@@ -58,3 +58,5 @@ cm_CO2TaxSectorMarkup,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
 pm_taxCO2eqRegi,input,questionnare
 pm_taxCO2eqSum,input,questionnare
+pm_tau_pe_tax,input,questionnaire
+pm_ccsinjecrate,input,questionaire

@@ -7,7 +7,7 @@
 *** SOF ./modules/50_damages/DiceLike/postsolve.gms
 
 
-pm_damage(tall,regi)$(tall.val ge 2010 and tall.val le 2300) = 
+pm_damage(tall,regi)$(tall.val ge 2020 and tall.val le 2300) = 
 1 
 - p50_damageFuncCoef1 * pm_globalMeanTemperatureZeroed1900(tall) 
 - p50_damageFuncCoef2 * pm_globalMeanTemperatureZeroed1900(tall)**2; 
