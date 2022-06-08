@@ -183,6 +183,12 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       }
     }
 
+    # didremindfinish is TRUE if full.log exists with status: Normal completion
+    didremindfinish <- function(fulldatapath) {
+      logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
+      return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
+    }
+
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
     if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
@@ -193,31 +199,29 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
           # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
           # may include folders that only _start_ with this string. They are sorted out later.
-          dirs <- Sys.glob(file.path(paste0("./output/",isettings[iscen, path_to_gdx],"*/fulldata.gdx")))
-          # if path_to_gdx cell content exactly matches folder name, use this one
-          if (paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx") %in% dirs) {
-            message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
-            isettings[iscen, path_to_gdx] <- paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx")
-          } else {
-            # didremindfinish is TRUE if full.log exists with status: Normal completion
-            didremindfinish <- function(fulldatapath) {
-              logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
-            }
-            # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
-            # for folder names only allows: cell content, an optional _, datetimepattern
-            # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
-            # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
-            datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-            dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
-            # if anything found, pick latest
-            if(length(dirs) > 0 && ! all(is.na(dirs))) {
-              lapply(dirs, str_sub, -32, -14) %>%
-                strptime(format='%Y-%m-%d_%H.%M.%S') %>%
-                as.numeric %>%
-                which.max -> latest_fulldata
-              message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],10,-14)))
-              isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+          dirfolders <- c("./output/", icfg$modeltests_folder)
+          for (dirfolder in dirfolders) {
+            dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
+            # if path_to_gdx cell content exactly matches folder name, use this one
+            if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
+              message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+              isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
+            } else {
+              # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
+              # for folder names only allows: cell content, an optional _, datetimepattern
+              # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
+              # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
+              datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
+              dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+              # if anything found, pick latest
+              if(length(dirs) > 0 && ! all(is.na(dirs))) {
+                lapply(dirs, str_sub, -32, -14) %>%
+                  strptime(format='%Y-%m-%d_%H.%M.%S') %>%
+                  as.numeric %>%
+                  which.max -> latest_fulldata
+                message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+              }
             }
           }
         }
