@@ -49,7 +49,11 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       warning("No active renv project found, not using renv.")
     } else {
       if (!renv::status()$synchronized) {
-        stop("The renv.lock file does not represent the current package environment.")
+        message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
+                "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
+        if (tolower(gms::getLine()) %in% c("y", "")) {
+          renv::snapshot(prompt = FALSE)
+        }
       }
       if (getOption("autoRenvUpdates", TRUE)) { # TODO put this setting into untracked config file
         source("scripts/utils/updateRenv.R")

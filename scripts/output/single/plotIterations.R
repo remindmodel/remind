@@ -8,29 +8,11 @@ if (!exists("source_include")) {
 
 outputdir <- normalizePath(outputdir)
 
-
-getLine <- function() {
-  # gets characters (line) from the terminal of from a connection
-  # and stores it in the return object
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    on.exit(close(con))
-    s <- readLines(con, 1, warn = FALSE)
-    if (identical(length(s), 0L)) {
-      s <- ""
-    }
-  }
-  stopifnot(identical(length(s), 1L))
-  return(s)
-}
-
 now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
 cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
-answer <- getLine()
+answer <- gms::getLine()
 if (!identical(trimws(answer), "")) {
   symbolNames <- answer
 }
@@ -98,7 +80,7 @@ writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character
 ), rmdPath)
 
 cat("Render plots to html? (default: ", generateHtml, ") ")
-answer <- getLine()
+answer <- gms::getLine()
 if (!identical(trimws(answer), "")) {
   generateHtml <- tolower(answer)
 }
