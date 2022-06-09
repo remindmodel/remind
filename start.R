@@ -206,6 +206,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
             if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
               message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
               isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
+              if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
             } else {
               # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
               # for folder names only allows: cell content, an optional _, datetimepattern
@@ -221,6 +222,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
                   which.max -> latest_fulldata
                 message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
                 isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+                if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
               }
             }
           }
@@ -285,7 +287,11 @@ if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--
   "If this is what you want, use --reprepare instead, or answer with y:")
   if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
+
 ignorederrors <- 0 # counts ignored errors in --test mode
+startedRuns <- 0
+waitingRuns <- 0
+modeltestRunsUsed <- 0
 
 ###################### Choose submission type #########################
 
@@ -428,10 +434,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     }
   }
 
-  # Tell user that model is currently locked
-  if (file.exists(".lock")) {
-    message("\nThe file .lock exists, so model runs will have to queue.")
-  }
+  # Save whether model is locked before runs are started
+  model_was_locked <- if (file.exists(".lock")) TRUE else FALSE
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
@@ -495,6 +499,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     save(cfg, file=filename)
 
     if (start_now){
+      startedRuns <- startedRuns + 1
       # Create results folder and start run
       if (! '--test' %in% argv) {
         submit(cfg)
@@ -502,6 +507,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         message("   If this wasn't --test mode, I would submit ", scen, ".")
       }
     } else {
+       waitingRuns <- waitingRuns + 1
        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
 
@@ -513,6 +519,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   }
 }
 
+message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
+        if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ('--test' %in% argv) {
-  message("\nFinished --test mode with ", ignorederrors, " errors. Rdata files were written, but no runs were started.")
+  message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+} else if (model_was_locked) {
+  message("The file .lock existed before runs were started, so they will have to queue.")
 }
