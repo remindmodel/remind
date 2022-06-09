@@ -33,9 +33,19 @@ q02_welfare(regi)..
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
+*** inconvenience cost for fuel switching in FE between fossil, biogenic, synthetic solids, liquids and gases across sectors and emissions markets
 $if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt) AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ), v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) + v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt))/1e3	
-            )
-        )
+*** inconvenience cost for fuel switching in FE non-energy use between biogenic, synthetic solids, liquids and gases
+  - sum((entySe,entyFe,te,sector,emiMkt)$(se2fe(entySe,entyFe,te) 
+                                          AND entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt)
+                                          AND (entySeBio(entySe) 
+                                            OR entySeSyn(entySe) )),
+        v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt) 
+        + v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+      )
+      /1e3            
+    )
+  )
 ;
 
 ***---------------------------------------------------------------------------
@@ -78,5 +88,18 @@ q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$((ttot.val ge
 ;
 $ENDIF.INCONV_bioSwitch
 
+*** inconvenience cost for fuel switching between biomass/synfuel in non-energy use
+q02_inconvPenNonEnSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$((ttot.val ge cm_startyear) 
+                                                            AND se2fe(entySe,entyFe,te) 
+                                                            AND entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt)
+                                                            AND (entySeBio(entySe) 
+                                                              OR entySeSyn(entySe) ) )..
+                                                              vm_demFENonEnergySector(ttot,regi,entySe,entyFe,sector,emiMkt) 
+                                                              - vm_demFENonEnergySector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
+                                                              + v02_NegInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+                                                              - v02_PosInconvPenNonEnSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
+                                                            =e=
+                                                            0
+;
 
 *** EOF ./modules/02_welfare/utilitarian/equations.gms

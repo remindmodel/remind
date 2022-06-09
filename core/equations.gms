@@ -490,6 +490,7 @@ q_emiTe(t,regi,emiTe(enty))..
   sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
+
 ***-----------------------------------------------------------------------------
 *' Emissions per market
 *' from primary to secondary energy transformation,
@@ -513,9 +514,15 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 	  )$(sameas(emiMkt,"ETS"))
 	  + sum(se2fe(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,enty,enty2,sector,emiMkt))
-		)
-	)
+		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
+            vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+*** substract FE used for non-energy, does not lead to energy-related emissions
+            - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+              vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
+            )
+          )
+*later we can add a term to represent waste incineration and the diff between using synfuels and fossil fuels as feedstocks
+      )  
 ;
 
 ***--------------------------------------------------
@@ -557,6 +564,12 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
 		)$( sameas(enty,"co2") )
 	)$(sameas(emiMkt,"ETS"))
+*** substract carbon in feedstocks from biogenic or synthetic origin, generates negative emissions
+  - sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum( se2fe(entySe, entyFe, te)$(entySeBio(entySe) OR entySeSyn(entySe)),
+        vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+    )
+  )$( sameas(enty,"co2") )    
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
@@ -581,6 +594,12 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
 	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
 *** Exogenous emissions
   +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
+*ADD here non energy emi from chem sector (feedstock emissions):
+  + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
+        se2fe(entySe,entyFe,te)), 
+      vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
+       * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    )
 ;
 
 

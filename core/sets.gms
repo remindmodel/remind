@@ -637,7 +637,11 @@ all_in   "all inputs and outputs of the CES function"
   ue_chemicals            "useful energy of chemicals production"
   en_chemicals            "energy use of chemicals production"
   kap_chemicals           "energy efficiency capital of chemicals production"
+<<<<<<< HEAD
   en_chemicals_fhth       "feedstock and high temperature heat energy use of chemicals production"
+=======
+  en_chemicals_fhth       "feedstock and high temperature heat enery use of chemicals production"
+>>>>>>> 0269115c0454e7d08d70bd35c7904bba0228be5e
   feso_chemicals          "solids energy use of chemicals production"
   feli_chemicals          "liquids energy use of chemicals production"
   fega_chemicals          "gases energy use of chemicals production"
@@ -1757,9 +1761,8 @@ entySeBio(all_enty)       "biomass secondary energy types"
 
 entySeSyn(all_enty)       "synfuel secondary energy types"
 /
-	seliqbio     "secondary energy liquids from biomass"
-	sesobio      "secondary energy solids from biomass"
-	segabio      "secondary energy gas from biomass"
+	seliqsyn     "secondary energy synthetic liquids from H2"
+	segasyn      "secondary energy synthetic gas from H2"
 /
 
 entySeFos(all_enty) "secondary energy types from fossil primary energy"
@@ -2104,6 +2107,14 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         co2luc.other
         co2cement_process.ETS
 /
+
+entyFe2sector2emiMkt_NonEn(all_enty,emi_sectors,all_emiMkt)                     "combinations of FE type, sector and emissions markets existing for FE non-energy use"
+/
+        fesos.indst.ETS
+        fehos.indst.ETS
+        fegas.indst.ETS
+/
+
 ccsCo2(all_enty)    "only cco2 (???)"
 /
         cco2
@@ -2487,7 +2498,41 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
         seliqsyn.fedie.tdsyndie
         seh2.feh2t.tdh2t
 /
+
+
 sefe(all_enty,all_enty) "map secondary energy to final energy"
+//
+
+entySe2entyFe(all_enty,all_enty) "map secondary energy to final energy"
+
+/
+        seel.feels
+        segabio.fegas
+        segafos.fegas
+        segasyn.fegas
+        segabio.fegat
+        segafos.fegat
+        segasyn.fegat
+        seliqbio.fehos
+        seliqfos.fehos
+        seliqsyn.fehos
+        sesobio.fesos
+        sesofos.fesos
+        seh2.feh2s
+        sehe.fehes
+        seel.feelt
+        seliqbio.fepet
+        seliqfos.fepet
+        seliqsyn.fepet
+        seliqbio.fedie
+        seliqfos.fedie
+        seliqsyn.fedie
+        seh2.feh2t
+/
+
+
+
+
 fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //

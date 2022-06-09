@@ -80,7 +80,7 @@ Sets
     en_chemicals         "energy use of chemicals production"
     kap_chemicals        "energy efficiency capital of chemicals production"
     en_chemicals_fhth    "feedstock and high temperature heat energy use of chemicals production"
-    feso_chemicals       "solids energy use of cement production"
+    feso_chemicals       "solids energy use of chemicals production"
     feli_chemicals       "liquids energy use of chemicals production"
     fega_chemicals       "gases energy use of chemicals production"
     feh2_chemicals       "hydrogen energy use of chemicals production"
@@ -139,6 +139,13 @@ Sets
    en_otherInd     . (en_otherInd_hth, feelwlth_otherInd)
    en_otherInd_hth . (feso_otherInd, feli_otherInd, fega_otherInd,
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
+  /
+
+  in_chemicals_37(all_in)   "chemicals FE that can provide feedstocks"
+  /
+    feso_chemicals
+    feli_chemicals
+    fega_chemicals
   /
 
   ces_eff_target_dyn37(all_in,all_in)   "limits to specific total energy use"
@@ -294,6 +301,27 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
     fesos
     fehos
     fegas
+  /
+
+entySe_emiFac_feedstocks(all_enty,all_enty) "SE type of emissions factor that should be used to calculate carbon contained in feedstocks"
+
+/
+  sesofos.fesos
+  seliqfos.fehos
+  segafos.fegas
+/
+
+
+ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
+  /
+    feelwlth_chemicals
+    feelhth_chemicals
+    feel_cement
+    feelwlth_otherInd
+    feelhth_otherInd
+    feel_steel_secondary
+    feel_steel_primary
+    feh2_steel
   /
 ;
 
