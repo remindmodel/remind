@@ -809,6 +809,17 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
+    # renamed because of https://github.com/remindmodel/remind/pull/848
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
+                             list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
+                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))                             
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
+                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
+
     #filter out deprecated regipol items
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("v47_emiTarget.L", "!!v47_emiTarget.L")),

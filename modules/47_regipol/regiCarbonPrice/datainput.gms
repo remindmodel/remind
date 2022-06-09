@@ -37,6 +37,12 @@ if ( (cm_startyear gt 2005),
     p47_taxemiMkt_init("2020",regi,"ES")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
     p47_taxemiMkt_init("2020",regi,"other")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
   );
+
+*** intialize price trajectory after 2020 based on historical year prices for non policy scenarios 
+  if ( (cm_startyear le 2020),
+    p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020)  = p47_taxemiMkt_init("2020",regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+  );
+
 );
 
 *** Auxiliar parameters based on emission targets information 
