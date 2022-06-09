@@ -304,4 +304,13 @@ display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
 
+*' load baseline industry ETS solids demand
+if (cm_emiscen ne 1,   !! not a BAU scenario
+execute_load "input_bau.gdx", vm_demFEsector;
+  p37_BAU_industry_ETS_solids(t,regi)
+  = sum(se2fe(entySE,"fesos",te),
+      vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
+    );
+);
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms

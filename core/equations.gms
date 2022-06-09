@@ -212,7 +212,9 @@ q_transSe2se(t,regi,se2se(enty,enty2,te))..
 qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
-  sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
+  )
 ; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
