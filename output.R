@@ -27,7 +27,11 @@ if (!exists("argv")) {
 
 # run updates before loading any packages
 if ("--update" %in% argv) {
+  stopifnot(`--update must not be used together with --renv=...` = !any(startsWith(argv, "--renv=")))
   source("scripts/utils/updateRenv.R")
+} else if (any(startsWith(argv, "--renv="))) {
+  renvProject <- sub("^--renv=", "", grep("^--renv=", argv, value = TRUE))
+  renv::load(normalizePath(renvProject))
 }
 
 # load landuse library

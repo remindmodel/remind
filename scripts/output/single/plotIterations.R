@@ -76,8 +76,7 @@ rmdFooter <- if (length(symbolNames) >= 2) {
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-                  collapse = "\n\n"
-), rmdPath)
+                  collapse = "\n\n"), rmdPath)
 
 cat("Render plots to html? (default: ", generateHtml, ") ")
 answer <- gms::getLine()

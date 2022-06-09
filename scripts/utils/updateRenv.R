@@ -9,5 +9,5 @@ local({
   # update pik-piam packages only
   renv::update(intersect(utils::installed.packages()[, "Package"], pikPiamPackages), prompt = FALSE)
 
-  source(here::here("scripts", "utils", "archiveRenvLock.R"))
+  source(here::here("scripts", "utils", "archiveRenv.R"))
 })
