@@ -12,12 +12,26 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   sum(se2fe(entySE,entyFE,te),
     vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
+*** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
+  - sum(se2fe(entySE,entyFE,te),
+    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+    )
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
        secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
     vm_cesIO(ttot,regi,in)
   + pm_cesdata(ttot,regi,in,"offset_quantity")
   )
+
+*** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
+  -   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
+       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
+       
+      ( vm_cesIO(ttot,regi,in) 
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
+      )
+      * p37_chemicals_feedstock_share(ttot,regi)
+      )
 ;
 
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$( 
@@ -154,6 +168,28 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
 
   )
 ;
+
+
+*** calculate carbon contained in chemical feedstocks
+q37_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)$(    entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                                                      AND entySe2entyFe(entySe,entyFe)  ) .. 
+  vm_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)
+  =e=
+  vm_demFENonEnergySector(ttot,regi,entySe,entyFe,"indst",emiMkt)
+    * p37_FeedstockCarbonContent(ttot,regi,entyFe);
+;
+
+
+*** in baseline runs, all industrial feedstocks should come from fossil energy carriers, no biofuels or synfuels
+q37_FossilFeedstock_Base(t,regi,entyFe,emiMkt)$(entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
+                                              AND cm_emiscen eq 1)..
+  sum(entySE,
+    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
+  =e=
+  sum(entySE$(entySeFos(entySE)),
+    vm_demFENonEnergySector(t,regi,entySE,entyFE,"indst",emiMkt))
+;
+
 
 *** EOF ./modules/37_industry/subsectors/equations.gms
 

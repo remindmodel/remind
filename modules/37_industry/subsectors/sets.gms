@@ -302,6 +302,14 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
     fegas
   /
 
+entySe_emiFac_feedstocks(all_enty,all_enty) "SE type of emissions factor that should be used to calculate carbon contained in feedstocks"
+
+/
+  sesofos.fesos
+  seliqfos.fehos
+  segafos.fegas
+/
+
 
 ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
   /
