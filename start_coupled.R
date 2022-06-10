@@ -313,7 +313,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         # for the sbatch command set the number of tasks per node
         if (subseq.env$cfg_rem$gms$optimization == "nash" && subseq.env$cfg_rem$gms$cm_nash_mode == "parallel") {
           # for nash: set the number of CPUs per node to number of regions + 1
-          nr_of_regions <- length(levels(read.csv2(subseq.env$cfg_rem$regionmapping)$RegionCode)) + 1
+          nr_of_regions <- length(unique(read.csv2(subseq.env$cfg_rem$regionmapping)$RegionCode)) + 1
         } else {
           # for negishi: use only one CPU
           nr_of_regions <- 1
