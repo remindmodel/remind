@@ -297,6 +297,9 @@ modeltestRunsUsed <- 0
 
 testOneRegi_region <- ""
 
+# Save whether model is locked before runs are started
+model_was_locked <- file.exists(".lock")
+
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
@@ -344,6 +347,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
+    startedRuns <- startedRuns + 1
     if (! '--test' %in% argv) {
       submit(cfg, restart = TRUE)
     } else {
@@ -433,9 +437,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
   }
-
-  # Save whether model is locked before runs are started
-  model_was_locked <- if (file.exists(".lock")) TRUE else FALSE
 
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
