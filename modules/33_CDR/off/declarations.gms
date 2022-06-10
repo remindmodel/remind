@@ -9,9 +9,4 @@ variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "CCS emissions from CDR [GtC / a]"
 ;
 
-positive variables
-v33_grindrock_onfield(ttot,all_regi,rlf,rlf)         "amount of ground rock spread on fields in each timestep [Gt]"
-v33_grindrock_onfield_tot(ttot,all_regi,rlf,rlf)     "total amount of ground rock on fields [Gt]"
-;
-
 *** EOF ./modules/33_CDR/off/declarations.gms

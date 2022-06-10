@@ -123,9 +123,18 @@ ConvCaseWise
 ElecEra
 ElecEraWise
 HydrHype
+HydrHype4
 HydrHypeWise
 Mix
 MixWise
+Mix1Wise
+Mix2Wise
+Mix3Wise
+Mix4Wise
+Mix1
+Mix2
+Mix3
+Mix4
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"

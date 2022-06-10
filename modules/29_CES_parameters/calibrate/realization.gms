@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/29_CES_parameters/calibrate.gms
+*** SOF ./modules/29_CES_parameters/calibrate/realization.gms
 
 *' @description 
 *' The macro-calibration takes place in `modules/29_CES_parameters/calibration/`. The calibration itself is in the file `preloop.gms`.
@@ -232,4 +232,4 @@ $Ifi "%phase%" == "preloop" $include "./modules/29_CES_parameters/calibrate/prel
 $Ifi "%phase%" == "bounds" $include "./modules/29_CES_parameters/calibrate/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/29_CES_parameters/calibrate/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/29_CES_parameters/calibrate.gms
+*** EOF ./modules/29_CES_parameters/calibrate/realization.gms

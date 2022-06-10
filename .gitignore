@@ -20,6 +20,16 @@ input/
 # Ignore everything in root "output" folder
 /output/
 
+# Ignore xlsx files in config created by remind2::colorScenConf()
+config/scenario_config*_colorful.xlsx
+config/*/scenario_config*_colorful.xlsx
+
+# Ignore compare scenario files
+compScen-*.pdf
+compScen-*.err
+compScen-*.out
+compScen-*/*
+
 # Ignore everything in "doc" folders, except for 3 specific files
 doc/
 !doc/literature.bib
@@ -29,8 +39,16 @@ doc/
 # Ignore "main.lst" files
 main.lst
 
-# Ignore .RData files only in the root folder
+# Ignore .RData and log files only in the root folder
 /*.RData
+/*.log
+
+# ignore magpie subfolder for coupled runs
+/magpie/
+
+# ignore .Rhistory files
+.Rhistory
+last.dump.rda
 
 # ignore all the MAGICC files, should they be present
 core/magicc/

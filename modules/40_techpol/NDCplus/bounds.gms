@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/40_techpol/NDCplus/bounds.gms 
+*** SOF ./modules/40_techpol/NDCplus/bounds.gms
 
 *AM the lowbound of solar and pv for 2025 and 2030 to be taken from the NDCs (in GW), therefore multiplying by 0.001 for TW*
 vm_cap.lo(t,regi,"spv","1")$(t.val lt 2031 AND t.val gt 2024) = p40_TechBound(t,regi,"spv")*0.001; 
@@ -78,11 +78,11 @@ vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("
 
 loop(regi,
        if( ( pm_gdp("2010",regi)/pm_pop("2010",regi) ) > 3,
-             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.9);
-             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 5 * pm_regiEarlyRetiRate("2020",regi,te) + 5 * pm_regiEarlyRetiRate("2025",regi,te) - 0.001, 0.9);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 5 * pm_regiEarlyRetiRate("2010",regi,te) + 5 * pm_regiEarlyRetiRate("2015",regi,te) - 0.001, 0.8);
         else
-             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.5);
-             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 10*cm_earlyreti_rate - 0.001, 0.8);
+             vm_capEarlyReti.lo("2030",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2020",regi,te)+ 5 * pm_regiEarlyRetiRate("2020",regi,te) + 5 * pm_regiEarlyRetiRate("2025",regi,te) - 0.001, 0.5);
+             vm_capEarlyReti.lo("2020",regi,te)$(sameas(te,"pc") OR sameas(te,"coalchp") OR sameas(te,"igcc")) = min(vm_capEarlyReti.l("2010",regi,te)+ 5 * pm_regiEarlyRetiRate("2010",regi,te) + 5 * pm_regiEarlyRetiRate("2015",regi,te) - 0.001, 0.8);
           );
      );
 

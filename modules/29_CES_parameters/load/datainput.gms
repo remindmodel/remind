@@ -8,7 +8,7 @@
 *** Load CES parameters based on current model configuration
 *** ATTENTION the file name is replaced by the function start_run()
 *##################### R SECTION START (CES INPUT) ##########################
-$include "./modules/29_CES_parameters/load/input/indu_subsectors-buil_simple-tran_edge_esm-demTrsp_Mix-POP_pop_SSP2-GDP_gdp_SSP2-En_gdp_SSP2-Kap_debt_limit-Reg_62eff8f7.inc"
+$include "./modules/29_CES_parameters/load/input/indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7.inc"
 *###################### R SECTION END (CES INPUT) ###########################
 
 if (cm_GDPcovid eq 1,

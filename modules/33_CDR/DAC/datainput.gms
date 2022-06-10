@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/33_CDR/DAC/datainput.gms
+
 !! Beutler et al. 2019 (Climeworks)
 !!fe demand electricity for ventilation
 p33_dac_fedem_el("feels") = 5.28;
@@ -15,3 +17,5 @@ p33_dac_fedem_heat("feels") = 21.12;
 *** FS: INNOPATHS sensitivity on DAC efficiency
 $if not "%cm_INNOPATHS_DAC_eff%" == "off" parameter p33_dac_fedem_fac(entyFeStat) / %cm_INNOPATHS_DAC_eff% /;
 $if not "%cm_INNOPATHS_DAC_eff%" == "off" p33_dac_fedem(entyFeStat) = p33_dac_fedem(entyFeStat) * p33_dac_fedem_fac(entyFeStat);
+
+*** EOF ./modules/33_CDR/DAC/datainput.gms

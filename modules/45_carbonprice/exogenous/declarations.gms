@@ -7,9 +7,6 @@
 *** SOF ./modules/45_carbonprice/exogenous/declarations.gms
 parameters
     p45_tau_co2_tax(ttot,all_regi)   "Exogenous CO2 tax level"
-
-$if not "%cm_regiExoPrice%" == "off" p45_exo_co2_tax(ext_regi,ttot)   "Exogenous CO2 tax level from switch [$/tCO2]" / %cm_regiExoPrice% /
-
 ;
 
 *** EOF ./modules/45_carbonprice/exogenous/declarations.gms

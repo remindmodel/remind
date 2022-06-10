@@ -29,9 +29,11 @@
     vm_taxrev(t,regi)
     =e=
       v21_taxrevGHG(t,regi)
+    + sum(emi_sectors, v21_taxrevCO2Sector(t,regi,emi_sectors))
     + v21_taxrevCO2luc(t,regi)
     + v21_taxrevCCS(t,regi) 
-    + v21_taxrevNetNegEmi(t,regi)  
+    + v21_taxrevNetNegEmi(t,regi)
+    + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
     + v21_taxrevFE(t,regi) 
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
@@ -43,7 +45,7 @@
     + v21_implicitDiscRate(t,regi)
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
-    + v21_taxrevBioImport(t,regi)  
+    + v21_taxrevBioImport(t,regi)
 $ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
     + vm_taxrevimplFETax(t,regi)
 $endif.cm_implicitFE    
@@ -51,19 +53,29 @@ $endif.cm_implicitFE
 
 
 ***---------------------------------------------------------------------------
-*'  Calculation of greenhouse gas taxes: tax rate (combination of 3 components) times ghg emissions
+*'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times ghg emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevGHG(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevGHG(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi)) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
+v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
                            - p21_taxrevGHG0(t,regi);
 
+
 ***---------------------------------------------------------------------------
-*'  Calculation of greenhouse gas taxes: tax rate (combination of 3 components) times land use co2 emissions
+*' Calculation of sectoral CO2 taxes as markup to GHG taxes (combination of 4 components)
+*' Sectoral CO2 emissions are multiplied by a predefined factor
+***---------------------------------------------------------------------------
+
+q21_taxrevCO2Sector(t,regi,emi_sectors)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevCO2Sector(t,regi,emi_sectors) =e= p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eqSum(t,regi) * vm_emiCO2Sector(t,regi,emi_sectors)
+                             - p21_taxrevCO2Sector0(t,regi,emi_sectors);
+
+***---------------------------------------------------------------------------
+*'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times land use co2 emissions
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCO2luc(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCO2luc(t,regi) =e= ( pm_taxCO2eq(t,regi)  + pm_taxCO2eqSCC(t,regi) + pm_taxCO2eqHist(t,regi))* cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
+v21_taxrevCO2luc(t,regi) =e= pm_taxCO2eqSum(t,regi) * cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
                            - p21_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -74,7 +86,7 @@ q21_taxrevCCS(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevCCS(t,regi) 
 =e= cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(t,regi,"ccsinje") 
     * ( sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS(t,regi,enty,enty2,te,rlf) ) ) )
-    * (1/sm_ccsinjecrate) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS(t,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1")	!! fraction of injection constraint per year
+    * (1/pm_ccsinjecrate(regi)) * sum(teCCS2rlf(te,rlf), sum(ccs2te(ccsCO2(enty),enty2,te), vm_co2CCS(t,regi,enty,enty2,te,rlf) ) ) / pm_dataccs(regi,"quan","1")	!! fraction of injection constraint per year
 	- p21_taxrevCCS0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -82,7 +94,7 @@ v21_taxrevCCS(t,regi)
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevNetNegEmi(t,regi) =e=  cm_frac_NetNegEmi * pm_taxCO2eq(t,regi) * v21_emiALLco2neg(t,regi)
+v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
                                  - p21_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
@@ -93,6 +105,14 @@ v21_taxrevNetNegEmi(t,regi) =e=  cm_frac_NetNegEmi * pm_taxCO2eq(t,regi) * v21_e
 ***---------------------------------------------------------------------------
 q21_emiAllco2neg(t,regi)..
 v21_emiALLco2neg(t,regi) =e= -vm_emiAll(t,regi,"co2") + v21_emiALLco2neg_slack(t,regi);
+
+***---------------------------------------------------------------------------
+*'  Calculation of PE tax: tax rate times primary energy
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevPE(t,regi,entyPe)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevPE(t,regi,entyPe) =e= pm_tau_pe_tax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+                          - p21_taxrevPE0(t,regi,entyPe);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of final Energy taxes: effective tax rate (tax - subsidy) times FE use in the specific sector
@@ -130,7 +150,7 @@ v21_taxrevPE2SE(t,regi)
 =e= SUM(pe2se(enty,enty2,te),
           (p21_tau_pe2se_tax(t,regi,te) + p21_tau_pe2se_sub(t,regi,te) + p21_tau_pe2se_inconv(t,regi,te)) * vm_prodSe(t,regi,enty,enty2,te)
        )
-	- p21_taxrevPE2SE0(t,regi) ; 
+	- p21_taxrevPE2SE0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of technology specific subsidies and taxes. Tax incidency applied only over new capacity (deltaCap)
@@ -141,7 +161,7 @@ v21_taxrevTech(t,regi)
 =e= sum(te2rlf(te,rlf),
           (p21_tech_tax(t,regi,te,rlf) + p21_tech_sub(t,regi,te,rlf)) * vm_deltaCap(t,regi,te,rlf)
        )
-	- p21_taxrevTech0(t,regi) ;   
+	- p21_taxrevTech0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of export taxes: tax rate times export volume
@@ -182,7 +202,7 @@ q21_implicitDiscRate(t,regi)$(t.val ge max(2010,cm_startyear))..
 						  
 ***---------------------------------------------------------------------------
 *'  Calculation of specific emission market taxes
-*'  calculation is done via additional budget emission contraints defined in regiplo module
+*'  calculation is done via additional budget emission constraints defined in regipol module
 ***---------------------------------------------------------------------------
 q21_taxemiMkt(t,regi,emiMkt)$(t.val ge max(2010,cm_startyear))..
   v21_taxemiMkt(t,regi,emiMkt) 

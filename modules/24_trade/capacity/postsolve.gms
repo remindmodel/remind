@@ -8,4 +8,13 @@
 
 pm_Xport0(ttot,regi,tradePe) = vm_Xport.l(ttot,regi,tradePe);
 
+***-------------------------------------------------------------------------------
+***                    SAVING RESULTS TO ITERATION VARIABLES
+***-------------------------------------------------------------------------------
+p24_Xport_iter(iteration,t,regi,tradeCap) = vm_Xport.l(t,regi,tradeCap);
+p24_Mport_iter(iteration,t,regi,tradeCap) = vm_Mport.l(t,regi,tradeCap);
+p24_trade_iter(iteration,t,regi,regi2,tradeModes) = v24_trade.l(t,regi,regi2,tradeModes);
+p24_capTrade_iter(iteration,t,regi,regi2,teTrade) = v24_capTrade.l(t,regi,regi2,teTrade);
+p24_XPortsPrice_iter(iteration,t,regi,tradeCap) = pm_PEPrice(t,regi,tradeCap);
+
 *** EOF ./modules/24_trade/capacity/postsolve.gms

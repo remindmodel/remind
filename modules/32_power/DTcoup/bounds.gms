@@ -4,6 +4,8 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/DTcoup/bounds.gms
+
 ***-----------------------------------------------------------
 ***                  module specific bounds
 ***------------------------------------------------------------
@@ -61,5 +63,4 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
 *** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1
 vm_cap.fx(t,regi,"elh2VRE",rlf) = 0;
 
-
-
+*** EOF ./modules/32_power/DTcoup/bounds.gms

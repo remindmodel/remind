@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/32_power/IntC/realization.gms
+*** SOF ./modules/32_power/DTcoup/realization.gms
 
 *' @description  
 *'
@@ -40,4 +40,4 @@ $Ifi "%phase%" == "presolve" $include "./modules/32_power/DTcoup/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/32_power/DTcoup/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 
-*** EOF ./modules/32_power/IntC/realization.gms
+*** EOF ./modules/32_power/DTcoup/realization.gms

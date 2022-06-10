@@ -17,11 +17,11 @@ opt = parse_args(opt_parser);
 library(data.table)
 library(gdx)
 library(gdxdt)
-library(edgeTrpLib)
+library(edgeTransport)
 require(devtools)
 library(rmndt)
 library(mrremind)
-print("Start of the EDGE-T iterative model run")
+print(paste("---", Sys.time(), "Start of the EDGE-T iterative model run."))
 
 ## use cached input data for speed purpose
 setConfig(forcecache=T)
@@ -60,9 +60,8 @@ REMIND2ISO_MAPPING <- fread(REMINDpath(cfg$regionmapping))[, .(iso = CountryCode
 EDGE2teESmap <- fread("mapping_EDGE_REMIND_transport_categories.csv")
 
 ## input data loading
-input_folder = paste0("../../modules/35_transport/edge_esm/input/")
-
-if (length(list.files(path = data_folder, pattern = "RDS")) < 7) {
+input_folder = paste0("./")
+if (length(list.files(path = data_folder, pattern = "RDS")) < 8) {
   createRDS(input_folder, data_folder,
             SSP_scenario = scenario,
             EDGE_scenario = EDGE_scenario)
@@ -78,8 +77,11 @@ capcost4W = inputdata$capcost4W
 loadFactor = inputdata$loadFactor
 price_nonmot = inputdata$price_nonmot
 pref_data = inputdata$pref_data
+preftab4W = inputdata$ptab4W
 
-## Moinput produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
+setnames(preftab4W, old = "ptab4W", new = "value")
+
+## mrremind produces all combinations of iso-vehicle types and attributes a 0. These ghost entries have to be cleared.
 int_dat = int_dat[EJ_Mpkm_final>0]
 prefdata_nonmot = pref_data$FV_final_pref[subsector_L3 %in% c("Walk", "Cycle")]
 pref_data$FV_final_pref = merge(pref_data$FV_final_pref, unique(int_dat[, c("region", "vehicle_type")]), by = c("region", "vehicle_type"), all.y = TRUE)
@@ -190,6 +192,7 @@ logit_data <- calculate_logit_inconv_endog(
   logit_params = logit_params,
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
+  ptab4W = preftab4W,
   totveh = if (!is.null(totveh)) totveh,
   tech_scen = tech_scen)
 
@@ -219,7 +222,6 @@ EDGE2CESmap <- fread("mapping_CESnodes_EDGE.csv")
 shares_int_dem <- shares_intensity_and_demand(
   logit_shares=shares,
   MJ_km_base=mj_km_data,
-  EDGE2CESmap=EDGE2CESmap,
   REMINDyears=REMINDyears,
   scenario=scenario,
   demand_input = if (opt$reporting) ES_demand_all)
@@ -240,6 +242,8 @@ if (opt$reporting) {
           datapath("demandF_plot_pkm.RDS"))
   saveRDS(logit_data$annual_sales, file = datapath("annual_sales.RDS"))
   saveRDS(logit_data$pref_data, file = datapath("pref_output.RDS"))
+  saveRDS(logit_params, file = datapath("logit_params.RDS"))
+  saveRDS(logit_data, file = datapath("logit_data.RDS"))
 
   vint <- vintages[["vintcomp_startyear"]]
   newd <- vintages[["newcomp"]]
@@ -254,7 +258,6 @@ if (opt$reporting) {
 
   vint <- newd[vint, on=c("region", "subsector_L1", "vehicle_type", "technology", "year", "sector")]
   vint <- vint[!is.na(demNew)]
-  
   vint <- vint[, c("year", "region", "vehicle_type", "technology", "variable", "demNew", "demVintEachYear")]
   vint[, demand_F := demNew + sum(demVintEachYear), by=c("region", "year", "vehicle_type", "technology")]
 
@@ -263,7 +266,7 @@ if (opt$reporting) {
   vint[, full_demand_vkm := demand_F/loadFactor]
   vint[, vintage_demand_vkm := demVintEachYear/loadFactor]
   vint[, c("demand_F", "demVintEachYear", "loadFactor", "demNew") := NULL]
-  
+
   setnames(vint, "variable", "construction_year")
 
   vintfile <- "vintcomp.csv"
@@ -354,4 +357,5 @@ writegdx.parameter("p35_shFeCes.gdx", finalInputs$shFeCes, "p35_shFeCes",
                    valcol="value",
                    uelcols = c("tall", "all_regi", "SSP_scenario", "EDGE_scenario", "all_enty", "all_in", "all_teEs"))
 
-print("End of the EDGE-T iterative model run")
+print(paste("---", Sys.time(), "End of the EDGE-T iterative model run."))
+

@@ -19,8 +19,8 @@ if(!exists("source_include")) {
 }
 
 load(paste0(outputdir, "/config.Rdata"))
-gdx	     <- file.path(outputdir,"fulldata.gdx")
-gdx_ref  <- file.path(outputdir,"input_ref.gdx")
+gdx      <- file.path(outputdir,"fulldata.gdx")
+gdx_ref  <- file.path(outputdir,"input_refpolicycost.gdx")
 if(!file.exists(gdx_ref)) gdx_ref <- NULL
 rds <- paste0(outputdir, "/report.rds")
 runstatistics <- paste0(outputdir,"/runstatistics.rda")

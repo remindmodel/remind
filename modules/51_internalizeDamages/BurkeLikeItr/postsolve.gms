@@ -4,8 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
-
+*** SOF ./modules/51_internalizeDamages/BurkeLikeItr/postsolve.gms
 
 * this is the third sum in Eq. (1). computed seperately for computational effectiveness. (this is still expensive, at a couple of seconds!)
 p51_marginalDamageCumul(tall,tall2,regi2)$((tall2.val ge tall.val) and (tall.val le 2250) and (tall2.val le 2250)) = 
@@ -43,15 +42,8 @@ p51_scc(tall)$((tall.val ge 2010) and (tall.val le 2150)) = 1000 *
 p51_scc(tall) = p51_sccLastItr(tall) *  min(max( (p51_scc(tall)/max(p51_sccLastItr(tall),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
+pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = max(0, p51_scc(ttot) * (44/12)/1000);
 
-loop(ttot$(ttot.val ge 2010),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2010) = p51_scc(tall)   * (44/12)/1000;
-*FIXME this is stupid:
-	    pm_taxCO2eqSCC(ttot,regi) = max(pm_taxCO2eqSCC(ttot,regi),0);
-
-	));
-	    
 *);
 
 *optional: prevent drastic decline towards the final periods
@@ -66,5 +58,4 @@ display p51_scc,pm_taxCO2eqSCC;
 p51_sccConvergenceMaxDeviation = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall)/max(p51_sccLastItr(tall),1e-8) - 1) );
 display p51_sccConvergenceMaxDeviation;
 
-
-
+*** EOF ./modules/51_internalizeDamages/BurkeLikeItr/postsolve.gms

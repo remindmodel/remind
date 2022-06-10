@@ -17,17 +17,14 @@ require(colorspace)
 require(gdx)
 require(grid)
 
-gdx_name     <- "fulldata.gdx"        # name of the gdx  
-gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
+gdx_name     <- "fulldata.gdx"             # name of the gdx
 
 if(!exists("source_include")) {
   #Define arguments that can be read from command line
    outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
-   readArgs("outputdir","gdx_name","gdx_ref_name")
+   readArgs("outputdir","gdx_name")
 } 
 gdx      <- file.path(outputdir,gdx_name)
-gdx_ref  <- file.path(outputdir,gdx_ref_name)
-if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 
 #---------------------------------------------------------------------------

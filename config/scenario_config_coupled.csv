@@ -1,4 +1,4 @@
-title;start;oldrun;path_report;magpie_scen;LU_pricing;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
+title;start;oldrun;path_report;magpie_scen;no_ghgprices_land_until;path_gdx;path_gdx_bau;path_gdx_ref;path_gdx_opt
 SSP1-Ref-SPA0;0;SSP1-ref;;SSP1;y2010;;;;
 SSP1-20-SPA0;0;SSP1-26;;SSP1;y2010;;/p/projects/ssp/submission_v15_v16/remind16_v15_r6192/output/rem6192_SSP1-Ref-SPA0-rem-5/fulldata.gdx;;
 SSP1-26-SPA0;0;SSP1-26;;SSP1;y2010;;/p/projects/ssp/submission_v15_v16/remind16_v15_r6192/output/rem6192_SSP1-Ref-SPA0-rem-5/fulldata.gdx;;

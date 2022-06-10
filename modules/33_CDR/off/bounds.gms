@@ -10,7 +10,5 @@ vm_cap.fx(t,regi,"rockgrind",rlf) = 0;
 vm_emiCdr.fx(t,regi,enty) = 0;   
 vm_omcosts_cdr.fx(t,regi) = 0;
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
-v33_grindrock_onfield.fx(t,regi,rlf,rlf2) = 0;
-v33_grindrock_onfield_tot.fx(t,regi,rlf,rlf2) = 0;
 
 *** EOF ./modules/33_CDR/off/bounds.gms

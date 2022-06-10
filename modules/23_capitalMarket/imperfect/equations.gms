@@ -29,4 +29,4 @@ q23_limit_debt_growth(t,regi)..
   + vm_budgetTradeM(t,regi) - vm_budgetTradeX(t,regi)
 ;
 
-*** EOF ./modules/23_capitalMarket/imperfect/equations.gms 
+*** EOF ./modules/23_capitalMarket/imperfect/equations.gms

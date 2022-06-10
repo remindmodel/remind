@@ -9,7 +9,7 @@
 vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 
 *** substitution elasticities
-Parameter 
+Parameter
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
     ue_industry                      0.5   !! cement - chemicals - steel - other
@@ -39,7 +39,7 @@ pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
 $IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
-pm_abatparam_Ind(ttot,regi,all_enty,steps)$( 
+pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
                                     pm_abatparam_Ind(ttot,regi,all_enty,steps) )
   = pm_abatparam_Ind(ttot,regi,all_enty,steps);
   / %cm_INNOPATHS_Industry_CCS_markup%);
@@ -47,7 +47,7 @@ $ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
   if (cm_CCS_cement eq 1,
-    
+
     emiMac2mac("co2cement_process","co2cement") = YES;
      );
    );
@@ -55,10 +55,22 @@ if (cm_IndCCSscen eq 1,
 *** assume 50 year lifetime for industry energy efficiency capital
 pm_delta_kap(regi,ppfKap_industry_dyn37) = -log(1 / 4) / 50;
 
-*** FIXME: this is temporary data, insert meaningful figures!
-p37_energy_limit("ue_cement")          =  10000;
-p37_energy_limit("ue_steel_primary")   =  10000;
-p37_energy_limit("ue_steel_secondary") = 100000;
+* Thermodynamic limits on subsector FE demand
+Parameter
+  pm_energy_limit(all_in)   "thermodynamic/technical limits of subsector energy use [GJ/t product]"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/pm_energy_limit.csv";
+$offdelim
+  /
+;
+
+pm_energy_limit(in)
+  = pm_energy_limit(in)   !! GJ/t
+  * 1e-3                   !! * TJ/GJ
+  / (8760 * 3600)          !! * s/year
+  * 1e9;                   !! * t/Gt
+                           !! = TWa/Gt
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -93,14 +105,11 @@ pm_macSwitch("co2otherInd") = NO;
 emiMac2mac("co2otherInd","co2otherInd") = NO;
 
 *** data on maximum secondary steel production
-Parameter 
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)   "upper limit to secondary steel production based on scrap availability"
-  /
-$ondelim
-$include "./modules/37_industry/subsectors/input/p37_cesIO_up_steel_secondary.cs4r";
-$offdelim
-  /
-;
+*** The steel recycling rate limit is assumed to increase from 90 to 99 %.
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)
+  = pm_fedemand(tall,all_regi,"ue_steel_secondary")
+  / 0.9
+  * 0.99;
 
 s37_clinker_process_CO2 = 0.5262;
 
@@ -187,16 +196,112 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 *** default values of CES markup
 p37_CESMkup(t,regi,in) = 0;
 
+
+*** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
+*** to represent demand-side cost of electrification and reach higher subsitution rates
+p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feel_steel_secondary") = 200* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feel_steel_primary") = 200* sm_TWa_2_MWh * 1e-12;
+
+*** place markup cost of 100 USD/MWh(H2) on H2 nodes
+*** to represent demand-side cost of hydrogen usage and reach higher subsitution rates
+p37_CESMkup(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_otherInd") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_steel") = 100* sm_TWa_2_MWh * 1e-12;
+p37_CESMkup(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
+
+
 *** overwrite or extent CES markup cost if specified by switch
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
   p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
 $endIf.CESMkup
 
 display p37_CESMkup;
 
+* Load secondary steel share limits
+Parameter
+  f37_steel_secondary_max_share(tall,all_regi,all_GDPscen)   "maximum share of secondary steel production"
+  /
+$ondelim
+$include "./modules/37_industry/subsectors/input/p37_steel_secondary_max_share.cs4r";
+$offdelim
+  /
+;
 
+p37_steel_secondary_max_share(t,regi)
+  = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
 
+$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
+Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 
+p37_steel_secondary_share(t,regi_dyn29(regi))
+  = pm_cesdata(t,regi,"ue_steel_secondary","quantity")
+  / ( pm_cesdata(t,regi,"ue_steel_primary","quantity")
+    + pm_cesdata(t,regi,"ue_steel_secondary","quantity")
+    );
+
+if (smax((t,regi),
+      p37_steel_secondary_share(t,regi)
+    - p37_steel_secondary_max_share(t,regi)
+    ) gt 0,
+  put logfile, ">>> Modifying maximum secondary steel share <<<" /;
+  loop ((t,regi_dyn29(regi))$(   p37_steel_secondary_share(t,regi)
+                              gt p37_steel_secondary_max_share(t,regi) ),
+    put p37_steel_secondary_max_share.tn(t,regi), "   ",
+        p37_steel_secondary_max_share(t,regi), " + ",
+        ( p37_steel_secondary_share(t,regi)
+        - p37_steel_secondary_max_share(t,regi)), " -> ",
+        p37_steel_secondary_share(t,regi) /;
+
+    p37_steel_secondary_max_share(t,regi) = p37_steel_secondary_share(t,regi);
+  );
+putclose logfile, " " /;
+);
+$endif.calibration
+
+$ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
+* Modify secondary steel share limits by scenario assumptions
+
+$ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
+* Abort if scenario limits are to be prescribed during calibration.
+$abort "cm_steel_secondary_max_share_scenario != off is incompatible with calibration"
+$endif.calibrate
+
+* Protect against the prescription of seconday steel shares in historic/fixed
+* time steps.
+if (smax((t,regi)$( t.val le max(cm_startyear, 2020) ),
+      p37_steel_secondary_max_share_scenario(t,regi)),
+  put logfile;
+  put "Error: cm_steel_secondary_max_share_scenario scaling before ",
+      "cm_startyear/2020" /;
+  loop ((t,regi)$(    t.val le max(cm_startyear, 2020)
+                  AND p37_steel_secondary_max_share_scenario(t,regi) ),
+    put p37_steel_secondary_max_share_scenario.tn(t,regi), " = ",
+        p37_steel_secondary_max_share_scenario(t,regi) /;
+  );
+  putclose logfile " " /;
+
+  execute_unload "abort.gdx";
+  abort "Faulty cm_steel_secondary_max_share_scenario scaling. See .log file for details.";
+);
+
+* Modify limits on secondary steel shares.  Linear fade from calibration limits
+* to scenario limits.
+loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
+  loop (t3$( t3.val eq max(cm_startyear, 2020) ),
+    loop (t,
+      sm_tmp = max(0, min(1, (t.val - t3.val) / (t2.val - t3.val)));
+
+      p37_steel_secondary_max_share(t,regi)
+      = (p37_steel_secondary_max_share(t,regi)           * (1 - sm_tmp))
+      + (p37_steel_secondary_max_share_scenario(t2,regi) * sm_tmp      );
+    );
+  );
+);
+
+display "scenario limits for maximum secondary steel share",
+        p37_steel_secondary_max_share;
+$endif.sec_steel_scen
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
-
