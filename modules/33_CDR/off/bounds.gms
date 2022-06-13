@@ -11,4 +11,6 @@ vm_emiCdr.fx(t,regi,enty) = 0;
 vm_omcosts_cdr.fx(t,regi) = 0;
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
 
+v33_emi.fx(t,regi,"weathering") = 0;
+v33_emi.fx(t,regi,"dac") = 0;
 *** EOF ./modules/33_CDR/off/bounds.gms

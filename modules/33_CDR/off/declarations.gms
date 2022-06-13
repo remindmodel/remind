@@ -9,4 +9,8 @@ variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "CCS emissions from CDR [GtC / a]"
 ;
 
+negative variables
+v33_emi(ttot,all_regi,all_te)                             "negative CO2 emission from CDR [GtC / a]"
+;
+
 *** EOF ./modules/33_CDR/off/declarations.gms

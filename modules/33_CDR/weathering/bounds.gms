@@ -11,4 +11,5 @@ v33_ew_onfield_tot.fx("2005",regi,rlf_cz33,rlf) = 0.0;
 v33_ew_onfield.fx(t,regi,rlf_cz33,rlf)$(rlf.val gt 10) = 0;
 v33_ew_onfield_tot.fx(t,regi,rlf_cz33,rlf)$(rlf.val gt 10) = 0;
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
+v33_emi.fx(t,regi,"dac") = 0;
 *** EOF ./modules/33_CDR/weathering/bounds.gms
