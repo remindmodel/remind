@@ -397,7 +397,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         message(cs_command)
         system(cs_command)
       } else {
-        message("### Coupling ### If you want a compareScenario with prefix ", cs_prefix, ", run:")
+        message("### Coupling ### If you want a compareScenario with name ", cs_name, ", run:")
         message(cs_command)
       }
     }
