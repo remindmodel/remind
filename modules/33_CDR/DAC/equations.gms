@@ -18,7 +18,7 @@ q33_cdr_FEdemand(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation and heat demand for absorption material recovery of direct air capture.
 ***---------------------------------------------------------------------------
-q33_dac_FEdemand(t, regi, entyFe2)$(sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac")))..
+q33_dac_FEdemand(t, regi, entyFe2)$(sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac")) and t.val ge 2025)..
 	sum(entyFe$fe2fe_cdr(entyFe, entyFe2, "dac"), v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
 	=e=
 	- v33_emi(t, regi, "dac") * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)

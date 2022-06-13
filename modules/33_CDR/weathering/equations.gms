@@ -37,7 +37,7 @@ q33_ew_capconst(t,regi)..
 *'  Calculation of the total amount of ground rock on the fields in timestep t. The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
 ***---------------------------------------------------------------------------
-q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2010, cm_startyear))..
+q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
 	v33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)
 	=e=
     v33_ew_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot)) +
