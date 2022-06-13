@@ -9,7 +9,7 @@
 ***---------------------------------------------------------------------------
 *'  CDR Final Energy Balance.
 ***---------------------------------------------------------------------------
-q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
+q33_cdr_FEdemand(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
 	sum(se2fe(entySe,entyFe,te), vm_demFeSector(t, regi, entySe, entyFe, "cdr", "ETS"))
 	=e=
 	sum(fe2fe_cdr(entyFe, entyFe2, te_dyn33), v33_FEdemand(t, regi, entyFe, entyFe2, te_dyn33))
@@ -18,7 +18,7 @@ q33_demFeCDR(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation and heat demand for absorption material recovery of direct air capture.
 ***---------------------------------------------------------------------------
-q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac"))..
+q33_dac_FEdemand(t, regi, entyFe2)$(sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac")))..
 	sum(entyFe$fe2fe_cdr(entyFe, entyFe2, "dac"), v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
 	=e=
 	- v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
@@ -28,7 +28,7 @@ q33_DacFEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac"))
 *'  Calculation of (negative) CO2 emissions from direct air capture. The first part of the equation describes emissions captured from the ambient air, 
 *'  the second part calculates the CO2 captured from the gas used for heat production assuming 90% capture rate.
 ***---------------------------------------------------------------------------
-q33_capconst_dac(t,regi)..
+q33_dac_capconst(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
 	- sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))

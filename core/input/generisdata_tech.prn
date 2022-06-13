@@ -175,7 +175,7 @@ incolearn          19000        0.00       29000
 ccap0              0.003                   0.003
 learn               0.10                    0.10
 
-+              rockgrind         dac
++             weathering         dac
 tech_stat                          3
 inco0               0.01       21600
 mix0                   0           0
