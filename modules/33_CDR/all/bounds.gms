@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/all/bounds.gms
 vm_emiCdr.fx(t,regi,emi)$(not sameas(emi,"co2")) = 0.0;
-vm_emiCdr.up(t,regi,"co2")$(t.val gt 2015) = -0.0001;
+vm_emiCdr.l(t,regi,"co2")$(t.val gt 2020) = -sm_eps;
 v33_ew_onfield_tot.up(t,regi,rlf_cz33,rlf) = s33_step;
 v33_ew_onfield_tot.fx("2005",regi,rlf_cz33,rlf) = 0.0;
 v33_ew_onfield.fx(t,regi,rlf_cz33,rlf)$(rlf.val gt 10) = 0;
