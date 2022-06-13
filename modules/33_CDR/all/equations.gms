@@ -127,7 +127,7 @@ q33_ew_LimEmi(t,regi)..
 q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
 	vm_prodSE(t,regi,"pebiolc","seh2",te)
 	=l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(entyFe2, v33_FEdemand(t,regi,"feh2s", entyFe2, "dac"))
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2fe_cdr("feh2s", entyFe2, "dac"), v33_FEdemand(t,regi,"feh2s", entyFe2, "dac"))
 	;		
 
 *** EOF ./modules/33_CDR/all/equations.gms
