@@ -1,4 +1,5 @@
-symbolNames <- paste("p36_techCosts_iter, p36_shFeCes_iter, p36_shUeCes_iter, v36_deltaProdEs_iter, v36_prodEs_iter")
+symbolNames <- paste("pm_FEPrice_iter")
+plotMapping <- 'xAxis = "year", color = "iteration", facets = "region", slider = "all_enty"'
 generateHtml <- "y"
 
 if (!exists("source_include")) {
@@ -29,12 +30,21 @@ getLine <- function() {
 now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-cat("Which variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
+# choose variables
+cat("\n\nWhich variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
 answer <- getLine()
 if (!identical(trimws(answer), "")) {
   symbolNames <- answer
 }
 symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
+
+# choose plot mapping
+cat("\n\nHow do you want to map the variable dimensions in the plot?",
+    "Unused aesthetics need to be set to NULL. \n(default: ", plotMapping, ")\n")
+answer <- getLine()
+if (!identical(trimws(answer), "")) {
+  plotMapping <- answer
+}
 
 rmdHeader <- paste0(
   "---\n",
@@ -69,14 +79,14 @@ str(', symbolName, 'Clean)
 ### Create Plots
 ```{r, results = "asis"}
 ', symbolName, 'Plots <- mip::mipIterations(
-  ', symbolName, 'Clean, returnGgplots = TRUE,
-  xAxis = "year", slider = "iteration", facets = "region", color = NULL
+  plotData = ', symbolName, 'Clean, returnGgplots = TRUE,
+  ', plotMapping, '
 )
 
 # customize plots here if needed
 
-# convert up to 5 plots via plotly::ggplotly and render
-htmltools::tagList(lapply(head(', symbolName, 'Plots, 5), plotly::ggplotly))
+# convert up to 10 plots via plotly::ggplotly and render
+htmltools::tagList(lapply(head(', symbolName, 'Plots, 10), plotly::ggplotly))
 ```'))
   # END TEMPLATE -------------------------
 }
