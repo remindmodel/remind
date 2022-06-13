@@ -32,7 +32,7 @@ q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))
 	v33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)
 	=e=
     v33_ew_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot)) +
-	v33_ew_onfield(ttot-1,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val)))) +
+	v33_ew_onfield(ttot-1,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val le (ttot.val-pm_ts(ttot)/2)) $ (tall.val gt (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val)))) +
 	v33_ew_onfield(ttot,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))))
 ;  
 
