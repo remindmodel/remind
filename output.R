@@ -144,7 +144,9 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
-  slurm_options <- grep(slurmExceptions, slurm_options, value = TRUE)
+  if (!is.null(slurmExceptions)) {
+    slurm_options <- unique(c("direct", grep(slurmExceptions, slurm_options, value = TRUE)))
+  }
   if (length(slurm_options) == 1) return(slurm_options[[1]])
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
@@ -284,7 +286,7 @@ if (comp == "Exit") {
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- switch(output,
-      reporting      = "--mem=[09]*[0-9]{3}",
+      reporting      = "--mem=[0-9]*[0-9]{3}",
       plotIterations = "^direct",
       NULL
     )
