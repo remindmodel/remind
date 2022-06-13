@@ -29,8 +29,10 @@ v33_FEdemand(ttot,all_regi,all_enty, all_enty, all_te)    "CDR final energy dema
 
 variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
-v33_emiDAC(ttot,all_regi)                               "carbon captured from DAC [GtC / a]"
-v33_emiEW(ttot,all_regi)                                "negative CO2 emission from EW [GtC / a]"
+;
+
+negative variables
+v33_emi(ttot,all_regi,all_te)                           "negative CO2 emission from CDR [GtC / a]"
 ;
 
 equations

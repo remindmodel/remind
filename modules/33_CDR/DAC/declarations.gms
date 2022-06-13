@@ -12,11 +12,14 @@ p33_dac_fedem(all_enty)                  "specific final energy demand for direc
 
 variables
 vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
-v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a]"
 ;
 
 positive variables
-v33_FEdemand(ttot,all_regi,all_enty, all_enty, all_te)    "DAC FE demand [TWa]"
+v33_FEdemand(ttot,all_regi,all_enty, all_enty, all_te)  "DAC FE demand [TWa]"
+;
+
+negative variables
+v33_emi(ttot,all_regi,all_te)                           "negative CO2 emission from CDR [GtC / a]"
 ;
 
 equations

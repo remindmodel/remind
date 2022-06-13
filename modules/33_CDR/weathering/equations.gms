@@ -49,7 +49,7 @@ q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2010, cm_startyear))
 *'  Calculation of (negative) CO2 emissions from enhanced weathering. 
 ***---------------------------------------------------------------------------
 q33_ew_emi(t,regi)..
-	v33_emiEW(t,i regi)
+	v33_emi(t,regi,"weathering")
 	=e=
 	sum(rlf_cz33,
 		- sum(rlf,v33_ew_onfield_tot(t,regi,rlf_cz33,rlf)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
@@ -62,7 +62,7 @@ q33_ew_emi(t,regi)..
 q33_emicdrregi(t,regi)..
 	vm_emiCdr(t,regi,"co2")
 	=e=
-	v33_emiEW(t,regi)
+	v33_emi(t,regi,"weathering")
 	;
 
 ***---------------------------------------------------------------------------

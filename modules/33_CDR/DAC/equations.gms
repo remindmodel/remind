@@ -21,7 +21,7 @@ q33_cdr_FEdemand(t,regi,entyFe)$entyFe2Sector(entyFe, "cdr")..
 q33_dac_FEdemand(t, regi, entyFe2)$(sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac")))..
 	sum(entyFe$fe2fe_cdr(entyFe, entyFe2, "dac"), v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
 	=e=
-	- v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
+	- v33_emi(t, regi, "dac") * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
 	;
 
 ***---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ q33_dac_FEdemand(t, regi, entyFe2)$(sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac"
 *'  the second part calculates the CO2 captured from the gas used for heat production assuming 90% capture rate.
 ***---------------------------------------------------------------------------
 q33_dac_capconst(t,regi)..
-	v33_emiDAC(t,regi)
+	v33_emi(t,regi, "dac")
 	=e=
 	- sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_FEdemand(t,regi,"fegas", "fehes", "dac")
@@ -41,8 +41,8 @@ q33_dac_capconst(t,regi)..
 q33_emicdrregi(t,regi)..
 	vm_emiCdr(t,regi,"co2")
 	=e=
-	v33_emiDAC(t,regi);
-
+	v33_emi(t,regi, "dac")
+	;
 
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCS chain.
@@ -50,7 +50,7 @@ q33_emicdrregi(t,regi)..
 q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 	sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
 	=e=
-	-vm_emiCdr(t,regi,"co2")
+	-v33_emi(t,regi, "dac")
 	;
 
 ***---------------------------------------------------------------------------

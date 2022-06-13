@@ -40,7 +40,7 @@ q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2010, cm_startyear))
 *'  Calculation of (negative) CO2 emissions from enhanced weathering. 
 ***---------------------------------------------------------------------------
 q33_ew_emi(t,regi)..
-	v33_emiEW(t, regi)
+	v33_emi(t,regi, "weathering")
 	=e=
 	sum(rlf_cz33,
 		- sum(rlf,v33_ew_onfield_tot(t,regi,rlf_cz33,rlf)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
@@ -52,7 +52,7 @@ q33_ew_emi(t,regi)..
 *'  the second part calculates the CO2 captured from the gas used for heat production assuming 90% capture rate.
 ***---------------------------------------------------------------------------
 q33_dac_capconst(t,regi)..
-	v33_emiDAC(t, regi)
+	v33_emi(t,regi, "dac")
 	=e=
 	- sum(teNoTransform2rlf_dyn33("dac",rlf), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf))
  	- (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * v33_FEdemand(t,regi,"fegas", "fehes", "dac")
@@ -64,7 +64,7 @@ q33_dac_capconst(t,regi)..
 q33_emicdrregi(t,regi)..
 	vm_emiCdr(t,regi,"co2")
 	=e=
-	v33_emiEW(t,regi) + v33_emiDAC(t,regi)
+	sum(te_dyn33, v33_emi(t,regi, te_dyn33))
 	;
 
 ***---------------------------------------------------------------------------
@@ -73,7 +73,7 @@ q33_emicdrregi(t,regi)..
 q33_dac_FEdemand(t, regi, entyFe2)$sum(entyFe, fe2fe_cdr(entyFe, entyFe2, "dac"))..
 	sum(fe2fe_cdr(entyFe, entyFe2, "dac"), v33_FEdemand(t, regi, entyFe, entyFe2, "dac"))
 	=e=
-	- v33_emiDAC(t, regi) * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
+	- v33_emi(t, regi, "dac") * sm_EJ_2_TWa * p33_dac_fedem(entyFe2)
 	;
 
 ***---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ q33_ew_potential(t,regi,rlf_cz33)..
 q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 	sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
 	=e=
-	-v33_emiDAC(t,regi)
+	-v33_emi(t,regi,"dac")
 	;	
 
 ***---------------------------------------------------------------------------
