@@ -1171,6 +1171,10 @@ run <- function(start_subsequent_runs = TRUE) {
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
+
+  # make sure the renv used for the run is also used for generating output
+  argv <- c(get0("argv"), paste0("--renv=", outputdir))
+
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()

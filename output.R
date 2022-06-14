@@ -30,8 +30,10 @@ if ("--update" %in% argv) {
   stopifnot(`--update must not be used together with --renv=...` = !any(startsWith(argv, "--renv=")))
   source("scripts/utils/updateRenv.R")
 } else if (any(startsWith(argv, "--renv="))) {
-  renvProject <- sub("^--renv=", "", grep("^--renv=", argv, value = TRUE))
-  renv::load(normalizePath(renvProject))
+  renvProject <- normalizePath(sub("^--renv=", "", grep("^--renv=", argv, value = TRUE)))
+  renv::load(renvProject)
+  message("using renv ", renvProject)
+  message("libPaths: ", paste(.libPaths(), collapse = ", "))
 }
 
 # load landuse library
