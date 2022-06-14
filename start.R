@@ -168,6 +168,12 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       }
     }
 
+    # didremindfinish is TRUE if full.log exists with status: Normal completion
+    didremindfinish <- function(fulldatapath) {
+      logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
+      return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
+    }
+
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
     if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
@@ -178,31 +184,31 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
           # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
           # may include folders that only _start_ with this string. They are sorted out later.
-          dirs <- Sys.glob(file.path(paste0("./output/",isettings[iscen, path_to_gdx],"*/fulldata.gdx")))
-          # if path_to_gdx cell content exactly matches folder name, use this one
-          if (paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx") %in% dirs) {
-            message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
-            isettings[iscen, path_to_gdx] <- paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx")
-          } else {
-            # didremindfinish is TRUE if full.log exists with status: Normal completion
-            didremindfinish <- function(fulldatapath) {
-              logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
-            }
-            # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
-            # for folder names only allows: cell content, an optional _, datetimepattern
-            # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
-            # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
-            datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-            dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
-            # if anything found, pick latest
-            if(length(dirs) > 0 && ! all(is.na(dirs))) {
-              lapply(dirs, str_sub, -32, -14) %>%
-                strptime(format='%Y-%m-%d_%H.%M.%S') %>%
-                as.numeric %>%
-                which.max -> latest_fulldata
-              message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],10,-14)))
-              isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+          dirfolders <- c("./output/", icfg$modeltests_folder)
+          for (dirfolder in dirfolders) {
+            dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
+            # if path_to_gdx cell content exactly matches folder name, use this one
+            if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
+              message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+              isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
+              if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+            } else {
+              # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
+              # for folder names only allows: cell content, an optional _, datetimepattern
+              # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
+              # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
+              datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
+              dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+              # if anything found, pick latest
+              if(length(dirs) > 0 && ! all(is.na(dirs))) {
+                lapply(dirs, str_sub, -32, -14) %>%
+                  strptime(format='%Y-%m-%d_%H.%M.%S') %>%
+                  as.numeric %>%
+                  which.max -> latest_fulldata
+                message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+                if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+              }
             }
           }
         }
@@ -266,11 +272,18 @@ if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--
   "If this is what you want, use --reprepare instead, or answer with y:")
   if (gms::getLine() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
+
 ignorederrors <- 0 # counts ignored errors in --test mode
+startedRuns <- 0
+waitingRuns <- 0
+modeltestRunsUsed <- 0
 
 ###################### Choose submission type #########################
 
 testOneRegi_region <- ""
+
+# Save whether model is locked before runs are started
+model_was_locked <- file.exists(".lock")
 
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
@@ -319,6 +332,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
+    startedRuns <- startedRuns + 1
     if (! '--test' %in% argv) {
       submit(cfg, restart = TRUE)
     } else {
@@ -409,11 +423,6 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     }
   }
 
-  # Tell user that model is currently locked
-  if (file.exists(".lock")) {
-    message("\nThe file .lock exists, so model runs will have to queue.")
-  }
-
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
 
@@ -476,6 +485,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     save(cfg, file=filename)
 
     if (start_now){
+      startedRuns <- startedRuns + 1
       # Create results folder and start run
       if (! '--test' %in% argv) {
         submit(cfg)
@@ -483,6 +493,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         message("   If this wasn't --test mode, I would submit ", scen, ".")
       }
     } else {
+       waitingRuns <- waitingRuns + 1
        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
 
@@ -494,6 +505,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   }
 }
 
+message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
+        if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ('--test' %in% argv) {
-  message("\nFinished --test mode with ", ignorederrors, " errors. Rdata files were written, but no runs were started.")
+  message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+} else if (model_was_locked) {
+  message("The file .lock existed before runs were started, so they will have to queue.")
 }

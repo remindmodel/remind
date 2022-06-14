@@ -18,5 +18,9 @@ loop(trade$(NOT tradeSe(trade)),
     );
 );
 
+*** Save FE prices in each iteration for easier monitoring
+pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
+  pm_FEPrice(t,regi,enty,sector,emiMkt);
+
 *-----------------------------------------------------------------------------------------------
 *** EOF ./modules/80_optimization/testOneRegi/postsolve.gms
