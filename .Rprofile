@@ -21,10 +21,10 @@ latestSnapshot <- if (length(snapshots) > 0) snapshots[[1]] else NA
 activateSnapshot <- function(snapshot) {
   stopifnot(file.exists(snapshot))
   if (R.version$major <= 3) { # include.site is not available before R 4.0
-    stopifnot(!endsWith(snapshot, "_R4"))
+    if (endsWith(snapshot, "_R4")) stop("Your R version is ", R.version$major, ", but your library snapshot is for 4.0 or later")
     .libPaths(snapshot)
   } else {
-    stopifnot(endsWith(snapshot, "_R4"))
+    if (!endsWith(snapshot, "_R4")) stop("Your R version is ", R.version$major, ", but your library snapshot is for < 4.0.")
     # setting include.site to FALSE makes sure that only the snapshot and system libraries are used
     .libPaths(snapshot, include.site = FALSE)
   }
