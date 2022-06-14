@@ -553,12 +553,12 @@ for(scen in common){
 if (! "--test" %in% argv) {
  system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
  message("\nCopied REMIND .Rprofile to MAgPIE folder.")
-  cs_runs <- paste0(common, "-rem-", max_iterations, collapse = ",")
+  cs_runs <- paste0("output/", common, "-rem-", max_iterations, collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
   cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
     cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/utils/run_compareScenarios2.R outputdirs=",
-    paste(cs_runs, collapse=","), " shortTerm=FALSE outfilename=", cs_name,
+    cs_runs, " shortTerm=FALSE outfilename=", cs_name,
     " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
   message("\n### To start a compareScenario once everything is finished, run:")
   message(cs_command)

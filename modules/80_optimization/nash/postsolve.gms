@@ -190,6 +190,10 @@ if(s80_fadeoutPriceAnticipStartingPeriod ne 0,
 );
 display s80_fadeoutPriceAnticipStartingPeriod, sm_fadeoutPriceAnticip;
 
+*** Save FE prices in each iteration for easier monitoring
+pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
+  pm_FEPrice(t,regi,enty,sector,emiMkt);
+
 
 ***Decide, on whether to end iterating now. if any of the following criteria (contained in the set convMessage80(surplus,infes,nonopt)) is not met, s80_bool is set to 0, and the convergence process is NOT stopped
 ***reset some indicators
