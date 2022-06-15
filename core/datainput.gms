@@ -190,7 +190,6 @@ $offdelim
 /
 ;
 
-
 *JH* SSP energy technology scenario
 table f_dataglob_SSP1(char,all_te)        "Techno-economic assumptions consistent with SSP1"
 $include "./core/input/generisdata_tech_SSP1.prn"

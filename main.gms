@@ -210,7 +210,7 @@ $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ----------------------------
 $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
-$setglobal water  heat                 !! def = off
+$setglobal water  off                 !! def = off
 ***---------------------    80_optimization    ----------------------------------
 $setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
@@ -597,7 +597,7 @@ $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = on
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
