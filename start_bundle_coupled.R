@@ -61,6 +61,23 @@ require(gtools) # required for mixedsort()
 require(dplyr) # for filter, secelt, %>%
 require(stringr) # for str_sub
 
+# Define colors for output
+red   <- "\033[0;31m"
+green <- "\033[0;32m"
+blue  <- "\033[0;34m"
+NC    <- "\033[0m"   # No Color
+
+message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
+message("path_magpie:           ", if (dir.exists(path_remind)) green else red, path_magpie, NC)
+message("path_settings_coupled: ", if (file.exists(path_remind)) green else red, path_settings_coupled, NC)
+message("path_settings_remind:  ", if (file.exists(path_remind)) green else red, path_settings_remind, NC)
+message("path_remind_oldruns:   ", if (dir.exists(path_remind)) green else red, path_remind_oldruns, NC)
+message("path_magpie_oldruns:   ", if (dir.exists(path_remind)) green else red, path_magpie_oldruns, NC)
+message("prefix_runname:        ", prefix_runname)
+message("max_iterations:        ", max_iterations)
+message("n600_iterations:       ", n600_iterations)
+message("run_compareScenarios:  ", run_compareScenarios)
+
 # load arguments from command line
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
@@ -119,9 +136,6 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 ##############  READ SCENARIO FILES ################
 ####################################################
 # Read-in the switches table, use first column as row names
-
-message("\nREMIND directory: ", path_remind, ". MAgPIE directory: ", path_magpie)
-message("Reading ", path_settings_coupled, " and ", path_settings_remind, ".\n")
 
 settings_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
 
@@ -294,8 +308,8 @@ for(scen in common){
     # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
     start_iter_first <- iter_rem + 1
     message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
-  } else if (iter_rem == max_iterations & iter_mag == max_iterations - 1) {
-    message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, ".")
+  } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
+    message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     next
   } else {
     stop("REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -490,21 +504,13 @@ for(scen in common){
 
   } # end for (i %in% configureIterations)
 
-  # Define colors for output
-  red   <- "\033[0;31m"
-  green <- "\033[0;32m"
-  blue  <- "\033[0;34m"
-  NC    <- "\033[0m"   # No Color
-
   # convert from logi to character so file.exists does not throw an error
   path_report <- as.character(path_report)
 
   message("\nSUMMARY")
   message("runname       : ", runname)
+  message("Start iter    : ", if (start_magpie) "mag-" else "rem-", start_iter_first)
   message("QOS           : ", qos)
-  message("Start iter    : ", start_iter_first)
-  message("path_remind   : ", ifelse(dir.exists(path_remind), green, red), path_remind, NC)
-  message("path_magpie   : ", ifelse(dir.exists(path_magpie), green, red), path_magpie, NC)
   message("remind gdxes  :")
   for (path_gdx in names(path_gdx_list)) {
       gdxname <- cfg_rem$files2export$start[path_gdx_list[path_gdx]]
