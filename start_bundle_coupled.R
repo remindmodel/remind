@@ -225,7 +225,7 @@ if (length(unknownColumnNames) > 0) {
 }
 
 if (parallel && file.exists("/p") && "qos" %in% names(scenarios_coupled)
-    && sum(scenarios_coupled[common, "qos"] == "priority") > 4) {
+    && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
       message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
       message("They may not be able to run in parallel on the PIK cluster.")
 }
@@ -242,7 +242,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)           # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
+  if(is.null(qos) | is.na(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
   start_iter_first <- 1                                  # iteration to start the coupling with
 
   # look whether there is already a REMIND run (check for old name if provided)
