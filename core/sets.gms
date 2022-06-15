@@ -637,11 +637,7 @@ all_in   "all inputs and outputs of the CES function"
   ue_chemicals            "useful energy of chemicals production"
   en_chemicals            "energy use of chemicals production"
   kap_chemicals           "energy efficiency capital of chemicals production"
-<<<<<<< HEAD
   en_chemicals_fhth       "feedstock and high temperature heat energy use of chemicals production"
-=======
-  en_chemicals_fhth       "feedstock and high temperature heat enery use of chemicals production"
->>>>>>> 0269115c0454e7d08d70bd35c7904bba0228be5e
   feso_chemicals          "solids energy use of chemicals production"
   feli_chemicals          "liquids energy use of chemicals production"
   fega_chemicals          "gases energy use of chemicals production"
