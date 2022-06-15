@@ -225,7 +225,7 @@ if (length(unknownColumnNames) > 0) {
 }
 
 if (parallel && file.exists("/p") && "qos" %in% names(scenarios_coupled)
-    && sum(scenarios_coupled[common, "qos"] == "priority") > 4) {
+    && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
       message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
       message("They may not be able to run in parallel on the PIK cluster.")
 }
