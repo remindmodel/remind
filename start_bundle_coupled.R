@@ -242,7 +242,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)           # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
+  if(is.null(qos) | is.na(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
   start_iter_first <- 1                                  # iteration to start the coupling with
 
   # look whether there is already a REMIND run (check for old name if provided)
