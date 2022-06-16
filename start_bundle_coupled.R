@@ -118,7 +118,6 @@ errorsfound <- 0
 startedRuns <- 0
 waitingRuns <- 0
 deletedFolders <- 0
-knownRefRuns <- NULL
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 
@@ -138,16 +137,7 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 # Read-in the switches table, use first column as row names
 
 settings_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
-
-# Read in
-
-settings_remind <- read.csv2(path_settings_remind, stringsAsFactors = FALSE, row.names=1, na.strings="")
-
-path_gdx_list <- c("path_gdx" = "input.gdx",
-                   "path_gdx_ref" = "input_ref.gdx",
-                   "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
-                   "path_gdx_bau" = "input_bau.gdx",
-                   "path_gdx_carbonprice" = "input_carbonprice.gdx")
+settings_remind  <- read.csv2(path_settings_remind, stringsAsFactors = FALSE, row.names=1, na.strings="")
 
 # Choose which scenarios to start: select rows according to "subset" and columns according to "select" (not used in the moment)
 scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
@@ -166,6 +156,7 @@ if (!identical(missing, character(0))) {
 }
 
 common <- intersect(rownames(settings_remind),rownames(scenarios_coupled))
+knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
 if (!identical(common,character(0))) {
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
@@ -188,6 +179,13 @@ if (length(miss_refpolicycost) > 0) {
   message("In ", paste(miss_refpolicycost, collapse = " and "),
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
 }
+
+path_gdx_list <- c("path_gdx" = "input.gdx",
+                   "path_gdx_ref" = "input_ref.gdx",
+                   "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
+                   "path_gdx_bau" = "input_bau.gdx",
+                   "path_gdx_carbonprice" = "input_carbonprice.gdx")
+
 settings_remind[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings_remind)]] <- NA
 scenarios_coupled[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenarios_coupled)]] <- NA
 
@@ -257,12 +255,12 @@ for(scen in common){
   if (! is.na(already_rem)) {
     if (! file.exists(already_rem)) stop(possibleRemindReport, " exists, but ", already_rem, " not!")
     iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1", already_rem))
-  } else {
+  } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
     message("Nothing found for ", suche, ", continue with oldrun.")
     if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/fulldata.gdx") &&
         file.exists(scenarios_coupled[scen, "oldrun"])) {
           already_rem <- c(scenarios_coupled[scen, "oldrun"])
-    } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
+    } else {
       needle <- scenarios_coupled[scen, "oldrun"]
       suche <- paste0(path_remind_oldruns, prefix_oldruns, needle, "-rem-*/fulldata.gdx")
       already_rem <- mixedsort(Sys.glob(suche))[1]
@@ -276,17 +274,22 @@ for(scen in common){
     message("Found REMIND gdx here: ", normalizePath(already_rem))
   }
   # is there already a MAgPIE run with this name?
+  iter_mag <- 0
   needle <- scen
   suche <- paste0(path_magpie, "output/", prefix_runname, needle,"-mag-*/report.mif")
   already_mag <- mixedsort(Sys.glob(suche))[1]
-  if(! is.na(already_mag)) {
+  if (! is.na(already_mag)) {
     iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
-  } else {
+  } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
     message("Nothing found for ", suche, ", continue with oldrun")
-    needle <- scenarios_coupled[scen, "oldrun"]
-    suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
-    already_mag <- mixedsort(Sys.glob(suche))[1]
-    iter_mag <- 0
+    if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/report.mif") &&
+        file.exists(scenarios_coupled[scen, "oldrun"])) {
+          already_mag <- c(scenarios_coupled[scen, "oldrun"])
+    } else {
+      needle <- scenarios_coupled[scen, "oldrun"]
+      suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
+      already_mag <- mixedsort(Sys.glob(suche))[1]
+    }
   }
   if (is.na(already_mag)) {
     message("Nothing found for ", suche, ", starting REMIND standalone.")
@@ -530,7 +533,6 @@ for(scen in common){
     nr_of_regions <- 1
   }
 
-  knownRefRuns <- c(knownRefRuns, paste0(fullrunname, if (parallel) "" else paste0("-rem-", max_iterations)))
   if (start_now){
       startedRuns <- startedRuns + 1
       if (! "--test" %in% argv) {
