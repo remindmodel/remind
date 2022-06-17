@@ -72,6 +72,25 @@ pm_energy_limit(in)
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
 
+* Specific energy demand cannot fall below a curve described by an exponential
+* function passing through the 2015 value and a point defined by an "efficiency
+* gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
+* year (e.g. 2050).
+loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
+  pm_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), vm_cesIO.l("2015",regi,in))
+      / vm_cesIO.l("2015",regi,out)
+      )
+    - pm_energy_limit(out)
+    )
+  * exp( (2015 - ttot.val)
+       / ( (2015 - 2050)   !! change this year and this percentage to bend
+         / log(1 - 0.75)   !! the curve to pass this point
+	 )
+      )
+  + pm_energy_limit(out);
+);
+
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
