@@ -309,7 +309,7 @@ $ifthen.edge_esm %transport% == "edge_esm"
 loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020 ),
   pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
   = max(
-  1e-3,
+  1e-4,
     ( pm_cesdata(ttot,regi,"entrp_frgt_lo","price")
     + p29_alpha(regi,"entrp_frgt_lo")
     + p29_beta(regi,"entrp_frgt_lo") * ttot.val
@@ -322,7 +322,7 @@ loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2020 ),
 loop (ttot$( ttot.val ge 2005),
   pm_cesdata(ttot,regi_dyn29(regi),"entrp_frgt_lo","price")
   = max(
-    1e-3,
+    1e-4,
     pm_cesdata(ttot,regi,"entrp_frgt_lo","price")
     );
 );
