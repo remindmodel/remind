@@ -303,13 +303,8 @@ model_was_locked <- file.exists(".lock")
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  if ("--reprepare" %in% argv) {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))
-  } else {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
-  }
+  searchforfile <- if ("--reprepare" %in% argv) "config.Rdata" else "full.gms"
+  possibledirs <- basename(dirname(Sys.glob(file.path("output", "*", searchforfile))))
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
@@ -524,6 +519,6 @@ message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are 
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ('--test' %in% argv) {
   message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
-} else if (model_was_locked) {
+} else if (model_was_locked & (! "--restart" %in% argv | "--reprepare" %in% argv)) {
   message("The file .lock existed before runs were started, so they will have to queue.")
 }
