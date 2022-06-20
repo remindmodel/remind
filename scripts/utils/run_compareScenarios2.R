@@ -8,7 +8,7 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  modelHistExclude <- c()
+  modelsHistExclude <- c()
   readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude")
 }
 
