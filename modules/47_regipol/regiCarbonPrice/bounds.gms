@@ -78,8 +78,8 @@ loop(regi$(sameAs(regi,"DEU")),
 
 
 *** bounds on historic gas capacities in Germany
-vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=35/1000;
-vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=40/1000;
+vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
+vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
 
 
