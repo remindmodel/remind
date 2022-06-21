@@ -22,12 +22,12 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 
 *' Thermodynamic limits on subsector energy demand
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
-                                       ttot.val gt 2020
-		                   AND pm_energy_limit_slope(ttot,regi,out) ) ..
+                                      ttot.val gt 2020
+				  AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
-  * pm_energy_limit_slope(ttot,regi,out)
+  * p37_energy_limit_slope(ttot,regi,out)
 ;
 
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050

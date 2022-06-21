@@ -76,19 +76,38 @@ pm_energy_limit(in)
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
 * year (e.g. 2050).
+if (cm_emiscen eq 1,
+  execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
+else
+  execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
+);
+
+sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to 
+                  !! thermodynamic limit
+sm_tmp  = 2050;   !! period in which closing could be achieved
+
 loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
-  pm_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
-  = ( ( sum(ces_eff_target_dyn37(out,in), vm_cesIO.l("2015",regi,in))
-      / vm_cesIO.l("2015",regi,out)
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
       )
     - pm_energy_limit(out)
     )
-  * exp( (2015 - ttot.val)
-       / ( (2015 - 2050)   !! change this year and this percentage to bend
-         / log(1 - 0.75)   !! the curve to pass this point
-	 )
-      )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
   + pm_energy_limit(out);
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
 );
 
 *** CCS for industry is off by default
