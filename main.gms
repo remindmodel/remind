@@ -355,6 +355,8 @@ parameters
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
   cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
   cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
+  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on pegas in Germany from 2020 to 2050"
+  cm_cesTax                "switch to manually activate a cost-neutral CES production tax, used in the Energy Security Scenario in ARIADNE"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -535,6 +537,8 @@ $setGlobal cm_import_ariadne  off !! def off
 $setGlobal cm_EnSecScen  off !! def off
 *** switch for ariadne policy assumptions for Germany
 $setGlobal cm_Ger_Pol  off !! def off
+*** switch for CES production tax
+$setGlobal cm_cesTax  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
