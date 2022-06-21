@@ -139,11 +139,15 @@ choose_mode <- function(title = "Please choose the output mode") {
   return(comp)
 }
 
-choose_slurmConfig_priority_standby <- function(high_mem = FALSE,
-                                                title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c(if (! high_mem) c("--qos=priority", "--qos=short", "--qos=standby"),
+choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty",
+                                                slurmExceptions = NULL) {
+  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
+  if (!is.null(slurmExceptions)) {
+    slurm_options <- unique(c("direct", grep(slurmExceptions, slurm_options, value = TRUE)))
+  }
+  if (length(slurm_options) == 1) return(slurm_options[[1]])
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -280,12 +284,16 @@ if (comp == "Exit") {
 
   # define slurm class or direct execution
   if (! exists("source_include")) {
-    modules_using_high_mem <- c("reporting")
-    need_high_mem <- isTRUE(any(modules_using_high_mem %in% output))
+    # for selected output scripts, only slurm configurations matching these regex are available
+    slurmExceptions <- switch(output,
+      reporting      = "--mem=[0-9]*[0-9]{3}",
+      plotIterations = "^direct",
+      NULL
+    )
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
-    if (! exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_priority_standby(high_mem = need_high_mem)
+    if (!exists("slurmConfig")) {
+      slurmConfig <- choose_slurmConfig_priority_standby(slurmExceptions = slurmExceptions)
       if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
