@@ -21,6 +21,8 @@
 - [ ] The model compiles and starts successfully
 
 ## Further information (optional):
-- Test runs are here: 
+
+* Test runs are here: 
+* Comparison of results (what changes by this PR?): 
 
 
