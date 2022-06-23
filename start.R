@@ -436,7 +436,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi", "--quick") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
