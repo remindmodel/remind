@@ -3,6 +3,8 @@
 
 ## Type of change
 
+(Make sure to delete from the Type-of-change list the items not relevant to your PR)
+
 - [ ] Bug fix 
 - [ ] Refactoring
 - [ ] New feature 
