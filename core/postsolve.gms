@@ -872,4 +872,66 @@ p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
 *** CG: growth rate after 2100 is very small (0.02 instead of around 0.05) due to various artefact, we simply set interest rates to 0.05 after 2100
 p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 
+*** calculation of FE Prices including sector specific and energy source information
+pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
+  qm_balFeAfterTax.m(ttot,regi,entySe,entyFe,sector,emiMkt) / qm_budget.m(ttot,regi);
+
+pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt)$(sum(entySe, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum(entySe, 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum(entySe, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector)$(sum(emiMkt, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum(emiMkt, 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum(emiMkt, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt)$(sum(sector, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum(sector, 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum(sector, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_SE(ttot,regi,entySe,entyFe)$(sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_Sector(ttot,regi,entyFe,sector)$(sum((entySe,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum((entySe,emiMkt), 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum((entySe,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt)$(sum((entySe,sector), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum((entySe,sector), 
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum((entySe,sector), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_FE(ttot,regi,entyFe)$(sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
+  sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)),
+    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
+  )
+  /
+  sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+
+pm_FEPrice_by_SE_Sector_EmiMkt_iter(iteration,ttot,regi,entySe,entyFe,sector,emiMkt) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt);
+pm_FEPrice_by_Sector_EmiMkt_iter(iteration,ttot,regi,entyFe,sector,emiMkt) = pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt);
+pm_FEPrice_by_SE_Sector_iter(iteration,ttot,regi,entySe,entyFe,sector) = pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector);
+pm_FEPrice_by_SE_EmiMkt_iter(iteration,ttot,regi,entySe,entyFe,emiMkt) = pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt);
+pm_FEPrice_by_SE_iter(iteration,ttot,regi,entySe,entyFe) = pm_FEPrice_by_SE(ttot,regi,entySe,entyFe);
+pm_FEPrice_by_Sector_iter(iteration,ttot,regi,entyFe,sector) = pm_FEPrice_by_Sector(ttot,regi,entyFe,sector);
+pm_FEPrice_by_EmiMkt_iter(iteration,ttot,regi,entyFe,emiMkt) = pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt);
+pm_FEPrice_by_FE_iter(iteration,ttot,regi,entyFe) = pm_FEPrice_by_FE(ttot,regi,entyFe);
+
 *** EOF ./core/postsolve.gms
