@@ -464,7 +464,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
-    if ("--quick" %in% argv) system("sed -i 's/rtredg = 1.d-9;/rtredg = 1.d-4;/' config/conopt3.op9")
+    if ("--quick" %in% argv) cfg$gms$cm_quick_mode <- "on"
     message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
