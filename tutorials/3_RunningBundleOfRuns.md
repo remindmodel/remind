@@ -64,7 +64,7 @@ Rscript start.R --test config/scenario_config_XYZ.csv
 ```
 Running the complete chain of runs, but only for one region and one iteration (as long as `cm_iteration_max = 1` wasn't changed), can be started with:
 ```bash
-Rscript start.R --testOneRegi config/scenario_config_XYZ.csv
+Rscript start.R --quick config/scenario_config_XYZ.csv
 ```
 If you want to manually start runs instead of editing the `start` column in the config file, start:
 ```bash
