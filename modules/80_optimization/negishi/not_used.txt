@@ -49,3 +49,5 @@ pm_emiMktRefYear,               parameter,  ???
 pm_implEnergyBoundLimited,      parameter,  ???
 pm_implEnergyBoundTarget_dev,   parameter,  ???
 pm_implEnergyBoundTarget,       parameter,  ???
+pm_FEPrice,                     parameter,  not needed
+pm_FEPrice_iter,                parameter,  not needed

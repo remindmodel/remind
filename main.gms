@@ -368,11 +368,12 @@ cm_keep_presolve_gdxes  = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 1;         !! def = 1
-$setglobal cm_rcp_scen  none   !! def = "none"
-cm_co2_tax_2020   = -1;        !! def = -1
-cm_co2_tax_growth = 1.05;      !! def = 1.05
-c_macscen         = 1;         !! def = 1
+cm_emiscen        = 1;               !! def = 1
+$setglobal cm_rcp_scen  none         !! def = "none"
+$setglobal cm_rcp_scen_build  none   !! def = "none"
+cm_co2_tax_2020   = -1;              !! def = -1
+cm_co2_tax_growth = 1.05;            !! def = 1.05
+c_macscen         = 1;               !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
 cm_ccapturescen  = 1;        !! def = 1

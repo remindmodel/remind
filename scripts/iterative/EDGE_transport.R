@@ -231,8 +231,7 @@ intensity <- shares_int_dem[["demandI"]] ##in million pkm/EJ
 norm_demand <- shares_int_dem[["demandF_plot_pkm"]] ## totla demand normalized to 1; if opt$reporting, in million km
 
 if (opt$reporting) {
-  saveRDS(vintages[["vintcomp"]], file = datapath("vintcomp.RDS"))
-  saveRDS(vintages[["newcomp"]], file = datapath("newcomp.RDS"))
+  saveRDS(vintages, file = datapath("vintages.RDS"))
   saveRDS(shares, file = datapath("shares.RDS"))
   saveRDS(logit_data$EF_shares, file = datapath("EF_shares.RDS"))
   saveRDS(logit_data$mj_km_data, file = datapath("mj_km_data.RDS"))
@@ -245,6 +244,9 @@ if (opt$reporting) {
   saveRDS(logit_params, file = datapath("logit_params.RDS"))
   saveRDS(logit_data, file = datapath("logit_data.RDS"))
 
+  ## the following vintages calculation is deprecated and shall not be updated!
+  ## as soon as the new reporting (edgeTransport::reportEDGETransport2) is used,
+  ## this can be deleted.
   vint <- vintages[["vintcomp_startyear"]]
   newd <- vintages[["newcomp"]]
   sharesVS1 <- shares[["VS1_shares"]]
