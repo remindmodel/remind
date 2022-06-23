@@ -62,7 +62,7 @@ Before you start the runs, you can test whether the right runs would be started 
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```
-Running the complete chain of runs, but only for one region and one iteration (as long as `cm_iteration_max = 1` wasn't changed), can be started with:
+Running the complete chain of runs, but only for one region and one iteration, can be started with:
 ```bash
 Rscript start.R --quick config/scenario_config_XYZ.csv
 ```
