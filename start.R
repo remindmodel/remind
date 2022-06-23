@@ -464,7 +464,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
-    if ("--quick" %in% argv) cfg$gms$cm_quick_mode <- "on"
+    if ("--quick" %in% argv) {
+        cfg$gms$cm_quick_mode <- "on"
+        cfg$gms$cm_iteration_max <- 1
+    }
     message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
