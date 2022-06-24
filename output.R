@@ -340,16 +340,15 @@ if (comp == "Exit") {
     # included as source (instead of a load from command line)
     source_include <- TRUE
 
-    message("\nStarting output generation for ", outputdir, "\n")
-
     ###################################################################################
     # Execute R scripts
     ###################################################################################
 
     # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
     if (all(is.na(output))) {
-      message("No output generation, as output was set to NA, as for example for --testOneRegi.")
+      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
+      message("\nStarting output generation for ", outputdir, "\n")
       for (rout in output) {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {
