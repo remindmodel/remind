@@ -139,13 +139,13 @@ choose_mode <- function(title = "Please choose the output mode") {
   return(comp)
 }
 
-choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses priority if empty",
+choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses the first option if empty",
                                                 slurmExceptions = NULL) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
   if (!is.null(slurmExceptions)) {
-    slurm_options <- unique(c("direct", grep(slurmExceptions, slurm_options, value = TRUE)))
+    slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
   }
   if (length(slurm_options) == 1) return(slurm_options[[1]])
   cat("\n\n", title, ":\n\n")
