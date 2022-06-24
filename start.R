@@ -9,6 +9,7 @@ library(gms)
 library(dplyr)
 require(stringr)
 
+helpText <- "
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
@@ -23,6 +24,8 @@ require(stringr)
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
+#' --help, -h: show this help text and exit
+#'
 #' --debug, -d: start a debug run with cm_nash_mode = debug
 #'
 #' --interactive, -i: interactively select run(s) to be started
@@ -33,8 +36,10 @@ require(stringr)
 #'
 #' --test, -t: Test configuration
 #'
-#' --testOneRegi, -1: Starting the REMIND run(s) in testOneRegi mode.
-
+#' --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'
+#' --quick, -q: starting one fast REMIND run for testing the full model.
+"
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
@@ -257,7 +262,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test")
+accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 
 # search for strings that look like -i1asrR and transform them into long flags
 onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
@@ -280,6 +285,11 @@ if (!all(known)) {
   ".\nAccepted parameters: [config file], ", paste(accepted, collapse = ", "))
   # set config file to not known parameter where the file actually exists
   config.file <- argv[!known][[1]] 
+}
+
+if ("--help" %in% argv) {
+  message(helpText)
+  q()
 }
 
 if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
@@ -327,7 +337,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     } else {
       if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
     }
-    if ("--testOneRegi" %in% argv) {
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       if (is.null(cfg[["backup"]][["optimization"]])) cfg$backup$optimization <- cfg$gms$optimization
       cfg$gms$optimization <- "testOneRegi"
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
@@ -426,7 +436,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi", "--quick") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
@@ -444,7 +454,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if ("--testOneRegi" %in% argv & is.na(config.file)) {
+    if (any(c("--quick", "--testOneRegi") %in% argv) & is.na(config.file)) {
       cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
@@ -454,14 +464,17 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
-
+    if ("--quick" %in% argv) {
+        cfg$gms$cm_quick_mode <- "on"
+        cfg$gms$cm_iteration_max <- 1
+    }
     message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # set optimization mode to testOneRegi, if specified as command line argument
-      if ('--testOneRegi' %in% argv) {
+      if (any(c("--quick", "--testOneRegi") %in% argv)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
         cfg$gms$optimization <- "testOneRegi"
         cfg$output           <- NA
