@@ -69,7 +69,7 @@ Without additional arguments this starts a single REMIND runs using the settings
 You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
-Rscript start.R --testOneRegi
+Rscript start.R --quick
 ```
 The shortcut is
 ```bash

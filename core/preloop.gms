@@ -92,7 +92,8 @@ if(cm_iterative_target_adj eq 9,
 
 display p_taxCO2eq_until2150, pm_taxCO2eq;
 
-$ifthen setGlobal c_scaleEmiHistorical
+$IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
+
 *re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
 display pm_macBaseMagpie;
 loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
@@ -115,7 +116,8 @@ loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"
   ;
 );
 display pm_macBaseMagpie;
-$endif
+
+$ENDIF.scaleEmiHist
 
 *** FS: calculate total bioenregy primary energy demand from last iteration
 pm_demPeBio(ttot,regi) = 
@@ -132,7 +134,7 @@ p_agriEmiPhaseOut("2030") = 0.5;
 p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
-*** Rescale German non-co2 base line emissions from agriculture 
+*** Rescale non-co2 base line emissions from agriculture 
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
 
