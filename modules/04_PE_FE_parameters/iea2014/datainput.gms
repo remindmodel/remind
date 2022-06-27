@@ -236,11 +236,11 @@ loop(pc2te(enty,enty2,te,enty3),
 display pm_prodCouple;
 
 *** define global values for couple production that can be used if the regional IEA data are 0
-***p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")        = 0.61;
-***p04_prodCoupleGlob("pegas","seel","gaschp","sehe")          = 0.42;
+p04_prodCoupleGlob("pecoal","seel","coalchp","sehe")        = 0.61;
+p04_prodCoupleGlob("pegas","seel","gaschp","sehe")          = 0.42;
 p04_prodCoupleGlob("pecoal","seh2","coalh2","seel")         = 0.081;
 p04_prodCoupleGlob("pecoal","seh2","coalh2c","seel")        = 0.054;
-***p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
+p04_prodCoupleGlob("pebiolc","seel","biochp","sehe")        = 0.72;
 p04_prodCoupleGlob("pebiolc","seliqbio","bioftrec","seel")  = 0.147; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","seliqbio","bioftcrec","seel") = 0.108; !! from Liu et al. 2011 (Making Fischer-Tropsch Fuels and Electricity from Coal and Biomass: Performance and Cost Analysis)
 p04_prodCoupleGlob("pebiolc","seliqbio","bioethl","seel")   = 0.153;
