@@ -62,11 +62,13 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
         installed <- utils::installed.packages()
         outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
-        message("The following PIK gpackages can be updated:\n",
-                paste("-", outdatedPackages[, "Package"], ":",
-                      outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
-                      collapse = "\n"),
-                "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
+        if (!is.null(outdatedPackages)) {
+          message("The following PIK packages can be updated:\n",
+                  paste("-", outdatedPackages[, "Package"], ":",
+                        outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
+                        collapse = "\n"),
+                  "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
+        }
       }
       file.copy("renv.lock", cfg$results_folder)
 

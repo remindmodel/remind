@@ -120,7 +120,7 @@ REMIND modeling routine
 
 # 3. What happens once you start REMIND on the cluster?
 
-First, a number of R libraries like **madrat**, **mrremind** and **remind** are loaded into your cache on the cluster. These libraries were and are still developed at PIK. They contain the functions necessary for the input data preparation and the output processing. Let us go through each of the stages and briefly describe what happens:
+First, a number of R libraries like **madrat**, **mrremind** and **remind2** are loaded into your cache on the cluster. These libraries were and are still developed at PIK. They contain the functions necessary for the input data preparation and the output processing. Let us go through each of the stages and briefly describe what happens:
 
 ## a) Input Data Preparation
 

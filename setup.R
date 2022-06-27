@@ -11,4 +11,4 @@ renv::snapshot(prompt = FALSE) # create renv.lock
 library(gdxrrw)
 library(remind2)
 
-message("If there were no errors/warnings your system is ready to run REMIND.")
+message("Finished REMIND setup and checks. Your system is ready to run REMIND if there were no errors/warnings.")

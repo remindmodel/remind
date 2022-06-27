@@ -1,4 +1,5 @@
 source("renv/activate.R")
+message("renv activated, libPaths: ", paste0("'", .libPaths(), "'", collapse = ", "))
 
 # source global .Rprofile (very important to load user specific settings)
 # DO NOT EDIT THIS LINE!
