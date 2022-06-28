@@ -7,6 +7,7 @@
 *** SOF ./modules/80_optimization/testOneRegi/solve.gms
 
 hybrid.optfile = 9;
+$IF %cm_quick_mode% == "on" hybrid.optfile = 4;
 
 ***reduce the problem to one region
 regi(all_regi) = NO;

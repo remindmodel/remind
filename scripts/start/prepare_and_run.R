@@ -291,7 +291,7 @@ prepare <- function() {
 
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
-  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  lock_id <- model_lock(timeout1 = 1)
   on.exit() # set the commands when exiting in the correct order
   on.exit(model_unlock(lock_id),add=TRUE)
   on.exit(setwd(cfg$results_folder),add=TRUE)

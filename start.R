@@ -9,6 +9,7 @@ library(gms)
 library(dplyr)
 require(stringr)
 
+helpText <- "
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
@@ -23,18 +24,27 @@ require(stringr)
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
+#' --help, -h: show this help text and exit
+#'
 #' --debug, -d: start a debug run with cm_nash_mode = debug
 #'
-#' --interactive, -i: interactively select run(s) to be started
+#' --interactive, -i: interactively select config file and run(s) to be started
+#'
+#' --quick, -q: starting one fast REMIND run with one region, one iteration and
+#'              reduced convergence criteria for testing the full model.
 #'
 #' --reprepare, -R: rewrite full.gms and restart run
 #'
 #' --restart, -r: interactively restart run(s)
 #'
-#' --test, -t: Test configuration
+#' --test, -t: Test scenario configuration and writing the RData files in the
+#'             REMIND main folder without starting the runs.
 #'
-#' --testOneRegi, -1: Starting the REMIND run(s) in testOneRegi mode.
-
+#' --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'
+#' You can combine --reprepare with --debug, --testOneRegi or --quick and the selected folders will be restarted using these settings.
+#' Afterwards, using --reprepare alone will restart the runs using their original settings.
+"
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
@@ -257,7 +267,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test")
+accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 
 # search for strings that look like -i1asrR and transform them into long flags
 onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
@@ -282,8 +292,13 @@ if (!all(known)) {
   config.file <- argv[!known][[1]] 
 }
 
-if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
-  message("\nIt is impossible to combine --restart with --testOneRegi or --debug because full.gms has to be rewritten.\n",
+if ("--help" %in% argv) {
+  message(helpText)
+  q()
+}
+
+if (any(c("--testOneRegi", "--debug", "--quick") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
+  message("\nIt is impossible to combine --restart with --debug, --quick or --testOneRegi because full.gms has to be rewritten.\n",
   "If this is what you want, use --reprepare instead, or answer with y:")
   if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
@@ -298,18 +313,13 @@ modeltestRunsUsed <- 0
 testOneRegi_region <- ""
 
 # Save whether model is locked before runs are started
-model_was_locked <- file.exists(".lock")
+model_was_locked <- if (exists("is_model_locked")) is_model_locked() else file.exists(".lock")
 
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  if ("--reprepare" %in% argv) {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))
-  } else {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
-  }
+  searchforfile <- if ("--reprepare" %in% argv) "config.Rdata" else "full.gms"
+  possibledirs <- basename(dirname(Sys.glob(file.path("output", "*", searchforfile))))
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
@@ -326,18 +336,26 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     message("Restarting ", outputdir)
     load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
+    # for debug, testOneRegi, quick: save original settings to cfg$backup; restore them from there if not set.
     if ("--debug" %in% argv) {
       if (is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$backup$cm_nash_mode <- cfg$gms$cm_nash_mode
       cfg$gms$cm_nash_mode <- "debug"
     } else {
       if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
     }
-    if ("--testOneRegi" %in% argv) {
+    cfg$gms$cm_quick_mode <- if ("--quick" %in% argv) "on" else "off"
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       if (is.null(cfg[["backup"]][["optimization"]])) cfg$backup$optimization <- cfg$gms$optimization
       cfg$gms$optimization <- "testOneRegi"
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     } else {
       if (! is.null(cfg[["backup"]][["optimization"]])) cfg$gms$optimization <- cfg$backup$optimization
+    }
+    if ("--quick" %in% argv) {
+      if (is.null(cfg[["backup"]][["cm_iteration_max"]])) cfg$backup$cm_iteration_max <- cfg$gms$cm_iteration_max
+      cfg$gms$cm_iteration_max <- 1
+    } else {
+      if (! is.null(cfg[["backup"]][["cm_iteration_max"]])) cfg$gms$cm_iteration_max <- cfg$backup$cm_iteration_max
     }
     if ("--reprepare" %in% argv & ! "--test" %in% argv) {
       try(system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms")))
@@ -431,7 +449,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi", "--quick") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
@@ -449,7 +467,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if ("--testOneRegi" %in% argv & is.na(config.file)) {
+    if (any(c("--quick", "--testOneRegi") %in% argv) & is.na(config.file)) {
       cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
@@ -459,14 +477,17 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
-
+    if ("--quick" %in% argv) {
+        cfg$gms$cm_quick_mode <- "on"
+        cfg$gms$cm_iteration_max <- 1
+    }
     message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # set optimization mode to testOneRegi, if specified as command line argument
-      if ('--testOneRegi' %in% argv) {
+      if (any(c("--quick", "--testOneRegi") %in% argv)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
         cfg$gms$optimization <- "testOneRegi"
         cfg$output           <- NA
@@ -524,6 +545,6 @@ message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are 
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ('--test' %in% argv) {
   message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
-} else if (model_was_locked) {
-  message("The file .lock existed before runs were started, so they will have to queue.")
+} else if (model_was_locked & (! "--restart" %in% argv | "--reprepare" %in% argv)) {
+  message("The model was locked before runs were started, so they will have to queue.")
 }
