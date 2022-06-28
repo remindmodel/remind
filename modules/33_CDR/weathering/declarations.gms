@@ -38,6 +38,8 @@ q33_cdr_FEdemand(ttot,all_regi,all_enty)               "CDR demand balance for f
 q33_ew_FEdemand(ttot, all_regi, all_enty)              "calculates weathering FE demand"
 q33_ew_capconst(ttot,all_regi)                         "calculates amount of ground rock spread on fields"
 q33_ew_onfield_tot(ttot,all_regi,rlf,rlf)              "calculates total amount of ground rock on fields"
+q33_ew_onfield_tot_bound(ttot,all_regi)                "sets boundaries for v33_ew_onfield_tot required in q33_ew_onfield_tot"
+q33_ew_omcosts(ttot,all_regi)                          "calculates O&M costs for spreading ground rocks on fields"
 q33_emicdrregi(ttot,all_regi)                          "calculates the (negative) emissions due to CDR technologies"
 q33_ew_omcosts(ttot,all_regi)                          "calculates O&M costs for spreading ground rocks on fields"
 q33_ew_potential(ttot,all_regi,rlf)                    "limits the total potential per region and grade"

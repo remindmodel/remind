@@ -26,7 +26,7 @@ q33_ew_capconst(t,regi)..
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the total amount of ground rock on the fields in timestep t. The first part of the equation describes the decay of the rocks added until that time,
-*'  the rest describes the newly added rocks.
+*'  the rest describes the newly added rocks. It is assumed that EW can be deployed from 2025
 ***---------------------------------------------------------------------------
 q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))..
 	v33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)
@@ -35,6 +35,28 @@ q33_ew_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2025, cm_startyear))
 	v33_ew_onfield(ttot-1,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val le (ttot.val-pm_ts(ttot)/2)) $ (tall.val gt (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val)))) +
 	v33_ew_onfield(ttot,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))))
 ;  
+
+***---------------------------------------------------------------------------
+*'  Set boundaries for v33_EW_onfield_tot at the timestep prior to cm_startyear if it's greater or equal to 2025
+***---------------------------------------------------------------------------
+q33_ew_onfield_tot_bound(ttot,regi)$(ttot.val eq cm_startyear AND cm_startyear ge 2025)..
+	v33_emi(ttot-1,regi,"weathering")
+	=e=
+	sum(rlf_cz33,
+		- sum(rlf,v33_EW_onfield_tot(ttot-1,regi,rlf_cz33,rlf)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
+	)
+	;
+
+***---------------------------------------------------------------------------
+*'  Set boundaries for v33_EW_onfield at the timestep prior to cm_startyear if it's greater or equal to 2025
+***---------------------------------------------------------------------------
+q33_ew_onfield_bound(ttot,regi)$(ttot.val eq cm_startyear AND cm_startyear ge 2025)..
+	vm_omcosts_cdr(ttot-1,regi)
+	=e=
+	sum((rlf_cz33, rlf),
+		(s33_costs_fix + p33_transport_costs(regi,rlf_cz33,rlf)) * v33_EW_onfield(ttot-1,regi,rlf_cz33,rlf)
+	)
+	;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of (negative) CO2 emissions from enhanced weathering. 
