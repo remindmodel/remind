@@ -609,26 +609,6 @@ prepare <- function() {
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
 
-    levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
-                             list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")),
-                             list(c("vm_otherFEdemand.L", "!!vm_otherFEdemand.L")))
-
-    margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
-                             list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_el.M")),
-                             list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")),
-                             list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
-                             list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
-                             list(c("vm_otherFEdemand.M", "!!vm_otherFEdemand.M")))
-
-    fixings_manipulateThis <- c(fixings_manipulateThis,
-                             list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
-                             list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")),
-                             list(c("vm_otherFEdemand.FX", "!!vm_otherFEdemand.FX")))
-
-
-
     #AJS filter out nash marginals in negishi case, as they would lead to a crash when trying to fix on them:
     if(cfg$gms$optimization == 'negishi'){
       margs_manipulateThis <- c(margs_manipulateThis, list(c("q80_costAdjNash.M", "!!q80_costAdjNash.M")))
@@ -705,87 +685,64 @@ prepare <- function() {
     #KK CDR module realizations
     if(cfg$gms$CDR == 'DAC'){
       fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
-                                  list(c("v33_grindrock_onfield.FX", "!!v33_grindrock_onfield.FX")),
-                                  list(c("v33_grindrock_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
+                                  list(c("v33_ew_onfield.FX", "!!v33_ew_onfield.FX")),
+                                  list(c("v33_ew_onfield_tot.FX", "!!v33_ew_onfield_tot.FX")))
 
       levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
-                               list(c("v33_grindrock_onfield.L", "!!v33_grindrock_onfield.L")),
-                               list(c("v33_grindrock_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
+                               list(c("v33_ew_onfield.L", "!!v33_ew_onfield.L")),
+                               list(c("v33_ew_onfield_tot.L", "!!v33_ew_onfield_tot.L")))
 
       margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
-                                list(c("v33_grindrock_onfield.M", "!!v33_grindrock_onfield.M")),
-                                list(c("v33_grindrock_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
-                                list(c("q33_capconst_grindrock.M", "!!q33_capconst_grindrock.M")),
-                                list(c("q33_grindrock_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
-                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
-                                list(c("q33_potential.M", "!!q33_potential.M")),
-                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
-                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")))
+                                list(c("v33_ew_onfield.M", "!!v33_ew_onfield.M")),
+                                list(c("v33_ew_onfield_tot.M", "!!v33_ew_onfield_tot.M")),
+                                list(c("q33_ew_capconst.M", "!!q33_ew_capconst.M")),
+                                list(c("q33_ew_onfield_tot.M", "!!q33_ew_onfield_tot.M")),
+                                list(c("q33_ew_onfield_tot_bound.M", "!!q33_ew_onfield_tot_bound.M")),
+                                list(c("q33_ew_onfield_bound.M", "!!q33_ew_onfield_bound.M")),
+                                list(c("q33_ew_omcosts.M", "!!q33_ew_omcosts.M")),
+                                list(c("q33_ew_potential.M", "!!q33_ew_potential.M")),
+                                list(c("q33_ew_emi.M", "!!q33_ew_emi.M")),
+                                list(c("q33_ew_LimEmi.M", "!!q33_ew_LimEmi.M")))
     }
 
     if(cfg$gms$CDR == 'weathering'){
-      fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
-                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
-                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")))
-
-      levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
-                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
-                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")))
-
       margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiDAC.M", "!!v33_emiDAC.")),
-                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
-                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
-                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
+                                list(c("q33_dac_FEdemand.M", "!!q33_dac_FEdemand.M")),
+                                list(c("q33_dac_capconst.M", "!!q33_dac_capconst.M")),
                                 list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
                                 list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")))
     }
 
     if(cfg$gms$CDR == 'off'){
       fixings_manipulateThis <- c(fixings_manipulateThis,
-                                  list(c("v33_emiDAC.FX", "!!v33_emiDAC.FX")),
-                                  list(c("v33_emiEW.FX", "!!v33_emiEW.FX")),
-                                  list(c("v33_DacFEdemand_el.FX", "!!v33_DacFEdemand_el.FX")),
-                                  list(c("v33_DacFEdemand_heat.FX", "!!v33_DacFEdemand_heat.FX")),
-                                  list(c("v33_grindrock_onfield.FX", "!!v33_grindrock_onfield.FX")),
-                                  list(c("v33_grindrock_onfield_tot.FX", "!!v33_grindrock_onfield_tot.FX")))
+                                  list(c("v33_FEdemand.FX", "!!v33_FEdemand.FX")),
+                                  list(c("v33_ew_onfield.FX", "!!v33_ew_onfield.FX")),
+                                  list(c("v33_ew_onfield_tot.FX", "!!v33_ew_onfield_tot.FX")))
 
       levs_manipulateThis <- c(levs_manipulateThis,
-                               list(c("v33_emiDAC.L", "!!v33_emiDAC.L")),
-                               list(c("v33_emiEW.L", "!!v33_emiEW.L")),
-                               list(c("v33_DacFEdemand_el.L", "!!v33_DacFEdemand_el.L")),
-                               list(c("v33_DacFEdemand_heat.L", "!!v33_DacFEdemand_heat.L")),
-                               list(c("v33_grindrock_onfield.L", "!!v33_grindrock_onfield.L")),
-                               list(c("v33_grindrock_onfield_tot.L", "!!v33_grindrock_onfield_tot.L")))
+                               list(c("v33_FEdemand.L", "!!v33_FEdemand.L")),
+                               list(c("v33_ew_onfield.L", "!!v33_ew_onfield.L")),
+                               list(c("v33_ew_onfield_tot.L", "!!v33_ew_onfield_tot.L")))
 
       margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("v33_emiDAC.M", "!!v33_emiDAC.M")),
-                                list(c("v33_emiEW.M", "!!v33_emiEW.M")),
-                                list(c("v33_grindrock_onfield.M", "!!v33_grindrock_onfield.M")),
-                                list(c("v33_grindrock_onfield_tot.M", "!!v33_grindrock_onfield_tot.M")),
-                                list(c("v33_DacFEdemand_el.M", "!!v33_DacFEdemand_el.M")),
-                                list(c("v33_DacFEdemand_heat.M", "!!v33_DacFEdemand_heat.M")),
-                                list(c("q33_capconst_grindrock.M", "!!q33_capconst_grindrock.M")),
-                                list(c("q33_grindrock_onfield_tot.M", "!!q33_grindrock_onfield_tot.M")),
-                                list(c("q33_omcosts.M", "!!q33_omcosts.M")),
-                                list(c("q33_potential.M", "!!q33_potential.M")),
-                                list(c("q33_emiEW.M", "!!q33_emiEW.M")),
-                                list(c("q33_LimEmiEW.M", "!!q33_LimEmiEW.M")),
-                                list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
-                                list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
-                                list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
+                                list(c("v33_ew_onfield.M", "!!v33_ew_onfield.M")),
+                                list(c("v33_ew_onfield_tot.M", "!!v33_ew_onfield_tot.M")),
+                                list(c("v33_FEdemand.M", "!!v33_FEdemand.M")),
+                                list(c("q33_ew_capconst.M", "!!q33_ew_capconst.M")),
+                                list(c("q33_ew_onfield_tot.M", "!!q33_ew_onfield_tot.M")),
+                                list(c("q33_ew_onfield_tot_bound.M", "!!q33_ew_onfield_tot_bound.M")),
+                                list(c("q33_ew_onfield_bound.M", "!!q33_ew_onfield_bound.M")),
+                                list(c("q33_ew_omcosts.M", "!!q33_ew_omcosts.M")),
+                                list(c("q33_ew_potential.M", "!!q33_ew_potential.M")),
+                                list(c("q33_ew_emi.M", "!!q33_ew_emi.M")),
+                                list(c("q33_ew_LimEmi.M", "!!q33_ew_LimEmi.M")),
+                                list(c("q33_ew_FEdemand.M", "!!q33_ew_FEdemand.M")),
+                                list(c("q33_dac_FEdemand.M", "!!q33_dac_FEdemand.M")),
+                                list(c("q33_dac_capconst.M", "!!q33_dac_capconst.M")),
                                 list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
                                 list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
-                                list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),
-                                list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")),
-                                list(c("q33_otherFEdemand.M", "!!q33_otherFEdemand.M")))
+                                list(c("q33_cdr_FEdemand.M", "!!q33_cdr_FEdemand.M")),
+                                list(c("q33_emicdrregi.M", "!!q33_emicdrregi.M")))
     }
     # end of CDR module realizations
 
