@@ -77,6 +77,12 @@ loop(regi$(sameAs(regi,"DEU")),
 );
 
 
+*** bounds on historic gas capacities in Germany
+vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
+vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
+
+
+
 *** only small amount of co2 injection ccs until 2030 in Germany
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
 *** no Pe2Se fossil CCS in Germany, if c_noPeFosCCDeu = 1 chosen 

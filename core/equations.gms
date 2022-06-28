@@ -327,6 +327,18 @@ q_capDistr(t,regi,teReNoBio(te))..
     vm_cap(t,regi,te,"1")
 ;
 
+
+***---------------------------------------------------------------------------
+*' Calculation of total primary to secondary energy capacities 
+*' Used for comfortably setting bounds on total capacity without technology differentiation.
+***--------------------------------------------------------------------------
+q_capTotal(t,regi,entyPe,entySe)$( capTotal(entyPe,entySe))..
+  vm_capTotal(t,regi,entyPe,entySe)
+  =e=
+  sum( pe2se(entyPe, entySe, te), 
+    vm_cap(t,regi,te,"1"))
+;
+
 ***---------------------------------------------------------------------------
 *' CG: implementing simple exogenous wind offshore energy production
 *'
