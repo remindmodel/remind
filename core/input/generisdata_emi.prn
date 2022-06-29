@@ -6,6 +6,7 @@
 ***  quickly burned, but some remains unburnt for decades) - "carbonstored".
 ***  NB: reduction calculated based on values in manual to IEA CO2 emissions statistics (2007).
 *JeS* emission factors for n2o are in Tg N per TWa (native remind units)
+*DK* biomass N2O emissions are taken care via p_efFossilFuelExtr in q_macBase in core/equations.gms
 *LP* ratio of C to H  in CCU-technologies (make sure if it is H or H2 you are reffering to!)
 
                                co2      cco2      n2o            CtoH
