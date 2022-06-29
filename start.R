@@ -313,7 +313,7 @@ modeltestRunsUsed <- 0
 testOneRegi_region <- ""
 
 # Save whether model is locked before runs are started
-model_was_locked <- file.exists(".lock")
+model_was_locked <- if (exists("is_model_locked")) is_model_locked() else file.exists(".lock")
 
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
@@ -546,5 +546,5 @@ message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are 
 if ('--test' %in% argv) {
   message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% argv | "--reprepare" %in% argv)) {
-  message("The file .lock existed before runs were started, so they will have to queue.")
+  message("The model was locked before runs were started, so they will have to queue.")
 }

@@ -2416,6 +2416,13 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
         all_sega.segasyn
 /
 
+capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
+/       
+        pecoal.seel
+        pegas.seel
+        pebiolc.seel
+/
+
 *RP* mappings for storage technologies
 VRE2teStor(all_te,teStor)   "mapping to know which technology uses which storage technology"
 /
