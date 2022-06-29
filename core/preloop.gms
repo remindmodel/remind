@@ -145,7 +145,7 @@ pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4")
 *** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
 *** emissions resulting from the actual biomass demand in REMIND are then added again. 
 
-pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(ttot,regi));
+pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(t,regi));
 display pm_macBaseMagpie;
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
