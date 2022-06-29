@@ -51,4 +51,12 @@ vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;
 
+*' Limit biomass solids use in industry to 25 % of baseline solids
+*' Cement CCS might otherwise become a compelling BioCCS option under very high
+*' carbon prices due to missing adjustment costs.
+if (cm_emiscen ne 1,   !! not a BAU scenario
+  vm_demFEsector.up(t,regi,"sesobio","fesos","indst","ETS")
+  = 0.25 * p37_BAU_industry_ETS_solids(t,regi);
+);
+
 *** EOF ./modules/37_industry/subsectors/bounds.gms
