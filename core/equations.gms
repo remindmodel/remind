@@ -627,7 +627,10 @@ vm_emiCO2Sector(t,regi,sector)
 *' percentage of abated emissions as a function of the costs. 
 *' Baseline emissions are obtained by three different methods: by source (via emission factors),
 *' by econometric estimate, and exogenous. Emissions are calculated as
-*' baseline emissions times (1 - relative emission reduction). 
+*' baseline emissions times (1 - relative emission reduction).
+*' If coupled to MAgPIE pm_macBaseMagpie contains all N2O landuse emissions including n2o from biomass production
+*' and p_efFossilFuelExtr(regi,"pebiolc","n2obio") is zero then. If running standalone 
+*' pm_macBaseMagpie does not include n2o from biomass but it is added here.
 *' In case of CO2 from landuse (co2luc), emissions can be negative. 
 *' To treat these emissions in the same framework, we subtract the minimal emission level from
 *' baseline emissions. This shift factor is then added again when calculating total emissions.
