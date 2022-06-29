@@ -112,11 +112,6 @@ authors:
   given-names:  "Elmar"
   affiliation: "Potsdam Institute for Climate Impact Research"
 
-- family-names: "Leiva"
-  given-names:  "Simón Moreno"
-  orcid: https://orcid.org/0000-0002-9625-3955
-  affiliation: "Potsdam Institute for Climate Impact Research"
-
 - family-names: "Levesque"
   given-names:  "Antoine"
   affiliation: "Potsdam Institute for Climate Impact Research"
@@ -145,6 +140,11 @@ authors:
 - family-names: "Merfort"
   given-names:  "Leon"
   orcid: https://orcid.org/0000-0003-1704-6892
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Moreno-Leiva"
+  given-names:  "Simón"
+  orcid: https://orcid.org/0000-0002-9625-3955
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Mouratiadou"
