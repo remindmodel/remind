@@ -88,13 +88,13 @@ q30_priceshift$(s30_switch_shiftcalc eq 1)..
 *' This applies in coupled runs only to prevent large jumps in bioenergy demand between coupling iterations. 
 *' It penalizes deviations in the demand for purpose grown bioenergy from the previous coupling iteration 
 *' by increasing the costs proportional to the deviation. The factor converges to 1, as the 
-*' difference between *vm_fuExtr* and *p30_pebiolc_demandmag* vanishes when the coupling converges over 
+*' difference between *vm_fuExtr* and *pm_pebiolc_demandmag* vanishes when the coupling converges over 
 *' iterations.
 
 q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
          v30_multcost(ttot,regi)
          =e=
-         power((vm_fuExtr(ttot,regi,"pebiolc","1")-p30_pebiolc_demandmag(ttot,regi))/ (p30_pebiolc_demandmag(ttot,regi) + 0.15),2) * 0.4 + 1
+         power((vm_fuExtr(ttot,regi,"pebiolc","1")-pm_pebiolc_demandmag(ttot,regi))/ (pm_pebiolc_demandmag(ttot,regi) + 0.15),2) * 0.4 + 1
 ;
 
 ***---------------------------------------------------------------------------

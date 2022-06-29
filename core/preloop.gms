@@ -137,6 +137,16 @@ p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 *** Rescale non-co2 base line emissions from agriculture 
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
+  
+*** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
+*** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
+*** in q_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)
+*** from the exogenous emission baseline read from MAgPIE, since the baseline already implicitly 
+*** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
+*** emissions resulting from the actual biomass demand in REMIND are then added again. 
+
+pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(ttot,regi));
+display pm_macBaseMagpie;
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;
