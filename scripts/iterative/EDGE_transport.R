@@ -193,8 +193,7 @@ logit_data <- calculate_logit_inconv_endog(
   intensity_data = int_dat,
   price_nonmot = price_nonmot,
   ptab4W = preftab4W,
-  totveh = if (!is.null(totveh)) totveh,
-  tech_scen = tech_scen)
+  totveh = if (!is.null(totveh)) totveh)
 
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
