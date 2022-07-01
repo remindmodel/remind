@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,7 +55,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out[which(out<0)] <- 0 # set negative values to zero since they cause errors in GMAS power function
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
-    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_demandmag_coupling.csv"),file_type="csvr")
+    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"),file_type="csvr")
   }
   .emissions_mac <- function(mag) {
     # define three columns of dataframe:

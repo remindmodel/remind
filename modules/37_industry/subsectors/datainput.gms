@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -71,6 +71,44 @@ pm_energy_limit(in)
   / (8760 * 3600)          !! * s/year
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
+
+* Specific energy demand cannot fall below a curve described by an exponential
+* function passing through the 2015 value and a point defined by an "efficiency
+* gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
+* year (e.g. 2050).
+if (cm_emiscen eq 1,
+  execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
+else
+  execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
+);
+
+sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to 
+                  !! thermodynamic limit
+sm_tmp  = 2050;   !! period in which closing could be achieved
+
+loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
+      )
+    - pm_energy_limit(out)
+    )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
+  + pm_energy_limit(out);
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
+);
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -303,5 +341,14 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
+*' load baseline industry ETS solids demand
+if (cm_emiscen ne 1,   !! not a BAU scenario
+execute_load "input_bau.gdx", vm_demFEsector;
+  p37_BAU_industry_ETS_solids(t,regi)
+  = sum(se2fe(entySE,"fesos",te),
+      vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
+    );
+);
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms
