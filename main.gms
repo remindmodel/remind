@@ -534,7 +534,7 @@ $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
 *** switch for ariadne policy assumptions for Germany
-$setGlobal cm_Ger_Pol  ensec !! def off
+$setGlobal cm_Ger_Pol  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
