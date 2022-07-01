@@ -146,27 +146,15 @@ p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(
 
 
 *** in energy security scenario, phase-in trade earlier already from 2030
-$ifthen.import_h2_EU "%cm_import_EU%" == "ensec"
-*** EU
-
-$ifthen.import_h2_ariadne "%cm_import_ariadne%" == "on"
-*** Germany (overrides value from EU above)  
-  p24_seTrade_Quantity("MEA","DEU","seel") = 0.25*sm_EJ_2_TWa;
-  p24_seTrade_Quantity("MEA","DEU","seh2") = 0.75*sm_EJ_2_TWa;
-  p24_seTrade_Quantity("MEA","DEU","seliqsyn") = 0.75*sm_EJ_2_TWa;
-
-*** earlier phase-in of imports, start 2030 already with about 300 PJ/yr H2+Synfuel 
+$ifthen.import_h2_EU "%cm_Ger_Pol%" == "ensec"
+*** earlier phase-in of imports, start 2030 already 
+*** with about 300 PJ/yr H2+Synfuel if cm_import_EU = "bal" and cm_import_ariadne = "on"
 *** corresponds to 10MtH2 2030 import goal of EU disaggregated to Germany via GDP share
   p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge 2050) = p24_seTrade_Quantity(regi,regi2,entySe);
   p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2045) = p24_seTrade_Quantity(regi,regi2,entySe)*0.75;
   p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2040) = p24_seTrade_Quantity(regi,regi2,entySe)*0.6;
   p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.4;
-  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.3;
-  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.2;
-
-$endif.import_h2_ariadne
-
-
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2030) = p24_seTrade_Quantity(regi,regi2,entySe)*0.2;
 $endif.import_h2_EU
 
 
