@@ -446,6 +446,37 @@ display p47_implEnergyBoundCurrent, pm_implEnergyBoundTarget, p47_implEnergyBoun
 
 $endIf.cm_implicitEnergyBound
 
+
+***---------------------------------------------------------------------------
+*** Calculation of implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+*** saving previous iteration value for implicit tax revenue recycling
+  p47_implicitPriceTax0(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector) * sum(emiMkt$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt));
+
+*** Calculate target deviation
+  p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = ((pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) - p47_implicitPriceTarget(t,regi,entyFe,entySe,sector)) / p47_implicitPriceTarget(t,regi,entyFe,entySe,sector));
+* save regional target deviation across iterations for debugging of target convergence issues
+  p47_implicitPrice_dev_iter(iteration,t,regi,entyFe,entySe,sector) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector);
+
+*** updating implicit price target tax
+***  p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector));
+  if((iteration.val eq 1),
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector));
+  else
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + pm_FEPrice_by_SE_Sector_iter(iteration-1,t,regi,entySe,entyFe,sector))/2 ); !!using average of two last iterations to avoid zigzag behavior
+  );
+  p47_implicitPriceTax("2080",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*2/3;
+  p47_implicitPriceTax("2090",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*1/3;
+
+* save price target tax across iterations for debugging of target convergence issues
+p47_implicitPriceTax_iter(iteration,t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector);
+
+display p47_implicitPriceTarget, p47_implicitPriceTax, p47_implicitPrice_dev, p47_implicitPriceTax_iter, p47_implicitPrice_dev_iter;
+$endIf.cm_implicitPriceTarget
+
 ***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------

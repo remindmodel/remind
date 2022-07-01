@@ -335,6 +335,7 @@ v_emiEnFuelEx(ttot,all_regi,all_enty)                 "energy emissions from fue
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
 vm_taxrevimplEnergyBoundTax(ttot,all_regi)           "primary, secondary or final energy bound implemented through implict tax"
+vm_implicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
 ;
 
 ***----------------------------------------------------------------------------------------

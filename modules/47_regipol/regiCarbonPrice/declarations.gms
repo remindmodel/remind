@@ -99,6 +99,25 @@ Equations
 $endIf.cm_implicitEnergyBound
 
 ***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+Parameter
+  p47_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector)      "price target for FE carrier per sector"
+  p47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)   "tax/subsidy level on FE for reaching the price target"
+  p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue"
+  p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)  "implicit price tax deviation of current iteration from target"
+  p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration"
+  p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration"
+;
+
+Equations
+  q47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)  "implicit tax/subsidy FE tax to reach target energy sector sectoral price"
+;
+$endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
 *'  Emission quantity target
 ***---------------------------------------------------------------------------
 

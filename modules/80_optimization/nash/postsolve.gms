@@ -288,6 +288,18 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
 );
 $endif.cm_implicitEnergyBound
 
+*** additional criterion: Were implicit tax/subsidy FE price targets reached? 
+$ontext
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+loop((t,regi,all_enty,entySe,sector)$p47_implicitPriceTarget(t,regi,all_enty,entySe,sector),
+  if( (p47_implicitPrice_dev(t,regi,all_enty,entySe,sector) gt 0.01 OR p47_implicitPrice_dev(t,regi,all_enty,entySe,sector) lt -0.01),
+    s80_bool = 0;
+    p80_messageShow("cm_implicitPriceTarget") = YES;
+  );
+);  
+$endIf.cm_implicitPriceTarget
+$offtext
+
 *** check global budget target from core/postsolve, must be within 1% of target value
 if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
   s80_bool = 0;
@@ -364,6 +376,16 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
           display pm_implEnergyBoundTarget_dev;
 	      );
 $endif.cm_implicitEnergyBound
+$ontext
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+        if(sameas(convMessage80, "cm_implicitPriceTarget"),
+		      display "#### 11) A final energy price target has not been reached yet.";
+          display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
+          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display p47_implicitPrice_dev;
+	      );
+$endIf.cm_implicitPriceTarget
+$offtext
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
@@ -450,6 +472,16 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
           display pm_implEnergyBoundTarget_dev;
 	      );
 $endif.cm_implicitEnergyBound
+$ontext
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+        if(sameas(convMessage80, "cm_implicitPriceTarget"),
+		      display "#### 11) A final energy price target has not been reached yet.";
+          display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
+          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
+          display p47_implicitPrice_dev;
+	      );
+$endIf.cm_implicitPriceTarget
+$offtext
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;

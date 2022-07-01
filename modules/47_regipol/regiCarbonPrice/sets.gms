@@ -83,6 +83,18 @@ energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty) "set combining
   FE.heat.(sehe)
 /
 $endIf.cm_implicitEnergyBound
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+fePriceScenario "scenarios for exogenous FE price targets"
+/
+  initial
+  highPrice
+  lowPrice
+  highElec
+  lowElec
+  highGasandLiq
+/
+$endIf.cm_implicitPriceTarget
 ;
 
 *** Defining extra energyCarrierANDtype2enty set elements

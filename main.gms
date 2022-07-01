@@ -475,6 +475,7 @@ $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
 $setGlobal cm_vehiclesSubsidies off !! def = off
 $setGlobal cm_implicitEnergyBound  off !! def = off
+$setGlobal cm_implicitPriceTarget  off !! def = off
 $setGlobal cm_loadFromGDX_implEnergyBoundTax  off !! def = off
 $setGlobal cm_VREminShare    off !! def = off
 

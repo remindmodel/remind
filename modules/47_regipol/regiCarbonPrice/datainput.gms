@@ -74,6 +74,31 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 $endIf.cm_implicitEnergyBound
 
 ***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+  p47_implicitPriceTax0(t,regi,entyFe,entySe,sector)=0;
+
+*** load exogenously defined FE price targets
+table f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)        "exogenously defined FE price targets"
+$ondelim
+$include "./modules/47_regipol/regiCarbonPrice/input/exogenousFEprices.cs3r"
+$offdelim
+;
+
+f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)$(ttot.val ge 2080) = 0;
+
+  loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      p47_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+    );
+  );
+
+$endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
 *** Region-specific datainput (with hard-coded regions)
 ***---------------------------------------------------------------------------
 

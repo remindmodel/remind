@@ -51,5 +51,18 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 
 $endIf.cm_implicitEnergyBound
 
+
+***---------------------------------------------------------------------------
+*** Calculation of implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+*** saving value for implicit tax revenue recycling
+  p47_implicitPriceTax0(t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector) * sum(emiMkt$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt));
+
+$endIf.cm_implicitPriceTarget
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
 

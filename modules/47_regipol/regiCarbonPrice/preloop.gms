@@ -29,7 +29,7 @@ $ENDIF.emiMkt
 ***---------------------------------------------------------------------------
 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-*** initialize tax value for first iteration
+*** initialize tax value for the first iteration
   p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
 
 *** load tax from gdx
@@ -70,6 +70,18 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
 );
 
 $endif.cm_implicitEnergyBound
+
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+*** initialize tax value for the first iteration
+  p47_implicitPriceTax(t,regi,all_enty,entySe,sector) = 0;
+
+$endIf.cm_implicitPriceTarget
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 

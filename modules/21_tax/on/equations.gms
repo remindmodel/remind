@@ -48,9 +48,11 @@
     + v21_taxrevBioImport(t,regi)  
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
     + vm_taxrevimplEnergyBoundTax(t,regi)
-$endif.cm_implicitEnergyBound  
+$endif.cm_implicitEnergyBound 
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+    + sum((entySe,entyFe,sector)$((t.val ge max(2010,cm_startyear)) and (entyFe2Sector(entyFe,sector))),vm_implicitPriceTax(t,regi,entySe,entyFe,sector))
+$endIf.cm_implicitPriceTarget
  ;
-
 
 ***---------------------------------------------------------------------------
 *'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times ghg emissions

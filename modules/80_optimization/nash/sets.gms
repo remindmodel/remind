@@ -32,7 +32,7 @@ solvestat, modelstat, resusd, objval
 
 convMessage80   "contains possible reasons for failed convergence"
 /
-infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget
+infes,surplus,nonopt,taxconv,anticip,target,regiTarget,implicitEnergyTarget,cm_implicitPriceTarget
 /
 nash_sol_itr80  "nash iterations"
 /
