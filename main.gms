@@ -532,7 +532,7 @@ $setGlobal cm_import_EU  off !! def off
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
-$setGlobal cm_EnSecScen  on !! def off
+$setGlobal cm_EnSecScen  off !! def off
 *** switch for ariadne policy assumptions for Germany
 $setGlobal cm_Ger_Pol  ensec !! def off
 
