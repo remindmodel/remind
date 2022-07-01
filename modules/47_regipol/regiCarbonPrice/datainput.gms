@@ -92,7 +92,7 @@ f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)$(t
 
   loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      p47_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+      p47_implicitPriceTarget(t,regi,entyFe,entySe,sector)$(NOT(sameas(sector,"CDR")))=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 

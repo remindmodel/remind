@@ -466,7 +466,8 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   if((iteration.val eq 1),
     p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector));
   else
-    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + pm_FEPrice_by_SE_Sector_iter(iteration-1,t,regi,entySe,entyFe,sector))/2 ); !!using average of two last iterations to avoid zigzag behavior
+***    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + pm_FEPrice_by_SE_Sector_iter(iteration-1,t,regi,entySe,entyFe,sector))/2 ) + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); !!using average of two last iterations to avoid zigzag behavior
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); 
   );
   p47_implicitPriceTax("2080",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*2/3;
   p47_implicitPriceTax("2090",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*1/3;

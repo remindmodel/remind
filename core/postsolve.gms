@@ -876,54 +876,145 @@ p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
   qm_balFeAfterTax.m(ttot,regi,entySe,entyFe,sector,emiMkt) / qm_budget.m(ttot,regi);
 
-pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt)$(sum(entySe, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum(entySe, 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum(entySe, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+*** marginal prices of aggregates equal to minimal non-zero marginal price of full equation marginal
+loop((ttot,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt) AND entyFe2Sector(entyFe,sector)),
 
-pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector)$(sum(emiMkt, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum(emiMkt, 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum(emiMkt, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+*** initialize prices
+  pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt)=0;
+  pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector)=0;
+  pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt)=0;
+  pm_FEPrice_by_SE(ttot,regi,entySe,entyFe)=0;
+  pm_FEPrice_by_Sector(ttot,regi,entyFe,sector)=0;
+  pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt)=0;
+  pm_FEPrice_by_FE(ttot,regi,entyFe)=0;
 
-pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt)$(sum(sector, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum(sector, 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum(sector, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+$ontext
+  pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt)$(sum(entySe2, vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt)) ne 0) = 
+    sum(entySe2, 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt)
+    )
+    /
+    sum(entySe2, vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt));
+$offtext
 
-pm_FEPrice_by_SE(ttot,regi,entySe,entyFe)$(sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum((sector,emiMkt)$sector2emiMkt(sector,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+  loop(entySe2, 
+    pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt) > EPS) 
+      AND
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt) < pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt))
+        OR (pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt);
+  );
 
-pm_FEPrice_by_Sector(ttot,regi,entyFe,sector)$(sum((entySe,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum((entySe,emiMkt), 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum((entySe,emiMkt), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+$ontext
+  pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector)$(sum(emiMkt2, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt2)) ne 0) = 
+    sum(emiMkt2, 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt2)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt2)
+    )
+    /
+    sum(emiMkt2, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt2));
+$offtext
 
-pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt)$(sum((entySe,sector), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum((entySe,sector), 
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum((entySe,sector), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+  loop(emiMkt2, 
+    pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt2) > EPS) 
+      AND
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt2) < pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector))
+        OR (pm_FEPrice_by_SE_Sector(ttot,regi,entySe,entyFe,sector) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt2);
+  );
 
-pm_FEPrice_by_FE(ttot,regi,entyFe)$(sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)) ne 0) = 
-  sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)),
-    pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)
-  )
-  /
-  sum((entySe,sector,emiMkt)$(sefe(entySe,entyFe) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt));
+$ontext
+  pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt)$(sum(sector2, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt)) ne 0) = 
+    sum(sector2, 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt)
+    )
+    /
+    sum(sector2, vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt));
+$offtext
+
+  loop(sector2,
+    pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt) > EPS) 
+      AND
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt) < pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt))
+        OR (pm_FEPrice_by_SE_EmiMkt(ttot,regi,entySe,entyFe,emiMkt) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt);
+  );
+
+$ontext
+  pm_FEPrice_by_SE(ttot,regi,entySe,entyFe)$(sum((sector2,emiMkt2)$sector2emiMkt(sector2,emiMkt2), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt2)) ne 0) = 
+    sum((sector2,emiMkt2)$sector2emiMkt(sector2,emiMkt2), 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt2)*vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt2)
+    )
+    /
+    sum((sector2,emiMkt2)$sector2emiMkt(sector2,emiMkt2), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector2,emiMkt2));
+$offtext
+
+  loop((sector2,emiMkt2)$sector2emiMkt(sector2,emiMkt2), 
+    pm_FEPrice_by_SE(ttot,regi,entySe,entyFe)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt2) > EPS) 
+      AND 
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt2) < pm_FEPrice_by_SE(ttot,regi,entySe,entyFe))
+        OR (pm_FEPrice_by_SE(ttot,regi,entySe,entyFe) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector2,emiMkt2);
+  );
+
+$ontext
+  pm_FEPrice_by_Sector(ttot,regi,entyFe,sector)$(sum((entySe2,emiMkt2), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt2)) ne 0) = 
+    sum((entySe2,emiMkt2), 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt2)*vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt2)
+    )
+    /
+    sum((entySe2,emiMkt2), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector,emiMkt2));
+$offtext
+
+  loop((entySe2,emiMkt2), !! take minimal non-zero price for aggregation if carrier has no quantity in the model
+    pm_FEPrice_by_Sector(ttot,regi,entyFe,sector)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt2) > EPS) 
+      AND 
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt2) < pm_FEPrice_by_Sector(ttot,regi,entyFe,sector))
+        OR (pm_FEPrice_by_Sector(ttot,regi,entyFe,sector) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector,emiMkt2);
+  );
+
+$ontext
+  pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt)$(sum((entySe2,sector2), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt)) ne 0) = 
+    sum((entySe2,sector2), 
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt)*vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt)
+    )
+    /
+    sum((entySe2,sector2), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt));
+$offtext
+
+  loop((entySe2,sector2), !! take minimal non-zero price for aggregation if carrier has no quantity in the model
+    pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt) > EPS) 
+      AND 
+      ( (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt) < pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt))
+        OR (pm_FEPrice_by_EmiMkt(ttot,regi,entyFe,emiMkt) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt);
+  );
+
+$ontext
+  pm_FEPrice_by_FE(ttot,regi,entyFe)$(sum((entySe2,sector2,emiMkt2)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector2,emiMkt2)), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt2)) ne 0) = 
+    sum((entySe2,sector2,emiMkt2)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector2,emiMkt2)),
+      pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt2)*vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt2)
+    )
+    /
+    sum((entySe2,sector2,emiMkt2)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector2,emiMkt2)), vm_demFeSector.l(ttot,regi,entySe2,entyFe,sector2,emiMkt2));    
+$offtext
+
+  loop((entySe2,sector2,emiMkt2)$(sefe(entySe2,entyFe) AND sector2emiMkt(sector2,emiMkt2)), !! take minimal non-zero price for aggregation if carrier has no quantity in the model
+    pm_FEPrice_by_FE(ttot,regi,entyFe)$(
+      (pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt2) > EPS) 
+      AND 
+      ((pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt2) < pm_FEPrice_by_FE(ttot,regi,entyFe))
+        OR (pm_FEPrice_by_FE(ttot,regi,entyFe) eq 0)
+      )) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe2,entyFe,sector2,emiMkt2);
+  );
+
+);
 
 pm_FEPrice_by_SE_Sector_EmiMkt_iter(iteration,ttot,regi,entySe,entyFe,sector,emiMkt) = pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt);
 pm_FEPrice_by_Sector_EmiMkt_iter(iteration,ttot,regi,entyFe,sector,emiMkt) = pm_FEPrice_by_Sector_EmiMkt(ttot,regi,entyFe,sector,emiMkt);
