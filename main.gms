@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -85,9 +85,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.304
+* Input data revision: 6.311
 * 
-* Last modification (input data): Thu May 19 12:35:05 2022
+* Last modification (input data): Thu Jun 23 10:11:30 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -595,6 +595,7 @@ cm_deuCDRmax = -1; !! def = -1
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
+$SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
@@ -633,7 +634,7 @@ $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_transpGDPscale off  !! def = off
+$setglobal cm_transpGDPscale  off  !! def = off
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off

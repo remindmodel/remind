@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,7 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  modelHistExclude <- c()
+  modelsHistExclude <- c()
   readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude")
 }
 

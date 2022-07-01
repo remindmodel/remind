@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -2422,6 +2422,13 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
 	all_sega.segabio
 	all_sega.segafos
         all_sega.segasyn
+/
+
+capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
+/       
+        pecoal.seel
+        pegas.seel
+        pebiolc.seel
 /
 
 *RP* mappings for storage technologies
