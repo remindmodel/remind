@@ -344,7 +344,7 @@ $endif.sec_steel_scen
 
 *' load baseline industry ETS solids demand
 if (cm_emiscen ne 1,   !! not a BAU scenario
-execute_load "input_bau.gdx", vm_demFEsector;
+execute_load "input_ref.gdx", vm_demFEsector;
   p37_BAU_industry_ETS_solids(t,regi)
   = sum(se2fe(entySE,"fesos",te),
       vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
