@@ -35,6 +35,8 @@ helpText <- "
 #'
 #' --reprepare, -R: rewrite full.gms and restart run
 #'
+#' --reset, -0: reset main.gms to default.cfg
+#'
 #' --restart, -r: interactively restart run(s)
 #'
 #' --test, -t: Test scenario configuration and writing the RData files in the
@@ -267,7 +269,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
+accepted <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart",
+              R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 
 # search for strings that look like -i1asrR and transform them into long flags
 onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
@@ -294,6 +297,14 @@ if (!all(known)) {
 
 if ("--help" %in% argv) {
   message(helpText)
+  q()
+}
+
+if ("--reset" %in% argv) {
+  source("./config/default.cfg")
+  cfg$gms$c_expname <- cfg$title
+  cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  lucode2::manipulateConfig("main.gms", cfg$gms)
   q()
 }
 
