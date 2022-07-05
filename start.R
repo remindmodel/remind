@@ -304,8 +304,12 @@ if ("--reset" %in% argv) {
   source("./config/default.cfg")
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  lock_id <- gms::model_lock(timeout1 = 0.2)
+  on.exit(gms::model_unlock(lock_id))
   lucode2::manipulateConfig("main.gms", cfg$gms)
   message("Settings in main.gms were reset to values specified in config/default.cfg.")
+  gms::model_unlock(lock_id)
+  on.exit()
   q()
 }
 
