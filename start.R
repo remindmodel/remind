@@ -35,7 +35,7 @@ helpText <- "
 #'
 #' --reprepare, -R: rewrite full.gms and restart run
 #'
-#' --reset, -0: reset main.gms to default.cfg
+#' --reset, -0: reset main.gms to default.cfg and exit
 #'
 #' --restart, -r: interactively restart run(s)
 #'
@@ -305,6 +305,7 @@ if ("--reset" %in% argv) {
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
   lucode2::manipulateConfig("main.gms", cfg$gms)
+  message("Settings in main.gms were reset to values specified in config/default.cfg.")
   q()
 }
 
