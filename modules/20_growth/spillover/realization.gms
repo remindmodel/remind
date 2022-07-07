@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/20_growth/spillover.gms
+*** SOF ./modules/20_growth/spillover/realization.gms
 
 *' @description
 *' This realization implies an endogenous growth path. It replaces and overwrites, respectively, the exogenous SSP GDP growth paths.
@@ -24,4 +24,4 @@ $Ifi "%phase%" == "equations" $include "./modules/20_growth/spillover/equations.
 $Ifi "%phase%" == "bounds" $include "./modules/20_growth/spillover/bounds.gms"
 $Ifi "%phase%" == "output" $include "./modules/20_growth/spillover/output.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/20_growth/spillover.gms
+*** EOF ./modules/20_growth/spillover/realization.gms

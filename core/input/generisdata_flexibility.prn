@@ -3,8 +3,8 @@
 *** parameterization after simple algorithm
 fm_dataglob("flexibility","ngcc")   = 0.95;
 fm_dataglob("flexibility","ngccc")  = 0.85;
-fm_dataglob("flexibility","ngt")    = 6;
-fm_dataglob("flexibility","h2turb") = 6;
+fm_dataglob("flexibility","ngt")    = 16;
+fm_dataglob("flexibility","h2turb") = 16;
 fm_dataglob("flexibility","dot")    = 6;
 fm_dataglob("flexibility","igcc")   = 0.85;
 fm_dataglob("flexibility","igccc")  = 0.7;
@@ -24,6 +24,9 @@ fm_dataglob("flexibility","wind")     = -1;
 fm_dataglob("flexibility","csp")      = -1;
 fm_dataglob("flexibility","spv")      = -1;
 fm_dataglob("flexibility","storwind") = 1.89;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+fm_dataglob("flexibility","storwind") = 1.86;
+$ENDIF.WindOff 
 fm_dataglob("flexibility","storcsp")  = 1.85;
 fm_dataglob("flexibility","storspv")  = 1.85;
 fm_dataglob("flexibility","geohdr")   = 0.8;

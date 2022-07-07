@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/equations.gms
+*** SOF ./modules/30_biomass/magpie_40/equations.gms
 ***---------------------------------------------------------------------------
 ***                      FUEL COSTS FOR BIOENERGY
 ***---------------------------------------------------------------------------
@@ -88,13 +88,13 @@ q30_priceshift$(s30_switch_shiftcalc eq 1)..
 *' This applies in coupled runs only to prevent large jumps in bioenergy demand between coupling iterations. 
 *' It penalizes deviations in the demand for purpose grown bioenergy from the previous coupling iteration 
 *' by increasing the costs proportional to the deviation. The factor converges to 1, as the 
-*' difference between *vm_fuExtr* and *p30_pebiolc_demandmag* vanishes when the coupling converges over 
+*' difference between *vm_fuExtr* and *pm_pebiolc_demandmag* vanishes when the coupling converges over 
 *' iterations.
 
 q30_costAdj(ttot,regi)$(ttot.val ge cm_startyear)..
          v30_multcost(ttot,regi)
          =e=
-         power((vm_fuExtr(ttot,regi,"pebiolc","1")-p30_pebiolc_demandmag(ttot,regi))/ (p30_pebiolc_demandmag(ttot,regi) + 0.15),2) * 0.4 + 1
+         power((vm_fuExtr(ttot,regi,"pebiolc","1")-pm_pebiolc_demandmag(ttot,regi))/ (pm_pebiolc_demandmag(ttot,regi) + 0.15),2) * 0.4 + 1
 ;
 
 ***---------------------------------------------------------------------------
@@ -136,4 +136,4 @@ q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge cm_startyear A
 
 
  
-*** EOF ./modules/30_biomass/magpie_4/equations.gms
+*** EOF ./modules/30_biomass/magpie_40/equations.gms

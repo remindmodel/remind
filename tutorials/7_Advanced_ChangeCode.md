@@ -40,7 +40,8 @@ Use the following *prefixes*:
 * "s_" to designate scalars,
 * "f_" to designate file parameters (parameters that contain unaltered data read in from input files),
 * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
-* "c_" to designate switches (parameters that enable different configuration choices),
+* "p_" to designate other parameters (parameters that were derived from "f_" parameters or defined in code),
+* "c_" to designate config switches (parameters that enable different configuration choices),
 * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
                              through multiplication, e.g. s_GWh_2_EJ.
 
@@ -65,6 +66,11 @@ The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are docum
 * Don't use the string "infes" in comments
 * Don't use $+number combinations, e.g., $20 (this interferes with GAMS error codes).
 * Indicate the end of a file by inserting \*** EOF filename.inc \*** 
+
+#### Sets
+
+* don't use set element names with three capital letters (like "ETS" or "ESR"), otherwise the maglcass R library might interpret this as a region name when reading in GDX data
+
 
 #### Equations:
 The general idea is not to write code and equations as short as possible, but to write them in a way they can be read and understood as fast as possible. To that end:
@@ -124,6 +130,8 @@ You can also compile the file *main.gms* directly by running the command
 ``` bash
 gams main.gms -a=c -errmsg=1
 ```
-This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast. However, this will not take into consideration the changes you made to *./config/default.cfg*. So if you want to test changes you made to a non-standard module realization, be sure to update the settings in *main.gms* by either editing it manually or running *start.R* for a couple of seconds, until you see "The model folder was locked by this process" and then cancel the execution (so that no run job is submitted). This will modify *main.gms* with the entries of config/default.cfg (similarly possible with start_bundle.R with a scenario_config...csv with one row with start = 1 and all gdx columns providing an existing gdx file path, which is then used for updating main.gms).
-
-
+or (only works on the PIK cluster, gives you highlighting of syntax errors)
+``` bash
+gamscompile main.gms
+```
+This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast. However, this will not take into consideration the changes you made to [`config/default.cfg`](../config/default.cfg). So if you want to test changes you made to a non-standard module realization, be sure to update the settings in [`main.gms`](../main.gms) by either editing it manually or running `./start.R -0` which resets `main.gms` to the entries of `config/default.cfg` (to get the settings of a `scenario_config*.csv`, start a single run with `start.R -i` and wait until `main.gms` is updated, then kill the run).

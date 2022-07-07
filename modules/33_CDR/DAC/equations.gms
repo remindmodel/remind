@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,7 +22,7 @@ q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) ..
 q33_capconst_dac(t,regi)..
 	v33_emiDAC(t,regi)
 	=e=
-	- sum(teNoTransform2rlf_dyn33(te,rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
+	- sum(teNoTransform2rlf_dyn33("dac",rlf2), vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf2))
 	-  (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * vm_otherFEdemand(t,regi,"fegas")
 	;
 
@@ -37,7 +37,7 @@ q33_emicdrregi(t,regi)..
 ***---------------------------------------------------------------------------
 *'  Calculation of electricity demand for ventilation of direct air capture.
 ***---------------------------------------------------------------------------
-q33_DacFEdemand_el(t,regi,entyFe)..
+q33_DacFEdemand_el(t,regi,entyFe)$(t.val ge 2025)..
     v33_DacFEdemand_el(t,regi,entyFe)
     =e=
 	- vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa *p33_dac_fedem_el(entyFe)
@@ -47,10 +47,10 @@ q33_DacFEdemand_el(t,regi,entyFe)..
 *'  Calculation of heat demand of direct air capture. Heat can be provided as heat or by electricity, gas or H2; 
 *'  For example, vm_otherFEdemand(t,regi,"fegas") is calculated as the total energy demand for heat from fegas minus what is already covered by other carriers (i.e. heat, h2 or elec) 
 ***---------------------------------------------------------------------------
-q33_DacFEdemand_heat(t,regi,entyFe)..
+q33_DacFEdemand_heat(t,regi,entyFe)$(t.val ge 2025)..
     v33_DacFEdemand_heat(t,regi,entyFe)
     =e=
-    - vm_emiCdr(t,regi,"co2") * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
+    - v33_emiDAC(t,regi) * sm_EJ_2_TWa * p33_dac_fedem_heat(entyFe)
     - v33_DacFEdemand_heat(t,regi,"feh2s")$((sameas(entyFe,"fegas"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels"))) 
 	- v33_DacFEdemand_heat(t,regi,"fegas")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"feels")))
 	- v33_DacFEdemand_heat(t,regi,"feels")$((sameas(entyFe,"feh2s"))OR(sameas(entyFe,"fehes"))OR(sameas(entyFe,"fegas")))

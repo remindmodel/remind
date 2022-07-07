@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -41,6 +41,13 @@ $offdelim
 pm_ffPolyCumEx(all_regi,"pecoal",char) = f31_ffPolyCumEx(all_regi,"pecoal",char,"%cm_coal_scen%");
 pm_ffPolyCumEx(all_regi,"peoil",char)  = f31_ffPolyCumEx(all_regi,"peoil",char,"%cm_oil_scen%");
 pm_ffPolyCumEx(all_regi,"pegas",char)  = f31_ffPolyCumEx(all_regi,"pegas",char,"%cm_gas_scen%");
+
+*** set lower bound of 1 for maximum cumulative extraction bound to avoit too small bounds
+pm_ffPolyCumEx(all_regi,"pecoal","max") = max(pm_ffPolyCumEx(all_regi,"pecoal","max") , 1 );
+pm_ffPolyCumEx(all_regi,"peoil","max") = max(pm_ffPolyCumEx(all_regi,"peoil","max") , 1 );
+pm_ffPolyCumEx(all_regi,"pegas","max") = max(pm_ffPolyCumEx(all_regi,"pegas","max") , 1 );
+
+display pm_ffPolyCumEx;
 
 table f31_ffPolyCoeffs(all_regi,all_fossilScen,polyCoeffCost)  "3rd-order polynomial coefficients (oil|gas|coal)"  
 $ondelim

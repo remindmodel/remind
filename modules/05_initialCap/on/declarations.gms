@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/05_initialCap/on/declaration.gms
+*** SOF ./modules/05_initialCap/on/declarations.gms
 
 Parameter
   pm_cap0(all_regi,all_te)                           "standing capacity in 2005 as calculated by the initialization routine generisinical. Unit: TWa"
@@ -43,5 +43,9 @@ Scalars
   s05_aux_prod_remaining   "auxiliary calculation parameter for the capacities in different grades: production that still has to be distributed to a grade"
 ;
 
-*** EOF ./modules/05_initalCap/on/declaration.gms
+File report_capini;            
+File check_INIdemEn0 / check_INIdemEn0.csv /; 
+
+
+*** EOF ./modules/05_initialCap/on/declarations.gms
 

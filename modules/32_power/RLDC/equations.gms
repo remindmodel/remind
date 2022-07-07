@@ -1,9 +1,11 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/RLDC/equations.gms
+
 ***---------------------------------------------------------------------------
 *** Balance equation for electricity secondary energy type:
 ***---------------------------------------------------------------------------
@@ -315,13 +317,16 @@ q32_limitCapTeChp(t,regi)..
 ***---------------------------------------------------------------------------
 *** Calculation of necessary grid installations for centralized renewables:
 ***---------------------------------------------------------------------------
-q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) .. 
-	vm_cap(t,regi,"gridwind",'1')       !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
-	/ p32_grid_factor(regi)        !! It is assumed that large regions require higher grid investment 
-	=g=
-	vm_prodSe(t,regi,"pesol","seel","spv")                
-	+ vm_prodSe(t,regi,"pesol","seel","csp")
-	+ 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")        !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+q32_limitCapTeGrid(t,regi)$( t.val ge 2015 ) ..
+   vm_cap(t,regi,"gridwind",'1')      !! Technology is now parameterized to yield marginal costs of ~3.5$/MWh VRE electricity
+    / p32_grid_factor(regi)                     !! It is assumed that large regions require higher grid investment
+    =g=
+    vm_prodSe(t,regi,"pesol","seel","spv")
+    + vm_prodSe(t,regi,"pesol","seel","csp")
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","wind")                 !! wind has larger variations accross space, so adding grid is more important for wind (result of REMIX runs for ADVANCE project)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+    + 1.5 * vm_prodSe(t,regi,"pewin","seel","windoff")
+$ENDIF.WindOff
 ;
 
 ***---------------------------------------------------------------------------
@@ -332,3 +337,5 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	=l=
 	0.2 * vm_usableSe(t,regi,"seel")
 ;
+
+*** EOF ./modules/32_power/RLDC/equations.gms

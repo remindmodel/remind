@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,10 +12,18 @@ parameters
 pm_delta_kap(all_regi,all_in)                                   "Depreciation rate of capital."
 pm_cumDeprecFactor_old(ttot,all_regi,all_in)                    "Investment depreciation within a period, applied to the investment of t -1."
 pm_cumDeprecFactor_new(ttot,all_regi,all_in)                    "Investment depreciation within a period, applied to the investment of t."
-pm_ppfen_ratios(ttot,all_regi,all_in,all_in)                    "Limit ratio of two primary production factors of energy (ppfEn)."
+p01_ppfen_ratios(ttot,all_regi,all_in,all_in)                   "Limit ratio of two primary production factors of energy (ppfEn)."
 pm_ppfen_shares(ttot,all_regi,all_in,all_in)                    "Limit the share of one ppfEn in total CES nest inputs."
 pm_consPC(tall,all_regi)                                        "Consumption per capita"
 ;   
+
+*** output parameters
+parameters
+o01_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
+o01_totalCESEff(ttot,all_regi,all_in)                  "total CES efficiency" 
+o01_CESmrs(ttot,all_regi,all_in,all_in)                "marginal rate of subsitution of CES production factors"
+;
+
 ***------------------------------------------------------------ -------------------
 ***                                   VARIABLES 
 ***------------------------------------------------------------ -------------------

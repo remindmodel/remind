@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -20,6 +20,7 @@ equations
 q39_emiCCU(ttot,all_regi,all_te)                                        "calculate CCU emissions"
 q39_shSynTrans(ttot,all_regi)                                           "Define share of of synthetic liquids in all SE liquids."
 q39_shSynGas(ttot,all_regi)                                             "Define share of of synthetic gas in all SE gases."
+q39_EqualSecShare_BioSyn(ttot,all_regi,all_enty,emi_sectors,emiMkt)     "constraint on equal share of synfuels in biofuels+synfuels for sectors"
 ;
 
 *** EOF ./modules/39_CCU/on/declarations.gms

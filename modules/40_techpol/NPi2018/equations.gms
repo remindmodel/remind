@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,6 +10,12 @@ q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 ***am minimum targets for certain technologies
     sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
       * 1000 =g= p40_ElecBioBound(t,regi);	 
+
+q40_windBound(t,regi)$(t.val gt 2025)..
+**making target apply to both wind onshore and offshore, when offshore switch is on
+sum(teWind(te), vm_cap(t,regi,te,"1")) 
+    =g= p40_TechBound(t,regi,"wind")*0.001
+;
 
 q40_PEgasBound(t,regi)$(t.val gt 2015 AND (sameas(regi,"CHN") OR sameas(regi,"CHA")))..
 *cb for china, gas PE must be higher than a certain share of total PE

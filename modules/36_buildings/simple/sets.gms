@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -68,6 +68,7 @@ Sets
   
  ue_dyn36(all_in)  "useful energy items"
  //
+
 ;
 
 cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;
@@ -80,4 +81,6 @@ ppfEn(ppfen_buildings_dyn36)      = YES;
 cesOut2cesIn(ces_buildings_dyn36) = YES;
 fe2ppfEn(fe2ppfEn36)              = YES;
 fe_tax_sub_sbi(fe_tax_sub36) = YES;
+ppfen_CESMkup(ppfen_buildings_dyn36) = YES;
+
 *** EOF ./modules/36_buildings/simple/sets.gms

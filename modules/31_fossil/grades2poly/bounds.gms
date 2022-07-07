@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,7 +28,8 @@ p31_rentdisc("pegas")   = cm_rentdiscgas;
 p31_rentdisc2("pegas")  = cm_rentdiscgas2;
 p31_rentconv("pegas")   = cm_rentconvgas;
 
-p31_rentdisctot(ttot, enty)$(p31_rentconv(enty) gt 0) =  (p31_rentdisc(enty) + (pm_ttot_val(ttot) - cm_startyear) * (p31_rentdisc2(enty)-p31_rentdisc(enty))/p31_rentconv(enty));
+s31_fuEx_startyr = 2005;  !! The fossil cost curves and rent discounting should always begin in the initial period.
+p31_rentdisctot(ttot, enty)$(p31_rentconv(enty) gt 0) =  (p31_rentdisc(enty) + (pm_ttot_val(ttot) - s31_fuEx_startyr) * (p31_rentdisc2(enty)-p31_rentdisc(enty))/p31_rentconv(enty));
 p31_rentdisctot(ttot, enty)$(ttot.val gt 2010 + p31_rentconv(enty)) = p31_rentdisc2(enty);
 
 display

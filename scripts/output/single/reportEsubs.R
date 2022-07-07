@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -163,8 +163,8 @@ filename<-"capital_unit.csv"
 
 if (file.exists(filename)) {
   df = read.csv(filename)
-}else if (file.exists(path(output_folder,filename))) {
-  df = read.csv(path(output_folder,filename))
+}else if (file.exists(file.path(output_folder,filename))) {
+  df = read.csv(file.path(output_folder,filename))
   
 } else {
   stop("No capital_unit.csv file found - please perform postprocessing first!")
@@ -184,8 +184,8 @@ cesOut2cesIn = inline.data.frame(
 fileDisc = "fulldata.gdx"
 if (file.exists(fileDisc)) {
   discRateImpl = read.gdx(fileDisc, "p21_implicitDiscRateMarg")
-}else if (file.exists(path(output_folder,fileDisc))) {
-  discRateImpl = read.gdx(path(output_folder,fileDisc), "p21_implicitDiscRateMarg")
+}else if (file.exists(file.path(output_folder,fileDisc))) {
+  discRateImpl = read.gdx(file.path(output_folder,fileDisc), "p21_implicitDiscRateMarg")
   
 } else { stop("Could not find fulldata.gdx")}
 
@@ -202,7 +202,7 @@ df = df %>% filter(iteration == max_iter) %>% select(-iteration)
 
 #----------------------------------------------------------------------------------------------------------
 
- pdf(path(outputdir,paste0("Esubs calibration report.pdf")),
+ pdf(file.path(outputdir,paste0("Esubs calibration report.pdf")),
      width = 42 / 2.54, height = 29.7 / 2.54, title = "Esubs calibration report")
 
 for (i in 1:nrow(cesOut2cesIn)){

@@ -1,9 +1,11 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/IntC/datainput.gms
+
 *------------------------------------------------------------------------------------
 ***                        IntC specific data input
 *------------------------------------------------------------------------------------
@@ -36,6 +38,10 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
+f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
+$ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
 ***INNOPATHS
@@ -45,6 +51,9 @@ $if not "%cm_INNOPATHS_storageFactor%" == "off" p32_factorStorage(all_regi,all_t
 p32_storexp(regi,"spv")     = 1;
 p32_storexp(regi,"csp")     = 1;
 p32_storexp(regi,"wind")    = 1;
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+p32_storexp(regi,"windoff")    = 1;
+$ENDIF.WindOff
 
 
 ***parameter p32_gridexp(all_regi,all_te) - exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly
@@ -56,6 +65,10 @@ p32_gridexp(regi,"wind")    = 1;
 table f32_storageCap(char, all_te)  "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
 $include "./modules/32_power/IntC/input/f32_storageCap.prn"
 ;
+
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+f32_storageCap(char,"windoff") = f32_storageCap(char,"wind");
+$ENDIF.WindOff 
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
@@ -75,3 +88,5 @@ $offtext
 
 *** initialize p32_PriceDurSlope parameter
 p32_PriceDurSlope(regi,"elh2") = cm_PriceDurSlope_elh2;
+
+*** EOF ./modules/32_power/IntC/datainput.gms

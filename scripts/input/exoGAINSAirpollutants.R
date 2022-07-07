@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -17,10 +17,13 @@ if (file.exists("log.txt")){
 # Downscaling of REMIND emissions to GAINS sectors using ECLIPSE emission and activity data
 #rm(list=ls())
 
-suppressMessages(library(dplyr, quietly = TRUE,warn.conflicts =FALSE))
-suppressMessages(library(luscale, quietly = TRUE,warn.conflicts =FALSE)) # rename_dimnames
-suppressMessages(library(remind2, quietly = TRUE,warn.conflicts =FALSE))
-suppressMessages(library(gdx, quietly = TRUE,warn.conflicts =FALSE)) # writeGDX
+# load required packages
+for (pkg in c('madrat', 'dplyr', 'luscale', 'remind2', 'gdx')) {
+  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
+}
+
+# stop madrat reporting its default settings _every damn time_
+invisible(getConfig(option = NULL, verbose = firstIteration))
 
 # read SSP scenario
 load("config.Rdata")
@@ -32,9 +35,13 @@ if (file.exists("fulldata.gdx")){gdx <- "fulldata.gdx"} else {if (file.exists("f
 
 t <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
 rem_in_mo <- NULL
+message("exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportMacroEconomy(gdx)[,t,])
+message("- reportPE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
+message("- reportSE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportSE(gdx)[,t,])
+message("- reportFE")
 rem_in_mo <- mbind(rem_in_mo,reportFE(gdx)[,t,])
 
 # delete "+" and "++" from variable names
@@ -138,8 +145,11 @@ E <- mbind(E,dimSums(E,dim=1))
 # E_calibrated <- E * E(2015) / E_CEDS(2015)
 
 # read mapping from GAINS sectors to REMIND sectors
-#map_GAINSsec2REMINDsec <- read.csv(madrat:::toolMappingFile("sectoral", "mappingGAINStoREMINDsectors.csv"), stringsAsFactors=FALSE,na.strings = "")
-map_GAINSsec2REMINDsec <- read.csv("mappingGAINStoREMINDsectors.csv", stringsAsFactors=FALSE,na.strings = "")
+map_GAINSsec2REMINDsec <- read.csv(
+  toolGetMapping(type = "sectoral", name = "mappingGAINStoREMINDsectors.csv", returnPathOnly = TRUE),
+  stringsAsFactors = FALSE,
+  na.strings = ""
+)
 # keep mixed version of GAINS sectors (mix of aggregated and extended, currently only appending waste sectors from extended to aggreagted)
 map_GAINSsec2REMINDsec <- subset(map_GAINSsec2REMINDsec, select = c("REMINDsectors","GAINS_mixed"))
 # remove lines with empty GAINS sectors (land use etc.)
@@ -221,4 +231,3 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 if(firstIteration){
   cat("\nExoGAINS - end of first iteration.\n\n")
 }
-

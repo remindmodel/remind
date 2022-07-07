@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -30,12 +30,12 @@ $include "./modules/33_CDR/module.gms"
 $include "./modules/35_transport/module.gms"
 $include "./modules/36_buildings/module.gms"
 $include "./modules/37_industry/module.gms"
-$include "./modules/38_stationary/module.gms"
 $include "./modules/39_CCU/module.gms"
 $include "./modules/40_techpol/module.gms"
 $include "./modules/41_emicapregi/module.gms"
 $include "./modules/42_banking/module.gms"
 $include "./modules/45_carbonprice/module.gms"
+$include "./modules/46_carbonpriceRegi/module.gms"
 $include "./modules/47_regipol/module.gms"
 $include "./modules/50_damages/module.gms"
 $include "./modules/51_internalizeDamages/module.gms"

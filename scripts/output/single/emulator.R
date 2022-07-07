@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,17 +22,18 @@ library(mip)
  
 if(!exists("source_include")) {
    outputdir <- "~/Transferfolder/coupling/"
+   readArgs("outputdir")
 }
 
 scenario <- getScenNames(outputdir)
 
-gdx <- path(outputdir,"fulldata.gdx")
+gdx <- file.path(outputdir,"fulldata.gdx")
 
 filename<-paste0("REMIND_generic_",scenario,".mif")
 if (file.exists(filename)) {
   csv <- read.report(filename,as.list = FALSE)
-} else if (file.exists(path(outputdir,filename))) {
-  csv <- read.report(path(outputdir,filename),as.list = FALSE)
+} else if (file.exists(file.path(outputdir,filename))) {
+  csv <- read.report(file.path(outputdir,filename),as.list = FALSE)
 } else {
   stop("No REMIND_generic_*.mif file found - please perform postprocessing first!")
 }
@@ -45,7 +46,7 @@ years <- getYears(csv)
 
 # MAgPIE EMULATOR results
 # open pdf
-emulator_file <- path(outputdir,paste0("EMULATOR_",scenario,".pdf"))
+emulator_file <- file.path(outputdir,paste0("EMULATOR_",scenario,".pdf"))
 pdf<-swopen()
 swlatex(pdf,c("\\title{MAgPIE EMULATOR results}","\\author{David Klein}","\\maketitle","\\tableofcontents"))
 swlatex(pdf,"\\newpage")
@@ -98,13 +99,13 @@ regions <- sort(getRegions(x$supplycurve))
 for (y in years) {
 
   title <- paste0(y) 
-  dat <- gginput(x$supplycurve[regions,y,],scatter="type")
+  dat <- gginput(x$supplycurve[regions,y,], scatter = "type", verbose = FALSE)
   dat$year<-factor(dat$year)
 
   p <- ggplot(dat, aes(x=.value.x,y=.value.y)) +
     geom_line(aes(colour=scenario, linetype=curve)) + #geom_line(size=0.5) + 
-    geom_point(data=gginput(x$rem_point[regions,y,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario)) +
-    geom_point(data=gginput(x$mag_point[regions,y,],scatter = "variable"),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
+    geom_point(data=gginput(x$rem_point[regions,y,],scatter = "variable", verbose = FALSE),aes(x=.value.x,y=.value.y,colour=scenario)) +
+    geom_point(data=gginput(x$mag_point[regions,y,],scatter = "variable", verbose = FALSE),aes(x=.value.x,y=.value.y,colour=scenario),shape=5) +
     facet_wrap(~region) +
     ggtitle(title) + ylab("$/GJ") + xlab("EJ") + coord_cartesian(xlim=c(0,80),ylim=c(0,30)) +
     theme(legend.position="top") + guides(linetype=guide_legend(nrow=2,byrow=TRUE, title.position = "top")) + 
@@ -119,10 +120,12 @@ for (y in years) {
 
 swlatex(pdf,"\\section{Bioenergy demand and prices}")
 
-var_price_shapes = c("Price|Biomass|MAgPIE (US$2005/GJ)" = 0,
-                     "Price|Biomass|Emulator presolve (US$2005/GJ)" = 1,
-                     "Price|Biomass|Emulator presolve shifted (US$2005/GJ)" = 2,
-                     "Price|Biomass|Emulator shifted (US$2005/GJ)" = 4)
+var_price_shapes = c(
+  "Internal|Price|Biomass|MAgPIE (US$2005/GJ)" = 0,
+  "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)" = 1,
+  "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)" = 2,
+  "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)" = 4
+)
 
 # bring GLO to front
 regions <- getRegions(csv)
@@ -145,7 +148,12 @@ for (r in regions){
   if(r!= "GLO") {
     plot.title<-paste0("\\subsection{Bioenergy prices (",r,")}")
     swlatex(pdf,plot.title)
-    var_price = c("Price|Biomass|MAgPIE (US$2005/GJ)","Price|Biomass|Emulator presolve (US$2005/GJ)","Price|Biomass|Emulator presolve shifted (US$2005/GJ)","Price|Biomass|Emulator shifted (US$2005/GJ)")
+    var_price = c(
+      "Internal|Price|Biomass|MAgPIE (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator presolve (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator presolve shifted (US$2005/GJ)",
+      "Internal|Price|Biomass|Emulator shifted (US$2005/GJ)"
+    )
     dat<-as.ggplot(csv[r,years,var_price])
     
     p <- ggplot(data=dat, aes(x=Year, y=Value,colour=Data3)) + geom_line(size=1) + labs(y="$/GJ") + 

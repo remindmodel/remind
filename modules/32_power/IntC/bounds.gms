@@ -1,15 +1,30 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/IntC/bounds.gms
+
 ***-----------------------------------------------------------
 ***                  module specific bounds
 ***------------------------------------------------------------
 
 *** Fix capacity factors to the standard value from data
 vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
+
+$IFTHEN.dispatchSetyDown not "%cm_dispatchSetyDown%" == "off"
+  loop(pe2se(enty,enty2,te),
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSetyDown% / 100 ) * pm_cf(t,regi,te);
+  );
+$ENDIF.dispatchSetyDown
+
+$IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
+  loop(pe2se(enty,enty2,te)$sameas(enty2,"seel"),  
+    vm_capFac.lo(t,regi,te) = ( 1 - %cm_dispatchSeelDown% / 100 ) * pm_cf(t,regi,te);  
+  );
+$ENDIF.dispatchSeelDown
+
 
 *** FS: for historically limited biomass production scenario (cm_bioprod_histlim >= 0)
 *** to avoid infeasibilities with vintage biomass capacities
@@ -37,7 +52,7 @@ if ( cm_flex_tax eq 1,
 loop(regi,
   loop(te$(teVRE(te)),
     if ( (sum(rlf, pm_dataren(regi,"maxprod",rlf,te)) > 0.01 * pm_IO_input(regi,"seel","feels","tdels")) ,
-         v32_shSeEl.lo(t,regi,te)$(t.val>2015) = 0.01; 
+         v32_shSeEl.lo(t,regi,te)$(t.val>2020) = 0.01; 
     );
   );
 );
@@ -58,6 +73,7 @@ loop(regi$(p32_factorStorage(regi,"csp") < 1),
   v32_shSeEl.lo(t,regi,"csp")$(t.val > 2100) = 2;
 );
 
+*** Fix capacity to 0 for elh2VRE now that the equation q32_elh2VREcapfromTestor pushes elh2, not anymore elh2VRE, and capital costs are 1
+vm_cap.fx(t,regi,"elh2VRE",rlf) = 0;
 
-
-
+*** EOF ./modules/32_power/IntC/bounds.gms

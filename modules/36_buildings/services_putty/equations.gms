@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -44,7 +44,9 @@ v36_putty_obj =e= sum((ttot,regi,in)$((ord(ttot) lt card(ttot)))
                    );
 *AL* End of Model solved in preloop 
 
-q36_enerSerAdj(ttot,regi,in)$(sameas (in, "esswb") AND ttot.val ge max(2010, cm_startyear)).. 
+q36_enerSerAdj(ttot,regi,in)$(sameas(in,"esswb")
+                              AND ttot.val ge max(2010, cm_startyear)
+                              AND cm_build_AdjCostActive eq 1).. 
          vm_enerSerAdj(ttot,regi,in) 
          =e=
          p36_adjFactor(ttot,regi)
@@ -60,7 +62,8 @@ q36_enerSerAdj(ttot,regi,in)$(sameas (in, "esswb") AND ttot.val ge max(2010, cm_
 
 q36_enerCoolAdj(ttot,regi,in)$(sameas (in, "fescelb") 
                                AND ttot.val ge max(2015, cm_startyear)
-                               AND regi_dyn36_cooling(regi) ).. 
+                               AND regi_dyn36_cooling(regi)
+                               AND cm_build_AdjCostActive eq 1).. 
          vm_enerSerAdj(ttot,regi,in) 
          =e=
          p36_adjFactor(ttot,regi)

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -31,6 +31,27 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2030) = 1.2;
 pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2035) = 2;
 pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 
+*** floor space demand for reporting
+Parameter
+p36_floorspace_scen(tall, all_regi, all_demScen)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
+/
+$ondelim
+$include "./modules/36_buildings/simple/input/p36_floorspace_scen.cs4r"
+$offdelim
+/
+;
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3; !! from million to billion m2
+
+*** UE demand for reporting
+Parameter
+f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
+/
+$ondelim
+$include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
+$offdelim
+/
+;
+p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
 $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off" 
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") = pm_cesdata_sigma(ttot,"enb") * %cm_INNOPATHS_enb%;
@@ -70,10 +91,20 @@ if ((cm_ElLim_b lt 1),
   pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi) AND t.val gt 2040 AND t.val lt 2100) = cm_ElLim_b;
 );
 
-*** Heat pumps markup cost: 0.2 €/kwh = 0.2 / ((10^12)/(10^9*8760)) T$/TWa = 1.752 T$/TWa
-p36_heatPumpMkup(t,regi) = 1.752;
-*** District heating markup cost: 7$/GJ = 7 * sm_DpGJ_2_TDpTWa T$/TWa = 7 * 0.03154 T$/TWa = 0.22078 T$/TWa
-p36_districtHeatingMkup(ttot,all_regi) = 0.22078;
+
+*** FS: CES markup cost buildings
+p36_CESMkup(t,regi,in) = 0;
+*** place markup cost on heat pumps electricity of 200 USD/MWh(el) to represent demand-side cost of electrification and reach higher efficiency during calibration which leads to some energy efficiency gains of electrification
+p36_CESMkup(t,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
+*** place markup cost on district heating of 25 USD/MWh(heat) to represent additional sector-specific cost expanding district heat
+p36_CESMkup(t,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
+
+*** overwrite or extent CES markup cost if specified by switch
+$ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
+  p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in)) = p36_CESMkup_input(in);
+$endIf.CESMkup
+
+display p36_CESMkup;
 
 *** EOF ./modules/36_buildings/simple/datainput.gms
 

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,6 +8,7 @@
 scalars
 s31_debug                                         "debugging option to display more output"        /0/
 s31_max_disp_peur                                 "maximum amount of cumulative uranium production in Megatonnes of metal uranium (    U3O8, the stuff that is traded at 40-60US$/lb)."
+s31_fuEx_startyr                                  "base year for fossil extraction cost curves and fossil rent discounting"
 ;
 
 

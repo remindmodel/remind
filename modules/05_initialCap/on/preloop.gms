@@ -1,30 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/05_initialCap/on/preloop.gms
-
-***------------------------------------------------------------------------------
-*** Normalization of historical vintage structure - ESM
-***------------------------------------------------------------------------------
-*RP* Rescale vintages to 1 so they can be multiplied with the actual 2005 capacities coming from the intialization routine initialcap2
-loop(regi,
-  loop(te,
-*--- Sum all historical capacities
-    p05_aux_vintage_renormalization(regi,te)
-      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val > 1) ),
-          (pm_vintage_in(regi,opTimeYr,te) * pm_omeg(regi,opTimeYr+1,te))
-        )
-        + pm_vintage_in(regi,"1",te) * pm_omeg(regi,"2",te) * 0.5;
-*--- Normalization
-    if(p05_aux_vintage_renormalization(regi,te) gt 0,
-      p05_vintage(regi,opTimeYr,te) = pm_vintage_in(regi,opTimeYr,te)/p05_aux_vintage_renormalization(regi,te);
-    );
-  );
-);
-display p05_vintage;
 
 ***---------------------------------------------------------------------------
 ***           MODEL    initialcap2         START
@@ -87,13 +67,38 @@ q05_ccapini(regi,en2en(enty,enty2,te)) ..
   * v05_INIdemEn0(regi,enty2)
 ;
 
-display pm_data;
-
 *** model definition
 model initialcap2 / q05_eedemini, q05_ccapini /;
 
-option limcol = 70;
-option limrow = 70;
+***---------------------------------------------------------------------------
+***           MODEL    initialcap2         END
+***---------------------------------------------------------------------------
+
+*** only run intialcap model if startyear is 2005
+if (cm_startyear eq 2005,
+
+***------------------------------------------------------------------------------
+*** Normalization of historical vintage structure - ESM
+***------------------------------------------------------------------------------
+*RP* Rescale vintages to 1 so they can be multiplied with the actual 2005 capacities coming from the intialization routine initialcap2
+loop(regi,
+  loop(te,
+*--- Sum all historical capacities
+    p05_aux_vintage_renormalization(regi,te)
+      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val > 1) ),
+          (pm_vintage_in(regi,opTimeYr,te) * pm_omeg(regi,opTimeYr+1,te))
+        )
+        + pm_vintage_in(regi,"1",te) * pm_omeg(regi,"2",te) * 0.5;
+*--- Normalization
+    if(p05_aux_vintage_renormalization(regi,te) gt 0,
+      p05_vintage(regi,opTimeYr,te) = pm_vintage_in(regi,opTimeYr,te)/p05_aux_vintage_renormalization(regi,te);
+    );
+  );
+);
+display p05_vintage;
+
+display pm_data;
+
 
 *** solve statement
 if (execError > 0,
@@ -111,7 +116,6 @@ pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);
 
 *** write report about v05_INIcap0:
-file report_capini;
 put report_capini;
 put "v05_INIcap0.l:" /;
      loop(regi,loop(te,
@@ -119,7 +123,6 @@ put "v05_INIcap0.l:" /;
      ));
 putclose report_capini;
 *** write report on v05_INIdemEn0
-file check_INIdemEn0 / check_INIdemEn0.csv /;
 put check_INIdemEn0;
 put "regi;enty;value";
 put /;
@@ -410,8 +413,17 @@ loop(regi,
     )
   );
 );
-pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP)
+pm_eta_conv(ttot,regi,teCHP) = pm_data(regi,"eta",teCHP);
 
+*AD* It looks like the dynamic etas in pm_dataeta are not used in pm_eta_conv, i.e.,
+*** they are not relevant for se->se or se->fe conversion.
+*** So if one adds a dynamic trajectory to generisdata_varying_eta.csv for a technology
+*** of this conversion type, it is ignored.
+*** As we need dynamic efficiencies for H2, we copy the values here explicitly.
+*** After checking with RP, I would however suggest to use the following:
+*** pm_eta_conv(ttot, regi, teEtaIncr) = pm_dataeta(ttot, regi, teEtaIncr);
+
+pm_eta_conv(ttot,regi,"elh2") = pm_dataeta(ttot,regi,"elh2");
 display pm_eta_conv, fm_dataglob;
 
 
@@ -449,18 +461,20 @@ p05_deltacap_res(ttot,regi,teBioPebiolc) = vm_deltaCap.l(ttot,regi,teBioPebiolc,
 * BS/DK* Developed regions phase out quickly (no new capacities)
 * BS/DK* Developing regions (GDP PPP threshold) phase out more slowly (varied by SSP)
 loop(regi,
-     if( ( pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi) ) < 4,
-          p05_deltacap_res("2010",regi,"biotr") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2015",regi,"biotr") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2020",regi,"biotr") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2025",regi,"biotr") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2030",regi,"biotr") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2035",regi,"biotr") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2040",regi,"biotr") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2045",regi,"biotr") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2050",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-          p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
-      );
+  if ((pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
+    p05_deltacap_res("2010",regi,"biotr") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2015",regi,"biotr") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2020",regi,"biotr") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$ifthen NOT %cm_tradbio_phaseout% == "fast"   !! cm_tradbio_phaseout
+    p05_deltacap_res("2025",regi,"biotr") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2030",regi,"biotr") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2035",regi,"biotr") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2040",regi,"biotr") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2045",regi,"biotr") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2050",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$endif
+  );
 );
 
 * quickest phaseout in SDP (no new capacities allowed), quick phaseout in SSP1 und SSP5
@@ -516,6 +530,24 @@ loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(ent
 );
 
 display pm_emifac;
+
+);
+
+*** if cm_startyear > 2005, load outputs of InitialCap from input_ref.gdx
+if (cm_startyear gt 2005,
+  Execute_Loadpoint 'input_ref' pm_eta_conv = pm_eta_conv;
+  Execute_Loadpoint 'input_ref' o_INI_DirProdSeTe = o_INI_DirProdSeTe;
+  Execute_Loadpoint 'input_ref' pm_emifac = pm_emifac;
+  Execute_Loadpoint 'input_ref' pm_EN_demand_from_initialcap2 = pm_EN_demand_from_initialcap2;
+  Execute_Loadpoint 'input_ref' pm_pedem_res = pm_pedem_res;
+  Execute_Loadpoint 'input_ref' pm_inco0_t = pm_inco0_t;
+  Execute_Loadpoint 'input_ref' pm_dataeta = pm_dataeta;
+  Execute_Loadpoint 'input_ref' pm_data = pm_data;
+  Execute_Loadpoint 'input_ref' pm_aux_capLowerLimit = pm_aux_capLowerLimit;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.l = vm_deltaCap.l;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.lo = vm_deltaCap.lo;
+  Execute_Loadpoint 'input_ref' vm_deltaCap.up = vm_deltaCap.up;
+);
 
 
 *** EOF ./modules/05_initialCap/on/preloop.gms

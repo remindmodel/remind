@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,8 +15,8 @@ library(rlang)
 library(luscale)
 
 ############################# BASIC CONFIGURATION #############################
-gdx_name     <- "fulldata.gdx"        # name of the gdx  
-gdx_ref_name <- "input_ref.gdx"       # name of the reference gdx (for policy cost calculation)
+gdx_name     <- "fulldata.gdx"             # name of the gdx
+gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
  
 
 if(!exists("source_include")) {
@@ -25,15 +25,15 @@ if(!exists("source_include")) {
    readArgs("outputdir","gdx_name","gdx_ref_name")
 } 
 
-gdx      <- path(outputdir,gdx_name)
-gdx_ref  <- path(outputdir,gdx_ref_name)
+gdx      <- file.path(outputdir,gdx_name)
+gdx_ref  <- file.path(outputdir,gdx_ref_name)
 if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
-remind_reporting_file <- path(outputdir,paste0("MOFEX_",scenario,".mif"))
-# magicc_reporting_file <- path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
-# LCOE_reporting_file   <- path(outputdir,paste0("REMIND_LCOE_", scenario, ".mif"))
+remind_reporting_file <- file.path(outputdir,paste0("MOFEX_",scenario,".mif"))
+# magicc_reporting_file <- file.path(outputdir,paste0("REMIND_climate_", scenario, ".mif"))
+# LCOE_reporting_file   <- file.path(outputdir,paste0("REMIND_LCOE_", scenario, ".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
 tmp <- try(reportMOFEX(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF

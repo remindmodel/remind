@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,5 +21,6 @@ vm_demFeSector.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
 $ifthen.CES_calibration "%CES_parameters%" == "calibrate"
 v36_H2share.up(t,regi) = s36_costDecayStart;
 $endif.CES_calibration
+
 
 *** EOF ./modules/36_buildings/simple/bounds.gms

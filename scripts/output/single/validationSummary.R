@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -17,10 +17,10 @@ if(!exists("source_include")) {
 } 
 
 scenario               <- getScenNames(outputdir)
-remind_reporting_file  <- path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
-gdx                    <- path(outputdir,"fulldata.gdx")
+remind_reporting_file  <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
+gdx                    <- file.path(outputdir,"fulldata.gdx")
 hist                   <- c(paste0(outputdir, "/historical.mif"), "./core/input/historical/historical.mif")
-name_of_output_pdf     <- path(outputdir,paste0("REMIND_summary_",scenario,".pdf"))
+name_of_output_pdf     <- file.path(outputdir,paste0("REMIND_summary_",scenario,".pdf"))
 
 #### Choose validation data ###
 # Use first hist file that can be found

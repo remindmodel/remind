@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -26,8 +26,8 @@ if(!exists("source_include")) {
 filename = "Logit_buildings.csv"
 if (file.exists(filename)) {
   df = read.csv(filename, stringsAsFactors = F)
-}else if (file.exists(path(output_folder,filename))) {
-  df = read.csv(path(output_folder,filename), stringsAsFactors = F)
+}else if (file.exists(file.path(output_folder,filename))) {
+  df = read.csv(file.path(output_folder,filename), stringsAsFactors = F)
   
 } else {
   stop("No capital_unit.csv file found - please perform postprocessing first!")
@@ -42,7 +42,7 @@ hist_period = 2015
 
 
 #---------------PROCESS DATA ----------------------------
-pdf(path(outputdir,paste0("reportLogit.pdf")), width = 10, height = 7)
+pdf(file.path(outputdir,paste0("reportLogit.pdf")), width = 10, height = 7)
 
 for (regi in getRegs(df)){
 

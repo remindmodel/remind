@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -103,9 +103,40 @@ if(cm_fetaxscen ne 0,
   );
 );
 
-display pm_tau_fe_sub, p21_tau_fuEx_sub;
+
+*** FS: switch cm_FEtax_trajectory to explicitly control tax level trajectory (overwrites cm_fetaxscen settings for the respective taxes affected), 
+$ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
+*** from year given in cm_FEtax_trajectory_abs, set FE tax to level specified by cm_FEtax_trajectory_abs, cm_FEtax_trajectory_abs in USD/MWh -> convert to trUSD/TWa
+  loop((ttot,sector,entyFe)$p21_FEtax_trajectory_abs(ttot,sector,entyFe),
+*** set FE tax to cm_FEtax_trajectory_abs to year given in cm_FEtax_trajectory_abs and after
+    loop(ttot2$(ttot2.val ge ttot.val),
+    pm_tau_fe_tax(ttot2,regi,sector,entyFe) = p21_FEtax_trajectory_abs(ttot,sector,entyFe) * sm_TWa_2_MWh * 1e-12;
+    );
+*** phase-in(out) FE tax linearly before from startyear to year given in cm_FEtax_trajectory_abs
+    loop(ttot2$(ttot2.val eq cm_startyear),
+    pm_tau_fe_tax(t,regi,sector,entyFe)$(t.val lt ttot.val and t.val ge cm_startyear)  = (pm_tau_fe_tax(ttot,regi,sector,entyFe) - pm_tau_fe_tax(ttot2,regi,sector,entyFe))/(ttot.val - ttot2.val) * (t.val - ttot2.val) + pm_tau_fe_tax(ttot2,regi,sector,entyFe);
+    );
+  );
+$endif.fetax
+
+
+*** FS: switch cm_FEtax_trajectory_rel to scale tax trajectory relative to tax in cm_startyear (overwrites cm_fetaxscen settings for the respective taxes affected), 
+$ifthen.fetaxRel not "%cm_FEtax_trajectory_rel%" == "off" 
+  loop((ttot,sector,entyFe)$p21_FEtax_trajectory_rel(ttot,sector,entyFe),
+    loop(ttot2$(ttot2.val eq cm_startyear),
+*** set FE tax to cm_FEtax_trajectory_rel * FE tax level of cm_startyear in year given in cm_FEtax_trajectory_rel and after
+      loop(ttot3$(ttot3.val ge ttot.val),
+        pm_tau_fe_tax(ttot3,regi,sector,entyFe) = p21_FEtax_trajectory_rel(ttot,sector,entyFe) * pm_tau_fe_tax(ttot2,regi,sector,entyFe);
+      );
+*** increase or decrease FE tax level linearily before
+    pm_tau_fe_tax(t,regi,sector,entyFe)$(t.val lt ttot.val and t.val ge cm_startyear)  = (pm_tau_fe_tax(ttot,regi,sector,entyFe) - pm_tau_fe_tax(ttot2,regi,sector,entyFe))/(ttot.val - ttot2.val) * (t.val - ttot2.val) + pm_tau_fe_tax(ttot2,regi,sector,entyFe);
+    );
+  );
+$endif.fetaxRel
+
+display pm_tau_fe_sub; 
 display pm_tau_fe_tax;
-display p21_tau_pe2se_sub;
+display p21_tau_pe2se_sub, p21_tau_fuEx_sub;
 
 *LB* initialization of vm_emiMac
 vm_emiMac.l(ttot,regi,enty) = 0;

@@ -1,10 +1,13 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
+
+
+*** region-specific bounds (with hard-coded regions)
 
 ** Force historical bounds on nuclear
 vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
@@ -62,6 +65,47 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
 $ENDIF.CoalRegiPol  
+
+
+
+*** further bounds for Germany
+*** upper bound on capacity additions for 2025 based on near-term trends
+*** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
+loop(regi$(sameAs(regi,"DEU")),
+  vm_deltaCap.up("2025",regi,"wind","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"wind"));
+  vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
+);
+
+
+*** bounds on historic gas capacities in Germany
+vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
+vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
+
+
+
+*** only small amount of co2 injection ccs until 2030 in Germany
+vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
+*** no Pe2Se fossil CCS in Germany, if c_noPeFosCCDeu = 1 chosen 
+vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND (cm_noPeFosCCDeu = 1)) = 1e-4;
+*** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
+vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
+
+
+*** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
+loop(regi$(sameAs(regi,"DEU")),
+vm_deltaCap.up("2015",regi,"ngcc","1") = 0.002;
+vm_deltaCap.up("2020",regi,"ngcc","1") = 0.0015;
+vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
+*** limit early retirement of coal power in Germany in 2020s to avoid extremly fast phase-out
+vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
+);
+
+
+
+*** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
+$ifThen.ensec "%cm_Ger_Pol%" == "ensec"
+    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
+$endIf.ensec
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

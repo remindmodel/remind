@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/output.gms
+*** SOF ./modules/30_biomass/magpie_40/output.gms
 *LB* save data for exogenous biomass module
 file p30_fix_costfu_bio;
 put p30_fix_costfu_bio;
@@ -41,4 +41,4 @@ put remind_modelstat;
 put o_modelstat /;
 putclose;
 
-*** EOF ./modules/30_biomass/magpie_4/output.gms
+*** EOF ./modules/30_biomass/magpie_40/output.gms
