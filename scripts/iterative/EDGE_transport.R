@@ -185,7 +185,7 @@ if (file.exists(datapath("demand_totalLDV.RDS"))) {
   ## load previous iteration number of cars
   totveh = readRDS(datapath("demand_totalLDV.RDS"))
 }
-logit_data <- calculate_logit_inconv_endog(
+logit_data_4W <- calculate_logit_4W(
   prices= REMIND_prices[tot_price > 0],
   vot_data = vot_data,
   pref_data = pref_data,
@@ -194,6 +194,16 @@ logit_data <- calculate_logit_inconv_endog(
   price_nonmot = price_nonmot,
   ptab4W = preftab4W,
   totveh = if (!is.null(totveh)) totveh)
+
+logit_data <- calculate_logit_inconv_endog(
+  prices= REMIND_prices[tot_price > 0],
+  vot_data = vot_data,
+  pref_data = pref_data,
+  logit_params = logit_params,
+  intensity_data = int_dat,
+  price_nonmot = price_nonmot,
+  ptab4W = preftab4W,
+  logit_data_4W = logit_data_4W)
 
 shares <- logit_data[["share_list"]] ## shares of alternatives for each level of the logit function
 ## shares$VS1_shares=shares$VS1_shares[,-c("sector","subsector_L2","subsector_L3")]
