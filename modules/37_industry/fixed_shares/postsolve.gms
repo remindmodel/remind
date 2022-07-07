@@ -6,11 +6,12 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/fixed_shares/postsolve.gms
 
+
 loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
   !! prepare industry CCS emissions for post-processing
   o37_emiInd(ttot,regi,entyPe,secInd37,enty)$( ttot.val ge 2005 )
   = sum(secInd37_2_emiInd37(secInd37,emiInd37(emiInd37_fuel)),
-      sum(pe2se(entyPE,entySE,te),
+     sum(pe2se(entyPE,entySE,te),
         sum(se2fe(entySE,entyFE,te2),
           sum(fe2ppfen(entyFE,in),
             vm_cesIO.l(ttot,regi,in)
@@ -62,6 +63,7 @@ loop (enty$( sameas(enty,"co2") OR sameas(enty,"cco2") ),
     );   !! residual emissions for co2, abated emissions for cco2
 
 );
+
 
 *** calculation of FE Industry Prices (useful for internal use and reporting 
 *** purposes)

@@ -15,6 +15,9 @@ parameters
 
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
+***
+pm_cons(ttot,all_regi)
+
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
@@ -252,6 +255,13 @@ p_share_seel_s(ttot,all_regi)                        "Share of electricity used 
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
 p_teAnnuity(all_te)                                  "Annuity factor of a technology"
+
+
+***----------------------------------------------------------------------------------------
+***------------------------------------------------energy expenditures----------------------------                              
+pm_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure disaggregated level"
+pm_EnergyExp(ttot,all_regi)                     "regional energy expenditure "
+
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -295,6 +305,15 @@ v_emiEnFuelEx(ttot,all_regi,all_enty)                 "energy emissions from fue
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
 vm_taxrevimplFETax(ttot,all_regi)                    "implicit efficiency directive target tax"
+
+* TN
+*vm_emiEnergyco2eq(ttot,all_regi)                      "emissions from energy system + DAC"
+*vm_emiEnergyco2eqMkt(ttot,all_regi,all_emiMkt)        "emissions from all GHG from energy system for each emiMkt"
+*vm_emiIndus(ttot,all_regi)                            "emissions from fugitive and industrial processes"
+
+vm_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
+
+
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -353,6 +372,12 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 v_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
+
+* energy expenditure
+*vm_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure, disaggregated level"
+vm_EnergyExp(ttot,all_regi)                     "regional energy expenditure "
+
+
 ;
 ***----------------------------------------------------------------------------------------
 ***                                   EQUATIONS
@@ -455,6 +480,18 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 $IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
+
+* energy expenditure
+*qm_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure, disaggregated level"
+*qm_EnergyExp(ttot,all_regi)                                 "regional energy expenditure "
+qm_EnergyExp(ttot,all_regi)                                 "regional energy expenditure "
+
+
+* emissions for taxes
+*qm_emiEnergyco2eq(ttot,all_regi)                          "emissions from energy system + DAC"
+*qm_emiEnergyco2eqMkt(ttot,all_regi,all_emiMkt)               "emissions from all GHG from energy system for each emiMkt"
+*qm_emiIndus(ttot,all_regi)                            "emissions from fugitive and industrial processes"
+qm_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
 
 
 ***----------------------------------------------------------------------------------------

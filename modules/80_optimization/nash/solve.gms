@@ -33,6 +33,10 @@ if (execError > 0,
 
 solve hybrid using nlp maximizing vm_welfareGlob;
 
+*if (ord(iteration) eq 3,
+*  abort "lets look at logs";
+*);
+
 
 ***      -------------------------------------------------------------------
 ***                     close regi loop

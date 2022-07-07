@@ -42,6 +42,12 @@ LOOP(iteration $(ord(iteration)<(cm_iteration_max+1)),
       IF(ord(iteration)>(cm_iteration_max-1),
             OPTION solprint=on
         );
+        
+*if (ord(iteration) eq 2,
+*  option limcol    = 2147483647;
+*  option limrow    = 2147483647;
+*);
+
 *--------------------------------------------------------------------------
 ***         BOUNDS
 *--------------------------------------------------------------------------

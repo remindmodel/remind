@@ -10,6 +10,18 @@
 vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
 
+pm_FEPrice(t,regi,entyFe,sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))=0;
+
+*pm_FEPrice(t,regi,entyFe,"trans",emiMkt)=0;
+*pm_FEPrice(t,regi,entyFe,"build",emiMkt)=0;
+*pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)=sm_eps;
+
+* TN: need to be declared (double check)
+*vm_emiIndus.l(ttot,regi)$(cm_emiscen eq 1)=0;
+*vm_emiEnergyco2eq.l(ttot,regi)$(cm_emiscen eq 1)=0;
+vm_emitaxredistr.l(ttot,regi)$(cm_emiscen eq 1)=0;
+
+
 *AJS* initialize parameter (avoid compilation errors)
 * do this at the start of datainput to prevent accidental overwriting
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution

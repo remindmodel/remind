@@ -7,6 +7,10 @@
 *** SOF ./core/postsolve.gms
 
 *-------------------------------calculate regional permit prices-----------------------------------
+*p02_EnergyExp_Add(ttot,regi)=vm_EnergyExp.l(ttot,regi)-p02_EnergyExp_ref(ttot,regi);
+pm_cons(ttot,regi)=vm_cons.l(ttot,regi);
+
+
 *** saving CO2 tax used in this iteration
 pm_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
@@ -889,5 +893,24 @@ o_carbon_reemitted(ttot,regi,"co2")$(ttot.val ge 2005) =
      *o_emi_conv("co2") 	
 ;
 
+
+
+pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te)$(ttot.val ge cm_startyear)=sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
+     vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt));
+     
+pm_EnergyExp(ttot,regi)$(ttot.val ge cm_startyear)=sum(se2fe(entySe,entyFe,te),
+      pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te));
+
+*display vm_cons.l,
+*        vm_EnergyExp.l,
+*        p02_energyexpShare,
+*        p02_revShare,
+*        p02_EnergyExp_ref,
+*       v02_energyexpShare.l,
+*        v02_EnergyExp_Add.l,
+*        v02_revShare.l,
+*        v02_taxrev_Add.l,
+*        vm_emitaxredistr.l,
+*        p02_taxrev_redistr0_ref;
 
 *** EOF ./core/postsolve.gms

@@ -12,9 +12,9 @@ p33_dac_fedem_heat(all_enty)         "specific heat demand for direct air captur
 ;
 
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
-v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC / a]"
-v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC / a] - fixed to 0, only defined for reporting reasons"
+vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC per a]"
+v33_emiDAC(ttot,all_regi)       "negative CO2 emission from DAC [GtC per a]"
+v33_emiEW(ttot,all_regi)        "negative CO2 emission from EW [GtC per a] - fixed to 0, only defined for reporting reasons"
 ;
 
 positive variables

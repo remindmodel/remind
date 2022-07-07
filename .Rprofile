@@ -35,8 +35,8 @@ if (any(grepl("^00LOCK.*", list.files(.libPaths()[1])))) {
 # to the model output folder. Otherwise, the run itself will again use the
 # default library set!
 
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2020_03_10"
-# if(file.exists(snapshot)) {
-# cat("Set libPaths to",snapshot,"\n")
-# .libPaths(snapshot)
-# }
+ snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2021_11"
+ if(file.exists(snapshot)) {
+ cat("Set libPaths to",snapshot,"\n")
+ .libPaths(snapshot)
+ }

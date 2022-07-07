@@ -205,7 +205,88 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
   sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
-; 
+;
+
+***---------------------------------------------------------------------------
+***  Energy expenditure
+***---------------------------------------------------------------------------
+
+qm_EnergyExp(ttot,regi)$(ttot.val ge cm_startyear)..
+    vm_EnergyExp(ttot,regi)
+    =e=
+    sum(se2fe(entySe,entyFe,te),
+      sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
+     vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt)))
+;
+
+
+* I am following the way things are aggregated in the balance of FE equation (qm_balFe)
+* Instead of just vm_demFeSector (quantity), I multiply it by the corresponding price to get expenditures
+*qm_EnergyExp_enty(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
+*     vm_EnergyExp_enty(t,regi,entySe,entyFe,te)
+*  =e=
+*     sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
+*     vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(t,regi,entyFe,sector,emiMkt))
+*;
+
+* sum over all combinations of enSe entyFe and te to get the regional total. 
+*qm_EnergyExp(t,regi)..
+*      vm_EnergyExp(t,regi)
+*  =e=
+*      sum(en2en(entySe,entyFe,te),
+*      sum(se2fe(entySe,entyFe,te),
+*      vm_EnergyExp_enty(t,regi,entySe,entyFe,te))
+*;
+
+
+***--------------------------------------------------
+*' Emissions which will generate revenues
+***--------------------------------------------------
+
+* TN: Equations to calculate actual tax revenues
+* summing on all GHG the energy emissions as well as CDR emissions.
+*qm_emiEnergyco2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
+*    vm_emiEnergyco2eqMkt(ttot,regi,emiMkt)
+*  =e=
+*    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
+*    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
+*    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
+*;      
+
+* summing on all Mkt to get the total:
+*qm_emiEnergyco2eq(ttot,regi)$(ttot.val ge cm_startyear)..
+*    vm_emiEnergyco2eq(ttot,regi)
+*    =e=
+*    sum(emiMkt, vm_emiEnergyco2eqMkt(ttot,regi,emiMkt))
+*;
+
+
+* Summing all the non-energy emissions sources coming from FF and industrial processes
+*qm_emiIndus(ttot,regi)$(ttot.val ge cm_startyear)..
+*    vm_emiIndus(ttot,regi)
+*    =e=
+*    vm_emiMacSector(ttot,regi,"co2cement_process")
+*    + sm_tgch4_2_pgc*(vm_emiMacSector(ttot,regi,"ch4coal")+vm_emiMacSector(ttot,regi,"ch4gas")+vm_emiMacSector(ttot,regi,"ch4oil"))
+*    + sm_tgn_2_pgc*(vm_emiMacSector(ttot,regi,"n2otrans")+vm_emiMacSector(ttot,regi,"n2oadac")+vm_emiMacSector(ttot,regi,"n2onitac"))
+*;
+
+* Grouping into a single source of emissions:
+qm_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
+    vm_emitaxredistr(ttot,regi)
+    =e=
+* Summing on all markets energy emissions as well as CDR emissions.
+    sum(emiMkt, 
+    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
+    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
+    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
+   )
+* Plus all non-energy emissions sources coming from FF and industrial processes:
+   	+ vm_emiMacSector(ttot,regi,"co2cement_process")
+    + sm_tgch4_2_pgc*(vm_emiMacSector(ttot,regi,"ch4coal")+vm_emiMacSector(ttot,regi,"ch4gas")+vm_emiMacSector(ttot,regi,"ch4oil"))
+    + sm_tgn_2_pgc*(vm_emiMacSector(ttot,regi,"n2otrans")+vm_emiMacSector(ttot,regi,"n2oadac")+vm_emiMacSector(ttot,regi,"n2onitac"))
+;
+
+
 
 ***To be moved to specific modules---------------------------------------------------------------------------
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.

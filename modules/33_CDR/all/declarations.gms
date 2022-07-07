@@ -31,9 +31,9 @@ v33_DacFEdemand_heat(ttot,all_regi,all_enty)        "DAC FE heat demand [TWa]"
 ;
 
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
-v33_emiDAC(ttot,all_regi)                               "carbon captured from DAC [GtC / a]"
-v33_emiEW(ttot,all_regi)                                "negative CO2 emission from EW [GtC / a]"
+vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC per a]"
+v33_emiDAC(ttot,all_regi)                               "carbon captured from DAC [GtC by a]"
+v33_emiEW(ttot,all_regi)                                "negative CO2 emission from EW [GtC by a]"
 ;
 
 equations
