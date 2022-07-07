@@ -49,10 +49,10 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by editing [`.Rprofile`](../.Rprofile) in both REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment these line by deleting `#` and change the date to today:
+Direct the models to the snapshot you just created above by editing [`.Rprofile`](../.Rprofile) in both REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment these line by deleting `#` and change the date to today (the `_R4` is necessary if you run `R 4.0` or later):
 
 ```bash
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_17"
+# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_17_R4"
 ```
 
 ### What happens during a single coupled run
