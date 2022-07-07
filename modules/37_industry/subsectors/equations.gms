@@ -31,7 +31,13 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
 ;
 
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
-q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
+q37_limit_secondary_steel_share(ttot,regi)$(
+         ttot.val ge cm_startyear
+$ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
+         !! do not limit steel production shares for fixed production
+     AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
+$endif.fixed_production
+                                                                            ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
   =l=
     ( vm_cesIO(ttot,regi,"ue_steel_primary")
