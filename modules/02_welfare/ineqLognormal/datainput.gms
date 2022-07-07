@@ -41,12 +41,50 @@ display p02_ineqTheil;
 * consumption path from base run
 * Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
 * To change: this should be the baseline? so input_bau instead of input_ref
-Execute_Loadpoint 'input_bau' p02_cons_ref = vm_cons.l;
+* TN: not needed in the one-step approach
+* Execute_Loadpoint 'input_bau' p02_cons_ref = vm_cons.l;
 
-* load parameters of the CES (in input)
-Execute_Loadpoint 'input_bau' p02_cesdata_ref=pm_cesdata;
 
-p02_EnergyExp_Add(ttot,regi)=pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,regi,"en","quantity")-p02_cesdata_ref(ttot,regi,"en","price")*p02_cesdata_ref(ttot,regi,"en","quantity");
+* for a baseline:
+p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1)=0;
+p02_taxrev_redistr0_ref(ttot,regi)$(cm_emiscen eq 1)=0;
+v02_taxrev_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
+*p21_taxrev_redistr0(ttot,regi)$(cm_emiscen eq 1)=0;
+
+* In the condition sign
+v02_EnergyExp_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
+v02_energyexpShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
+v02_revShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
+
+* because they are used:
+p02_revShare(ttot,regi)$(cm_emiscen ne 1)=0;
+p02_energyexpShare(ttot,regi)$(cm_emiscen ne 1)=0;
+
+v02_taxrev_Add.l(ttot,regi)$(cm_emiscen ne 1)=0;
+
+vm_EnergyExp.l(ttot,regi)$(cm_emiscen eq 1)=p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1);
+
+*p02_EnergyExp_Add(ttot,regi)=0
+
+* Trying to set a initial price to things, which hopefully will be erased afterwards.
+*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt)$(cm_emiscen eq 1)=0;
+
+* for a policy run:
+
+if ((cm_emiscen ne 1),
+    Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
+    Execute_Loadpoint 'input_bau' p02_prodFe_ref=vm_prodFe.l;
+    Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
+    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_EnergyExp.l;
+    
+*    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_costEnergySys.l;
+
+    
+*    Execute_Loadpoint 'input_bau' p02_FEPrice_ref=pm_FEPrice;
+*    Execute_Loadpoint 'input_bau' p02_demFeSector_ref=vm_demFeSector.l;
+    
+);
+
 
 *p02_relConsLoss(ttot,regi)=0+(p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi))$(p02_cons_ref(ttot,regi) ne 0);
 
@@ -63,8 +101,12 @@ p02_EnergyExp_Add(ttot,regi)=pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,
 * display p02_distrSigma;
 
 * income elasticity of mitigation costs. fixing this to some number for now
-p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 0.5;
-display p02_distrAlpha;
+*p02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear) = 1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi));
+*v02_distrAlpha.l(ttot,regi)$() = p02_distrAlpha(ttot,regi);
+
+*p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 1;
+
+*display p02_distrAlpha;
 
 * TN: income elasticity of tax revenues redistribution. fixing this to some number for now
 p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 1;
@@ -83,15 +125,15 @@ p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 1;
 *v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 * TN
-v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-v02_energyexpShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
+*v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+*v02_energyexpShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
+*v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
 
 * adding initial values for the emissions:
 * they need to be declared because they are in the condition sign
-v02_emiEnergyco2eq.l(ttot,regi)$(ttot.val ge 2005)=vm_co2eq.l(ttot,regi)$(ttot.val ge 2005);
+*v02_emiEnergyco2eq.l(ttot,regi)$(ttot.val ge 2005)=vm_co2eq.l(ttot,regi)$(ttot.val ge 2005);
 *v02_emiEnergyco2eqMkt.l(ttot,regi,emiMkt)$(ttot.val ge 2005)=0;
-v02_emiIndus.l(ttot,regi)$(ttot.val ge 2005)=0;
+*v02_emiIndus.l(ttot,regi)$(ttot.val ge 2005)=0;
 
 
 

@@ -8,6 +8,10 @@
 ***  ---------------------------------------------------------
 ***  Track of changes between iterations
 ***  ---------------------------------------------------------
+* TN
+*p02_energyexpShare(ttot,regi)=max(0,v02_energyexpShare.l(ttot,regi));
+*p02_revShare(ttot,regi)=v02_revShare.l(ttot,regi);
+*p02_distrAlpha(ttot,regi)=v02_distrAlpha.l(ttot,regi);
 
 *GL* calculate mean square deviation from previous tax revenue as metric for convergence of revenue iteration
 p21_deltarev(iteration+1,regi)=sqrt(sum(ttot$(ttot.val ge max(2010,cm_startyear)),sqr(vm_taxrev.l(ttot,regi)*pm_ts(ttot)))/(sum(ttot$(ttot.val ge max(2010,cm_startyear)),1)));
@@ -19,7 +23,7 @@ OPTION decimals =3;
 *JH* !!Warning!! The same allocation block exists in presolve.gms.
 ***                Do not forget to update the other file.
 * TN
-p21_taxrev_redistr0(ttot,regi) = (pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*(v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0);
+*p21_taxrev_redistr0(ttot,regi) = (pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*vm_emitaxredistr.l(ttot,regi)$(vm_emitaxredistr.l(ttot,regi) ge 0);
 p21_taxrevGHG0(ttot,regi) = ( pm_taxCO2eq(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi)) * (vm_co2eq.l(ttot,regi) - vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3));
 p21_taxrevCO2luc0(ttot,regi) = ( pm_taxCO2eq(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi)) * cm_cprice_red_factor * vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3);
 p21_taxrevCCS0(ttot,regi) = cm_frac_CCS * pm_data(regi,"omf","ccsinje") * pm_inco0_t(ttot,regi,"ccsinje") 

@@ -9,8 +9,7 @@
 *'
 *' @description The welfare module enables the implementation of different social welfare functions.
 *###################### R SECTION START (MODULETYPES) ##########################
-$Ifi "%welfare%" == "utilitarian" $include "./modules/02_welfare/utilitarian/realization.gms"
 $Ifi "%welfare%" == "ineqLognormal" $include "./modules/02_welfare/ineqLognormal/realization.gms"
-
+$Ifi "%welfare%" == "utilitarian" $include "./modules/02_welfare/utilitarian/realization.gms"
 *###################### R SECTION END (MODULETYPES) ############################
 *** EOF ./modules/02_welfare/module.gms

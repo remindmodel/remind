@@ -28,8 +28,14 @@ q02_welfare(regi)..
         pm_welf(ttot) * pm_ts(ttot) * (1 / ( (1 + pm_prtp(regi))**(pm_ttot_val(ttot)-2005) ) )
         *   (  (pm_pop(ttot,regi)
                 *   (
-                        ((( (vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
-* BS 2020-03-12 eta = 1 equation to account for inequality
+                        ((((vm_cons(ttot,regi)*exp(-0.5*(1/pm_ies(regi))*v02_distrFinal_sigmaSq_welfare(ttot,regi))*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
+
+
+
+* NT: in the general case welfare = population * u(c_eq)
+* with c_eq=c exp(-0.5 eta sigma^2)
+
+* BS2020-03-12 eta = 1 equation to account for inequality
 * TO DO: also include analytic result for eta != 1
 * first test with parameter -> expect no effect
 *                       + (log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)) - pm_ineqTheil(ttot,regi))$(pm_ies(regi) eq 1)
@@ -39,7 +45,7 @@ q02_welfare(regi)..
 * TN: use the final instead of the New distribution
 * TN: one zero
                         + ( log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi))
-                              - 0.5*v02_distrFinal_sigmaSq(ttot,regi) )$(pm_ies(regi) eq 1)
+                              - 0.5*v02_distrFinal_sigmaSq_welfare(ttot,regi) )$(pm_ies(regi) eq 1)
                     )
                 )
 $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalSolids(ttot,regi)
@@ -47,82 +53,38 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
         )
 ;
 
-
-*BS 2020-03-12: internalization of income distribution effects
-* here I distribute the consumption loss according to my lognormal approach
-
-*BS 2020-03-25 analytical simplification greatly reduces the number of additional equations and variables
-
-* per capita consumption [1000 $]
-* not needed any more, simplified equations are completely independent of the per capita values
-* q02_consPcap(ttot,regi)$(ttot.val ge 2005)..
-*    v02_consPcap(ttot,regi)
-*  =e=
-*    vm_cons(ttot,regi) / pm_pop(ttot,regi)
-*;
-
-* Energy expenditure
-* New way of doing it: using the CES data. see datainput.
-* I am following the way things are aggregated in the balance of FE equation (qm_balFe)
-* Instead of just vm_demFeSector (quantity), I multiply it by the corresponding price to get expenditures
-*q02_EnergyExp_enty(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
-*     v02_EnergyExp_enty(t,regi,entySe,entyFe,te)
-*  =e=
-*     sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
-*     vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(t,regi,entyFe,sector,emiMkt))
-*;
-
-* sum over all combinations of enSe entyFe and te to get the regional total. 
-*q02_EnergyExp(t,regi)..
-*      v02_EnergyExp(t,regi)
-*  =e=
-*      sum(en2en(entySe,entyFe,te),
-*      v02_EnergyExp_enty(t,regi,entySe,entyFe,te))
-*;
-
-* other way to compute energy expenditures is to use the CES function
 *q02_EnergyExp_Add(ttot,regi)..
-*     p02_EnergyExp_Add(ttot,regi)
-*  =e=
-*     pm_cesdata(ttot,regi,"en","price")*pm_cesdata(ttot,regi,"en","quantity")-p02_cesdata_ref(ttot,regi,"en","price")*p02_cesdata_ref(ttot,regi,"en","quantity")
-*;     
+q02_EnergyExp_Add(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_EnergyExp_Add(ttot,regi)
+  =e=
+* Classical difference
+    (vm_EnergyExp(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+
+* With the consumption
+*    (vm_cons(ttot,regi)-p02_cons_ref(ttot,regi))$(cm_emiscen ne 1)
+* Another thing: Q(p-p0) with p the average price of FE.
+*    (vm_EnergyExp(ttot,regi)-sum(se2fe(entySe,entyFe,te),vm_prodFe(ttot,regi,entySe,entyFe,te))/sum(se2fe(entySe,entyFe,te),p02_prodFe_ref(ttot,regi,entySe,entyFe,te)) *p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+
+* energy system costs
+*    (vm_costEnergySys(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+;
 
 * relative consumption loss
-q02_energyexpShare(ttot,regi)$(ttot.val ge 2005)..
+*q02_energyexpShare(ttot,regi)..
+q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_energyexpShare(ttot,regi)
   =e=
-   (p02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi)+p02_EnergyExp_Add(ttot,regi)-p21_taxrev_redistr0(ttot,regi)))
-*    ((p02_cons_ref(ttot,regi)-vm_cons(ttot,regi))/p02_cons_ref(ttot,regi))
-* Computing rather additional energy expenditure as a share of consumption:
-*    p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi)
+*    v02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi)+vm_EnergyExp(ttot,regi))
+* simply divided by conso
+    v02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
+* divided by adjusted conso
+*    (v02_EnergyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
+
+* Other
+*    (p02_EnergyExp_Add(ttot,regi))/(vm_cons(ttot,regi))
+*    v02_EnergyExp_Add(ttot,regi)/(p02_cons_ref(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 ;
 
-* TN: Equations to calculate actual tax revenues
-* summing on all GHG the energy emissions as well as CDR emissions.
-q02_emiEnergyco2eqMkt(ttot,regi,emiMkt)..
-    v02_emiEnergyco2eqMkt(ttot,regi,emiMkt)
-  =e=
-    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
-    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
-    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
-;      
-
-* summing on all Mkt to get the total:
-q02_emiEnergyco2eq(ttot,regi)..
-    v02_emiEnergyco2eq(ttot,regi)
-    =e=
-    sum(emiMkt, v02_emiEnergyco2eqMkt(ttot,regi,emiMkt))
-;
-
-
-* Summing all the non-energy emissions sources coming from FF and industrial processes
-q02_emiIndus(t,regi)..
-    v02_emiIndus(t,regi)
-    =e=
-    vm_emiMacSector(t,regi,"co2cement_process")
-    + sm_tgch4_2_pgc*(vm_emiMacSector(t,regi,"ch4coal")+vm_emiMacSector(t,regi,"ch4gas")+vm_emiMacSector(t,regi,"ch4oil"))
-    + sm_tgn_2_pgc*(vm_emiMacSector(t,regi,"n2otrans")+vm_emiMacSector(t,regi,"n2oadac")+vm_emiMacSector(t,regi,"n2onitac"))
-;
 
 * TN relative tax revenues 
 * expression for the tax levels borrowed from q21_taxrevGHG
@@ -130,18 +92,36 @@ q02_emiIndus(t,regi)..
 * Also make sure that this is a positive value.
 * Later think about how to treat negative emissions.
 
-q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
+*q02_relTaxlevels(ttot,regi)..
+q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_revShare(ttot,regi)
   =e=
-    p21_taxrev_redistr0(ttot,regi)/(vm_cons(ttot,regi)+p02_EnergyExp_Add(ttot,regi)-p21_taxrev_redistr0(ttot,regi))
-*    0+(p21_taxrevGHG0(ttot,regi)/vm_cons(ttot,regi))$(p21_taxrevGHG0(ttot,regi) ge 0)
-*    0+((v02_emiIndus(ttot,regi)+v02_emiEnergyco2eq(ttot,regi))*(pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))/vm_cons(ttot,regi))$((v02_emiIndus.l(ttot,regi)+v02_emiEnergyco2eq.l(ttot,regi)) ge 0)
+* Divided by adjusted conso
+*    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
+* Simply divided by conso
+    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
 ;
 
 
+*q02_taxrev_Add(ttot,regi)..
+q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_taxrev_Add(ttot,regi)
+  =e=
+    ((pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*vm_emitaxredistr(ttot,regi)
+    -p02_taxrev_redistr0_ref(ttot,regi))$(cm_emiscen ne 1)
+;
+
+*q02_distrAlpha(ttot,regi)..
+q02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_distrAlpha(ttot,regi)
+    =e=
+    1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
+*    1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi))
+;
+
 * normalization of cost distribution
 * with the simplified equations this can be removed
-*q02_distrNormalization(ttot,regi)$(ttot.val ge 2005)..
+*q02_distrNormalization(ttot,regi)$(t.val ge 2005)..
 *    v02_distrNormalization(ttot,regi)
 *  =e=
 * simplified equation
@@ -153,7 +133,7 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
 
 * second moment of distribution after subtraction of costs
 * this is now redundant as well
-*q02_distrNew_SecondMom(ttot,regi)$(ttot.val ge 2005)..
+*q02_distrNew_SecondMom(ttot,regi)$(t.val ge 2005)..
 *    v02_distrNew_SecondMom(ttot,regi)
 *  =e=
 * simplified equations
@@ -207,22 +187,110 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge 2005)..
 *  - 2*log((1-p02_relConsLoss(ttot,regi)))
 * original equation
 *    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
+
+
+
+*q02_energyexpShare_cap(ttot,regi)..
+q02_energyexpShare_cap(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_energyexpShare(ttot,regi)
+     =l=
+    0.5
 ;
 
 
-* TN: one-step approximation
-q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
+*q02_budget_first(ttot,regi)..
+q02_budget_first(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_budget_first(ttot,regi)
+     =e=
+*    (1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi)+0.05)
+
+      exp(2*p02_ineqTheil(ttot,regi))
+
+      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
+      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
+      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
+      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
+      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi))
+      
+* minus a epsilon to make sure
+      -0.001
+;
+
+*q02_budget_second(ttot,regi)..
+q02_budget_second(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_budget_second(ttot,regi)
+     =e=
+    (1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)-0.05)
+;
+
+
+* TN: one-step approxitmation
+*q02_distrFinal_sigmaSq(ttot,regi)..
+q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrFinal_sigmaSq(ttot,regi)
   =e=
+  (log( exp(2*p02_ineqTheil(ttot,regi))
+
 * simplified equation
-  log( exp(2*p02_ineqTheil(ttot,regi))
-      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi))
+*       - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi))
+*       + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrAlpha(ttot,regi),2))
+*       )
+*  -2*log(1-v02_energyexpShare(ttot,regi))
+*real equation
+      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
       + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
-      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrAlpha(ttot,regi),2))
+      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
       + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
-      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)))
-      -2*log(1-v02_energyexpShare(ttot,regi)+v02_revShare(ttot,regi))
+      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)))
+      -2*log(1-v02_energyexpShare(ttot,regi)+v02_revShare(ttot,regi)))
+*      *(v02_distrFinal_sigmaSq(ttot,regi)-2*p02_ineqTheil(ttot,regi)+sqrt(sqr(v02_distrFinal_sigmaSq(ttot,regi)-2*p02_ineqTheil(ttot,regi))+sqr(0.001)))/2
+      
+*      +
+*      2*p02_ineqTheil(ttot,regi)*(-v02_distrFinal_sigmaSq(ttot,regi)+2*p02_ineqTheil(ttot,regi)+sqrt(sqr(-v02_distrFinal_sigmaSq(ttot,regi)+2*p02_ineqTheil(ttot,regi))+sqr(0.001)))/2
+      
+* another, even more simplified equation
+
+*    2*p02_ineqTheil(ttot,regi)*power((1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi))/(1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)),2)
+
 ;
+
+
+q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_distrFinal_sigmaSq_welfare(ttot,regi)
+        =e=
+* if there is a limit
+* this should be equal to:
+* sigma if sigma<sigma_limit
+* sigma_limit otherwise
+    (v02_distrFinal_sigmaSq(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(sqr(v02_distrFinal_sigmaSq(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi))+0.00001))/2
+;
+    
+* define the limit sigma
+
+q02_distrFinal_sigmaSq_limit(ttot,regi)$(ttot.val ge cm_startyear)..
+* solution one_ the limit is such that the bottom 40% should not have more than in the baseline
+*    p02_cons_ref(ttot,regi)*(1+errorf((-0.253347-sqrt(p02_ineqTheil(ttot,regi)))/sqrt(2)))
+*    =e=
+*    vm_cons(ttot,regi)*(1+errorf((-0.253347-0.5*v02_distrFinal_sigmaSq_limit(ttot,regi))/sqrt(2)))
+    
+* solution two: the limit is the level of inequality in the baseline
+    v02_distrFinal_sigmaSq_limit(ttot,regi)
+        =e=
+    2*p02_ineqTheil(ttot,regi)
+;
+
+
+q02_distrFinal_sigmaSq_limit2(ttot,regi)$(ttot.val ge cm_startyear)..
+* solution one_ the limit is such that the bottom 40% should not have more than in the baseline
+*    p02_cons_ref(ttot,regi)*(1+errorf((-0.253347-0.5*sqrt(2*p02_ineqTheil(ttot,regi)))/sqrt(2)))
+*    =e=
+*    vm_cons(ttot,regi)*(1+errorf((-0.253347-0.5*sqrt(v02_distrFinal_sigmaSq_limit2(ttot,regi)))/sqrt(2)))
+    p02_cons_ref(ttot,regi)*errorf(-0.253347-0.5*sqrt(2*p02_ineqTheil(ttot,regi)))
+    =e=
+    vm_cons(ttot,regi)*errorf(-0.253347-0.5*sqrt(v02_distrFinal_sigmaSq_limit2(ttot,regi)))
+;   
+
+
 
 
 ***---------------------------------------------------------------------------
