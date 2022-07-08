@@ -203,6 +203,52 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
 ;
 $offtext
 
+$ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
+  Parameter
+    p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
+    !! from FORECAST v1.0_8Gt_Bal.xlsx
+    /
+      2020 . DEU . ue_cement   34.396171
+      2025 . DEU . ue_cement   34.086007
+      2030 . DEU . ue_cement   33.497825
+      2035 . DEU . ue_cement   32.984228
+      2040 . DEU . ue_cement   32.517921
+      2045 . DEU . ue_cement   31.826778
+      2050 . DEU . ue_cement   31.13703
+  
+      2020 . DEU . ue_steel_primary     25.07355
+      2025 . DEU . ue_steel_primary     27.08212
+      2030 . DEU . ue_steel_primary     24.808956
+      2035 . DEU . ue_steel_primary     22.442278
+      2040 . DEU . ue_steel_primary     20.219831
+      2045 . DEU . ue_steel_primary     19.946714
+      2050 . DEU . ue_steel_primary     19.725106
+  
+      2020 . DEU . ue_steel_secondary   10.50795
+      2025 . DEU . ue_steel_secondary   14.288815
+      2030 . DEU . ue_steel_secondary   16.181637
+      2035 . DEU . ue_steel_secondary   18.103032
+      2040 . DEU . ue_steel_secondary   20.168031
+      2045 . DEU . ue_steel_secondary   19.946714
+      2050 . DEU . ue_steel_secondary   19.725106
+    /
+  ;
+  
+  !! convert Mt to Gt
+  p37_industry_quantity_targets(t,regi,in)$(
+                                      p37_industry_quantity_targets(t,regi,in) )
+    = p37_industry_quantity_targets(t,regi,in)
+      !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
+    * 1e-3;
+  
+  !! extend beyond 2050
+  !! FIXME: do this smarter, using something like GDPpC growth or something
+  p37_industry_quantity_targets(t,regi,in)$(
+                                 p37_industry_quantity_targets("2050",regi,in)
+ 	                     AND t.val ge 2050                                 )
+    = p37_industry_quantity_targets("2050",regi,in);
+$endif.bal_scenario
+
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","level")     = 1.5;
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","midperiod") = 2030;
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","width")     = 15;
