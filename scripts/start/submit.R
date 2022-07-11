@@ -73,7 +73,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       file.copy("renv.lock", cfg$results_folder)
 
       createResultsfolderRenv <- function(resultsfolder) {
-        renv::init(resultsfolder, bare = TRUE)
+        # use same snapshot.type so renv::status()$synchronized always uses the same logic
+        renv::init(resultsfolder, bare = TRUE, settings = list(snapshot.type = renv::settings$snapshot.type()))
         renv::restore() # will restore using the renv.lock copied from the main renv
       }
       # init renv in a separate session so the libPaths of the current session remain unchanged
