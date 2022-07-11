@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -23,3 +23,4 @@ cm_bioprod_histlim,input,questionnaire
 cm_BioSupply_Adjust_EU,input,questionnaire
 cm_biolc_tech_phaseout,input,questionnaire
 vm_deltaCap,variable,no needed
+pm_pebiolc_demandmag,parameter,not needed

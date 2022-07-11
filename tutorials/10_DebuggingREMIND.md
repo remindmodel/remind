@@ -16,7 +16,7 @@ Case 1: REMIND did not start
 
 The first place to look is `log.txt` in the output subfolder for each run. It shows you the log of running [`prepare_and_run.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepare_and_run.R). If it states "Starting REMIND..." somewhere, this shows that the input preparation scripts were successful. If not, this can be caused by the following reasons:
 
-- the model remains locked? start `vi .lock` in the REMIND folder and carefully delete (with `dd`, then save with `:w`) the lines of older runs that may still be present there because you killed these runs.
+- the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
 - because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](4_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
 - input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn't help, the input generation may be broken.
 - you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.

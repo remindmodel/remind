@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -353,7 +353,8 @@ parameters
   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
   c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
-  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on pegas in Germany from 2020 to 2050"
+  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
+  cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -532,6 +533,8 @@ $setGlobal cm_import_EU  off !! def off
 $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
+*** switch for ariadne policy assumptions for Germany
+$setGlobal cm_Ger_Pol  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8

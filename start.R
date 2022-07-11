@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -34,6 +34,8 @@ helpText <- "
 #'              reduced convergence criteria for testing the full model.
 #'
 #' --reprepare, -R: rewrite full.gms and restart run
+#'
+#' --reset, -0: reset main.gms to default.cfg and exit
 #'
 #' --restart, -r: interactively restart run(s)
 #'
@@ -252,7 +254,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
+accepted <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart",
+              R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 
 # search for strings that look like -i1asrR and transform them into long flags
 onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
@@ -282,6 +285,19 @@ if ("--help" %in% argv) {
   q()
 }
 
+if ("--reset" %in% argv) {
+  source("./config/default.cfg")
+  cfg$gms$c_expname <- cfg$title
+  cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  lock_id <- gms::model_lock(timeout1 = 0.2)
+  on.exit(gms::model_unlock(lock_id))
+  lucode2::manipulateConfig("main.gms", cfg$gms)
+  message("Settings in main.gms were reset to values specified in config/default.cfg.")
+  gms::model_unlock(lock_id)
+  on.exit()
+  q()
+}
+
 if (any(c("--testOneRegi", "--debug", "--quick") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
   message("\nIt is impossible to combine --restart with --debug, --quick or --testOneRegi because full.gms has to be rewritten.\n",
   "If this is what you want, use --reprepare instead, or answer with y:")
@@ -298,7 +314,7 @@ modeltestRunsUsed <- 0
 testOneRegi_region <- ""
 
 # Save whether model is locked before runs are started
-model_was_locked <- file.exists(".lock")
+model_was_locked <- if (exists("is_model_locked")) is_model_locked() else file.exists(".lock")
 
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
@@ -531,5 +547,5 @@ message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are 
 if ('--test' %in% argv) {
   message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% argv | "--reprepare" %in% argv)) {
-  message("The file .lock existed before runs were started, so they will have to queue.")
+  message("The model was locked before runs were started, so they will have to queue.")
 }

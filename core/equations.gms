@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -212,7 +212,9 @@ q_transSe2se(t,regi,se2se(enty,enty2,te))..
 qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
-  sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
+  )
 ; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
@@ -325,6 +327,18 @@ q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
     =e=
     vm_cap(t,regi,te,"1")
+;
+
+
+***---------------------------------------------------------------------------
+*' Calculation of total primary to secondary energy capacities 
+*' Used for comfortably setting bounds on total capacity without technology differentiation.
+***--------------------------------------------------------------------------
+q_capTotal(t,regi,entyPe,entySe)$( capTotal(entyPe,entySe))..
+  vm_capTotal(t,regi,entyPe,entySe)
+  =e=
+  sum( pe2se(entyPe, entySe, te), 
+    vm_cap(t,regi,te,"1"))
 ;
 
 ***---------------------------------------------------------------------------
@@ -613,7 +627,10 @@ vm_emiCO2Sector(t,regi,sector)
 *' percentage of abated emissions as a function of the costs. 
 *' Baseline emissions are obtained by three different methods: by source (via emission factors),
 *' by econometric estimate, and exogenous. Emissions are calculated as
-*' baseline emissions times (1 - relative emission reduction). 
+*' baseline emissions times (1 - relative emission reduction).
+*' If coupled to MAgPIE pm_macBaseMagpie contains all N2O landuse emissions including n2o from biomass production
+*' and p_efFossilFuelExtr(regi,"pebiolc","n2obio") is zero then. If running standalone 
+*' pm_macBaseMagpie does not include n2o from biomass but it is added here.
 *' In case of CO2 from landuse (co2luc), emissions can be negative. 
 *' To treat these emissions in the same framework, we subtract the minimal emission level from
 *' baseline emissions. This shift factor is then added again when calculating total emissions.

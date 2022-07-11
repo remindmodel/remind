@@ -1,3 +1,9 @@
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
 name,type,reason
 sm_DpGJ_2_TDpTWa,input,questionnaire
 sm_tgn_2_pgc,input,questionnaire
@@ -48,3 +54,5 @@ cm_startyear,input,questionnaire
 pm_eta_conv,input,questionnaire
 cm_EnSecScen,input,questionnaire
 pm_tau_pe_tax,input,questionnaire
+cm_Ger_Pol,input,questionnaire
+vm_capTotal,input,questionnaire

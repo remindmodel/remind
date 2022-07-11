@@ -6,6 +6,9 @@
 # 2: Use a "!" at the start, to explicitly NOT ignore a pattern
 # !!!
 
+# Ignore model lock file
+.lock
+
 # Ignore files that end with ".un~", ".swp" or ".pdf"
 *.un~
 *.swp

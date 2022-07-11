@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -375,18 +375,21 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
       ),
       p_macLevFree(ttot,regi,enty)
 	);
-  
 
-loop(regi,
-     loop(ttot$(ttot.val ge 2015),
-           loop(enty(MacSector),
-              if ((pm_macAbatLev(ttot,regi,enty) > (pm_macAbatLev(ttot-1,regi,enty) + s_macChange * pm_ts(ttot))),
-             pm_macAbatLev(ttot,regi,enty) = pm_macAbatLev(ttot-1,regi,enty) + s_macChange * pm_ts(ttot);
-              );
-            );
-        );
+*** Limit MAC abatement level increase to 5 % p.a., or 2 % p.a. for cement
+*** before 2050
+pm_macAbatLev(ttot,regi,MACsector(enty))$( ttot.val ge 2015 )
+  = min(
+      pm_macAbatLev(ttot,regi,enty),
+      ( pm_macAbatLev(ttot-1,regi,enty)
+      + ( ( s_macChange$( NOT sameas(enty,"co2cement") OR  ttot.val gt 2050 )
+          + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
+	  )
+        * pm_ts(ttot)
+	)
+      )
     );
-
+  
 
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
