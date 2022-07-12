@@ -39,7 +39,7 @@ activateSnapshot <- function(snapshot) {
 # Snapshots must be compatible to the R version used. If you are using R 4.1
 # make sure the selected snapshot's name ends with '_R4'.
 
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_31_R4"
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_07_R4"
 # snapshot <- latestSnapshot
 
 if (exists("snapshot")) {
