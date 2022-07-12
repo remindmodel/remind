@@ -110,6 +110,37 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
     );
 );
 
+
+*** Specific energy demand limits for other industry and chemicals in TWa/trUSD
+*** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
+sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value 
+sm_tmp  = 2100;   !! period in which closing could be achieved
+
+loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
+      )
+    )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)));
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
+);
+
+display p37_energy_limit_slope;
+
+
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
 pm_macSwitch(emiInd37)      = NO;
