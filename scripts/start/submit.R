@@ -20,7 +20,6 @@
 ############## Define function: submit #########################
 
 submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
-  
   if(!restart) {
     # Generate name of output folder and create the folder
     date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -48,29 +47,42 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     if (is.null(renv::project())) {
       warning("No active renv project found, not using renv.")
     } else {
-      if (!renv::status()$synchronized) {
-        message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
-                "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
-        if (tolower(gms::getLine()) %in% c("y", "")) {
-          renv::snapshot(prompt = FALSE)
+      # the following is FALSE if we are starting a subsequent run in a cascade -> renv checks/updates are skipped
+      if (normalizePath(renv::project()) == normalizePath(here::here())) {
+        if (!renv::status()$synchronized) {
+          message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
+                  "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
+          if (tolower(gms::getLine()) %in% c("y", "")) {
+            renv::snapshot(prompt = FALSE)
+          }
+        }
+
+        if (getOption("autoRenvUpdates", TRUE)) { # TODO put this setting into untracked config file
+          source("scripts/utils/updateRenv.R")
+        } else {
+          packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
+          pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
+          installed <- utils::installed.packages()
+          outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
+          if (!is.null(outdatedPackages)) {
+            message("The following PIK packages can be updated:\n",
+                    paste("-", outdatedPackages[, "Package"], ":",
+                          outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
+                          collapse = "\n"),
+                    "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
+          }
         }
       }
-      if (getOption("autoRenvUpdates", TRUE)) { # TODO put this setting into untracked config file
-        source("scripts/utils/updateRenv.R")
-      } else {
-        packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-        pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
-        installed <- utils::installed.packages()
-        outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
-        if (!is.null(outdatedPackages)) {
-          message("The following PIK packages can be updated:\n",
-                  paste("-", outdatedPackages[, "Package"], ":",
-                        outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
-                        collapse = "\n"),
-                  "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
-        }
-      }
-      file.copy("renv.lock", cfg$results_folder)
+
+      # renv::paths$lockfile() belongs to the run renv and not the main renv when starting subsequent runs
+      file.copy(renv::paths$lockfile(), cfg$results_folder)
+
+      # copy renv package installation itself, would require internet otherwise, cannot load renv from cache
+      renvPath <- file.path(.libPaths()[[1]], "renv")
+      stopifnot(`could not find renv installation` = dir.exists(renvPath))
+      copyTarget <- file.path(cfg$results_folder, sub(renv::project(), "", .libPaths()[[1]]))
+      dir.create(copyTarget, recursive = TRUE)
+      file.copy(renvPath, copyTarget, recursive = TRUE)
 
       createResultsfolderRenv <- function(resultsfolder) {
         # use same snapshot.type so renv::status()$synchronized always uses the same logic
