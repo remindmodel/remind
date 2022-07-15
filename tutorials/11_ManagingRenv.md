@@ -1,2 +1,60 @@
-# Overview
-REMIND uses the [renv](https://rstudio.github.io/renv/) package for package management. When starting an R session or script from the REMIND folder the corresponding renv is automatically activated, and packages are installed to and loaded from the renv subfolder instead of the global package library. This isolation means that updates in the global package library do not affect REMIND which is especially important on multi-user systems where packages may be loaded by some users while others are updating these packages. In such a situation the loaded packages are no longer valid and R crashes. Another advantage of renv is that it documents exactly which packages are currently installed, and it makes it easy to go back to a previous package configuration via `renv.lock` files.
+# basics
+REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R packages. When starting R from the REMIND folder the corresponding renv is automatically activated. This means that packages are installed to and loaded from the renv subfolder instead of the usual package library. Thus updates in the global package library do not affect REMIND which is especially important on multi-user systems where packages may be loaded by some users while others are updating these packages. In such a situation the loaded packages are no longer valid and R crashes. Another advantage of renv is that it documents exactly which packages are currently installed, and it makes it easy to go back to a previous package configuration via `renv.lock` files.
+
+## REMIND renv structure
+### main renv
+- used when starting R in main folder, e.g. `Rscript output.R`
+- modify via scripts, see below
+
+### run renv
+- each run has its own run renv
+- standalone run: main renv is updated (unless disabled via `options(autoRenvUpdates = FALSE)`) and copied to run folder
+- cascade/subsequent runs: renv from the previous run is copied -> all runs in a cascade use the same renv
+- run renv is used for the run itself and automatic post-processing
+- run renvs should ensure reproducibility, so they must never change
+
+## scripts
+### updateRenv
+- path: scripts/utils/updateRenv.R
+- updates all pik-piam packages in main renv
+- copies new renv.lock to archive
+
+### restoreRenv
+- path: scripts/utils/restoreRenv.R
+- resets main renv to earlier state recorded in renv.lock file from the archive
+
+# advanced
+## renv files
+### renv.lock
+- text file which lists for each installed package:
+	- version
+	- source repo (CRAN, GitHub, ...)
+- any renv can be reset to state described in renv.lock
+
+### .Rprofile
+- sourced whenever R is started in the same folder as the .Rprofile
+- activates the corresponding renv
+
+### renv folder
+- renv settings
+- actual package library
+
+## renv.lock archive
+### archive folder
+- renv.lock is copied here after updating packages
+- restore renv.lock using restoreRenv script
+
+### archiveRenv
+- path: scripts/utils/archiveRenv.R
+- copies timestamp-renamed main renv.lock to archive
+- only need to run this manually after using renv functions directly, see below
+
+## renv functions
+The scripts explained earlier should cover all common tasks, use the following for more control.
+- `renv::restore(lockfile = "path/to/renv.lock")` reset renv to state described in lockfile
+- `renv::install("package@2.3.4")` install specific package version
+- `renv::install("githubuser/package", ref = "<commit hash>")` install package from GitHub, optionally provide commit hash
+- `renv::remove("package")` uninstall package
+- `renv::status()` show differences between renv and renv.lock
+- `renv::snapshot()` write state of renv to renv.lock, use after (un)installing packages
+- renv documentation: https://rstudio.github.io/renv/
