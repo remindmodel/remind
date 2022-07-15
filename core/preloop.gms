@@ -148,8 +148,7 @@ pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4")
 *** Hotfix: Disable the subtraction of baseline bioenergy N2O emissions, since somehow this
 *** may lead to negative values.
 *** pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(t,regi));
-pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin");
-display pm_macBaseMagpie;
+display pm_macBaseMagpie, pm_pebiolc_demandmag;
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;
