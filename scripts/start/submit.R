@@ -48,7 +48,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       warning("No active renv project found, not using renv.")
     } else {
       # the following is FALSE if we are starting a subsequent run in a cascade -> renv checks/updates are skipped
-      if (normalizePath(renv::project()) == normalizePath(here::here())) {
+      if (normalizePath(renv::project()) == normalizePath(".")) {
         if (!renv::status()$synchronized) {
           message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
                   "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
@@ -57,7 +57,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
           }
         }
 
-        if (getOption("autoRenvUpdates", TRUE)) { # TODO put this setting into untracked config file
+        if (getOption("autoRenvUpdates", TRUE)) {
           source("scripts/utils/updateRenv.R")
         } else {
           packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"

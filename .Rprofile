@@ -8,5 +8,5 @@ if (file.exists("~/.Rprofile")) {
 }
 
 if (!"https://pik-piam.r-universe.dev" %in% getOption("repos")) {
-  options(repos = c(getOption("repos"), pikpiam = "https://pik-piam.r-universe.dev"))
+  options(repos = c(getOption("repos"), "https://pik-piam.r-universe.dev"))
 }
