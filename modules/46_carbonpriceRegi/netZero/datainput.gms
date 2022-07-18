@@ -66,12 +66,34 @@ pm_taxCO2eqRegi("2085",nz_reg2070)=15;
 pm_taxCO2eqRegi("2090",nz_reg2070)=10;
 pm_taxCO2eqRegi("2095",nz_reg2070)=5;
 
+*** profile for countries with 2080 target
+pm_taxCO2eqRegi("2035",nz_reg2080)=2;
+pm_taxCO2eqRegi("2040",nz_reg2080)=4;
+pm_taxCO2eqRegi("2045",nz_reg2080)=7;
+pm_taxCO2eqRegi("2050",nz_reg2080)=10;
+pm_taxCO2eqRegi("2055",nz_reg2080)=13;
+pm_taxCO2eqRegi("2060",nz_reg2080)=16;
+pm_taxCO2eqRegi("2065",nz_reg2080)=19;
+pm_taxCO2eqRegi("2070",nz_reg2080)=22;
+pm_taxCO2eqRegi("2075",nz_reg2080)=25;
+pm_taxCO2eqRegi("2080",nz_reg2080)=28;
+pm_taxCO2eqRegi("2085",nz_reg2080)=21;
+pm_taxCO2eqRegi("2090",nz_reg2080)=14;
+pm_taxCO2eqRegi("2095",nz_reg2080)=7;
+
 ***rescale
 pm_taxCO2eqRegi(ttot,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(ttot,regi);
 
 ***initialize parameter
 p46_taxCO2eqRegiLast(t,regi) = 0;
 p46_taxCO2eqLast(t,regi)     = 0;
+
+***define offsets
+p46_offset(all_regi) = 0;
+$ifthen.cm_netZeroScen "%cm_netZeroScen%" == "ENGAGE4p5_GlP_nooooo"
+p46_offset(nz_reg)$(sameas(nz_reg, "EUR")) = 100;
+p46_offset(nz_reg)$(sameas(nz_reg, "SSA")) = 2000;
+$endif.cm_netZeroScen
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
 

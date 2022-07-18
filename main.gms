@@ -283,6 +283,7 @@ parameters
   cm_iterative_target_adj   "whether or not a tax or a budget target should be iteratively adjusted depending on actual emission or forcing level"
   cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
   cm_NDC_divergentScenario  "choose scenario about convergence of CO2eq prices in NDC realization of module 45_carbonprice"
+  cm_netZeroScen            "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
   cm_gdximport_target       "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
   cm_LimRock                "limit amount of rock spread each year [Gt]"
@@ -445,6 +446,7 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 $setglobal cm_NDC_version  2022_cond    !! def = 2022_cond
 cm_NDC_divergentScenario = 0;           !! def = 0
+$setglobal cm_netZeroScen  NGFS2022   !! def = NGFS2022
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
