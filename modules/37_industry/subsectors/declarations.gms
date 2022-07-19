@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -13,6 +13,7 @@ Scalar
 Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2005]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
+  p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
   p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"                                         
   pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"                               
   pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market"   
@@ -29,6 +30,8 @@ Parameters
   p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)                "testing parameter Ind FE Balance right-hand side feedstock term"
   p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                                "energy demand co2 emissions with non-energy correction"
   p37_EmiEnDemand(ttot,all_regi)                                          "energy demand co2 emissions without non-energy correction"
+  p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
+  p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                

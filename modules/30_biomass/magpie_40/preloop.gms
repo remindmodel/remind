@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -36,7 +36,7 @@ model_biopresolve_c /q30_pebiolc_costs/
 ***------------ Step 1: Fix fuelex to MAgPIE demand -------------
 *** BEFORE calculation: Regular emulator equations are applied to calculate costs and prices. Therefore set demand (fuelex) in
 *** the emulator equations for price and costs to demand from MAgPIE reporting
-vm_fuExtr.fx(ttot,regi,"pebiolc","1") = p30_pebiolc_demandmag(ttot,regi);
+vm_fuExtr.fx(ttot,regi,"pebiolc","1") = pm_pebiolc_demandmag(ttot,regi);
 
 *** Shift factors only have to be calculateed if REMIND is run coupled to MAgPIE, else they are set to 1
 *** ============================================================
@@ -111,7 +111,7 @@ display p30_pebiolc_costs_emu_preloop;
 vm_fuExtr.lo(ttot,regi,"pebiolc","1") = 0;
 vm_fuExtr.up(ttot,regi,"pebiolc","1") = inf;
 *** Provide start values for fuelex
-vm_fuExtr.l(ttot,regi,"pebiolc","1")  = p30_pebiolc_demandmag(ttot,regi);
+vm_fuExtr.l(ttot,regi,"pebiolc","1")  = pm_pebiolc_demandmag(ttot,regi);
 
 ***-------------------------------------------------------------
 ***  END: calculate shift factors

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -114,10 +114,12 @@ if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"igccc",rlf)        = 0;
   vm_cap.fx(t,regi_capturescen,"coalftcrec",rlf)   = 0;
   vm_cap.fx(t,regi_capturescen,"coalh2c",rlf)      = 0;
+  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
   vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
   vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
 elseif (cm_ccapturescen eq 3),  !! no bio carbon capture:
+  vm_cap.fx(t,regi_capturescen,"biogasc",rlf)      = 0;
   vm_cap.fx(t,regi_capturescen,"bioftcrec",rlf)    = 0;
   vm_cap.fx(t,regi_capturescen,"bioh2c",rlf)       = 0;
   vm_cap.fx(t,regi_capturescen,"bioigccc",rlf)     = 0;
@@ -149,6 +151,7 @@ if (c_bioh2scen eq 0, !! no bioh2 technologies
 
 *NB* controlling for readyness of advanced bio-energy technologies (introduced for EMF33)
 if(c_abtrdy gt 2010,
+  vm_deltaCap.up(t,regi,"biogasc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)       = 1.0e-6;
   vm_deltaCap.up(t,regi,"bioigcc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 1.0e-6;
@@ -166,6 +169,7 @@ if(c_abtrdy gt 2010,
 );
 
 *NB* controlling for investment cost of advance bio-energy technologies (introduced for EMF33)
+pm_data(regi, "inco0","biogasc")   = c_abtcst * pm_data(regi, "inco0","biogasc");
 pm_data(regi, "inco0","bioftrec")  = c_abtcst * pm_data(regi, "inco0","bioftrec");
 pm_data(regi, "inco0","bioh2")     = c_abtcst * pm_data(regi, "inco0","bioh2");
 pm_data(regi, "inco0","bioigcc")   = c_abtcst * pm_data(regi, "inco0","bioigcc");

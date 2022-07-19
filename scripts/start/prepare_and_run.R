@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,7 +55,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out[which(out<0)] <- 0 # set negative values to zero since they cause errors in GMAS power function
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
-    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_demandmag_coupling.csv"),file_type="csvr")
+    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"),file_type="csvr")
   }
   .emissions_mac <- function(mag) {
     # define three columns of dataframe:
@@ -291,7 +291,7 @@ prepare <- function() {
 
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
-  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  lock_id <- model_lock(timeout1 = 1)
   on.exit() # set the commands when exiting in the correct order
   on.exit(model_unlock(lock_id),add=TRUE)
   on.exit(setwd(cfg$results_folder),add=TRUE)
@@ -894,7 +894,7 @@ run <- function(start_subsequent_runs = TRUE) {
   if (cfg$gms$CES_parameters == "load") {
 
     system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
-                  " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
+                  " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
 
   } else if (cfg$gms$CES_parameters == "calibrate") {
 
@@ -913,7 +913,7 @@ run <- function(start_subsequent_runs = TRUE) {
                     "\\).*/\\1", cal_itr, "/' full.gms"))
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
-                    " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
+                    " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
 
       # If GAMS found a solution
       if (   file.exists("fulldata.gdx")
