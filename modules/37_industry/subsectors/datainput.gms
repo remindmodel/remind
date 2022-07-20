@@ -438,4 +438,10 @@ execute_load "input_ref.gdx", vm_demFEsector;
     );
 );
 
+
+
+*** FS: maximum share of biomass use in industry subsector
+*** set to prevent too fast or technically unrealistic switch to biomass in industry subsectors
+p37_BioShareMaxSubsec(t,regi,entyFe,secInd37)=1;
+
 *** EOF ./modules/37_industry/subsectors/datainput.gms
