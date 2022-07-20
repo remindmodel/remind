@@ -214,7 +214,7 @@ if (comp == "Exit") {
   }
 
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2")
+  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2", "xlsx_IIASA")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
