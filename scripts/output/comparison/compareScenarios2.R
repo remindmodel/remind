@@ -16,10 +16,9 @@ chooseFromSequence <- function(sequence, title, default) {
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
   }
-  if (length(ids) == 0) {
-    return(default)
-  }
-  return(sequence[ids])
+  chosenElements <- if (length(ids) == 0) default else sequence[ids]
+  cat("\nchosen elements:", paste(chosenElements, collapse=", "))
+  return(chosenElements)
 }
 
 # cs2 profiles
