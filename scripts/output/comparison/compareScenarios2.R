@@ -11,7 +11,7 @@ chooseFromSequence <- function(sequence, title, default) {
   cat("\n\n", title, "\n\n")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  input <- readline()
+  input <- get_line()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
