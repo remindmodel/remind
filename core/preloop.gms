@@ -92,31 +92,55 @@ if(cm_iterative_target_adj eq 9,
 
 display p_taxCO2eq_until2150, pm_taxCO2eq;
 
+
+*** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
+*** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
+*** in q_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)
+*** from the exogenous emission baseline read from MAgPIE, since the baseline already implicitly 
+*** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
+*** emissions resulting from the actual biomass demand in REMIND are then added again. 
+*** In case some inconsistencies between pm_pebiolc_demandmag and pm_macBaseMagpie lead to
+*** negative values, set the value to 0 instead, since negative values may lead to 
+*** infeasibilities.
+display pm_macBaseMagpie;
+pm_macBaseMagpie(t,regi,"n2ofertin") = max(0, pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(t,regi)));
+display pm_macBaseMagpie;
+
+
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
+*** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
+*** data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more).
+*** This involves different emission variables in pm_macBaseMagpie and
+*** additionall agwaste variables from p_macBaseExo
+display p_macBaseExo;
 
-*re-scale MAgPie reference emissions to be inline with eurostat data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more)
-display pm_macBaseMagpie;
-loop(enty$(sameas(enty,"ch4rice") OR sameas(enty,"ch4animals") OR sameas(enty,"ch4anmlwst")),
-  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"ch4","agriculture","process") AND (ttot.val ge 2005)) =
-   pm_macBaseMagpie(ttot,regi,enty) *
-    ( (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
-      /
-      (sum(enty2$(sameas(enty2,"ch4rice") OR sameas(enty2,"ch4animals") OR sameas(enty2,"ch4anmlwst")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"ch4agwaste"))
-    )
-  ;
-);
-loop(enty$(sameas(enty,"n2ofertin") OR sameas(enty,"n2ofertcr") OR sameas(enty,"n2oanwstc") OR sameas(enty,"n2oanwstm") OR sameas(enty,"n2oanwstp")),
-  pm_macBaseMagpie(ttot,regi,enty)$(p_histEmiSector("2005",regi,"n2o","agriculture","process") AND (ttot.val ge 2005)) =
-    pm_macBaseMagpie(ttot,regi,enty) *
-    ( p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions)
-* eurostat uses 298 to convert N2O to CO2eq
-      /
-      (sum(enty2$(sameas(enty,"n2ofertin") OR sameas(enty2,"n2ofertcr") OR sameas(enty2,"n2oanwstc") OR sameas(enty2,"n2oanwstm") OR sameas(enty2,"n2oanwstp")), pm_macBaseMagpie("2005",regi,enty2)) + p_macBaseExo("2005",regi,"n2oagwaste"))
-    )
-  ;
-);
-display pm_macBaseMagpie;
+*** Define rescale factor for MAgPIE CH4 emissions
+p_aux_scaleEmiHistorical_ch4(regi)$p_histEmiSector("2005",regi,"ch4","agriculture","process") =
+  (p_histEmiSector("2005",regi,"ch4","agriculture","process")+p_histEmiSector("2005",regi,"ch4","lulucf","process")) !!no rescaling needed - REMIND-internal unit is Mt CH4
+    /
+  (sum(enty$emiMacMagpieCH4(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"ch4agwaste"));
+*** Rescale CH4 emissions so that all subtypes add up to the historic values
+*** pm_macBaseMagpie
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi) AND emiMacMagpieCH4(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_ch4(regi);
+*** p_macBaseExo
+p_macBaseExo(ttot,regi,"ch4agwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_ch4(regi)) =
+  p_macBaseExo(ttot,regi,"ch4agwaste") * p_aux_scaleEmiHistorical_ch4(regi);
 
+*** Define rescale factor for MAgPIE N2O emissions
+p_aux_scaleEmiHistorical_n2o(regi)$p_histEmiSector("2005",regi,"n2o","agriculture","process") =
+  p_histEmiSector("2005",regi,"n2o","agriculture","process")/( 44 / 28) !! rescaling to Mt N (internal unit for N2O emissions), since eurostat uses 298 to convert N2O to CO2eq
+    /
+  (sum(enty$emiMacMagpieN2O(enty), pm_macBaseMagpie("2005",regi,enty)) + p_macBaseExo("2005",regi,"n2oagwaste"));
+*** Rescale N2O emissions so that all subtypes add up to the historic values
+*** pm_macBaseMagpie
+pm_macBaseMagpie(ttot,regi,enty)$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi) AND emiMacMagpieN2O(enty)) =
+  pm_macBaseMagpie(ttot,regi,enty) * p_aux_scaleEmiHistorical_n2o(regi);
+*** p_macBaseExo
+p_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHistorical_n2o(regi)) =
+  p_macBaseExo(ttot,regi,"n2oagwaste") * p_aux_scaleEmiHistorical_n2o(regi);
+
+display pm_macBaseMagpie;
 $ENDIF.scaleEmiHist
 
 *** FS: calculate total bioenregy primary energy demand from last iteration
@@ -138,17 +162,6 @@ p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
   
-*** The N2O emissions generated during biomass production in agriculture (in MAgPIE)
-*** are represented in REMIND by applying the n2obio emission factor (zero in coupled runs)
-*** in q_macBase. In standaolne runs the resulting emissions need to be subtracted (see below)
-*** from the exogenous emission baseline read from MAgPIE, since the baseline already implicitly 
-*** includes the N2O emissions from biomass. In q_macBase in core/equations.gms the N2O 
-*** emissions resulting from the actual biomass demand in REMIND are then added again. 
-
-*** Hotfix: Disable the subtraction of baseline bioenergy N2O emissions, since somehow this
-*** may lead to negative values.
-*** pm_macBaseMagpie(t,regi,"n2ofertin") = pm_macBaseMagpie(t,regi,"n2ofertin") - (p_efFossilFuelExtr(regi,"pebiolc","n2obio") * pm_pebiolc_demandmag(t,regi));
-display pm_macBaseMagpie, pm_pebiolc_demandmag;
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
 option limrow = 70;
