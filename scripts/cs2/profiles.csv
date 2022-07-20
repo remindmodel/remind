@@ -1,18 +1,18 @@
+# Profiles for cs2 (compareScenarios2);;;;;;;;;;;;;;;;;;;;
+# Lines that start with a hashtag are comments.;;;;;;;;;;;;;;;;;;;;
+# The column 'name' identifies the profile.;;;;;;;;;;;;;;;;;;;;
+# The other columns are arguments to remind2::compareScenarios2(). See the R help page of this function for the meaning of the arguments.;;;;;;;;;;;;;;;;;;;;
+# The values in the cells are evaluated as R-code. They are not quoted (no single or double quotes at beginning and end unless the value should be a string, in this case use single quotes). Make sure that this format is still valid after changing this file!;;;;;;;;;;;;;;;;;;;;
+# These R expressions may contain a variable named '.'. It refers to the default value of the variable as defined in scripts/utils/run_compareScenarios2.R.;;;;;;;;;;;;;;;;;;;;
+# Leave a cell empty to not change the corresponding argument.;;;;;;;;;;;;;;;;;;;;
 name;mifScen;mifHist;outputDir;outputFile;outputFormat;envir;cfgScen;cfgDefault;yearsScen;yearsHist;yearsBarPlot;yearRef;reg;modelsHistExclude;sections;userSectionPath;mainReg;figWidth;figHeight;warning
-# Profiles for cs2 (compareScenarios2)
-# Lines that start with a hashtag are comments.
-# The column name identifies the profile.
-# The other columns are arguments to remind2::compareScenarios2(). See the R help page of this function for the meaning of the arguments.
-# The values in the cells are evaluated as R-code. They are not quoted (no " at beginning and end unless the value should be a string). Make sure that this format is still valid after changing this file!
-# These R expressions may contain a variable named ".". It refers to the default value of the variable as defined in scripts/utils/run_compareScenarios2.R.
-# Leave a cell empty to not change the corresponding argument.
-# default: The default profile.
+# default: The default profile.;;;;;;;;;;;;;;;;;;;;
 default;;;;;;;;;;;;;;;;;;;;
-defaultHTML;;;;;"html";;;;;;;;;;;;;;;
-# short: The default profile but only until 2050.
+defaultHTML;;;;;'html';;;;;;;;;;;;;;;
+# short: The default profile but only until 2050.;;;;;;;;;;;;;;;;;;;;
 short;;;;;;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;;;;;;;
-shortHTML;;;;;"html";;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;;;;;;;
-# AriadneDEU: years until 2050, DEU as main region
-AriadneDEU;;;;paste0(., "-Ariadne");;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;c("IEA ETP B2DS", "IEA ETP 2DS", "IEA ETP RTS", "EDGE_SSP1", "EDGE_SSP2", "CEDS", "IRENA", "IEA WEO 2021 APS", "IEA WEO 2021 SDS", "IEA WEO 2021 SPS");;;"DEU";;;
-# summary: show only the summary chapter
-summary;;;;paste0(., "-Summary");;;;;;;;;;;c(0,1,99);;;;;
+shortHTML;;;;;'html';;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;;;;;;;
+# AriadneDEU: years until 2050, DEU as main region;;;;;;;;;;;;;;;;;;;;
+AriadneDEU;;;;paste0(., '-Ariadne');;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS');;;'DEU';;;
+# summary: show only the summary chapter;;;;;;;;;;;;;;;;;;;;
+summary;;;;paste0(., '-Summary');;;;;;;;;;;c(0,1,99);;;;;
