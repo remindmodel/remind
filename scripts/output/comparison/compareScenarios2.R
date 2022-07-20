@@ -13,14 +13,14 @@ chooseFromSequence <- function(sequence, title, default) {
     "Leave empty for: ", paste(default, collapse=", "), ".\n\n", 
     sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
-  cat("\nNumbers, e.g, '1', '2,4', '3:5', ...\n: ")
+  cat("\nNumbers, e.g, '1', '2,4', '3:5', ...:\n")
   input <- get_line()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
   }
   chosenElements <- if (length(ids) == 0) default else sequence[ids]
-  cat("\nchosen elements:\n", paste(chosenElements, collapse="\n"), "\n\n")
+  cat("\nchosen elements:\n  ", paste(chosenElements, collapse="\n  "), "\n\n")
   return(chosenElements)
 }
 
