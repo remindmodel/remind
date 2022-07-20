@@ -10,33 +10,37 @@ library(remind2)
 if (!exists("source_include")) {
   modelsHistExclude <- c()
   profile <- ""
-  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude", "profileName")
+  readArgs("outputdirs", "outfilename", "regionList", "mainRegName", "profileName")
 }
 
 run_compareScenarios2 <- function(
   outputdirs, 
-  shortTerm, 
   outfilename, 
   regionList, 
   mainRegName, 
-  modelsHistExclude, 
   profileName
 ) {
 
-  scenNames <- getScenNames(outputdirs)
-  # for non-absolute paths, add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
-  outputdirs <- ifelse(substr(outputdirs,1,1) == "/", outputdirs, file.path("..", outputdirs))
-  mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
-  mif_path_polCosts  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
-  hist_path <- file.path(outputdirs[1], "historical.mif")
-  scen_config_path  <- file.path(outputdirs, "config.Rdata")
-  default_config_path  <- file.path("..", "config", "default.cfg")
   profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
   profiles <- read.delim(
     profilesFilePath, 
     header = TRUE, 
     sep = ";",
-    colClasses = "character")
+    colClasses = "character",
+    comment.char = "#",
+    quote = "")
+  
+  scenNames <- getScenNames(outputdirs)
+  # for non-absolute paths, add '../' in front of the paths as compareScenarios2() 
+  # will be run in individual temporary subfolders (see below).
+  outputdirs <- ifelse(substr(outputdirs,1,1) == "/", outputdirs, file.path("..", outputdirs))
+  mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
+  mif_path_polCosts  <- file.path(
+    outputdirs, 
+    paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
+  hist_path <- file.path(outputdirs[1], "historical.mif")
+  scen_config_path  <- file.path(outputdirs, "config.Rdata")
+  default_config_path  <- file.path("..", "config", "default.cfg")
   
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
@@ -81,11 +85,7 @@ run_compareScenarios2 <- function(
     !is.na(profileName) && 
     nchar(profileName) > 1
   ) {
-    message("Try to apply profile: ", profileName)
-    if (!profileName %in% profiles$name) stop(
-      "Did not find profile ", profileName, 
-      " in name column of ", profilesFilePath, "."
-      )
+    message("applying profile ", profileName)
     profile <- as.list(profiles[profiles$name == profileName, ])
     profile$name <- NULL
     profile <- lapply(profile, trimws)
@@ -98,10 +98,10 @@ run_compareScenarios2 <- function(
     )
     args[names(profile)] <- profileEval
   } else {
-    message("Use default profile.")
+    message("using default profile")
   }
   
   try(do.call(compareScenarios2, args))
 }
 
-run_compareScenarios2(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude, profileName)
+run_compareScenarios2(outputdirs, outfilename, regionList, mainRegName, profileName)
