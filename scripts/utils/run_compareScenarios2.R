@@ -72,8 +72,7 @@ run_compareScenarios2 <- function(
     outputFile = outfilename,
     outputFormat = "PDF",
     reg = regionList,
-    mainReg = mainRegName,
-    modelsHistExclude = modelsHistExclude
+    mainReg = mainRegName
   )
   
   # If profile is a single non-empty string, load cs2 profile and change args. 
