@@ -8,8 +8,6 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  modelsHistExclude <- c()
-  profile <- ""
   readArgs("outputdirs", "outfilename", "regionList", "mainRegName", "profileName")
 }
 
@@ -23,7 +21,7 @@ run_compareScenarios2 <- function(
 
   profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
   profiles <- read.delim(
-    profilesFilePath, 
+    text = readLines(profilesFilePath, warn = FALSE), 
     header = TRUE, 
     sep = ";",
     colClasses = "character",

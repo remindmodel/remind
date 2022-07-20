@@ -25,7 +25,7 @@ chooseFromSequence <- function(sequence, title, default) {
 profileNamesDefault <- c("short", "default")
 profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
 profiles <- read.delim(
-  profilesFilePath, 
+  text = readLines(profilesFilePath, warn = FALSE), 
   header = TRUE, 
   sep = ";",
   colClasses = "character",
