@@ -17,7 +17,7 @@ chooseFromSequence <- function(sequence, title, default) {
     stop("Choose numbers between 1 and ", length(sequence))
   }
   chosenElements <- if (length(ids) == 0) default else sequence[ids]
-  cat("\nchosen elements:", paste(chosenElements, collapse=", "))
+  cat("\nchosen elements:", paste(chosenElements, collapse=", "), "\n\n")
   return(chosenElements)
 }
 
