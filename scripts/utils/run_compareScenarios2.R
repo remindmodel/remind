@@ -9,10 +9,19 @@ library(remind2)
 
 if (!exists("source_include")) {
   modelsHistExclude <- c()
-  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude")
+  profile <- ""
+  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude", "profileName")
 }
 
-run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude) {
+run_compareScenarios2 <- function(
+  outputdirs, 
+  shortTerm, 
+  outfilename, 
+  regionList, 
+  mainRegName, 
+  modelsHistExclude, 
+  profileName
+) {
 
   scenNames <- getScenNames(outputdirs)
   # for non-absolute paths, add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
@@ -22,7 +31,13 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   hist_path <- file.path(outputdirs[1], "historical.mif")
   scen_config_path  <- file.path(outputdirs, "config.Rdata")
   default_config_path  <- file.path("..", "config", "default.cfg")
-
+  profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
+  profiles <- read.delim(
+    profilesFilePath, 
+    header = TRUE, 
+    sep = ";",
+    colClasses = "character")
+  
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
@@ -44,35 +59,49 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   hist_path <- normalizePath(hist_path)
 
   message("Using these mif paths:\n - ", paste(c(hist_path, mif_path), collapse = "\n - "))
-
-  if (!shortTerm) {
-    try(compareScenarios2(
-      mifScen = mif_path,
-      mifHist = hist_path,
-      cfgScen = scen_config_path,
-      cfgDefault = default_config_path,
-      outputDir = outfilepath,
-      outputFile = outfilename,
-      outputFormat = "PDF",
-      reg = regionList,
-      mainReg = mainRegName,
-      modelsHistExclude = modelsHistExclude))
+  
+  # default arguments
+  args <- list(
+    mifScen = mif_path,
+    mifHist = hist_path,
+    cfgScen = scen_config_path,
+    cfgDefault = default_config_path,
+    outputDir = outfilepath,
+    outputFile = outfilename,
+    outputFormat = "PDF",
+    reg = regionList,
+    mainReg = mainRegName,
+    modelsHistExclude = modelsHistExclude
+  )
+  
+  # If profile is a single non-empty string, load cs2 profile and change args. 
+  if (
+    length(profileName) == 1 && 
+    is.character(profileName) && 
+    !is.na(profileName) && 
+    nchar(profileName) > 1
+  ) {
+    message("Try to apply profile: ", profileName)
+    if (!profileName %in% profiles$name) stop(
+      "Did not find profile ", profileName, 
+      " in name column of ", profilesFilePath, "."
+      )
+    profile <- as.list(profiles[profiles$name == profileName, ])
+    profile$name <- NULL
+    profile <- lapply(profile, trimws)
+    profile <- profile[vapply(profile, function(s) nchar(s)>0, logical(1))]
+    profileEval <- lapply(
+      names(profile), 
+      function(nm) {
+        eval(parse(text = profile[[nm]]), list("." = args[[nm]]))
+      }
+    )
+    args[names(profile)] <- profileEval
   } else {
-    try(compareScenarios2(
-      mifScen = mif_path,
-      mifHist = hist_path,
-      cfgScen = scen_config_path,
-      cfgDefault = default_config_path,
-      outputDir = outfilepath,
-      outputFile = outfilename,
-      outputFormat = "PDF",
-      reg = regionList,
-      mainReg = mainRegName,
-      yearsScen = seq(2005, 2050, 5),
-      yearsHist = c(seq(1990, 2020, 1), seq(2025, 2050, 5)),
-      yearsBarPlot = c(2010, 2030, 2050),
-      modelsHistExclude = modelsHistExclude))
+    message("Use default profile.")
   }
+  
+  try(do.call(compareScenarios2, args))
 }
 
-run_compareScenarios2(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude)
+run_compareScenarios2(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude, profileName)

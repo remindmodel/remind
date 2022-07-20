@@ -71,7 +71,8 @@ start_comp <- function(outputdirs,
                        outfilename,
                        regionList,
                        mainReg,
-                       modelsHistExclude=c()) {
+                       modelsHistExclude = c(),
+                       profile = "") {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
   }
@@ -93,6 +94,7 @@ start_comp <- function(outputdirs,
     " --wrap=\"Rscript ", script,
     " outputdirs=", paste(outputdirs, collapse = ","),
     " shortTerm=", shortTerm,
+    " profile=", profile,
     " outfilename=", jobname,
     " regionList=", paste(regionList, collapse = ","),
     " mainRegName=", mainReg,
@@ -136,9 +138,21 @@ for (r in listofruns) {
     else
       mainRegName <- reg
     if (r$period == "short" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
+      start_comp(
+        outputdirs = r$dirs, 
+        shortTerm = TRUE, 
+        outfilename = fileName, 
+        regionList = regionList, 
+        mainReg = mainRegName,
+        profile = "short")
     if (r$period == "long" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=FALSE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
+      start_comp(
+        outputdirs = r$dirs, 
+        shortTerm = FALSE, 
+        outfilename = fileName, 
+        regionList = regionList, 
+        mainReg = mainRegName,
+        profile = "default")
 
     # plot additional pdf with Germany as focus region and exclusion of non-meaningful references in that context
     if (reg == "EUR") {
@@ -151,7 +165,14 @@ for (r in listofruns) {
         paste0("'", x, "'")
       }, USE.NAMES = F)
       fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-DEU")
-      start_comp(outputdirs = r$dirs, shortTerm = TRUE, outfilename = paste0(fileName, "-", "Ariadne"), regionList = regionList, mainReg = "DEU", modelsHistExclude = ref.exclude)
+      start_comp(
+        outputdirs = r$dirs, 
+        shortTerm = TRUE, 
+        outfilename = paste0(fileName, "-", "Ariadne"), 
+        regionList = regionList, 
+        mainReg = "DEU", 
+        modelsHistExclude = ref.exclude,
+        profile = "AriadneDEU")
     }
 
   }
