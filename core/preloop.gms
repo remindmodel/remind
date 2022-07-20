@@ -109,9 +109,9 @@ display pm_macBaseMagpie;
 
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 *** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
-*** data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more).
-*** This involves different emission variables in pm_macBaseMagpie and
-*** additionall agwaste variables from p_macBaseExo
+*** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
+*** twice as high as historic emissions). This involves different emission variables in
+*** pm_macBaseMagpie and additionall agwaste variables from p_macBaseExo
 display p_macBaseExo;
 
 *** Define rescale factor for MAgPIE CH4 emissions
