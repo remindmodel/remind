@@ -8,16 +8,19 @@
 
 # Ask user to select an element form a sequence.
 chooseFromSequence <- function(sequence, title, default) {
-  cat("\n\n", title, "\n\n")
+  cat(
+    "\n\n", title, 
+    "Leave empty for: ", paste(default, collapse=", "), ".\n\n", 
+    sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
-  cat("\nNumber: ")
+  cat("\nNumbers, e.g, '1', '2,4', '3:5', ...\n: ")
   input <- get_line()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
   }
   chosenElements <- if (length(ids) == 0) default else sequence[ids]
-  cat("\nchosen elements:", paste(chosenElements, collapse=", "), "\n\n")
+  cat("\nchosen elements:\n", paste(chosenElements, collapse="\n"), "\n\n")
   return(chosenElements)
 }
 
@@ -39,9 +42,7 @@ if (exists("outputdirs")) {
   
   profileNames <- chooseFromSequence(
     profiles$name, 
-    paste0(
-      "Choose profiles for cs2. ",
-      "Leave empty for ", paste(profileNamesDefault, collapse=", ")),
+    "Choose profiles for cs2.",
     profileNamesDefault)
   
   listofruns <- list(list(
