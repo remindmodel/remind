@@ -23,10 +23,12 @@ Parameters
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
   p37_CESMkup_policy_phasein(ttot)                                             "parameter to define temporal phase-in of CES mark-up cost changes via switch cm_CESMkup_ind"
+  p37_BioShareMaxSubsec(ttot,all_regi,all_enty,secInd37)                       "maximum biomass share in industry subsector per energy carrier"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 **p37_specMatsDem(mats,all_te,opModes)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
 **p37_specFeDem(all_enty,all_te,opModes)                                       "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
 $endif.process_based_steel
+
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
@@ -72,6 +74,7 @@ $endif.no_calibration
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+<<<<<<< HEAD
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
@@ -79,6 +82,9 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
   q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
 $endif.process_based_steel
+=======
+  q37_BioLimitSubsec(ttot,all_regi,all_enty,all_emiMkt)   "limits of switching to biomass use in industry subsectors"
+>>>>>>> 0e6e51ef... add constraint to limit the phase-in of biomass in industry depending on the industrial subsector
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
