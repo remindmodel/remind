@@ -10,7 +10,7 @@
 chooseFromSequence <- function(sequence, title, default) {
   cat(
     "\n\n", title, 
-    "Leave empty for: ", paste(default, collapse=", "), ".\n\n", 
+    "\nLeave empty for: ", paste(default, collapse=", "), ".\n\n", 
     sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
   cat("\nNumbers, e.g, '1', '2,4', '3:5', ...:\n")
