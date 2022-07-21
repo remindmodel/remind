@@ -13,6 +13,6 @@ defaultHTML;;;;;'html';;;;;;;;;;;;;;;
 short;;;;;;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;;;;;;;
 shortHTML;;;;;'html';;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;;;;;;;
 # AriadneDEU: years until 2050, DEU as main region;;;;;;;;;;;;;;;;;;;;
-AriadneDEU;;;;paste0(., '-Ariadne');;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS');;;'DEU';;;
+AriadneDEU;;;;;;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS');;;'DEU';;;
 # summary: show only the summary chapter;;;;;;;;;;;;;;;;;;;;
-summary;;;;paste0(., '-Summary');;;;;;;;;;;c(0,1,99);;;;;
+summary;;;;;;;;;;;;;;;c(0,1,99);;;;;
