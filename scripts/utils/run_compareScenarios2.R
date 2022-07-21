@@ -70,7 +70,7 @@ run_compareScenarios2 <- function(
     mainReg = mainRegName
   )
   
-  # If profile is a single non-empty string, load cs2 profile and change args. 
+  # If profileName is a single non-empty string, load cs2 profile and change args. 
   if (
     length(profileName) == 1 && 
     is.character(profileName) && 
