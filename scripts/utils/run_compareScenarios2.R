@@ -33,6 +33,7 @@ run_compareScenarios2 <- function(
   scenNames <- getScenNames(outputdirs)
   
   outputdirs <- normalizePath(outputdirs) # make paths absolute
+  outfilepath <- normalizePath(outfilename)
   mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
   mif_path_polCosts  <- file.path(
     outputdirs, 
@@ -84,7 +85,6 @@ run_compareScenarios2 <- function(
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
   system(paste0("mkdir ", outfilename))
-  outfilepath <- normalizePath(outfilename) # Make path absolute.
   wd <- getwd()
   setwd(outfilepath) # working directory now is the temporary folder
   
