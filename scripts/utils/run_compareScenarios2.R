@@ -94,9 +94,9 @@ run_compareScenarios2 <- function(
   }
   
   # move pdf / html file out of temporary folder and remove temporary folder
-  on.exit(system(paste0("mv ", outfilename, ".* ..")))
+  on.exit(system(paste0("mv ", args$outputFile, ".* ..")))
   on.exit(setwd(wd), add = TRUE)
-  on.exit(system(paste0("rm -rf ", outfilename)), add = TRUE)
+  on.exit(system(paste0("rm -rf ", args$outputDir)), add = TRUE)
   
   try(do.call(compareScenarios2, args))
 }
