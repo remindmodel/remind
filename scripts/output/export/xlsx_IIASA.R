@@ -20,16 +20,17 @@ library(stringr) # str_sub
 
 options(warn = 1)
 
-MODEL <- "REMIND-MAgPIE 3.0-4.4"                            # modelname in final file
-REMOVE_FROM_SCEN <- ""                                      # you can use regex such as: "_diff|_expoLinear"
-ADD_TO_SCEN <- NULL                                         # is added at the beginning
+MODEL <- "REMIND 3.0"                                              # modelname in final file
+REMOVE_FROM_SCEN <- ""                                             # you can use regex such as: "_diff|_expoLinear"
+ADD_TO_SCEN <- NULL                                                # is added at the beginning
+UNITS_TO_CORRECT <- NULL                                           # c("old unit" = "new unit", ...)
 
 # filenames relative to REMIND main directory (or use absolute path) 
-MAPPING <- "mapping_r30m44_AR6NGFS.csv"                     # obtained by generate_mappingfile.R in project_interfaces
-iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx" # provided for each project, can be yaml or xlsx with a column 'Variable'
+MAPPING <- "add_csv_file_obtained_from_project_interfaces_here"    # obtained by generate_mappingfile.R in project_interfaces
+iiasatemplate <- "add_yaml_or_xlsx_file_obtained_from_IIASA_here"  # provided for each project, can be yaml or xlsx with a column 'Variable'
 
 # note: you can also pass all these options to output.R, so 'Rscript output.R LOGFILE=mylogfile.txt' works.
-lucode2::readArgs("outputdirs", "filename_prefix", "OUTPUT_FILENAME", "MODEL", "MAPPING", "LOGFILE", "REMOVE_FROM_SCEN", "ADD_TO_SCEN", "iiasatemplate")
+lucode2::readArgs("project", "outputdirs", "filename_prefix", "OUTPUT_FILENAME", "MODEL", "MAPPING", "LOGFILE", "REMOVE_FROM_SCEN", "ADD_TO_SCEN", "iiasatemplate")
 
 tstamp = format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
 if (! exists("filename_prefix")) filename_prefix <- ""
@@ -43,17 +44,43 @@ OUTPUT_mif  <- paste0(OUTPUT_FILENAME, ".mif")
 OUTPUT_xlsx <- paste0(OUTPUT_FILENAME, ".xlsx")
 if (! exists("LOGFILE")) LOGFILE <- paste0(OUTPUT_FILENAME, ".log")
 
-logtext <- paste0("### Generating ", OUTPUT_mif, " and .xlsx for model ", MODEL, " using mapping ", MAPPING, ".")
-message(logtext)
-write(paste0("\n\n", logtext), file = LOGFILE, append = TRUE)
-message("# Requested changes to scenario names: '", ADD_TO_SCEN, "' will be prepended, '", REMOVE_FROM_SCEN, "' will be removed.")
-message("# Find log of iamc::write.reportProject() in ", LOGFILE)
+### Project-specific settings
 
-### further features
+UNITS_TO_CORRECT <- NULL                                           # c("old unit" = "new unit", ...)
 
 # variables to be deleted although part of the template
 temporarydelete <- NULL # c("Price|Agriculture|Corn|Index", "Price|Agriculture|Non-Energy Crops and Livestock|Index", "Price|Agriculture|Non-Energy Crops|Index", "Price|Agriculture|Soybean|Index", "Price|Agriculture|Wheat|Index")
 
+
+if (! exists("project")) {
+  project <- FALSE
+} else {
+  message("# Overwriting settings with project settings for '", project, ".")
+  if ("NGFS" %in% project) {
+    MODEL <- "REMIND-MAgPIE 3.0-4.4"
+    MAPPING <- "mapping_r30m44_AR6NGFS.csv"
+    iiasatemplate <- "../ngfs-internal-workflow/definitions/variable/variables.yaml"
+    REMOVE_FROM_SCEN <- "C_|_bIT|_bit|_bIt"
+  } else if ("ENGAGE_4p5" %in% project) {
+    MODEL <- "REMIND 3.0"
+    MAPPING <- "mapping_r30m44_AR6NGFS.csv"
+    iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
+    REMOVE_FROM_SCEN <- "_diff|_expoLinear"
+  } else {
+    message("# Command line argument project='", project, "' defined, but not found.")
+  }
+}
+
+if (any(c("NGFS", "ENGAGE_4p5") %in% project)) {
+  UNITS_TO_CORRECT <- c("bn m2/yr" = "billion m2/yr", "bn vkm/yr" = "billion vkm/yr", "bn tkm/yr" = "billion tkm/yr",
+                        "bn pkm/yr" = "billion pkm/yr", "Mt/year" = "Mt/yr", "kt CF4-equiv/yr" = "kt CF4/yr")
+}
+
+logtext <- paste0("\n### Generating ", OUTPUT_mif, " and .xlsx for model ", MODEL, " using mapping ", MAPPING, ".")
+message(logtext)
+write(paste0("\n\n", logtext), file = LOGFILE, append = TRUE)
+message("# Requested changes to scenario names: '", ADD_TO_SCEN, "' will be prepended, '", REMOVE_FROM_SCEN, "' will be removed.")
+message("# Find log of iamc::write.reportProject() in ", LOGFILE)
 
 
 ### define filenames
@@ -143,13 +170,14 @@ system(command)
 data <- read.quitte(OUTPUT_mif, factors = FALSE) %>%
   mutate(model = paste(MODEL))
 
-message("# correct units")
-data$unit[data$unit == "bn m2/yr"] <- "billion m2/yr"
-data$unit[data$unit == "bn vkm/yr"] <- "billion vkm/yr"
-data$unit[data$unit == "bn tkm/yr"] <- "billion tkm/yr"
-data$unit[data$unit == "bn pkm/yr"] <- "billion pkm/yr"
-data$unit[data$unit == "Mt/year"] <- "Mt/yr"
-data$unit[data$unit == "kt CF4-equiv/yr"] <- "kt CF4/yr"
+if (length(UNITS_TO_CORRECT) > 0) {
+  message("# correct ", length(UNITS_TO_CORRECT), " units")
+  for (old in names(UNITS_TO_CORRECT)) {
+    data$unit[data$unit == old] <- UNITS_TO_CORRECT[[old]]
+  }
+} else {
+  message("# no units are corrected")
+}
 
 message("# load IIASA template file ", iiasatemplate)
 
