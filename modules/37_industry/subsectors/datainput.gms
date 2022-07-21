@@ -448,7 +448,7 @@ p37_BioShareMaxSubsec(t,regi,entyFeCC37,secInd37)=1;
 
 
 *** for steel set maximum biomass share in solids to 30% until 2025 and linearly increase up to 80% in 2050
-p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val le 2025)=0.3;
+p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2015 AND t.val le 2025)=0.3;
 p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2025 AND t.val le 2050)= 0.3 + (t.val - 2025) * 0.02;
 p37_BioShareMaxSubsec(t,regi,"fesos","steel")$(t.val gt 2050)=p37_BioShareMaxSubsec("2050",regi,"fesos","steel");
 
