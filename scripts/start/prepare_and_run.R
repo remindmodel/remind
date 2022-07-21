@@ -527,12 +527,6 @@ prepare <- function() {
   try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
   try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
 
-  try(file.copy("magicc/run_magicc.R","run_magicc.R"))
-  try(file.copy("magicc/run_magicc_temperatureImpulseResponse.R","run_magicc_temperatureImpulseResponse.R"))
-  try(file.copy("magicc/read_DAT_TOTAL_ANTHRO_RF.R","read_DAT_TOTAL_ANTHRO_RF.R"))
-  try(file.copy("magicc/read_DAT_SURFACE_TEMP.R","read_DAT_SURFACE_TEMP.R"))
-
-
   # Function to create the levs.gms, fixings.gms, and margs.gms files, used in
   # delay scenarios.
   create_fixing_files <- function(cfg, input_ref_file = "input_ref.gdx") {
