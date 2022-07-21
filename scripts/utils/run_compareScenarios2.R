@@ -46,13 +46,8 @@ run_compareScenarios2 <- function(
   system(paste0("mkdir ", outfilename))
   outfilepath <- normalizePath(outfilename) # Make path absolute.
   wd <- getwd()
-
   setwd(outfilepath)
-  # move pdf / html file out of temporary folder and remove temporary folder
-  on.exit(system(paste0("mv ", outfilename, ".* ..")))
-  on.exit(setwd(wd), add = TRUE)
-  on.exit(system(paste0("rm -rf ", outfilename)), add = TRUE)
-
+  
   # Use adjustedPolicyCosts mif, if available
   mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
 
@@ -97,6 +92,11 @@ run_compareScenarios2 <- function(
   } else {
     message("using default profile")
   }
+  
+  # move pdf / html file out of temporary folder and remove temporary folder
+  on.exit(system(paste0("mv ", outfilename, ".* ..")))
+  on.exit(setwd(wd), add = TRUE)
+  on.exit(system(paste0("rm -rf ", outfilename)), add = TRUE)
   
   try(do.call(compareScenarios2, args))
 }
