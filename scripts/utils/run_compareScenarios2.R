@@ -33,7 +33,7 @@ run_compareScenarios2 <- function(
   scenNames <- getScenNames(outputdirs)
   
   outputdirs <- normalizePath(outputdirs) # make paths absolute
-  outfilepath <- normalizePath(outfilename)
+  outfilepath <- normalizePath(outfilename, mustWork = FALSE)
   mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
   mif_path_polCosts  <- file.path(
     outputdirs, 
