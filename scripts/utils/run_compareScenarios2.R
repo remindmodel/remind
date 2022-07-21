@@ -18,6 +18,8 @@ run_compareScenarios2 <- function(
   mainRegName, 
   profileName
 ) {
+  
+  # working directory is assumed to be the remind directory
 
   profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
   profiles <- read.delim(
@@ -29,32 +31,17 @@ run_compareScenarios2 <- function(
     quote = "")
   
   scenNames <- getScenNames(outputdirs)
-  # for non-absolute paths, add '../' in front of the paths as compareScenarios2() 
-  # will be run in individual temporary subfolders (see below).
-  outputdirs <- ifelse(substr(outputdirs,1,1) == "/", outputdirs, file.path("..", outputdirs))
+  
+  outputdirs <- normalizePath(outputdirs) # make paths absolute
   mif_path  <- file.path(outputdirs, paste("REMIND_generic_", scenNames, ".mif", sep = ""))
   mif_path_polCosts  <- file.path(
     outputdirs, 
     paste("REMIND_generic_", scenNames, "_adjustedPolicyCosts.mif", sep = ""))
+  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
   hist_path <- file.path(outputdirs[1], "historical.mif")
   scen_config_path  <- file.path(outputdirs, "config.Rdata")
-  default_config_path  <- file.path("..", "config", "default.cfg")
+  default_config_path  <- normalizePath("./config/default.cfg")
   
-  # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
-  # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
-  # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
-  system(paste0("mkdir ", outfilename))
-  outfilepath <- normalizePath(outfilename) # Make path absolute.
-  wd <- getwd()
-  setwd(outfilepath)
-  
-  # Use adjustedPolicyCosts mif, if available
-  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
-
-  # Make paths absolute.
-  mif_path <- normalizePath(mif_path)
-  hist_path <- normalizePath(hist_path)
-
   message("Using these mif paths:\n - ", paste(c(hist_path, mif_path), collapse = "\n - "))
   
   # default arguments
@@ -93,9 +80,17 @@ run_compareScenarios2 <- function(
     message("using default profile")
   }
   
+  # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
+  # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
+  # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
+  system(paste0("mkdir ", outfilename))
+  outfilepath <- normalizePath(outfilename) # Make path absolute.
+  wd <- getwd()
+  setwd(outfilepath) # working directory now is the temporary folder
+  
   # move pdf / html file out of temporary folder and remove temporary folder
   on.exit(system(paste0("mv ", args$outputFile, ".* ..")))
-  on.exit(setwd(wd), add = TRUE)
+  on.exit(setwd(wd), add = TRUE)  # working directory should be the remind folder after exiting run_compareScenarios2()
   on.exit(system(paste0("rm -rf ", args$outputDir)), add = TRUE)
   
   try(do.call(compareScenarios2, args))
