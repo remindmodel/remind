@@ -55,7 +55,7 @@ temporarydelete <- NULL # c("Price|Agriculture|Corn|Index", "Price|Agriculture|N
 if (! exists("project")) {
   project <- FALSE
 } else {
-  message("# Overwriting settings with project settings for '", project, ".")
+  message("# Overwriting settings with project settings for '", project, "'.")
   if ("NGFS" %in% project) {
     MODEL <- "REMIND-MAgPIE 3.0-4.4"
     MAPPING <- "mapping_r30m44_AR6NGFS.csv"
