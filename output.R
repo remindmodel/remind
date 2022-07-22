@@ -21,9 +21,7 @@ options(error = quote({
   q()
 }))
 
-if (!exists("argv")) {
-  argv <- commandArgs(trailingOnly = TRUE)
-}
+argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
 
 # run updates before loading any packages
 if ("--update" %in% argv) {
@@ -32,8 +30,6 @@ if ("--update" %in% argv) {
 } else if (any(startsWith(argv, "--renv="))) {
   renvProject <- normalizePath(sub("^--renv=", "", grep("^--renv=", argv, value = TRUE)))
   renv::load(renvProject)
-  message("using renv ", renvProject)
-  message("libPaths: ", paste(.libPaths(), collapse = ", "))
 }
 
 # load landuse library

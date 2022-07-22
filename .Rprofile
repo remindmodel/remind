@@ -1,5 +1,7 @@
 source("renv/activate.R")
 
+options(renv.config.auto.snapshot = TRUE) # sync renv.lock file after every install/update
+
 # source global .Rprofile (very important to load user specific settings)
 # DO NOT EDIT THIS LINE!
 if (file.exists("~/.Rprofile")) {
