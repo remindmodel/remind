@@ -168,7 +168,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
-    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--testOneRegi", "--debug") %in% argv)) {
+    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--debug", "--quick", "--testOneRegi") %in% argv)) {
       icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
     }
     if (icfg$slurmConfig %in% c(NA, ""))       {
@@ -347,6 +347,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
   }
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+  if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
   message()
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
@@ -455,7 +456,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
     # if no csv was provided create dummy list with default/testOneRegi as the only scenario
-    if ("--testOneRegi" %in% argv) {
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       scenarios <- data.frame("testOneRegi" = "testOneRegi", row.names = "testOneRegi")
     } else {
       scenarios <- data.frame("default" = "default", row.names = "default")
@@ -465,9 +466,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi", "--quick") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
-    if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
+    if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
+    if (any(c("--debug", "--quick", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
   }

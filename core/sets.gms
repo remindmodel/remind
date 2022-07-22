@@ -1920,7 +1920,6 @@ emiMacMagpieN2O(all_enty)  "types of climate-relevant non-energy N2O emissions w
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
         n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
-        ch4peatland "ch4 emissions from peatlands (peatland_ch4)"        
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2opeatland "n2o emissions from peatlands (no MAC available)"        
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
