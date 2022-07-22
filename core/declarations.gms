@@ -133,6 +133,8 @@ p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calc
 s_aux_cap_remaining                                         "aux. param. to calculate p_avCapFac2015; countdown parameter"
 p_aux_capThisGrade(all_regi,all_te,rlf)                     "aux. param. to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
+p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
+p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
