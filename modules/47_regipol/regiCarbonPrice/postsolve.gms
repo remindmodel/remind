@@ -467,10 +467,20 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
     p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector));
   else
 ***    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + pm_FEPrice_by_SE_Sector_iter(iteration-1,t,regi,entySe,entyFe,sector))/2 ) + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); !!using average of two last iterations to avoid zigzag behavior
-    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); 
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) = 
+      (p47_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector))/2 !! only applying half of the deviation to avoid overshooting
+      + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); 
   );
   p47_implicitPriceTax("2080",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*2/3;
   p47_implicitPriceTax("2090",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*1/3;
+  
+*** limit the size of subsidies (-0.5 T$/TWa) to avoid extreme negative price markups
+  loop((t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector),
+    if (( p47_implicitPriceTax(t,regi,entyFe,entySe,sector) < -0.5 ),
+      p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = -0.5;
+      p47_implicitPrice_dev(t,regi,entyFe,entySe,sector) = 0; !! reset deviation calculated values to avoid this case to be considered in the decision of running additional iterations  
+    );
+  );
 
 * save price target tax across iterations for debugging of target convergence issues
 p47_implicitPriceTax_iter(iteration,t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector);
