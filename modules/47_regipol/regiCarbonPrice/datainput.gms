@@ -182,5 +182,8 @@ $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
 $endIf.cm_EnSecScen
 
+*** increase offshore wind in Germany by increasing off2on ratio
+p_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.5;
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
