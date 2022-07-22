@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -148,5 +148,39 @@ $offdelim
 
 *** difference between 2015 land-use change emissions from Magpie and UNFCCC 2015 land-use change emissions
 p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_macBaseMagpie("2015",regi,"co2luc") - p47_EmiLULUCFCountryAcc("2015",regi)* 1e-3/sm_c_2_co2);
+
+
+*** -------------------------Primary Energy Tax--------------------------
+
+*PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
+$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
+  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.4;
+  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.3;
+  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.25;
+  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.15;
+  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.1;
+
+  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
+  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
+  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = 0.15;
+  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = 0.15;
+  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
+
+  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.03;
+  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
+  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
+  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
+  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
+  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
+  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
+  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
+$endIf.cm_EnSecScen
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

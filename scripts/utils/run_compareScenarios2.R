@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,10 +8,11 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName")
+  modelsHistExclude <- c()
+  readArgs("outputdirs", "shortTerm", "outfilename", "regionList", "mainRegName", "modelsHistExclude")
 }
 
-run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName) {
+run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude) {
 
   scenNames <- getScenNames(outputdirs)
   # for non-absolute paths, add '../' in front of the paths as compareScenarios2() will be run in individual temporary subfolders (see below).
@@ -22,9 +23,6 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   scen_config_path  <- file.path(outputdirs, "config.Rdata")
   default_config_path  <- file.path("..", "config", "default.cfg")
 
-  # Use adjustedPolicyCosts mif, if available
-  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
- 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
   # So we create a temporary subfolder in which each compareScenarios2 creates its own figure folder.
@@ -38,9 +36,14 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
   on.exit(setwd(wd), add = TRUE)
   on.exit(system(paste0("rm -rf ", outfilename)), add = TRUE)
 
+  # Use adjustedPolicyCosts mif, if available
+  mif_path <- ifelse(file.exists(mif_path_polCosts), mif_path_polCosts, mif_path)
+
   # Make paths absolute.
   mif_path <- normalizePath(mif_path)
   hist_path <- normalizePath(hist_path)
+
+  message("Using these mif paths:\n - ", paste(c(hist_path, mif_path), collapse = "\n - "))
 
   if (!shortTerm) {
     try(compareScenarios2(
@@ -52,7 +55,8 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
       outputFile = outfilename,
       outputFormat = "PDF",
       reg = regionList,
-      mainReg = mainRegName))
+      mainReg = mainRegName,
+      modelsHistExclude = modelsHistExclude))
   } else {
     try(compareScenarios2(
       mifScen = mif_path,
@@ -66,8 +70,9 @@ run_compareScenarios2 <- function(outputdirs, shortTerm, outfilename, regionList
       mainReg = mainRegName,
       yearsScen = seq(2005, 2050, 5),
       yearsHist = c(seq(1990, 2020, 1), seq(2025, 2050, 5)),
-      yearsBarPlot = c(2010, 2030, 2050)))
+      yearsBarPlot = c(2010, 2030, 2050),
+      modelsHistExclude = modelsHistExclude))
   }
 }
 
-run_compareScenarios2(outputdirs, shortTerm, outfilename, regionList, mainRegName)
+run_compareScenarios2(outputdirs, shortTerm, outfilename, regionList, mainRegName, modelsHistExclude)

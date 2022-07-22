@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2021 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -121,7 +121,7 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
 }
 
 choose_mode <- function(title = "Please choose the output mode") {
-  modes <- c("Output for single run ", "Comparison across runs")
+  modes <- c("Output for single run ", "Comparison across runs", "Export", "Exit")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -130,18 +130,26 @@ choose_mode <- function(title = "Please choose the output mode") {
   if (identifier == 1) {
     comp <- FALSE
   } else if (identifier == 2) {
-    comp <- TRUE
+    comp <- "comparison"
+  } else if (identifier == 3) {
+    comp <- "export"
+  } else if (identifier == 4) {
+    comp <- "Exit"
   } else {
     stop("This mode is invalid. Please choose a valid mode.")
   }
   return(comp)
 }
 
-choose_slurmConfig_priority_standby <- function(high_mem = FALSE,
-                                                title = "Please enter the slurm mode, uses priority if empty") {
-  slurm_options <- c(if (! high_mem) c("--qos=priority", "--qos=short", "--qos=standby"),
+choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses the first option if empty",
+                                                slurmExceptions = NULL) {
+  slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
+  if (!is.null(slurmExceptions)) {
+    slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
+  }
+  if (length(slurm_options) == 1) return(slurm_options[[1]])
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
@@ -170,12 +178,15 @@ if (exists("source_include")) {
 } else if (!exists("comp")) {
   comp <- choose_mode("Please choose the output mode")
 }
+if (isTRUE(comp)) comp <- "comparison"
 
-if (comp == TRUE) {
+if (comp == "Exit") {
+  q()
+} else if (comp == "comparison" | comp == "export") {
   print("comparison")
   # Select output modules if not defined by readArgs
   if (!exists("output")) {
-    output <- choose_module("./scripts/output/comparison",
+    output <- choose_module(paste0("./scripts/output/", comp),
                             "Please choose the output module to be used for output generation")
   }
   # Select output directories if not defined by readArgs
@@ -206,7 +217,7 @@ if (comp == TRUE) {
   }
 
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2")
+  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2", "xlsx_IIASA")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -233,10 +244,10 @@ if (comp == TRUE) {
   # Execute output scripts over all chosen folders
   for (rout in output) {
     name <- paste(rout, ".R", sep = "")
-    if (file.exists(paste("scripts/output/comparison/", name, sep = ""))) {
+    if (file.exists(paste0("scripts/output/", comp, "/", name))) {
       print(paste("Executing", name))
       tmp.env <- new.env()
-      tmp.error <- try(sys.source(paste("scripts/output/comparison/", name, sep = ""), envir = tmp.env))
+      tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
       rm(tmp.env)
       gc()
       if (!is.null(tmp.error)) {
@@ -276,12 +287,16 @@ if (comp == TRUE) {
 
   # define slurm class or direct execution
   if (! exists("source_include")) {
-    modules_using_high_mem <- c("reporting")
-    need_high_mem <- isTRUE(any(modules_using_high_mem %in% output))
+    # for selected output scripts, only slurm configurations matching these regex are available
+    slurmExceptions <- switch(output,
+      reporting      = "--mem=[0-9]*[0-9]{3}",
+      plotIterations = "^direct",
+      NULL
+    )
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
-    if (! exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_priority_standby(high_mem = need_high_mem)
+    if (!exists("slurmConfig")) {
+      slurmConfig <- choose_slurmConfig_priority_standby(slurmExceptions = slurmExceptions)
       if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -325,16 +340,15 @@ if (comp == TRUE) {
     # included as source (instead of a load from command line)
     source_include <- TRUE
 
-    message("\nStarting output generation for ", outputdir, "\n")
-
     ###################################################################################
     # Execute R scripts
     ###################################################################################
 
     # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
     if (all(is.na(output))) {
-      message("No output generation, as output was set to NA, as for example for --testOneRegi.")
+      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
+      message("\nStarting output generation for ", outputdir, "\n")
       for (rout in output) {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {

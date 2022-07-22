@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -143,6 +143,19 @@ p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge 2050) = p24_seTrade_Quantity(
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2045) = p24_seTrade_Quantity(regi,regi2,entySe)*0.75;
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2040) = p24_seTrade_Quantity(regi,regi2,entySe)*0.5;
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.25;
+
+
+*** in energy security scenario, phase-in trade earlier already from 2030
+$ifthen.import_h2_EU "%cm_Ger_Pol%" == "ensec"
+*** earlier phase-in of imports, start 2030 already 
+*** with about 300 PJ/yr H2+Synfuel if cm_import_EU = "bal" and cm_import_ariadne = "on"
+*** corresponds to 10MtH2 2030 import goal of EU disaggregated to Germany via GDP share
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge 2050) = p24_seTrade_Quantity(regi,regi2,entySe);
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2045) = p24_seTrade_Quantity(regi,regi2,entySe)*0.75;
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2040) = p24_seTrade_Quantity(regi,regi2,entySe)*0.6;
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.4;
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2030) = p24_seTrade_Quantity(regi,regi2,entySe)*0.2;
+$endif.import_h2_EU
 
 
 *** EOF ./modules/24_trade/se_trade/datainput.gms

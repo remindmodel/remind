@@ -6,6 +6,9 @@
 # 2: Use a "!" at the start, to explicitly NOT ignore a pattern
 # !!!
 
+# Ignore model lock file
+.lock
+
 # Ignore files that end with ".un~", ".swp" or ".pdf"
 *.un~
 *.swp
@@ -39,8 +42,12 @@ doc/
 # Ignore "main.lst" files
 main.lst
 
-# Ignore .RData files only in the root folder
+# Ignore .RData and log files only in the root folder
 /*.RData
+/*.log
+
+# ignore magpie subfolder for coupled runs
+/magpie/
 
 # ignore .Rhistory files
 .Rhistory

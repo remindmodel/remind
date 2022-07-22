@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -7,10 +7,6 @@
 *** SOF ./modules/50_damages/BurkeLike/bounds.gms
 
 vm_damageProdFactor.fx(ttot,regi,in) = 1;
-
-loop(ttot$(ttot.val ge 2005),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    vm_damageFactor.fx(ttot,regi) = pm_damage(tall,regi);
-));
+vm_damageFactor.fx(ttot,regi)$(ttot.val ge 2005) = pm_damage(ttot,regi);
 
 *** EOF ./modules/50_damages/BurkeLike/bounds.gms

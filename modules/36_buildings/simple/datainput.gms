@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -44,14 +44,14 @@ p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3
 
 *** UE demand for reporting
 Parameter
-f36_uedemand_build(tall,all_regi,all_demScen,all_in)   "useful energy demand in buildings"
+f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
 /
 $ondelim
 $include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
 /
 ;
-p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%",in);
+p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
 
 $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off" 
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") = pm_cesdata_sigma(ttot,"enb") * %cm_INNOPATHS_enb%;

@@ -22,7 +22,7 @@ This section will explain how you start your first REMIND run on PIK's cluster (
 
 ## Default Configurations
 
-The `[config/default.cfg](../config/default.cfg)` file contains the default configuration for REMIND.
+The [`config/default.cfg`](../config/default.cfg) file contains the default configuration for REMIND.
 It is divided into four parts: MODULES, SWITCHES, FLAGS, and Explanations of switches and flags.
 
 a. The first part, MODULES, contains settings for the various [modules](../modules) and their realizations. For example, the [module `21_tax`](../modules/21_tax/) has the realizations [`on`](../modules/21_tax/on) and [`off`](../modules/21_tax/off). The realizations within the particular module differ from each other in their features, for e.g., bounds, parametric values, different policy cases etc. For each module you choose which realization of the module will be activated for your current run:
@@ -69,11 +69,11 @@ Without additional arguments this starts a single REMIND runs using the settings
 You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
-Rscript start.R --testOneRegi
+Rscript start.R --quick
 ```
 The shortcut is
 ```bash
-Rscript start.R -1
+Rscript start.R -q
 ```
 
 

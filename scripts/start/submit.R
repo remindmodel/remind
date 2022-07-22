@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -19,7 +19,7 @@
 
 ############## Define function: runsubmit #########################
 
-submit <- function(cfg, restart = FALSE) {
+submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   
   if(!restart) {
     # Generate name of output folder and create the folder
@@ -31,7 +31,14 @@ submit <- function(cfg, restart = FALSE) {
     if (!file.exists(cfg$results_folder)) {
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     } else if (!cfg$force_replace) {
-      stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
+      couldnotdelete <- paste0("Results folder ",cfg$results_folder," could not be created because it already exists")
+      if (stopOnFolderCreateError) {
+        stop(couldnotdelete, ".")
+      } else if (! all(grepl("^log*.txt", list.files(cfg$results_folder)))) {
+        stop(couldnotdelete, " and it contains not only log files.")
+      } else {
+        message(couldnotdelete, " but it contains only log files.")
+      }
     } else {
       cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
       unlink(cfg$results_folder, recursive = TRUE)

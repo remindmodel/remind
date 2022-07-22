@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -41,15 +41,8 @@ display p51_scc;
 p51_scc(tall,regi) = p51_sccLastItr(tall,regi) *  min(max( (p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8)),1 - 0.5*0.95**iteration.val),1 + 0.95**iteration.val);
 
 pm_taxCO2eqSCC(ttot,regi) = 0;
+pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = max(0, p51_scc(ttot,regi) * (44/12)/1000);
 
-loop(ttot$(ttot.val ge 2020),
-	loop(tall$(pm_ttot_2_tall(ttot,tall)),
-	    pm_taxCO2eqSCC(ttot,regi)$(ttot.val ge 2020) = p51_scc(tall,regi)   * (44/12)/1000;
-*FIXME this is stupid:
-	    pm_taxCO2eqSCC(ttot,regi) = max(pm_taxCO2eqSCC(ttot,regi),0);
-
-	));
-	    
 *);
 
 *optional: prevent drastic decline towards the final periods
@@ -63,7 +56,6 @@ display p51_scc,pm_taxCO2eqSCC;
 * convergence indicator:
 p51_sccConvergenceMaxDeviation(regi) = 100 * smax(tall$(tall.val ge cm_startyear and tall.val lt 2150),abs(p51_scc(tall,regi)/max(p51_sccLastItr(tall,regi),1e-8) - 1) );
 display p51_sccConvergenceMaxDeviation;
-
 
 
 *** EOF ./modules/51_internalizeDamages/KWlikeItrCPnash/postsolve.gms

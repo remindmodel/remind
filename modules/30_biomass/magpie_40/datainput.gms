@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -54,16 +54,16 @@ $offdelim
 ;
 
 *** select pebiolc productoion from look-up table according to SSP and RCP
-p30_pebiolc_demandmag(ttot,regi) = p30_biolcProductionLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
+pm_pebiolc_demandmag(ttot,regi) = p30_biolcProductionLookup(ttot,regi,"%cm_LU_emi_scen%","%cm_rcp_scen%");
 
 *DK* In coupled runs overwrite pebiolc production from look-up table with actual MAgPIE values.
 *DK* Read production of 2nd gen. purpose grown bioenergy from MAgPIE (given to MAgPIE from previous Remind run)
-$if %cm_MAgPIE_coupling% == "on"  table p30_pebiolc_demandmag_coupling(tall,all_regi)     "production of 2nd gen. purpose grown bioenergy from MAgPIE"
+$if %cm_MAgPIE_coupling% == "on"  table pm_pebiolc_demandmag_coupling(tall,all_regi)     "production of 2nd gen. purpose grown bioenergy from MAgPIE"
 $if %cm_MAgPIE_coupling% == "on"  $ondelim
-$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie_40/input/p30_pebiolc_demandmag_coupling.csv";
+$if %cm_MAgPIE_coupling% == "on"  $include "./modules/30_biomass/magpie_40/input/pm_pebiolc_demandmag_coupling.csv";
 $if %cm_MAgPIE_coupling% == "on"  $offdelim
 $if %cm_MAgPIE_coupling% == "on"  ;
-$if %cm_MAgPIE_coupling% == "on"  p30_pebiolc_demandmag(ttot,regi) = p30_pebiolc_demandmag_coupling(ttot,regi);
+$if %cm_MAgPIE_coupling% == "on"  pm_pebiolc_demandmag(ttot,regi) = pm_pebiolc_demandmag_coupling(ttot,regi);
 
 *** Read parameters for bioenergy supply curve
 parameter f30_bioen_price(tall,all_regi,all_LU_emi_scen,all_rcp_scen,all_charScen)  "time dependent fit coefficients for bioenergy price formula"

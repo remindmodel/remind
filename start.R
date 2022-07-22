@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -9,6 +9,7 @@ library(gms)
 library(dplyr)
 require(stringr)
 
+helpText <- "
 #' Usage:
 #' Rscript start.R [options]
 #' Rscript start.R file
@@ -23,18 +24,29 @@ require(stringr)
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
+#' --help, -h: show this help text and exit
+#'
 #' --debug, -d: start a debug run with cm_nash_mode = debug
 #'
-#' --interactive, -i: interactively select run(s) to be started
+#' --interactive, -i: interactively select config file and run(s) to be started
+#'
+#' --quick, -q: starting one fast REMIND run with one region, one iteration and
+#'              reduced convergence criteria for testing the full model.
 #'
 #' --reprepare, -R: rewrite full.gms and restart run
 #'
+#' --reset, -0: reset main.gms to default.cfg and exit
+#'
 #' --restart, -r: interactively restart run(s)
 #'
-#' --test, -t: Test configuration
+#' --test, -t: Test scenario configuration and writing the RData files in the
+#'             REMIND main folder without starting the runs.
 #'
-#' --testOneRegi, -1: Starting the REMIND run(s) in testOneRegi mode.
-
+#' --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'
+#' You can combine --reprepare with --debug, --testOneRegi or --quick and the selected folders will be restarted using these settings.
+#' Afterwards, using --reprepare alone will restart the runs using their original settings.
+"
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
@@ -156,7 +168,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
-    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--testOneRegi", "--debug") %in% argv)) {
+    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--debug", "--quick", "--testOneRegi") %in% argv)) {
       icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
     }
     if (icfg$slurmConfig %in% c(NA, ""))       {
@@ -183,6 +195,12 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       }
     }
 
+    # didremindfinish is TRUE if full.log exists with status: Normal completion
+    didremindfinish <- function(fulldatapath) {
+      logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
+      return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
+    }
+
     # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
     # if not a full path ending with .gdx provided, search for most recent folder with that title
     if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
@@ -193,31 +211,31 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
           # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
           # may include folders that only _start_ with this string. They are sorted out later.
-          dirs <- Sys.glob(file.path(paste0("./output/",isettings[iscen, path_to_gdx],"*/fulldata.gdx")))
-          # if path_to_gdx cell content exactly matches folder name, use this one
-          if (paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx") %in% dirs) {
-            message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
-            isettings[iscen, path_to_gdx] <- paste0("./output/",isettings[iscen, path_to_gdx],"/fulldata.gdx")
-          } else {
-            # didremindfinish is TRUE if full.log exists with status: Normal completion
-            didremindfinish <- function(fulldatapath) {
-              logpath <- paste0(str_sub(fulldatapath,1,-14),"/full.log")
-              return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
-            }
-            # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
-            # for folder names only allows: cell content, an optional _, datetimepattern
-            # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
-            # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
-            datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-            dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
-            # if anything found, pick latest
-            if(length(dirs) > 0 && ! all(is.na(dirs))) {
-              lapply(dirs, str_sub, -32, -14) %>%
-                strptime(format='%Y-%m-%d_%H.%M.%S') %>%
-                as.numeric %>%
-                which.max -> latest_fulldata
-              message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],10,-14)))
-              isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+          dirfolders <- c("./output/", icfg$modeltests_folder)
+          for (dirfolder in dirfolders) {
+            dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
+            # if path_to_gdx cell content exactly matches folder name, use this one
+            if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
+              message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+              isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
+              if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+            } else {
+              # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
+              # for folder names only allows: cell content, an optional _, datetimepattern
+              # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
+              # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
+              datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
+              dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+              # if anything found, pick latest
+              if(length(dirs) > 0 && ! all(is.na(dirs))) {
+                lapply(dirs, str_sub, -32, -14) %>%
+                  strptime(format='%Y-%m-%d_%H.%M.%S') %>%
+                  as.numeric %>%
+                  which.max -> latest_fulldata
+                message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+                if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+              }
             }
           }
         }
@@ -251,7 +269,8 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 
 # define arguments that are accepted
-accepted <- c("1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart", R = "--reprepare", t = "--test")
+accepted <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", i = "--interactive", r = "--restart",
+              R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 
 # search for strings that look like -i1asrR and transform them into long flags
 onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
@@ -276,27 +295,47 @@ if (!all(known)) {
   config.file <- argv[!known][[1]] 
 }
 
-if (any(c("--testOneRegi", "--debug") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
-  message("\nIt is impossible to combine --restart with --testOneRegi or --debug because full.gms has to be rewritten.\n",
+if ("--help" %in% argv) {
+  message(helpText)
+  q()
+}
+
+if ("--reset" %in% argv) {
+  source("./config/default.cfg")
+  cfg$gms$c_expname <- cfg$title
+  cfg$gms$c_description <- substr(cfg$description, 1, 255)
+  lock_id <- gms::model_lock(timeout1 = 0.2)
+  on.exit(gms::model_unlock(lock_id))
+  lucode2::manipulateConfig("main.gms", cfg$gms)
+  message("Settings in main.gms were reset to values specified in config/default.cfg.")
+  gms::model_unlock(lock_id)
+  on.exit()
+  q()
+}
+
+if (any(c("--testOneRegi", "--debug", "--quick") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
+  message("\nIt is impossible to combine --restart with --debug, --quick or --testOneRegi because full.gms has to be rewritten.\n",
   "If this is what you want, use --reprepare instead, or answer with y:")
   if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
+
 ignorederrors <- 0 # counts ignored errors in --test mode
+startedRuns <- 0
+waitingRuns <- 0
+modeltestRunsUsed <- 0
 
 ###################### Choose submission type #########################
 
 testOneRegi_region <- ""
 
+# Save whether model is locked before runs are started
+model_was_locked <- if (exists("is_model_locked")) is_model_locked() else file.exists(".lock")
+
 # Restart REMIND in existing results folder (if required by user)
 if (any(c("--reprepare", "--restart") %in% argv)) {
   # choose results folder from list
-  if ("--reprepare" %in% argv) {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("/config.Rdata","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx"),file.path("./output","*","config.Rdata"))))))
-  } else {
-    possibledirs <- sub("/(non_optimal|fulldata).gdx","",sub("./output/","",
-    Sys.glob(c(file.path("./output","*","non_optimal.gdx"),file.path("./output","*","fulldata.gdx")))))
-  }
+  searchforfile <- if ("--reprepare" %in% argv) "config.Rdata" else "full.gms"
+  possibledirs <- basename(dirname(Sys.glob(file.path("output", "*", searchforfile))))
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
@@ -308,23 +347,32 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
   }
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+  if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
   message()
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
     load(paste0("output/", outputdir, "/config.Rdata")) # read config.Rdata from results folder
     cfg$restart_subsequent_runs <- restart_subsequent_runs
+    # for debug, testOneRegi, quick: save original settings to cfg$backup; restore them from there if not set.
     if ("--debug" %in% argv) {
       if (is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$backup$cm_nash_mode <- cfg$gms$cm_nash_mode
       cfg$gms$cm_nash_mode <- "debug"
     } else {
       if (! is.null(cfg[["backup"]][["cm_nash_mode"]])) cfg$gms$cm_nash_mode <- cfg$backup$cm_nash_mode
     }
-    if ("--testOneRegi" %in% argv) {
+    cfg$gms$cm_quick_mode <- if ("--quick" %in% argv) "on" else "off"
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       if (is.null(cfg[["backup"]][["optimization"]])) cfg$backup$optimization <- cfg$gms$optimization
       cfg$gms$optimization <- "testOneRegi"
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     } else {
       if (! is.null(cfg[["backup"]][["optimization"]])) cfg$gms$optimization <- cfg$backup$optimization
+    }
+    if ("--quick" %in% argv) {
+      if (is.null(cfg[["backup"]][["cm_iteration_max"]])) cfg$backup$cm_iteration_max <- cfg$gms$cm_iteration_max
+      cfg$gms$cm_iteration_max <- 1
+    } else {
+      if (! is.null(cfg[["backup"]][["cm_iteration_max"]])) cfg$gms$cm_iteration_max <- cfg$backup$cm_iteration_max
     }
     if ("--reprepare" %in% argv & ! "--test" %in% argv) {
       try(system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms")))
@@ -334,6 +382,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
     cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
     save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
+    startedRuns <- startedRuns + 1
     if (! '--test' %in% argv) {
       submit(cfg, restart = TRUE)
     } else {
@@ -407,7 +456,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
     # if no csv was provided create dummy list with default/testOneRegi as the only scenario
-    if ("--testOneRegi" %in% argv) {
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       scenarios <- data.frame("testOneRegi" = "testOneRegi", row.names = "testOneRegi")
     } else {
       scenarios <- data.frame("default" = "default", row.names = "default")
@@ -417,16 +466,12 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
-    if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
+    if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
+    if (any(c("--debug", "--quick", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
-  }
-
-  # Tell user that model is currently locked
-  if (file.exists(".lock")) {
-    message("\nThe file .lock exists, so model runs will have to queue.")
   }
 
   # Modify and save cfg for all runs
@@ -440,7 +485,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if ("--testOneRegi" %in% argv & is.na(config.file)) {
+    if (any(c("--quick", "--testOneRegi") %in% argv) & is.na(config.file)) {
       cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
@@ -450,14 +495,17 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
       cfg$force_replace    <- TRUE
       if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
     }
-
+    if ("--quick" %in% argv) {
+        cfg$gms$cm_quick_mode <- "on"
+        cfg$gms$cm_iteration_max <- 1
+    }
     message("\n", if (is.na(config.file)) cfg$title else scen)
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings)
       # set optimization mode to testOneRegi, if specified as command line argument
-      if ('--testOneRegi' %in% argv) {
+      if (any(c("--quick", "--testOneRegi") %in% argv)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
         cfg$gms$optimization <- "testOneRegi"
         cfg$output           <- NA
@@ -491,6 +539,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     save(cfg, file=filename)
 
     if (start_now){
+      startedRuns <- startedRuns + 1
       # Create results folder and start run
       if (! '--test' %in% argv) {
         submit(cfg)
@@ -498,6 +547,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
         message("   If this wasn't --test mode, I would submit ", scen, ".")
       }
     } else {
+       waitingRuns <- waitingRuns + 1
        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
 
@@ -509,6 +559,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   }
 }
 
+message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
+        if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ('--test' %in% argv) {
-  message("\nFinished --test mode with ", ignorederrors, " errors. Rdata files were written, but no runs were started.")
+  message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+} else if (model_was_locked & (! "--restart" %in% argv | "--reprepare" %in% argv)) {
+  message("The model was locked before runs were started, so they will have to queue.")
 }

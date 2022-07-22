@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -189,6 +189,10 @@ if(s80_fadeoutPriceAnticipStartingPeriod ne 0,
  sm_fadeoutPriceAnticip = 0.7**(iteration.val - s80_fadeoutPriceAnticipStartingPeriod + 1);
 );
 display s80_fadeoutPriceAnticipStartingPeriod, sm_fadeoutPriceAnticip;
+
+*** Save FE prices in each iteration for easier monitoring
+pm_FEPrice_iter(iteration,t,regi,enty,sector,emiMkt) =
+  pm_FEPrice(t,regi,enty,sector,emiMkt);
 
 
 ***Decide, on whether to end iterating now. if any of the following criteria (contained in the set convMessage80(surplus,infes,nonopt)) is not met, s80_bool is set to 0, and the convergence process is NOT stopped

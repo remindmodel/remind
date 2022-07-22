@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -50,5 +50,19 @@ vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
 vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$( 
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;
+
+*' Limit biomass solids use in industry to 25 % of baseline solids
+*' Cement CCS might otherwise become a compelling BioCCS option under very high
+*' carbon prices due to missing adjustment costs.
+if (cm_emiscen ne 1,   !! not a BAU scenario
+  vm_demFEsector.up(t,regi,"sesobio","fesos","indst","ETS")
+  = 0.25 * p37_BAU_industry_ETS_solids(t,regi);
+);
+
+!! Fix industry output for bal scenario
+$ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
+  vm_cesIO.fx(t,regi,in)$( p37_industry_quantity_targets(t,regi,in) )
+  = p37_industry_quantity_targets(t,regi,in);
+$endif.bal_scenario
 
 *** EOF ./modules/37_industry/subsectors/bounds.gms

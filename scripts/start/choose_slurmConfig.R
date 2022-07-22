@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,16 +28,16 @@ choose_slurmConfig <- function(identifier = FALSE) {
     modes <- c(" 1: SLURM standby               12   nash H12             [recommended]",
                " 2: SLURM standby               13   nash H12 coupled",
                " 3: SLURM standby               16   nash H12+",
-               " 4: SLURM standby                1   nash debug, testOneRegi, reporting",
+               " 4: SLURM standby                1   nash debug, testOneRegi, quick",
                "-----------------------------------------------------------------------",
                " 5: SLURM priority              12   nash H12             [recommended]",
                " 6: SLURM priority              13   nash H12 coupled",
                " 7: SLURM priority              16   nash H12+",
-               " 8: SLURM priority               1   nash debug, testOneRegi, reporting",
+               " 8: SLURM priority               1   nash debug, testOneRegi, quick",
                "-----------------------------------------------------------------------",
                " 9: SLURM short                 12   nash H12",
                "10: SLURM short                 16   nash H12+",
-               "11: SLURM short                  1   nash debug, testOneRegi, reporting",
+               "11: SLURM short                  1   nash debug, testOneRegi, quick",
                "12: SLURM medium                 1   negishi",
                "13: SLURM long                   1   negishi",
                "-----------------------------------------------------------------------",
@@ -67,7 +67,7 @@ choose_slurmConfig <- function(identifier = FALSE) {
                     "5" = "--qos=priority --nodes=1 --tasks-per-node=12" , # SLURM priority - task per node: 12 (nash H12) [recommended]
                     "6" = "--qos=priority --nodes=1 --tasks-per-node=13" , # SLURM priority - task per node: 13 (nash H12 coupled)
                     "7" = "--qos=priority --nodes=1 --tasks-per-node=16" , # SLURM priority - task per node: 16 (nash H12+)
-                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
+                    "8" = "--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000"  , # SLURM priority - task per node:  1 (nash debug, test one regi)
                     "9" = "--qos=short --nodes=1 --tasks-per-node=12"    , # SLURM short    - task per node: 12 (nash H12)
                    "10" = "--qos=short --nodes=1 --tasks-per-node=16"    , # SLURM short    - task per node: 16 (nash H12+)
                    "11" = "--qos=short --nodes=1 --tasks-per-node=1 --mem=8000"     , # SLURM short    - task per node:  1 (nash debug, test one regi)

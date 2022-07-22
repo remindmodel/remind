@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -66,7 +66,7 @@ policy_costs_pdf <- function(policy_costs,
                  "options(width=110)",
                  "@")
   
-  # Create temporaray folder in which to create the policyCost pdf
+  # Create temporary folder in which to create the policyCost pdf
   system("mkdir tmp_policyCost")
 
   # Open stream in tmp_folder
@@ -120,9 +120,9 @@ write_new_reporting <- function(mif_path,
                                 scen_name,
                                 new_polCost_data) {
 
-  new_mif_path <- paste0(substr(mif_path,1,nchar(mif_path)-4),"_adjustedPolicyCosts.mif")
+  new_mif_path <- mif_path # paste0(substr(mif_path,1,nchar(mif_path)-4),"_adjustedPolicyCosts.mif")
 
-  message("A mif file with the name ", crayon::green(paste0("REMIND_generic_",scen_name,"_adjustedPolicyCosts.mif"))," is being created in the ",scen_name," output folder.")
+  message("The mif file '", crayon::green(new_mif_path), "' is overwritten in the ",scen_name," output folder.")
 
   my_data <- magclass::read.report(mif_path)
   my_variables <- grep("Policy Cost", magclass::getNames(my_data[[1]][[1]]), value = TRUE, invert = T)
@@ -132,8 +132,8 @@ write_new_reporting <- function(mif_path,
   magclass::getSets(new_polCost_data)[3] <- "variable"
 
   my_data <- magclass::mbind(my_data[[1]][[1]][,,my_variables], new_polCost_data)
-  my_data <- magclass::add_dimension(my_data,dim=3.1,add = "model",nm = "REMIND")
-  my_data <- magclass::add_dimension(my_data,dim=3.1,add = "scenario",nm = scen_name)
+  my_data <- magclass::add_dimension(my_data, dim=3.1, add = "model", nm = "REMIND")
+  my_data <- magclass::add_dimension(my_data, dim=3.1, add = "scenario", nm = scen_name)
 
   magclass::write.report(my_data, file = new_mif_path, ndigit = 7)
 
@@ -152,7 +152,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   sc <- magclass::getItems(pol_run,3.1)
 
   # Tell the user what's going on
-  message("Adding ",crayon::green("transfers")," to REMIND_generic_",sc,"_adjustedPolicyCosts.mif")
+  message("Adding ", crayon::green("transfers")," to mif file")
 
 
   # Get gdploss 
@@ -222,10 +222,9 @@ if (!exists("source_include")) {
                   "base_allT_lab_1point25_2020-03-27_16.12.35/",
                   "base_noEffChange_2020-03-09_17.16.28/")
   special_requests <- c("2")
-  # Make over-writtable from command line
-  lucode2::readArgs("outputdirs","special_requests")
+  # Make over-writable from command line
+  lucode2::readArgs("outputdirs", "special_requests")
 }
-
 
 
 # Go into a while loop, until the user is happy with his input, or gives up and exits
@@ -254,14 +253,17 @@ while (!happy_with_input) {
   # Get run names
   pol_names <- rm_timestamp(basename(dirname(pol_gdxs)))
   ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
+  pol_mifs <- paste0(dirname(pol_gdxs), "/REMIND_generic_", pol_names, ".mif")
 
   # Define pol-ref, policyCost pair names
-  pc_pairs <- paste0(crayon::green(pol_names), " w.r.t. ", crayon::green(ref_names))
+  pc_pairs <- paste0(ifelse(file.exists(pol_mifs) & file.exists(pol_gdxs), crayon::green(pol_names), crayon::red(pol_names)),
+                     " w.r.t. ", ifelse(file.exists(ref_gdxs), crayon::green(ref_names), crayon::red(ref_names)))
 
   # If this script was called from output.R, check with user if the pol-ref pairs
   # are the ones she wanted. 
   if(exists("source_include")) {
-    message(crayon::blue("\nPlease confirm the set-up:"))
+    message(crayon::blue("\nPlease confirm the set-up."))
+    if (! all(file.exists(c(pol_mifs, pol_gdxs, ref_gdxs)))) message(crayon::red("Red"), " folder names have no fitting mif or gdx file, first run the reporting.")
     message("From the order with which you selected the directories, the following policy costs will be computed:")
     message(paste0("\t", pc_pairs, "\n"))
     message("Is that what you intended?")
@@ -305,8 +307,8 @@ while (!happy_with_input) {
 
 message("Copy fulldata.gdx of policy refs to input_refpolicycost.gdx in output folders, overwriting these files if they exist.")
 message("If you rerun the reporting, the policy run specified here will be used from now on.")
-file.copy(ref_gdxs, cp_ref_gdxs_to, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
-
+copiedfiles <- file.copy(ref_gdxs, cp_ref_gdxs_to, overwrite = TRUE, copy.mode = TRUE, copy.date = TRUE)
+if (any(! copiedfiles)) message(paste(ref_gdxs[! copiedfiles], collapse = ", "), " could not be copied")
 
 # Get Policy costs for every policy-reference pair
 message(crayon::blue("\nComputing Policy costs:\n"))
@@ -317,7 +319,6 @@ message(crayon::green("Done!"))
 # Create "adjustedPolicyCost" reporting file
 if (!"1" %in% special_requests) {
   message(crayon::blue("\nCreating new reportings:\n"))
-  pol_mifs <- paste0(dirname(pol_gdxs), "/REMIND_generic_", pol_names, ".mif")
   new_reporting_files <- mapply(write_new_reporting, pol_mifs, pol_names, tmp_policy_costs_magpie)
   message(crayon::green("Done!"))
 }
@@ -327,7 +328,7 @@ if (!"1" %in% special_requests) {
 if ("2" %in% special_requests && !"1" %in% special_requests) {
   message(crayon::blue("\nComputing transfers:"))
   ref_mifs <- paste0(dirname(ref_gdxs), "/REMIND_generic_", ref_names, ".mif")
-  transfer_info <- mapply(report_transfers, new_reporting_files, ref_mifs, SIMPLIFY = F)
+  transfer_info <- mapply(report_transfers, new_reporting_files, ref_mifs, SIMPLIFY = FALSE)
   message(crayon::green("Done!"))
 }
 
@@ -338,7 +339,7 @@ if (!"3" %in% special_requests) {
   
   # Add transfers, if they exist
   if (exists("transfer_info")) {
-    tmp_policy_costs_magpie <- mapply(magclass::mbind, tmp_policy_costs_magpie, transfer_info, SIMPLIFY = F)
+    tmp_policy_costs_magpie <- mapply(magclass::mbind, tmp_policy_costs_magpie, transfer_info, SIMPLIFY = FALSE)
   }
   
   tmp_policy_costs <- tmp_policy_costs_magpie %>% 

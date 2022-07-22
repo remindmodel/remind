@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -139,9 +139,9 @@ $offdelim
 *** converted to T$/TWyr   
 p21_tau_xpres_tax(ttot,regi,"peoil")$(ttot.val ge 2005) = p21_tau_xpres_tax(ttot,regi,"peoil") * sm_DpGJ_2_TDpTWa;
 *LB* use 0 for all regions as default
-p21_tau_xpres_tax(ttot,regi,all_enty) = 0;  
+p21_tau_xpres_tax(ttot,regi,all_enty) = 0;
 
-           
+
 *** --------------------
 *** CO2 prices
 *** --------------------    
@@ -240,6 +240,12 @@ $else.cm_CO2TaxSectorMarkup
   p21_CO2TaxSectorMarkup(regi,emi_sectors) = 0;
 ;
 $endIf.cm_CO2TaxSectorMarkup
+
+*** by default PE tax is zero
+pm_tau_pe_tax(ttot,regi,all_enty) = 0;
+
+*** by default CES tax is zero
+pm_tau_ces_tax(ttot,regi,all_in) = 0;
 
 
 *** EOF ./modules/21_tax/on/datainput.gms
