@@ -877,11 +877,11 @@ p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
 p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 
 
-pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te)$(ttot.val ge cm_startyear)=sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
-     vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt));
+*pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te)$(ttot.val ge cm_startyear)=sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),
+*     vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt));
      
-pm_EnergyExp(ttot,regi)$(ttot.val ge cm_startyear)=sum(se2fe(entySe,entyFe,te),
-      pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te));
+*pm_EnergyExp(ttot,regi)$(ttot.val ge cm_startyear)=sum(se2fe(entySe,entyFe,te),
+*      pm_EnergyExp_enty(ttot,regi,entySe,entyFe,te));
 
 *display vm_cons.l,
 *        vm_EnergyExp.l,

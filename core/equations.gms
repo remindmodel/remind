@@ -295,10 +295,10 @@ qm_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
 ;
 
 
-  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
-    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
-  )
-; 
+*  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+*    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
+*  )
+*; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
 *' FE Pathway III: Energy service layer (prodFe -> demFeForEs -> prodEs), no capacity tracking.
