@@ -6,7 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 # ---- Define set of runs that will be compared ----
 
-<<<<<<< HEAD
 
 # gets characters (line) from the terminal of from a connection
 # and stores it in the return object
@@ -23,22 +22,14 @@ getLine <- function() {
 }
 
 # Ask user to select an element form a sequence.
-=======
-# Ask user to select an element from a sequence.
->>>>>>> 6b95d9b89e6f3c2af8548174067b614fdef9eec0
 chooseFromSequence <- function(sequence, title, default) {
   cat(
     "\n\n", title,
     "\nLeave empty for: ", paste(default, collapse = ", "), ".\n\n",
     sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
-<<<<<<< HEAD
-  cat("\nNumbers, e.g, '1', '2,4', '3:5', ...:\n")
-  input <- getLine()
-=======
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
   input <- get_line()
->>>>>>> 6b95d9b89e6f3c2af8548174067b614fdef9eec0
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
