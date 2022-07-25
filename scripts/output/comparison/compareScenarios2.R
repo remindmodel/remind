@@ -6,14 +6,14 @@
 # |  Contact: remind@pik-potsdam.de
 # ---- Define set of runs that will be compared ----
 
-# Ask user to select an element form a sequence.
+# Ask user to select an element from a sequence.
 chooseFromSequence <- function(sequence, title, default) {
   cat(
     "\n\n", title, 
     "\nLeave empty for: ", paste(default, collapse=", "), ".\n\n", 
     sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
-  cat("\nNumbers, e.g, '1', '2,4', '3:5', ...:\n")
+  cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
   input <- get_line()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
