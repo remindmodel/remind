@@ -6,13 +6,52 @@
 # |  Contact: remind@pik-potsdam.de
 # ---- Define set of runs that will be compared ----
 
+# Ask user to select an element from a sequence.
+chooseFromSequence <- function(sequence, title, default) {
+  cat(
+    "\n\n", title, 
+    "\nLeave empty for: ", paste(default, collapse=", "), ".\n\n", 
+    sep = "")
+  cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
+  cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
+  input <- get_line()
+  ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
+  if (any(!ids %in% seq_along(sequence))) {
+    stop("Choose numbers between 1 and ", length(sequence))
+  }
+  chosenElements <- if (length(ids) == 0) default else sequence[ids]
+  cat("\nchosen elements:\n  ", paste(chosenElements, collapse="\n  "), "\n\n", sep="")
+  return(chosenElements)
+}
+
+# cs2 profiles
+profileNamesDefault <- c("short", "default")
+profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
+profiles <- read.delim(
+  text = readLines(profilesFilePath, warn = FALSE), 
+  header = TRUE, 
+  sep = ";",
+  colClasses = "character",
+  comment.char = "#",
+  quote = "")
+profileNames <- profileNamesDefault
+
+
 if (exists("outputdirs")) {
   # This is the case if this script was called via Rscript output.R
+  
+  profileNames <- chooseFromSequence(
+    profiles$name, 
+    "Choose profiles for cs2.",
+    profileNamesDefault)
+  
   listofruns <- list(list(
     period = "both",
     set = format(Sys.time(), "%Y-%m-%d_%H.%M.%S"),
     dirs = outputdirs))
+  
 } else {
+  
   # This is the case if this script was called directly via Rscript
   listofruns <- list(
     list(
@@ -51,6 +90,7 @@ if (exists("outputdirs")) {
       period = "both",
       set = "cpl-SSP5",
       dirs = c("C_SSP5-Base-rem-5","C_SSP5-NPi-rem-5","C_SSP5-PkBudg1300-rem-5","C_SSP5-PkBudg1100-rem-5","C_SSP5-PkBudg900-rem-5")))
+  
 }
 
 # remove the NULL element
@@ -66,20 +106,20 @@ for (i in 1:length(listofruns)) {
 
 # ---- Start compareScenarios either on the cluster or locally ----
 
-start_comp <- function(outputdirs,
-                       shortTerm,
-                       outfilename,
-                       regionList,
-                       mainReg,
-                       modelsHistExclude=c()) {
+start_comp <- function(
+  outputdirs,
+  outfilename,
+  regionList,
+  mainReg,
+  profileName
+) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
   }
   jobname <- paste0(
       "compScen",
-      ifelse(outfilename == "", "", "-"),
-      outfilename,
-      ifelse(shortTerm, "-shortTerm", "")
+      ifelse(outfilename == "", "", "-"), outfilename,
+      "-", profileName
     )
   cat("Starting ", jobname, "\n")
   on_cluster <- file.exists("/p/projects/")
@@ -92,11 +132,10 @@ start_comp <- function(outputdirs,
     " --mail-type=END --time=200 --mem-per-cpu=8000",
     " --wrap=\"Rscript ", script,
     " outputdirs=", paste(outputdirs, collapse = ","),
-    " shortTerm=", shortTerm,
+    " profileName=", profileName,
     " outfilename=", jobname,
     " regionList=", paste(regionList, collapse = ","),
     " mainRegName=", mainReg,
-    " modelsHistExclude=", paste(modelsHistExclude, collapse = ","),
     "\"")
   cat(clcom, "\n")
   if (on_cluster) {
@@ -135,23 +174,23 @@ for (r in listofruns) {
       mainRegName <- "World"
     else
       mainRegName <- reg
-    if (r$period == "short" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
-    if (r$period == "long" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=FALSE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
+    for (profileName in profileNames) {
+      start_comp(
+        outputdirs = r$dirs, 
+        outfilename = fileName, 
+        regionList = regionList, 
+        mainReg = mainRegName,
+        profileName = profileName)
+    }
 
     # plot additional pdf with Germany as focus region and exclusion of non-meaningful references in that context
     if (reg == "EUR") {
-      ref.exclude <- c(
-        "IEA ETP B2DS", "IEA ETP 2DS", "IEA ETP RTS",
-        "EDGE_SSP1", "EDGE_SSP2", "CEDS", "IRENA",
-        "IEA WEO 2021 APS", "IEA WEO 2021 SDS", "IEA WEO 2021 SPS"
-      )
-      ref.exclude <- sapply(ref.exclude, function(x) {
-        paste0("'", x, "'")
-      }, USE.NAMES = F)
       fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-DEU")
-      start_comp(outputdirs = r$dirs, shortTerm = TRUE, outfilename = paste0(fileName, "-", "Ariadne"), regionList = regionList, mainReg = "DEU", modelsHistExclude = ref.exclude)
+      start_comp(
+        outputdirs = r$dirs, 
+        outfilename = fileName, 
+        regionList = regionList, 
+        profileName = "AriadneDEU")
     }
 
   }
