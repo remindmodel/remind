@@ -23,7 +23,8 @@ pm_consPC(tall,regi)$(tall.val gt 2150) = pm_consPC("2150",regi);
 *** output parameter for diagnostics
 
 *** Compute ppf prices from CES derivatives
-o01_CESderivatives(t,regi,cesOut2cesIn(out,in))$( vm_cesIO.l(t,regi,in) gt 0 )
+o01_CESderivatives(t,regi,cesOut2cesIn(out,in))$( vm_cesIO.l(t,regi,in) gt 0 AND
+                                                  vm_cesIO.l(t,regi,out) gt 0)
   =
     pm_cesdata(t,regi,in,"xi")
   * pm_cesdata(t,regi,in,"eff")
