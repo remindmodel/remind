@@ -76,11 +76,12 @@ loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
 );
 
-
 *** bounds on historic gas capacities in Germany
 vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
 vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
+*** limit coal-power capacity to at least 5 GW in 2030 to accuount for emissions from waste power plants which are currently subsumed under coal-power in REMIND 
+vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
 
 
 *** only small amount of co2 injection ccs until 2030 in Germany
