@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -100,13 +100,13 @@ p_switch_cement(ttot,regi)$(ttot.val ge 1990)=1/(1+exp(-(s_c_so2/s_tau_cement)*(
 display p_switch_cement;
 
 *** scale CO2 luc baselines from MAgPIE to EDGAR v4.2 2005 data in REMIND standalone runs: linear, phase out within 20 years
-***$if %cm_MAgPIE_coupling% == "off" p_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = p_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - p_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
+***$if %cm_MAgPIE_coupling% == "off" pm_macBaseMagpie(ttot,regi,"co2luc")$(ttot.val lt 2030) = pm_macBaseMagpie(ttot,regi,"co2luc") + ( (p_macBase2005(regi,"co2luc") - pm_macBaseMagpie("2005",regi,"co2luc")) * (1-(ttot.val - 2005)/20) );
 
 *** make sure that minimum CO2 luc emissions given in p_macPolCO2luc do not exceed the baseline
 loop(regi,
      loop(ttot,
-          if( (p_macPolCO2luc(ttot,regi) > p_macBaseMagpie(ttot,regi,"co2luc")),
-                    p_macPolCO2luc(ttot,regi) = p_macBaseMagpie(ttot,regi,"co2luc")
+          if( (p_macPolCO2luc(ttot,regi) > pm_macBaseMagpie(ttot,regi,"co2luc")),
+                    p_macPolCO2luc(ttot,regi) = pm_macBaseMagpie(ttot,regi,"co2luc")
              );
           );
     );
@@ -257,9 +257,9 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 
 
 *** exogenous
-vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = p_macBaseMagpie(ttot,regi,enty);
+vm_macBase.fx(ttot,regi,enty)$emiMacMagpie(enty) = pm_macBaseMagpie(ttot,regi,enty);
 vm_macBase.fx(ttot,regi,enty)$emiMacExo(enty) = p_macBaseExo(ttot,regi,enty);
-vm_macBase.fx(ttot,regi,"co2luc") = p_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
+vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
 vm_macBase.up(ttot,regi,"n2ofertin") = Inf;
 ***scale exogenous baselines from van Vuuren to EDGAR v4.2 2005 data
 vm_macBase.fx(ttot,regi,"n2otrans")$p_macBaseVanv("2005",regi,"n2otrans") = p_macBaseVanv(ttot,regi,"n2otrans") * (p_macBase2005(regi,"n2otrans") / p_macBaseVanv("2005",regi,"n2otrans"));
@@ -289,8 +289,8 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: pm_priceCO2 [$/tCeq]; T$/TWa = 1e6 M$/TWa * sm_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
-p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * sm_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
+*** Conversion: pm_priceCO2 [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
   = min(801, ceil(max(pm_priceCO2(ttot,regi) * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
@@ -345,7 +345,7 @@ p_macLevFree(ttot,regi,enty)$( ttot.val gt 2005 )
     )$( (ttot.val gt 2040) )
 ;
 
-$ifthen setGlobal c_scaleEmiHistorical
+$IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 
 **p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 * Set minimum abatment levels based on historical emissions
@@ -357,11 +357,11 @@ p_macLevFree(ttot,regi,emiMacMagpie(enty))$((ttot.val ge 2015) AND p_histEmiSect
 p_macLevFree("2010",regi,enty)$((p_histEmiMac("2010",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2010",regi,enty)) /vm_macBase.l("2010",regi,enty) );
 p_macLevFree(ttot,regi,enty)$((ttot.val ge 2015) AND (p_histEmiMac("2015",regi,enty)) AND (sameas(enty,"ch4wstl") OR sameas(enty,"ch4wsts"))) = max( 0, 1 - (p_histEmiMac("2015",regi,enty))/vm_macBase.l("2015",regi,enty) );
 
-$else
+$ELSE.scaleEmiHist
 
 p_macLevFree(ttot,regi,emiMacMagpie(enty))=0;
 
-$endif
+$ENDIF.scaleEmiHist
 
 pm_macAbatLev(ttot,regi,enty) = 0.0;
 pm_macAbatLev("2005",regi,enty) = p_macUse2005(regi,enty);
@@ -375,18 +375,21 @@ pm_macAbatLev(ttot,regi,enty)$( ttot.val gt 2015 )
       ),
       p_macLevFree(ttot,regi,enty)
 	);
-  
 
-loop(regi,
-     loop(ttot$(ttot.val ge 2015),
-           loop(enty(MacSector),
-              if ((pm_macAbatLev(ttot,regi,enty) > (pm_macAbatLev(ttot-1,regi,enty) + s_macChange * pm_ts(ttot))),
-             pm_macAbatLev(ttot,regi,enty) = pm_macAbatLev(ttot-1,regi,enty) + s_macChange * pm_ts(ttot);
-              );
-            );
-        );
+*** Limit MAC abatement level increase to 5 % p.a., or 2 % p.a. for cement
+*** before 2050
+pm_macAbatLev(ttot,regi,MACsector(enty))$( ttot.val ge 2015 )
+  = min(
+      pm_macAbatLev(ttot,regi,enty),
+      ( pm_macAbatLev(ttot-1,regi,enty)
+      + ( ( s_macChange$( NOT sameas(enty,"co2cement") OR  ttot.val gt 2050 )
+          + 0.02$(            sameas(enty,"co2cement") AND ttot.val le 2050 )
+	  )
+        * pm_ts(ttot)
+	)
+      )
     );
-
+  
 
 pm_macAbatLev("2015",regi,"co2luc") = 0;
 pm_macAbatLev("2020",regi,"co2luc") = 0;
@@ -424,7 +427,7 @@ pm_macCost(ttot,regi,emiMacSector(enty))
 *** These losses are not accounted for, so neither are the avoided losses.
 *** conversion factor MtCH4 --> TWa: 1 MtCH4 = 1.23 * 10^6 toe * 42 GJ/toe * 10^-9 EJ/GJ * 1 TWa/31.536 EJ = 0.001638 (BP statistical review)
 p_macPE(ttot,regi,enty) = 0.0;
-p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = sm_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
+p_macPE(ttot,regi,"pegas")$(ttot.val gt 2005) = s_MtCH4_2_TWa * 0.5 * (vm_macBase.l(ttot,regi,"ch4coal")-vm_emiMacSector.l(ttot,regi,"ch4coal"));
 
 
 ***------------ adjust adjustment costs for advanced vehicles according to CO2 price in the previous time step ----------------------

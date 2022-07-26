@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -20,6 +20,13 @@ p35_esCapCost(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_teEs) "Capital cos
 /
 $ondelim
 $include "./modules/35_transport/edge_esm/input/esCapCost.cs4r"
+$offdelim
+/
+
+p35_transportGDPshare(ttot,all_regi) "transportation share in GDP [percentage]"
+/
+$ondelim
+$include "./modules/35_transport/edge_esm/input/f35_transportGDPshare.cs4r"
 $offdelim
 /
 

@@ -1,9 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/RLDC/declarations.gms
 
 parameters
     p32_capFacDem(all_regi)						"Average demand factor of a power sector [0,1]"
@@ -72,3 +73,5 @@ equations
     q32_limitCapTeGrid(ttot,all_regi)   		"Calculate the additional grid capacity required by VRE"
     q32_limitSolarWind(tall,all_regi)    		"Limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 ;
+
+*** EOF ./modules/32_power/RLDC/declarations.gms

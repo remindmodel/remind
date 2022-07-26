@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -28,8 +28,8 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
   + sum(in, vm_invRD(ttot,regi,in))
   + sum(in, vm_invInno(ttot,regi,in))
   + sum(in, vm_invImi(ttot,regi,in))
-  + sum(tradePe(enty), pm_costsTradePeFinancial(regi,"Mport",enty) * vm_Mport(ttot,regi,enty))
-  + sum(tradePe(enty),
+  + sum(tradePe(enty)$(NOT tradeCap(enty)), pm_costsTradePeFinancial(regi,"Mport",enty) * vm_Mport(ttot,regi,enty))
+  + sum(tradePe(enty)$(NOT tradeCap(enty)),
       (pm_costsTradePeFinancial(regi,"Xport",enty) * vm_Xport(ttot,regi,enty))
     * ( 1 
       + ( pm_costsTradePeFinancial(regi,"XportElasticity",enty)
@@ -41,8 +41,9 @@ qm_budget(ttot,regi)$( ttot.val ge cm_startyear ) ..
         )$( ttot.val ge max(2010, cm_startyear) )
       )
     )
-  + sum(tradeSe, pm_MPortsPrice(ttot,regi,tradeSe) * vm_Mport(ttot,regi,tradeSe)) 
-  - sum(tradeSe, pm_XPortsPrice(ttot,regi,tradeSe) * vm_Xport(ttot,regi,tradeSe)) 
+  + sum(tradeSe, pm_MPortsPrice(ttot,regi,tradeSe) * vm_Mport(ttot,regi,tradeSe))
+  - sum(tradeSe, pm_XPortsPrice(ttot,regi,tradeSe) * vm_Xport(ttot,regi,tradeSe))
+  + sum(tradeCap, vm_costTradeCap(ttot,regi,tradeCap))
   + vm_taxrev(ttot,regi)$(ttot.val ge 2010)
   + vm_costAdjNash(ttot,regi)
   + sum(in_enerSerAdj(in), vm_enerSerAdj(ttot,regi,in))
@@ -94,6 +95,7 @@ q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
       pm_cesdata(t,regi,in,"xi")
     * ( pm_cesdata(t,regi,in,"eff")
       * vm_effGr(t,regi,in)
+      * vm_damageProdFactor(t,regi,in)
       * vm_cesIO(t,regi,in)
       )
    ** pm_cesdata(t,regi,out,"rho")

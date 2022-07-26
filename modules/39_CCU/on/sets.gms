@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -21,6 +21,18 @@ te_ccu39(all_te)                            "CCU technologies"
 /
     h22ch4         							"conversion technology of secondary energy hydrogen to secondary energy gas by methanation using captured CO2"
 	MeOH									"conversion technology of secondary energy hydrogen to secondary energy liquids by the H2-Fischer-Tropsch route/Methanol route using captured CO2"
+/
+
+
+enty_BioSyn_39(all_enty,emi_sectors,emiMkt)	"FE, sector and emissions markets to which constraint on equal share of synfuels in biofuels+synfuels should be applied"
+/
+	fedie.trans.ETS
+	fedie.trans.ES
+	fedie.trans.other
+	fepet.trans.ETS
+	fepet.trans.ES
+	fepet.trans.other
+
 /
 
 ***-------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -123,9 +123,18 @@ ConvCaseWise
 ElecEra
 ElecEraWise
 HydrHype
+HydrHype4
 HydrHypeWise
 Mix
 MixWise
+Mix1Wise
+Mix2Wise
+Mix3Wise
+Mix4Wise
+Mix1
+Mix2
+Mix3
+Mix4
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"

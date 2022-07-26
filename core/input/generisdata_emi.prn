@@ -6,6 +6,7 @@
 ***  quickly burned, but some remains unburnt for decades) - "carbonstored".
 ***  NB: reduction calculated based on values in manual to IEA CO2 emissions statistics (2007).
 *JeS* emission factors for n2o are in Tg N per TWa (native remind units)
+*DK* biomass N2O emissions are taken care via p_efFossilFuelExtr in q_macBase in core/equations.gms
 *LP* ratio of C to H  in CCU-technologies (make sure if it is H or H2 you are reffering to!)
 
                                co2      cco2      n2o            CtoH
@@ -34,16 +35,17 @@ pecoal.seliqfos.coalftrec      26.1
 pecoal.seliqfos.coalftcrec      7.8      18.3
 pecoal.sesofos.coaltr          26.1             0.04415
 pecoal.segafos.coalgas         26.1             0.04415
-pebiolc.seel.bioigccc         -20.0      20.0   0.12614
-pebiolc.seel.bioigcc                            0.12614
+pebiolc.seel.bioigccc         -20.0      20.0
+pebiolc.seel.bioigcc
+pebiolc.segabio.biogasc        -9.5       9.5
 pebiolc.seliqbio.bioftcrec    -12.0      12.0 
-pebiolc.seh2.bioh2c           -22.5      22.5   0.12614
-pebiolc.seel.biochp                             0.12614
-pebiolc.seh2.bioh2                              0.12614
-pebiolc.sehe.biohp                              0.12614
-pebiolc.sesobio.biotr                           0.12614
-pebiolc.sesobio.biotrmod                        0.12614
-pebiolc.segabio.biogas                          0.12614
+pebiolc.seh2.bioh2c           -22.5      22.5   
+pebiolc.seel.biochp                             
+pebiolc.seh2.bioh2                              
+pebiolc.sehe.biohp                              
+pebiolc.sesobio.biotr                           
+pebiolc.sesobio.biotrmod                        
+pebiolc.segabio.biogas                          
 peoil.seliqfos.refliq          18.4               
 peoil.seel.dot                 18.4             0.01892
 seh2.segasyn.h22ch4                                              0.395

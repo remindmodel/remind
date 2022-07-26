@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,7 +10,7 @@ library(luplot)
 library(lucode2)
 library(gms)
 library(gdx)
-library(magpie)
+library(magpie4)
 library(remind2)
 
 ############################# BASIC CONFIGURATION #############################
@@ -53,7 +53,7 @@ readfuelex <- function(gdx,enty) {
 }
 
 ############### read and calculate data ################################
-fuelex <- read_all(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
+fuelex <- readAll(gdx_path,readfuelex,enty="pebiolc",as.list=FALSE)
 
 fuelex_bio <- dimSums(fuelex,dims=4) * TWa2EJ # grades are in fourth dimension
 

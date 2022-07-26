@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,7 +10,7 @@ if( (ord(iteration) le 25 and ord(iteration) ge cm_startIter_EDGET and (mod(ord(
     or (ord(iteration) le 45  and ord(iteration) gt 25 and  (mod(ord(iteration), 5) eq 0))
     or (ord(iteration)  gt 45 and  (mod(ord(iteration), 8) eq 0)),
 
-    Execute "Rscript EDGE_transport.R";
+    Execute "Rscript -e 'edgeTransport::toolIterativeEDGETransport()'";
 
     Execute_Loadpoint 'p35_esCapCost' p35_esCapCost;
     pm_esCapCost(t,regi,teEs_dyn35)$(t.val gt 2010 AND t.val ge cm_startyear AND t.val le 2100) = p35_esCapCost(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%",teEs_dyn35);

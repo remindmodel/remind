@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -131,7 +131,7 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
          )
 ***   add (reused gas from waste landfills) to segas to not account for CO2 
 ***   emissions - it comes from biomass
-  + ( sm_MtCH4_2_TWa
+  + ( s_MtCH4_2_TWa
     * ( vm_macBase(t,regi,"ch4wstl")
       - vm_emiMacSector(t,regi,"ch4wstl")
       )
@@ -207,7 +207,9 @@ q_transSe2se(t,regi,se2se(enty,enty2,te))..
 qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   vm_prodFe(t,regi,entySe,entyFe,te)
   =e=
-  sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+    vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
+  )
 ; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
@@ -218,13 +220,13 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 q_transFe2Es(t,regi,fe2es(entyFe,esty,teEs))..
     pm_fe2es(t,regi,teEs) * vm_demFeForEs(t,regi,entyFe,esty,teEs)
     =e=
-    v_prodEs(t,regi,entyFe,esty,teEs);
+    vm_prodEs(t,regi,entyFe,esty,teEs);
 
 *' Hand-over to CES:
 q_es2ppfen(t,regi,in)$ppfenFromEs(in)..
     vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity")
     =e=
-    sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in), v_prodEs(t,regi,entyFe,esty,teEs))
+    sum(fe2es(entyFe,esty,teEs)$es2ppfen(esty,in), vm_prodEs(t,regi,entyFe,esty,teEs))
 ;
 
 *' Shares of FE carriers w.r.t. a CES node:
@@ -320,6 +322,18 @@ q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
     =e=
     vm_cap(t,regi,te,"1")
+;
+
+
+***---------------------------------------------------------------------------
+*' Calculation of total primary to secondary energy capacities 
+*' Used for comfortably setting bounds on total capacity without technology differentiation.
+***--------------------------------------------------------------------------
+q_capTotal(t,regi,entyPe,entySe)$( capTotal(entyPe,entySe))..
+  vm_capTotal(t,regi,entyPe,entySe)
+  =e=
+  sum( pe2se(entyPe, entySe, te), 
+    vm_cap(t,regi,te,"1"))
 ;
 
 ***---------------------------------------------------------------------------
@@ -579,13 +593,39 @@ q_emiAllMkt(t,regi,emiTe,emiMkt)..
 ;
 
 
+***--------------------------------------------------
+*' Sectoral energy-emissions used for taxation markup with cm_CO2TaxSectorMarkup
+***--------------------------------------------------
+
+*** CO2 emissions from (fossil) fuel combustion in buildings and transport (excl. bunker fuels)
+q_emiCO2Sector(t,regi,sector)$(sameAs(sector, "build") OR
+                                sameAs(sector, "trans"))..
+vm_emiCO2Sector(t,regi,sector)
+  =e=
+*** calculate direct CO2 emissions per end-use sector
+    sum(se2fe(entySe,entyFe,te),
+      sum(emiMkt$(sector2emiMkt(sector,emiMkt)),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+    )
+  )
+*** substract emissions of bunker fuels for transport sector
+  - sum(se2fe(entySe,entyFe,te),
+        pm_emifac(t,regi,entySe,entyFe,te,"co2")
+        * vm_demFeSector(t,regi,entySe,entyFe,sector,"other")
+  )$(sameAs(sector, "trans"))
+;
+
 ***------------------------------------------------------
 *' Mitigation options that are independent of energy consumption are represented
 *' using marginal abatement cost (MAC) curves, which describe the
 *' percentage of abated emissions as a function of the costs. 
 *' Baseline emissions are obtained by three different methods: by source (via emission factors),
 *' by econometric estimate, and exogenous. Emissions are calculated as
-*' baseline emissions times (1 - relative emission reduction). 
+*' baseline emissions times (1 - relative emission reduction).
+*' If coupled to MAgPIE pm_macBaseMagpie contains all N2O landuse emissions including n2o from biomass production
+*' and p_efFossilFuelExtr(regi,"pebiolc","n2obio") is zero then. If running standalone 
+*' pm_macBaseMagpie does not include n2o from biomass but it is added here.
 *' In case of CO2 from landuse (co2luc), emissions can be negative. 
 *' To treat these emissions in the same framework, we subtract the minimal emission level from
 *' baseline emissions. This shift factor is then added again when calculating total emissions.
@@ -598,7 +638,7 @@ q_macBase(t,regi,enty)$( emiFuEx(enty) OR sameas(enty,"n2ofertin") ) ..
       p_efFossilFuelExtr(regi,enty2,enty) 
     * sum(pe2rlf(enty2,rlf), vm_fuExtr(t,regi,enty2,rlf))
     )$( emiFuEx(enty) )
-  + ( p_macBaseMagpie(t,regi,enty) 
+  + ( pm_macBaseMagpie(t,regi,enty) 
     + p_efFossilFuelExtr(regi,"pebiolc","n2obio") 
     * vm_fuExtr(t,regi,"pebiolc","1")
     )$( sameas(enty,"n2ofertin") )
@@ -814,14 +854,13 @@ q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2109 AND pm_ttot_val(ttot+1) ge m
         =g=
         vm_capEarlyReti(ttot,regi,te);
 
-q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear))..
+q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) gt max(2010, cm_startyear))..
         vm_capEarlyReti(ttot+1,regi,te)
         =l=
-        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * (cm_earlyreti_rate 
-*** more retirement possible for coal power plants in early time steps for Europe and USA, to account for relatively old fleet 
-		+ pm_earlyreti_adjRate(regi,te)$(ttot.val lt 2035)
-*** more retirement possible for first generation biofuels		
-		+ 0.05$(sameas(te,"biodiesel") or sameas(te, "bioeths")));
+        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * 
+*** Region- and tech-specific max early retirement rates, e.g. more retirement possible for coal power plants in CHA, EUR, REF and USA to account for relatively old fleet or short historical lifespans
+        pm_regiEarlyRetiRate(ttot,regi,te) 
+    ;
 
 
 
@@ -842,14 +881,15 @@ q_costEnergySys(ttot,regi)$( ttot.val ge cm_startyear ) ..
 *' Investment equation for end-use capital investments (energy service layer):
 ***---------------------------------------------------------------------------
 q_esCapInv(ttot,regi,teEs)$(pm_esCapCost(ttot,regi,teEs) AND ttot.val ge cm_startyear) ..
-    vm_esCapInv(ttot,regi,teEs)
-    =e=
-    sum (fe2es(entyFe,esty,teEs),
-    pm_esCapCost(ttot,regi,teEs) * v_prodEs(ttot,regi,entyFe,esty,teEs)
-    );
-    ;
-
-
+  vm_esCapInv(ttot,regi,teEs)
+  =e=
+  sum (fe2es(entyFe,esty,teEs)$entyFeTrans(entyFe), !!edge transport
+    vm_transpGDPscale(ttot,regi) * pm_esCapCost(ttot,regi,teEs) * vm_prodEs(ttot,regi,entyFe,esty,teEs)
+  ) +
+  sum (fe2es(entyFe,esty,teEs)$(not(entyFeTrans(entyFe))), 
+    pm_esCapCost(ttot,regi,teEs) * vm_prodEs(ttot,regi,entyFe,esty,teEs)
+  )
+;
 
 *' Limit electricity use for fehes to 1/4th of total electricity use:
 q_limitSeel2fehes(t,regi)..
@@ -858,7 +898,7 @@ q_limitSeel2fehes(t,regi)..
     - vm_prodSe(t,regi,"pegeo","sehe","geohe") * pm_prodCouple(regi,"pegeo","sehe","geohe","seel")
 ;
 
-*' Requires minimum share of liquids from oil in total liquids of 5%:
+*' Requires minimum share of liquids from oil in total fossil liquids of 5%:
 q_limitShOil(t,regi)..
     sum(pe2se("peoil",enty2,te)$(sameas(te,"refliq") ), 
        vm_prodSe(t,regi,"peoil",enty2,te) 
@@ -950,17 +990,10 @@ q_heat_limit(t,regi)$(t.val gt 2020)..
 ;
 $ENDIF.sehe_upper
 
-$ontext
-q_H2BICouple(ttot,regi)$(ttot.val ge max(2010, cm_startyear))..
-    sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"build")), 
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  * sum(sector2emiMkt(sector,emiMkt)$(SAMEAS(sector,"indst")),
-      vm_demFeSector(ttot,regi,"seh2","feh2s",sector,emiMkt) - vm_demFeSector(ttot-1,regi,"seh2","feh2s",sector,emiMkt))
-  =g=
-  0
-;
-$offtext
 
+***---------------------------------------------------------------------------
+*' H2 t&d capacities in buildings and industry to avoid switching behavior between both sectors
+***---------------------------------------------------------------------------
 
 q_capH2BI(t,regi)$(t.val ge max(2015, cm_startyear))..
   vm_cap(t,regi,"tdh2i","1") + vm_cap(t,regi,"tdh2b","1")
@@ -982,7 +1015,7 @@ q_limitCapFeH2BI(t,regi,sector)$(SAMEAS(sector,"build") OR SAMEAS(sector,"indst"
 ***---------------------------------------------------------------------------
 
 q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
-  (pm_secBioShare(t,regi,entyFe,sector) + s_histBioShareTolerance)
+  (pm_secBioShare(t,regi,entyFe,sector) + 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
   =g=
@@ -990,7 +1023,7 @@ q_shbiofe_up(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(ent
 ;
 
 q_shbiofe_lo(t,regi,entyFe,sector,emiMkt)$((sameas(entyFE,"fegas") or sameas(entyFE,"fehos") or sameas(entyFE,"fesos")) and entyFe2Sector(entyFe,sector) and sector2emiMkt(sector,emiMkt) and (t.val le 2015))..
-  (pm_secBioShare(t,regi,entyFe,sector) - s_histBioShareTolerance)
+  (pm_secBioShare(t,regi,entyFe,sector) - 0.02)
   *
   sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
   =l=

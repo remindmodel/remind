@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/35_transport/complex.gms
+*** SOF ./modules/35_transport/complex/realization.gms
 
 *' @description Transport demand composition is calculated for LDV categories, electric trains and an aggregate category HDV.
 *' The CES transport branch has 3 nodes (LDV, HDV and electric trains). LDVs are in turn divided into ICE cars, BEVs, FCEVs.
@@ -22,4 +22,4 @@ $Ifi "%phase%" == "preloop" $include "./modules/35_transport/complex/preloop.gms
 $Ifi "%phase%" == "bounds" $include "./modules/35_transport/complex/bounds.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/35_transport/complex/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
-*** EOF ./modules/35_transport/complex.gms
+*** EOF ./modules/35_transport/complex/realization.gms

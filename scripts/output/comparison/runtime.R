@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,7 @@
 library(magclass, quietly = TRUE,warn.conflicts =FALSE)
 library(gms, quietly = TRUE,warn.conflicts =FALSE)
 library(lucode2, quietly = TRUE,warn.conflicts =FALSE)
-library(magpie, quietly = TRUE,warn.conflicts =FALSE)
+library(magpie4, quietly = TRUE,warn.conflicts =FALSE)
 
 if(!exists("source_include")) {
  outputdirs <- c("output/default_2015-01-14_11.41.17",

@@ -1,9 +1,11 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/32_power/RLDC/bounds.gms
+
 ***-----------------------------------------------------------
 ***                  module specific bounds
 ***------------------------------------------------------------
@@ -176,3 +178,5 @@ $if %cm_Full_Integration% == "on" vm_cap.fx(t,regi,"storspv","1")               
 $if %cm_Full_Integration% == "on" vm_deltaCap.fx(t,regi,"storspv","1")           = 0;
 
 vm_deltaCap.up(t,regi,"dot",rlf)$(t.val > 2040) = 1e-5;
+
+*** EOF ./modules/32_power/RLDC/bounds.gms

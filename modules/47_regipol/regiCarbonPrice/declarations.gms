@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -15,13 +15,20 @@ Parameter
   pm_emissionsRefYear(ext_regi,ttot,ttot2)	   "emissions in reference year 2015, used for calculating target deviation of year targets [GtCO2]"
   pm_factorRescaleCO2Tax(ext_regi,ttot,ttot2)  "multiplicative tax rescale factor that rescales carbon price from iteration to iteration to reach regipol targets [%]"
   s47_prefreeYear                              "value of the last non-free year for the carbon price trajectory"
+  p47_LULUCFEmi_GrassiShift(ttot,all_regi)		"difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
 ;
 
 $ifThen.regicarbonprice not "%cm_regiCO2target%" == "off" 
 Parameter
-	pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
+  pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type) "region GHG emissions target [GtCO2]" / %cm_regiCO2target% /
 ;  
 $endIf.regicarbonprice
+
+$ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
+Parameter
+  p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /
+;
+$endIf.regiExoPrice
 
 *** It does not need to be a variable (and equations) because is only dealt in between iterations!!!!
 variables
@@ -39,6 +46,7 @@ equations
 	q47_emiTarget_netGHG_noLULUCF_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and LULUCF (=ESR+ETS) [GtC]"
 	q47_emiTarget_mkt_netCO2(ttot, all_regi, all_emiMkt) "Calculates net CO2 emissions per emission market used for target [GtC]"
 	q47_emiTarget_mkt_netGHG(ttot, all_regi, all_emiMkt) "Calculates net GHG emissions per emission market used for target [GtC]"
+	q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(ttot, all_regi) "Calculates net GHG emissions excluding bunkers and shifting LULUCF emissions to meet 2015 UNFCCC values"
 ;
 
 $ifThen.emiMktETS not "%cm_emiMktETS%" == "off" 
@@ -117,26 +125,6 @@ equations
 ;
 $endIf.cm_implicitFE
 
-
-$ifThen.co2priceSlope not "%cm_regipol_slope_beforeTarget%" == "off" 
-Parameter
-	p47_slope_beforeTarget(ttot,ext_regi) "parameter to scale slope of co2 price trajectory in years before target year" / %cm_regipol_slope_beforeTarget% /
-	p47_slope_beforeTarget_timeStep(ttot)	  "helper parameter to make loops shorter in implementation"
-	p47_slope_beforeTarget_regi(ext_regi)	  "helper paramter to hold regions to which second slope adjustment before Target should apply"
-	p47_slope_firstYears(all_regi)		  "helper parameter to hold co2 price trajectory slope of first years [USD/tC/yr]"
-
-	p47_tax_display(ttot,all_regi)		 "helper parameter to display tax adjustment step by step"
-	p47_ttot_display					 "helper parameter to display ttot in loop"
-
-
-	o47_emiCO2Budget(ext_regi,ttot,ttot2,emi_type)	"diagnostic output parameter holding the CO2 budget up to the target year [GtCO2]"
-;
-
-Scalar
-s47_initialCO2Price_year				"initial year of co2 price which should be unchanged by co2 price adjustment"
-;
-
-$endIf.co2priceSlope
 
 *** parameters to track regipol emissions calculation
 Parameters

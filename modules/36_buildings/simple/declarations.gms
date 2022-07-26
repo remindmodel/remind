@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -14,8 +14,9 @@ scalars
 
 Parameters
   p36_CESMkup(ttot,all_regi,all_in)               "CES markup cost parameter [trUSD/CES input]"
-  p36_floorspace(tall,all_regi)  "buildings floorspace, billion m2, in simple realization only used for reporting"
-;
+  p36_floorspace(tall,all_regi)                   "buildings floorspace, billion m2, in simple realization only used for reporting"
+  p36_uedemand_build(tall,all_regi,all_in)        "useful energy demand in buildings in TWh/a, in simple realization only used for reporting"
+  ;
 
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
 Parameter
@@ -30,8 +31,6 @@ Variables
 Positive Variables
   v36_expSlack(ttot,all_regi)     "slack variable to avoid overflow on too high logistic function exponent"
   v36_H2share(ttot,all_regi)      "H2 share in gases"
-  v36_Heatshare(ttot,all_regi)    "district heat share in FE buildings"
-  v36_Elshare(ttot,all_regi)      "electricity share in FE buildings"
   v36_costAddH2LowPen(ttot,all_regi) "low penetration H2 mark up component"
   v36_costAddTeInvH2(ttot,all_regi,all_te)         "Additional hydrogen phase-in cost at low H2 penetration levels [trUSD]"
 ;
@@ -39,8 +38,6 @@ Positive Variables
 Equations
   q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
   q36_H2Share(ttot,all_regi)         "H2 share in gases"
-  q36_HeatShare(ttot,all_regi)       "calculate district heating share in FE buildings"
-  q36_ElShare(ttot,all_regi)         "calculate electricity share in FE buildings"
   q36_costAddH2LowPen(ttot,all_regi) "additional buildings hydrogen annual investment costs under low technology diffusion"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"  
   q36_costAddH2PhaseIn(ttot,all_regi) "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in buildings" 

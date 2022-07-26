@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -76,10 +76,6 @@ loop ((all_regi,ppfen_industry_dyn37(all_in)),
 );
 
 display "calculated FE share of 'other' industry sector", p37_shIndFE;
-
-p37_fctEmi("fesos") = fm_dataemiglob("pecoal","sesofos", "coaltr","co2");
-p37_fctEmi("fehos") = fm_dataemiglob("peoil", "seliqfos","refliq","co2");
-p37_fctEmi("fegas") = fm_dataemiglob("pegas", "segafos", "gastr", "co2");
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;

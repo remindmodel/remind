@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/diffPhaseIn2LinFlex/declarations.gms
+*** SOF ./modules/45_carbonprice/diffPhaseInLin2LinFlex/declarations.gms
 ***------------------------------------------------------------------------------------------------------------------------
 *** *BS* 20190930 linear convergence with starting points differentiated by GDP/capita, global price from 2040
 ***-----------------------------------------------------------------------------------------------------------------------
@@ -27,4 +27,4 @@ s45_convergenceCO2price                     "price to which the regional values 
 
 
 ;
-*** EOF ./modules/45_carbonprice/diffPhaseIn2LinFlex/declarations.gms
+*** EOF ./modules/45_carbonprice/diffPhaseInLin2LinFlex/declarations.gms

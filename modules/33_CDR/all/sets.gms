@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,13 +24,25 @@ teNoTransform2rlf_dyn33(all_te,rlf)      "mapping for final energy to grades"
       (rockgrind) . 1
 	  (dac) . 1
 /
+
+adjte_dyn33(all_te)           "technologies with linearly growing constraint on control variable"
+/
+      dac
+/
+
+teLearn_dyn33(all_te)         "learning technologies"
+/
+      dac
+/
 ;
 
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
-te(te_dyn33)								   = YES;
+te(te_dyn33)                                   = YES;
+teLearn(teLearn_dyn33)                         = YES;
 teNoTransform(teNoTransform_dyn33)             = YES;
 teNoTransform2rlf(teNoTransform2rlf_dyn33)     = YES;
+teAdj(adjte_dyn33)                             = YES;
 
 *** EOF ./modules/33_CDR/all/sets.gms

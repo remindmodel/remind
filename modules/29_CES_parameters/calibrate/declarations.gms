@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -30,9 +30,11 @@ $endif.transpmodule
   p29_capitalUnitProjections(all_regi,all_in,index_Nr)  "Capital cost per unit of consumed energy and final energy per unit of useful energy (or UE per unit of ES) used to calibrate some elasticities of substitution. kap is in $/kWh; UE and FE in kWh"
   p29_output_estimation(all_regi,all_in)       "scaling of the target quantity for comparability with technological data"                                          
 
-p29_esubGrowth         "long term growth of the elasticity of substitution"
+  p29_esubGrowth         "long term growth of the elasticity of substitution"
 
   p29_t_tmp(tall)                                       "tmp value for calculations over t"
+
+  p29_share_H2HTH_traj_indst(ttot,all_regi,all_in)  "H2 and electricity HTH baseline trajectories as share of gas (for H2) and low-temperature electricity (for HTH electricity) trajectories in industry"
 ;
 
 *** in case of a putty formulation, the model putty_paths will try to 
@@ -65,11 +67,12 @@ q29_outputtech(all_regi,all_in,index_Nr)            "CES equation for technologi
 
 file file_CES_calibration / "CES_calibration.csv" /;
 
-file_CES_calibration.ap =  1; !! append to file
-file_CES_calibration.pc =  5; !! csv file
-file_CES_calibration.lw =  0;
-file_CES_calibration.nw = 20;
-file_CES_calibration.nd = 15;
+file_CES_calibration.ap =  1;   !! append to file
+file_CES_calibration.pc =  5;   !! csv file
+file_CES_calibration.lw =  0;   !! no label padding
+file_CES_calibration.nr =  2;   !! scientific notation
+file_CES_calibration.nd =  3;   !! three decimal places
+file_CES_calibration.nw = 10;   !! number width: +0.000e+00
 
 if (%c_CES_calibration_iteration% eq 1,
   put file_CES_calibration; 

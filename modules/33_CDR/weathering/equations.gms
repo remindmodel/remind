@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -42,8 +42,8 @@ q33_capconst_grindrock(t,regi)..
 q33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$((ttot.val ge max(2010, cm_startyear))$(rlf.val le 2))..
 	v33_grindrock_onfield_tot(ttot,regi,rlf,rlf2)$(rlf.val le 2)
 	=e=
-    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * pm_ts(ttot)) + 
-	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val gt (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val)))) + 
+    v33_grindrock_onfield_tot(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * pm_ts(ttot)) +
+	v33_grindrock_onfield(ttot-1,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val)))) +
 	v33_grindrock_onfield(ttot,regi,rlf,rlf2)$(rlf.val le 2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf)$(rlf.val le 2) * (ttot.val-tall.val))))
 ;  
 
@@ -70,7 +70,7 @@ q33_emicdrregi(t,regi)..
 ***---------------------------------------------------------------------------
 *'  O&M costs of EW, consisting of fix costs for mining, grinding and spreading, and transportation costs.
 ***---------------------------------------------------------------------------	
-q33_omcosts_onfield(t,regi)..
+q33_omcosts(t,regi)..
 	vm_omcosts_cdr(t,regi)
 	=e=
 	sum(rlf$(rlf.val le 2), 

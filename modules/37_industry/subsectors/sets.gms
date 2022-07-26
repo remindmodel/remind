@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -58,8 +58,8 @@ Sets
     cement    . ETS
     chemicals . ETS
     steel     . ETS
-    otherInd  . ES  
-  /  
+    otherInd  . ES
+  /
 
   in_industry_dyn37(all_in)   "all inputs and outputs of the CES function - industry"
   /
@@ -74,7 +74,7 @@ Sets
     fega_cement              "gases energy use of cement production"
     feh2_cement              "hydrogen energy use of cement production"
     feel_cement              "electricity energy use of cement production"
- 
+
 
     ue_chemicals         "useful energy of chemicals production"
     en_chemicals         "energy use of chemicals production"
@@ -137,13 +137,13 @@ Sets
 
    ue_otherInd     . (en_otherInd, kap_otherInd)
    en_otherInd     . (en_otherInd_hth, feelwlth_otherInd)
-   en_otherInd_hth . (feso_otherInd, feli_otherInd, fega_otherInd, 
+   en_otherInd_hth . (feso_otherInd, feli_otherInd, fega_otherInd,
                       feh2_otherInd, fehe_otherInd, feelhth_otherInd)
-  /  
+  /
 
   ces_eff_target_dyn37(all_in,all_in)   "limits to specific total energy use"
   /
-    ue_cement . (feso_cement, feli_cement, fega_cement, feh2_cement, 
+    ue_cement . (feso_cement, feli_cement, fega_cement, feh2_cement,
                  feel_cement)
 
     ue_chemicals . (feso_chemicals, feli_chemicals, fega_chemicals, 
@@ -179,13 +179,19 @@ Sets
   ppfen_industry_dyn37(all_in)   "primary production factors energy - industry"
   /
     feso_cement, feli_cement, fega_cement, feh2_cement, feel_cement,
-    feso_chemicals, feli_chemicals, fega_chemicals, feh2_chemicals, 
+    feso_chemicals, feli_chemicals, fega_chemicals, feh2_chemicals,
     feelhth_chemicals, feelwlth_chemicals,
-    feso_steel, feli_steel, fega_steel, feh2_steel, feel_steel_primary, 
+    feso_steel, feli_steel, fega_steel, feh2_steel, feel_steel_primary,
     feel_steel_secondary,
     feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
     feelhth_otherInd, feelwlth_otherInd
   /
+
+  ppf_industry_dyn37(all_in)   "primary production factors - industry"
+  /   /
+
+  ipf_industry_dyn37(all_in)   "intermediate production factors - industry"
+  /   /
 
   !! Calibration Sets
   pf_eff_target_dyn37(all_in)    "production factors with efficiency target"
@@ -202,10 +208,11 @@ Sets
     feelhth_otherInd  . feelwlth_otherInd
   /
 
+  pf_industry_relaxed_bounds_dyn37(all_in)   "production factors with progressively relaxed bounds during the calibration"
 
   secInd37_2_pf(secInd37,all_in)   "link industry sub-sectors to energy to production factors"
   /
-    cement . (ue_cement, en_cement, kap_cement, en_cement_non_electric, 
+    cement . (ue_cement, en_cement, kap_cement, en_cement_non_electric,
               feso_cement, feli_cement, fega_cement, feh2_cement, feel_cement)
 
     chemicals . (ue_chemicals, en_chemicals, kap_chemicals, en_chemicals_fhth,
@@ -213,13 +220,33 @@ Sets
                  feelhth_chemicals, feelwlth_chemicals)
 
     steel . (ue_steel, ue_steel_primary, ue_steel_secondary, en_steel_primary,
-             kap_steel_primary, en_steel_furnace, feso_steel, feli_steel, 
+             kap_steel_primary, en_steel_furnace, feso_steel, feli_steel,
              fega_steel, feh2_steel, feel_steel_primary, kap_steel_secondary,
              feel_steel_secondary)
 
     otherInd . (ue_otherInd, en_otherInd, kap_otherInd, en_otherInd_hth,
                 feso_otherInd, feli_otherInd, fega_otherInd, feh2_otherInd,
                 fehe_otherInd, feelhth_otherInd, feelwlth_otherInd)
+  /
+
+  ue_industry_2_pf(all_in,all_in)   "link industry sub-sectors activity to pf"
+  /
+    ue_cement . (en_cement, kap_cement, en_cement_non_electric, feso_cement,
+                 feli_cement, fega_cement, feh2_cement, feel_cement)
+
+    ue_chemicals . (en_chemicals, kap_chemicals, en_chemicals_fhth, 
+                    feso_chemicals, feli_chemicals, fega_chemicals,
+		    feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
+
+    ue_steel_primary . (en_steel_primary, kap_steel_primary, en_steel_furnace,
+                        feso_steel, feli_steel, fega_steel, feh2_steel,
+			feel_steel_primary)
+
+    ue_steel_secondary . (kap_steel_secondary, feel_steel_secondary)
+
+    ue_otherInd . (en_otherInd, kap_otherInd, en_otherInd_hth, feso_otherInd,
+                   feli_otherInd, fega_otherInd, feh2_otherInd, fehe_otherInd,
+		   feelhth_otherInd, feelwlth_otherInd)
   /
 
   cal_ppf_industry_dyn37(all_in)   "primary production factors for calibration - industry"
@@ -237,7 +264,7 @@ Sets
     fegas . (fega_cement, fega_chemicals, fega_steel, fega_otherInd)
     feh2s . (feh2_cement, feh2_chemicals, feh2_steel, feh2_otherInd)
     fehes . fehe_otherInd
-    feels . (feel_cement, feelhth_chemicals, feelwlth_chemicals, 
+    feels . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
              feel_steel_primary, feel_steel_secondary, feelhth_otherInd,
              feelwlth_otherInd)
   /
@@ -250,11 +277,11 @@ Sets
     fegai . (fega_cement, fega_chemicals, fega_steel, fega_otherInd)
     feh2i . (feh2_cement, feh2_chemicals, feh2_steel, feh2_otherInd)
     fehei . fehe_otherInd
-    feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals, 
+    feeli . (feel_cement, feelhth_chemicals, feelwlth_chemicals,
              feel_steel_primary, feel_steel_secondary, feelhth_otherInd,
              feelwlth_otherInd)
   /
-  
+
 energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
   /
     ue_cement          . en_cement
@@ -268,38 +295,34 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
     fehos
     fegas
   /
-
-
-ppfen_CESMkup_dyn37(all_in)                   "industry production factors of CES function to which CES markup cost can be applied"
-  /
-    feelhth_chemicals
-    feelwlth_chemicals
-    feel_steel_secondary
-    feelwlth_otherInd
-    feelhth_otherInd
-  /
 ;
 
 *** ---------------------------------------------------------------------------
 ***        add module-specifc sets and mappings to the global ones
 *** ---------------------------------------------------------------------------
-ppfKap(ppfKap_industry_dyn37)                 = YES;
-in(in_industry_dyn37)                         = YES;
-ppfen(ppfen_industry_dyn37)                   = YES;
-cesOut2cesIn(ces_industry_dyn37)              = YES;
-fe2ppfen(fe2ppfen37)                          = YES;
-fe_tax_sub_sbi(fe_tax_sub37) = YES;
+ppf_industry_dyn37(ppfKap_industry_dyn37)                              = YES;
+ppf_industry_dyn37(ppfen_industry_dyn37)                               = YES;
+ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
+ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
+in(in_industry_dyn37)                                                  = YES;
+ppfKap(ppfKap_industry_dyn37)                                          = YES;
+ppfen(ppfen_industry_dyn37)                                            = YES;
+cesOut2cesIn(ces_industry_dyn37)                                       = YES;
+fe2ppfen(fe2ppfen37)                                                   = YES;
+fe_tax_sub_sbi(fe_tax_sub37)                                           = YES;
+pf_eff_target_dyn37(ppfen_industry_dyn37)                              = YES;
+pf_quan_target_dyn37(ppfkap_industry_dyn37)                            = YES;
+pf_industry_relaxed_bounds_dyn37(ppf_industry_dyn37)                   = YES;
+pf_industry_relaxed_bounds_dyn37(industry_ue_calibration_target_dyn37) = YES;
 
-pf_eff_target_dyn37(ppfen_industry_dyn37)   = YES;
-pf_quan_target_dyn37(ppfkap_industry_dyn37) = YES;
+ppfen_CESMkup(ppfen_industry_dyn37) = YES;
 
 $ifthen.calibrate "%CES_parameters%" == "calibrate"   !! CES_parameters
-pf_eff_target_dyn29(pf_eff_target_dyn37)   = YES;
-pf_quan_target_dyn29(pf_quan_target_dyn37) = YES;
+pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
+pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 
-*** EOF ./modules/37_industry_four_sectors/sets.gms
-
+*** EOF ./modules/37_industry/subsectors/sets.gms

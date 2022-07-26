@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -73,31 +73,10 @@ q36_H2Share(t,regi)..
 ***---------------------------------------------------------------------------
 *'  CES markup cost to represent sector-specific demand-side transformation cost in buildings
 ***---------------------------------------------------------------------------
-q36_costCESmarkup(t,regi,in)$(ppfen_CESMkup_dyn36(in))..
+q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
   vm_costCESMkup(t,regi,in)
   =e=
   p36_CESMkup(t,regi,in)*(vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
-;
-
-
-*** calculate district heat share in FE buildings
-q36_HeatShare(t,regi)..
-  v36_Heatshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-  =e=
-  sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"fehes")),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-;
-
-*** calculate electricity share in FE buildings
-q36_ElShare(t,regi)..
-  v36_Elshare(t,regi) 
-  * sum(se2fe(entySe,entyFe,te)$( entyFe36(entyFe)),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
-  =e=
-  sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feels")),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
 ;
 
 

@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
+*** SOF ./modules/50_damages/DiceLike/datainput.gms
 
 p50_damageFuncCoef1 = 0;
 p50_damageFuncCoef2 = 0;
@@ -28,4 +28,4 @@ $ifi %cm_damage_DiceLike_specification% == "KWpanelPop" p50_damageFuncCoef2 = 0.
 pm_damage(tall,regi) = 1;
 pm_damageMarginal(tall,regi)           = 0;
 
-
+*** EOF ./modules/50_damages/DiceLike/datainput.gms

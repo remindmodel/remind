@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -10,6 +10,9 @@ p35_fe2es_aux(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_teEs) "Aggregate e
 ;
 Equations
 q35_demFeTrans(ttot,all_regi,all_enty,all_emiMkt) "Transport final energy demand"
+$IFTHEN.transpGDPscale "%cm_transpGDPscale%" == "on" 
+q35_transGDPshare(ttot,all_regi)  "Calculating dampening factor to align edge-t non-energy transportation costs with historical GDP data"
+$ENDIF.transpGDPscale
 ;
 
 *** EOF ./modules/35_transport/edge_esm/declarations.gms

@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-
+*** SOF ./modules/45_carbonprice/temperatureNotToExceed/postsolve.gms
 
 if(iteration.val gt 2,
 
@@ -66,4 +66,4 @@ s45_taxTempLimitConvMaxDeviation =
 p45_taxTempLimitLastItr(tall) = p45_taxTempLimit(tall);
 display s45_taxTempLimitConvMaxDeviation;
 
-
+*** EOF ./modules/45_carbonprice/temperatureNotToExceed/postsolve.gms

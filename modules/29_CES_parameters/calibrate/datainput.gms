@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -197,6 +197,23 @@ $offdelim
 ;
 p29_capitalQuantity(t,regi,ppfKap) = f29_capitalQuantity(t,regi,"%cm_GDPscen%",ppfKap);
 
+*** fix industry energy efficiency capital for mrremind rounding
+loop ((ttot,regi,ppfKap_industry_dyn37(in))$( t(ttot-1) AND t(ttot+1) ),
+  sm_tmp
+  = p29_capitalQuantity(ttot-1,regi,in)
+  * ( (1 - pm_delta_kap(regi,in))
+   ** (pm_ttot_val(ttot) - pm_ttot_val(ttot-1))
+    );
+
+  if (p29_capitalQuantity(ttot,regi,in) lt sm_tmp,
+    p29_capitalQuantity(ttot,regi,in)
+    = ( p29_capitalQuantity(ttot-1,regi,in)
+      + p29_capitalQuantity(ttot+1,regi,in)
+      )
+    / 2;
+  );
+);
+
 *** ---- PRELIMINARY ALTERNATIVE FE TRAJECTORIES FOR INDUSTRY ----------------START----------
 ** Alternative ("handmade") FE trajectory
 display pm_fedemand;
@@ -207,7 +224,6 @@ Parameter
 p29_fedemand_alt       "alt final energy demand"
 /
 $ondelim
-$if "%cm_calibration_FE%" == "low" $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_low.cs4r"
 $if "%cm_calibration_FE%" == "medium" $include "./modules/29_CES_parameters/calibrate/input/pm_fe_demand_medium.cs4r"
 $offdelim
 /
@@ -349,21 +365,42 @@ $endif.edgesm
 pm_cesdata(t,regi,ppfKap,"quantity") = p29_capitalQuantity(t,regi,ppfKap);
 
 $ifthen.subsectors "%industry%" == "subsectors"
-*** Assume H2 and feelhth demand at 0.1% of gases and feelwlth demand
-loop (pf_quantity_shares_37(in,in2),
-  pm_cesdata(t,regi_dyn29(regi),in,"quantity")
-  = 1e-4 * pm_cesdata(t,regi,in2,"quantity");
-);
-
 *** Assume fehe_otherInd at 0.1% of fega_otherInd for regions with zero 
 *** fehe_otherInd in historic periods (IND, LAM, MEA, SSA)
 loop ((t_29hist(t),regi_dyn29(regi))$( 
                            pm_cesdata(t,regi,"fehe_otherInd","quantity") eq 0 ),
   pm_cesdata(t,regi,"fehe_otherInd","quantity")
-  = 1e-4 * pm_cesdata(t,regi,"fega_otherInd","quantity");
+  = 1e-4
+  * pm_cesdata(t,regi,"fega_otherInd","quantity");
 
   pm_cesdata(t,regi,"fehe_otherInd","offset_quantity")
   = -pm_cesdata(t,regi,"fehe_otherInd","quantity");
+);
+
+*** Use offset quantity for regions with no production/energy use in certain
+*** subsectors (e.g. no primary steel production in NEN)
+loop ((t,regi_dyn29(regi)),
+  loop (ue_industry_dyn37(out)$( pm_cesdata(t,regi,out,"quantity") eq 0 ),
+    pm_cesdata(t,regi,out,"quantity") = 1e-6;
+    pm_cesdata(t,regi,out,"offset_quantity")
+    = -pm_cesdata(t,regi,out,"quantity");
+
+    if (sum(ces_eff_target_dyn37(out,in), pm_cesdata(t,regi,in,"quantity")) eq 0,
+      loop (ces_eff_target_dyn37(out,in),
+        pm_cesdata(t,regi,in,"quantity") = 1e-6;
+	pm_cesdata(t,regi,in,"offset_quantity")
+	= -pm_cesdata(t,regi,in,"quantity");
+      );
+    );
+  );
+);
+
+* Use offset quantities for historic industry H2/HTH_el use, since it actually
+* didn't happen.
+loop (pf_quantity_shares_37(in,in2),
+  pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
+                                  pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
+  = -pm_cesdata(t,regi,in,"quantity");
 );
 $endif.subsectors
 

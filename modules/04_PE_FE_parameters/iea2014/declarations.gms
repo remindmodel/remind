@@ -1,9 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
+*** SOF ./modules/04_PE_FE_parameters/iea2014/declarations.gms
 
 parameter
 pm_IO_input(all_regi,all_enty,all_enty,all_te)                 "Energy input based on IEA data"
@@ -19,4 +20,8 @@ p04_fuExtr(all_regi, all_enty)                                  "regional fuel e
 pm_histfegrowth(all_regi,all_enty)                              "average growth rate of fe use from 1995 to 2005"
 p04_prodCoupleGlob(all_enty,all_enty,all_te,all_enty)           "global couple products"
 p04_prodCoupleGlobEmi(emiAll,all_enty,all_te,all_enty)          "global emissions couple products"
+p04_IO_output_beforeFix(ttot,all_regi,all_enty,all_enty,all_te)        "Energy output based on IEA data as read in from input data before correction from FE trajectories"
+p04_IO_output_beforeFix_Total(ttot,all_regi,all_enty)                         "Energy output based on IEA data as read in from input data before correction from FE trajectories summed over SE"
 ;
+
+*** EOF ./modules/04_PE_FE_parameters/iea2014/declarations.gms

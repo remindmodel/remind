@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -14,7 +14,6 @@ scalars
 ;
 
 Parameters
-  p37_fctEmi(all_enty)                                   "emission factors of FE carriers [GtC/TWa]"
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)         "industry CCS MAC curves [ratio @ US$2005]"
 
 
@@ -32,6 +31,9 @@ Parameters
   o37_CESderivatives(ttot,all_regi,all_in,all_in)        "derivatives of production CES function"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)  "FE demand per industry subsector, FE carrier, SE carrier, emissions market"
   o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)           "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
+
+  !! empty parameters from subsectors
+  pm_energy_limit(all_in)    ""   / /
 ;
 
 

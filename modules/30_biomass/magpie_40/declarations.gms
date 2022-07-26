@@ -1,10 +1,10 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/30_biomass/magpie_4/declarations.gms
+*** SOF ./modules/30_biomass/magpie_40/declarations.gms
 
 scalars
 s30_D2TD                "Multiplicative factor to convert from Dollar to TeraDollar"     /1.0e-12/
@@ -19,7 +19,7 @@ p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal peb
 p30_max200_path(tall)                           "Time path of global maximal pebiolc production containing values for 200 EJ case [TWa]"
 p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues enhanced by demand of biotr [TWa]"
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
-p30_pebiolc_demandmag(tall,all_regi)            "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
+pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
 
 
@@ -69,4 +69,4 @@ q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to refer
 q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production to multiple of cm_bioprod_histlim times 2015 level, active if cm_bioprod_histlim >= 0"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
 ;
-*** EOF ./modules/30_biomass/magpie_4/declarations.gms
+*** EOF ./modules/30_biomass/magpie_40/declarations.gms
