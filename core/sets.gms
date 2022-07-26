@@ -1818,9 +1818,19 @@ entyFeTrans(all_enty) "final energy types from transport sector"
 
 feForCes(all_enty)   "limit q_balFeForCes to entyFe in fe2ppfEn"
 
-emi(all_enty)      "types of emissions, these emissions are given to the climate module"
+emiAll(all_enty)            "all types of climate-relevant energy emissions"
+/
+        co2     "energy system co2"
+        so2     "energy system so2"
+        bc      "black carbon from fossil fuel combustion"
+        oc      "organic carbon from fossil fuel combustion"
+        ch4     "energy system ch4"
+        n2o     "energy system n2o"
+        cco2    "captured CO2"
+        n2obio  "N2O emissions from pebiolc "
+/
 
-emiTe(all_enty)   "types of climate-relevant energy emissions for climate coupling and reporting"
+emiTe(emiAll)   "types of climate-relevant energy emissions for climate coupling and reporting"
 /
         co2     "energy system co2"
         so2     "energy system so2"
@@ -1829,19 +1839,19 @@ emiTe(all_enty)   "types of climate-relevant energy emissions for climate coupli
         ch4     "energy system ch4"
         n2o     "energy system n2o"
 /
-emiExog(all_enty)  "exogenous emissions"
+emiExog(emiTe)  "exogenous emissions"
 /
         so2
         bc
         oc
 
 /
-emiAP(all_enty) "Used for allocation of emission factors"
+emiAP(emiTe) "Used for allocation of emission factors"
 /
         bc
         oc
 /
-emiMac(all_enty)  "sum over sub-emissions from emiMacSector"
+emiMac(emiTe)  "sum over sub-emissions from emiMacSector"
 /
         co2
         n2o
@@ -2110,7 +2120,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         co2luc.other
         co2cement_process.ETS
 /
-ccsCo2(all_enty)    "only cco2 (???)"
+ccsCo2(emiAll)    "only cco2 (???)"
 /
         cco2
 /
@@ -2522,13 +2532,16 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         segabio.fegas.tdbiogas.seel
 		segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
-        cco2.ico2.ccsinje.seel
         fedie.uedit.apCarDiEffT.feelt
         fedie.uedit.apCarDiEffH2T.feelt
         fedie.uedit.apCarDiEffH2T.feh2t
 /
+pc2emi(emiAll,all_enty,all_te,all_enty)    "mapping for own emission consumption of technologies"
+/
+        cco2.ico2.ccsinje.seel
+/
 *NB* mappings for emissions, capture and leakage
-emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
+emi2te(all_enty,all_enty,all_te,emiAll)    " map emissions to technologies"
 /
         pegas.seel.ngcc.co2
         pegas.seel.ngt.co2
@@ -2668,7 +2681,7 @@ emi2fuel(all_enty,all_enty) "map emissions to fuel extraction"
     pegas.ch4gas
     peoil.ch4oil
 /
-emiMacSector2emiMac(all_enty,all_enty)   "mapping of sub-emissions to their sum"
+emiMacSector2emiMac(all_enty,emiAll)   "mapping of sub-emissions to their sum"
 /
         (co2luc,co2cement_process)                          .co2
         (n2otrans,n2oadac,n2onitac,n2ofertin,n2ofertcr, n2ofertsom, n2oanwstc,n2oanwstm,n2opeatland,n2oanwstp,n2oagwaste,n2oforest,n2osavan,n2owaste).n2o
@@ -2705,7 +2718,7 @@ emiMac2mac(all_enty,all_enty)            "mapping of emission sources to MACs - 
         co2steel     . co2steel
 /
 
-emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of emission sources from MACs to sectors (and emissions)"
+emiMac2sector(all_enty,emi_sectors,sector_types,emiAll)            "mapping of emission sources from MACs to sectors (and emissions)"
 /
         (ch4coal, ch4gas, ch4oil).extraction.process.ch4
         (ch4wstl, ch4wsts).waste.process.ch4
@@ -2722,7 +2735,7 @@ emiMac2sector(all_enty,emi_sectors,sector_types,all_enty)            "mapping of
         (co2luc).lulucf.process.co2
 /
 
-emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technology and captured emissions"
+emiBECCS2te(all_enty,all_enty,all_te,emiAll) "mapping of BECCS PE,SE,technology and captured emissions"
 /
         pebiolc.seliqbio.bioftcrec.cco2
         pebiolc. seel.bioigccc.cco2
@@ -2730,11 +2743,11 @@ emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technolog
 /
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion
-emi2fuelMine(all_enty,all_enty,rlf)   "missions from fossil fuel extraction"
+emi2fuelMine(emiAll,all_enty,rlf)   "missions from fossil fuel extraction"
 /
         co2.peoil.(4*8)
 /
-ccs2te(all_enty,all_enty,all_te)   "chain for ccs"
+ccs2te(emiAll,all_enty,all_te)   "chain for ccs"
 /
 *        cco2.pco2.ccscomp
 *        pco2.tco2.ccspipe
@@ -2742,7 +2755,7 @@ ccs2te(all_enty,all_enty,all_te)   "chain for ccs"
 *        ico2.sco2.ccsmoni
 /
 
-ccs2Leak(all_enty,all_enty,all_te,all_enty)   "leakage along ccs chain"
+ccs2Leak(emiAll,all_enty,all_te,emiAll)   "leakage along ccs chain"
 /
 *        cco2.pco2.ccscomp.co2
 *        pco2.tco2.ccspipe.co2

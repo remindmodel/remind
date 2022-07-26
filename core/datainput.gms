@@ -11,7 +11,6 @@ vm_co2eq.l(ttot,regi) = 0;
 vm_emiAll.l(ttot,regi,enty) = 0;
 vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
 
-
 *AJS* initialize parameter (avoid compilation errors)
 * do this at the start of datainput to prevent accidental overwriting
 pm_SolNonInfes(regi) = 1; !! assume the starting point came from a feasible solution
@@ -351,7 +350,7 @@ $offdelim
 /
 ;
 * Read in historical emissions per sector to calibrate MAC reference emissions
-parameter p_histEmiSector(tall,all_regi,all_enty,emi_sectors,sector_types)    "historical emissions per sector"
+parameter p_histEmiSector(tall,all_regi,emiTe,emi_sectors,sector_types)    "historical emissions per sector"
 /
 $ondelim
 $include "./core/input/p_histEmiSector.cs4r"
@@ -367,7 +366,7 @@ $offdelim
 *RP* 2012-07-24: CO2-technologies don't have own emissions, but the pipeline leakage rate (s_co2pipe_leakage) is multiplied on the individual pe2se
 s_co2pipe_leakage = 0.01;
 
-loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
+loop(emi2te(enty,enty2,te,emiAll)$teCCS(te),
     fm_dataemiglob(enty,enty2,te,"co2")  = fm_dataemiglob(enty,enty2,te,"co2") + fm_dataemiglob(enty,enty2,te,"cco2") * s_co2pipe_leakage ;
     fm_dataemiglob(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2") * (1 - s_co2pipe_leakage );
 );

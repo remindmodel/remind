@@ -24,8 +24,8 @@ Parameters
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
 
 *** output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"                                                                              
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,emiAll)                     "industry CCS emissions [GtC/a]"                                                                                
+  o37_cementProcessEmissions(ttot,all_regi,emiAll)                       "cement process emissions [GtC/a]"                                                                              
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"                                       
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"                                                                              

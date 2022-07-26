@@ -49,9 +49,19 @@ q05_eedemini(regi,enty)..
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
     )
+  + sum(ccs2te(emiAll,enty2,te),
+      pm_cf("2005",regi,te)
+    / pm_data(regi,"eta",te)
+    * v05_INIcap0(regi,te)
+    )
     !! subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
   - sum(pc2te(enty3,enty4,te2,enty),
       pm_prodCouple(regi,enty3,enty4,te2,enty)
+    * pm_cf("2005",regi,te2)
+    * v05_INIcap0(regi,te2)
+    )
+  - sum(pc2emi(emiAll,enty4,te2,enty),
+      pm_prodCoupleEmi(regi,emiAll,enty4,te2,enty)
     * pm_cf("2005",regi,te2)
     * v05_INIcap0(regi,te2)
     )
