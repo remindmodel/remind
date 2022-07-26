@@ -16,3 +16,7 @@ shortHTML;;;;;'html';;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050,
 AriadneDEU;;;;;;;;;seq(2005, 2050, 5);c(seq(1990, 2020, 1), seq(2025, 2050, 5));c(2010, 2030, 2050);;;c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS');;;'DEU';;;
 # summary: show only the summary chapter;;;;;;;;;;;;;;;;;;;;
 summary;;;;;;;;;;;;;;;c(0,1,99);;;;;
+# REMIND-MAgPIE: default REMIND report with MAgPIE section added to the end;;;;;;;;;;;;;;;;;;;;
+REMIND-MAgPIE;;;;;;;;;;;;;;;;normalizePath('scripts/cs2/magpie.Rmd');;;;
+# MAgPIE: only MAgPIE section;;;;;;;;;;;;;;;;;;;;
+MAgPIE;;;;;;;;;;;;;;;c(0,99);normalizePath('scripts/cs2/magpie.Rmd');;;;
