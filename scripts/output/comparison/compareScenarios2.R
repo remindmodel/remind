@@ -138,7 +138,7 @@ startComp <- function(
     )
   cat("Starting ", jobName, "\n")
   onCluster <- file.exists("/p/projects/")
-  script <- "scripts/utils/run_compareScenarios2.R"
+  script <- "scripts/cs2/run_compareScenarios2.R"
   clcom <- paste0(
     "sbatch ", slurmConfig,
     " --job-name=", jobName,
