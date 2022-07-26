@@ -80,7 +80,7 @@ loop(regi$(sameAs(regi,"DEU")),
 vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
 vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
-*** limit coal-power capacity to at least 5 GW in 2030 to accuount for emissions from waste power plants which are currently subsumed under coal-power in REMIND 
+*** limit coal-power capacity to at least 5 GW in 2030 to account for emissions from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND
 vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
 
 
