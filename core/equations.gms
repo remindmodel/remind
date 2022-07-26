@@ -29,9 +29,14 @@ q_costFu(t,regi)..
 q_costInv(t,regi)..
   v_costInv(t,regi)
   =e=
-*** investment cost for technologies
-  sum(te$(not(sameas(te,"h2curt") or sameas(te,"tdh2b") or sameas(te,"tdh2i"))),
+*** investment cost of conversion technologies
+  sum(en2en(enty,enty2,te),
     v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te)
+  )
+  +
+*** investment cost of non-conversion technologies (storage, grid etc.)
+  sum(teNoTransform,
+    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
   )
 *** additional transmission and distribution cost (increases hydrogen cost at low hydrogen penetration levels when hydrogen infrastructure is not yet developed) 
   +
