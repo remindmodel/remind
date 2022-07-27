@@ -180,9 +180,6 @@ $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
   pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
   pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
-
-*** CES tax
-   pm_tau_ces_tax(t,regi,in)=0;
 $endIf.cm_EnSecScen
 
 
