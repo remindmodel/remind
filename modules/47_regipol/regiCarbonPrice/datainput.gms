@@ -182,8 +182,17 @@ $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
 $endIf.cm_EnSecScen
 
-*** increase offshore wind in Germany by increasing off2on ratio
-p_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.5;
+*** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany
+*** as German government seeks to install at least 70 GW of offshore by 2045 and 160 GW onshore wind by 2040 (as of July 2022)
+*** parameter to determine temporal scale-up
+p_shareWindOff("2010",regi)$(sameAs(regi,"DEU")) = 0.05;
+p_shareWindOff("2015",regi)$(sameAs(regi,"DEU")) = 0.1;
+p_shareWindOff("2020",regi)$(sameAs(regi,"DEU")) = 0.15;
+p_shareWindOff("2025",regi)$(sameAs(regi,"DEU")) = 0.3;
+p_shareWindOff("2030",regi)$(sameAs(regi,"DEU")) = 0.7;
+p_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
+*** parameter to deteremine regional long-term share
+p_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
