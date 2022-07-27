@@ -135,7 +135,7 @@ q21_taxrevFE(t,regi)$(t.val ge max(2010,cm_startyear))..
   ;
 
 ***---------------------------------------------------------------------------
-*'  Calculation of CES tax: tax rate times CES parameters
+*'  Calculation of CES tax: tax rate times CES inputs
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCES(t,regi,in)$(t.val ge max(2010,cm_startyear))..
