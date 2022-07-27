@@ -71,7 +71,7 @@ q36_H2Share(t,regi)..
 
 
 ***---------------------------------------------------------------------------
-*'  CES markup cost to represent sector-specific demand-side transformation cost in buildings
+*'  CES markup cost that are accounted in the budget (GDP) to represent sector-specific demand-side transformation cost in buildings
 ***---------------------------------------------------------------------------
 q36_costCESmarkup(t,regi,in)$(ppfen_buildings_dyn36(in))..
   vm_costCESMkup(t,regi,in)

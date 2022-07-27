@@ -41,7 +41,7 @@ Equations
   q36_costAddH2LowPen(ttot,all_regi) "additional buildings hydrogen annual investment costs under low technology diffusion"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"  
   q36_costAddH2PhaseIn(ttot,all_regi) "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in buildings" 
-  q36_costCESmarkup(ttot,all_regi,all_in) "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q36_costCESmarkup(ttot,all_regi,all_in) "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
   q36_costAddTeInv(ttot,all_regi,all_te)  "summation of sector-specific demand-side cost"
 ;
 

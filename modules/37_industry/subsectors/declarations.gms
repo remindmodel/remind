@@ -57,7 +57,7 @@ Equations
   q37_cementCCS(ttot,all_regi)                            "link cement fuel and process abatement"
   q37_IndCCSCost                                          "Calculate industry CCS costs"
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
-  q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

@@ -277,31 +277,42 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 
 *** FS: CES markup cost industry
-*** default values of CES markup
+
+*** The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
+*** (1) They represent sectoral end-use cost not captured by the energy system. 
+*** (2) As they alter prices to the CES function, they affect the CES efficiency parameters during calibration 
+*** and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
+*** are given by the marginal rate of subsitution in the parameter o01_CESmrs.
+
+*** There are two types of CES mark-up cost:
+*** (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
+*** (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+
+*** default values of CES mark-up with budget effect:
 p37_CESMkup(t,regi,in) = 0;
-
-
+*** deafult values of CES mark-up without budget effect:
 *** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
-*** to represent demand-side cost of electrification and reach higher subsitution rates
-p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feel_steel_secondary") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feel_steel_primary") = 200* sm_TWa_2_MWh * 1e-12;
+*** to represent demand-side cost of electrification and reach higher subsitution rates following technical substitution rates to solids/liquids/gases
+pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
 
 *** place markup cost of 100 USD/MWh(H2) on H2 nodes
-*** to represent demand-side cost of hydrogen usage and reach higher subsitution rates
-p37_CESMkup(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_otherInd") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_steel") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
+*** to represent demand-side cost of hydrogen usage and reach higher subsitution rates following technical substitution rates to liquids/gases
+pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_otherInd") = 50* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 
 *** overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
 $endIf.CESMkup
 
 display p37_CESMkup;
+display pm_tau_ces_tax;
 
 * Load secondary steel share limits
 Parameter
