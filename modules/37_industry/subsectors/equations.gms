@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,15 +22,28 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 
 *' Thermodynamic limits on subsector energy demand
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
-                                 ttot.val gt 2015 AND pm_energy_limit(out) ) ..
+                                      ttot.val gt 2020
+				  AND p37_energy_limit_slope(ttot,regi,out) 
+!! deactivate energy limits for calibration, since they would be essentially
+!! random
+$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
+                                  AND NO
+$endif.calibration
+				                                            ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
-  * pm_energy_limit(out)
+  * p37_energy_limit_slope(ttot,regi,out)
 ;
 
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
-q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
+q37_limit_secondary_steel_share(ttot,regi)$(
+         ttot.val ge cm_startyear
+$ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
+         !! do not limit steel production shares for fixed production
+     AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
+$endif.fixed_production
+                                                                            ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
   =l=
     ( vm_cesIO(ttot,regi,"ue_steel_primary")
@@ -44,9 +57,12 @@ q37_limit_secondary_steel_share(ttot,regi)$( ttot.val ge cm_startyear ) ..
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
-    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),fe2ppfen(entyFE,in))$(entyFeCC37(entyFe)),
+    sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),
+         fe2ppfen(entyFECC37(entyFE),in)),
       vm_cesIO(ttot,regi,in)
-    * sum((entySe,te)$(se2fe(entySe,entyFe,te) and entySeFos(entySe)), pm_emifac(ttot,regi,entySe,entyFe,te,"co2"))
+    * sum(se2fe(entySEfos,entyFE,te),
+        pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
+      )
     )
 ;
 

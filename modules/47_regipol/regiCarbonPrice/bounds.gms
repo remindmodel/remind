@@ -1,6 +1,7 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
-*** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+*** |  of REMIND and licensed un
+der AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
@@ -75,6 +76,10 @@ loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
 );
 
+*** bounds on historic gas capacities in Germany
+vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
+vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
+
 *** only small amount of co2 injection ccs until 2030 in Germany
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
 *** no Pe2Se fossil CCS in Germany, if c_noPeFosCCDeu = 1 chosen 
@@ -91,10 +96,10 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
-*** energy security scenario assumes 5GW(el) electrolysis installed by 2030 in Germany at minimum
-$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
-    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5/pm_eta_conv("2030",regi,"elh2")/1000;
-$endIf.cm_EnSecScen
+*** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
+$ifThen.ensec "%cm_Ger_Pol%" == "ensec"
+    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
+$endIf.ensec
 
 ***---------------------------------------------------------------------------
 *** per region minimun variable renewables share in electricity:

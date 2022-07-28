@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -71,6 +71,44 @@ pm_energy_limit(in)
   / (8760 * 3600)          !! * s/year
   * 1e9;                   !! * t/Gt
                            !! = TWa/Gt
+
+* Specific energy demand cannot fall below a curve described by an exponential
+* function passing through the 2015 value and a point defined by an "efficiency
+* gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
+* year (e.g. 2050).
+if (cm_emiscen eq 1,
+  execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
+else
+  execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
+);
+
+sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to 
+                  !! thermodynamic limit
+sm_tmp  = 2050;   !! period in which closing could be achieved
+
+loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
+      )
+    - pm_energy_limit(out)
+    )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)))
+  + pm_energy_limit(out);
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
+);
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;
@@ -164,6 +202,52 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
     feh2_otherInd     . fega_otherInd    1.1     2050        22
 ;
 $offtext
+
+$ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
+  Parameter
+    p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
+    !! from FORECAST v1.0_8Gt_Bal.xlsx
+    /
+      2020 . DEU . ue_cement   34.396171
+      2025 . DEU . ue_cement   34.086007
+      2030 . DEU . ue_cement   33.497825
+      2035 . DEU . ue_cement   32.984228
+      2040 . DEU . ue_cement   32.517921
+      2045 . DEU . ue_cement   31.826778
+      2050 . DEU . ue_cement   31.13703
+  
+      2020 . DEU . ue_steel_primary     25.07355
+      2025 . DEU . ue_steel_primary     27.08212
+      2030 . DEU . ue_steel_primary     24.808956
+      2035 . DEU . ue_steel_primary     22.442278
+      2040 . DEU . ue_steel_primary     20.219831
+      2045 . DEU . ue_steel_primary     19.946714
+      2050 . DEU . ue_steel_primary     19.725106
+  
+      2020 . DEU . ue_steel_secondary   10.50795
+      2025 . DEU . ue_steel_secondary   14.288815
+      2030 . DEU . ue_steel_secondary   16.181637
+      2035 . DEU . ue_steel_secondary   18.103032
+      2040 . DEU . ue_steel_secondary   20.168031
+      2045 . DEU . ue_steel_secondary   19.946714
+      2050 . DEU . ue_steel_secondary   19.725106
+    /
+  ;
+  
+  !! convert Mt to Gt
+  p37_industry_quantity_targets(t,regi,in)$(
+                                      p37_industry_quantity_targets(t,regi,in) )
+    = p37_industry_quantity_targets(t,regi,in)
+      !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
+    * 1e-3;
+  
+  !! extend beyond 2050
+  !! FIXME: do this smarter, using something like GDPpC growth or something
+  p37_industry_quantity_targets(t,regi,in)$(
+                                 p37_industry_quantity_targets("2050",regi,in)
+ 	                     AND t.val ge 2050                                 )
+    = p37_industry_quantity_targets("2050",regi,in);
+$endif.bal_scenario
 
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","level")     = 1.5;
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","midperiod") = 2030;
@@ -303,5 +387,14 @@ loop ((regi,t2)$( p37_steel_secondary_max_share_scenario(t2,regi) ),
 display "scenario limits for maximum secondary steel share",
         p37_steel_secondary_max_share;
 $endif.sec_steel_scen
+
+*' load baseline industry ETS solids demand
+if (cm_emiscen ne 1,   !! not a BAU scenario
+execute_load "input_ref.gdx", vm_demFEsector;
+  p37_BAU_industry_ETS_solids(t,regi)
+  = sum(se2fe(entySE,"fesos",te),
+      vm_demFEsector.l(t,regi,entySE,"fesos","indst","ETS")
+    );
+);
 
 *** EOF ./modules/37_industry/subsectors/datainput.gms

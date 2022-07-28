@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -130,6 +130,8 @@ p_aux_capToDistr(all_regi,all_te)                           "aux. param. to calc
 s_aux_cap_remaining                                         "aux. param. to calculate p_avCapFac2015; countdown parameter"
 p_aux_capThisGrade(all_regi,all_te,rlf)                     "aux. param. to calculate p_avCapFac2015; How the historic 2015 capacity is distributed among grades"
 p_aux_capacityFactorHistOverREMIND(all_regi,all_te)         "aux. param. to calculate capacity factors correction (wind and spv): the ratio of historic over REMIND CapFac in 2015"
+p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to rescale MAgPIE n2o emissions to historical values"
+p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
@@ -352,6 +354,7 @@ vm_costEnergySys(ttot,all_regi)                      "energy system costs"
 
 vm_cap(tall,all_regi,all_te,rlf)                     "net total capacities"
 vm_capDistr(tall,all_regi,all_te,rlf)                "net capacities, distributed to the different grades for renewables"
+vm_capTotal(ttot,all_regi,all_enty,all_enty)         "total capacity without technology differentation for technologies where there exists differentation [TW]"
 vm_capFac(ttot,all_regi,all_te)                      "capacity factor of conversion technologies"
 vm_deltaCap(tall,all_regi,all_te,rlf)                "capacity additions"
 vm_capCum(tall,all_regi,all_te)                      "gross capacities (=capacities cumulated over time)"
@@ -421,6 +424,7 @@ q_costInv(ttot,all_regi)                             "costs of investment"
 
 q_cap(tall,all_regi,all_te,rlf)                      "definition of available capacities"
 q_capDistr(tall,all_regi,all_te)                     "distribute available capacities across grades"
+q_capTotal(ttot,all_regi,all_enty,all_enty)          "calculation of vm_capTotal as total capacity without technology differentation for technologies where there exists differentation"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 q_windoff_low(tall,all_regi)                         "semi-endogenous offshore wind power generation as a share of onshore wind energy, which is proportional to more than half of maxprod ratio"

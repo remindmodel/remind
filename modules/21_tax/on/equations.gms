@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -34,7 +34,8 @@
     + v21_taxrevCCS(t,regi) 
     + v21_taxrevNetNegEmi(t,regi)
     + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
-    + v21_taxrevFE(t,regi) 
+    + v21_taxrevFE(t,regi)
+    + sum(in, v21_taxrevCES(t,regi,in))
     + v21_taxrevResEx(t,regi)   
     + v21_taxrevPE2SE(t,regi)
     + v21_taxrevTech(t,regi)
@@ -134,6 +135,14 @@ q21_taxrevFE(t,regi)$(t.val ge max(2010,cm_startyear))..
   )
   - p21_taxrevFE0(t,regi)
   ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of CES tax: tax rate times CES parameters
+*'  Documentation of overall tax approach is above at q21_taxrev.
+***---------------------------------------------------------------------------
+q21_taxrevCES(t,regi,in)$(t.val ge max(2010,cm_startyear))..
+v21_taxrevCES(t,regi,in) =e= pm_tau_ces_tax(t,regi,in) * vm_cesIO(t,regi,in)
+                          - p21_taxrevCES0(t,regi,in);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of resource extraction subsidies: subsidy rate times fuel extraction

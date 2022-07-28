@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -211,10 +211,35 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       } else {
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
+      # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
+      report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
+      if (exists("mag_report_keep_in_mind") && file.exists(mag_report_keep_in_mind)) {
+        message("\n### Joining to a common reporting file:\n    ", report_rem, "\n    ", mag_report_keep_in_mind)
+        tmp1 <- read.report(report_rem, as.list=FALSE)
+        tmp2 <- read.report(mag_report_keep_in_mind, as.list=FALSE)[, getYears(tmp1), ]
+        tmp3 <- mbind(tmp1,tmp2)
+        getNames(tmp3, dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
+        # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
+        if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
+          msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
+          message(msg)
+          warning(msg)
+        } else {
+          write.report(tmp3, file = report_rem, ndigit = 7)
+          remind2::deletePlus(report_rem, writemif = TRUE)
+          message(" -> ", report_rem, " now contains also MAgPIE results.")
+          if (i == max_iterations) {
+            # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
+            getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
+            write.report(tmp3, file = paste0("output/",runname,".mif"), ndigit = 7)
+            message(" -> output/", runname, ".mif uses REMIND-MAgPIE as model name.")
+          }
+        }
+      }
     }
 
     if (!file.exists(report)) stop(paste0("### COUPLING ### Could not find report: ", report,"\n"))
-    
+
     # If in the last iteration don't run MAgPIE
     if (i == max_iterations) {
       report_mag <- mag_report_keep_in_mind
@@ -351,32 +376,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     ret  <- findIterations(runs, modelpath = c(remindpath, magpiepath), latest = FALSE)
     readRuntime(ret, plot=TRUE, coupled=TRUE)
     unlink(c("runtime.log", "runtime.out", "runtime.rda"))
-
-    # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
-    report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
-    if (exists("outfolder_mag")) {
-      # If MAgPIE has run use its regular outputfolder
-      report_mag <- paste0(path_magpie, outfolder_mag, "/report.mif")
-    } else {
-      # If MAgPIE did not run, because coupling has been restarted with the last REMIND iteration,
-      # use the path to the MAgPIE report REMIND has been restarted with.
-      report_mag <- mag_report_keep_in_mind
-    }
-    message("Joining to a common reporting file:\n    ", report_rem, "\n    ", report_mag)
-    tmp1 <- read.report(report_rem, as.list=FALSE)
-    tmp2 <- read.report(report_mag, as.list=FALSE)[, getYears(tmp1), ]
-    tmp3 <- mbind(tmp1,tmp2)
-    getNames(tmp3, dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
-    # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
-    if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
-      msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
-      message(msg)
-      warning(msg)
-    } else {
-      # Replace REMIND and MAgPIE with REMIND-MAgPIE
-      #getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAGPIE",getNames(tmp3,dim=2))
-      write.report(tmp3,file=paste0("output/",runname,".mif"))
-    }
 
     if (max_iterations > 1) {
       # set required variables and execute script to create convergence plots

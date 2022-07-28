@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,7 +55,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     out[which(out<0)] <- 0 # set negative values to zero since they cause errors in GMAS power function
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL
-    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/p30_pebiolc_demandmag_coupling.csv"),file_type="csvr")
+    write.magpie(out[notGLO,,],paste0("./modules/30_biomass/",inputpath_mag,"/input/pm_pebiolc_demandmag_coupling.csv"),file_type="csvr")
   }
   .emissions_mac <- function(mag) {
     # define three columns of dataframe:
@@ -291,7 +291,7 @@ prepare <- function() {
 
   ################## M O D E L   L O C K ###################################
   # Lock the directory for other instances of the start scripts
-  lock_id <- model_lock(timeout1 = 1,check_interval = runif(1, 10, 60))
+  lock_id <- model_lock(timeout1 = 1)
   on.exit() # set the commands when exiting in the correct order
   on.exit(model_unlock(lock_id),add=TRUE)
   on.exit(setwd(cfg$results_folder),add=TRUE)
@@ -937,7 +937,7 @@ run <- function(start_subsequent_runs = TRUE) {
   if (cfg$gms$CES_parameters == "load") {
 
     system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
-                  " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
+                  " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
 
   } else if (cfg$gms$CES_parameters == "calibrate") {
 
@@ -956,7 +956,7 @@ run <- function(start_subsequent_runs = TRUE) {
                     "\\).*/\\1", cal_itr, "/' full.gms"))
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
-                    " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -logoption=", cfg$logoption))
+                    " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
 
       # If GAMS found a solution
       if (   file.exists("fulldata.gdx")
@@ -1093,11 +1093,13 @@ run <- function(start_subsequent_runs = TRUE) {
   if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
-      "li=$(nashstat -F | wc -l); cat",
+      "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
       "<(if (($li < 2)); then echo no infeasibilities found; fi)",
       "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
-      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with 'nashstat -a' ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 3)); then echo If infeasibilities appear some iterations before GAMS failed, check 'nashstat -a' carefully.; fi)",
+      "<(if (($li > 3)); then echo The error that stopped GAMS is probably not the actual reason to fail.; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
     if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }

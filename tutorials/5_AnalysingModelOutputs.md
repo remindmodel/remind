@@ -186,12 +186,12 @@ In both cases, you can choose from the list of available model scenarios, for wh
 
 Now, the selected scripts are executed. After completion, the results are written in the respective folder of the run (combination of **model title** name and the **current date** inside the **output** folder of the model).
 
-One recommended script for comparison of different scenarios is `compareScenarios`. After you selected folder names, specified a `filename_prefix` and the priority on the cluster, it produces two large PDF in the `./remind/` folder, one `shortTerm` with a 2050 time horizon and one until 2100.
+One recommended script for comparison of different scenarios is `compareScenarios2`. After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
-You can also specify the parameters in the command line, for example starting a `compareScenario` run without any prefix as:
+You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=priority
+Rscript output.R comp=TRUE filename_prefix= output=compareScenarios2 slurmConfig=priority
 ```
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).

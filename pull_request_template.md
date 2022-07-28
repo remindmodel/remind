@@ -3,6 +3,8 @@
 
 ## Type of change
 
+(Make sure to delete from the Type-of-change list the items not relevant to your PR)
+
 - [ ] Bug fix 
 - [ ] Refactoring
 - [ ] New feature 
@@ -18,7 +20,7 @@
 - [ ] Changes are commented, particularly in hard-to-understand areas
 - [ ] I have updated the in-code documentation
 - [ ] I have adjusted reporting where it was needed
-- [ ] The model compiles and starts successfully
+- [ ] The model compiles and runs successfully (`Rscript start.R -q`)
 
 ## Further information (optional):
 

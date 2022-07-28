@@ -1,4 +1,4 @@
-*** |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -85,9 +85,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.304
+* Input data revision: 6.311
 * 
-* Last modification (input data): Thu May 19 12:35:05 2022
+* Last modification (input data): Thu Jun 23 10:11:30 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -353,7 +353,8 @@ parameters
   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
   c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
-  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on pegas in Germany from 2020 to 2050"
+  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
+  cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -521,6 +522,8 @@ $setGlobal cm_import_EU  off !! def off
 $setGlobal cm_import_ariadne  off !! def off
 *** switch for ariadne energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
+*** switch for ariadne policy assumptions for Germany
+$setGlobal cm_Ger_Pol  off !! def off
 
 *** buildings services_putty switches
 cm_logitCal_markup_conv_b = 0.8; !! def 0.8
@@ -584,6 +587,7 @@ cm_deuCDRmax = -1; !! def = -1
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
+$SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
@@ -622,7 +626,7 @@ $setglobal cm_cooling_shares  dynamic    !! def = dynamic
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-$setglobal cm_transpGDPscale off  !! def = off
+$setglobal cm_transpGDPscale  off  !! def = off
 
 *** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off

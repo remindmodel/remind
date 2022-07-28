@@ -1,4 +1,4 @@
-*** |  (C) 2006-2019 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -191,6 +191,9 @@ $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
   pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
 $endIf.cm_EnSecScen
+
+*** intermediate solution for code check until ces tax gets implemented
+pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

@@ -1,4 +1,4 @@
-# |  (C) 2006-2020 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -227,8 +227,10 @@ plot_iterations <- function(runname) {
   report_path <- report_path[!grepl("with|adj",report_path)]
 
   tmp <- NULL
-  for (r in report_path) tmp <- mbind(tmp, read.report(r,as.list=FALSE))
-  tmp <- tmp[,,"Price|Carbon (US$2005/t CO2)"]
+  for (r in report_path) {
+    tmp1 <- read.report(r, as.list=FALSE)
+    tmp <- mbind(tmp, tmp1[,,"Price|Carbon (US$2005/t CO2)"])
+  }
   getNames(tmp) <- gsub(".*rem-","",getNames(tmp))
 
   v  <- paste(runname,"Price|Carbon (US$2005/t CO2)",sep="\n")
