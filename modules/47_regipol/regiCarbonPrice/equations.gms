@@ -135,8 +135,16 @@ q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
   	p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
   )
   - p47_implFETax0(t,regi) 
-  ;
+;
 
 $endIf.cm_implicitFE
 
+*** PW: Total gas demand in DEU that is being limited in ARIADEN EnSec Limit Scenario
+$ifThen.ensec_lim "%cm_Ger_Pol%" == "ensec"
+q47_demPEGasDEU(t)..
+	v47_demPEGasDEU(t)
+	=e=
+	sum(te, sum(entySe, vm_demPE(t,regi,"pegas",entySe,te)$(sameAs(regi,"DEU"))))
+;
+$endIf.ensec_lim
 *** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

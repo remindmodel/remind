@@ -106,7 +106,9 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
-$endIf.ensec
 
+*** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
+    v47_demPEGasDEU.up(t)(t ge 2020) * pm_conv_TWa_EJ = 2
+$endIf.ensec
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
