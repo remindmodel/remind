@@ -153,7 +153,7 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_m
 *** -------------------------Primary Energy Tax--------------------------
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
-$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
+$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "price"
   pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.4;
   pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.3;
   pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.25;

@@ -132,7 +132,7 @@ p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to s
 ;
 
 *** Limit PE gas demand in DEU as part of ARIADNE EnSec Limit scenario
-$IFTHEN.EnSec_Limit "%cm_Ger_Pol%" == "ensec"
+$IFTHEN.EnSec_Limit "%cm_EnSecScen%" == "limit"
 variables
 	v47_demPEGasDEU(ttot)    "sum of all pe gas demand in DEU"
 ;
