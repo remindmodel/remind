@@ -182,5 +182,8 @@ $ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
 $endIf.cm_EnSecScen
 
+*** intermediate solution for code check until ces tax gets implemented
+pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
