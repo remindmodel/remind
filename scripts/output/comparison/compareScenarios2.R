@@ -39,12 +39,11 @@ getLine <- function() {
 chooseFromSequence <- function(sequence, title, default) {
   cat(
     "\n\n", title,
-    "\nLeave empty for bold (", paste(default, collapse = ", "), ").\n\n",
+    "\nLeave empty for cyan (", paste(default, collapse = ", "), ").\n\n",
     sep = "")
-  cat(paste(
-    seq_along(sequence), 
-    ifelse(sequence %in% default, crayon::bold(sequence), sequence), 
-    sep = ": "), sep = "\n")
+  numList <- paste(seq_along(sequence), sequence, sep = ": ")
+  
+  cat(ifelse(sequence %in% default, crayon::cyan(numList), numList), sep = "\n")
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
   input <- getLine()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
