@@ -872,6 +872,7 @@ p_r(ttot,regi)$(ttot.val gt 2005 and ttot.val le 2130)
 *** CG: growth rate after 2100 is very small (0.02 instead of around 0.05) due to various artefact, we simply set interest rates to 0.05 after 2100
 p_r(ttot,regi)$(ttot.val gt 2100) = 0.05;
 
+***------------ FE prices ----------------------
 *** calculation of FE Prices including sector specific and energy source information
 pm_FEPrice_by_SE_Sector_EmiMkt(ttot,regi,entySe,entyFe,sector,emiMkt)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
   qm_balFeAfterTax.m(ttot,regi,entySe,entyFe,sector,emiMkt) / qm_budget.m(ttot,regi);

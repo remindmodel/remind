@@ -288,10 +288,11 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
 );
 $endif.cm_implicitEnergyBound
 
-*** additional criterion: Were implicit tax/subsidy FE price targets reached? 
+*** additional criterion: Were implicit tax/subsidy FE price targets reached?
+*** convergence criteria is 5% of deviation from target in any year after 2040 (prices before 2045 are less price flexible) 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 loop((t,regi,all_enty,entySe,sector)$p47_implicitPriceTarget(t,regi,all_enty,entySe,sector),
-  if( (p47_implicitPrice_dev(t,regi,all_enty,entySe,sector) gt 0.01 OR p47_implicitPrice_dev(t,regi,all_enty,entySe,sector) lt -0.01),
+  if( (t.val ge 2045) AND ((p47_implicitPrice_dev_adj(t,regi,all_enty,entySe,sector) gt 0.05 OR p47_implicitPrice_dev_adj(t,regi,all_enty,entySe,sector) lt -0.05)), 
     s80_bool = 0;
     p80_messageShow("cm_implicitPriceTarget") = YES;
   );
@@ -378,8 +379,8 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
           display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display p47_implicitPrice_dev;
+          display "#### The deviation must to be less than 5% (in between -0.05 and 0.05) to reach convergence for years latter than 2040.";
+          display p47_implicitPrice_dev_adj, p47_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
    );
@@ -472,8 +473,8 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
           display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display p47_implicitPrice_dev;
+          display "#### The deviation must to be less than 5% (in between -0.05 and 0.05) to reach convergence for years latter than 2040.";
+          display p47_implicitPrice_dev_adj, p47_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
 	 );

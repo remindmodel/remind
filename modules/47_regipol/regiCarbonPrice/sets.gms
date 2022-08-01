@@ -87,6 +87,8 @@ $endIf.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 fePriceScenario "scenarios for exogenous FE price targets"
 /
+  elecPrice
+  H2Price
   initial
   highPrice
   lowPrice
