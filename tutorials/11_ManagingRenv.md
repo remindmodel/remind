@@ -17,11 +17,12 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 ### updateRenv
 - path: scripts/utils/updateRenv.R
 - updates all pik-piam packages in main renv
-- copies new renv.lock to archive
+- copies updated renv.lock to archive
 
 ### restoreRenv
 - path: scripts/utils/restoreRenv.R
-- resets main renv to earlier state recorded in renv.lock file from the archive
+- resets main renv to earlier state recorded in renv.lock file from the archive or from previous runs
+- run as `Rscript scripts/utils/restoreRenv.R path/to/renv.lock` to restore given lockfile
 
 # advanced
 ## renv files
@@ -51,10 +52,11 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 
 ## renv functions
 The scripts explained earlier should cover all common tasks, use the following for more control.
-- `renv::restore(lockfile = "path/to/renv.lock")` reset renv to state described in lockfile
 - `renv::install("package@2.3.4")` install specific package version
 - `renv::install("githubuser/package", ref = "<commit hash>")` install package from GitHub, optionally provide commit hash
 - `renv::remove("package")` uninstall package
-- `renv::status()` show differences between renv and renv.lock
-- `renv::snapshot()` write state of renv to renv.lock, use after (un)installing packages
+- `renv::update()` update all packages
+- `renv::update("package")` update package
+- `renv::status()` show differences between library and renv.lock
+- `renv::snapshot()` write state of library to renv.lock
 - renv documentation: https://rstudio.github.io/renv/
