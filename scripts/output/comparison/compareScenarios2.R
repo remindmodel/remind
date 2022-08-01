@@ -205,6 +205,7 @@ for (r in listofruns) {
         outputDirs = r$dirs,
         outFileName = fileName,
         regionList = regionList,
+        mainReg = "DEU",
         profileName = "AriadneDEU")
     }
 
