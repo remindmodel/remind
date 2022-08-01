@@ -479,6 +479,7 @@ $setGlobal cm_implicitEnergyBound  off !! def = off
 $setGlobal cm_implicitPriceTarget  off !! def = off
 $setGlobal cm_loadFromGDX_implEnergyBoundTax  off !! def = off
 $setGlobal cm_VREminShare    off !! def = off
+$setGlobal cm_CCSmaxBound    off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5

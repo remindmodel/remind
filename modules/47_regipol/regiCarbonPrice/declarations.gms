@@ -148,6 +148,22 @@ Equation
 
 $endIf.cm_VREminShare
 
+
+***---------------------------------------------------------------------------
+*** per region maximum CCS:
+***---------------------------------------------------------------------------
+$ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
+
+Parameter
+  p47_CCSmaxBound(ext_regi) "per region yearly maximum CCS. Unit[Gt CO2]" / %cm_CCSmaxBound% /  
+;
+p47_CCSmaxBound(ext_regi) = p47_CCSmaxBound(ext_regi) / sm_c_2_co2;
+Equation
+  q47_CCSmaxBound(ttot,ext_regi) "per region yearly maximum CCS"
+;
+
+$endIf.cm_CCSmaxBound
+
 ***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------
