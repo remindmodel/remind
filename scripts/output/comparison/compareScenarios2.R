@@ -117,7 +117,6 @@ startComp <- function(
 # Data --------------------------------------------------------------------
 
 
-profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
 
 
 
@@ -125,17 +124,24 @@ profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
 # Code --------------------------------------------------------------------
 
 
-# cs2 profiles
-profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
+# load cs2 profiles
+profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
 profiles <- jsonlite::read_json(profilesFilePath, simplifyVector = FALSE)
 profiles <- profiles[!startsWith(names(profiles), "_")] # remove comments
+
+# let user choose cs2 profile(s)
+profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
 profileNames <- chooseFromSequence(
-  profiles$name,
+  names(profiles),
   "Choose profiles for cs2.",
   profileNamesDefault)
+
+# create core of file name / job name
 timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
 if (!exists("filename_prefix")) filename_prefix <- ""
 nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
+
+# start a job for each profile
 for (profileName in profileNames) {
   startComp(
     outputDirs = outputdirs,

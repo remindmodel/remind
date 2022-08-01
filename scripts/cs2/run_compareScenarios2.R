@@ -19,14 +19,10 @@ run_compareScenarios2 <- function(
 
   # working directory is assumed to be the remind directory
 
-  profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
-  profiles <- read.delim(
-    text = readLines(profilesFilePath, warn = FALSE),
-    header = TRUE,
-    sep = ";",
-    colClasses = "character",
-    comment.char = "#",
-    quote = "")
+  # load cs2 profiles
+  profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
+  profiles <- jsonlite::read_json(profilesFilePath, simplifyVector = FALSE)
+  profiles <- profiles[!startsWith(names(profiles), "_")] # remove comments
 
   scenNames <- getScenNames(outputDirs)
 
@@ -65,11 +61,8 @@ run_compareScenarios2 <- function(
     nchar(profileName) > 1
   ) {
     message("Applying profile ", profileName)
-    profile <- as.list(profiles[profiles$name == profileName, ])
-    profile$name <- NULL
-    profile <- lapply(profile, trimws)
-    profile <- profile[vapply(profile, function(s) nchar(s) > 0, logical(1))]
-    profileEval <- lapply(
+    profile <- profiles[[profileName]]
+    profileEval <- lapply( # evaluate entries of profile as R code
       names(profile),
       function(nm) {
         eval(parse(text = profile[[nm]]), list("." = args[[nm]]))
