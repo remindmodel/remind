@@ -8,14 +8,12 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputDirs", "outFileName", "regionList", "mainRegName", "profileName")
+  readArgs("outputDirs", "outFileName", "profileName")
 }
 
 run_compareScenarios2 <- function(
   outputDirs,
   outFileName,
-  regionList,
-  mainRegName,
   profileName
 ) {
 
@@ -56,9 +54,7 @@ run_compareScenarios2 <- function(
     cfgDefault = defaultConfigPath,
     outputDir = outfilepath,
     outputFile = outFileName,
-    outputFormat = "PDF",
-    reg = regionList,
-    mainReg = mainRegName
+    outputFormat = "PDF"
   )
 
   # If profileName is a single non-empty string, load cs2 profile and change args.
@@ -68,7 +64,7 @@ run_compareScenarios2 <- function(
     !is.na(profileName) &&
     nchar(profileName) > 1
   ) {
-    message("applying profile ", profileName)
+    message("Applying profile ", profileName)
     profile <- as.list(profiles[profiles$name == profileName, ])
     profile$name <- NULL
     profile <- lapply(profile, trimws)
@@ -81,8 +77,11 @@ run_compareScenarios2 <- function(
     )
     args[names(profile)] <- profileEval
   } else {
-    message("using default profile")
+    message("Using default profile")
   }
+  
+  message("Use following cs2 settings:")
+  for (i in seq_len(args)) message("  ", names(args)[i], " = ", dput(args[[i]]))
 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
@@ -95,7 +94,8 @@ run_compareScenarios2 <- function(
   on.exit(setwd(wd), add = TRUE)  # working directory should be the remind folder after exiting run_compareScenarios2()
   on.exit(system(paste0("rm -rf ", args$outputDir)), add = TRUE)
 
+  message("Calling remind2::compareScenarios2()...\n")
   try(do.call(compareScenarios2, args))
 }
 
-run_compareScenarios2(outputDirs, outFileName, regionList, mainRegName, profileName)
+run_compareScenarios2(outputDirs, outFileName, profileName)
