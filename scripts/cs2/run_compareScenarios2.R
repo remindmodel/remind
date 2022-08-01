@@ -74,7 +74,8 @@ run_compareScenarios2 <- function(
   }
   
   message("Use following cs2 settings:")
-  for (i in seq_along(args)) message("  ", names(args)[i], " = ", dput(args[[i]]))
+  for (i in seq_along(args)) 
+    message("  ", names(args)[i], " = ", capture.output( dput(args[[i]])))
 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.

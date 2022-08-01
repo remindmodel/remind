@@ -39,10 +39,10 @@ getLine <- function() {
 chooseFromSequence <- function(sequence, title, default) {
   cat(
     "\n\n", title,
-    paste(
-      "Leave empty for",
+    paste0(
+      "Leave empty for ",
       crayon::cyan("cyan"),
-      "(", paste(default, collapse = ", "), ")."),
+      " (", paste(default, collapse = ", "), ")."),
     "\n",
     sep = "\n")
   numList <- paste(seq_along(sequence), sequence, sep = ": ")
