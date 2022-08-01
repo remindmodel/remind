@@ -227,8 +227,10 @@ plot_iterations <- function(runname) {
   report_path <- report_path[!grepl("with|adj",report_path)]
 
   tmp <- NULL
-  for (r in report_path) tmp <- mbind(tmp, read.report(r,as.list=FALSE))
-  tmp <- tmp[,,"Price|Carbon (US$2005/t CO2)"]
+  for (r in report_path) {
+    tmp1 <- read.report(r, as.list=FALSE)
+    tmp <- mbind(tmp, tmp1[,,"Price|Carbon (US$2005/t CO2)"])
+  }
   getNames(tmp) <- gsub(".*rem-","",getNames(tmp))
 
   v  <- paste(runname,"Price|Carbon (US$2005/t CO2)",sep="\n")

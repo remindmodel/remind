@@ -1050,11 +1050,13 @@ run <- function(start_subsequent_runs = TRUE) {
   if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
-      "li=$(nashstat -F | wc -l); cat",
+      "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
       "<(if (($li < 2)); then echo no infeasibilities found; fi)",
       "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
-      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with 'nashstat -a' ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 3)); then echo If infeasibilities appear some iterations before GAMS failed, check 'nashstat -a' carefully.; fi)",
+      "<(if (($li > 3)); then echo The error that stopped GAMS is probably not the actual reason to fail.; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
     if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }
