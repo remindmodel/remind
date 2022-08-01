@@ -16,13 +16,15 @@
 		"yearsBarPlot": "c(2010, 2030, 2050)"
 	},
 	"EU27": {
-		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')"
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
+		"mainReg": "'EU27'"
 	},
 	"EU27-short": {
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
 		"yearsScen": "seq(2005, 2050, 5)",
 		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
-		"yearsBarPlot": "c(2010, 2030, 2050)"
+		"yearsBarPlot": "c(2010, 2030, 2050)",
+		"mainReg": "'EU27'"
 	},
 	"AriadneDEU": {
 		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
