@@ -60,3 +60,6 @@ The scripts explained earlier should cover all common tasks, use the following f
 - `renv::status()` show differences between library and renv.lock
 - `renv::snapshot()` write state of library to renv.lock
 - renv documentation: https://rstudio.github.io/renv/
+
+# legacy snapshots
+Before REMIND started using renv it was using so-called "snapshots". You can restore this snapshot machinery (and disable renv) by renaming `snapshot.Rprofile` -> `.Rprofile`. If you do, do not commit changes to `.Rprofile`. For coupled model runs you need to use snapshots, renv does not cover that use case yet. Snapshot support will be removed when coupled model runs are possible with renv.
