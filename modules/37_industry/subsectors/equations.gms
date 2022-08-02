@@ -156,6 +156,10 @@ q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   * (vm_cesIO(t,regi,in) + pm_cesdata(t,regi,in,"offset_quantity"))
 ;
 
+***--------------------------------------------------------------------------
+*'  Feedstock balances
+***--------------------------------------------------------------------------
+
 * lower bound on feso/feli/fega in chemicals FE input for feedstocks
 q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) .. 
   sum(in_chemicals_37(in), vm_cesIO(t,regi,in))
@@ -175,7 +179,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
        secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
-       
+
     ( vm_cesIO(ttot,regi,in) 
     + pm_cesdata(ttot,regi,in,"offset_quantity")
     )
