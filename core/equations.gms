@@ -218,7 +218,7 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 ; 
 
 *' FE balance equation including FE sectoral taxes effect
-qm_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
+q_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
   =e=
   vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)

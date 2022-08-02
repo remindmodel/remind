@@ -290,8 +290,8 @@ $endif.cm_implicitEnergyBound
 
 *** additional criterion: Were FE price targets reached by implicit taxes and/or subsidies?
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
-loop((t,regi,all_enty,entySe,sector)$p47_implicitPriceTarget(t,regi,all_enty,entySe,sector),
-  if((p47_implicitPrice_NotConv(t,regi,all_enty,entySe,sector) eq 1), 
+loop((t,regi,all_enty,entySe,sector)$pm_implicitPriceTarget(t,regi,all_enty,entySe,sector),
+  if((pm_implicitPrice_NotConv(t,regi,all_enty,entySe,sector) eq 1), 
     s80_bool = 0;
     p80_messageShow("cm_implicitPriceTarget") = YES;
   );
@@ -377,12 +377,12 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out below the p47_implicitPrice_NotConv parameter values for non convergence.";
-          display "#### p47_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to s47_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
-          display "#### p47_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
-          display "#### p47_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
-          display "#### p47_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
-          display p47_implicitPrice_NotConv, p47_implicitPrice_dev;
+          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence.";
+          display "#### pm_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to sm_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
+          display "#### pm_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
+          display "#### pm_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
+          display "#### pm_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
+          display pm_implicitPrice_NotConv, pm_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
    );
@@ -474,12 +474,12 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out below the p47_implicitPrice_NotConv parameter values for non convergence.";
-          display "#### p47_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to s47_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
-          display "#### p47_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
-          display "#### p47_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
-          display "#### p47_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
-          display p47_implicitPrice_NotConv, p47_implicitPrice_dev;
+          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence.";
+          display "#### pm_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to sm_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
+          display "#### pm_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
+          display "#### pm_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
+          display "#### pm_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
+          display pm_implicitPrice_NotConv, pm_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
 	 );

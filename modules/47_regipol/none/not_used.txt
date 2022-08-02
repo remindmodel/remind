@@ -53,3 +53,10 @@ pm_implEnergyBoundTarget_dev,input,questionnaire
 cm_Ger_Pol,input,questionnaire
 vm_capTotal,input,questionnaire
 pm_tau_ces_tax,input,questionnaire
+sm_DpGJ_2_TDpTWa,input,questionnaire
+vm_implicitPriceTax,input,questionnaire
+pm_FEPrice_by_SE_Sector,input,questionnaire
+pm_implicitPriceTarget,input,questionnaire
+pm_implicitPrice_NotConv,input,questionnaire
+sm_implicitPriceTax_convYear,input,questionnaire
+pm_implicitPrice_dev,input,questionnaire

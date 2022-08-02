@@ -73,7 +73,6 @@ $endIf.emiMkt
 ***---------------------------------------------------------------------------
 *** Implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
 ***---------------------------------------------------------------------------
-
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 Parameter
   p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)          "tax/subsidy level on PE, SE and/or FE for an specific energy type"
@@ -101,18 +100,16 @@ $endIf.cm_implicitEnergyBound
 ***---------------------------------------------------------------------------
 *** implicit tax/subsidy necessary to final energy price targets
 ***---------------------------------------------------------------------------
-
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 Parameter
-  p47_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector)      "price target for FE carrier per sector"
+  pm_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector) "price target for FE carrier per sector"
   p47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)   "tax/subsidy level on FE for reaching the price target"
   p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue"
-  p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)  "implicit price tax deviation of current iteration from target"
+  pm_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target"
   p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration"
-*  p47_implicitPrice_dev_adj(ttot,all_regi,all_enty,entySe,sector)  "auxiliary parameter to remove extreme cases of subsidies from convergence check"
-  p47_implicitPrice_NotConv(ttot,all_regi,all_enty,entySe,sector)  "auxiliary parameter to store the non convergence criteria for price targets (1= did not converged, 2=non existent price; 3=model stuck, 4=subsidy limited to 0.5 T$/TWa)" 
+  pm_implicitPrice_NotConv(ttot,all_regi,all_enty,entySe,sector) "auxiliary parameter to store the non convergence criteria for price targets (1= did not converged, 2=non existent price; 3=model stuck, 4=subsidy limited to 0.5 T$/TWa)" 
   p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration"
-  s47_implicitPriceTax_convYear   "first year to consider convergence criteria for price targets" / 2045 /
+  sm_implicitPriceTax_convYear   "first year to consider convergence criteria for price targets" / 2045 /
 ;
 
 Equations
@@ -123,7 +120,6 @@ $endIf.cm_implicitPriceTarget
 ***---------------------------------------------------------------------------
 *'  Emission quantity target
 ***---------------------------------------------------------------------------
-
 $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
 Parameter
   p47_quantity_regiCO2target(ttot,ext_regi) "Exogenously emissions quantity constrain on net CO2 without bunkers [GtCO2]" / %cm_quantity_regiCO2target% /
@@ -137,7 +133,6 @@ $endIf.quantity_regiCO2target
 *** per region minimun variable renewables share in electricity:
 ***---------------------------------------------------------------------------
 $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
-
 Variable
   v47_VREshare(ttot,all_regi) "share of variable renewables (wind and solar) in electricity"
 ;
@@ -147,15 +142,12 @@ Parameter
 Equation
   q47_VREShare(ttot,all_regi) "per region minimun share of variable renewables (wind and solar) from ttot year onward"
 ;
-
 $endIf.cm_VREminShare
-
 
 ***---------------------------------------------------------------------------
 *** per region maximum CCS:
 ***---------------------------------------------------------------------------
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
-
 Parameter
   p47_CCSmaxBound(ext_regi) "per region yearly maximum CCS. Unit[Gt C]" / %cm_CCSmaxBound% /  
 ;
@@ -163,13 +155,11 @@ p47_CCSmaxBound(ext_regi) = p47_CCSmaxBound(ext_regi) / sm_c_2_co2;
 Equation
   q47_CCSmaxBound(ttot,ext_regi) "per region yearly maximum CCS"
 ;
-
 $endIf.cm_CCSmaxBound
 
 ***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:
 ***---------------------------------------------------------------------------
-
 $ifThen.regiExoPrice not "%cm_regiExoPrice%" == "off"
 Parameter
   p47_exoCo2tax(ext_regi,ttot)   "Exogenous CO2 tax level. Overrides carbon prices in pm_taxCO2eq, only if explicitly defined. Regions and region groups allowed. Format: '<regigroup>.<year> <value>, <regigroup>.<year2> <value2>' or '<regigroup>.(<year1> <value>,<year2> <value>'). [$/tCO2]" / %cm_regiExoPrice% /

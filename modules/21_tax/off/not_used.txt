@@ -71,3 +71,4 @@ pm_taxrevCO2Sector0,input,questionaire
 pm_taxrevCO2LUC0,input,questionaire
 pm_taxrevNetNegEmi0,input,questionaire
 pm_tau_ces_tax,input,questionnaire
+vm_implicitPriceTax,input,questionnaire
