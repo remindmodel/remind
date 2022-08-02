@@ -474,20 +474,37 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   );
   p47_implicitPriceTax("2080",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*2/3;
   p47_implicitPriceTax("2090",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*1/3;
-  
-*** limit the size of subsidies (-0.5 T$/TWa) to avoid extreme negative price markups (these cases are disconsidered when checking for price convergence)
-  p47_implicitPrice_dev_adj(t,regi,entyFe,entySe,sector) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector);
+
+*** convergence criteria
+  p47_implicitPrice_NotConv(t,regi,entyFe,entySe,sector)$((t.val ge s47_implicitPriceTax_convYear) AND (abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05)) = 1; !! = 1 did not converged: More than 5% deviation from target
+*** additional convergence checks: 
+***   ignoring non existent prices from price convergence check
+  p47_implicitPrice_NotConv(t,regi,entyFe,entySe,sector)$((t.val ge s47_implicitPriceTax_convYear) AND (p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) AND (NOT(pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)))) = 2; !!2 = non existent price  
+***   checking if there is a hard bound on the model that does not allow the prices to change further in between iterations 
+***   if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous two iterations when the deviation is still greater than 5%, the tax is not affecting anymore the prices.  
+  if((iteration.val gt 3),
+    loop((t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector),
+      if((abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05),
+        if((abs(p47_implicitPriceTax(t,regi,entyFe,entySe,sector) - p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector)) lt 1e-2), !! less than 1% variation in relation to previous iteration price
+          if((abs(p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector) - p47_implicitPriceTax_iter(iteration-2,t,regi,entyFe,entySe,sector)) lt 1e-2), !! less than 1% variation in the two previous iteration prices
+            p47_implicitPrice_NotConv(t,regi,entyFe,entySe,sector)$(t.val ge s47_implicitPriceTax_convYear) = 3; !! 3 = less than 1% price change in this and the previous two iterations  
+          );
+        );
+      );
+    );
+  );
+***   limit the size of subsidies (-0.5 T$/TWa) to avoid extreme negative price markups (case ignored on convergence check)
   loop((t,regi,entyFe,entySe,sector)$p47_implicitPriceTarget(t,regi,entyFe,entySe,sector),
     if (( p47_implicitPriceTax(t,regi,entyFe,entySe,sector) < -0.5 ),
       p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = -0.5;
-      p47_implicitPrice_dev_adj(t,regi,entyFe,entySe,sector) = 0; !! reset deviation calculated values to avoid this case to be considered in the decision of running additional iterations  
+      p47_implicitPrice_NotConv(t,regi,entyFe,entySe,sector)$(t.val ge s47_implicitPriceTax_convYear) = 4; !! 4 = subsidy limited to 0.5 T$/TWa
     );
   );
 
 * save price target tax across iterations for debugging of target convergence issues
-p47_implicitPriceTax_iter(iteration,t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector);
+  p47_implicitPriceTax_iter(iteration,t,regi,entyFe,entySe,sector) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector);
 
-display p47_implicitPriceTarget, p47_implicitPriceTax, p47_implicitPrice_dev, p47_implicitPrice_dev_adj, p47_implicitPriceTax_iter, p47_implicitPrice_dev_iter;
+display p47_implicitPriceTarget, p47_implicitPriceTax, p47_implicitPrice_dev, p47_implicitPriceTax_iter, p47_implicitPrice_dev_iter;
 $endIf.cm_implicitPriceTarget
 
 ***---------------------------------------------------------------------------

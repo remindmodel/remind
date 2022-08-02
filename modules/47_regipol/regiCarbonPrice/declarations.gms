@@ -109,8 +109,10 @@ Parameter
   p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue"
   p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)  "implicit price tax deviation of current iteration from target"
   p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration"
-  p47_implicitPrice_dev_adj(ttot,all_regi,all_enty,entySe,sector)  "auxiliary parameter to remove extreme cases of subsidies from convergence check"
+*  p47_implicitPrice_dev_adj(ttot,all_regi,all_enty,entySe,sector)  "auxiliary parameter to remove extreme cases of subsidies from convergence check"
+  p47_implicitPrice_NotConv(ttot,all_regi,all_enty,entySe,sector)  "auxiliary parameter to store the non convergence criteria for price targets (1= did not converged, 2=non existent price; 3=model stuck, 4=subsidy limited to 0.5 T$/TWa)" 
   p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration"
+  s47_implicitPriceTax_convYear   "first year to consider convergence criteria for price targets" / 2045 /
 ;
 
 Equations

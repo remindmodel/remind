@@ -274,7 +274,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emi
 );
 $endif.emiMkt
 
-*** additional criterion: Were implicit tax/subsidy primary, secondary and/or final energy targets reached? 
+*** additional criterion: Were primary, secondary and/or final energy targets reached by implicit taxes and/or subsidies? 
 $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   if( (pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) gt 0.01 OR pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) lt -0.01),
@@ -288,11 +288,10 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
 );
 $endif.cm_implicitEnergyBound
 
-*** additional criterion: Were implicit tax/subsidy FE price targets reached?
-*** convergence criteria is 5% of deviation from target in any year after 2040 (prices before 2045 are less price flexible) 
+*** additional criterion: Were FE price targets reached by implicit taxes and/or subsidies?
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 loop((t,regi,all_enty,entySe,sector)$p47_implicitPriceTarget(t,regi,all_enty,entySe,sector),
-  if( (t.val ge 2045) AND ((p47_implicitPrice_dev_adj(t,regi,all_enty,entySe,sector) gt 0.05 OR p47_implicitPrice_dev_adj(t,regi,all_enty,entySe,sector) lt -0.05)), 
+  if((p47_implicitPrice_NotConv(t,regi,all_enty,entySe,sector) eq 1), 
     s80_bool = 0;
     p80_messageShow("cm_implicitPriceTarget") = YES;
   );
@@ -378,9 +377,12 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 5% (in between -0.05 and 0.05) to reach convergence for years latter than 2040.";
-          display p47_implicitPrice_dev_adj, p47_implicitPrice_dev;
+          display "#### Check out below the p47_implicitPrice_NotConv parameter values for non convergence.";
+          display "#### p47_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to s47_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
+          display "#### p47_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
+          display "#### p47_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
+          display "#### p47_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
+          display p47_implicitPrice_NotConv, p47_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
    );
@@ -472,9 +474,12 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out the p47_implicitPrice_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 5% (in between -0.05 and 0.05) to reach convergence for years latter than 2040.";
-          display p47_implicitPrice_dev_adj, p47_implicitPrice_dev;
+          display "#### Check out below the p47_implicitPrice_NotConv parameter values for non convergence.";
+          display "#### p47_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to s47_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
+          display "#### p47_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
+          display "#### p47_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
+          display "#### p47_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
+          display p47_implicitPrice_NotConv, p47_implicitPrice_dev;
 	      );
 $endIf.cm_implicitPriceTarget
 	 );
