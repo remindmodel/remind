@@ -3,17 +3,19 @@ Start running REMIND with default settings
 Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), David Klein (<dklein@pik-potsdam.de>)
 30 April, 2019
 
--   [1. Your first run](#1-your-first-run)
-    -   [Default configurations](#default-configurations)
-    -   [Accessing the cluster](#accessing-the-cluster)
-    -   [Adjust the Rprofile](#adjust-the-rprofile)
-    -   [Starting the run](#starting-the-run)
-    -   [Restarting runs](#restarting-runs)
--   [2. What happens during a REMIND run?](#2-what-happens-during-a-remind-run)
--   [3. What happens once you start REMIND on the cluster? ](#3-what-happens-once-you-start-remind-on-the-cluster)
-    -   [a) Input data preparation](#a-input-data-preparation)
-    -   [b) Optimization](#b-optimization)
-    -   [c) Output processing](#c-output-processing)
+- [Start running REMIND with default settings](#start-running-remind-with-default-settings)
+- [1. Your first run](#1-your-first-run)
+  - [Default Configurations](#default-configurations)
+  - [Accessing the cluster](#accessing-the-cluster)
+  - [Adjust the .profile](#adjust-the-profile)
+  - [Starting the run](#starting-the-run)
+  - [Restarting runs](#restarting-runs)
+- [2. What happens during a REMIND run?](#2-what-happens-during-a-remind-run)
+- [3. What happens once you start REMIND on the cluster?](#3-what-happens-once-you-start-remind-on-the-cluster)
+  - [a) renv Setup](#a-renv-setup)
+  - [b) Input Data Preparation](#b-input-data-preparation)
+  - [c) Optimization](#c-optimization)
+  - [d) Output Processing](#d-output-processing)
 
 
 # 1. Your first run
