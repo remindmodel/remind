@@ -11,6 +11,8 @@
 # Header ------------------------------------------------------------------
 
 
+source("./scripts/utils/isSlurmAvailable.R")
+
 # Make sure the script is called via output.R.
 if (!exists("outputdirs")) stop("outputdirs does not extist. Please call comapreScenarios.R via output.R, which defines outputdirs.")
 
@@ -46,7 +48,7 @@ chooseFromSequence <- function(sequence, title, default) {
     "\n",
     sep = "\n")
   numList <- paste(seq_along(sequence), sequence, sep = ": ")
-  
+
   cat(ifelse(sequence %in% default, crayon::cyan(numList), numList), sep = "\n")
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
   input <- getLine()
@@ -90,9 +92,8 @@ startComp <- function(
     )
   outFileName <- jobName
   script <- "scripts/cs2/run_compareScenarios2.R"
-  onCluster <- file.exists("/p/projects/")
   cat("Starting ", jobName, "\n")
-  if (onCluster) {
+  if (isSlurmAvailable()) {
     clcom <- paste0(
       "sbatch ", slurmConfig,
       " --job-name=", jobName,
