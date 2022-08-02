@@ -20,9 +20,7 @@ run_compareScenarios2 <- function(
   # working directory is assumed to be the remind directory
 
   # load cs2 profiles
-  profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
-  profiles <- jsonlite::read_json(profilesFilePath, simplifyVector = FALSE)
-  profiles <- profiles[!startsWith(names(profiles), "_")] # remove comments
+  profiles <- remind2::getCs2Profiles()
 
   scenNames <- getScenNames(outputDirs)
 
@@ -42,15 +40,14 @@ run_compareScenarios2 <- function(
   message("Using these mif paths:\n - ", paste(c(histPath, mifPath), collapse = "\n - "))
   message("Using this temporary folder:\n - ", outfilepath)
 
-  # default arguments
+  # predefined arguments
   args <- list(
     mifScen = mifPath,
     mifHist = histPath,
     cfgScen = scenConfigPath,
     cfgDefault = defaultConfigPath,
     outputDir = outfilepath,
-    outputFile = outFileName,
-    outputFormat = "PDF"
+    outputFile = outFileName
   )
 
   # If profileName is a single non-empty string, load cs2 profile and change args.
@@ -62,20 +59,27 @@ run_compareScenarios2 <- function(
   ) {
     message("Applying profile ", profileName)
     profile <- profiles[[profileName]]
-    profileEval <- lapply( # evaluate entries of profile as R code
+    # Evaluate entries of profile as R code.
+    profileEval <- lapply( 
       names(profile),
       function(nm) {
-        eval(parse(text = profile[[nm]]), list("." = args[[nm]]))
+        eval(
+          parse(text = profile[[nm]]), 
+          # Set variable . to predefined argument value.
+          # This allows refer to the predefined value in the profile expression.
+          list("." = args[[nm]])) 
       }
     )
     args[names(profile)] <- profileEval
   } else {
-    message("Using default profile")
+    message("Using default profile.")
   }
   
-  message("Use following cs2 settings:")
+  message("Will make following function call:")
+  message("  remind2::compareScenarios2(")
   for (i in seq_along(args)) 
-    message("  ", names(args)[i], " = ", capture.output( dput(args[[i]])))
+    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), ",")
+  message("  )")
 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.

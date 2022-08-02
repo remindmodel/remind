@@ -13,28 +13,18 @@
 
 source("./scripts/utils/isSlurmAvailable.R")
 
-# Make sure the script is called via output.R.
-if (!exists("outputdirs")) stop("outputdirs does not extist. Please call comapreScenarios.R via output.R, which defines outputdirs.")
+# This script expects a variable `outputdirs` to be defined. 
+# Variables `slurmConfig` and `filename_prefix` are used if they defined.
+if (!exists("outputdirs")) {
+  stop(
+    "Variable outputdirs does not exist. ",
+    "Please call comapreScenarios.R via output.R, which defines outputdirs.")
+}
 
 
 
 
 # Function Definitions ----------------------------------------------------
-
-
-# gets characters (line) from the terminal of from a connection
-# and stores it in the return object
-# same as get_line() in output.R, should eventually be extracted to package
-getLine <- function() {
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
-    on.exit(close(con))
-  }
-  return(s)
-}
 
 
 # Ask user to select an element form a sequence.
@@ -51,7 +41,7 @@ chooseFromSequence <- function(sequence, title, default) {
 
   cat(ifelse(sequence %in% default, crayon::cyan(numList), numList), sep = "\n")
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
-  input <- getLine()
+  input <- gms::getLine()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
@@ -121,24 +111,22 @@ startComp <- function(
 # Code --------------------------------------------------------------------
 
 
-# load cs2 profiles
-profilesFilePath <- normalizePath("./scripts/cs2/profiles.json")
-profiles <- jsonlite::read_json(profilesFilePath, simplifyVector = FALSE)
-profiles <- profiles[!startsWith(names(profiles), "_")] # remove comments
+# Load cs2 profiles.
+profiles <- remind2::getCs2Profiles()
 
-# let user choose cs2 profile(s)
+# Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
 profileNames <- chooseFromSequence(
   names(profiles),
   "Choose profiles for cs2.",
   profileNamesDefault)
 
-# create core of file name / job name
+# Create core of file name / job name.
 timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
 if (!exists("filename_prefix")) filename_prefix <- ""
 nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
 
-# start a job for each profile
+# Start a job for each profile.
 for (profileName in profileNames) {
   startComp(
     outputDirs = outputdirs,
