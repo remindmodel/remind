@@ -9,6 +9,9 @@
 *--------------------------------------------------------------------------
 ***                  save gdx
 *--------------------------------------------------------------------------
+
+*** run exoGAINS from iteration 2 onwards to avoid incomplete GDX files when running it in the first iteration
+if (iteration.val ge 2,
 *** write the fulldata.gdx file after each optimal iteration
 ***AJS* in Nash status 7 is considered optimal in that respect (see definition of o_modelstat in solve.gms)
 if((o_modelstat le 2),
@@ -33,4 +36,5 @@ pm_emiAPexsolve(t,regi,all_sectorEmi,emiRCP) = p11_emiAPexsolveGDX(t,regi,all_se
 
 display pm_emiAPexsolve;
 
+);
 *** EOF ./modules/11_aerosols/exoGAINS/postsolve.gms
