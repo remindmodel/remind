@@ -512,31 +512,35 @@ q_emiTe(t,regi,emiTe(enty))..
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
 
-q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
+q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(
+                            emi2te(enty,enty2,te,enty3) 
+                         OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
-      (
-	    sum(pe2se(enty,enty2,te),
-		  pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * vm_demPE(t,regi,enty,enty2,te)
-		  )
-	    + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
-		    pm_emifac(t,regi,enty,enty2,te,enty3)
-		    * vm_co2CCS(t,regi,enty,enty2,te,rlf)
-		  )
-	  )$(sameas(emiMkt,"ETS"))
-	  + sum(se2fe(enty,enty2,te),
+      ( sum(pe2se(enty,enty2,te),
           pm_emifac(t,regi,enty,enty2,te,enty3)
-		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
-            vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-*** substract FE used for non-energy, does not lead to energy-related emissions
-            - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
-              vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
-            )
-          )
-*later we can add a term to represent waste incineration and the diff between using synfuels and fossil fuels as feedstocks
-      )  
+        * vm_demPE(t,regi,enty,enty2,te)
+	)
+      + sum((ccs2Leak(enty,enty2,te,enty3),teCCS2rlf(te,rlf)),
+          pm_emifac(t,regi,enty,enty2,te,enty3)
+	* vm_co2CCS(t,regi,enty,enty2,te,rlf)
+        )
+      )$( sameas(emiMkt,"ETS") )
+    + sum(se2fe(enty,enty2,te),
+        pm_emifac(t,regi,enty,enty2,te,enty3)
+      * sum((entyFe2Sector(enty2,sector),sector2emiMkt(sector,emiMkt)),
+          vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
+          !! substract FE used for non-energy, does not lead to energy-related
+	  !! emissions
+	- sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
+              vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt)
+	  )
+	)
+      )
+    !! TODO: later we can add a term to represent waste incineration and the
+    !! diff between using synfuels and fossil fuels as feedstocks
+    )  
 ;
 
 ***--------------------------------------------------
@@ -597,22 +601,24 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 ***--------------------------------------------------
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
-	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
-*** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
-*** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
-	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
-   	vm_emiMacSector(t,regi,emiMacSector)
-  )
-*** CDR from CDR module
-	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
-*** Exogenous emissions
-  +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
-*ADD here non energy emi from chem sector (feedstock emissions):
+  =e=
+    vm_emiTeMkt(t,regi,emi,emiMkt)
+    !! Non-energy sector emissions. Note: These are emissions from all MAC
+    !! curves.  So, this includes fugitive emissions, which are sometimes also
+    !! subsumed under the term energy emissions. 
+  + sum((emiMacSector2emiMac(emiMacSector,emiMac(emi)),
+         macSector2emiMkt(emiMacSector,emiMkt)),
+      vm_emiMacSector(t,regi,emiMacSector)
+    )
+    !! CDR from CDR module
+  + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") ) 
+    !! Exogenous emissions
+  + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
+    !! non energy emi from chem sector (feedstock emissions):
   + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
-        se2fe(entySe,entyFe,te)), 
+         se2fe(entySe,entyFe,te)), 
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-       * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
     )
 ;
 

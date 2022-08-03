@@ -2111,11 +2111,11 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         co2cement_process.ETS
 /
 
-entyFe2sector2emiMkt_NonEn(all_enty,emi_sectors,all_emiMkt)                     "combinations of FE type, sector and emissions markets existing for FE non-energy use"
+entyFE2sector2emiMkt_NonEn(all_enty,emi_sectors,all_emiMkt)                     "combinations of FE type, sector and emissions markets existing for FE non-energy use"
 /
-        fesos.indst.ETS
-        fehos.indst.ETS
-        fegas.indst.ETS
+  fesos . indst . ETS
+  fehos . indst . ETS
+  fegas . indst . ETS
 /
 
 ccsCo2(all_enty)    "only cco2 (???)"
@@ -2514,37 +2514,9 @@ se2fe(all_enty,all_enty,all_te)   "map secondary energy to end-use energy using 
 sefe(all_enty,all_enty) "map secondary energy to final energy"
 //
 
-entySe2entyFe(all_enty,all_enty) "map secondary energy to final energy"
-
-/
-        seel.feels
-        segabio.fegas
-        segafos.fegas
-        segasyn.fegas
-        segabio.fegat
-        segafos.fegat
-        segasyn.fegat
-        seliqbio.fehos
-        seliqfos.fehos
-        seliqsyn.fehos
-        sesobio.fesos
-        sesofos.fesos
-        seh2.feh2s
-        sehe.fehes
-        seel.feelt
-        seliqbio.fepet
-        seliqfos.fepet
-        seliqsyn.fepet
-        seliqbio.fedie
-        seliqfos.fedie
-        seliqsyn.fedie
-        seh2.feh2t
-/
-
-
-
-
 fete(all_enty,all_te) "map final energy to technologies"
+//
+
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 

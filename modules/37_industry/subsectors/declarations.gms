@@ -20,18 +20,18 @@ Parameters
   p37_CESMkup(ttot,all_regi,all_in)                                            "CES markup cost parameter [trUSD/CES input]"                                  
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                      "upper limit to secondary steel production based on scrap availability"        
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
-  p37_chemicals_feedstock_share(ttot,all_regi)                                 "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
-
-  p37_FeedstockCarbonContent(ttot,all_regi,all_enty)                      "carbon content of feedstocks [GtC/TWa]"
-  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)                 "testing parameter for FE without non-energy use" 
-  p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)                      "testing parameter for process emissions from chemical feedstocks"
-  p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)                            "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
-  p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)                "testing parameter Ind FE Balance left-hand side feedstock term"
-  p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)                "testing parameter Ind FE Balance right-hand side feedstock term"
-  p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                                "energy demand co2 emissions with non-energy correction"
-  p37_EmiEnDemand(ttot,all_regi)                                          "energy demand co2 emissions without non-energy correction"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
+
+  p37_chemicals_feedstock_share(ttot,all_regi)               "minimum share of feso/feli/fega in total chemicals FE input [0-1]"
+  p37_FeedstockCarbonContent(ttot,all_regi,all_enty)         "carbon content of feedstocks [GtC/TWa]"
+  p37_FE_noNonEn(ttot,all_regi,all_enty,all_enty2,emiMkt)    "testing parameter for FE without non-energy use" 
+  p37_Emi_ChemProcess(ttot,all_regi,all_enty,emiMkt)         "testing parameter for process emissions from chemical feedstocks"
+  p37_CarbonFeed_CDR(ttot,all_regi,all_emiMkt)               "testing parameter for carbon in feedstocks from biogenic and synthetic sources"
+  p37_IndFeBal_FeedStock_LH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance left-hand side feedstock term"
+  p37_IndFeBal_FeedStock_RH(ttot,all_regi,all_enty,emiMkt)   "testing parameter Ind FE Balance right-hand side feedstock term"
+  p37_EmiEnDemand_NonEnCorr(ttot,all_regi)                   "energy demand co2 emissions with non-energy correction"
+  p37_EmiEnDemand(ttot,all_regi)                             "energy demand co2 emissions without non-energy correction"
 
 *** output parameters only for reporting
   o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
@@ -61,19 +61,19 @@ Positive Variables
 ;
 
 Equations
-  q37_energy_limits(ttot,all_regi,all_in)                           "thermodynamic/technical limit of energy use"
-  q37_limit_secondary_steel_share(ttot,all_regi)                    "no more than 90% of steel from seconday production"
-  q37_macBaseInd(ttot,all_regi,all_enty,secInd37)                   "gross industry emissions before CCS"
-  q37_emiIndCCSmax(ttot,all_regi,emiInd37)                          "maximum abatable industry emissions at current CO2 price"
-  q37_IndCCS(ttot,all_regi,emiInd37)                                "limit industry emissions abatement"
-  q37_cementCCS(ttot,all_regi)                                      "link cement fuel and process abatement"
-  q37_IndCCSCost                                                    "Calculate industry CCS costs"
-  q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)                 "industry final energy demand (per emission market)"
-  q37_costCESmarkup(ttot,all_regi,all_in)                           "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
-  q37_chemicals_feedstocks_limit(ttot,all_regi)                     "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
-  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
-  q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)       "in baseline runs feedstocks only come from fossil energy carriers"
-  q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
+  q37_energy_limits(ttot,all_regi,all_in)                                  "thermodynamic/technical limit of energy use"
+  q37_limit_secondary_steel_share(ttot,all_regi)                           "no more than 90% of steel from seconday production"
+  q37_macBaseInd(ttot,all_regi,all_enty,secInd37)                          "gross industry emissions before CCS"
+  q37_emiIndCCSmax(ttot,all_regi,emiInd37)                                 "maximum abatable industry emissions at current CO2 price"
+  q37_IndCCS(ttot,all_regi,emiInd37)                                       "limit industry emissions abatement"
+  q37_cementCCS(ttot,all_regi)                                             "link cement fuel and process abatement"
+  q37_IndCCSCost                                                           "Calculate industry CCS costs"
+  q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)                        "industry final energy demand (per emission market)"
+  q37_costCESmarkup(ttot,all_regi,all_in)                                  "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q37_chemicals_feedstocks_limit(ttot,all_regi)                            "lower bound on feso/feli/fega in chemicals FE input for feedstocks"
+  q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)           "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
+  q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)              "in baseline runs feedstocks only come from fossil energy carriers"
+  q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_te,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

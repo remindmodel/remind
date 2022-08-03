@@ -296,14 +296,14 @@ energy_limits37(all_in,all_in)   "thermodynamic limit of energy"
     ue_steel_secondary . feel_steel_secondary
   /
 
-entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
+entyFECC37(all_enty)  "FE carriers in industry which can be used for CO2 capture"
   /
     fesos
     fehos
     fegas
   /
 
-entySe_emiFac_feedstocks(all_enty,all_enty) "SE type of emissions factor that should be used to calculate carbon contained in feedstocks"
+entySE_emiFac_feedstocks(all_enty,all_enty) "SE type of emissions factor that should be used to calculate carbon contained in feedstocks"
 
 /
   sesofos.fesos
