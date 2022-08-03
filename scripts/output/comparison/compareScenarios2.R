@@ -13,7 +13,7 @@
 
 source("./scripts/utils/isSlurmAvailable.R")
 
-# This script expects a variable `outputdirs` to be defined. 
+# This script expects a variable `outputdirs` to be defined.
 # Variables `slurmConfig` and `filename_prefix` are used if they defined.
 if (!exists("outputdirs")) {
   stop(

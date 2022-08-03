@@ -41,19 +41,6 @@ if (file.exists("/iplex/01/landuse")) { # run is performed on the cluster
   latexpath <- NA
 }
 
-get_line <- function() {
-  # gets characters (line) from the terminal of from a connection
-  # and stores it in the return object
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
-    on.exit(close(con))
-  }
-  return(s)
-}
-
 choose_folder <- function(folder, title = "Please choose a folder") {
   dirs <- NULL
 
@@ -72,7 +59,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   cat(paste(seq_along(dirs), dirs, sep = ": "), sep = "\n")
   cat(paste(length(dirs) + 1, "Search by the pattern.\n", sep = ": "))
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- strsplit(identifier, ",")[[1]]
   tmp <- NULL
   for (i in seq_along(identifier)) {
@@ -86,13 +73,13 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   # PATTERN
   if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
     cat("\nInsert the search pattern or the regular expression: ")
-    pattern <- get_line()
+    pattern <- getLine()
     id <- grep(pattern = pattern, dirs[-1])
     # lists all chosen directories and ask for the confirmation of the made choice
     cat("\n\nYou have chosen the following directories:\n")
     cat(paste(seq_along(id), dirs[id + 1], sep = ": "), sep = "\n")
     cat("\nAre you sure these are the right directories?(y/n): ")
-    answer <- get_line()
+    answer <- getLine()
     if (answer == "y") {
       return(dirs[id + 1])
     } else {
@@ -112,7 +99,7 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(module), module, sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
   if (any(!(identifier %in% seq_along(module)))) {
     stop("This choice (", identifier, ") is not possible. Please type in a number between 1 and ", length(module))
@@ -125,7 +112,7 @@ choose_mode <- function(title = "Please choose the output mode") {
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
   if (identifier == 1) {
     comp <- FALSE
@@ -153,7 +140,7 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   if (identifier == "") {
     identifier <- 1
   }
@@ -166,7 +153,7 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
 choose_filename_prefix <- function(modules, title = "") {
   cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
   cat(" For example compareScenarios2 uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
-  filename_prefix <- get_line()
+  filename_prefix <- getLine()
   if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
     filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
   }
