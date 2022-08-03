@@ -7,5 +7,5 @@ if (file.exists("~/.Rprofile")) {
 }
 
 if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
-  options(repos = c(getOption("repos"), "https://rse.pik-potsdam.de/r/packages"))
+  options(repos = c(getOption("repos"), pik = "https://rse.pik-potsdam.de/r/packages"))
 }
