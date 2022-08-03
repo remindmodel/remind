@@ -40,7 +40,7 @@ compareScenTable <- function(listofruns){
 
       def_choice <- fls[length(fls)]
       cat(sprintf("Select the correct output directory (%s): ", def_choice))
-      n <- as.integer(get_line())
+      n <- as.integer(gms::getLine())
       if(is.na(n))
         choice <- def_choice
       else
