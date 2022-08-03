@@ -43,13 +43,12 @@ Please add the GAMS training license you have been provided (gamslice.txt) by sa
 
 In addition *R* (<https://www.r-project.org/>) is required for pre- and postprocessing and run management (needs to be added to the user's PATH variable as well). It is recommended to also install RSudio (<https://www.rstudio.com>).
 
-On Windows you need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH
-variable.
+On Windows you need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH variable.
 
 For some types of REMIND output post-processing, LaTeX (<https://www.latex-project.org/get/>) and pandoc (<https://pandoc.org/installing.html>) are required. Make sure the executable "pdflatex" is added to the PATH variable of your system.
 
 Navigate to the REMIND folder that you cloned earlier. Always start R scripts and sessions related to REMIND from this path. To install all required R packages and check if your system is ready to run REMIND execute the following:
 
 ```sh
-Rscript setup.R
+Rscript checkSetup.R
 ```
