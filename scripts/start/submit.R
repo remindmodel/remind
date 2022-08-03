@@ -116,7 +116,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   
   # send prepare_and_run.R to cluster 
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
-  if(cfg$slurmConfig=="direct") {
+  if (grepl("^direct", cfg$slurmConfig)) {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")
   } else {

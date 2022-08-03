@@ -6,21 +6,6 @@
 # |  Contact: remind@pik-potsdam.de
 # ---- Define set of runs that will be compared ----
 
-
-# gets characters (line) from the terminal of from a connection
-# and stores it in the return object
-# same as get_line() in output.R, should eventually be extracted to package
-getLine <- function() {
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
-    on.exit(close(con))
-  }
-  return(s)
-}
-
 # Ask user to select an element form a sequence.
 chooseFromSequence <- function(sequence, title, default) {
   cat(
@@ -29,7 +14,7 @@ chooseFromSequence <- function(sequence, title, default) {
     sep = "")
   cat(paste(seq_along(sequence), sequence, sep = ": "), sep = "\n")
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
-  input <- get_line()
+  input <- gms::getLine()
   ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
   if (any(!ids %in% seq_along(sequence))) {
     stop("Choose numbers between 1 and ", length(sequence))
