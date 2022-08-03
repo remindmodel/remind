@@ -52,5 +52,6 @@ pm_implEnergyBoundTarget_dev,   parameter,  ???
 pm_implEnergyBoundTarget,       parameter,  ???
 pm_implicitPriceTarget,         parameter,  not needed
 pm_implicitPrice_NotConv,       parameter,  not needed
+pm_implicitPrice_ignConv,       parameter,  not needed
 sm_implicitPriceTax_convYear,   parameter,  not needed
 pm_implicitPrice_dev,           parameter,  not needed

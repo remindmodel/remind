@@ -290,8 +290,8 @@ $endif.cm_implicitEnergyBound
 
 *** additional criterion: Were FE price targets reached by implicit taxes and/or subsidies?
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
-loop((t,regi,all_enty,entySe,sector)$pm_implicitPriceTarget(t,regi,all_enty,entySe,sector),
-  if((pm_implicitPrice_NotConv(t,regi,all_enty,entySe,sector) eq 1), 
+loop((t,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(t,regi,entyFe,entySe,sector),
+  if((pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)), 
     s80_bool = 0;
     p80_messageShow("cm_implicitPriceTarget") = YES;
   );
@@ -377,12 +377,10 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence.";
-          display "#### pm_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to sm_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
-          display "#### pm_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
-          display "#### pm_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
-          display "#### pm_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
-          display pm_implicitPrice_NotConv, pm_implicitPrice_dev;
+          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence cases.";
+          display "####     Deviations must be lower than 5% for years later or equal to sm_implicitPriceTax_convYear";
+          display "#### The pm_implicitPrice_ignConv stores the cases disconsidered in the convergence check.";
+          display sm_implicitPriceTax_convYear, pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
    );
@@ -474,12 +472,10 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
-          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence.";
-          display "#### pm_implicitPrice_NotConv = 1, target has not converged (deviation higher than 5% for years later or equal to sm_implicitPriceTax_convYear). This is the only case that forces additional iterations.";
-          display "#### pm_implicitPrice_NotConv = 2, non existent price (disconsidered in convergence criteria).";
-          display "#### pm_implicitPrice_NotConv = 3, no change in prices for the last 3 iterations (disconsidered in convergence criteria).";
-          display "#### pm_implicitPrice_NotConv = 4, subsidy limited to 0.5 T$/TWa (disconsidered in convergence criteria).";
-          display pm_implicitPrice_NotConv, pm_implicitPrice_dev;
+          display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence cases.";
+          display "####     Deviations must be lower than 5% for years later or equal to sm_implicitPriceTax_convYear";
+          display "#### The pm_implicitPrice_ignConv stores the cases disconsidered in the convergence check.";
+          display sm_implicitPriceTax_convYear, pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
 	 );
