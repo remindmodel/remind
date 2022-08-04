@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/off/bounds.gms
 vm_otherFEdemand.fx(t,regi,entyFe) = 0;
-vm_cap.fx(t,regi,"rockgrind",rlf) = 0;
+vm_cap.fx(t,regi,"weathering",rlf) = 0;
 vm_emiCdr.fx(t,regi,enty) = 0;   
 vm_omcosts_cdr.fx(t,regi) = 0;
 vm_ccs_cdr.fx(t,regi,enty,enty2,te,rlf)$ccs2te(enty,enty2,te) = 0;
