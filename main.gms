@@ -553,8 +553,8 @@ cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 $setglobal cm_steel_secondary_max_share_scenario  off !! def off
 
 *** EU bioenergy switches
-cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
+cm_BioSupply_Adjust_EU = 3; !! def 3
+cm_BioImportTax_EU = 1; !! def 1
 
 cm_noPeFosCCDeu = 0; !! def 0
 
@@ -665,7 +665,7 @@ $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
-$setglobal cm_wind_offshore  1      !! def = 0
+$setglobal cm_wind_offshore  1      !! def = 1
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
