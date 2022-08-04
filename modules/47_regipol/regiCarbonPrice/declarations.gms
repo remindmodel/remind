@@ -105,7 +105,7 @@ Parameter
   pm_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector) "price target for FE carrier per sector"
   p47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)   "tax/subsidy level on FE for reaching the price target"
   p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue"
-  pm_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target"
+  p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target"
   p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration"
   pm_implicitPrice_NotConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that did not converged" 
   pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations, 3 = subsidy limited to 0.5 T$/TWa)" 
