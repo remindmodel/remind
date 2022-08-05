@@ -468,15 +468,29 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
       (pm_implicitPriceTarget(t,regi,entyFe,entySe,sector) - pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector))/2 !! only applying half of the deviation to avoid overshooting
       + p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector); 
   );
-  p47_implicitPriceTax("2080",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*2/3;
-  p47_implicitPriceTax("2090",regi,entyFe,entySe,sector)$p47_implicitPriceTax("2070",regi,entyFe,entySe,sector) = p47_implicitPriceTax("2070",regi,entyFe,entySe,sector)*1/3;
+*** initial and terminal year with price targets for given region and carrier
+  loop((ttot,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector),
+    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector) = max(ttot.val, p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector));
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) = min(ttot.val, p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector));
+  );
+*** terminal year onward tax (continuous tax up to 2100 and linear deacy afterwards)
+  loop((ttot,regi,entyFe,entySe,sector)$(pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) and (ttot.val eq p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector))),
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt ttot.val) = p47_implicitPriceTax(ttot,regi,entyFe,entySe,sector);
+  );
+  p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt 2100) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector) - (p47_implicitPriceTax("2100",regi,entyFe,entySe,sector) * ((t.val - 2150) / (2150 - 2100)));
+*** linear tax between cm_startyear and initial year (p47_implicitPriceTarget_initialYear)
+  loop(ttot$(ttot.val eq cm_startyear),
+    loop((ttot2,regi,entyFe,entySe,sector)$(pm_implicitPriceTarget(ttot2,regi,entyFe,entySe,sector) and (ttot2.val eq p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector))),
+      p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge cm_startyear) and (t.val lt ttot2.val)) = p47_implicitPriceTax(ttot2,regi,entyFe,entySe,sector) * ((t.val - ttot.val) / (ttot2.val - ttot.val));
+    );
+  );
 
 *** convergence criteria
-  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$((t.val ge sm_implicitPriceTax_convYear) AND (abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05)) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector); !! target did not converged = prices deviate more than 5% from target
+  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$(abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05) = p47_implicitPrice_dev(t,regi,entyFe,entySe,sector); !! target did not converged = prices deviate more than 5% from target
 *** additional convergence checks: 
 ***   ignoring non existent prices from price convergence check
-  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$((t.val ge sm_implicitPriceTax_convYear) AND (p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) AND (NOT(pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)))) = 0; !! removing from convergence check
-  pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$((t.val ge sm_implicitPriceTax_convYear) AND (p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) AND (NOT(pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)))) = 1; !!1 = non existent price  
+  pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$((p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) AND (NOT(pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)))) = 0; !! removing from convergence check
+  pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$((p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) AND (NOT(pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector)))) = 1; !!1 = non existent price  
 ***   checking if there is a hard bound on the model that does not allow the prices to change further in between iterations 
 ***   if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous two iterations when the deviation is still greater than 5%, the tax is not affecting anymore the prices.  
   if((iteration.val gt 3),
@@ -484,8 +498,8 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
       if((abs(p47_implicitPrice_dev(t,regi,entyFe,entySe,sector)) gt 0.05),
         if((abs(p47_implicitPriceTax(t,regi,entyFe,entySe,sector) - p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector)) lt 1e-2), !! less than 1% variation in relation to previous iteration price
           if((abs(p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector) - p47_implicitPriceTax_iter(iteration-2,t,regi,entyFe,entySe,sector)) lt 1e-2), !! less than 1% variation in the two previous iteration prices
-            pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$(t.val ge sm_implicitPriceTax_convYear) = 0; !! removing from convergence check
-            pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$(t.val ge sm_implicitPriceTax_convYear) = 2; !! 2 = less than 1% price change in this and the previous two iterations  
+            pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t) = 0; !! removing from convergence check
+            pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t) = 2; !! 2 = less than 1% price change in this and the previous two iterations  
           );
         );
       );
@@ -495,8 +509,8 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   loop((t,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(t,regi,entyFe,entySe,sector),
     if (( p47_implicitPriceTax(t,regi,entyFe,entySe,sector) < -0.5 ),
       p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = -0.5;
-      pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$(t.val ge sm_implicitPriceTax_convYear) = 0; !! removing from convergence check
-      pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$(t.val ge sm_implicitPriceTax_convYear) = 3; !! 3 = subsidy limited to 0.5 T$/TWa
+      pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t) = 0; !! removing from convergence check
+      pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t) = 3; !! 3 = subsidy limited to 0.5 T$/TWa
     );
   );
 

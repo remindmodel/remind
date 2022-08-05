@@ -96,6 +96,12 @@ f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)$(t
     );
   );
 
+*** initialize first and terminal years auxiliary parameters for price targets 
+  loop(ttot,
+    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2005;
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) $pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2150;
+  );
+
 $endIf.cm_implicitPriceTarget
 
 ***---------------------------------------------------------------------------

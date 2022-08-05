@@ -378,9 +378,9 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
           display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence cases.";
-          display "####     Deviations must be lower than 5% for years later or equal to sm_implicitPriceTax_convYear";
+          display "####     Deviations must be lower than 5%.";
           display "#### The pm_implicitPrice_ignConv stores the cases disconsidered in the convergence check.";
-          display sm_implicitPriceTax_convYear, pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
+          display pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
    );
@@ -473,9 +473,9 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
         if(sameas(convMessage80, "cm_implicitPriceTarget"),
 		      display "#### 11) A final energy price target has not been reached yet.";
           display "#### Check out below the pm_implicitPrice_NotConv parameter values for non convergence cases.";
-          display "####     Deviations must be lower than 5% for years later or equal to sm_implicitPriceTax_convYear";
+          display "####     Deviations must be lower than 5%.";
           display "#### The pm_implicitPrice_ignConv stores the cases disconsidered in the convergence check.";
-          display sm_implicitPriceTax_convYear, pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
+          display pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
 	 );

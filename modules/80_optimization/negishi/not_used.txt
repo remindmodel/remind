@@ -54,4 +54,3 @@ pm_FEPrice_iter,                parameter,  not needed
 pm_implicitPriceTarget,         parameter,  not needed
 pm_implicitPrice_NotConv,       parameter,  not needed
 pm_implicitPrice_ignConv,       parameter,  not needed
-sm_implicitPriceTax_convYear,   parameter,  not needed

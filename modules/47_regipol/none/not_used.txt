@@ -59,5 +59,4 @@ pm_FEPrice_by_SE_Sector,input,questionnaire
 pm_implicitPriceTarget,input,questionnaire
 pm_implicitPrice_NotConv,input,questionnaire
 pm_implicitPrice_ignConv,input,questionnaire
-sm_implicitPriceTax_convYear,input,questionnaire
 p47_implicitPrice_dev,input,questionnaire
