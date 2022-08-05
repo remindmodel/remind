@@ -8,18 +8,6 @@
 ############### Select slurm partitiion ###############################
 #######################################################################
 
-get_line <- function(){
-  # gets characters (line) from the terminal or from a connection
-  # and returns it
-  if(interactive()){
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn=FALSE)
-    on.exit(close(con))
-  }
-  return(s);
-}
 
 choose_slurmConfig <- function(identifier = FALSE) {
 
@@ -57,7 +45,7 @@ choose_slurmConfig <- function(identifier = FALSE) {
       cat(modes,sep="\n")
       cat("=======================================================================\n")
       cat("Number: ")
-      identifier <- strsplit(get_line(), ",")[[1]]
+      identifier <- strsplit(gms::getLine(), ",")[[1]]
     }
     comp <- switch(as.integer(identifier),
                     "1" = "--qos=standby --nodes=1 --tasks-per-node=12"  , # SLURM standby  - task per node: 12 (nash H12) [recommended]
