@@ -23,8 +23,8 @@ pm_consPC(tall,regi)$(tall.val gt 2150) = pm_consPC("2150",regi);
 *** output parameter for diagnostics
 
 *** Compute ppf prices from CES derivatives
-o01_CESderivatives(t,regi,cesOut2cesIn(out,in))$( vm_cesIO.l(t,regi,in) gt 0 AND
-                                                  vm_cesIO.l(t,regi,out) gt 0)
+o01_CESderivatives(t,regi,cesOut2cesIn(out,in))$( vm_cesIO.l(t,regi,in) gt 1e-6 AND
+                                                  vm_cesIO.l(t,regi,out) gt 1e-6)
   =
     pm_cesdata(t,regi,in,"xi")
   * pm_cesdata(t,regi,in,"eff")
@@ -50,7 +50,7 @@ loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
 *** compute marginal rate of substitution between primary production factors as ratio of CES prices
 *** provides the amount of in2 needed to subsitute one unit of in to generate the same economic value
 loop((cesOut2cesIn(out,in),cesOut2cesIn2(out,in2))$(ppfen(in)),
-  o01_CESmrs(t,regi,in,in2)
+  o01_CESmrs(t,regi,in,in2)$(o01_CESderivatives(t,regi,"inco",in2) gt 0)
   =
   o01_CESderivatives(t,regi,"inco",in) /
   o01_CESderivatives(t,regi,"inco",in2)
