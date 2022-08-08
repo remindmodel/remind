@@ -56,6 +56,7 @@ chooseFromSequence <- function(sequence, title, default) {
 determineDefaultProfiles <- function(outputDir) {
   env <- new.env()
   load(file.path(outputDir, "config.Rdata"), envir = env)
+  if (env$cfg$gms$cm_MAgPIE_coupling) return("REMIND-MAgPIE")
   regionMappingFile <- basename(env$cfg$regionmapping)
   defaults <- switch(
     regionMappingFile,
