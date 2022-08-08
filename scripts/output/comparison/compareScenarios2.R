@@ -30,14 +30,12 @@ if (!exists("outputdirs")) {
 # Ask user to select an element form a sequence.
 chooseFromSequence <- function(sequence, title, default) {
   cat(
-    "\n\n", title,
-    paste0(
-      "Leave empty for ",
-      crayon::cyan("cyan"),
-      " (", paste(default, collapse = ", "), ")."),
-    "\n",
-    sep = "\n")
-  numList <- paste(seq_along(sequence), sequence, sep = ": ")
+    "\n\n", title, 
+    "\n  Leave empty for ",
+    crayon::cyan("cyan profiles"),
+    ", i.e., ",  paste(default, collapse = ", "), ".\n\n",
+    sep = "")
+  numList <- paste(sprintf("%3d", seq_along(sequence)), sequence, sep = ": ")
 
   cat(ifelse(sequence %in% default, crayon::cyan(numList), numList), sep = "\n")
   cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
