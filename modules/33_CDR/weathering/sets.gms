@@ -21,6 +21,12 @@ teNoTransform2rlf_dyn33(all_te,rlf) "mapping for final energy to grades"
 /
       (weathering) . 1
 /
+
+rlf_cz33(rlf) "representing weathering rates depending on climate zones according to Strefler, Amann et al. (2017)"
+/
+      1     "warm regions"
+      2	"temperate regions"
+/
 ;
 
 ***-------------------------------------------------------------------------

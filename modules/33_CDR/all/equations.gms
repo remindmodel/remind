@@ -10,30 +10,30 @@
 *'  CDR Final Energy Balance
 ***---------------------------------------------------------------------------
 q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
-  vm_otherFEdemand(t,regi,entyFe)
-  =e=
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
+	vm_otherFEdemand(t,regi,entyFe)
+	=e=
+	sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
 ;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of the amount of ground rock spread in timestep t.
 ***---------------------------------------------------------------------------
 q33_capconst_weathering(t,regi)..
-	sum(rlf2,sum(rlf, v33_weathering_onfield(t,regi,rlf,rlf2)))
+	sum((rlf_cz33, rlf), v33_weathering_onfield(t,regi,rlf_cz33,rlf))
 	=l=
-	sum(teNoTransform2rlf_dyn33("weathering",rlf2), vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf2))
+	sum(teNoTransform2rlf_dyn33("weathering",rlf), vm_capFac(t,regi,"weathering") * vm_cap(t,regi,"weathering",rlf))
 	;
 	
 ***---------------------------------------------------------------------------
 *'  Calculation of the total amount of ground rock on the fields in timestep t. The first part of the equation describes the decay of the rocks added until that time,
 *'  the rest describes the newly added rocks.
 ***---------------------------------------------------------------------------
-q33_weathering_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startyear))..
-	v33_weathering_onfield_tot(ttot,regi,rlf,rlf2)
+q33_weathering_onfield_tot(ttot,regi,rlf_cz33,rlf)$(ttot.val ge max(2010, cm_startyear))..
+	v33_weathering_onfield_tot(ttot,regi,rlf_cz33,rlf)
 	=e=
-    v33_weathering_onfield_tot(ttot-1,regi,rlf,rlf2) * exp(-p33_co2_rem_rate(rlf) * pm_ts(ttot)) +
-	v33_weathering_onfield(ttot-1,regi,rlf,rlf2) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val)))) +
-	v33_weathering_onfield(ttot,regi,rlf,rlf2) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf) * (ttot.val-tall.val))))
+    v33_weathering_onfield_tot(ttot-1,regi,rlf_cz33,rlf) * exp(-p33_co2_rem_rate(rlf_cz33) * pm_ts(ttot)) +
+	v33_weathering_onfield(ttot-1,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val lt (ttot.val-pm_ts(ttot)/2)) $ (tall.val ge (ttot.val-pm_ts(ttot)))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val)))) +
+	v33_weathering_onfield(ttot,regi,rlf_cz33,rlf) * (sum(tall $ ((tall.val le ttot.val) $ (tall.val gt (ttot.val-pm_ts(ttot)/2))),exp(-p33_co2_rem_rate(rlf_cz33) * (ttot.val-tall.val))))
 ;  
 
 ***---------------------------------------------------------------------------
@@ -42,9 +42,9 @@ q33_weathering_onfield_tot(ttot,regi,rlf,rlf2)$(ttot.val ge max(2010, cm_startye
 q33_emiEW(t,regi)..
 	v33_emiEW(t,regi)
 	=e=
-	sum(rlf,
-		- sum(rlf2,v33_weathering_onfield_tot(t,regi,rlf,rlf2)) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf)))
-		)
+	sum((rlf_cz33, rlf),
+		- v33_weathering_onfield_tot(t,regi,rlf_cz33,rlf) * s33_co2_rem_pot * (1 - exp(-p33_co2_rem_rate(rlf_cz33)))
+	)
 	;	
 
 ***---------------------------------------------------------------------------
@@ -100,7 +100,7 @@ q33_DacFEdemand_heat(t,regi,entyFe)..
 q33_otherFEdemand(t,regi,entyFe)..
 	vm_otherFEdemand(t,regi,entyFe)
 	=e=
-	sum(rlf$(rlf.val le 2), p33_weathering_fedem(entyFe) * sm_EJ_2_TWa * sum(rlf2,v33_weathering_onfield(t,regi,rlf,rlf2)))
+	p33_weathering_fedem(entyFe) * sm_EJ_2_TWa * sum((rlf_cz33, rlf), v33_weathering_onfield(t,regi,rlf_cz33,rlf))
    + v33_DacFEdemand_el(t,regi,entyFe) + v33_DacFEdemand_heat(t,regi,entyFe)
 	;	
 	
@@ -111,21 +111,19 @@ q33_otherFEdemand(t,regi,entyFe)..
 q33_omcosts(t,regi)..
 	vm_omcosts_cdr(t,regi)
 	=e=
-	sum(rlf$(rlf.val le 2), 
-	    sum(rlf2,
-	       (s33_costs_fix + p33_transport_costs(regi,rlf,rlf2))  
-	       * v33_weathering_onfield(t,regi,rlf,rlf2)
-		)
+	sum((rlf_cz33, rlf),
+	    (s33_costs_fix + p33_transport_costs(regi,rlf_cz33,rlf)) * v33_weathering_onfield(t,regi,rlf_cz33,rlf)
 	)
 	;
 
 ***---------------------------------------------------------------------------
 *'  Limit total amount of ground rock on the fields to regional maximum potentials.
 ***---------------------------------------------------------------------------		
-q33_potential(t,regi,rlf)..	
-	sum(rlf2,v33_weathering_onfield_tot(t,regi,rlf,rlf2))
+q33_potential(t,regi,rlf_cz33)..
+	sum(rlf, v33_weathering_onfield_tot(t,regi,rlf_cz33,rlf))
 	=l=
-	f33_maxProdGradeRegiWeathering(regi,rlf);	
+	f33_maxProdGradeRegiWeathering(regi,rlf_cz33)
+	;
 
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCS chain.
@@ -140,11 +138,10 @@ q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
 *'  An annual limit for the maximum amount of rocks spred [Gt] can be set via cm_LimRock, e.g. due to sustainability concerns.
 ***---------------------------------------------------------------------------  
 q33_LimEmiEW(t,regi)..
-             sum(rlf,
-                  sum(rlf2,v33_weathering_onfield(t,regi,rlf,rlf2))
-                )
-        =l=
-        cm_LimRock*p33_LimRock(regi);
+	sum((rlf_cz33, rlf), v33_weathering_onfield(t,regi,rlf_cz33,rlf))
+	=l=
+	cm_LimRock*p33_LimRock(regi)
+	;
 
 ***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without DAC.
