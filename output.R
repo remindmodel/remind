@@ -41,19 +41,6 @@ if (file.exists("/iplex/01/landuse")) { # run is performed on the cluster
   latexpath <- NA
 }
 
-get_line <- function() {
-  # gets characters (line) from the terminal of from a connection
-  # and stores it in the return object
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    s <- readLines(con, 1, warn = FALSE)
-    on.exit(close(con))
-  }
-  return(s)
-}
-
 choose_folder <- function(folder, title = "Please choose a folder") {
   dirs <- NULL
 
@@ -72,7 +59,7 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   cat(paste(seq_along(dirs), dirs, sep = ": "), sep = "\n")
   cat(paste(length(dirs) + 1, "Search by the pattern.\n", sep = ": "))
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- strsplit(identifier, ",")[[1]]
   tmp <- NULL
   for (i in seq_along(identifier)) {
@@ -86,13 +73,13 @@ choose_folder <- function(folder, title = "Please choose a folder") {
   # PATTERN
   if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
     cat("\nInsert the search pattern or the regular expression: ")
-    pattern <- get_line()
+    pattern <- getLine()
     id <- grep(pattern = pattern, dirs[-1])
     # lists all chosen directories and ask for the confirmation of the made choice
     cat("\n\nYou have chosen the following directories:\n")
     cat(paste(seq_along(id), dirs[id + 1], sep = ": "), sep = "\n")
     cat("\nAre you sure these are the right directories?(y/n): ")
-    answer <- get_line()
+    answer <- getLine()
     if (answer == "y") {
       return(dirs[id + 1])
     } else {
@@ -112,7 +99,7 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(module), module, sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
   if (any(!(identifier %in% seq_along(module)))) {
     stop("This choice (", identifier, ") is not possible. Please type in a number between 1 and ", length(module))
@@ -121,17 +108,19 @@ choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
 }
 
 choose_mode <- function(title = "Please choose the output mode") {
-  modes <- c("Output for single run ", "Comparison across runs", "Exit")
+  modes <- c("Output for single run ", "Comparison across runs", "Export", "Exit")
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   identifier <- as.numeric(strsplit(identifier, ",")[[1]])
   if (identifier == 1) {
     comp <- FALSE
   } else if (identifier == 2) {
-    comp <- TRUE
+    comp <- "comparison"
   } else if (identifier == 3) {
+    comp <- "export"
+  } else if (identifier == 4) {
     comp <- "Exit"
   } else {
     stop("This mode is invalid. Please choose a valid mode.")
@@ -151,7 +140,7 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
   cat("\n\n", title, ":\n\n")
   cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
   cat("\nNumber: ")
-  identifier <- get_line()
+  identifier <- getLine()
   if (identifier == "") {
     identifier <- 1
   }
@@ -163,8 +152,8 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
 
 choose_filename_prefix <- function(modules, title = "") {
   cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
-  cat(" For example compareScenarios uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
-  filename_prefix <- get_line()
+  cat(" For example compareScenarios2 uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
+  filename_prefix <- getLine()
   if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
     filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
   }
@@ -176,14 +165,15 @@ if (exists("source_include")) {
 } else if (!exists("comp")) {
   comp <- choose_mode("Please choose the output mode")
 }
+if (isTRUE(comp)) comp <- "comparison"
 
 if (comp == "Exit") {
   q()
-} else if (comp == TRUE) {
+} else if (comp == "comparison" | comp == "export") {
   print("comparison")
   # Select output modules if not defined by readArgs
   if (!exists("output")) {
-    output <- choose_module("./scripts/output/comparison",
+    output <- choose_module(paste0("./scripts/output/", comp),
                             "Please choose the output module to be used for output generation")
   }
   # Select output directories if not defined by readArgs
@@ -214,7 +204,7 @@ if (comp == "Exit") {
   }
 
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios", "compareScenarios2")
+  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -224,7 +214,7 @@ if (comp == "Exit") {
   }
 
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-  modules_using_slurmConfig <- c("compareScenarios", "compareScenarios2")
+  modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_priority_standby()
   }
@@ -241,10 +231,10 @@ if (comp == "Exit") {
   # Execute output scripts over all chosen folders
   for (rout in output) {
     name <- paste(rout, ".R", sep = "")
-    if (file.exists(paste("scripts/output/comparison/", name, sep = ""))) {
+    if (file.exists(paste0("scripts/output/", comp, "/", name))) {
       print(paste("Executing", name))
       tmp.env <- new.env()
-      tmp.error <- try(sys.source(paste("scripts/output/comparison/", name, sep = ""), envir = tmp.env))
+      tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
       rm(tmp.env)
       gc()
       if (!is.null(tmp.error)) {
@@ -337,16 +327,15 @@ if (comp == "Exit") {
     # included as source (instead of a load from command line)
     source_include <- TRUE
 
-    message("\nStarting output generation for ", outputdir, "\n")
-
     ###################################################################################
     # Execute R scripts
     ###################################################################################
 
     # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
     if (all(is.na(output))) {
-      message("No output generation, as output was set to NA, as for example for --testOneRegi.")
+      message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
+      message("\nStarting output generation for ", outputdir, "\n")
       for (rout in output) {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {

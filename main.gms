@@ -362,7 +362,7 @@ parameters
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-cm_abortOnConsecFail   = 0;     !! def = 0
+cm_abortOnConsecFail   = 5;     !! def = 5
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_keep_presolve_gdxes  = 0;     !! def = 0

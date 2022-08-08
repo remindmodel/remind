@@ -50,21 +50,6 @@ helpText <- "
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
-############## Define function: get_line ##############################
-
-get_line <- function(){
-    # gets characters (line) from the terminal or from a connection
-    # and stores it in the return object
-    if(interactive()){
-        s <- readline()
-    } else {
-        con <- file("stdin")
-        s <- readLines(con, 1, warn=FALSE)
-        on.exit(close(con))
-    }
-    return(s);
-}
-
 ############## Define function: chooseFromList #########################
 # thelist: list to be selected from
 # group: list with same dimension as thelist with group names to allow to select whole groups
@@ -93,7 +78,7 @@ chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multip
   message(paste(paste(str_pad(1:length(thelist), nchar(length(thelist)), side = "left"), thelist, sep=": " ), collapse="\n"))
   message("\nNumber", ifelse(multiple,"s entered as 2,4:6,9",""),
           ifelse(allowempty, " or leave empty", ""), " (", type, "): ")
-  identifier <- strsplit(get_line(), ",")[[1]]
+  identifier <- strsplit(gms::getLine(), ",")[[1]]
   if (allowempty & length(identifier) == 0) return(NA)
   if (length(identifier) == 0 | ! all(grepl("^[0-9,:]*$", identifier))) {
     message("Try again, you have to choose some numbers.")
@@ -124,13 +109,13 @@ chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multip
   # PATTERN
   if(multiple && length(identifier == 1) && identifier == length(thelist) ){
     message("\nInsert the search pattern or the regular expression: ")
-    pattern <- get_line()
+    pattern <- gms::getLine()
     id <- grep(pattern=pattern, originallist)
     # lists all chosen and ask for the confirmation of the made choice
     message("\n\nYou have chosen the following ", type, ":")
     if (length(id) > 0) message(paste(paste(1:length(id), originallist[id], sep=": "), collapse="\n"))
     message("\nAre you sure these are the right ", type, "? (y/n): ")
-    if(get_line() == "y"){
+    if(gms::getLine() == "y"){
       identifier <- id
       booleanlist[id] <- 1
     } else {
@@ -151,7 +136,7 @@ chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multip
 select_testOneRegi_region <- function() {
   message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
   "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
-  return(get_line())
+  return(gms::getLine())
 }
 
 ############## Define function: configure_cfg #########################
@@ -168,7 +153,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
-    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--testOneRegi", "--debug") %in% argv)) {
+    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--debug", "--quick", "--testOneRegi") %in% argv)) {
       icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
     }
     if (icfg$slurmConfig %in% c(NA, ""))       {
@@ -316,7 +301,7 @@ if ("--reset" %in% argv) {
 if (any(c("--testOneRegi", "--debug", "--quick") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
   message("\nIt is impossible to combine --restart with --debug, --quick or --testOneRegi because full.gms has to be rewritten.\n",
   "If this is what you want, use --reprepare instead, or answer with y:")
-  if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
+  if (gms::getLine() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
 
 ignorederrors <- 0 # counts ignored errors in --test mode
@@ -341,12 +326,13 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
   outputdirs <- chooseFromList(sort(unique(possibledirs)), "runs to be restarted", returnboolean = FALSE)
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
-  restart_subsequent_runs <- get_line() %in% c("Y", "y")
+  restart_subsequent_runs <- gms::getLine() %in% c("Y", "y")
   if ("--testOneRegi" %in% argv) testOneRegi_region <- select_testOneRegi_region()
   if ("--reprepare" %in% argv) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
   }
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+  if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
   message()
   for (outputdir in outputdirs) {
     message("Restarting ", outputdir)
@@ -455,7 +441,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
     # if no csv was provided create dummy list with default/testOneRegi as the only scenario
-    if ("--testOneRegi" %in% argv) {
+    if (any(c("--quick", "--testOneRegi") %in% argv)) {
       scenarios <- data.frame("testOneRegi" = "testOneRegi", row.names = "testOneRegi")
     } else {
       scenarios <- data.frame("default" = "default", row.names = "default")
@@ -465,9 +451,10 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--testOneRegi", "--quick") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if(! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% argv) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
-    if (any(c("--debug", "--testOneRegi") %in% argv) && !is.na(config.file)) {
+    if ("--quick" %in% argv) slurmConfig <- paste(slurmConfig, "--time=60")
+    if (any(c("--debug", "--quick", "--testOneRegi") %in% argv) && !is.na(config.file)) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
   }
