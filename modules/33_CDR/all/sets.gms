@@ -34,6 +34,12 @@ teLearn_dyn33(all_te) "learning technologies"
 /
       dac
 /
+
+rlf_cz33(rlf) "representing weathering rates depending on climate zones according to Strefler, Amann et al. (2017)"
+/
+      1     "warm regions"
+      2     "temperate regions"
+/
 ;
 
 ***-------------------------------------------------------------------------
