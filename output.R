@@ -275,11 +275,9 @@ if (comp == "Exit") {
   # define slurm class or direct execution
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
-    slurmExceptions <- switch(output,
-      reporting      = "--mem=[0-9]*[0-9]{3}",
-      plotIterations = "^direct",
-      NULL
-    )
+    slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
+    outputUsingDirect <- c("plotIterations")
+    if (all(output %in% outputUsingDirect)) slurmConfig <- "direct"
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
@@ -339,7 +337,7 @@ if (comp == "Exit") {
       for (rout in output) {
         name <- paste(rout, ".R", sep = "")
         if (file.exists(paste0("scripts/output/single/", name))) {
-          if (slurmConfig == "direct") {
+          if (slurmConfig == "direct" | rout %in% outputUsingDirect) {
             # execute output script directly (without sending it to slurm)
             message("Executing ", name)
             tmp.env <- new.env()
