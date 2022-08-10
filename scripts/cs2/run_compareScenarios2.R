@@ -8,27 +8,19 @@ library(lucode2) # getScenNames
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputDirs", "outFileName", "regionList", "mainRegName", "profileName")
+  readArgs("outputDirs", "outFileName", "profileName")
 }
 
 run_compareScenarios2 <- function(
   outputDirs,
   outFileName,
-  regionList,
-  mainRegName,
   profileName
 ) {
 
   # working directory is assumed to be the remind directory
 
-  profilesFilePath <- normalizePath("./scripts/cs2/profiles.csv")
-  profiles <- read.delim(
-    text = readLines(profilesFilePath, warn = FALSE),
-    header = TRUE,
-    sep = ";",
-    colClasses = "character",
-    comment.char = "#",
-    quote = "")
+  # load cs2 profiles
+  profiles <- remind2::getCs2Profiles()
 
   scenNames <- getScenNames(outputDirs)
 
@@ -48,17 +40,14 @@ run_compareScenarios2 <- function(
   message("Using these mif paths:\n - ", paste(c(histPath, mifPath), collapse = "\n - "))
   message("Using this temporary folder:\n - ", outfilepath)
 
-  # default arguments
+  # predefined arguments
   args <- list(
     mifScen = mifPath,
     mifHist = histPath,
     cfgScen = scenConfigPath,
     cfgDefault = defaultConfigPath,
     outputDir = outfilepath,
-    outputFile = outFileName,
-    outputFormat = "PDF",
-    reg = regionList,
-    mainReg = mainRegName
+    outputFile = outFileName
   )
 
   # If profileName is a single non-empty string, load cs2 profile and change args.
@@ -68,21 +57,29 @@ run_compareScenarios2 <- function(
     !is.na(profileName) &&
     nchar(profileName) > 1
   ) {
-    message("applying profile ", profileName)
-    profile <- as.list(profiles[profiles$name == profileName, ])
-    profile$name <- NULL
-    profile <- lapply(profile, trimws)
-    profile <- profile[vapply(profile, function(s) nchar(s) > 0, logical(1))]
-    profileEval <- lapply(
+    message("Applying profile ", profileName)
+    profile <- profiles[[profileName]]
+    # Evaluate entries of profile as R code.
+    profileEval <- lapply( 
       names(profile),
       function(nm) {
-        eval(parse(text = profile[[nm]]), list("." = args[[nm]]))
+        eval(
+          parse(text = profile[[nm]]), 
+          # Set variable . to predefined argument value.
+          # This allows refer to the predefined value in the profile expression.
+          list("." = args[[nm]])) 
       }
     )
     args[names(profile)] <- profileEval
   } else {
-    message("using default profile")
+    message("Using default profile.")
   }
+  
+  message("Will make following function call:")
+  message("  remind2::compareScenarios2(")
+  for (i in seq_along(args)) 
+    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), ",")
+  message("  )")
 
   # Create temporary folder. This is necessary because each compareScenarios2 creates a folder names 'figure'.
   # If multiple compareScenarios2 run in parallel they would interfere with the others' figure folder.
@@ -95,7 +92,8 @@ run_compareScenarios2 <- function(
   on.exit(setwd(wd), add = TRUE)  # working directory should be the remind folder after exiting run_compareScenarios2()
   on.exit(system(paste0("rm -rf ", args$outputDir)), add = TRUE)
 
+  message("Calling remind2::compareScenarios2()...\n")
   try(do.call(compareScenarios2, args))
 }
 
-run_compareScenarios2(outputDirs, outFileName, regionList, mainRegName, profileName)
+run_compareScenarios2(outputDirs, outFileName, profileName)
