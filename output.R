@@ -41,95 +41,7 @@ if (file.exists("/iplex/01/landuse")) { # run is performed on the cluster
   latexpath <- NA
 }
 
-choose_folder <- function(folder, title = "Please choose a folder") {
-  dirs <- NULL
-
-  # Detect all output folders containing fulldata.gdx
-  # For coupled runs please use the outcommented text block below
-
-  dirs <- basename(dirname(Sys.glob(file.path(folder, "*", "fulldata.gdx"))))
-
-  # DK: The following outcommented lines are specially made for listing results of coupled runs
-  # runs <- findCoupledruns(folder)
-  # dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
-  # dirs <- sub("./output/","",dirs)
-
-  dirs <- c("all", dirs)
-  cat("\n\n", title, ":\n\n")
-  cat(paste(seq_along(dirs), dirs, sep = ": "), sep = "\n")
-  cat(paste(length(dirs) + 1, "Search by the pattern.\n", sep = ": "))
-  cat("\nNumber: ")
-  identifier <- getLine()
-  identifier <- strsplit(identifier, ",")[[1]]
-  tmp <- NULL
-  for (i in seq_along(identifier)) {
-    if (length(strsplit(identifier, ":")[[i]]) > 1) {
-      tmp <- c(tmp, as.numeric(strsplit(identifier, ":")[[i]])[1]:as.numeric(strsplit(identifier, ":")[[i]])[2])
-    } else {
-      tmp <- c(tmp, as.numeric(identifier[i]))
-    }
-  }
-  identifier <- tmp
-  # PATTERN
-  if (length(identifier) == 1 && identifier == (length(dirs) + 1)) {
-    cat("\nInsert the search pattern or the regular expression: ")
-    pattern <- getLine()
-    id <- grep(pattern = pattern, dirs[-1])
-    # lists all chosen directories and ask for the confirmation of the made choice
-    cat("\n\nYou have chosen the following directories:\n")
-    cat(paste(seq_along(id), dirs[id + 1], sep = ": "), sep = "\n")
-    cat("\nAre you sure these are the right directories?(y/n): ")
-    answer <- getLine()
-    if (answer == "y") {
-      return(dirs[id + 1])
-    } else {
-      choose_folder(folder, title)
-    }
-  } else if (any(dirs[identifier] == "all")) {
-    identifier <- 2:length(dirs)
-    return(dirs[identifier])
-  } else {
-    return(dirs[identifier])
-  }
-}
-
-
-choose_module <- function(Rfolder, title = "Please choose an outputmodule") {
-  module <- gsub("\\.R$", "", grep("\\.R$", list.files(Rfolder), value = TRUE))
-  cat("\n\n", title, ":\n\n")
-  cat(paste(seq_along(module), module, sep = ": "), sep = "\n")
-  cat("\nNumber: ")
-  identifier <- getLine()
-  identifier <- as.numeric(strsplit(identifier, ",")[[1]])
-  if (any(!(identifier %in% seq_along(module)))) {
-    stop("This choice (", identifier, ") is not possible. Please type in a number between 1 and ", length(module))
-  }
-  return(module[identifier])
-}
-
-choose_mode <- function(title = "Please choose the output mode") {
-  modes <- c("Output for single run ", "Comparison across runs", "Export", "Exit")
-  cat("\n\n", title, ":\n\n")
-  cat(paste(seq_along(modes), modes, sep = ": "), sep = "\n")
-  cat("\nNumber: ")
-  identifier <- getLine()
-  identifier <- as.numeric(strsplit(identifier, ",")[[1]])
-  if (identifier == 1) {
-    comp <- FALSE
-  } else if (identifier == 2) {
-    comp <- "comparison"
-  } else if (identifier == 3) {
-    comp <- "export"
-  } else if (identifier == 4) {
-    comp <- "Exit"
-  } else {
-    stop("This mode is invalid. Please choose a valid mode.")
-  }
-  return(comp)
-}
-
-choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm mode, uses the first option if empty",
-                                                slurmExceptions = NULL) {
+choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
                      "--qos=priority --mem=8000", "--qos=short --mem=8000",
                      "--qos=standby --mem=8000", "--qos=priority --mem=32000", "direct")
@@ -137,17 +49,9 @@ choose_slurmConfig_priority_standby <- function(title = "Please enter the slurm 
     slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
   }
   if (length(slurm_options) == 1) return(slurm_options[[1]])
-  cat("\n\n", title, ":\n\n")
-  cat(paste(seq_along(slurm_options), gsub("qos=", "", gsub("--", "", slurm_options)), sep = ": "), sep = "\n")
-  cat("\nNumber: ")
-  identifier <- getLine()
-  if (identifier == "") {
-    identifier <- 1
-  }
-  if (!identifier %in% seq(length(slurm_options))) {
-    return(choose_slurmConfig_priority_standby(title= "This slurm mode is invalid. Please choose a valid mode"))
-  }
-  return(slurm_options[as.numeric(identifier)])
+  identifier <- chooseFromList(gsub("qos=", "", gsub("--", "", slurm_options)),
+         multiple = FALSE, returnBoolean = TRUE, type = "slurm mode", userinfo = "Uses the first option if empty.")
+  return(if (any(identifier)) slurm_options[as.numeric(which(identifier))] else slurm_options[1])
 }
 
 choose_filename_prefix <- function(modules, title = "") {
@@ -161,36 +65,37 @@ choose_filename_prefix <- function(modules, title = "") {
 }
 
 if (exists("source_include")) {
-  comp <- FALSE
-} else if (!exists("comp")) {
-  comp <- choose_mode("Please choose the output mode")
+  comp <- "single"
+} else if (! exists("comp")) {
+  modes <- c("single" = "Output for single run", "comparison" = "Comparison across runs", "export" = "Export", "exit" = "Exit")
+  comp <- names(modes)[which(chooseFromList(unname(modes), type = "output mode", multiple = FALSE, returnBoolean = TRUE))]
+  if (comp == "exit") q()
 }
+if (isFALSE(comp)) comp <- "single" # legacy from times only two comp modes existed
 if (isTRUE(comp)) comp <- "comparison"
 
-if (comp == "Exit") {
-  q()
-} else if (comp == "comparison" | comp == "export") {
-  print("comparison")
-  # Select output modules if not defined by readArgs
-  if (!exists("output")) {
-    output <- choose_module(paste0("./scripts/output/", comp),
-                            "Please choose the output module to be used for output generation")
-  }
+if (! exists("output")) {
+  modules <- gsub("\\.R$", "", grep("\\.R$", list.files(paste0("./scripts/output/", if (isFALSE(comp)) "single" else comp)), value = TRUE))
+  output <- chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
+}
+
+if (comp %in% c("comparison", "export")) {
   # Select output directories if not defined by readArgs
-  if (!exists("outputdir")) {
+  if (! exists("outputdir")) {
     if ("policyCosts" %in% output) {
       message("\nFor policyCosts, specify policy runs and reference runs alternatingly:")
       message("3,1,4,1 compares runs 3 and 4 with 1.")
     }
-    if (!exists("remind_dir")) {
-      temp <- choose_folder("./output", "Please choose the runs to be used for output generation")
-      outputdirs <- temp
-      for (i in seq_along(temp)) {
-        outputdirs[i] <- file.path("output", temp[i])
-      }
-    } else {
-      temp <- choose_folder(remind_dir, "Please choose the runs to be used for output generation, separate with comma")
-      outputdirs <- temp
+    dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
+    dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
+    # DK: The following outcommented lines are specially made for listing results of coupled runs
+    # runs <- findCoupledruns(folder)
+    # dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
+    # dirs <- sub("./output/","",dirs)
+    temp <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
+                                      multiple = TRUE)
+    outputdirs <- file.path("output", temp)
+    if (exists("remind_dir")) {
       for (i in seq_along(temp)) {
         last_iteration <-
           max(as.numeric(sub("magpie_", "", grep("magpie_",
@@ -216,7 +121,7 @@ if (comp == "Exit") {
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
   modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
-    slurmConfig <- choose_slurmConfig_priority_standby()
+    slurmConfig <- choose_slurmConfig_output()
   }
   if (exists("slurmConfig")) {
     if (slurmConfig %in% c("priority", "short", "standby")) {
@@ -242,24 +147,19 @@ if (comp == "Exit") {
       }
     }
   }
-} else {
-  # Select an output module if not defined by readArgs
-  if (!exists("output")) {
-    output <- choose_module("./scripts/output/single",
-                            "Please choose the output module to be used for output generation")
-  }
-
+} else { # comp = single
   # Select an output directory if not defined by readArgs
   if (!exists("outputdir")) {
-    if (!exists("remind_dir")) {
-      temp <- choose_folder("./output", "Please choose the run(s) to be used for output generation")
-      outputdirs <- temp
-      for (i in seq_along(temp)) {
-        outputdirs[i] <- file.path("output", temp[i])
-      }
-    } else {
-      temp <- choose_folder(remind_dir, "Please choose the runs to be used for output generation")
-      outputdirs <- temp
+    dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
+    dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
+    # DK: The following outcommented lines are specially made for listing results of coupled runs
+    # runs <- findCoupledruns(folder)
+    # dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
+    # dirs <- sub("./output/","",dirs)
+    temp <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
+                                      multiple = TRUE)
+    outputdirs <- file.path("output", temp)
+    if (exists("remind_dir")) {
       for (i in seq_along(temp)) {
         last_iteration <-
           max(as.numeric(sub("magpie_", "", grep("magpie_",
@@ -281,7 +181,7 @@ if (comp == "Exit") {
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
-      slurmConfig <- choose_slurmConfig_priority_standby(slurmExceptions = slurmExceptions)
+      slurmConfig <- choose_slurmConfig_output(slurmExceptions = slurmExceptions)
       if (slurmConfig != "direct") slurmConfig <- paste(slurmConfig, "--nodes=1 --tasks-per-node=1")
     }
     if (slurmConfig %in% c("priority", "short", "standby")) {
