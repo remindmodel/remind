@@ -51,7 +51,30 @@
 *' The concatenation process starts with files from the core and continues with files from activated modules, 
 *' in increasing order of module-number. It observes the following structure:
 *'
-*' ![Technical Structure of REMIND](technical_structure.png){ width=100% }
+*' ```
+*' SETS
+*'
+*' DECLARATION    ---> of equations, variables, parameters, and scalars
+*'
+*' DATAINPUT
+*'
+*' EQUATIONS
+*'
+*' PRELOOP        ---> initial calibration of e.g. macroeconomic model
+*'
+*' LOOP
+*'         ---> read gdx
+*' ----------------------------------------------- BEGIN OF NEGISH/NASH ITERATION LOOP -----
+*'       * BOUNDS
+*'       * PRESOLVE
+*'       * SOLVE     ---> solve statement in module 80_optimization
+*'       * POSTSOLVE
+*'
+*'         ---> write gdx
+*' ----------------------------------------------- END OF NEGISHI/NASH ITERATATION LOOP ----
+*'
+*' OUTPUT
+*' ```
 *'
 *'
 *' The GAMS code follows a naming etiquette based on the following prefixes:
