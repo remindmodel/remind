@@ -362,7 +362,7 @@ parameters
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-cm_abortOnConsecFail   = 0;     !! def = 0
+cm_abortOnConsecFail   = 5;     !! def = 5
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_keep_presolve_gdxes  = 0;     !! def = 0
@@ -542,8 +542,8 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
 
 *** flex tax switches
-cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_flex_tax = 1; !! def 1
+cm_PriceDurSlope_elh2 = 15; !! def 15
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
