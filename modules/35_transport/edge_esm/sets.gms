@@ -135,6 +135,16 @@ Mix1
 Mix2
 Mix3
 Mix4
+ECEMF_HighEl_ModEff
+ECEMF_HighEl_LifestCha
+ECEMF_HighEl_ModEff
+ECEMF_HighH2_HighEff
+ECEMF_HighH2_LifestCha
+ECEMF_HighH2_ModEff
+NAV_act
+NAV_tec
+NAV_ele
+NAV_all
 /
 
 EDGE_scenario(EDGE_scenario_all) "Selected EDGE-T scenario"
