@@ -240,7 +240,7 @@ $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
 Parameter
- p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
 ;
 
 Parameter
