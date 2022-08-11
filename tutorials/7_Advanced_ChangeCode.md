@@ -14,10 +14,30 @@ The REMIND-code is structured in a modular way. The technical structure looks as
 
 In the `main.gms` file the technical structure of REMIND can be found. First, the `*.gms` files from the core folder are included and afterward the `*.gms` files from the activated module realization, beginning with the one with the smallest module-number. The technical structure of REMIND looks as follows:
 
-<img src="figures/technical_structure.png" alt="Technical Structure of REMIND" width="100%" />
-<p class="caption">
-Technical Structure of REMIND
-</p>
+```
+SETS
+
+DECLARATION    ---> of equations, variables, parameters, and scalars
+
+DATAINPUT
+
+EQUATIONS
+
+PRELOOP        ---> initial calibration of e.g. macroeconomic model
+
+LOOP
+        ---> read gdx
+----------------------------------------------- BEGIN OF NEGISH/NASH ITERATION LOOP -----
+      * BOUNDS
+      * PRESOLVE
+      * SOLVE     ---> solve statement in module 80_optimization
+      * POSTSOLVE
+      
+        ---> write gdx
+----------------------------------------------- END OF NEGISHI/NASH ITERATATION LOOP ----
+
+OUTPUT
+```
 
 In general, the `.gms`-files in each module realization can be the same as in the core. For each module it has to be clearly defined what kind of interfaces it has with the core part of the model.
 
