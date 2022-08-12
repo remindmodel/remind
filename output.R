@@ -24,6 +24,7 @@ options(error = quote({
 # load landuse library
 library(lucode2)
 library(gms)
+require(stringr)
 
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {
@@ -79,35 +80,33 @@ if (! exists("output")) {
   output <- chooseFromList(modules, type = "modules to be used for output generation", addAllPattern = FALSE)
 }
 
-if (comp %in% c("comparison", "export")) {
-  # Select output directories if not defined by readArgs
-  if (! exists("outputdir")) {
-    if ("policyCosts" %in% output) {
-      message("\nFor policyCosts, specify policy runs and reference runs alternatingly:")
-      message("3,1,4,1 compares runs 3 and 4 with 1.")
-    }
-    dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
-    dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
-    # DK: The following outcommented lines are specially made for listing results of coupled runs
-    # runs <- findCoupledruns(folder)
-    # dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
-    # dirs <- sub("./output/","",dirs)
-    temp <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
-                                      multiple = TRUE)
-    outputdirs <- file.path("output", temp)
-    if (exists("remind_dir")) {
-      for (i in seq_along(temp)) {
-        last_iteration <-
-          max(as.numeric(sub("magpie_", "", grep("magpie_",
-                                                 list.dirs(file.path(remind_dir, temp[i], "data", "results")),
-                                                 value = TRUE))))
-        outputdirs[i] <- file.path(remind_dir, temp[i], "data", "results", paste0("magpie_", last_iteration))
-      }
-    }
-  } else {
-    outputdirs <- outputdir
+# Select output directories if not defined by readArgs
+if (! exists("outputdir")) {
+  if ("policyCosts" %in% output) {
+    message("\nFor policyCosts, specify policy runs and reference runs alternatingly:")
+    message("3,1,4,1 compares runs 3 and 4 with 1.")
   }
+  dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
+  dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
+  names(dirs) <- stringr::str_extract(dirs, "rem-[0-9]+$")
+  names(dirs)[is.na(names(dirs))] <- ""
+  selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
+                                    multiple = TRUE)
+  outputdirs <- file.path("output", selectedDirs)
+  if (exists("remind_dir")) {
+    for (i in seq_along(selectedDirs)) {
+      last_iteration <-
+        max(as.numeric(sub("magpie_", "", grep("magpie_",
+                                               list.dirs(file.path(remind_dir, selectedDirs[i], "data", "results")),
+                                               value = TRUE))))
+      outputdirs[i] <- file.path(remind_dir, selectedDirs[i], "data", "results", paste0("magpie_", last_iteration))
+    }
+  }
+} else {
+  outputdirs <- outputdir
+}
 
+if (comp %in% c("comparison", "export")) {
   # ask for filename_prefix, if one of the modules that use it is selected
   modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA")
   if (!exists("filename_prefix")) {
@@ -148,30 +147,6 @@ if (comp %in% c("comparison", "export")) {
     }
   }
 } else { # comp = single
-  # Select an output directory if not defined by readArgs
-  if (!exists("outputdir")) {
-    dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
-    dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
-    # DK: The following outcommented lines are specially made for listing results of coupled runs
-    # runs <- findCoupledruns(folder)
-    # dirs <- findIterations(runs,modelpath=folder,latest=TRUE)
-    # dirs <- sub("./output/","",dirs)
-    temp <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
-                                      multiple = TRUE)
-    outputdirs <- file.path("output", temp)
-    if (exists("remind_dir")) {
-      for (i in seq_along(temp)) {
-        last_iteration <-
-          max(as.numeric(sub("magpie_", "", grep("magpie_",
-                                                 list.dirs(file.path(remind_dir, temp[i], "data", "results")),
-                                                 value = TRUE))))
-        outputdirs[i] <- file.path(remind_dir, temp[i], "data", "results", paste0("magpie_", last_iteration))
-      }
-    }
-  } else {
-    outputdirs <- outputdir
-  }
-
   # define slurm class or direct execution
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
