@@ -255,7 +255,7 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
 ;
 $offtext
 
-$ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
+$ifthen.bal_scenario "%cm_forecast_fix%" == "bal"   !! cm_forecast_fix
   Parameter
     p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
     !! from FORECAST v1.0_8Gt_Bal.xlsx
@@ -267,7 +267,7 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2040 . DEU . ue_cement   32.517921
       2045 . DEU . ue_cement   31.826778
       2050 . DEU . ue_cement   31.13703
-  
+
       2020 . DEU . ue_steel_primary     25.07355
       2025 . DEU . ue_steel_primary     27.08212
       2030 . DEU . ue_steel_primary     24.808956
@@ -275,7 +275,7 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2040 . DEU . ue_steel_primary     20.219831
       2045 . DEU . ue_steel_primary     19.946714
       2050 . DEU . ue_steel_primary     19.725106
-  
+
       2020 . DEU . ue_steel_secondary   10.50795
       2025 . DEU . ue_steel_secondary   14.288815
       2030 . DEU . ue_steel_secondary   16.181637
@@ -285,14 +285,14 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2050 . DEU . ue_steel_secondary   19.725106
     /
   ;
-  
+
   !! convert Mt to Gt
   p37_industry_quantity_targets(t,regi,in)$(
                                       p37_industry_quantity_targets(t,regi,in) )
     = p37_industry_quantity_targets(t,regi,in)
       !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
     * 1e-3;
-  
+
   !! extend beyond 2050
   !! FIXME: do this smarter, using something like GDPpC growth or something
   p37_industry_quantity_targets(t,regi,in)$(
@@ -300,6 +300,49 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
  	                     AND t.val ge 2050                                 )
     = p37_industry_quantity_targets("2050",regi,in);
 $endif.bal_scenario
+
+$ifthen.ensec_scenario "%cm_forecast_fix%" == "ensec"   !! cm_forecast_fix
+  Parameter
+    p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
+    !! from Ariadne_Industrieproduktion_Harmonisierung.xlsx
+    /
+      2020 . DEU . ue_cement   34.396171
+      2025 . DEU . ue_cement   34.086007
+      2030 . DEU . ue_cement   33.497825
+      2035 . DEU . ue_cement   32.984228
+      2040 . DEU . ue_cement   32.517921
+      2045 . DEU . ue_cement   31.826778
+
+      2020 . DEU . ue_steel_primary     23.597700
+      2025 . DEU . ue_steel_primary     25.641956
+      2030 . DEU . ue_steel_primary     23.563428
+      2035 . DEU . ue_steel_primary     21.597116
+      2040 . DEU . ue_steel_primary     19.814551
+      2045 . DEU . ue_steel_primary     17.777242
+
+      2020 . DEU . ue_steel_secondary   11.428800
+      2025 . DEU . ue_steel_secondary   15.183230
+      2030 . DEU . ue_steel_secondary   16.890665
+      2035 . DEU . ue_steel_secondary   18.631843
+      2040 . DEU . ue_steel_secondary   20.521511
+      2045 . DEU . ue_steel_secondary   22.116186
+    /
+  ;
+
+  !! convert Mt to Gt
+  p37_industry_quantity_targets(t,regi,in)$(
+                                      p37_industry_quantity_targets(t,regi,in) )
+    = p37_industry_quantity_targets(t,regi,in)
+      !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
+    * 1e-3;
+
+  !! extend beyond 2045
+  !! FIXME: do this smarter, using something like GDPpC growth or something
+  p37_industry_quantity_targets(t,regi,in)$(
+                                 p37_industry_quantity_targets("2045",regi,in)
+ 	                     AND t.val ge 2045                                 )
+    = p37_industry_quantity_targets("2045",regi,in);
+$endif.ensec_scenario
 
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","level")     = 1.5;
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","midperiod") = 2030;

@@ -131,4 +131,13 @@ Parameters
 p47_emiTarget_grossEnCO2_noBunkers_iter(iteration,ttot,all_regi)	"parameter to save value of gross energy emissions target over iterations to check whether values converge"
 ;
 
+*** Limit PE gas demand in DEU as part of ARIADNE EnSec Limit scenario
+$IFTHEN.EnSec_Limit "%cm_EnSecScen%" == "limit"
+variables
+	v47_demPEGasDEU(ttot)    "sum of all pe gas demand in DEU"
+;
+equations
+	q47_demPEGasDEU(t)    "sum of all pe gas demand in DEU"
+;
+$endif.EnSec_Limit
 *** EOF ./modules/47_regipol/regiCarbonPrice/declarations.gms
