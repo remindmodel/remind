@@ -79,8 +79,7 @@ $endif.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 
 *** initialize tax value for the first iteration
-  p47_implicitPriceTax(t,regi,all_enty,entySe,sector) = 0;
-  p47_implicitPriceTax_iter(iteration,t,regi,all_enty,entySe,sector) = 0;
+  p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = 0;
   
 $endIf.cm_implicitPriceTarget
 

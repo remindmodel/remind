@@ -82,7 +82,7 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   p47_implicitPriceTax0(t,regi,entyFe,entySe,sector)=0;
 
 *** load exogenously defined FE price targets
-table f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)        "exogenously defined FE price targets"
+table f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)        "exogenously defined FE price targets [2005 Dollar per GJoule]"
 $ondelim
 $include "./modules/47_regipol/regiCarbonPrice/input/exogenousFEprices.cs3r"
 $offdelim

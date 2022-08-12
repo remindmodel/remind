@@ -45,11 +45,11 @@ Parameter
 
 *** Parameters necessary to calculate the emission tax rescaling factor
   p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliar parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
-  p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope [#]"
+  p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope across iterations [#]"
   p47_factorRescaleIntersect(ttot,ttot2,ext_regi,emiMktExt) "auxiliar parameter to save the intersect value of the linear projection of previous iterations mitigation levels when compared to relative price difference [#]" 
-  p47_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve intersect [#]"
+  p47_factorRescaleIntersect_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve intersect across iterations [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
-  p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugginh purposes [%]"
+  p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
 
 *** Parameters necessary to define the CO2 tax curve shape   
   p47_targetConverged(ttot,ext_regi)                 "boolean to store if emission target has converged [0 or 1]"
@@ -102,14 +102,14 @@ $endIf.cm_implicitEnergyBound
 ***---------------------------------------------------------------------------
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 Parameter
-  pm_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector) "price target for FE carrier per sector"
-  p47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)   "tax/subsidy level on FE for reaching the price target"
-  p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue"
-  p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target"
-  p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration"
-  pm_implicitPrice_NotConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that did not converged" 
-  pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations, 3 = subsidy limited to 0.5 T$/TWa)" 
-  p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration"
+  pm_implicitPriceTarget(ttot,all_regi,all_enty,entySe,sector) "price target for FE carrier per sector [2005 TerraDollar per TWyear]"
+  p47_implicitPriceTax(ttot,all_regi,all_enty,entySe,sector)   "tax/subsidy level on FE for reaching the price target [2005 TerraDollar per TWyear]"
+  p47_implicitPriceTax0(ttot,all_regi,all_enty,entySe,sector)  "previous iteration implicit price target tax revenue  [2005 TerraDollar]"
+  p47_implicitPrice_dev(ttot,all_regi,all_enty,entySe,sector)   "implicit price tax deviation of current iteration from target [%]"
+  p47_implicitPrice_dev_iter(iteration,ttot,all_regi,all_enty,entySe,sector) "implicit price tax deviation of current iteration from target per iteration [%]"
+  pm_implicitPrice_NotConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that did not converged [%]" 
+  pm_implicitPrice_ignConv(all_regi,sector,all_enty,entySe,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
+  p47_implicitPriceTax_iter(iteration,ttot,all_regi,all_enty,entySe,sector)  "tax/subsidy level on FE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
   p47_implicitPriceTarget_terminalYear(all_regi,all_enty,entySe,sector) "terminal year of price target for given region and energy carrier [year]"
   p47_implicitPriceTarget_initialYear(all_regi,all_enty,entySe,sector) "initial year of price target for given region and energy carrier [year]"
 ;
