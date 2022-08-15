@@ -21,35 +21,6 @@ if (!exists("outputdirs")) {
     "Please call comapreScenarios.R via output.R, which defines outputdirs.")
 }
 
-
-
-
-# Function Definitions ----------------------------------------------------
-
-
-# Ask user to select an element form a sequence.
-chooseFromSequence <- function(sequence, title, default) {
-  cat(
-    "\n\n", title, 
-    "\n  Leave empty for ",
-    crayon::cyan("cyan profiles"),
-    ", i.e., ",  paste(default, collapse = ", "), ".\n\n",
-    sep = "")
-  numList <- paste(sprintf("%3d", seq_along(sequence)), sequence, sep = ": ")
-
-  cat(ifelse(sequence %in% default, crayon::cyan(numList), numList), sep = "\n")
-  cat("\nNumbers, e.g., '1', '2,4', '3:5':\n")
-  input <- gms::getLine()
-  ids <- as.numeric(eval(parse(text = paste("c(", input, ")"))))
-  if (any(!ids %in% seq_along(sequence))) {
-    stop("Choose numbers between 1 and ", length(sequence))
-  }
-  chosenElements <- if (length(ids) == 0) default else sequence[ids]
-  cat("\nchosen elements:\n  ", paste(chosenElements, collapse = "\n  "), "\n\n", sep = "")
-  return(chosenElements)
-}
-
-
 # Find a suitable default cs2 profile depending on config.RData.
 determineDefaultProfiles <- function(outputDir) {
   env <- new.env()
@@ -115,10 +86,16 @@ profiles <- remind2::getCs2Profiles()
 
 # Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
-profileNames <- chooseFromSequence(
-  names(profiles),
-  "Choose profiles for cs2.",
-  profileNamesDefault)
+profileNames <- names(profiles)[gms::chooseFromList(
+  ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
+  type = "profiles for cs2",
+  userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
+  returnBoolean = TRUE
+)]
+if (length(profileNames) == 0) {
+  profileNames <- profileNamesDefault
+  message("Default: ", paste(profileNamesDefault, collapse = ", "), ".\n")
+}
 
 # Create core of file name / job name.
 timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
