@@ -12,3 +12,4 @@ pm_fedemand,             parameter,  not needed
 sm_TWa_2_MWh,            input,      questionnaire
 sm_tmp2,                 parameter,  not needed
 cm_import_EU,            switch,     not needed
+cm_forecast_fix,         switch,     not needed
