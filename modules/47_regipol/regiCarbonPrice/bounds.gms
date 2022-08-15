@@ -110,7 +110,7 @@ $endIf.ensec
 
 *** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
-    v47_demPEGasDEU.up(t)(t ge 2020) * pm_conv_TWa_EJ = 2
+    v47_demPEtotal.up(t,"DEU","pegas")$(t.val ge 2025) = 2/pm_conv_TWa_EJ;
 $endIf.ensec_lim
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

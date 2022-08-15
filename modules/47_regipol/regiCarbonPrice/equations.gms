@@ -141,10 +141,11 @@ $endIf.cm_implicitFE
 
 *** PW: Total gas demand in DEU that is being limited in ARIADEN EnSec Limit Scenario
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
-q47_demPEGasDEU(t)..
-	v47_demPEGasDEU(t)
+q47_demPEtotal(t,regi,entyPe)$(sameAs(regi,"DEU") and sameAs(entyPe,"pegas"))..
+	v47_demPEtotal(t,regi,entyPe)
 	=e=
-	sum(te, sum(entySe, vm_demPE(t,regi,"pegas",entySe,te)$(sameAs(regi,"DEU"))))
+	sum(pe2se(entyPe,entySe,te), vm_demPE(t,regi,entyPe,entySe,te))
 ;
 $endIf.ensec_lim
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms
