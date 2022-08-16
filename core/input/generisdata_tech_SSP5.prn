@@ -1,7 +1,8 @@
 *** SOF ./core/input/generisdata_tech.prn
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
-inco0       Initial investment costs given in $(2015)/kW(output) capacity
+tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
+inco0       Initial investment costs given in $(2015)/kW(output) capacity; for dac: $(2015)/tC(removed)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (for all but nuclear plants, there it is TW energy output over MT Uranium input)
@@ -11,6 +12,7 @@ lifetime    given in years
 incolearn   Difference from inco0 to floor investment costs, given in $(2015)/kW(output)
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
+luse        land use factor of solar technologies
 $offtext
 
                    ngcc       ngccc         ngt       gastr      gaschp       gashp       gash2      gash2c       gasftrec    gasftcrec
