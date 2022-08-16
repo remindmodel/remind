@@ -51,8 +51,11 @@ $ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
     + vm_taxrevimplEnergyBoundTax(t,regi)
 $endif.cm_implicitEnergyBound 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
-    + sum((entySe,entyFe,sector)$((t.val ge max(2010,cm_startyear)) and (entyFe2Sector(entyFe,sector))),vm_implicitPriceTax(t,regi,entySe,entyFe,sector))
+    + sum((entySe,entyFe,sector)$(entyFe2Sector(entyFe,sector)),vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector))
 $endIf.cm_implicitPriceTarget
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+    + sum(entyPe,vm_taxrevimplicitPePriceTax(t,regi,entyPe))
+$endIf.cm_implicitPePriceTarget
  ;
 
 ***---------------------------------------------------------------------------

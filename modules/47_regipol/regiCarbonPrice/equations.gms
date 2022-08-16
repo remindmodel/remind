@@ -40,7 +40,7 @@ $endIf.cm_implicitEnergyBound
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 
 q47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge max(2010,cm_startyear)) and (entyFe2Sector(entyFe,sector)))..
-  vm_implicitPriceTax(t,regi,entySe,entyFe,sector)
+  vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector)
   =e=
   (
     p47_implicitPriceTax(t,regi,entyFe,entySe,sector) * sum(emiMkt$sector2emiMkt(sector,emiMkt), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
@@ -50,6 +50,24 @@ q47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge max(2010,cm_startye
 ;
 
 $endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+q47_implicitPePriceTax(t,regi,entyPe)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplicitPePriceTax(t,regi,entyPe)
+  =e=
+  (
+    p47_implicitPePriceTax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+  )
+  -
+  p47_implicitPePriceTax0(t,regi,entyPe)
+;
+
+$endIf.cm_implicitPePriceTarget
 
 ***---------------------------------------------------------------------------
 *'  Emission quantity target

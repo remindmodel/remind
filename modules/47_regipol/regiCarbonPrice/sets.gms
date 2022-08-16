@@ -97,6 +97,13 @@ fePriceScenario "scenarios for exogenous FE price targets"
   highGasandLiq
 /
 $endIf.cm_implicitPriceTarget
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+pePriceScenario "scenarios for exogenous PE price targets"
+/
+  highFossilPrice
+/
+$endIf.cm_implicitPePriceTarget
 ;
 
 *** Defining extra energyCarrierANDtype2enty set elements

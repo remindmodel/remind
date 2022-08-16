@@ -64,5 +64,17 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 $endIf.cm_implicitPriceTarget
 
 
+***---------------------------------------------------------------------------
+*** Calculation of implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+*** saving value for implicit tax revenue recycling
+  p47_implicitPePriceTax0(t,regi,entyPe) = p47_implicitPePriceTax(t,regi,entyPe) * vm_prodPe.l(t,regi,entyPe);
+
+$endIf.cm_implicitPePriceTarget
+
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
 

@@ -484,7 +484,7 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   pm_implicitPrice_ignConv(regi,sector,entyFe,entySe,t)$((pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)) AND (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) lt 1e-5)) = 1; !!1 = non existent price  
   pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)$((pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t)) AND (pm_FEPrice_by_SE_Sector(t,regi,entySe,entyFe,sector) lt 1e-5)) = 0; !! removing from convergence check
 ***   checking if there is a hard bound on the model that does not allow the prices to change further in between iterations 
-***   if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous two iterations, i.e. less than 1% variation, when the deviation is still greater than 5%, the tax is not affecting anymore the prices.  
+***   if current value (p47_implicitPriceTax) is unchanged in relation to previous two iterations, i.e. less than 1% variation, when the deviation is still greater than 5%, the tax is not affecting anymore the prices.  
   if((iteration.val gt 3),
     loop((t,regi,entyFe,entySe,sector)$pm_implicitPrice_NotConv(regi,sector,entyFe,entySe,t),
       if((abs(p47_implicitPriceTax(t,regi,entyFe,entySe,sector) - p47_implicitPriceTax_iter(iteration-1,t,regi,entyFe,entySe,sector)) lt 1e-2), !! less than 1% variation in relation to previous iteration price
@@ -515,6 +515,76 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 
 display pm_implicitPriceTarget, p47_implicitPriceTax, p47_implicitPrice_dev, p47_implicitPriceTax_iter, p47_implicitPrice_dev_iter;
 $endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
+*** Calculation of implicit tax/subsidy necessary to achieve primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+*** saving previous iteration value for implicit tax revenue recycling
+  p47_implicitPePriceTax0(t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe) = p47_implicitPePriceTax(t,regi,entyPe) * vm_prodPe.l(t,regi,entyPe);
+
+*** saving previous iteration value price target tax for debugging of target convergence issues
+  p47_implicitPePriceTax_iter(iteration,t,regi,entyPe) = p47_implicitPePriceTax(t,regi,entyPe);
+
+*** Calculate target deviation
+  p47_implicitPePrice_dev(t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe) = ((pm_PEPrice(t,regi,entyPe) - pm_implicitPePriceTarget(t,regi,entyPe)) / pm_implicitPePriceTarget(t,regi,entyPe));
+*** save regional target deviation across iterations for debugging of target convergence issues
+  p47_implicitPePrice_dev_iter(iteration,t,regi,entyPe) = p47_implicitPePrice_dev(t,regi,entyPe);
+
+*** updating implicit price target tax for next iteration (iteration+1)
+  loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
+    if((abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt 0.05), !! convergence criteria not reached
+      if((pm_PEPrice(t,regi,entyPe) lt 1e-5), !! repeat tax if there is no price
+        p47_implicitPePriceTax(t,regi,entyPe) = p47_implicitPePriceTax(t,regi,entyPe);
+      else
+        p47_implicitPePriceTax(t,regi,entyPe) = 
+          (pm_implicitPePriceTarget(t,regi,entyPe) - pm_PEPrice(t,regi,entyPe))
+          + p47_implicitPePriceTax(t,regi,entyPe);
+      );
+    );
+  );
+
+*** convergence criteria
+  pm_implicitPePrice_NotConv(regi,entyPe,t) = 0;
+  pm_implicitPePrice_NotConv(regi,entyPe,t)$(abs(p47_implicitPePrice_dev(t,regi,entyPe)) gt 0.05) = p47_implicitPePrice_dev(t,regi,entyPe); !! target did not converged = prices deviate more than 5% from target
+*** additional convergence checks: 
+***   ignoring non existent prices from price convergence check
+  pm_implicitPePrice_ignConv(regi,entyPe,t)$((pm_implicitPePrice_NotConv(regi,entyPe,t)) AND (pm_PEPrice(t,regi,entyPe) lt 1e-5)) = 1; !!1 = non existent price  
+  pm_implicitPePrice_NotConv(regi,entyPe,t)$((pm_implicitPePrice_NotConv(regi,entyPe,t)) AND (pm_PEPrice(t,regi,entyPe) lt 1e-5)) = 0; !! removing from convergence check
+***   checking if there is a hard bound on the model that does not allow the prices to change further in between iterations 
+***   if current value (p47_implicitPePriceTax) is unchanged in relation to previous two iterations, i.e. less than 1% variation, when the deviation is still greater than 5%, the tax is not affecting anymore the prices.  
+  if((iteration.val gt 3),
+    loop((t,regi,entyPe)$pm_implicitPePrice_NotConv(regi,entyPe,t),
+      if((abs(p47_implicitPePriceTax(t,regi,entyPe) - p47_implicitPePriceTax_iter(iteration-1,t,regi,entyPe)) lt 1e-2), !! less than 1% variation in relation to previous iteration price
+        if((abs(p47_implicitPePriceTax_iter(iteration-1,t,regi,entyPe) - p47_implicitPePriceTax_iter(iteration-2,t,regi,entyPe)) lt 1e-2), !! less than 1% variation in the two previous iteration prices
+          pm_implicitPePrice_ignConv(regi,entyPe,t) = 2; !! 2 = less than 1% price change in this and the previous two iterations  
+          pm_implicitPePrice_NotConv(regi,entyPe,t) = 0; !! removing from convergence check
+        );
+      );
+    );
+  );
+
+*** smoothing out tax phase-in and phase-out for non controlled years
+  loop((ttot,regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe),
+    p47_implicitPePriceTarget_terminalYear(regi,entyPe) = max(ttot.val, p47_implicitPePriceTarget_terminalYear(regi,entyPe));
+    p47_implicitPePriceTarget_initialYear(regi,entyPe) = min(ttot.val, p47_implicitPePriceTarget_initialYear(regi,entyPe));
+  );
+*** terminal year onward tax (continuous tax up to 2100 and linear decay afterwards)
+  loop((ttot,regi,entyPe)$(pm_implicitPePriceTarget(ttot,regi,entyPe) and (ttot.val eq p47_implicitPePriceTarget_terminalYear(regi,entyPe))),
+    p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt ttot.val) = p47_implicitPePriceTax(ttot,regi,entyPe);
+  );
+  p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt 2100) = p47_implicitPePriceTax(t,regi,entyPe) - (p47_implicitPePriceTax("2100",regi,entyPe) * ((t.val - 2150) / (2150 - 2100)));
+*** linear tax between cm_startyear and initial year (p47_implicitPePriceTarget_initialYear)
+  loop(ttot$(ttot.val eq cm_startyear),
+    loop((ttot2,regi,entyPe)$(pm_implicitPePriceTarget(ttot2,regi,entyPe) and (ttot2.val eq p47_implicitPePriceTarget_initialYear(regi,entyPe))),
+      p47_implicitPePriceTax(t,regi,entyPe)$((t.val ge cm_startyear) and (t.val lt ttot2.val)) = p47_implicitPePriceTax(ttot2,regi,entyPe) * ((t.val - ttot.val) / (ttot2.val - ttot.val));
+    );
+  );
+
+display pm_implicitPePriceTarget, p47_implicitPePriceTax, p47_implicitPePrice_dev, p47_implicitPePriceTax_iter, p47_implicitPePrice_dev_iter;
+$endIf.cm_implicitPePriceTarget
 
 ***---------------------------------------------------------------------------
 *** Exogenous CO2 tax level:

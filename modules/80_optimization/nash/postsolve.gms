@@ -298,6 +298,16 @@ loop((t,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(t,regi,entyFe,entySe,s
 );  
 $endIf.cm_implicitPriceTarget
 
+*** additional criterion: Were PE price targets reached by implicit taxes and/or subsidies?
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+loop((t,regi,entyPe)$pm_implicitPePriceTarget(t,regi,entyPe),
+  if((pm_implicitPePrice_NotConv(regi,entyPe,t)), 
+    s80_bool = 0;
+    p80_messageShow("cm_implicitPePriceTarget") = YES;
+  );
+);  
+$endIf.cm_implicitPePriceTarget
+
 *** check global budget target from core/postsolve, must be within 1% of target value
 if (sm_globalBudget_dev gt 1.01 OR sm_globalBudget_dev lt 0.99,
   s80_bool = 0;
@@ -383,6 +393,15 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
           display pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+        if(sameas(convMessage80, "cm_implicitPePriceTarget"),
+		      display "#### 11) A primary energy price target has not been reached yet.";
+          display "#### Check out below the pm_implicitPePrice_NotConv parameter values for non convergence cases.";
+          display "####     Deviations must be lower than 5%.";
+          display "#### The pm_implicitPePrice_ignConv stores the cases disconsidered in the convergence check.";
+          display pm_implicitPePrice_NotConv, pm_implicitPePrice_ignConv;
+	      );
+$endIf.cm_implicitPePriceTarget
    );
 
 display "See the indicators below to dig deeper on the respective reasons of non-convergence: "
@@ -478,6 +497,15 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
           display pm_implicitPrice_NotConv, pm_implicitPrice_ignConv;
 	      );
 $endIf.cm_implicitPriceTarget
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+        if(sameas(convMessage80, "cm_implicitPePriceTarget"),
+		      display "#### 11) A primary energy price target has not been reached yet.";
+          display "#### Check out below the pm_implicitPePrice_NotConv parameter values for non convergence cases.";
+          display "####     Deviations must be lower than 5%.";
+          display "#### The pm_implicitPePrice_ignConv stores the cases disconsidered in the convergence check.";
+          display pm_implicitPePrice_NotConv, pm_implicitPePrice_ignConv;
+	      );
+$endIf.cm_implicitPePriceTarget
 	 );
 	 display "#### Info: These residual market surplusses in current monetary values are:";
 	 display  p80_defic_trade;

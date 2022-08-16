@@ -88,11 +88,9 @@ $include "./modules/47_regipol/regiCarbonPrice/input/exogenousFEprices.cs3r"
 $offdelim
 ;
 
-f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)$(ttot.val ge 2080) = 0;
-
   loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
     loop(regi$regi_groupExt(ext_regi,regi),
-      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)$(NOT(sameas(sector,"CDR")))=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
     );
   );
 
@@ -103,6 +101,35 @@ f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)$(t
   );
 
 $endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+  p47_implicitPePriceTax0(t,regi,entyPe)=0;
+
+*** load exogenously defined FE price targets
+table f47_implicitPePriceTarget(pePriceScenario,ext_regi,all_enty,ttot)        "exogenously defined Pe price targets [2005 Dollar per GJoule]"
+$ondelim
+$include "./modules/47_regipol/regiCarbonPrice/input/exogenousPEprices.cs3r"
+$offdelim
+;
+
+  loop((t,ext_regi,entyPe)$f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      pm_implicitPePriceTarget(t,regi,entyPe)=f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
+    );
+  );
+
+*** initialize first and terminal years auxiliary parameters for price targets 
+  loop(ttot,
+    p47_implicitPePriceTarget_terminalYear(regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe) = 2005;
+    p47_implicitPePriceTarget_initialYear(regi,entyPe) $pm_implicitPePriceTarget(ttot,regi,entyPe) = 2150;
+  );
+
+$endIf.cm_implicitPePriceTarget
 
 ***---------------------------------------------------------------------------
 *** Region-specific datainput (with hard-coded regions)

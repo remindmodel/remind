@@ -119,6 +119,29 @@ Equations
 ;
 $endIf.cm_implicitPriceTarget
 
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+Parameter
+  pm_implicitPePriceTarget(ttot,all_regi,all_enty) "price target for PE carrier per sector [2005 TerraDollar per TWyear]"
+  p47_implicitPePriceTax(ttot,all_regi,all_enty)   "tax/subsidy level on PE for reaching the price target [2005 TerraDollar per TWyear]"
+  p47_implicitPePriceTax0(ttot,all_regi,all_enty)  "previous iteration implicit price target tax revenue  [2005 TerraDollar]"
+  p47_implicitPePrice_dev(ttot,all_regi,all_enty)   "implicit price tax deviation of current iteration from target [%]"
+  p47_implicitPePrice_dev_iter(iteration,ttot,all_regi,all_enty) "implicit price tax deviation of current iteration from target per iteration [%]"
+  pm_implicitPePrice_NotConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that did not converged [%]" 
+  pm_implicitPePrice_ignConv(all_regi,all_enty,ttot) "auxiliary parameter to store the price targets that were ignored in the convergence check (cases: 1 = non existent price, 2 = no change in prices for the last 3 iterations) [#]" 
+  p47_implicitPePriceTax_iter(iteration,ttot,all_regi,all_enty)  "tax/subsidy level on PE for reaching the price target per iteration [2005 TerraDollar per TWyear]"
+  p47_implicitPePriceTarget_terminalYear(all_regi,all_enty) "terminal year of price target for given region and energy carrier [year]"
+  p47_implicitPePriceTarget_initialYear(all_regi,all_enty) "initial year of price target for given region and energy carrier [year]"
+;
+
+Equations
+  q47_implicitPePriceTax(ttot,all_regi,all_enty)  "implicit tax/subsidy PE tax to reach target energy sector sectoral price"
+;
+$endIf.cm_implicitPePriceTarget
+
 ***---------------------------------------------------------------------------
 *'  Emission quantity target
 ***---------------------------------------------------------------------------
