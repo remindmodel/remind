@@ -37,7 +37,6 @@ compScen-*/*
 doc/
 !doc/literature.bib
 !doc/images/MAC_costs.png
-!doc/images/technical_structure.png
 
 # Ignore "main.lst" files
 main.lst
