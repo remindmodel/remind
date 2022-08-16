@@ -50,108 +50,11 @@ helpText <- "
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
 
-############## Define function: get_line ##############################
-
-get_line <- function(){
-    # gets characters (line) from the terminal or from a connection
-    # and stores it in the return object
-    if(interactive()){
-        s <- readline()
-    } else {
-        con <- file("stdin")
-        s <- readLines(con, 1, warn=FALSE)
-        on.exit(close(con))
-    }
-    return(s);
-}
-
-############## Define function: chooseFromList #########################
-# thelist: list to be selected from
-# group: list with same dimension as thelist with group names to allow to select whole groups
-# returnboolean: TRUE: returns list with dimension of thelist with 0 or 1
-# returnboolean: FALSE: returns selected entries of thelist
-# multiple: TRUE: allows to select multiple entries. FALSE: no
-# allowempty: TRUE: allows you not to select anything (returns NA). FALSE: must select something
-# type: string to be shown to user to understand what they choose
-
-chooseFromList <- function(thelist, type = "runs", returnboolean = FALSE, multiple = TRUE,
-                           allowempty = FALSE, group = FALSE) {
-  originallist <- thelist
-  booleanlist <- numeric(length(originallist)) # set to zero
-  if (! isFALSE(group) && (length(group) != length(originallist) | isFALSE(multiple))) {
-    message("group must have same dimension as thelist, or multiple not allowed. Group mode disabled")
-    group <- FALSE
-  }
-  message("\n\nPlease choose ", type,":\n\n")
-  if (! isFALSE(group)) {
-    groups <- sort(unique(group))
-    groupsids <- seq(length(originallist)+2, length(originallist)+length(groups)+1)
-    thelist <- c(paste0(str_pad(thelist, max(nchar(originallist)), side = "right"), " ", group), paste("Group:", groups))
-    message(str_pad("", max(nchar(originallist)) + nchar(length(thelist)+2)+2, side = "right"), " Group")
-  }
-  if(multiple)   thelist <- c("all", thelist, "Search by pattern...")
-  message(paste(paste(str_pad(1:length(thelist), nchar(length(thelist)), side = "left"), thelist, sep=": " ), collapse="\n"))
-  message("\nNumber", ifelse(multiple,"s entered as 2,4:6,9",""),
-          ifelse(allowempty, " or leave empty", ""), " (", type, "): ")
-  identifier <- strsplit(get_line(), ",")[[1]]
-  if (allowempty & length(identifier) == 0) return(NA)
-  if (length(identifier) == 0 | ! all(grepl("^[0-9,:]*$", identifier))) {
-    message("Try again, you have to choose some numbers.")
-    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
-  }
-  tmp <- NULL
-  for (i in 1:length(identifier)) { # turns 2:5 into 2,3,4,5
-    if (length(strsplit(identifier,":")[[i]]) > 1) {
-      tmp <- c(tmp,as.numeric(strsplit(identifier,":")[[i]])[1]:as.numeric(strsplit(identifier,":")[[i]])[2])
-    }
-    else {
-      tmp <- c(tmp,as.numeric(identifier[i]))
-    }
-  }
-  identifier <- tmp
-  if (! multiple & length(identifier) > 1) {
-    message("Try again, not in list or multiple chosen: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
-  }
-  if (any(! identifier %in% seq(length(thelist)))) {
-    message("Try again, not all in list: ", paste(identifier, collapse = ", "))
-    return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
-  }
-  if (! isFALSE(group)) {
-    selectedgroups <- sub("^Group: ", "", thelist[intersect(identifier, groupsids)])
-    identifier <- unique(c(identifier[! identifier %in% groupsids], which(group %in% selectedgroups)+1))
-  }
-  # PATTERN
-  if(multiple && length(identifier == 1) && identifier == length(thelist) ){
-    message("\nInsert the search pattern or the regular expression: ")
-    pattern <- get_line()
-    id <- grep(pattern=pattern, originallist)
-    # lists all chosen and ask for the confirmation of the made choice
-    message("\n\nYou have chosen the following ", type, ":")
-    if (length(id) > 0) message(paste(paste(1:length(id), originallist[id], sep=": "), collapse="\n"))
-    message("\nAre you sure these are the right ", type, "? (y/n): ")
-    if(get_line() == "y"){
-      identifier <- id
-      booleanlist[id] <- 1
-    } else {
-      return(chooseFromList(originallist, type, returnboolean, multiple, allowempty, group))
-    }
-  } else if(any(thelist[identifier] == "all")){
-    booleanlist[] <- 1
-    identifier <- 1:length(originallist)
-  } else {
-    if (multiple) identifier <- identifier - 1
-    booleanlist[identifier] <- 1
-  }
-  message("Selected: ", paste(originallist[identifier], collapse = ", "))
-  if (returnboolean) return(booleanlist) else return(originallist[identifier])
-}
-
 ############## Define function: select_testOneRegi_region #############
 select_testOneRegi_region <- function() {
   message("\nWhich region should testOneRegi use? Type it, or leave empty to keep settings:\n",
   "Examples are CAZ, CHA, EUR, IND, JPN, LAM, MEA, NEU, OAS, REF, SSA, USA.")
-  return(get_line())
+  return(gms::getLine())
 }
 
 ############## Define function: configure_cfg #########################
@@ -316,7 +219,7 @@ if ("--reset" %in% argv) {
 if (any(c("--testOneRegi", "--debug", "--quick") %in% argv) & "--restart" %in% argv & ! "--reprepare" %in% argv) {
   message("\nIt is impossible to combine --restart with --debug, --quick or --testOneRegi because full.gms has to be rewritten.\n",
   "If this is what you want, use --reprepare instead, or answer with y:")
-  if (get_line() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
+  if (gms::getLine() %in% c("Y", "y")) argv <- c(argv, "--reprepare")
 }
 
 ignorederrors <- 0 # counts ignored errors in --test mode
@@ -339,9 +242,9 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
-  outputdirs <- chooseFromList(sort(unique(possibledirs)), "runs to be restarted", returnboolean = FALSE)
+  outputdirs <- gms::chooseFromList(sort(unique(possibledirs)), type = "runs to be restarted", returnBoolean = FALSE)
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
-  restart_subsequent_runs <- get_line() %in% c("Y", "y")
+  restart_subsequent_runs <- gms::getLine() %in% c("Y", "y")
   if ("--testOneRegi" %in% argv) testOneRegi_region <- select_testOneRegi_region()
   if ("--reprepare" %in% argv) {
     message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
@@ -396,7 +299,7 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
   if (is.na(config.file) & "--interactive" %in% argv) {
     possiblecsv <- Sys.glob(c(file.path("./config/scenario_config*.csv"), file.path("./config","*","scenario_config*.csv")))
     possiblecsv <- possiblecsv[! grepl(".*scenario_config_coupled.*csv$", possiblecsv)]
-    config.file <- chooseFromList(possiblecsv, type = "one config file", returnboolean = FALSE, multiple = FALSE, allowempty = TRUE)
+    config.file <- gms::chooseFromList(possiblecsv, type = "one config file", returnBoolean = FALSE, multiple = FALSE)
   }
 
   if (all(c("--testOneRegi", "--interactive") %in% argv)) testOneRegi_region <- select_testOneRegi_region()
@@ -448,9 +351,9 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
     # Select scenarios that are flagged to start, some checks for titles
     if ("--interactive" %in% argv | ! any(settings$start == 1)) {
-      settings$start <- chooseFromList(rownames(settings), type = "runs", returnboolean = TRUE, group = settings$start)
+      settings$start <- gms::chooseFromList(setNames(rownames(settings), settings$start), type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
     }
-    scenarios <- settings[settings$start==1,]
+    scenarios <- settings[settings$start == 1, ]
     if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
     if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
