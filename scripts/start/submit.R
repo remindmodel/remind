@@ -4,7 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-############## Define function: .copy.fromlist #########################
 
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -16,8 +15,6 @@
     }
   }
 }
-
-############## Define function: submit #########################
 
 submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   if(!restart) {
@@ -50,7 +47,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # the following is FALSE if we are starting a subsequent run in a cascade -> renv checks/updates are skipped
       if (normalizePath(renv::project()) == normalizePath(".")) {
         if (!renv::status()$synchronized) {
-          message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
+          message("The new run will use the package environment defined in renv.lock, ",
+                  "but it is out of sync, probably because you installed packages/updates manually. ",
                   "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
           if (tolower(gms::getLine()) %in% c("y", "")) {
             renv::snapshot(prompt = FALSE)

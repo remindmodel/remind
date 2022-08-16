@@ -1175,8 +1175,10 @@ run <- function(start_subsequent_runs = TRUE) {
   outputdir <- cfg$results_folder
 
   # make sure the renv used for the run is also used for generating output
-  stopifnot(is.null(renv::project()) || normalizePath(renv::project()) == normalizePath(outputdir))
-  argv <- c(get0("argv"), paste0("--renv=", renv::project(), recycle0 = TRUE))
+  if (!is.null(renv::project())) {
+    stopifnot(`loaded renv and outputdir must be equal` = normalizePath(renv::project()) == normalizePath(outputdir))
+    argv <- c(get0("argv"), paste0("--renv=", renv::project()))
+  }
 
   sys.source("output.R",envir=new.env())
   # get runtime for output
