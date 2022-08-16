@@ -47,8 +47,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     if (is.null(renv::project())) {
       warning("No active renv project found, not using renv.")
     } else {
-      # the following is FALSE if we are starting a subsequent run in a cascade -> renv checks/updates are skipped
-      if (normalizePath(renv::project()) == normalizePath(".")) {
+      # we only want to run renv checks/updates in the first run in a cascade, which can be
+      # detected like this
+      firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
+      if (firstRunInCascade) {
         if (!renv::status()$synchronized) {
           message("The new run will use the package environment defined in renv.lock, but it is out of sync. ",
                   "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
