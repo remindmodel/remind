@@ -37,6 +37,7 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 - activates the corresponding renv
 
 ### renv folder
+- auto-generated and managed by renv
 - renv settings
 - actual package library
 
@@ -62,4 +63,4 @@ The scripts explained earlier should cover all common tasks, use the following f
 - renv documentation: https://rstudio.github.io/renv/
 
 # legacy snapshots
-Before REMIND started using renv it was using so-called "snapshots". You can restore this snapshot machinery (and disable renv) by renaming `.snapshot.Rprofile` -> `.Rprofile`. If you do, do not commit changes to `.Rprofile`. For coupled model runs you need to use snapshots, renv does not cover that use case yet. Snapshot support will be removed when coupled model runs are possible with renv.
+Before REMIND started using renv it was using so-called "snapshots" to get a stable package environment. You can restore this snapshot machinery (and disable renv) by renaming `.snapshot.Rprofile` -> `.Rprofile`. If you do, please make sure to *not* commit your changes to `.Rprofile`. For coupled model runs you need to use snapshots, renv does not cover that use case yet. Snapshot support will be removed when coupled model runs are possible with renv.
