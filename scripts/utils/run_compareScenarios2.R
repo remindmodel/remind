@@ -5,7 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(lucode2) # getScenNames
-library(remind2)
+#library(remind2)
+devtools::load_all('/p/tmp/schreyer/Modeling/pik-piam/remind2_CESreport')
 
 if (!exists("source_include")) {
   readArgs("outputDirs", "outFileName", "regionList", "mainRegName", "profileName")
