@@ -1,7 +1,7 @@
 # updates renv.lock, copies updated renv.lock to the archive and appends current timestamp
 local({
   stopifnot(`No renv active. Try starting the R session in the repo root.` = !is.null(renv::project()))
-  here::i_am(file.path("scripts", "utils", "archiveRenv.R"))
+  suppressMessages(here::i_am(file.path("scripts", "utils", "archiveRenv.R")))
 
   # update renv.lock
   renv::snapshot(prompt = FALSE)
