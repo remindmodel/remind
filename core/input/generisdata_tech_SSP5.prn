@@ -2,14 +2,14 @@
 $ontext
 IMPORTANT: all costs are now given in $2015! As long as the model runs in $2005, the values need to be converted in datainput.gms
 tech_stat   technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'
-inco0       Initial investment costs given in $(2015)/kW(output) capacity; for dac: $(2015)/tC(captured)
+inco0       Initial investment costs given in $[2015] / kW[output] capacity; for dac: $[2015] / (tC[captured]/a)
 constrTme   Construction time in years, needed to calculate turn-key cost premium compared to overnight costs
 mix0        Fraction of output that is produced by this technology in 2005. This value can be overwritten in the calibration process; also, it often does not add up to 1.
 eta         Conversion efficieny, i.e. energy output divided by energy input (for all but nuclear plants, there it is TW energy output over MT Uranium input)
 omf         Fixed operation and maintenace costs given as a fraction of investment costs
-omv         Variable operation and maintenance costs given in $(2015)/kWa energy production
+omv         Variable operation and maintenance costs given in $[2015] / (kW[output] * a) energy production
 lifetime    given in years
-incolearn   Difference from inco0 to floor investment costs, given in $(2015)/kW(output)
+incolearn   Difference from inco0 to floor investment costs, given in $[2015] / kW[output]; for dac: $[2015] / (tC[captured]/a)
 ccap0       Cumulated capacity in 2005 given in TW
 learn       Learning rate given in percent cost reduction per doubling of cumulated capacity
 luse        land use factor of solar technologies
@@ -180,7 +180,7 @@ inco0               0.01       21600
 mix0                   0           0
 eta                 1.00        1.00
 omf                 0.84       0.025
-omv                    0           0
+omv                    0
 lifetime              20          20
 incolearn                      18000
 ccap0                       0.000001
