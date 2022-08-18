@@ -47,8 +47,8 @@ On Windows you need to install [Rtools](https://cran.r-project.org/bin/windows/R
 
 For some types of REMIND output post-processing, LaTeX (<https://www.latex-project.org/get/>) and pandoc (<https://pandoc.org/installing.html>) are required. Make sure the executable "pdflatex" is added to the PATH variable of your system.
 
-Navigate to the REMIND folder that you cloned earlier. Always start R scripts and sessions related to REMIND from this path. To install all required R packages and check if your system is ready to run REMIND execute the following:
+Navigate to the REMIND folder that you cloned earlier. Always start R scripts and sessions related to REMIND from this path. Do not set the environment variable R_PROFILE_USER, otherwise the REMIND package environment (renv) is not correctly loaded. To install all required R packages and check if your system is ready to run REMIND execute the following:
 
 ```sh
-Rscript checkSetup.R
+Rscript scripts/utils/checkSetup.R
 ```
