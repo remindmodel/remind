@@ -17,6 +17,11 @@ timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
 if (!exists("filename_prefix")) filename_prefix <- ""
 nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
 fullName <- paste0("varList-", nameCore)
+htmlBefore <- paste0(c(
+  "<ul>",
+  paste0("  <li>", outputdirs, "</li>"),
+  "</ul>"
+), collapse = "\n")
 
 mifs <- c(
   remind2::getMifScenPath(outputdirs), 
@@ -35,6 +40,7 @@ remind2::createVarListHtml(
   x = mifs,
   outFileName = paste0(fullName, ".html"),
   title = fullName,
+  htmlBefore = htmlBefore,
   usePlus = TRUE,
   details = details)
 
