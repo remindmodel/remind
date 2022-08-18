@@ -39,7 +39,7 @@ if (isSlurmAvailable() && slurmConfig != "direct") {
     " --output=", fullName, ".out",
     " --error=", fullName, ".out",
     " --mail-type=END --time=200 --mem-per-cpu=8000",
-    r"( --wrap="R -e ')", command, r"('")")
+    r"( --wrap="R -e ')", gsub("\"", "\\\"", command), r"('")")
   cat(clcom, "\n")
   system(clcom)
 } else {
