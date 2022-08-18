@@ -28,7 +28,7 @@ details <-
     delim = ";",
     col_select = c(r21m42, Definition),
     col_types = "cc") |>
-  dplyr::rename(name = r21m42))
+  dplyr::rename(name = r21m42)
 
 remind2::createVarListHtml(
   x = mifs,
