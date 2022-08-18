@@ -5,8 +5,6 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-source("./scripts/utils/isSlurmAvailable.R")
-
 # This script expects a variable `outputdirs` to be defined.
 # Variable `filename_prefix` is used if defined.
 if (!exists("outputdirs")) {
@@ -20,7 +18,9 @@ if (!exists("filename_prefix")) filename_prefix <- ""
 nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
 fullName <- paste0("varList-", nameCore)
 
-mifs <- c(remind2::getMifScenPath(outputdirs), remind2::getMifHistPath(outputdirs[1]))
+mifs <- c(
+  remind2::getMifScenPath(outputdirs), 
+  remind2::getMifHistPath(outputdirs[1]))
 
 details <- 
   readr::read_delim(
