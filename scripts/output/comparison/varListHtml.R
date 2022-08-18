@@ -7,12 +7,12 @@
 
 source("./scripts/utils/isSlurmAvailable.R")
 
-# This script expects a variable `outputdirs` and `slurmConfig` to be defined.
+# This script expects a variable `outputdirs` to be defined.
 # Variable `filename_prefix` is used if defined.
-if (!exists("outputdirs") || !exists("slurmConfig")) {
+if (!exists("outputdirs")) {
   stop(
-    "Variable outputdirs or slurmConfig do not exist. ",
-    "Please call varListHtml.R via output.R, which defines outputdirs and slurmConfig.")
+    "Variable outputdirs does not exist. ",
+    "Please call varListHtml.R via output.R, which defines outputdirs.")
 }
 
 timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
@@ -22,32 +22,18 @@ fullName <- paste0("varList-", nameCore)
 
 mifs <- c(remind2::getMifScenPath(outputdirs), remind2::getMifHistPath(outputdirs[1]))
 
-command <- paste0(
-  "remind2::createVarListHtml(",
-  "x = c(\"", paste(mifs, collapse = "\",\""), "\"), ",
-  "outFileName = \"", fullName, ".html\"", ", ",
-  "title = \"", fullName, "\", ", 
-  "usePlus = FALSE, ",
-  "details = NULL",
-  ")"
-)
+details <- 
+  readr::read_delim(
+    "https://raw.githubusercontent.com/pik-piam/project_interfaces/master/ar6/mapping_template_AR6.csv",
+    delim = ";",
+    col_select = c(r21m42, Definition),
+    col_types = "cc") |>
+  dplyr::rename(name = r21m42))
 
-if (isSlurmAvailable() && slurmConfig != "direct") {
-  clcom <- paste0(
-    "sbatch ", slurmConfig,
-    " --job-name=", fullName,
-    " --output=", fullName, ".out",
-    " --error=", fullName, ".out",
-    " --mail-type=END --time=200 --mem-per-cpu=8000",
-    r"( --wrap="R -e ')", gsub(r"(\")", r"(\\")", command), r"('")")
-  cat(clcom, "\n")
-  system(clcom)
-} else {
-  tmpEnv <- new.env()
-  tmpError <- try(
-    eval(parse(text=command), envir = tmpEnv)
-  )
-  if (!is.null(tmpError))
-    warning("Script ", script, " was stopped by an error and not executed properly!")
-  rm(tmpEnv)
-}
+remind2::createVarListHtml(
+  x = mifs,
+  outFileName = paste0(fullName, ".html"),
+  title = fullName,
+  usePlus = TRUE,
+  details = details)
+

@@ -118,7 +118,7 @@ if (comp %in% c("comparison", "export")) {
   }
 
   # choose the slurm options. If you use command line arguments, use slurmConfig=priority or standby
-  modules_using_slurmConfig <- c("compareScenarios2", "varListHtml")
+  modules_using_slurmConfig <- c("compareScenarios2")
   if (!exists("slurmConfig") && any(modules_using_slurmConfig %in% output)) {
     slurmConfig <- choose_slurmConfig_output()
   }
