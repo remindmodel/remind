@@ -227,7 +227,7 @@ prepare <- function() {
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
-            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
             "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse",
             "tools"),
