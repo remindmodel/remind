@@ -718,6 +718,46 @@ display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 
 *** Second, adjust the price of labour, so that, whithout changing the price of
 *** energy, the Euler equation holds.
+*** But first lower the price of energy should xi of labour be less than 5 %.
+sm_tmp2 = 0.95
+
+if (sm_tmp2 lt smin((t,regi_dyn29(regi)),
+                 sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+                   pm_cesdata(t,regi,in,"quantity")
+                 * pm_cesdata(t,regi,in,"price")
+                 )
+               / pm_cesdata(t,regi,"inco","quantity")
+               ),
+  put logfile, ">>> Adjusting en price to ensure labour xi >= ", sm_tmp, 
+      " <<<" /;
+
+  loop ((t,regi_dyn29(regi)),
+    sm_tmp
+    = sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+        pm_cesdata(t,regi,in,"quantity")
+      * pm_cesdata(t,regi,in,"price")
+      )
+    / pm_cesdata(t,regi,"inco","quantity");
+  
+    if (sm_tmp gt sm_tmp2,
+      put pm_cesdata.tn(t,regi,"en","price"), @60 pm_cesdata(t,regi,"en","price"),
+          " -> ";
+      pm_cesdata(t,regi,"en","price")
+      = pm_cesdata(t,regi,"en","price")
+      * ( (sm_tmp2 * pm_cesdata(t,regi,"inco","quantity"))
+        - ( pm_cesdata(t,regi,"kap","quantity")
+  	* pm_cesdata(t,regi,"kap","price")
+  	)
+        )
+      / ( pm_cesdata(t,regi,"en","quantity")
+        * pm_cesdata(t,regi,"en","price")
+        )
+      put pm_cesdata(t,regi,"en","price") /;
+    );
+  );
+  putclose logfile, " " /;
+);
+
 pm_cesdata(t,regi_dyn29,"lab","price")
   = ( pm_cesdata(t,regi_dyn29,"inco","quantity")
     - sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
@@ -728,7 +768,8 @@ pm_cesdata(t,regi_dyn29,"lab","price")
   / pm_cesdata(t,regi_dyn29,"lab","quantity")
 ;
 
-*** Fourth, adjust eff and xi  of labour and energy so that the price matches the derivative.
+*** Fourth, adjust eff and xi  of labour and energy so that the price matches
+*** the derivative.
 loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
   pm_cesdata(t,regi_dyn29,in,"xi")
   = pm_cesdata(t,regi_dyn29,in,"price")
