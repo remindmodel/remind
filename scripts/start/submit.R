@@ -74,23 +74,18 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         }
       }
 
-      # renv::paths$lockfile() belongs to the run renv and not the main renv when starting subsequent runs
-      file.copy(renv::paths$lockfile(), cfg$results_folder)
-
-      # copy renv package installation itself, would require internet otherwise, cannot load renv from cache
-      renvPath <- file.path(.libPaths()[[1]], "renv")
-      stopifnot(`could not find renv installation` = dir.exists(renvPath))
-      copyTarget <- file.path(cfg$results_folder, sub(renv::project(), "", .libPaths()[[1]]))
-      dir.create(copyTarget, recursive = TRUE)
-      file.copy(renvPath, copyTarget, recursive = TRUE)
-
-      createResultsfolderRenv <- function(resultsfolder) {
+      createResultsfolderRenv <- function(resultsfolder, lockfile) {
         # use same snapshot.type so renv::status()$synchronized always uses the same logic
-        renv::init(resultsfolder, bare = TRUE, settings = list(snapshot.type = renv::settings$snapshot.type()))
-        renv::restore() # will restore using the renv.lock copied from the main renv
+        renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
+
+        # restore same renv as previous run in cascade, or main renv if first run
+        file.copy(lockfile, resultsfolder, overwrite = TRUE)
+        renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
       }
       # init renv in a separate session so the libPaths of the current session remain unchanged
-      callr::r(createResultsfolderRenv, list(cfg$results_folder), show = TRUE)
+      callr::r(createResultsfolderRenv,
+               list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
+               show = TRUE)
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 
