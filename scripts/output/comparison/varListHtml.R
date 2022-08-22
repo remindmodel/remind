@@ -18,9 +18,11 @@ if (!exists("filename_prefix")) filename_prefix <- ""
 nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
 fullName <- paste0("varList-", nameCore)
 htmlBefore <- paste0(c(
+  "<h2>Runs Used</h2>",
   "<ul>",
   paste0("  <li>", outputdirs, "</li>"),
-  "</ul>"
+  "</ul>",
+  "<h2>List of Variables</h2>"
 ), collapse = "\n")
 
 mifs <- c(
