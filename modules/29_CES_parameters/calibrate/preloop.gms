@@ -1202,6 +1202,7 @@ if (0 gt sm_tmp,
     );
   );
   putclose logfile, " " /;
+  execute_unload "abort.gdx";
   abort "assertion EEK value < subsector output quantity failed. See log for details.";
 );
 
