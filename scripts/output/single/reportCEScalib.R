@@ -109,11 +109,11 @@ col <- c("#fc0000", "#000000",
          "#bc80bd"#,
          #"#808080"
          )
-names(col) <- c("origin", "target", seq(1,length(itr_num)))
+names(col) <- c("origin", "target", itr_num)
 
 
 lns <- c(rep("solid", 2), rep("longdash", length(itr_num)))
-names(lns) <-  c("origin", "target", seq(1,length(itr_num)))
+names(lns) <- c("origin", "target", itr_num)
 
 .pf <- list("TE" = c("gastr", "refliq", "biotr", "coaltr","hydro", "ngcc","ngt","pc", "apCarDiT","apCarPeT","apCarElT","dot","gaschp","wind","tnrs"))
 
@@ -217,7 +217,7 @@ for (s in levels(CES.cal.report$scenario)) {
              variable == "total efficiency",
              iteration != "origin") %>% 
       group_by(scenario,t,regi,pf,variable) %>%
-      mutate(value = value / value[as.character(iteration) == "1"]) %>% 
+      mutate(value = value / value[as.character(iteration) == as.character(min(itr_num))]) %>%
       ungroup() %>% 
       order.levels(pf = getElement(.pf,"structure" )) %>% 
       ggplot(aes(x = t, y = value, colour = iteration, 
