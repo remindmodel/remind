@@ -1062,11 +1062,6 @@ run <- function(start_subsequent_runs = TRUE) {
   }
   message("")
 
-  if (stoprun) {
-    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
-         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
-  }
-
   message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
                          modelstat  = modelstat,
@@ -1074,6 +1069,11 @@ run <- function(start_subsequent_runs = TRUE) {
                          runtime    = gams_runtime,
                          setup_info = lucode2::setup_info(),
                          submit     = cfg$runstatistics)
+
+  if (stoprun) {
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
+         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
+  }
 
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)
