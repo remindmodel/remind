@@ -7,7 +7,7 @@
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputDirs", "outFileName", "profileName")
+  lucode2::readArgs("outputDirs", "outFileName", "profileName")
 }
 
 run_compareScenarios2 <- function(
