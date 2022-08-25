@@ -1175,6 +1175,37 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
 
 $ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
+*** Check for industry EEK value to be lower than subsector output quantity
+sm_tmp = smin((t,regi_dyn29(regi),
+               cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
+	   pm_cesdata(t,regi,out,"quantity")
+	 - ( pm_cesdata(t,regi,in,"quantity")
+	   * pm_cesdata(t,regi,in,"price")
+	   )
+	);
+if (0 gt sm_tmp,
+  put logfile,  "Error in industry FE price rescaling: ",
+                "EEK value exceeds subsector output quantity" /;
+  logfile.nr = 1;
+  loop ((t,regi_dyn29(regi),
+         cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
+    sm_tmp = pm_cesdata(t,regi,out,"quantity")
+           - ( pm_cesdata(t,regi,in,"quantity")
+	     * pm_cesdata(t,regi,in,"price")
+	     );
+    if (0 gt sm_tmp,
+      put t.tl, ".", regi.tl, "   ", out.tl:>20,
+          pm_cesdata(t,regi,out,"quantity"):>10:4, " < ",
+	  pm_cesdata(t,regi,in,"quantity"):>8:4, " x ",
+	  pm_cesdata(t,regi,in,"price"):<8:4, " ",
+          in.tl:<0 /;
+    );
+  );
+  putclose logfile, " " /;
+  execute_unload "abort.gdx";
+  abort "assertion EEK value < subsector output quantity failed. See log for details.";
+);
+
 *** scale industry input prices as a slack variable to make the Euler identity
 *** hold
 put logfile, ">>> Industry FE Price Rescaling <<<" /;
