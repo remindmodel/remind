@@ -121,7 +121,7 @@ if (! exists("outputdir")) {
 
 if (comp %in% c("comparison", "export")) {
   # ask for filename_prefix, if one of the modules that use it is selected
-  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA")
+  modules_using_filename_prefix <- c("compareScenarios2", "xlsx_IIASA", "varListHtml")
   if (!exists("filename_prefix")) {
     if (any(modules_using_filename_prefix %in% output)) {
       filename_prefix <- choose_filename_prefix(modules = intersect(modules_using_filename_prefix, output))
@@ -161,10 +161,10 @@ if (comp %in% c("comparison", "export")) {
   }
 } else { # comp = single
   # define slurm class or direct execution
+  outputUsingDirect <- c("plotIterations")
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    outputUsingDirect <- c("plotIterations")
     if (all(output %in% outputUsingDirect)) slurmConfig <- "direct"
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options

@@ -21,11 +21,11 @@ if (!exists("outputdirs")) {
     "Please call comapreScenarios.R via output.R, which defines outputdirs.")
 }
 
-
 # Find a suitable default cs2 profile depending on config.RData.
 determineDefaultProfiles <- function(outputDir) {
   env <- new.env()
   load(file.path(outputDir, "config.Rdata"), envir = env)
+  if (tolower(env$cfg$gms$cm_MAgPIE_coupling) == "on") return("REMIND-MAgPIE")
   regionMappingFile <- basename(env$cfg$regionmapping)
   defaults <- switch(
     regionMappingFile,
