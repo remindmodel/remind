@@ -73,7 +73,7 @@ run_compareScenarios2 <- function(
   message("Will make following function call:")
   message("  remind2::compareScenarios2(")
   for (i in seq_along(args)) 
-    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), ",")
+    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), if (i < length(args)) ",")
   message("  )")
 
   message("Calling remind2::compareScenarios2()...\n")
