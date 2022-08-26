@@ -20,6 +20,7 @@ p46_emi_actual_iter(iteration,ttot,all_regi)        "Track the changes of p46_em
 p46_offset(all_regi)                                "allowed emissions in netZero year"
 ;
 
+Scalar p46_zeroYear                                 "between the netZero goal and this scalar, pm_taxCO2eqRegi linearly drops to zero"
 Scalar p46_startInIteration                         "first iteration to start adapting pm_taxCO2eqRegi" / 10 /;
 
 *** EOF ./modules/46_carbonpriceRegi/netZero/declarations.gms
