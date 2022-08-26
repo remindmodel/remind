@@ -959,6 +959,9 @@ run <- function(start_subsequent_runs = TRUE) {
         file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
         file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
                   overwrite = TRUE)
+        if (file.exists("non_optimal.gdx")) {
+          file.rename("non_optimal.gdx", sprintf("non_optimal_%02i.gdx", cal_itr))
+        }
 
         # Update file modification time
         fulldata_m_time <- file.info("fulldata.gdx")$mtime
