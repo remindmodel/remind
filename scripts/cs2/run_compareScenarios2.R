@@ -7,7 +7,7 @@
 library(remind2)
 
 if (!exists("source_include")) {
-  readArgs("outputDirs", "outFileName", "profileName")
+  lucode2::readArgs("outputDirs", "outFileName", "profileName")
 }
 
 run_compareScenarios2 <- function(
@@ -24,9 +24,13 @@ run_compareScenarios2 <- function(
   # load cs2 profiles
   profiles <- getCs2Profiles()
 
-  # Create temporary folder. See comment below.
+  # Create temporary folder. This is necessary because each compareScenarios2
+  # run creates a folder named 'figure'. If multiple compareScenarios2 run in
+  # parallel they would interfere with the others' figure folder. So we create a
+  # temporary subfolder in which each compareScenarios2 creates its own figure
+  # folder.
   system(paste0("mkdir ", outFileName)) 
-  outfilepath <- normalizePath(outFileName, mustWork = TRUE)
+  outDir <- normalizePath(outFileName, mustWork = TRUE)
   
   mifPath <- getMifScenPath(outputDirs, mustWork = TRUE)
   histPath <- getMifHistPath(outputDirs[1], mustWork = TRUE)
@@ -39,8 +43,9 @@ run_compareScenarios2 <- function(
     mifHist = histPath,
     cfgScen = scenConfigPath,
     cfgDefault = defaultConfigPath,
-    outputDir = outfilepath,
-    outputFile = outFileName
+    outputDir = outDir,
+    outputFile = outFileName,
+    outputFormat = "pdf"
   )
 
   # Load cs2 profile and change args.
@@ -59,27 +64,27 @@ run_compareScenarios2 <- function(
   )
   args[names(profile)] <- profileEval
   
+  # Check outputFile ending.
+  expectedEnding <- paste0(".", tolower(args$outputFormat))
+  if (!endsWith(tolower(args$outputFile), expectedEnding)) {
+    args$outputFile <- paste0(args$outputFile, expectedEnding)
+  }
+  
   message("Will make following function call:")
   message("  remind2::compareScenarios2(")
   for (i in seq_along(args)) 
-    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), ",")
+    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), if (i < length(args)) ",")
   message("  )")
 
-  # A temporary folder was created above. This is necessary because each
-  # compareScenarios2 creates a folder names 'figure'. If multiple
-  # compareScenarios2 run in parallel they would interfere with the others'
-  # figure folder. So we create a temporary subfolder in which each
-  # compareScenarios2 creates its own figure folder.
-  wd <- getwd()
-  setwd(outfilepath) # working directory now is the temporary folder
-
-  # Move pdf / html file out of temporary folder and remove temporary folder.
-  on.exit(system(paste0("mv ", args$outputFile, ".* ..")))
-  on.exit(setwd(wd), add = TRUE)  # working directory should be the remind folder after exiting run_compareScenarios2()
-  on.exit(system(paste0("rm -rf ", args$outputDir)), add = TRUE)
-
   message("Calling remind2::compareScenarios2()...\n")
-  try(do.call(compareScenarios2, args))
+  do.call(compareScenarios2, args)
+  
+  message("Move outputFile and delete temporary folder.\n")
+  outputFilePath <- file.path(args$outputDir, args$outputFile)
+  system(paste0("mv ", outputFilePath, " ."))
+  system(paste0("rm -rf ", args$outputDir))
+  
+  message("Done!\n")
 }
 
 run_compareScenarios2(outputDirs, outFileName, profileName)
