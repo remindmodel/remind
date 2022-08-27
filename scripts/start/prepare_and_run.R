@@ -227,9 +227,9 @@ prepare <- function() {
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
-            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -1173,6 +1173,13 @@ run <- function(start_subsequent_runs = TRUE) {
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
+
+  # make sure the renv used for the run is also used for generating output
+  if (!is.null(renv::project())) {
+    stopifnot(`loaded renv and outputdir must be equal` = normalizePath(renv::project()) == normalizePath(outputdir))
+    argv <- c(get0("argv"), paste0("--renv=", renv::project()))
+  }
+
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()

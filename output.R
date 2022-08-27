@@ -21,6 +21,17 @@ options(error = quote({
   q()
 }))
 
+argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
+
+# run updates before loading any packages
+if ("--update" %in% argv) {
+  stopifnot(`--update must not be used together with --renv=...` = !any(startsWith(argv, "--renv=")))
+  source("scripts/utils/updateRenv.R")
+} else if (any(startsWith(argv, "--renv="))) {
+  renvProject <- normalizePath(sub("^--renv=", "", grep("^--renv=", argv, value = TRUE)))
+  renv::load(renvProject)
+}
+
 # load landuse library
 library(lucode2)
 library(gms)
@@ -49,16 +60,18 @@ choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   if (!is.null(slurmExceptions)) {
     slurm_options <- unique(c(grep(slurmExceptions, slurm_options, value = TRUE), "direct"))
   }
-  if (length(slurm_options) == 1) return(slurm_options[[1]])
-  identifier <- chooseFromList(gsub("qos=", "", gsub("--", "", slurm_options)),
-         multiple = FALSE, returnBoolean = TRUE, type = "slurm mode", userinfo = "Uses the first option if empty.")
+  if (length(slurm_options) == 1) {
+    return(slurm_options[[1]])
+  }
+  identifier <- chooseFromList(gsub("qos=", "", gsub("--", "", slurm_options)), multiple = FALSE, returnBoolean = TRUE,
+                               type = "slurm mode", userinfo = "Uses the first option if empty.")
   return(if (any(identifier)) slurm_options[as.numeric(which(identifier))] else slurm_options[1])
 }
 
 choose_filename_prefix <- function(modules, title = "") {
   cat(paste0("\n\n ", title, "Please choose a prefix for filenames of ", paste(modules, collapse=", "), ".\n"))
   cat(" For example compareScenarios2 uses it for the filenames: compScen-yourprefix-2022-….pdf.\n Use only A-Za-z0-9_-, or leave empty:\n\n")
-  filename_prefix <- getLine()
+  filename_prefix <- gms::getLine()
   if(grepl("[^A-Za-z0-9_-]", filename_prefix)) {
     filename_prefix <- choose_filename_prefix(modules, title = paste("No, this contained special characters, try again.\n",title))
   }
