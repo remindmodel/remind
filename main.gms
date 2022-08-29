@@ -77,7 +77,17 @@
 *' ```
 *'
 *'
-*' The GAMS code follows a naming etiquette based on the following prefixes:
+*' The GAMS code follows a Coding Etiquette:
+*'
+*' #### Naming conventions:
+*'
+*' * Please put effort into choosing intelligible names.
+*' * Don't just enumerate existing names: `budget1`/`budget2`, `tradebal1`/`tradebal2` will cause everyone for the next years much more frustration than if you choose names like `emi_budget_G8`/`emi_budget_Mud`, `tradebal_res`/`tradebal_perm`/`tradebal_good`.
+*' * Explain the abbreviation you designed in the descriptive text (the part with the `" "` behind each parameter/variable/equation declaration). `directteinv` is easier to memorize if you know it means "Direct technology investment".
+*' * Within REMIND files: use Capitalization to improve readability. `XpPerm` is more easily translated into "Export of Permits" than `xpperm`, the first part of the name (after the prefix) should describe the type of parameter/variable (e.g. `sh` for share, `cap` for capacity, `prod` for production, `dem` for demand, `cost` for costs)
+*'
+*' #### Prefixes:
+*' Use the following *prefixes*:
 *'
 *' * "q_" to designate equations,
 *' * "v_" to designate variables,
@@ -101,9 +111,44 @@
 *' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
 *'
 *' For the labels of parameters, scalars and set, use double quotes only.
-
-
-
+*'
+*' #### Commenting:
+*'
+*' * Comment all parts of the code generously
+*' * For all equations, it should become clear from the comments what part of the equation is supposed to do what
+*' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
+*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND 
+*' * Never use 4 asterisks (reserved for GAMS error messages)
+*' * Don't use the string `infes` in comments
+*' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).
+*' * Indicate the end of a file by inserting `*** EOF filename.inc ***` 
+*' 
+*' #### Sets
+*' 
+*' * don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the maglcass R library might interpret this as a region name when reading in GDX data
+*' 
+*' 
+*' #### Equations:
+*' The general idea is not to write code and equations as short as possible, but to write them in a way they can be read and understood as fast as possible. To that end:
+*' 
+*' * Write the mathematical operator (`*`, `/`, `+`, `-`) at the beginning of a line, not the end of the last line
+*' * Leave a space before and after `+` and `-` operators and equation signs (`=g=`, `=l=`, `=e=`)
+*' * Leave a space behind the comma of a sum (not behind the commas in set element calling)
+*' * Use indentations to make the structure more readable
+*' * Use full quotes (`"feel"`) instead of single quotes (`'feel'`) when specifying individual elements of a set (this makes automatic replacement via sed easier)
+*' * Put the equation sign (`=g=`, `=l=`, `=e=`) in a single line without anything else
+*' 
+*' 
+*' #### Other general rules:
+*' * Decompose large model equations into several small equations to enhance readability and model diagnostics
+*' * Don't use hard-coded numbers in the equations part of the model
+*' * Parameters should not be overwritten in the initialization part of the models. Use if-statements instead. Notable exceptions include parameters that are part a loop iteration, e.g. Negishi weights.
+*' * Have your work double-checked! To avoid bugs and problems: If you make major changes to your code, ask an experienced colleague to review the changes before they are pushed to the git main repository.
+*' * Use sets and subsets to avoid redundant formulation of code (e.g., for technology groups)
+*' * If big data tables are read in exclude them from the `.lst`-file (by using `$offlisting` and `$onlisting`), nevertheless display the parameter afterwards for an easier debugging later
+*' * When declaring a parameter/variable/equation always add the sets it is declared for, e.g. `parameter test(x,y);` instead of `parameter test;`
+*' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
+*' 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
 * Regionscode: 62eff8f7
