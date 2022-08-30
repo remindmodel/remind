@@ -6,6 +6,9 @@
 # |  Contact: remind@pik-potsdam.de
 library(remind2)
 
+# optional dependency of remind2 "kableExtra" is used here, make explicit so renv installs it
+requireNamespace("kableExtra", quietly = TRUE)
+
 if (!exists("source_include")) {
   lucode2::readArgs("outputDirs", "outFileName", "profileName")
 }
