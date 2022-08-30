@@ -5,7 +5,9 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 library(lucode2) # getScenNames
-library(remind2)
+#library(remind2)
+library(devtools)
+load_all("/p/tmp/simonlei/this-is-remind2/remind2")
 
 if (!exists("source_include")) {
   readArgs("outputDirs", "outFileName", "profileName")

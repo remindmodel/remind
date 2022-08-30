@@ -74,6 +74,7 @@ Equations
   q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
   q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)       "in baseline runs feedstocks only come from fossil energy carriers"
   q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
+  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "restrict feedstocks flow to total energy flows into industry"
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

@@ -13,9 +13,9 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
     vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
 *** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
-  - sum(se2fe(entySE,entyFE,te),
-    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
-    )
+*  - sum(se2fe(entySE,entyFE,te),
+*    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+*    )
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
        secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
@@ -24,14 +24,14 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
 
 *** substract chemical feedstocks which are supplied by vm_demFENonEnergySector (see q37_demFeFeedstockChemIndst)
-  -   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
-       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
+*  -   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
+*       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
        
-      ( vm_cesIO(ttot,regi,in) 
-      + pm_cesdata(ttot,regi,in,"offset_quantity")
-      )
-      * p37_chemicals_feedstock_share(ttot,regi)
-      )
+*      ( vm_cesIO(ttot,regi,in) 
+*      + pm_cesdata(ttot,regi,in,"offset_quantity")
+*      )
+*      * p37_chemicals_feedstock_share(ttot,regi)
+*      )
 ;
 
 *' Thermodynamic limits on subsector energy demand
@@ -186,6 +186,17 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startye
     * p37_chemicals_feedstock_share(ttot,regi)
 
   )
+;
+
+* feedstocks flow has to be lower than total energy flow into industry
+q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear 
+                                                    AND sefe(entySE,entyFE) AND sector2emiMkt("indst",emiMkt) 
+                                                    AND entyFe2Sector(entyFe,"indst") AND entyFeCC37(entyFe))..
+
+  vm_demFESector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+  =g=
+  vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+  
 ;
 
 

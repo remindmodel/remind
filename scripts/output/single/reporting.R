@@ -6,7 +6,11 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind2)
+
+#library(remind2)
+library(devtools)
+load_all("/p/tmp/simonlei/this-is-remind2/remind2")
+
 library(lucode2)
 library(gms)
 library(methods)
