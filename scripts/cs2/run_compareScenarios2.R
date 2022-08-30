@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 library(remind2)
 
-# explicitly require optional dependency of remind2, so renv installs it
+# optional dependency of remind2 "kableExtra" is used here, make explicit so renv installs it
 requireNamespace("kableExtra", quietly = TRUE)
 
 if (!exists("source_include")) {
