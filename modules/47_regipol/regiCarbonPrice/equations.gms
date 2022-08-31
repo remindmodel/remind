@@ -44,7 +44,7 @@ q47_emiTarget_grossEnCO2(t,regi)..
 *** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
 	+  vm_emiCdr(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
 *** add pe2se BECCS
-	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
+	+  sum(emi2te(enty,enty2,te,emiAll)$(teBio(te) AND teCCS(te) AND sameAs(emiAll,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,emiAll)) * pm_share_CCS_CCO2(t,regi)
 *** add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin 
 	+  sum( (entySe,entyFe,secInd37,emiMkt)$(NOT (entySeFos(entySe))),
 		pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(t,regi)

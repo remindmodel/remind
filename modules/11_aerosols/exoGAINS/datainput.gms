@@ -249,7 +249,7 @@ loop(emiAP,
 display pm_emifac;
 
 *** calculation of air pollution costs
-p11_EF_mean(enty,enty2,te,enty3)$emi2te(enty,enty2,te,enty3) = sum(regi,pm_emifac("2005",regi,enty,enty2,te,enty3))/11;
+p11_EF_mean(enty,enty2,te,emiAll)$emi2te(enty,enty2,te,emiAll) = sum(regi,pm_emifac("2005",regi,enty,enty2,te,emiAll))/11;
 
 *JeS data is taken from US EPA http://www.epa.gov/ttnecas1/models/DOCumentationReport.pdf#page=1469
 p11_costpollution("pc",     "SO2","power")  = 768;

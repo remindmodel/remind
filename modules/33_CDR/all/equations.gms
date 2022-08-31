@@ -131,8 +131,8 @@ q33_potential(t,regi,rlf)..
 ***---------------------------------------------------------------------------
 *'  Preparation of captured emissions to enter the CCS chain.
 ***---------------------------------------------------------------------------		
-q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
-	sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+q33_ccsbal(t,regi,ccs2te(ccsCo2(emiAll),enty2,te))..
+	sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,emiAll,enty2,te,rlf))
 	=e=
 	-v33_emiDAC(t,regi)
 	;	

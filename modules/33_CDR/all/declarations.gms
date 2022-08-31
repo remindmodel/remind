@@ -31,7 +31,7 @@ v33_DacFEdemand_heat(ttot,all_regi,all_enty)        "DAC FE heat demand [TWa]"
 ;
 
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
+vm_ccs_cdr(ttot,all_regi,emiAll,all_enty,all_te,rlf)  "CCS emissions from CDR [GtC / a]"
 v33_emiDAC(ttot,all_regi)                               "carbon captured from DAC [GtC / a]"
 v33_emiEW(ttot,all_regi)                                "negative CO2 emission from EW [GtC / a]"
 ;
@@ -49,7 +49,7 @@ q33_emiEW(ttot,all_regi)                            "calculates amount of carbon
 q33_LimEmiEW(ttot,all_regi)                         "limits EW to a maximal annual amount of ground rock of cm_LimRock"
 q33_capconst_dac(ttot,all_regi)                     "calculates amount of carbon captured by DAC"
 q33_emicdrregi(ttot,all_regi)                       "calculates the (negative) emissions due to CDR technologies"
-q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
+q33_ccsbal(ttot,all_regi,emiAll,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_H2bio_lim(ttot,all_regi,all_te)                 "limits H2 from bioenergy to FE - otherFEdemand, i.e. no H2 from bioenergy for DAC"
 ;
 
