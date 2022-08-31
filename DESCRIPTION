@@ -1,0 +1,75 @@
+Package: remindmodel
+Title: REMIND - REgional Model of INvestments and Development
+Version: 0.1
+Date: 2022-08-31
+Description: This is not a package yet, the purpose of this file is to
+    document metadata, notably dependencies.
+License: file LICENSE
+URL: https://github.com/remindmodel/remind,
+    https://doi.org/10.5281/zenodo.6794920
+BugReports: https://github.com/remindmodel/remind/issues
+Depends:
+    R (>= 4.0.0)
+Imports:
+    callr,
+    colorspace,
+    crayon,
+    data.table,
+    devtools,
+    dplyr,
+    edgeTransport,
+    flexdashboard,
+    GDPuc,
+    gdx,
+    gdxdt,
+    gdxrrw,
+    ggplot2,
+    gms,
+    gridExtra,
+    gtools,
+    hdf5r,
+    here,
+    htmltools,
+    iamc,
+    kableExtra,
+    knitr,
+    lazyeval,
+    lpjclass,
+    lucode2,
+    luplot,
+    luscale,
+    lusweave,
+    magclass,
+    magpie4,
+    magpiesets,
+    mip,
+    modelstats,
+    mrremind,
+    mrvalidation,
+    ncdf4,
+    nleqslv,
+    optparse,
+    plotly,
+    purrr,
+    quitte,
+    R.utils,
+    raster,
+    readr,
+    readxl,
+    remind2,
+    renv,
+    reshape2,
+    rlang,
+    rmarkdown,
+    rmndt,
+    SPEI,
+    stringr,
+    terra,
+    tibble,
+    tidyr,
+    tidyverse,
+    withr,
+    writexl,
+    yaml,
+    zoo
+Encoding: UTF-8
