@@ -8,7 +8,6 @@
 ############### Select slurm partitiion ###############################
 #######################################################################
 
-
 choose_slurmConfig <- function(identifier = FALSE) {
 
   slurm <- suppressWarnings(ifelse(system2("srun",stdout=FALSE,stderr=FALSE) != 127, TRUE, FALSE))
