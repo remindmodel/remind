@@ -67,15 +67,15 @@ $offtext
 *** Increase SE2FE efficiency for gases in DEU
 pm_eta_conv("2010",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.949;
 pm_eta_conv("2015",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.962;
-pm_eta_conv(t,regi,"tdfosgas")$(sameAs(regi,"DEU") and t.val gt 2020) = 0.975;
+pm_eta_conv(t,regi,"tdfosgas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 
 pm_eta_conv("2010",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.949;
 pm_eta_conv("2015",regi,"tdbiogas")$(sameAs(regi,"DEU")) = 0.962;
-pm_eta_conv(t,regi,"tdbiogas")$(sameAs(regi,"DEU") and t.val gt 2020) = 0.975;
+pm_eta_conv(t,regi,"tdbiogas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 
 pm_eta_conv("2010",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.949;
 pm_eta_conv("2015",regi,"tdsyngas")$(sameAs(regi,"DEU")) = 0.962;
-pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val gt 2020) = 0.975;
+pm_eta_conv(t,regi,"tdsyngas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 
