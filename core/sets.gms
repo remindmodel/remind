@@ -401,7 +401,7 @@ all_enty             "all types of quantities"
         steel        "Steel"
         dri          "Directly reduced iron"
         scrap        "Steel scrap"
-        iore         "Iron ore"
+        ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"

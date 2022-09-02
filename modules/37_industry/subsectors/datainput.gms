@@ -11,20 +11,21 @@ vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
 PARAMETERS
   p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /
-    iore.idr.(ng,h2)        1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
+    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
     
     dri.eaf.pri             1.0                                             !! DRI demand of EAF
     scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
     dri.eaf.sec             0.0
     scrap.eaf.pri           0.0
     
-    iore.bfbof.pri          1.5                                             !! Iron ore demand of BF-BOF
+    ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
     scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
     scrap.bfbof.pri         0.0
-    iore.bfbof.sec          0.0
+    ironore.bfbof.sec       0.0
   /
 
   p37_specFeDem(entyFe,teMats,opModes)                                      "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
@@ -40,6 +41,7 @@ PARAMETERS
     fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
   /
 ;
+$endif.process_based_steel
 
 
 ***-------------------------------------------------------------------------------

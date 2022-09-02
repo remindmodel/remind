@@ -17,6 +17,7 @@
 *
 * For the moment the only group of materials considered here belong to any of the
 * production routes of steel. Trade is also currently forced to zero.
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
 q37_balMats(t,regi,mats)..
     v37_demMatsEcon(t,regi,mats)
   + v37_demMatsProc(t,regi,mats)
@@ -61,6 +62,7 @@ q37_demFEMats(t,regi,entyFe,emiMkt)..
       )
     )
 ;
+$endif.process_based_steel
 
 
 ***-------------------------------------------------------------------------------
@@ -78,7 +80,9 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
     vm_cesIO(ttot,regi,in)
   + pm_cesdata(ttot,regi,in,"offset_quantity")
   )
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
   + v37_demFeMats(ttot,regi,entyFe,emiMkt)
+$endif.process_based_steel
 ;
 
 *' Thermodynamic limits on subsector energy demand
@@ -98,6 +102,7 @@ $endif.calibration
 ;
 
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"
 q37_limit_secondary_steel_share(ttot,regi)$(
          ttot.val ge cm_startyear
 $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
@@ -112,6 +117,7 @@ $endif.fixed_production
     )
   * p37_steel_secondary_max_share(ttot,regi)
 ;
+$endif.process_based_steel
 
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
 *' use with fuel-specific emission factors.

@@ -7,12 +7,13 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
   mats(all_enty)        "Materials considered in material-flow model"
   /
     steel               "Steel"
     dri                 "Directly reduced iron"
     scrap               "Steel scrap"
-    iore                "Iron ore"
+    ironore             "Iron ore"
   /
   
   teMats(all_te)        "Technologies used in material-flow model"
@@ -32,9 +33,9 @@ Sets
   
   teMats2matsIn(teMats,mats)
   /
-    idr . iore
+    idr . ironore
     eaf . (dri,scrap)
-    bfbof . (iore,scrap)
+    bfbof . (ironore,scrap)
   /
   
   teMats2opModes(teMats,opModes)
@@ -50,6 +51,7 @@ Sets
     steel . eaf
     steel . bfbof
   /
+$endif.process_based_steel
 
   secInd37   "industry sub-sectors"
   /
@@ -58,13 +60,15 @@ Sets
     steel       "iron and steel production"
     otherInd    "aggregated other industry sub-sectors"
   /
-  
+
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
   secInd37_teMats(secInd37,teMats)
   /
     steel . idr
     steel . eaf
     steel . bfbof
   /
+$endif.process_based_steel
 
   emiInd37(all_enty)   "industry emissions"
   /
@@ -181,10 +185,12 @@ Sets
                                feh2_chemicals, feelhth_chemicals)
 
    ue_steel                 . (ue_steel_primary, ue_steel_secondary)
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"
    ue_steel_secondary       . (feel_steel_secondary, kap_steel_secondary)
    ue_steel_primary         . (en_steel_primary, kap_steel_primary)
    en_steel_primary         . (en_steel_furnace, feel_steel_primary)
    en_steel_furnace         . (feso_steel, feli_steel, fega_steel, feh2_steel)
+$endif.process_based_steel
 
    ue_otherInd     . (en_otherInd, kap_otherInd)
    en_otherInd     . (en_otherInd_hth, feelwlth_otherInd)
@@ -373,7 +379,9 @@ pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
 alias(mats,mats2,matsIn,matsOut);
+$endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 
