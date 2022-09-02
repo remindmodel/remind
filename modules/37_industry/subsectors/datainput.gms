@@ -11,7 +11,7 @@ vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
 PARAMETERS
   p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /

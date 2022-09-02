@@ -7,7 +7,7 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   mats(all_enty)        "Materials considered in material-flow model"
   /
     steel               "Steel"
@@ -61,7 +61,7 @@ $endif.process_based_steel
     otherInd    "aggregated other industry sub-sectors"
   /
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   secInd37_teMats(secInd37,teMats)
   /
     steel . idr
@@ -185,7 +185,7 @@ $endif.process_based_steel
                                feh2_chemicals, feelhth_chemicals)
 
    ue_steel                 . (ue_steel_primary, ue_steel_secondary)
-$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"
+$ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
    ue_steel_secondary       . (feel_steel_secondary, kap_steel_secondary)
    ue_steel_primary         . (en_steel_primary, kap_steel_primary)
    en_steel_primary         . (en_steel_furnace, feel_steel_primary)
@@ -379,7 +379,7 @@ pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 alias(mats,mats2,matsIn,matsOut);
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
