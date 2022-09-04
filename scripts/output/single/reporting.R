@@ -10,6 +10,7 @@ library(remind2)
 library(lucode2)
 library(gms)
 library(methods)
+library(edgeTransport)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
