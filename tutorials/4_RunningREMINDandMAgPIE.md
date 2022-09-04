@@ -3,16 +3,24 @@ Running REMIND and MAgPIE in coupled mode
 David Klein (<dklein@pik-potsdam.de>)
 27 April, 2020
 
+- [Running REMIND and MAgPIE in coupled mode](#running-remind-and-magpie-in-coupled-mode)
 - [How to start coupled runs](#how-to-start-coupled-runs)
-    + [Clone the models](#clone-the-models)
-    + [Switch to relevant branchs](#switch-to-relevant-branchs)
-    + [Create snapshot of R libraries](#create-snapshot-of-r-libraries)
-    + [Activate snapshot for REMIND and MAgPIE](#activate-snapshot-for-remind-and-magpie)
-    + [What happens during a single coupled run](#what-happens-during-a-single-coupled-run)
-    + [Configure start_bundle_coupled.R](#configure-start_bundle_coupledr)
-    + [Configure the scenario_config_coupled.csv of your choice](#configure-the-scenario-config-coupledcsv-of-your-choice)
-    + [Perform test start before actually submitting runs](#perform-test-start-before-actually-submitting-runs)
-    + [Start runs after checking that coupling scripts finds all gdxes and mifs ](#Start-runs-after-checking-that-coupling-scripts-finds-all-gdxes-and-mifs)
+    - [Clone the models](#clone-the-models)
+    - [Switch to relevant branchs](#switch-to-relevant-branchs)
+    - [Create snapshot of R libraries](#create-snapshot-of-r-libraries)
+    - [Activate snapshot for REMIND and MAgPIE](#activate-snapshot-for-remind-and-magpie)
+    - [What happens during a single coupled run](#what-happens-during-a-single-coupled-run)
+    - [What happens during a bundle of coupled runs](#what-happens-during-a-bundle-of-coupled-runs)
+    - [Configure start_bundle_coupled.R](#configure-start_bundle_coupledr)
+    - [Configure the config files of your choice](#configure-the-config-files-of-your-choice)
+    - [Perform test start before actually submitting runs](#perform-test-start-before-actually-submitting-runs)
+    - [Start runs after checking that coupling scripts finds all gdxes and mifs](#start-runs-after-checking-that-coupling-scripts-finds-all-gdxes-and-mifs)
+- [Check the convergence](#check-the-convergence)
+- [Technical concept](#technical-concept)
+    - [Dynamic part](#dynamic-part)
+    - [Static part](#static-part)
+    - [Assumptions](#assumptions)
+    - [The coupling scripts](#the-coupling-scripts)
 
 - [Check the convergence](#Check-the-convergence)
 - [Technical concept](#technical-concept)
@@ -49,7 +57,7 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by editing [`.Rprofile`](../.Rprofile) in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment these line by deleting `#` and change the date to today (the `_R4` is necessary if you run `R 4.0` or later):
+Direct the models to the snapshot you just created above by first renaming [.snapshot.Rsprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment the following line by deleting `#` and change the date to today (the `_R4` is necessary if you run `R 4.0` or later):
 
 ```bash
 # snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_17_R4"
