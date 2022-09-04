@@ -69,7 +69,7 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 
 if(file.exists(file.path(outputdir, "EDGE-T"))){
 message("start generation of EDGE-T reporting")
-  EDGET_output <- reportEDGETransport2(outputdir, sub_folder = "EDGE-T",
+  EDGET_output <- toolReportEDGET(outputdir, sub_folder = "EDGE-T",
                                             extendedReporting = FALSE,
                                             scenario_title = scenario, model_name = "REMIND",
                                             gdx = paste0(outputdir,"/fulldata.gdx"))
