@@ -62,5 +62,8 @@ The scripts explained earlier should cover all common tasks, use the following f
 - `renv::snapshot()` write state of library to renv.lock
 - renv documentation: https://rstudio.github.io/renv/
 
+## package development
+When testing packages in development use `renv::install("githubuser/package")` to install the package from your fork. To prevent your custom package from being overwritten disable auto updates with `options(autoRenvUpdates = FALSE)` either in `.Rprofile` (disables auto updates parmanently) or in the same interactive session where you start a run (disables auto updates for this R session only).
+
 # legacy snapshots
 Before REMIND started using renv it was using so-called "snapshots" to get a stable package environment. You can restore this snapshot machinery (and disable renv) by renaming `.snapshot.Rprofile` -> `.Rprofile`. If you do, please make sure to *not* commit your changes to `.Rprofile`. For coupled model runs you need to use snapshots, renv does not cover that use case yet. Snapshot support will be removed when coupled model runs are possible with renv.
