@@ -435,6 +435,7 @@ parameters
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
   cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
   cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
+  cm_process_based_steel      "switch to turn on process-based steel implementation"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -756,6 +757,8 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
 $setglobal cm_wind_offshore  1      !! def = 0
+
+$setglobal cm_process_based_steel = off; !! def = off
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
