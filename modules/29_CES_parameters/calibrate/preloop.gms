@@ -1607,15 +1607,24 @@ loop ((t_29(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf_29(out)))$(
  ** (1 / pm_cesdata(t,regi,out,"rho"));
 
   p29_test_CES_recursive(t,regi,out)$( NOT ipf_putty(out) )
-  = sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * pm_cesdata(t,regi,in,"effGr")
-      * p29_test_CES_recursive(t,regi,in)
+  !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS
+  = exp(
+      log(
+        sum(cesOut2cesIn(out,in),
+          pm_cesdata(t,regi,in,"xi")
+        * exp(
+            log(
+              ( pm_cesdata(t,regi,in,"eff")
+              * pm_cesdata(t,regi,in,"effGr")
+              * p29_test_CES_recursive(t,regi,in)
+              )
+            )
+          * pm_cesdata(t,regi,out,"rho")
+          )
+        )
       )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"));
+    * (1 / pm_cesdata(t,regi,out,"rho"))
+    );
 
   !! compute the total for factors that are ppf in the CES and ipf in the putty
   p29_test_CES_recursive(t,regi_dyn29,out)$( ppfIO_putty(out) )
