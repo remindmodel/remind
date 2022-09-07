@@ -31,21 +31,21 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
     sec                 "Secondary production of steel (based on scrap)"
   /
   
-  teMats2matsIn(teMats,mats)
+  teMats2matsIn(teMats,mats)    "Mapping of technologies onto input materials"
   /
     idr . ironore
     eaf . (dri,scrap)
     bfbof . (ironore,scrap)
   /
   
-  teMats2opModes(teMats,opModes)
+  teMats2opModes(teMats,opModes)    "Mapping of technologies onto available operation modes"
   /
     idr . (ng,h2)
     eaf . (pri,sec)
     bfbof . (pri,sec)
   /
   
-  matsOut2teMats(mats,teMats)
+  matsOut2teMats(mats,teMats)       "Mapping of output materials onto technologies producing these"
   /
     dri . idr
     steel . eaf
@@ -62,7 +62,7 @@ $endif.process_based_steel
   /
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  secInd37_teMats(secInd37,teMats)
+  secInd37_teMats(secInd37,teMats)      "Mapping of technologies onto industry subsectors"
   /
     steel . idr
     steel . eaf
