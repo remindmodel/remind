@@ -393,6 +393,7 @@ parameters
   cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
   cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
+  cm_taxCO2inc_fix            "globally universal annual increase of CO2 price after cm_expoLinear_yearStart"
   cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
   cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
   c_regi_nucscen				"regions to apply nucscen to"
@@ -542,6 +543,7 @@ $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
+$setGlobal cm_taxCO2inc_fix off    !! def = off - if switched on you might want to set it to cm_taxCO2inc_after_peakBudgYr
 cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
