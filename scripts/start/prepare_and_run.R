@@ -431,7 +431,7 @@ prepare <- function() {
       input_old     <- "no_data"
   }
   input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(is.null(cfg$extramappings_historic),"",paste0("-", regionscode(cfg$extramapping_historical))),"_", tolower(cfg$validationmodel_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(is.null(cfg$extramappings_historic),"",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
