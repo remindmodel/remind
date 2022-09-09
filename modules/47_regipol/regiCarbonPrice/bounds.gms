@@ -111,6 +111,24 @@ $endIf.ensec
 *** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
     v47_demPEtotal.up(t,"DEU","pegas")$(t.val ge 2025) = 2/pm_conv_TWa_EJ;
+
+*** increase capacity factors for coal by ~20% in limit scenario
+    vm_capFac(2025,regi,"pc")$sameas(regi,"DEU") = 0.52
+    vm_capFac(2030,regi,"pc")$sameas(regi,"DEU") = 0.48
+    vm_capFac(2025,regi,"igcc")$sameas(regi,"DEU") = 0.78
+    vm_capFac(2030,regi,"igcc")$sameas(regi,"DEU") = 0.78
+    vm_capFac(2025,regi,"coalchp")$sameas(regi,"DEU") = 0.72
+    vm_capFac(2030,regi,"coalchp")$sameas(regi,"DEU") = 0.72
 $endIf.ensec_lim
+
+*** increase capacity factors for coal by ~10% in ensec scenario
+$ifThen.ensec_ensec "%cm_EnSecScen%" == "ensec"
+    vm_capFac(2025,regi,"pc")$sameas(regi,"DEU") = 0.47
+    vm_capFac(2030,regi,"pc")$sameas(regi,"DEU") = 0.44
+    vm_capFac(2025,regi,"igcc")$sameas(regi,"DEU") = 0.71
+    vm_capFac(2030,regi,"igcc")$sameas(regi,"DEU") = 0.71
+    vm_capFac(2025,regi,"coalchp")$sameas(regi,"DEU") = 0.66
+    vm_capFac(2030,regi,"coalchp")$sameas(regi,"DEU") = 0.66
+$endIf.ensec_ensec
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
