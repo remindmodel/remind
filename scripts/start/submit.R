@@ -57,7 +57,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
           }
         }
 
-        if (getOption("autoRenvUpdates", TRUE)) {
+        if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
         } else {
           packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"

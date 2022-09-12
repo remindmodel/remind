@@ -8,8 +8,8 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 
 ### run renv
 - each run has its own run renv
-- standalone run: main renv is updated (unless disabled via `options(autoRenvUpdates = FALSE)`) and copied to run folder
-- cascade/subsequent runs: renv from the previous run is copied -> all runs in a cascade use the same renv
+- standalone/first run: main renv is copied to run folder; if you set `options(autoRenvUpdates = TRUE)` the updateRenv script is run before copying
+- subsequent runs: renv from the previous run is copied -> all runs in a cascade use the same renv
 - run renv is used for the run itself and automatic post-processing
 - run renvs should ensure reproducibility, so they must never change
 
@@ -61,6 +61,9 @@ The scripts explained earlier should cover all common tasks, use the following f
 - `renv::status()` show differences between library and renv.lock
 - `renv::snapshot()` write state of library to renv.lock
 - renv documentation: https://rstudio.github.io/renv/
+
+## package development
+When testing packages in development use `renv::install("githubuser/package")` to install the package from your fork. Do not set `options(autoRenvUpdates = TRUE)`, otherwise your custom package might get overwritten by auto updates.
 
 # legacy snapshots
 Before REMIND started using renv it was using so-called "snapshots" to get a stable package environment. You can restore this snapshot machinery (and disable renv) by renaming `.snapshot.Rprofile` -> `.Rprofile`. If you do, please make sure to *not* commit your changes to `.Rprofile`. For coupled model runs you need to use snapshots, renv does not cover that use case yet. Snapshot support will be removed when coupled model runs are possible with renv.
