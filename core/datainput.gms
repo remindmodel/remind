@@ -1484,8 +1484,8 @@ $offdelim
 ;
 
 *** use cm_demScen for Industry and Buildings 
-*** cm_GDPscen will be used for Transport (EDGE-T) (see p29_trpdemand)
-pm_fedemand(tall,all_regi,in) = f_fedemand(tall,all_regi,"%cm_demScen%",in);
+pm_fedemand(tall,all_regi,in_i) = f_fedemand(tall,all_regi,"%cm_demScen_i%",in_i);
+pm_fedemand(tall,all_regi,in_b) = f_fedemand(tall,all_regi,"%cm_demScen_b%",in_b);
 
 *** RCP-dependent demands in buildings (climate impact)
 $ifthen.cm_rcp_scen_build NOT "%cm_rcp_scen_build%" == "none"
@@ -1497,7 +1497,7 @@ $offdelim
 /;
 
 pm_fedemand(t,regi,cal_ppf_buildings_dyn36) =
-  f_fedemand_build(t,regi,"%cm_demScen%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
+  f_fedemand_build(t,regi,"%cm_demScen_b%","%cm_rcp_scen_build%",cal_ppf_buildings_dyn36);
 $endif.cm_rcp_scen_build
 
 *** initialize global target deviation scalar

@@ -151,6 +151,7 @@ Sets
 
 *** add module specific sets and mappings to the global sets and mappings
 in(in_industry_dyn37)              = YES;
+in_i(in_industry_dyn37)            = YES;
 ppfEn(ppfen_industry_dyn37)        = YES;
 cesOut2cesIn(ces_industry_dyn37)   = YES;
 fe2ppfEn(fe2ppfEn37)               = YES;

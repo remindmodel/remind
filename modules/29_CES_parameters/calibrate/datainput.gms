@@ -240,7 +240,7 @@ $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
 Parameter
- p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen_t,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
 ;
 
 Parameter
@@ -358,7 +358,7 @@ pm_cesdata(t,regi,in,"quantity") $p29_esdemand(t,regi,in) = p29_esdemand(t,regi,
 *** Load exogenous transport demand - required for the EDGE transport module
 $ifthen.edgesm %transport% ==  "edge_esm"
 pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in)
-           = p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in);
+           = p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen_t%","%cm_EDGEtr_scen%", in);
 $endif.edgesm
 
 *** Load capital quantities

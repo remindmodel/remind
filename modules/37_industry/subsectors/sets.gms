@@ -362,6 +362,7 @@ ppf_industry_dyn37(ppfen_industry_dyn37)                               = YES;
 ipf_industry_dyn37(in_industry_dyn37)                                  = YES;
 ipf_industry_dyn37(ppf_industry_dyn37)                                 = NO;
 in(in_industry_dyn37)                                                  = YES;
+in_i(in_industry_dyn37)                                                  = YES;
 ppfKap(ppfKap_industry_dyn37)                                          = YES;
 ppfen(ppfen_industry_dyn37)                                            = YES;
 cesOut2cesIn(ces_industry_dyn37)                                       = YES;

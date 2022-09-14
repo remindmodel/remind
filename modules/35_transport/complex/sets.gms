@@ -217,6 +217,7 @@ se2fe(notIn_se2fe_dyn35) = NO;
 emi2te(notIn_emi2te_dyn35) = NO;
 
 in(in_dyn35)             = YES;
+in_t(in_dyn35)           = YES;
 ppfEn(ppfen_dyn35)       = YES;
 cesOut2cesIn(ces_transport_dyn35)            = YES;
 ue2ppfen(ue2ppfen_dyn35) = YES;

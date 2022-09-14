@@ -54,7 +54,7 @@ gdp_b1
 gdp_b2
 /
 
-all_demScen    "all possible demand scenarios"
+all_demScen_i    "all industry demand scenarios"
 /
 gdp_SDP         "SDP fastGROWTH medCONV"
 gdp_SDP_EI
@@ -72,6 +72,47 @@ gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity s
 gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
 gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
 /
+
+all_demScen_b    "all buildings demand scenarios"
+/
+gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
+gdp_SSP1        "SSP1 fastGROWTH medCONV"
+gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2EU
+gdp_SSP3        "SSP3 slowGROWTH slowCONV"
+gdp_SSP4        "SSP4  medGROWTH mixedCONV"
+gdp_SSP5        "SSP5 fastGROWTH fastCONV"
+gdp_SSP2_lowEn  "SSP2 with low energy"
+gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
+gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+/
+
+all_demScen_t    "all transport demand scenarios"
+/
+gdp_SDP         "SDP fastGROWTH medCONV"
+gdp_SDP_EI
+gdp_SDP_MC
+gdp_SDP_RC
+gdp_SSP1        "SSP1 fastGROWTH medCONV"
+gdp_SSP2        "SSP2 medGROWTH medCONV"
+gdp_SSP2EU
+gdp_SSP3        "SSP3 slowGROWTH slowCONV"
+gdp_SSP4        "SSP4  medGROWTH mixedCONV"
+gdp_SSP5        "SSP5 fastGROWTH fastCONV"
+gdp_SSP2_lowEn  "SSP2 with low energy"
+gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
+gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+/
+
+all_demScen    "all demand scenarios - to be populated from the sector specific sets"
+//
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
 /
@@ -687,6 +728,14 @@ all_in   "all inputs and outputs of the CES function"
   feelhth_otherInd        "high temperature heat electricity energy use of other industry production"
   feelwlth_otherInd       "work and low temperature heat electricity energy use of other industry production"
 /
+
+in_i(all_in)        "CES in- and outputs for industry"
+//
+in_b(all_in)        "CES in- and outputs for buldings"
+//
+in_t(all_in)        "CES in- and outputs for transport"
+//
+
 
 all_teEs                 "energy service technologies"
 /

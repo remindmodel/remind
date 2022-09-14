@@ -258,6 +258,7 @@ regi_dyn36_cooling(all_regi) = NO;
 ***-------------------------------------------------------------------------
 ppfKap(ppfKap_dyn36) = YES;
 in(in_buildings_dyn36)             = YES;
+in_b(in_buildings_dyn36)           = YES;
 ppfEn(ppfen_buildings_dyn36)       = YES;
 cesOut2cesIn(ces_buildings_dyn36)           = YES;
 fe2ppfEn(fe2ppfEn36)                      = YES;

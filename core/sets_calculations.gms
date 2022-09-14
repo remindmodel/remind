@@ -185,4 +185,7 @@ t_interpolate(ttot) = t(ttot) - t_input_gdx(ttot);
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 
+*** all possible demand scenarios
+all_demScen = all_demScen_i + all_demScen_b + all_demScen_t;
+
 *** EOF ./core/sets_calculations.gms

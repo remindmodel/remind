@@ -34,14 +34,14 @@ pm_delta_kap(regi,in)$nests_putty_dyn36(out,in) = pm_delta_kap(regi,out);
       
 parameter
 
-p36_floorspace_scen(tall,all_regi,all_demScen)                  "floorspace"
+p36_floorspace_scen(tall,all_regi,all_demScen_b)                  "floorspace"
 /
 $ondelim
 $include "./modules/36_buildings/services_with_capital/input/p36_floorspace_scen.cs4r"
 $offdelim
 /
 ;
-p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3; !! from million to billion m2
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen_b%") * 1e-3; !! from million to billion m2
 
 parameter
 p36_demFeForEs_scen  "final energy demand projections for FE-UE technologies"

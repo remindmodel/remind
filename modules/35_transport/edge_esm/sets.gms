@@ -163,6 +163,7 @@ fedie
 alias(teEs_dyn35,teEs_dyn35_2);
 teEs(teEs_dyn35)         = YES;
 in(in_dyn35)             = YES;
+in_t(in_dyn35)           = YES;
 
 esty(esty_dyn35)     = YES;
 

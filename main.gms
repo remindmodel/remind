@@ -487,7 +487,9 @@ cm_cprice_red_factor  = 1;         !! def = 1
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
-$setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
+$setglobal cm_demScen_i  gdp_SSP2EU     !! def = gdp_SSP2EU
+$setglobal cm_demScen_b  gdp_SSP2EU     !! def = gdp_SSP2EU
+$setglobal cm_demScen_t  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.

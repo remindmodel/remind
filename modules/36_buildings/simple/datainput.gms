@@ -33,25 +33,25 @@ pm_cesdata_sigma(ttot,"enhgab")$ (ttot.val eq 2040) = 3;
 
 *** floor space demand for reporting
 Parameter
-p36_floorspace_scen(tall, all_regi, all_demScen)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
+p36_floorspace_scen(tall, all_regi, all_demScen_b)                  "floorspace, in buildings simple realization only used for reporting at the moment, not in optimization itself"
 /
 $ondelim
 $include "./modules/36_buildings/simple/input/p36_floorspace_scen.cs4r"
 $offdelim
 /
 ;
-p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen%") * 1e-3; !! from million to billion m2
+p36_floorspace(ttot,regi) = p36_floorspace_scen(ttot,regi,"%cm_demScen_b%") * 1e-3; !! from million to billion m2
 
 *** UE demand for reporting
 Parameter
-f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "useful energy demand in buildings"
+f36_uedemand_build(tall,all_regi,all_demScen_b,all_rcp_scen,all_in)   "useful energy demand in buildings"
 /
 $ondelim
 $include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
 /
 ;
-p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen%","%cm_rcp_scen_build%",in);
+p36_uedemand_build(ttot,regi,in) = f36_uedemand_build(ttot,regi,"%cm_demScen_b%","%cm_rcp_scen_build%",in);
 
 $IFTHEN.cm_INNOPATHS_enb not "%cm_INNOPATHS_enb%" == "off" 
   pm_cesdata_sigma(ttot,"enb")$pm_cesdata_sigma(ttot,"enb") = pm_cesdata_sigma(ttot,"enb") * %cm_INNOPATHS_enb%;
