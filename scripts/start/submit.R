@@ -4,7 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-############## Define function: .copy.fromlist #########################
 
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -17,10 +16,7 @@
   }
 }
 
-############## Define function: runsubmit #########################
-
 submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
-  
   if(!restart) {
     # Generate name of output folder and create the folder
     date <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -44,32 +40,78 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       unlink(cfg$results_folder, recursive = TRUE)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
-    
-    # remember main folder
-    cfg$remind_folder <- getwd()
-    
+
+    if (is.null(renv::project())) {
+      warning("No active renv project found, not using renv.")
+    } else {
+      # we only want to run renv checks/updates in the first run in a cascade, which can be
+      # detected like this
+      firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
+      if (firstRunInCascade) {
+        if (!renv::status()$synchronized) {
+          message("The new run will use the package environment defined in renv.lock, ",
+                  "but it is out of sync, probably because you installed packages/updates manually. ",
+                  "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
+          if (tolower(gms::getLine()) %in% c("y", "")) {
+            renv::snapshot(prompt = FALSE)
+          }
+        }
+
+        if (getOption("autoRenvUpdates", FALSE)) {
+          source("scripts/utils/updateRenv.R")
+        } else {
+          packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
+          pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
+          installed <- utils::installed.packages()
+          outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
+          if (!is.null(outdatedPackages)) {
+            message("The following PIK packages can be updated:\n",
+                    paste("-", outdatedPackages[, "Package"], ":",
+                          outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
+                          collapse = "\n"),
+                    "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
+          }
+        }
+      }
+
+      createResultsfolderRenv <- function(resultsfolder, lockfile) {
+        # use same snapshot.type so renv::status()$synchronized always uses the same logic
+        renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
+
+        # restore same renv as previous run in cascade, or main renv if first run
+        file.copy(lockfile, resultsfolder, overwrite = TRUE)
+        renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
+      }
+      # init renv in a separate session so the libPaths of the current session remain unchanged
+      callr::r(createResultsfolderRenv,
+               list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
+               show = TRUE)
+    }
+
     # Save the cfg (with the updated name of the result folder) into the results folder. 
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
     filename <- paste0(cfg$results_folder,"/config.Rdata")
     cat("   Writing cfg to file",filename,"\n")
+    # remember main folder
+    cfg$remind_folder <- normalizePath(".")
     save(cfg,file=filename)
     
     # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)
-    
+
     # Do not remove .RData files from REMIND main folder because they are needed in case you need to manually restart subsequent runs.
   }
-  
+
+  on.exit(setwd(cfg$remind_folder))
   # Change to run folder
   setwd(cfg$results_folder)
-  on.exit(setwd(cfg$remind_folder))
   
   # send prepare_and_run.R to cluster 
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
-  if(cfg$slurmConfig=="direct") {
+  if (grepl("^direct", cfg$slurmConfig)) {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
     system("Rscript prepare_and_run.R")
   } else {

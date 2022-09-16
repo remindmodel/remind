@@ -11,6 +11,7 @@ devtools::load_all('/p/tmp/schreyer/Modeling/pik-piam/remind2_CESreport')
 library(lucode2)
 library(gms)
 library(methods)
+library(edgeTransport)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
@@ -70,7 +71,14 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 
 if(file.exists(file.path(outputdir, "EDGE-T"))){
 message("start generation of EDGE-T reporting")
-  reportEDGETransport(outputdir)
+  EDGET_output <- toolReportEDGET(outputdir, sub_folder = "EDGE-T",
+                                            extendedReporting = FALSE,
+                                            scenario_title = scenario, model_name = "REMIND",
+                                            gdx = paste0(outputdir,"/fulldata.gdx"))
+
+  writeMIF(EDGET_output, remind_reporting_file, append=T)
+  deletePlus(remind_reporting_file, writemif=T)
+
 message("end generation of EDGE-T reporting")
 }
 
@@ -82,7 +90,7 @@ tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execu
 message("end generation of LCOE reporting")
 
 ## generate DIETER reporting if it is needed
-## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory 
+## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
   message("start generation of DIETER reporting")

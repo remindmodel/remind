@@ -71,7 +71,7 @@ If you want to manually start runs instead of editing the `start` column in the 
 ```bash
 Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
-In interactive mode, the scripts lets you select a config files if you do not specify one. You can combine all these options and use
+In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine all these options and use
 ```bash
 Rscript start.R -qit
 ```
@@ -87,5 +87,7 @@ Further notes:
 
 * To compare two `scenario_config*.csv` files, for example after a change, run `Rscript -e "remind2::compareScenConf()"` in your REMIND directory to get a human-readable list of changes with further options [offered in the function description](https://github.com/pik-piam/remind2/blob/master/R/compareScenConf.R), or try these git commands:
 
-        git diffmif scenario_config_1.csv scenario_config_2.csv
-        git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
+```bash
+git diffmif scenario_config_1.csv scenario_config_2.csv
+git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
+```

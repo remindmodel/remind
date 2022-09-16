@@ -136,6 +136,7 @@ write_new_reporting <- function(mif_path,
   my_data <- magclass::add_dimension(my_data, dim=3.1, add = "scenario", nm = scen_name)
 
   magclass::write.report(my_data, file = new_mif_path, ndigit = 7)
+  remind2::deletePlus(new_mif_path, writemif=TRUE)
 
   return(new_mif_path)
 }
@@ -202,7 +203,8 @@ report_transfers <- function(pol_mif, ref_mif) {
     magclass::add_dimension(dim=3.1,add = "scenario",nm = sc)
   
   magclass::write.report(pol_run, file = pol_mif, ndigit = 7, skipempty = FALSE)
-  
+  remind2::deletePlus(pol_mif, writemif = TRUE)
+
   return(my_transfers)
 }
 # ###### END FUNCTION DEFINITONS ########################################
@@ -269,7 +271,7 @@ while (!happy_with_input) {
     message("Is that what you intended?")
     message("Type '",crayon::green("y"),"' to continue, '",crayon::blue("r"),"' to reselect output directories, '",crayon::red("n"),"' to abort: ")
 
-    user_input <- get_line()
+    user_input <- gms::getLine()
 
     if(user_input %in% c("y","Y","yes")) {
       happy_with_input <- TRUE
@@ -282,7 +284,7 @@ while (!happy_with_input) {
       message("3: Skip plot creation")
       message("4: Plot until 2150 in pdf")
       message("Type the number (or numbers seperated by a comma) to choose the special requests, or nothing to continue without any: ")
-      special_requests <- get_line() %>% str_split(",",simplify = TRUE) %>% as.vector()
+      special_requests <- gms::getLine() %>% str_split(",",simplify = TRUE) %>% as.vector()
 
     } else if (user_input %in% c("r","R","reselect")) {
       if (exists("choose_folder")) {

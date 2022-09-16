@@ -66,7 +66,11 @@ gdp_SSP2EU
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_SSP2_lowEn   "SSP2 with low energy"
+gdp_SSP2_lowEn  "SSP2 with low energy"
+gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
+gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -321,6 +325,11 @@ $ENDIF.WindOff
         termX_nh3   "Export terminals for liquid ammonia (liquification)"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
+*** PCV: technologies related to steel
+        ironMine     "Mining of iron ore"
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bfbof        "Blast furnace/basic-oxygen furnace"
 /
 
 all_enty             "all types of quantities"
@@ -387,6 +396,12 @@ all_enty             "all types of quantities"
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
         ueelTt       "transport useful energy for electric trains"
+
+        !! materials, feedstock, and industrial goods
+        steel        "Steel"
+        dri          "Directly reduced iron"
+        scrap        "Steel scrap"
+        ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"

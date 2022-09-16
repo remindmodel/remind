@@ -27,11 +27,11 @@ After having successfully started and completed a scenario run, the next step is
 
 There are plentiful ways to look at and analyze REMIND results. This tutorial gives an overview on different tools and options that can be used.
 
-For each scenario, results are written to a folder that is created automatically as a combination of **scenario title** name and the **current date** inside the **output** folder of the model.
+For each scenario, results are written to a folder that is created automatically as a combination of the **scenario title** name and the **current date** inside the **output** folder of the model.
 
 ## 2. Model output files
 
-As mentioned in tutorial 2, the two main output files you will typically care about are the *fulldata.gdx* and the *REMIND_generic_NameofYourRun.mif* files in the *output* folder of your run. The *fulldata.gdx* is the actual technical output of the GAMS optimization and contains all the variables, parameters, sets etc. (the differences between these GAMS objects are explained in tutorial 2) of the REMIND model. However, this gdx-file is mainly interesting once you actually work on the GAMS code and want to check specific the variables and their values. If you simply want to look at REMIND results of your run or use it for further data analysis and plotting, you would open the *REMIND_generic_NameofYourRun.mif* which is basically a csv-file in a certain standardized format (called the model intercomparison file format) used in the Integrated Assessment Modeling community. Please refer to the `vignette("mif")` of the package *mip* (model intercomparison plots) to learn more about the mif format.
+As mentioned in [tutorial 2 - RunningREMIND](2_RunningREMIND.md), the two main output files you will typically care about are the *fulldata.gdx* and the *REMIND_generic_NameofYourRun.mif* files in the *output* folder of your run. The *fulldata.gdx* is the actual technical output of the GAMS optimization and contains all the variables, parameters, sets etc. of the REMIND model (the differences between these GAMS objects are explained in tutorial 2 section 3c). However, this gdx-file is mainly interesting once you actually work on the GAMS code and want to check specific the variables and their values. If you simply want to look at REMIND results of your run or use it for further data analysis and plotting, you would open the *REMIND_generic_NameofYourRun.mif* which is basically a csv-file in a certain standardized format (called the model intercomparison file format) used in the Integrated Assessment Modeling community. Please refer to the `vignette("mif")` of the package *mip* (model intercomparison plots) to learn more about the mif format.
 
 Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives the name of the run (that you specified in the first column of your config file when starting the run). The column **region** provides an three-letter acronym of the region (e.g. EUR -> EU, SSA -> Sub-Saharan Africa). The column **variable** represents the variable you are looking at (To avoid confusion with the above: It does not necessarily represent a variable in the GAMS code of REMIND. The mif-file is a synthetized output generated from *fulldata.gdx* by post-processing Rscripts from the *remind* package). Scrolling through the **variable** column, you will get an impression of the outputs the REMIND model permits you to explore. 
 
@@ -39,11 +39,7 @@ Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives
 
 ### 3.1 Access the Cluster
 
-To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster here:
-
-
-https://redmine.pik-potsdam.de/projects/mo/wiki/Getting_ready_to_use_the_Cluster
-
+To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster on [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Getting_ready_to_use_the_Cluster).
 
 ### 3.2 Load a mif file as a Magpie Object
 
@@ -186,12 +182,12 @@ In both cases, you can choose from the list of available model scenarios, for wh
 
 Now, the selected scripts are executed. After completion, the results are written in the respective folder of the run (combination of **model title** name and the **current date** inside the **output** folder of the model).
 
-One recommended script for comparison of different scenarios is `compareScenarios`. After you selected folder names, specified a `filename_prefix` and the priority on the cluster, it produces two large PDF in the `./remind/` folder, one `shortTerm` with a 2050 time horizon and one until 2100.
+One recommended script for comparison of different scenarios is `compareScenarios2`. After you selected folder names, specified a `filename_prefix`, the priority on the cluster, and a *profile* (describes some output parameters) it produces a large PDF (or HTML if a respective profile is chosen) in the `./remind/` folder.
 
-You can also specify the parameters in the command line, for example starting a `compareScenario` run without any prefix as:
+You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=TRUE filename_prefix= output=compareScenarios slurmConfig=priority
+Rscript output.R comp=TRUE filename_prefix= output=compareScenarios2 slurmConfig=priority
 ```
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
