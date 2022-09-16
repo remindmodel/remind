@@ -19,8 +19,8 @@ $endIf.cm_implicitFE
 vm_macBase.fx(t,regi,"co2chemicals")$(sameas(regi,"DEU") AND t.val le 2015)= 5.5 / sm_C_2_CO2 / 1000;
 vm_macBase.fx(t,regi,"co2steel")$(sameas(regi,"DEU") AND t.val le 2015)= 16.7 / sm_C_2_CO2 / 1000;
 *** exponential decrease until 2050 to ~25% of  2015 value
-vm_macBase.fx(t,regi,"co2chemicals")$(sameas(regi,"DEU") AND t.val gt 2015) = vm_macBase.lo("2015",regi,"co2chemicals")$(sameas(regi,"DEU")) * exp( -1/25 * (t.val - 2015));
-vm_macBase.fx(t,regi,"co2steel")$(sameas(regi,"DEU") AND t.val gt 2015) = vm_macBase.lo("2015",regi,"co2steel")$(sameas(regi,"DEU")) * exp( -1/25 * (t.val - 2015));
+vm_macBase.fx(t,regi,"co2chemicals")$(sameas(regi,"DEU") AND t.val gt 2015) = 5.5 / sm_C_2_CO2 / 1000 * exp( -1/25 * (t.val - 2015));
+vm_macBase.fx(t,regi,"co2steel")$(sameas(regi,"DEU") AND t.val gt 2015) = 16.7 / sm_C_2_CO2 / 1000 * exp( -1/25 * (t.val - 2015));
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/presolve.gms
