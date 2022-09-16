@@ -294,7 +294,7 @@ p37_CESMkup(t,regi,in) = 0;
 *** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
 *** to represent demand-side cost of electrification and reach higher subsitution rates following technical substitution rates to solids/liquids/gases
 pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
-pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 300* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
 
 *** place markup cost of 100 USD/MWh(H2) on H2 nodes
