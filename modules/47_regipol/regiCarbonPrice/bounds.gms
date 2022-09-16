@@ -110,7 +110,7 @@ $endIf.ensec
 
 *** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
-    vm_prodPe.up(t,"DEU","pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2/pm_conv_TWa_EJ;
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2/pm_conv_TWa_EJ;
 
 *** increase capacity factors for coal by ~20% in limit scenario
     vm_capFac(2025,regi,"pc")$sameas(regi,"DEU") = 0.52;
