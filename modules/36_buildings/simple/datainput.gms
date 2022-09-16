@@ -92,18 +92,20 @@ if ((cm_ElLim_b lt 1),
 );
 
 
-*** FS: CES markup cost buildings
+*** CES mark-up cost buildings
 
 
 *** The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
 *** (1) They represent sectoral end-use cost not captured by the energy system. 
-*** (2) As they alter prices to the CES function, they affect the CES efficiency parameters during calibration 
+*** (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
 *** and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
-*** are given by the marginal rate of subsitution in the parameter o01_CESmrs.
+*** are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
 
 *** There are two types of CES mark-up cost:
 *** (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
 *** (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+
+*** Mark-up cost in buildings are modeled with budget-effect (a).
 
 *** default values of CES mark-up with budget effect:
 p36_CESMkup(t,regi,in) = 0;
