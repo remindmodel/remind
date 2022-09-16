@@ -108,6 +108,12 @@ $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
 $endIf.ensec
 
+*** delay coal phase-out in EnSec scenario, minimum bounds of 6 GW in 2030 on coalchp and igcc in EnSec scenarios to replace gas power
+$ifThen.ensec "%cm_Ger_Pol%" == "ensec"
+    vm_cap.lo("2030",regi,"coalchp","1")$(sameAs(regi,"DEU"))=6/1000;
+    vm_cap.lo("2030",regi,"igcc","1")$(sameAs(regi,"DEU"))=6/1000;
+$endIf.ensec
+
 *** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
     vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2/pm_conv_TWa_EJ;
