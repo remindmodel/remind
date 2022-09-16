@@ -65,7 +65,7 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-Please refer to the [installation guide](tutorials/1_GettingREMIND.md).
+Please refer to the [installation guide](tutorials/01_GettingREMIND.md).
 
 
 ## HOW TO CONFIGURE

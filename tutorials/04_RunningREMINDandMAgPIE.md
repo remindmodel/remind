@@ -105,7 +105,7 @@ So, in the end of the coupled run in this example, you should have a directory s
 
 ### What happens during a bundle of coupled runs
 
-Make sure you have read and understood [`3_RunningBundleOfRuns`](./3_RunningBundleOfRuns.md).
+Make sure you have read and understood [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md).
 After Base-rem-1 run is finished, the policy run (NDC-rem-1) is already started as well as Base-rem-2, etc.
 So `NDC-rem-1` uses the `fulldata.gdx` from `Base-rem-1` as `path_gdx_ref`, while `NDC-rem-2` uses `Base-rem-2` and so on:
 
@@ -123,7 +123,7 @@ See comments in the head section of the file. Most importantly you need to provi
 
 ### Configure the config files of your choice
 
-Required as `path_settings_coupled` is a file from [`./config/`](../config) that starts with `scenario_config_coupled*.csv` and provides some extra information for coupled runs (e.g. which run should be started, specific MAgPIE configurations), with one scenario per row and settings on the columns. `path_settings_remind` is a normal `scenario_config` that defines all other REMIND settings, as explained in [`3_RunningBundleOfRuns`](./3_RunningBundleOfRuns.md). Every scenario to be run must be present in both files.
+Required as `path_settings_coupled` is a file from [`./config/`](../config) that starts with `scenario_config_coupled*.csv` and provides some extra information for coupled runs (e.g. which run should be started, specific MAgPIE configurations), with one scenario per row and settings on the columns. `path_settings_remind` is a normal `scenario_config` that defines all other REMIND settings, as explained in [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md). Every scenario to be run must be present in both files.
 
 All the columns must be present in the `scenario_config_coupled.csv` file, but most of them can be left blank. The required ones are:
    - `title`: The name of the scenario, must be unique and match the `title` column in REMIND's `scenario_config.csv`
@@ -133,7 +133,7 @@ All the columns must be present in the `scenario_config_coupled.csv` file, but m
    - `no_ghgprices_land_until`: Controls at which timestep in the MAgPIE runs GHG prices from REMIND will start to be applied. This essentially enables you to set whether or not (or when) GHG prices on land should be applied in MAgPIE. If you want MAgPIE to always apply the same GHG prices from REMIND, you should set this to a timestep corresponding to the start of your REMIND run, such as `y2020` to start in the 2020 timestep. If you want to disable GHG prices in MAgPIE, regardless of what REMIND finds, set this to the last timestep of the run (usually `y2150`). Values in between allow the simulation of policies where GHG prices are only applied in the land use sector after a certain year.
 
 Other, optional columns allow you to make a run start only after another has finished, set starting conditions, and give you finer control over which data is fed to MAgPIE.
-   - `path_gdx`, `path_gdx_ref`, `path_gdx_refpolicycost`, `path_gdx_carbonprice`, `path_gdx_bau`, : Override these same settings in REMIND's `scenario_config`, see [`3_RunningBundleOfRuns`](./3_RunningBundleOfRuns.md) for a detailed explanation.
+   - `path_gdx`, `path_gdx_ref`, `path_gdx_refpolicycost`, `path_gdx_carbonprice`, `path_gdx_bau`, : Override these same settings in REMIND's `scenario_config`, see [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md) for a detailed explanation.
       - You can set these switches either to the full path of a `fulldata.gdx` file or simply to the name of another scenario in the file (without the "C_"!). So if you want a certain scenario (say `NDC`) to use as starting point the results of a `Base` scenario, you can simply set `path_gdx` to `Base` and it will automatically locate the appropriate `fulldata.gdx` in `Base`, for example `path_remind/C_Base-rem-5/fulldata.gdx` if 5 iterations where requested and you run in "serial" mode.
       - If you set any of these `path_gdx…` columns (or `path_mif_ghgprice_land`, below) with a scenario name such as `Base`, the coupling script will not start any runs that depend on an unfinished run, and automatically start them when that run finishes. So, in the example above, you can set `start` to `1` in both `Base` and `NDC`, `NDC` will only start *after* `Base` is finished. `NDC-rem-2` will start after `NDC-rem-1` and `Base-rem-2` are finished.
       - If you set any of these settings with a scenario name, the script will automatically try to detect whether the required "parent" run including the reporting is already finished and uses the appropriate `fulldata.gdx` then. In "serial" mode, if for some reason you changed `max_iterations` between the "parent" run and the current one, it's safer to specify a full path to a `fulldata.gdx` in these settings, otherwise the script may look for the wrong iteration of the "parent" scenario.
