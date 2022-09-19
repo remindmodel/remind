@@ -88,19 +88,28 @@ q01_balLab(t,regi)..
 *** Keep in mind to adjust the calculation of derivatives and shares 
 *** in ./core/reswrite.inc if you change the structure of this function.
 ***---------------------------------------------------------------------------
-q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) .. 
+q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
   vm_cesIO(t,regi,out)
   =e=
-    sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * vm_effGr(t,regi,in)
-      * vm_damageProdFactor(t,regi,in)
-      * vm_cesIO(t,regi,in)
+  !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS for
+  !! very low values of a
+  exp(
+    log(
+      sum(cesOut2cesIn(out,in),
+        pm_cesdata(t,regi,in,"xi")
+      * exp(
+          log(
+	    pm_cesdata(t,regi,in,"eff")
+	  * vm_effGr(t,regi,in)
+	  * vm_damageProdFactor(t,regi,in)
+	  * vm_cesIO(t,regi,in)
+	  )
+	* pm_cesdata(t,regi,out,"rho")
+	)
       )
-   ** pm_cesdata(t,regi,out,"rho")
     )
-  ** (1 / pm_cesdata(t,regi,out,"rho"))
+  * (1 / pm_cesdata(t,regi,out,"rho"))
+  )
 ;
 
 ***---------------------------------------------------------------------------
