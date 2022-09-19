@@ -245,11 +245,11 @@ prepare <- function() {
   setwd(cfg$remind_folder)
 
   # Check configuration for consistency
-  cfg <- check_config(cfg, reference_file="config/default.cfg",
-                      settings_config = "config/settings_config.csv",
-                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                 "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg <- check_config(cfg, reference_file="config/default.cfg",
+#                      settings_config = "config/settings_config.csv",
+#                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                 "gms$cm_CES_configuration", "gms$c_description"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
