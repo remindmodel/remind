@@ -169,7 +169,7 @@
 * 
 * Input data revision: 6.316
 * 
-* Last modification (input data): Fri Sep 02 09:53:52 2022
+* Last modification (input data): Mon Sep 19 11:43:37 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -237,10 +237,8 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 $setGlobal climate  off               !! def = off
 ***---------------------    16_downscaleTemperature    --------------------------
 *** (off)
-*** (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). Requires climate='magicc' and cm_rcp_scen=none"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*** (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
-*** (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
-$setglobal carbonprice  none          !! def = none
+*** (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). Requires climate= 'magicc' and cm_rcp_scen=none"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+$setGlobal downscaleTemperature  off  !! def = off
 ***---------------------    20_growth    ------------------------------------------
 *** (exogenous): exogenous growth
 *** (endogenous): endogenous growth !!Warning: still experimental stuff!!
@@ -425,8 +423,8 @@ parameters
 ***  (6): budget
 ***  (8): forcing target from 2100 onwards (overshoot scen)
 ***  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
-****RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
-****JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
+*** *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
+*** *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ***  (-1): default setting equivalent to no carbon tax
 ***  (any number >= 0): tax level in 2020, with 5% exponential increase over time
@@ -511,7 +509,7 @@ parameters
 ***  (1): 1 %
 ***  (3): 3 %
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
-****RP* even if set to 0, the PE inconvenience cost/SO2-cost for coal are always on if module 21_tax is on
+*** *RP* even if set to 0, the PE inconvenience cost/SO2-cost for coal are always on if module 21_tax is on
 ***  (0): no tax, sub, inconv
 ***  (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
 ***  (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
@@ -930,9 +928,9 @@ $setGlobal cm_CoalRegiPol   off   !! def = off
 $setGlobal cm_proNucRegiPol   off   !! def = off
 *** cm_CCSRegiPol "def = off, year for earliest investment in Europe, with one timestep split between countries currently exploring - Norway (NEN), Netherlands (EWN) and UK (UKI) - and others"
 $setGlobal cm_CCSRegiPol     off   !! def = off
-*** cm_implFETarget "default = 2030.EUR_regi 1.26921. Only active if cm_implicitFE = FEtarget. Enforce EU Energy Efficiency Directive maximum final energy level of 956 Mtoe by 2030 for EU28 regions by exogenous taxes reflecting non price-driven measures, i.e. not influencing the carbon pricing -> 956 Mtoe (956 Mtoe -> 956 * 10^6 toe -> 956 * 10^6 toe * 41.868 GJ/toe -> 40025.808 * 10^6 GJ * 10^-9 EJ/GJ -> 40.025808 EJ * 1 TWa/31.536 EJ -> 1.26921 TWa)"
+*** cm_implFETarget "default = 2030.EUR_regi 1.26921. Only active if cm_implicitFE = off"
 $setGlobal cm_implFETarget  2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
-*** cm_implFEExoTax "default = off. Value to overwrite default defined in the parameter p47_implFEExoTax, ex. "2040.EUR_regi.stat 5, 2050.EUR_regi.stat 10, 2030.EUR_regi.trans 15, 2040.EUR_regi.trans 30, 2050.EUR_regi.trans 40". Only active if cm_implicitFE = exoTax. Sets a FE tax on stationary sectors (industry plus buldings) of 5$/GJ from 2040 onward, and 10$/GJ from 2050 onward; Sets a FE tax on transportation of 15$/GJ from 2030 onward, and 30$/GJ from 2040 onward, and 40$/GJ from 2040 onward."
+*** cm_implFEExoTax "default = off. Value to overwrite default defined in the parameter p47_implFEExoTax, ex. "2040.EUR_regi.stat 5, 2050.EUR_regi.stat 10, 2030.EUR_regi.trans 15, 2040.EUR_regi.trans 30, 2050.EUR_regi.trans 40". Only active if cm_implicitFE = off; Sets a FE tax on transportation of 15$/GJ from 2030 onward, and 30$/GJ from 2040 onward, and 40$/GJ from 2040 onward."
 $setGlobal cm_implFEExoTax  off   !! def = off
 *** cm_vehiclesSubsidies "default = off. If "on" applies country specific BEV and FCEV subsidies from 2020 onwards"
 $setGlobal cm_vehiclesSubsidies  off !! def = off
@@ -1143,7 +1141,7 @@ $setGlobal cm_implicitFE  off !! def = off
 $setglobal cm_transpGDPscale  off  !! def = off
 *** This flag turns off output production
 $setGlobal c_skip_output  off        !! def = off
-  cm_CO2TaxSectorMarkup     "CO2 tax markup in buildings or transport sector, a value of 0.5 means CO2 tax increased by 50%"
+***  cm_CO2TaxSectorMarkup     "CO2 tax markup in buildings or transport sector, a value of 0.5 means CO2 tax increased by 50%"
 ***  (off): no markup
 ***  ("GLO.build 1, USA_regi.trans 0.25, EUR_regi.trans 0.25"): "example for CO2 tax markup in transport of 25% in USA and EUR, and CO2eq tax markup in buildings sector of 100 % in all regions. Currently, build and trans are the only two elements of the set emi_sectors that are supported."
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
