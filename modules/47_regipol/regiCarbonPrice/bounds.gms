@@ -108,37 +108,17 @@ $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
 $endIf.ensec
 
-*** delay coal phase-out in EnSec scenario, minimum bounds of 6 GW in 2030 on coalchp and igcc in EnSec scenarios to replace gas power
+*** increase CF of coal power in Ensec scenarios in 2025 and 2030
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
-    vm_cap.lo("2030",regi,"coalchp","1")$(sameAs(regi,"DEU"))=6/1000;
-    vm_cap.lo("2030",regi,"igcc","1")$(sameAs(regi,"DEU"))=6/1000;
+    vm_capFac.fx("2025",regi,"pc")$sameas(regi,"DEU") = 0.6;
+    vm_capFac.fx("2030",regi,"pc")$sameas(regi,"DEU") = 0.6;
 $endIf.ensec
 
-*** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
+*** PW: limit PE gas demand from 2025 on to 2 EJ/yr gas imports + 0.116 EJ/yr domestic gas production potential in Germany
 $ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
-    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2/pm_conv_TWa_EJ;
-
-*** increase capacity factors for coal by ~20% in limit scenario
-    vm_capFac.fx("2025",regi,"pc")$sameas(regi,"DEU") = 0.52;
-    vm_capFac.fx("2030",regi,"pc")$sameas(regi,"DEU") = 0.48;
-$ontext
-    vm_capFac.fx("2025",regi,"igcc")$sameas(regi,"DEU") = 0.78;
-    vm_capFac.fx("2030",regi,"igcc")$sameas(regi,"DEU") = 0.78;
-    vm_capFac.fx("2025",regi,"coalchp")$sameas(regi,"DEU") = 0.72;
-    vm_capFac.fx("2030",regi,"coalchp")$sameas(regi,"DEU") = 0.72;
-$offtext
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2.116/pm_conv_TWa_EJ;
 $endIf.ensec_lim
 
-*** increase capacity factors for coal by ~10% in ensec scenario
-$ifThen.ensec_ensec "%cm_EnSecScen%" == "ensec"
-    vm_capFac.fx("2025",regi,"pc")$sameas(regi,"DEU") = 0.47;
-    vm_capFac.fx("2030",regi,"pc")$sameas(regi,"DEU") = 0.44;
-$ontext
-    vm_capFac.fx("2025",regi,"igcc")$sameas(regi,"DEU") = 0.71;
-    vm_capFac.fx("2030",regi,"igcc")$sameas(regi,"DEU") = 0.71;
-    vm_capFac.fx("2025",regi,"coalchp")$sameas(regi,"DEU") = 0.66;
-    vm_capFac.fx("2030",regi,"coalchp")$sameas(regi,"DEU") = 0.66;
-$offtext
-$endIf.ensec_ensec
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
