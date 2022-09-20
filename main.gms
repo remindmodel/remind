@@ -243,11 +243,11 @@ $setGlobal downscaleTemperature  off  !! def = off
 *** (exogenous): exogenous growth
 *** (endogenous): endogenous growth !!Warning: still experimental stuff!!
 *** (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
-$setglobal growth   "exogenous"                !! def = exogenous
+$setglobal growth   exogenous                !! def = exogenous
 ***---------------------    21_tax    ------------------------------------------
 *** (on): tax mechanism active
 *** (off): no tax mechanism
-$setglobal tax    "on"           !! def = on
+$setglobal tax    on           !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
 *** (globallyOptimal): Only works with Nash, gives cooperative solution w.r.t. the learning spillover - this should then be equivalent to the Negishi solution.
 *** (off): do not subsidize learning. Default setting for Negishi. With Nash, this gives the non-cooperative solution w.r.t. the learning spillover.
@@ -261,7 +261,7 @@ $setglobal capitalMarket  debt_limit           !! def = debt_limit
 *** (standard): macro-economic commodities and primary energy commodities trading
 *** (se_trade): macro-economic commodities, primary energy commodities and secondary energy hydrogen and electricitiy trading
 *** (capacity): capacity-based trade implementation
-$setglobal trade     "standard"           !! def = standard
+$setglobal trade     standard           !! def = standard
 ***----------------------   26_agCosts  ----------------------------------------
 *** (off): agricultural costs zero, no trade taken into account
 *** (costs): includes total landuse costs
@@ -279,12 +279,12 @@ $setglobal biomass  magpie_40              !! def = magpie_hightccost
 *** (timeDepGrades): time-dependent grade stucture of fossil resources (oil & gas only)
 *** (grades2poly)  : simplified version of the time-dependent grade realization (using polynomial functions)
 *** (exogenous)    : exogenous fossil extraction and costs
-$setglobal fossil    "grades2poly"        !! def = grades2poly
+$setglobal fossil    grades2poly        !! def = grades2poly
 ***---------------------    32_power    ----------------------------------------
 *** (IntC)	:	Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 *** (RLDC)	:	Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
 *** (DTcoup)    : Power sector formulation with coupling to DIETER
-$setglobal power    "IntC"        !! def = IntC
+$setglobal power    IntC        !! def = IntC
 ***---------------------    33_CDR       ----------------------------------------
 *** (off)        : no carbon dioxide removal technologies except BECCS
 *** (weathering) : includes enhanced weathering
@@ -328,11 +328,11 @@ $setglobal techpol  none           !! def = none
 *** (exog):   exogenous emission cap path (generic)  (under construction)
 *** (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
 *** (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
-$setglobal emicapregi   "none"           !! def = none
+$setglobal emicapregi   none           !! def = none
 ***---------------------    42_banking  ----------------------------------------
 *** (off): no banking and borrowing of emission permits, no when-flexibility
 *** (banking):  only banking allowed, no borrowing at all
-$setglobal banking    "off"          !! def = off
+$setglobal banking    off          !! def = off
 ***---------------------    45_carbonprice  ----------------------------------------
 *** This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *** (none): no tax policy (combined with all emiscens except emiscen eq 9)
@@ -346,7 +346,7 @@ $setglobal banking    "off"          !! def = off
 *** (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *** (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
 *** (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
-$setglobal carbonprice   "none"           !! def = none
+$setglobal carbonprice   none           !! def = none
 ***---------------------    46_carbonpriceRegi  ---------------------------------
 *** This module applies a markup pm_taxCO2eqRegi on top of pm_taxCO2eq to achieve additional intermediate targets.
 *** (none): no regional carbonprice policies
@@ -1154,7 +1154,7 @@ $setGlobal c_regi_capturescen  all !! def = all
 $setGlobal c_regi_synfuelscen  all !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
-$setglobal cm_process_based_steel = off; !! def = off
+$setglobal cm_process_based_steel = off !! def = off
 
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = "scenario"
