@@ -112,7 +112,9 @@ resulted from (e.g. `_ITERATION_10.inc`).  To use the calibration results, copy
 the parameter (`.inc`) file (without the iteration counter) to the directory
 `./modules/29_CES_parameters/load/input/` and the .gdx file to the directory
 `./config/gdx-files/`.  At PIK, this is done automatically using the RSE support
-scripts.
+scripts.  See [this wiki
+page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
+for details.
 
 As for diagnostic output, there are the `full.log` and `full.lst` files for each
 calibration iteration (`full_01.log` …), the file `CES_calibration.csv`
