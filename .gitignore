@@ -68,5 +68,4 @@ plotRuntimeDependencies/
 
 # main renv.lock should only be commited for releases
 /renv.lock
-/archive/
 /.Rbuildignore

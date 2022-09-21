@@ -7,7 +7,7 @@ local({
     lockfile <- argv
   } else {
     suppressMessages(here::i_am(file.path("scripts", "utils", "restoreRenv.R")))
-    lockfiles <- c(list.files(here::here("archive"), full.names = TRUE),
+    lockfiles <- c(list.files(here::here("renv/archive"), full.names = TRUE),
                    Filter(file.exists, file.path(list.files(here::here("output"), full.names = TRUE), "renv.lock")))
     message(paste0(seq_along(lockfiles), ": ",
                    sub(here::here(""), "", lockfiles, fixed = TRUE),
