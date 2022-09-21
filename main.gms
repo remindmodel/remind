@@ -169,7 +169,7 @@
 * 
 * Input data revision: 6.316
 * 
-* Last modification (input data): Mon Sep 19 11:43:37 2022
+* Last modification (input data): Wed Sep 21 17:40:01 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -208,8 +208,8 @@ option profile = 0;
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  default
-$setGlobal c_description  REMIND run with default settings
+$setGlobal c_expname  SSP2EU-Base
+$setGlobal c_description  SSP2EU-Base: This baseline calibration scenario follows the Shared Socioeconomic Pathways 2 called Middle of the Road. 
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -396,7 +396,7 @@ $setGlobal optimization  nash         !! def = nash
 ***---------------------    81_codePerformance    -------------------------------
 *** (off): nothing happens
 *** (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially,
-**                    therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
+***                    therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
 $setGlobal codePerformance  off       !! def = off
 
 ***-----------------------------------------------------------------------------
@@ -405,14 +405,32 @@ $setGlobal codePerformance  off       !! def = off
 ***--------------- declaration of parameters for switches ----------------------
 parameters
   cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
+;
+  cm_iteration_max       = 1;     !! def = 1
+parameters
   cm_abortOnConsecFail      "number of iterations of consecutive failures of one region after which to abort"
+;
+  cm_abortOnConsecFail   = 5;     !! def = 5
+parameters
   c_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
+;
+  c_solver_try_max       = 2;     !! def = 2
+parameters
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
+;
+  c_keep_iteration_gdxes = 0;     !! def = 0
+parameters
   cm_keep_presolve_gdxes    "save gdxes for all regions/solver tries/nash iterations for debugging"
+;
+  cm_keep_presolve_gdxes  = 0;     !! def = 0
+parameters
   cm_nash_autoconverge      "choice of nash convergence mode"
 ***  (0): manually set number of iterations by adjusting cm_iteration_max
 ***  (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
 ***  (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
+;
+  cm_nash_autoconverge   = 1;     !! def = 1
+parameters
   cm_emiscen                "policy scenario choice"
 ***  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
 ***  (1): BAU
@@ -425,6 +443,9 @@ parameters
 ***  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
 *** *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
 *** *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
+;
+  cm_emiscen        = 1;               !! def = 1
+parameters
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ***  (-1): default setting equivalent to no carbon tax
 ***  (any number >= 0): tax level in 2020, with 5% exponential increase over time
@@ -699,14 +720,6 @@ parameters
 *** switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 ;
 
-cm_iteration_max       = 1;     !! def = 1
-cm_abortOnConsecFail   = 5;     !! def = 5
-c_solver_try_max       = 2;     !! def = 2
-c_keep_iteration_gdxes = 0;     !! def = 0
-cm_keep_presolve_gdxes  = 0;     !! def = 0
-cm_nash_autoconverge   = 1;     !! def = 1
-
-cm_emiscen        = 1;               !! def = 1
 cm_co2_tax_2020   = -1;              !! def = -1
 cm_co2_tax_growth = 1.05;            !! def = 1.05
 c_macscen         = 1;               !! def = 1
