@@ -73,6 +73,16 @@ $ENDIF.WindOff
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
 
+*** set thresholds above which total VRE share additional integration challenges arise: 
+p32_AddIntCostThreshold(t)$(t.val < 2030) = 50;
+p32_AddIntCostThreshold("2030") = 60;
+p32_AddIntCostThreshold("2035") = 70;
+p32_AddIntCostThreshold("2040") = 80;
+p32_AddIntCostThreshold("2045") = 90;
+p32_AddIntCostThreshold(t)$(t.val > 2045) = 95;
+
+p32_shAddIntCostTotVREFactor = 1.5;
+
 $ontext
 parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"
 /

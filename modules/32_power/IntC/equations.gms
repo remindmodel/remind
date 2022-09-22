@@ -139,10 +139,31 @@ q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
 q32_storloss(t,regi,teVRE)$(t.val ge 2020)..
 	v32_storloss(t,regi,teVRE)
 	=e=
-	v32_shStor(t,regi,teVRE) / 93    !! corrects for the 7%-shift in v32_shStor: at 100% the value is correct again
+	v32_shStorAll(t,regi,teVRE) / 100    
 	* sum(VRE2teStor(teVRE,teStor), (1 - pm_eta_conv(t,regi,teStor) ) /  pm_eta_conv(t,regi,teStor) )
 	* vm_usableSeTe(t,regi,"seel",teVRE)
 ;
+
+q32_TotVREshare(t,regi)..
+  v32_TotVREshare(t,regi)
+  =e=
+  sum(teVRE, v32_shSeEl(t,regi,teVRE) )
+;
+
+q32_shAddIntCostTotVRE(t,regi)..
+  v32_shAddIntCostTotVRE(t,regi)
+  =g=
+  v32_TotVREshare(t,regi)
+  - p32_shAddIntCostTotVREThreshold(t)
+;
+
+q32_shIntegAll(t,regi,teVRE)..
+  v32_shStorAll(t,regi,teVRE) / 100
+  =e=
+  v32_shStor(t,regi,teVRE) / 93  !! corrects for the 7%-shift in v32_shStor: at 100% the value is correct again
+  + p32_shAddIntCostTotVREFactor * v32_shAddIntCostTotVRE(t,regi) / 100 
+;
+
 
 ***---------------------------------------------------------------------------
 *** Operating reserve constraint
