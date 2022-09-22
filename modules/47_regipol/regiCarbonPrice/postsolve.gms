@@ -296,6 +296,20 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
     pm_taxemiMkt(t,regi,"other") = pm_taxemiMkt(t,regi,"ES");
   );
 );
+
+*** output helper parameter
+p47_taxemiMkt_AggEmi(t,regi) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * vm_co2eqMkt.l(t,regi,emiMkt))) / (sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt)));
+p47_taxCO2eq_AggEmi(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
+p47_taxCO2eq_AggEmi(t,regi)$p47_taxemiMkt_AggEmi(t,regi) = p47_taxemiMkt_AggEmi(t,regi);
+
+p47_taxemiMkt_AggFE(t,regi) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxCO2eq_AggFE(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
+p47_taxCO2eq_AggFE(t,regi)$p47_taxemiMkt_AggFE(t,regi) = p47_taxemiMkt_AggFE(t,regi);
+
+p47_taxemiMkt_SectorAggFE(t,regi,sector)$(sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxCO2eq_SectorAggFE(ttot,regi,sector) = pm_taxCO2eqSum(ttot,regi);
+p47_taxCO2eq_SectorAggFE(t,regi,sector)$p47_taxemiMkt_SectorAggFE(t,regi,sector) = p47_taxemiMkt_SectorAggFE(t,regi,sector);
+
 *** display pm_emiMktTarget,pm_emiMktCurrent,pm_emiMktRefYear,pm_emiMktTarget_dev,pm_factorRescaleemiMktCO2Tax;
 
 $ENDIF.emiMkt

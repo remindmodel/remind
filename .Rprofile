@@ -41,6 +41,7 @@ activateSnapshot <- function(snapshot) {
 
 # snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_31_R4"
 # snapshot <- latestSnapshot
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_08_23_R4"
 
 if (exists("snapshot")) {
   activateSnapshot(snapshot)

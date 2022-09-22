@@ -60,6 +60,14 @@ Parameter
   p47_currentConvergencePeriod(ext_regi)             "auxiliar parameter to store the current target year being executed by the convergence algorithm [year]"
   p47_nextConvergencePeriod(ext_regi)                "auxiliar parameter to store the next target year being executed by the convergence algorithm [year]"
   p47_averagetaxemiMkt(ttot,all_regi)                "auxiliar parameter to store the weighted average convergence price between the current target terminal year and the next target year. Only applied for target years different than p47_lastTargetYear"
+
+*** output parameters
+  p47_taxemiMkt_AggEmi(ttot,all_regi)                "CO2eq regional aggregated emission tax (aggregated by emissions)"
+  p47_taxCO2eq_AggEmi(ttot,all_regi)                 "CO2eq global and regional aggregated emission taxes (aggregated by emissions)"
+  p47_taxemiMkt_AggFE(ttot,all_regi)                 "CO2eq regional aggregated emission tax (aggregated by final energy)"
+  p47_taxCO2eq_AggFE(ttot,all_regi)                  "CO2eq global and regional aggregated emission taxes (aggregated by final energy)"
+  p47_taxemiMkt_SectorAggFE(ttot,all_regi,sector)    "CO2eq regional aggregated sectoral emission tax (aggregated by final energy)"
+  p47_taxCO2eq_SectorAggFE(ttot,all_regi,sector)     "CO2eq global and regional aggregated sectoral emission taxes (aggregated by final energy)"
 ;
 
 $ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
