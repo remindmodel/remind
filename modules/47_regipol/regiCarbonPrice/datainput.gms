@@ -153,7 +153,7 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_m
 *** -------------------------Primary Energy Tax--------------------------
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
-$ifThen.cm_EnSecScen "%cm_Ger_Pol%" == "ensec"
+$ifThen.cm_EnSecScen_price "%cm_EnSecScen_price%" == "on"
   pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.32;
   pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.24;
   pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
@@ -180,7 +180,7 @@ $ifThen.cm_EnSecScen "%cm_Ger_Pol%" == "ensec"
   pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
   pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
   pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
-$endIf.cm_EnSecScen
+$endIf.cm_EnSecScen_price
 
 *** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany
 *** as German government seeks to install at least 70 GW of offshore by 2045 and 160 GW onshore wind by 2040 (as of July 2022)
