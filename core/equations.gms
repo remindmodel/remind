@@ -994,11 +994,11 @@ q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe
 
 
 *limit secondary energy district heating and heat pumps
-$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+$IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off" 
 q_heat_limit(t,regi)$(t.val gt 2020)..
     vm_prodFe(t,regi,"sehe","fehes","tdhes")
     =l=
-    %cm_INNOPATHS_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
+    %cm_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
 ;
 $ENDIF.sehe_upper
 

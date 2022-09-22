@@ -213,10 +213,10 @@ if (c_techAssumptScen eq 3,
 display fm_dataglob;
 
 *** Overwrite default technology parameter values based on specific scenario configs
-$if not "%cm_INNOPATHS_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_INNOPATHS_incolearn% /;
-$if not "%cm_INNOPATHS_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
-$if not "%cm_INNOPATHS_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_INNOPATHS_inco0Factor% /;
-$if not "%cm_INNOPATHS_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
+$if not "%cm_incolearn%" == "off" parameter p_new_incolearn(all_te) / %cm_incolearn% /;
+$if not "%cm_incolearn%" == "off" fm_dataglob("incolearn",te)$p_new_incolearn(te)=p_new_incolearn(te);
+$if not "%cm_inco0Factor%" == "off" parameter p_new_inco0Factor(all_te) / %cm_inco0Factor% /;
+$if not "%cm_inco0Factor%" == "off" fm_dataglob("inco0",te)$p_new_inco0Factor(te)=p_new_inco0Factor(te)*fm_dataglob("inco0",te);
 $if not "%cm_inco0RegiFactor%" == "off" parameter p_new_inco0RegiFactor(all_te) / %cm_inco0RegiFactor% /;
 $if not "%cm_inco0RegiFactor%" == "off" p_inco0(ttot,regi,te)$(p_inco0(ttot,regi,te) and p_new_inco0RegiFactor(te)) = p_new_inco0RegiFactor(te)*p_inco0(ttot,regi,te);
 $if not "%cm_learnRate%" == "off" parameter p_new_learnRate(all_te) / %cm_learnRate% /;
@@ -1041,19 +1041,19 @@ $ENDIF.WindOff
 );
 
 ***Rescaling adj seed and coeff
-$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
-$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
+$if not "%cm_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
+$if not "%cm_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
 
 ***Overwritting adj seed and coeff
-$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
+$ifthen not "%cm_adj_seed_cont%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
-$elseif not "%cm_INNOPATHS_adj_seed%" == "off"
+$elseif not "%cm_adj_seed%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $endif
 
-$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
+$ifthen not "%cm_adj_coeff_cont%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
-$elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
+$elseif not "%cm_adj_coeff%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
 $endif
 

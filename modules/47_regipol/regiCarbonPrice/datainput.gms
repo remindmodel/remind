@@ -135,12 +135,12 @@ $endIf.cm_implicitPePriceTarget
 *** Region-specific datainput (with hard-coded regions)
 ***---------------------------------------------------------------------------
 
-$IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
-	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_INNOPATHS_CCS_markup%;
+$IFTHEN.CCScostMarkup not "%cm_CCS_markup%" == "off" 
+	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_CCS_markup%;
 $ENDIF.CCScostMarkup
 
-$IFTHEN.renewablesFloorCost not "%cm_INNOPATHS_renewables_floor_cost%" == "off" 
-	parameter p_new_renewables_floor_cost(all_te) / %cm_INNOPATHS_renewables_floor_cost% /;
+$IFTHEN.renewablesFloorCost not "%cm_renewables_floor_cost%" == "off" 
+	parameter p_new_renewables_floor_cost(all_te) / %cm_renewables_floor_cost% /;
 	pm_data(regi,"floorcost",te)$((regi_group("EUR_regi",regi)) AND (p_new_renewables_floor_cost(te))) = pm_data(regi,"floorcost",te)  + p_new_renewables_floor_cost(te);
 $ENDIF.renewablesFloorCost
 

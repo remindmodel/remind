@@ -151,15 +151,15 @@ p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coe
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
 p_varyAdj_mult_adjCoeff(ttot,all_regi)               "Multiplicative factor to adjust adjustment cost parameter p_adj_coeff according to CO2 price level"
-$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /
-$elseif not "%cm_INNOPATHS_adj_seed%" == "off"
-  p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"  / %cm_INNOPATHS_adj_seed% /
+$ifthen not "%cm_adj_seed_cont%" == "off"
+  p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_adj_seed% , %cm_adj_seed_cont% /
+$elseif not "%cm_adj_seed%" == "off"
+  p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"  / %cm_adj_seed% /
 $endif
-$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
-  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /
-$elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
-  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /
+$ifthen not "%cm_adj_coeff_cont%" == "off"
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_adj_coeff% , %cm_adj_coeff_cont% /
+$elseif not "%cm_adj_coeff%" == "off"
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_adj_coeff% /
 $endif
 
 $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
@@ -518,7 +518,7 @@ q_capH2BI(ttot,all_regi)                                  "H2 infrastructure cap
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry"
 
 
-$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off"
+$IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
 
@@ -615,9 +615,7 @@ file magicc_sed_script /                                 "./magicc/modify_MAGCFG
 
 magicc_sed_script.ap = 0;
 
-
-
-*** INNOPATHS emissions reporting
+*** emissions reporting helper parameters
 
 Parameter
 o_emissions(ttot,all_regi,all_enty)   "output parameter"

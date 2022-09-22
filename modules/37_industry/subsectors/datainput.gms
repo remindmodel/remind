@@ -77,11 +77,11 @@ pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off" 
 pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
                                     pm_abatparam_Ind(ttot,regi,all_enty,steps) )
   = pm_abatparam_Ind(ttot,regi,all_enty,steps);
-  / %cm_INNOPATHS_Industry_CCS_markup%);
+  / %cm_Industry_CCS_markup%);
 $ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,

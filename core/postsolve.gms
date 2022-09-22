@@ -638,7 +638,7 @@ pm_PEPrice(ttot,regi,entyPe)$(abs (qm_budget.m(ttot,regi)) gt sm_eps) =
 *** calculate share of stored CO2 from captured CO2
 pm_share_CCS_CCO2(t,regi) = sum(teCCS2rlf(te,rlf), vm_co2CCS.l(t,regi,"cco2","ico2",te,rlf)) / (sum(teCCS2rlf(te,rlf), vm_co2capture.l(t,regi,"cco2","ico2",te,rlf))+sm_eps);
 
-*** INNOPATHS emissions reporting
+*** emissions reporting helper parameters
 o_emissions_bunkers(ttot,regi,emi)$(ttot.val ge 2005) = 
     sum(se2fe(enty,enty2,te),
         pm_emifac(ttot,regi,enty,enty2,te,emi)

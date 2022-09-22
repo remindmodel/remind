@@ -391,7 +391,7 @@ parameters
   
   cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
   cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-  cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+  cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
   cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
   cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
@@ -577,12 +577,12 @@ cm_damage_KWSE			                  = 0;     !! def = 0
 
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
-cm_INNOPATHS_priceSensiBuild     = -3;
+cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_INNOPATHS_pushCalib  none !! def = none
-$setGlobal cm_INNOPATHS_reducCostB  none !! def = none
-$setGlobal cm_INNOPATHS_effHP  5 !! def = 5
+$setGlobal cm_pushCalib  none !! def = none
+$setGlobal cm_reducCostB  none !! def = none
+$setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 
@@ -711,36 +711,35 @@ $setglobal cm_regNetNegCO2  on       !! def = on
 
 $setglobal cm_transpGDPscale  off  !! def = off
 
-*** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off
 
-$setglobal cm_INNOPATHS_eni  off!! def = off
-$setglobal cm_INNOPATHS_enb  off!! def = off
+$setglobal cm_eni  off!! def = off
+$setglobal cm_enb  off!! def = off
 
-$setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
+$setglobal cm_LDV_mkt_share  off !! def = off
 $setglobal cm_share_LDV_sales  off !! def = off
-$setglobal cm_INNOPATHS_incolearn  off !! def = off
-$setglobal cm_INNOPATHS_storageFactor  off !! def = off
+$setglobal cm_incolearn  off !! def = off
+$setglobal cm_storageFactor  off !! def = off
 $setglobal cm_learnRate  off !! def = off
 
-$setglobal cm_INNOPATHS_adj_seed  off
-$setglobal cm_INNOPATHS_adj_seed_cont  off
-$setglobal cm_INNOPATHS_adj_coeff  off
-$setglobal cm_INNOPATHS_adj_coeff_cont  off
+$setglobal cm_adj_seed  off
+$setglobal cm_adj_seed_cont  off
+$setglobal cm_adj_coeff  off
+$setglobal cm_adj_coeff_cont  off
 
-$setglobal cm_INNOPATHS_adj_seed_multiplier  off
-$setglobal cm_INNOPATHS_adj_coeff_multiplier  off
+$setglobal cm_adj_seed_multiplier  off
+$setglobal cm_adj_coeff_multiplier  off
 
-$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+$setglobal cm_inco0Factor  off !! def = off
 $setglobal cm_inco0RegiFactor  off !! def = off
 
-$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
-$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
-$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
+$setglobal cm_CCS_markup  off !! def = off
+$setglobal cm_Industry_CCS_markup  off !! def = off
+$setglobal cm_renewables_floor_cost  off !! def = off 
 
-$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
+$setglobal cm_DAC_eff  off !! def = off 
 
-$setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
+$setglobal cm_sehe_upper  off !! def = off 
 
 $setglobal cm_fixCO2price  off !! def = off
 
