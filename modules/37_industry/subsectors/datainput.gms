@@ -8,6 +8,45 @@
 
 vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 
+***-------------------------------------------------------------------------------
+***                         MATERIAL-FLOW IMPLEMENTATION
+***-------------------------------------------------------------------------------
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
+PARAMETERS
+  p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  /
+    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
+    
+    dri.eaf.pri             1.0                                             !! DRI demand of EAF
+    scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
+    dri.eaf.sec             0.0
+    scrap.eaf.pri           0.0
+    
+    ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
+    scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
+    scrap.bfbof.pri         0.0
+    ironore.bfbof.sec       0.0
+  /
+
+  p37_specFeDem(entyFe,teMats,opModes)                                      "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+  /
+    feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
+    fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
+    feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
+    
+    feels.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
+    feels.eaf.sec           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
+    
+    fesos.bfbof.pri         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
+    fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
+  /
+;
+$endif.process_based_steel
+
+
+***-------------------------------------------------------------------------------
+***                     REST OF SUBSECTOR INDUSTRY MODULE
+***-------------------------------------------------------------------------------
 *** substitution elasticities
 Parameter
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
@@ -76,6 +115,7 @@ pm_energy_limit(in)
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
 * year (e.g. 2050).
+$ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 if (cm_emiscen eq 1,
   execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
 else
@@ -109,6 +149,7 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
       )
     );
 );
+$endif.no_calibration
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;

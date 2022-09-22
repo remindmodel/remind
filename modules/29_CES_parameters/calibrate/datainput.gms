@@ -240,7 +240,7 @@ $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
 Parameter
- p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
 ;
 
 Parameter
@@ -329,8 +329,14 @@ $endif.industry_subsectors
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
 
 
-*** Load CES parameters parameters from the last run
-Execute_Load 'input'  p29_cesdata_load= pm_cesdata;
+*** Load CES parameters from the last run
+Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
+$ifthen.testOneRegi "%optimization%" == "testOneRegi"   !! optimization
+  !! carry along CES parameters for other regions in testOneRegi runs
+  pm_cesdata(t,regi,in,cesParameter)$( NOT regi_dyn29(regi) )
+  = p29_cesdata_load(t,regi,in,cesParameter);
+$endif.testOneRegi
+
 *** FS: if some elasticities are 0 because they are not part of the input gdx, -> set them to 0.5 to avoid divsion by 0
 p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.5;
 
@@ -357,8 +363,8 @@ pm_cesdata(t,regi,in,"quantity") $p29_esdemand(t,regi,in) = p29_esdemand(t,regi,
 
 *** Load exogenous transport demand - required for the EDGE transport module
 $ifthen.edgesm %transport% ==  "edge_esm"
-pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%", in)
-           = p29_trpdemand(t,regi,"%cm_GDPscen%", "%cm_EDGEtr_scen%", in);
+pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in)
+           = p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in);
 $endif.edgesm
 
 *** Load capital quantities

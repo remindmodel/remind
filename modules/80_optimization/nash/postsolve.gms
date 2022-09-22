@@ -223,21 +223,32 @@ loop(trade$(NOT tradeSe(trade)),
  );
 );
 
-***critertion "infes": and are all solutions optimal?
+*** critertion "infes": and are all solutions optimal?
 loop(regi,
  if((p80_repy(regi,'modelstat') ne 2) and (p80_repy(regi,'modelstat') ne 7),
      s80_bool = 0;
      p80_messageShow("infes") = YES;
   );
 
-***critertion "nonopt": The next lines are a workaround for the status 7 problem. If the objective value does not differ too much from the last known optimal solution, accept this solution as if it were optimal. 
- if( (p80_repy(regi,'modelstat') eq 7) and ((p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval')) lt - 1E-4) ,   !! The 1E-4 are quite arbitrary. One should do more research on how the solution differs over iteration when status 7 occurs. 
-     s80_bool = 0;
-     p80_messageShow("nonopt") = YES;     
-     display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
-     s80_dummy= (p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval'));
-     display s80_dummy;
-   );
+*** critertion "nonopt": The next lines are a workaround for the status 7
+*** problem. If the objective value does not differ too much from the last known
+*** optimal solution, accept this solution as if it were optimal. 
+  if (1 le iteration.val,
+    !! no last iteration if this is the first; NA value in p80_repyLastOptim is
+    !! sticky, so test this separately
+    if (   p80_repy(regi,'modelstat') eq 7
+           !! The 1E-4 are quite arbitrary. One should do more research on how
+	   !! the solution differs over iteration when status 7 occurs. 
+       AND p80_repy(regi,'objval') - p80_repyLastOptim(regi,'objval') lt - 1e-4,
+      s80_bool = 0;
+      p80_messageShow("nonopt") = YES;     
+      display "Not all regions were status 2 in the last iteration. The deviation of the objective function from the last optimal solution is too large to be accepted:";
+      s80_dummy
+      = p80_repy(regi,'objval')
+      - p80_repyLastOptim(regi,'objval');
+      display s80_dummy;
+    );
+  );
 );
 
 ***additional criterion: are the anticipation terms sufficienctly small?

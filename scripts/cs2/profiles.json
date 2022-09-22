@@ -1,0 +1,51 @@
+{
+	"_TITLE_": "Profiles for compareScenarios2",
+	"_NOTE_": "Entries on the top level with a name starting with _ are ignored.",
+	"_DESCRIPTION_": "The top level entries identify the profiles for compareScenarios2 (cs2) when called via 'Rscript output.R'. The sub-entries define the arguments passed to remind2::compareScenarios2(). See the R help page of this function for the meaning of the arguments. The values of the sub-entries are strings, i.e., they start and end with a double quote. These strings will be evaluated as R-code. Use single quotes inside these expressions when quotes are needed. The expressions may contain a variable named '.'. It refers to the value of the variable before applying the profile, e.g., setting outputFile to paste0(., '-suffix') will add a suffix to the file name. For more details, see 'scripts/cs2/run_compareScenarios2.R' and 'output/comparison/compareScenarios2.R'.",
+	"default": {},
+	"defaultHTML": {
+		"outputFormat": "'html'"
+	},
+	"H12": {
+		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')"
+	},
+	"H12-short": {
+		"reg": "c('CAZ', 'CHA', 'EUR', 'IND', 'JPN', 'LAM', 'MEA', 'NEU', 'OAS', 'REF', 'SSA', 'USA', 'World')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2010, 2030, 2050)"
+	},
+	"EU27": {
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
+		"mainReg": "'EU27'"
+	},
+	"EU27-short": {
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2010, 2030, 2050)",
+		"mainReg": "'EU27'"
+	},
+	"AriadneDEU": {
+		"reg": "c('DEU', 'ECE', 'ECS', 'ENC', 'ESC', 'ESW', 'EU27', 'EWN', 'FRA')",
+		"yearsScen": "seq(2005, 2050, 5)",
+		"yearsHist": "c(seq(1990, 2020, 1), seq(2025, 2050, 5))",
+		"yearsBarPlot": "c(2010, 2030, 2050)",
+		"modelsHistExclude": "c('IEA ETP B2DS', 'IEA ETP 2DS', 'IEA ETP RTS', 'EDGE_SSP1', 'EDGE_SSP2', 'CEDS', 'IRENA', 'IEA WEO 2021 APS', 'IEA WEO 2021 SDS', 'IEA WEO 2021 SPS')",
+		"mainReg": "'DEU'"
+	},
+	"summary": {
+		"sections": "c(0,1,99)"
+	},
+	"REMIND-MAgPIE": {
+		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
+	},
+	"MAgPIE": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
+	},
+	"mySection": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/mySection.Rmd')"
+	}
+}

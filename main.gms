@@ -51,10 +51,48 @@
 *' The concatenation process starts with files from the core and continues with files from activated modules, 
 *' in increasing order of module-number. It observes the following structure:
 *'
-*' ![Technical Structure of REMIND](technical_structure.png){ width=100% }
+*' ```
+*' SETS
+*'
+*' DECLARATION    ---> of equations, variables, parameters, and scalars
+*'
+*' DATAINPUT
+*'
+*' EQUATIONS
+*'
+*' PRELOOP        ---> initial calibration of e.g. macroeconomic model
+*'
+*' LOOP
+*'         ---> read gdx
+*' ----------------------------------------------- BEGIN OF NEGISH/NASH ITERATION LOOP -----
+*'       * BOUNDS
+*'       * PRESOLVE
+*'       * SOLVE     ---> solve statement in module 80_optimization
+*'       * POSTSOLVE
+*'
+*'         ---> write gdx
+*' ----------------------------------------------- END OF NEGISHI/NASH ITERATATION LOOP ----
+*'
+*' OUTPUT
+*' ```
 *'
 *'
-*' The GAMS code follows a naming etiquette based on the following prefixes:
+*' The GAMS code follows a Coding Etiquette:
+*'
+*' #### Naming conventions:
+*'
+*' * Please put effort into choosing intelligible names
+*' * Don't just enumerate existing names: `budget1`/`budget2`, `tradebal1`/`tradebal2` will cause everyone
+*' for the next years much more frustration than if you choose names like `emi_budget_G8`/`emi_budget_Mud`,
+*' `tradebal_res`/`tradebal_perm`/`tradebal_good`
+*' * Explain the abbreviation you designed in the descriptive text (the part with the `" "` behind each
+*' parameter/variable/equation declaration). `directteinv` is easier to memorize if you know it means "Direct technology investment"
+*' * Within REMIND files: use Capitalization to improve readability. `XpPerm` is more easily translated into
+*' "Export of Permits" than `xpperm`, the first part of the name (after the prefix) should describe the type
+*' of parameter/variable (e.g. `sh` for share, `cap` for capacity, `prod` for production, `dem` for demand, `cost` for costs)
+*'
+*' #### Prefixes:
+*' Use the following *prefixes*:
 *'
 *' * "q_" to designate equations,
 *' * "v_" to designate variables,
@@ -78,9 +116,51 @@
 *' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
 *'
 *' For the labels of parameters, scalars and set, use double quotes only.
-
-
-
+*'
+*' #### Commenting:
+*'
+*' * Comment all parts of the code generously
+*' * For all equations, it should become clear from the comments what part of the equation is supposed to do what
+*' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
+*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND 
+*' * Never use 4 asterisks (reserved for GAMS error messages)
+*' * Don't use the string `infes` in comments
+*' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).
+*' * Indicate the end of a file by inserting `*** EOF filename.inc ***` 
+*' 
+*' #### Sets
+*' 
+*' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the maglcass R
+*' library might interpret this as a region name when reading in GDX data
+*' 
+*' 
+*' #### Equations:
+*' The general idea is not to write code and equations as short as possible, but to write them in a way they
+*' can be read and understood as fast as possible. To that end:
+*' 
+*' * Write the mathematical operator (`*`, `/`, `+`, `-`) at the beginning of a line, not the end of the last line
+*' * Leave a space before and after `+` and `-` operators and equation signs (`=g=`, `=l=`, `=e=`)
+*' * Leave a space behind the comma of a sum (not behind the commas in set element calling)
+*' * Use indentations to make the structure more readable
+*' * Use full quotes (`"feel"`) instead of single quotes (`'feel'`) when specifying individual elements of
+*' a set (this makes automatic replacement via sed easier)
+*' * Put the equation sign (`=g=`, `=l=`, `=e=`) in a single line without anything else
+*' 
+*' 
+*' #### Other general rules:
+*' * Decompose large model equations into several small equations to enhance readability and model diagnostics
+*' * Don't use hard-coded numbers in the equations part of the model
+*' * Parameters should not be overwritten in the initialization part of the models. Use if-statements instead.
+*' Notable exceptions include parameters that are part a loop iteration, e.g. Negishi weights.
+*' * Have your work double-checked! To avoid bugs and problems: If you make major changes to your code, ask an
+*' experienced colleague to review the changes before they are pushed to the git main repository.
+*' * Use sets and subsets to avoid redundant formulation of code (e.g., for technology groups)
+*' * If big data tables are read in exclude them from the `.lst`-file (by using `$offlisting` and `$onlisting`),
+*' nevertheless display the parameter afterwards for an easier debugging later
+*' * When declaring a parameter/variable/equation always add the sets it is declared for,
+*' e.g. `parameter test(x,y);` instead of `parameter test;`
+*' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
+*' 
 *##################### R SECTION START (VERSION INFO) ##########################
 * 
 * Regionscode: 62eff8f7
@@ -355,6 +435,7 @@ parameters
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
   cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
   cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
+  cm_process_based_steel      "switch to turn on process-based steel implementation"
 ;
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -362,7 +443,7 @@ parameters
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-cm_abortOnConsecFail   = 0;     !! def = 0
+cm_abortOnConsecFail   = 5;     !! def = 5
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_keep_presolve_gdxes  = 0;     !! def = 0
@@ -533,8 +614,8 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
 
 *** flex tax switches
-cm_flex_tax = 0; !! def 0
-cm_PriceDurSlope_elh2 = 20; !! def 10
+cm_flex_tax = 1; !! def 1
+cm_PriceDurSlope_elh2 = 15; !! def 15
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -668,6 +749,8 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
 $setglobal cm_wind_offshore  1      !! def = 1
+
+$setglobal cm_process_based_steel = off; !! def = off
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
