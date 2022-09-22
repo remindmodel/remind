@@ -651,6 +651,7 @@ $setglobal cm_INNOPATHS_adj_seed_multiplier  off
 $setglobal cm_INNOPATHS_adj_coeff_multiplier  off
 
 $setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+$setglobal cm_inco0RegiFactor  off !! def = off
 
 $setglobal cm_INNOPATHS_CCS_markup  off !! def = off
 $setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
