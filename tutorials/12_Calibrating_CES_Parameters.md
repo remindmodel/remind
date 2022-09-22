@@ -1,4 +1,4 @@
-# CES Calibration
+# Calibrationg CES Parameters
 
 ## CES Production Function Basics
 
@@ -55,8 +55,8 @@ For the calibration process to work, we need
 Trajectories under (1) come from the input files `./core/input/f_gdp.cs3r`,
 `./core/input/f_pop.cs3r`,
 `./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`, and
-`./core/input/f_fedemand.cs4r` which are generated automatically by `mrremind`
-and always present.
+`./core/input/f_fedemand.cs4r` which are generated automatically as part of the
+input data generation and always present.
 
 Prices under (2) are calculated using the `input.gdx` provided to the
 calibration run.  User intervention is only required when prices cannot be
@@ -106,13 +106,13 @@ the CES parameters.  They are named based on the CES configuration, the
 GDP/population scenarios, the capital market module realisation and the region
 configuration (e.g.
 `indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7`).
-You don't need to change these names, they are matched automatically.  The
-parameter files also include a counter for the calibration iteration they
-resulted from (e.g. `_ITERATION_10.inc`).  To use the calibration results, copy
-the parameter (`.inc`) file (without the iteration counter) to the directory
-`./modules/29_CES_parameters/load/input/` and the .gdx file to the directory
-`./config/gdx-files/`.  At PIK, this is done automatically using the RSE support
-scripts.  See [this wiki
+You don't need to change these names, they are matched automatically using the
+switch `cm_CES_configuration`.  The parameter files also include a counter for
+the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).  To
+use the calibration results, copy the parameter (`.inc`) file (without the
+iteration counter) to the directory `./modules/29_CES_parameters/load/input/`
+and the .gdx file to the directory `./config/gdx-files/`.  At PIK, this is done
+automatically using the RSE support scripts.  See [this wiki
 page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
 for details.
 
@@ -121,7 +121,8 @@ calibration iteration (`full_01.log` …), the file `CES_calibration.csv`
 containing all the relevant calibration parameters (inputs and outputs) for all
 iterations for automated analysis and a `CES_calibration_report` .pdf file with
 plots of quantities, prices, and efficiency parameters over regions, production
-factors, and time.
+factors, and time.  This .pdf file can also be generated manually using the
+`output.R` script (option "reportCEScalib").
 
 
 ## Validity
