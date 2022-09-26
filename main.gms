@@ -424,8 +424,6 @@ parameters
   cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
   cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
   cm_startIter_EDGET          "starting iteration of EDGE-T"
-  cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
-  cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
   c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
   cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -656,9 +654,6 @@ cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 
 
 cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 
-$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
-
-$setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
 
 $setGlobal c_VREPot_Factor  off !! def = off
 
