@@ -43,7 +43,7 @@ q_costInv(t,regi)..
   sum(sector2te_addTDCost(sector,te),
     vm_costAddTeInv(t,regi,te,sector)
   )
-*** end-use technology cost placed on CES nodes to represent demand-side investment cost:
+*** end-use transformation cost of novel technologies placed on CES nodes that are to be accounted in the budget equation
   +
   sum(in$(ppfen_CESMkup(in)),
     vm_costCESMkup(t,regi,in)

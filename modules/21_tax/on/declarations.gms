@@ -19,7 +19,7 @@ p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction
 p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
-pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to mimic production drain and transformation costs"
+pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
 
 p21_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
 p21_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"

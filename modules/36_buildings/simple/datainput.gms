@@ -119,7 +119,7 @@ p36_CESMkup(t,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
 
 
 *** overwrite or extent CES markup cost if specified by switch
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
+$ifThen.CESMkup not "%cm_CESMkup_build%" == "standard"
   p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in) AND ppfen_MkupCost36(in)) = p36_CESMkup_input(in);
   pm_tau_ces_tax(t,regi,in)$(p36_CESMkup_input(in) AND (NOT ppfen_MkupCost36(in))) = p36_CESMkup_input(in);
 $endIf.CESMkup
