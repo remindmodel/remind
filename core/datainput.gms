@@ -1038,11 +1038,17 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
-***Rescaling adj seed and coeff
-$if not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_INNOPATHS_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
-$if not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_INNOPATHS_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
+***Rescaling adj seed and coeff if adj cost multiplier switches are on
+$ifthen not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"
+   p_adj_seed_te(ttot,regi,te)$(p_adj_seed_multiplier(te)) = p_adj_seed_multiplier(te) * p_adj_seed_te(ttot,regi,te);
+$endif
 
-***Overwritting adj seed and coeff
+$ifthen not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"  
+  p_adj_coeff(ttot,regi,te)$(p_adj_coeff_multiplier(te)) = p_adj_coeff_multiplier(te) * p_adj_coeff(ttot,regi,te);
+$endif
+
+
+***Overwritting adj seed and coeff if adj cost overwrite switches are on
 $ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $elseif not "%cm_INNOPATHS_adj_seed%" == "off"
