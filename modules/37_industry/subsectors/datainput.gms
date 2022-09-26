@@ -115,6 +115,7 @@ pm_energy_limit(in)
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
 * year (e.g. 2050).
+$ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 if (cm_emiscen eq 1,
   execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
 else
@@ -148,6 +149,7 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
       )
     );
 );
+$endif.no_calibration
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;

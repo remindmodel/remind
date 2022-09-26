@@ -86,20 +86,16 @@ $endif.process_based_steel
 ;
 
 *' Thermodynamic limits on subsector energy demand
+$ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                                       ttot.val gt 2020
-				  AND p37_energy_limit_slope(ttot,regi,out) 
-!! deactivate energy limits for calibration, since they would be essentially
-!! random
-$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
-                                  AND NO
-$endif.calibration
-				                                            ) ..
+				  AND p37_energy_limit_slope(ttot,regi,out) ) ..
   sum(ces_eff_target_dyn37(out,in), vm_cesIO(ttot,regi,in))
   =g=
     vm_cesIO(ttot,regi,out)
   * p37_energy_limit_slope(ttot,regi,out)
 ;
+$endif.no_calibration
 
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
 $ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
