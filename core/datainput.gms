@@ -1447,6 +1447,17 @@ $include "./core/magicc/magicc_scen_bau.inc";
 $include "./core/magicc/magicc_scen_450.inc";
 $include "./core/magicc/magicc_scen_550.inc";
 
+***------ Read in emission factors for process emissions in chemicals sector---
+*' will need an update after new IEA balances are integrated
+*' calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
+parameter pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)  "emission factors for feedstocks in the chemicals sector"
+/
+$ondelim
+$include "./core/input/f_nechem_emissionFactors.cs4r"
+$offdelim
+/
+;
+
 *** ----- Parameters needed for MAGICC ----------------------------------------
 
 table p_regi_2_MAGICC_regions(all_regi,RCP_regions_world_bunkers)    "map REMIND to MAGICC regions"
