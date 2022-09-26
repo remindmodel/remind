@@ -329,8 +329,14 @@ $endif.industry_subsectors
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
 
 
-*** Load CES parameters parameters from the last run
-Execute_Load 'input'  p29_cesdata_load= pm_cesdata;
+*** Load CES parameters from the last run
+Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
+$ifthen.testOneRegi "%optimization%" == "testOneRegi"   !! optimization
+  !! carry along CES parameters for other regions in testOneRegi runs
+  pm_cesdata(t,regi,in,cesParameter)$( NOT regi_dyn29(regi) )
+  = p29_cesdata_load(t,regi,in,cesParameter);
+$endif.testOneRegi
+
 *** FS: if some elasticities are 0 because they are not part of the input gdx, -> set them to 0.5 to avoid divsion by 0
 p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.5;
 

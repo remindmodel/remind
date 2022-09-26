@@ -716,6 +716,103 @@ pm_cesdata(t,regi_dyn29,"kap","eff")
 
 display "after change cap eff consistency", pm_cesdata, pm_cesdata_putty;
 
+*** If the value (quantity x price) of either en or kap, or the sum of both,
+*** exceed the quantity of inco (all of which would result in negative labour
+*** prices), scale these prices down accordingly, and warn this is happening.
+if (smax((t,regi_dyn29(regi)),
+       sum(cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+         pm_cesdata(t,regi,in,"quantity")
+       * pm_cesdata(t,regi,in,"price")
+       )
+     / pm_cesdata(t,regi,"inco","quantity")
+     ) gt 1,   !! does the sum of en and cap exceed inco?
+  put logfile, ">>> Warning: Rescaling en and kap prices as their combined ",
+               "value exceeds inco <<<" /;
+  loop ((t,regi_dyn29(regi)),
+    sm_tmp   !! by how much does en + kap exceed inco?
+    = ( ( pm_cesdata(t,regi,"en","quantity")
+        * pm_cesdata(t,regi,"en","price")
+	)
+      + ( pm_cesdata(t,regi,"kap","quantity")
+        * pm_cesdata(t,regi,"kap","price")
+	)
+      )
+    / pm_cesdata(t,regi,"inco","quantity");
+
+    if (sm_tmp > 1,
+      put "  ", t.tl, " ", regi.tl, "   ",
+          pm_cesdata(t,regi,"en","quantity"), " x ",
+	  pm_cesdata(t,regi,"en","price"), " + ",
+	  pm_cesdata(t,regi,"kap","quantity"), " x ",
+	  pm_cesdata(t,regi,"kap","price"), " > ",
+	  pm_cesdata(t,regi,"inco","quantity"), " -> ";
+
+      sm_tmp2
+      = ( pm_cesdata(t,regi,"inco","quantity")
+        - ( pm_cesdata(t,regi,"lab","quantity")
+          * pm_cesdata(t,regi,"lab","price")
+  	  )
+        )
+      / ( ( pm_cesdata(t,regi,"en","quantity")
+          * pm_cesdata(t,regi,"en","price")
+	  )
+        + ( pm_cesdata(t,regi,"kap","quantity")
+          * pm_cesdata(t,regi,"kap","price")
+	  )
+        );
+
+      pm_cesdata(t,regi,"en","price")
+      = pm_cesdata(t,regi,"en","price")
+      * sm_tmp2;
+
+      pm_cesdata(t,regi,"kap","price")
+      = pm_cesdata(t,regi,"kap","price")
+      * sm_tmp2;
+
+      put pm_cesdata(t,regi,"en","price"), ", ", 
+          pm_cesdata(t,regi,"kap","price") /;
+    );
+  );
+  putclose logfile, " " /;
+);
+
+!! do either en or kap exceed inco?
+loop (cesOut2cesIn("inco",in)$( NOT sameas(in,"lab") ),
+  if (smax((t,regi_dyn29(regi)),
+        pm_cesdata(t,regi,in,"quantity")
+      * pm_cesdata(t,regi,in,"price")
+      / pm_cesdata(t,regi,"inco","quantity")
+      ) gt 1,
+    put logfile, ">>> Warning: Rescaling ", in.tl, " prices as its value ",
+                 "exceedes inco <<<" /;
+    loop ((t,regi_dyn29(regi)),
+      sm_tmp
+      = pm_cesdata(t,regi,in,"quantity")
+      * pm_cesdata(t,regi,in,"price")
+      / pm_cesdata(t,regi,"inco","quantity");
+
+      if (sm_tmp gt 1,
+        put "  ", t.tl, " ", regi.tl, in.tl:>4, "   ",
+	    pm_cesdata(t,regi,in,"quantity"), " x ",
+	    pm_cesdata(t,regi,in,"price"), " > ",
+	    pm_cesdata(t,regi,"inco","quantity"), " -> ";
+
+        pm_cesdata(t,regi,in,"price")
+	= ( pm_cesdata(t,regi,"inco","quantity")
+	  - sum(cesOut2cesIn2("inco",in2)$( NOT sameas(in,in2) ),
+	      pm_cesdata(t,regi,in2,"quantity")
+	    * pm_cesdata(t,regi,in2,"price")
+	    )
+	  )
+	/ pm_cesdata(t,regi,in,"quantity");
+
+	put pm_cesdata(t,regi,in,"price") /;
+      );
+    );
+    putclose logfile, " " /;
+  );
+);
+
 *** Second, adjust the price of labour, so that, whithout changing the price of
 *** energy, the Euler equation holds.
 pm_cesdata(t,regi_dyn29,"lab","price")
@@ -728,8 +825,9 @@ pm_cesdata(t,regi_dyn29,"lab","price")
   / pm_cesdata(t,regi_dyn29,"lab","quantity")
 ;
 
-*** Fourth, adjust eff and xi  of labour and energy so that the price matches the derivative.
-loop ((ces_29("inco",in))$( NOT sameas(in,"kap")),
+*** Fourth, adjust eff and xi of labour, energy, and capital, so that the price
+*** matches the derivative.
+loop ((t,regi_dyn29,ces_29("inco",in)),
   pm_cesdata(t,regi_dyn29,in,"xi")
   = pm_cesdata(t,regi_dyn29,in,"price")
   * pm_cesdata(t,regi_dyn29,in,"quantity")
@@ -1458,7 +1556,6 @@ loop ((t_29hist(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf(out))),
     )
  ** (1 / pm_cesdata(t,regi,out,"rho"));
 
-
 !! compute the total for factors that are ppf in the CES and ipf in the putty
 p29_test_CES_recursive(t0(t),regi,ppfIO_putty(out))
   = p29_test_CES_putty_recursive(t,regi,out)
@@ -1510,15 +1607,24 @@ loop ((t_29(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf_29(out)))$(
  ** (1 / pm_cesdata(t,regi,out,"rho"));
 
   p29_test_CES_recursive(t,regi,out)$( NOT ipf_putty(out) )
-  = sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * pm_cesdata(t,regi,in,"effGr")
-      * p29_test_CES_recursive(t,regi,in)
+  !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS
+  = exp(
+      log(
+        sum(cesOut2cesIn(out,in),
+          pm_cesdata(t,regi,in,"xi")
+        * exp(
+            log(
+              ( pm_cesdata(t,regi,in,"eff")
+              * pm_cesdata(t,regi,in,"effGr")
+              * p29_test_CES_recursive(t,regi,in)
+              )
+            )
+          * pm_cesdata(t,regi,out,"rho")
+          )
+        )
       )
-   ** pm_cesdata(t,regi,out,"rho")
-    )
- ** (1 / pm_cesdata(t,regi,out,"rho"));
+    * (1 / pm_cesdata(t,regi,out,"rho"))
+    );
 
   !! compute the total for factors that are ppf in the CES and ipf in the putty
   p29_test_CES_recursive(t,regi_dyn29,out)$( ppfIO_putty(out) )
