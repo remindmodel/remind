@@ -29,8 +29,10 @@ q39_shSynLiq(t,regi)$(cm_shSynLiq gt 0)..
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_seliq",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynLiq(t,regi)
     =e=
-  sum(se2se(entySe,entySe2,te), 
-    vm_prodSe(t,regi,"seh2","seliqsyn",te))
+  sum(se2se(entySe,entySe2,te)$(sameAs(entySe, "seh2") AND 
+                                sameAs(entySe2, "seliqsyn") AND
+                                te_ccu39(te)), 
+    vm_prodSe(t,regi,entySe,entySe2,te))
 ;
 
 *** calculate v39_shSynGas, share of synthetic (hydrogen-based) gas in all SE gases if cm_shSynGas switch used 
@@ -40,8 +42,10 @@ q39_shSynGas(t,regi)$(cm_shSynGas gt 0)..
 	+ sum(se2se(entySe,entySe2,te)$seAgg2se("all_sega",entySe2), vm_prodSe(t,regi,entySe,entySe2,te))
     ) * v39_shSynGas(t,regi)
     =e=
-  sum(se2se(entySe,entySe2,te), 
-    vm_prodSe(t,regi,"seh2","segasyn",te))
+  sum(se2se(entySe,entySe2,te)$(sameAs(entySe, "seh2") AND 
+                                sameAs(entySe2, "segasyn") AND
+                                te_ccu39(te)), 
+    vm_prodSe(t,regi,entySe,entySe2,te))
 ;
 
 *** impose same shares of synfuels in total biofuel+synfuel across all transport subsectors
