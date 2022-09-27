@@ -1417,17 +1417,17 @@ pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie"
 
 *** define non-energy emission factors. For now only for the chemicals industry
 
-pm_emifacNonEnergy(ttot,regi,'segafos','fegas','indst','co2') = 0.051; !! GtC/TWa
-pm_emifacNonEnergy(ttot,regi,'seliqfos','fehos','indst','co2') = 0.069; !! GtC/TWa
-pm_emifacNonEnergy(ttot,regi,'sesofos','fesos','indst','co2') = 0.086; !! GtC/TWa
+* pm_emifacNonEnergy(ttot,regi,'segafos','fegas','indst','co2') = 0.051; !! GtC/TWa
+* pm_emifacNonEnergy(ttot,regi,'seliqfos','fehos','indst','co2') = 0.069; !! GtC/TWa
+* pm_emifacNonEnergy(ttot,regi,'sesofos','fesos','indst','co2') = 0.086; !! GtC/TWa
 
-pm_emifacNonEnergy("2005",regi,'segafos','fegas','indst','co2') = 0.068; !! GtC/TWa
-pm_emifacNonEnergy("2005",regi,'seliqfos','fehos','indst','co2') = 0.092; !! GtC/TWa
-pm_emifacNonEnergy("2005",regi,'sesofos','fesos','indst','co2') = 0.114; !! GtC/TWa
+* pm_emifacNonEnergy("2005",regi,'segafos','fegas','indst','co2') = 0.068; !! GtC/TWa
+* pm_emifacNonEnergy("2005",regi,'seliqfos','fehos','indst','co2') = 0.092; !! GtC/TWa
+* pm_emifacNonEnergy("2005",regi,'sesofos','fesos','indst','co2') = 0.114; !! GtC/TWa
 
-pm_emifacNonEnergy("2010",regi,'segafos','fegas','indst','co2') = 0.071; !! GtC/TWa
-pm_emifacNonEnergy("2010",regi,'seliqfos','fehos','indst','co2') = 0.096; !! GtC/TWa
-pm_emifacNonEnergy("2010",regi,'sesofos','fesos','indst','co2') = 0.119; !! GtC/TWa
+* pm_emifacNonEnergy("2010",regi,'segafos','fegas','indst','co2') = 0.071; !! GtC/TWa
+* pm_emifacNonEnergy("2010",regi,'seliqfos','fehos','indst','co2') = 0.096; !! GtC/TWa
+* pm_emifacNonEnergy("2010",regi,'sesofos','fesos','indst','co2') = 0.119; !! GtC/TWa
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
