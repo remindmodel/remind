@@ -36,6 +36,9 @@ prepare_NDC<-function(gdx, cfg){
   }
 
   getNames(pm_BAU_reg_emi_wo_LU_bunkers) <- NULL
-  write.magpie(pm_BAU_reg_emi_wo_LU_bunkers, "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r", comment="** description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \n*** unit: Mt CO2eq/yr \n*** file created with scripts/input/prepare_NDC.R")
-  write.magpie(pm_BAU_reg_emi_wo_LU_bunkers, "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r", comment="** description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \n*** unit: Mt CO2eq/yr \n*** file created with scripts/input/prepare_NDC.R")
+  write.magpie(pm_BAU_reg_emi_wo_LU_bunkers, "./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r",
+               comment = "description: Regional GHG emi (excl. LU and bunkers) in BAU scenario \nunit: Mt CO2eq/yr \nfile created with scripts/input/prepare_NDC.R",
+               comment.char="*** ")
+  file.copy("./modules/45_carbonprice/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r",
+            "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r")
 }
