@@ -94,11 +94,16 @@ $offdelim
     );
   );
 
-*** initialize first and terminal years auxiliary parameters for price targets 
-  loop(ttot,
+  !!initialize first and terminal years auxiliary parameters for price targets
+  loop(ttot,  
     p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2005;
-    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) $pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2150;
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2150;
   );
+  loop((ttot,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector),
+    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector) = max(ttot.val, p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector));
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) = min(ttot.val, p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector));
+  );
+  p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)$(p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) lt cm_startyear) = cm_startyear;
 
 $endIf.cm_implicitPriceTarget
 
@@ -123,11 +128,16 @@ $offdelim
     );
   );
 
-*** initialize first and terminal years auxiliary parameters for price targets 
-  loop(ttot,
+  !!initialize first and terminal years auxiliary parameters for price targets
+  loop(ttot,  
     p47_implicitPePriceTarget_terminalYear(regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe) = 2005;
     p47_implicitPePriceTarget_initialYear(regi,entyPe) $pm_implicitPePriceTarget(ttot,regi,entyPe) = 2150;
   );
+  loop((ttot,regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe),
+    p47_implicitPePriceTarget_terminalYear(regi,entyPe) = max(ttot.val, p47_implicitPePriceTarget_terminalYear(regi,entyPe));
+    p47_implicitPePriceTarget_initialYear(regi,entyPe) = min(ttot.val, p47_implicitPePriceTarget_initialYear(regi,entyPe));
+  );
+  p47_implicitPePriceTarget_initialYear(regi,entyPe)$(p47_implicitPePriceTarget_initialYear(regi,entyPe) lt cm_startyear) = cm_startyear;
 
 $endIf.cm_implicitPePriceTarget
 

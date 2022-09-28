@@ -98,6 +98,8 @@ Parameter
   pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)  "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
 
   pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the energy usage"
+
+  p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) "initial year of target for given region and energy carrier [year]"
 ;
 
 Equations

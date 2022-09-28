@@ -235,7 +235,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
           );
 ***       linear price between first free year and current target terminal year
           loop(ttot3,
-              s47_firstFreeYear = ttot3.val; 
+            s47_firstFreeYear = ttot3.val; 
             break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
             s47_prefreeYear = ttot3.val;
           );
@@ -434,6 +434,11 @@ p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,e
 
 *** updating energy targets implicit tax
 pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 0;
+loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType), !! initialize before first year auxiliary parameter for targets
+    loop(ttot2$(ttot2.val eq cm_startyear), 
+        p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) =  pm_ttot_val(ttot2-1);
+    );
+);
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
 *** terminal year onward tax
@@ -443,19 +448,13 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
     if(sameas(taxType,"sub"),
       p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
     );
-*** linear price between first free year and terminal year
-    loop(ttot2,
-      s47_firstFreeYear = ttot2.val; 
-      break$((ttot2.val ge ttot.val) and (ttot2.val ge cm_startyear)); !!initial free price year
-      s47_prefreeYear = ttot2.val;
-    );
-    loop(ttot2$(ttot2.val eq s47_prefreeYear),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_firstFreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
+*** linear price between first free year and target year
+    loop(ttot2$(ttot2.val eq p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType)),
+      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
            p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType) +
         (
           p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType)
-        ) / (ttot.val - ttot2.val)
-        * (t.val - ttot2.val)
+        ) * ((t.val - ttot2.val) / (ttot.val - ttot2.val))
       ;
     );
 *** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
@@ -468,6 +467,8 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
       );
     );
   );
+*** update initialYear for further targets
+  p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) = ttot.val;
 );
 
 p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType);
@@ -528,19 +529,20 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
   );
 
 *** smoothing out tax phase-in and phase-out for non controlled years
-  loop((ttot,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector),
-    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector) = max(ttot.val, p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector));
-    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) = min(ttot.val, p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector));
-  );
+  loop((regi,entyFe,entySe,sector)$p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector),
 *** terminal year onward tax (continuous tax up to 2100 and linear decay afterwards)
-  loop((ttot,regi,entyFe,entySe,sector)$(pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) and (ttot.val eq p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector))),
-    p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt ttot.val) = p47_implicitPriceTax(ttot,regi,entyFe,entySe,sector);
-  );
-  p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt 2100) = p47_implicitPriceTax(t,regi,entyFe,entySe,sector) - (p47_implicitPriceTax("2100",regi,entyFe,entySe,sector) * ((t.val - 2150) / (2150 - 2100)));
-*** linear tax between cm_startyear and initial year (p47_implicitPriceTarget_initialYear)
-  loop(ttot$(ttot.val eq cm_startyear),
-    loop((ttot2,regi,entyFe,entySe,sector)$(pm_implicitPriceTarget(ttot2,regi,entyFe,entySe,sector) and (ttot2.val eq p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector))),
-      p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge cm_startyear) and (t.val lt ttot2.val)) = p47_implicitPriceTax(ttot2,regi,entyFe,entySe,sector) * ((t.val - ttot.val) / (ttot2.val - ttot.val));
+    loop(ttot$(ttot.val eq p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector)),
+      p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt ttot.val) = p47_implicitPriceTax(ttot,regi,entyFe,entySe,sector);
+      p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$(t.val gt 2100) = p47_implicitPriceTax("2100",regi,entyFe,entySe,sector) * (1 - ((t.val - 2100) / (2150 - 2100)));
+    );
+*** linear tax between period before cm_startyear and initial year (p47_implicitPriceTarget_initialYear)
+    loop(ttot,
+      s47_firstFreeYear = ttot.val; 
+      break$(ttot.val ge cm_startyear);
+      s47_prefreeYear = ttot.val;
+    );
+    loop(ttot$(ttot.val eq p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)),
+      p47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge cm_startyear) and (t.val lt ttot.val)) = p47_implicitPriceTax(ttot,regi,entyFe,entySe,sector) * ((t.val - s47_prefreeYear) / (ttot.val - s47_prefreeYear));
     );
   );
 
@@ -598,19 +600,20 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
   );
 
 *** smoothing out tax phase-in and phase-out for non controlled years
-  loop((ttot,regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe),
-    p47_implicitPePriceTarget_terminalYear(regi,entyPe) = max(ttot.val, p47_implicitPePriceTarget_terminalYear(regi,entyPe));
-    p47_implicitPePriceTarget_initialYear(regi,entyPe) = min(ttot.val, p47_implicitPePriceTarget_initialYear(regi,entyPe));
-  );
+  loop((regi,entyPe)$p47_implicitPePriceTarget_terminalYear(regi,entyPe),
 *** terminal year onward tax (continuous tax up to 2100 and linear decay afterwards)
-  loop((ttot,regi,entyPe)$(pm_implicitPePriceTarget(ttot,regi,entyPe) and (ttot.val eq p47_implicitPePriceTarget_terminalYear(regi,entyPe))),
-    p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt ttot.val) = p47_implicitPePriceTax(ttot,regi,entyPe);
-  );
-  p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt 2100) = p47_implicitPePriceTax(t,regi,entyPe) - (p47_implicitPePriceTax("2100",regi,entyPe) * ((t.val - 2150) / (2150 - 2100)));
+    loop(ttot$(ttot.val eq p47_implicitPePriceTarget_terminalYear(regi,entyPe)),
+      p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt ttot.val) = p47_implicitPePriceTax(ttot,regi,entyPe);
+      p47_implicitPePriceTax(t,regi,entyPe)$(t.val gt 2100) = p47_implicitPePriceTax("2100",regi,entyPe) * (1 - ((t.val - 2100) / (2150 - 2100)));
+    );
 *** linear tax between cm_startyear and initial year (p47_implicitPePriceTarget_initialYear)
-  loop(ttot$(ttot.val eq cm_startyear),
-    loop((ttot2,regi,entyPe)$(pm_implicitPePriceTarget(ttot2,regi,entyPe) and (ttot2.val eq p47_implicitPePriceTarget_initialYear(regi,entyPe))),
-      p47_implicitPePriceTax(t,regi,entyPe)$((t.val ge cm_startyear) and (t.val lt ttot2.val)) = p47_implicitPePriceTax(ttot2,regi,entyPe) * ((t.val - ttot.val) / (ttot2.val - ttot.val));
+    loop(ttot,
+      s47_firstFreeYear = ttot.val; 
+      break$(ttot.val ge cm_startyear);
+      s47_prefreeYear = ttot.val;
+    );
+    loop(ttot$(ttot.val eq p47_implicitPePriceTarget_initialYear(regi,entyPe)),
+      p47_implicitPePriceTax(t,regi,entyPe)$((t.val ge cm_startyear) and (t.val lt ttot.val)) = p47_implicitPePriceTax(ttot,regi,entyPe) * ((t.val - s47_prefreeYear) / (ttot.val - s47_prefreeYear));
     );
   );
 
