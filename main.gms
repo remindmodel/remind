@@ -919,7 +919,7 @@ parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 *** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings/industry.  
 *** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings/industry. 
-*** This switch only has an effect if the flexibility tax is on by cm_flex_tax = 1.
+*** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 ;
   cm_FlexTaxFeedback = 0; !! def 0
 parameter
