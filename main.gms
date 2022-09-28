@@ -207,6 +207,7 @@ option profile = 0;
 ***           basic scenario choices
 *--------------------------------------------------------------------------
 
+
 ***---------------------    Run name and description    -------------------------
 $setGlobal c_expname  default
 $setGlobal c_description  REMIND run with default settings
@@ -493,7 +494,7 @@ parameter
 ;
   c_bioh2scen      = 1;        !! def = 1
 parameter
-  c_shGreenH2               "lower bound on share of green hydrogen in all hydrogen by 2030"
+  c_shGreenH2               "lower bound on share of green hydrogen in all hydrogen from 2030 onwards"
 ***  (a number between 0 and 1): share
 ;
   c_shGreenH2      = 0;        !! def = 0
@@ -503,14 +504,14 @@ parameter
 ;
   c_shBioTrans     = 1;        !! def = 1
 parameter
-  cm_shSynTrans             "lower bound on share of synthetic fuels in all transport fuels by 2045"
+  cm_shSynLiq               "lower bound on share of synfuels in SE liquids by 2045, gradual scale-up before"
 ***  (a number between 0 and 1): share
 ;
-  cm_shSynTrans    = 0;        !! def = 0
+  cm_shSynLiq    = 0.2;        !! def = 0.2
 parameter
-  cm_shSynGas               "lower bound on share of synthetic gases by 2045"
+  cm_shSynGas               "lower bound on share of synthetic gas in SE gases by 2045, gradual scale-up before"
 ;
-  cm_shSynGas      = 0;        !! def = 0
+  cm_shSynGas      = 0.2;        !! def = 0.2
 parameter
   cm_IndCCSscen             "CCS for Industry"
 ;
@@ -787,7 +788,7 @@ parameter
   c_abtcst                 = 1;      !! def = 1
 parameter
   c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
-*** budgets from AR6 for 2020-2100 (including 2020), for 1.5Â°C: 400 Gt CO2, for 2Â°C: 1150 Gt CO2
+*** budgets from AR6 for 2020-2100 (including 2020), for 1.5°C: 400 Gt CO2, for 2°C: 1150 Gt CO2
 ;
   c_budgetCO2from2020      = 1150;   !! def = 1150
 parameter
@@ -891,7 +892,8 @@ parameter
   cm_biotrade_phaseout = 0; !! def 0
 parameter
   cm_bioprod_histlim          "regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
-*** def -1, means no limit to bioenergy production according to historic demand (positive number means limit production limit of this factor times 2015 PE bioenergy demand)
+*** def -1, means no additional limit to bioenergy production relative to historic production
+*** limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
 ;
   cm_bioprod_histlim = -1; !! def -1
 parameter
@@ -910,11 +912,14 @@ parameter
 parameter
   cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 ***  cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
+*** This switch only has an effect if the flexibility tax is on by cm_flex_tax = 1. 	
 ;
   cm_PriceDurSlope_elh2 = 15; !! def 15
 parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings/ 0 /industry)
+*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings/industry.  
+*** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings/industry. 
+*** This switch only has an effect if the flexibility tax is on by cm_flex_tax = 1.
 ;
   cm_FlexTaxFeedback = 0; !! def 0
 parameter
@@ -924,7 +929,9 @@ parameter
 ***     - ease capacity constraints on storage
 ***     - reduce necessary storage for electricity production
 ***  for 2 - sombre, modify
-***     - incolearn spv to 5010 (150 $/ 0 /kW floor cost)
+***     - incolearn spv to 5010 (150 $/kW floor cost)
+***  for 3 - bleak, modify
+***     - incolearn spv to 4960 (200 $/kW floor cost)
 ;
   cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
 parameter
@@ -958,11 +965,17 @@ parameter
 parameter
   cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
 *** scales bioenergy supply curves in EU regions (mainly used to match EUR H12/ 3 /GJ from 2030 onward, and 30$/GJ from 2040 onward, and 40$/GJ from 2040 onward.
+*** scales slope of bioenergy supply curves in EU subregions (mainly used to match EUR H12/Magpie bioenergy potential)
+*** switch can be removed once supply curves for EU subregions are fixed in input data
 ;
-  cm_BioSupply_Adjust_EU = 3; !! def 1
+  cm_BioSupply_Adjust_EU = 3; !! def 3, 3*bioenergy supply slope obtained from input data
 parameter
   cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 ***  def 1, 100% bioenergy import tax
+***  if larger zero, EU subregions pay cm_BioImportTax_EU of the world market price for in addition biomass imports after 2030 due to sustainability concerns
+***  cm_biotrade_phaseout !! def = 0
+***  (0) no biomass trade restrictions
+***  (1) constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
 ;
   cm_BioImportTax_EU = 1; !! def 0.25
 parameter
@@ -980,6 +993,9 @@ parameter
   cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 *** CCS limitations for Germany
 *** def 0, no suppression of Pe2Se Fossil Carbon Capture in Germany, if 1 then no pe2se fossil CO2 capture in Germany
+*** fossil CCS limitations in Germany+
+*** (0) none
+*** (1) no fossil carbon and capture in Germany
 ;
   cm_noPeFosCCDeu = 0; !! def 0
 parameter
@@ -1000,8 +1016,8 @@ parameter
   cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 parameter
   c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
-*** switch to lower Baseline agriultural emissions, value is the fraction of reduction with respect to default assumptions
-*** reduction starts in 2030, reaches full reduction by 2040
+*** switch to lower Baseline agriultural emissions in all regions, value is the fraction of reduction with respect to default assumptions,
+*** e.g. 0.4 means 40% lower emissions trajectory relative to default, reduction starts in 2030, reaches full reduction by 2040
 ;
   c_BaselineAgriEmiRed = 0; !! def = 0
 parameter
@@ -1153,26 +1169,31 @@ $setGlobal c_regi_sensscen  all !! def = all
 $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 *** industry
 *** maximum secondary steel share
-*** Share is faded in from cm_startyear/2020 to the denoted level by region/year.
-*** Example: "2040.EUR 0.6" will cap the share of secondary steel production at
-*** 60 % in EUR from 2040 onwards.
-$setglobal cm_steel_secondary_max_share_scenario  off !! def off
+$setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
 *** ------------- EU import switches
 ***   cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
-*** def <- "off", e.g. "low_h2", "high_h2", "high_synf" 
+*** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
+*** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
+*** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
-*** Import Assumptions for Ariadne project (needs cm_import_EU to be not off)
+*** Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)
 *** def <- "off", if import assumptions for Germany in Ariadne project -> switch to "on"
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
+*** this switch activates ARIADNE-specific H2 imports for Germany, it requires that cm_import_EU is not "off"
+*** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
+*** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 ***   cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
-*** switch for ariadne energy security scenario
+*** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
+*** (on) energy security scenario for Germany
+*** (off) no energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
 ***  cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
-*** select policies in Germany used for ARIADNE scenarios
-*** switch for ariadne policy assumptions for Germany
+*** switch for Germany-specific policies
+*** (off) default
+*** (ensec) policies for energy security scenario, e.g. faster hydrogen upscaling
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  off        !! def = off
@@ -1198,18 +1219,35 @@ $setglobal cm_INNOPATHS_storageFactor  off !! def = off
 ***  Change learn rate
 *** def <- "off"; or list of techs to change learn rate value. (ex. "apcarelt 0.2")
 $setglobal cm_learnRate  off !! def = off
-*** change technology-dependent v_adjFactor seed value. Smaller means slower scale-up
+*** overwrite technology-dependent v_adjFactor seed value. Smaller means slower scale-up
 *** def <- "off"; or list of techs to change adj_seed value. (ex. "apCarH2T=0.5,apCarElT=0.5,apCarDiEffT=0.25,apCarDiEffH2T=0.25")
 $setglobal cm_INNOPATHS_adj_seed  off
 $setglobal cm_INNOPATHS_adj_seed_cont  off
-*** change coefficient for adjustment costs
+*** These two switches overwrite the technology-dependent adjustment cost seed value. Both have the same functionality. 
+*** overwrite coefficient for adjustment costs. Higher means higher adjustment cost
 *** def <- "off"; or list of techs to change adj_coeff value. (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200")
+*** cm_INNOPATHS_adj_seed_cont only serves to add more changes once the character limit of cm_INNOPATHS_adj_seed is reached. 
+*** Decreasing the adjustment seed value leads to deployment of adjustment cost at slower scale-up rates of capacities. Hence, lower values mean slower scale-up.
+*** The values can be set technology-specific by providing a list (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200"). 
+*** overwrite coefficient for adjustment costs. Higher means higher adjustment cost
 $setglobal cm_INNOPATHS_adj_coeff  off
 $setglobal cm_INNOPATHS_adj_coeff_cont  off
+*** rescale adjustment cost seed value relative to default value. Smaller means slower scale-up.
+*** These two switches overwrite the technology-dependent adjustment cost coefficient. Both have the same functionality. 
+*** cm_INNOPATHS_adj_coeff_cont only serves to add more changes once the character limit of cm_INNOPATHS_coeff_seed is reached. 
+*** Increasing the adjustment cost coefficient leads to high adjustment cost. 
+*** The values can be set technology-specific by providing a list (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200").
 $setglobal cm_INNOPATHS_adj_seed_multiplier  off
+*** rescales adjustment seed value by a certain factor relative to the default value. Works similar to the above adjustment cost switches. 
+*** (ex. "spv 0.5, storspv 0.5, wind 0.25")
 $setglobal cm_INNOPATHS_adj_coeff_multiplier  off
 *** Change investment costs (factor)
 *** def <- "off"; or list of techs with respective factor to change inco0 value. (ex. "ccsinje=0.5,bioigccc=0.66,bioh2c=0.66,biogas=0.66,bioftrec=0.66,bioftcrec=0.66,igccc=0.66,coalh2c=0.66,coalgas=0.66,coalftrec=0.66,coalftcrec=0.66,ngccc=0.66,gash2c=0.66,gasftrec=0.66,gasftcrec=0.66,tnrs=0.66")
+*** rescales adjustment coefficient by a certain factor relative to the default value. Works similar to the above adjustment cost switches. 
+*** (ex. "spv 2, storspv 2, wind 4")
+*** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to 
+*** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time. 
+*** Example: cm_INNOPATHS_adj_seed_multiplier = "spv 0.5" and cm_INNOPATHS_adj_coeff_multiplier = "spv 2". 
 $setglobal cm_INNOPATHS_inco0Factor  off !! def = off
 *** CCS
 *** def <- "off", multiplicative factor for CSS cost markup
@@ -1248,20 +1286,22 @@ $setGlobal cm_CESMkup_build  standard !! def = standard
 *** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli) 
 *** CES markup cost for industry to represent sector-specific demand-side transformation cost
 *** (only applies to industry realization "fixed_shares" for now)
+*** switch to change CES mark-up cost in industry
+*** "standard" applies standard mark-up cost found in 37_industry/subsectors/datainput.gms or 37_industry/fixed_shares/datainput.gms, note that different industry realizations have different CES nodes
+*** Setting the switch to, for example: "feelhth_otherInd 1.5, feh2_cement 0.6" would change the mark-up cost for feelhth_otherInd CES node to 1.3 trUSD/TWa and feh2_cement CES node to 0.6 trUSD/TWa
+*** and keep all other CES mark-up cost as in the standard configuration
+*** Note on CES markup cost:
+*** The CES mark-up cost represent the sector-specific demand-side transformation cost. 
+*** When used in calibration/baseline runs they affect the CES efficiencies and can be used to increase/decrease them
 $setGlobal cm_CESMkup_ind  standard !! def = standard
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).   
 $setglobal cm_feShareLimits  off  !! def = off
-***   cm_ARIADNE_FeShareBounds    "switch for minimum share of liquids and gases for industry needed for the ARIADNE project"
-***  def <- "off", if "on" -> bounds on FE shares in industry used in the ARIADNE project
-$setGlobal cm_ARIADNE_FeShareBounds  off !! def = off
-***   cm_ariadne_VRECapFac_adj       "switch for enabling increase of VRE capacity factors for wind and solar PV in Germany until 2040 in line with ARIADNE assumptions"
-***  adjustment of VRE capacity factors in Germany in line with ARIADNE assumptions
-*** def <- "off", if "on": small increase of VRE capacity factors for wind and solar PV until 2045 in Germany in line with ARIADNE assumptions
-$setGlobal cm_ariadne_VRECapFac_adj  off !! def = off
-***   c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 *** VRE potential switches
 *** rescaling factor for sensitivity analysis on renewable potentials, this factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities swith existing capacities)
 *** (ex. "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
+*** rescaling factor for sensitivity analysis on renewable potentials. 
+*** This factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities with existing capacities)
+*** (example: "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
 $setGlobal c_VREPot_Factor  off !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -1271,7 +1311,7 @@ $setGlobal c_VREPot_Factor  off !! def = off
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
 *** factor for scaling FE tax relative to level in cm_startyear from a specific year onwards for a given sector and FE carrier 
-*** example: cm_FEtax_trajectory_rel = "2040.indst.feels 2" doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
+*** example: cm_FEtax_trajectory_rel = 2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** wind offshore switch
@@ -1349,22 +1389,26 @@ $setglobal cm_process_based_steel   off  !! off
 *** c_CO2priceDependent_AdjCosts
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
-*** switch to generate a co2 price trajectory in the regipol module with a different slope in the first years than in the last years before the target year
-*** e.g. cm_regipol_slope_beforeTarget is set to 2040.EUR 1.3 when pm_regiCO2target is set for 2050:
-*** linaer increase between 2040 and target year (2050) is 1.3 larger than the linear increase of the co2 price before 2040
-*** This is useful if certain budget and year targets need to be fulfilled at the same time as an increase of this factor will induce stronger emissions reductions around the target year 
-*** without necessarily reducing the emissions in the first years as much
-$setglobal cm_regipol_slope_beforeTarget  off  !!def off
+*** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies, 
+***  i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
+***  Example: if set to 10, then the CF of all pe2se technologies can be decreased by up to 10% from the default value
+***  Setting capacity factors free is numerically expensive but can be helpful to see if negative prices disappear in historic years as the model is allowed to dispatch.
+$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+*** cm_dispatchSeelDown <- "off", same as cm_dispatchSetyDown but only provides range to capacity factors of electricity generation technologies
+***  cm_steel_secondary_max_share_scenario
+***  defines maximum secondary steel share per region
+***  Share is faded in from cm_startyear or 2020 to the denoted level by region/year.
+***  Example: "2040.EUR 0.6" will cap the share of secondary steel production at 60 % in EUR from 2040 onwards
+$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
+
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 $setglobal c_delayPolicy  SPA0           !! def = SPA0
-$setGlobal cm_emiMktEScoop  off    !! def = off	
+$setGlobal cm_emiMktEScoop  off    !! def = off
 $setGlobal cm_emiMktES2020price  30 !! def = 30
-$setGlobal cm_emiMktES2050  off   !! def = off	
-$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
-$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
+$setGlobal cm_emiMktES2050  off   !! def = off
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
