@@ -1265,7 +1265,7 @@ $setGlobal c_VREPot_Factor  off !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 *** swtich for setting FE tax to an absolute value in USD/MWh from a specific year onwards for a given sector and FE carrier (for all regions equally)
-*** example: cm_FEtax_trajectory_abs = "2040.indst.feels 20" sets FE electricity tax in industry to 20 USD/MWh from 2040 onwards, before: linear increase from cm_startyear to 2040
+*** example: cm_FEtax_trajectory_abs = 2040.indst.feels 20  sets FE electricity tax in industry to 20 USD/MWh from 2040 onwards, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
@@ -1353,7 +1353,7 @@ $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** linaer increase between 2040 and target year (2050) is 1.3 larger than the linear increase of the co2 price before 2040
 *** This is useful if certain budget and year targets need to be fulfilled at the same time as an increase of this factor will induce stronger emissions reductions around the target year 
 *** without necessarily reducing the emissions in the first years as much
-$setglobal cm_regipol_slope_beforeTarget <- "off"  !!def off
+$setglobal cm_regipol_slope_beforeTarget  off  !!def off
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
