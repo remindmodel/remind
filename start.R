@@ -329,6 +329,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     source("config/default.cfg")
+    # read in GAMS related switches from main.gms
+    cfg$gms <- as.list(readSettings("main.gms"))
     knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                           "regionmapping", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
@@ -382,6 +384,8 @@ if (any(c("--reprepare", "--restart") %in% argv)) {
 
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
     source("config/default.cfg")
+    # read in GAMS related switches from main.gms
+    cfg$gms <- as.list(readSettings("main.gms"))
 
     # Have the log output written in a file (not on the screen)
     cfg$logoption   <- 2
