@@ -756,9 +756,9 @@ $setglobal cm_feShareLimits  off  !! def = off
 
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
-$setglobal cm_wind_offshore  1      !! def = 0
+$setglobal cm_wind_offshore  1      !! def = 1
 
-$setglobal cm_process_based_steel = off; !! def = off
+$setglobal cm_process_based_steel  off !! def = off
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ***                                  END OF WARNING ZONE
