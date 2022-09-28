@@ -58,7 +58,13 @@ $ondelim
 $include "./modules/50_damages/KWTCint/input/f50_gdp.cs3r"
 $offdelim
 ;
-pm_GDPfrac(tall,iso) = f50_countryGDP(tall,iso,"gdp_SSP2EU")/sum(regi2iso(regi,iso),pm_gdp(tall,regi));
+pm_GDPfrac(tall,iso) = f50_countryGDP(tall,iso,"gdp_SSP2EU")/1000000/sum(regi2iso(regi,iso),pm_gdp(tall,regi)/pm_shPPPMER(regi));
+loop(ttot$(ttot.val ge 2005),
+	loop(tall$(pm_tall_2_ttot(tall,ttot)),
+		pm_GDPfrac(tall,iso) = 
+			(1-pm_interpolWeight_ttot_tall(tall))*pm_GDPfrac(ttot,iso)
+			+ pm_interpolWeight_ttot_tall(tall)*pm_GDPfrac(ttot+1,iso);
+));
 display pm_GDPfrac;
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 
