@@ -858,7 +858,7 @@ parameter
   cm_INNOPATHS_priceSensiBuild     = -3;
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
-***    time of net-zero CO2 emissions (peak budget), requires emiscen = 9 and cm_iterative_target_adj = 7, will potentially be adjusted by algorithms
+***    time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
   cm_peakBudgYr            = 2050;   !! def = 2050
 parameter
   cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
@@ -1349,7 +1349,7 @@ $setglobal cm_process_based_steel   off  !! off
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** switch to generate a co2 price trajectory in the regipol module with a different slope in the first years than in the last years before the target year
-*** e.g. cm_regipol_slope_beforeTarget = 2040.EUR 1.3 when pm_regiCO2target is set for 2050:
+*** e.g. cm_regipol_slope_beforeTarget is set to 2040.EUR 1.3 when pm_regiCO2target is set for 2050:
 *** linaer increase between 2040 and target year (2050) is 1.3 larger than the linear increase of the co2 price before 2040
 *** This is useful if certain budget and year targets need to be fulfilled at the same time as an increase of this factor will induce stronger emissions reductions around the target year 
 *** without necessarily reducing the emissions in the first years as much
