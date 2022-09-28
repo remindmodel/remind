@@ -19,3 +19,6 @@ pm_globalMeanTemperatureZeroed1900,input,questionnaire
 cm_damages_BurkeLike_specification,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
 pm_damageMarginal,input,questionnaire
+pm_shPPPMER,input,questionnaire
+pm_interpolWeight_ttot_tall,input,questionnaire
+pm_tall_2_ttot,input,questionnaire

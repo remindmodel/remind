@@ -30,3 +30,6 @@ pm_damageIso,input,questionnaire
 pm_damageGrowthRateIso,input,questionnaire
 pm_damageTC,input,questionnaire
 pm_damageScc,input,questionnaire
+pm_shPPPMER,input,questionnaire
+pm_interpolWeight_ttot_tall,input,questionnaire
+pm_tall_2_ttot,input,questionnaire

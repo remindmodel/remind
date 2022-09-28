@@ -167,7 +167,7 @@
 * 
 * Input data revision: 6.316
 * 
-* Last modification (input data): Wed Sep 28 10:22:07 2022
+* Last modification (input data): Wed Sep 28 10:35:42 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -222,8 +222,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  SSP2EU-Base
-$setGlobal c_description  REMIND run SSP2EU-Base started by config/scenario_config_GCS.csv.
+$setGlobal c_expname  default
+$setGlobal c_description  REMIND run with default settings
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -240,9 +240,9 @@ $setGlobal initialCap  on             !! def = on
 ***---------------------    11_aerosols    --------------------------------------
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
-$setGlobal climate  magicc               !! def = off
+$setGlobal climate  off               !! def = off
 ***---------------------    16_downscaleTemperature    --------------------------
-$setGlobal downscaleTemperature  CMIP5  !! def = off
+$setGlobal downscaleTemperature  off  !! def = off
 ***---------------------    20_growth    ----------------------------------------
 $setGlobal growth  exogenous          !! def = exogenous
 ***---------------------    21_tax    -------------------------------------------
@@ -272,7 +272,7 @@ $setglobal buildings  simple          !! def = simple
 ***---------------------    37_industry    --------------------------------------
 $setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    -------------------------------------------
-$setglobal CCU  off !! def = on
+$setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
 $setglobal techpol  none              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
@@ -286,7 +286,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    47_regipol  -----------------------------------------
 $setglobal regipol  none              !! def = none
 ***---------------------    50_damages    ---------------------------------------
-$setGlobal damages  TC               !! def = off
+$setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ----------------------------
 $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
@@ -458,7 +458,7 @@ cm_co2_tax_growth = 1.05;            !! def = 1.05
 c_macscen         = 1;               !! def = 1
 
 cm_nucscen       = 2;        !! def = 2
-cm_ccapturescen  = 2;        !! def = 1
+cm_ccapturescen  = 1;        !! def = 1
 c_bioliqscen     = 1;        !! def = 1
 c_bioh2scen      = 1;        !! def = 1
 c_shGreenH2      = 0;        !! def = 0
@@ -519,7 +519,7 @@ c_cint_scen           = 1;         !! def = 1
 cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
-c_ccsinjecratescen    = 0;         !! def = 1
+c_ccsinjecratescen    = 1;         !! def = 1
 $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
@@ -537,12 +537,12 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2from2020FFI   = 700;    !! def = 700 
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2from2020      = 0;   !! def = 1150
+c_budgetCO2from2020      = 1150;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
-cm_peakBudgYr            = 2100;   !! def = 2050
+cm_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
@@ -593,7 +593,7 @@ $setGlobal cm_INNOPATHS_pushCalib  none !! def = none
 $setGlobal cm_INNOPATHS_reducCostB  none !! def = none
 $setGlobal cm_INNOPATHS_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  Mix  !! def = Mix1
+$setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -682,7 +682,7 @@ $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal c_EARLYRETIRE       on         !! def = on
-$setGlobal cm_OILRETIRE  off        !! def = on
+$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
 $setGlobal cm_so2_out_of_opt  on         !! def = on
@@ -692,8 +692,8 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 $setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
-$setGlobal cm_magicc_calibrateTemperature2000  HADCRUT4  !! def=uncalibrated
-$setGlobal cm_magicc_config  RCP26_50    !! def = OLDDEFAULT
+$setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
+$setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT
 $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
