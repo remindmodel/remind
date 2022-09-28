@@ -65,7 +65,7 @@ vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
 *** Note: make sure that this matches with the settings for residues in modules/05_initialCap/on/preloop.gms
 
 *BS/DK* Developed regions phase out quickly (no new capacities)
-vm_deltaCap.up(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
+vm_deltaCap.fx(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
 *BS/DK* Developing regions (defined by GDP PPP threshold) phase out more slowly ( + varied by SSP)
 loop(regi,
   if ( (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,

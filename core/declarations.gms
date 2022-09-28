@@ -162,6 +162,14 @@ $elseif not "%cm_adj_coeff%" == "off"
   p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_adj_coeff% /
 $endif
 
+$ifthen not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"
+  p_adj_seed_multiplier(all_te)                               "factor to multiply standard adjustment seed with" / %cm_INNOPATHS_adj_seed_multiplier% /
+$endif
+
+$ifthen not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"
+  p_adj_coeff_multiplier(all_te)                               "factor to multiply standard adjustment cost coefficient with" / %cm_INNOPATHS_adj_coeff_multiplier% /
+$endif
+
 $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
   p_VREPot_Factor(all_te) "Rescale factor for renewable potentials" / %c_VREPot_Factor% /
 $endif.VREPot_Factor

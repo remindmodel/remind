@@ -259,6 +259,9 @@ fm_dataglob("flexibility","storwindoff")  = 1.93;
 fm_dataglob("flexibility","windoff")  = -1;
 $ENDIF.WindOff
 
+* inco0 (and incolearn) are given in $/kW (or $/(tC/a) for dac)
+* convert to REMIND units, i.e., T$/TW (or T$/(GtC/a) for dac)
+* note that factor for $/kW -> T$/TW is the same as for $/(tC/a) -> T$/(GtC/a)
 fm_dataglob("inco0",te)              = sm_DpKW_2_TDpTW       * fm_dataglob("inco0",te);
 fm_dataglob("incolearn",te)          = sm_DpKW_2_TDpTW       * fm_dataglob("incolearn",te);
 fm_dataglob("omv",te)                = s_DpKWa_2_TDpTWa      * fm_dataglob("omv",te);
@@ -1040,11 +1043,16 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
-***Rescaling adj seed and coeff
-$if not "%cm_adj_seed_multiplier%" == "off"  p_adj_seed_te(ttot,regi,te) = %cm_adj_seed_multiplier% *  p_adj_seed_te(ttot,regi,te);
-$if not "%cm_adj_coeff_multiplier%" == "off"  p_adj_coeff(ttot,regi,te) = %cm_adj_coeff_multiplier% *  p_adj_coeff(ttot,regi,te);
+***Rescaling adj seed and coeff if adj cost multiplier switches are on
+$ifthen not "%cm_adj_seed_multiplier%" == "off"
+   p_adj_seed_te(ttot,regi,te)$(p_adj_seed_multiplier(te)) = p_adj_seed_multiplier(te) * p_adj_seed_te(ttot,regi,te);
+$endif
 
-***Overwritting adj seed and coeff
+$ifthen not "%cm_adj_coeff_multiplier%" == "off"  
+  p_adj_coeff(ttot,regi,te)$(p_adj_coeff_multiplier(te)) = p_adj_coeff_multiplier(te) * p_adj_coeff(ttot,regi,te);
+$endif
+
+***Overwritting adj seed and coeff if adj cost overwrite switches are on
 $ifthen not "%cm_adj_seed_cont%" == "off"
   p_adj_seed_te(ttot,regi,te)$p_new_adj_seed(te) = p_new_adj_seed(te);
 $elseif not "%cm_adj_seed%" == "off"
