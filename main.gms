@@ -372,15 +372,15 @@ $setglobal regipol  none              !! def = none
 $setGlobal damages  off               !! def = off
 ***---------------------    51_internalizeDamages    ----------------------------
 *** (off):
-*** (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen=9 for now.
-*** (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen=9 for now.
-*** (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen=9 for now.
-*** (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen=9 for now.
-*** (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen=9 for now.
-*** (KW_SEitr): Internalize damage function based on Kalkuhl & Wenz (2020) for upper limit based on standard error. Requires cm_emiscen=9 for now.
-*** (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen=9 for now.
-*** (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen=9 for now.
-*** (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen=9 for now.
+*** (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen set to 9 for now.
+*** (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen set to 9 for now.
+*** (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen set to 9 for now.
+*** (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen set to9 for now.
+*** (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen set to 9 for now.
+*** (KW_SEitr): Internalize damage function based on Kalkuhl & Wenz (2020) for upper limit based on standard error. Requires cm_emiscen set to 9 for now.
+*** (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen set to 9 for now.
+*** (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
+*** (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
 $setGlobal internalizeDamages  off               !! def = off
 ***---------------------    70_water  -------------------------------------------
 *** (off): no water demand taken into account
@@ -607,7 +607,7 @@ parameter
   cm_prtpScen         = 3;         !! def = 3
 parameter
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
-*** *RP* even if set to 0, the PE inconvenience cost/SO2-cost for coal are always on if module 21_tax is on
+*** *RP* even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
 ***  (0): no tax, sub, inconv
 ***  (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
 ***  (2): converging tax, phased out sub (-2030), no inconvenience cost so far (used in SSP 1)
@@ -684,7 +684,7 @@ parameter
 ***  (1): so2 tax is low
 ***  (2): so2 tax is standard
 ***  (3): so2 tax is high
-***  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3)/(2)
+***  (4): so2 tax intermediary between 1 and 2, multiplying (1) tax by the ratio (3) and (2)
 ;
   cm_so2tax_scen        = 1;         !! def =
 parameter
