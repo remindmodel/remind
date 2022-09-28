@@ -953,19 +953,20 @@ run <- function(start_subsequent_runs = TRUE) {
         getLoadFile()
 
         # Store all the interesting output
-        file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
-        file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
+        interestingOutput <- c("full.lst", "full.log", "fulldata.gdx", "non_optimal.gdx", "abort.gdx")
+        file.copy(from = interestingOutput,
+                  to = sub("^(.*)(\\.[^\\.]+)$", sprintf("\\1_%02i\\2", cal_itr), interestingOutput), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
-        file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
-                  overwrite = TRUE)
-        if (file.exists("non_optimal.gdx")) {
-          file.rename("non_optimal.gdx", sprintf("non_optimal_%02i.gdx", cal_itr))
+        if (cal_itr < cfg$gms$c_CES_calibration_iterations) {
+          unlink(c("abort.gdx", "non_optimal.gdx"))
+        } else { # calibration was successful
+          file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration, ".gdx"))
+          file.copy(from = paste0(cfg$gms$cm_CES_configuration, "_ITERATION_", cal_itr, ".inc"),
+                    to = paste0(cfg$gms$cm_CES_configuration, ".inc"))
         }
 
         # Update file modification time
         fulldata_m_time <- file.info("fulldata.gdx")$mtime
-
       } else {
         break
       }
