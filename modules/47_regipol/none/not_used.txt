@@ -61,3 +61,9 @@ pm_implicitPriceTarget,input,questionnaire
 pm_implicitPrice_NotConv,input,questionnaire
 pm_implicitPrice_ignConv,input,questionnaire
 p47_implicitPrice_dev,input,questionnaire
+vm_prodPe,input,questionnaire
+pm_PEPrice,input,questionnaire
+pm_ttot_val,input,questionnaire
+pm_implicitPePriceTarget,input,questionnaire
+pm_implicitPePrice_NotConv,input,questionnaire
+pm_implicitPePrice_ignConv,input,questionnaire

@@ -54,3 +54,6 @@ pm_FEPrice_iter,                parameter,  not needed
 pm_implicitPriceTarget,         parameter,  not needed
 pm_implicitPrice_NotConv,       parameter,  not needed
 pm_implicitPrice_ignConv,       parameter,  not needed
+pm_implicitPePriceTarget,       parameter,  not needed
+pm_implicitPePrice_NotConv,     parameter,  not needed
+pm_implicitPePrice_ignConv,     parameter,  not needed
