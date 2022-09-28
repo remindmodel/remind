@@ -24,20 +24,24 @@ p50_damageFuncCoefTC0(isoTC) = 0;
 p50_damageFuncCoefTC1(isoTC) = 0;
 
 *** load TC damage parameter data
-table f50_TCconst(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter constant"
+parameter f50_TCconst(isoTC,all_TCpers,all_TCspec)	"damage parameter constant"
+/
 $ondelim
-$include "./modules/50_damages/KWTCint/input/TC_df_parameters_const.csv"
+$include "./modules/50_damages/KWTCint/input/f50_TC_df_const.cs4r"
 $offdelim
+/
 ;
 
-table f50_TCtasK(isoTC,all_SSPscen,all_TCpers,all_TCspec)	"damage parameter, linear with temperature"
+parameter f50_TCtasK(isoTC,all_TCpers,all_TCspec)	"damage parameter, linear with temperature"
+/
 $ondelim
-$include "./modules/50_damages/KWTCint/input/TC_df_parameters_tasK.csv"
+$include "./modules/50_damages/KWTCint/input/f50_TC_df_tasK.cs4r"
 $offdelim
+/
 ;
 
-p50_damageFuncCoefTC0(isoTC) = f50_TCconst(isoTC,"%cm_TCssp%","%cm_TCpers%","%cm_TCspec%")/100;
-p50_damageFuncCoefTC1(isoTC) = f50_TCtasK(isoTC,"%cm_TCssp%","%cm_TCpers%","%cm_TCspec%")/100;
+p50_damageFuncCoefTC0(iso) = f50_TCconst(iso,"%cm_TCpers%","%cm_TCspec%")/100;
+p50_damageFuncCoefTC1(iso) = f50_TCtasK(iso,"%cm_TCpers%","%cm_TCspec%")/100;
 
 * initialize
 pm_damage(tall,regi) = 1;
@@ -48,12 +52,14 @@ pm_damageMarginalT(tall,regi)           = 0;
 pm_damageMarginalTm1(tall,regi)           = 0;
 pm_damageMarginalTm2(tall,regi)           = 0;
 
-table f50_countryGDPfrac(tall,iso,all_GDPscen)	"ratio country to regional GDP"
+*read in GDP to calculate fraction of countries in a region
+table f50_countryGDP(tall,iso,all_GDPscen)	"ratio country to regional GDP"
 $ondelim
-$include "./modules/50_damages/KWTCint/input/gdp_countryFrac_ann.csv"
+$include "./modules/50_damages/KWTCint/input/f50_gdp.cs3r"
 $offdelim
 ;
-pm_GDPfrac(tall,iso) = f50_countryGDPfrac(tall,iso,"gdp_SSP2EU");
+pm_GDPfrac(tall,iso) = f50_countryGDP(tall,iso,"gdp_SSP2EU")/sum(regi2iso(regi,iso),pm_gdp(tall,regi));
+display pm_GDPfrac;
 pm_GDPfrac(tall,iso)$(tall.val ge 2150) = pm_GDPfrac("2150",iso);
 
 *** EOF ./modules/50_damages/KWTCint/datainput.gms

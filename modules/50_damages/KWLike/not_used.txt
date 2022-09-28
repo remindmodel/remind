@@ -22,4 +22,5 @@ pm_damageGrowthRateIso,input,questionnaire
 pm_damageScc,input,questionnaire
 pm_damageProd,input,questionnaire
 pm_GDPfrac,input,questionnaire
+pm_gdp,input,questionnaire
 cm_damage_KWSE,input,switch not required
