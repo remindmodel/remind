@@ -211,11 +211,13 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 
 ### Static part
 
-* bioenergy supply curves in REMIND derived from MAgPIE (vignette remulator package)
+* bioenergy supply curves in REMIND derived from MAgPIE (updated in coupled runs)
 * CO2 MAC: currently deactivated due to negligible differences in CO2 LUC emissions across RCPs
 * CH4/N2O MAC (turned on in REMIND standalone, turned off in REMIND coupled because abatement is part of MAgPIE)
-* GHG emission baselines for SSPs/RCPs (updated in coupled runs)
+* GHG emission baselines for SSPs/RCPs (delivered to REMIND via (updated in coupled runs)
 * total agricultural production costs (fixed for standalone and coupled)
+
+Please find here a [detailed list of the REMIND input files and were they come from here](https://redmine.pik-potsdam.de/projects/remind-r/wiki/Updating_inputs_from_MAgPIE).
 
 ### Assumptions
 
