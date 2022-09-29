@@ -14,6 +14,5 @@ sm_tmp2,                 parameter,  not needed
 cm_import_EU,            switch,     not needed
 vm_cap,                  variable,   not needed
 vm_capFac,               variable,   not needed
-cm_process_based_steel,  switch,     not needed
 vm_Xport,                variable,   not needed
 vm_Mport,                variable,   not needed

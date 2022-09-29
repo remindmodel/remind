@@ -217,10 +217,10 @@ $setGlobal c_description  REMIND run with default settings
 ***------------------------------------------------------------------------------
 
 ***---------------------    01_macro    -----------------------------------------
-*** (singleSectorGr): 
+*** (singleSectorGr) 
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 ***---------------------    02_welfare    ---------------------------------------
-*** (utilitarian): 
+*** (utilitarian) 
 $setGlobal welfare  utilitarian  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
 *** (iea2014): new PE-FE parameters based on IEA 2014
@@ -229,7 +229,7 @@ $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 *** (on):      load existing CES parameters matching model configuration
 $setGlobal initialCap  on             !! def = on
 ***---------------------    11_aerosols    --------------------------------------
-*** (exoGAINS)   :
+*** (exoGAINS):
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 ***---------------------    15_climate    ---------------------------------------
 *** (off): no climate coupling
@@ -403,7 +403,6 @@ $setGlobal codePerformance  off       !! def = off
 ***-----------------------------------------------------------------------------
 ***                     SWITCHES 
 ***-----------------------------------------------------------------------------
-***--------------- declaration of parameters for switches ----------------------
 parameter
   cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
 ;

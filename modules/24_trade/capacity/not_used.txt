@@ -6,7 +6,5 @@
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
 pm_gdp,input,questionnaire
-cm_import_EU,input,questionnaire
-
 pm_SEPrice, parameter, not yet used in capacity realization
-cm_Ger_Pol,input,questionnaire
+
