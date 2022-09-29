@@ -142,7 +142,7 @@ To restart a run in "debug" mode, run
 ```bash
 Rscript start.R --debug --reprepare
 ```
-in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will recreate move `full.gms` and `fulldata.gdx` to filenames with an appended `_old` and restart the input preparation and the model run.
+in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will move `full.gms` and `fulldata.gdx` to filenames with an appended `_beforeRestart` and restart the input preparation and the model run.
 
 If you only want to look at a specific region that created the infeasibility, you can either specify `c_testOneRegi_region` in `scenario_config_XYZ.csv`:
 ```bash
