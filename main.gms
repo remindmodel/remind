@@ -507,11 +507,11 @@ parameter
   cm_shSynLiq               "lower bound on share of synfuels in SE liquids by 2045, gradual scale-up before"
 ***  (a number between 0 and 1): share
 ;
-  cm_shSynLiq    = 0.2;        !! def = 0.2
+  cm_shSynLiq    = 0;        !! def = 0
 parameter
   cm_shSynGas               "lower bound on share of synthetic gas in SE gases by 2045, gradual scale-up before"
 ;
-  cm_shSynGas      = 0.2;        !! def = 0.2
+  cm_shSynGas      = 0;        !! def = 0
 parameter
   cm_IndCCSscen             "CCS for Industry"
 ;
