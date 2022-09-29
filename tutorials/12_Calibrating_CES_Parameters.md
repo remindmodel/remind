@@ -1,5 +1,22 @@
 # Calibrationg CES Parameters
 
+## Introduction
+
+REMIND uses a production function with nested Constant Elasticity of Substitution (CES) to determine a region's Gross Domestic Product (GDP) and several intermediate products (such as different industry sectors' output). This function has the general form:
+
+$V_o = \left( \sum{\alpha_i {V_i}^{\rho_o}} \right)^{\frac{1}{\rho_o}}$
+
+with output quantity $V_o$, input quantities $V_i$, elasticity parameter
+$\rho_o$, and efficiency parameters $\alpha_i$. 
+
+In a regular REMIND run, the elasticity $\rho_o$, and efficiency parameters $\alpha_i$ for all the nodes of the nested CES function are fixed, with the various policies and settings in a given scenario affecting input quantities and, consequently, output quantities. 
+
+While the valuess of the elasticity parameters
+$\rho_o$ are fixed in the model code, the efficiency parameters $\alpha_i$ are determined in a special calibration run. In a calibration run, the efficiency parameters are calibrated to predefined input and output values of a given baseline scenario, generally given by an SSP (Shared Socioeconomic Pathway) narrative. The idea is that, in a baseline run, $V_i$ and $V_o$ should alway (approximately) match the values given in that predefined scenario.
+
+Thefore, the general rule is that every time something is changed in the model that affects the input and output results of a baseline (no-policy) run for a given SSP, such as changing assumptions on the scenario itself (in pre-processing) or bounds on the mixes of inputs required for an intermediary product (such as the outputs of different industry `subsectors`), you might need a new calibration. This tutorial presents the basics of how to perform, use and debug a new calibration.
+
+
 ## CES Production Function Basics
 
 Consider the CES production function
