@@ -13,8 +13,16 @@ pm_taxCO2eq("2020",regi)= cm_co2_tax_2020 * sm_DptCO2_2_TDpGtC;
 
 *LB* calculate tax path until cm_expoLinear_yearStart (defaults to 2060)
 pm_taxCO2eq(ttot,regi)$(ttot.val ge max(2020,cm_startyear) ) = pm_taxCO2eq("2020",regi)*cm_co2_tax_growth**(ttot.val-2020);
+
 *LB* use linear tax path from cm_expoLinear_yearStart on
+$ifthen %cm_taxCO2inc_fix% == "off"
+*** regional price increase before cm_expoLinear_yearStart
 p45_tau_co2_tax_inc(regi) = sum(ttot$(ttot.val eq cm_expoLinear_yearStart),((pm_taxCO2eq(ttot, regi) - pm_taxCO2eq(ttot - 1, regi)) / (pm_ttot_val(ttot) - pm_ttot_val(ttot - 1)))); 
+$else
+*RH* globally universal price increase
+p45_tau_co2_tax_inc(regi) = cm_taxCO2inc_fix * sm_DptCO2_2_TDpGtC;
+$endif
+
 pm_taxCO2eq(ttot,regi)$(ttot.val gt cm_expoLinear_yearStart) = sum(t$(t.val eq cm_expoLinear_yearStart), pm_taxCO2eq(t, regi) +  p45_tau_co2_tax_inc(regi) * (pm_ttot_val(ttot) - pm_ttot_val(t)))  ;
 *** set carbon price constant after 2110 to prevent huge carbon prices which lead to convergence problems
 pm_taxCO2eq(ttot,regi)$(ttot.val gt 2110) = pm_taxCO2eq("2110",regi);
