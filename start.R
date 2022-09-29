@@ -233,13 +233,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # DK: The following outcommented lines are specially made for listing results of coupled runs
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
-  outputdirs <- gms::chooseFromList(sort(unique(possibledirs)), type = "runs to be restarted", returnBoolean = FALSE)
+  outputdirs <- gms::chooseFromList(sort(unique(possibledirs)), returnBoolean = FALSE,
+                           type = paste0("runs to be re ", ifelse("--reprepare" %in% argv, "prepared", "started")))
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- gms::getLine() %in% c("Y", "y")
   if ("--testOneRegi" %in% flags) testOneRegi_region <- select_testOneRegi_region()
-  if ("--reprepare" %in% flags) {
-    message("\nBecause of the flag --reprepare, move full.gms -> full_old.gms and fulldata.gdx -> fulldata_old.gdx such that runs are newly prepared.\n")
-  }
+  filestomove <- c("abort.gdx" = "abort_beforeRestart.gdx", "non_optimal.gdx" = "non_optimal_beforeRestart.gdx",
+                  c("full.gms" = "full_beforeRestart.gms", "fulldata.gdx" = "fulldata_beforeRestart.gdx")["--reprepare" %in% argv])
+  message("\n", paste(names(filestomove), collapse = ", "), " will be moved and get a postfix '_beforeRestart'.\n")
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
   if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
   message()
@@ -268,9 +269,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     } else {
       if (! is.null(cfg[["backup"]][["cm_iteration_max"]])) cfg$gms$cm_iteration_max <- cfg$backup$cm_iteration_max
     }
-    if ("--reprepare" %in% flags & ! "--test" %in% flags) {
-      try(system(paste0("mv output/", outputdir, "/full.gms output/", outputdir, "/full_old.gms")))
-      try(system(paste0("mv output/", outputdir, "/fulldata.gdx output/", outputdir, "/fulldata_old.gdx")))
+    if (! "--test" %in% flags) {
+      filestomove_exists <- file.exists(file.path("output", outputdir, names(filestomove)))
+      file.rename(file.path("output", outputdir, names(filestomove[filestomove_exists])),
+                  file.path("output", outputdir, filestomove[filestomove_exists]))
     }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository

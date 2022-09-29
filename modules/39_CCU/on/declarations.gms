@@ -12,14 +12,14 @@ p39_co2_dem(ttot,all_regi,all_enty,all_enty,all_te)					"CO2 demand of CCU techn
 
 positive variables
 vm_co2CCUshort(ttot,all_regi,all_enty,all_enty,all_te,rlf)           "CO2 captured in CCU te that have a persistence for co2 storage shorter than 5 years. Unit GtC/a"
-v39_shSynTrans(ttot,all_regi)                                        "Share of synthetic liquids in all SE liquids. Value between 0 and 1."
+v39_shSynLiq(ttot,all_regi)                                        "Share of synthetic liquids in all SE liquids. Value between 0 and 1."
 v39_shSynGas(ttot,all_regi)                                          "Share of synthetic gas in all SE gases. Value between 0 and 1."
 ;
 
 equations
 q39_emiCCU(ttot,all_regi,all_te)                                        "calculate CCU emissions"
-q39_shSynTrans(ttot,all_regi)                                           "Define share of of synthetic liquids in all SE liquids."
-q39_shSynGas(ttot,all_regi)                                             "Define share of of synthetic gas in all SE gases."
+q39_shSynLiq(ttot,all_regi)                                             "calculate share of of synthetic liquids in all SE liquids."
+q39_shSynGas(ttot,all_regi)                                             "calculate share of of synthetic gas in all SE gases."
 q39_EqualSecShare_BioSyn(ttot,all_regi,all_enty,emi_sectors,emiMkt)     "constraint on equal share of synfuels in biofuels+synfuels for sectors"
 ;
 

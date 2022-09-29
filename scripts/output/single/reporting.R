@@ -11,6 +11,7 @@ library(lucode2)
 library(gms)
 library(methods)
 library(edgeTransport)
+library(quitte)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
@@ -68,14 +69,15 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
-if(file.exists(file.path(outputdir, "EDGE-T"))){
+edgetOutputDir <- file.path(outputdir, "EDGE-T")
+if(file.exists(edgetOutputDir)) {
 message("start generation of EDGE-T reporting")
-  EDGET_output <- toolReportEDGET(outputdir, sub_folder = "EDGE-T",
-                                            extendedReporting = FALSE,
-                                            scenario_title = scenario, model_name = "REMIND",
-                                            gdx = paste0(outputdir,"/fulldata.gdx"))
+  EDGET_output <- toolReportEDGET(edgetOutputDir,
+                                  extendedReporting = FALSE,
+                                  scenario_title = scenario, model_name = "REMIND",
+                                  gdx = paste0(outputdir,"/fulldata.gdx"))
 
-  writeMIF(EDGET_output, remind_reporting_file, append=T)
+  write.mif(EDGET_output, remind_reporting_file, append=T)
   deletePlus(remind_reporting_file, writemif=T)
 
 message("end generation of EDGE-T reporting")
