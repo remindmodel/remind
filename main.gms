@@ -1316,7 +1316,7 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** wind offshore switch
 *** cm_wind_offshore = 1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore = 0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
-$setglobal cm_wind_offshore  1      !! def = 0
+$setglobal cm_wind_offshore  1      !! def = 1
 *** *RP* Turn on a slower convergence scheme where each conopt file is used twice, thus conopt1 is used for itr 1+2, conopt.op2 for itr 3+4, conopt.op3 for itr 5+6, conopt.op4 for itr 7+8, conopt.op5 from itr 9 on.
 *** *RP* from my own experience, this improves convergence and actually decreases total runtime, even if you start from a gdx with good convergence. But, as always, feelings about REMIND runtimes can be misleading :-)
 $setglobal cm_SlowConvergence  off        !! def = off
