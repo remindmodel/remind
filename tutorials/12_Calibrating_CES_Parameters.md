@@ -1,53 +1,53 @@
 # Calibrationg CES Parameters
 
-## Introduction
-
-REMIND uses a production function with nested Constant Elasticity of Substitution (CES) to determine a region's Gross Domestic Product (GDP) and several intermediate products (such as different industry sectors' output). This function has the general form:
-
-$V_o = \left( \sum{\alpha_i {V_i}^{\rho_o}} \right)^{\frac{1}{\rho_o}}$
-
-with output quantity $V_o$, input quantities $V_i$, elasticity parameter
-$\rho_o$, and efficiency parameters $\alpha_i$. 
-
-In a regular REMIND run, the elasticity $\rho_o$, and efficiency parameters $\alpha_i$ for all the nodes of the nested CES function are fixed, with the various policies and settings in a given scenario affecting input quantities and, consequently, output quantities. 
-
-While the valuess of the elasticity parameters
-$\rho_o$ are fixed in the model code, the efficiency parameters $\alpha_i$ are determined in a special calibration run. In a calibration run, the efficiency parameters are calibrated to predefined input and output values of a given baseline scenario, generally given by an SSP (Shared Socioeconomic Pathway) narrative. The idea is that, in a baseline run, $V_i$ and $V_o$ should alway (approximately) match the values given in that predefined scenario.
-
-Thefore, the general rule is that every time something is changed in the model that affects the input and output results of a baseline (no-policy) run for a given SSP, such as changing assumptions on the scenario itself (in pre-processing) or bounds on the mixes of inputs required for an intermediary product (such as the outputs of different industry `subsectors`), you might need a new calibration. This tutorial presents the basics of how to perform, use and debug a new calibration.
-
-
 ## CES Production Function Basics
 
-Consider the CES production function
+REMIND uses a nested CES production function of the form
 
 $V_o = \left( \sum{\alpha_i {V_i}^{\rho_o}} \right)^{\frac{1}{\rho_o}}$
 
 with output quantity $V_o$, input quantities $V_i$, elasticity parameter
-$\rho_o$, and efficiency parameters $\alpha_i$.  In REMIND, the quantities are
-determined by the input data into the calibration, the elasticity parameter is
-part of the model code, and the efficiency parameters are to be determined
-during calibration.
+$\rho_o$, and efficiency parameters $\alpha_i$.  The top-level output is the
+macroeconomic output (GDP, `inco`), and the inputs can be either intermediate
+production factors, that are themselves outputs of a lower level of the CES
+function (hence nested), or primary production factors (`ppf`) that are linked
+to the energy system model or macro parts of REMIND.
+
+In a REMIND run, the quantities $V$ are free (within the constraints of the
+scenario) and subject to the optimisation, while the efficiency and
+substitution parameters $\alpha_i$ and $\rho_o$ are fixed.
+
+The purpose of the CES calibration is to find efficiency parameters $\alpha_i$
+(the substitution parameters $\rho_o$ are fixed in the code) such that in the
+baseline scenario the quantities $V$ (which are derived for the different
+scenarios like SSP2 as part of the input data generation) are matched as best as
+possible.
+
+Therefore, anytime either the REMIND model or the input data generation is
+changed in a way that affects the results of a baseline scenario, that baseline
+scenario needs to be calibrated.
+
+## Iterative Calibration
 
 As it is not possible to calculate $n$ parameters $\alpha_i$ from a single
-equation, we use and iterative approach.  The
+equation, we use an iterative approach.  The
 [Euler identity](https://en.wikipedia.org/wiki/Homogeneous_function#Euler's_theorem)
 asserts that for homogeneous functions of degree one the function value is equal
 to the sum of the partial derivatives times the function arguments:
 
 $V_o = \sum{\frac{\partial V_o}{\partial  V_i} V_i}$
 
-As we are not seeking a general analytic solution, but only need to calculate
-values at specific points for the iterative process, we can express the partial
-derivatives in terms of the input and output quantities: 
+We are not seeking a general analytic solution, but only need to calculate
+values at specific points for the iterative process, and thus can express the
+partial derivatives in terms of the input and output quantities:
 
 $\frac{\partial V_o}{\partial  V_i} = \pi_i = \alpha_i {V_i}^{\rho_o - 1} {V_o}^{1 - \rho_o}$
 
 Since the final output of the production function $V_o$ is also the numéraire
 (e.g. the unit – U.S. dollars – in which inputs are measured), the partial
 derivatives are the equilibrium prices $\pi_i$ of the input factors $V_i$ and
-can express the efficiency parameters in terms of quantities, prices, and
-elasticity parameters: 
+the efficiency parameters can be expressed in terms of quantities, prices, and
+elasticity parameters:
 
 $\frac{\partial V_o}{\partial  V_i} = \pi_i \Leftrightarrow \alpha_i = \pi_i \left(\frac{V_o}{V_i}\right)^{1 - \rho_o}$
 
@@ -66,7 +66,7 @@ $\alpha_i^{(j+1)} = \pi_i^{(j)} \left(\frac{V_o^\ast}{V_i^\ast}\right)^{1 - \rho
 For the calibration process to work, we need 
 
 1. trajectories for all primary production factors (`ppf`, final energy and
-   energy service demands, labour, capital) and the output (`inco`, GDP), and
+   energy service demands, labour, capital) and the output (GDP), and
 2. the previous iterations' `ppf` prices.
 
 Trajectories under (1) come from the input files `./core/input/f_gdp.cs3r`,
@@ -77,16 +77,21 @@ input data generation and always present.
 
 Prices under (2) are calculated using the `input.gdx` provided to the
 calibration run.  User intervention is only required when prices cannot be
-derived from the .gdx, which will be the case of a change in the CES structure,
-i.e. when nodes have been added or removed from the CES tree (technically when
-the set `cesOut2cesIn` differs between `input.gdx` and the current calibration
-run), or seldom in cases of convergence problems.
+derived from the .gdx file, which will be the case of a change in the CES
+structure, i.e. when nodes have been added or removed from the CES tree
+(technically when the set `cesOut2cesIn` differs between `input.gdx` and the
+current calibration run), or seldom in cases of convergence problems.
 
 
 ## Settings
 
 To set up a CES calibration run, simply set module 29 `CES_parameters` to the
-`calibration` realisation.
+`calibration` realisation.  All data relevant to the calibration is configured
+according to the selected scenario configuration.  Keep them identical to the
+baseline scenario you want to calibrate.
+As the calibration performs multiple REMIND runs (ten by default), allow for
+longer runtime, usually more than 24 hours, by selecting an appropriate slurm
+configuration.
 
 The calibration can further be adjusted using three switches:
 
@@ -121,8 +126,7 @@ used.
 The main output of the CES calibration are a .gdx file and a .inc files with all
 the CES parameters.  They are named based on the CES configuration, the
 GDP/population scenarios, the capital market module realisation and the region
-configuration (e.g.
-`indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7`).
+configuration (e.g. `indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7`).
 You don't need to change these names, they are matched automatically using the
 switch `cm_CES_configuration`.  The parameter files also include a counter for
 the calibration iteration they resulted from (e.g. `_ITERATION_10.inc`).  To
@@ -152,9 +156,9 @@ To check the validity of a CES calibration run:
    - Did the last CES calibration iteration converge?
    - Where there no GAMS errors (in the `full.log` and `full.lst`)?
 2. Check the convergence of the Calibration:
-   - In the `CES_calibration_report` .pdf, do the quantities converge
+   - In the `CES_calibration_report` .pdf file, do the quantities converge
      (sufficiently) towards the target values?  There is no fixed level of
-     "sufficient" convergence.  Use personal judgment. 
+     "sufficient" convergence.  Use personal judgment.
    - If derived production factor prices are so high that the value (quantity
      times price) of inputs exceeds the value of the output (GDP), they are
      scaled down.  This is done in order to overcome a transient problem in the
@@ -180,14 +184,14 @@ observed problems and suggested solutions.
   If any of the quantities required for the calibration (final energy or energy
   service demand, labour, capital) is missing, GAMS either complains outright
   about (`Symbol declared but no values have been assigned.`) or assumes the
-  missing data to be zero and fails on a division by zero.  
+  missing data to be zero and fails on a division by zero.
   This can be due to a new or modified scenario (`GDPscen`, `POPscen`) that is
   missing entirely or data in the scenario missing.  Check the input files
-  (`./core/input/f_gdp.cs3r`, `./core/input/f_pop.cs3r`, 
+  (`./core/input/f_gdp.cs3r`, `./core/input/f_pop.cs3r`,
   `./modules/29_CES_parameters/calibrate/input/f29_capitalQuantity.cs4r`, and
   `./core/input/f_fedemand.cs4r`) to figure out which data is missing and go
   from there.
-- $\xi \lt 0$  
+- $\xi \lt 0$
   This error (`assertion xi gt 0 failed, see .log file for details`) should not
   show up anymore.  If it still does it is because (the code working around it
   failed and) the value (quantity times price) of some inputs exceeds the value
@@ -211,10 +215,10 @@ Nash runs where it does not find infeasibilities in `testOneRegi` (for reasons
 unknown), but the output of a `testOneRegi` CES calibration (while itself quite
 useless) can be used as a `input.gdx` for the Nash calibration, overcoming these
 infeasibilities.  Just put the path of the `fulldata.gdx` from the `testOneRegi`
-run into the `path_gdx` column of the scenario config .csv.  It is (in extreme
-cases) also possible to daisy-chain `testOneRegi` runs, using the output of one
-as the input to another, all with different `c_testOneRegi_region`, and the
-result of the last one as the input to a Nash calibration.  (This method was
+run into the `path_gdx` column of the scenario config .csv file.  It is (in
+extreme cases) also possible to daisy-chain `testOneRegi` runs, using the output
+of one as the input to another, all with different `c_testOneRegi_region`, and
+the result of the last one as the input to a Nash calibration.  (This method was
 used for the initial calibration of the new EU-21-regions version of REMIND.)
 
 ### Calibration Convergence Errors
@@ -231,9 +235,10 @@ that case
 - Check production factor prices
   The prices of the production factors constitute the information transfer
   between calibration iterations.  Check whether they change between iterations,
-  or stay constant.  If they are constant, investigate why the inputs to the
-  price calculation $\pi_i = \alpha_i {V_i}^{\rho_o - 1} {V_o}^{1 - \rho_o}$ do
-  not change.
+  or stay constant, in either the `CES_calibration.csv` or the
+  `CES_calibration_report` .pdf file.  If they are constant, investigate why the
+  inputs to the   price calculation
+  $\pi_i = \alpha_i {V_i}^{\rho_o - 1} {V_o}^{1 - \rho_o}$ do not change.
 - Check bounds on quantities
   If quantities (`vm_cesIO`) do not change in between calibration iterations,
   it might be that they are fixed, either explicitly through lower and upper
