@@ -235,8 +235,8 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
           );
 ***       linear price between first free year and current target terminal year
           loop(ttot3,
-            s47_firstFreeYear = ttot3.val; 
-            break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear)); !!initial free price year
+            s47_firstFreeYear = ttot3.val;
+            break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear) and (ttot.val ge 2020)); !!initial free price year
             s47_prefreeYear = ttot3.val;
           );
           if(not(ttot2.val eq p47_firstTargetYear(ext_regi)), !! delay price change by cm_emiMktTargetDelay years for later targets
@@ -436,7 +436,7 @@ p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,e
 pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 0;
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType), !! initialize before first year auxiliary parameter for targets
     loop(ttot2$(ttot2.val eq cm_startyear), 
-        p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) =  pm_ttot_val(ttot2-1);
+        p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) =  max(2020,pm_ttot_val(ttot2-1));
     );
 );
 loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
@@ -538,7 +538,7 @@ $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 *** linear tax between period before cm_startyear and initial year (p47_implicitPriceTarget_initialYear)
     loop(ttot,
       s47_firstFreeYear = ttot.val; 
-      break$(ttot.val ge cm_startyear);
+      break$((ttot.val ge cm_startyear) and (ttot.val gt 2020));
       s47_prefreeYear = ttot.val;
     );
     loop(ttot$(ttot.val eq p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)),
@@ -609,7 +609,7 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
 *** linear tax between cm_startyear and initial year (p47_implicitPePriceTarget_initialYear)
     loop(ttot,
       s47_firstFreeYear = ttot.val; 
-      break$(ttot.val ge cm_startyear);
+      break$((ttot.val ge cm_startyear) and (ttot.val gt 2020));
       s47_prefreeYear = ttot.val;
     );
     loop(ttot$(ttot.val eq p47_implicitPePriceTarget_initialYear(regi,entyPe)),
