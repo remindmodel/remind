@@ -202,7 +202,7 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 * GHG emission baselines for SSPs/RCPs (delivered to REMIND via (updated in coupled runs)
 * total agricultural production costs (fixed for standalone and coupled)
 
-Please find here a [detailed list of the REMIND input files and were they come from here](https://redmine.pik-potsdam.de/projects/remind-r/wiki/Updating_inputs_from_MAgPIE).
+Please find here a [detailed list of the REMIND input files and were they come from](https://redmine.pik-potsdam.de/projects/remind-r/wiki/Updating_inputs_from_MAgPIE).
 
 ### Assumptions
 
@@ -213,7 +213,7 @@ Please find here a [detailed list of the REMIND input files and were they come f
 
 ### The coupling scripts
 
-The meta scripts for coupled runs that configure the models, start the runs, and perform the iteration loop are located in the REMIND main folder.
+The meta scripts for coupled runs that configure the models, start the runs, and perform the iteration loop, are located in the REMIND main folder.
 
 <img src="figures/coupling-scripts.png" style="display: block; margin: auto;" />
 
@@ -224,7 +224,7 @@ The meta scripts for coupled runs that configure the models, start the runs, and
 * `start_coupled.R`
   * tries to detect runs that crashed and that can be continued
   * reads the `.RData` file and starts REMIND and MAgPIE.
-  * saves the output of one model into the specific intput folder of the other model
+  * saves the output of one model into the specific input folder of the other model
   * the models read these inputs as part of their individual start scripts
   * REMIND runs last
-  * after last coupling iteration generate combined reporting file by binding REMIND and MAgPIE mifs together, and create a `compareScenario2` for REMIND and a `plot_compare_iterations` for the MAgPIE results.
+  * after last coupling iteration generate combined reporting file by binding REMIND and MAgPIE mifs together, and create a `compareScenario2` for REMIND, and a `plot_compare_iterations` using results of both models.
