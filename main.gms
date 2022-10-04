@@ -165,9 +165,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.311
+* Input data revision: 6.316
 * 
-* Last modification (input data): Thu Jun 23 10:11:30 2022
+* Last modification (input data): Wed Sep 28 10:35:42 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -695,7 +695,7 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 $setGlobal cm_damage_Labor_exposure  low    !!def = low
 $setGlobal cm_TCssp  SSP2  !! def = SSP2
 $setGlobal cm_TCpers  8  !! def = 8
-$setGlobal cm_TCspec  estimates_mean  !! def = estimates_mean
+$setGlobal cm_TCspec  mean  !! def = estimates_mean
 
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 
