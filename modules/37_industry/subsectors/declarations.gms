@@ -76,21 +76,23 @@ $endif.no_calibration
 
 
 *** process-based implementation
-Parameters
+
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+Parameters
 **p37_specMatsDem(mats,all_te,opModes)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
 **p37_specFeDem(all_enty,all_te,opModes)                                       "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
-$endif.process_based_steel
 ;
+$endif.process_based_steel
 
-Equations
+
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+Equations
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
   q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
   q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
-$endif.process_based_steel
 ;
+$endif.process_based_steel
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
 
