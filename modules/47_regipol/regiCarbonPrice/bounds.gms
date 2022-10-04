@@ -108,27 +108,21 @@ $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
 $endIf.ensec
 
-*** PW: limit sum of all PE gas demands from 2025 on to 2 EJ/yr
-$ifThen.ensec_lim "%cm_EnSecScen%" == "limit"
-    vm_prodPe.up(t,"DEU","pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = 2/pm_conv_TWa_EJ;
+*** provide range for gas and coal power CF in EnSec scenario in 2025 and 2030 for subsitution
+$ifThen.ensec "%cm_Ger_Pol%" == "ensec"
+    vm_capFac.up("2025",regi,"pc")$sameas(regi,"DEU") = 0.6;
+    vm_capFac.up("2030",regi,"pc")$sameas(regi,"DEU") = 0.6;
 
-*** increase capacity factors for coal by ~20% in limit scenario
-    vm_capFac(2025,regi,"pc")$sameas(regi,"DEU") = 0.52;
-    vm_capFac(2030,regi,"pc")$sameas(regi,"DEU") = 0.48;
-    vm_capFac(2025,regi,"igcc")$sameas(regi,"DEU") = 0.78;
-    vm_capFac(2030,regi,"igcc")$sameas(regi,"DEU") = 0.78;
-    vm_capFac(2025,regi,"coalchp")$sameas(regi,"DEU") = 0.72;
-    vm_capFac(2030,regi,"coalchp")$sameas(regi,"DEU") = 0.72;
-$endIf.ensec_lim
+*** fix gas power to lower value in 2025 for short-term substitution
+    vm_capFac.fx("2025",regi,"ngcc")$sameas(regi,"DEU") = 0.2;
+    vm_capFac.lo("2030",regi,"ngcc")$sameas(regi,"DEU") = 0.2;
+$endIf.ensec
 
-*** increase capacity factors for coal by ~10% in ensec scenario
-$ifThen.ensec_ensec "%cm_EnSecScen%" == "ensec"
-    vm_capFac(2025,regi,"pc")$sameas(regi,"DEU") = 0.47;
-    vm_capFac(2030,regi,"pc")$sameas(regi,"DEU") = 0.44;
-    vm_capFac(2025,regi,"igcc")$sameas(regi,"DEU") = 0.71;
-    vm_capFac(2030,regi,"igcc")$sameas(regi,"DEU") = 0.71;
-    vm_capFac(2025,regi,"coalchp")$sameas(regi,"DEU") = 0.66;
-    vm_capFac(2030,regi,"coalchp")$sameas(regi,"DEU") = 0.66;
-$endIf.ensec_ensec
+*** PW: limit PE gas demand from 2025 on to cm_EnSecScen_limit EJ/yr gas imports + domestic gas in Germany
+if (cm_EnSecScen_limit gt 0,
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
+);
+
+
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

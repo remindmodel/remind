@@ -16,7 +16,8 @@ parameters
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
     o32_dispatchDownPe2se(ttot,all_regi,all_te)           "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
-
+    p32_shAddIntCostTotVREThreshold(ttot)           "Total VRE share above which additional integration costs arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
+    p32_shAddIntCostTotVREFactor                    "Multiplicative factor that influences how much the total VRE share increases integration challenges"
 ;
 
 scalars
@@ -24,10 +25,13 @@ s32_storlink                                        "how strong is the influence
 ;
 
 positive variables
-    v32_shStor(ttot,all_regi,all_te)         		"share of seel production from renewables that needs to be stored, range 0..1 [0,1]"
+    v32_shStor(ttot,all_regi,all_te)         		"share of seel production from a VRE te that needs to be stored based on this te's share. Unit: ~Percent"
     v32_storloss(ttot,all_regi,all_te)         		"total energy loss from storage for a given technology [TWa]"
     v32_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
     v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
+    v32_TotVREshare(ttot,all_regi)                  "Total VRE share as calculated by summing shSeEl. Unit: Percent"
+    v32_shAddIntCostTotVRE(ttot,all_regi)           "Share to calculate additional integation costs due to total VRE share. How much is TotVREshare above the threshold"
+    v32_shStorAll(ttot,all_regi,all_te)             "share of seel production from a VRE te that needs to be stored, based on this te and all other VRE"
 ;
 
 equations
@@ -48,6 +52,9 @@ equations
     q32_flexPriceShareMin                           "calculatae miniumum share of average electricity that flexible technologies can see"
     q32_flexPriceShare(tall,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see"
     q32_flexPriceBalance(tall,all_regi)             "constraint such that flexible electricity prices balanance to average electricity price"
+    q32_TotVREshare(ttot,all_regi)                  "calculate total VRE share"
+    q32_shAddIntCostTotVRE(ttot,all_regi)                   "calculate how much total VRE share is above threshold value"
+    q32_shIntegAll(ttot,all_regi,all_te)            "calculate share of seel production from a VRE te that needs to be stored, based on this te and all other VRE"
 ;
 
 variables

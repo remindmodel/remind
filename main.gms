@@ -354,7 +354,8 @@ parameters
   c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
   cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
-  cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on pegas in Germany from 2020 to 2050 or limiting gas demand from 2025 on"
+  cm_EnSecScen_price       "switch on tax on PE gas to simulate continued energy crisis in Germany for ARIADNE energy security scenario"
+  cm_EnSecScen_limit       "switch for running an ARIADNE energy security scenario limiting gas demand from 2025 on"
   cm_forecast_fix          "switch for selecting fixed industry production quantities in DEU based on FORECAST data"
 ;
 
@@ -531,9 +532,11 @@ cm_H2targets = 0; !! def 0
 *** EU import switches
 $setGlobal cm_import_EU  off !! def off
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
-$setGlobal cm_import_ariadne  off !! def off
-*** switch for ariadne energy security scenario
-$setGlobal cm_EnSecScen  off !! def off
+$setGlobal cm_import_ariadne  on !! def off
+*** switch for ariadne energy security price scenario
+$setGlobal cm_EnSecScen_price  off !! def off,  "on" -> switch on tax on PE gas and oil from 2025 in Germany
+*** switch for ariadne energy security limit scenario
+cm_EnSecScen_limit = 0; !! def 0 -> off, any value > 0 -> PE gas limit in EJ/yr for Germany from 2025
 *** switch for ariadne policy assumptions for Germany
 $setGlobal cm_Ger_Pol  off !! def off
 *** switch for industry production fix to FORECAST
