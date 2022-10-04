@@ -109,9 +109,8 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
 $endif.altFeEmiFac
 
 
-*** VRE capacity factor adjustments for Germany in line with ARIADNE assumptions
-$ifthen.GerVRECapFac not "%cm_ariadne_VRECapFac_adj%" == "off" 
-loop(te$sameas(te,"wind"),
+*** VRE capacity factor adjustments for Germany in line with results from detailed models in ARIADNE project
+ loop(te$sameas(te,"wind"),
   loop(regi$sameas(regi,"DEU"),
     pm_cf("2025",regi,te) =  1.04 * pm_cf("2025",regi,te);
     pm_cf("2030",regi,te) =  1.08 * pm_cf("2030",regi,te);
@@ -133,7 +132,7 @@ loop(te$sameas(te,"spv"),
     pm_cf(t,regi,te)$(t.val gt 2045) =  pm_cf("2045",regi,te);
   );
 );
-$endif.GerVRECapFac
+
 
 
 *** p_EmiLULUCFCountryAcc contains historic LULUCF emissions from UNFCCC, 

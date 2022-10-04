@@ -894,13 +894,6 @@ $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
 
-$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
-  regi_sensscen(all_regi)=YES;
-$ELSE.RegScenSens
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
-$ENDIF.RegScenSens
-
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
 set

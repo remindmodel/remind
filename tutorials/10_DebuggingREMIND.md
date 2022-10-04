@@ -17,7 +17,7 @@ Case 1: REMIND did not start
 The first place to look is `log.txt` in the output subfolder for each run. It shows you the log of running [`prepare_and_run.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepare_and_run.R). If it states "Starting REMIND..." somewhere, this shows that the input preparation scripts were successful. If not, this can be caused by the following reasons:
 
 - the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
-- because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](4_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
+- because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
 - input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn't help, the input generation may be broken.
 - you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.
 - a recent change in `prepare_and_run` may have broken the prepare scripts, check the [file history](https://github.com/remindmodel/remind/commits/develop/scripts/start/prepare_and_run.R) for changes.
@@ -142,7 +142,7 @@ To restart a run in "debug" mode, run
 ```bash
 Rscript start.R --debug --reprepare
 ```
-in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will recreate move `full.gms` and `fulldata.gdx` to filenames with an appended `_old` and restart the input preparation and the model run.
+in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will move `full.gms` and `fulldata.gdx` to filenames with an appended `_beforeRestart` and restart the input preparation and the model run.
 
 If you only want to look at a specific region that created the infeasibility, you can either specify `c_testOneRegi_region` in `scenario_config_XYZ.csv`:
 ```bash
