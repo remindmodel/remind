@@ -169,7 +169,7 @@
 * 
 * Input data revision: 6.316
 * 
-* Last modification (input data): Wed Sep 28 09:12:50 2022
+* Last modification (input data): Wed Sep 28 10:35:42 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -1361,10 +1361,10 @@ $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = Ho
 $setGlobal cm_damage_Labor_exposure  low    !!def = low
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available
 $setGlobal cm_TCssp  SSP2  !! def = SSP2
-*** cfg$gms$cm_TCpers <- 8   #def = 8; {0,1,2,3,4,5,6,7,8} the lags taken into account in the damage function
+*** cfg$gms$cm_TCpers <- 8   #def = 8; {0,1,2,3,4,5,6,7,8,9} the lags taken into account in the damage function
 $setGlobal cm_TCpers  8  !! def = 8
-*** cfg$gms$cm_TCspec <- "estimates_mean"  #def = estimates_mean; {estimates_mean,estimates_median,estimates_95,estimates_05,estimates_83,estimates_17}  the uncertainty estimate of the TC damage function
-$setGlobal cm_TCspec  estimates_mean  !! def = estimates_mean
+*** cfg$gms$cm_TCspec <- "mean"  #def = mean; {mean,median,95,05,83,17}  the uncertainty estimate of the TC damage function
+$setGlobal cm_TCspec  mean  !! def = mean
 *** cm_implicitFE "off, FEtarget or exoTax (def = off). FEtarget calculates endogenously the tax necessary to comply with the final energy targets (defined at cm_implFETarget). exoTax sets an exogenous tax at stationary and/or transportation level to represent non CO2 price policies (defined at cm_implFEExoTax).
 $setGlobal cm_implicitFE  off !! def = off
 *** #cm_transpGDPscale <- "on"  # def "on", activate dampening factor to align edge-t non-energy transportation costs with historical GDP data"
