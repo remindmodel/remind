@@ -47,9 +47,9 @@
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
     + v21_taxrevBioImport(t,regi)  
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-    + vm_taxrevimplEnergyBoundTax(t,regi)
-$endif.cm_implicitEnergyBound 
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+    + vm_taxrevimplicitQttyTargetTax(t,regi)
+$endif.cm_implicitQttyTarget 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
     + sum((entySe,entyFe,sector)$(entyFe2Sector(entyFe,sector)),vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector))
 $endIf.cm_implicitPriceTarget

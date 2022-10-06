@@ -11,7 +11,7 @@ sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_emiTe,input,questionnaire
 vm_co2eqMkt,input,questionnaire
 vm_emiAllMkt,input,questionnaire
-vm_taxrevimplEnergyBoundTax,input,questionnaire
+vm_taxrevimplicitQttyTargetTax,input,questionnaire
 vm_cap,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_taxCO2eqHist,input,questionnaire
@@ -42,14 +42,14 @@ vm_demPe,input,questionnaire
 vm_demSe,input,questionnaire
 pm_taxCO2eqSum,input,questionnaire
 pm_emiMktRefYear,input,questionnaire
-pm_implEnergyBoundLimited,input,questionnaire
+pm_implicitQttyTargetLimited,input,questionnaire
 pm_taxrevGHG0,input,questionnaire
 pm_taxrevCO2Sector0,input,questionnaire
 pm_taxrevCO2LUC0,input,questionnaire
 pm_taxrevNetNegEmi0,input,questionnaire
 vm_shSeEl,input,questionnaire
-pm_implEnergyBoundTarget,input,questionnaire
-pm_implEnergyBoundTarget_dev,input,questionnaire
+pm_implicitQttyTargetTarget,input,questionnaire
+pm_implicitQttyTargetTarget_dev,input,questionnaire
 cm_Ger_Pol,input,questionnaire
 vm_capTotal,input,questionnaire
 pm_tau_ces_tax,input,questionnaire

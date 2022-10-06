@@ -49,7 +49,7 @@ vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
 sm_eps,input,questionnaire
 vm_co2eqMkt,input,questionnaire
-vm_taxrevimplEnergyBoundTax,input,questionnaire
+vm_taxrevimplicitQttyTargetTax,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire

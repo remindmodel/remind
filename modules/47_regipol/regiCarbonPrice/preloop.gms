@@ -25,32 +25,32 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 $ENDIF.emiMkt
 
 ***---------------------------------------------------------------------------
-*** Calculation of implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+*** Calculation of implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
 
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 *** initialize tax value for the first iteration
-  p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
+  p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = 0;
 
 *** load tax from gdx
-$ifthen.loadFromGDX_implEnergyBoundTax not "%cm_loadFromGDX_implEnergyBoundTax%" == "off"
-Execute_Loadpoint 'input_ref' p47_implEnergyBoundTax = p47_implEnergyBoundTax;
+$ifthen.loadFromGDX_implicitQttyTargetTax not "%cm_loadFromGDX_implicitQttyTargetTax%" == "off"
+Execute_Loadpoint 'input_ref' p47_implicitQttyTargetTax = p47_implicitQttyTargetTax;
 *** disable tax values for inexistent targets
-  loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$(NOT (pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType))),
+  loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$(NOT (pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup))),
     loop(all_regi$regi_groupExt(ext_regi,all_regi),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = 0;
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = 0;
     );
   );
-$endif.loadFromGDX_implEnergyBoundTax
+$endif.loadFromGDX_implicitQttyTargetTax
 
 *** initialize values if not loaded from gdx
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
     if(sameas(taxType,"tax"),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val) and (NOT(p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)))) = 0.1;
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge ttot.val) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = 0.1;
     );
     if(sameas(taxType,"sub"),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge ttot.val) and (NOT(p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)))) = - 0.1;
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge ttot.val) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = - 0.1;
     );
     loop(ttot2,
       s47_firstFreeYear = ttot2.val; 
@@ -58,10 +58,10 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
       s47_prefreeYear = ttot2.val;
     );
     loop(ttot2$(ttot2.val eq s47_prefreeYear),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val ge s47_firstFreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear) and (NOT(p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)))) = 
-        p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType) +
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge s47_firstFreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = 
+        p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup) +
         (
-          p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType)
+          p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup)
         ) / (ttot.val - ttot2.val)
         * (t.val - ttot2.val)
       ;
@@ -69,7 +69,7 @@ loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEne
   );
 );
 
-$endif.cm_implicitEnergyBound
+$endif.cm_implicitQttyTarget
 
 
 ***---------------------------------------------------------------------------

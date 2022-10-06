@@ -316,166 +316,169 @@ $ENDIF.emiMkt
 
 
 ***---------------------------------------------------------------------------
-*** Calculation of implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+*** Calculation of implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
 
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving previous iteration value for implicit tax revenue recycling
-p47_implEnergyBoundTax_prevIter(t,regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType);
-p47_implEnergyBoundTax0(t,regi) =
-  sum((energyCarrierLevel,energyType)$p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType),
-  ( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entyPe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
-  )$(sameas(energyCarrierLevel,"PE")) 
-  +
-  ( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
-  )$(sameas(energyCarrierLevel,"SE")) 
-  +
-  ( p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
-  )$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
+p47_implicitQttyTargetTax_prevIter(t,regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup);
+p47_implicitQttyTargetTax0(t,regi) =
+  sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
+    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
+    )$(sameas(qttyTarget,"PE")) 
+    +
+    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
+    )$(sameas(qttyTarget,"SE")) 
+    +
+    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
+    )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+    +
+    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
+    )$(sameas(qttyTarget,"CCS"))    
   )
 ;
 
-***  Calculating current PE, SE and/or FE energy type level
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+***  Calculating current quantity target levels (PE, SE, FE and/or CCS level)
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(targetType,"t"), !!absolute target (t=total) 
-    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
-    (
-      sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
-    )$(sameas(energyCarrierLevel,"PE")) 
-    +
-    ( 
-      sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
-    )$(sameas(energyCarrierLevel,"SE")) 
-    +
-    ( 
-      sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-      + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-      )$(sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
+    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyQttyTargetANDGroup2enty("PE",qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
+      )$(sameas(qttyTarget,"PE")) 
       +
-      ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-      )$(sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e")) 
-    )$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
-  ;
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("SE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
+      )$(sameas(qttyTarget,"SE")) 
+      +
+      ( sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
+        + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+        )$(sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+        +
+        ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(qttyTargetGroup,"all") or sameas(qttyTargetGroup,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e")) 
+      )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+      +
+      ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
+      )$(sameas(qttyTarget,"CCS")) 
+    ;
   ); 
-  if(sameas(targetType,"s"), !!relative target (s=share) 
-    p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) = 
-    (
-      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE",energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
-      /
-      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyCarrierANDtype2enty("PE","all",entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
-    )$(sameas(energyCarrierLevel,"PE")) 
-    +
-    ( 
-      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("SE",energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) ) )
-      /
-      ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("SE","all",entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) ) )
-    )$(sameas(energyCarrierLevel,"SE")) 
-    +
-    (   (
-      sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-      + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-      )$(sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
-      +
-      ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(energytype,"all") or sameas(energytype,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-      )$(sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e")) 
-        )
-      /
+  if(sameas(targetType,"s"), !!relative target (s=share) (not applied to CCS)
+    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
       (
-      sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
-      + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyCarrierANDtype2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
-      )$(sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
+        ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyQttyTargetANDGroup2enty("PE",qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
+        /
+        ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyQttyTargetANDGroup2enty("PE","all",entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) ) )
+      )$(sameas(qttyTarget,"PE")) 
       +
-      ( - ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-      )$(sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e")) 
-      )  
-    )$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
-  ;
+      ( 
+        ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("SE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) ) )
+        /
+        ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("SE","all",entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) ) )
+      )$(sameas(qttyTarget,"SE")) 
+      +
+      (   (
+        sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
+        + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+        )$(sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+        +
+        ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(qttyTargetGroup,"all") or sameas(qttyTargetGroup,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e")) 
+          )
+        /
+        (
+        sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyQttyTargetANDGroup2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
+        + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("FE","all",entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
+        )$(sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+        +
+        ( - ( p47_nonEnergyUse(ttot,ext_regi) ) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
+        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e")) 
+        )  
+      )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+    ;
   ); 
 );
-p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType);
+p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
 *** calculate target deviation
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(targetType,"t"),
-    pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = ( p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType) ) / pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+    pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) = ( p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) - pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) ) / pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup);
   );
   if(sameas(targetType,"s"),
-    pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) - pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType);
+    pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) - pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup);
   );
 * save regional target deviation across iterations for debugging of target convergence issues
-  p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType) = pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType);
+  p47_implicitQttyTargetTarget_dev_iter(iteration, ttot,ext_regi,qttyTarget,qttyTargetGroup) = pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 );
 
 ***  calculating targets implicit tax rescale factor
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(taxType,"tax"),
     if(iteration.val lt 15,
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
     else
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 + pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
     );  
   );
   if(sameas(taxType,"sub"),
     if(iteration.val lt 15,
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 4;
+      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
     else
-      p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) = (1 - pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType) ) ** 2;
+      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
     );  
   );
 *** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
-  if((iteration.val gt 3) and (p47_implEnergyBoundTarget_dev_iter(iteration, ttot,ext_regi,energyCarrierLevel,energyType)*p47_implEnergyBoundTarget_dev_iter(iteration-1, ttot,ext_regi,energyCarrierLevel,energyType) < 0),
-  p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType) =
-    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+  if((iteration.val gt 3) and (p47_implicitQttyTargetTarget_dev_iter(iteration, ttot,ext_regi,qttyTarget,qttyTargetGroup)*p47_implicitQttyTargetTarget_dev_iter(iteration-1, ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0),
+  p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
   );
 );
 
-p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType);
+p47_implicitQttyTargetTax_Rescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
 *** updating energy targets implicit tax
-pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 0;
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType), !! initialize before first year auxiliary parameter for targets
+pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) = 0;
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup), !! initialize before first year auxiliary parameter for targets
     loop(ttot2$(ttot2.val eq cm_startyear), 
-        p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) =  max(2020,pm_ttot_val(ttot2-1));
+        p47_implicitQttyTargetTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) =  max(2020,pm_ttot_val(ttot2-1));
     );
 );
-loop((ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)$pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
 *** terminal year onward tax
     if(sameas(taxType,"tax"),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = max(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = max(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
     );
     if(sameas(taxType,"sub"),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$(t.val ge ttot.val) = min(1e-10, p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType) * p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)); !! assuring that the updated tax is negative (subsidy)
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = min(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is negative (subsidy)
     );
 *** linear price between first free year and target year
-    loop(ttot2$(ttot2.val eq p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType)),
-      p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
-           p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType) +
+    loop(ttot2$(ttot2.val eq p47_implicitQttyTargetTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)),
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val gt ttot2.val) and (t.val lt ttot.val) and (t.val ge cm_startyear)) = 
+           p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup) +
         (
-          p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundTax(ttot2,all_regi,energyCarrierLevel,energyType)
+          p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup)
         ) * ((t.val - ttot2.val) / (ttot.val - ttot2.val))
       ;
     );
 *** checking if there is a hard bound on the model that does not allow the tax to change further the energy usage
-*** if current value (p47_implEnergyBoundCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
+*** if current value (p47_implicitQttyTargetCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
     if((iteration.val gt 3),
-      if( ((p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) lt 1e-10) AND (p47_implEnergyBoundCurrent_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) - p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType) gt -1e-10) ) 
-        and (NOT( p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) lt 0.0001 and p47_implEnergyBoundTax_Rescale_iter(iteration-1,ttot,ext_regi,energyCarrierLevel,energyType) gt -0.0001 )),
-        p47_implEnergyBoundTax(t,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax_prevIter(t,all_regi,energyCarrierLevel,energyType);
-        pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType) = 1;
+      if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10) ) 
+        and (NOT( p47_implicitQttyTargetTax_Rescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTax_Rescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup);
+        pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
       );
     );
   );
 *** update initialYear for further targets
-  p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) = ttot.val;
+  p47_implicitQttyTargetTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = ttot.val;
 );
 
-p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType) = p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType);
+p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup);
 
-display p47_implEnergyBoundCurrent, pm_implEnergyBoundTarget, p47_implEnergyBoundTax_prevIter, pm_implEnergyBoundTarget_dev, p47_implEnergyBoundTarget_dev_iter, p47_implEnergyBoundTax, p47_implEnergyBoundTax_Rescale, p47_implEnergyBoundTax_Rescale_iter, p47_implEnergyBoundTax_iter, p47_implEnergyBoundCurrent_iter, p47_implEnergyBoundTax0;
+display p47_implicitQttyTargetCurrent, pm_implicitQttyTargetTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTargetTarget_dev, p47_implicitQttyTargetTarget_dev_iter, p47_implicitQttyTargetTax, p47_implicitQttyTargetTax_Rescale, p47_implicitQttyTargetTax_Rescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
 
-$endIf.cm_implicitEnergyBound
+$endIf.cm_implicitQttyTarget
 
 
 ***---------------------------------------------------------------------------

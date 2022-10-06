@@ -79,33 +79,33 @@ $endIf.prioRescaleFactor
 $endIf.emiMkt
 
 ***---------------------------------------------------------------------------
-*** Implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 Parameter
-  p47_implEnergyBoundTax(ttot,all_regi,energyCarrierLevel,energyType)          "tax/subsidy level on PE, SE and/or FE for an specific energy type"
-  p47_implEnergyBoundCurrent(ttot,ext_regi,energyCarrierLevel,energyType)      "current iteration total PE, SE and/or FE for an specific energy type"
-  p47_implEnergyBoundTax_Rescale(ttot,ext_regi,energyCarrierLevel,energyType)  "rescale factor for current implicit energy bound tax" 
-  p47_implEnergyBoundTax_prevIter(ttot,all_regi,energyCarrierLevel,energyType) "previous iteration implicit energy bound target tax"
-  p47_implEnergyBoundTax0(ttot,all_regi)                                       "previous iteration implicit energy bound target tax revenue"
+  p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup)          "tax/subsidy level necessary to achieve a quantity target"
+  p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup)      "current iteration total value for an specific quantity target"
+  p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)  "rescale factor for current implicit quantity target tax" 
+  p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) "previous iteration quantity target tax"
+  p47_implicitQttyTargetTax0(ttot,all_regi)                                    "previous iteration quantity target tax revenue"
 
-  p47_implEnergyBoundTax_iter(iteration,ttot,all_regi,energyCarrierLevel,energyType)         "energy bound implicit tax per iteration"
-  pm_implEnergyBoundTarget_dev(ttot,ext_regi,energyCarrierLevel,energyType)                 "energy bound implicit tax deviation of current iteration from target"
-  p47_implEnergyBoundTarget_dev_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)  "parameter to save pm_implEnergyBoundTarget_dev across iterations"
-  p47_implEnergyBoundTax_Rescale_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType) "energy bound implicit tax rescale factor per iteration"    
-  p47_implEnergyBoundCurrent_iter(iteration,ttot,ext_regi,energyCarrierLevel,energyType)     "total PE, SE and/or FE level for an specific energy type per iteration"   
+  p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup)        "tax/subsidy level necessary to achieve a quantity target per iteration"
+  pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)                 "deviation of current iteration quantity target from target"
+  p47_implicitQttyTargetTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "parameter to save pm_implicitQttyTargetTarget_dev across iterations"
+  p47_implicitQttyTargetTax_Rescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax per iteration"    
+  p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
-  pm_implEnergyBoundTarget(ttot,ext_regi,taxType,targetType,energyCarrierLevel,energyType)  "Energy bound target [absolute: TWa; or percentage: 0.1]"  / %cm_implicitEnergyBound% /
+  pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
 
-  pm_implEnergyBoundLimited(iteration,energyCarrierLevel,energyType)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the energy usage"
+  pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup)  "1 (one) if there is a hard bound on the model that does not allow the tax to change further the quantity"
 
-  p47_implEnergyBoundTarget_initialYear(ext_regi,taxType,targetType,energyCarrierLevel,energyType) "initial year of target for given region and energy carrier [year]"
+  p47_implicitQttyTargetTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 ;
 
 Equations
-  q47_implEnergyBoundTax(ttot,all_regi)  "implicit energy bound tax (PE, SE and/or FE for an specific energy type) to represent non CO2-price-driven policies"
+  q47_implicitQttyTargetTax(ttot,all_regi)  "implicit quantity target tax (PE, SE, FE and/or FE CCS) to represent non CO2-price-driven policies or exogenously defined quantity constraint scenarios"
 ;
-$endIf.cm_implicitEnergyBound
+$endIf.cm_implicitQttyTarget
 
 ***---------------------------------------------------------------------------
 *** implicit tax/subsidy necessary to final energy price targets

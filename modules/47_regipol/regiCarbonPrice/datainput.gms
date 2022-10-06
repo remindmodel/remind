@@ -65,13 +65,14 @@ if ( (cm_startyear gt 2005),
 $ENDIF.emiMkt
 
 ***---------------------------------------------------------------------------
-*** Implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
 
 *** intialize energy type bound implicit target parameters
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
-	p47_implEnergyBoundTax0(t,all_regi) = 0;
-$endIf.cm_implicitEnergyBound
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+  pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup) = pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)/(sm_c_2_co2*1000);
+	p47_implicitQttyTargetTax0(t,all_regi) = 0;
+$endIf.cm_implicitQttyTarget
 
 ***---------------------------------------------------------------------------
 *** implicit tax/subsidy necessary to final energy price targets

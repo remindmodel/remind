@@ -47,9 +47,9 @@ pm_emiMktCurrent,               input,      ??
 pm_taxemiMkt_iteration,         input,      ??
 pm_emiMktTarget_dev,            parameter,  ???
 pm_emiMktRefYear,               parameter,  ???
-pm_implEnergyBoundLimited,      parameter,  ???
-pm_implEnergyBoundTarget_dev,   parameter,  ???
-pm_implEnergyBoundTarget,       parameter,  ???
+pm_implicitQttyTargetLimited,      parameter,  ???
+pm_implicitQttyTargetTarget_dev,   parameter,  ???
+pm_implicitQttyTargetTarget,       parameter,  ???
 pm_implicitPriceTarget,         parameter,  not needed
 pm_implicitPrice_NotConv,       parameter,  not needed
 pm_implicitPrice_ignConv,       parameter,  not needed

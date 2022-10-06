@@ -17,8 +17,8 @@ $ifThen.emiMkt not "%cm_emiMktTarget%" == "off"
   regiANDperiodEmiMktTarget_47(ttot,ext_regi) "regions and periods with emiMkt targets" / /
 $ENDIF.emiMkt
 
-*** implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 taxType "PE, SE or FE tax type"
 /
@@ -32,7 +32,7 @@ targetType "PE, SE or FE target type"
   s  "relative target (s=share)"
 /
 
-energyCarrierLevel "energy carrier Level"
+qttyTarget "quantity target for energy carrier level (primary, secondary, final energy) or CCS"
 /
   PE              "Primary Energy"
   SE              "Secondary Energy"
@@ -40,9 +40,10 @@ energyCarrierLevel "energy carrier Level"
   FE_wo_b         "Final Energy without bunkers"
   FE_wo_n_e       "Final Energy without non-energy"
   FE_wo_b_wo_n_e  "Final Energy without bunkers and non-energy"
+  CCS             "carbon capture and storage"
 /
 
-energyType "energy type aggregated categories"
+qttyTargetGroup "quantity target aggregated categories"
 /
   all
   biomass
@@ -56,7 +57,7 @@ energyType "energy type aggregated categories"
   heat
 /
 
-energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty) "set combining possible energy level (PE, SE or FE), energy types and energy carriers"
+energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,all_enty) "set combining possible energy level (PE, SE or FE), energy types and energy carriers"
 /
 *** Primary energy type categories
 ***  PE.all.(entyPe) !! defined below as calculated set
@@ -82,7 +83,7 @@ energyCarrierANDtype2enty(energyCarrierLevel,energyType,all_enty) "set combining
   FE.electricity.(seel)
   FE.heat.(sehe)
 /
-$endIf.cm_implicitEnergyBound
+$endIf.cm_implicitQttyTarget
 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
 fePriceScenario "scenarios for exogenous FE price targets"
@@ -106,18 +107,18 @@ pePriceScenario "scenarios for exogenous PE price targets"
 $endIf.cm_implicitPePriceTarget
 ;
 
-*** Defining extra energyCarrierANDtype2enty set elements
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+*** Defining extra energyQttyTargetANDGroup2enty set elements
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
   loop(entyPe,
-    energyCarrierANDtype2enty("PE","all",entyPe) = YES;
+    energyQttyTargetANDGroup2enty("PE","all",entyPe) = YES;
   );
   loop(entySe,
-    energyCarrierANDtype2enty("SE","all",entySe) = YES;
+    energyQttyTargetANDGroup2enty("SE","all",entySe) = YES;
   );
   loop(entyFe,
-    energyCarrierANDtype2enty("FE","all",entySe) = YES;
+    energyQttyTargetANDGroup2enty("FE","all",entySe) = YES;
   );
-$endIf.cm_implicitEnergyBound
+$endIf.cm_implicitQttyTarget
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/sets.gms

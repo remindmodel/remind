@@ -868,9 +868,9 @@ prepare <- function() {
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
 
-    if(grepl("off", cfg$gms$cm_implicitEnergyBound, ignore.case = T)){
+    if(grepl("off", cfg$gms$cm_implicitQttyTarget, ignore.case = T)){
       margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")))
+                                list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")))
     }
     
     

@@ -351,7 +351,7 @@ $setGlobal cm_CoalRegiPol	 off   !! def = off
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
 $setGlobal cm_vehiclesSubsidies  off !! def = off
-$setGlobal cm_implicitEnergyBound  off !! def = off
+$setGlobal cm_implicitQttyTarget  off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5

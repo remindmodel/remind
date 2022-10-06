@@ -46,9 +46,9 @@ cm_keep_presolve_gdxes,         switch,     not needed
 vm_capacityTradeBalance,        variable,   not implemented yet
 pm_emiMktTarget_dev,            parameter,  ???
 pm_emiMktRefYear,               parameter,  ???
-pm_implEnergyBoundLimited,      parameter,  ???
-pm_implEnergyBoundTarget_dev,   parameter,  ???
-pm_implEnergyBoundTarget,       parameter,  ???
+pm_implicitQttyTargetLimited,      parameter,  ???
+pm_implicitQttyTargetTarget_dev,   parameter,  ???
+pm_implicitQttyTargetTarget,       parameter,  ???
 pm_FEPrice,                     parameter,  not needed
 pm_FEPrice_iter,                parameter,  not needed
 pm_implicitPriceTarget,         parameter,  not needed

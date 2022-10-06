@@ -7,31 +7,35 @@
 *** SOF ./modules/47_regipol/regiCarbonPrice/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  Implicit tax/subsidy necessary to achieve primary, secondary and/or final energy targets
+*'  Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
 ***---------------------------------------------------------------------------
-$ifthen.cm_implicitEnergyBound not "%cm_implicitEnergyBound%" == "off"
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
-q47_implEnergyBoundTax(t,regi)$(t.val ge max(2010,cm_startyear))..
-  vm_taxrevimplEnergyBoundTax(t,regi)
+q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplicitQttyTargetTax(t,regi)
   =e=
-  sum((energyCarrierLevel,energyType)$p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType),
-  ( 
-    p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entyPe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
-  )$(sameas(energyCarrierLevel,"PE")) 
-  +
-  ( 
-    p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty(energyCarrierLevel,energyType,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
-  )$(sameas(energyCarrierLevel,"SE")) 
-  +
-  ( 
-    p47_implEnergyBoundTax(t,regi,energyCarrierLevel,energyType) * sum(entySe$energyCarrierANDtype2enty("FE",energyType,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
-  )$(sameas(energyCarrierLevel,"FE") or sameas(energyCarrierLevel,"FE_wo_b") or sameas(energyCarrierLevel,"FE_wo_n_e") or sameas(energyCarrierLevel,"FE_wo_b_wo_n_e"))
-  ) 
+  sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
+    )$(sameas(qttyTarget,"PE")) 
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
+    )$(sameas(qttyTarget,"SE")) 
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
+    )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+    )$(sameas(qttyTarget,"CCS"))  
+  )
   -
-  p47_implEnergyBoundTax0(t,regi)
+  p47_implicitQttyTargetTax0(t,regi)
 ;
 
-$endIf.cm_implicitEnergyBound
+$endIf.cm_implicitQttyTarget
 
 ***---------------------------------------------------------------------------
 *** implicit tax/subsidy necessary to final energy price targets
