@@ -823,7 +823,8 @@ prepare <- function() {
     #filter out deprecated regipol items
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("v47_emiTarget.L", "!!v47_emiTarget.L")),
-                             list(c("v47_emiTargetMkt.L", "!!v47_emiTargetMkt.L")))
+                             list(c("v47_emiTargetMkt.L", "!!v47_emiTargetMkt.L")),
+                             list(c("vm_taxrevimplEnergyBoundTax.L", "!!vm_taxrevimplEnergyBoundTax.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("v47_emiTarget.M", "!!v47_emiTarget.M")),
                              list(c("v47_emiTargetMkt.M", "!!v47_emiTargetMkt.M")),
@@ -846,12 +847,17 @@ prepare <- function() {
                              list(c("q47_emiTarget_mkt_netGHG_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noBunkers.M")),
                              list(c("q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M")),
                              list(c("q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M")),
-                             list(c("qm_balFeAfterTax.M", "!!qm_balFeAfterTax.M")))
+                             list(c("qm_balFeAfterTax.M", "!!qm_balFeAfterTax.M")),
+                             list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")),
+                             list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")),
+                             list(c("vm_taxrevimplEnergyBoundTax.M", "!!vm_taxrevimplEnergyBoundTax.M"))
+                             )
 
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
-                            list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")))
-
+                            list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
+                            list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+    
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
@@ -868,12 +874,6 @@ prepare <- function() {
                                                                "$include \"margs.gms\";",
                                                                "$onlisting", sep = "\n"))))
 
-    if(grepl("off", cfg$gms$cm_implicitQttyTarget, ignore.case = T)){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")))
-    }
-    
-    
     # Perform actual manipulation on levs.gms, fixings.gms, and margs.gms in
     # single, respective, parses of the texts.
     manipulateFile("levs.gms", levs_manipulateThis, fixed = TRUE)
