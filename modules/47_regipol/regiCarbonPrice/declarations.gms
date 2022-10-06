@@ -184,11 +184,11 @@ $endIf.cm_VREminShare
 ***---------------------------------------------------------------------------
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
 Parameter
-  p47_CCSmaxBound(ext_regi) "per region yearly maximum CCS. Unit[Gt C]" / %cm_CCSmaxBound% /  
+  p47_CCSmaxBound(all_regi) "per region yearly maximum CCS. Unit[Gt C]" / %cm_CCSmaxBound% /  
 ;
-p47_CCSmaxBound(ext_regi) = p47_CCSmaxBound(ext_regi) / sm_c_2_co2;
+p47_CCSmaxBound(regi) = p47_CCSmaxBound(regi) / sm_c_2_co2;
 Equation
-  q47_CCSmaxBound(ttot,ext_regi) "per region yearly maximum CCS"
+  q47_CCSmaxBound(ttot,all_regi) "per region yearly maximum CCS"
 ;
 $endIf.cm_CCSmaxBound
 

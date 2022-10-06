@@ -115,10 +115,10 @@ $endIf.cm_VREminShare
 ***---------------------------------------------------------------------------
 $ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
 
-q47_CCSmaxBound(t,ext_regi)$p47_CCSmaxBound(ext_regi)..
-  sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf))))
+q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
+  sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
   =l=
-  p47_CCSmaxBound(ext_regi)
+  p47_CCSmaxBound(regi)
 ;
 
 $endIf.cm_CCSmaxBound
