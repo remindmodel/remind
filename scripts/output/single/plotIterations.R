@@ -19,18 +19,11 @@ if (!exists("source_include")) {
 outputdir <- normalizePath(outputdir)
 
 
-getLine <- function() {
-  # gets characters (line) from the terminal of from a connection
-  # and stores it in the return object
-  if (interactive()) {
-    s <- readline()
-  } else {
-    con <- file("stdin")
-    on.exit(close(con))
-    s <- readLines(con, 1, warn = FALSE)
-    if (identical(length(s), 0L)) {
-      s <- ""
-    }
+getLineCoerce <- function() {
+  # gets characters (line) from the user and always returns a string
+  s <- gms::getLine()
+  if (identical(length(s), 0L)) {
+    s <- ""
   }
   stopifnot(identical(length(s), 1L))
   return(s)
@@ -39,9 +32,8 @@ getLine <- function() {
 now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-# choose variables
 cat("\n\nWhich variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
-answer <- getLine()
+answer <- getLineCoerce()
 if (!identical(trimws(answer), "")) {
   symbolNames <- answer
 }
@@ -52,7 +44,7 @@ symbolNames <- trimws(strsplit(symbolNames, ",")[[1]])
   for (s in symbolNames) {
   cat("\n\nHow do you want to map the dimensions of ", s, "in the plot?",
       "Unused aesthetics need to be set to NULL. Combine dimensions with +.\n(default: ", plotMappingDefault, ")\n")
-  answer <- getLine()
+  answer <- getLineCoerce()
   if (!identical(trimws(answer), "")) {
     pm <- answer
     if (grepl("\\+", pm)) {
@@ -152,11 +144,10 @@ rmdFooter <- if (length(symbolNames) >= 2) {
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-                  collapse = "\n\n"
-), rmdPath)
+                  collapse = "\n\n"), rmdPath)
 
 cat("Render plots to html? (default: ", generateHtml, ") ")
-answer <- getLine()
+answer <- getLineCoerce()
 if (!identical(trimws(answer), "")) {
   generateHtml <- tolower(answer)
 }

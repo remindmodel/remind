@@ -109,9 +109,9 @@ display pm_macBaseMagpie;
 
 $IFTHEN.scaleEmiHist %c_scaleEmiHistorical% == "on"
 *** Re-scale MAgPie reference CH4 and N2O emissions to be inline with eurostat
-*** data (MagPie overestimates non-CO2 GHG emissions by a factor of 50% more).
-*** This involves different emission variables in pm_macBaseMagpie and
-*** additionall agwaste variables from p_macBaseExo
+*** data (depending on the region MAgPIE non-CO2 GHG emissions can be up to 
+*** twice as high as historic emissions). This involves different emission variables in
+*** pm_macBaseMagpie and additional agwaste variables from p_macBaseExo
 display p_macBaseExo;
 
 *** Define rescale factor for MAgPIE CH4 emissions
@@ -158,7 +158,7 @@ p_agriEmiPhaseOut("2030") = 0.5;
 p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
-*** Rescale non-co2 base line emissions from agriculture 
+*** Rescale non-co2 base line emissions from agriculture for all regions if c_BaselineAgriEmiRed switch is non-zero
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
   

@@ -37,7 +37,6 @@ compScen-*/*
 doc/
 !doc/literature.bib
 !doc/images/MAC_costs.png
-!doc/images/technical_structure.png
 
 # Ignore "main.lst" files
 main.lst
@@ -66,3 +65,7 @@ config/gdx-files/*.gdx
 plotRuntime*.html
 plotRuntimeDependencies/
 .Rproj.user
+
+# main renv.lock should only be commited for releases
+/renv.lock
+/.Rbuildignore

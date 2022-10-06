@@ -73,7 +73,7 @@ run_compareScenarios2 <- function(
   message("Will make following function call:")
   message("  remind2::compareScenarios2(")
   for (i in seq_along(args)) 
-    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), ",")
+    message("    ", names(args)[i], " = ", capture.output(dput(args[[i]])), if (i < length(args)) ",")
   message("  )")
 
   message("Calling remind2::compareScenarios2()...\n")
@@ -84,7 +84,7 @@ run_compareScenarios2 <- function(
   system(paste0("mv ", outputFilePath, " ."))
   system(paste0("rm -rf ", args$outputDir))
   
-  message("Done!.\n")
+  message("Done!\n")
 }
 
 run_compareScenarios2(outputDirs, outFileName, profileName)

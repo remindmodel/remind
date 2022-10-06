@@ -3,17 +3,19 @@ Start running REMIND with default settings
 Felix Schreyer (<felix.schreyeru@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), David Klein (<dklein@pik-potsdam.de>)
 30 April, 2019
 
--   [1. Your first run](#1-your-first-run)
-    -   [Default configurations](#default-configurations)
-    -   [Accessing the cluster](#accessing-the-cluster)
-    -   [Adjust the Rprofile](#adjust-the-rprofile)
-    -   [Starting the run](#starting-the-run)
-    -   [Restarting runs](#restarting-runs)
--   [2. What happens during a REMIND run?](#2-what-happens-during-a-remind-run)
--   [3. What happens once you start REMIND on the cluster? ](#3-what-happens-once-you-start-remind-on-the-cluster)
-    -   [a) Input data preparation](#a-input-data-preparation)
-    -   [b) Optimization](#b-optimization)
-    -   [c) Output processing](#c-output-processing)
+- [Start running REMIND with default settings](#start-running-remind-with-default-settings)
+- [1. Your first run](#1-your-first-run)
+  - [Default Configurations](#default-configurations)
+  - [Accessing the cluster](#accessing-the-cluster)
+  - [Adjust the .profile](#adjust-the-profile)
+  - [Starting the run](#starting-the-run)
+  - [Restarting runs](#restarting-runs)
+- [2. What happens during a REMIND run?](#2-what-happens-during-a-remind-run)
+- [3. What happens once you start REMIND on the cluster?](#3-what-happens-once-you-start-remind-on-the-cluster)
+  - [a) renv Setup](#a-renv-setup)
+  - [b) Input Data Preparation](#b-input-data-preparation)
+  - [c) Optimization](#c-optimization)
+  - [d) Output Processing](#d-output-processing)
 
 
 # 1. Your first run
@@ -57,15 +59,15 @@ The first line loads the `piam` environment once you log onto the cluster via co
 
 Open a console session on the cluster and create a folder on the cluster where you want to store REMIND. It is recommended not to use the `home` directory. For your first experiments you can use a subfolder of the `/p/tmp/YourPIKName/` directory (only stored for 3 months).
 
-In case you are using console and are not familiar with shell commands, google a list of basic shell commands such as `mkdir` to create a folder or `cd /p/tmp/YourPIKName/` to switch to your folder. Download REMIND into a directory in this folder via `git clone` (see tutorial [0_Git_and_GitHub_workflow](0_Git_and_GitHub_workflow.md)).
+In case you are using console and are not familiar with shell commands, google a list of basic shell commands such as `mkdir` to create a folder or `cd /p/tmp/YourPIKName/` to switch to your folder. Download REMIND into a directory in this folder via `git clone` (see tutorial [00_Git_and_GitHub_workflow](00_Git_and_GitHub_workflow.md)).
 
 Go to your REMIND main folder (i.e. it contains subfolders such as `config`, `core`, and `modules`) and start a REMIND run by typing:
 
 ``` bash
 Rscript start.R
 ```
-Without additional arguments this starts a single REMIND runs using the settings from [`config/default.cfg`](../config/default.cfg). Also, on Windows, you can double-click the `start.cmd` file. NOTE: In order to use those scripts on local machines, you have to have R installed on your machine. Don't forget to update the R libraries from time to time (explained in the Wiki page above, you need to do it only on local machines, on the cluster it happens automatically).
 
+Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg). Also, on Windows, you can double-click the `start.cmd` file.
 You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
@@ -76,10 +78,9 @@ The shortcut is
 Rscript start.R -q
 ```
 
+A message similar to the following confirms that your runs has been submitted to a compute node on the cluster: `Submitted batch job 15489230`.
 
-A message similar to the following confirms that your runs has been submitted to the cluster: `Submitted batch job 15489230`.
-
-You can check if the run has been accepted by the cluster just by using the command
+You can check if the run is actually running by using the command
 
 ``` bash
 sq
@@ -99,7 +100,7 @@ NOTE: A few words on the scripts that we currently use to start runs. The script
 
 ## Restarting runs
 
-Sometimes you want to restart a run in its already existing results folder without creating a new results folder and without compiling a new full.gms., e.g. you want a nash run to perform additional nash iterations because you are not satisfied with the convergence so far. Adding the parameter `--restart` displays a list of existing runs and lets you choose the run(s) you want to restart:
+Sometimes you want to restart a run in its already existing results folder without creating a new results folder and without compiling a new full.gms, e.g. you want a nash run to perform additional nash iterations because you are not satisfied with the convergence so far. Adding the parameter `--restart` displays a list of existing runs and lets you choose the run(s) you want to restart:
 
 ``` bash
 Rscript start.R --restart
@@ -120,9 +121,14 @@ REMIND modeling routine
 
 # 3. What happens once you start REMIND on the cluster?
 
-First, a number of R libraries like **madrat**, **mrremind** and **remind** are loaded into your cache on the cluster. These libraries were and are still developed at PIK. They contain the functions necessary for the input data preparation and the output processing. Let us go through each of the stages and briefly describe what happens:
+Let us go through each of the stages and briefly describe what happens:
 
-## a) Input Data Preparation
+## a) renv Setup
+REMIND is using renv for R package library management, see [the REMIND renv tutorial](11_ManagingRenv.md) for details. When starting a run the main renv is essentially copied to the run folder which ensures that the run is always using the same package versions for reproducibility and packages cannot become corrupt because of global package updates.
+
+The R libraries required for indput data preparation and output processing (e.g. **madrat**, **mrremind** and **remind2**) are made available to the run this way.
+
+## b) Input Data Preparation
 
 The optimization in REMIND requires a lot of input data. For example, the model needs to know energy production capacities per region for its initial time steps. Furthermore, it builds on GDP, population and energy demand projections that are results of other models. These kind of data are stored on the cluster in
 
@@ -141,7 +147,7 @@ cfg$inputRevision
 ```
 the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded from `/p/projects/rd3mod/inputdata/output/` and distributed.
 
-## b) Optimization
+## c) Optimization
 
 The actual REMIND is written in GAMS, a programming software to numerically solve optimization problems. The GAMS scripts are *.gms* files that you can find under the `core` (main part of the model) and the `modules` directories (subparts of the model). The general structure of the GAMS code is depicted in Figure 2. At each stage (e.g. *sets*), GAMS runs through the respective *.gms* files of the core and all chosen module realisations of that stage (`core/sets.gms` -> `modules/01_macro/sets.gms`, -> `modules/02_welfare/sets.gms` -> ...) before going to the next stage. The stages *bounds*, *presolve*, *solve* and *postsolve* are run in a loop that is followed by the final stage *output*.
 
@@ -152,7 +158,7 @@ GAMS code structure
 
 Fundamentally, we distinguish between two kinds of variables: variables (starting with *v_*) and parameters (starting with *p_*). Parameters are fixed (exogenous data in economists' lingo), while variables are free within a certain range and can be adjusted to maximize the objective function of the optimization problem (endogenous variables in economist's lingo). However, there are many constraints that fix relations between the variables and parameters. Within the remaining solution space, the optimization procedure tries to find the maximum of the objective function. The output file of the optimization is the **fulldata.gdx** which is under `output` in the folder of your REMIND run. You can open it, for instance, with GAMS IDE or load it into `R` using the command  `readGDX()` (see details below). In the file, you can find, among other things, the optimal levels of the variables (`variable.l`) and all the predefined parameter values.
 
-## c) Output Processing
+## d) Output Processing
 
 The output processing works with a number of R functions from the **[remind2](https://github.com/pik-piam/remind2/)** package (most of them start with `report... .R`). The wrapper function **[convGDX2MIF.R](https://github.com/pik-piam/remind2/blob/master/R/convGDX2MIF.R)** writes the most relevant output into the so-called **.mif** file. Again, it is a table that you can open in Excel for example. You find under `output` in the folder of your REMIND run as
 

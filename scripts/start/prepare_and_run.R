@@ -227,9 +227,9 @@ prepare <- function() {
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
-            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -431,7 +431,7 @@ prepare <- function() {
       input_old     <- "no_data"
   }
   input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$validationmodel_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(is.null(cfg$extramappings_historic),"",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -953,16 +953,20 @@ run <- function(start_subsequent_runs = TRUE) {
         getLoadFile()
 
         # Store all the interesting output
-        file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
-        file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
+        interestingOutput <- c("full.lst", "full.log", "fulldata.gdx", "non_optimal.gdx", "abort.gdx")
+        file.copy(from = interestingOutput,
+                  to = sub("^(.*)(\\.[^\\.]+)$", sprintf("\\1_%02i\\2", cal_itr), interestingOutput), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
-        file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
-                  overwrite = TRUE)
+        if (cal_itr < cfg$gms$c_CES_calibration_iterations) {
+          unlink(c("abort.gdx", "non_optimal.gdx"))
+        } else { # calibration was successful
+          file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration, ".gdx"))
+          file.copy(from = paste0(cfg$gms$cm_CES_configuration, "_ITERATION_", cal_itr, ".inc"),
+                    to = paste0(cfg$gms$cm_CES_configuration, ".inc"))
+        }
 
         # Update file modification time
         fulldata_m_time <- file.info("fulldata.gdx")$mtime
-
       } else {
         break
       }
@@ -1050,20 +1054,17 @@ run <- function(start_subsequent_runs = TRUE) {
   if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
-      "li=$(nashstat -F | wc -l); cat",
+      "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
       "<(if (($li < 2)); then echo no infeasibilities found; fi)",
       "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
-      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with 'nashstat -a' ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 3)); then echo If infeasibilities appear some iterations before GAMS failed, check 'nashstat -a' carefully.; fi)",
+      "<(if (($li > 3)); then echo The error that stopped GAMS is probably not the actual reason to fail.; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
     if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }
   message("")
-
-  if (stoprun) {
-    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
-         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
-  }
 
   message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
@@ -1072,6 +1073,11 @@ run <- function(start_subsequent_runs = TRUE) {
                          runtime    = gams_runtime,
                          setup_info = lucode2::setup_info(),
                          submit     = cfg$runstatistics)
+
+  if (stoprun) {
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
+         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
+  }
 
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)
@@ -1171,6 +1177,13 @@ run <- function(start_subsequent_runs = TRUE) {
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
+
+  # make sure the renv used for the run is also used for generating output
+  if (!is.null(renv::project())) {
+    stopifnot(`loaded renv and outputdir must be equal` = normalizePath(renv::project()) == normalizePath(outputdir))
+    argv <- c(get0("argv"), paste0("--renv=", renv::project()))
+  }
+
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()
