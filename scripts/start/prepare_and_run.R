@@ -349,17 +349,18 @@ prepare <- function() {
   manipulateConfig(cfg$model, cfg$gms)
 
   ######## declare functions for updating information ####
-  update_info <- function(regionscode,revision) {
+  update_info <- function(regionscode, revision) {
 
-    subject <- 'VERSION INFO'
-    content <- c('',
-      paste('Regionscode:',regionscode),
-      '',
-      paste('Input data revision:',revision),
-      '',
-      paste('Last modification (input data):',date()),
-      '')
-    replace_in_file(cfg$model,paste('*',content),subject)
+    subject <- "VERSION INFO"
+    content <- c("",
+      paste("Regionscode:", regionscode),
+      "",
+      paste("Input data revision:", revision),
+      "",
+      paste("Last modification (input data):",
+            format(file.mtime("input/source_files.log"), "%a %b %d %H:%M:%S %Y")),
+      "")
+    replace_in_file(cfg$model, paste("*", content), subject)
   }
 
   update_sets <- function(map) {
