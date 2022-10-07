@@ -290,7 +290,7 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if( (pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0.01 OR pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt -0.01),
     if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
-      if(NOT(pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
+      if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
       );

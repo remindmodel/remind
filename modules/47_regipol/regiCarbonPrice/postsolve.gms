@@ -414,29 +414,29 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(taxType,"tax"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
     else
-      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
     );  
   );
   if(sameas(taxType,"sub"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
     else
-      p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
     );  
   );
 *** dampen rescale factor with increasing iterations to help convergence if the last two iteration deviations where not in the same direction 
   if((iteration.val gt 3) and (p47_implicitQttyTarget_dev_iter(iteration, ttot,ext_regi,qttyTarget,qttyTargetGroup)*p47_implicitQttyTarget_dev_iter(iteration-1, ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0),
-  p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
+  p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
+    max(min( 2 * EXP( -0.15 * iteration.val ) + 1.01 ,p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)),1/ ( 2 * EXP( -0.15 * iteration.val ) + 1.01));
   );
 );
 
-p47_implicitQttyTargetTax_Rescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
+p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
 *** updating energy targets implicit tax
-pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) = 0;
+pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 0;
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup), !! initialize before first year auxiliary parameter for targets
     loop(ttot2$(ttot2.val eq cm_startyear), 
         p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) =  max(2020,pm_ttot_val(ttot2-1));
@@ -446,10 +446,10 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
 *** terminal year onward tax
     if(sameas(taxType,"tax"),
-      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = max(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = max(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
     );
     if(sameas(taxType,"sub"),
-      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = min(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTax_Rescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is negative (subsidy)
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = min(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is negative (subsidy)
     );
 *** linear price between first free year and target year
     loop(ttot2$(ttot2.val eq p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)),
@@ -464,9 +464,9 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 *** if current value (p47_implicitQttyTargetCurrent) is unchanged in relation to previous iteration when the rescale factor of the previous iteration was different than one, price changes did not affected quantity and therefore the tax level is reseted to the previous iteration value to avoid unecessary tax increase without target achievment gains.  
     if((iteration.val gt 3),
       if( ((p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10) AND (p47_implicitQttyTargetCurrent_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10) ) 
-        and (NOT( p47_implicitQttyTargetTax_Rescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTax_Rescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
+        and (NOT( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0.0001 and p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -0.0001 )),
         p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup);
-        pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
       );
     );
   );
@@ -476,7 +476,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 
 p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup);
 
-display p47_implicitQttyTargetCurrent, pm_implicitQttyTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTarget_dev, p47_implicitQttyTarget_dev_iter, p47_implicitQttyTargetTax, p47_implicitQttyTargetTax_Rescale, p47_implicitQttyTargetTax_Rescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
+display p47_implicitQttyTargetCurrent, pm_implicitQttyTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTarget_dev, p47_implicitQttyTarget_dev_iter, p47_implicitQttyTargetTax, p47_implicitQttyTargetTaxRescale, p47_implicitQttyTargetTaxRescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
 
 $endIf.cm_implicitQttyTarget
 
