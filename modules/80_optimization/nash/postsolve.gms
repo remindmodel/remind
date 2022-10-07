@@ -287,9 +287,9 @@ $endif.emiMkt
 
 *** additional criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
-loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if( (pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0.01 OR pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt -0.01),
-    if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTargetTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
+  if( (pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0.01 OR pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt -0.01),
+    if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
       if(NOT(pm_implicitQttyTargetLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
         p80_messageShow("implicitEnergyTarget") = YES;
@@ -390,9 +390,9 @@ $endif.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
-          display "#### Check out the pm_implicitQttyTargetTarget_dev parameter of 47_regipol module.";
+          display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
           display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTargetTarget_dev;
+          display pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -494,9 +494,9 @@ $endif.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"    
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
-          display "#### Check out the pm_implicitQttyTargetTarget_dev parameter of 47_regipol module.";
+          display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
           display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTargetTarget_dev;
+          display pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"

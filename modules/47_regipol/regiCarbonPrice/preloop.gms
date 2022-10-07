@@ -36,7 +36,7 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 $ifthen.loadFromGDX_implicitQttyTargetTax not "%cm_loadFromGDX_implicitQttyTargetTax%" == "off"
 Execute_Loadpoint 'input_ref' p47_implicitQttyTargetTax = p47_implicitQttyTargetTax;
 *** disable tax values for inexistent targets
-  loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$(NOT (pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup))),
+  loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$(NOT (pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup))),
     loop(all_regi$regi_groupExt(ext_regi,all_regi),
       p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = 0;
     );
@@ -44,7 +44,7 @@ Execute_Loadpoint 'input_ref' p47_implicitQttyTargetTax = p47_implicitQttyTarget
 $endif.loadFromGDX_implicitQttyTargetTax
 
 *** initialize values if not loaded from gdx
-loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTargetTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
     if(sameas(taxType,"tax"),
       p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge ttot.val) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = 0.1;

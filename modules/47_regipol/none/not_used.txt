@@ -48,8 +48,8 @@ pm_taxrevCO2Sector0,input,questionnaire
 pm_taxrevCO2LUC0,input,questionnaire
 pm_taxrevNetNegEmi0,input,questionnaire
 vm_shSeEl,input,questionnaire
-pm_implicitQttyTargetTarget,input,questionnaire
-pm_implicitQttyTargetTarget_dev,input,questionnaire
+pm_implicitQttyTarget,input,questionnaire
+pm_implicitQttyTarget_dev,input,questionnaire
 cm_Ger_Pol,input,questionnaire
 vm_capTotal,input,questionnaire
 pm_tau_ces_tax,input,questionnaire
