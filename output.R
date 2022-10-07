@@ -41,7 +41,9 @@ require(stringr)
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
-  readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix")
+  flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix", .flags = c(t = "--test"))
+} else {
+  flags <- NULL
 }
 
 # Setting relevant paths
@@ -149,13 +151,17 @@ if (comp %in% c("comparison", "export")) {
   for (rout in output) {
     name <- paste(rout, ".R", sep = "")
     if (file.exists(paste0("scripts/output/", comp, "/", name))) {
-      print(paste("Executing", name))
-      tmp.env <- new.env()
-      tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
-      rm(tmp.env)
-      gc()
-      if (!is.null(tmp.error)) {
-        warning("Script ", name, " was stopped by an error and not executed properly!")
+      if ("--test" %in% flags) {
+        message("Test mode, not executing ", paste0("scripts/output/", comp, "/", name))
+      } else {
+        message(paste("Executing", name))
+        tmp.env <- new.env()
+        tmp.error <- try(sys.source(paste0("scripts/output/", comp, "/", name), envir = tmp.env))
+        rm(tmp.env)
+        gc()
+        if (!is.null(tmp.error)) {
+          warning("Script ", name, " was stopped by an error and not executed properly!")
+        }
       }
     }
   }
@@ -217,34 +223,39 @@ if (comp %in% c("comparison", "export")) {
     # Execute R scripts
     ###################################################################################
 
-    # output creation for --testOneRegi was switched off in start.R in this commit: https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
+    # output creation for --testOneRegi was switched off in start.R in this commit:
+    # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
     if (all(is.na(output))) {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
       for (rout in output) {
         name <- paste(rout, ".R", sep = "")
-        if (file.exists(paste0("scripts/output/single/", name))) {
-          if (slurmConfig == "direct" | rout %in% outputUsingDirect) {
-            # execute output script directly (without sending it to slurm)
-            message("Executing ", name)
-            tmp.env <- new.env()
-            tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
-            #        rm(list=ls(tmp.env),envir=tmp.env)
-            rm(tmp.env)
-            gc()
-            if (!is.null(tmp.error)) {
-              warning("Script ", name, " was stopped by an error and not executed properly!")
+        if ("--test" %in% flags) {
+          message("Test mode, not executing ", paste0("scripts/output/single/", name))
+        } else {
+          if (file.exists(paste0("scripts/output/single/", name))) {
+            if (slurmConfig == "direct" | rout %in% outputUsingDirect) {
+              # execute output script directly (without sending it to slurm)
+              message("Executing ", name)
+              tmp.env <- new.env()
+              tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
+              #        rm(list=ls(tmp.env),envir=tmp.env)
+              rm(tmp.env)
+              gc()
+              if (!is.null(tmp.error)) {
+                warning("Script ", name, " was stopped by an error and not executed properly!")
+              }
+            } else {
+              # send the output script to slurm
+              logfile <- paste0(outputdir, "/log_", rout, ".txt")
+              slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                                 " --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
+                                 ".R  outputdir=", outputdir, "\"")
+              message("Sending to slurm: ", name, ". Find log in ", logfile)
+              system(slurmcmd)
+              Sys.sleep(1)
             }
-          } else {
-            # send the output script to slurm
-            logfile <- paste0(outputdir, "/log_", rout, ".txt")
-            slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                               " --mail-type=END --comment=REMIND --wrap=\"Rscript scripts/output/single/", rout,
-                               ".R  outputdir=", outputdir, "\"")
-            message("Sending to slurm: ", name, ". Find log in ", logfile)
-            system(slurmcmd)
-            Sys.sleep(1)
           }
         }
       }
