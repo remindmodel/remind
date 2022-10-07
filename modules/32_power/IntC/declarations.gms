@@ -15,9 +15,9 @@ parameters
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
-    o32_dispatchDownPe2se(ttot,all_regi,all_te)           "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
-    p32_shAddIntCostTotVREThreshold(ttot)           "Total VRE share above which additional integration costs arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
-    p32_shAddIntCostTotVREFactor                    "Multiplicative factor that influences how much the total VRE share increases integration challenges"
+    o32_dispatchDownPe2se(ttot,all_regi,all_te)     "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
+    p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration costs arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
+    p32_FactorAddIntCostTotVRE                      "Multiplicative factor that influences how much the total VRE share increases integration challenges"
 ;
 
 scalars
@@ -30,8 +30,7 @@ positive variables
     v32_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
     v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
     v32_TotVREshare(ttot,all_regi)                  "Total VRE share as calculated by summing shSeEl. Unit: Percent"
-    v32_shAddIntCostTotVRE(ttot,all_regi)           "Share to calculate additional integation costs due to total VRE share. How much is TotVREshare above the threshold"
-    v32_shStorAll(ttot,all_regi,all_te)             "share of seel production from a VRE te that needs to be stored, based on this te and all other VRE"
+    v32_shAddIntCostTotVRE(ttot,all_regi)           "Variable containing how much the total VRE share is above the threshold - needed to calculate additional integation costs due to total VRE share."
 ;
 
 equations

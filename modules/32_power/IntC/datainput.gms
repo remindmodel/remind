@@ -38,6 +38,7 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
+
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
 f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
@@ -73,14 +74,15 @@ $ENDIF.WindOff
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
 
-*** set thresholds above which total VRE share additional integration challenges arise: 
-p32_shAddIntCostTotVREThreshold(t)$(t.val < 2030) = 50;
-p32_shAddIntCostTotVREThreshold("2030") = 60;
-p32_shAddIntCostTotVREThreshold("2035") = 70;
-p32_shAddIntCostTotVREThreshold("2040") = 80;
-p32_shAddIntCostTotVREThreshold(t)$(t.val > 2040) = 90;
+*** set total VRE share threshold above which additional integration challenges arise: 
+p32_shThresholdTotVREAddIntCost(t)$(t.val < 2030) = 50;
+p32_shThresholdTotVREAddIntCost("2030") = 60;
+p32_shThresholdTotVREAddIntCost("2035") = 70;
+p32_shThresholdTotVREAddIntCost("2040") = 80;
+p32_shThresholdTotVREAddIntCost("2045") = 90;
+p32_shThresholdTotVREAddIntCost(t)$(t.val > 2045) = 95;
 
-p32_shAddIntCostTotVREFactor = 1.5;
+p32_FactorAddIntCostTotVRE = 1.5;
 
 $ontext
 parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"

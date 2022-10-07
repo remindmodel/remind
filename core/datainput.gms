@@ -1024,11 +1024,11 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
   p_adj_coeff(ttot,regi,"spv")             = 0.08;
-  p_adj_coeff(ttot,regi,"wind")            = 0.08;
+  p_adj_coeff(ttot,regi,"wind")            = 0.15;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
-  p_adj_coeff(ttot,regi,"windoff")         = 0.16;
+  p_adj_coeff(ttot,regi,"windoff")         = 0.3;
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
@@ -1037,7 +1037,7 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,'apCarDiT')        = 1.0;
   p_adj_coeff(ttot,regi,'apCarDiEffT')     = 2.0;
   p_adj_coeff(ttot,regi,'apCarDiEffH2T')   = 2.0;
-  p_adj_coeff(ttot,regi,teGrid)            = 0.1;
+  p_adj_coeff(ttot,regi,teGrid)            = 0.3;
   p_adj_coeff(ttot,regi,teStor)            = 0.05;
 );
 
