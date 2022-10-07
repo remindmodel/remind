@@ -52,8 +52,7 @@ equations
     q32_flexPriceShare(tall,all_regi,all_te)        "calculate share of average electricity price that flexible technologies see"
     q32_flexPriceBalance(tall,all_regi)             "constraint such that flexible electricity prices balanance to average electricity price"
     q32_TotVREshare(ttot,all_regi)                  "calculate total VRE share"
-    q32_shAddIntCostTotVRE(ttot,all_regi)                   "calculate how much total VRE share is above threshold value"
-    q32_shIntegAll(ttot,all_regi,all_te)            "calculate share of seel production from a VRE te that needs to be stored, based on this te and all other VRE"
+    q32_shAddIntCostTotVRE(ttot,all_regi)           "calculate how much total VRE share is above threshold value"
 ;
 
 variables
