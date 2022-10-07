@@ -378,7 +378,7 @@ parameters
   cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
   
   cm_postTargetIncrease "carbon price increase per year after target is reached (euro per tCO2)"
-  cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applyed to first target set." 
+  cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set." 
   c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
   
   cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
