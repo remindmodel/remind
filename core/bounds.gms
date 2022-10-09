@@ -553,10 +553,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 
-*** FS: no electrolysis capacities before 2020
-vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
-
-
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
 ***----------------------------------------------------------------------------
