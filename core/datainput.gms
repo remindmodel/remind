@@ -1183,9 +1183,6 @@ Execute_Loadpoint 'input' p_capCum = vm_capCum.l;
 p_capCum(tall,regi,te)$( NOT p_capCum(tall,regi,te)) = fm_dataglob("ccap0",te)/card(regi);
 *RP overwrite p_capCum by exogenous values for 2020
 p_capCum("2020",regi,"spv")  = 0.6 / card(regi2);  !! roughly 600GW in 2020
-*FS overwrite p_capCum by exogenous values for 2025 for electrolysis and dac by distributing capacity ccap0 for 2025 assumed in generisdata_tech across regions
-p_capCum("2025",regi,"elh2")  = fm_dataglob("ccap0","elh2") / card(regi2);  
-p_capCum("2025",regi,"dac")  = fm_dataglob("ccap0","dac") / card(regi2);  
 
 pm_data(regi,"learnMult_woFC",teLearn(te))   = pm_data(regi,"incolearn",te)/sum(regi2,(pm_data(regi2,"ccap0",te))**(pm_data(regi,"learnExp_woFC",te)));
 *RP* adjust parameter learnMult_woFC to take floor costs into account
@@ -1194,9 +1191,10 @@ $if %cm_techcosts% == "GLO"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_data(regi,"incolearn",te)/(sum(regi2,p_capCum("2015",regi2,te))**pm_data(regi,"learnExp_wFC",te));
 *** initialize spv learning curve in 2020
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
-*FS initialize learning curve in 2025 for electrolysis and dac given assumed global cumulate capacity of ccap0 from generisdata_tech
-$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","elh2")    = pm_data(regi,"incolearn","elh2")/(sum(regi2,p_capCum("2025",regi2,"elh2"))**pm_data(regi,"learnExp_wFC","elh2"));
-$if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","dac")    = pm_data(regi,"incolearn","dac")/(sum(regi2,p_capCum("2025",regi2,"dac"))**pm_data(regi,"learnExp_wFC","dac"));
+*FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
+* equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
+pm_data(regi,"learnMult_wFC",te)$(pm_data(regi,"tech_stat",te) eq 4) = pm_data(regi,"incolearn",te)/(fm_dataglob("ccap0",te)**pm_data(regi,"learnExp_wFC",te));
+
 
 
 display p_capCum;
