@@ -352,6 +352,10 @@ loop(regi,
   );
 );
 
+*** no technologies with tech_stat 4 before 2025
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0;
+
+
 *CB 2012024 -----------------------------------------------------
 *CB allow for early retirement at the start of free model time
 *CB ------------------------------------------------------------
