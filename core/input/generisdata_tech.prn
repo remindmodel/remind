@@ -216,6 +216,8 @@ Assume that all 400 USD/tCO2 are investment cost as current plants runs with was
 Assume floor cost 100 USD/tCO2. 
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
+
+annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), r = 0.05 (factor to annualize total investment cost of plant)
 $offtext
 
 *** EOF ./core/input/generisdata_tech.prn
