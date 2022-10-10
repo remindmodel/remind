@@ -56,7 +56,7 @@ display p35_freight_ES_efficiency;
 
 
 *** bunkers FE demand trajectories
-Parameter  p35_bunkers_fedemand(tall,all_regi,all_GDPscen,EDGE_scenario_all)       "Bunkers FE demand [EJ]"
+Parameter  p35_bunkers_fedemand(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all)       "Bunkers FE demand [EJ]"
 /
 $ondelim
 $include "./modules/35_transport/complex/input/f35_bunkers_fe.cs4r"
@@ -64,7 +64,7 @@ $offdelim
 /
 ;
 
-p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","Mix");
+p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","gdp_SSP2EU_NAV_act","Mix1");
 
 display p35_bunkers_fe;
 
