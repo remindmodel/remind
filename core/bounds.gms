@@ -349,6 +349,10 @@ loop(regi,
   );
 );
 
+*** no technologies with tech_stat 4 before 2025
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0;
+
+
 *CB 2012024 -----------------------------------------------------
 *CB allow for early retirement at the start of free model time
 *CB ------------------------------------------------------------
@@ -545,10 +549,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
-
-*** FS: no electrolysis capacities before 2020
-vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
-
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
