@@ -1162,9 +1162,32 @@ $setglobal cm_regNetNegCO2  on       !! def = on
 *** c_regi_sensscen: specify regions to which certain regional sensitivity parameters should be applied to applied to sensitivity parameters 
 $setGlobal c_regi_sensscen  all !! def = all
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
-*** ("MixX") with X being an integer between 1 and 4, determining the level of climate ambition in
-***   the transport sector
-*** ("HydrHype4") similar to Mix4 but with a strong focus on FCEVs in both passenger and freight sectors.
+***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
+***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
+***  Please note also that all cm_EDGEtr_scen share roughly the same overall energy service demand
+***  the ES demand level is governed by the demScen switch.
+***  (Mix1) the transport sektor "baseline". Consistent with a no- to low-mitigation scenario.
+***         Low BEV or FCEV shares, electrification rate around 1/4th to 1/3rd of LDV
+***         energy service demands in 2050. Similar shares for trucks.
+***         Mode shares: Continuation of existing trends as prescribed in the SSP scenario.
+***         For SSP2 this means roughly constant mode shares.
+***  (Mix4) the high ambition scenario. Consistent with a 1.5° or 2° scenario.
+***         LDVs: High BEV shares, electrification rates for LDVs almost 90% in 2050 (numbers can vary).
+***         Trucks: high electrification of up to 80%.
+***         Busses: BEV rates almost 70% in 2050.
+***         Trains: electric train shares go up to 85% globally (from 60% 2015)
+***         Aviation: there is some hydrogen aviation in 2050 but all in all it is negligible
+***         Ships: there are no technical alternatives in EDGE-T at the moment.
+***         Mode shares:
+***           almost a doubling of the train share in 2050
+***           doubling of non-motorized shares (4% to 8%)
+***           consequently reduced LDV mode shares (~75% - 68% for EUR, just to give order of magnitude,
+***             there is no effect globally in that regard due the developing regions)
+***           constant mode shares for busses.
+***  The other scenarios (Mix2) and (Mix3) can be found at roughly 1/3rd and 2/3rd of the ambition level
+***  of Mix4.
+***  ("HydrHype4") similar to Mix4 but with a strong focus on FCEVs in both passenger and freight sectors.
+***  This information has been added on 4.10.22. Please contact the transport sector experts for more detail.
 $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 *** industry
 *** maximum secondary steel share
