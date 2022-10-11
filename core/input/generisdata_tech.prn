@@ -199,10 +199,10 @@ Assume that 20 GW(el) electrolysis installed globally at 1200 EUR/GW(el) in 2025
 (Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3,
  Odenweller et al. (2022), https://doi.org/10.1038/s41560-022-01097-4, Fig. 1d ).
 
-20 GW(el) * 0.65 (el2he efficiency) * 1e-3 ~ 0.013 TW(H2) = ccap0
-1200 EUR/GW(el) / 0.65 (el2he efficiency) * 1.1 (EUR to USD, 2015) ~ 2000 USD/kW(H2) = inco0
+20 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.013 TW(H2) = ccap0
+1200 EUR/GW(el) / 0.65 (elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 2000 USD/kW(H2) = inco0
 Assume floor cost: 350 EUR/GW(el)
-350 EUR/GW(el) / 0.75 (long-term el2he efficiency) * 1.1 (EUR to USD, 2015) ~ 500 USD/kW(H2) -> incolearn = 1500
+350 EUR/GW(el) / 0.75 (long-term elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 500 USD/kW(H2) -> incolearn = 1500
 
 Direct Air Capture - dac
 learning parameterization:
@@ -217,7 +217,7 @@ Assume floor cost 100 USD/tCO2.
 100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
 * 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
 
-annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), r = 0.05 (factor to annualize total investment cost of plant)
+annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05 
 $offtext
 
 *** EOF ./core/input/generisdata_tech.prn
