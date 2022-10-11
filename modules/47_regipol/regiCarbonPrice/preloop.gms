@@ -6,62 +6,93 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 
-$IFTHEN.regicarbonprice not "%cm_regiCO2target%" == "off" 
-
-loop((ttot,ttot2,ext_regi,target_type,emi_type)$pm_regiCO2target(ttot,ttot2,ext_regi,target_type,emi_type),
-	loop(all_regi$(sameas(ext_regi,all_regi) OR (regi_group(ext_regi,all_regi))),
-*** 		Initialize EU tax path until 2050
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2016 AND t.val le 2050) = pm_taxCO2eq("2020",all_regi)*1.05**(t.val-2020);		
-*** 		convergence scheme post 2050: exponential increase with 1.25%
-		pm_taxCO2eq(t,all_regi)$(t.val gt 2050) = pm_taxCO2eq("2050",all_regi)*1.0125**(t.val-2050);
-	);
-);
-
-$ENDIF.regicarbonprice
-
-
 ***--------------------------------------------------
-*** Emission markets
+*** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
-
-*** Intialize parameters
-pm_emiRescaleCo2TaxETS(ETS_mkt) = 0;
-pm_emiRescaleCo2TaxESR(ttot,regi) = 0;
 
 *** Initialize tax path
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
-  pm_taxemiMkt(t,regi,"ETS")$(NOT (ETS_regi("EU_ETS",regi))) = 0;
-);
-$ENDIF.emiMktETS
-
-$IFTHEN.emiMktES not "%cm_emiMktES%" == "off"
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' pm_taxemiMkt = pm_taxemiMkt;
-  pm_taxemiMkt(t,regi,"ES")$(NOT (regi_group("EU27_regi",regi))) = 0;
-  pm_taxemiMkt(t,regi,"other")$(NOT (ETS_regi("EU_ETS",regi) OR regi_group("EU27_regi",regi))) = 0;
-);
-$ENDIF.emiMktES
-
-$ontext
-*** Removing the economy wide co2 tax parameters for regions within the ETS
-$IFTHEN.ETSprice not "%cm_emiMktETS%" == "off" 
-	loop(ETS_mkt,
-		pm_taxCO2eq(t,regi)$((t.val ge cm_startyear) and ETS_regi(ETS_mkt,regi)) = 0;
-		pm_taxCO2eqHist(t,regi)$((t.val ge cm_startyear) and ETS_regi(ETS_mkt,regi)) = 0;
-  	);
-$ENDIF.ETSprice
-
-*** Removing the economy wide co2 tax parameters for regions within the ES
-$IFTHEN.ESprice not "%cm_emiMktES%" == "off" 
-	loop((regi)$pm_emiTargetESR("2030",regi),
-		pm_taxCO2eq(t,regi)$(t.val ge cm_startyear) = 0;
-		pm_taxCO2eqHist(t,regi)$(t.val ge cm_startyear) = 0;
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+*** Initializing emi market historical and reference prices
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+        pm_taxemiMkt(ttot3,regi,emiMkt) = p47_taxemiMkt_init(ttot3,regi,emiMkt);
+      );
+    );
   );
-$ENDIF.ESprice
-$offtext
+$ENDIF.emiMkt
+
+***---------------------------------------------------------------------------
+*** Calculation of implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+*** initialize tax value for the first iteration
+  p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = 0;
+
+*** load tax from gdx
+$ifthen.loadFromGDX_implicitQttyTargetTax not "%cm_loadFromGDX_implicitQttyTargetTax%" == "off"
+Execute_Loadpoint 'input_ref' p47_implicitQttyTargetTax = p47_implicitQttyTargetTax;
+*** disable tax values for inexistent targets
+  loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$(NOT (pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup))),
+    loop(all_regi$regi_groupExt(ext_regi,all_regi),
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup) = 0;
+    );
+  );
+$endif.loadFromGDX_implicitQttyTargetTax
+
+*** initialize values if not loaded from gdx
+loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
+  loop(all_regi$regi_groupExt(ext_regi,all_regi),
+    if(sameas(taxType,"tax"),
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge ttot.val) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = 0.1;
+    );
+    if(sameas(taxType,"sub"),
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge ttot.val) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = - 0.1;
+    );
+    loop(ttot2,
+      s47_firstFreeYear = ttot2.val; 
+      break$((ttot2.val ge ttot.val) and (ttot2.val ge cm_startyear)); !!initial free price year
+      s47_prefreeYear = ttot2.val;
+    );
+    loop(ttot2$(ttot2.val eq s47_prefreeYear),
+      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$((t.val ge s47_firstFreeYear) and (t.val lt ttot.val) and (t.val ge cm_startyear) and (NOT(p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)))) = 
+        p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup) +
+        (
+          p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup) - p47_implicitQttyTargetTax(ttot2,all_regi,qttyTarget,qttyTargetGroup)
+        ) / (ttot.val - ttot2.val)
+        * (t.val - ttot2.val)
+      ;
+    );
+  );
+);
+
+$endif.cm_implicitQttyTarget
+
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+*** initialize tax value for the first iteration
+  p47_implicitPriceTax(t,regi,entyFe,entySe,sector) = 0;
+  
+$endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+*** initialize tax value for the first iteration
+  p47_implicitPePriceTax(t,regi,entyPe) = 0;
+  
+$endIf.cm_implicitPePriceTarget
+
 *** EOF ./modules/47_regipol/regiCarbonPrice/preloop.gms
 

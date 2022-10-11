@@ -48,8 +48,8 @@ p35_share_seliq_t(ttot,all_regi)                               "share of liquids
 p35_share_seh2_t(ttot,all_regi)                                "share of hydrogen used for transport sector  (feh2t). Unit 0..1"
 p35_share_seel_t(ttot,all_regi)                                "Share of electricity used for transport sector (feelt). Unit 0..1"
 
-$ifthen not "%cm_INNOPATHS_LDV_mkt_share%" == "off"
-  p35_shUePeT_bound(all_te,bound_type)   "define upper and/or lower bound for LDV EV (apCarElT), hydrogen (apCarH2T) or petrol (apCarPeT) market share  [ex. apCarElT.upper 90, apCarPeT.lower 5]" / %cm_INNOPATHS_LDV_mkt_share% /
+$ifthen not "%cm_LDV_mkt_share%" == "off"
+  p35_shUePeT_bound(all_te,bound_type)   "define upper and/or lower bound for LDV EV (apCarElT), hydrogen (apCarH2T) or petrol (apCarPeT) market share  [ex. apCarElT.upper 90, apCarPeT.lower 5]" / %cm_LDV_mkt_share% /
 $endif    
 
 $ifthen.shLDVsales not "%cm_share_LDV_sales%" == "off"

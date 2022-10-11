@@ -779,6 +779,7 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis, 
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
 
+    
     # OR: renamed for sectoral taxation
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
@@ -811,12 +812,55 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
-    #RP filter out regipol items
-    if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q47_implFETax.M", "!!q47_implFETax.M")))
-    }
+    # renamed because of https://github.com/remindmodel/remind/pull/848
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
+                             list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
+                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))                             
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
+                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
+    #filter out deprecated regipol items
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v47_emiTarget.L", "!!v47_emiTarget.L")),
+                             list(c("v47_emiTargetMkt.L", "!!v47_emiTargetMkt.L")),
+                             list(c("vm_taxrevimplEnergyBoundTax.L", "!!vm_taxrevimplEnergyBoundTax.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v47_emiTarget.M", "!!v47_emiTarget.M")),
+                             list(c("v47_emiTargetMkt.M", "!!v47_emiTargetMkt.M")),
+                             list(c("q47_implFETax.M", "!!q47_implFETax.M")),
+                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
+                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
+                             list(c("q47_emiTarget_netCO2.M", "!!q47_emiTarget_netCO2.M")),
+                             list(c("q47_emiTarget_netCO2_noBunkers.M", "!!q47_emiTarget_netCO2_noBunkers.M")),
+                             list(c("q47_emiTarget_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_netCO2_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG.M", "!!q47_emiTarget_netGHG.M")),
+                             list(c("q47_emiTarget_netGHG_noBunkers.M", "!!q47_emiTarget_netGHG_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_netGHG_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M")),
+
+                             list(c("q47_emiTarget_grossEnCO2.M", "!!q47_emiTarget_grossEnCO2.M")),
+                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
+                             list(c("q47_emiTarget_mkt_netCO2_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M")),
+                             list(c("qm_balFeAfterTax.M", "!!qm_balFeAfterTax.M")),
+                             list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")),
+                             list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")),
+                             list(c("vm_taxrevimplEnergyBoundTax.M", "!!vm_taxrevimplEnergyBoundTax.M"))
+                             )
+
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
+                            list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
+                            list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+    
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,

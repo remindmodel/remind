@@ -6,98 +6,155 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
+*** initialize regipol target deviation parameter
+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
-* initialize regipol target deviation parameter
-pm_regiTarget_dev(ext_regi,ttot,ttot2) = 0;
+***--------------------------------------------------
+*** Emission markets (EU Emission trading system and Effort Sharing)
+***--------------------------------------------------
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-*** if the bau or ref gdx has been run with a carbon tax  
+*** initialize emiMkt Target parameters
+  p47_targetConverged(ttot2,ext_regi) = 0;
+
+*** initialize carbon taxes before start year 
 if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p47_taxCO2eqBeforeStartYear = pm_taxCO2eq;
-  p47_taxCO2eqBeforeStartYear(ttot,regi)$((ttot.val ge cm_startyear)) = 0;
+  Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
+  Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
+
+*** copying taxCO2eq value to emiMkt tax parameter for fixed years that contain no pm_taxemiMkt value
+  p47_taxemiMkt_init(ttot,regi,emiMkt)$((p47_taxCO2eq_ref(ttot,regi)) and (ttot.val le cm_startyear) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
+
+*** Initializing European ETS historical and reference prices
+  loop(regi$regi_groupExt("EUR_regi",regi),
+    p47_taxemiMkt_init("2005",regi,"ETS")$(cm_startyear le 2005) = 0;
+    p47_taxemiMkt_init("2010",regi,"ETS")$(cm_startyear le 2010)  = 15*sm_DptCO2_2_TDpGtC;
+    p47_taxemiMkt_init("2015",regi,"ETS")$(cm_startyear le 2015)  = 8*sm_DptCO2_2_TDpGtC;
+***  p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+    p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+
+*** Initializing European ESR historical and reference prices
+    p47_taxemiMkt_init("2020",regi,"ES")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+    p47_taxemiMkt_init("2020",regi,"other")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+  );
+
+*** intialize price trajectory after 2020 based on historical year prices for non policy scenarios 
+  if ( (cm_startyear le 2020),
+    p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020)  = p47_taxemiMkt_init("2020",regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+  );
+
 );
 
-parameter f47_ETSreferenceEmissions(tall,all_regi)      "ETS 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
-/
+*** Auxiliar parameters based on emission targets information 
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
+    regiEmiMktTarget(ext_regi) = yes;
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes;
+  );
+
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
+    p47_lastTargetYear(ext_regi) = ttot2.val;
+  );
+
+  loop(ext_regi,
+    loop(ttot$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
+      p47_firstTargetYear(ext_regi) = ttot.val;
+      break$(p47_firstTargetYear(ext_regi));
+    );
+  );
+
+$ENDIF.emiMkt
+
+***---------------------------------------------------------------------------
+*** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
+***---------------------------------------------------------------------------
+
+*** intialize energy type bound implicit target parameters
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+  pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup) = pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,"CCS",qttyTargetGroup)/(sm_c_2_co2*1000);
+	p47_implicitQttyTargetTax0(t,all_regi) = 0;
+$endIf.cm_implicitQttyTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+  p47_implicitPriceTax0(t,regi,entyFe,entySe,sector)=0;
+
+*** load exogenously defined FE price targets
+table f47_implicitPriceTarget(fePriceScenario,ext_regi,all_enty,entySe,sector,ttot)        "exogenously defined FE price targets [2005 Dollar per GJoule]"
 $ondelim
-$include "./modules/47_regipol/regiCarbonPrice/input/p47_ETS_GHG_referenceEmissions.cs4r"
+$include "./modules/47_regipol/regiCarbonPrice/input/exogenousFEprices.cs3r"
 $offdelim
-/
 ;
 
-$IFTHEN.emiMktETS not "%cm_emiMktETS%" == "off" 
-pm_emissionsRefYearETS(ETS_mkt) = sum(regi$ETS_regi(ETS_mkt,regi), f47_ETSreferenceEmissions("2005",regi)/1000);
+  loop((t,ext_regi,entyFe,entySe,sector)$f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      pm_implicitPriceTarget(t,regi,entyFe,entySe,sector)=f47_implicitPriceTarget("%cm_implicitPriceTarget%",ext_regi,entyFe,entySe,sector,t)*sm_DpGJ_2_TDpTWa;
+    );
+  );
 
-display f47_ETSreferenceEmissions, pm_emissionsRefYearETS;
+  !!initialize first and terminal years auxiliary parameters for price targets
+  loop(ttot,  
+    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2005;
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector) = 2150;
+  );
+  loop((ttot,regi,entyFe,entySe,sector)$pm_implicitPriceTarget(ttot,regi,entyFe,entySe,sector),
+    p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector) = max(ttot.val, p47_implicitPriceTarget_terminalYear(regi,entyFe,entySe,sector));
+    p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) = min(ttot.val, p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector));
+  );
+  p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector)$(p47_implicitPriceTarget_initialYear(regi,entyFe,entySe,sector) lt cm_startyear) = cm_startyear;
 
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p47_taxemiMktBeforeStartYear = pm_taxemiMkt;
-  p47_taxemiMktBeforeStartYear(ttot,regi,emiMkt)$((ttot.val ge cm_startyear)) = 0;
-);
-$ENDIF.emiMktETS
+$endIf.cm_implicitPriceTarget
 
-$IFTHEN.emiMktES not "%cm_emiMktES%" == "off" 
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
 
-parameter f47_ESRTarget(tall,all_regi)      "Effort Sharing emission reduction target (%)"
-/
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+  p47_implicitPePriceTax0(t,regi,entyPe)=0;
+
+*** load exogenously defined FE price targets
+table f47_implicitPePriceTarget(pePriceScenario,ext_regi,all_enty,ttot)        "exogenously defined Pe price targets [2005 Dollar per GJoule]"
 $ondelim
-$include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_target.cs4r"
+$include "./modules/47_regipol/regiCarbonPrice/input/exogenousPEprices.cs3r"
 $offdelim
-/
 ;
 
-parameter f47_ESRreferenceEmissions(tall,all_regi)      "Effort Sharing 2005 reference emissions (Mt CO2-equiv or Mt CO2)"
-/
-$ondelim
-$if %cm_emiMktES_type% == "netGHG"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_GHG_referenceEmissions.cs4r"
-$if %cm_emiMktES_type% == "netCO2"   $include "./modules/47_regipol/regiCarbonPrice/input/p47_ESR_CO2_referenceEmissions.cs4r"
-$offdelim
-/
-;
+  loop((t,ext_regi,entyPe)$f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      pm_implicitPePriceTarget(t,regi,entyPe)=f47_implicitPePriceTarget("%cm_implicitPePriceTarget%",ext_regi,entyPe,t)*sm_DpGJ_2_TDpTWa;
+    );
+  );
 
-pm_emissionsRefYearESR(ttot,regi) = f47_ESRreferenceEmissions(ttot,regi)/1000;
+  !!initialize first and terminal years auxiliary parameters for price targets
+  loop(ttot,  
+    p47_implicitPePriceTarget_terminalYear(regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe) = 2005;
+    p47_implicitPePriceTarget_initialYear(regi,entyPe) $pm_implicitPePriceTarget(ttot,regi,entyPe) = 2150;
+  );
+  loop((ttot,regi,entyPe)$pm_implicitPePriceTarget(ttot,regi,entyPe),
+    p47_implicitPePriceTarget_terminalYear(regi,entyPe) = max(ttot.val, p47_implicitPePriceTarget_terminalYear(regi,entyPe));
+    p47_implicitPePriceTarget_initialYear(regi,entyPe) = min(ttot.val, p47_implicitPePriceTarget_initialYear(regi,entyPe));
+  );
+  p47_implicitPePriceTarget_initialYear(regi,entyPe)$(p47_implicitPePriceTarget_initialYear(regi,entyPe) lt cm_startyear) = cm_startyear;
 
-pm_emiTargetESR(t,regi)$(f47_ESRTarget(t,regi) and regi_group("EU27_regi",regi)) = ( pm_emissionsRefYearESR("2005",regi) * (1 + f47_ESRTarget(t,regi)) ) / sm_c_2_co2;
+$endIf.cm_implicitPePriceTarget
 
-* Applying modifier if it is assumed that the Effort Sharing Decision target does not need to be reached entirely at 2030
-pm_emiTargetESR("2030",regi)$pm_emiTargetESR("2030",regi) = pm_emiTargetESR("2030",regi) * %cm_emiMktES%;
-
-$IFTHEN.emiMktES2050 not "%cm_emiMktES2050%" == "off"
-$IFTHEN.emiMktES2050_2 not "%cm_emiMktES2050%" == "linear"
-$IFTHEN.emiMktES2050_3 not "%cm_emiMktES2050%" == "linear2010to2050"
-	pm_emiTargetESR("2050",regi) = (pm_emissionsRefYearESR("2005",regi)/sm_c_2_co2)*%cm_emiMktES2050%;
-$ENDIF.emiMktES2050_3
-$ENDIF.emiMktES2050_2
-$ENDIF.emiMktES2050
-
-display pm_emiTargetESR;
-
-$ENDIF.emiMktES
-
+***---------------------------------------------------------------------------
 *** Region-specific datainput (with hard-coded regions)
+***---------------------------------------------------------------------------
 
-$IFTHEN.CCScostMarkup not "%cm_INNOPATHS_CCS_markup%" == "off" 
-	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_INNOPATHS_CCS_markup%;
+$IFTHEN.CCScostMarkup not "%cm_CCS_markup%" == "off" 
+	pm_inco0_t(ttot,regi,teCCS)$(regi_group("EUR_regi",regi)) = pm_inco0_t(ttot,regi,teCCS)*%cm_CCS_markup%;
 $ENDIF.CCScostMarkup
 
-$IFTHEN.renewablesFloorCost not "%cm_INNOPATHS_renewables_floor_cost%" == "off" 
-	parameter p_new_renewables_floor_cost(all_te) / %cm_INNOPATHS_renewables_floor_cost% /;
+$IFTHEN.renewablesFloorCost not "%cm_renewables_floor_cost%" == "off" 
+	parameter p_new_renewables_floor_cost(all_te) / %cm_renewables_floor_cost% /;
 	pm_data(regi,"floorcost",te)$((regi_group("EUR_regi",regi)) AND (p_new_renewables_floor_cost(te))) = pm_data(regi,"floorcost",te)  + p_new_renewables_floor_cost(te);
 $ENDIF.renewablesFloorCost
 
-
-$ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
-loop((ttot,ext_regi,emi_type)$p47_quantity_regiCO2target(ttot,ext_regi,emi_type),
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)$(t.val ge ttot.val) = p47_quantity_regiCO2target(ttot,ext_regi,emi_type); 
-);
-$ENDIF.quantity_regiCO2target
-
-*** intialize FE implicit target parameters
-$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
-
-	p47_implFETax(ttot,all_regi,entyFe) = 0;
-	p47_implFETax0(ttot,all_regi) = 0;
-
-$endIf.cm_implicitFE
 
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off" 
 *** Changing refineries emission factors in regions that belong to cm_altFeEmiFac to avoid negative emissions on pe2se (changing from 18.4 to 20 zeta joule = 20/31.7098 = 0.630719841 Twa = 0.630719841 * 3.66666666666666 * 1000 * 0.03171  GtC/TWa = 73.33 GtC/TWa)
@@ -107,7 +164,6 @@ loop(ext_regi$altFeEmiFac_regi(ext_regi),
 *** Changing Germany and UKI solids emissions factors to be in line with CRF numbers (changing from 26.1 to 29.27 zeta joule = 0.922937989 TWa = 107.31 GtC/TWa)
   pm_emifac(ttot,regi,"pecoal","sesofos","coaltr","co2")$(sameas(regi,"DEU") OR sameas(regi,"UKI")) = 0.922937989;
 $endif.altFeEmiFac
-
 
 *** VRE capacity factor adjustments for Germany in line with results from detailed models in ARIADNE project
  loop(te$sameas(te,"wind"),
@@ -121,7 +177,6 @@ $endif.altFeEmiFac
   );
 );
 
-
 loop(te$sameas(te,"spv"),
   loop(regi$sameas(regi,"DEU"),
     pm_cf("2025",regi,te) =  1.02 * pm_cf("2025",regi,te);
@@ -132,7 +187,6 @@ loop(te$sameas(te,"spv"),
     pm_cf(t,regi,te)$(t.val gt 2045) =  pm_cf("2045",regi,te);
   );
 );
-
 
 
 *** p_EmiLULUCFCountryAcc contains historic LULUCF emissions from UNFCCC, 

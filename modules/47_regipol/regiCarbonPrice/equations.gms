@@ -6,137 +6,121 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/equations.gms
 
-***$ifThen.regicarbonprice not "%cm_regiCO2target%" == "off"
-*** FS: calculate emissions used in regional target
-*** net CO2 
-q47_emiTarget_netCO2(t, regi)..
-	v47_emiTarget(t,regi,"netCO2")
-	=e=
-	vm_emiAll(t,regi,"co2")
+***---------------------------------------------------------------------------
+*'  Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS
+***---------------------------------------------------------------------------
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+
+q47_implicitQttyTargetTax(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplicitQttyTargetTax(t,regi)
+  =e=
+  sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe(t,regi,entyPe,entySe,te))) 
+    )$(sameas(qttyTarget,"PE")) 
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe(t,regi,entySe,entyFe,te))) 
+    )$(sameas(qttyTarget,"SE")) 
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)))) 
+    )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+    +
+    ( 
+      p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+    )$(sameas(qttyTarget,"CCS"))  
+  )
+  -
+  p47_implicitQttyTargetTax0(t,regi)
 ;
 
-q47_emiTarget_netCO2_noBunkers(t, regi)..
-	v47_emiTarget(t,regi,"netCO2_noBunkers")
-	=e=
-	vm_emiAll(t,regi,"co2")
-	- sum(se2fe(enty,enty2,te),
-		pm_emifac(t,regi,enty,enty2,te,"co2")
-		* vm_demFeSector(t,regi,enty,enty2,"trans","other"))
+$endIf.cm_implicitQttyTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to final energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+
+q47_implicitPriceTax(t,regi,entyFe,entySe,sector)$((t.val ge max(2010,cm_startyear)) and (entyFe2Sector(entyFe,sector)))..
+  vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector)
+  =e=
+  (
+    p47_implicitPriceTax(t,regi,entyFe,entySe,sector) * sum(emiMkt$sector2emiMkt(sector,emiMkt), vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt))
+  )
+  -
+  p47_implicitPriceTax0(t,regi,entyFe,entySe,sector)
 ;
 
-q47_emiTarget_netCO2_noLULUCF_noBunkers(t, regi)..
-	v47_emiTarget(t,regi,"netCO2_noLULUCF_noBunkers")
-	=e=
-	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
-		vm_emiAllMkt(t,regi,"co2",emiMkt)
-	)
+$endIf.cm_implicitPriceTarget
+
+***---------------------------------------------------------------------------
+*** implicit tax/subsidy necessary to primary energy price targets
+***---------------------------------------------------------------------------
+
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+
+q47_implicitPePriceTax(t,regi,entyPe)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplicitPePriceTax(t,regi,entyPe)
+  =e=
+  (
+    p47_implicitPePriceTax(t,regi,entyPe) * vm_prodPe(t,regi,entyPe)
+  )
+  -
+  p47_implicitPePriceTax0(t,regi,entyPe)
 ;
 
+$endIf.cm_implicitPePriceTarget
 
-
-*** FS: gross energy CO2 emissions (excl. BECCS and bunkers)
-*** note: industry BECCS is still missing from this variable, to be added in the future
-q47_emiTarget_grossEnCO2(t,regi)..
-	v47_emiTarget(t,regi,"grossEnCO2_noBunkers")
-	=e=
-*** total net CO2 energy CO2 (w/o DAC accounting of synfuels) 
-	vm_emiTe(t,regi,"co2")
-*** DAC accounting of synfuels: remove CO2 of vm_emiCDR (which is negative) from vm_emiTe which is not stored in vm_co2CCS
-	+  vm_emiCdr(t,regi,"co2") * (1-pm_share_CCS_CCO2(t,regi))
-*** add pe2se BECCS
-	+  sum(emi2te(enty,enty2,te,enty3)$(teBio(te) AND teCCS(te) AND sameAs(enty3,"cco2")), vm_emiTeDetail(t,regi,enty,enty2,te,enty3)) * pm_share_CCS_CCO2(t,regi)
-*** add industry CCS with hydrocarbon fuels from biomass (industry BECCS) or synthetic origin 
-	+  sum( (entySe,entyFe,secInd37,emiMkt)$(NOT (entySeFos(entySe))),
-		pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt)) * pm_share_CCS_CCO2(t,regi)
-*** remove bunker emissions
-	-  sum(se2fe(enty,enty2,te), pm_emifac(t,regi,enty,enty2,te,"co2") * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
-;
-
-
-
-*** net GHG
-q47_emiTarget_netGHG(t, regi)..
-	v47_emiTarget(t,regi,"netGHG")
-	=e=
-	vm_co2eq(t,regi)
-;
-
-q47_emiTarget_netGHG_noBunkers(t, regi)..
-	v47_emiTarget(t,regi,"netGHG_noBunkers")
-	=e=
-	vm_co2eq(t,regi)
-	- 	sum(se2fe(enty,enty2,te),
-		(pm_emifac(t,regi,enty,enty2,te,"co2")
-		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
-		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
-		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
-;
-
-q47_emiTarget_netGHG_noLULUCF_noBunkers(t, regi)..
-	v47_emiTarget(t,regi,"netGHG_noLULUCF_noBunkers")
-	=e=
-	sum(emiMkt$(sameas(emiMkt,"ETS") OR sameas(emiMkt,"ES")),
-		vm_co2eqMkt(t,regi,emiMkt)
-	)
-;
-
-
-q47_emiTarget_netGHG_LULUCFGrassi_noBunkers(t, regi)..
-	v47_emiTarget(t,regi,"netGHG_LULUCFGrassi_noBunkers")
-	=e=
-	vm_co2eq(t,regi)
-	- 	sum(se2fe(enty,enty2,te),
-		(pm_emifac(t,regi,enty,enty2,te,"co2")
-		+ pm_emifac(t,regi,enty,enty2,te,"n2o")*sm_tgn_2_pgc
-		+ pm_emifac(t,regi,enty,enty2,te,"ch4")*sm_tgch4_2_pgc)
-		 * vm_demFeSector(t,regi,enty,enty2,"trans","other"))
-	- p47_LULUCFEmi_GrassiShift(t,regi)
-;
-
-***$endIf.regicarbonprice
-
-*** net CO2 per Mkt 
-q47_emiTarget_mkt_netCO2(t, regi, emiMkt)..
-	v47_emiTargetMkt(t,regi,emiMkt,"netCO2")
-	=e=
-	vm_emiAllMkt(t,regi,"co2",emiMkt)
-;
-
-*** net GHG per Mkt
-q47_emiTarget_mkt_netGHG(t, regi, emiMkt)..
-	v47_emiTargetMkt(t,regi,emiMkt,"netGHG")
-	=e=
-	vm_co2eqMkt(t,regi,emiMkt)
-;
-
+***---------------------------------------------------------------------------
+*'  Emission quantity target
+***---------------------------------------------------------------------------
 
 $ifThen.quantity_regiCO2target not "%cm_quantity_regiCO2target%" == "off"
 
-q47_quantity_regiCO2target(t,ext_regi,emi_type)$p47_quantity_regiCO2target(t,ext_regi,emi_type)..
-	sum(regi$regi_group(ext_regi,regi),
-		v47_emiTarget(t,regi,emi_type) 
-	)
-	=l=
-	p47_quantity_regiCO2target(t,ext_regi,emi_type)/sm_c_2_co2
+q47_quantity_regiCO2target(t,ext_regi)$p47_quantity_regiCO2target(t,ext_regi)..
+*** net CO2 without bunkers 
+  sum(emiMkt,
+	  sum(emiMkt$emiMktGroup(emiMktExt,emiMkt), vm_emiAllMkt(t,regi,"co2",emiMkt) )
+	- (
+		sum(se2fe(enty,enty2,te),
+		pm_emifac(t,regi,enty,enty2,te,"co2")
+		* vm_demFeSector(t,regi,enty,enty2,"trans","other")
+		)
+	)$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
+  )
+  =l=
+  p47_quantity_regiCO2target(t,ext_regi)/sm_c_2_co2
 ;
 
 $endIf.quantity_regiCO2target
 
 
 ***---------------------------------------------------------------------------
-*'  Calculation of tax/subsidy to reflect non carbon pricing driven efficency measures applied to reduce total final energy to comply with efficiency directive targets
+*** per region minimum variable renewables share in electricity:
 ***---------------------------------------------------------------------------
-$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
 
-q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
-  vm_taxrevimplFETax(t,regi)
-  =e=
-  sum(enty2$entyFE(enty2),
-  	p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
-  )
-  - p47_implFETax0(t,regi) 
-  ;
+q47_VREShare(ttot,regi)..
+  v47_VREshare(ttot,regi)
+  =g=
+  sum(teVRE, vm_shSeEl(ttot,regi,teVRE))
+;
 
-$endIf.cm_implicitFE
+$endIf.cm_VREminShare
 
-*** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms
+***---------------------------------------------------------------------------
+*** per region maximum CCS:
+***---------------------------------------------------------------------------
+$ifthen.cm_CCSmaxBound not "%cm_CCSmaxBound%" == "off"
+
+q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
+  sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
+  =l=
+  p47_CCSmaxBound(regi)
+;
+
+$endIf.cm_CCSmaxBound
+
+*** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms

@@ -31,7 +31,7 @@ sm_year_2_day,input,questionnaire
 sm_day_2_hour,input,questionnaire
 pm_tsu2opTimeYr,input,questionnaire
 vm_demFeForEs,input,questionnaire
-cm_INNOPATHS_priceSensiBuild,input,questionnaire
+cm_priceSensiBuild,input,questionnaire
 cm_logitCal_markup_conv_b,input,questionnaire
 cm_logitCal_markup_newtech_conv_b,input,questionnaire
 cm_build_AdjCostActive,input,questionnaire

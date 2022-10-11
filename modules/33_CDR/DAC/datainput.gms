@@ -14,8 +14,8 @@ p33_dac_fedem_heat("fehes") = 21.12;
 p33_dac_fedem_heat("fegas") = 21.12;
 p33_dac_fedem_heat("feh2s") = 21.12;
 p33_dac_fedem_heat("feels") = 21.12;
-*** FS: INNOPATHS sensitivity on DAC efficiency
-$if not "%cm_INNOPATHS_DAC_eff%" == "off" parameter p33_dac_fedem_fac(entyFeStat) / %cm_INNOPATHS_DAC_eff% /;
-$if not "%cm_INNOPATHS_DAC_eff%" == "off" p33_dac_fedem(entyFeStat) = p33_dac_fedem(entyFeStat) * p33_dac_fedem_fac(entyFeStat);
+*** FS: sensitivity on DAC efficiency
+$if not "%cm_DAC_eff%" == "off" parameter p33_dac_fedem_fac(entyFeStat) / %cm_DAC_eff% /;
+$if not "%cm_DAC_eff%" == "off" p33_dac_fedem(entyFeStat) = p33_dac_fedem(entyFeStat) * p33_dac_fedem_fac(entyFeStat);
 
 *** EOF ./modules/33_CDR/DAC/datainput.gms

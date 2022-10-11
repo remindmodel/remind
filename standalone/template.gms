@@ -273,7 +273,7 @@ c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
-$setGlobal cm_regiCO2target  off     !! def = off
+$setGlobal cm_emiMktTarget  off   !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst             = 1.5;  !! def = 1.5
