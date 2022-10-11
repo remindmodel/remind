@@ -83,19 +83,20 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
       }
       # init renv in a separate session so the libPaths of the current session remain unchanged
+      message("Initializing renv, see ", file.path(cfg$results_folder, "renv_init.log"))
       callr::r(createResultsfolderRenv,
                list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
-               show = TRUE)
+               stdout = file.path(cfg$results_folder, "renv_init.log"), stderr = "2>&1")
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
-    filename <- paste0(cfg$results_folder,"/config.Rdata")
-    cat("   Writing cfg to file",filename,"\n")
+    filename <- file.path(cfg$results_folder, "config.Rdata")
+    cat("   Writing cfg to file", filename, "\n")
     # remember main folder
     cfg$remind_folder <- normalizePath(".")
-    save(cfg,file=filename)
+    save(cfg, file = filename)
     
     # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
