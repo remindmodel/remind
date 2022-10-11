@@ -38,102 +38,35 @@ $offdelim
 p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f_ineqTheil(ttot,regi,"%cm_GDPscen%");
 display p02_ineqTheil;
 
-* consumption path from base run
-* Note: this currently only works for SSP2 due to the SSP2-NDC reference run!!
-* To change: this should be the baseline? so input_bau instead of input_ref
-* TN: not needed in the one-step approach
-* Execute_Loadpoint 'input_bau' p02_cons_ref = vm_cons.l;
+
+* for a policy run, we need to load values coming from the baseline for consumption, tax revenues and energy expenditures:
+if ((cm_emiscen ne 1),
+    Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
+    Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
+    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_EnergyExp.l;
+    
+*    Former code using energy costs vm_costEnergySys as a proxy for energy expenditures:
+*    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_costEnergySys.l;
+    
+);
+
+* income elasticity of tax revenues redistribution. Fixing this to some number for now
+p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = cm_distrBeta;
 
 
-* for a baseline:
+* for a baseline we need the following variables to be 0:
 p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 p02_taxrev_redistr0_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
-*p21_taxrev_redistr0(ttot,regi)$(cm_emiscen eq 1)=0;
-
-* In the condition sign
 v02_EnergyExp_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_energyexpShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_revShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 
-* because they are used:
-p02_revShare(ttot,regi)$(cm_emiscen ne 1)=0;
-p02_energyexpShare(ttot,regi)$(cm_emiscen ne 1)=0;
-
+* For runs that are not baseline, we need to initialize:
+* taxrev_Add, because they are used in the condition sign:
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen ne 1)=0;
-
+* and vm_EnergyExp to the level in the baseline so the model can have a start value
 vm_EnergyExp.l(ttot,regi)$(cm_emiscen eq 1)=p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1);
-
-*p02_EnergyExp_Add(ttot,regi)=0
-
-* Trying to set a initial price to things, which hopefully will be erased afterwards.
-*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt)$(cm_emiscen eq 1)=0;
-
-* for a policy run:
-
-if ((cm_emiscen ne 1),
-    Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
-    Execute_Loadpoint 'input_bau' p02_prodFe_ref=vm_prodFe.l;
-    Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
-    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_EnergyExp.l;
-    
-*    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_costEnergySys.l;
-
-    
-*    Execute_Loadpoint 'input_bau' p02_FEPrice_ref=pm_FEPrice;
-*    Execute_Loadpoint 'input_bau' p02_demFeSector_ref=vm_demFeSector.l;
-    
-);
-
-
-*p02_relConsLoss(ttot,regi)=0+(p02_EnergyExp_Add(ttot,regi)/p02_cons_ref(ttot,regi))$(p02_cons_ref(ttot,regi) ne 0);
-
-* per capita consumption in reference run (1e3 $ MER 2005)
-* p02_consPcap_ref(ttot,regi)$(ttot.val ge 2005) = p02_cons_ref(ttot,regi)/pm_pop(ttot,regi);
-* display p02_consPcap_ref;
-
-* parameters of initial lognormal distribution
-* this is not required anymore
-*p02_distrMu(ttot,regi)$(ttot.val ge 2005) = log(p02_cons_ref(ttot,regi)) - p02_ineqTheil(ttot,regi);
-* display p02_distrMu;
-* To Do: this is unused and only for checking, remove later
-* p02_distrSigma(ttot,regi)$(ttot.val ge 2005) = sqrt(2*p02_ineqTheil(ttot,regi));
-* display p02_distrSigma;
-
-* income elasticity of mitigation costs. fixing this to some number for now
-*p02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear) = 1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi));
-*v02_distrAlpha.l(ttot,regi)$() = p02_distrAlpha(ttot,regi);
-
-*p02_distrAlpha(ttot,regi)$(ttot.val ge 2005) = 1;
-
-*display p02_distrAlpha;
-
-* TN: income elasticity of tax revenues redistribution. fixing this to some number for now
-p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = 1;
-
-*expectation value of y^alpha
-* p02_distrEVyAlpha(t,regi) = exp(p02_distrAlpha(t,regi)*p02_distrMu(t,regi) + p02_distrAlpha(t,regi)**2 * p02_ineqTheil(t,regi));
-* display p02_distrEVyAlpha;
-
-* set start values for variables because they are not contained in the gdx
-* trying to get correct order of magnitude here
-* v02_consPcap.l(ttot,regi)$(ttot.val ge 2005) = 10;
-*v02_relConsLoss.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-* v02_distrNormalization.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-* v02_distrNew_mu.l(ttot,regi)$(ttot.val ge 2005) = 1;
-* v02_distrNew_SecondMom.l(ttot,regi)$(ttot.val ge 2005) = 100;
-*v02_distrNew_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
-
-* TN
-*v02_revShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-*v02_energyexpShare.l(ttot,regi)$(ttot.val ge 2005) = 0.01;
-*v02_distrFinal_sigmaSq.l(ttot,regi)$(ttot.val ge 2005) = 1;
-
-* adding initial values for the emissions:
-* they need to be declared because they are in the condition sign
-*v02_emiEnergyco2eq.l(ttot,regi)$(ttot.val ge 2005)=vm_co2eq.l(ttot,regi)$(ttot.val ge 2005);
-*v02_emiEnergyco2eqMkt.l(ttot,regi,emiMkt)$(ttot.val ge 2005)=0;
-*v02_emiIndus.l(ttot,regi)$(ttot.val ge 2005)=0;
 
 
 

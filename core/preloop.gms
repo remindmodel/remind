@@ -49,13 +49,13 @@ Execute_Loadpoint 'input' pm_pvp = pm_pvp;
 Execute_Loadpoint 'input' vm_demFeSector.l = vm_demFeSector.l;
 
 *** if startyear > 2005, overwrite prices of first years with values from input_ref.gdx
-$ifthen not "%c_fuelprice_init%" == "off"
-  if ( (cm_startyear gt 2005),
-    Execute_Loadpoint 'input_ref' pm_FEPrice = pm_FEPrice;
-    Execute_Loadpoint 'input_ref' pm_SEPrice = pm_SEPrice;
-    Execute_Loadpoint 'input_ref' pm_PEPrice = pm_PEPrice;
-  ); 
-$endif
+*$ifthen not "%c_fuelprice_init%" == "off"
+*  if ( (cm_startyear gt 2005),
+*    Execute_Loadpoint 'input_ref' pm_FEPrice = pm_FEPrice;
+*    Execute_Loadpoint 'input_ref' pm_SEPrice = pm_SEPrice;
+*    Execute_Loadpoint 'input_ref' pm_PEPrice = pm_PEPrice;
+*  ); 
+*$endif
 
 
 if (cm_gdximport_target eq 1,
@@ -181,6 +181,7 @@ option limrow = 0;
 option limcol = 0;
 $ENDIF.out
 
+*pm_FEPrice(t,regi,entyFe,sector,emiMkt)=0;
 
 *** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
 if (cm_startyear gt 2005,

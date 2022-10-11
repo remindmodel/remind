@@ -29,21 +29,9 @@ q02_welfare(regi)..
         *   (  (pm_pop(ttot,regi)
                 *   (
                         ((((vm_cons(ttot,regi)*exp(-0.5*(1/pm_ies(regi))*v02_distrFinal_sigmaSq_welfare(ttot,regi))*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot)))/pm_pop(ttot,regi))**(1-1/pm_ies(regi))-1)/(1-1/pm_ies(regi)) )$(pm_ies(regi) ne 1)
+                        
 
 
-
-* NT: in the general case welfare = population * u(c_eq)
-* with c_eq=c exp(-0.5 eta sigma^2)
-
-* BS2020-03-12 eta = 1 equation to account for inequality
-* TO DO: also include analytic result for eta != 1
-* first test with parameter -> expect no effect
-*                       + (log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi)) - pm_ineqTheil(ttot,regi))$(pm_ies(regi) eq 1)
-* now with coupling to mitigation costs
-*                        + ( log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi))
-*                              - 0.5*v02_distrNew_sigmaSq(ttot,regi) )$(pm_ies(regi) eq 1)
-* TN: use the final instead of the New distribution
-* TN: one zero
                         + ( log((vm_cons(ttot,regi)*(1-cm_damage*vm_forcOs(ttot)*vm_forcOs(ttot))) / pm_pop(ttot,regi))
                               - 0.5*v02_distrFinal_sigmaSq_welfare(ttot,regi) )$(pm_ies(regi) eq 1)
                     )
@@ -53,57 +41,39 @@ $if %cm_INCONV_PENALTY% == "on"  - v02_inconvPen(ttot,regi) - v02_inconvPenCoalS
         )
 ;
 
-*q02_EnergyExp_Add(ttot,regi)..
+
+***---------------------------------------------------------------------------
+*' Variables affecting inequalities:
+*' 1/ Additional energy expenditures,
+*' 2/ Additional revenues from the carbon tax
+***---------------------------------------------------------------------------
+
+* This equation defines additional energy expenditure compared to baseline
+* 
 q02_EnergyExp_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_EnergyExp_Add(ttot,regi)
   =e=
-* Classical difference
+* Preferred expression using energy expenditures (defined in the core)
+* It is worth 0 in the baseline (cm_emiscen=1)
     (vm_EnergyExp(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
 
-* With the consumption
-*    (vm_cons(ttot,regi)-p02_cons_ref(ttot,regi))$(cm_emiscen ne 1)
-* Another thing: Q(p-p0) with p the average price of FE.
-*    (vm_EnergyExp(ttot,regi)-sum(se2fe(entySe,entyFe,te),vm_prodFe(ttot,regi,entySe,entyFe,te))/sum(se2fe(entySe,entyFe,te),p02_prodFe_ref(ttot,regi,entySe,entyFe,te)) *p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
-
-* energy system costs
+* Another expression (if we wanted to use energy system costs)
+* In that case adjust also the expression for p02_EnergyExp_ref in datainput
 *    (vm_costEnergySys(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 
-* relative consumption loss
-*q02_energyexpShare(ttot,regi)..
+* This equation the ratio of additional energy expenditures over consumption
 q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_energyexpShare(ttot,regi)
   =e=
-*    v02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi)+vm_EnergyExp(ttot,regi))
 * simply divided by conso
     v02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
 * divided by adjusted conso
 *    (v02_EnergyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 
-* Other
-*    (p02_EnergyExp_Add(ttot,regi))/(vm_cons(ttot,regi))
-*    v02_EnergyExp_Add(ttot,regi)/(p02_cons_ref(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 ;
 
-
-* TN relative tax revenues 
-* expression for the tax levels borrowed from q21_taxrevGHG
-* Note that for now, it's 'GHG tax revenues'
-* Also make sure that this is a positive value.
-* Later think about how to treat negative emissions.
-
-*q02_relTaxlevels(ttot,regi)..
-q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_revShare(ttot,regi)
-  =e=
-* Divided by adjusted conso
-*    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
-* Simply divided by conso
-    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
-;
-
-
-*q02_taxrev_Add(ttot,regi)..
+* Similarly to energy expenditure, we define the additional revenues compared to the baseline
 q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_taxrev_Add(ttot,regi)
   =e=
@@ -111,161 +81,61 @@ q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     -p02_taxrev_redistr0_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 
-*q02_distrAlpha(ttot,regi)..
+* We use the ratio over consumption
+* In addition, we suppose that this is worth 0 in case revenues are negative (subsidies to negative emission technologies)
+q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_revShare(ttot,regi)
+  =e=
+* Simply divided by conso
+    v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
+
+* Divided by adjusted conso
+*    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
+
+;
+
+* Alpha, the elasticity of energy expenditure, depends upon the region's GDP
+* We use the functional form and calibration from Soergel et al. 2021    
 q02_distrAlpha(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrAlpha(ttot,regi)
     =e=
     1+1.618788-2*0.09746092*log(1000*vm_cesIO(ttot,regi,"inco")/pm_pop(ttot,regi))
+* Note that the above equation defines alpha as a parameter depending upon GDP, which could potentially bring a complex feedback (rich countries moderating GDP growth to reduce the regressivity of energy expenditures).
+* For tests, I also used previously consumption in the baseline instead of actual GDP in the current scenario, so that alpha is a parameter
 *    1+1.618788-2*0.09746092*log(1000*p02_cons_ref(ttot,regi)/pm_pop(ttot,regi))
 ;
 
-* normalization of cost distribution
-* with the simplified equations this can be removed
-*q02_distrNormalization(ttot,regi)$(t.val ge 2005)..
-*    v02_distrNormalization(ttot,regi)
-*  =e=
-* simplified equation
-*  v02_relConsLoss(ttot,regi) * exp( (p02_distrAlpha(ttot,regi) - p02_distrAlpha(ttot,regi)**2) * p02_ineqTheil(ttot,regi) )
-* original equation
-*    v02_relConsLoss(ttot,regi) * p02_consPcap_ref(ttot,regi)**p02_distrAlpha(ttot,regi)
-*      * exp( - p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) - p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
-*;
 
-* second moment of distribution after subtraction of costs
-* this is now redundant as well
-*q02_distrNew_SecondMom(ttot,regi)$(t.val ge 2005)..
-*    v02_distrNew_SecondMom(ttot,regi)
-*  =e=
-* simplified equations
-*    p02_consPcap_ref(ttot,regi)**2 * (
-*      exp(2*p02_ineqTheil(ttot,regi))
-*      - 2* v02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
-*      + v02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) )
-*    )
-* orignal equation
-*    exp(2*p02_distrMu(ttot,regi) + 4*p02_ineqTheil(ttot,regi))
-*    - 2*v02_distrNormalization(ttot,regi)/(p02_consPcap_ref(ttot,regi)**(p02_distrAlpha(ttot,regi)-1))
-*      * exp((p02_distrAlpha(ttot,regi)+1)*p02_distrMu(ttot,regi) + (p02_distrAlpha(ttot,regi)+1)**2 * p02_ineqTheil(ttot,regi))
-*    + power(v02_distrNormalization(ttot,regi),2)/(p02_consPcap_ref(ttot,regi)**(2*(p02_distrAlpha(ttot,regi)-1)))
-*      * exp(2*p02_distrAlpha(ttot,regi)*p02_distrMu(ttot,regi) + 4*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi))
-*;
+***---------------------------------------------------------------------------
+*' Defining sigma
+***---------------------------------------------------------------------------
 
-* moment matching: approximating distribution with new lognormal with changed mu and sigma
-* mu (currently unused, could remove this)
-*q02_distrNew_mu(ttot,regi)$(ttot.val ge 2005)..
-*    v02_distrNew_mu(ttot,regi)
-*  =e=
-*    2*log(v02_consPcap(ttot,regi)) - 0.5*log(v02_distrNew_SecondMom(ttot,regi))
-*;
-* sigma^2: this finally enters the welfare function to account for the change in the income distribution
-* with the simplified equation everything enters directly here
-*q02_distrNew_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
-*    v02_distrNew_sigmaSq(ttot,regi)
-*  =e=
-* simplified equation
-*  log( exp(2*p02_ineqTheil(ttot,regi))
-*      - 2* p02_relConsLoss(ttot,regi) * exp( 2*p02_distrAlpha(ttot,regi)*p02_ineqTheil(ttot,regi) )
-*      + power(p02_relConsLoss(ttot,regi),2) * exp( 2*power(p02_distrAlpha(ttot,regi),2) * p02_ineqTheil(ttot,regi) ))
-*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-*  - 2*log((1-p02_relConsLoss(ttot,regi)))
-* original equation
-*    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
-*;
-
-* TN: adding the second step: distributional effects of revenues
-*q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge 2005)..
-*    v02_distrFinal_sigmaSq(ttot,regi)
-*  =e=
-* simplified equation
-*  log( exp(v02_distrNew_sigmaSq(ttot,regi))
-*      + 2* v02_revShare(ttot,regi) * (exp(p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
-*      -exp(p02_distrAlpha(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi))
-*      -exp(p02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)*v02_distrNew_sigmaSq(ttot,regi)))
-*      + power(v02_revShare(ttot,regi),2)*(exp(power(p02_distrAlpha(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))
-*      +exp(power(p02_distrBeta(ttot,regi),2)*v02_distrNew_sigmaSq(ttot,regi))))
-*      + p02_relConsLoss(ttot,regi)**2 * exp( 2*p02_distrAlpha(ttot,regi)**2 * p02_ineqTheil(ttot,regi) ))
-*  - 2*log((1-p02_relConsLoss(ttot,regi)))
-* original equation
-*    log(v02_distrNew_SecondMom(ttot,regi)) - 2*log(v02_consPcap(ttot,regi))
-
-
-
-*q02_energyexpShare_cap(ttot,regi)..
-q02_energyexpShare_cap(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_energyexpShare(ttot,regi)
-     =l=
-    0.5
-;
-
-
-*q02_budget_first(ttot,regi)..
-q02_budget_first(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_budget_first(ttot,regi)
-     =e=
-*    (1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi)+0.05)
-
-      exp(2*p02_ineqTheil(ttot,regi))
-
-      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
-      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
-      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
-      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
-      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi))
-      
-* minus a epsilon to make sure
-      -0.001
-;
-
-*q02_budget_second(ttot,regi)..
-q02_budget_second(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_budget_second(ttot,regi)
-     =e=
-    (1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)-0.05)
-;
-
-
-* TN: one-step approxitmation
+* Equation defining sigma:
 *q02_distrFinal_sigmaSq(ttot,regi)..
 q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrFinal_sigmaSq(ttot,regi)
   =e=
-  (log( exp(2*p02_ineqTheil(ttot,regi))
 
-* simplified equation
-*       - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrAlpha(ttot,regi))
-*       + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrAlpha(ttot,regi),2))
-*       )
-*  -2*log(1-v02_energyexpShare(ttot,regi))
-*real equation
-      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
-      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
-      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
-      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
-      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)))
-      -2*log(1-v02_energyexpShare(ttot,regi)+v02_revShare(ttot,regi)))
-*      *(v02_distrFinal_sigmaSq(ttot,regi)-2*p02_ineqTheil(ttot,regi)+sqrt(sqr(v02_distrFinal_sigmaSq(ttot,regi)-2*p02_ineqTheil(ttot,regi))+sqr(0.001)))/2
-      
-*      +
-*      2*p02_ineqTheil(ttot,regi)*(-v02_distrFinal_sigmaSq(ttot,regi)+2*p02_ineqTheil(ttot,regi)+sqrt(sqr(-v02_distrFinal_sigmaSq(ttot,regi)+2*p02_ineqTheil(ttot,regi))+sqr(0.001)))/2
-      
-* another, even more simplified equation
-
-*    2*p02_ineqTheil(ttot,regi)*power((1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi))/(1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)),2)
-
-;
-
-
-q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_distrFinal_sigmaSq_welfare(ttot,regi)
-        =e=
-* if there is a limit
-* this should be equal to:
-* sigma if sigma<sigma_limit
-* sigma_limit otherwise
-    (v02_distrFinal_sigmaSq(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(sqr(v02_distrFinal_sigmaSq(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi))+0.00001))/2
-;
+* Solution 1: This is the complex equation 
+*    log( exp(2*p02_ineqTheil(ttot,regi))
+*      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
+*      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
+*      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
+*      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
+*      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi)))
+*    -2*log(1-v02_energyexpShare(ttot,regi)+v02_revShare(ttot,regi))
     
-* define the limit sigma
+      
+* Solution 2: The simple equation
+    2*p02_ineqTheil(ttot,regi)*power((1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi))/(1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)),2)
+
+;
+
+***---------------------------------------------------------------------------
+*' Defining a boundary to prevent welfare-enhancing effects
+***---------------------------------------------------------------------------
+
+* I define sigma_limit as a limit past which increases in inequality do not bring further welfare benefits
 
 q02_distrFinal_sigmaSq_limit(ttot,regi)$(ttot.val ge cm_startyear)..
 * solution one_ the limit is such that the bottom 40% should not have more than in the baseline
@@ -280,15 +150,69 @@ q02_distrFinal_sigmaSq_limit(ttot,regi)$(ttot.val ge cm_startyear)..
 ;
 
 
-q02_distrFinal_sigmaSq_limit2(ttot,regi)$(ttot.val ge cm_startyear)..
-* solution one_ the limit is such that the bottom 40% should not have more than in the baseline
-*    p02_cons_ref(ttot,regi)*(1+errorf((-0.253347-0.5*sqrt(2*p02_ineqTheil(ttot,regi)))/sqrt(2)))
-*    =e=
-*    vm_cons(ttot,regi)*(1+errorf((-0.253347-0.5*sqrt(v02_distrFinal_sigmaSq_limit2(ttot,regi)))/sqrt(2)))
-    p02_cons_ref(ttot,regi)*errorf(-0.253347-0.5*sqrt(2*p02_ineqTheil(ttot,regi)))
-    =e=
-    vm_cons(ttot,regi)*errorf(-0.253347-0.5*sqrt(v02_distrFinal_sigmaSq_limit2(ttot,regi)))
-;   
+
+* I define sigmaSq_welfare as the maximum of sigmaSq and sigmaSq_limit
+* To do that I use a smooth approximation of the welfare function
+*q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge 2015)..
+q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_distrFinal_sigmaSq_welfare(ttot,regi)
+        =e=
+    0.5*(v02_distrFinal_sigmaSq(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(power(v02_distrFinal_sigmaSq(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi),2)+0.00001))
+
+* test: sigma welfare equal to the level in the baseline...
+*    2*p02_ineqTheil(ttot,regi)
+
+* another test: sigma welfare always equal to sigma (no limit)
+*    v02_distrFinal_sigmaSq(ttot,regi)      
+;
+    
+
+
+***---------------------------------------------------------------------------
+*' Adding other boundaries to prevent model from failing
+***---------------------------------------------------------------------------
+
+* For tests (maybe not needed anymore)
+
+* To make sure the energy expenditure share stays within reasonable boundaries, I defined the following inequality:
+q02_energyexpShare_cap(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_energyexpShare(ttot,regi)
+     =l=
+    0.5
+;
+
+* To prevent the "complex" equation defining sigma to fail, one can use inequalities to make sure what is within the log is positive
+
+q02_budget_first(ttot,regi)$(ttot.val ge cm_startyear)..
+* Note that v02_budget_first is defined as a positive variable
+*    v02_budget_first(ttot,regi)
+*     =e=
+*      exp(2*p02_ineqTheil(ttot,regi))
+*      - 2* v02_energyexpShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi))
+*      + 2* v02_revShare(ttot,regi) * exp(2*p02_ineqTheil(ttot,regi)*p02_distrBeta(ttot,regi))
+*      + power(v02_energyexpShare(ttot,regi),2)* exp(2*p02_ineqTheil(ttot,regi)*power(v02_distrAlpha(ttot,regi),2))
+*      + power(v02_revShare(ttot,regi),2)*exp(2*p02_ineqTheil(ttot,regi)*power(p02_distrBeta(ttot,regi),2))
+*      - 2* v02_energyexpShare(ttot,regi)*v02_revShare(ttot,regi)*exp(2*p02_ineqTheil(ttot,regi)*v02_distrAlpha(ttot,regi)*p02_distrBeta(ttot,regi))
+* minus a epsilon to make sure
+*      -0.0001
+
+* At the moment I removed this so use use instead
+    0
+    =l=
+    1
+
+;
+
+* Similar equation for the other expression within the log
+*q02_budget_second(ttot,regi)..
+q02_budget_second(ttot,regi)$(ttot.val ge cm_startyear)..
+*    v02_budget_second(ttot,regi)
+*     =e=
+    0
+    =l=
+    (1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)-0.05)
+;
+
 
 
 

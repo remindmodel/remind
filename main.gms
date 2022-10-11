@@ -108,9 +108,9 @@
 * 
 * Regionscode: 62eff8f7
 * 
-* Input data revision: 6.311
+* Input data revision: 6.316
 * 
-* Last modification (input data): Thu Jun 23 10:11:30 2022
+* Last modification (input data): Tue Oct 11 05:20:44 2022
 * 
 *###################### R SECTION END (VERSION INFO) ###########################
 
@@ -165,8 +165,8 @@ option profile = 0;
 
 
 ***---------------------    Run name and description    -------------------------
-$setGlobal c_expname  default
-$setGlobal c_description  REMIND run with default settings
+$setGlobal c_expname  SSP2EU-PkBudg500-IMCP-Ineq-rev1-testbeta
+$setGlobal c_description  SSP2EU-PkBudg500: This climate policy scenario follows the Shared Socioeconomic Pathways 2 called Middle of the Road. The stylized climate policy scenario assumes a peak budget of 500 Gt?CO2 on total CO2 emissions from 2015 to 2100. This is a 1.5??C scena
 
 ***------------------------------------------------------------------------------
 ***                           MODULES
@@ -175,7 +175,7 @@ $setGlobal c_description  REMIND run with default settings
 ***---------------------    01_macro    -----------------------------------------
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 ***---------------------    02_welfare    ---------------------------------------
-$setGlobal welfare  utilitarian  !! def = utilitarian
+$setGlobal welfare  ineqLognormal  !! def = utilitarian
 ***---------------------    04_PE_FE_parameters    ------------------------------
 $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
 ***---------------------    05_initialCap    ------------------------------------
@@ -191,7 +191,7 @@ $setGlobal growth  exogenous          !! def = exogenous
 ***---------------------    21_tax    -------------------------------------------
 $setGlobal tax  on                    !! def = on
 ***---------------------    22_subsidizeLearning    -----------------------------
-$setGlobal subsidizeLearning  off     !! def = off
+$setGlobal subsidizeLearning  globallyOptimal     !! def = off
 ***---------------------    23_capitalMarket    ---------------------------------
 $setGlobal capitalMarket  debt_limit     !! def = debt_limit
 ***---------------------    24_trade    -----------------------------------------
@@ -217,13 +217,13 @@ $setglobal industry  subsectors     !! def = subsectors
 ***---------------------    39_CCU    -------------------------------------------
 $setglobal CCU  on !! def = on
 ***---------------------    40_techpol  -----------------------------------------
-$setglobal techpol  none              !! def = none
+$setglobal techpol  NDC              !! def = none
 ***---------------------    41_emicapregi  --------------------------------------
 $setglobal emicapregi  none           !! def = none
 ***---------------------    42_banking  -----------------------------------------
 $setglobal banking  off               !! def = off
 ***---------------------    45_carbonprice  -------------------------------------
-$setglobal carbonprice  none          !! def = none
+$setglobal carbonprice  diffCurvPhaseIn2Lin          !! def = none
 ***---------------------    46_carbonpriceRegi  ---------------------------------
 $setglobal carbonpriceRegi  none      !! def = none
 ***---------------------    47_regipol  -----------------------------------------
@@ -279,6 +279,7 @@ parameters
   cm_startyear              "first optimized modelling time step [year]"
   c_start_budget            "start of GHG budget limit"
   cm_prtpScen               "pure rate of time preference standard values"
+  cm_distrBeta              "elasticity of tax revenue redistribution"
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
   cm_permittradescen        "scenario on permit trade"
@@ -385,17 +386,17 @@ parameters
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-cm_abortOnConsecFail   = 5;     !! def = 5
+cm_abortOnConsecFail   = 0;     !! def = 5
 c_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_keep_presolve_gdxes  = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 
-cm_emiscen        = 1;               !! def = 1
-$setglobal cm_rcp_scen  none         !! def = "none"
+cm_emiscen        = 9;               !! def = 1
+$setglobal cm_rcp_scen  rcp20         !! def = "none"
 $setglobal cm_rcp_scen_build  none   !! def = "none"
-cm_co2_tax_2020   = -1;              !! def = -1
+cm_co2_tax_2020   = 100;              !! def = -1
 cm_co2_tax_growth = 1.05;            !! def = 1.05
 c_macscen         = 1;               !! def = 1
 
@@ -433,10 +434,11 @@ $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
-cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
+cm_startyear      = 2025;      !! def = 2005 for a BAU, 2015 for policy runs
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
+cm_distrBeta        = 1;         !! def = 1
 cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
@@ -465,7 +467,7 @@ c_ccsinjecratescen    = 1;         !! def = 1
 $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 c_ccscapratescen      = 1;         !! def = 1
 c_export_tax_scen     = 0;         !! def = 0
-cm_iterative_target_adj  = 0;      !! def = 0
+cm_iterative_target_adj  = 9;      !! def = 0
 $setglobal cm_NDC_version  2022_cond    !! def = 2022_cond
 cm_NDC_divergentScenario = 0;           !! def = 0
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
@@ -479,12 +481,12 @@ cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2from2020FFI   = 700;    !! def = 700 
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
-c_budgetCO2from2020      = 1150;   !! def = 1150
+c_budgetCO2from2020      = 500;   !! def = 1150
 $setGlobal cm_regiExoPrice  off    !! def = off
 $setGlobal cm_regiCO2target  off   !! def = off
 cm_postTargetIncrease    = 2;      !! def = 2
 $setGlobal cm_quantity_regiCO2target  off !! def = off
-cm_peakBudgYr            = 2050;   !! def = 2050
+cm_peakBudgYr            = 2080;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 $setGlobal cm_emiMktETS  off       !! def = off
@@ -535,7 +537,7 @@ $setGlobal cm_INNOPATHS_pushCalib  none !! def = none
 $setGlobal cm_INNOPATHS_reducCostB  none !! def = none
 $setGlobal cm_INNOPATHS_effHP  5 !! def = 5
 
-$setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
+$setGlobal cm_EDGEtr_scen  Mix4  !! def = Mix1
 
 $setGlobal c_regi_nucscen  all !! def = all
 $setGlobal c_regi_capturescen  all !! def = all
@@ -565,8 +567,8 @@ cm_logitCal_markup_newtech_conv_b = 0.3; !! def 0.3
 cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
 
 *** flex tax switches
-cm_flex_tax = 1; !! def 1
-cm_PriceDurSlope_elh2 = 15; !! def 15
+cm_flex_tax = 0; !! def 1
+cm_PriceDurSlope_elh2 = 20; !! def 15
 cm_FlexTaxFeedback = 0; !! def 0
 
 *** VRE switch
@@ -587,7 +589,7 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off
 
 *** EU bioenergy switches
 cm_BioSupply_Adjust_EU = 3; !! def 1
-cm_BioImportTax_EU = 1; !! def 0.25
+cm_BioImportTax_EU = 0; !! def 0.25
 
 cm_noPeFosCCDeu = 0; !! def 0
 

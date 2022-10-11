@@ -12,16 +12,12 @@ vm_emiAll.l(ttot,regi,enty) = 0;
 vm_emiCO2Sector.l(ttot,all_regi,emi_sectors) = 0;
 
 
-pm_FEPrice(t,regi,entyFe,sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))=0;
+* In previous versions, I needed to initialize variables, but it is not needed anymore
+*vm_EnergyExp.l(ttot,regi)$(cm_emiscen eq 1)=0;
+*vm_emitaxredistr.l(ttot,regi)$(cm_emiscen eq 1)=0;
+*pm_FEPrice(t,regi,entyFe,sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))=0;
+*pm_FEPrice(t,regi,entyFe,sector,emiMkt)=0;
 
-*pm_FEPrice(t,regi,entyFe,"trans",emiMkt)=0;
-*pm_FEPrice(t,regi,entyFe,"build",emiMkt)=0;
-*pm_FEPrice(ttot,regi,entyFe,"indst",emiMkt)=sm_eps;
-
-* TN: need to be declared (double check)
-*vm_emiIndus.l(ttot,regi)$(cm_emiscen eq 1)=0;
-*vm_emiEnergyco2eq.l(ttot,regi)$(cm_emiscen eq 1)=0;
-vm_emitaxredistr.l(ttot,regi)$(cm_emiscen eq 1)=0;
 
 
 *AJS* initialize parameter (avoid compilation errors)

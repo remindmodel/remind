@@ -21,7 +21,6 @@ p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
 pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to mimic production drain and transformation costs"
 
-p21_taxrev_redistr0(ttot,all_regi)            "reference level value of GHG emission tax revenues that can be redistributed"
 p21_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
 p21_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
 p21_taxrevCO2luc0(ttot,all_regi)                 "reference level value of co2luc emission tax"

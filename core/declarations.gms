@@ -16,7 +16,8 @@ parameters
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
 ***
-pm_cons(ttot,all_regi)
+* NT
+*pm_cons(ttot,all_regi)
 
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
@@ -283,7 +284,7 @@ p_teAnnuity(all_te)                                  "Annuity factor of a techno
 ***----------------------------------------------------------------------------------------
 ***------------------------------------------------energy expenditures----------------------------                              
 *pm_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure disaggregated level"
-pm_EnergyExp(ttot,all_regi)                     "regional energy expenditure "
+*pm_EnergyExp(ttot,all_regi)                     "regional energy expenditure "
 
 ;
 
@@ -526,7 +527,6 @@ $ENDIF.sehe_upper
 
 * energy expenditure
 *qm_EnergyExp_enty(ttot,all_regi,all_enty,all_enty,all_te)   "energy expenditure, disaggregated level"
-*qm_EnergyExp(ttot,all_regi)                                 "regional energy expenditure "
 qm_EnergyExp(ttot,all_regi)                                 "regional energy expenditure "
 
 
