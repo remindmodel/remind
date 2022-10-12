@@ -135,7 +135,7 @@ p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to resc
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
-p_shareWindOff(ttot)                                 "windoff rollout as a fraction of technical potential"
+p_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
 $ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."

@@ -119,8 +119,16 @@ q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
   sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS(t,regi,enty,enty2,te,rlf)))
   =l=
   p47_CCSmaxBound(regi)
+q47_implFETax(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrevimplFETax(t,regi)
+  =e=
+  sum(enty2$entyFE(enty2),
+  	p47_implFETax(t,regi,enty2) * sum(se2fe(enty,enty2,te), vm_prodFe(t,regi,enty,enty2,te))
+  )
+  - p47_implFETax0(t,regi) 
 ;
 
 $endIf.cm_CCSmaxBound
 
-*** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
+
+*** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms
