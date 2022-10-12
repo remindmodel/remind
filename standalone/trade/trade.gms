@@ -202,7 +202,7 @@ cm_frac_NetNegEmi    "tax on CDR to reflect risk of overshooting, formulated as 
 
 cm_DiscRateScen          "Scenario for the implicit discount rate applied to the energy efficiency capital"
 cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
-cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"
@@ -243,7 +243,6 @@ cm_ariadne_trade_syngas        "switch for enabling synfuel gases imports to Ger
 c_VREPot_Factor             "switch for rescaling renewable potentials in all grades which have not been used by 2020"
 cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
-cm_regipol_slope_beforeTarget "factor for scaling the slope of the co2 price trajectory in the regipol module which is apply only to the last years before target year" 
 cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
 cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
 c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
@@ -340,35 +339,19 @@ c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
-$setGlobal cm_regiCO2target  off   !! def = off
-cm_postTargetIncrease    = 2;      !! def = 2
+$setGlobal cm_emiMktTarget  off   !! def = off
+cm_postTargetIncrease    = 0;      !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
 cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
-$setGlobal cm_emiMktETS  off       !! def = off
-$setGlobal cm_emiMktETS_type  off  !! def = off
 
-$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
-$setGlobal cm_ETS_post2055Increase  2      !! def = 2
-
-$setGlobal cm_emiMktES  off        !! def = off	
-$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
-
-$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
-$setGlobal cm_ESD_post2055Increase  2 !! def = 2
-
-$setGlobal cm_emiMktEScoop  off    !! def = off	
-$setGlobal cm_emiMktES2020price  30 !! def = 30
-$setGlobal cm_emiMktES2050	 off   !! def = off	
 $setGlobal cm_NucRegiPol	 off   !! def = off		
 $setGlobal cm_CoalRegiPol	 off   !! def = off		
 $setGlobal cm_proNucRegiPol	 off   !! def = off
 $setGlobal cm_CCSRegiPol	 off   !! def = off	
-$setGlobal cm_implicitFE  off !! def = off
-$setGlobal cm_implFETarget  2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
-$setGlobal cm_implFEExoTax  off   !! def = off
 $setGlobal cm_vehiclesSubsidies  off !! def = off
+$setGlobal cm_implicitQttyTarget  off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
@@ -384,12 +367,12 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
-cm_INNOPATHS_priceSensiBuild     = -3;
+cm_priceSensiBuild     = -3;
 $setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_INNOPATHS_pushCalib  none !! def = none
-$setGlobal cm_INNOPATHS_reducCostB  none !! def = none
-$setGlobal cm_INNOPATHS_effHP  5 !! def = 5
+$setGlobal cm_pushCalib  none !! def = none
+$setGlobal cm_reducCostB  none !! def = none
+$setGlobal cm_effHP  5 !! def = 5
 
 $setGlobal cm_EDGEtr_scen  ConvCase  !! def = ConvCase
 
@@ -461,8 +444,6 @@ $setGlobal c_VREPot_Factor  off !! def = off
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 
-$setGlobal cm_regipol_slope_beforeTarget  off !! def = off
-
 $setGlobal cm_altFeEmiFac  off        !! def = off	
 
 
@@ -511,34 +492,34 @@ $setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
-*** INNOPATHS switches
 $setglobal cm_calibration_FE  off      !! def = off
 
-$setglobal cm_INNOPATHS_eni  off!! def = off
-$setglobal cm_INNOPATHS_enb  off!! def = off
+$setglobal cm_eni  off!! def = off
+$setglobal cm_enb  off!! def = off
 
-$setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
+$setglobal cm_LDV_mkt_share  off !! def = off
 
-$setglobal cm_INNOPATHS_incolearn  off !! def = off
-$setglobal cm_INNOPATHS_storageFactor  off !! def = off
+$setglobal cm_incolearn  off !! def = off
+$setglobal cm_storageFactor  off !! def = off
 
-$setglobal cm_INNOPATHS_adj_seed  off
-$setglobal cm_INNOPATHS_adj_seed_cont  off
-$setglobal cm_INNOPATHS_adj_coeff  off
-$setglobal cm_INNOPATHS_adj_coeff_cont  off
+$setglobal cm_adj_seed  off
+$setglobal cm_adj_seed_cont  off
+$setglobal cm_adj_coeff  off
+$setglobal cm_adj_coeff_cont  off
 
-$setglobal cm_INNOPATHS_adj_seed_multiplier  off
-$setglobal cm_INNOPATHS_adj_coeff_multiplier  off
+$setglobal cm_adj_seed_multiplier  off
+$setglobal cm_adj_coeff_multiplier  off
 
-$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+$setglobal cm_inco0Factor  off !! def = off
+$setglobal cm_inco0RegiFactor  off !! def = off
 
-$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
-$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
-$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
+$setglobal cm_CCS_markup  off !! def = off
+$setglobal cm_Industry_CCS_markup  off !! def = off
+$setglobal cm_renewables_floor_cost  off !! def = off 
 
-$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
+$setglobal cm_DAC_eff  off !! def = off 
 
-$setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
+$setglobal cm_sehe_upper  off !! def = off 
 
 $setglobal cm_fixCO2price  off !! def = off
 

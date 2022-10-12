@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
 
-
+***---------------------------------------------------------------------------
 *** region-specific bounds (with hard-coded regions)
+***---------------------------------------------------------------------------
 
 ** Force historical bounds on nuclear
 vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
@@ -66,8 +67,6 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
 
 $ENDIF.CoalRegiPol  
 
-
-
 *** further bounds for Germany
 *** upper bound on capacity additions for 2025 based on near-term trends
 *** for now only REMIND-EU/Germany, upper bound is double the historic maximum capacity addition in 2011-2020
@@ -76,12 +75,9 @@ loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
 );
 
-
 *** bounds on historic gas capacities in Germany
 vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
 vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
-
-
 
 *** only small amount of co2 injection ccs until 2030 in Germany
 vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU"))) = 1e-3;
@@ -89,7 +85,6 @@ vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU
 vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND (cm_noPeFosCCDeu = 1)) = 1e-4;
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
-
 
 *** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
 loop(regi$(sameAs(regi,"DEU")),
@@ -100,12 +95,22 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
-
-
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
 $endIf.ensec
+
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables share in electricity:
+***---------------------------------------------------------------------------
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
+  loop((ttot,ext_regi)$(p47_VREminShare(ttot,ext_regi)),
+    loop(regi$(regi_group(ext_regi,regi)),
+      v47_VREshare.lo(t,regi)$(t.val ge ttot.val) = p47_VREminShare(t,ext_regi);
+    )
+  )
+;
+$endIf.cm_VREminShare
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

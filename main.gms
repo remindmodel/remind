@@ -801,7 +801,12 @@ parameter
 parameter
   cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
 ;
-  cm_postTargetIncrease    = 2;      !! def = 2
+  cm_postTargetIncrease    = 0;      !! def = 0
+parameter
+cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
+*** cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set." 
+;
+  cm_emiMktTargetDelay    = 0;       !! def = 0
 parameter
   c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 ;
@@ -849,13 +854,14 @@ parameter
   cm_DiscRateScen        = 0;!! def = 0
 parameter
   cm_noReboundEffect      "Switch for allowing a rebound effect when closing the efficiency gap (cm_DiscRateScen)"
+*** def <- -3  , price sensitivity of logit function for heating and cooking technological choice
 ;
   cm_noReboundEffect     = 0;
 parameter
-  cm_INNOPATHS_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 *** def <- -3  , price sensitivity of logit function for heating and cooking technological choice
 ;
-  cm_INNOPATHS_priceSensiBuild     = -3;
+  cm_priceSensiBuild     = -3;
 parameter
   cm_peakBudgYr       "date of net-zero CO2 emissions for peak budget runs without overshoot"
 ***    time of net-zero CO2 emissions (peak budget), requires emiscen to 9 and cm_iterative_target_adj to 7, will potentially be adjusted by algorithms
@@ -1106,26 +1112,25 @@ $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 *** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch, require regipol module to be set to regiCarbonPrice (e.g. GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494) )" 
 $setGlobal cm_regiExoPrice  off    !! def = off
-*** cm_regiCO2target "budget or year target for specific region or region group. Ex.: '2050.EUR_regi.budget 72, 2050.DEU.year 0.1' sets a 72 GtCO2eq budget target for European countries for emissions between 2020 and 2050, and a 100 MtCO2 CO2eq emission target for the 2050 year for Germany (only used if regipol model regiCarbonPrice realization is active)"
-$setGlobal cm_regiCO2target  off   !! def = off
-*** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group. Ex.: '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be zero from 2050 on"
+*** cm_emiMktTarget "budget or year target for specific emission market and region or region group. Ex.: '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1' sets a 72 GtCO2eq budget target for European 27 countries for emissions between 2020 and 2050, and a 100 MtCO2 CO2eq emission target for the 2050 year for Germany (only used if regipol model regiCarbonPrice realization is active)"
+$setGlobal cm_emiMktTarget  off    !! def = off
+*** cm_prioRescaleFactor "factor applied to carbon tax rescale factor to prioritize short term targets in the initial 15 iterations (and vice versa latter) [0..1]. e.g if equal to 0.1, only 10% of the carbon tax rescaling will be applied in the first 15 iterations for targets from 2050 onward. This prioritize more short term targets (e.g 2030) in the first iteration. The opposite will happen to iterations higher than 15, making short term carbon pricing (e.g. 2030) more rigid to change in later iterations."
+$setGlobal cm_prioRescaleFactor off !! def = off
+** cm_quantity_regiCO2target "emissions quantity upper bound from specific year for region group. Ex.: '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be zero from 2050 on"
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 *** cm_emiMktETS "enable European ETS specific carbon prices. off = disabled (default); number = percentage of 2005 emissions allowance for 2050 (ex. 0.1 = 2050 emissions correspond to 10% of the 2005 emissions)"
-$setGlobal cm_emiMktETS  off       !! def = off
-*** cm_emiMktETS_type off = disabled (default); "budget" = ETS 2013-2050 budget target based on linear decrease up to 2005 emissions multiplied by cm_emiMktETS in 2050; "year" = ETS 2050 emissions equal to 2005 emissions multiplied by cm_emiMktETS
-$setGlobal cm_emiMktETS_type  off  !! def = off
 *** cm_ETS_postTargetIncrease "ETS carbon price increase per year after the year target and before 2055 (linear string or euro per tCO2)"
-$setGlobal cm_ETS_postTargetIncrease  linear !! def = linear
-*** cm_ETS_post2055Increase "ETS carbon price increase per year after 2055 (euro per tCO2)"
-$setGlobal cm_ETS_post2055Increase  2      !! def = 2
-*** cm_emiMktES  "enable European Effort Sharing specific carbon prices. off = disabled (default); 1 = target per region follows EU per country legislation targets; other number (1.2, 0.9,...) = target in 2030 is multiplied by the factor (1.2 = achieved target in 2030 is 20% higher than the predicted by the EU legislation)
-$setGlobal cm_emiMktES  off        !! def = off	
-*** cm_emiMktES_type "emissions type that the target is calaculated for. netGHG = GHG emissions target (default), netCO2 = CO2 emissions target"
-$setGlobal cm_emiMktES_type  netGHG !! def = netGHG	
-*** cm_ESD_postTargetIncrease "ESD carbon price increase per year after the year target and before 2055 (euro per tCO2)"
-$setGlobal cm_ESD_postTargetIncrease  8 !! def = 8
-*** cm_ESD_post2055Increase   "ESD carbon price increase per year after 2055 (euro per tCO2)"
-$setGlobal cm_ESD_post2055Increase  2 !! def = 2
+*** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies, 
+*** i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
+*** Example: if set to 10, then the CF of all pe2se technologies can be decreased by up to 10% from the default value
+*** Setting capacity factors free is numerically expensive but can be helpful to see if negative prices disappear in historic years as the model is allowed to dispatch.
+$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+*** cm_dispatchSeelDown <- "off", same as cm_dispatchSetyDown but only provides range to capacity factors of electricity generation technologies
+*** cm_steel_secondary_max_share_scenario
+*** defines maximum secondary steel share per region
+*** Share is faded in from cm_startyear or 2020 to the denoted level by region/year.
+*** Example: "2040.EUR 0.6" will cap the share of secondary steel production at 60 % in EUR from 2040 onwards
+$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
 *** cm_NucRegiPol "enable European region specific nuclear phase-out and new capacitiy constraints"
 $setGlobal cm_NucRegiPol   off   !! def = off
 *** cm_CoalRegiPol "enable European region specific coal phase-out and new capacitiy constraints"
@@ -1133,13 +1138,20 @@ $setGlobal cm_CoalRegiPol   off   !! def = off
 *** cm_proNucRegiPol "enable European region specific pro nuclear capacitiy constraints"
 $setGlobal cm_proNucRegiPol   off   !! def = off
 *** cm_CCSRegiPol "def = off, year for earliest investment in Europe, with one timestep split between countries currently exploring - Norway (NEN), Netherlands (EWN) and UK (UKI) - and others"
-$setGlobal cm_CCSRegiPol     off   !! def = off
-*** cm_implFETarget "default = 2030.EUR_regi 1.26921. Only active if cm_implicitFE = off"
-$setGlobal cm_implFETarget  2030.EUR_regi 1.26921 !! def = 2030.EUR_regi 1.26921
-*** cm_implFEExoTax "default = off. Value to overwrite default defined in the parameter p47_implFEExoTax, ex. "2040.EUR_regi.stat 5, 2050.EUR_regi.stat 10, 2030.EUR_regi.trans 15, 2040.EUR_regi.trans 30, 2050.EUR_regi.trans 40". Only active if cm_implicitFE = off; Sets a FE tax on transportation of 15$/GJ from 2030 onward, and 30$/GJ from 2040 onward, and 40$/GJ from 2040 onward."
-$setGlobal cm_implFEExoTax  off   !! def = off
-*** cm_vehiclesSubsidies "default = off. If "on" applies country specific BEV and FCEV subsidies from 2020 onwards"
-$setGlobal cm_vehiclesSubsidies  off !! def = off
+$setGlobal cm_CCSRegiPol     off   !! def = off*** cm_vehiclesSubsidies "default = off. If "on" applies country specific BEV and FCEV subsidies from 2020 onwards"
+$setGlobal cm_vehiclesSubsidies  off !! def = off*** cm_implicitQttyTarget "default = off. Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...). The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations. 
+*** Ex: If you want to enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa). Just set the cm_implicitQttyTarget to "2030.EU27_regi.tax.t.FE.all 1.03263". The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)   
+*** Ex: If you want to enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions. Just set the cm_implicitQttyTarget to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.    
+$setGlobal cm_implicitQttyTarget  off !! def = of*** cm_implicitPriceTarget "default = off. aceptable values: "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice", define tax/subsidies to match FE prices defined in the pm_implicitPriceTarget parameter.   
+$setGlobal cm_implicitPriceTarget  off !! def = off
+*** cm_implicitPePriceTarget "default = off. aceptable values: "highFossilPrice", define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter.   
+$setGlobal cm_implicitPePriceTarget  off !! def = off
+*** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration"
+$setGlobal cm_loadFromGDX_implicitQttyTargetTax  off !! def = off
+*** cm_VREminShare "default=off, 2050.EUR_regi 0.7, requires a minimum 70% VRE share (wind plus solar) in electricity production."
+$setGlobal cm_VREminShare    off !! def = off
+*** cm_CCSmaxBound "default=off, unit GT CO2. e.g. `GLO 2, EUR 0.25`, amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2/yr globally, and 250 Mt CO2/yr in EU28. This switch only works for model native regions, if you want to apply it to a group region use cm_implicitQttyTarget instead."
+$setGlobal cm_CCSmaxBound    off !! def = off$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 *** c_CES_calibration_new_structure      <-   0       # def <-  0, switch to 1 if you want to calibrate a CES structure different from input gdx
 $setglobal c_CES_calibration_new_structure  0     !!  def  =  0
 *** c_CES_calibration_write_prices       <-   0       # def <-  0, switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
@@ -1219,32 +1231,29 @@ $setGlobal cm_EnSecScen  off !! def off
 $setGlobal cm_Ger_Pol  off !! def off
 *** cm_altFeEmiFac <- "off"  # def <- "off", regions that should use alternative data from "umweltbundesamt" on emission factors for final energy carriers (ex. "EUR_regi, NEU_regi")
 $setGlobal cm_altFeEmiFac  off        !! def = off
-*** INNOPATHS switches
 *** overwritte default fe trajectories with low, medium and high alternatives for buildings, transport and industry
 $setglobal cm_calibration_FE  off      !! def = off
 *** Electricity elasticities (factor)
 *** def <- "off", no change for industry energy elasticity (eni); or number (ex. 2), multiplicative factor applied to industry eni elasticity value.
-$setglobal cm_INNOPATHS_eni  off!! def = off
+$setglobal cm_eni  off!! def = off
 *** def <- "off", no change for buildings energy elasticity (enb); or number (ex. 2), multiplicative factor applied to buildings enb elasticity value.
-$setglobal cm_INNOPATHS_enb  off!! def = off
-*** Complex Transport mkt shares
+$setglobal cm_enb  off!! def = off*** Complex Transport mkt shares
 *** def <- "off"; or list of techs with adj upper/lower bounds to mkt share in LDV (ex. for EV, H2V and ICE: apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5)
-$setglobal cm_INNOPATHS_LDV_mkt_share  off !! def = off
+$setglobal cm_LDV_mkt_share  off !! def = off
 ***  def <- "off"; or list of techs with adj upper/lower bounds to mkt share in LDV (ex. for EV, H2V and ICE: 2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5)
 $setglobal cm_share_LDV_sales  off !! def = off
 ***  Change floor investment cost
 ***  def <- "off"; or list of techs to change incolearn value. (ex. "apcarelt=17000,wind=1600,spv=5160,csp=9500")
-$setglobal cm_INNOPATHS_incolearn  off !! def = off
+$setglobal cm_incolearn  off !! def = off
 *** Scale curtailment and storage requirements (factor)
 *** def <- "off"; or number (ex. 0.66), fraction to resize the curtailment and storage requirements per region.
-$setglobal cm_INNOPATHS_storageFactor  off !! def = off
-***  Change learn rate
+$setglobal cm_storageFactor  off !! def = off***  Change learn rate
 *** def <- "off"; or list of techs to change learn rate value. (ex. "apcarelt 0.2")
 $setglobal cm_learnRate  off !! def = off
 *** overwrite technology-dependent v_adjFactor seed value. Smaller means slower scale-up
 *** def <- "off"; or list of techs to change adj_seed value. (ex. "apCarH2T=0.5,apCarElT=0.5,apCarDiEffT=0.25,apCarDiEffH2T=0.25")
-$setglobal cm_INNOPATHS_adj_seed  off
-$setglobal cm_INNOPATHS_adj_seed_cont  off
+$setglobal cm_adj_seed  off
+$setglobal cm_adj_seed_cont  off
 *** These two switches overwrite the technology-dependent adjustment cost seed value. Both have the same functionality. 
 *** overwrite coefficient for adjustment costs. Higher means higher adjustment cost
 *** def <- "off"; or list of techs to change adj_coeff value. (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200")
@@ -1252,48 +1261,46 @@ $setglobal cm_INNOPATHS_adj_seed_cont  off
 *** Decreasing the adjustment seed value leads to deployment of adjustment cost at slower scale-up rates of capacities. Hence, lower values mean slower scale-up.
 *** The values can be set technology-specific by providing a list (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200"). 
 *** overwrite coefficient for adjustment costs. Higher means higher adjustment cost
-$setglobal cm_INNOPATHS_adj_coeff  off
-$setglobal cm_INNOPATHS_adj_coeff_cont  off
-*** rescale adjustment cost seed value relative to default value. Smaller means slower scale-up.
+$setglobal cm_adj_coeff  off
+$setglobal cm_adj_coeff_cont  off*** rescale adjustment cost seed value relative to default value. Smaller means slower scale-up.
 *** These two switches overwrite the technology-dependent adjustment cost coefficient. Both have the same functionality. 
-*** cm_INNOPATHS_adj_coeff_cont only serves to add more changes once the character limit of cm_INNOPATHS_coeff_seed is reached. 
+*** cm_adj_coeff_cont only serves to add more changes once the character limit of cm_coeff_seed is reached. 
 *** Increasing the adjustment cost coefficient leads to high adjustment cost. 
 *** The values can be set technology-specific by providing a list (ex. "apCarH2T=100,apCarElT=100,apCarDiEffT=200,apCarDiEffH2T=200").
-$setglobal cm_INNOPATHS_adj_seed_multiplier  off
+$setglobal cm_adj_seed_multiplier  off
 *** rescales adjustment seed value by a certain factor relative to the default value. Works similar to the above adjustment cost switches. 
 *** (ex. "spv 0.5, storspv 0.5, wind 0.25")
-$setglobal cm_INNOPATHS_adj_coeff_multiplier  off
-*** Change investment costs (factor)
+$setglobal cm_adj_coeff_multiplier  off*** Change investment costs (factor)
 *** def <- "off"; or list of techs with respective factor to change inco0 value. (ex. "ccsinje=0.5,bioigccc=0.66,bioh2c=0.66,biogas=0.66,bioftrec=0.66,bioftcrec=0.66,igccc=0.66,coalh2c=0.66,coalgas=0.66,coalftrec=0.66,coalftcrec=0.66,ngccc=0.66,gash2c=0.66,gasftrec=0.66,gasftcrec=0.66,tnrs=0.66")
 *** rescales adjustment coefficient by a certain factor relative to the default value. Works similar to the above adjustment cost switches. 
 *** (ex. "spv 2, storspv 2, wind 4")
 *** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to 
 *** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time. 
-*** Example: cm_INNOPATHS_adj_seed_multiplier = "spv 0.5" and cm_INNOPATHS_adj_coeff_multiplier = "spv 2". 
-$setglobal cm_INNOPATHS_inco0Factor  off !! def = off
+*** Example: cm_INNOPATHS_adj_seed_multiplier = "spv 0.5" and cm_adj_coeff_multiplier = "spv 2". 
+$setglobal cm_inco0Factor  off !! def = off
+$setglobal cm_inco0RegiFactor  off !! def = off
 *** CCS
 *** def <- "off", multiplicative factor for CSS cost markup
-$setglobal cm_INNOPATHS_CCS_markup  off !! def = off
+$setglobal cm_CCS_markup  off !! def = off
 *** Industry CCS
 *** def <- "off", multiplicative factor for Industry CSS cost markup
-$setglobal cm_INNOPATHS_Industry_CCS_markup  off !! def = off
+$setglobal cm_Industry_CCS_markup  off !! def = off
 *** RE floor cost
 *** def <- "off", additional floor cost for renewables
-$setglobal cm_INNOPATHS_renewables_floor_cost  off !! def = off 
-*** DAC
+$setglobal cm_renewables_floor_cost  off !! def = off *** DAC
 *** def "off", multiplicative factor for energy demand per unit carbon captured with DAC
-$setglobal cm_INNOPATHS_DAC_eff  off !! def = off 
+$setglobal cm_DAC_eff  off !! def = off 
 *** secondary energy district heating and heat pumps upper bound
 *** def <- "off", limit secondary energy district heating and heat pumps upper bound in relation to 2020 values
-$setglobal cm_INNOPATHS_sehe_upper  off !! def = off 
+$setglobal cm_sehe_upper  off !! def = off 
 *** cm_rcp_scen_build     "chooses RCP scenario for demand in buildings (climate change impact)"
 $setglobal cm_rcp_scen_build  none   !! def = "none"
-*** cfg$gms$cm_INNOPATHS_pushCalib          <- "none" #def <- "none" , "hydrogen" also possible. Reduction of calibration factor over time in logit
-$setGlobal cm_INNOPATHS_pushCalib  none !! def = none
-*** cfg$gms$cm_INNOPATHS_reducCostB         <- "none" #def <- "none" , "hydrogen" and "heatpumps" also possible. Reduction of costs
-$setGlobal cm_INNOPATHS_reducCostB  none !! def = none
-*** cfg$gms$cm_INNOPATHS_effHP         <- 5 #def <- 5 , efficiency of heat pumps
-$setGlobal cm_INNOPATHS_effHP  5 !! def = 5
+*** cfg$gms$cm_pushCalib          <- "none" #def <- "none" , "hydrogen" also possible. Reduction of calibration factor over time in logit
+$setGlobal cm_pushCalib  none !! def = none
+*** cfg$gms$cm_reducCostB         <- "none" #def <- "none" , "hydrogen" and "heatpumps" also possible. Reduction of costs
+$setGlobal cm_reducCostB  none !! def = none
+*** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
+$setGlobal cm_effHP  5 !! def = 5
 *** Note on CES markup cost:
 *** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as 
 *** higher markup-cost in calibration will lead to higher efficiencies 

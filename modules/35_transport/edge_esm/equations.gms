@@ -10,7 +10,7 @@
 *'  Transportation Final Energy Balance
 q35_demFeTrans(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"trans"))) ..
   sum((entySe,te)$se2fe(entySe,entyFe,te), 
-    vm_demFeSector(ttot,regi,entySe,entyFe,"trans",emiMkt)
+    vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,"trans",emiMkt)
   )
   =e=
   sum(fe2es(entyFe,esty,teEs)$(NOT (es_lo35(esty))), vm_demFeForEs(ttot,regi,entyFe,esty,teEs))$(sameas(emiMkt,"ES"))+

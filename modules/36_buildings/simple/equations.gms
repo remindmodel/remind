@@ -10,7 +10,7 @@
 *'  Buildings Final Energy Balance
 ***---------------------------------------------------------------------------
 q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"build"))) .. 
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(ttot,regi,entySe,entyFe,"build",emiMkt)) 
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,"build",emiMkt)) 
   =e=
   ( sum(in$(fe2ppfEn(entyFe,in) AND ppfen_buildings_dyn36(in)),
     vm_cesIO(ttot,regi,in)
@@ -35,7 +35,7 @@ q36_costAddH2PhaseIn(t,regi)..
   v36_costAddTeInvH2(t,regi,"tdh2s")
   =e=
   v36_costAddH2LowPen(t,regi)
-    * (vm_demFeSector(t,regi,"seh2","feh2s","build","ES"))
+    * (vm_demFeSector_afterTax(t,regi,"seh2","feh2s","build","ES"))
     + (v36_expSlack(t,regi)*1e-8)
 ;
 
@@ -63,10 +63,10 @@ q36_auxCostAddTeInv(t,regi)..
 q36_H2Share(t,regi)..
   v36_H2share(t,regi) 
   * sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,"build","ES"))
   =e=
   sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),
-      vm_demFeSector(t,regi,entySe,entyFe,"build","ES"))
+      vm_demFeSector_afterTax(t,regi,entySe,entyFe,"build","ES"))
 ;
 
 
