@@ -8,6 +8,7 @@
 ***  ---------------------------------------------------------
 ***  Track of changes between iterations
 ***  ---------------------------------------------------------
+
 *GL* calculate mean square deviation from previous tax revenue as metric for convergence of revenue iteration
 p21_deltarev(iteration+1,regi)=sqrt(sum(ttot$(ttot.val ge max(2010,cm_startyear)),sqr(vm_taxrev.l(ttot,regi)*pm_ts(ttot)))/(sum(ttot$(ttot.val ge max(2010,cm_startyear)),1)));
 OPTION decimals =5;

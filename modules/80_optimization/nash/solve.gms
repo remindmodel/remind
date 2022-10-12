@@ -46,7 +46,6 @@ if (cm_keep_presolve_gdxes eq 1,
 solve hybrid using nlp maximizing vm_welfareGlob;
 
 
-
 ***      -------------------------------------------------------------------
 ***                     close regi loop
 ***      -------------------------------------------------------------------

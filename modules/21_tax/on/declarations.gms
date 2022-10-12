@@ -40,6 +40,7 @@ p21_implicitDiscRate0(ttot,all_regi)             "reference level value of impli
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)         "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                   "reference level value of flexibility tax"
 p21_taxrevBioImport0(ttot,all_regi)              "reference level value of bioenergy import tax"
+
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
 p21_taxrevNetNegEmi_iter(iteration,ttot,all_regi)          "reference level value of net-negative emissions tax revenue"
