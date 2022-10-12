@@ -8,11 +8,8 @@ stopifnot(`pdflatex not found, check your LaTeX installation` = Sys.which("pdfla
 message("checking for pdflatex executable on your PATH - ok")
 
 message("checking if required R packages are installed")
-filter_func <- function(x) {
-  return(!requireNamespace(x, quietly = TRUE) && x != "R")
-}
-missingDeps <- Filter(filter_func,
-                      renv::dependencies(dev = TRUE)[, "Package"])
+missingDeps <- Filter(function(x) !requireNamespace(x, quietly = TRUE),
+                      setdiff(renv::dependencies(dev = TRUE)[, "Package"], "R"))
 if (length(missingDeps) > 0) {
   stop("Some required R packages are missing, install them with `renv::install(",
        paste(capture.output(dput(missingDeps)), collapse = ""), ")`")
