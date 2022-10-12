@@ -45,9 +45,6 @@ if (cm_keep_presolve_gdxes eq 1,
 
 solve hybrid using nlp maximizing vm_welfareGlob;
 
-*if (ord(iteration) eq 3,
-*  abort "lets look at logs";
-*);
 
 
 ***      -------------------------------------------------------------------

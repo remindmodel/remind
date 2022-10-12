@@ -8,11 +8,6 @@
 ***  ---------------------------------------------------------
 ***  Track of changes between iterations
 ***  ---------------------------------------------------------
-* TN
-*p02_energyexpShare(ttot,regi)=max(0,v02_energyexpShare.l(ttot,regi));
-*p02_revShare(ttot,regi)=v02_revShare.l(ttot,regi);
-*p02_distrAlpha(ttot,regi)=v02_distrAlpha.l(ttot,regi);
-
 *GL* calculate mean square deviation from previous tax revenue as metric for convergence of revenue iteration
 p21_deltarev(iteration+1,regi)=sqrt(sum(ttot$(ttot.val ge max(2010,cm_startyear)),sqr(vm_taxrev.l(ttot,regi)*pm_ts(ttot)))/(sum(ttot$(ttot.val ge max(2010,cm_startyear)),1)));
 OPTION decimals =5;

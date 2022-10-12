@@ -5,12 +5,6 @@
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/21_tax/on/presolve.gms
-*NT
-*p02_EnergyExp_Add(ttot,regi)=vm_EnergyExp.l(ttot,regi)-p02_EnergyExp_ref(ttot,regi);
-*p02_energyexpShare(ttot,regi)=max(0,v02_energyexpShare.l(ttot,regi));
-*p02_revShare(ttot,regi)=v02_revShare.l(ttot,regi);
-*p02_distrAlpha(ttot,regi)=v02_distrAlpha.l(ttot,regi);
-
 *JS*
 *** calculation of tax rate, as a function of per-capita gdp levels
 p21_tau_so2_tax(ttot,regi)$(ttot.val ge 2005)=s21_so2_tax_2010*pm_gdp_gdx(ttot,regi)/pm_pop(ttot,regi);  !! scaled by GDP/cap in the unit [trn US$/bn people]
@@ -25,7 +19,6 @@ pm_taxCO2eqSum(ttot,regi) = pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) 
 *JH* !!Warning!! The same allocation block exists in postsolve.gms. 
 ***                Do not forget to update the other file.
 *** save level value of all taxes
-
 p21_taxrevGHG0(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * (vm_co2eq.l(ttot,regi) - vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3));
 p21_taxrevCO2Sector0(ttot,regi,emi_sectors) = p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eqSum(ttot,regi) * vm_emiCO2Sector.l(ttot,regi,emi_sectors);
 p21_taxrevCO2luc0(ttot,regi) = pm_taxCO2eqSum(ttot,regi) * cm_cprice_red_factor * vm_emiMacSector.l(ttot,regi,"co2luc")$(cm_multigasscen ne 3);
