@@ -69,3 +69,4 @@ pm_implicitPePriceTarget,input,questionnaire
 pm_implicitPePrice_NotConv,input,questionnaire
 pm_implicitPePrice_ignConv,input,questionnaire
 vm_capFac,input,questionnaire
+pm_shareWindPotentialOff2On,input,questionnaire

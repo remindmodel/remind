@@ -134,7 +134,7 @@ p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to resc
 p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
+pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
 p_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
 $ENDIF.WindOff
 

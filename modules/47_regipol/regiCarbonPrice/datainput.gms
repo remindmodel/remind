@@ -245,7 +245,7 @@ p_shareWindOff("2025",regi)$(sameAs(regi,"DEU")) = 0.3;
 p_shareWindOff("2030",regi)$(sameAs(regi,"DEU")) = 0.7;
 p_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
 *** parameter to deteremine regional long-term share
-p_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
+pm_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 
 *** intermediate solution for code check until ces tax gets implemented
 pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
