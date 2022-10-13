@@ -7,7 +7,9 @@
 *** SOF ./modules/21_tax/on/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  The bioenergy tax is calculated: it scales linearly with the bioenergy demand starting at 0 at 0EJ to the level defined in cm_bioenergy_SustTax at 200 EJ.
+*'  The dynamic bioenergy sustainability tax is calculated: it scales linearly
+*'  with the bioenergy demand starting at 0 at 0EJ to the level defined in
+*'  cm_bioenergy_SustTax at 200 EJ.
 ***---------------------------------------------------------------------------
   q21_tau_bio(t)$(t.val ge max(2010,cm_startyear))..
     v21_tau_bio(t)
