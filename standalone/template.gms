@@ -136,7 +136,9 @@ cm_CCS_cement        "CCS for cement sub-sector"
 cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
-cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
+cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
+cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2/GJ]"
+cm_regi_bioenergy_EFTax "region(s) in which bioenergy is charged with an emission-factor-based tax"
 cm_bioenergymaxscen   "bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
@@ -221,7 +223,9 @@ cm_CCS_chemicals       = 1;        !! def = 1
 cm_CCS_steel           = 1;        !! def = 1
 
 
-cm_bioenergy_tax    = 1.5;       !! def = 1.5
+cm_bioenergy_SustTax  = 1.5;              !! def = 1.5
+cm_bioenergy_EF_for_tax    = 0;           !! def = 0
+$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 cm_bioenergymaxscen = 0;         !! def = 0
 cm_tradecost_bio     = 2;         !! def = 2
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2

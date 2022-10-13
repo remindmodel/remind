@@ -7,12 +7,12 @@
 *** SOF ./modules/21_tax/on/equations.gms
 
 ***---------------------------------------------------------------------------
-*'  The bioenergy tax is calculated: it scales linearly with the bioenergy demand starting at 0 at 0EJ to the level defined in cm_bioenergy_tax at 200 EJ.
+*'  The bioenergy tax is calculated: it scales linearly with the bioenergy demand starting at 0 at 0EJ to the level defined in cm_bioenergy_SustTax at 200 EJ.
 ***---------------------------------------------------------------------------
   q21_tau_bio(t)$(t.val ge max(2010,cm_startyear))..
     v21_tau_bio(t)
     =e=
-    cm_bioenergy_tax / (200 * sm_EJ_2_TWa) * (sum(regi,vm_fuExtr(t,regi,"pebiolc","1") + pm_fuExtrForeign(t,regi,"pebiolc","1")))
+    cm_bioenergy_SustTax / (200 * sm_EJ_2_TWa) * (sum(regi,vm_fuExtr(t,regi,"pebiolc","1") + pm_fuExtrForeign(t,regi,"pebiolc","1")))
     ;
 
 
@@ -189,13 +189,35 @@ v21_taxrevSO2(t,regi) =e= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
                           - p21_taxrevSO20(t,regi);
 
 ***---------------------------------------------------------------------------
-*'  Calculation of bioenergy tax: tax rate (calculated as multiple of bioenergy price) times PE use of pebiolc
+*'  Calculation of total bioenergy tax revenues. There are two tax types that
+*'  are independent of each other:
+*'     1. The global sustainability tax rate, which scales linearly with
+*'        bioenergy production (the higher the demand, the higher the tax
+*'        ratio v21_tau_bio). 
+*'        Units: v21_tau_bio(t)                                [1]
+*'               vm_pebiolc_price(t,regi)                      [T$US/TWa]
+*'               => v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US/TWa]
+*'     2. The (potentially) region-specific emission-factor-based tax, which
+*'        is directly linked to the carbon price and does not directly
+*'        depend on the bioenergy production level. This tax is applied on
+*'        consumption, i.e. after trade.
+*'        Units: p21_bio_EF(t,regi)                            [GtC/TWa] 
+*'               pm_taxCO2eq(t,regi)                           [T$US/GtC]
+*'               => p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US/TWa]
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevBio(t,regi) =e= v21_tau_bio(t) * vm_fuExtr(t,regi,"pebiolc","1") * vm_pebiolc_price(t,regi)
-                          - p21_taxrevBio0(t,regi);
-						  
+  v21_taxrevBio(t,regi)
+  =g=
+  !! 1. sustainability tax on production
+    v21_tau_bio(t)  * vm_pebiolc_price(t,regi)
+    * vm_fuExtr(t,regi,"pebiolc","1")
+  !! 2. emission-factor-based tax on consumption
+  + p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)
+    * (vm_fuExtr(t,regi,"pebiolc","1") - (vm_Xport(t,regi,"pebiolc")-vm_Mport(t,regi,"pebiolc")))
+  
+  - p21_taxrevBio0(t,regi);
+
 ***---------------------------------------------------------------------------
 *'  Calculation of High implicit discount rates in energy efficiency capital 
 *'  which is also modeled as a tax to mirror the lack of incentive for cost-efficient renovations.
