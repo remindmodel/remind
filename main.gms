@@ -1226,8 +1226,7 @@ $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 *** industry
 *** maximum secondary steel share
 $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
-*** ------------- EU import switches
-***   cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
+*** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
@@ -1240,13 +1239,13 @@ $setGlobal cm_import_EU  off !! def off
 *** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
-***   cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
+*** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
 *** (on) energy security scenario for Germany
 *** (off) no energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
-***  cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
+*** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
 *** (ensec) policies for energy security scenario, e.g. faster hydrogen upscaling
@@ -1315,11 +1314,11 @@ $setglobal cm_inco0Factor  off !! def = off
 *** cm_inco0RegiFactor "change investment costs regionalized technology values. [factor]."
 ***   def <- "off" = use default p_inco0 values.
 ***   or list of techs with respective factor to change p_inco0 value by a multiplication factor. (ex. "wind=0.33, spv=0.33" makes investment costs for wind and spv 3 times cheaper)
-$setglobal cm_inco0RegiFactor  off !! def = off
+$setglobal cm_inco0RegiFactor  off  !! def = off
 *** cm_CCS_markup "multiplicative factor for CSS cost markup"
 ***   def <- "off" = use default CCS pm_inco0_t values.
 ***   or number (ex. 0.66), multiply by 0.66 the CSS cost markup
-$setglobal cm_CCS_markup  off !! def = off
+$setglobal cm_CCS_markup  off  !! def = off
 *** cm_Industry_CCS_markup "multiplicative factor for Industry CSS cost markup"
 ***   def <- "off"
 ***   or number (ex. 0.66), multiply by 0.66 Industry CSS cost markup
@@ -1327,11 +1326,11 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
-$setglobal cm_renewables_floor_cost  off !! def = off 
+$setglobal cm_renewables_floor_cost  off  !! def = off 
 *** cm_DAC_eff "multiplicative factor for energy demand per unit carbon captured with DAC"
 ***   def <- "off" = use default p33_dac_fedem value.
 ***   or list of stationary energy carriers with respective value to be multiplied to p33_dac_fedem
-$setglobal cm_DAC_eff  off !! def = off 
+$setglobal cm_DAC_eff  off  !! def = off 
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.
@@ -1339,11 +1338,11 @@ $setglobal cm_sehe_upper  off !! def = off
 *** cm_rcp_scen_build     "chooses RCP scenario for demand in buildings (climate change impact)"
 $setglobal cm_rcp_scen_build  none   !! def = "none"
 *** cfg$gms$cm_pushCalib          <- "none" #def <- "none" , "hydrogen" also possible. Reduction of calibration factor over time in logit
-$setGlobal cm_pushCalib  none !! def = none
+$setGlobal cm_pushCalib  none  !! def = none
 *** cfg$gms$cm_reducCostB         <- "none" #def <- "none" , "hydrogen" and "heatpumps" also possible. Reduction of costs
-$setGlobal cm_reducCostB  none !! def = none
+$setGlobal cm_reducCostB  none  !! def = none
 *** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
-$setGlobal cm_effHP  5 !! def = 5
+$setGlobal cm_effHP  5  !! def = 5
 *** Note on CES markup cost:
 *** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as 
 *** higher markup-cost in calibration will lead to higher efficiencies 
@@ -1353,7 +1352,7 @@ $setGlobal cm_effHP  5 !! def = 5
 ***  def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
 *** CES markup cost for buildings to represent sector-specific demand-side transformation cost
 *** (only applies to buildings realization "simple" for now)
-$setGlobal cm_CESMkup_build  standard !! def = standard
+$setGlobal cm_CESMkup_build  standard  !! def = standard
 ***   cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
 *** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli) 
 *** CES markup cost for industry to represent sector-specific demand-side transformation cost
@@ -1365,7 +1364,7 @@ $setGlobal cm_CESMkup_build  standard !! def = standard
 *** Note on CES markup cost:
 *** The CES mark-up cost represent the sector-specific demand-side transformation cost. 
 *** When used in calibration/baseline runs they affect the CES efficiencies and can be used to increase/decrease them
-$setGlobal cm_CESMkup_ind  standard !! def = standard
+$setGlobal cm_CESMkup_ind  standard  !! def = standard
 *** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).   
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
@@ -1374,7 +1373,7 @@ $setglobal cm_feShareLimits  off  !! def = off
 *** rescaling factor for sensitivity analysis on renewable potentials. 
 *** This factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities with existing capacities)
 *** (example: "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
-$setGlobal c_VREPot_Factor  off !! def = off
+$setGlobal c_VREPot_Factor  off  !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 *** swtich for setting FE tax to an absolute value in USD/MWh from a specific year onwards for a given sector and FE carrier (for all regions equally)
@@ -1448,9 +1447,9 @@ $setGlobal c_skip_output  off        !! def = off
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
 *** c_regi_nucscen              "regions to apply nucscen to"
 ***  specify regions to which nucscen, capturescen should apply to (e.g. c_regi_nucscen <- "JPN,USA")
-$setGlobal c_regi_nucscen  all !! def = all
+$setGlobal c_regi_nucscen  all  !! def = all
 ***  c_regi_capturescen              "region to apply ccapturescen to"
-$setGlobal c_regi_capturescen  all !! def = all
+$setGlobal c_regi_capturescen  all  !! def = all
 ***  c_regi_synfuelscen              "region to apply synfuelscen to"
 $setGlobal c_regi_synfuelscen  all !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
@@ -1480,7 +1479,7 @@ $setglobal c_delayPolicy  SPA0           !! def = SPA0
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
-$setGLobal cm_debug_preloop  off !! def = off
+$setGLobal cm_debug_preloop  off    !! def = off
 $setGlobal c_EARLYRETIRE  on         !! def = on
 $setGlobal cm_ccsfosall  off        !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2
