@@ -83,16 +83,16 @@ luse                                                                            
 
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            1                                    2                                               3          3  
-inco0               2500         480         360         600         700          0.1      0.1          700        800
+tech_stat            4                                    2                                               3          3  
+inco0               2000         480         360         600         700          0.1      0.1          700        800
 constrTme            2            2           1           2           2            1        1            2          2
 mix0                                                                                                                    
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
 omf                 0.05        0.03        0.03        0.03        0.05         0.00      0.00         0.03       0.03
 omv                    3          12          12          24           0                                 3           12
 lifetime              30          25          25          30          30          30        30            30          30
-incolearn           2000
-ccap0             0.0005 
+incolearn           1500
+ccap0              0.013 
 learn               0.15  
 
 
@@ -179,14 +179,47 @@ ccap0              0.003                   0.003
 learn               0.10                    0.10
 
 +              rockgrind         dac
-tech_stat                          3
-inco0               0.01       21600
+tech_stat                          4
+inco0               0.01       18800
 mix0                   0           0
 eta                 1.00        1.00
 omf                 0.84       0.025
 omv                    0
 lifetime              20          20
-incolearn                      18000
-ccap0                       0.000001
+incolearn                      14000
+ccap0                         0.0008
 learn                           0.15   
+
+
+
+$ontext
+Explanations:
+ 
+Electrolysis - elh2
+learning parameterization:
+Assume that 20 GW(el) electrolysis installed globally at 1200 EUR/GW(el) in 2025 
+(Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3,
+ Odenweller et al. (2022), https://doi.org/10.1038/s41560-022-01097-4, Fig. 1d ).
+
+20 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.013 TW(H2) = ccap0
+1200 EUR/GW(el) / 0.65 (elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 2000 USD/kW(H2) = inco0
+Assume floor cost: 350 EUR/GW(el)
+350 EUR/GW(el) / 0.75 (long-term elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 500 USD/kW(H2) -> incolearn = 1500
+
+Direct Air Capture - dac
+learning parameterization:
+Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture) 
+that produce at (unit) cost of 400 USD/tCO2 (Climeworks).
+Assume that all 400 USD/tCO2 are investment cost as current plants runs with waste energy. 
+
+3 MtCO2/yr / 3.66 * / 1000 ~ 0.0008 GtC/yr = ccap0
+400 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
+* 3.66 (tCO2 to tC) ~ 18800 USD/(tC/yr)
+Assume floor cost 100 USD/tCO2. 
+100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
+* 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
+
+annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05 
+$offtext
+
 *** EOF ./core/input/generisdata_tech.prn

@@ -12,7 +12,7 @@
 q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr")) .. 
   vm_otherFEdemand(t,regi,entyFe)
   =e=
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(t,regi,entySe,entyFe,"cdr","ETS"))
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(t,regi,entySe,entyFe,"cdr","ETS"))
 ;
 
 ***---------------------------------------------------------------------------

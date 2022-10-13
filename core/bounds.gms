@@ -25,7 +25,6 @@ AND (not sameas(te,"tnrs"))),
 );
 
 
-
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-7;
@@ -232,7 +231,7 @@ if (cm_nucscen eq 3,
 
 * no new nuclear investments after 2020, until then all currently planned plants are built
 if (cm_nucscen eq 5,
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 1e-6;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
 );
 
@@ -262,8 +261,6 @@ if (cm_emiscen ne 1,
     vm_cap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"fnrs",rlf);
   );
 );
-
-
 
 *** -----------------------------------------------------------
 *mh bounds that narrow the solution space to help the conopt solver:
@@ -351,6 +348,10 @@ loop(regi,
     );
   );
 );
+
+*** no technologies with tech_stat 4 before 2025
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0;
+
 
 *CB 2012024 -----------------------------------------------------
 *CB allow for early retirement at the start of free model time
@@ -548,10 +549,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
-
-*** FS: no electrolysis capacities before 2020
-vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
-
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data

@@ -1,0 +1,8 @@
+* description: Exogenous PE prices to be enforce in the model if cm_implicitPePriceTarget is set to one of the below PePriceScenario aceptable values
+* unit: 2005_USD/GJ
+* origin: externally calculated
+* creation date: June 24 2022
+PePriceScenario,ext_regi,all_enty,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100
+highFossilPrice,EUR_regi,peoil,0,0,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829
+highFossilPrice,EUR_regi,pegas,0,0,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829
+highFossilPrice,EUR_regi,pecoal,0,0,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829,59.829
