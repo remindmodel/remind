@@ -74,6 +74,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         }
       }
 
+      renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
+      message("Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function(resultsfolder, lockfile) {
         # use same snapshot.type so renv::status()$synchronized always uses the same logic
         renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
@@ -82,11 +84,11 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         file.copy(lockfile, resultsfolder, overwrite = TRUE)
         renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
       }
+
       # init renv in a separate session so the libPaths of the current session remain unchanged
-      message("Initializing renv, see ", file.path(cfg$results_folder, "renv_init.log"))
       callr::r(createResultsfolderRenv,
                list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
-               stdout = file.path(cfg$results_folder, "renv_init.log"), stderr = "2>&1")
+               stdout = renvLogPath, stderr = "2>&1")
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 
