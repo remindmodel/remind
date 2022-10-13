@@ -208,7 +208,7 @@ for (scen in common) {
 # check REMIND settings
 
 # retrieve REMIND default settings
-  source(paste0(path_remind,"config/default.cfg")) 
+  cfg <- readDefaultConfig(path_remind)
   # read in GAMS related switches from main.gms
   cfg$gms <- as.list(readSettings(paste0(path_remind,"main.gms")))
 
@@ -329,9 +329,7 @@ for(scen in common){
   }
 
 
-  source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
-  # read in GAMS related switches from main.gms
-  cfg$gms <- as.list(readSettings(paste0(path_remind,"main.gms")))
+  cfg <- readDefaultConfig(path_remind)   # retrieve REMIND settings
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen

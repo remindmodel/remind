@@ -17,7 +17,7 @@ helpText <- "
 #' Rscript start.R --test --testOneRegi file
 #'
 #' Without additional arguments this starts a single REMIND run
-#' using the settings from `config/default.cfg`.
+#' using the settings from `config/default.cfg` and `main.gms`.
 #'
 #' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
 #'
@@ -321,9 +321,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     settings[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings)]] <- NA
     
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
-    source("config/default.cfg")
-    # read in GAMS related switches from main.gms
-    cfg$gms <- as.list(readSettings("main.gms"))
+    cfg <- readDefaultConfig(".")
     knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                           "regionmapping", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
@@ -376,9 +374,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   for (scen in rownames(scenarios)) {
 
     #source cfg file for each scenario to avoid duplication of gdx entries in files2export
-    source("config/default.cfg")
-    # read in GAMS related switches from main.gms
-    cfg$gms <- as.list(readSettings("main.gms"))
+    cfg <- readDefaultConfig(".")
 
     # Have the log output written in a file (not on the screen)
     cfg$logoption   <- 2

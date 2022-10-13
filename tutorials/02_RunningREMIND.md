@@ -71,8 +71,8 @@ Go to your REMIND main folder (i.e. it contains subfolders such as `config`, `co
 Rscript start.R
 ```
 
-Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg). Also, on Windows, you can double-click the `start.cmd` file.
-You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` (useful to quickly check if your changes to the code break the model):
+Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg) and [`main.gms`](../main.gms). Also, on Windows, you can double-click the `start.cmd` file.
+You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` and `main.gms` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
 Rscript start.R --quick
