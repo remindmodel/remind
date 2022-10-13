@@ -875,6 +875,8 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+set regi_groupExt(ext_regi,all_regi) "extended region group mapping. Mapping model regions that belong to region group, including one to one region mapping";
+
 set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
   / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW, EU27_regi, NEU_UKI_regi /;
 
@@ -2065,10 +2067,26 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
 ***  feh2s.indst.feh2i
 /
 
-all_emiMkt         "emission markets"
+all_emiMkt      "emission markets"
 /	ETS     "ETS emission market"
 	ES      "Effort sharing emission market"
 	other	"other market configurations"
+/
+
+all_emiMktExt   "extended emission market definitions"
+/	
+        ETS     "ETS emission market"
+	ESR     "Effort sharing emission market"
+	other	"other market configurations"
+        all     "economy wide emission market"
+/
+
+emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"
+/
+        ETS.(ETS)
+        ESR.(ES)
+        other.(other)
+        all.(ETS,ES,other)
 /
 
 sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
@@ -2338,6 +2356,7 @@ alias(rlf,rlf2);
 alias(regi,regi2,regi3);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
+alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
 alias(sector_types,type)
 
