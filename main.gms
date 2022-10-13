@@ -475,16 +475,16 @@ cm_CCS_steel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = "scenario"
 
-cm_bioenergy_SustTax  = 1.5;              !! def = 1.5
-cm_bioenergy_EF_for_tax    = 0;           !! def = 0
+cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
+cm_bioenergy_EF_for_tax = 0;              !! def = 0
 $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
-cm_bioenergymaxscen = 0;         !! def = 0
-cm_tradecost_bio     = 2;         !! def = 2
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-cm_1stgen_phaseout  = 0;         !! def = 0
-$setglobal cm_tradbio_phaseout  default  !! def = default
-cm_biolc_tech_phaseout = 0;        !! def = 0
-cm_cprice_red_factor  = 1;         !! def = 1
+cm_bioenergymaxscen     = 0;              !! def = 0
+cm_tradecost_bio        = 2;              !! def = 2
+$setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
+cm_1stgen_phaseout      = 0;              !! def = 0
+$setglobal cm_tradbio_phaseout  default   !! def = default
+cm_biolc_tech_phaseout  = 0;              !! def = 0
+cm_cprice_red_factor    = 1;              !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
