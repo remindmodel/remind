@@ -48,7 +48,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
-        if (!renv::status()$synchronized) {
+        capture.output({ # suppress printing status
+          renvStatus <- renv::status()
+        })
+        if (!renvStatus$synchronized) {
           message("The new run will use the package environment defined in renv.lock, ",
                   "but it is out of sync, probably because you installed packages/updates manually. ",
                   "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
