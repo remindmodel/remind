@@ -922,8 +922,8 @@ parameter
   cm_PriceDurSlope_elh2 = 15; !! def 15
 parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings/industry.  
-*** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings/industry. 
+*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.  
+*** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings and industry. 
 *** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 ;
   cm_FlexTaxFeedback = 0; !! def 0
@@ -934,9 +934,9 @@ parameter
 ***     - ease capacity constraints on storage
 ***     - reduce necessary storage for electricity production
 ***  for 2 - sombre, modify
-***     - incolearn spv to 5010 (150 $/kW floor cost)
+***     - incolearn spv to 5010 (150 $ per kW floor cost)
 ***  for 3 - bleak, modify
-***     - incolearn spv to 4960 (200 $/kW floor cost)
+***     - incolearn spv to 4960 (200 $ per kW floor cost)
 ;
   cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - bleak
 parameter
