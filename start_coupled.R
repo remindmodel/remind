@@ -73,10 +73,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   mainwd <- getwd() # save folder in which this script is executed
 
   # Retrieve REMIND settings
-  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
-                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                     "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
+#                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                     "gms$cm_CES_configuration", "gms$c_description"))
   cfg_rem$slurmConfig   <- "direct"
   cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
   cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing

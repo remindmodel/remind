@@ -207,13 +207,16 @@ for (scen in common) {
 
 # check REMIND settings
 
-source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND default settings
+# retrieve REMIND default settings
+  cfg <- readDefaultConfig(path_remind)
+  # read in GAMS related switches from main.gms
+  cfg$gms <- as.list(readSettings(paste0(path_remind,"main.gms")))
 
 knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                       "regionmapping", "inputRevision", "slurmConfig")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
-  message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
+  message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these config file columns:")
   message("  ", paste(unknownColumnNames, collapse = ", "))
   message("The start script might simply ignore them. Please check if these switches are not deprecated.")
   message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start_bundle_coupled.R.\n")
@@ -326,7 +329,7 @@ for(scen in common){
   }
 
 
-  source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
+  cfg <- readDefaultConfig(path_remind)   # retrieve REMIND settings
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen

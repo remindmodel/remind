@@ -36,7 +36,6 @@ pm_IndstCO2Captured,input,questionnaire
 pm_macBaseMagpie,input,questionnaire
 cm_startyear,input,questionnaire
 pm_eta_conv,input,questionnaire
-cm_EnSecScen,input,questionnaire
 pm_tau_pe_tax,input,questionnaire
 vm_demPe,input,questionnaire
 vm_demSe,input,questionnaire
@@ -50,7 +49,6 @@ pm_taxrevNetNegEmi0,input,questionnaire
 vm_shSeEl,input,questionnaire
 pm_implicitQttyTarget,input,questionnaire
 pm_implicitQttyTarget_dev,input,questionnaire
-cm_Ger_Pol,input,questionnaire
 vm_capTotal,input,questionnaire
 pm_tau_ces_tax,input,questionnaire
 sm_DpGJ_2_TDpTWa,input,questionnaire

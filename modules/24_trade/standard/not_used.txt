@@ -7,14 +7,11 @@
 name,type,reason
 pm_PEPrice, parameter, only used in capacity realization
 pm_SEPrice, parameter, only necessary for secondary energy trade
-
 pm_gdp,input,questionnaire
-cm_import_EU,input,questionnaire
-
 pm_omeg,parameter,only used in capacity realization
 pm_data,parameter,only used in capacity realization
 pm_tsu2opTimeYr,parameter,only used in capacity realization
 pm_ttot_val,parameter,only used in capacity realization
 pm_ts,parameter,only used in capacity realization
 pm_dt,parameter,only used in capacity realization
-cm_Ger_Pol,input,questionnaire
+

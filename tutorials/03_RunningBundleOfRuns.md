@@ -25,7 +25,7 @@ Those two columns are mandatory and usually placed at the beginning:
 * `start` is a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0.
 
 Further columns are the configurations that you can choose for the specific runs.
-They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
+They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) and [`./main.gms`](../main.gms) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
 Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
