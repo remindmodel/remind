@@ -203,246 +203,292 @@ $offdigit
 *** turn profiling off (0) or on (1-3, different levels of detail)
 option profile = 0;
 
+*' @code
 *--------------------------------------------------------------------------
-***           basic scenario choices
+*' #### Configuration - Settings for Scenatios:
 *--------------------------------------------------------------------------
-
 
 ***---------------------    Run name and description    -------------------------
 $setGlobal c_expname  default
 $setGlobal c_description  REMIND run with default settings
 
 ***------------------------------------------------------------------------------
-***                           MODULES
+*' ####                      MODULES
 ***------------------------------------------------------------------------------
 
-***---------------------    01_macro    -----------------------------------------
-*** (singleSectorGr) 
+*'---------------------    01_macro    -----------------------------------------
+*'
+*' * (singleSectorGr) 
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
-***---------------------    02_welfare    ---------------------------------------
-*** (utilitarian) 
+*'---------------------    02_welfare    ---------------------------------------
+*'
+*' * (utilitarian) 
 $setGlobal welfare  utilitarian  !! def = utilitarian
-***---------------------    04_PE_FE_parameters    ------------------------------
-*** (iea2014): new PE-FE parameters based on IEA 2014
+*'---------------------    04_PE_FE_parameters    ------------------------------
+*'
+*' * (iea2014): new PE-FE parameters based on IEA 2014
 $setGlobal PE_FE_parameters  iea2014  !! def = iea2014
-***---------------------    05_initialCap    ------------------------------------
-*** (on):      load existing CES parameters matching model configuration
+*'---------------------    05_initialCap    ------------------------------------
+*'
+*' * (on):      load existing CES parameters matching model configuration
 $setGlobal initialCap  on             !! def = on
-***---------------------    11_aerosols    --------------------------------------
-*** (exoGAINS):
+*'---------------------    11_aerosols    --------------------------------------
+*'
+*' * (exoGAINS):
 $setGlobal aerosols  exoGAINS         !! def = exoGAINS
-***---------------------    15_climate    ---------------------------------------
-*** (off): no climate coupling
-*** (magicc): MAGICC - iterative mode, outside of optimization.
-*** (box): Petschel-Held
+*'---------------------    15_climate    ---------------------------------------
+*'
+*' * (off): no climate coupling
+*' * (magicc): MAGICC - iterative mode, outside of optimization.
+*' * (box): Petschel-Held
 $setGlobal climate  off               !! def = off
-***---------------------    16_downscaleTemperature    --------------------------
+*'---------------------    16_downscaleTemperature    --------------------------
+*'
 *** (off)
 *** (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). Requires climate= 'off' and cm_rcp_scen=none"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 $setGlobal downscaleTemperature  off  !! def = off
-***---------------------    20_growth    ------------------------------------------
+*'---------------------    20_growth    ------------------------------------------
+*'
 *** (exogenous): exogenous growth
 *** (endogenous): endogenous growth !!Warning: still experimental stuff!!
 *** (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
 $setglobal growth  exogenous                !! def = exogenous
-***---------------------    21_tax    ------------------------------------------
-*** (on): tax mechanism active
-*** (off): no tax mechanism
+*'---------------------    21_tax    ------------------------------------------
+*'
+*' * (on): tax mechanism active
+*' * (off): no tax mechanism
 $setglobal tax  on           !! def = on
-***---------------------    22_subsidizeLearning    -----------------------------
-*** (globallyOptimal): Only works with Nash, gives cooperative solution w.r.t. the learning spillover - this should then be equivalent to the Negishi solution.
-*** (off): do not subsidize learning. Default setting for Negishi. With Nash, this gives the non-cooperative solution w.r.t. the learning spillover.
+*'---------------------    22_subsidizeLearning    -----------------------------
+*'
+*' * (globallyOptimal): Only works with Nash, gives cooperative solution w.r.t. the learning spillover - this should then be equivalent to the Negishi solution.
+*' * (off): do not subsidize learning. Default setting for Negishi. With Nash, this gives the non-cooperative solution w.r.t. the learning spillover.
 $setglobal subsidizeLearning  off           !! def = off
-***----------------------    23_capitalMarket    -------------------------------
-*** (imperfect): Imperfect capital market: brings initial consumption shares closer to empirical data
-*** (perfect):   Perfect capital market (results in large short-term capital flows from North to South)
-*** (debt_limit): Weak imperfection of capital market by debt and surplus growth limits
+*'----------------------    23_capitalMarket    -------------------------------
+*'
+*' * (imperfect): Imperfect capital market: brings initial consumption shares closer to empirical data
+*' * (perfect):   Perfect capital market (results in large short-term capital flows from North to South)
+*' * (debt_limit): Weak imperfection of capital market by debt and surplus growth limits
 $setglobal capitalMarket  debt_limit           !! def = debt_limit
-***----------------------    24_trade    ---------------------------------------
-*** (standard): macro-economic commodities and primary energy commodities trading
-*** (se_trade): macro-economic commodities, primary energy commodities and secondary energy hydrogen and electricitiy trading
-*** (capacity): capacity-based trade implementation
+*'----------------------    24_trade    ---------------------------------------
+*'
+*' * (standard): macro-economic commodities and primary energy commodities trading
+*' * (se_trade): macro-economic commodities, primary energy commodities and secondary energy hydrogen and electricitiy trading
+*' * (capacity): capacity-based trade implementation
 $setglobal trade  standard           !! def = standard
-***----------------------   26_agCosts  ----------------------------------------
-*** (off): agricultural costs zero, no trade taken into account
-*** (costs): includes total landuse costs
-*** (costs_trade): includes agricultural production costs and the MAgPIE trade balance
+*'----------------------   26_agCosts  ----------------------------------------
+*'
+*' * (off): agricultural costs zero, no trade taken into account
+*' * (costs): includes total landuse costs
+*' * (costs_trade): includes agricultural production costs and the MAgPIE trade balance
 $setglobal agCosts  costs       !! def = costs
-***---------------------    29_CES_parameters    ----------------------------
-*** (load):      load existing CES parameters matching model configuration
-*** (calibrate): calculate new CES parameters based on v_cesIO trajectories -- under development!
+*'---------------------    29_CES_parameters    ----------------------------
+*'
+*' * (load):      load existing CES parameters matching model configuration
+*' * (calibrate): calculate new CES parameters based on v_cesIO trajectories -- under development!
 $setglobal CES_parameters  load   !! def = load
-***---------------------    30_biomass    ----------------------------------------
-*** (exogenous):     exogenous biomass extraction and costs
-*** (magpie_40): using supplycurved derived from MAgpIE 4.0
+*'---------------------    30_biomass    ----------------------------------------
+*'
+*' * (exogenous):     exogenous biomass extraction and costs
+*' * (magpie_40): using supplycurved derived from MAgpIE 4.0
 $setglobal biomass  magpie_40              !! def = magpie_hightccost
-***---------------------    31_fossil    ----------------------------------------
-*** (timeDepGrades): time-dependent grade stucture of fossil resources (oil & gas only)
-*** (grades2poly)  : simplified version of the time-dependent grade realization (using polynomial functions)
-*** (exogenous)    : exogenous fossil extraction and costs
+*'---------------------    31_fossil    ----------------------------------------
+*'
+*' * (timeDepGrades): time-dependent grade stucture of fossil resources (oil & gas only)
+*' * (grades2poly)  : simplified version of the time-dependent grade realization (using polynomial functions)
+*' * (exogenous)    : exogenous fossil extraction and costs
 $setglobal fossil  grades2poly        !! def = grades2poly
-***---------------------    32_power    ----------------------------------------
-*** (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
-*** (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*** (DTcoup)    : Power sector formulation with coupling to DIETER
+*'---------------------    32_power    ----------------------------------------
+*'
+*' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
+*' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
+*' * (DTcoup)    : Power sector formulation with coupling to DIETER
 $setglobal power  IntC        !! def = IntC
-***---------------------    33_CDR       ----------------------------------------
-*** (off)        : no carbon dioxide removal technologies except BECCS
-*** (weathering) : includes enhanced weathering
-*** (DAC) :    includes direct air capture
-*** (all) :    includes all CDR technologies
+*'---------------------    33_CDR       ----------------------------------------
+*'
+*' * (off)        : no carbon dioxide removal technologies except BECCS
+*' * (weathering) : includes enhanced weathering
+*' * (DAC) :    includes direct air capture
+*' * (all) :    includes all CDR technologies
 $setglobal CDR  DAC        !! def = DAC
-***---------------------    35_transport    ----------------------------------------
-*** (complex):  transport realization including electricity in the transport sector (*RP*)
-*** (edge_esm): transport realization with detailed modes/vehicles representation (*AD*, *MR*)																							  
+*'---------------------    35_transport    ----------------------------------------
+*'
+*' * (complex):  transport realization including electricity in the transport sector (*RP*)
+*' * (edge_esm): transport realization with detailed modes/vehicles representation (*AD*, *MR*)
 $setglobal transport  edge_esm           !! def = edge_esm
-***---------------------    36_buildings    ---------------------------------
-*** (simple): representation of the demand in terms of energy carriers
-*** (services_with_capital): representation of the demand by energy service with capital
-*** (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
+*'---------------------    36_buildings    ---------------------------------
+*'
+*' * (simple): representation of the demand in terms of energy carriers
+*' * (services_with_capital): representation of the demand by energy service with capital
+*' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
-***---------------------    37_industry    ----------------------------------
-*** (fixed_shares): fixed shares of industry sub-sectors (cement, chemicals,
-***                  steel, other) in industry FE use
-*** (subsectors):   models industry subsectors explicitly with individual CES nests
-***                  for cement, chemicals, steel, and otherInd production.
+*'---------------------    37_industry    ----------------------------------
+*'
+*' * (fixed_shares): fixed shares of industry sub-sectors (cement, chemicals,
+*' *                  steel, other) in industry FE use
+*' * (subsectors):   models industry subsectors explicitly with individual CES nests
+*' *                  for cement, chemicals, steel, and otherInd production.
 $setglobal industry  subsectors   !! def = subsectors
-***---------------------    39_CCU    ---------------------------------
-*** (on): simple representation of carbon capture and utilization technologies, first only example of syngas (H22CH4)
-*** (off): no representation of carbon caputre and utilization technologies.
+*'---------------------    39_CCU    ---------------------------------
+*'
+*' * (on): simple representation of carbon capture and utilization technologies, first only example of syngas (H22CH4)
+*' * (off): no representation of carbon caputre and utilization technologies.
 $setglobal CCU  on      !! def = on
-***---------------------    40_techpol  ----------------------------------------
-*** (none): no technology policies
-*** (lowCarbonPush): [works only with Negishi] global low-carbon push until 2030: PV, CSP, Wind, Gas-CCS, Bio-CCS and Electromobility
-*** (coalPhaseout): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
-*** (coalPhaseoutRegional): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
-*** (CombLowCandCoalPO): [works only with Negishi] combination of lowCarbonPush and coalPhaseout
-*** (NDC): Technology targets for 2030 for spv,wind,tnrs.
-*** (NPi): Reference technology targets, mostly already enacted (N)ational (P]ol(i)cies, mostly for 2020
-*** (EVmandates): mandate for electric vehicles - used for UBA project
+*'---------------------    40_techpol  ----------------------------------------
+*'
+*' * (none): no technology policies
+*' * (lowCarbonPush): [works only with Negishi] global low-carbon push until 2030: PV, CSP, Wind, Gas-CCS, Bio-CCS and Electromobility
+*' * (coalPhaseout): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
+*' * (coalPhaseoutRegional): [works only with Negishi] global phase-out of new freely-emitting coal conversion, caps all coal routes with the exception of coaltr: coal solids can still expand
+*' * (CombLowCandCoalPO): [works only with Negishi] combination of lowCarbonPush and coalPhaseout
+*' * (NDC): Technology targets for 2030 for spv,wind,tnrs.
+*' * (NPi): Reference technology targets, mostly already enacted (N)ational (P]ol(i)cies, mostly for 2020
+*' * (EVmandates): mandate for electric vehicles - used for UBA project
 $setglobal techpol  none           !! def = none
-***---------------------    41_emicapregi  ----------------------------------------
-*** (none): no regional emission caps
-*** (CandC):  contraction and convergence allocation (under construction)
-*** (GDPint):  GDP intensity allocation (under construction)
-*** (POPint):  sovereignity (per cap.) allocation (under construction)
-*** (exog):   exogenous emission cap path (generic)  (under construction)
-*** (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
-*** (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
+*'---------------------    41_emicapregi  ----------------------------------------
+*'
+*' * (none): no regional emission caps
+*' * (CandC):  contraction and convergence allocation (under construction)
+*' * (GDPint):  GDP intensity allocation (under construction)
+*' * (POPint):  sovereignity (per cap.) allocation (under construction)
+*' * (exog):   exogenous emission cap path (generic)  (under construction)
+*' * (PerCapitaConvergence):   based on CandC: convergence, to be run with emiscen = 4
+*' * (AbilityToPay):   mitigation requirement shared based on per-capita GDP, to be run with emiscen = 4
 $setglobal emicapregi  none           !! def = none
-***---------------------    42_banking  ----------------------------------------
-*** (off): no banking and borrowing of emission permits, no when-flexibility
-*** (banking):  only banking allowed, no borrowing at all
+*'---------------------    42_banking  ----------------------------------------
+*'
+*' * (off): no banking and borrowing of emission permits, no when-flexibility
+*' * (banking):  only banking allowed, no borrowing at all
 $setglobal banking  off          !! def = off
-***---------------------    45_carbonprice  ----------------------------------------
-*** This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
-*** (none): no tax policy (combined with all emiscens except emiscen eq 9)
-*** (exponential): 5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen eq 9 and cm_co2_tax_2020>0)
-*** (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
-*** (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
-*** (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen eq 9 and cm_co2_tax_2020>0)
-*** (diffPriceSameCost) ! experimental ! adjusts regional carbon prices until regional mitigation costs (in NPV GDP) are equal across regions. Use with iterative_adjust=2, emiscen=9. Experimental feature, you are responsible to check for convergence yourself (check that p45_mitiCostRel is about constant over iterations)
-*** (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen=1"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*** (NDC2constant): linearly phase in global constant price from NDC prices (default 2020-2040 phase-in)
-*** (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
-*** (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
-*** (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
+*'---------------------    45_carbonprice  ----------------------------------------
+*' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
+*'
+*' * (none): no tax policy (combined with all emiscens except emiscen eq 9)
+*' * (exponential): 5% exponential increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen eq 9 and cm_co2_tax_2020>0)
+*' * (expoLinear): 5% exponential increase until c_expoLinear_yearStart, linear increase thereafter
+*' * (exogenous): carbon price is specified using an external input file or using the switch cm_regiExoPrice
+*' * (linear): linear increase over time of the tax level in 2020 set via cm_co2_tax_2020 (combined with emiscen eq 9 and cm_co2_tax_2020>0)
+*' * (diffPriceSameCost) ! experimental ! adjusts regional carbon prices until regional mitigation costs (in NPV GDP) are equal across regions. Use with iterative_adjust=2, emiscen=9. Experimental feature, you are responsible to check for convergence yourself (check that p45_mitiCostRel is about constant over iterations)
+*' * (temperatureNotToExceed): [test and verify before using it!] Find the optimal carbon carbon tax (set cm_emiscen=1"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (NDC2constant): linearly phase in global constant price from NDC prices (default 2020-2040 phase-in)
+*' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
+*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
 $setglobal carbonprice  none           !! def = none
-***---------------------    46_carbonpriceRegi  ---------------------------------
-*** This module applies a markup pm_taxCO2eqRegi on top of pm_taxCO2eq to achieve additional intermediate targets.
-*** (none): no regional carbonprice policies
-*** (NDC): implements a carbon price markup trajectory consistent with the NDC targets between 2030 and 2070
-*** (netZero): implements a carbon price markup trajectory consistent with the net zero targets
+*'---------------------    46_carbonpriceRegi  ---------------------------------
+*' This module applies a markup pm_taxCO2eqRegi on top of pm_taxCO2eq to achieve additional intermediate targets.
+*'
+*' * (none): no regional carbonprice policies
+*' * (NDC): implements a carbon price markup trajectory consistent with the NDC targets between 2030 and 2070
+*' * (netZero): implements a carbon price markup trajectory consistent with the net zero targets
 $setglobal carbonpriceRegi  none      !! def = none
-***---------------------    47_regipol  -----------------------------------------
-*** The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
-*** (none): no regional policies
-*** (regiCarbonPrice): Region specific or region group independent carbon price and additional policies.
+*'---------------------    47_regipol  -----------------------------------------
+*' The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
+*'
+*' * (none): no regional policies
+*' * (regiCarbonPrice): Region specific or region group independent carbon price and additional policies.
 $setglobal regipol  none              !! def = none
-***---------------------    50_damages    ---------------------------------------
-*** (off): no damages on GDP
-*** (DiceLike): DICE-like damages (linear-quadratic damages on GDP). Choose specification via cm_damage_DiceLike_specification
-*** (BurkeLike): Burke-like damages (growth rate damages on GDP). Choose specification via cm_damage_BurkeLike_specification and cm_damage_BurkeLike_persistenceTime
-*** (KWLike): Damage function based on Kalkuhl & Wenz (2020)
-*** (KW_SE): Damage function based on Kalkuhl & Wenz (2020), but for the upper bound of the damages based on their standard error calculation
-*** (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
-*** (Labor): Labor supply damages from Dasgupta et al. (2021)
-*** (TC): tropical cyclone damages from Krichene et al. (2022)
+*'---------------------    50_damages    ---------------------------------------
+*'
+*' * (off): no damages on GDP
+*' * (DiceLike): DICE-like damages (linear-quadratic damages on GDP). Choose specification via cm_damage_DiceLike_specification
+*' * (BurkeLike): Burke-like damages (growth rate damages on GDP). Choose specification via cm_damage_BurkeLike_specification and cm_damage_BurkeLike_persistenceTime
+*' * (KWLike): Damage function based on Kalkuhl & Wenz (2020)
+*' * (KW_SE): Damage function based on Kalkuhl & Wenz (2020), but for the upper bound of the damages based on their standard error calculation
+*' * (KWTCint): Combines aggregate damages from Kalkuhl & Wenz (2020) and tropical cyclone damages from Krichene et al. (2022)
+*' * (Labor): Labor supply damages from Dasgupta et al. (2021)
+*' * (TC): tropical cyclone damages from Krichene et al. (2022)
 $setGlobal damages  off               !! def = off
-***---------------------    51_internalizeDamages    ----------------------------
-*** (off):
-*** (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen set to 9 for now.
-*** (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen set to 9 for now.
-*** (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen set to 9 for now.
-*** (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen set to9 for now.
-*** (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen set to 9 for now.
-*** (KW_SEitr): Internalize damage function based on Kalkuhl & Wenz (2020) for upper limit based on standard error. Requires cm_emiscen set to 9 for now.
-*** (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen set to 9 for now.
-*** (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
-*** (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
+*'---------------------    51_internalizeDamages    ----------------------------
+*'
+*' * (off):
+*' * (DiceLikeItr): Internalize DICE-like damages (calculate the SCC) adjust cm_damages_SccHorizon. Requires cm_emiscen set to 9 for now.
+*' * (BurkeLikeItr): Internalize Burke-like damages (calculate the SCC) adjust cm_damages_SccHorizo. Requires cm_emiscen set to 9 for now.
+*' * (KWlikeItr): Internalize damage function based on Kalkuhl & Wenz (2020). Requires cm_emiscen set to 9 for now.
+*' * (KWlikeItrCPnash): Internalize damage function based on Kalkuhl & Wenz (2020), but with Nash SCC, i.e. each region only internalizes its own damages. Requires cm_emiscen set to9 for now.
+*' * (KWlikeItrCPreg): Internalize damage function based on Kalkuhl & Wenz (2020), but with regional SCC instead of a global uniform price. Requires cm_emiscen set to 9 for now.
+*' * (KW_SEitr): Internalize damage function based on Kalkuhl & Wenz (2020) for upper limit based on standard error. Requires cm_emiscen set to 9 for now.
+*' * (KWTCintItr): Internalize combined damages from Kalkuhl & Wenz (2020) and from tropical cyclones. Requires cm_emiscen set to 9 for now.
+*' * (LabItr): Internalize labor supply damages based on Dasgupta et al. (2021). Requires cm_emiscen set to 9 for now.
+*' * (TCitr): Internalize tropical cyclone damage function based on Krichene et al. (2022). Requires cm_emiscen set to 9 for now.
 $setGlobal internalizeDamages  off               !! def = off
-***---------------------    70_water  -------------------------------------------
-*** (off): no water demand taken into account
-*** (exogenous): exogenous water demand is calculated based on data on water demand coefficients and cooling shares
-*** (heat): as exogenous only that vintage structure in combination with time dependent cooling shares as vintages and efficiency factors are also considered and demand is a function of excess heat as opposed to electricity output
+*'---------------------    70_water  -------------------------------------------
+*'
+*' * (off): no water demand taken into account
+*' * (exogenous): exogenous water demand is calculated based on data on water demand coefficients and cooling shares
+*' * (heat): as exogenous only that vintage structure in combination with time dependent cooling shares as vintages and efficiency factors are also considered and demand is a function of excess heat as opposed to electricity output
 $setglobal water  off                 !! def = off
-***---------------------    80_optimization    ----------------------------------
-*** (nash): Nash solution. Adjust cm_nash_autoconverge to needs.
-*** (negishi): calculates a Negishi solution (social planner)
-*** (testOneRegi):  solves the problem for one region for given prices (taken from gdx).
-***                ! Warning:  For development purposes only !
+*'---------------------    80_optimization    ----------------------------------
+*'
+*' * (nash): Nash solution. Adjust cm_nash_autoconverge to needs.
+*' * (negishi): calculates a Negishi solution (social planner)
+*' * (testOneRegi):  solves the problem for one region for given prices (taken from gdx).
+*'                 ! Warning:  For development purposes only !
 $setGlobal optimization  nash         !! def = nash
-***---------------------    81_codePerformance    -------------------------------
-*** (off): nothing happens
-*** (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially,
-***                    therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
+*'---------------------    81_codePerformance    -------------------------------
+*'
+*' * (off): nothing happens
+*' * (on):  test code performance: noumerous (30) succesive runs performed in a triangle, tax0, tax30, tax150, all growing exponentially,
+*'                      therefore use carbonprice|exponential, c_emiscen|9, and cm_co2_tax_2020|0.
 $setGlobal codePerformance  off       !! def = off
 
 ***-----------------------------------------------------------------------------
-***                     SWITCHES 
+*' ####                     SWITCHES 
 ***-----------------------------------------------------------------------------
 parameter
   cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
+*'
 parameter
   cm_abortOnConsecFail      "number of iterations of consecutive failures of one region after which to abort"
 ;
   cm_abortOnConsecFail   = 5;     !! def = 5
+*'
 parameter
   c_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
 ;
   c_solver_try_max       = 2;     !! def = 2
+*'
 parameter
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
 ;
   c_keep_iteration_gdxes = 0;     !! def = 0
+*' additonal info for c_keep_iteration_gdxes
+*'
+*' * (0)  gdx files are NOT saved
+*' * (1)  gdx files are saved
 parameter
   cm_keep_presolve_gdxes    "save gdxes for all regions/solver tries/nash iterations for debugging"
 ;
   cm_keep_presolve_gdxes  = 0;     !! def = 0
+*'
 parameter
   cm_nash_autoconverge      "choice of nash convergence mode"
-***  (0): manually set number of iterations by adjusting cm_iteration_max
-***  (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
-***  (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
+*' additional information for cm_nash_autoconverge
+*'
+*' * (0): manually set number of iterations by adjusting cm_iteration_max
+*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
+*' * (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
+*'
 parameter
   cm_emiscen                "policy scenario choice"
-***  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
-***  (1): BAU
-***  (2): temperature cap
-***  (3): CO2 concentration cap
-***  (4): emission time path
-***  (5): forcing target from 2010 (not to exceed)
-***  (6): budget
-***  (8): forcing target from 2100 onwards (overshoot scen)
-***  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
-*** *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
-*** *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
 ;
   cm_emiscen        = 1;               !! def = 1
+*'
+*' *  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
+*' *  (1): BAU
+*' *  (2): temperature cap
+*' *  (3): CO2 concentration cap
+*' *  (4): emission time path
+*' *  (5): forcing target from 2010 (not to exceed)
+*' *  (6): budget
+*' *  (8): forcing target from 2100 onwards (overshoot scen)
+*' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
+*' *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
+*' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
+*'
 parameter
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
 ***  (-1): default setting equivalent to no carbon tax
@@ -1028,20 +1074,22 @@ parameter
 ;
   cm_deuCDRmax = -1; !! def = -1
 ***-----------------------------------------------------------------------------
-***                     FLAGS 
+*' ####                     FLAGS 
 ***-----------------------------------------------------------------------------
-*** cm_MAgPIE_coupling "switch on coupling mode with MAgPIE"
-***  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
-***  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
+*' cm_MAgPIE_coupling    "switch on coupling mode with MAgPIE"
+*'
+*' *  (off): off = REMIND expects to be run standalone (emission factors are used, shiftfactors are set to zero)
+*' *  (on): on  = REMIND expects to be run based on a MAgPIE reporting file (emission factors are set to zero because emissions are retrieved from the MAgPIE reporting, shift factors for supply curves are calculated)
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
-*** cm_rcp_scen     "chooses RCP scenario"
-***  (none): no RCP scenario, standard setting
-***  (rcp20): RCP2.0
-***  (rcp26): RCP2.6
-***  (rcp37): RCP3.7
-***  (rcp45): RCP4.5
-***  (rcp60): RCP6.0
-***  (rcp85): RCP8.5
+*' cm_rcp_scen       "chooses RCP scenario"
+*'
+*' *  (none): no RCP scenario, standard setting
+*' *  (rcp20): RCP2.0
+*' *  (rcp26): RCP2.6
+*' *  (rcp37): RCP3.7
+*' *  (rcp45): RCP4.5
+*' *  (rcp60): RCP6.0
+*' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"
 *** cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
 ***  (2022_cond):   all NDCs conditional to international financial support
@@ -1491,15 +1539,14 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_fixCO2price  off !! def = off
 $setglobal cm_altTransBunkersShare  off      !! def = off
 
+*' @stop
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 ***$setGlobal test_TS             !! def = off
 *GL* Flag for short time horizon
 ***$setGlobal END2110             !! def = off
-
 *-------------------------------------------------------------------------------------
 *** automated checks and settings
-
 *ag* set conopt version
 option nlp = %cm_conoptv%;
 option cns = %cm_conoptv%;
