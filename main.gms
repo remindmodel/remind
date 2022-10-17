@@ -1196,10 +1196,10 @@ $setGlobal cm_vehiclesSubsidies  off !! def = off
 *** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...). 
 ***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations. 
 ***   Example on how to use:
-***     cm_implicitQttyTarget = "2030.EU27_regi.tax.t.FE.all 1.03263".
+***     cm_implicitQttyTarget  "2030.EU27_regi.tax.t.FE.all 1.03263"
 ***       Enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa).
 ***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)   
-***     cm_implicitQttyTarget = to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.          
+***     cm_implicitQttyTarget to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.          
 ***       Enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions. 
 ***       The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
 $setGlobal cm_implicitQttyTarget  off !! def = off
@@ -1218,13 +1218,14 @@ $setGlobal cm_implicitPePriceTarget  off !! def = off
 $setGlobal cm_VREminShare    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
-***     cm_CCSmaxBound = `GLO 2, EUR 0.25`
-***       amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2/yr globally, and 250 Mt CO2/yr in EU28. 
+***     cm_CCSmaxBound   GLO 2, EUR 0.25
+***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28. 
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
-$setGlobal cm_CCSmaxBound    off !! def = off$setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
-*** c_CES_calibration_new_structure      <-   0       # def <-  0, switch to 1 if you want to calibrate a CES structure different from input gdx
+$setGlobal cm_CCSmaxBound    off  !! def = off
+$setglobal cm_CES_configuration   indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
+*** c_CES_calibration_new_structure      <-   0        switch to 1 if you want to calibrate a CES structure different from input gdx
 $setglobal c_CES_calibration_new_structure  0     !!  def  =  0
-*** c_CES_calibration_write_prices       <-   0       # def <-  0, switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
+*** c_CES_calibration_write_prices       <-   0       switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
 $setglobal c_CES_calibration_write_prices  0     !!  def  =  0
 *** cm_CES_calibration_default_prices    <-   0.01    # def <-  0.01 lower value if input factors get negative shares (xi), CES prices in the first calibration iteration
 $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
@@ -1312,17 +1313,17 @@ $setglobal cm_eni  off  !! def = off
 $setglobal cm_enb  off  !! def = off
 *** cm_LDV_mkt_share "set upper or lower bounds to transport LDV market shares in complex realisation"
 ***   Example on how to use:
-***     cm_LDV_mkt_share = apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
+***     cm_LDV_mkt_share  apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
 ***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market 
 $setglobal cm_LDV_mkt_share  off !! def = off
 *** cm_share_LDV_sales "set upper or lower bounds to transport LDV market share sales in complex realisation"
 ***   Example on how to use:
-***     cm_share_LDV_sales = 2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
+***     cm_share_LDV_sales    2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
 ***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market 
 $setglobal cm_share_LDV_sales  off !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
-***     cm_incolearn = "apcarelt=17000,wind=1600,spv=5160,csp=9500"
+***     cm_incolearn  "apcarelt=17000,wind=1600,spv=5160,csp=9500"
 ***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
@@ -1425,17 +1426,17 @@ $setGlobal c_VREPot_Factor  off  !! def = off
 *** FE tax switches, allows scaling up or down FE taxes on all sectors, energy carriers flexibly
 ***   cm_FEtax_trajectory_abs     "switch for setting the aboslute FE tax level explicitly from a given year onwards, before tax levels increases or decreases linearly to that value"
 *** swtich for setting FE tax to an absolute value in USD/MWh from a specific year onwards for a given sector and FE carrier (for all regions equally)
-*** example: cm_FEtax_trajectory_abs = 2040.indst.feels 20  sets FE electricity tax in industry to 20 USD/MWh from 2040 onwards, before: linear increase from cm_startyear to 2040
+*** example: cm_FEtax_trajectory_abs  2040.indst.feels 20  sets FE electricity tax in industry to 20 USD/MWh from 2040 onwards, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
 *** factor for scaling FE tax relative to level in cm_startyear from a specific year onwards for a given sector and FE carrier 
-*** example: cm_FEtax_trajectory_rel = 2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
+*** example: cm_FEtax_trajectory_rel   2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** wind offshore switch
-*** cm_wind_offshore = 1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
-*** cm_wind_offshore = 0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
+*** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
+*** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
 $setglobal cm_wind_offshore  1      !! def = 1
 *** *RP* Turn on a slower convergence scheme where each conopt file is used twice, thus conopt1 is used for itr 1+2, conopt.op2 for itr 3+4, conopt.op3 for itr 5+6, conopt.op4 for itr 7+8, conopt.op5 from itr 9 on.
 *** *RP* from my own experience, this improves convergence and actually decreases total runtime, even if you start from a gdx with good convergence. But, as always, feelings about REMIND runtimes can be misleading :-)
