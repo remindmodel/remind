@@ -29,13 +29,13 @@ invisible(getConfig(option = NULL, verbose = firstIteration))
 load("config.Rdata")
 ssp_scenario <- cfg$gms$cm_APscen
 
-# read in REMIND avtivities, use the fulldata_post.gdx and then the input.gdx if the fulldata.gdx is not available
-if (file.exists("fulldata.gdx")){gdx <- "fulldata.gdx"} else {if (file.exists("fulldata_post.gdx")){gdx <- "fulldata_post.gdx"} else {gdx <- "input.gdx"}}
+# read in REMIND avtivities, use input.gdx if the fulldata_exoGAINS.gdx is not available
+gdx <- if (file.exists("fulldata_exoGAINS.gdx")) "fulldata_exoGAINS.gdx" else "input.gdx"
 
-
+iterationNumber <- as.numeric(readGDX(gdx = gdx, "o_iterationNumber", format = "simplest"))
 t <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
 rem_in_mo <- NULL
-message("exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
+message("Iteration ", iterationNumber, ": exoGAINSAirpollutants.R calls remind2::reportMacroEconomy ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportMacroEconomy(gdx)[,t,])
 message("- reportPE ", appendLF = FALSE)
 rem_in_mo <- mbind(rem_in_mo,reportPE(gdx)[,t,])
@@ -227,6 +227,8 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # CEDS16 <- add_columns(CEDS16,addnm = getNames(avi_E,dim=1)) # filled with NA
 # CEDS16[,,getNames(avi_E,dim=1)] <- 0 # replace NA with zero
 # CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
+
+unlink("fulldata_exoGAINS.gdx")
 
 if(firstIteration){
   cat("\nExoGAINS - end of first iteration.\n\n")

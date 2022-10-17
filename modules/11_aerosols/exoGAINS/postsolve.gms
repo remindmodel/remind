@@ -12,16 +12,11 @@
 
 *** run exoGAINS from iteration 2 onwards to avoid incomplete GDX files when running it in the first iteration
 if (iteration.val ge 2,
-*** write the fulldata.gdx file after each optimal iteration
-***AJS* in Nash status 7 is considered optimal in that respect (see definition of o_modelstat in solve.gms)
-if((o_modelstat le 2),
-    Execute_Unload 'fulldata';
-  );  
-if((o_modelstat gt 2),
-    Execute_Unload 'non_optimal';
-  );
 
-*** Calcualte AP emissions
+*** write data to file
+Execute_Unload 'fulldata_exoGAINS';
+
+*** Calculate AP emissions
 Execute "Rscript exoGAINSAirpollutants.R";
 
 *** Read input ref results for tall with following dimensions: pm_emiAPexsolve(tall,all_regi,all_sectorEmi,emiRCP)
