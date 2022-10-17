@@ -271,6 +271,8 @@ if (cm_emiscen ne 1,
 
 *nr* cumulated capacity never falls below initial cumulated capacity:
 vm_capCum.lo(ttot,regi,teLearn)$(ttot.val ge cm_startyear) = pm_data(regi,"ccap0",teLearn);
+*** exception for tech_stat 4 technologies whose ccap0 refers to 2025 as these technologies don't exist in 2005
+vm_capCum.lo(ttot,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4 AND ttot.val le 2020) = pm_data(regi,"ccap0",teLearn);
 
 *nr: floor costs represent the lower bound of learning technologies investment costs
 vm_costTeCapital.lo(t,regi,teLearn) = pm_data(regi,"floorcost",teLearn);
@@ -354,6 +356,12 @@ loop(regi,
 
 *** no technologies with tech_stat 4 before 2025
 vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0;
+*** initialize cumulative capacity of tech_stat 4 technologies at 0 
+*** (not at ccap0 from generisdata_tech.prn which gives the cucmulative capacity
+***  at the initial investment cost of the first year in which the technology can be built)
+vm_capCum.fx(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4) = 0;
+*** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
+vm_costTeCapital.fx(t,regi,teLearn)$(t.val le 2020 AND pm_data(regi,"tech_stat",teLearn) eq 4)=fm_dataglob("inco0",teLearn);
 
 
 *CB 2012024 -----------------------------------------------------
