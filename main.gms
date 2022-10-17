@@ -205,7 +205,7 @@ option profile = 0;
 
 *' @code
 *--------------------------------------------------------------------------
-*' #### Configuration - Settings for Scenatios:
+*' #### Configuration - Settings for Scenarios:
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------
