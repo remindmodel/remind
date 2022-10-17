@@ -324,9 +324,9 @@ $setglobal buildings  simple      !! def = simple
 *'---------------------    37_industry    ----------------------------------
 *'
 *' * (fixed_shares): fixed shares of industry sub-sectors (cement, chemicals,
-*' *                  steel, other) in industry FE use
+*'                   steel, other) in industry FE use
 *' * (subsectors):   models industry subsectors explicitly with individual CES nests
-*' *                  for cement, chemicals, steel, and otherInd production.
+*'                   for cement, chemicals, steel, and otherInd production.
 $setglobal industry  subsectors   !! def = subsectors
 *'---------------------    39_CCU    ---------------------------------
 *'
@@ -453,10 +453,10 @@ parameter
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
 ;
   c_keep_iteration_gdxes = 0;     !! def = 0
-*' additonal info for c_keep_iteration_gdxes
+*' in default we do not save gdx files from each iteration but this might be helpful for debugging
 *'
-*' * (0)  gdx files are NOT saved
-*' * (1)  gdx files are saved
+*' * (0)  gdx files from each iteration are NOT saved
+*' * (1)  gdx files from each iteration are saved
 parameter
   cm_keep_presolve_gdxes    "save gdxes for all regions/solver tries/nash iterations for debugging"
 ;
@@ -466,7 +466,6 @@ parameter
   cm_nash_autoconverge      "choice of nash convergence mode"
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
-*' additional information for cm_nash_autoconverge
 *'
 *' * (0): manually set number of iterations by adjusting cm_iteration_max
 *' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
@@ -498,7 +497,7 @@ parameter
 *'
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
-***  (any number >= 0): rate of exponential increase over time
+*'  (any number >= 0): rate of exponential increase over time
 ;
   cm_co2_tax_growth = 1.05;            !! def = 1.05
 *'
@@ -511,23 +510,23 @@ parameter
 *'
 parameter
   cm_nucscen                "nuclear option choice"
-***  (1): no fnrs, tnrs completely free after 2020
-***  (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
-***  (3): no tnrs no fnrs
-***  (4): fix at bau level
-***  (5): no new nuclear investments after 2020
-***  (6): +33% investment costs (tnrs) & uranium resources increased by a factor of 10
 ;
   cm_nucscen       = 2;        !! def = 2
+*'   (1): no fnrs, tnrs completely free after 2020
+*'   (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
+*'   (3): no tnrs no fnrs
+*'   (4): fix at bau level
+*'   (5): no new nuclear investments after 2020
+*'   (6): +33% investment costs (tnrs) & uranium resources increased by a factor of 10
 *'
 parameter
   cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
-***  (1): yes
-***  (2): no carbon capture (only if CCS and CCU are switched off!)
-***  (3): no bio carbon capture
-***  (4): no carbon capture in the electricity sector
 ;
   cm_ccapturescen  = 1;        !! def = 1
+*' *  (1): yes
+*' *  (2): no carbon capture (only if CCS and CCU are switched off!)
+*' *  (3): no bio carbon capture
+*' *  (4): no carbon capture in the electricity sector
 *'
 parameter
   c_bioliqscen              "bioenergy liquids technology choise"
@@ -656,12 +655,11 @@ parameter
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
-***  (2005): standard for BAU to check if model is well calibrated
-***  (2015): standard for all policy runs (eq. to fix2010) and production baselines, especially if various baselines with varying parameters are explored
-***  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
-*AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
+*' *  (2005): standard for basline to check if model is well calibrated
+*' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
+*' *  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
 ;
-  cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
+  cm_startyear      = 2005;      !! def = 2005 for a baseline
 *'
 parameter
   c_start_budget            "start of GHG budget limit"
@@ -1565,19 +1563,16 @@ $setGlobal cm_less_TS  on  !! def = on
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
 $setGlobal cm_Full_Integration  off     !! def = off
-***  MAGICC configuration (AJS)
-***  Calibrate year 2000 temperature to HADCRUT4 data (which is very close to AR5).
-*** cfg$gms$cm_magicc_calibrateTemperature2000 <- "uncalibrated" # def = uncalibrated;  {uncalibrated, HADCRUT4  }
-$setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
-***  Derive temperature impulse response to CO2 emissions, based on MAGICC. Adds around 10min runtime.
-*** cfg$gms$cm_magicc_temperatureImpulseResponse <- "off" # def = off; {off,on }
+*'   MAGICC configuration 
+*'   either uncalibrated or calibrate year 2000 temperature to HADCRUT4 data (which is very close to AR5).
+$setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def = uncalibrated
+*'  Derive temperature impulse response to CO2 emissions, based on MAGICC. Adds around 10min runtime.
 $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
-*** MAGICC configuration
-*** roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
-*** choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
+*' MAGICC configuration
+*' roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
+*' choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
-***  climate damages
-*** cfg$gms$cm_damage_DiceLike_specification <- "HowardNonCatastrophic" # def = "HowardNonCatastrophic"; {DICE2013R,DICE2016,HowardNonCatastrophic,HowardInclCatastrophic,KWcross,KWpanelPop}
+*'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
 $setGlobal cm_damage_Labor_exposure  low    !!def = low
