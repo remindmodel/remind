@@ -218,11 +218,11 @@ $setGlobal c_description  REMIND run with default settings
 
 *'---------------------    01_macro    -----------------------------------------
 *'
-*' * (singleSectorGr) 
+*' * (singleSectorGr) neo-classical, single sector growth model
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
-*' * (utilitarian) 
+*' * (utilitarian) utilitarian aka. Benthamite social welfare function
 $setGlobal welfare  utilitarian  !! def = utilitarian
 *'---------------------    04_PE_FE_parameters    ------------------------------
 *'
