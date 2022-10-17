@@ -831,7 +831,7 @@ parameter
   c_abtcst                 = 1;      !! def = 1
 parameter
   c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
-*** budgets from AR6 for 2020-2100 (including 2020), for 1.5°C: 400 Gt CO2, for 2°C: 1150 Gt CO2
+*** budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 400 Gt CO2, for 2 C: 1150 Gt CO2
 ;
   c_budgetCO2from2020      = 1150;   !! def = 1150
 parameter
@@ -1254,7 +1254,7 @@ $setGlobal c_regi_sensscen  all !! def = all
 ***         energy service demands in 2050. Similar shares for trucks.
 ***         Mode shares: Continuation of existing trends as prescribed in the SSP scenario.
 ***         For SSP2 this means roughly constant mode shares.
-***  (Mix4) the high ambition scenario. Consistent with a 1.5° or 2° scenario.
+***  (Mix4) the high ambition scenario. Consistent with a 1.5 C or 2 C scenario.
 ***         LDVs: High BEV shares, electrification rates for LDVs almost 90% in 2050 (numbers can vary).
 ***         Trucks: high electrification of up to 80%.
 ***         Busses: BEV rates almost 70% in 2050.
