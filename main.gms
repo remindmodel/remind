@@ -662,21 +662,18 @@ parameter
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 ;
   cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
-*'
 parameter
   c_start_budget            "start of GHG budget limit"
 ;
   c_start_budget    = 2100;      !! def = 2100
-*'
 parameter
   cm_prtpScen               "pure rate of time preference standard values"
 ***  (1): 1 %
 ***  (3): 3 %
 ;
   cm_prtpScen         = 3;         !! def = 3
-*'
 parameter
-  cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
+  cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than zero enable final energy tax"
 *** *RP* even if set to 0, the PE inconvenience cost per SO2-cost for coal are always on if module 21_tax is on
 ***  (0): no tax, sub, inconv
 ***  (1): constant t,s,i (used in SSP 5 and ADVANCE WP3.1 HighOilSub)
@@ -1012,7 +1009,7 @@ parameter
   cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 *'
 parameter
-  cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
+  cm_biotrade_phaseout        "switch for phasing out biomass trade in the EU regions by 2030"
 ***  def 0, means no biomass import phase out
 ;
   cm_biotrade_phaseout = 0; !! def 0
@@ -1404,7 +1401,7 @@ $setGlobal cm_Ger_Pol  off !! def off
 $setGlobal cm_altFeEmiFac  off        !! def = off
 *** overwritte default fe trajectories with low, medium and high alternatives for buildings, transport and industry
 $setglobal cm_calibration_FE  off      !! def = off
-*** cm_eni "multiplicative factor applied to industry energy elasticity value (eni). [factor]"
+*** cm_eni "multiplicative factor applied to industry energy elasticity value (eni) used in fixed_shares realization. [factor]"
 ***   def <- "off" = no change for industry energy elasticity (eni); 
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_eni  off  !! def = off
