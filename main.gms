@@ -453,10 +453,10 @@ parameter
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
 ;
   c_keep_iteration_gdxes = 0;     !! def = 0
-*' additonal info for c_keep_iteration_gdxes
+*' in default we do not save gdx files from each iteration but this might be helpful for debugging
 *'
-*' * (0)  gdx files are NOT saved
-*' * (1)  gdx files are saved
+*' * (0)  gdx files from each iteration are NOT saved
+*' * (1)  gdx files from each iteration are saved
 parameter
   cm_keep_presolve_gdxes    "save gdxes for all regions/solver tries/nash iterations for debugging"
 ;
@@ -466,7 +466,6 @@ parameter
   cm_nash_autoconverge      "choice of nash convergence mode"
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
-*' additional information for cm_nash_autoconverge
 *'
 *' * (0): manually set number of iterations by adjusting cm_iteration_max
 *' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
@@ -498,7 +497,7 @@ parameter
 *'
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
-***  (any number >= 0): rate of exponential increase over time
+*'  (any number >= 0): rate of exponential increase over time
 ;
   cm_co2_tax_growth = 1.05;            !! def = 1.05
 *'
@@ -522,10 +521,10 @@ parameter
 *'
 parameter
   cm_ccapturescen       "carbon capture option choice, no carbon capture only if CCS and CCU are switched off!"
-***  (1): yes
-***  (2): no carbon capture (only if CCS and CCU are switched off!)
-***  (3): no bio carbon capture
-***  (4): no carbon capture in the electricity sector
+*' *  (1): yes
+*' *  (2): no carbon capture (only if CCS and CCU are switched off!)
+*' *  (3): no bio carbon capture
+*' *  (4): no carbon capture in the electricity sector
 ;
   cm_ccapturescen  = 1;        !! def = 1
 *'
@@ -656,12 +655,11 @@ parameter
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
-***  (2005): standard for BAU to check if model is well calibrated
-***  (2015): standard for all policy runs (eq. to fix2010) and production baselines, especially if various baselines with varying parameters are explored
-***  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
-*AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
+*' *  (2005): standard for basline to check if model is well calibrated
+*' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
+*' *  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
 ;
-  cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
+  cm_startyear      = 2005;      !! def = 2005 for a baseline
 *'
 parameter
   c_start_budget            "start of GHG budget limit"
