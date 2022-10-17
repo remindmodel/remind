@@ -218,11 +218,11 @@ $setGlobal c_description  REMIND run with default settings
 
 *'---------------------    01_macro    -----------------------------------------
 *'
-*' * (singleSectorGr) 
+*' * (singleSectorGr) neo-classical, single sector growth model
 $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
-*' * (utilitarian) 
+*' * (utilitarian) utilitarian aka. Benthamite social welfare function
 $setGlobal welfare  utilitarian  !! def = utilitarian
 *'---------------------    04_PE_FE_parameters    ------------------------------
 *'
@@ -239,7 +239,7 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 *'---------------------    15_climate    ---------------------------------------
 *'
 *' * (off): no climate coupling
-*' * (magicc): MAGICC - iterative mode, outside of optimization.
+*' * (magicc): MAGICC - iterative coupling of MAGICC climate model.
 *' * (box): Petschel-Held
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
@@ -301,7 +301,7 @@ $setglobal fossil  grades2poly        !! def = grades2poly
 *'
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 *' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*' * (DTcoup)    : Power sector formulation with coupling to DIETER
+*' * (DTcoup)    :    Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'
@@ -312,12 +312,12 @@ $setglobal power  IntC        !! def = IntC
 $setglobal CDR  DAC        !! def = DAC
 *'---------------------    35_transport    ----------------------------------------
 *'
-*' * (complex):  transport realization including electricity in the transport sector (*RP*)
-*' * (edge_esm): transport realization with detailed modes/vehicles representation (*AD*, *MR*)
+*' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
+*' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies  
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
-*' * (simple): representation of the demand in terms of energy carriers
+*' * (simple): representation of final energy demand via a CES function calibrated to EDGE-Buildings' demand trajectories
 *' * (services_with_capital): representation of the demand by energy service with capital
 *' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
@@ -330,7 +330,7 @@ $setglobal buildings  simple      !! def = simple
 $setglobal industry  subsectors   !! def = subsectors
 *'---------------------    39_CCU    ---------------------------------
 *'
-*' * (on): simple representation of carbon capture and utilization technologies, first only example of syngas (H22CH4)
+*' * (on): representation of technologies for producing synthetic liquids and synthetic gases based on hydrogen and captured carbon
 *' * (off): no representation of carbon caputre and utilization technologies.
 $setglobal CCU  on      !! def = on
 *'---------------------    40_techpol  ----------------------------------------
@@ -385,7 +385,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 *' The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
 *'
 *' * (none): no regional policies
-*' * (regiCarbonPrice): Region specific or region group independent carbon price and additional policies.
+*' * (regiCarbonPrice): region-specific policies and refinements (regional emissions targets, co2 prices, phase-out policies etc.)
 $setglobal regipol  none              !! def = none
 *'---------------------    50_damages    ---------------------------------------
 *'
@@ -1200,10 +1200,10 @@ $setglobal cm_rcp_scen  none         !! def = "none"
 ***  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 ***  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
 $setglobal cm_NDC_version  2022_cond    !! def = "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
-*** c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired in one year in each region, applied to all techs unless otherwise specified in c_tech_earlyreti_rate"
+*** c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 ***  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
 $setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
-*** c_tech_earlyreti_rate  "technology-specific annual early retirement limits in each region, which overrides c_regi_earlyreti_rate"
+*** c_tech_earlyreti_rate  "maximum percentage of capital stock of specific technologies that can be retired early in one year in specified regions. This switch overrides c_regi_earlyreti_rate to allow for fine-tuning of phase-out schedules, e.g. for implementation of certain policies or anticipated trends."
 ***  GLO.(biodiesel 0.14, bioeths 0.1), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13: default value, including retirement of 1st gen biofuels, higher rate of coal phase-out for USA, REF and CHA
 $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13 !! def = GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13
 *** cm_LU_emi_scen   "choose emission baseline for CO2, CH4, and N2O land use emissions from MAgPIE"
