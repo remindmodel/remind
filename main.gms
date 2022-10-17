@@ -301,7 +301,7 @@ $setglobal fossil  grades2poly        !! def = grades2poly
 *'
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 *' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*' * (DTcoup)    : Power sector formulation with coupling to DIETER
+*' * (DTcoup)    :    Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'
@@ -312,12 +312,12 @@ $setglobal power  IntC        !! def = IntC
 $setglobal CDR  DAC        !! def = DAC
 *'---------------------    35_transport    ----------------------------------------
 *'
-*' * (complex):  transport realization including electricity in the transport sector (*RP*)
-*' * (edge_esm): transport realization with detailed modes/vehicles representation (*AD*, *MR*)
+*' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
+*' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies  
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
-*' * (simple): representation of the demand in terms of energy carriers
+*' * (simple): representation of final energy demand via a CES function calibrated to EDGE-Buildings' demand trajectories
 *' * (services_with_capital): representation of the demand by energy service with capital
 *' * (services_putty): representation of the demand by energy service with capital and with putty-clay for buildings insulation
 $setglobal buildings  simple      !! def = simple
@@ -330,7 +330,7 @@ $setglobal buildings  simple      !! def = simple
 $setglobal industry  subsectors   !! def = subsectors
 *'---------------------    39_CCU    ---------------------------------
 *'
-*' * (on): simple representation of carbon capture and utilization technologies, first only example of syngas (H22CH4)
+*' * (on): representation of technologies for producing synthetic liquids and synthetic gases based on hydrogen and captured carbon
 *' * (off): no representation of carbon caputre and utilization technologies.
 $setglobal CCU  on      !! def = on
 *'---------------------    40_techpol  ----------------------------------------
@@ -385,7 +385,7 @@ $setglobal carbonpriceRegi  none      !! def = none
 *' The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
 *'
 *' * (none): no regional policies
-*' * (regiCarbonPrice): Region specific or region group independent carbon price and additional policies.
+*' * (regiCarbonPrice): region-specific policies and refinements (regional emissions targets, co2 prices, phase-out policies etc.)
 $setglobal regipol  none              !! def = none
 *'---------------------    50_damages    ---------------------------------------
 *'
