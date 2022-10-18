@@ -92,7 +92,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Rice (Mt CH4/yr)",                                              emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
-    } else {
+    } else if("Emissions|CO2|Land Use (Mt CO2/yr)" %in% getNames(mag)) {
       # MAgPIE 3
       map <- rbind(map,data.frame(emimag="Emissions|CO2|Land Use (Mt CO2/yr)",                                                        emirem="co2luc",    factor_mag2rem=1/1000*12/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land Use|Agriculture|AWM (kt N2O/yr)",                                        emirem="n2oanwstm", factor_mag2rem=1/1000*28/44,stringsAsFactors=FALSE))
@@ -111,6 +111,8 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Forest Burning (Mt CH4/yr)",                         emirem="ch4forest", factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Savannah Burning (Mt CH4/yr)",                       emirem="ch4savan",  factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land Use|Biomass Burning|Agricultural Waste Burning (Mt CH4/yr)",             emirem="ch4agwaste",factor_mag2rem=1,stringsAsFactors=FALSE))
+    } else {
+      stop("Emission data not found in MAgPIE report. Check MAgPIE reporting file.")
     }
 
     # Read data from MAgPIE report and convert to REMIND data, collect in 'out' object
@@ -227,9 +229,9 @@ prepare <- function() {
         tribble(
             ~Package, "data.table", "devtools", "dplyr", "edgeTransport",
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
-            "lucode", "luplot", "luscale", "magclass", "magpie", "methods",
+            "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -245,11 +247,11 @@ prepare <- function() {
   setwd(cfg$remind_folder)
 
   # Check configuration for consistency
-  cfg <- check_config(cfg, reference_file="config/default.cfg",
-                      settings_config = "config/settings_config.csv",
-                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                 "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg <- check_config(cfg, reference_file="config/default.cfg",
+#                      settings_config = "config/settings_config.csv",
+#                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                 "gms$cm_CES_configuration", "gms$c_description"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -339,25 +341,30 @@ prepare <- function() {
   # Check all setglobal settings for consistency
   settingsCheck()
 
-  # configure main model gms file (cfg$model) based on settings of cfg file
+  # use main model gms file (cfg$model) and create modified version based on settings in cfg$gms
+  # use main.gms if not further specified
+  if (is.null(cfg$model)) cfg$model <- "main.gms"
+  # add info from cfg into cfg$gams so it ends up in gams.
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
-  # run main.gms if not further specified
-  if(is.null(cfg$model)) cfg$model <- "main.gms"
-  manipulateConfig(cfg$model, cfg$gms)
+  # create modified version
+  tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
+  file.copy(cfg$model, tmpModelFile)
+  manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
-  update_info <- function(regionscode,revision) {
+  update_info <- function(regionscode, revision) {
 
-    subject <- 'VERSION INFO'
-    content <- c('',
-      paste('Regionscode:',regionscode),
-      '',
-      paste('Input data revision:',revision),
-      '',
-      paste('Last modification (input data):',date()),
-      '')
-    replace_in_file(cfg$model,paste('*',content),subject)
+    subject <- "VERSION INFO"
+    content <- c("",
+      paste("Regionscode:", regionscode),
+      "",
+      paste("Input data revision:", revision),
+      "",
+      paste("Last modification (input data):",
+            format(file.mtime("input/source_files.log"), "%a %b %d %H:%M:%S %Y")),
+      "")
+    replace_in_file(tmpModelFile, paste("*", content), subject)
   }
 
   update_sets <- function(map) {
@@ -431,7 +438,7 @@ prepare <- function() {
       input_old     <- "no_data"
   }
   input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$validationmodel_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(is.null(cfg$extramappings_historic),"",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data 
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -452,11 +459,11 @@ prepare <- function() {
   }
 
   ############ update information ########################
-  # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
+  # update_info, which regional resolution and input data revision in tmpModelFile
+  update_info(regionscode(cfg$regionmapping), cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
-  map <- read.csv(cfg$regionmapping,sep=";")
+  map <- read.csv(cfg$regionmapping, sep=";")
   update_sets(map)
 
   ########################################################
@@ -500,7 +507,9 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
+  singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
+  # now that full.gms exists, we don't need tmpModelFile any more
+  file.remove(tmpModelFile)
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -776,6 +785,7 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis, 
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
 
+    
     # OR: renamed for sectoral taxation
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
@@ -808,12 +818,55 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
-    #RP filter out regipol items
-    if(grepl("off", cfg$gms$cm_implicitFE, ignore.case = T)){
-      margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("q47_implFETax.M", "!!q47_implFETax.M")))
-    }
+    # renamed because of https://github.com/remindmodel/remind/pull/848
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
+                             list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
+                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))                             
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
+                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
+    #filter out deprecated regipol items
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v47_emiTarget.L", "!!v47_emiTarget.L")),
+                             list(c("v47_emiTargetMkt.L", "!!v47_emiTargetMkt.L")),
+                             list(c("vm_taxrevimplEnergyBoundTax.L", "!!vm_taxrevimplEnergyBoundTax.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v47_emiTarget.M", "!!v47_emiTarget.M")),
+                             list(c("v47_emiTargetMkt.M", "!!v47_emiTargetMkt.M")),
+                             list(c("q47_implFETax.M", "!!q47_implFETax.M")),
+                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
+                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
+                             list(c("q47_emiTarget_netCO2.M", "!!q47_emiTarget_netCO2.M")),
+                             list(c("q47_emiTarget_netCO2_noBunkers.M", "!!q47_emiTarget_netCO2_noBunkers.M")),
+                             list(c("q47_emiTarget_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_netCO2_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG.M", "!!q47_emiTarget_netGHG.M")),
+                             list(c("q47_emiTarget_netGHG_noBunkers.M", "!!q47_emiTarget_netGHG_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_netGHG_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_netGHG_LULUCFGrassi_noBunkers.M")),
+
+                             list(c("q47_emiTarget_grossEnCO2.M", "!!q47_emiTarget_grossEnCO2.M")),
+                             list(c("q47_emiTarget_mkt_netCO2.M", "!!q47_emiTarget_mkt_netCO2.M")),
+                             list(c("q47_emiTarget_mkt_netCO2_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netCO2_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG.M", "!!q47_emiTarget_mkt_netGHG.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_noLULUCF_noBunkers.M")),
+                             list(c("q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M", "!!q47_emiTarget_mkt_netGHG_LULUCFGrassi_noBunkers.M")),
+                             list(c("qm_balFeAfterTax.M", "!!qm_balFeAfterTax.M")),
+                             list(c("q47_implicitQttyTargetTax.M", "!!q47_implicitQttyTargetTax.M")),
+                             list(c("q47_implEnergyBoundTax.M", "!!q47_implEnergyBoundTax.M")),
+                             list(c("vm_taxrevimplEnergyBoundTax.M", "!!vm_taxrevimplEnergyBoundTax.M"))
+                             )
+
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
+                            list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
+                            list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+    
     # Include fixings (levels) and marginals in full.gms at predefined position 
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
@@ -953,16 +1006,20 @@ run <- function(start_subsequent_runs = TRUE) {
         getLoadFile()
 
         # Store all the interesting output
-        file.copy("full.lst", sprintf("full_%02i.lst", cal_itr), overwrite = TRUE)
-        file.copy("full.log", sprintf("full_%02i.log", cal_itr), overwrite = TRUE)
+        interestingOutput <- c("full.lst", "full.log", "fulldata.gdx", "non_optimal.gdx", "abort.gdx")
+        file.copy(from = interestingOutput,
+                  to = sub("^(.*)(\\.[^\\.]+)$", sprintf("\\1_%02i\\2", cal_itr), interestingOutput), overwrite = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-        file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration,".gdx"), overwrite = TRUE)
-        file.copy("fulldata.gdx", sprintf("input_%02i.gdx", cal_itr),
-                  overwrite = TRUE)
+        if (cal_itr < cfg$gms$c_CES_calibration_iterations) {
+          unlink(c("abort.gdx", "non_optimal.gdx"))
+        } else { # calibration was successful
+          file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration, ".gdx"))
+          file.copy(from = paste0(cfg$gms$cm_CES_configuration, "_ITERATION_", cal_itr, ".inc"),
+                    to = paste0(cfg$gms$cm_CES_configuration, ".inc"))
+        }
 
         # Update file modification time
         fulldata_m_time <- file.info("fulldata.gdx")$mtime
-
       } else {
         break
       }
@@ -1050,20 +1107,17 @@ run <- function(start_subsequent_runs = TRUE) {
   if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
-      "li=$(nashstat -F | wc -l); cat",
+      "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
       "<(if (($li < 2)); then echo no infeasibilities found; fi)",
       "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
-      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with nashstat -a ...; fi)",
-      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)")
+      "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with 'nashstat -a' ...; fi)",
+      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 3)); then echo If infeasibilities appear some iterations before GAMS failed, check 'nashstat -a' carefully.; fi)",
+      "<(if (($li > 3)); then echo The error that stopped GAMS is probably not the actual reason to fail.; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))
     if (nashstatres != 0) message("nashstat not found, search for p80_repy in full.lst yourself.")
   }
   message("")
-
-  if (stoprun) {
-    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
-         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
-  }
 
   message("\nCollect and submit run statistics to central data base.")
   lucode2::runstatistics(file       = "runstatistics.rda",
@@ -1072,6 +1126,11 @@ run <- function(start_subsequent_runs = TRUE) {
                          runtime    = gams_runtime,
                          setup_info = lucode2::setup_info(),
                          submit     = cfg$runstatistics)
+
+  if (stoprun) {
+    stop("GAMS did not complete its run, so stopping here:\n       No output is generated, no subsequent runs are started.\n",
+         "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
+  }
 
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)
@@ -1171,6 +1230,13 @@ run <- function(start_subsequent_runs = TRUE) {
   # Postprocessing / Output Generation
   output    <- cfg$output
   outputdir <- cfg$results_folder
+
+  # make sure the renv used for the run is also used for generating output
+  if (!is.null(renv::project())) {
+    stopifnot(`loaded renv and outputdir must be equal` = normalizePath(renv::project()) == normalizePath(outputdir))
+    argv <- c(get0("argv"), paste0("--renv=", renv::project()))
+  }
+
   sys.source("output.R",envir=new.env())
   # get runtime for output
   timeOutputEnd <- Sys.time()

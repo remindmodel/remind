@@ -66,7 +66,11 @@ gdp_SSP2EU
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_SSP2_lowEn   "SSP2 with low energy"
+gdp_SSP2_lowEn  "SSP2 with low energy"
+gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
+gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -321,6 +325,11 @@ $ENDIF.WindOff
         termX_nh3   "Export terminals for liquid ammonia (liquification)"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
+*** PCV: technologies related to steel
+        ironMine     "Mining of iron ore"
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bfbof        "Blast furnace/basic-oxygen furnace"
 /
 
 all_enty             "all types of quantities"
@@ -387,6 +396,12 @@ all_enty             "all types of quantities"
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
         ueelTt       "transport useful energy for electric trains"
+
+        !! materials, feedstock, and industrial goods
+        steel        "Steel"
+        dri          "Directly reduced iron"
+        scrap        "Steel scrap"
+        ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"
@@ -860,6 +875,8 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+set regi_groupExt(ext_regi,all_regi) "extended region group mapping. Mapping model regions that belong to region group, including one to one region mapping";
+
 set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
   / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW, EU27_regi, NEU_UKI_regi /;
 
@@ -878,13 +895,6 @@ $IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
 $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
-
-$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
-  regi_sensscen(all_regi)=YES;
-$ELSE.RegScenSens
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
-$ENDIF.RegScenSens
 
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
@@ -1920,7 +1930,6 @@ emiMacMagpieN2O(all_enty)  "types of climate-relevant non-energy N2O emissions w
         n2ofertcr  "n2o emissions from decay of crop residues (resid_n2o)"
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
         n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
-        ch4peatland "ch4 emissions from peatlands (peatland_ch4)"        
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2opeatland "n2o emissions from peatlands (no MAC available)"        
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
@@ -2058,10 +2067,26 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
 ***  feh2s.indst.feh2i
 /
 
-all_emiMkt         "emission markets"
+all_emiMkt      "emission markets"
 /	ETS     "ETS emission market"
 	ES      "Effort sharing emission market"
 	other	"other market configurations"
+/
+
+all_emiMktExt   "extended emission market definitions"
+/	
+        ETS     "ETS emission market"
+	ESR     "Effort sharing emission market"
+	other	"other market configurations"
+        all     "economy wide emission market"
+/
+
+emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"
+/
+        ETS.(ETS)
+        ESR.(ES)
+        other.(other)
+        all.(ETS,ES,other)
 /
 
 sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
@@ -2331,6 +2356,7 @@ alias(rlf,rlf2);
 alias(regi,regi2,regi3);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
+alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
 alias(sector_types,type)
 

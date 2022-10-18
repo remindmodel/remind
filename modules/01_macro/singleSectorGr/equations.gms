@@ -88,19 +88,28 @@ q01_balLab(t,regi)..
 *** Keep in mind to adjust the calculation of derivatives and shares 
 *** in ./core/reswrite.inc if you change the structure of this function.
 ***---------------------------------------------------------------------------
-q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) .. 
+q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
   vm_cesIO(t,regi,out)
   =e=
-    sum(cesOut2cesIn(out,in),
-      pm_cesdata(t,regi,in,"xi")
-    * ( pm_cesdata(t,regi,in,"eff")
-      * vm_effGr(t,regi,in)
-      * vm_damageProdFactor(t,regi,in)
-      * vm_cesIO(t,regi,in)
+  !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS for
+  !! very low values of a
+  exp(
+    log(
+      sum(cesOut2cesIn(out,in),
+        pm_cesdata(t,regi,in,"xi")
+      * exp(
+          log(
+	    pm_cesdata(t,regi,in,"eff")
+	  * vm_effGr(t,regi,in)
+	  * vm_damageProdFactor(t,regi,in)
+	  * vm_cesIO(t,regi,in)
+	  )
+	* pm_cesdata(t,regi,out,"rho")
+	)
       )
-   ** pm_cesdata(t,regi,out,"rho")
     )
-  ** (1 / pm_cesdata(t,regi,out,"rho"))
+  * (1 / pm_cesdata(t,regi,out,"rho"))
+  )
 ;
 
 ***---------------------------------------------------------------------------
@@ -121,16 +130,22 @@ q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) AND (( NOT in_putty(in2)
 *' Both depreciation and investments are expressed as annual values,
 *' so the time step length is taken into account.
 ***---------------------------------------------------------------------------
-q01_kapMo(ttot,regi,ppfKap(in))$( ( NOT in_putty(in)) AND (ord(ttot) lt card(ttot)) AND (pm_ttot_val(ttot+1) ge max(2010, cm_startyear)) AND (pm_cesdata("2005",regi,in,"quantity") gt 0))..
-    vm_cesIO(ttot+1,regi,in)
+q01_kapMo(ttot,regi,ppfKap(in))$(
+                             NOT in_putty(in)
+                         AND ord(ttot) lt card(ttot)
+                         AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear)
+                         AND pm_cesdata("2005",regi,in,"quantity") gt 0     ) ..
+  vm_cesIO(ttot+1,regi,in)
   =e=
-    (1- pm_delta_kap(regi,in))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_cesIO(ttot,regi,in)
+    vm_cesIO(ttot,regi,in)
+  * (1 - pm_delta_kap(regi,in))
+ ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
 $ifthen setGlobal END2110
 *gl* short time horizon requires investments to materialize in the same time step
   + pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5 - (0.5*pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5)$(ord(ttot) eq card(ttot));
 $else
   + pm_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
-  + pm_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in) ;
+  + pm_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
 $endif
 ;
 

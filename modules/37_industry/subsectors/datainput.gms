@@ -8,6 +8,45 @@
 
 vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 
+***-------------------------------------------------------------------------------
+***                         MATERIAL-FLOW IMPLEMENTATION
+***-------------------------------------------------------------------------------
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
+PARAMETERS
+  p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  /
+    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
+    
+    dri.eaf.pri             1.0                                             !! DRI demand of EAF
+    scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
+    dri.eaf.sec             0.0
+    scrap.eaf.pri           0.0
+    
+    ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
+    scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
+    scrap.bfbof.pri         0.0
+    ironore.bfbof.sec       0.0
+  /
+
+  p37_specFeDem(entyFe,teMats,opModes)                                      "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+  /
+    feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
+    fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
+    feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
+    
+    feels.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
+    feels.eaf.sec           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
+    
+    fesos.bfbof.pri         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
+    fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
+  /
+;
+$endif.process_based_steel
+
+
+***-------------------------------------------------------------------------------
+***                     REST OF SUBSECTOR INDUSTRY MODULE
+***-------------------------------------------------------------------------------
 *** substitution elasticities
 Parameter
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
@@ -38,11 +77,11 @@ pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off" 
 pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
                                     pm_abatparam_Ind(ttot,regi,all_enty,steps) )
   = pm_abatparam_Ind(ttot,regi,all_enty,steps);
-  / %cm_INNOPATHS_Industry_CCS_markup%);
+  / %cm_Industry_CCS_markup%);
 $ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
@@ -76,6 +115,7 @@ pm_energy_limit(in)
 * function passing through the 2015 value and a point defined by an "efficiency
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
 * year (e.g. 2050).
+$ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 if (cm_emiscen eq 1,
   execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
 else
@@ -86,6 +126,7 @@ sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
                   !! thermodynamic limit
 sm_tmp  = 2050;   !! period in which closing could be achieved
 
+*** Specific energy demand limits for steel and cement relative to thermodynamic limit from input data
 loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
   p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
   = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
@@ -109,6 +150,36 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
       )
     );
 );
+
+*** Specific energy demand limits for other industry and chemicals in TWa/trUSD
+*** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
+sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value 
+sm_tmp  = 2100;   !! period in which closing could be achieved
+
+loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
+      )
+    )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)));
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
+);
+
+display p37_energy_limit_slope;
+$endif.no_calibration
 
 *** CCS for industry is off by default
 emiMacSector(emiInd37_fuel) = NO;

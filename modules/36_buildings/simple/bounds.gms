@@ -11,10 +11,10 @@ v36_costExponent.up(t,regi) = 20;
 
 
 *** FS: no H2 in buildings before 2050
-vm_demFeSector.up('2010',regi,'seh2','feh2s','build','ES') = 0;
-vm_demFeSector.up('2015',regi,'seh2','feh2s','build','ES') = 0;
-vm_demFeSector.up('2020',regi,'seh2','feh2s','build','ES') = 1e-5;
-vm_demFeSector.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
+vm_demFeSector_afterTax.up('2010',regi,'seh2','feh2s','build','ES') = 0;
+vm_demFeSector_afterTax.up('2015',regi,'seh2','feh2s','build','ES') = 0;
+vm_demFeSector_afterTax.up('2020',regi,'seh2','feh2s','build','ES') = 1e-5;
+vm_demFeSector_afterTax.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
 
 
 *** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. In case contrary, H2 is competitive against gas in buildings and industry even during calibration.

@@ -4,155 +4,108 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-# ---- Define set of runs that will be compared ----
 
-if (exists("outputdirs")) {
-  # This is the case if this script was called via Rscript output.R
-  listofruns <- list(list(
-    period = "both",
-    set = format(Sys.time(), "%Y-%m-%d_%H.%M.%S"),
-    dirs = outputdirs))
-} else {
-  # This is the case if this script was called directly via Rscript
-  listofruns <- list(
-    list(
-      period = "both",
-      set = "cpl-Base",
-      dirs = c("C_SDP-Base-rem-5","C_SSP1-Base-rem-5","C_SSP2-Base-rem-5","C_SSP5-Base-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-PkBudg900",
-      dirs = c("C_SDP-PkBudg900-rem-5","C_SSP1-PkBudg900-rem-5","C_SSP2-PkBudg900-rem-5","C_SSP5-PkBudg900-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-PkBudg1100",
-      dirs = c("C_SDP-PkBudg1100-rem-5","C_SSP1-PkBudg1100-rem-5","C_SSP2-PkBudg1100-rem-5","C_SSP5-PkBudg1100-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-PkBudg1300",
-      dirs = c("C_SDP-PkBudg1300-rem-5","C_SSP1-PkBudg1300-rem-5","C_SSP2-PkBudg1300-rem-5","C_SSP5-PkBudg1300-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-NPi",
-      dirs = c("C_SDP-NPi-rem-5","C_SSP1-NPi-rem-5","C_SSP2-NPi-rem-5","C_SSP5-NPi-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-SDP",
-      dirs = c("C_SDP-Base-rem-5","C_SDP-NPi-rem-5","C_SDP-PkBudg1300-rem-5","C_SDP-PkBudg1100-rem-5","C_SDP-PkBudg1000-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-SSP1",
-      dirs = c("C_SSP1-Base-rem-5","C_SSP1-NPi-rem-5","C_SSP1-PkBudg1300-rem-5","C_SSP1-PkBudg1100-rem-5","C_SSP1-PkBudg900-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-SSP2",
-      dirs = c("C_SSP2-Base-rem-5","C_SSP2-NPi-rem-5","C_SSP2-PkBudg1300-rem-5","C_SSP2-PkBudg1100-rem-5","C_SSP2-PkBudg900-rem-5","C_SSP2-NDC-rem-5")),
-    list(
-      period = "both",
-      set = "cpl-SSP5",
-      dirs = c("C_SSP5-Base-rem-5","C_SSP5-NPi-rem-5","C_SSP5-PkBudg1300-rem-5","C_SSP5-PkBudg1100-rem-5","C_SSP5-PkBudg900-rem-5")))
+
+
+
+# Header ------------------------------------------------------------------
+
+
+source("./scripts/utils/isSlurmAvailable.R")
+
+# This script expects a variable `outputdirs` to be defined.
+# Variables `slurmConfig` and `filename_prefix` are used if they defined.
+if (!exists("outputdirs")) {
+  stop(
+    "Variable outputdirs does not exist. ",
+    "Please call comapreScenarios.R via output.R, which defines outputdirs.")
 }
 
-# remove the NULL element
-listofruns <- listofruns[!sapply(listofruns, is.null)]
-
-# if no path in "dirs" starts with "output/" insert it at the beginning
-# this is the case if listofruns was created in the lower case above !exists("outputdirs"), i.e. if this script was not called via Rscript output.R
-for (i in 1:length(listofruns)) {
-  if (!any(grepl("output/", listofruns[[i]]$dirs))) {
-    listofruns[[i]]$dirs <- paste0("output/", listofruns[[i]]$dirs)
-  }
+# Find a suitable default cs2 profile depending on config.RData.
+determineDefaultProfiles <- function(outputDir) {
+  env <- new.env()
+  load(file.path(outputDir, "config.Rdata"), envir = env)
+  if (tolower(env$cfg$gms$cm_MAgPIE_coupling) == "on") return("REMIND-MAgPIE")
+  regionMappingFile <- basename(env$cfg$regionmapping)
+  defaults <- switch(
+    regionMappingFile,
+    "default",
+    "regionmappingH12.csv" =  c("H12", "H12-short"),
+    "regionmapping_21_EU11.csv" =  c("H12", "H12-short", "EU27", "EU27-short", "AriadneDEU"))
+  return(defaults)
 }
 
-# ---- Start compareScenarios either on the cluster or locally ----
 
-start_comp <- function(outputdirs,
-                       shortTerm,
-                       outfilename,
-                       regionList,
-                       mainReg,
-                       modelsHistExclude=c()) {
+# Start compareScenarios2 either on the cluster or locally.
+startComp <- function(
+  outputDirs,
+  nameCore,
+  profileName
+) {
   if (!exists("slurmConfig")) {
     slurmConfig <- "--qos=standby"
   }
-  jobname <- paste0(
+  jobName <- paste0(
       "compScen",
-      ifelse(outfilename == "", "", "-"),
-      outfilename,
-      ifelse(shortTerm, "-shortTerm", "")
+      "-", nameCore,
+      "-", profileName
     )
-  cat("Starting ", jobname, "\n")
-  on_cluster <- file.exists("/p/projects/")
-  script <- "scripts/utils/run_compareScenarios2.R"
-  clcom <- paste0(
-    "sbatch ", slurmConfig,
-    " --job-name=", jobname,
-    " --output=", jobname, ".out",
-    " --error=", jobname, ".out",
-    " --mail-type=END --time=200 --mem-per-cpu=8000",
-    " --wrap=\"Rscript ", script,
-    " outputdirs=", paste(outputdirs, collapse = ","),
-    " shortTerm=", shortTerm,
-    " outfilename=", jobname,
-    " regionList=", paste(regionList, collapse = ","),
-    " mainRegName=", mainReg,
-    " modelsHistExclude=", paste(modelsHistExclude, collapse = ","),
-    "\"")
-  cat(clcom, "\n")
-  if (on_cluster) {
+  outFileName <- jobName
+  script <- "scripts/cs2/run_compareScenarios2.R"
+  cat("Starting ", jobName, "\n")
+  if (isSlurmAvailable()) {
+    clcom <- paste0(
+      "sbatch ", slurmConfig,
+      " --job-name=", jobName,
+      " --output=", jobName, ".out",
+      " --error=", jobName, ".out",
+      " --mail-type=END --time=200 --mem-per-cpu=8000",
+      " --wrap=\"Rscript ", script,
+      " outputDirs=", paste(outputDirs, collapse = ","),
+      " profileName=", profileName,
+      " outFileName=", outFileName,
+      "\"")
+    cat(clcom, "\n")
     system(clcom)
   } else {
-    outfilename <- jobname
-    tmp.env <- new.env()
-    tmp.error <- try(sys.source(script, envir = tmp.env))
-    if (!is.null(tmp.error))
+    tmpEnv <- new.env()
+    tmpError <- try(sys.source(script, envir = tmpEnv))
+    if (!is.null(tmpError))
       warning("Script ", script, " was stopped by an error and not executed properly!")
-    rm(tmp.env)
+    rm(tmpEnv)
   }
 }
 
-# ---- For each list entry call start script that starts compareScenarios ----
-regionSubsetList <- remind2::toolRegionSubsets(file.path(listofruns[[1]]$dirs, "fulldata.gdx"))
-# ADD EU-27 region aggregation if possible
-if ("EUR" %in% names(regionSubsetList)) {
-  regionSubsetList <- c(regionSubsetList, list(
-    "EU27" = c("ENC", "EWN", "ECS", "ESC", "ECE", "FRA", "DEU", "ESW"))) # EU27 (without Ireland)
+
+
+# Code --------------------------------------------------------------------
+
+
+# Load cs2 profiles.
+profiles <- remind2::getCs2Profiles()
+
+# Let user choose cs2 profile(s).
+profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
+profileNames <- names(profiles)[gms::chooseFromList(
+  ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
+  type = "profiles for cs2",
+  userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
+  returnBoolean = TRUE
+)]
+if (length(profileNames) == 0) {
+  profileNames <- profileNamesDefault
+  message("Default: ", paste(profileNamesDefault, collapse = ", "), ".\n")
 }
 
-for (r in listofruns) {
-  # Create multiple pdf files for H12 and subregions of H12
-  for (reg in c("H12", names(regionSubsetList))) {
-    if (exists("filename_prefix")) {
-      fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-", reg)
-    } else {
-      fileName <- paste0(r$set, "-", reg)
-    }
-    if (reg == "H12")
-      regionList <- c("World","LAM","OAS","SSA","EUR","NEU","MEA","REF","CAZ","CHA","IND","JPN","USA")
-    else
-      regionList <- c(reg, regionSubsetList[[reg]])
-    if (reg == "H12")
-      mainRegName <- "World"
-    else
-      mainRegName <- reg
-    if (r$period == "short" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=TRUE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
-    if (r$period == "long" | r$period == "both")
-      start_comp(outputdirs=r$dirs, shortTerm=FALSE, outfilename=fileName, regionList=regionList, mainReg=mainRegName)
+# Create core of file name / job name.
+timeStamp <- format(Sys.time(), "%Y-%m-%d_%H.%M.%S")
+if (!exists("filename_prefix")) filename_prefix <- ""
+nameCore <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), timeStamp)
 
-    # plot additional pdf with Germany as focus region and exclusion of non-meaningful references in that context
-    if (reg == "EUR") {
-      ref.exclude <- c(
-        "IEA ETP B2DS", "IEA ETP 2DS", "IEA ETP RTS",
-        "EDGE_SSP1", "EDGE_SSP2", "CEDS", "IRENA",
-        "IEA WEO 2021 APS", "IEA WEO 2021 SDS", "IEA WEO 2021 SPS"
-      )
-      ref.exclude <- sapply(ref.exclude, function(x) {
-        paste0("'", x, "'")
-      }, USE.NAMES = F)
-      fileName <- paste0(filename_prefix, ifelse(filename_prefix == "", "", "-"), r$set, "-DEU")
-      start_comp(outputdirs = r$dirs, shortTerm = TRUE, outfilename = paste0(fileName, "-", "Ariadne"), regionList = regionList, mainReg = "DEU", modelsHistExclude = ref.exclude)
-    }
-
-  }
+# Start a job for each profile.
+for (profileName in profileNames) {
+  startComp(
+    outputDirs = outputdirs,
+    nameCore = nameCore,
+    profileName = profileName)
 }

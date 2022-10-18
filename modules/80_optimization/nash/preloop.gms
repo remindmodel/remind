@@ -14,6 +14,9 @@
   Execute_Loadpoint 'input' vm_fuExtr.l = vm_fuExtr.l;
   Execute_Loadpoint 'input' vm_prodPe.l = vm_prodPe.l;
 
+*** assign fake values for p80_repyLastOptim which gets initialised in the loop
+p80_repyLastOptim(regi,solveinfo80) = NA;
+
 
 *AJS* initialize starting points for prices, trade volumes etc. from gdx.
 ***in order to read parameters like p80_priceXXX from a gdx, instead of only variables , we have to explicitly instruct gams to do so in the execute_loadpoint command in core/preloop.gms.

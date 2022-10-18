@@ -9,9 +9,9 @@
 parameters
 p50_damageFuncCoef1			"damage function coefficient"
 p50_damageFuncCoef2			"damage function coefficient"
-p50_damageFuncCoefTC0(isoTC)		"damage function coefficient for TC, constant"
-p50_damageFuncCoefTC1(isoTC)			"damage function coefficient for TC, linear in temperature"
-p50_damageFuncCoefTC2(isoTC) 			"damage function coefficient for TC, quadratic in temperture"
+p50_damageFuncCoefTC0(iso)		"damage function coefficient for TC, constant"
+p50_damageFuncCoefTC1(iso)			"damage function coefficient for TC, linear in temperature"
+p50_damageFuncCoefTC2(iso) 			"damage function coefficient for TC, quadratic in temperture"
 pm_damage(tall,all_regi)                             "damage factor (reduces GDP)"
 pm_damageIso(tall,iso)                             "damage factor (reduces GDP)"
 *p50_damageAllIso(tall,iso)                             "damage factor (reduces GDP)"

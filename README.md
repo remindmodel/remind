@@ -65,11 +65,11 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-Please refer to the [installation guide](tutorials/1_GettingREMIND.md).
+Please refer to the [installation guide](tutorials/01_GettingREMIND.md).
 
 
 ## HOW TO CONFIGURE
-Model run settings are set in `config/default.cfg` (or another config file of
+Model run settings are set in `config/default.cfg` and `main.gms` (or another config file of
 the same structure). New model scenarios can be created by adding a row to
 `config/scenario_config.csv`
 

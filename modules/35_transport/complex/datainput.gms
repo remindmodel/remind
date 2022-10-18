@@ -64,7 +64,7 @@ $offdelim
 /
 ;
 
-p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","Mix");
+p35_bunkers_fe(ttot,regi) = sm_EJ_2_TWa * p35_bunkers_fedemand(ttot,regi,"gdp_SSP2","Mix1");
 
 display p35_bunkers_fe;
 

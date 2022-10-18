@@ -66,6 +66,11 @@ authors:
   orcid: https://orcid.org/0000-0002-3240-2608
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Führlich"
+  given-names:  "Pascal"
+  orcid: https://orcid.org/0000-0002-6856-8239
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Giannousakis"
   given-names:  "Anastasis"
   orcid: https://orcid.org/0000-0002-4225-0011
@@ -157,6 +162,11 @@ authors:
 
 - family-names: "Pehl"
   given-names:  "Michaja"
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Pflüger"
+  given-names:  "Mika"
+  orcid: https://orcid.org/0000-0002-7814-8916
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Piontek"

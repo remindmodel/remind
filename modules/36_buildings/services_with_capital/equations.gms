@@ -8,7 +8,7 @@
 
 ***  Buildings Final Energy Balance
 q36_demFeBuild(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"build"))) .. 
-  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector(ttot,regi,entySe,entyFe,"build",emiMkt)) 
+  sum((entySe,te)$se2fe(entySe,entyFe,te), vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,"build",emiMkt)) 
   =e=
   (
     sum(fe2ppfEn36(entyFe,in),
