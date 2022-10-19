@@ -238,12 +238,12 @@ $endIf.cm_EnSecScen_price
 *** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany
 *** as German government seeks to install at least 70 GW of offshore by 2045 and 160 GW onshore wind by 2040 (as of July 2022)
 *** parameter to determine temporal scale-up
-p_shareWindOff("2010",regi)$(sameAs(regi,"DEU")) = 0.05;
-p_shareWindOff("2015",regi)$(sameAs(regi,"DEU")) = 0.1;
-p_shareWindOff("2020",regi)$(sameAs(regi,"DEU")) = 0.15;
-p_shareWindOff("2025",regi)$(sameAs(regi,"DEU")) = 0.3;
-p_shareWindOff("2030",regi)$(sameAs(regi,"DEU")) = 0.7;
-p_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
+pm_shareWindOff("2010",regi)$(sameAs(regi,"DEU")) = 0.05;
+pm_shareWindOff("2015",regi)$(sameAs(regi,"DEU")) = 0.1;
+pm_shareWindOff("2020",regi)$(sameAs(regi,"DEU")) = 0.15;
+pm_shareWindOff("2025",regi)$(sameAs(regi,"DEU")) = 0.3;
+pm_shareWindOff("2030",regi)$(sameAs(regi,"DEU")) = 0.7;
+pm_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
 *** parameter to deteremine regional long-term share
 pm_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 

@@ -69,3 +69,5 @@ vm_capFac,input,questionnaire
 pm_shareWindPotentialOff2On,input,questionnaire
 cm_EnSecScen_price,input,questionnaire
 cm_EnSecScen_limit,input,questionnaire
+pm_conv_TWa_EJ,input,questionnaire
+vm_prodFe,input,questionnaire
