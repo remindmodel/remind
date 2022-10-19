@@ -565,31 +565,49 @@ parameter
 ;
   cm_shSynGas      = 0;        !! def = 0
 *'
-parameter
-  cm_IndCCSscen             "CCS for Industry"
+
+*' ##### Industry
+Scalars
+  cm_IndCCSscen		    "CCS for Industry"
+  cm_CCS_cement		    "CCS for cement sub-sector"
+  cm_CCS_chemicals	    "CCS for chemicals sub-sector"
+  cm_CCS_steel		    "CCS for steel sub-sector"
+  cm_optimisticMAC	    "assume optimistic Industry CCS MAC"
+  cm_indst_H2costAddH2Inv   "additional H2 distribution costs for low diffusion levels [$/kWh]"
+  cm_indst_costDecayStart   "simplified logistic function end of full value [%]"
+  cm_indst_H2costDecayEnd   "simplified logistic function start of null value [%]"
 ;
-  cm_IndCCSscen          = 1;        !! def = 1
+cm_IndCCSscen           = 1;      !! def = 1
+cm_CCS_cement           = 1;      !! def = 1
+cm_CCS_chemicals        = 1;      !! def = 1
+cm_CCS_steel            = 1;      !! def = 1
+cm_optimisticMAC        = 0;      !! def = 0
+cm_indst_H2costAddH2Inv = 0.1;    !! def 3.25 $/kg = 0.1 $/kWh
+cm_indst_costDecayStart = 0.05;   !! def  5 %
+cm_indst_H2costDecayEnd = 0.10;   !! def 10 %
 *'
-parameter
-  cm_optimisticMAC          "assume optimistic Industry MAC from AR5 Ch. 10?"
-;
-  cm_optimisticMAC       = 0;        !! def = 0
-*'
-parameter
-  cm_CCS_cement             "CCS for cement sub-sector"
-;
-  cm_CCS_cement          = 1;        !! def = 1
-*'
-parameter
-  cm_CCS_chemicals          "CCS for chemicals sub-sector"
-;
-  cm_CCS_chemicals       = 1;        !! def = 1
-*'
-parameter
-  cm_CCS_steel              "CCS for steel sub-sector"
-;
-  cm_CCS_steel           = 1;        !! def = 1
-*'
+*' - `cm_IndCCSscen` enables (`1`, default) or disables (`0`) CCS for all
+*'   industry subsectors.
+*' - `cm_CCS_cement` enables (`1`, default) or disables (`0`) CCS for cement
+*'   production.
+*' - `cm_CCS_chemicals` enables (`1`, default) or disables (`0`) CCS for
+*'   chemicals production.
+*' - `cm_CCS_steel` enables (`1`, default) or disables (`0`) CCS for (primary)
+*'   steel production.
+*' - By default, REMIND uses subsector-specific CCS MACs derived from
+*'   [Kuramochi et al. (2012)](https://doi.org/10.1016/j.pecs.2011.05.001).
+*'   Setting `cm_optimisticMAC` to `1` instead uses MACs dericed from a
+*'   logarithmic fit through to the CCS assumptions in figure 10.7 of the 
+*'   [Industry chapter](http://ipcc.ch/pdf/assessment-report/ar5/wg3/ipcc_wg3_ar5_chapter10.pdf)
+*'   of the AR5.
+*' - `cm_indst_H2costAddH2Inv` are additional distribution costs for hydrogen at
+*'   low levels of hydrogen diffusion (e.g. ordering a tank lorry instead of
+*'   being connected to a distribution pipe).
+*' - `cm_indst_costDecayStart` is the H2 diffusion level (share) up to which the
+*'   full additional distribution costs apply before being phased out.
+*' - `cm_indst_H2costDecayEnd` is the H2 diffusion level (share) from which on
+*'   the additional distribution costs are fully phased out and thus 0.
+
 parameter
   c_solscen                 "solar option choice"
 ***  (1): yes
@@ -1084,21 +1102,6 @@ parameter
   cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
 ;
   cm_build_AdjCostActive = 0; !! def 0 = Adjustment cost deactivated (set to 1 to activate)
-*'
-parameter
-  cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 3.25$kg = 0.1 $/kWh)"
-;
-  cm_indst_H2costAddH2Inv = 0.1;  !! def 3.25$/kg = 0.1 $/Kwh
-*'
-parameter
-  cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
-;
-  cm_indst_costDecayStart = 0.05; !! def 5%
-*'
-parameter
-  cm_indst_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> between 10% and 100% the simplified logistic function will have the value 0). [%]"
-;
-  cm_indst_H2costDecayEnd = 0.1;  !! def 10%
 *'
 parameter
   cm_BioSupply_Adjust_EU      "factor for scaling sub-EU bioenergy supply curves"
