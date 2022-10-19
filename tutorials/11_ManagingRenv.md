@@ -40,9 +40,10 @@ REMIND uses [renv](https://rstudio.github.io/renv/) for managing required R pack
 - auto-generated and managed by renv
 - renv settings
 - actual package library
+- renv.lock archive folder
 
 ## renv.lock archive
-### archive folder
+### renv/archive folder
 - renv.lock is copied here after updating packages
 - restore renv.lock using restoreRenv script
 

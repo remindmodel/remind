@@ -247,11 +247,11 @@ prepare <- function() {
   setwd(cfg$remind_folder)
 
   # Check configuration for consistency
-  cfg <- check_config(cfg, reference_file="config/default.cfg",
-                      settings_config = "config/settings_config.csv",
-                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                 "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg <- check_config(cfg, reference_file="config/default.cfg",
+#                      settings_config = "config/settings_config.csv",
+#                      extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                 "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                 "gms$cm_CES_configuration", "gms$c_description"))
 
   # Check for compatibility with subsidizeLearning
   if ( (cfg$gms$optimization != 'nash') & (cfg$gms$subsidizeLearning == 'globallyOptimal') ) {
@@ -341,12 +341,16 @@ prepare <- function() {
   # Check all setglobal settings for consistency
   settingsCheck()
 
-  # configure main model gms file (cfg$model) based on settings of cfg file
+  # use main model gms file (cfg$model) and create modified version based on settings in cfg$gms
+  # use main.gms if not further specified
+  if (is.null(cfg$model)) cfg$model <- "main.gms"
+  # add info from cfg into cfg$gams so it ends up in gams.
   cfg$gms$c_expname <- cfg$title
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
-  # run main.gms if not further specified
-  if(is.null(cfg$model)) cfg$model <- "main.gms"
-  manipulateConfig(cfg$model, cfg$gms)
+  # create modified version
+  tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
+  file.copy(cfg$model, tmpModelFile)
+  manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
   update_info <- function(regionscode, revision) {
@@ -360,7 +364,7 @@ prepare <- function() {
       paste("Last modification (input data):",
             format(file.mtime("input/source_files.log"), "%a %b %d %H:%M:%S %Y")),
       "")
-    replace_in_file(cfg$model, paste("*", content), subject)
+    replace_in_file(tmpModelFile, paste("*", content), subject)
   }
 
   update_sets <- function(map) {
@@ -455,11 +459,11 @@ prepare <- function() {
   }
 
   ############ update information ########################
-  # update_info, which regional resolution and input data revision in cfg$model
-  update_info(regionscode(cfg$regionmapping),cfg$inputRevision)
+  # update_info, which regional resolution and input data revision in tmpModelFile
+  update_info(regionscode(cfg$regionmapping), cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
-  map <- read.csv(cfg$regionmapping,sep=";")
+  map <- read.csv(cfg$regionmapping, sep=";")
   update_sets(map)
 
   ########################################################
@@ -503,7 +507,9 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=cfg$model,output = file.path(cfg$results_folder, "full.gms"))
+  singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
+  # now that full.gms exists, we don't need tmpModelFile any more
+  file.remove(tmpModelFile)
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),

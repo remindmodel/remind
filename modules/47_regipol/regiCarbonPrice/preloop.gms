@@ -96,7 +96,7 @@ $endIf.cm_implicitPePriceTarget
 $ENDIF.ESprice
 $offtext
 
-*** Increase SE2FE efficiency for gases in DEU
+*** Increase SE2FE efficiency for gases in DEU following AGEB data from 2020
 pm_eta_conv("2010",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.949;
 pm_eta_conv("2015",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.962;
 pm_eta_conv(t,regi,"tdfosgas")$(sameAs(regi,"DEU") and t.val ge 2020) = 0.975;

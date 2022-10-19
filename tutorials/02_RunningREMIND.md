@@ -24,8 +24,8 @@ This section will explain how you start your first REMIND run on PIK's cluster (
 
 ## Default Configurations
 
-The [`config/default.cfg`](../config/default.cfg) file contains the default configuration for REMIND.
-It is divided into four parts: MODULES, SWITCHES, FLAGS, and Explanations of switches and flags.
+The [`main.gms`](../main.gms) and [`config/default.cfg`](../config/default.cfg) files contain the default configuration for REMIND.
+[`main.gms`](../main.gms) is divided into several parts.
 
 a. The first part, MODULES, contains settings for the various [modules](../modules) and their realizations. For example, the [module `21_tax`](../modules/21_tax/) has the realizations [`on`](../modules/21_tax/on) and [`off`](../modules/21_tax/off). The realizations within the particular module differ from each other in their features, for e.g., bounds, parametric values, different policy cases etc. For each module you choose which realization of the module will be activated for your current run:
 
@@ -33,7 +33,11 @@ a. The first part, MODULES, contains settings for the various [modules](../modul
 cfg$gms$module_name
 ```
 
-b. The SWITCHES and FLAGS section contain settings to control, for e.g., how many iterations to run, which technologies to include, which SSP to use, start and end year of model run etc. See the fourth section, explanations of switches and flags, to learn more.
+b. The SWITCHES section contains setting parameters to control, for e.g., how many iterations to run, which technologies to include.
+
+c. The FLAGS section contains compilation flags (setGlobals) for further configuration, for e.g., which SSP to use.
+
+d. The last part includes all model parts from the core and modules.
 
 ## Accessing the cluster
 
@@ -67,8 +71,8 @@ Go to your REMIND main folder (i.e. it contains subfolders such as `config`, `co
 Rscript start.R
 ```
 
-Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg). Also, on Windows, you can double-click the `start.cmd` file.
-You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` (useful to quickly check if your changes to the code break the model):
+Without additional arguments this starts a single REMIND run using the settings from [`config/default.cfg`](../config/default.cfg) and [`main.gms`](../main.gms). Also, on Windows, you can double-click the `start.cmd` file.
+You can control the script's behavior by providing additional arguments, for example starting a single REMIND run in one-region mode using the settings from `config/default.cfg` and `main.gms` (useful to quickly check if your changes to the code break the model):
 
 ``` bash
 Rscript start.R --quick
