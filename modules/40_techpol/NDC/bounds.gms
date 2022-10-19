@@ -13,11 +13,6 @@ vm_cap.lo(t,regi,"tnrs","1")$(t.val ge 2025) = p40_TechBound(t,regi,"tnrs")*0.00
 vm_cap.lo(t,regi,"hydro","1")$(t.val ge 2025) = p40_TechBound(t,regi,"hydro")*0.001;
 
 
-* FS: in case of a nuclear phase-out scenario (nucscen 7), nuclear lower bound from p40_techBound only up to 2025
-if(cm_nucscen eq 7,
-  vm_cap.lo(t,regi_nucscen,"tnrs","1")$((t.val gt 2025) and (t.val ge cm_startyear)) = 0;
-);
-
 *** FS: if cm_H2Targets on: include capacity targets for electrolysis following national Hydrogen Strategies
 *** multiply by conversion efficiency as targets are given in GW(electricity) but GW(H2) needed
 *** EU Hydrogen Strategy (2020): https://ec.europa.eu/energy/sites/ener/files/hydrogen_strategy.pdf
@@ -30,8 +25,6 @@ if(cm_H2targets eq 1,
 if(cm_nucscen eq 5,
   vm_cap.lo(t,regi_nucscen,"tnrs","1")$(t.val gt 2020) = 0;
 );
-
-
 
 $ifthen.complex_transport "%transport%" == "complex"
 
