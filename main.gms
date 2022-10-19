@@ -600,15 +600,15 @@ parameter
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
-#  The tax is only applied to purpose grown 2nd generation (lignocellulosic)
-#  Only effective if 21_tax is on.
-#  Biomass and the level increases linearly with bioenergy demand. A value of 1
-#  refers to a tax level of 100% at a production of 200 EJ/yr globally (implies
-#  50% at 100 EJ/yr or 150% at 300 EJ/yr, for example).
-#  (0):               setting equivalent to no tax
-#  (1.5):             (default), implying a tax level of 150% at a demand of
-#                     200 EJ/yr (or 75% at 100 EJ/yr)
-#  (any number >= 0): defines tax level at 200 EJ/yr
+*' Only effective if 21_tax is on.
+*' The tax is only applied to purpose grown 2nd generation (lignocellulosic)
+*' biomass and the level increases linearly with bioenergy demand. A value of 1
+*' refers to a tax level of 100% at a production of 200 EJ/yr globally (implies
+*' 50% at 100 EJ/yr or 150% at 300 EJ/yr, for example).
+*' (0):               setting equivalent to no tax
+*' (1.5):             (default), implying a tax level of 150% at a demand of
+*'                    200 EJ/yr (or 75% at 100 EJ/yr)
+*' (any number >= 0): defines tax level at 200 EJ/yr
 ;
   cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
 *'
@@ -1252,7 +1252,7 @@ $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 ***  (EUR):                  only Europe
 ***  (DEU):                  only Germany
 ***  (CAZ,EUR,JPN,NEU,USA):  only these five regions (more or less OECD)
-$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob   
+$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 *** cm_tradbio_phaseout "Switch that allows for a faster phase out of traditional biomass"
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)

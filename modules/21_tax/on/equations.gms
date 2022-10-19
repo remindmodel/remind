@@ -200,7 +200,7 @@ v21_taxrevSO2(t,regi) =e= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 *'  are independent of each other:
 *'     1. The global sustainability tax rate, which scales linearly with
 *'        bioenergy production (the higher the demand, the higher the tax
-*'        ratio v21_tau_bio). 
+*'        ratio v21_tau_bio).
 *'        Units: v21_tau_bio(t)                                [1]
 *'               vm_pebiolc_price(t,regi)                      [T$US/TWa]
 *'               => v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US/TWa]
@@ -208,7 +208,7 @@ v21_taxrevSO2(t,regi) =e= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 *'        is directly linked to the carbon price and does not directly
 *'        depend on the bioenergy production level. This tax is applied on
 *'        consumption, i.e. after trade.
-*'        Units: p21_bio_EF(t,regi)                            [GtC/TWa] 
+*'        Units: p21_bio_EF(t,regi)                            [GtC/TWa]
 *'               pm_taxCO2eq(t,regi)                           [T$US/GtC]
 *'               => p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US/TWa]
 *'  Documentation of overall tax approach is above at q21_taxrev.
@@ -222,7 +222,6 @@ q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
   !! 2. emission-factor-based tax on consumption
   + p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)
     * (vm_fuExtr(t,regi,"pebiolc","1") - (vm_Xport(t,regi,"pebiolc")-vm_Mport(t,regi,"pebiolc")))
-  
   - p21_taxrevBio0(t,regi);
 
 ***---------------------------------------------------------------------------
