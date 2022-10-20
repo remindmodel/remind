@@ -512,10 +512,7 @@ parameter
   cm_nucscen                "nuclear option choice"
 ;
   cm_nucscen       = 2;        !! def = 2
-*'   (1): no fnrs, tnrs completely free after 2020
 *'   (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
-*'   (3): no tnrs no fnrs
-*'   (4): fix at bau level
 *'   (5): no new nuclear investments after 2020
 *'   (6): +33% investment costs (tnrs) & uranium resources increased by a factor of 10
 *'

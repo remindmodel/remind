@@ -23,7 +23,7 @@ Imports:
     gdxdt,
     gdxrrw,
     ggplot2,
-    gms,
+    gms (>= 0.21.0),
     gridExtra,
     gtools,
     hdf5r,
