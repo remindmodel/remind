@@ -89,6 +89,11 @@ To set up a CES calibration run, simply set module 29 `CES_parameters` to the
 `calibration` realisation.  All data relevant to the calibration is configured
 according to the selected scenario configuration.  Keep them identical to the
 baseline scenario you want to calibrate.
+Set the `inputRevision` in `./config/default.cfg` to the input data revision
+you want to calibrate to.  You can find the latest input data revision on the
+cluster using `lastrev`.  Do not include the `rev` part of the revision name,
+just the part from the numbers on.  Use quote signs (`"`) around the revision,
+even if it is just numerical.
 As the calibration performs multiple REMIND runs (ten by default), allow for
 longer runtime, usually more than 24 hours, by selecting an appropriate slurm
 configuration.
