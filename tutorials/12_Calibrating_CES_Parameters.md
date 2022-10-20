@@ -1,4 +1,4 @@
-# Calibrationg CES Parameters
+# Calibrating CES Parameters
 
 ## CES Production Function Basics
 
