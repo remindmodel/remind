@@ -446,7 +446,8 @@ prepare <- function() {
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
-                          debug        = FALSE)
+                          debug        = FALSE,
+			  stopOnMissing = TRUE)
   } else {
       message("No input data downloaded and distributed. To enable that, delete input/source_files.log or set cfg$force_download to TRUE.")
   }
