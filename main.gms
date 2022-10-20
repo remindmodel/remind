@@ -600,12 +600,12 @@ parameter
 *' Only effective if 21_tax is on.
 *' The tax is only applied to purpose grown 2nd generation (lignocellulosic)
 *' biomass and the level increases linearly with bioenergy demand. A value of 1
-*' refers to a tax level of 100% at a production of 200 EJ/yr globally (implies
-*' 50% at 100 EJ/yr or 150% at 300 EJ/yr, for example).
+*' refers to a tax level of 100% at a production of 200 EJ per yr globally
+*' (implies 50% at 100 EJ per yr or 150% at 300 EJ per yr, for example).
 *' (0):               setting equivalent to no tax
 *' (1.5):             (default), implying a tax level of 150% at a demand of
-*'                    200 EJ/yr (or 75% at 100 EJ/yr)
-*' (any number >= 0): defines tax level at 200 EJ/yr
+*'                    200 EJ per yr (or 75% at 100 EJ per yr)
+*' (any number ge 0): defines tax level at 200 EJ per yr
 ;
   cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
 *'
@@ -615,8 +615,8 @@ parameter
 *' cm_regi_bioenergy_EFTax. Please note that the tax, which is derived from
 *' this emission factor, is not the same as the sustainabilty tax described
 *' above.
-*' The value represents an emissions factor in [kg CO2/GJ] that is associated
-*' with the production of a unit of primary energy purpose grown
+*' The value represents an emissions factor in [kg CO2 per GJ] that is
+*' associated with the production of a unit of primary energy purpose grown
 *' lignocellulosic biomass. The tax level in monetary terms per unit of
 *' bioenergy is then derived by multiplying this emission factor with the CO2
 *' price. This tax is applied to biomass consumption (i.e. after trade, applied
@@ -635,9 +635,12 @@ parameter
 *' to inform the tax level).
 *' Examples:
 *' (0)    off
-*' (20)   Sets the emission factor to 20 kgCO2/GJ, which for example results in
-*'        a tax of 2$/GJ (primary energy) at a carbon price of 100$/tCO2:
-*'        20 kgCO2/GJ * 100$/tCO2 = 0.02 tCO2/GJ * 100$/tCO2 = 2$/GJ
+*' (20)   Sets the emission factor to 20 kgCO2 per GJ, which for example
+*'        results in a tax of 2 $ per GJ (primary energy) at a carbon price of
+*'        100 $ per tCO2:
+*'                20 kgCO2 per GJ * 100 $ per tCO2 
+*'          eq    0.02 tCO2 per GJ * 100 $ per tCO2 
+*'          eq    2 $ per GJ
 ;
 cm_bioenergy_EF_for_tax  = 0;        !! def = 0
 *'

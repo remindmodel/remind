@@ -19,7 +19,6 @@ pm_tau_fe_tax, parameter, ???
 pm_ts, parameter, ???
 cm_bioenergy_SustTax,input,questionnaire
 cm_bioenergy_EF_for_tax,input,questionnaire
-cm_regi_bioenergy_EFTax,input,questionnaire
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
