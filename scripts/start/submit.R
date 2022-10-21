@@ -78,7 +78,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       }
 
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
-      message("Initializing renv, see ", renvLogPath)
+      message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function(resultsfolder, lockfile) {
         # use same snapshot.type so renv::status()$synchronized always uses the same logic
         renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
