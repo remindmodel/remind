@@ -512,10 +512,7 @@ parameter
   cm_nucscen                "nuclear option choice"
 ;
   cm_nucscen       = 2;        !! def = 2
-*'   (1): no fnrs, tnrs completely free after 2020
 *'   (2): no fnrs, tnrs with restricted new builds until 2030 (based on current data on plants under construction, planned or proposed)
-*'   (3): no tnrs no fnrs
-*'   (4): fix at bau level
 *'   (5): no new nuclear investments after 2020
 *'   (6): +33% investment costs (tnrs) & uranium resources increased by a factor of 10
 *'
@@ -1198,10 +1195,10 @@ $setglobal cm_rcp_scen  none         !! def = "none"
 ***  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 ***  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
 $setglobal cm_NDC_version  2022_cond    !! def = "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
-*** c_regi_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a region"
+*** c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 ***  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
 $setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
-*** c_tech_earlyreti_rate  "maximum portion of capital stock that can be retired in one year for a technology in a region"
+*** c_tech_earlyreti_rate  "maximum percentage of capital stock of specific technologies that can be retired early in one year in specified regions. This switch overrides c_regi_earlyreti_rate to allow for fine-tuning of phase-out schedules, e.g. for implementation of certain policies or anticipated trends."
 ***  GLO.(biodiesel 0.14, bioeths 0.1), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13: default value, including retirement of 1st gen biofuels, higher rate of coal phase-out for USA, REF and CHA
 $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13 !! def = GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(biodiesel 0.15, bioeths 0.15), USA_regi.pc 0.13, REF_regi.pc 0.13, CHA_regi.pc 0.13
 *** cm_LU_emi_scen   "choose emission baseline for CO2, CH4, and N2O land use emissions from MAgPIE"
