@@ -379,7 +379,7 @@ $setglobal carbonprice  none           !! def = none
 *'
 *' * (none): no regional carbonprice policies
 *' * (NDC): implements a carbon price markup trajectory consistent with the NDC targets between 2030 and 2070
-*' * (netZero): implements a carbon price markup trajectory consistent with the net zero targets
+*' * (netZero): implements a carbon price markup trajectory consistent with the net zero targets, the region settings can be adjusted with cm_netZeroScen
 $setglobal carbonpriceRegi  none      !! def = none
 *'---------------------    47_regipol  -----------------------------------------
 *' The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
@@ -1195,6 +1195,10 @@ $setglobal cm_rcp_scen  none         !! def = "none"
 ***  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 ***  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
 $setglobal cm_NDC_version  2022_cond    !! def = "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
+*** cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
+***  (NGFS2022):       settings used for NGFS 2022
+***  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
+$setglobal cm_netZeroScen  NGFS2022     !! def = "NGFS2022"
 *** c_regi_earlyreti_rate  "maximum percentage of capital stock that can be retired early (before reaching their expected lifetimes) in one year in specified regions, if they are not economically viable. It is applied to all techs unless otherwise specified in c_tech_earlyreti_rate."
 ***  GLO 0.09, EUR_regi 0.15: default value. (0.09 means full retirement after 11 years, 10% standing after 10 years)
 $setglobal c_regi_earlyreti_rate  GLO 0.09, EUR_regi 0.15      !! def = GLO 0.09, EUR_regi 0.15
