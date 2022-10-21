@@ -1174,7 +1174,8 @@ parameter
   cm_deuCDRmax = -1; !! def = -1
 *'
 parameter
-  cm_EnSecScen_limit        "switch for running an ARIADNE energy security scenario limiting gas demand"
+  cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
+*** This switch is used to represent a limited gas supply in a energy security scenario. [EJ per yr]
 *** (0)                default, equals "off", no limit imposed
 *** (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 ;
@@ -1388,7 +1389,6 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
-
 *** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
 *** def <- "off", if import assumptions for Germany in Ariadne project -> switch to "on"
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)

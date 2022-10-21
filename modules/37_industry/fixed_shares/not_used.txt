@@ -15,5 +15,3 @@ vm_cap,                  variable,   not needed
 vm_capFac,               variable,   not needed
 vm_Xport,                variable,   not needed
 vm_Mport,                variable,   not needed
-cm_import_EU,            switch,     not needed
-cm_indstExogScen,        switch,     not needed
