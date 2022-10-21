@@ -18,3 +18,10 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
 if (file.exists("~/.Rprofile")) {
   source("~/.Rprofile")
 }
+
+if (packageVersion("lucode2") >= "0.31.0") {
+  lucode2::checkDeps()
+} else {
+  warning("REMIND requires lucode2 >= 0.31.0, please run the following to update it:\n",
+          "renv::install('lucode2'); renv::snapshot(prompt = FALSE)")
+}
