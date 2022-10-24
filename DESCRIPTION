@@ -49,6 +49,7 @@ Imports:
     ncdf4,
     nleqslv,
     optparse,
+    piamInterfaces (>= 0.0.17),
     plotly,
     purrr,
     quitte,
