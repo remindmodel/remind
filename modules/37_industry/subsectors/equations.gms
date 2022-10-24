@@ -154,25 +154,18 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
   * p37_chemicals_feedstock_share(t,regi)
 ;
 
-*Flow of non-energy feedstocks. It is used for emissions accounting 
-q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear 
-                                                      AND entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt) ) .. 
- 
+***Flow of non-energy feedstocks. It is used for emissions accounting 
+q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear AND entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) .. 
   sum(se2fe(entySE,entyFE,te),
-
     vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
   =e=
-  sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),              
-       secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in_chemicals_37(in))), 
-
-    ( vm_cesIO(ttot,regi,in) 
-    + pm_cesdata(ttot,regi,in,"offset_quantity")
+  sum(in$(fe2ppfEN(entyFE,in) and in_chemicals_37(in)),
+    ( vm_cesIO(ttot,regi,in)
+      + pm_cesdata(ttot,regi,in,"offset_quantity")
     )
-    * p37_chemicals_feedstock_share(ttot,regi)
-
-  )
-;
+  )* p37_chemicals_feedstock_share(ttot,regi)
+; 
 
 * feedstocks flow has to be lower than total energy flow into industry
 q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear 

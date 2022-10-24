@@ -1415,19 +1415,23 @@ pm_emifac(ttot,regi,"seliqfos","fehos","tdfoshos","co2") = p_ef_dem(regi,"fehos"
 pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
-*** define non-energy emission factors. For now only for the chemicals industry
+***------ Read in emission factors for process emissions in chemicals sector---
+*' will need an update after new IEA balances are integrated
+*' calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
 
-* pm_emifacNonEnergy(ttot,regi,'segafos','fegas','indst','co2') = 0.051; !! GtC/TWa
-* pm_emifacNonEnergy(ttot,regi,'seliqfos','fehos','indst','co2') = 0.069; !! GtC/TWa
-* pm_emifacNonEnergy(ttot,regi,'sesofos','fesos','indst','co2') = 0.086; !! GtC/TWa
+***remember to remove the "*" before merging by modif the input file (fegas instead of gases, etc.)
+*** "non-energy emission factors [GtC per ZJ]"
+parameter f_nechem_emissionFactors(ttot,all_regi,*)  
+/
+$ondelim
+$include "./core/input/f_nechem_emissionFactors.cs4r"
+$offdelim
+/
+;
 
-* pm_emifacNonEnergy("2005",regi,'segafos','fegas','indst','co2') = 0.068; !! GtC/TWa
-* pm_emifacNonEnergy("2005",regi,'seliqfos','fehos','indst','co2') = 0.092; !! GtC/TWa
-* pm_emifacNonEnergy("2005",regi,'sesofos','fesos','indst','co2') = 0.114; !! GtC/TWa
-
-* pm_emifacNonEnergy("2010",regi,'segafos','fegas','indst','co2') = 0.071; !! GtC/TWa
-* pm_emifacNonEnergy("2010",regi,'seliqfos','fehos','indst','co2') = 0.096; !! GtC/TWa
-* pm_emifacNonEnergy("2010",regi,'sesofos','fesos','indst','co2') = 0.119; !! GtC/TWa
+pm_emifacNonEnergy(ttot,regi,'segafos','fegas','indst','co2') = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,'seliqfos','fehos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,'sesofos','fesos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
@@ -1446,17 +1450,6 @@ pm_cesdata(ttot,regi,in,"offset_quantity")$(ttot.val ge 2005)       = 0;
 $include "./core/magicc/magicc_scen_bau.inc";
 $include "./core/magicc/magicc_scen_450.inc";
 $include "./core/magicc/magicc_scen_550.inc";
-
-***------ Read in emission factors for process emissions in chemicals sector---
-*' will need an update after new IEA balances are integrated
-*' calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
-parameter pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)  "emission factors for feedstocks in the chemicals sector"
-/
-$ondelim
-$include "./core/input/f_nechem_emissionFactors.cs4r"
-$offdelim
-/
-;
 
 *** ----- Parameters needed for MAGICC ----------------------------------------
 
