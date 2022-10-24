@@ -614,26 +614,9 @@ parameter
 *' Only effective if 21_tax is on, applied to all regions specified by
 *' cm_regi_bioenergy_EFTax. Please note that the tax, which is derived from
 *' this emission factor, is not the same as the sustainabilty tax described
-*' above.
-*' The value represents an emissions factor in [kg CO2 per GJ] that is
-*' associated with the production of a unit of primary energy purpose grown
-*' lignocellulosic biomass. The tax level in monetary terms per unit of
-*' bioenergy is then derived by multiplying this emission factor with the CO2
-*' price. This tax is applied to biomass consumption (i.e. after trade, applied
-*' within the region consuming the bioenergy).
-*' By default this emission factor based bioenergy tax is deactivated, since in
-*' coupled REMIND-MAgPIE policy runs we usually assume that emissions
-*' associated with bioenergy production are regulated (i.e. penalized) within
-*' the land-use sector with the carbon price on terrestrial carbon emissions.
-*' In the absence of direct emissions regulation within the land-use sector,
-*' however, this undifferentiated emission factor based energy tax can be used
-*' as a substitute for missing climate policies in the land-use sector in order
-*' to close the regulation gap.
-*' Please note that the associated emissions (bioenergy production * emission
-*' factor) do NOT enter the emissions balance equations, since land-use
-*' emissions are accounted for in MAgPIE (i.e. the emission factor is only used
-*' to inform the tax level).
-*' Examples:
+*' above. Please also note that the emission factor is only used to inform
+*' the tax level, i.e. associated emissions do not enter the emissions balance
+*' equations.
 *' (0)    off
 *' (20)   Sets the emission factor to 20 kgCO2 per GJ, which for example
 *'        results in a tax of 2 $ per GJ (primary energy) at a carbon price of

@@ -202,15 +202,30 @@ v21_taxrevSO2(t,regi) =e= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 *'        bioenergy production (the higher the demand, the higher the tax
 *'        ratio v21_tau_bio).
 *'        Units: v21_tau_bio(t)                                [1]
-*'               vm_pebiolc_price(t,regi)                      [T$US/TWa]
-*'               => v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US/TWa]
+*'               vm_pebiolc_price(t,regi)                      [T$US per TWa]
+*'               -> v21_tau_bio(t)  * vm_pebiolc_price(t,regi) [T$US per TWa]
 *'     2. The (potentially) region-specific emission-factor-based tax, which
 *'        is directly linked to the carbon price and does not directly
-*'        depend on the bioenergy production level. This tax is applied on
-*'        consumption, i.e. after trade.
-*'        Units: p21_bio_EF(t,regi)                            [GtC/TWa]
-*'               pm_taxCO2eq(t,regi)                           [T$US/GtC]
-*'               => p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US/TWa]
+*'        depend on the bioenergy production level. The tax level in monetary
+*'        terms per unit of bioenergy is derived by multiplying the emission
+*'        factor with the CO2 price. This tax is applied to biomass consumption
+*'        (i.e. after trade, applied within the region consuming the
+*'        bioenergy). By default this emission-factor-based bioenergy tax is
+*'        deactivated, since in coupled REMIND-MAgPIE policy runs we usually
+*'        assume that emissions associated with bioenergy production are
+*'        regulated (i.e. penalized) within the land-use sector with the carbon
+*'        price on terrestrial carbon emissions. In the absence of direct
+*'        emissions regulation within the land-use sector, however, this
+*'        undifferentiated emission-factor-based energy tax can be used as a
+*'        substitute for missing climate policies in the land-use sector in
+*'        order to close the regulation gap.
+*'        Please note that the associated emissions (bioenergy production *
+*'        emission factor) do NOT enter the emissions balance equations, since
+*'        land-use emissions are accounted for in MAgPIE (i.e. the emission
+*'        factor is only used to inform the tax level).
+*'        Units: p21_bio_EF(t,regi)                            [GtC per TWa]
+*'               pm_taxCO2eq(t,regi)                           [T$US per GtC]
+*'               -> p21_bio_EF(t,regi) * pm_taxCO2eq(t,regi)   [T$US per TWa]
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
