@@ -1010,7 +1010,11 @@ run <- function(start_subsequent_runs = TRUE) {
         # Store all the interesting output
         interestingOutput <- c("full.lst", "full.log", "fulldata.gdx", "non_optimal.gdx", "abort.gdx")
         file.copy(from = interestingOutput,
-                  to = sub("^(.*)(\\.[^\\.]+)$", sprintf("\\1_%02i\\2", cal_itr), interestingOutput), overwrite = TRUE)
+                  to = sub("^(.*)(\\.[^\\.]+)$",
+                           sprintf("\\1_%02i\\2", cal_itr),
+                           interestingOutput),
+                  overwrite = TRUE,
+                  copy.date = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
         if (cal_itr < cfg$gms$c_CES_calibration_iterations) {
           unlink(c("abort.gdx", "non_optimal.gdx"))
