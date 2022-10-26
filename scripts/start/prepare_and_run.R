@@ -75,7 +75,7 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Decay of Crop Residues (Mt N2O/yr)",         emirem="n2ofertcr", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O/yr)",       emirem="n2ofertsom",factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O/yr)",                        emirem="n2oanwstp", factor_mag2rem=28/44,stringsAsFactors=FALSE))
-      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|+|Peatland (Mt N2O/yr)",                                                      emirem="n2opeatland", factor_mag2rem=28/44,stringsAsFactors=FALSE))      
+      map <- rbind(map,data.frame(emimag="Emissions|N2O|Land|+|Peatland (Mt N2O/yr)",                                                      emirem="n2opeatland", factor_mag2rem=28/44,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Rice (Mt CH4/yr)",                                              emirem="ch4rice",   factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Animal waste management (Mt CH4/yr)",                           emirem="ch4anmlwst",factor_mag2rem=1,stringsAsFactors=FALSE))
       map <- rbind(map,data.frame(emimag="Emissions|CH4|Land|Agriculture|+|Enteric fermentation (Mt CH4/yr)",                              emirem="ch4animals",factor_mag2rem=1,stringsAsFactors=FALSE))
@@ -128,22 +128,22 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
         #if (map[i,]$emirem!="co2luc" &&  map[i,]$emirem!="n2ofertrb") {
         # tmp[tmp<0] <- 0
         #}
-        
-        # Check for negative values, since only "co2luc" is allowed to be 
+
+        # Check for negative values, since only "co2luc" is allowed to be
         # negative. All other emission variables are positive by definition.
         if(map[i,]$emirem != "co2luc"){
           if( !(all(tmp>=0)) ){
             # Hotfix 2021-09-28: Raise warning and set negative values to zero.
             # XXX Todo XXX: Make sure that MAgPIE is not reporting negative N2O
-            # or CH4 emissions and convert this warning into an error that 
+            # or CH4 emissions and convert this warning into an error that
             # breaks the model instead of setting the values to zero.
-            print(paste0("Warning: Negative values detected for '", 
+            print(paste0("Warning: Negative values detected for '",
                          map[i,]$emirem, "' / '", map[i,]$emimag, "'. ",
                          "Hot fix: Set respective values to zero."))
             tmp[tmp < 0] <- 0
           }
         }
-        
+
         # Add emission variable to full dataframe
         out<-mbind(out,tmp)
     }
@@ -214,7 +214,7 @@ prepare <- function() {
   cat("\n===== git info =====\nLatest commit: ")
   cat(try(system("git show -s --format='%h %ci %cn'", intern=TRUE), silent=TRUE),"\nChanges since then: ")
   cat(paste(try(system("git status", intern=TRUE), silent=TRUE),collapse="\n"))
-  
+
   # print version information of installed packages
   cat("\n\n==== installed package versions =====\n")
   installed.packages() %>%
@@ -273,9 +273,9 @@ prepare <- function() {
 
   # Is the run performed on the cluster?
   on_cluster    <- file.exists('/p')
-  
+
   # Copy MAGICC
-  if ( !file.exists(cfg$magicc_template) 
+  if ( !file.exists(cfg$magicc_template)
      & file.exists(path.expand(Sys.getenv('MAGICC'))))
       cfg$magicc_template <- path.expand(Sys.getenv('MAGICC'))
 
@@ -284,7 +284,7 @@ prepare <- function() {
       system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
       system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
-      cat("Could not copy",cfg$magicc_template,"because it does not exist\n") 
+      cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
     }
 
   # Make sure all MAGICC files have LF line endings, so Fortran won't crash
@@ -393,7 +393,7 @@ prepare <- function() {
       subsets <- c(subsets,list(
         "EU27"=c("ENC","EWN","ECS","ESC","ECE","FRA","DEU","ESW"), #EU27 (without Ireland)
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
-      ) ) 
+      ) )
     }
     # ext_regi
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
@@ -440,7 +440,7 @@ prepare <- function() {
   input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
                       paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(is.null(cfg$extramappings_historic),"",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
-  # download and distribute needed data 
+  # download and distribute needed data
   if(!setequal(input_new, input_old) | cfg$force_download) {
       message("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed.")
       download_distribute(files        = input_new,
@@ -485,14 +485,14 @@ prepare <- function() {
   content <- c(content,'      /',';')
   replace_in_file('core/sets.gms',content,"MODULES",comment="***")
   ### ADD MODULE INFO IN SETS  ############# END #########
-  
+
   # copy right gdx file to the output folder
   gdx_name <- paste0("config/gdx-files/",cfg$gms$cm_CES_configuration,".gdx")
-  if (0 != system(paste('cp', gdx_name, 
+  if (0 != system(paste('cp', gdx_name,
 			file.path(cfg$results_folder, 'input.gdx')))) {
     stop('Could not copy gdx file ', gdx_name)
   }
-  
+
   # choose which conopt files to copy
   cfg$files2export$start <- sub("conopt3",cfg$gms$cm_conoptv,cfg$files2export$start)
 
@@ -779,14 +779,14 @@ prepare <- function() {
     }
     # end of CDR module realizations
 
-    levs_manipulateThis <- c(levs_manipulateThis, 
+    levs_manipulateThis <- c(levs_manipulateThis,
                                list(c("vm_shBioFe.L","!!vm_shBioFe.L")))
-    fixings_manipulateThis <- c(fixings_manipulateThis, 
-                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))   
-    margs_manipulateThis <- c(margs_manipulateThis, 
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                                list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))
+    margs_manipulateThis <- c(margs_manipulateThis,
                                 list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
 
-    
+
     # OR: renamed for sectoral taxation
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_emiCO2_sector.L", "vm_emiCO2Sector.L")),
@@ -825,7 +825,7 @@ prepare <- function() {
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
-                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))                             
+                             list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
                             list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
@@ -867,8 +867,8 @@ prepare <- function() {
                             list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
-    
-    # Include fixings (levels) and marginals in full.gms at predefined position 
+
+    # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
                              list(c("cb20150605readinpositionforlevelfile",
@@ -1197,7 +1197,7 @@ run <- function(start_subsequent_runs = TRUE) {
     # a small message.
 
     subseq_start_file  <- paste0(cfg$results_folder,"/start_subsequentruns_manually.R")
-  
+
     if(!any(cfg$RunsUsingTHISgdxAsInput == cfg$title)) {
       write("cat('\nNo subsequent run was set for this scenario\n')", file=subseq_start_file)
     } else {
@@ -1260,7 +1260,7 @@ run <- function(start_subsequent_runs = TRUE) {
 #                                    script                                                      #
 ##################################################################################################
 
-# Call prepare() and run() without cfg, because cfg is read from results folder, where it has been 
+# Call prepare() and run() without cfg, because cfg is read from results folder, where it has been
 # copied to by submit(cfg)
 
 if (!file.exists("full.gms")) {
