@@ -125,7 +125,7 @@ if (! file.exists("output")) dir.create("output")
 if (packageVersion("lucode2") >= "0.34.0") {
   lucode2::checkDeps(action = "ask")
 } else {
-  stop("REMIND requires lucode2 >= 0.34.0, please use a library snapshot containing it.")
+  stop("REMIND requires lucode2 >= 0.34.0, please use library snapshot 2022_10_26_R4 or later.")
 }
 
 errorsfound <- 0
