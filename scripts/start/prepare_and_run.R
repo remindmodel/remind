@@ -1016,7 +1016,7 @@ run <- function(start_subsequent_runs = TRUE) {
                   overwrite = TRUE,
                   copy.date = TRUE)
         file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
-        if (cal_itr < cfg$gms$c_CES_calibration_iterations) {
+        if (cal_itr < as.integer(cfg$gms$c_CES_calibration_iterations)) {
           unlink(c("abort.gdx", "non_optimal.gdx"))
         } else { # calibration was successful
           file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration, ".gdx"))
