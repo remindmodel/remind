@@ -122,10 +122,10 @@ if (length(argv) > 0) {
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
-if (packageVersion("lucode2") >= "0.31.0") {
-  lucode2::checkDeps(action = "stop")
+if (packageVersion("lucode2") >= "0.34.0") {
+  lucode2::checkDeps(action = "ask")
 } else {
-  stop("REMIND requires lucode2 >= 0.31.0, please use a library snapshot containing it.")
+  stop("REMIND requires lucode2 >= 0.34.0, please use a library snapshot containing it.")
 }
 
 errorsfound <- 0
