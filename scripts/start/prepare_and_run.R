@@ -442,7 +442,9 @@ prepare <- function() {
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data
   if(!setequal(input_new, input_old) | cfg$force_download) {
-      message("Your input data are outdated or in a different regional resolution. New data are downloaded and distributed.")
+      message(if (cfg$force_download) "You set 'cfg$force_download = TRUE'"
+              else "Your input data are outdated or in a different regional resolution",
+              ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
                           repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
                           modelfolder  = ".",
@@ -1277,6 +1279,7 @@ if (!file.exists("full.gms")) {
 } else {
   # If "full.gms" exists, the script assumes that a full.gms has been generated before and you want
   # to restart REMIND in the same folder using the gdx that it eventually previously produced.
+  message("\nRestarting REMIND, find old log in 'log_beforeRestart.txt'.")
   if(file.exists("fulldata.gdx")) file.copy("fulldata.gdx", "input.gdx", overwrite = TRUE)
   start_subsequent_runs <- FALSE
 }
