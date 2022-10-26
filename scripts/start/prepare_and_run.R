@@ -976,7 +976,8 @@ run <- function(start_subsequent_runs = TRUE) {
         #create the file to be used in the load mode
         getLoadFile <- function(){
 
-          file_name = paste0(cfg$gms$cm_CES_configuration,"_ITERATION_",cal_itr,".inc")
+          file_name = sprintf('%s_ITERATION_%02i.inc',
+                              cfg$gms$cm_CES_configuration, cal_itr)
           ces_in = system("gdxdump fulldata.gdx symb=in NoHeader Format=CSV", intern = TRUE) %>% gsub("\"","",.) #" This comment is just to obtain correct syntax highlighting
           expr_ces_in = paste0("(",paste(ces_in, collapse = "|") ,")")
 
@@ -1015,7 +1016,8 @@ run <- function(start_subsequent_runs = TRUE) {
           unlink(c("abort.gdx", "non_optimal.gdx"))
         } else { # calibration was successful
           file.copy("fulldata.gdx", paste0(cfg$gms$cm_CES_configuration, ".gdx"))
-          file.copy(from = paste0(cfg$gms$cm_CES_configuration, "_ITERATION_", cal_itr, ".inc"),
+          file.copy(from = sprintf('%s_ITERATION_%02i.inc',
+                                   cfg$gms$cm_CES_configuration, cal_itr),
                     to = paste0(cfg$gms$cm_CES_configuration, ".inc"))
         }
 
