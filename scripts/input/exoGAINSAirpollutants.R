@@ -228,8 +228,6 @@ writeGDX(out,file="pm_emiAPexsolve.gdx",period_with_y = FALSE)
 # CEDS16[,,getNames(avi_E,dim=1)] <- 0 # replace NA with zero
 # CEDS16["GLO",,getNames(avi_E[,,ssp_scenario])] <- avi_E[,,ssp_scenario] # data only contains BC and NOx emissions from aircraft
 
-unlink("fulldata_exoGAINS.gdx")
-
 if(firstIteration){
   cat("\nExoGAINS - end of first iteration.\n\n")
 }

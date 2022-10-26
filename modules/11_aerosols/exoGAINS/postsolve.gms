@@ -13,8 +13,10 @@
 *** run exoGAINS from iteration 2 onwards to avoid incomplete GDX files when running it in the first iteration
 if (iteration.val ge 2,
 
-*** write data to file
-Execute_Unload 'fulldata_exoGAINS';
+*** write data to file if an optimal solution was found
+if((o_modelstat le 2),
+    Execute_Unload 'fulldata_exoGAINS';
+);
 
 *** Calculate AP emissions
 Execute "Rscript exoGAINSAirpollutants.R";
