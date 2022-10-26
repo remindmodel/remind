@@ -435,7 +435,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 
 p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
 
-*** updating energy targets implicit tax
+*** updating quantity targets implicit tax
 pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 0;
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup), !! initialize before first year auxiliary parameter for targets
     loop(ttot2$(ttot2.val eq cm_startyear), 
@@ -446,10 +446,20 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   loop(all_regi$regi_groupExt(ext_regi,all_regi),
 *** terminal year onward tax
     if(sameas(taxType,"tax"),
-      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = max(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is positive, otherwise other policies like the carbon tax are already enough to achieve the efficiency target
+      if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 1e-10), !! assuring that the updated tax is positive, i.e. the target is achieved without the need for any additional tax
+        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = 1e-10;
+      else
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
+      ); 
     );
     if(sameas(taxType,"sub"),
-      p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = min(1e-10, p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)); !! assuring that the updated tax is negative (subsidy)
+      if((p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt -1e-10), !! assuring that the updated tax is negative (subsidy), i.e. the target is achieved without the need for any additional subsidy
+        pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) = 1;
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = -1e-10;
+      else
+        p47_implicitQttyTargetTax(t,all_regi,qttyTarget,qttyTargetGroup)$(t.val ge ttot.val) = p47_implicitQttyTargetTax_prevIter(t,all_regi,qttyTarget,qttyTargetGroup) * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup); 
+      ); 
     );
 *** linear price between first free year and target year
     loop(ttot2$(ttot2.val eq p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)),
