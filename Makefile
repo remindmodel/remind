@@ -15,8 +15,7 @@ update-renv:    ## Upgrade all pik-piam packages in your renv to the respective
 
 update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, make new snapshot
-	Rscript -e 'renv::update()'
-	Rscript -e 'renv::install()'
+	Rscript -e 'renv::update(exclude = "renv")'
 	Rscript -e 'renv::snapshot()'
 
 check:          ## Check if the GAMS code follows the coding etiquette
