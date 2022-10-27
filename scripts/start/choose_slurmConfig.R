@@ -107,7 +107,7 @@ combine_slurmConfig <- function (original, update_with) {
   names(v_original) <- gsub("--(.*)=.*","\\1",unlist(strsplit(original,split=" ")))
 
   # remove elements from "original" that are existing in "update_with"
-  v_original <- v_original[!names(v_original) %in% "qos"]
+  v_original <- v_original[!names(v_original) %in% names(v_update_with)]
 
   combined <- c(v_update_with,v_original)
 
