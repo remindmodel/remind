@@ -243,12 +243,16 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # runs <- lucode2::findCoupledruns("./output/")
   # possibledirs <- sub("./output/", "", lucode2::findIterations(runs, modelpath = "./output", latest = TRUE))
   outputdirs <- gms::chooseFromList(sort(unique(possibledirs)), returnBoolean = FALSE,
-                           type = paste0("runs to be re ", ifelse("--reprepare" %in% argv, "prepared", "started")))
+                           type = paste0("runs to be re", ifelse("--reprepare" %in% flags, "prepared", "started")))
   message("\nAlso restart subsequent runs? Enter y, else leave empty:")
   restart_subsequent_runs <- gms::getLine() %in% c("Y", "y")
   if ("--testOneRegi" %in% flags) testOneRegi_region <- select_testOneRegi_region()
-  filestomove <- c("abort.gdx" = "abort_beforeRestart.gdx", "non_optimal.gdx" = "non_optimal_beforeRestart.gdx",
-                  c("full.gms" = "full_beforeRestart.gms", "fulldata.gdx" = "fulldata_beforeRestart.gdx")["--reprepare" %in% argv])
+  filestomove <- c("abort.gdx" = "abort_beforeRestart.gdx",
+                   "non_optimal.gdx" = "non_optimal_beforeRestart.gdx",
+                   "log.txt" = "log_beforeRestart.txt",
+     if ("--reprepare" %in% flags) c("full.gms" = "full_beforeRestart.gms",
+                                     "fulldata.gdx" = "fulldata_beforeRestart.gdx")
+                  )
   message("\n", paste(names(filestomove), collapse = ", "), " will be moved and get a postfix '_beforeRestart'.\n")
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
   if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")

@@ -88,11 +88,9 @@ withCallingHandlers({ # piping messages to logFile
     }
     message("\n### Generate ", mappingFile, " based on piamInterfaces templates ", paste(mapping, collapse = ","), ".")
     mapreturn <- piamInterfaces::generateMappingfile(templates = mapping, outputDirectory = ".",
-                                 fileName = mappingFile, model = model, commentFileName = NULL)
+                                 fileName = mappingFile, model = model, logFile = logFile,
+                                 iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
     mapping <- mappingFile
-    write(paste0("\n\n\n### Comments from piamInterfaces::generateMappingfile\n\n",
-          paste(paste0("- ", mapreturn[["comments"]]$Variable, ": ", mapreturn[["comments"]]$Comment), collapse = "\n"), "\n\n"),
-          file = logFile, append = TRUE)
   }
 
   message("\n### Generating ", OUTPUT_mif, " and .xlsx using mapping ", mapping, ".")

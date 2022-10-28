@@ -10,8 +10,5 @@ local({
   # update pik-piam packages only
   renv::update(intersect(utils::installed.packages()[, "Package"], pikPiamPackages), prompt = FALSE)
 
-  # install new dependencies
-  renv::install(prompt = FALSE)
-
   source(here::here("scripts", "utils", "archiveRenv.R"))
 })
