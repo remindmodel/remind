@@ -25,7 +25,6 @@ AND (not sameas(te,"tnrs"))),
 );
 
 
-
 *** RP 20160405 make sure that the model also sees the se2se technologies (seel <--> seh2)
 loop(se2se(enty,enty2,te),
   vm_cap.lo(t,regi,te,"1")$(t.val gt 2025) = 1e-7;
@@ -66,7 +65,7 @@ vm_deltaCap.up(t,regi,"fnrs",rlf) = 0;
 *** Note: make sure that this matches with the settings for residues in modules/05_initialCap/on/preloop.gms
 
 *BS/DK* Developed regions phase out quickly (no new capacities)
-vm_deltaCap.up(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
+vm_deltaCap.fx(t,regi,"biotr",rlf)$(t.val gt 2005) = 0;
 *BS/DK* Developing regions (defined by GDP PPP threshold) phase out more slowly ( + varied by SSP)
 loop(regi,
   if ( (pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
@@ -205,10 +204,10 @@ if (cm_startyear le 2020,   !! require the realization of at least 50% of the pl
    vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.5 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
    vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
 );
-if (cm_startyear le 2025 AND cm_nucscen ge 2,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
+if (cm_startyear le 2025,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2025",regi,"tnrs","1") = pm_NuclearConstraint("2025",regi,"tnrs") / 5;
 );
-if (cm_startyear le 2030 AND cm_nucscen ge 2,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
+if (cm_startyear le 2030,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 70% of proposed plants, plus extra for lifetime extension and newcomers
    vm_deltaCap.up("2030",regi,"tnrs","1") = pm_NuclearConstraint("2030",regi,"tnrs") / 5;
 );
 
@@ -217,28 +216,13 @@ display p_CapFixFromRWfix, p_deltaCapFromRWfix;
 *** ------------------------------------------------------------------------------------------
 *RP* implement switch for scenarios with different nuclear assumptions:
 *** ------------------------------------------------------------------------------------------
+vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
+vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
 
-** FS: swtich on fnrs only in nucscen 0 and 4, (2 is default)
-if (cm_nucscen gt 0 AND cm_nucscen ne 4,
-  vm_deltaCap.up(t,regi,"fnrs",rlf)$(t.val ge 2010)= 0;
-  vm_cap.fx(t,regi,"fnrs",rlf)$(t.val ge 2010) = 0;
-);
-
-*mh no tnrs:
-if (cm_nucscen eq 3,
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = 0;
-  vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010)= 0;
-);
-
-* no new nuclear investments after 2020, until then all currently planned plants are built
+*** no new nuclear investments after 2020, until then all currently planned plants are built
 if (cm_nucscen eq 5,
-  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 0;
+  vm_deltaCap.up(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2020)= 1e-6;
   vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$(t.val gt 2015)  = 0;
-);
-
-*FS: nuclear phase-out by 2040
-if (cm_nucscen eq 7,
-  vm_prodSe.up(t,regi_nucscen,"peur","seel","tnrs")$(t.val ge 2040) = 0;
 );
 
 *** -------------------------------------------------------------
@@ -257,13 +241,7 @@ if (cm_emiscen ne 1,
   if (c_solscen eq 3,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
-  if (cm_nucscen eq 4,
-    vm_cap.up(t,regi_nucscen,"tnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"tnrs",rlf);
-    vm_cap.up(t,regi_nucscen,"fnrs",rlf)$(t.val ge 2010) = p_boundtmp(t,regi_nucscen,"fnrs",rlf);
-  );
 );
-
-
 
 *** -----------------------------------------------------------
 *mh bounds that narrow the solution space to help the conopt solver:
@@ -351,6 +329,10 @@ loop(regi,
     );
   );
 );
+
+*** no technologies with tech_stat 4 before 2025
+vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0;
+
 
 *CB 2012024 -----------------------------------------------------
 *CB allow for early retirement at the start of free model time
@@ -548,10 +530,6 @@ v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_f
 
 *** FS: allow for H2 use in buildings only from 2030 onwards
 vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
-
-*** FS: no electrolysis capacities before 2020
-vm_cap.up(t,regi,"elh2","1")$(t.val le 2015) = 0;
-
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data

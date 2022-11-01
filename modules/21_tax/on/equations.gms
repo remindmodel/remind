@@ -46,12 +46,17 @@
     + v21_implicitDiscRate(t,regi)
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
-    + v21_taxrevBioImport(t,regi)
-$ifthen.cm_implicitFE not "%cm_implicitFE%" == "off"
-    + vm_taxrevimplFETax(t,regi)
-$endif.cm_implicitFE    
+    + v21_taxrevBioImport(t,regi)  
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+    + vm_taxrevimplicitQttyTargetTax(t,regi)
+$endif.cm_implicitQttyTarget 
+$ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
+    + sum((entySe,entyFe,sector)$(entyFe2Sector(entyFe,sector)),vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector))
+$endIf.cm_implicitPriceTarget
+$ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
+    + sum(entyPe,vm_taxrevimplicitPePriceTax(t,regi,entyPe))
+$endIf.cm_implicitPePriceTarget
  ;
-
 
 ***---------------------------------------------------------------------------
 *'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times ghg emissions
@@ -59,7 +64,7 @@ $endif.cm_implicitFE
 ***---------------------------------------------------------------------------
 q21_taxrevGHG(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * (vm_co2eq(t,regi) - vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3))
-                           - p21_taxrevGHG0(t,regi);
+                           - pm_taxrevGHG0(t,regi);
 
 
 ***---------------------------------------------------------------------------
@@ -69,7 +74,7 @@ v21_taxrevGHG(t,regi) =e= pm_taxCO2eqSum(t,regi) * (vm_co2eq(t,regi) - vm_emiMac
 
 q21_taxrevCO2Sector(t,regi,emi_sectors)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevCO2Sector(t,regi,emi_sectors) =e= p21_CO2TaxSectorMarkup(regi,emi_sectors) * pm_taxCO2eqSum(t,regi) * vm_emiCO2Sector(t,regi,emi_sectors)
-                             - p21_taxrevCO2Sector0(t,regi,emi_sectors);
+                             - pm_taxrevCO2Sector0(t,regi,emi_sectors);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times land use co2 emissions
@@ -77,7 +82,7 @@ v21_taxrevCO2Sector(t,regi,emi_sectors) =e= p21_CO2TaxSectorMarkup(regi,emi_sect
 ***---------------------------------------------------------------------------
 q21_taxrevCO2luc(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevCO2luc(t,regi) =e= pm_taxCO2eqSum(t,regi) * cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
-                           - p21_taxrevCO2LUC0(t,regi);
+                           - pm_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Calculation of CCS tax: tax rate (defined as fraction(or multiplier) of O&M costs) times amount of CO2 sequestration
@@ -96,7 +101,7 @@ v21_taxrevCCS(t,regi)
 ***---------------------------------------------------------------------------
 q21_taxrevNetNegEmi(t,regi)$(t.val ge max(2010,cm_startyear))..
 v21_taxrevNetNegEmi(t,regi) =e= cm_frac_NetNegEmi * pm_taxCO2eqSum(t,regi) * v21_emiALLco2neg(t,regi)
-                                 - p21_taxrevNetNegEmi0(t,regi);
+                                 - pm_taxrevNetNegEmi0(t,regi);
 
 ***---------------------------------------------------------------------------
 *'  Auxiliary calculation of net-negative emissions: 

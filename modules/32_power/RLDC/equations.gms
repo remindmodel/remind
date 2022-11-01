@@ -338,4 +338,13 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	0.2 * vm_usableSe(t,regi,"seel")
 ;
 
+***---------------------------------------------------------------------------
+*** Calculation of share of electricity production of a technology:
+***---------------------------------------------------------------------------
+q32_shSeEl(t,regi,teVRE)..
+    vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
+    =e=
+    vm_usableSeTe(t,regi,"seel",teVRE)
+;
+
 *** EOF ./modules/32_power/RLDC/equations.gms

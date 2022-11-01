@@ -51,7 +51,7 @@ debug_coupled <- function(model = NULL, cfg) {
 ##################################################################
 
 start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations = 5, start_iter = 1,
-                          n600_iterations = 0, report = NULL, qos, parallel = FALSE, fullrunname = FALSE,
+                          n600_iterations = 0, report = NULL, qos, fullrunname = FALSE,
                           prefix_runname = "C_", run_compareScenarios = TRUE) {
   require(lucode2)
   require(gms)
@@ -73,12 +73,11 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   mainwd <- getwd() # save folder in which this script is executed
 
   # Retrieve REMIND settings
-  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
-                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                     "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
+#                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                     "gms$cm_CES_configuration", "gms$c_description"))
   cfg_rem$slurmConfig   <- "direct"
-  cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
   cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing
 
   # retrieve MAgPIE settings
@@ -94,7 +93,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   possible_pathes_to_gdx <- c("input.gdx", "input_ref.gdx", "input_refpolicycost.gdx",
                               "input_bau.gdx", "input_carbonprice.gdx")
 
-  startIterations <- if (parallel) c(start_iter) else start_iter:max_iterations
+  startIterations <- c(start_iter)
 
   # Start REMIND and MAgPIE iteratively
   for (i in startIterations) {
@@ -114,43 +113,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
-    cfg_rem$force_replace  <- if (parallel & ! debug) FALSE else TRUE # overwrite existing output folders
+    cfg_rem$force_replace  <- debug # overwrite existing output folders for debug
     #cfg_rem$gms$biomass    <- "magpie_linear"
-
-    # define gdx paths. In case of parallel mode, they are already in cfg_rem
-    if (isFALSE(parallel)) {
-      if (i == start_iter) {
-        message("### COUPLING ### gdx in first iteration taken from files2export$start")
-      } else {
-        message("### COUPLING ### gdx taken from previous iteration")
-        for (path_gdx in possible_pathes_to_gdx) {
-          cfg_rem$files2export$start[path_gdx]  <- paste0("output/",runname,"-rem-",i-1,"/", path_gdx)
-        }
-        # use fulldata.gdx as input.gdx
-        cfg_rem$files2export$start["input.gdx"] <- paste0("output/",runname,"-rem-",i-1,"/fulldata.gdx")
-      }
-    }
-
-    # Control Negishi iterations
-    itr_offset <- 1 # Choose this if negishi iterations should only be adjusted for coupling iteration numbers below 3
-    #itr_offset <- start_iter # Choose this if negishi iterations should be adjusted for the first three iterations (regardless of their number)
-                  #	This is the case after the coupling was restarted continuing from existing iterations.
-    
-    double_iterations <- 1
-    if (cfg_rem$gms$cm_SlowConvergence == "on") double_iterations <- 2 
-    
-    if(i==itr_offset) {
-      # Set negisgi iteration to 1 for the first run
-      cfg_rem$gms$cm_iteration_max <- 1*double_iterations
-    #} else if (i==itr_offset+1) {
-    #  cfg_rem$gms$cm_iteration_max <- 2*double_iterations
-    #} else if (i==itr_offset+2) {
-    #  cfg_rem$gms$cm_iteration_max <- 3*double_iterations
-    } else {
-      # Set negishi iterations back to the value defined in the config file
-      cfg_rem$gms$cm_iteration_max <- cm_iteration_max_tmp
-    }
-    message("Set Negishi iterations to ",cfg_rem$gms$cm_iteration_max)
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
@@ -212,29 +176,14 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
       # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
-      report_rem <- paste0(path_remind,outfolder_rem,"/REMIND_generic_",cfg_rem$title,".mif")
-      if (exists("mag_report_keep_in_mind") && file.exists(mag_report_keep_in_mind)) {
-        message("\n### Joining to a common reporting file:\n    ", report_rem, "\n    ", mag_report_keep_in_mind)
-        tmp1 <- read.report(report_rem, as.list=FALSE)
-        tmp2 <- read.report(mag_report_keep_in_mind, as.list=FALSE)[, getYears(tmp1), ]
-        tmp3 <- mbind(tmp1,tmp2)
-        getNames(tmp3, dim=1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp3,dim=1)) # remove -rem-xx and mag-xx from scenario names
-        # only harmonize model names to REMIND-MAgPIE, if there are no variable names that are identical across the models
-        if (any(getNames(tmp3[,,"REMIND"],dim=3) %in% getNames(tmp3[,,"MAgPIE"],dim=3))) {
-          msg <- "Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!\n"
-          message(msg)
-          warning(msg)
-        } else {
-          write.report(tmp3, file = report_rem, ndigit = 7)
-          remind2::deletePlus(report_rem, writemif = TRUE)
-          message(" -> ", report_rem, " now contains also MAgPIE results.")
-          if (i == max_iterations) {
-            # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
-            getNames(tmp3,dim=2) <- gsub("REMIND|MAgPIE","REMIND-MAgPIE",getNames(tmp3,dim=2))
-            write.report(tmp3, file = paste0("output/",runname,".mif"), ndigit = 7)
-            message(" -> output/", runname, ".mif uses REMIND-MAgPIE as model name.")
-          }
-        }
+      report_rem <- paste0(path_remind, outfolder_rem, "/REMIND_generic_", cfg_rem$title,".mif")
+      if (i == max_iterations) {
+        # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
+        tmp_rem_mag <- read.report(report_rem, as.list=FALSE)
+        getNames(tmp_rem_mag, dim=2) <- gsub("REMIND|MAgPIE", "REMIND-MAgPIE", getNames(tmp_rem_mag, dim=2))
+        getNames(tmp_rem_mag, dim=1) <- runname
+        write.report(tmp_rem_mag, file = paste0("output/",runname,".mif"), ndigit = 7)
+        message("\n### output/", runname, ".mif written: model='REMIND-MAgPIE', scenario='", runname, "'.")
       }
     }
 
@@ -315,15 +264,14 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       message("\nPrepare subsequent run ", run, ":")
       subseq.env <- new.env()
-      RData_file <- paste0(if (! parallel) prefix_runname, run, ".RData")
+      RData_file <- paste0(run, ".RData")
       load(RData_file, envir = subseq.env)
 
       pathes_to_gdx <- intersect(possible_pathes_to_gdx, names(subseq.env$cfg_rem$files2export$start))
 
       gdx_na <- is.na(subseq.env$cfg_rem$files2export$start[pathes_to_gdx])
 
-      stringtobereplaced <- if (parallel) fullrunname else paste0(runname, "-rem-", max_iterations)
-      needfulldatagdx <- names(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][subseq.env$cfg_rem$files2export$start[pathes_to_gdx] == stringtobereplaced & !gdx_na])
+      needfulldatagdx <- names(subseq.env$cfg_rem$files2export$start[pathes_to_gdx][subseq.env$cfg_rem$files2export$start[pathes_to_gdx] == fullrunname & !gdx_na])
       message("In ", RData_file, ", use current fulldata.gdx path for ", paste(needfulldatagdx, collapse = ", "), ".")
       subseq.env$cfg_rem$files2export$start[needfulldatagdx] <- fulldatapath
 
@@ -343,8 +291,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           # for negishi: use only one CPU
           nr_of_regions <- 1
         }
-        logfile <- if (parallel) file.path("output", subseq.env$fullrunname, "log.txt")
-                   else file.path("output", paste0("log_", subseq.env$fullrunname, stamp, ".txt"))
+        logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
@@ -352,7 +299,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
           system(subsequentcommand)
-          Sys.sleep(10)
         } else {
           message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")
         }
@@ -388,8 +334,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       cs_name <- paste0("compScen-rem-1-", max_iterations, "_", runname)
       cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
       cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-      cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/utils/run_compareScenarios2.R outputdirs=",
-      paste(cs_runs, collapse=","), " shortTerm=FALSE outfilename=", cs_name,
+      cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+      paste(cs_runs, collapse=","), " profileName=REMIND-MAgPIE outFileName=", cs_name,
       " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
       if (! isFALSE(run_compareScenarios)) {
         message("### Coupling ### Start compareScenario ", cs_name)
@@ -415,12 +361,11 @@ require(lucode2)
 readArgs("coupled_config")
 load(coupled_config)
 # backwards compatibility
-if (! exists("parallel")) parallel <- FALSE
 if (! exists("fullrunname")) fullrunname <- runname
 if (! exists("prefix_runname")) prefix_runname <- "C_"
 if (! exists("run_compareScenarios")) run_compareScenarios <- "short"
 start_coupled(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations, start_iter,
-              n600_iterations, path_report, qos, parallel, fullrunname, prefix_runname, run_compareScenarios)
+              n600_iterations, path_report, qos, fullrunname, prefix_runname, run_compareScenarios)
 
 message("### Print warnings ###")
 warnings()

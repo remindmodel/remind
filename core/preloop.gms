@@ -158,7 +158,7 @@ p_agriEmiPhaseOut("2030") = 0.5;
 p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
-*** Rescale non-co2 base line emissions from agriculture 
+*** Rescale non-co2 base line emissions from agriculture for all regions if c_BaselineAgriEmiRed switch is non-zero
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
   

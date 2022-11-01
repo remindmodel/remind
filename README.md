@@ -19,15 +19,16 @@ The model documentation for version 3.0.0 can be found at https://rse.pik-potsda
 
 The most recent version of the documentation can also be extracted from the
 model source code via the R package goxygen
-(https://github.com/pik-piam/goxygen). To extract the documentation, install the
-package and run the main function `(goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15))`
+(https://github.com/pik-piam/goxygen). To extract the documentation, run `make docs`
 in the main folder of the model.
-The resulting documentation can be found in the folder "doc".
+The resulting documentation can be found in the folder `doc/`.
 
 Please pay attention to the REMIND Coding Etiquette when you modify the code
 (if you plan on contributing to the REMIND official repository).
 The Coding Etiquette is found in the documentation section of the file main.gms.
 It explains also the used name conventions and other structural characteristics.
+To automatically check if some aspects of the coding etiquette, you can run
+`make check` in the main folder of the model.
 
 ## TUTORIALS
 
@@ -65,11 +66,11 @@ and memory. Recommended is a machine with Windows, MacOS or Linux, with at least
 
 ## HOW TO INSTALL
 
-Please refer to the [installation guide](tutorials/1_GettingREMIND.md).
+Please refer to the [installation guide](tutorials/01_GettingREMIND.md).
 
 
 ## HOW TO CONFIGURE
-Model run settings are set in `config/default.cfg` (or another config file of
+Model run settings are set in `config/default.cfg` and `main.gms` (or another config file of
 the same structure). New model scenarios can be created by adding a row to
 `config/scenario_config.csv`
 

@@ -17,7 +17,7 @@ Case 1: REMIND did not start
 The first place to look is `log.txt` in the output subfolder for each run. It shows you the log of running [`prepare_and_run.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepare_and_run.R). If it states "Starting REMIND..." somewhere, this shows that the input preparation scripts were successful. If not, this can be caused by the following reasons:
 
 - the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
-- because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](4_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
+- because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
 - input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn't help, the input generation may be broken.
 - you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.
 - a recent change in `prepare_and_run` may have broken the prepare scripts, check the [file history](https://github.com/remindmodel/remind/commits/develop/scripts/start/prepare_and_run.R) for changes.
@@ -86,6 +86,8 @@ Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mc
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
 But it is important that the error may have first appeared in this equation, but may have been caused somewhere else.
 
+If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. In your run folder, you can find the model script on [`EDGE_transport.R`](https://github.com/remindmodel/remind/blob/develop/scripts/iterative/EDGE_transport.R) and its input/output data in the `EDGE-T` subfolder. You should find an error message in `log.txt`. If this is not helpful, try opening that script in an interactive `R` session (on your run's folder) and run it line by line, you'll have a better idea of what the problem actually was. Forcing the model to redownload it's input data (see above) can help if something in either model changed when you created that folder. Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you'll often find that a newer EDGE-T library (that would be loaded if you didn't set a snapshot or updated your renv) won't work with a REMIND folder that is even a few days old. 
+
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
 ### Case 2c: GDX or R file missing
@@ -127,8 +129,6 @@ An explanation of the modelstat and solvestat numbers can be found in the tables
 
 If infeasibilities show up already in the first iteration, it may be related to a wrong `input.gdx` (specified with `path_gdx` in the `scenario_config_XYZ.csv`) or some general error in the GAMS code. Via the international trade, infeasibilities in one region may propagate to other regions in later iterations, but then it is worth knowing where it started.
 
-If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. In your run folder, you can find the model script on [`EDGE_transport.R`](https://github.com/remindmodel/remind/blob/develop/scripts/iterative/EDGE_transport.R) and its input/output data in the `EDGE-T` subfolder. You should find an error message in `log.txt`. If this is not helpful, try opening that script in an interactive `R` session (on your run's folder) and run it line by line, you'll have a better idea of what the problem actually was. Forcing the model to redownload it's input data (see above) can help if something in either model changed when you created that folder.
-
 There are different types of solver infeasibilities: pre-triangular and optimization infeasibilities. In pre-triangular infeasibilities, GAMS shows you in the solution report the equations that are incompatible with each other. For optimization infeasibilies, the CONOPT solver tries to reduce the infeasibility to the thing that less affects the objective function. It does not show all affected equations, as it is not a simple problem as a non-square system of equations like in the pre-triangular case. You need to check if it is bound-related: the variables bounds, and the equation bounds starting from the infeasibility and going through the variables that have relation with it. You can always force in another run the variable that is infeasible to a feasible value to see what else is affected by it. But this is usually not necessary as just checking the logic behind the equation and the infeasible variable is usually sufficient to find the limitation.
 
 More information needed? debug runs
@@ -142,7 +142,7 @@ To restart a run in "debug" mode, run
 ```bash
 Rscript start.R --debug --reprepare
 ```
-in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will recreate move `full.gms` and `fulldata.gdx` to filenames with an appended `_old` and restart the input preparation and the model run.
+in the REMIND main folder and select the runs to be restarted (the shortcut is `Rscript start.R -dR`). This will move `full.gms` and `fulldata.gdx` to filenames with an appended `_beforeRestart` and restart the input preparation and the model run.
 
 If you only want to look at a specific region that created the infeasibility, you can either specify `c_testOneRegi_region` in `scenario_config_XYZ.csv`:
 ```bash
@@ -152,7 +152,7 @@ and you will be asked which region you want to look at (the shortcut is `Rscript
 You can also run `Rscript start.R --reprepare --debug --testOneRegi` to get the results in the same output folder.
 Running `Rscript start.R --reprepare` a second time then resets the settings to the original ones.
 
-If the error was not in the first iteration, a faster and more convenient way might be to start the run again in parallel mode with `c_keep_iteration_gdxes = 1` specified in `config/default.cfg` or the `scenario_config_XYZ.csv`. And then start a debug run that uses the `fulldata_07.gdx` (or the first iteration in which this occurs) of this first run as `input.gdx` specified in `path_gdx` of `scenario_config_XYZ.csv`. That way, you should see where the infeasibility is in the first iteration of the debug run already and not have to wait until the 7th iteration.
+If the error was not in the first iteration, a faster and more convenient way might be to start the run again in parallel mode with `c_keep_iteration_gdxes = 1` specified in `main.gms` or the `scenario_config_XYZ.csv`. And then start a debug run that uses the `fulldata_07.gdx` (or the first iteration in which this occurs) of this first run as `input.gdx` specified in `path_gdx` of `scenario_config_XYZ.csv`. That way, you should see where the infeasibility is in the first iteration of the debug run already and not have to wait until the 7th iteration.
 
 If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 

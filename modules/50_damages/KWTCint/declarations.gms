@@ -16,8 +16,8 @@ p50_damageFuncCoefa1     "coef1 of damamge function",
 p50_damageFuncCoefa2     "coef2 of damamge function"
 p50_damageFuncCoefb1     "coef1 of damamge function",
 p50_damageFuncCoefb2     "coef2 of damamge function"
-p50_damageFuncCoefTC0(isoTC)	"coef0 for tropical cyclone damage function"
-p50_damageFuncCoefTC1(isoTC)	"coef1 for tropical cyclone damage function"
+p50_damageFuncCoefTC0(iso)	"coef0 for tropical cyclone damage function"
+p50_damageFuncCoefTC1(iso)	"coef1 for tropical cyclone damage function"
 pm_damageProd(tall,all_regi)	"damage from aggregate damage function"
 pm_damageTC(tall,iso)		"tropical cyclone damages"
 pm_damageGrowthRateTC(tall,iso)	"growth rate damage from tropical cyclones"

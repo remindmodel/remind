@@ -115,5 +115,6 @@ $endif.solprint
 
 p80_repy_iteration(all_regi,solveinfo80,iteration) = p80_repy(all_regi,solveinfo80);
 
+
 *** EOF ./modules/80_optimization/nash/solve.gms
 

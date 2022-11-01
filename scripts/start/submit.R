@@ -23,20 +23,20 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
     cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
     # Create output folder
-    cat("   Creating results folder",cfg$results_folder,"\n")
     if (!file.exists(cfg$results_folder)) {
+      message("   Creating results folder", cfg$results_folder)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     } else if (!cfg$force_replace) {
-      couldnotdelete <- paste0("Results folder ",cfg$results_folder," could not be created because it already exists")
+      couldnotdelete <- paste0("Results folder ",cfg$results_folder," already exists")
       if (stopOnFolderCreateError) {
         stop(couldnotdelete, ".")
       } else if (! all(grepl("^log*.txt", list.files(cfg$results_folder)))) {
         stop(couldnotdelete, " and it contains not only log files.")
       } else {
-        message(couldnotdelete, " but it contains only log files.")
+        message(couldnotdelete, " containing only log files as expected for coupled runs.")
       }
     } else {
-      cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
+      message("    Results folder already exists, deleting and re-creating it: ",cfg$results_folder,"\n")
       unlink(cfg$results_folder, recursive = TRUE)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
@@ -48,7 +48,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
-        if (!renv::status()$synchronized) {
+        capture.output({ # suppress printing status
+          renvStatus <- renv::status()
+        })
+        if (!renvStatus$synchronized) {
           message("The new run will use the package environment defined in renv.lock, ",
                   "but it is out of sync, probably because you installed packages/updates manually. ",
                   "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
@@ -74,6 +77,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         }
       }
 
+      renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
+      message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function(resultsfolder, lockfile) {
         # use same snapshot.type so renv::status()$synchronized always uses the same logic
         renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
@@ -82,20 +87,21 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         file.copy(lockfile, resultsfolder, overwrite = TRUE)
         renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
       }
+
       # init renv in a separate session so the libPaths of the current session remain unchanged
       callr::r(createResultsfolderRenv,
                list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
-               show = TRUE)
+               stdout = renvLogPath, stderr = "2>&1")
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 
     # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
-    filename <- paste0(cfg$results_folder,"/config.Rdata")
-    cat("   Writing cfg to file",filename,"\n")
+    filename <- file.path(cfg$results_folder, "config.Rdata")
+    cat("   Writing cfg to file", filename, "\n")
     # remember main folder
     cfg$remind_folder <- normalizePath(".")
-    save(cfg,file=filename)
+    save(cfg, file = filename)
     
     # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
