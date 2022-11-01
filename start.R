@@ -213,6 +213,15 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
   if (gms::getLine() %in% c("Y", "y")) flags <- c(flags, "--reprepare")
 }
 
+# Check if dependencies for a model run are fulfilled
+if (packageVersion("lucode2") >= "0.34.0") {
+  lucode2::checkDeps(action = "ask")
+} else {
+  stop("REMIND requires lucode2 >= 0.34.0, please run the following to update it:\n",
+       "renv::install('lucode2'); renv::snapshot(prompt = FALSE)\n",
+       "and re-run start.R in a fresh R session.")
+}
+
 ignorederrors <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
