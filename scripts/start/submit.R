@@ -48,17 +48,28 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
-        capture.output({ # suppress printing status
-          renvStatus <- renv::status()
-        })
-        if (!renvStatus$synchronized) {
-          message("The new run will use the package environment defined in renv.lock, ",
-                  "but it is out of sync, probably because you installed packages/updates manually. ",
-                  "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
-          if (tolower(gms::getLine()) %in% c("y", "")) {
-            renv::snapshot(prompt = FALSE)
+          capture.output({ # suppress printing status
+              renvStatus <- renv::status()
+          })
+
+          if (!renvStatus$synchronized) {
+              # check environment variable on whether to syncronise renv
+              Rrs <- Sys.getenv('REMIND_sync_renv')
+
+              # if neither 'always' nor 'never', ask the user
+              if (!Rrs %in% c('always', 'never')) {
+                  message("The new run will use the package environment defined in renv.lock, ",
+                          "but it is out of sync, probably because you installed packages/updates manually. ",
+                          "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
+                  if (tolower(gms::getLine()) %in% c("y", "")) {
+                      Rrs <- 'always'
+                  }
+              }
+              # if always or user answered 'yes', do it
+              if ('always' == Rrs) {
+                  renv::snapshot(prompt = FALSE)
+              }
           }
-        }
 
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
@@ -94,15 +105,15 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                stdout = renvLogPath, stderr = "2>&1")
     }
 
-    # Save the cfg (with the updated name of the result folder) into the results folder. 
-    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+    # Save the cfg (with the updated name of the result folder) into the results folder.
+    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
     filename <- file.path(cfg$results_folder, "config.Rdata")
     cat("   Writing cfg to file", filename, "\n")
     # remember main folder
     cfg$remind_folder <- normalizePath(".")
     save(cfg, file = filename)
-    
+
     # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
@@ -114,8 +125,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   on.exit(setwd(cfg$remind_folder))
   # Change to run folder
   setwd(cfg$results_folder)
-  
-  # send prepare_and_run.R to cluster 
+
+  # send prepare_and_run.R to cluster
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
   if (grepl("^direct", cfg$slurmConfig)) {
     log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
@@ -124,6 +135,6 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
     Sys.sleep(1)
   }
-    
+
   return(cfg$results_folder)
 }
