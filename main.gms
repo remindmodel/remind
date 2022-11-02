@@ -279,6 +279,7 @@ parameters
   cm_startyear              "first optimized modelling time step [year]"
   c_start_budget            "start of GHG budget limit"
   cm_prtpScen               "pure rate of time preference standard values"
+  cm_distrBeta              "elasticity of tax revenue redistribution"
   cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
   cm_permittradescen        "scenario on permit trade"
@@ -437,6 +438,7 @@ cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
 c_start_budget    = 2100;      !! def = 2100
 
 cm_prtpScen         = 3;         !! def = 3
+cm_distrBeta        = 1;         !! def = 1
 cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1

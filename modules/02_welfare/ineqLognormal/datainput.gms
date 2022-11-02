@@ -50,7 +50,7 @@ if ((cm_emiscen ne 1),
     
 );
 
-* income elasticity of tax revenues redistribution. Fixing this to some number for now
+* income elasticity of tax revenues redistribution.
 p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = cm_distrBeta;
 
 
