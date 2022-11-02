@@ -8,7 +8,7 @@
 require(data.table)
 require(iamc)
 require(rmndt)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(quitte)
 library(lucode2)
 library(magclass)
@@ -78,23 +78,16 @@ if (! exists("logFile")) logFile <- paste0(outputFilename, ".log")
 message("### Find various logs in ", logFile)
 withCallingHandlers({ # piping messages to logFile
 
-  ### generate mapping if not specified
-  if (is.null(mapping) || ! all(file.exists(mapping))) {
-    if (all(mapping %in% names(piamInterfaces::templateNames()))) {
-      mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
-    } else {
-      stop("# mapping = '", paste(mapping, collapse = ","), "' not understood. ",
-           "Specify a file or templates such as ", paste0(names(piamInterfaces::templateNames()), collapse = ","))
-    }
-    message("\n### Generate ", mappingFile, " based on piamInterfaces templates ", paste(mapping, collapse = ","), ".")
-    mapreturn <- piamInterfaces::generateMappingfile(templates = mapping, outputDirectory = ".",
-                                 fileName = mappingFile, model = model, logFile = logFile,
-                                 iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
-    mapping <- mappingFile
+  if (all(mapping %in% names(templateNames()))) {
+    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
+  } else if (length(mapping) == 1 && file.exists(mapping)) {
+    mappingFile <- mapping
+  } else {
+    message("# Mapping = '", paste(mapping, collapse = ","), " exists neither as file nor mapping name.")
+    mapping <- NULL
   }
 
-  message("\n### Generating ", OUTPUT_mif, " and .xlsx using mapping ", mapping, ".")
-
+  message("\n### Generating ", OUTPUT_mif, " and .xlsx.")
   ### define filenames
 
   gdxs <- file.path(outputdirs, "fulldata.gdx")
@@ -115,75 +108,15 @@ withCallingHandlers({ # piping messages to logFile
 
   filename_remind2_mif <- paste0(outputFilename, "_remind2.mif")
 
-  message("\n### Read mif files...")
+  message("\n### Read mif files and bind them together...")
 
-  all_mifs <- NULL
+  mifdata <- NULL
   for (mif in mif_path) {
-    tmp1 <- read.report(mif, as.list=FALSE)
+    thismifdata <- read.quitte(mif, factors = FALSE)
     # remove -rem-xx and mag-xx from scenario names
-    getNames(tmp1, dim = 1) <- gsub("-(rem|mag)-[0-9]{1,2}","",getNames(tmp1, dim=1))
-    all_mifs <- mbind(all_mifs, tmp1)
+    thismifdata$scenario <- gsub("-(rem|mag)-[0-9]{1,2}", "", thismifdata$scenario)
+    mifdata <- rbind(mifdata, thismifdata)
   }
-
-  message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
-
-  write.report(all_mifs, file = filename_remind2_mif)
-
-  message("\n### Using mapping, generate joint mif:  ", OUTPUT_mif)
-
-  set_model_and_scenario <- function(mif, model, scen_remove = NULL, scen_add = NULL){
-    dt <- readMIF(mif)
-    scenario_names <- unique(dt$Scenario)
-    dt[, Model := model]
-    if (! is.null(scen_remove)) dt[, Scenario := gsub(scen_remove, "", Scenario)]
-    if (! is.null(scen_add)) {
-      if (all(grepl(scen_add, unique(dt$Scenario), fixed = TRUE))) {
-        message(sprintf("Prefix %s already found in all scenario name in %s. Skipping.", scen_add, mif))
-      } else {
-        dt[, Scenario := paste0(scen_add,Scenario)]
-      }
-    }
-    if (length(unique(dt$Scenario)) < length(scenario_names)) {
-      message(length(scenario_names), " scenario names before changes: ", paste(scenario_names, collapse = ", "))
-      message(length(unique(dt$Scenario)), " scenario names after changes:  ", paste(unique(dt$Scenario), collapse = ", "))
-      stop("Changes to scenario names lead to duplicates. Adapt scen_remove='", scen_remove, "' and scen_add='", scen_add, "'!")
-    }
-    writeMIF(dt, mif)
-  }
-
-  message("# Correct model name to '", model, "'.")
-  message("# Adapt scenario names: '",
-          addToScen, "' will be prepended, '", removeFromScen, "' will be removed.")
-  set_model_and_scenario(filename_remind2_mif, model, removeFromScen, addToScen)
-
-  message("# Apply mapping from ", mapping)
-
-  iamc::write.reportProject(filename_remind2_mif, mapping, OUTPUT_mif, append = FALSE, missing_log = logFile)
-
-  message("# Restore PM2.5 and poverty w.r.t. median income dots in variable names")
-  command <- paste("sed -i 's/wrt median income/w\\.r\\.t\\. median income/g;s/PM2\\_5/PM2\\.5/g'", OUTPUT_mif)
-  system(command)
-
-  # message("add two trailing spaces for Policy Cost|GDP Loss|w/o transfers (as in DB)")
-  # message("make sure that no other variable contains: w/o transfers")
-  # command <- paste("sed -i 's/Policy Cost\\|GDP Loss\\|w\/o transfers/Policy Cost\\|GDP Loss\\|w\\/o transfers  /g; s/w\/o transfers/w\\/o transfers  /g'", OUTPUT_mif)
-  # system(command)
-
-  message("# Replace N/A for missing years with blanks as recommended by Ed Byers")
-  command <- paste("sed -i 's/N\\/A//g'", OUTPUT_mif)
-  system(command)
-
-  message("# Remove unwanted timesteps")
-  command <- paste("cut -d ';' -f1-21 ", OUTPUT_mif, " > tmp_reporting.tmp")
-  system(command)
-  command <- paste("mv tmp_reporting.tmp", OUTPUT_mif)
-  system(command)
-
-  ## HERE you can change the data again, if required
-  mifdata <- read.quitte(OUTPUT_mif, factors = FALSE) %>%
-    mutate(model = paste(model)) %>%
-    mutate(value = ifelse(!is.finite(value) | is.na(value), 0, value)) %>%
-    mutate(scenario = gsub("NA", "", scenario))
 
   message("# ", length(temporarydelete), " variables are in the list to be temporarily deleted, ",
           length(unique(mifdata$variable[mifdata$variable %in% temporarydelete])), " were deleted.")
@@ -191,34 +124,15 @@ withCallingHandlers({ # piping messages to logFile
         file = logFile, append = TRUE)
   mifdata <- filter(mifdata, ! variable %in% temporarydelete)
 
-  if (file.exists(iiasatemplate)) {
-    mifdata <- checkIIASASubmission(mifdata, iiasatemplate, logFile)
-  } else {
-    message("# iiasatemplate ", iiasatemplate , " does not exist, returning full list of variables.")
-  }
+  message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
+  write.mif(mifdata, filename_remind2_mif)
 
-  # check whether all scenarios have same number of variables
-  scenarios <- unique(mifdata$variable)
-  for (i in 1:length(scenarios)) {
-    stopifnot(length(filter(mifdata, variable %in% scenarios[[1]])) == length(filter(mifdata, variable %in% scenarios[[i]])))
-  }
-
-  file.remove(OUTPUT_mif)
-  write.mif(mifdata, OUTPUT_mif)
-
-  # perform summation checks
-  checkSummationData <- checkSummations(OUTPUT_mif, template = mapping, summationsFile = "AR6",
-                                        logFile = logFile, logAppend = TRUE,
-                                        dataDumpFile = file.path(outputFolder, "checkSummations.csv"))
-
-  mifdata %>%
-    mutate(value = ifelse(!is.finite(value) | paste(value) == "", 0, value)) %>%
-    pivot_wider(names_from="period", values_from="value") -> writetoexcel
-
-  writexl::write_xlsx(list("data" = writetoexcel), OUTPUT_xlsx)
-
-  message("\n### mif files: ", sum(existingfiles), " used, ", sum(! existingfiles), " not found, see above.")
-  message("\n### Output files written:\n- ", OUTPUT_mif, "\n- ", OUTPUT_xlsx)
+  generateIIASASubmission(filename_remind2_mif, mapping = mapping, model = model, mappingFile = mappingFile,
+                          removeFromScen = removeFromScen, addToScen = addToScen,
+                          outputDirectory = outputFolder, outputPrefix = "",
+                          logFile = logFile, generateSingleOutput = TRUE,
+                          outputFilename = basename(OUTPUT_mif),
+                          iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
 
 }, message = function(x) {
   cat(x$message, file = logFile, append = TRUE)
