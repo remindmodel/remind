@@ -12,9 +12,3 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   renv::snapshot(prompt = FALSE) # create renv.lock
   message("Finished installing R package dependencies.")
 }
-
-# source global .Rprofile (very important to load user specific settings)
-# DO NOT EDIT THIS LINE!
-if (file.exists("~/.Rprofile")) {
-  source("~/.Rprofile")
-}
