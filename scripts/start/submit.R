@@ -62,18 +62,15 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
 
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
-        } else {
-          if (!is.null(lucode2::showUpdates())) {
-            message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
-          }
+        } else if (!is.null(lucode2::showUpdates())) {
+          message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
         }
       }
 
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function(resultsfolder, lockfile) {
-        # use same snapshot.type so renv::status()$synchronized always uses the same logic
-        renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
+        renv::init(resultsfolder)
 
         # restore same renv as previous run in cascade, or main renv if first run
         file.copy(lockfile, resultsfolder, overwrite = TRUE)
