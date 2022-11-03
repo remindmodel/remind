@@ -63,16 +63,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
         } else {
-          packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-          pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
-          installed <- utils::installed.packages()
-          outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
-          if (!is.null(outdatedPackages)) {
-            message("The following PIK packages can be updated:\n",
-                    paste("-", outdatedPackages[, "Package"], ":",
-                          outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
-                          collapse = "\n"),
-                    "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
+          if (!is.null(lucode2::showUpdates())) {
+            message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
           }
         }
       }
