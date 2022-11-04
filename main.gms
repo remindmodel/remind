@@ -607,20 +607,12 @@ parameter
   cm_bioenergy_tax    = 1.5;       !! def = 1.5
 *'
 parameter
-  cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
-***  (0): no bound
-***  (1): 100 EJ global bioenergy potential
-***  (2): 200 EJ global bioenergy potential
-***  (3): 300 EJ global bioenergy potential
-***  (4): 152 EJ global bioenergy potential
+  cm_tradecost_bio          "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
+***  (0.5)              (default) low tradecosts (used e.g. for other SSP scenarios than SSP2)
+***  (1):               medium trade costs (used e.g. for for SSP2)
+***  (any value ge 0):  set costs multiplier to that value
 ;
-  cm_bioenergymaxscen = 0;         !! def = 0
-*'
-parameter
-  cm_tradecost_bio          "choose financal tradecosts for biomass (purpose grown pebiolc)"
-***  (1): low   tradecosts (for other SSP scenarios than SSP2)
-;
-  cm_tradecost_bio     = 2;         !! def = 2
+  cm_tradecost_bio    = 0.5;       !! def = 0.5
 *'
 parameter
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
@@ -1211,6 +1203,11 @@ $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
 $setglobal cm_tradbio_phaseout  default  !! def = default
+*** cm_bioenergymaxscen  "Bound on global pebiolc production excluding residues [EJ per yr]"
+***  (off):             (default) no bound
+***  (100):             (e.g.) set maximum to 100 EJ per year
+***  (any value ge 0):  set maximum to that value
+$setglobal cm_bioenergymaxscen  off  !! def = off     
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"

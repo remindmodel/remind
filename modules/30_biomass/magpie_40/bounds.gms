@@ -32,40 +32,18 @@ else
 *** Bounds on 2nd generation biomass annual production
 *** -------------------------------------------------------------
 
-*** bound on global annual pebiolc production in EJ/a
-s30_max_pebiolc $(cm_bioenergymaxscen=1) = 100;
-s30_max_pebiolc $(cm_bioenergymaxscen=2) = 200;
-s30_max_pebiolc $(cm_bioenergymaxscen=3) = 300;
-s30_max_pebiolc $(cm_bioenergymaxscen=4) = 152;
+*** 1. Bound on purpose grown biomass 
+$ifthen.bioenergymaxscen not %cm_bioenergymaxscen% == "off"
+*** Set bound on global annual pebiolc production and convert from EJ to TWa
+p30_max_pebiolc_path_glob(t) = cm_bioenergymaxscen * sm_EJ_2_TWa;
 
-p30_max200_path(t) = s30_max_pebiolc;
-
-*** bounds until 2025 taken from old 200 EJ maxprod in generisdata_biosupply_grades.prn (EJ/yr)
-p30_max200_path("2005") = 68.25;
-p30_max200_path("2010") = 100;
-p30_max200_path("2015") = 130;
-p30_max200_path("2020") = 160;
-p30_max200_path("2025") = 190;
-
-*** Use values if they are smaller than the maximal allowed value (s30_max_pebiolc)
-*** otherwise limit to maximal allowed value (s30_max_pebiolc)
-loop(t,
-     if (p30_max200_path(t)<s30_max_pebiolc, 
-       p30_max_pebiolc_path_glob(t) = p30_max200_path(t);
-     ELSE
-       p30_max_pebiolc_path_glob(t) = s30_max_pebiolc;
-     );
-);
-
-*** Reduce the global upper bound on purpose grown bio-energy by residues, since the total bound applies to the sum of residues and purpose grown
-p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) * sm_EJ_2_TWa -  sum(regi, p30_datapebio(regi,"pebiolc","2","maxprod",t)); 
-
+*** Reduce the global upper bound on purpose grown bio-energy by residues,
+*** since the total bound applies to the sum of residues and purpose grown.
+p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) -  sum(regi, p30_datapebio(regi,"pebiolc","2","maxprod",t)); 
 display p30_max_pebiolc_path_glob;
 
-***-------------------------------------------------------------
 *** Calclate regional bounds with equal marginal costs 
 *** from global bound (inverting the supply curve)
-***-------------------------------------------------------------
 loop(ttot$(ttot.val ge cm_startyear),
 *** initialization
      p30_max_pebiolc_dummy = 0;
@@ -87,8 +65,16 @@ loop(ttot$(ttot.val ge cm_startyear),
 );
 
 display p30_max_pebiolc_path;
-***-------------------------------------------------------------
 
+*** According to EMF guidelines, the upper bound on total (residues+purpose) global
+*** biomass production does not include traditional biomass use. Since the demand
+*** for traditional biomass is already supplied by the residue grade we expand the
+*** purpose-grown grade by the demand for traditional biomass.
+vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
+$endif.bioenergymaxscen
+
+***-------------------------------------------------------------
+*** 2. Bound on residues
 *** In REMIND there are two grades for fuel extraxtion from pebiolc. The first grade
 *** is purpose grown bioenergy, the second grade are residues. The residue grade of
 *** pebiolc (pebiolc.2) in REMIND is roughly MAgPIE's residue potential (plus some 
@@ -109,17 +95,6 @@ display p30_max_pebiolc_path;
 p30_maxprod_residue(ttot,regi)     = max(p30_datapebio(regi,"pebiolc","2","maxprod",ttot), sum(teBioPebiolc, pm_pedem_res(ttot,regi,teBioPebiolc)));
 vm_fuExtr.up(t,regi,"pebiolc","2") = p30_maxprod_residue(t,regi)*1.0001;
 
-*** According to EMF guidelines, the upper bound on total (residues+purpose) global
-*** biomass production does not include traditional biomass use. Since the demand 
-*** for traditional biomass is already supplied by the residue grade we expand the
-*** purpose-grown grade by the demand for traditional biomass.
-
-if(cm_bioenergymaxscen>0,
-vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
-);
-
-*** FS: test regional bounds on pebiolc.1 production
-***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
 
 *** -------------------------------------------------------------
 *** Phase out capacities of bioenergy technologies that use
