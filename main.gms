@@ -635,11 +635,6 @@ parameter
   cm_biolc_tech_phaseout = 0;        !! def = 0
 *'
 parameter
-  cm_cprice_red_factor      "scaling factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
-;
-  cm_cprice_red_factor  = 1;         !! def = 1
-*'
-parameter
   cm_startyear              "first optimized modelling time step [year]"
 *' *  (2005): standard for basline to check if model is well calibrated
 *' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
