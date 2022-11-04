@@ -197,7 +197,8 @@ Explanations:
  
 Electrolysis - elh2
 learning parameterization:
-Assume that 10 GW(el) electrolysis installed globally and CAPEX of 900 EUR/kW(el) in 2025 
+Assume that 10 GW(el) electrolysis installed globally and CAPEX of 900 EUR/kW(el) in 2025
+(slightly optimistic due to recent policies, e.g. EU Hydrogen Bank and US Inflation Reduction Act)
 (Odenweller et al. (2022), https://doi.org/10.1038/s41560-022-01097-4,
 Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3).
 10 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.0065 TW(H2) = ccap0
