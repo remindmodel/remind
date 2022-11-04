@@ -230,7 +230,7 @@ v21_taxrevSO2(t,regi) =e= p21_tau_so2_tax(t,regi) * vm_emiTe(t,regi,"so2")
 ***---------------------------------------------------------------------------
 q21_taxrevBio(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevBio(t,regi)
-  =g=
+  =e=
   !! 1. sustainability tax on production
     v21_tau_bio(t)  * vm_pebiolc_price(t,regi)
     * vm_fuExtr(t,regi,"pebiolc","1")
