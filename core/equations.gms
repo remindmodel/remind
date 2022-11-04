@@ -419,7 +419,7 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
 
 ***  learning curve for investment costs
 ***  deactivate learning for tech_stat 4 technologies before 2025 as they are not built before
-q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) AND t.val le 2020)) .. 
+q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) .. 
   vm_costTeCapital(t,regi,teLearn)
   =e=
 ***  special treatment for first time steps: using global estimates better
