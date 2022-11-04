@@ -1,4 +1,4 @@
-.PHONY: help docs update-renv update-all-renv check
+.PHONY: help docs update-renv update-all-renv check check-fix
 .DEFAULT_GOAL := help
 
 help:           ## Show this help.
@@ -21,3 +21,8 @@ update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
 check:          ## Check if the GAMS code follows the coding etiquette
                 ## using gms::codeCheck
 	Rscript -e 'invisible(gms::codeCheck(strict = TRUE))'
+
+check-fix:      ## Check if the GAMS code follows the coding etiquette
+                ## and offer fixing any problems directly if possible
+                ## using gms::codeCheck
+	Rscript -e 'invisible(gms::codeCheck(strict = TRUE, interactive = TRUE))'
