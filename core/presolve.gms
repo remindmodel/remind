@@ -137,8 +137,9 @@ $ENDIF.emiMkt
 
 *** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
 *** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
-*** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * cm_cprice_red_factor;
+*** 1. Optional: Reduce co2 price for land-use entities (see s56_cprice_red_factor in MAgPIE). By default, the scaling factor 
+*** in MAgPIE is 1. Deviations from this MAgPIE default should only be handled in coupled runs and not in REMIND standalone runs.
+*** Therefore, we do not need a counterpart in REMIND standalone.
 *** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);

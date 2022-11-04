@@ -205,7 +205,7 @@ option profile = 0;
 
 *' @code
 *--------------------------------------------------------------------------
-*' #### Configuration - Settings for Scenatios:
+*' #### Configuration - Settings for Scenarios:
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------
@@ -288,9 +288,8 @@ $setglobal agCosts  costs       !! def = costs
 $setglobal CES_parameters  load   !! def = load
 *'---------------------    30_biomass    ----------------------------------------
 *'
-*' * (exogenous):     exogenous biomass extraction and costs
 *' * (magpie_40): using supplycurved derived from MAgpIE 4.0
-$setglobal biomass  magpie_40              !! def = magpie_hightccost
+$setglobal biomass  magpie_40     !! def = magpie_hightccost
 *'---------------------    31_fossil    ----------------------------------------
 *'
 *' * (timeDepGrades): time-dependent grade stucture of fossil resources (oil & gas only)
@@ -526,7 +525,7 @@ parameter
 *' *  (4): no carbon capture in the electricity sector
 *'
 parameter
-  c_bioliqscen              "bioenergy liquids technology choise"
+  c_bioliqscen              "2nd generation bioenergy liquids technology choice"
 ***  (0): no technologies
 ***  (1): all technologies
 ;
@@ -614,8 +613,6 @@ parameter
 ***  (2): 200 EJ global bioenergy potential
 ***  (3): 300 EJ global bioenergy potential
 ***  (4): 152 EJ global bioenergy potential
-***  (6): 75 EJ (2050) and 90 EJ (2100) global bioenergy potential (linear
-***       interpolation in between)
 ;
   cm_bioenergymaxscen = 0;         !! def = 0
 *'
@@ -626,7 +623,7 @@ parameter
   cm_tradecost_bio     = 2;         !! def = 2
 *'
 parameter
-  cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+  cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
 ***  (0): 1st generation biofuels after 2020 are fixed at upper limit of resource potential (maxprod)
 ***  (1): no new capacities for 1st generation biofuel technologies may be built after 2030 -> phaseout until ~2060
 ;
@@ -644,11 +641,6 @@ parameter
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 ;
   cm_biolc_tech_phaseout = 0;        !! def = 0
-*'
-parameter
-  cm_cprice_red_factor      "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
-;
-  cm_cprice_red_factor  = 1;         !! def = 1
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
