@@ -445,7 +445,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       cfg$slurmConfig <- slurmConfig
     }
 
-    if (cfg$pythonEnabled) {
+    if (cfg$pythonEnabled == "on") {
       if (firstScenario) {
         pythonVirtualEnvLockFile <- updatePythonVirtualEnvLockFile()
       }

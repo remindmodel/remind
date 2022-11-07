@@ -104,7 +104,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                stdout = renvLogPath, stderr = "2>&1")
     }
 
-    if (cfg$pythonEnabled) {
+    if (cfg$pythonEnabled == "on") {
       createResultsfolderPythonVirtualEnv(resultsfolder, cfg$pythonVirtualEnvLockFile)
     }
 
