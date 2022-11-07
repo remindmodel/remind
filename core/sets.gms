@@ -1064,7 +1064,7 @@ $if not setGlobal test_TS   2080,
                             2090,
 $if not setGlobal test_TS   2100,
 $if setGlobal END2110       2120
-$if not setGlobal END2110 $if setGlobal test_TS  2110, 2130, 2150
+$if not setGlobal END2110   2110, 2130, 2150
 /
 
 *cb the content of those subsets is defined 16 lines further down
@@ -1082,8 +1082,6 @@ opTime5(opTimeYr)            "actual life time of ??? in years - 5 years time st
 /
 t0(tall)   "start of modelling time, not optimization" /2005/
 
-t_input_gdx(ttot)     "t loaded from input.gdx, used for t interpolation"
-t_interpolate(ttot)   "periods that need interpolation"
 ;
 
 t(ttot)$(ttot.val ge cm_startyear)=Yes;

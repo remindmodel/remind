@@ -1521,11 +1521,6 @@ $setGlobal cm_so2_out_of_opt  on         !! def = on
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
 $setGlobal cm_MOFEX  off        !! def = off
-*** *LB* default: 5 years time steps from 2005 to 2150
-*** *LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*** *LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*** *LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
 $setGlobal cm_Full_Integration  off     !! def = off
