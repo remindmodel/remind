@@ -12,3 +12,22 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   renv::snapshot(prompt = FALSE) # create renv.lock
   message("Finished installing R package dependencies.")
 }
+
+# configure locations of REMIND input data
+foo <- Sys.getenv('REMIND_repos')
+if ('' != foo) {
+  # local directories, separated by colons (":")
+  foo <- unlist(strsplit(foo, ':', fixed = TRUE))
+  bar <- rep(list(NULL), length(foo))
+  attr(bar, 'names') <- foo
+  options(remind_repos = bar)
+  rm('bar')
+} else if (all(file.exists(
+                 c('/p/projects/rd3mod/inputdata/output',
+                   '/p/projects/remind/inputdata/CESparametersAndGDX')))) {
+  # default cluster directories
+  options(remind_repos = list(
+    '/p/projects/rd3mod/inputdata/output' = NULL,
+    '/p/projects/remind/inputdata/CESparametersAndGDX' = NULL))
+}
+rm('foo')
