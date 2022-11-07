@@ -83,7 +83,7 @@ v21_taxrevCO2Sector(t,regi,emi_sectors) =e= p21_CO2TaxSectorMarkup(regi,emi_sect
 *'  Documentation of overall tax approach is above at q21_taxrev.
 ***---------------------------------------------------------------------------
 q21_taxrevCO2luc(t,regi)$(t.val ge max(2010,cm_startyear))..
-v21_taxrevCO2luc(t,regi) =e= pm_taxCO2eqSum(t,regi) * cm_cprice_red_factor * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
+v21_taxrevCO2luc(t,regi) =e= pm_taxCO2eqSum(t,regi) * vm_emiMacSector(t,regi,"co2luc")$(cm_multigasscen ne 3)
                            - pm_taxrevCO2LUC0(t,regi);
 
 ***---------------------------------------------------------------------------

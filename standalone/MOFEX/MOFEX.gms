@@ -145,7 +145,7 @@ cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioe
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
-cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
+cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen           "pure rate of time preference standard values"
@@ -288,7 +288,6 @@ $setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
 cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
 cm_biolc_tech_phaseout  = 0;              !! def = 0
-cm_cprice_red_factor    = 1;              !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
