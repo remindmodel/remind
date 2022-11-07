@@ -1565,7 +1565,6 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
-$setglobal c_delayPolicy  SPA0           !! def = SPA0
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
@@ -1577,7 +1576,6 @@ $setglobal c_CES_calibration_iteration  1     !!  def  =  1
 $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_fixCO2price  off !! def = off
-$setglobal cm_altTransBunkersShare  off      !! def = off
 
 *' @stop
 *--------------------more flags-------------------------------------------------------
