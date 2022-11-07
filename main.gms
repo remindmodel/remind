@@ -1306,8 +1306,6 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (middle) 1.5
 *** (high) 2
 $setGlobal cm_EsubGrowth  low  !! def = low
-*** cm_cooling_shares -    use "static" or "dynamic" cooling shares in module 70_water/heat
-$setglobal cm_cooling_shares  dynamic    !! def = dynamic
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
 $setglobal cm_techcosts  REG       !! def = REG
 *** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
@@ -1582,7 +1580,6 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off    !! def = off
-$setGlobal c_EARLYRETIRE  on         !! def = on
 $setGlobal cm_ccsfosall  off        !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()

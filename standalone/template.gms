@@ -320,7 +320,6 @@ $setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
