@@ -1040,12 +1040,6 @@ tall            "time index"
         1900*3000
         /
 
-*LB* Different time-steps are used for the flags cm_less_TS (default), test_TS,
-*** and END2110. If none of these flags is set, five year steps are used.
-*** test_TS: 2005,2010,2020,2030,2040,2050,2070,2090,2110,2130,2150
-*** cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,
-*** 2070,2080,2090,2100,2110,2130,2150
-*** END2110: 2005:5:2105,2120
 *AJS* Defining ttot as sum of t and tsu will give errors from compiler, so do
 *** it manually instead:
 ttot(tall)      "time index with spin up"
@@ -1065,22 +1059,13 @@ $if not setGlobal test_TS   2045,
                             2050,
 $if not setGlobal test_TS   2055,
 $if not setGlobal test_TS   2060,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2065,
                             2070,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2075,
 $if not setGlobal test_TS   2080,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2085,
                             2090,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2095,
 $if not setGlobal test_TS   2100,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2105,
 $if setGlobal END2110       2120
 $if not setGlobal END2110 $if setGlobal test_TS  2110, 2130, 2150
-$if not setGlobal END2110 $if %cm_less_TS% == "on"  2110, 2130, 2150
-$if not setGlobal END2110 $if not setGlobal test_TS $if %cm_less_TS% == "off"  2110, 2115, 2120, 2125, 2130, 2135, 2140, 2145, 2150
 /
-
-$if not setGlobal test_TS $if %cm_less_TS% == "off" t_interpol(ttot)/ 2065,2075,2085,2095,2105,2115,2125,2135,2145/
 
 *cb the content of those subsets is defined 16 lines further down
 t(ttot) "modeling time, usually starting in 2005, but later for fixed delay runs",
