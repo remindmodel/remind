@@ -58,7 +58,7 @@ The scripts explained earlier should cover all common tasks, use the following f
 - `renv::install("githubuser/package", ref = "<commit hash>")` install package from GitHub, optionally provide commit hash
 - `renv::install("/p/tmp/username/yourpackagefolder")` install package from sources
 - `renv::remove("package")` uninstall package
-- `renv::update()` update all packages
+- `renv::update(exclude = "renv")` update all packages except renv (please do not update renv itself)
 - `renv::update("package")` update package
 - `renv::status()` show differences between library and renv.lock
 - `renv::snapshot()` write state of library to renv.lock

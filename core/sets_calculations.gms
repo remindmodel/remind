@@ -186,10 +186,6 @@ t_magicc(t_magiccttot)$(t_magiccttot.val ge 2005) = Yes;
 
 display "MAGICC related sets", t_magicc, t_extra, t;
 
-Execute_Loadpoint 'input'   t_input_gdx = t;
-
-t_interpolate(ttot) = t(ttot) - t_input_gdx(ttot);
-
 *** Alias of mapping
 en2en2(enty,enty2,te) = en2en(enty,enty2,te);
 
