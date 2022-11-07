@@ -50,6 +50,8 @@ helpText <- "
 "
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
+source("scripts/utils/pythonBinPath.R")
+source("scripts/start/updatePythonVirtualEnvLockFile.R")
 
 ############## Define function: select_testOneRegi_region #############
 select_testOneRegi_region <- function() {
@@ -383,6 +385,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
   }
 
+  firstScenario <- TRUE
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
 
@@ -442,6 +445,12 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       cfg$slurmConfig <- slurmConfig
     }
 
+    if (cfg$pythonEnabled) {
+      if (firstScenario) {
+        pythonVirtualEnvLockFile <- updatePythonVirtualEnvLockFile()
+      }
+      cfg$pythonVirtualEnvLockFile <- pythonVirtualEnvLockFile
+    }
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     filename <- paste0(cfg$title,".RData")
     message("   Writing cfg to file ", filename)

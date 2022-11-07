@@ -5,6 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+source("scripts/utils/pythonBinPath.R")
+
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
   for(i in 1:length(filelist)) {
@@ -14,6 +16,14 @@
         cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
     }
   }
+}
+
+createResultsfolderPythonVirtualEnv <- function(resultsfolder, pythonVirtualEnvLockFile) {
+  # create virtual env
+  newPythonVirtualEnv <- file.path(resultsfolder, ".venv")
+  system2(pythonBinPath(".venv"), c("-mvenv", newPythonVirtualEnv))
+  # install packages into it
+  system2(pythonBinPath(newPythonVirtualEnv), c("-mpip", "install", "-r", pythonVirtualEnvLockFile))
 }
 
 submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
@@ -92,6 +102,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       callr::r(createResultsfolderRenv,
                list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
                stdout = renvLogPath, stderr = "2>&1")
+    }
+
+    if (cfg$pythonEnabled) {
+      createResultsfolderPythonVirtualEnv(resultsfolder, cfg$pythonVirtualEnvLockFile)
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 
