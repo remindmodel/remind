@@ -594,16 +594,36 @@ parameter
   c_solscen        = 1;        !! def = 1
 *'
 parameter
-  cm_bioenergy_tax          "level of bioenergy sustainability tax in fraction of bioenergy price"
-***  The tax is only applied to purpose grown 2nd generation (lignocellulosic)
-***  biomass and the level increases linearly with bioenergy demand. A value of 1
-***  refers to a tax level of 100% at a production of 200 EJ/ 1.5 /yr or 150% at 300 EJ/yr, for example).
-***  (0):               setting equivalent to no tax
-***  (1.5):             (default), implying a tax level of 150% at a demand of
-***                     200 EJ/yr (or 75% at 100 EJ/yr)
-***  (any number >= 0): defines tax level at 200 EJ/yr
+  cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
+*' Only effective if 21_tax is on.
+*' The tax is only applied to purpose grown 2nd generation (lignocellulosic)
+*' biomass and the level increases linearly with bioenergy demand. A value of 1
+*' refers to a tax level of 100% at a production of 200 EJ per yr globally
+*' (implies 50% at 100 EJ per yr or 150% at 300 EJ per yr, for example).
+*' (0):               setting equivalent to no tax
+*' (1.5):             (default), implying a tax level of 150% at a demand of
+*'                    200 EJ per yr (or 75% at 100 EJ per yr)
+*' (any number ge 0): defines tax level at 200 EJ per yr
 ;
-  cm_bioenergy_tax    = 1.5;       !! def = 1.5
+  cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
+*'
+parameter
+  cm_bioenergy_EF_for_tax   "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
+*' Only effective if 21_tax is on, applied to all regions specified by
+*' cm_regi_bioenergy_EFTax. Please note that the tax, which is derived from
+*' this emission factor, is not the same as the sustainabilty tax described
+*' above. Please also note that the emission factor is only used to inform
+*' the tax level, i.e. associated emissions do not enter the emissions balance
+*' equations.
+*' (0)    off
+*' (20)   Sets the emission factor to 20 kgCO2 per GJ, which for example
+*'        results in a tax of 2 $ per GJ (primary energy) at a carbon price of
+*'        100 $ per tCO2:
+*'                20 kgCO2 per GJ * 100 $ per tCO2 
+*'          eq    0.02 tCO2 per GJ * 100 $ per tCO2 
+*'          eq    2 $ per GJ
+;
+cm_bioenergy_EF_for_tax  = 0;        !! def = 0
 *'
 parameter
   cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
@@ -1181,6 +1201,16 @@ $setglobal c_tech_earlyreti_rate  GLO.(biodiesel 0.14, bioeths 0.14), EUR_regi.(
 ***  (SSP2): emissions (from SSP2 scenario in MAgPIE)
 ***  (SSP5): emissions (from SSP5 scenario in MAgPIE)
 $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
+*** cm_regi_bioenergy_EFTax  "region(s) in which bioenergy is charged with an emission-factor-based tax"
+***  This switch has only an effect if 21_tax is on and cm_bioenergy_EF_for_tax
+***  is not zero. It reads in the regions that are affected by the emission-
+***  factor-based bioenergy tax. Regions can be read in comma-separated
+***  Examples:
+***  (glob):                 default; all regions
+***  (EUR):                  only Europe
+***  (DEU):                  only Germany
+***  (CAZ,EUR,JPN,NEU,USA):  only these five regions (more or less OECD)
+$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 *** cm_tradbio_phaseout "Switch that allows for a faster phase out of traditional biomass"
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
