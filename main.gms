@@ -605,7 +605,7 @@ parameter
 *'                    200 EJ per yr (or 75% at 100 EJ per yr)
 *' (any number ge 0): defines tax level at 200 EJ per yr
 ;
-  cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
+  cm_bioenergy_SustTax = 1.5;      !! def = 1.5
 *'
 parameter
   cm_bioenergy_EF_for_tax   "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
@@ -623,22 +623,22 @@ parameter
 *'          eq    0.02 tCO2 per GJ * 100 $ per tCO2 
 *'          eq    2 $ per GJ
 ;
-cm_bioenergy_EF_for_tax  = 0;        !! def = 0
+cm_bioenergy_EF_for_tax = 0;       !! def = 0
 *'
 parameter
   cm_tradecost_bio          "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
-***  (0.5)              (default) low tradecosts (used e.g. for other SSP scenarios than SSP2)
 ***  (1):               medium trade costs (used e.g. for for SSP2)
+***  (0.5)              low tradecosts (used e.g. for other SSP scenarios than SSP2)
 ***  (any value ge 0):  set costs multiplier to that value
 ;
-  cm_tradecost_bio    = 0.5;       !! def = 0.5
+  cm_tradecost_bio = 1;            !! def = 1
 *'
 parameter
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
 ***  (0): 1st generation biofuels after 2020 are fixed at upper limit of resource potential (maxprod)
 ***  (1): no new capacities for 1st generation biofuel technologies may be built after 2030 -> phaseout until ~2060
 ;
-  cm_1stgen_phaseout  = 0;         !! def = 0
+  cm_1stgen_phaseout = 0;          !! def = 0
 *'
 parameter
   cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
@@ -651,7 +651,7 @@ parameter
 ***       tagets in p40_ElecBioBound are removed. The first year, in which no new
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 ;
-  cm_biolc_tech_phaseout = 0;        !! def = 0
+  cm_biolc_tech_phaseout = 0;      !! def = 0
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"

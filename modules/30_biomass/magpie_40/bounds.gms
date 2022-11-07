@@ -35,7 +35,7 @@ else
 *** 1. Bound on purpose grown biomass 
 $ifthen.bioenergymaxscen not %cm_bioenergymaxscen% == "off"
 *** Set bound on global annual pebiolc production and convert from EJ to TWa
-p30_max_pebiolc_path_glob(t) = cm_bioenergymaxscen * sm_EJ_2_TWa;
+p30_max_pebiolc_path_glob(t) = %cm_bioenergymaxscen% * sm_EJ_2_TWa;
 
 *** Reduce the global upper bound on purpose grown bio-energy by residues,
 *** since the total bound applies to the sum of residues and purpose grown.
