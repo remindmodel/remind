@@ -884,7 +884,7 @@ parameter
 *'
 parameter
   c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
-*** budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 400 Gt CO2, for 2 C: 1150 Gt CO2
+*** budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 500 Gt CO2 peak budget (400 Gt CO2 end of century), for 2 C: 1150 Gt CO2
 ;
   c_budgetCO2from2020      = 1150;   !! def = 1150
 *'
