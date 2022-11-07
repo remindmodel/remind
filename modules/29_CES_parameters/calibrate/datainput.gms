@@ -478,13 +478,7 @@ loop ( (t0(t),regi, ppfIO_putty(in)),
     );
 );
 
-$ifthen.growth %cm_esubGrowth% ==  "low"
 p29_esubGrowth = 0.3;
-$elseif.growth %cm_esubGrowth% == "middle"
-p29_esubGrowth = 0.5;
-$elseif.growth %cm_esubGrowth% == "high"
-p29_esubGrowth = 1;
-$endif.growth
-;
+
 *** EOF ./modules/29_CES_parameters/calibrate/datainput.gms
 

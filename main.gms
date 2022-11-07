@@ -1301,11 +1301,6 @@ $setglobal c_CES_calibration_write_prices  0     !!  def  =  0
 $setglobal cm_CES_calibration_default_prices  0.01  !!  def  =  0.01
 *** cm_calibration_string "def = off, else = additional string to include in the calibration name to be used" label for your calibration run to keep calibration files with different setups apart (e.g. with low elasticities, high eleasticies)
 $setglobal cm_calibration_string  off    !!  def  =  off
-*** cm_esubGrowth            "long term growth of the elasticity of substitution"
-*** (low) 1.3
-*** (middle) 1.5
-*** (high) 2
-$setGlobal cm_EsubGrowth  low  !! def = low
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
 $setglobal cm_techcosts  REG       !! def = REG
 *** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
