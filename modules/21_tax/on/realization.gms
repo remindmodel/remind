@@ -7,6 +7,7 @@
 *** SOF ./modules/21_tax/on/realization.gms
 
 *####################### R SECTION START (PHASES) ##############################
+$Ifi "%phase%" == "sets" $include "./modules/21_tax/on/sets.gms"
 $Ifi "%phase%" == "declarations" $include "./modules/21_tax/on/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/21_tax/on/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/21_tax/on/equations.gms"
