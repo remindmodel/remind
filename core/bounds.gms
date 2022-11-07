@@ -148,35 +148,6 @@ if (c_bioh2scen eq 0, !! no bioh2 technologies
 *  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
 
-*NB* controlling for readyness of advanced bio-energy technologies (introduced for EMF33)
-if(c_abtrdy gt 2010,
-  vm_deltaCap.up(t,regi,"biogasc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)       = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioigcc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)   = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioh2c",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)      = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioigccc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioethl",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 1.0e-6;
-*  vm_deltaCap.fx(t,regi,"bioftrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 0;
-*  vm_deltaCap.fx(t,regi,"bioh2",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)       = 0;
-*  vm_deltaCap.fx(t,regi,"bioigcc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 0;
-*  vm_deltaCap.fx(t,regi,"bioftcrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)   = 0;
-*  vm_deltaCap.fx(t,regi,"bioh2c",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)      = 0;
-*  vm_deltaCap.fx(t,regi,"bioigccc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 0;
-*  vm_deltaCap.fx(t,regi,"bioethl",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 0;
-);
-
-*NB* controlling for investment cost of advance bio-energy technologies (introduced for EMF33)
-pm_data(regi, "inco0","biogasc")   = c_abtcst * pm_data(regi, "inco0","biogasc");
-pm_data(regi, "inco0","bioftrec")  = c_abtcst * pm_data(regi, "inco0","bioftrec");
-pm_data(regi, "inco0","bioh2")     = c_abtcst * pm_data(regi, "inco0","bioh2");
-pm_data(regi, "inco0","bioigcc")   = c_abtcst * pm_data(regi, "inco0","bioigcc");
-pm_data(regi, "inco0","bioftcrec") = c_abtcst * pm_data(regi, "inco0","bioftcrec");
-pm_data(regi, "inco0","bioh2c")    = c_abtcst * pm_data(regi, "inco0","bioh2c");
-pm_data(regi, "inco0","bioigccc")  = c_abtcst * pm_data(regi, "inco0","bioigccc");
-pm_data(regi, "inco0","bioethl")   = c_abtcst * pm_data(regi, "inco0","bioethl");
-
 ***--------------------------------------------------------------------
 *RP no CCS should be used in a BAU run, and no CCS at all in 2010
 ***--------------------------------------------------------------------
