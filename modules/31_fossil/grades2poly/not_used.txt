@@ -12,7 +12,6 @@ pm_IO_trade, parameter, ??
 pm_EN_demand_from_initialcap2, parameter, ??
 pm_prtp, parameter, ??
 pm_costsTradePeFinancial,parameter,???
-cm_trdadj,switch,???
 qm_fuel2pe,equation,???
 vm_Xport,input,questionnaire
 pm_fuelex_cum,input,questionnaire

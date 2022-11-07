@@ -10,7 +10,7 @@
 ***                                   PARAMETERS
 ***-------------------------------------------------------------------------------
 parameters
-pm_welf(tall)                                     "Weight parameter in the welfare function to avoid jumps with cm_less_TS"
+pm_welf(tall)                                     "Weight parameter in the welfare function to avoid jumps for years between differnet time step lengths"
 pm_w(all_regi)                                    "Negishi weights"
 pm_prtp(all_regi)                                 "Pure rate of time preference"
 

@@ -7,7 +7,7 @@
 *** SOF ./modules/02_welfare/utilitarian/datainput.gms
 
 pm_welf(ttot)$(ttot.val ge 2005) = 1;
-$if %cm_less_TS% == "on"  pm_welf("2060") = 0.9;
+pm_welf("2060") = 0.9;
 
 *RP* 2012-03-06: Inconvenience costs on seprod
 $IFTHEN.INCONV %cm_INCONV_PENALTY% == "on"

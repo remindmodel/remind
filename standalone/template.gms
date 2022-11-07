@@ -325,7 +325,6 @@ $setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -337,12 +336,6 @@ $setglobal cm_techcosts  REG       !! def = REG
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*LB* default: 5 years time steps from 2005 to 2150
-*LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
-***$setGlobal test_TS             !! def = off
 *GL* Flag for short time horizon
 ***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
