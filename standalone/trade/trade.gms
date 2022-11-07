@@ -458,7 +458,6 @@ cm_deuCDRmax = -1; !! def = -1
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
-$setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
@@ -486,7 +485,6 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
@@ -538,12 +536,6 @@ $setglobal cm_wind_offshore  0      !! def = 0
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*LB* default: 5 years time steps from 2005 to 2150
-*LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
-***$setGlobal test_TS             !! def = off
 *GL* Flag for short time horizon
 ***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
