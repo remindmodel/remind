@@ -37,7 +37,6 @@ p_tall_val(tall) = tall.val;
 
 pm_ts(ttot) = (pm_ttot_val(ttot+1)-(pm_ttot_val(ttot-1)))/2;
 pm_ts("1900") = 2.5;
-$if setGlobal END2110 pm_ts(ttot)$(ord(ttot) eq card(ttot)-1) =  pm_ts(ttot-1) ;
 pm_ts(ttot)$(ord(ttot) eq card(ttot)) = 27;
 pm_dt("1900") = 5;
 pm_dt(ttot)$(ttot.val > 1900) = ttot.val - pm_ttot_val(ttot-1);
@@ -1263,11 +1262,7 @@ $if %c_techcosts% == "REG"    );
 
 *** definition of budgets on energy emissions in GtC and associated time period
 s_t_start        = 2005;
-$IFTHEN.test setglobal test_TS
-sm_endBudgetCO2eq      = 2090;
-$ELSE.test
 sm_endBudgetCO2eq      = 2110;
-$ENDIF.test
 *cb single budget should cover the full modeling time, as otherwise CO2 prices show strange behaviour around 2100 (and rest of behaviour is also biased by foresight of cap-free post 2100)
 if (cm_emiscen eq 6,
 sm_endBudgetCO2eq      = 2150;

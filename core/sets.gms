@@ -1045,22 +1045,21 @@ ttot(tall)      "time index with spin up"
         1960, 1965, 1970, 1975, 1980, 1985,
         1990, 1995,
         2000, 2005, 2010,
-$if not setGlobal test_TS   2015,
-                            2020,
-$if not setGlobal test_TS   2025,
-                            2030,
-$if not setGlobal test_TS   2035,
-                            2040,
-$if not setGlobal test_TS   2045,
-                            2050,
-$if not setGlobal test_TS   2055,
-$if not setGlobal test_TS   2060,
-                            2070,
-$if not setGlobal test_TS   2080,
-                            2090,
-$if not setGlobal test_TS   2100,
-$if setGlobal END2110       2120
-$if not setGlobal END2110   2110, 2130, 2150
+        2015,
+        2020,
+        2025,
+        2030,
+        2035,
+        2040,
+        2045,
+        2050,
+        2055,
+        2060,
+        2070,
+        2080,
+        2090,
+        2100,
+        2110, 2130, 2150
 /
 
 *cb the content of those subsets is defined 16 lines further down

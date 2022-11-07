@@ -1578,11 +1578,7 @@ $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_fixCO2price  off !! def = off
 
 *' @stop
-*--------------------more flags-------------------------------------------------------
-*-------------------------------------------------------------------------------------
-***$setGlobal test_TS             !! def = off
-*GL* Flag for short time horizon
-***$setGlobal END2110             !! def = off
+
 *-------------------------------------------------------------------------------------
 *** automated checks and settings
 *ag* set conopt version

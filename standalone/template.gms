@@ -329,8 +329,6 @@ $setglobal cm_techcosts  REG       !! def = REG
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*GL* Flag for short time horizon
-***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
 
 *-------------------------------------------------------------------------------------

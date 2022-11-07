@@ -160,8 +160,7 @@ $if %cm_OILRETIRE% == "on"    + v31_fuSlack(ttot+1,regi,enty,rlf)
 	=g=
 	p31_datafosdyn(regi,enty,rlf,"decoffset") * p31_grades(ttot,regi,"xi3",enty,rlf) * 0.5 * ( pm_ts(ttot+1) + pm_ts(ttot) )     !! This is an (arbitrarily set) minimal amount that can simply be turned off from one time step to the next
 
-$if not setglobal test_TS   + (1-p31_datafosdyn(regi,enty,rlf,"dec"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
-$if setglobal test_TS       + (1-p31_datafosdyn(regi,enty,rlf,"dec")-0.002)**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
+    + (1-p31_datafosdyn(regi,enty,rlf,"dec"))**(pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * vm_fuExtr(ttot,regi,enty,rlf);
 
 $IFTHEN.cm_OILRETIRE %cm_OILRETIRE% == "on"
 ***CG: replacing earlyreti_lim with regional early retirement rate pm_extRegiEarlyRetiRate(ext_regi)

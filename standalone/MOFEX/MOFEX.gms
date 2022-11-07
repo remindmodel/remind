@@ -527,8 +527,6 @@ $setglobal cm_wind_offshore  0      !! def = 0
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*GL* Flag for short time horizon
-***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
 
 *-------------------------------------------------------------------------------------

@@ -180,12 +180,8 @@ q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
                +  pm_dt(ttot)/2 / pm_dataeta(ttot,regi,te)
                 * pm_omeg(regi,"2",te)
                 * vm_deltaCap(ttot,regi,te,rlf)   
-$ifthen setglobal END2110
-                      - (pm_ts(ttot) / pm_dataeta(ttot,regi,te) * pm_omeg(regi,"11",te)
-                   * 0.5*vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
-$endif
-                                )
-                        );
+                )
+            );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -319,16 +315,9 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
         +  ( pm_dt(ttot) / 2 
        * pm_omeg(regi,"2",te)
        * vm_deltaCap(ttot,regi,te,rlf)
-       )
-$ifthen setGlobal END2110
-    - ( pm_ts(ttot) / 2
-      * pm_omeg(regi,"11",te)
-      * vm_deltaCap(ttot,regi,te,rlf)
-      )$ (ord(ttot) eq card(ttot) )				   
-$endif
-);
-
-
+            )
+         )
+;
 
 q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
