@@ -231,7 +231,6 @@ $setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
 cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
 cm_biolc_tech_phaseout  = 0;              !! def = 0
-cm_cprice_red_factor    = 1;              !! def = 1
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
