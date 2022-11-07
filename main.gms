@@ -205,7 +205,7 @@ option profile = 0;
 
 *' @code
 *--------------------------------------------------------------------------
-*' #### Configuration - Settings for Scenatios:
+*' #### Configuration - Settings for Scenarios:
 *--------------------------------------------------------------------------
 
 ***---------------------    Run name and description    -------------------------
@@ -288,9 +288,8 @@ $setglobal agCosts  costs       !! def = costs
 $setglobal CES_parameters  load   !! def = load
 *'---------------------    30_biomass    ----------------------------------------
 *'
-*' * (exogenous):     exogenous biomass extraction and costs
 *' * (magpie_40): using supplycurved derived from MAgpIE 4.0
-$setglobal biomass  magpie_40              !! def = magpie_hightccost
+$setglobal biomass  magpie_40     !! def = magpie_hightccost
 *'---------------------    31_fossil    ----------------------------------------
 *'
 *' * (timeDepGrades): time-dependent grade stucture of fossil resources (oil & gas only)
@@ -526,7 +525,7 @@ parameter
 *' *  (4): no carbon capture in the electricity sector
 *'
 parameter
-  c_bioliqscen              "bioenergy liquids technology choise"
+  c_bioliqscen              "2nd generation bioenergy liquids technology choice"
 ***  (0): no technologies
 ***  (1): all technologies
 ;
@@ -614,8 +613,6 @@ parameter
 ***  (2): 200 EJ global bioenergy potential
 ***  (3): 300 EJ global bioenergy potential
 ***  (4): 152 EJ global bioenergy potential
-***  (6): 75 EJ (2050) and 90 EJ (2100) global bioenergy potential (linear
-***       interpolation in between)
 ;
   cm_bioenergymaxscen = 0;         !! def = 0
 *'
@@ -626,7 +623,7 @@ parameter
   cm_tradecost_bio     = 2;         !! def = 2
 *'
 parameter
-  cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+  cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
 ***  (0): 1st generation biofuels after 2020 are fixed at upper limit of resource potential (maxprod)
 ***  (1): no new capacities for 1st generation biofuel technologies may be built after 2030 -> phaseout until ~2060
 ;
@@ -644,11 +641,6 @@ parameter
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 ;
   cm_biolc_tech_phaseout = 0;        !! def = 0
-*'
-parameter
-  cm_cprice_red_factor      "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
-;
-  cm_cprice_red_factor  = 1;         !! def = 1
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
@@ -1322,7 +1314,6 @@ $setGlobal cm_VREminShare    off !! def = off
 ***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28. 
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
 $setGlobal cm_CCSmaxBound    off  !! def = off
-$setglobal cm_CES_configuration   indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 *** c_CES_calibration_new_structure      <-   0        switch to 1 if you want to calibrate a CES structure different from input gdx
 $setglobal c_CES_calibration_new_structure  0     !!  def  =  0
 *** c_CES_calibration_write_prices       <-   0       switch to 1 if you want to generate price file, you can use this as new p29_cesdata_price.cs4r price input file
@@ -1601,17 +1592,6 @@ $setglobal cm_process_based_steel   off  !! off
 *** c_CO2priceDependent_AdjCosts
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
-*** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies, 
-***  i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
-***  Example: if set to 10, then the CF of all pe2se technologies can be decreased by up to 10% from the default value
-***  Setting capacity factors free is numerically expensive but can be helpful to see if negative prices disappear in historic years as the model is allowed to dispatch.
-$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
-*** cm_dispatchSeelDown <- "off", same as cm_dispatchSetyDown but only provides range to capacity factors of electricity generation technologies
-***  cm_steel_secondary_max_share_scenario
-***  defines maximum secondary steel share per region
-***  Share is faded in from cm_startyear or 2020 to the denoted level by region/year.
-***  Example: "2040.EUR 0.6" will cap the share of secondary steel production at 60 % in EUR from 2040 onwards
-$setGlobal cm_dispatchSeelDown  off   !! def = off  The amount that te producing seel can dispatch less (in percent) (overrides cm_dispatchSetyDown for te producing seel)
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 
