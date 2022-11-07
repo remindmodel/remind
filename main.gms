@@ -244,14 +244,14 @@ $setGlobal aerosols  exoGAINS         !! def = exoGAINS
 $setGlobal climate  off               !! def = off
 *'---------------------    16_downscaleTemperature    --------------------------
 *'
-*** (off)
-*** (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). Requires climate= 'off' and cm_rcp_scen=none"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
+*' * (off)
+*' * (CMIP5): downscale GMT to regional temperature based on CMIP5 data (between iterations, no runtime impact). Requires climate= 'off' and cm_rcp_scen=none"iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 $setGlobal downscaleTemperature  off  !! def = off
 *'---------------------    20_growth    ------------------------------------------
 *'
-*** (exogenous): exogenous growth
-*** (endogenous): endogenous growth !!Warning: still experimental stuff!!
-*** (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
+*' * (exogenous): exogenous growth
+*' * (endogenous): endogenous growth !!Warning: still experimental stuff!!
+*' * (spillover): endogenous growth with spillover externality !!Warning: not yet calibrated!!
 $setglobal growth  exogenous                !! def = exogenous
 *'---------------------    21_tax    ------------------------------------------
 *'
@@ -502,11 +502,10 @@ parameter
 *'
 parameter
   c_macscen                 "use of mac"
-***  (1): on
-***  (2): off
 ;
   c_macscen         = 1;               !! def = 1
-*'
+*'  (1): on
+*'  (2): off
 parameter
   cm_nucscen                "nuclear option choice"
 ;
@@ -864,30 +863,10 @@ parameter
   c_budgetCO2from2020FFI   = 700;    !! def = 700
 *'
 parameter
-  c_abtrdy              "first year in which advanced bio-energy technology are ready (unit is year; e.g. 2050)"
-;
-  c_abtrdy                 = 2010;   !! def = 2010
-*'
-parameter
-  c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
-;
-  c_abtcst                 = 1;      !! def = 1
-*'
-parameter
   c_budgetCO2from2020   "carbon budget for all CO2 emissions starting from 2020 (in GtCO2)"
 *** budgets from AR6 for 2020-2100 (including 2020), for 1.5 C: 400 Gt CO2, for 2 C: 1150 Gt CO2
 ;
   c_budgetCO2from2020      = 1150;   !! def = 1150
-*'
-parameter
-  cm_trdcst              "parameter to scale trade export cost for gas"
-;
-  cm_trdcst            = 1.5;  !! def = 1.5
-*'
-parameter
-  cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
-;
-  cm_trdadj            = 2;    !! def = 2.0
 *'
 parameter
   cm_postTargetIncrease     "carbon price increase per year after regipol emission target is reached (euro per tCO2)"
@@ -1327,8 +1306,6 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 *** (middle) 1.5
 *** (high) 2
 $setGlobal cm_EsubGrowth  low  !! def = low
-*** cm_cooling_shares -    use "static" or "dynamic" cooling shares in module 70_water/heat
-$setglobal cm_cooling_shares  dynamic    !! def = dynamic
 *** cm_techcosts -     use regionalized or globally homogenous technology costs for certain technologies
 $setglobal cm_techcosts  REG       !! def = REG
 *** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
@@ -1544,11 +1521,6 @@ $setGlobal cm_so2_out_of_opt  on         !! def = on
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
 $setGlobal cm_MOFEX  off        !! def = off
-*** *LB* default: 5 years time steps from 2005 to 2150
-*** *LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*** *LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*** *LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
 $setGlobal cm_Full_Integration  off     !! def = off
@@ -1603,7 +1575,6 @@ $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off    !! def = off
-$setGlobal c_EARLYRETIRE  on         !! def = on
 $setGlobal cm_ccsfosall  off        !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
