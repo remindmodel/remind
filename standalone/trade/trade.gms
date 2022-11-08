@@ -144,12 +144,12 @@ cm_CCS_cement        "CCS for cement sub-sector"
 cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
-cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
+cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
+cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2/GJ]"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
-cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen           "pure rate of time preference standard values"
@@ -283,13 +283,15 @@ cm_CCS_steel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
-cm_bioenergy_tax    = 1.5;       !! def = 1.5
-cm_bioenergymaxscen = 0;         !! def = 0
-cm_tradecost_bio     = 2;         !! def = 2
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-cm_1stgen_phaseout  = 0;         !! def = 0
-$setglobal cm_tradbio_phaseout  default  !! def = default
-cm_cprice_red_factor  = 1;         !! def = 1
+cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
+cm_bioenergy_EF_for_tax = 0;              !! def = 0
+$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
+cm_bioenergymaxscen     = 0;              !! def = 0
+cm_tradecost_bio        = 2;              !! def = 2
+$setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
+cm_1stgen_phaseout      = 0;              !! def = 0
+$setglobal cm_tradbio_phaseout  default   !! def = default
+cm_biolc_tech_phaseout  = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
@@ -460,7 +462,6 @@ cm_deuCDRmax = -1; !! def = -1
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
-$setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
@@ -488,7 +489,6 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
@@ -540,12 +540,6 @@ $setglobal cm_wind_offshore  0      !! def = 0
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*LB* default: 5 years time steps from 2005 to 2150
-*LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
-***$setGlobal test_TS             !! def = off
 *GL* Flag for short time horizon
 ***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off

@@ -97,25 +97,19 @@ if (! exists("output")) {
 
 # Select output directories if not defined by readArgs
 if (! exists("outputdir")) {
-  if ("policyCosts" %in% output) {
-    message("\nFor policyCosts, specify policy runs and reference runs alternatingly:")
-    message("3,1,4,1 compares runs 3 and 4 with 1.")
-  }
   dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
   dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
   names(dirs) <- stringr::str_extract(dirs, "rem-[0-9]+$")
   names(dirs)[is.na(names(dirs))] <- ""
-  selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation", returnBoolean = FALSE,
-                                    multiple = TRUE)
+  selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation",
+                    userinfo = if ("policyCosts" %in% output) "The reference run will be selected separately!" else FALSE,
+                    returnBoolean = FALSE, multiple = TRUE)
   outputdirs <- file.path("output", selectedDirs)
-  if (exists("remind_dir")) {
-    for (i in seq_along(selectedDirs)) {
-      last_iteration <-
-        max(as.numeric(sub("magpie_", "", grep("magpie_",
-                                               list.dirs(file.path(remind_dir, selectedDirs[i], "data", "results")),
-                                               value = TRUE))))
-      outputdirs[i] <- file.path(remind_dir, selectedDirs[i], "data", "results", paste0("magpie_", last_iteration))
-    }
+  if ("policyCosts" %in% output) {
+    policyrun <- file.path("output", chooseFromList(dirs, type = "reference run to which policy run will be compared",
+                           userinfo = "Select a single reference run.",
+                           returnBoolean = FALSE, multiple = FALSE))
+    outputdirs <- c(rbind(outputdirs, policyrun))
   }
 } else {
   outputdirs <- outputdir

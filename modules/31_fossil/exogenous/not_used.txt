@@ -27,7 +27,6 @@ cm_rentdisccoal,switch,???
 cm_rentdisccoal2,switch,???
 cm_rentconvcoal,switch,???
 pm_costsTradePeFinancial,parameter,???
-cm_trdadj,switch,???
 qm_fuel2pe,equation,???
 pm_ffPolyCumEx,input,questionnaire
 pm_fuelex_cum,input,questionnaire

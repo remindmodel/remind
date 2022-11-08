@@ -67,7 +67,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
-    for (switchname in intersect(c("model", "regionmapping", "inputRevision", "slurmConfig"), names(iscenarios))) {
+    for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig"), names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
@@ -213,6 +213,15 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
   if (gms::getLine() %in% c("Y", "y")) flags <- c(flags, "--reprepare")
 }
 
+# Check if dependencies for a model run are fulfilled
+if (packageVersion("lucode2") >= "0.34.0") {
+  lucode2::checkDeps(action = "ask")
+} else {
+  stop("REMIND requires lucode2 >= 0.34.0, please run the following to update it:\n",
+       "renv::install('lucode2'); renv::snapshot(prompt = FALSE)\n",
+       "and re-run start.R in a fresh R session.")
+}
+
 ignorederrors <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
@@ -327,7 +336,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     cfg <- readDefaultConfig(".")
     knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                          "regionmapping", "inputRevision", "slurmConfig")
+                          "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
