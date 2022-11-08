@@ -17,14 +17,14 @@
 *'
 *' With this module activated, MAGICC is run between iterations one time or several, depending on specific switches. 
 
-*' By default, the global mean temperature change is simpy read and passed on to other modules.
+*' By default, the global mean temperature change is simply read and passed on to other modules.
 
 *' Depending on the choice of carbon tax adjustment in `cm_emiscen`, the total carbon budget will also be adjusted based on 
 *' the MAGICC radiation forcing or temperature outcomes between iterations. This can allow the carbon tax, which is adjusted based on the carbon budget, to be optimized
 *' for a given temperature target.
 
 *' If `cm_magicc_temperatureImpulseResponse` is on, a new Temperature Impulse Response Function (TIRF)
-*' is also generated between iterations. The TIRF is smooth function that estimates the effect of an additional unit
+*' is also generated between iterations. The TIRF is a smooth function that estimates the effect of an additional unit
 *' of emissions in global temperature, and it's used by some damage modules that internalize climate damages (i.e. account
 *' for damages within the optimization). To derive a TIRF, MAGICC is run several times with pulse emissions added around the
 *' the emissions of that iteration.  
