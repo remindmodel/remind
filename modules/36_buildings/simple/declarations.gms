@@ -13,7 +13,7 @@ scalars
 ;
 
 Parameters
-  p36_CESMkup(ttot,all_regi,all_in)               "CES markup cost parameter [trUSD/CES input]"
+  p36_CESMkup(ttot,all_regi,all_in)               "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
   p36_floorspace(tall,all_regi)                   "buildings floorspace, billion m2, in simple realization only used for reporting"
   p36_uedemand_build(tall,all_regi,all_in)        "useful energy demand in buildings in TWh/a, in simple realization only used for reporting"
   ;
@@ -41,7 +41,7 @@ Equations
   q36_costAddH2LowPen(ttot,all_regi) "additional buildings hydrogen annual investment costs under low technology diffusion"
   q36_auxCostAddTeInv(ttot,all_regi) "auxiliar logistic function exponent calculation for additional hydrogen low penetration cost"  
   q36_costAddH2PhaseIn(ttot,all_regi) "calculation of additional industry hydrogen t&d cost at low penetration levels of hydrogen in buildings" 
-  q36_costCESmarkup(ttot,all_regi,all_in) "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
+  q36_costCESmarkup(ttot,all_regi,all_in) "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
   q36_costAddTeInv(ttot,all_regi,all_te)  "summation of sector-specific demand-side cost"
 ;
 

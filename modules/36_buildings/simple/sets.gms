@@ -69,6 +69,12 @@ Sets
  ue_dyn36(all_in)  "useful energy items"
  //
 
+ ppfen_MkupCost36(all_in)  "primary production factors in buildings on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
+  /
+  feelhpb
+  feheb
+  /
+
 ;
 
 cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;
