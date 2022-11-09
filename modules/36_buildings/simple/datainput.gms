@@ -88,30 +88,6 @@ $ifthen.feShareScenario "%cm_feShareLimits%" == "incumbents"
     0.15 + (0.10 / 20) * (t.val - 2030);
 $endif.feShareScenario
 
-* FS: limited share of district heat or electricity in buildings in EU regions
-if ((cm_HeatLim_b lt 1),
-  pm_shfe_up(t,regi,"fehes","build")$(regi_group("EUR_regi",regi)
-                                      AND t.val gt 2030
-                                      AND t.val lt 2100) =
-    cm_HeatLim_b + 0.05;
-  pm_shfe_up(t,regi,"fehes","build")$(regi_group("EUR_regi",regi)
-                                      AND t.val gt 2040
-                                      AND t.val lt 2100) =
-    cm_HeatLim_b;
-);
-
-if ((cm_ElLim_b lt 1),
-  pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi)
-                                      AND t.val gt 2030
-                                      AND t.val lt 2100) =
-    cm_ElLim_b + 0.05;
-  pm_shfe_up(t,regi,"feels","build")$(regi_group("EUR_regi",regi)
-                                      AND t.val gt 2040
-                                      AND t.val lt 2100) =
-    cm_ElLim_b;
-);
-
-
 ***-----------------------------------------------------------------------------
 *` CES mark-up cost buildings
 ***-----------------------------------------------------------------------------

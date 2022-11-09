@@ -1097,24 +1097,8 @@ parameter
   cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 ***  def 1, 100% bioenergy import tax
 ***  if larger zero, EU subregions pay cm_BioImportTax_EU of the world market price for in addition biomass imports after 2030 due to sustainability concerns
-***  cm_biotrade_phaseout !! def = 0
-***  (0) no biomass trade restrictions
-***  (1) constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
 ;
   cm_BioImportTax_EU = 1; !! def 0.25
-*'
-parameter
-  cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
-***  set upper limits for heat and electricity shares in FE buildlings only for the EU regions
-*** def 1, no limit on district heating in FE buildings, if <1, then this serves as an upper bound to the buildings FE heat share
-;
-  cm_HeatLim_b = 1; !! def 1
-*'
-parameter
-  cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
-*** def 1, no limit on electricity in FE buildings, if <1, then this serves as an upper bound to the buildings FE electricity share
-;
-  cm_ElLim_b = 1; !! def 1
 *'
 parameter
   cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
