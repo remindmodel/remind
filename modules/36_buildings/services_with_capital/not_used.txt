@@ -10,7 +10,7 @@ pm_cumDeprecFactor_old,input,questionnaire
 pm_cumDeprecFactor_new,input,questionnaire
 vm_costAddTeInv,input,questionnaire
 cm_build_H2costAddH2Inv,input,questionnaire
-cm_build_costDecayStart,input,questionnaire
+cm_build_H2costDecayStart,input,questionnaire
 cm_build_H2costDecayEnd,input,questionnaire
 cm_logitCal_markup_conv_b,input,questionnaire
 cm_logitCal_markup_newtech_conv_b,input,questionnaire

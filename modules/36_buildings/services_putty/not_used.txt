@@ -7,7 +7,7 @@
 name,type,reason
 vm_costAddTeInv,input,questionnaire
 cm_build_H2costAddH2Inv,input,questionnaire
-cm_build_costDecayStart,input,questionnaire
+cm_build_H2costDecayStart,input,questionnaire
 cm_build_H2costDecayEnd,input,questionnaire
 cm_HeatLim_b,input,questionnaire
 cm_ElLim_b,input,questionnaire

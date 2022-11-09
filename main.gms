@@ -1059,9 +1059,9 @@ parameter
   cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
 *'
 parameter
-  cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
+  cm_build_H2costDecayStart   "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 ;
-  cm_build_costDecayStart = 0.05; !! def 5%
+  cm_build_H2costDecayStart = 0.05; !! def 5%
 *'
 parameter
   cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
