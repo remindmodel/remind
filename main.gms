@@ -1001,12 +1001,6 @@ parameter
   cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 *'
 parameter
-  cm_biotrade_phaseout        "switch for phasing out biomass trade in the EU regions by 2030"
-***  def 0, means no biomass import phase out
-;
-  cm_biotrade_phaseout = 0; !! def 0
-*'
-parameter
   cm_bioprod_histlim          "regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
 *** def -1, means no additional limit to bioenergy production relative to historic production
 *** limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
