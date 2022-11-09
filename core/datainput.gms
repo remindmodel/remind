@@ -322,8 +322,6 @@ pm_share_trans("2150",regi) = 0.872;
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
   fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  fm_dataemiglob("pecoal","seel","pcc","co2")      = 0.2;
-  fm_dataemiglob("pecoal","seel","pcc","cco2")     = 25.9;
   fm_dataemiglob("pecoal","seel","coalh2c","co2")  = 0.2;
   fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"

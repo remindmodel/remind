@@ -104,8 +104,6 @@ p21_tau_pe2se_sub(tall,regi,te)= 0;
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
 *GL* Values try to account for excessive water use, further pollution
 *GL* Taxes are given in USD(2005) per GJ 
-p21_tau_pe2se_tax(ttot,regi,"pcc")$(ttot.val ge 2005)        = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"pco")$(ttot.val ge 2005)        = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = 1.0;
