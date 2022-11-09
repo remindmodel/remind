@@ -140,12 +140,12 @@ cm_CCS_cement        "CCS for cement sub-sector"
 cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
-cm_bioenergy_tax      "level of bioenergy tax in fraction of bioenergy price"
+cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
+cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2/GJ]"
 cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
 cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
-cm_cprice_red_factor  "reduction factor for price on co2luc when calculating the revenues. Replicates the reduction applied in MAgPIE"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen           "pure rate of time preference standard values"
@@ -216,7 +216,7 @@ cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
-cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
+cm_build_H2costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
 cm_build_AdjCostActive      "Activate adjustment cost to penalise inter-temporal variation of area-specific weatherisation demand and space cooling efficiency slope (only in putty)"
 cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
@@ -279,13 +279,15 @@ cm_CCS_steel           = 1;        !! def = 1
 
 $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 
-cm_bioenergy_tax    = 1.5;       !! def = 1.5
-cm_bioenergymaxscen = 0;         !! def = 0
-cm_tradecost_bio     = 2;         !! def = 2
-$setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
-cm_1stgen_phaseout  = 0;         !! def = 0
-$setglobal cm_tradbio_phaseout  default  !! def = default
-cm_cprice_red_factor  = 1;         !! def = 1
+cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
+cm_bioenergy_EF_for_tax = 0;              !! def = 0
+$setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
+cm_bioenergymaxscen     = 0;              !! def = 0
+cm_tradecost_bio        = 2;              !! def = 2
+$setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
+cm_1stgen_phaseout      = 0;              !! def = 0
+$setglobal cm_tradbio_phaseout  default   !! def = default
+cm_biolc_tech_phaseout  = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
@@ -325,7 +327,6 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
-$setglobal c_delayPolicy  SPA0           !! def = SPA0
 cm_gs_ew                 = 20;     !! def = 20
 cm_LimRock               = 1000;   !! def = 1000
 c_tau_so2_xmpt           = 0;      !! def = 0
@@ -362,7 +363,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
 cm_priceSensiBuild     = -3;
-$setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
@@ -401,7 +401,7 @@ cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - b
 
 *** H2 simple buildings/industry switches
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
-cm_build_costDecayStart = 0.05; !! def 5%
+cm_build_H2costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.1;  !! def 10%
 
 cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
@@ -453,7 +453,6 @@ cm_deuCDRmax = -1; !! def = -1
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
-$setGlobal c_EARLYRETIRE       on         !! def = on
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
@@ -461,7 +460,6 @@ $setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  on        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
@@ -483,7 +481,6 @@ $setglobal cm_calibration_string  off      !! def = off
 
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 
-$setglobal cm_cooling_shares  static    !! def = static
 $setglobal cm_techcosts  REG       !! def = REG
 $setglobal cm_regNetNegCO2  on       !! def = on
 
@@ -523,8 +520,6 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
-$setglobal cm_altTransBunkersShare  off      !! def = off
-
 $setglobal cm_wind_offshore  0      !! def = 0
 
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -536,14 +531,6 @@ $setglobal cm_wind_offshore  0      !! def = 0
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*LB* default: 5 years time steps from 2005 to 2150
-*LB* test_TS: 2005,2010, 2020,2030,2040,2050,2070,2090,2110,2130,2150
-*LB* cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,2070,2080,2090,2100,2110,2130,2150
-*LB* END2110: 2005:5:2105,2120
-$setGlobal cm_less_TS  on  !! def = on
-***$setGlobal test_TS             !! def = off
-*GL* Flag for short time horizon
-***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
 
 *-------------------------------------------------------------------------------------

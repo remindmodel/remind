@@ -103,8 +103,6 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *** ------------------------------------------------------------------------------------------
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"pcc",rlf)          = 0;
-  vm_cap.fx(t,regi_capturescen,"pco",rlf)          = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
 ***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
 ***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
@@ -147,35 +145,6 @@ if (c_bioh2scen eq 0, !! no bioh2 technologies
 *  vm_cap.fx(t,regi,"bioh2c",rlf)       = 0;
 *  vm_cap.fx(t,regi,"bioh2",rlf)       = 0;
 );
-
-*NB* controlling for readyness of advanced bio-energy technologies (introduced for EMF33)
-if(c_abtrdy gt 2010,
-  vm_deltaCap.up(t,regi,"biogasc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioftrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioh2",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)       = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioigcc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioftcrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)   = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioh2c",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)      = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioigccc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 1.0e-6;
-  vm_deltaCap.up(t,regi,"bioethl",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 1.0e-6;
-*  vm_deltaCap.fx(t,regi,"bioftrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 0;
-*  vm_deltaCap.fx(t,regi,"bioh2",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)       = 0;
-*  vm_deltaCap.fx(t,regi,"bioigcc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 0;
-*  vm_deltaCap.fx(t,regi,"bioftcrec",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)   = 0;
-*  vm_deltaCap.fx(t,regi,"bioh2c",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)      = 0;
-*  vm_deltaCap.fx(t,regi,"bioigccc",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)    = 0;
-*  vm_deltaCap.fx(t,regi,"bioethl",rlf)$(t.val lt c_abtrdy AND t.val gt 2005)     = 0;
-);
-
-*NB* controlling for investment cost of advance bio-energy technologies (introduced for EMF33)
-pm_data(regi, "inco0","biogasc")   = c_abtcst * pm_data(regi, "inco0","biogasc");
-pm_data(regi, "inco0","bioftrec")  = c_abtcst * pm_data(regi, "inco0","bioftrec");
-pm_data(regi, "inco0","bioh2")     = c_abtcst * pm_data(regi, "inco0","bioh2");
-pm_data(regi, "inco0","bioigcc")   = c_abtcst * pm_data(regi, "inco0","bioigcc");
-pm_data(regi, "inco0","bioftcrec") = c_abtcst * pm_data(regi, "inco0","bioftcrec");
-pm_data(regi, "inco0","bioh2c")    = c_abtcst * pm_data(regi, "inco0","bioh2c");
-pm_data(regi, "inco0","bioigccc")  = c_abtcst * pm_data(regi, "inco0","bioigccc");
-pm_data(regi, "inco0","bioethl")   = c_abtcst * pm_data(regi, "inco0","bioethl");
 
 ***--------------------------------------------------------------------
 *RP no CCS should be used in a BAU run, and no CCS at all in 2010
@@ -475,9 +444,7 @@ vm_cap.fx(ttot,regi,te,rlf)$((NOT rlf.val eq 1) AND ( teSe2rlf(te,"1") OR teFe2r
 *** fix F-gas emissions to inputdata (IMAGE)
 ***----------------------------------------------------------------------------
 
-*** cm_startyear eq 2015 - SPA0
-*** cm_startyear gt 2015 - SPAx
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","%c_delayPolicy%",all_enty);
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
 display vm_emiFgas.L;
 
 

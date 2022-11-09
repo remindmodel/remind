@@ -7,7 +7,7 @@
 name,type,reason
 vm_costAddTeInv,input,questionnaire
 cm_build_H2costAddH2Inv,input,questionnaire
-cm_build_costDecayStart,input,questionnaire
+cm_build_H2costDecayStart,input,questionnaire
 cm_build_H2costDecayEnd,input,questionnaire
 cm_HeatLim_b,input,questionnaire
 cm_ElLim_b,input,questionnaire
@@ -21,3 +21,4 @@ sm_TWa_2_MWh,input,questionnaire
 vm_costCESMkup,input,questionnaire
 sm_trillion_2_non,input,questionnaire
 sm_TWa_2_kWh,input,questionnaire
+pm_tau_ces_tax,input,questionnaire

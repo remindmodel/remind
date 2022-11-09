@@ -344,9 +344,7 @@ if(length(fulldim(price)[[2]][[3]])>1)  price <- collapseNames(price) # only if 
 						 title=paste0("Purpose grown bioenergy price: shifted, without tax"))
              
 ############### READ DYNAMIC BIO TAX ################################
-dyntax <- read_all(gdx_path,readpar,name="p21_tau_bioenergy_tax",as.list=FALSE)
-#dyntax <- read_all(gdx_path,readvar,name="v21_tau_bio",as.list=FALSE)
-#dyntax <- setNames(dyntax,gsub(".","",getNames(dyntax),fixed=TRUE))
+dyntax <- read_all(gdx_path,readvar,name="v21_tau_bio",as.list=FALSE)
 if(length(fulldim(dyntax)[[2]][[3]])>1) dyntax <- collapseNames(dyntax) # only if there is more than one scenario, otherwise keep single scenarioname
 
 	#### PLOT REGIONAL BIOENERGY PRICES (purpose) #####

@@ -17,7 +17,8 @@ pm_taxCO2eq, parameter, ???
 pm_tau_fe_sub, parameter, ???
 pm_tau_fe_tax, parameter, ???
 pm_ts, parameter, ???
-cm_bioenergy_tax, switch, ???
+cm_bioenergy_SustTax,input,questionnaire
+cm_bioenergy_EF_for_tax,input,questionnaire
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
@@ -43,7 +44,6 @@ pm_ttot_val,input,questionnaire
 p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
-cm_cprice_red_factor,input,questionnaire
 vm_pebiolc_price,input,questionnaire
 vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
