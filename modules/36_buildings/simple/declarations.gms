@@ -7,9 +7,14 @@
 *** SOF ./modules/36_buildings/simple/declarations.gms
 
 Parameters
-  p36_CESMkup(ttot,all_regi,all_in)        "CES markup cost parameter [trUSD/CES input]  demand-side cost of electrification /district heating and reach higher efficiency during calibration which leads to some energy efficiency gains e.g. of electrification"
+  p36_CESMkup(ttot,all_regi,all_in)        "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
   p36_floorspace(tall,all_regi)            "buildings floorspace, billion m2, in simple realization only used for reporting"
   p36_uedemand_build(tall,all_regi,all_in) "useful energy demand in buildings in TWh/a, in simple realization only used for reporting"
+;
+
+$ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
+Parameter
+	p36_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in buildings to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_build% /
 ;
 
 Variables
@@ -26,11 +31,11 @@ Positive Variables
 Equations
   q36_demFeBuild(ttot,all_regi,all_enty,all_emiMkt) "buildings final energy demand"
   q36_H2Share(ttot,all_regi)                        "H2 share in gases"
-  q36_costAddH2LowPen(ttot,all_regi)                "additional buildings H2 annual investment costs at low penetration"
-  q36_auxCostAddTeInv(ttot,all_regi)                "auxiliar logistic function exponent calculation for additional for H2 at low penetration"  
-  q36_costAddH2PhaseIn(ttot,all_regi)               "additional industry H2 t&d cost at low penetration levels of H2 in buildings" 
-  q36_costCESmarkup(ttot,all_regi,all_in)           "additional CES markup cost to represent demand-side technology cost of end-use transformation, e.g. cost of heat pumps"
-  q36_costAddTeInv(ttot,all_regi,all_te)            "sector-specific demand-side cost"
+  q36_auxCostAddTeInv(ttot,all_regi)                "logistic function exponent calculation for additional cost at low H2 penetration"  
+  q36_costAddH2LowPen(ttot,all_regi)                "additional annual investment costs under low H2 penetration in buildings"
+  q36_costAddH2PhaseIn(ttot,all_regi)               "additional industry H2 t&d cost at low H2 penetration in buildings" 
+  q36_costCESmarkup(ttot,all_regi,all_in)           "calculation of additional CES markup cost that are accounted in the budget (GDP) to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps"
+  q36_costAddTeInv(ttot,all_regi,all_te)            "summation of sector-specific demand-side cost"
 ;
 
 *** EOF ./modules/36_buildings/simple/declarations.gms
