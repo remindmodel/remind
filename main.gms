@@ -359,6 +359,7 @@ $setglobal emicapregi  none           !! def = none
 *' * (banking):  only banking allowed, no borrowing at all
 $setglobal banking  off          !! def = off
 *'---------------------    45_carbonprice  ----------------------------------------
+*'
 *' This module defines the carbon price pm_taxCO2eq, with behaviour across regions governed by similar principles (e.g. global targets, or all following NDC or NPi policies).
 *'
 *' * (none): no tax policy (combined with all emiscens except emiscen eq 9)
@@ -374,6 +375,7 @@ $setglobal banking  off          !! def = off
 *' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
+*'
 *' This module applies a markup pm_taxCO2eqRegi on top of pm_taxCO2eq to achieve additional intermediate targets.
 *'
 *' * (none): no regional carbonprice policies
@@ -381,6 +383,7 @@ $setglobal carbonprice  none           !! def = none
 *' * (netZero): implements a carbon price markup trajectory consistent with the net zero targets, the region settings can be adjusted with cm_netZeroScen
 $setglobal carbonpriceRegi  none      !! def = none
 *'---------------------    47_regipol  -----------------------------------------
+*'
 *' The regiCarbonPrice realisation defines more detailed region or emissions market specific targets, overwriting the behaviour of pm_taxCO2eq and pm_taxCO2eqRegi for these regions.
 *'
 *' * (none): no regional policies
@@ -595,6 +598,8 @@ parameter
 *'
 parameter
   cm_bioenergy_SustTax      "level of the bioenergy sustainability tax in fraction of bioenergy price"
+;
+  cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
 *' Only effective if 21_tax is on.
 *' The tax is only applied to purpose grown 2nd generation (lignocellulosic)
 *' biomass and the level increases linearly with bioenergy demand. A value of 1
@@ -604,11 +609,11 @@ parameter
 *' (1.5):             (default), implying a tax level of 150% at a demand of
 *'                    200 EJ per yr (or 75% at 100 EJ per yr)
 *' (any number ge 0): defines tax level at 200 EJ per yr
-;
-  cm_bioenergy_SustTax   = 1.5;      !! def = 1.5
 *'
 parameter
   cm_bioenergy_EF_for_tax   "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
+;
+  cm_bioenergy_EF_for_tax  = 0;        !! def = 0
 *' Only effective if 21_tax is on, applied to all regions specified by
 *' cm_regi_bioenergy_EFTax. Please note that the tax, which is derived from
 *' this emission factor, is not the same as the sustainabilty tax described
@@ -622,8 +627,6 @@ parameter
 *'                20 kgCO2 per GJ * 100 $ per tCO2 
 *'          eq    0.02 tCO2 per GJ * 100 $ per tCO2 
 *'          eq    2 $ per GJ
-;
-cm_bioenergy_EF_for_tax  = 0;        !! def = 0
 *'
 parameter
   cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
@@ -663,11 +666,11 @@ parameter
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
+;
+  cm_startyear      = 2005;      !! def = 2005 for a baseline
 *' *  (2005): standard for basline to check if model is well calibrated
 *' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
 *' *  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
-;
-  cm_startyear      = 2005;      !! def = 2005 for a baseline
 *'
 parameter
   c_start_budget            "start of GHG budget limit"
@@ -1160,6 +1163,7 @@ parameter
 *** switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 ;
   cm_deuCDRmax = -1; !! def = -1
+*'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS 
 ***-----------------------------------------------------------------------------
