@@ -1,14 +1,13 @@
-Changing inputs in REMIND model
-================
-Miško Stevanović (<stevanovic@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>)
+# Changing inputs in REMIND model
+Miško Stevanović (<stevanovic@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), Mika Pflüger(<mika.pflueger@pik-potsdam.de>)
 
 -   [Introduction](#introduction)
--   [Local Input Data](#local-input-data)
+-   [Download Input Data Automatically](#download-input-data-automatically)
+-   [Use Local Input Data](#use-local-input-data)
 -   [Adding New Input Data](#adding-new-input-data)
 -   [How to Update Input Data](#how-to-update-input-data)
 
-Introduction
-===============
+## Introduction
 
 The input data for REMIND is prepared by a set of pre-processing routines that take the data from original sources (e.g. IEA, GTAP, PWT...), execute additional calculations and convert it to the required REMIND parameter format. 
 
@@ -24,30 +23,57 @@ the name of the needed input data is constructed. It is checked whether those in
 
 The prepared input data is a compressed tar archive file "`.tgz`", which can be opened with software such as [7-Zip](https://www.7-zip.org/), or in terminal by `tar` and `untar` commands. 
 
-Local Input Data
-==================
-If you like to get the input data on your local machine you need to copy your ssh key (`/home/[your_cluster_user_name]/.ssh/id_dsa`) to your computer and adjust your local **.Rprofile** by adding the following line:
-``` r
-options(remind_repos=list("scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output"=list(username="[your_cluster_user_name]",ssh_private_keyfile="[path_to_your_local_copy_of_your_key]")))
+## Download Input Data Automatically
+
+If you like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
+On Linux, add to your `~/.bashrc` file (found in your home directory):
+```bash
+# if you have access to the PIK cluster, you can download from there
+export REMIND_repos_scp="scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX"
+# change to your username on the cluster
+export REMIND_repos_scp_user="myusername"
+# change to the path to your ssh private key on your laptop (might als be id_rsa or similar)
+export REMIND_repos_scp_key="/home/myusername/.ssh/id_ed25519"
 ```
-If your key is password-protected you have to remove this by using an empty passphrase:  
-``` cmd 
-ssh-keygen -p
--> path to id_dsa
--> empty passphrase
+
+On Windows, you need to set your environment variables equivalently (search the internet for "windows change environment variables" to get a description how to get to the right dialog in windows):
+
+| Variable              | Value                                                                                                                                        |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| REMIND_repos_scp      | scp://cluster.pik-potsdam.de/p/projects/rd3mod/inputdata/output;scp://cluster.pik-potsdam.de/p/projects/remind/inputdata/CESparametersAndGDX |
+| REMIND_repos_scp_user | myusername (use your cluster user name)                                                                                                      |
+| REMIND_repos_scp_key  | C:\Users\myusername\.ssh\id_ed25519                                                                                                          |
+
+Make sure to use your username on the cluster and the correct path to your private ssh key (might also be named `id_rsa` or something similar starting with `id_`).
+
+## Use Local Input Data
+
+If you don't have access to the PIK cluster, but have input data available locally, you have to provide the corresponding path via environment variables.
+On Linux, add to your `~/.bashrc` file (found in your home directory):
+```bash
+# If the input data is spread over multiple directories, separate them with a :
+export REMIND_repos_dirs="/my/first/path:/my/second/path"
 ```
-It is recommended to first copy the existing key (e.g. id_dsa into id_dsa-local) and remove the passphrase of this copy and copy it to your machine.
 
-If you plan to run REMIND not with the default regional resolution you have to take care that REMIND starts from a gdx with the correct regional resolution. Either you can use one from an older run with the corresponding regional resolution or you can construct a new gdx with the correct regional resolution from a gdx in a different regional resolution by using the function `gdx_rename` from the package (gdx) (e.g. `gdx_rename("input.gdx",set_name="all_regi",c(REF="RUS",CAZ="ROW",...,MEA="MEA",USA="USA"))`).
+On Windows, you need to set your environment variables equivalently (search the internet for "windows change environment variables" to get a description how to get to the right dialog in windows):
+
+| Variable           | Value                               |
+|--------------------|-------------------------------------|
+| REMIND_repos_dirs  | C:\my\first\path;D:\my\second\path  |
+
+Note that if the input data is spread over multiple directories, you have to separate them with a `;`.
+
+## Different regional resolutions
+
+If you plan to run REMIND not with the default regional resolution you have to take care that REMIND starts from a gdx with the correct regional resolution.
+Either you can use one from an older run with the corresponding regional resolution, or you can build a new gdx with the correct regional resolution from a gdx in a different regional resolution using the function `gdx_rename` from the package `gdx` (e.g. `gdx::gdx_rename("input.gdx",set_name="all_regi",c(REF="RUS",CAZ="ROW",...,MEA="MEA",USA="USA"))`).
 
 
-Adding New Input Data
-======================
+## Adding New Input Data
 
 The input data for REMIND are generated by using the R-libraries *mrremind* (https://github.com/pik-piam/mrremind) and *madrat* (https://github.com/pik-piam/madrat). While *mrremind* contains all calculations tailored to REMIND-input-data, the package *madrat* provides the general wrapper functions and helpful tools. For further information read the vignettes of these R-packages.
 
-How to Update Input Data
-========================
+## How to Update Input Data
 
 1. Check for the current input data revision number in this cluster folder: `/p/projects/rd3mod/inputdata/cache`. Alternatively, run the helper tool `lastRev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five revX.XXX*_remind.tgz items in the default moinput output directory.
 2. Clone the repo [`https://gitlab.pik-potsdam.de/REMIND/preprocessing-remind`](https://gitlab.pik-potsdam.de/REMIND/preprocessing-remind) to your tmp folder on the cluster and edit its `start.R` file by inserting the next revision number. Use at least 4 decimal places for development/testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information.
