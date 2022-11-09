@@ -1556,13 +1556,10 @@ $setGlobal c_skip_output  off        !! def = off
 ***  (off): no markup
 ***  ("GLO.build 1, USA_regi.trans 0.25, EUR_regi.trans 0.25"): "example for CO2 tax markup in transport of 25% in USA and EUR, and CO2eq tax markup in buildings sector of 100 % in all regions. Currently, build and trans are the only two elements of the set emi_sectors that are supported."
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
-*** c_regi_nucscen              "regions to apply nucscen to"
-***  specify regions to which nucscen, capturescen should apply to (e.g. c_regi_nucscen <- "JPN,USA")
+*** c_regi_nucscen              "regions to apply cm_nucscen to in case of cm_nucscen = 5 (no new nuclear investments), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_nucscen  all  !! def = all
-***  c_regi_capturescen              "region to apply ccapturescen to"
+***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
-***  c_regi_synfuelscen              "region to apply synfuelscen to"
-$setGlobal c_regi_synfuelscen  all !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
 $setglobal cm_process_based_steel   off  !! off  
