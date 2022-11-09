@@ -103,8 +103,6 @@ if ( c_ccsinjecratescen eq 0, !!no carbon sequestration at all
 *** ------------------------------------------------------------------------------------------
 if (cm_ccapturescen eq 2,  !! no carbon capture at all
   vm_cap.fx(t,regi_capturescen,"ngccc",rlf)        = 0;
-  vm_cap.fx(t,regi_capturescen,"pcc",rlf)          = 0;
-  vm_cap.fx(t,regi_capturescen,"pco",rlf)          = 0;
   vm_cap.fx(t,regi_capturescen,"ccsinje",rlf)      = 0;
 ***  vm_cap.fx(t,regi_capturescen,"ccscomp",rlf)      = 0; !! technologies disabled in REMIND 1.7
 ***  vm_cap.fx(t,regi_capturescen,"ccspipe",rlf)      = 0; !! technologies disabled in REMIND 1.7
@@ -446,9 +444,7 @@ vm_cap.fx(ttot,regi,te,rlf)$((NOT rlf.val eq 1) AND ( teSe2rlf(te,"1") OR teFe2r
 *** fix F-gas emissions to inputdata (IMAGE)
 ***----------------------------------------------------------------------------
 
-*** cm_startyear eq 2015 - SPA0
-*** cm_startyear gt 2015 - SPAx
-vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","%c_delayPolicy%",all_enty);
+vm_emiFgas.fx(ttot,all_regi,all_enty) = f_emiFgas(ttot,all_regi,"%c_SSP_forcing_adjust%","%cm_rcp_scen%","SPA0",all_enty);
 display vm_emiFgas.L;
 
 

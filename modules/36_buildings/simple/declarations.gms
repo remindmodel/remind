@@ -14,8 +14,9 @@ Parameters
 
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard" 
 Parameter
-	p36_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in buildings to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_build% /
+  p36_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in buildings to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_build% /
 ;
+$endif.CESMkup 
 
 Variables
   v36_costExponent(ttot,all_regi) "logistic function exponent for additional cost for H2 at low penetration"

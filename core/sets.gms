@@ -163,10 +163,6 @@ all_te          "all energy technologies, including from modules"
         igcc            "integrated coal gasification combined cycle"
         igccc           "integrated coal gasification combined cycle with capture"
         pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-        pcc             "pulverised coal power plant with capture"
-        pco             "pulverised coal power plant with oxyfuel capture"
-$endif
         coalchp         "combined heat powercoal"
         coalhp          "heating plantcoal"
         coaltr          "tranformation of coal"
@@ -330,6 +326,8 @@ $ENDIF.WindOff
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bfbof        "Blast furnace/basic-oxygen furnace"
+        pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
+        pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
 
 all_enty             "all types of quantities"
@@ -1049,22 +1047,21 @@ ttot(tall)      "time index with spin up"
         1960, 1965, 1970, 1975, 1980, 1985,
         1990, 1995,
         2000, 2005, 2010,
-$if not setGlobal test_TS   2015,
-                            2020,
-$if not setGlobal test_TS   2025,
-                            2030,
-$if not setGlobal test_TS   2035,
-                            2040,
-$if not setGlobal test_TS   2045,
-                            2050,
-$if not setGlobal test_TS   2055,
-$if not setGlobal test_TS   2060,
-                            2070,
-$if not setGlobal test_TS   2080,
-                            2090,
-$if not setGlobal test_TS   2100,
-$if setGlobal END2110       2120
-$if not setGlobal END2110   2110, 2130, 2150
+        2015,
+        2020,
+        2025,
+        2030,
+        2035,
+        2040,
+        2045,
+        2050,
+        2055,
+        2060,
+        2070,
+        2080,
+        2090,
+        2100,
+        2110, 2130, 2150
 /
 
 *cb the content of those subsets is defined 16 lines further down
@@ -1126,10 +1123,6 @@ te(all_te)              "energy technologies"
         igcc            "integrated coal gasification combined cycle"
         igccc           "integrated coal gasification combined cycle with carbon capture"
         pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-        pcc             "pulverised coal power plant with capture"
-        pco             "pulverised coal power plant with oxyfuel capture"
-$endif
         coalchp         "combined heat powercoal"
         coalhp          "heating plant coal"
         coaltr          "tranformation of coal"
@@ -1235,10 +1228,6 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   igcc            "integrated coal gasification combined cycle"
   igccc           "integrated coal gasification combined cycle with capture"
   pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-  pcc             "pulverised coal power plant with capture"
-  pco             "pulverised coal power plant with oxyfuel capture"
-$endif
   coalchp         "combined heat powercoal"
   coalhp          "heating plant coal"
   coaltr          "tranformation of coal"
@@ -1347,10 +1336,6 @@ teCCS(all_te)       "Technologies with CCS"
   ngccc       "natural gas combined cycle with carbon capture"
   gash2c      "gas to hydrogen with capture"
   igccc       "integrated coal gasification combined cycle with carbon capture"
-$ifthen setGlobal cm_ccsfosall
-  pcc         "pulverized coal power plant with capture"
-  pco         "pulverized coal power plant with oxyfuel capture"
-$endif
   coalftcrec  "coal based fischer-tropsch with capture recycle"
   coalh2c     "coal to hydrogen with capture"
   biogasc     "gasification of biomass with capture"
@@ -1470,13 +1455,9 @@ $ENDIF.WindOff
 teFosCCS(all_te)    "fossil technologies with CCS"
 /
         ngccc       "natural gas combined cycle with carbon capture"
-	gash2c      "gas to hydrogen with capture"
+        gash2c      "gas to hydrogen with capture"
         gasftcrec       "gas based fischer-tropsch with capture recycle"
         igccc       "integrated coal gasification combined cycle with carbon capture"
-$ifthen setGlobal cm_ccsfosall
-        pcc         "pulverized coal power plant with capture"
-        pco         "pulverized coal power plant with oxyfuel capture"
-$endif
         coalftcrec  "coal based fischer-tropsch with capture recycle"
         coalh2c     "coal to hydrogen with capture"
 /
@@ -1538,8 +1519,6 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        ngcc
        ngt
        gaschp
-       pcc
-       pco
        igccc
        ngccc
        tnrs
@@ -2371,10 +2350,6 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
         pecoal.seel.igcc
         pecoal.seel.igccc
         pecoal.seel.pc
-$ifthen setGlobal cm_ccsfosall
-        pecoal.seel.pcc
-        pecoal.seel.pco
-$endif
         pecoal.seel.coalchp
         pecoal.sesofos.coaltr
         pecoal.segafos.coalgas
@@ -2571,14 +2546,6 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
         pecoal.seel.pc.oc
         pecoal.seel.coalchp.oc
         pecoal.seel.igccc.co2
-$ifthen setGlobal cm_ccsfosall
-        pecoal.seel.pcc.co2
-        pecoal.seel.pco.co2
-        pecoal.seel.pcc.cco2
-        pecoal.seel.pco.cco2
-        pecoal.seel.pcc.n2o
-        pecoal.seel.pco.n2o
-$endif
         pecoal.seel.igccc.cco2
         pecoal.sesofos.coaltr.co2
         pecoal.sesofos.coaltr.so2
@@ -2799,9 +2766,6 @@ $ENDIF.WindOff
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
-$ifthen setGlobal cm_ccsfosall
-       pcc, pco
-$endif
        ) . 1
 /
 
