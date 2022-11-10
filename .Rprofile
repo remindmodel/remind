@@ -48,8 +48,7 @@ use_cluster_defaults <- TRUE
 if ("" != remindReposDirs) {
   directories <- unlist(
     strsplit(remindReposDirs,
-             ifelse("Windows" == getElement(Sys.info(), "sysname"),
-                    ";", ":"),
+             if ("Windows" == getElement(Sys.info(), "sysname")) ";" else ":",
              fixed = TRUE))
   directoriesList <- rep(list(NULL), length(directories))
   names(directoriesList) <- directories
