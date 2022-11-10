@@ -54,7 +54,6 @@ if ("" != remindReposDirs) {
   names(directoriesList) <- directories
 
   options(remind_repos = c(options("remind_repos")[[1]], directoriesList))
-  rm(directories, directoriesList)
   use_cluster_defaults <- FALSE
 }
 
