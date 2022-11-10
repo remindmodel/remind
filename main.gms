@@ -626,12 +626,12 @@ parameter
 cm_bioenergy_EF_for_tax = 0;       !! def = 0
 *'
 parameter
-  cm_tradecost_bio          "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
+  cm_tradecostBio          "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
 ***  (1):               medium trade costs (used e.g. for for SSP2)
 ***  (0.5)              low tradecosts (used e.g. for other SSP scenarios than SSP2)
 ***  (any value ge 0):  set costs multiplier to that value
 ;
-  cm_tradecost_bio = 1;            !! def = 1
+  cm_tradecostBio = 1;             !! def = 1
 *'
 parameter
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
