@@ -143,12 +143,6 @@ p_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHisto
 display pm_macBaseMagpie;
 $ENDIF.scaleEmiHist
 
-*** FS: calculate total bioenregy primary energy demand from last iteration
-pm_demPeBio(ttot,regi) = 
-  sum(en2en(enty,enty2,te)$(peBio(enty)), 
-    vm_demPe.l(ttot,regi,enty,enty2,te))
-;
-
 !! all net negative co2luc
 p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
 

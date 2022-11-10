@@ -63,22 +63,6 @@ $offtext
 51       5.0                                       6.0           6.0           8.0           8.0                         5.0
 56       5.0                                       6.0           6.0           8.0           8.0                         5.0
 
-$ifthen setGlobal cm_ccsfosall
-+        pcc           pco          
-1        1.0           1.0         
-6        
-11       
-16       
-21       
-26       
-31       
-36       
-41       
-46       
-51       
-56       
-$endif
-
 +       biotr    biotrmod     biohp   biochp   bioigcc   bioigccc    biogas      biogasc       bioftrec     bioftcrec     bioh2   bioh2c   bioethl   bioeths     biodiesel
 1        1.0         1.0       3.0      3.0       1.0        1.0       3.0           1.0          3.0           3.0       3.0      3.0       3.0       0.1           1.0
 6        1.0         1.0       2.0      2.0       1.0                  2.0                        2.0           2.0       2.0      2.0       2.0       0.01          1.0

@@ -38,7 +38,7 @@ rm_timestamp <- function(strings,
 }
 
 
-policy_costs_pdf <- function(policy_costs, 
+policy_costs_pdf <- function(policy_costs,
                              fileName="PolicyCost.pdf") {
 
   message("A pdf with the name ", crayon::green(fileName), " is being created in the main remind folder.")
@@ -65,7 +65,7 @@ policy_costs_pdf <- function(policy_costs,
                  "<<echo=false>>=",
                  "options(width=110)",
                  "@")
-  
+
   # Create temporary folder in which to create the policyCost pdf
   system("mkdir tmp_policyCost")
 
@@ -87,7 +87,7 @@ policy_costs_pdf <- function(policy_costs,
       facet_wrap("region", ncol = 3, scales = "free_y") +
       xlab("Year") +
       theme_bw() +
-      theme(legend.position = "bottom", 
+      theme(legend.position = "bottom",
             legend.direction = "vertical",
             legend.title.align=0.5,
             legend.title = element_text(face="bold"),
@@ -156,7 +156,7 @@ report_transfers <- function(pol_mif, ref_mif) {
   message("Adding ", crayon::green("transfers")," to mif file")
 
 
-  # Get gdploss 
+  # Get gdploss
   gdploss <- pol_run[,,"Policy Cost|GDP Loss (billion US$2005/yr)"]
   # Add rel gdploss (not in percent)
   gdploss_rel <- magclass::setNames(pol_run[,,"Policy Cost|GDP Loss|Relative to Reference GDP (percent)"]/100,
@@ -168,16 +168,16 @@ report_transfers <- function(pol_mif, ref_mif) {
   # Calculate difference to global rel gdploss
   delta_gdploss <- gdploss_rel[,,] - gdploss_rel["GLO",,]
   # Calculate transfer required to equalize rel gdploss across regions
-  delta_transfer <- magclass::setNames(delta_gdploss * gdp_ref, 
+  delta_transfer <- magclass::setNames(delta_gdploss * gdp_ref,
                                        "Policy Cost|Transfers equal effort (billion US$2005/yr)")
-  delta_transfer_rel <- 100*magclass::setNames(delta_transfer/gdp_ref, 
+  delta_transfer_rel <- 100*magclass::setNames(delta_transfer/gdp_ref,
                                                "Policy Cost|Transfers equal effort|Relative to Reference GDP (percent)")
 
 
   # Calculate new gdp variables
   gdp_withtransfers <- magclass::setNames(gdp_policy + delta_transfer,
                                           "GDP|MER|w/ transfers equal effort (billion US$2005/yr)")
-  gdploss_withtransfers <- magclass::setNames(gdp_ref - gdp_withtransfers, 
+  gdploss_withtransfers <- magclass::setNames(gdp_ref - gdp_withtransfers,
                                               "Policy Cost|GDP Loss|w/ transfers equal effort (billion US$2005/yr)")
   gdploss_withtransfers_rel <- 100*magclass::setNames(gdploss_withtransfers/gdp_ref,
                                                       "Policy Cost|GDP Loss|w/ transfers equal effort|Relative to Reference GDP (percent)")
@@ -191,17 +191,17 @@ report_transfers <- function(pol_mif, ref_mif) {
 
   # Bind together
   my_transfers <- NULL
-  my_transfers <- magclass::mbind(my_transfers, delta_transfer) %>% 
-    magclass::mbind(delta_transfer_rel) %>% 
-    magclass::mbind(gdp_withtransfers) %>% 
-    magclass::mbind(gdploss_withtransfers) %>% 
+  my_transfers <- magclass::mbind(my_transfers, delta_transfer) %>%
+    magclass::mbind(delta_transfer_rel) %>%
+    magclass::mbind(gdp_withtransfers) %>%
+    magclass::mbind(gdploss_withtransfers) %>%
     magclass::mbind(gdploss_withtransfers_rel)
-  
+
   pol_run <- magclass::read.report(pol_mif)
-  pol_run <- magclass::mbind(pol_run[[1]][[1]][,,], my_transfers) %>% 
-    magclass::add_dimension(dim=3.1,add = "model",nm = md) %>% 
+  pol_run <- magclass::mbind(pol_run[[1]][[1]][,,], my_transfers) %>%
+    magclass::add_dimension(dim=3.1,add = "model",nm = md) %>%
     magclass::add_dimension(dim=3.1,add = "scenario",nm = sc)
-  
+
   magclass::write.report(pol_run, file = pol_mif, ndigit = 7, skipempty = FALSE)
   remind2::deletePlus(pol_mif, writemif = TRUE)
 
@@ -214,7 +214,7 @@ report_transfers <- function(pol_mif, ref_mif) {
 
 
 # Check for an object called "source_include". If found, that means, this script
-# is being called from another (output.R most likely), and the input variable 
+# is being called from another (output.R most likely), and the input variable
 # "outputdirs" is already in the environment. If not found, "outputdirs" is given
 # default values, and made over-writable with the command line.
 if (!exists("source_include")) {
@@ -229,81 +229,62 @@ if (!exists("source_include")) {
 }
 
 
-# Go into a while loop, until the user is happy with his input, or gives up and exits
-happy_with_input <- FALSE
-while (!happy_with_input) {
-  # Check that "outputdirs" has an even number of entries.
-  if (length(outputdirs) %% 2!=0) {
-    message(crayon::red("\nERROR: "), "The number of directories is not even!")
-    message("Remember, your choice of directories should be made in the follwing manner:")
-    message("\t1: policy run 1\n\t2: reference run 1\n\t3: policy run 2\n\t4: reference run 2\nand so on...")
-    if (exists("choose_folder")) {
-      outputdirs <- choose_folder("./output",crayon::blue("Please reselect your output folders"))
-      outputdirs <- paste0("output/",outputdirs)
-    } else {
-      message(crayon::red("\nStopping execution now.\n"))
-      stop("Number of directories is not even!")
-    }
-    next()
-  }
+# Check that "outputdirs" has an even number of entries.
+if (length(outputdirs) %% 2!=0) {
+  message(crayon::red("\nOutputdirs has an uneben number of entries..."))
+  message("To start again, run: ", crayon::blue("Rscript output.R comp=comparison output=policyCosts"), "\n\n")
+  q()
+}
 
-  # Get gdx paths
-  pol_gdxs <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/fulldata.gdx")
-  ref_gdxs <- paste0(outputdirs[seq(2,length(outputdirs),2)], "/fulldata.gdx")
-  cp_ref_gdxs_to <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/input_refpolicycost.gdx")
+# Get gdx paths
+pol_gdxs <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/fulldata.gdx")
+ref_gdxs <- paste0(outputdirs[seq(2,length(outputdirs),2)], "/fulldata.gdx")
+cp_ref_gdxs_to <- paste0(outputdirs[seq(1,length(outputdirs),2)], "/input_refpolicycost.gdx")
 
-  # Get run names
-  pol_names <- rm_timestamp(basename(dirname(pol_gdxs)))
-  ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
-  pol_mifs <- paste0(dirname(pol_gdxs), "/REMIND_generic_", pol_names, ".mif")
+# Get run names
+pol_names <- rm_timestamp(basename(dirname(pol_gdxs)))
+ref_names <- rm_timestamp(basename(dirname(ref_gdxs)))
+pol_mifs <- paste0(dirname(pol_gdxs), "/REMIND_generic_", pol_names, ".mif")
 
-  # Define pol-ref, policyCost pair names
-  pc_pairs <- paste0(ifelse(file.exists(pol_mifs) & file.exists(pol_gdxs), crayon::green(pol_names), crayon::red(pol_names)),
-                     " w.r.t. ", ifelse(file.exists(ref_gdxs), crayon::green(ref_names), crayon::red(ref_names)))
+# Define pol-ref, policyCost pair names
+pc_pairs <- paste0(ifelse(file.exists(pol_mifs) & file.exists(pol_gdxs), crayon::green(pol_names), crayon::red(pol_names)),
+                   " w.r.t. ", ifelse(file.exists(ref_gdxs), crayon::green(ref_names), crayon::red(ref_names)))
 
-  # If this script was called from output.R, check with user if the pol-ref pairs
-  # are the ones she wanted. 
-  if(exists("source_include")) {
-    message(crayon::blue("\nPlease confirm the set-up."))
-    if (! all(file.exists(c(pol_mifs, pol_gdxs, ref_gdxs)))) message(crayon::red("Red"), " folder names have no fitting mif or gdx file, first run the reporting.")
-    message("From the order with which you selected the directories, the following policy costs will be computed:")
-    message(paste0("\t", pc_pairs, "\n"))
-    message("Is that what you intended?")
-    message("Type '",crayon::green("y"),"' to continue, '",crayon::blue("r"),"' to reselect output directories, '",crayon::red("n"),"' to abort: ")
+# If this script was called from output.R, check with user if the pol-ref pairs
+# are the ones she wanted.
+if (exists("source_include")) {
+  message(crayon::blue("\nPlease confirm the set-up."))
+  if (! all(file.exists(c(pol_mifs, pol_gdxs, ref_gdxs)))) message(crayon::red("Red"), " folder names have no fitting mif or gdx file, first run the reporting.")
+  message("From the order with which you selected the directories, the following policy costs will be computed:")
+  message(paste0("\t", pc_pairs, "\n"))
+  message("Is that what you intended?")
+  message("Type '",crayon::green("y"),"' to continue, '",crayon::blue("s"),"' to skip red ones, ", crayon::red("n"),"' to abort: ")
 
-    user_input <- gms::getLine()
+  user_input <- gms::getLine()
 
-    if(user_input %in% c("y","Y","yes")) {
-      happy_with_input <- TRUE
-      message(crayon::green("Great!"))
-      
-      # Get special requests from user
-      message(crayon::blue("\nDo you have any special requests?"))
-      message("1: Skip creation of adjustedPolicyCost reporting")
-      message("2: Add transfers to adjustedPolicyCost reporting")
-      message("3: Skip plot creation")
-      message("4: Plot until 2150 in pdf")
-      message("Type the number (or numbers seperated by a comma) to choose the special requests, or nothing to continue without any: ")
-      special_requests <- gms::getLine() %>% str_split(",",simplify = TRUE) %>% as.vector()
-
-    } else if (user_input %in% c("r","R","reselect")) {
-      if (exists("choose_folder")) {
-        message("Remember, the order in which you choose the directories should be:")
-        message("\t1: policy run 1\n\t2: reference run 1\n\t3: policy run 2\n\t4: reference run 2\nand so on...")
-        outputdirs <- choose_folder("./output",crayon::blue("Reselect your output folders now"))
-        outputdirs <- paste0("output/",outputdirs)
-      } else {
-        message(crayon::red("\nStopping execution now.\n"))
-        stop("Couldn't find choosefolder() function")
-      }
-    } else {
-      message(crayon::red("\nGood-bye (windows xp shutting down music)..."))
-      message(crayon::red("Stopping execution now.\n\n"))
-      stop("I can't figure this **** out. I give up.")
-    }
+  if (user_input %in% c("s", "S")) {
+    message(crayon::blue("Great, continuing with all green entries."))
+    keep <- file.exists(pol_mifs) & file.exists(pol_gdxs) & file.exists(ref_gdxs)
+    pol_gdxs <- pol_gdxs[keep]
+    pol_names <- pol_names[keep]
+    pol_mifs <- pol_mifs[keep]
+    ref_gdxs <- ref_gdxs[keep]
+    cp_ref_gdxs_to <- cp_ref_gdxs_to[keep]
+  } else if (user_input %in% c("y","Y","yes")) {
+    message(crayon::green("Great!"))
   } else {
-    happy_with_input <- TRUE
+    message(crayon::red("\nGood-bye (windows xp shutting down music)..."))
+    message("To start again, run: ", crayon::blue("Rscript output.R comp=comparison output=policyCosts"), "\n\n")
+    q()
   }
+  # Get special requests from user
+  message(crayon::blue("\nDo you have any special requests?"))
+  message("1: Skip creation of adjustedPolicyCost reporting")
+  message("2: Add transfers to adjustedPolicyCost reporting")
+  message("3: Skip plot creation")
+  message("4: Plot until 2150 in pdf")
+  message("Type the number (or numbers seperated by a comma) to choose the special requests, or nothing to continue without any: ")
+  special_requests <- gms::getLine() %>% str_split(",",simplify = TRUE) %>% as.vector()
 }
 
 
@@ -338,35 +319,35 @@ if ("2" %in% special_requests && !"1" %in% special_requests) {
 # Create Pdf
 if (!"3" %in% special_requests) {
   message(crayon::blue("\nCreating plots:\n"))
-  
+
   # Add transfers, if they exist
   if (exists("transfer_info")) {
     tmp_policy_costs_magpie <- mapply(magclass::mbind, tmp_policy_costs_magpie, transfer_info, SIMPLIFY = FALSE)
   }
-  
-  tmp_policy_costs <- tmp_policy_costs_magpie %>% 
-    lapply(quitte::as.quitte) %>% 
+
+  tmp_policy_costs <- tmp_policy_costs_magpie %>%
+    lapply(quitte::as.quitte) %>%
     lapply(select, region, period, data, value)
-  
+
   # Combine results in single tibble, with names like "Pol_w.r.t_Ref"
   policy_costs <- rename(tmp_policy_costs[[1]], !!sym(paste0(pol_names[1], "_w.r.t_",ref_names[1])):=value)
   if (length(tmp_policy_costs)>1){
     for (i in 2:length(tmp_policy_costs)) {
-      policy_costs <- tmp_policy_costs[[i]] %>% 
-        rename(!!sym(paste0(pol_names[i], "_w.r.t_",ref_names[i])):=value) %>% 
+      policy_costs <- tmp_policy_costs[[i]] %>%
+        rename(!!sym(paste0(pol_names[i], "_w.r.t_",ref_names[i])):=value) %>%
         left_join(policy_costs, tmp_policy_costs[[i]], by=c("region", "period", "data"))
     }
   }
   # and do some pivotting
-  policy_costs <- policy_costs %>% 
-    pivot_longer(cols = matches(".*w\\.r\\.t.*"), names_to = "Model Output") %>% 
+  policy_costs <- policy_costs %>%
+    pivot_longer(cols = matches(".*w\\.r\\.t.*"), names_to = "Model Output") %>%
     pivot_wider(names_from = data)
-  
+
   # By default, plots are only created until 2100
   if (!"4" %in% special_requests) {
     policy_costs <- policy_costs %>% filter(period<=2100)
   }
-  
+
   time_stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   policy_costs_pdf(policy_costs, fileName = paste0("PolicyCost",time_stamp,".pdf"))
   message(crayon::green("Done!"))

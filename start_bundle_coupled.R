@@ -121,6 +121,13 @@ if (length(argv) > 0) {
 
 if (! file.exists("output")) dir.create("output")
 
+# Check if dependencies for a REMIND model run are fulfilled
+if (packageVersion("lucode2") >= "0.34.0") {
+  lucode2::checkDeps(action = "ask")
+} else {
+  stop("REMIND requires lucode2 >= 0.34.0, please use library snapshot 2022_10_26_R4 or later.")
+}
+
 errorsfound <- 0
 startedRuns <- 0
 waitingRuns <- 0
@@ -213,7 +220,7 @@ for (scen in common) {
   cfg$gms <- as.list(readSettings(paste0(path_remind,"main.gms")))
 
 knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                      "regionmapping", "inputRevision", "slurmConfig")
+                      "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
   message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these config file columns:")
@@ -390,7 +397,7 @@ for(scen in common){
   #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
-  for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(settings_remind))) {
+  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }

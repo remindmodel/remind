@@ -116,12 +116,6 @@ loop(regi,
       );
 );
 
-*** FS: constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
-if ( cm_biotrade_phaseout eq 1,
-	vm_Mport.up(t,regi,"pebiolc")$(t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi)) = 
-      pm_demPeBio("2015",regi)$(regi_group("EUR_regi",regi))/4;
-);
-
 *** set maximum import and export secondary energy trade based on trading capacities 
 vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
 vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));
