@@ -7,7 +7,7 @@ name: auto-dev-version
 
 jobs:
   auto-dev-version:
-    #if: github.repository == 'remindmodel/remind'
+    if: github.repository == 'remindmodel/remind'
     runs-on: ubuntu-22.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
