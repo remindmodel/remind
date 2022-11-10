@@ -1433,6 +1433,14 @@ pm_emifacNonEnergy(ttot,regi,'segafos','fegas','indst','co2') = f_nechem_emissio
 pm_emifacNonEnergy(ttot,regi,'seliqfos','fehos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,'sesofos','fesos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
 
+pm_emifacNonEnergy(ttot,regi,'segabio','fegas','indst','co2') = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,'seliqbio','fehos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,'sesobio','fesos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"solids") / s_zj_2_twa;
+
+pm_emifacNonEnergy(ttot,regi,'segasyn','fegas','indst','co2') = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
+pm_emifacNonEnergy(ttot,regi,'seliqsyn','fehos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
+
+
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!
 pm_cesdata(ttot,regi,in,"offset_quantity")$(ttot.val ge 2005)       = 0;

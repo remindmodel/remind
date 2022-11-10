@@ -155,9 +155,9 @@ q37_chemicals_feedstocks_limit(t,regi)$( t.val ge cm_startyear ) ..
 ;
 
 ***Flow of non-energy feedstocks. It is used for emissions accounting 
-q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear AND entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)) .. 
+q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear AND entyFe2sector2emiMkt_NonEn(entyFe,"indst","ETS")) .. 
   sum(se2fe(entySE,entyFE,te),
-    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+    vm_demFENonEnergySector(ttot,regi,entySE,entyFE,"indst","ETS")
   )
   =e=
   sum(in$(fe2ppfEN(entyFE,in) and in_chemicals_37(in)),
@@ -168,6 +168,7 @@ q37_demFeFeedstockChemIndst(ttot,regi,entyFe,emiMkt)$(ttot.val ge cm_startyear A
 ; 
 
 * feedstocks flow has to be lower than total energy flow into industry
+*** TODO: try to change ttot for t
 q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear 
                                                     AND sefe(entySE,entyFE) AND sector2emiMkt("indst",emiMkt) 
                                                     AND entyFe2Sector(entyFe,"indst") AND entyFeCC37(entyFe))..
@@ -178,8 +179,8 @@ q37_feedstocksLimit(ttot,regi,entySE,entyFE,emiMkt)$(ttot.val ge cm_startyear
   
 ;
 
-
-*** calculate carbon contained in chemical feedstocks
+*** calculate carbon contained in feedstocks for the industry sector
+*** TODO: try to change ttot for t
 q37_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)$(    entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt)
                                                       AND entySe2entyFe(entySe,entyFe)  ) .. 
   vm_FeedstocksCarbon(ttot,regi,entySe,entyFe,emiMkt)

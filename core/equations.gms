@@ -530,7 +530,7 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
           pm_emifac(t,regi,enty,enty2,te,enty3)
 		  * sum(sector$(entyFe2Sector(enty2,sector) AND sector2emiMkt(sector,emiMkt)), 
             vm_demFeSector(t,regi,enty,enty2,sector,emiMkt)
-*** substract FE used for non-energy, does not lead to energy-related emissions
+*** substract FE used for non-energy purposes (as feedstocks) so it does not create energy-related emissions
             - sum(entyFe2sector2emiMkt_NonEn(enty2,sector,emiMkt),
               vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
             )
@@ -587,6 +587,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
+***  SM The CCU module will be refactored because now this is also including carbon that is sequestered in products of the chemicals sector
   + sum(teCCU2rlf(te2,rlf),
 		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
 	)$(sameas(emiMkt,"ETS"))
