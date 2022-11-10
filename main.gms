@@ -626,7 +626,7 @@ parameter
 cm_bioenergy_EF_for_tax = 0;       !! def = 0
 *'
 parameter
-  cm_tradecostBio          "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
+  cm_tradecostBio           "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
 ***  (1):               medium trade costs (used e.g. for for SSP2)
 ***  (0.5)              low tradecosts (used e.g. for other SSP scenarios than SSP2)
 ***  (any value ge 0):  set costs multiplier to that value
