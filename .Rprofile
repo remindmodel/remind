@@ -13,7 +13,7 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("Finished installing R package dependencies.")
 }
 
-base::local({
+local({
 # Configure locations of REMIND input data
 # These can be located in directories on the local machine, remote directories,
 # or default directories on the cluster.
