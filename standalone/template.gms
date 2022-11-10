@@ -138,7 +138,7 @@ cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
 cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
-cm_bioenergymaxscen     "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
+cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
 cm_tradecostBio         "choose financal tradecosts for biomass (purpose grown pebiolc)"
 cm_1stgen_phaseout      "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
 cm_tradbio_phaseout     "switch that allows for a faster phase out of traditional biomass"
@@ -226,7 +226,7 @@ cm_CCS_steel           = 1;        !! def = 1
 cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
 cm_bioenergy_EF_for_tax = 0;              !! def = 0
 $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
-$setGlobal cm_bioenergymaxscen  off       !! def = off
+$setGlobal cm_maxProdBiolc  off           !! def = off
 cm_tradecostBio         = 0.5;            !! def = 0.5
 $setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
 cm_1stgen_phaseout      = 0;              !! def = 0

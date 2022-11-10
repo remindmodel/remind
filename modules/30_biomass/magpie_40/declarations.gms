@@ -36,7 +36,7 @@ i30_bioen_price_a(ttot,all_regi)   "Time dependent intercept in bioenergy price 
 i30_bioen_price_b(ttot,all_regi)   "Time dependent slope in bioenergy price formula [T$US/TWa/TWa]"
 
 *** Parameters used for the determination of regional biomass bounds consistent with global bound based on same marginal supply costs
-p30_pebiolc_price_dummy            "Dummy for the bio-energy price to match the bioenergy bound cm_bioenergymaxscen"
+p30_pebiolc_price_dummy            "Dummy for the bio-energy price to match the bioenergy bound cm_maxProdBiolc"
 p30_max_pebiolc_dummy              "Dummy for bio energy supply at p30_pebiolc_price_dummy"
 p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
 ;

@@ -1207,11 +1207,11 @@ $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
 $setglobal cm_tradbio_phaseout  default  !! def = default
-*** cm_bioenergymaxscen  "Bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
+*** cm_maxProdBiolc  "Bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
 ***  (any value ge 0):  set maximum to that value
-$setglobal cm_bioenergymaxscen  off  !! def = off     
+$setglobal cm_maxProdBiolc  off  !! def = off     
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
