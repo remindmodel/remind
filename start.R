@@ -239,9 +239,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if ("--gamscompile" %in% flags) {
     for (outputdir in outputdirs) {
       load(file.path("output", outputdir, "config.Rdata")) # read config.Rdata from results folder
-      tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
-      if (file.exists(file.path("output", outputdir, cfg$model))) {
-        file.copy(file.path("output", outputdir, cfg$model), tmpModelFile)
+      tmpModelFile <- paste0("main_", cfg$title, ".gms")
+      if (file.exists(file.path("output", outputdir, "main.gms"))) {
+        file.copy(file.path("output", outputdir, "main.gms"), tmpModelFile)
         manipulateConfig(tmpModelFile, cfg$gms)
         command <- paste("gams", tmpModelFile, "-a=c -errmsg=1 -pw=$( tput cols ) -ps=0",
                          "&& rm $( echo ", tmpModelFile, " | sed 's/\\.[^\\.]\\+/.lst/' ) || less -j 4",
@@ -250,7 +250,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         startedRuns <- startedRuns + 1
         file.remove(tmpModelFile)
       } else {
-        message(file.path("output", outputdir, cfg$model), " not found. Skipping this folder.")
+        message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
       }
     }
   } else {
@@ -297,7 +297,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         file.rename(file.path("output", outputdir, names(filestomove[filestomove_exists])),
                     file.path("output", outputdir, filestomove[filestomove_exists]))
       }
-      cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
+      cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig, slurmConfig) # update the slurmConfig setting to what the user just chose
       cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository
       cfg$results_folder <- paste0("output/",outputdir) # overwrite results_folder in cfg with name of the folder the user wants to restart, because user might have renamed the folder before restarting
       save(cfg,file=paste0("output/",outputdir,"/config.Rdata"))
@@ -385,7 +385,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if(! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+  if ("--gamscompile" %in% flags) slurmConfig <- "direct"
+  if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && !is.na(config.file)) {
@@ -435,7 +436,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
-      start_now <- all(gdx_specified | gdx_na) | "--gamscompile" %in% flags
+      start_now <- all(gdx_specified | gdx_na)
       if (start_now) {
         message("   Run can be started using ", sum(gdx_specified), " specified gdx file(s).")
         if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
@@ -457,35 +458,29 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     message("   Writing cfg to file ", filename)
     save(cfg, file=filename)
 
-    if (start_now){
-      startedRuns <- startedRuns + 1
-      # Create results folder and start run
-      if (! '--test' %in% flags) {
-        if ("--gamscompile" %in% flags) {
-          if (is.null(cfg$model)) cfg$model <- "main.gms"
-          tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
-          file.copy(cfg$model, tmpModelFile)
-          manipulateConfig(tmpModelFile, cfg$gms)
-          command <- paste("gams", tmpModelFile, "-a=c -errmsg=1 -pw=$( tput cols ) -ps=0",
-                           "&& rm $( echo ", tmpModelFile, " | sed 's/\\.[^\\.]\\+/.lst/' ) || less -j 4",
-                           "--pattern='^\\*\\*\\*\\*' $( echo", tmpModelFile, "| sed 's/\\.[^\\.]\\+/.lst/' )")
-          system(command)
-        } else {
-          submit(cfg)
-        }
-      } else {
-        message("   If this wasn't --test mode, I would submit ", scen, ".")
-      }
-    } else {
-       waitingRuns <- waitingRuns + 1
-       message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+    startedRuns <- startedRuns + start_now
+    waitingRuns <- waitingRuns + 1 - start_now
+    if ("--test" %in% flags) {
+      message("   If this wasn't --test mode, I would submit ", scen, ".")
+    } else if ("--gamscompile" %in% flags) {
+      if (is.null(cfg$model)) cfg$model <- "main.gms"
+      tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
+      file.copy(cfg$model, tmpModelFile)
+      manipulateConfig(tmpModelFile, cfg$gms)
+      command <- paste("gams", tmpModelFile, "-a=c -errmsg=1 -pw=$( tput cols ) -ps=0",
+                       "&& rm $( echo ", tmpModelFile, " | sed 's/\\.[^\\.]\\+/.lst/' ) || less -j 4",
+                       "--pattern='^\\*\\*\\*\\*' $( echo", tmpModelFile, "| sed 's/\\.[^\\.]\\+/.lst/' )")
+      system(command)
+    } else if (start_now) {
+      submit(cfg)
     }
-
-    # print names of subsequent runs if there are any
+    # print names of runs to be waited and subsequent runs if there are any
+    if (! start_now) {
+      message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+    }
     if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
       message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
     }
-
   }
 }
 
