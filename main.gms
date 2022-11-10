@@ -1001,12 +1001,6 @@ parameter
   cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 *'
 parameter
-  cm_biotrade_phaseout        "switch for phasing out biomass trade in the EU regions by 2030"
-***  def 0, means no biomass import phase out
-;
-  cm_biotrade_phaseout = 0; !! def 0
-*'
-parameter
   cm_bioprod_histlim          "regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
 *** def -1, means no additional limit to bioenergy production relative to historic production
 *** limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
@@ -1103,24 +1097,8 @@ parameter
   cm_BioImportTax_EU          "factor for EU bioenergy import tax"
 ***  def 1, 100% bioenergy import tax
 ***  if larger zero, EU subregions pay cm_BioImportTax_EU of the world market price for in addition biomass imports after 2030 due to sustainability concerns
-***  cm_biotrade_phaseout !! def = 0
-***  (0) no biomass trade restrictions
-***  (1) constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
 ;
   cm_BioImportTax_EU = 1; !! def 0.25
-*'
-parameter
-  cm_HeatLim_b                "switch to set maximum share of district heating in FE buildings"
-***  set upper limits for heat and electricity shares in FE buildlings only for the EU regions
-*** def 1, no limit on district heating in FE buildings, if <1, then this serves as an upper bound to the buildings FE heat share
-;
-  cm_HeatLim_b = 1; !! def 1
-*'
-parameter
-  cm_ElLim_b                  "switch to set maximum share of electricity in FE buildings"
-*** def 1, no limit on electricity in FE buildings, if <1, then this serves as an upper bound to the buildings FE electricity share
-;
-  cm_ElLim_b = 1; !! def 1
 *'
 parameter
   cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
@@ -1339,8 +1317,6 @@ $setglobal cm_calibration_string  off    !!  def  =  off
 $setglobal cm_techcosts  REG       !! def = REG
 *** cm_regNetNegCO2 -    default "on" allows for regionally netNegative CO2 emissions, setting "off" activates bound in core/bounds.gms that disallows net negative CO2 emissions at the regional level
 $setglobal cm_regNetNegCO2  on       !! def = on
-*** c_regi_sensscen: specify regions to which certain regional sensitivity parameters should be applied to applied to sensitivity parameters 
-$setGlobal c_regi_sensscen  all !! def = all
 *** cfg$gms$cm_EDGEtr_scen  "the EDGE-T scenario"  # def <- "Mix1". For calibration runs: Mix1. Mix2, Mix3, Mix4 also available - numbers after the "mix" denote policy strength, with 1 corresponding roughly to Baseline/NPI, 2= NDC, 3= Budg1500, 4 = Budg800
 ***  The following descriptions are based on scenario results for EUR in 2050 unless specified otherwise.
 ***  Whenever we give numbers, please be aware that they are just there to estimate the ballpark.
@@ -1580,13 +1556,10 @@ $setGlobal c_skip_output  off        !! def = off
 ***  (off): no markup
 ***  ("GLO.build 1, USA_regi.trans 0.25, EUR_regi.trans 0.25"): "example for CO2 tax markup in transport of 25% in USA and EUR, and CO2eq tax markup in buildings sector of 100 % in all regions. Currently, build and trans are the only two elements of the set emi_sectors that are supported."
 $setglobal cm_CO2TaxSectorMarkup  off   !! def = off
-*** c_regi_nucscen              "regions to apply nucscen to"
-***  specify regions to which nucscen, capturescen should apply to (e.g. c_regi_nucscen <- "JPN,USA")
+*** c_regi_nucscen              "regions to apply cm_nucscen to in case of cm_nucscen = 5 (no new nuclear investments), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_nucscen  all  !! def = all
-***  c_regi_capturescen              "region to apply ccapturescen to"
+***  c_regi_capturescen              "regions to apply cm_ccapturescen to (availability of carbon capture technologies), e.g. c_regi_nucscen <- "JPN,USA"
 $setGlobal c_regi_capturescen  all  !! def = all
-***  c_regi_synfuelscen              "region to apply synfuelscen to"
-$setGlobal c_regi_synfuelscen  all !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
 $setglobal cm_process_based_steel   off  !! off  
