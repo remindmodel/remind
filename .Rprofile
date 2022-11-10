@@ -65,7 +65,6 @@ if ("" != remindReposSCP && "" != remindReposSCPUser && "" != remindReposSCPKey)
     names(config) <- SCPUrl
     options(remind_repos = c(options("remind_repos")[[1]], config))
   }
-  rm(SCPUrls, SCPUrl, config)
   use_cluster_defaults <- FALSE
 }
 
