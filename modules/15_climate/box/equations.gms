@@ -171,14 +171,6 @@ q15_clisys(ta10)..
 	=e=
 	v15_tempFast(ta10) + v15_tempSlow(ta10);
 
-***---------------------------------------------------------------------------
-*'    Forcing overshoot for damage function
-***---------------------------------------------------------------------------
-q15_forc_os(t)..
-    vm_forcOs(t)
-	=e=
-	v15_forcKyo(t) - s15_gr_forc_kyo + v15_slackForc(t);
-
 ***-----------------------------------------------------------------------------------------
 *'     link to core
 ***-----------------------------------------------------------------------------------------
@@ -186,7 +178,7 @@ q15_linkEMI(ttot2ta10(ttot, ta10),emis2climate10(enty,FOB10))..
     vm_emiAllGlob(ttot,enty)
 	=e=
 	v15_emi(ta10,FOB10);
-$IF %cm_so2_out_of_opt% == "on" q15_linkEMI_aer(ttot2ta10(ttot, ta10),emiaer2climate10(emiaer,FOB10)).. p15_so2emi(ttot,emiaer) =e= v15_emi(ta10,FOB10);
+q15_linkEMI_aer(ttot2ta10(ttot, ta10),emiaer2climate10(emiaer,FOB10)).. p15_so2emi(ttot,emiaer) =e= v15_emi(ta10,FOB10);
 
 ***-----------------------------------------------------------------------------------------
 *'     interpolation for linking (annual resolution of climate modules)
