@@ -459,6 +459,7 @@ parameter
 *'
 *' * (0)  gdx files from each iteration are NOT saved
 *' * (1)  gdx files from each iteration are saved
+*' * (2)  gdx files from each iteration are saved, but deleted at the end if finished with modelstat = 2
 parameter
   cm_keep_presolve_gdxes    "save gdxes for all regions/solver tries/nash iterations for debugging"
 ;
