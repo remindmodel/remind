@@ -782,12 +782,6 @@ parameter
   cm_so2tax_scen        = 1;         !! def =
 *'
 parameter
-  cm_damage                 "cm_damage factor for forcing overshoot"
-*** *JeS* can be used to lower forcing overshoot in cm_emiscen 8 scenarios, use only with box model!
-;
-  cm_damage             = 0.005;     !! def = 0.005
-*'
-parameter
   cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 ***  (0) advanced - cheap investment costs, higher learning rates for pv, csp and wind
 ***  (1) reference - normal investment costs & learning rates for pv, csp and wind     EMF27-3nd round Adv scenario
