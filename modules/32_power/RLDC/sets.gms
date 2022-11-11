@@ -10,33 +10,33 @@
 ***                  module specific sets
 ***------------------------------------------------------------
 SETS
-	PolyCoeff   "Which coefficients exist for the RLDC formulation"
-	/
-		p00  
-		p10   "wind ^1, solar ^0"
-		p01   "wind ^0, solar ^1"
-		p20
-		p11
-		p02
-		p30
-		p21
-		p12
-		p03
-	/
-	
-	RLDCbands   "???"
-	/
-		1*4,
-		curt
-		peak
-		curtShVRE
-		shtStor
-		STScost
-		STSRes2Cap
-	/
-	
-	LoB(RLDCbands) "Electricity load band"
-	/1 * 4/
+    PolyCoeff   "Which coefficients exist for the RLDC formulation"
+    /
+        p00  
+        p10   "wind ^1, solar ^0"
+        p01   "wind ^0, solar ^1"
+        p20
+        p11
+        p02
+        p30
+        p21
+        p12
+        p03
+    /
+    
+    RLDCbands   "???"
+    /
+        1*4,
+        curt
+        peak
+        curtShVRE
+        shtStor
+        STScost
+        STSRes2Cap
+    /
+    
+    LoB(RLDCbands) "Electricity load band"
+    /1 * 4/
 ;
 
 teVRE(all_te) = no;
@@ -59,8 +59,6 @@ teRLDCDisp("dot") = yes;
 teRLDCDisp("igcc") = yes;
 teRLDCDisp("igccc") = yes;
 teRLDCDisp("pc") = yes;
-teRLDCDisp("pcc") = yes;
-teRLDCDisp("pco") = yes;
 teRLDCDisp("coalchp") = yes;
 teRLDCDisp("tnrs") = yes;
 teRLDCDisp("fnrs") = yes;
@@ -73,17 +71,17 @@ teRLDCDisp("h2turb") = yes;
 teRLDCDisp("csp") = yes;
 
 if (cm_solwindenergyscen eq 8,
-	teRLDCDisp("spv") = yes;
-	teRLDCDisp("wind") = yes;
+    teRLDCDisp("spv") = yes;
+    teRLDCDisp("wind") = yes;
 );
 
 *Sets used on data input assignments
 SETS
-	PeakDep(RLDCbands) "RLDC elements that scale with peak (not curtailment, storage)"
-	/
-		1 * 4
-		peak
-	/	
+  PeakDep(RLDCbands) "RLDC elements that scale with peak (not curtailment, storage)"
+   /
+     1 * 4
+     peak
+   /
 
 $ontext
 	UsedGrades2070(all_regi,all_te,rlf)
@@ -113,25 +111,23 @@ $ontext
 	/	
 $offtext
 
-	teNotLoB1(all_te)   "Technologies that can't go into the first LoB as they are difficult to cycle continuously & quickly"
-	/
-		tnrs
-		pc
-		pcc
-		ngcc
-		ngccc
-		pco
-		igccc
-		igcc
-		bioigcc
-		bioigccc
-		coalchp
-		gaschp
-		biochp
-	/
-	
-	teNotBase(all_te)   "Technologies that can't go into the last LoB (baseload) as they can't run for 7500 FLh"
-	/
+   teNotLoB1(all_te)   "Technologies that can't go into the first LoB as they are difficult to cycle continuously & quickly"
+   /
+      tnrs
+      pc
+      ngcc
+      ngccc
+      igccc
+      igcc
+      bioigcc
+      bioigccc
+      coalchp
+      gaschp
+      biochp
+    /
+    
+    teNotBase(all_te)   "Technologies that can't go into the last LoB (baseload) as they can't run for 7500 FLh"
+    /
 ***		hydro
 ***		csp
 ***		coalchp

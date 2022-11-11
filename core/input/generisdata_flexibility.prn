@@ -9,10 +9,6 @@ fm_dataglob("flexibility","dot")    = 6;
 fm_dataglob("flexibility","igcc")   = 0.85;
 fm_dataglob("flexibility","igccc")  = 0.7;
 fm_dataglob("flexibility","pc")     = 0.90;
-$ifthen setGlobal cm_ccsfosall
-fm_dataglob("flexibility","pcc")    = 0.7;
-fm_dataglob("flexibility","pco")    = 0.7;
-$endif
 fm_dataglob("flexibility","gaschp")  = 0.85;
 fm_dataglob("flexibility","coalchp") = 0.75;
 fm_dataglob("flexibility","biochp")  = 0.7;

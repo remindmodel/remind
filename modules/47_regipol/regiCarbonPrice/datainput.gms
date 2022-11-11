@@ -9,6 +9,11 @@
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
+*** RR this should be replaced as soon as non-energy is treated endogenously in the model
+*** EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28"
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.1194863;
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
+
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------

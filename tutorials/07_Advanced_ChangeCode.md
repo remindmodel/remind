@@ -65,7 +65,7 @@ gms::module.skeleton(100, "bla", c("on", "off", "new"))
 ```
 It creates all additional gams files for your new realization "new" of the existing module `100_bla`. You can find more information about the function `module_skeleton` in its documentation.
 
-After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in both the `main.gms` and in the `default.cfg` by hand.
+After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in the `main.gms` by hand.
 
 Compiling
 =============
@@ -84,4 +84,7 @@ or (only works on the PIK cluster, gives you highlighting of syntax errors)
 ```bash
 gamscompile main.gms
 ```
-This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast. However, this will not take into consideration the changes you made to [`config/default.cfg`](../config/default.cfg). So if you want to test changes you made to a non-standard module realization, be sure to update the settings in [`main.gms`](../main.gms) by either editing it manually or running `./start.R -0` which resets `main.gms` to the entries of `config/default.cfg` (to get the settings of a `scenario_config*.csv`, start a single run with `start.R -i` and wait until `main.gms` is updated, then kill the run).
+This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast. However, this will not take into consideration the changes you made to [`config/default.cfg`](../config/default.cfg). So if you want to test changes you made to these configurations, be sure to update the settings in [`main.gms`](../main.gms) by either editing it manually or running `./start.R -0` which resets `main.gms` to the entries of `config/default.cfg` (to get the settings of a `scenario_config*.csv`, start a single run with `start.R -i` and wait until `main.gms` is updated, then kill the run).
+
+Before submitting the code changes to the REMIND repository, it is recommended to run `make check-fix` on the command line (or the equivalent but harder to remember `gms::codeCheck(strict = TRUE, interactive = TRUE)` in `R`). It performs some checks on the code. In particular, it may ask you some questions about the `not_used.txt` files in each realization that contain the parameter names that are used somewhere in this module, but not in this specific module realization.
+These tests are also performed on github once you submit a pull request, but it is recommended to run the tests yourself regularly during development so you don't have to fix everything at once in the end.

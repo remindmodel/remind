@@ -1,4 +1,4 @@
-.PHONY: help docs update-renv update-all-renv check
+.PHONY: help docs update-renv update-all-renv check check-fix
 .DEFAULT_GOAL := help
 
 help:           ## Show this help.
@@ -15,9 +15,14 @@ update-renv:    ## Upgrade all pik-piam packages in your renv to the respective
 
 update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, make new snapshot
-	Rscript -e 'renv::update()'
+	Rscript -e 'renv::update(exclude = "renv")'
 	Rscript -e 'renv::snapshot()'
 
 check:          ## Check if the GAMS code follows the coding etiquette
                 ## using gms::codeCheck
 	Rscript -e 'invisible(gms::codeCheck(strict = TRUE))'
+
+check-fix:      ## Check if the GAMS code follows the coding etiquette
+                ## and offer fixing any problems directly if possible
+                ## using gms::codeCheck
+	Rscript -e 'invisible(gms::codeCheck(strict = TRUE, interactive = TRUE))'

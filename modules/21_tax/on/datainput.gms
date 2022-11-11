@@ -104,8 +104,6 @@ p21_tau_pe2se_sub(tall,regi,te)= 0;
 *RP* FILE changed by hand after introduction of SO2 taxes and inconvenience penalties on 2012-03-08
 *GL* Values try to account for excessive water use, further pollution
 *GL* Taxes are given in USD(2005) per GJ 
-p21_tau_pe2se_tax(ttot,regi,"pcc")$(ttot.val ge 2005)        = 0.25;
-p21_tau_pe2se_tax(ttot,regi,"pco")$(ttot.val ge 2005)        = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igcc")$(ttot.val ge 2005)       = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"igccc")$(ttot.val ge 2005)      = 0.25;
 p21_tau_pe2se_tax(ttot,regi,"coalftrec")$(ttot.val ge 2005)  = 1.0;
@@ -246,6 +244,12 @@ pm_tau_pe_tax(ttot,regi,all_enty) = 0;
 
 *** by default CES tax is zero
 pm_tau_ces_tax(ttot,regi,all_in) = 0;
+
+
+*** Read in bioenergy emission factor that is used to compute the emission-
+*** factor-based bioenergy tax and convert from kgCO2 per GJ to GtC per TWa.
+p21_bio_EF(ttot,all_regi) = 0;
+p21_bio_EF(ttot,regi_bio_EFTax21) = cm_bioenergy_EF_for_tax * (1/1000 * 12/44) / (sm_EJ_2_TWa);
 
 
 *** EOF ./modules/21_tax/on/datainput.gms

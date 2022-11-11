@@ -16,8 +16,8 @@ Parameter
   p47_LULUCFEmi_GrassiShift(ttot,all_regi)           "difference between Magpie land-use change emissions and UNFCCC emissions in 2015 to correct for national accounting in emissions targets"
   pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) "deviation of emissions of current iteration from target emissions, for budget target this is the difference normalized by target emissions, while for year targets this is the difference normalized by 2005 emissions [%]"
 
-*** RR this should be replaced as soon as non-energy is treated endoegenously in the model
-  p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use: EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28" / 2030.EUR_regi 0.1194863, 2030.EU27_regi 0.11 /
+*** RR this should be replaced as soon as non-energy is treated endogenously in the model
+  p47_nonEnergyUse(ttot,ext_regi)                  "non-energy use"
 ;
 
 *** parameters to track regipol emissions calculation

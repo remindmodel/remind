@@ -142,6 +142,12 @@ automatically using the RSE support scripts.  See [this wiki
 page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
 for details.
 
+If the specific calibration settings (e.g. `cm_CES_configuration`) have not been
+calibrated and used in REMIND before, the names of the .gdx and .inc files have
+to be included in the `./config/gdx-files/files` and
+`./modules/29_CES_parameters/load/input/files` files, respectively, so that the
+new calibration results are copied into these directories during run setup.
+
 As for diagnostic output, there are the `full.log` and `full.lst` files for each
 calibration iteration (`full_01.log` …), the file `CES_calibration.csv`
 containing all the relevant calibration parameters (inputs and outputs) for all

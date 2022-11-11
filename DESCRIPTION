@@ -1,3 +1,4 @@
+Package: remindmodel
 Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
 Date: 2022-08-31
@@ -35,7 +36,7 @@ Imports:
     knitr,
     lazyeval,
     lpjclass,
-    lucode2,
+    lucode2 (>=0.36.0),
     luplot,
     luscale,
     lusweave,
@@ -49,6 +50,7 @@ Imports:
     ncdf4,
     nleqslv,
     optparse,
+    piamInterfaces (>= 0.0.23),
     plotly,
     purrr,
     quitte,
