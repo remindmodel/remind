@@ -123,7 +123,7 @@ if ( cm_biotrade_phaseout eq 1,
 );
 
 *** Forbid bioenergy trade if 2nd gen. bioenergy should be phased out to avoid
-*** failing markets, which is in particular happening in early years, with
+*** failing markets, which may in particular happening in early years, with
 *** still non-zero production
 if (cm_biolc_tech_phaseout eq 1,
    vm_Mport.up(t,regi,"pebiolc")$(t.val ge cm_startyear) = 1e-6;
