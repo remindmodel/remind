@@ -1119,13 +1119,6 @@ parameter
   cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
 *'
 parameter
-  c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
-*** switch to lower Baseline agriultural emissions in all regions, value is the fraction of reduction with respect to default assumptions,
-*** e.g. 0.4 means 40% lower emissions trajectory relative to default, reduction starts in 2030, reaches full reduction by 2040
-;
-  c_BaselineAgriEmiRed = 0; !! def = 0
-*'
-parameter
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
 *** switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 ;
@@ -1496,6 +1489,10 @@ $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** example: cm_FEtax_trajectory_rel   2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
+*** Switch to scale agriculture baseline emissions per region relative to default (Magpie) levels
+*** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR, 
+*** phase-in of the scaling is gradual over time and full scaling is reached by 2040
+$setGLobal c_agricult_base_shift off !! def off
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
