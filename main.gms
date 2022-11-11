@@ -865,11 +865,6 @@ parameter
   cm_LimRock               = 1000;   !! def = 1000
 *'
 parameter
-  c_tau_so2_xmpt            "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
-;
-  c_tau_so2_xmpt           = 0;      !! def = 0
-*'
-parameter
   cm_expoLinear_yearStart   "time at which carbon price increases lineraly instead of exponentially"
 ;
   cm_expoLinear_yearStart  = 2050;   !! def = 2050
@@ -1513,9 +1508,6 @@ $setglobal cm_INCONV_PENALTY  on         !! def = on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
-***  cm_so2_out_of_opt  on       !! def = on
-*** *JeS* Flag to exclude aerosols from optimization routine, should be used especially for temperature targets
-$setGlobal cm_so2_out_of_opt  on         !! def = on
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
