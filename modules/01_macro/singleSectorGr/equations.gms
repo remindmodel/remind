@@ -140,13 +140,8 @@ q01_kapMo(ttot,regi,ppfKap(in))$(
     vm_cesIO(ttot,regi,in)
   * (1 - pm_delta_kap(regi,in))
  ** (pm_ttot_val(ttot+1) - pm_ttot_val(ttot))
-$ifthen setGlobal END2110
-*gl* short time horizon requires investments to materialize in the same time step
-  + pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5 - (0.5*pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5)$(ord(ttot) eq card(ttot));
-$else
   + pm_cumDeprecFactor_old(ttot+1,regi,in) * vm_invMacro(ttot,regi,in)
   + pm_cumDeprecFactor_new(ttot+1,regi,in) * vm_invMacro(ttot+1,regi,in)
-$endif
 ;
 
 ***---------------------------------------------------------------------------
@@ -228,14 +223,7 @@ q01_puttyclay(ttot,regi,in_putty(in))$(ord(ttot) lt card(ttot)  AND (pm_ttot_val
 q01_kapMo_putty(ttot,regi,in_putty(in))$(ppfKap(in) AND (ord(ttot) le card(ttot)) AND (pm_ttot_val(ttot) ge max(2005, cm_startyear)) AND (pm_cesdata("2005",regi,in,"quantity") gt 0))..
     vm_cesIOdelta(ttot,regi,in)
     =e=
-             0
-$ifthen setGlobal END2110
-*gl* short time horizon requires investments to materialize in the same time step
-                  + pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5 - (0.5*pm_ts(ttot)*vm_invMacro(ttot,regi,in)*0.94**5)$(ord(ttot) eq card(ttot));
-$else
-                  + vm_invMacro(ttot,regi,in)
-                   ;
-$endif
+    vm_invMacro(ttot,regi,in)
 ;
 ***---------------------------------------------------------------------------
 *** End of Putty-Clay equations

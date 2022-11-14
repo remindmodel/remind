@@ -121,7 +121,6 @@ pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciat
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
-pm_demPeBio(tall,all_regi)                                  "Primary energy bioenergy demand from last iteration [TWyr]"
 
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
@@ -344,6 +343,7 @@ v_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)       "total energy-emissions of e
 v_emiEnFuelEx(ttot,all_regi,all_enty)                 "energy emissions from fuel extraction [GtC, Mt CH4, Mt N]"
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
+vm_costCESMkup(ttot,all_regi,all_in)                  "CES markup cost to represent demand-side technology cost of end-use transformation [trUSD/TWa]"
 vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "quantity target bound implemented through implict tax"
 vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
 vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "primary energy price target implemented through implict tax"
@@ -410,9 +410,6 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
-
-*** CES markup to represent end-use technology cost
-vm_costCESMkup(ttot,all_regi,all_in)                                   "CES markup cost to represent demand-side technology cost of end-use transformation [trUSD/TWa]"
 
 ;
 ***----------------------------------------------------------------------------------------

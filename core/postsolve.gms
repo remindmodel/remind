@@ -49,11 +49,9 @@ if(cm_iterative_target_adj eq 4,
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
 *** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
 *** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
-*** if test_TS is set, ttot = 2100 doesn't exist and the timestep for 2090 is equal to 20 years, hence 0.5 year of emissions for 2090 is added.
 s_actualbudgetco2 =           sum(ttot$(ttot.val le 2090 AND ttot.val > 2020), (sum(regi, vm_emiTe.l(ttot,regi,"co2") + vm_emiMacSector.l(ttot,regi,"co2cement_process")) * sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiMacSector.l("2100",regi,"co2cement_process")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiMacSector.l("2090",regi,"co2cement_process")) * sm_c_2_co2 * 0.5
-                              + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiMacSector.l("2020",regi,"co2cement_process")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
+                            + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiMacSector.l("2100",regi,"co2cement_process")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
+                            + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiMacSector.l("2020",regi,"co2cement_process")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
 display s_actualbudgetco2;
 		
 	if (cm_emiscen eq 6,
@@ -82,11 +80,9 @@ if(cm_iterative_target_adj eq 5,
 *KK* for a time step of 5 years, the budget is calculated as 3 * 2020 + ts(2025-2090) + 8 * 2100;
 *** 10-pm_ts("2090")/2 and pm_ts("2020")/2 are the time periods that haven't been taken into account in the sum over ttot.
 *** 0.5 year of emissions is added for the two boundaries, such that the budget is calculated for 81 years.
-*** if test_TS is set, ttot = 2100 doesn't exist and the timestep for 2090 is equal to 20 years, hence 0.5 year of emissions for 2090 is added.
 s_actualbudgetco2 =           sum(ttot$(ttot.val le 2090 AND ttot.val > 2020), (sum(regi, (vm_emiTe.l(ttot,regi,"co2") + vm_emiCdr.l(ttot,regi,"co2") + vm_emiMac.l(ttot,regi,"co2"))) * sm_c_2_co2 * pm_ts(ttot)))
-$if not setglobal test_TS     + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
-$if setglobal test_TS         + sum(regi, vm_emiTe.l("2090",regi,"co2") + vm_emiCdr.l("2090",regi,"co2") + vm_emiMac.l("2090",regi,"co2")) * sm_c_2_co2 * 0.5
-                              + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
+                            + sum(regi, vm_emiTe.l("2100",regi,"co2") + vm_emiCdr.l("2100",regi,"co2") + vm_emiMac.l("2100",regi,"co2")) * sm_c_2_co2 * (10 - pm_ts("2090")/2 + 0.5)
+                            + sum(regi, vm_emiTe.l("2020",regi,"co2") + vm_emiCdr.l("2020",regi,"co2") + vm_emiMac.l("2020",regi,"co2")) * sm_c_2_co2 * (pm_ts("2020")/2 + 0.5);
 
 display s_actualbudgetco2;
 		

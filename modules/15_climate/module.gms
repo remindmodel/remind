@@ -8,7 +8,10 @@
 
 *' @title climate
 *'
-*' @description  The 15_climate module calculates the resulting climate variables using either MAGICC6.4 or a stylized box model that can be used within the optimization routine.
+*' @description  
+*' The 15_climate module takes emissions and simulates the resulting climate variables (forcings, global mean temperature)
+*' using either the MAGICC climate emulator or a stylized box model. These may also be used within the optimization or between iterations
+*' in order to internalize climate damages or adjust the carbon price to meet a desired climate target
 *'
 *' @authors Jessica Strefler, Michaja Pehl, Christoph Bertram
 

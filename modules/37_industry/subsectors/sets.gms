@@ -352,6 +352,10 @@ entyFeCC37(all_enty)  "FE carriers in industry which can be used for CO2 capture
     fehos
     fegas
   /
+
+ppfen_MkupCost37(all_in)  "primary production factors in industry on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
+  /
+  /
 ;
 
 *** ---------------------------------------------------------------------------

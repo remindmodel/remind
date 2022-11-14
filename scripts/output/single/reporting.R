@@ -59,7 +59,7 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
              "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
              " < climate_reporting_template.txt ",
              " > ","../../../", magicc_reporting_file,"; ",
-             "sed -i 's/glob/World/g' ","../../../", magicc_reporting_file, "; ",
+             "sed -i 's/;glob;/;World;/g' ","../../../", magicc_reporting_file, "; ",
              "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
              sep = ""))
 }
