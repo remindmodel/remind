@@ -168,7 +168,6 @@ cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved 
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -178,7 +177,6 @@ cm_iterative_target_adj "whether or not a tax or a budget target should be itera
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
 cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
 cm_LimRock             "limit amount of rock spread each year [Gt]"
-c_tau_so2_xmpt       "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
 cm_expoLinear_yearStart "time at which carbon price increases lineraly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
@@ -323,7 +321,6 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -334,7 +331,6 @@ cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 cm_gs_ew                 = 20;     !! def = 20
 cm_LimRock               = 1000;   !! def = 1000
-c_tau_so2_xmpt           = 0;      !! def = 0
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
@@ -463,7 +459,6 @@ $setGLobal cm_debug_preloop  off !! def = off
 $setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
-$setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
