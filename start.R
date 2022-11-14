@@ -222,6 +222,10 @@ if (packageVersion("lucode2") >= "0.34.0") {
        "and re-run start.R in a fresh R session.")
 }
 
+if (!getOption("autoRenvUpdates", FALSE) && !is.null(lucode2::showUpdates())) {
+  message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
+}
+
 ignorederrors <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
