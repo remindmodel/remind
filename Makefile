@@ -15,8 +15,11 @@ update-renv:    ## Upgrade all pik-piam packages in your renv to the respective
 
 update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, make new snapshot
+                 ## Upgrade all packages in python venv, if python venv exists
 	Rscript -e 'renv::update(exclude = "renv")'
 	Rscript -e 'renv::snapshot()'
+	[ --e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
+	[ --d ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade -r requirements.txt
 
 check:          ## Check if the GAMS code follows the coding etiquette
                 ## using gms::codeCheck

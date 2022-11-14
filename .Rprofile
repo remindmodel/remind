@@ -13,6 +13,19 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("Finished installing R package dependencies.")
 }
 
+# bootstrapping python venv, will only run once after remind is freshly cloned
+if (!dir.exists(".venv/") && Sys.which("python3") != "") {
+  local({
+    source("scripts/utils/pythonBinPath.R")
+    message("Python venv is not available, setting up now...")
+    # use system python to set up venv
+    system2("python3", c("-mvenv", ".venv"))
+    # use venv python to install dependencies in venv
+    system2(pythonBinPath(".venv"), c("-mpip", "install", "--upgrade", "pip", "wheel"))
+    system2(pythonBinPath(".venv"), c("-mpip", "install", "-r", "requirements.txt"))
+  })
+}
+
 # source global .Rprofile (very important to load user specific settings)
 # DO NOT EDIT THIS LINE!
 if (file.exists("~/.Rprofile")) {

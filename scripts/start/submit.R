@@ -87,7 +87,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     }
 
     if (cfg$pythonEnabled == "on") {
-      createResultsfolderPythonVirtualEnv(resultsfolder, cfg$pythonVirtualEnvLockFile)
+      createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder), cfg$pythonVirtualEnvLockFile)
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder. 

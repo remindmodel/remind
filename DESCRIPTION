@@ -61,6 +61,7 @@ Imports:
     remind2 (>= 1.103.11),
     renv,
     reshape2,
+    reticulate,
     rlang,
     rmarkdown,
     rmndt,

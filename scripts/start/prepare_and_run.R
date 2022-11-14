@@ -928,7 +928,7 @@ run <- function(start_subsequent_runs = TRUE) {
   load("config.Rdata")
 
   if (cfg$pythonEnabled == "on"){
-    source("scripts/utils/pythonBinPath")
+    source("../../scripts/utils/pythonBinPath.R")
     # Set environment variables so that reticulate finds the configured Python virtual env
     Sys.setenv(RETICULATE_PYTHON = pythonBinPath(".venv"))
   }
