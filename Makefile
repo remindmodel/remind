@@ -18,8 +18,8 @@ update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
                  ## Upgrade all packages in python venv, if python venv exists
 	Rscript -e 'renv::update(exclude = "renv")'
 	Rscript -e 'renv::snapshot()'
-	[ --e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
-	[ --d ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade -r requirements.txt
+	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
+	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt
 
 check:          ## Check if the GAMS code follows the coding etiquette
                 ## using gms::codeCheck
