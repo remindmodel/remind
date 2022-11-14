@@ -254,7 +254,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
                                      "fulldata.gdx" = "fulldata_beforeRestart.gdx")
                   )
   message("\n", paste(names(filestomove), collapse = ", "), " will be moved and get a postfix '_beforeRestart'.\n")
-  message("Eventually existing fulldata_[0-9]*.gdx and non_optimal_[0-9]*.gdx will be deleted.\n")
   if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
   if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
   message()
@@ -287,8 +286,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       filestomove_exists <- file.exists(file.path("output", outputdir, names(filestomove)))
       file.rename(file.path("output", outputdir, names(filestomove[filestomove_exists])),
                   file.path("output", outputdir, filestomove[filestomove_exists]))
-      file.remove(c(Sys.glob(file.path("output", outputdir, "fulldata_[0-9]*.gdx")),
-                    Sys.glob(file.path("output", outputdir, "non_optimal_[0-9]*.gdx"))))
     }
     cfg$slurmConfig <- combine_slurmConfig(cfg$slurmConfig,slurmConfig) # update the slurmConfig setting to what the user just chose
     cfg$remind_folder <- getwd()                      # overwrite remind_folder: run to be restarted may have been moved from other repository

@@ -1141,12 +1141,6 @@ run <- function(start_subsequent_runs = TRUE) {
          "       See the debugging tutorial at https://github.com/remindmodel/remind/blob/develop/tutorials/10_DebuggingREMIND.md")
   }
 
-  if (cfg$gms$c_keep_iteration_gdxes == 2 && modelstat == 2 && cfg$gms$CES_parameters != "calibrate") {
-    filestodelete <- c(Sys.glob("fulldata_[0-9]*.gdx"), Sys.glob("non_optimal_[0-9]*.gdx"))
-    message("Delete ", paste(filestodelete, collapse = ", "))
-    file.remove(filestodelete)
-  }
-
   # Compress files with the fixing-information
   if (cfg$gms$cm_startyear > 2005)
     system("gzip -f levs.gms margs.gms fixings.gms")
