@@ -60,11 +60,11 @@ select_testOneRegi_region <- function() {
 
 ############## Define function: configure_cfg #########################
 
-configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
+configure_cfg <- function(icfg, iscen, iscenarios, isettings, verbosegamscompile = TRUE) {
 
     # Edit run title
     icfg$title <- iscen
-    message("   Configuring cfg for ", iscen)
+    if (verbosegamscompile) message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
     for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig"), names(iscenarios))) {
@@ -105,55 +105,55 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
       return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
     }
 
-    # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
-    # if not a full path ending with .gdx provided, search for most recent folder with that title
-    if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
-      stop("Self-reference: ", iscen , " refers to itself in a path_gdx... column.")
-    }
-    for (path_to_gdx in names(path_gdx_list)) {
-      if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
-        if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
-          # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
-          # may include folders that only _start_ with this string. They are sorted out later.
-          dirfolders <- c("./output/", icfg$modeltests_folder)
-          for (dirfolder in dirfolders) {
-            dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
-            # if path_to_gdx cell content exactly matches folder name, use this one
-            if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
-              message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
-              isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
-              if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
-            } else {
-              # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
-              # for folder names only allows: cell content, an optional _, datetimepattern
-              # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
-              # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
-              datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-              dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
-              # if anything found, pick latest
-              if(length(dirs) > 0 && ! all(is.na(dirs))) {
-                lapply(dirs, str_sub, -32, -14) %>%
-                  strptime(format='%Y-%m-%d_%H.%M.%S') %>%
-                  as.numeric %>%
-                  which.max -> latest_fulldata
-                message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
-                isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+    if (verbosegamscompile) {
+      # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
+      # if not a full path ending with .gdx provided, search for most recent folder with that title
+      if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
+        stop("Self-reference: ", iscen , " refers to itself in a path_gdx... column.")
+      }
+      for (path_to_gdx in names(path_gdx_list)) {
+        if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
+          if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
+            # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
+            # may include folders that only _start_ with this string. They are sorted out later.
+            dirfolders <- c("./output/", icfg$modeltests_folder)
+            for (dirfolder in dirfolders) {
+              dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
+              # if path_to_gdx cell content exactly matches folder name, use this one
+              if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
+                message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+                isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
                 if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+              } else {
+                # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
+                # for folder names only allows: cell content, an optional _, datetimepattern
+                # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
+                # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
+                datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
+                dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+                # if anything found, pick latest
+                if(length(dirs) > 0 && ! all(is.na(dirs))) {
+                  lapply(dirs, str_sub, -32, -14) %>%
+                    strptime(format='%Y-%m-%d_%H.%M.%S') %>%
+                    as.numeric %>%
+                    which.max -> latest_fulldata
+                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                  isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+                  if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
+                }
               }
             }
           }
-        }
-        # if the above has not created a path to a valid gdx, stop
-        if (!file.exists(isettings[iscen, path_to_gdx])){
-          stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
-          if (! any(c("--gamscompile", "--test") %in% flags)) stop(stoptext) else {
-            ignorederrors <<- ignorederrors + 1
-            message("Error: ", stoptext)
+          # if the above has not created a path to a valid gdx, stop
+          if (!file.exists(isettings[iscen, path_to_gdx])){
+            stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
+            if (! any(c("--gamscompile", "--test") %in% flags)) stop(stoptext) else {
+              ignorederrors <<- ignorederrors + 1
+              message("Error: ", stoptext)
+            }
           }
         }
       }
-    }
-
     # Define path where the GDXs will be taken from
     gdxlist <- unlist(isettings[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
@@ -164,7 +164,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
     # add table with information about runs that need the fulldata.gdx of the current run as input
     icfg$RunsUsingTHISgdxAsInput <- iscenarios %>% select(contains("path_gdx")) %>%              # select columns that have "path_gdx" in their name
                                                    filter(rowSums(. == iscen, na.rm = TRUE) > 0) # select rows that have the current scenario in any column
-
+    }
     return(icfg)
 }
 
@@ -191,14 +191,13 @@ if (length(argv) > 0) {
 
 if ("--gamscompile" %in% flags) {
   dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
-  rungamscompile <- function(tmpModelFile) {
+  rungamscompile <- function(tmpModelFile, verbosegamscompile) {
     system2("gams", args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile), "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=2"))
-    system2("grep", args = paste("'^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)))
+    # system2("grep", args = paste("'^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)))
     errorsfound <- suppressWarnings(system2("grep", args = paste("-c '^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)), stdout = TRUE))
-    if (as.numeric(errorsfound) > 0) {
-      message("Check: less -j 4 --pattern='^\\*\\*\\*\\*' ", gsub("gms$", "lst", tmpModelFile))
-    } else {
-      message("   No errors found in ", gsub("gms$", "lst", tmpModelFile))
+    message(if (as.numeric(errorsfound) > 0) "FAIL  " else " OK   ", gsub("gms$", "lst", tmpModelFile))
+    if (verbosegamscompile && as.numeric(errorsfound) > 0) {
+      system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'", gsub("gms$", "lst", tmpModelFile)))
     }
   }
 }
@@ -255,9 +254,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       load(file.path("output", outputdir, "config.Rdata"))
       tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
-        file.copy(file.path("output", outputdir, "main.gms"), tmpModelFile)
+        file.copy(file.path("output", outputdir, "main.gms"), tmpModelFile, overwrite = TRUE)
         manipulateConfig(tmpModelFile, cfg$gms)
-        rungamscompile(tmpModelFile)
+        rungamscompile(tmpModelFile, verbosegamscompile = "--interactive" %in% flags)
         startedRuns <- startedRuns + 1
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
@@ -429,11 +428,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$gms$cm_quick_mode <- "on"
         cfg$gms$cm_iteration_max <- 1
     }
-    message("\n", if (is.na(config.file)) cfg$title else scen)
+    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
+      message("\n", if (is.na(config.file)) cfg$title else scen)
+    }
 
     # configure cfg according to settings from csv if provided
     if (!is.na(config.file)) {
-      cfg <- configure_cfg(cfg, scen, scenarios, settings)
+      cfg <- configure_cfg(cfg, scen, scenarios, settings,
+                           verbosegamscompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       # set optimization mode to testOneRegi, if specified as command line argument
       if (any(c("--quick", "--testOneRegi") %in% flags)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
@@ -447,7 +449,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
       start_now <- all(gdx_specified | gdx_na)
-      if (start_now) {
+      if (start_now && (! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
         message("   Run can be started using ", sum(gdx_specified), " specified gdx file(s).")
         if (sum(gdx_specified) > 0) message("     ", paste0(path_gdx_list[gdx_specified], ": ", cfg$files2export$start[path_gdx_list][gdx_specified], collapse = "\n     "))
       }
@@ -462,12 +464,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
       cfg$slurmConfig <- slurmConfig
     }
-
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     filename <- paste0(cfg$title,".RData")
-    message("   Writing cfg to file ", filename)
+    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) message("   Writing cfg to file ", filename)
     save(cfg, file=filename)
-
     startedRuns <- startedRuns + start_now
     waitingRuns <- waitingRuns + 1 - start_now
     if ("--test" %in% flags) {
@@ -475,14 +475,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     } else if ("--gamscompile" %in% flags) {
       if (is.null(cfg$model)) cfg$model <- "main.gms"
       tmpModelFile <- file.path("output", "gamscompile", sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model))
-      file.copy(cfg$model, tmpModelFile)
+      file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
       manipulateConfig(tmpModelFile, cfg$gms)
-      rungamscompile(tmpModelFile)
+      rungamscompile(tmpModelFile, verbosegamscompile = "--interactive" %in% flags)
     } else if (start_now) {
       submit(cfg)
     }
     # print names of runs to be waited and subsequent runs if there are any
-    if (! start_now) {
+    if (! start_now && ( ! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
       message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
     }
     if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
@@ -493,8 +493,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
 message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
-if (any(c("--gamscompile", "--test") %in% flags)) {
-  message("You are in --gamscompile or --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+if ("--gamscompile" %in% flags) {
+  message("To look at the errors, run: less -j 4 --pattern='^\\*\\*\\*\\*' filename.lst")
+} else if ("--test" %in% flags) {
+  message("You are in --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
 }
