@@ -46,14 +46,6 @@ if (!exists("source_include")) {
   flags <- NULL
 }
 
-# Setting relevant paths
-if (file.exists("/iplex/01/landuse")) { # run is performed on the cluster
-  pythonpath <- "/iplex/01/landuse/bin/python/bin/"
-  latexpath <- "/iplex/01/sys/applications/texlive/bin/x86_64-linux/"
-} else {
-  pythonpath <- ""
-  latexpath <- NA
-}
 
 choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
