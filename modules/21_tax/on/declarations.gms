@@ -57,7 +57,7 @@ p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level valu
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
 
-p21_CO2TaxSectorMarkup(all_regi,emi_sectors)            "CO2 tax markup in building, industry or transport sector"
+p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)          "CO2 tax markup in building, industry or transport sector"
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 

@@ -232,10 +232,10 @@ Parameter
   p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors) "CO2 tax markup in building, industry or transport sector (extended regions)" / %cm_CO2TaxSectorMarkup% /
 ;
   loop((ext_regi,emi_sectors)$p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors),
-    p21_CO2TaxSectorMarkup(regi,emi_sectors)$(regi_group(ext_regi,regi)) = p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors);
+    p21_CO2TaxSectorMarkup(ttot,regi,emi_sectors)$(regi_group(ext_regi,regi) AND ttot.val ge cm_startyear) = p21_extRegiCO2TaxSectorMarkup(ext_regi,emi_sectors);
   );
 $else.cm_CO2TaxSectorMarkup
-  p21_CO2TaxSectorMarkup(regi,emi_sectors) = 0;
+  p21_CO2TaxSectorMarkup(ttot,regi,emi_sectors)$(ttot.val ge cm_startyear) = 0;
 ;
 $endIf.cm_CO2TaxSectorMarkup
 
