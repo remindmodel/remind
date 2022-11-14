@@ -44,6 +44,35 @@ p24_seTradeCapacity(t,regi2,regi,entySe) = 0;
 *** Secondary Energy exogenously defined trade scenarios
 
 
+$IFTHEN.trade_SE_exog not "%cm_trade_SE_exog%" == "off"
+loop( (ttot,ttot2,ext_regi,ext_regi2,entySe)$(p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)),
+
+*** define trade quantities to converge to in the long-term (ttot2)
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge ttot2.val)=
+      sum( regi_group(ext_regi,regi),
+        sum( regi_group2(ext_regi2,regi2),
+              p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)))
+              * pm_gdp(t,regi) / sum(regi3$(regi_group(ext_regi,regi3)),pm_gdp(t,regi3))
+              * pm_gdp(t,regi2) / sum(regi4$(regi_group(ext_regi,regi4)),pm_gdp(t,regi4));
+    
+
+*** define ramp-up of trade quantities, linear increase from ttot (start year) to ttot2 (end year)
+  p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge ttot.val
+                                            AND t.val lt ttot2.val) =
+     sum( regi_group(ext_regi,regi),
+       sum( regi_group2(ext_regi2,regi2),
+              p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)))
+      * pm_gdp(t,regi) / sum(regi3$(regi_group(ext_regi,regi3)),pm_gdp(t,regi3))
+      * pm_gdp(t,regi2) / sum(regi4$(regi_group(ext_regi,regi4)),pm_gdp(t,regi4))
+      * ((t.val - ttot.val) / (ttot2.val - ttot.val));
+);
+
+
+
+$ENDIF.trade_SE_exog
+
+
+
 *** Scenario Assumptions for Imports to the EU from MEA (Ariadne Scenarios)
 p24_seTrade_Quantity(regi,regi2,entySe) = 0;
 

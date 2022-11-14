@@ -1343,6 +1343,11 @@ $setGlobal cm_import_EU  off !! def off
 *** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
+*** cm_trade_SE_exog
+*** set exogenuous SE trade scenarios (requires se_trade realization of modul 24 to be active)
+*** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
+*** linear scale-up of trade in 2030-2050 period
+$setGlobal cm_trade_SE_exog off !! def off
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
 *** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
