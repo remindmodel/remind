@@ -72,7 +72,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
     }
-    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--debug", "--quick", "--testOneRegi") %in% flags)) {
+    if (icfg$slurmConfig %in% paste(seq(1:16)) & ! any(c("--debug", "--gamscompile", "--quick", "--testOneRegi") %in% flags)) {
       icfg$slurmConfig <- choose_slurmConfig(identifier = icfg$slurmConfig)
     }
     if (icfg$slurmConfig %in% c(NA, ""))       {
@@ -146,7 +146,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings) {
         # if the above has not created a path to a valid gdx, stop
         if (!file.exists(isettings[iscen, path_to_gdx])){
           stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
-          if (! "--test" %in% flags) stop(stoptext) else {
+          if (! any(c("--gamscompile", "--test") %in% flags)) stop(stoptext) else {
             ignorederrors <<- ignorederrors + 1
             message("Error: ", stoptext)
           }
@@ -187,6 +187,20 @@ if (length(argv) > 0) {
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
   config.file <- argv[[1]]
+}
+
+if ("--gamscompile" %in% flags) {
+  dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
+  rungamscompile <- function(tmpModelFile) {
+    system2("gams", args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile), "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=2"))
+    system2("grep", args = paste("'^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)))
+    errorsfound <- suppressWarnings(system2("grep", args = paste("-c '^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)), stdout = TRUE))
+    if (as.numeric(errorsfound) > 0) {
+      message("Check: less -j 4 --pattern='^\\*\\*\\*\\*' ", gsub("gms$", "lst", tmpModelFile))
+    } else {
+      message("   No errors found in ", gsub("gms$", "lst", tmpModelFile))
+    }
+  }
 }
 
 if ("--help" %in% flags) {
@@ -238,17 +252,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
                            type = paste0("runs to be re", ifelse("--reprepare" %in% flags, "prepared", "started")))
   if ("--gamscompile" %in% flags) {
     for (outputdir in outputdirs) {
-      load(file.path("output", outputdir, "config.Rdata")) # read config.Rdata from results folder
-      tmpModelFile <- paste0("main_", cfg$title, ".gms")
+      load(file.path("output", outputdir, "config.Rdata"))
+      tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
         file.copy(file.path("output", outputdir, "main.gms"), tmpModelFile)
         manipulateConfig(tmpModelFile, cfg$gms)
-        command <- paste("gams", tmpModelFile, "-a=c -errmsg=1 -pw=$( tput cols ) -ps=0",
-                         "&& rm $( echo ", tmpModelFile, " | sed 's/\\.[^\\.]\\+/.lst/' ) || less -j 4",
-                         "--pattern='^\\*\\*\\*\\*' $( echo", tmpModelFile, "| sed 's/\\.[^\\.]\\+/.lst/' )")
-        system(command)
+        rungamscompile(tmpModelFile)
         startedRuns <- startedRuns + 1
-        file.remove(tmpModelFile)
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
       }
@@ -464,13 +474,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       message("   If this wasn't --test mode, I would submit ", scen, ".")
     } else if ("--gamscompile" %in% flags) {
       if (is.null(cfg$model)) cfg$model <- "main.gms"
-      tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
+      tmpModelFile <- file.path("output", "gamscompile", sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model))
       file.copy(cfg$model, tmpModelFile)
       manipulateConfig(tmpModelFile, cfg$gms)
-      command <- paste("gams", tmpModelFile, "-a=c -errmsg=1 -pw=$( tput cols ) -ps=0",
-                       "&& rm $( echo ", tmpModelFile, " | sed 's/\\.[^\\.]\\+/.lst/' ) || less -j 4",
-                       "--pattern='^\\*\\*\\*\\*' $( echo", tmpModelFile, "| sed 's/\\.[^\\.]\\+/.lst/' )")
-      system(command)
+      rungamscompile(tmpModelFile)
     } else if (start_now) {
       submit(cfg)
     }
@@ -486,8 +493,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
 message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
-if ('--test' %in% flags) {
-  message("You are in --test mode. Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+if (any(c("--gamscompile", "--test") %in% flags)) {
+  message("You are in --gamscompile or --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
 }
