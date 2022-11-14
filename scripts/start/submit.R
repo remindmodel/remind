@@ -6,6 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 source("scripts/utils/pythonBinPath.R")
+source("scripts/start/createResultsfolderPythonVirtualEnv.R")
 
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -16,14 +17,6 @@ source("scripts/utils/pythonBinPath.R")
         cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
     }
   }
-}
-
-createResultsfolderPythonVirtualEnv <- function(resultsfolder, pythonVirtualEnvLockFile) {
-  # create virtual env
-  newPythonVirtualEnv <- file.path(resultsfolder, ".venv")
-  system2(pythonBinPath(".venv"), c("-mvenv", newPythonVirtualEnv))
-  # install packages into it
-  system2(pythonBinPath(newPythonVirtualEnv), c("-mpip", "install", "-r", pythonVirtualEnvLockFile))
 }
 
 submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
