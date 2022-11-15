@@ -175,7 +175,7 @@ acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "-
 flags <- lucode2::readArgs("startnow", .flags = acceptedFlags)
 
 # initialize config.file
-config.file <- NA
+config.file <- NULL
 
 # load command-line arguments
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
@@ -333,19 +333,18 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
 } else {
 
-  if (is.na(config.file) & "--interactive" %in% flags) {
+  if (is.null(config.file) & "--interactive" %in% flags) {
     possiblecsv <- Sys.glob(c(file.path("./config/scenario_config*.csv"), file.path("./config","*","scenario_config*.csv")))
     possiblecsv <- possiblecsv[! grepl(".*scenario_config_coupled.*csv$", possiblecsv)]
     config.file <- gms::chooseFromList(possiblecsv, type = "one config file", returnBoolean = FALSE, multiple = FALSE)
   }
-
   if (all(c("--testOneRegi", "--interactive") %in% flags)) testOneRegi_region <- select_testOneRegi_region()
 
   ###################### Load csv if provided  ###########################
 
   # If a scenario_config.csv file was provided, set cfg according to it.
 
-  if (! is.na(config.file)) {
+  if (! length(config.file) == 0) {
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names
@@ -410,7 +409,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
-    if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && !is.na(config.file)) {
+    if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
   }
@@ -426,7 +425,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if (any(c("--quick", "--testOneRegi") %in% flags) & is.na(config.file)) {
+    if (any(c("--quick", "--testOneRegi") %in% flags) & length(config.file) == 0) {
       cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
@@ -445,7 +444,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     # configure cfg according to settings from csv if provided
-    if (!is.na(config.file)) {
+    if (! length(config.file) == 0) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings,
                            verbosegamscompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       # set optimization mode to testOneRegi, if specified as command line argument
