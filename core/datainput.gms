@@ -25,10 +25,6 @@ pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
-if (cm_emiscen ne 8,
-cm_damage = 0.0;
-);
-
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
 *------------------------------------------------------------------------------------

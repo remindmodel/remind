@@ -31,9 +31,6 @@ emis2climate10(all_enty,FOB10)   "???"
        co2.CO2
        ch4.CH4
        n2o.N2O
-$IF %cm_so2_out_of_opt% == "off"       so2.SO2
-$IF %cm_so2_out_of_opt% == "off"       bc.BC
-$IF %cm_so2_out_of_opt% == "off"       oc.OC
 /
 emiaer2climate10(emiaer,FOB10)   "???"
 /

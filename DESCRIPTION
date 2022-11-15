@@ -58,7 +58,7 @@ Imports:
     raster,
     readr,
     readxl,
-    remind2,
+    remind2 (>= 1.103.11),
     renv,
     reshape2,
     rlang,

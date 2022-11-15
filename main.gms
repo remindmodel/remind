@@ -782,12 +782,6 @@ parameter
   cm_so2tax_scen        = 1;         !! def =
 *'
 parameter
-  cm_damage                 "cm_damage factor for forcing overshoot"
-*** *JeS* can be used to lower forcing overshoot in cm_emiscen 8 scenarios, use only with box model!
-;
-  cm_damage             = 0.005;     !! def = 0.005
-*'
-parameter
   cm_solwindenergyscen      "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 ***  (0) advanced - cheap investment costs, higher learning rates for pv, csp and wind
 ***  (1) reference - normal investment costs & learning rates for pv, csp and wind     EMF27-3nd round Adv scenario
@@ -869,11 +863,6 @@ parameter
   cm_LimRock                "limit amount of rock spread each year [Gt]"
 ;
   cm_LimRock               = 1000;   !! def = 1000
-*'
-parameter
-  c_tau_so2_xmpt            "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
-;
-  c_tau_so2_xmpt           = 0;      !! def = 0
 *'
 parameter
   cm_expoLinear_yearStart   "time at which carbon price increases lineraly instead of exponentially"
@@ -1530,9 +1519,6 @@ $setglobal cm_INCONV_PENALTY  on         !! def = on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
 $setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
-***  cm_so2_out_of_opt  on       !! def = on
-*** *JeS* Flag to exclude aerosols from optimization routine, should be used especially for temperature targets
-$setGlobal cm_so2_out_of_opt  on         !! def = on
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
