@@ -8,7 +8,7 @@
 library(gms)
 library(dplyr, warn.conflicts = FALSE)
 library(lucode2)
-require(stringr)
+require(stringr, quietly = TRUE)
 
 helpText <- "
 #' Usage:
@@ -192,12 +192,19 @@ if (length(argv) > 0) {
 if ("--gamscompile" %in% flags) {
   dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
   rungamscompile <- function(tmpModelFile, verbosegamscompile) {
-    system2("gams", args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile), "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=2"))
-    # system2("grep", args = paste("'^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)))
-    errorsfound <- suppressWarnings(system2("grep", args = paste("-c '^\\*\\*\\*\\*.*ERROR'", gsub("gms$", "lst", tmpModelFile)), stdout = TRUE))
-    message(if (as.numeric(errorsfound) > 0) "FAIL  " else " OK   ", gsub("gms$", "lst", tmpModelFile))
-    if (verbosegamscompile && as.numeric(errorsfound) > 0) {
-      system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'", gsub("gms$", "lst", tmpModelFile)))
+    exitcode <- system2(
+      command = "gams",
+      args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
+                   "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
+
+    if (0 < exitcode) {
+      message('FAIL  ', gsub("gms$", "lst", tmpModelFile))
+      if (verbosegamscompile) {
+        system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
+                     gsub("gms$", "lst", tmpModelFile)))
+      }
+    } else {
+      message(' OK   ', gsub("gms$", "lst", tmpModelFile))
     }
   }
 }
@@ -351,7 +358,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       message("\nNo column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
     }
     settings[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings)]] <- NA
-    
+
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     cfg <- readDefaultConfig(".")
     knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
