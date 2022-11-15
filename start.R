@@ -11,42 +11,33 @@ library(lucode2)
 require(stringr, quietly = TRUE)
 
 helpText <- "
-#' Usage:
-#' Rscript start.R [options]
-#' Rscript start.R file
-#' Rscript start.R --test --testOneRegi file
+#' Rscript start.R [options] [file]
 #'
-#' Without additional arguments this starts a single REMIND run
-#' using the settings from `config/default.cfg` and `main.gms`.
+#'    Without [file] argument starts a single REMIND run using the settings from
+#'    `config/default.cfg` and `main.gms`.
 #'
-#' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
+#'    [file] must be a scenario config .csv file (usually in the config/
+#'    directory).  Using this will start all REMIND runs specified by
+#'    \"start = 1\" in that file.
 #'
-#'   Rscript start.R config/scenario_config_XYZ.csv
+#'    --help, -h:        show this help text and exit
+#'    --debug, -d:       start a debug run with cm_nash_mode = debug
+#'    --gamscompile, -g: compile gms of all selected runs
+#'    --interactive, -i: interactively select config file and run(s) to be
+#'                       started
+#'    --quick, -q:       starting one fast REMIND run with one region, one
+#'                       iteration and reduced convergence criteria for testing
+#'                       the full model.
+#'    --reprepare, -R:   rewrite full.gms and restart run
+#'    --restart, -r:     interactively restart run(s)
+#'    --test, -t:        test scenario configuration and writing the RData files
+#'                       in the REMIND main folder without starting the runs
+#'    --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
 #'
-#' Control the script's behavior by providing additional arguments:
-#'
-#' --help, -h: show this help text and exit
-#'
-#' --debug, -d: start a debug run with cm_nash_mode = debug
-#'
-#' --gamscompile, -g: compile gms of all selected runs
-#'
-#' --interactive, -i: interactively select config file and run(s) to be started
-#'
-#' --quick, -q: starting one fast REMIND run with one region, one iteration and
-#'              reduced convergence criteria for testing the full model.
-#'
-#' --reprepare, -R: rewrite full.gms and restart run
-#'
-#' --restart, -r: interactively restart run(s)
-#'
-#' --test, -t: Test scenario configuration and writing the RData files in
-#'             the REMIND main folder without starting the runs.
-#'
-#' --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
-#'
-#' You can combine --reprepare with --debug, --testOneRegi or --quick and the selected folders will be restarted using these settings.
-#' Afterwards, using --reprepare alone will restart the runs using their original settings.
+#'    You can combine --reprepare with --debug, --testOneRegi or --quick and the
+#'    selected folders will be restarted using these settings.  Afterwards,
+#'    using --reprepare alone will restart the runs using their original
+#'    settings.
 "
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
@@ -172,7 +163,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings, verbosegamscompile
 # define arguments that are accepted
 acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "--gamscompile", i = "--interactive",
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
-flags <- lucode2::readArgs("startnow", .flags = acceptedFlags)
+flags <- lucode2::readArgs("startnow", .flags = acceptedFlags, .silent = TRUE)
 
 # initialize config.file
 config.file <- NULL
@@ -210,7 +201,7 @@ if ("--gamscompile" %in% flags) {
 }
 
 if ("--help" %in% flags) {
-  message(helpText)
+  message(gsub("#' ?", '', helpText))
   q()
 }
 
