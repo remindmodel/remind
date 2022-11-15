@@ -511,8 +511,8 @@ prepare <- function() {
   # Merge GAMS files
   message("\nCreating full.gms")
   singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
-  # now that full.gms exists, we don't need tmpModelFile any more
-  file.remove(tmpModelFile)
+  # now that full.gms exists, we move tmpModelFile to the results folder (for debugging, restarting)
+  file.rename(tmpModelFile, file.path(cfg$results_folder, "main.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),

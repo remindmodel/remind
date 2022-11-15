@@ -94,7 +94,7 @@ if (! exists("outputdir")) {
   names(dirs) <- stringr::str_extract(dirs, "rem-[0-9]+$")
   names(dirs)[is.na(names(dirs))] <- ""
   selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation",
-                    userinfo = if ("policyCosts" %in% output) "The reference run will be selected separately!" else FALSE,
+                    userinfo = if ("policyCosts" %in% output) "The reference run will be selected separately!" else NULL,
                     returnBoolean = FALSE, multiple = TRUE)
   outputdirs <- file.path("output", selectedDirs)
   if ("policyCosts" %in% output) {
