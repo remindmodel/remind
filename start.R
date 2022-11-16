@@ -169,8 +169,12 @@ flags <- lucode2::readArgs(.flags = acceptedFlags, .silent = TRUE)
 config.file <- NULL
 
 # load command-line arguments
-if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-argv <- argv[! grepl("^-", argv) && ! grepl("=", argv)]
+if (!exists("argv"))
+  argv <- commandArgs(trailingOnly = TRUE)
+
+# filter "--switches" and "variable=assignments"
+argv <- grep('(^-|=)', argv, value = TRUE, invert = TRUE)
+
 # check if user provided any unknown arguments or config files that do not exist
 if (length(argv) > 0) {
   file_exists <- file.exists(argv)
