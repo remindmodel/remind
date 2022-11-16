@@ -326,6 +326,8 @@ $ENDIF.WindOff
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bfbof        "Blast furnace/basic-oxygen furnace"
+        pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
+        pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
 
 all_enty             "all types of quantities"
