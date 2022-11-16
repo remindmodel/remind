@@ -170,7 +170,7 @@ config.file <- NULL
 
 # load command-line arguments
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-argv <- argv[! grepl("^-", argv) && ! grepl("=", argv)]
+argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 # check if user provided any unknown arguments or config files that do not exist
 if (length(argv) > 0) {
   file_exists <- file.exists(argv)
@@ -433,7 +433,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$gms$cm_iteration_max <- 1
     }
     if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
-      message("\n", if (is.na(config.file)) cfg$title else scen)
+      message("\n", if (length(config.file) == 0) cfg$title else scen)
     }
 
     # configure cfg according to settings from csv if provided
