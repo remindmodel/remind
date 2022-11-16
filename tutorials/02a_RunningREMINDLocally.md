@@ -1,11 +1,11 @@
 # Running REMIND locally
 Mika Pflüger (mika.pflueger@pik-potsdam.de)
 
-*Note:* This tutorial is not yet finished, not all steps needed are described, yet.
+*Note:* This tutorial is a work in progress, not all steps needed are described, yet.
 
 ## Download Input Data Automatically
 
-If you have access to the PIK cluster and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
+If you have access to the PIK cluster (if you don't have access to the PIK cluster, you can get access only if you are a PIK employee) and like to automatically download the input data when running REMIND on your local machine, you need to configure this via environment variables.
 Add to your `~/.Renviron` file (in linux, found in your home directory, in windows, found at `C:\Users\<your windows username>\Documents\.Renviron`):
 ```bash
 # REMIND data repository setup

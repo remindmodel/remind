@@ -31,15 +31,16 @@ Based on the regional resolution and the input data revision
 ```R
 cfg$inputRevision
 ```
-the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded and distributed.
+the name of the needed input data is constructed. It is checked whether those input data are already available. If not they are automatically downloaded and distributed. For details where to get the input data if you are not running the model on the PIK cluster, see [02a_RunningREMINDLocally.md](https://github.com/remindmodel/remind/blob/develop/tutorials/02a_RunningREMINDLocally.md).
 
-The prepared input data is a compressed tar archive file `.tgz` and can be found on the cluster at `/p/projects/rd3mod/inputdata/output`.
+The prepared input data is a compressed tar archive file `.tgz` and can be found on the PIK cluster at `/p/projects/rd3mod/inputdata/output`.
 If you want to peek inside the archive to debug something or out of curiosity you can use the software [7-Zip](https://www.7-zip.org/), or the `tar` command in the terminal.
 
 ### How to Update Input Data
 
-1. Check for the current input data revision number in this cluster folder: `/p/projects/rd3mod/inputdata/cache`. Alternatively, run the helper tool `lastrev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five revX.XXX*_remind.tgz items in the default madrat output directory.
-2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `start.R` file by inserting the next revision number. Use at least 4 decimal places for development/testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information.
+1. Run the helper tool `lastrev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five `revX.XXX*_remind.tgz` items in the default madrat output directory. Alternatively, you can also check by hand in the `/p/projects/rd3mod/inputdata/output` folder on the PIK cluster.
+
+2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `start.R` file by inserting the next revision number. Use at least 4 decimal places for development/testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
 
 3. Start the script with `sbatch slurm_start.sh`.
 The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).
@@ -54,9 +55,7 @@ and then selecting the change in `default.cfg` and the first change to the input
 
 ## Initial Parameter Values
 
-The initial values for all optimization parameters are taken from a previous run and supplied via an input `gdx` file.
-In a bundle of runs, a previous run from the same bundle is usually configured via the `path_gdx` configuration parameter.
-However, in a standalone run or the first run in a bundle, the input `gdx` has to be supplied externally.
+The initial values for all optimization parameters are taken from a previous run and supplied via an input `gdx` file, which has to be supplied externally.
 
 Within REMIND, the input `gdx` is automatically downloaded and unpacked based on the 
 ```R
