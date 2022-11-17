@@ -510,9 +510,25 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
-  # now that full.gms exists, we move tmpModelFile to the results folder (for debugging, restarting)
+
+  # only compile the GAMS file to catch compilation errors and create a dump file with the full code
+  modelFilePathStem <- substr(tmpModelFile, 1, nchar(tmpModelFile) - 4)
+  dumpFilePath <- paste0(modelFilePathStem, ".dmp")
+  listFilePath <- paste0(modelFilePathStem, ".lst")
+  logFilePath <- paste0(modelFilePathStem, ".log")
+
+  exitcode <- system2(cfg$gamsv, c(tmpModelFile, "action=c", "dumpopt=21", "logoption=", cfg$logoption))
+  if ( 0 < exitcode ) {
+    stop(paste("Compiling", tmpModelFile, "failed, stopping. Check",
+               logFilePath, ",", dumpFilePath, ", and", listFilePath, "for details." ))
+  }
+
+  file.rename(dumpFilePath, file.path(cfg$results_folder, "full.gms"))
+  file.rename(listFilePath, file.path(cfg$results_folder, "main.lst"))
   file.rename(tmpModelFile, file.path(cfg$results_folder, "main.gms"))
+  if ( file.exists(logFilePath) ) {
+    file.rename(logFilePath, file.path(cfg$results_folder, "main.log"))
+  }
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
