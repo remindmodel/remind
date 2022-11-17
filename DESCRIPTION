@@ -11,6 +11,7 @@ BugReports: https://github.com/remindmodel/remind/issues
 Depends:
     R (>= 4.0.0)
 Imports:
+    argparser,
     callr,
     colorspace,
     crayon,
