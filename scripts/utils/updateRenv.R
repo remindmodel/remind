@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # Updates all pik-piam R packages in the current renv, updates renv.lock, and archives the renv.lock
 local({
   stopifnot(`No renv active. Try starting the R session in the repo root.` = !is.null(renv::project()))

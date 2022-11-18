@@ -11,42 +11,33 @@ library(lucode2)
 require(stringr, quietly = TRUE)
 
 helpText <- "
-#' Usage:
-#' Rscript start.R [options]
-#' Rscript start.R file
-#' Rscript start.R --test --testOneRegi file
+#' Rscript start.R [options] [file]
 #'
-#' Without additional arguments this starts a single REMIND run
-#' using the settings from `config/default.cfg` and `main.gms`.
+#'    Without [file] argument starts a single REMIND run using the settings from
+#'    `config/default.cfg` and `main.gms`.
 #'
-#' Starting a bundle of REMIND runs using the settings from a scenario_config_XYZ.csv:
+#'    [file] must be a scenario config .csv file (usually in the config/
+#'    directory).  Using this will start all REMIND runs specified by
+#'    \"start = 1\" in that file.
 #'
-#'   Rscript start.R config/scenario_config_XYZ.csv
+#'    --help, -h:        show this help text and exit
+#'    --debug, -d:       start a debug run with cm_nash_mode = debug
+#'    --gamscompile, -g: compile gms of all selected runs
+#'    --interactive, -i: interactively select config file and run(s) to be
+#'                       started
+#'    --quick, -q:       starting one fast REMIND run with one region, one
+#'                       iteration and reduced convergence criteria for testing
+#'                       the full model.
+#'    --reprepare, -R:   rewrite full.gms and restart run
+#'    --restart, -r:     interactively restart run(s)
+#'    --test, -t:        test scenario configuration and writing the RData files
+#'                       in the REMIND main folder without starting the runs
+#'    --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
 #'
-#' Control the script's behavior by providing additional arguments:
-#'
-#' --help, -h: show this help text and exit
-#'
-#' --debug, -d: start a debug run with cm_nash_mode = debug
-#'
-#' --gamscompile, -g: compile gms of all selected runs
-#'
-#' --interactive, -i: interactively select config file and run(s) to be started
-#'
-#' --quick, -q: starting one fast REMIND run with one region, one iteration and
-#'              reduced convergence criteria for testing the full model.
-#'
-#' --reprepare, -R: rewrite full.gms and restart run
-#'
-#' --restart, -r: interactively restart run(s)
-#'
-#' --test, -t: Test scenario configuration and writing the RData files in
-#'             the REMIND main folder without starting the runs.
-#'
-#' --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
-#'
-#' You can combine --reprepare with --debug, --testOneRegi or --quick and the selected folders will be restarted using these settings.
-#' Afterwards, using --reprepare alone will restart the runs using their original settings.
+#'    You can combine --reprepare with --debug, --testOneRegi or --quick and the
+#'    selected folders will be restarted using these settings.  Afterwards,
+#'    using --reprepare alone will restart the runs using their original
+#'    settings.
 "
 source("scripts/start/submit.R")
 source("scripts/start/choose_slurmConfig.R")
@@ -60,11 +51,11 @@ select_testOneRegi_region <- function() {
 
 ############## Define function: configure_cfg #########################
 
-configure_cfg <- function(icfg, iscen, iscenarios, isettings, verbosegamscompile = TRUE) {
+configure_cfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile = TRUE) {
 
     # Edit run title
     icfg$title <- iscen
-    if (verbosegamscompile) message("   Configuring cfg for ", iscen)
+    if (verboseGamsCompile) message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
     for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig"), names(iscenarios))) {
@@ -105,7 +96,7 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings, verbosegamscompile
       return( file.exists(logpath) && any(grep("*** Status: Normal completion", readLines(logpath, warn = FALSE), fixed = TRUE)))
     }
 
-    if (verbosegamscompile) {
+    if (verboseGamsCompile) {
       # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
       # if not a full path ending with .gdx provided, search for most recent folder with that title
       if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
@@ -172,14 +163,14 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings, verbosegamscompile
 # define arguments that are accepted
 acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "--gamscompile", i = "--interactive",
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
-flags <- lucode2::readArgs("startnow", .flags = acceptedFlags)
+flags <- lucode2::readArgs(.flags = acceptedFlags, .silent = TRUE)
 
 # initialize config.file
-config.file <- NA
+config.file <- NULL
 
 # load command-line arguments
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-argv <- argv[! grepl("^-", argv)]
+argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 # check if user provided any unknown arguments or config files that do not exist
 if (length(argv) > 0) {
   file_exists <- file.exists(argv)
@@ -191,26 +182,28 @@ if (length(argv) > 0) {
 
 if ("--gamscompile" %in% flags) {
   dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
-  rungamscompile <- function(tmpModelFile, verbosegamscompile) {
+  runGamsCompile <- function(modelFile, cfg, verboseGamsCompile) {
+    tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
+    file.copy(modelFile, tmpModelFile, overwrite = TRUE)
+    manipulateConfig(tmpModelFile, cfg$gms)
     exitcode <- system2(
       command = "gams",
       args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                    "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
-
-    if (0 < exitcode) {
-      message('FAIL  ', gsub("gms$", "lst", tmpModelFile))
-      if (verbosegamscompile) {
-        system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
-                     gsub("gms$", "lst", tmpModelFile)))
+    message(if (0 < exitcode) "FAIL " else " OK  ", gsub("gms$", "lst", tmpModelFile))
+    if (0 < exitcode && verboseGamsCompile) {
+      system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
+                   gsub("gms$", "lst", tmpModelFile)))
+      message("Do you want to rerun, because you fixed the error already? y/n")
+      if (gms::getLine() %in% c("Y", "y")) {
+        runGamsCompile(modelFile, cfg, verboseGamsCompile)
       }
-    } else {
-      message(' OK   ', gsub("gms$", "lst", tmpModelFile))
     }
   }
 }
 
 if ("--help" %in% flags) {
-  message(helpText)
+  message(gsub("#' ?", '', helpText))
   q()
 }
 
@@ -264,11 +257,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if ("--gamscompile" %in% flags) {
     for (outputdir in outputdirs) {
       load(file.path("output", outputdir, "config.Rdata"))
-      tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
-        file.copy(file.path("output", outputdir, "main.gms"), tmpModelFile, overwrite = TRUE)
-        manipulateConfig(tmpModelFile, cfg$gms)
-        rungamscompile(tmpModelFile, verbosegamscompile = "--interactive" %in% flags)
+        runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, verboseGamsCompile = "--interactive" %in% flags)
         startedRuns <- startedRuns + 1
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
@@ -333,19 +323,18 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
 } else {
 
-  if (is.na(config.file) & "--interactive" %in% flags) {
+  if (is.null(config.file) & "--interactive" %in% flags) {
     possiblecsv <- Sys.glob(c(file.path("./config/scenario_config*.csv"), file.path("./config","*","scenario_config*.csv")))
     possiblecsv <- possiblecsv[! grepl(".*scenario_config_coupled.*csv$", possiblecsv)]
     config.file <- gms::chooseFromList(possiblecsv, type = "one config file", returnBoolean = FALSE, multiple = FALSE)
   }
-
   if (all(c("--testOneRegi", "--interactive") %in% flags)) testOneRegi_region <- select_testOneRegi_region()
 
   ###################### Load csv if provided  ###########################
 
   # If a scenario_config.csv file was provided, set cfg according to it.
 
-  if (! is.na(config.file)) {
+  if (! length(config.file) == 0) {
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names
@@ -406,11 +395,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
-  if ("--gamscompile" %in% flags) slurmConfig <- "direct"
+  if ("--gamscompile" %in% flags) {
+    slurmConfig <- "direct"
+    message("\nTrying to compile the selected runs...")
+  }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
     if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
-    if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && !is.na(config.file)) {
+    if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
   }
@@ -426,7 +418,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     start_now       <- TRUE
 
     # testOneRegi settings
-    if (any(c("--quick", "--testOneRegi") %in% flags) & is.na(config.file)) {
+    if (any(c("--quick", "--testOneRegi") %in% flags) & length(config.file) == 0) {
       cfg$title            <- "testOneRegi"
       cfg$description      <- "A REMIND run with default settings using testOneRegi"
       cfg$gms$optimization <- "testOneRegi"
@@ -441,13 +433,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$gms$cm_iteration_max <- 1
     }
     if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
-      message("\n", if (is.na(config.file)) cfg$title else scen)
+      message("\n", if (length(config.file) == 0) cfg$title else scen)
     }
 
     # configure cfg according to settings from csv if provided
-    if (!is.na(config.file)) {
+    if (! length(config.file) == 0) {
       cfg <- configure_cfg(cfg, scen, scenarios, settings,
-                           verbosegamscompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
+                           verboseGamsCompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       # set optimization mode to testOneRegi, if specified as command line argument
       if (any(c("--quick", "--testOneRegi") %in% flags)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
@@ -477,19 +469,18 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       cfg$slurmConfig <- slurmConfig
     }
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
-    filename <- paste0(cfg$title,".RData")
-    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) message("   Writing cfg to file ", filename)
-    save(cfg, file=filename)
+
+    if (! "--gamscompile" %in% flags) {
+      filename <- paste0(cfg$title,".RData")
+      message("   Writing cfg to file ", filename)
+      save(cfg, file=filename)
+    }
     startedRuns <- startedRuns + start_now
     waitingRuns <- waitingRuns + 1 - start_now
     if ("--test" %in% flags) {
       message("   If this wasn't --test mode, I would submit ", scen, ".")
     } else if ("--gamscompile" %in% flags) {
-      if (is.null(cfg$model)) cfg$model <- "main.gms"
-      tmpModelFile <- file.path("output", "gamscompile", sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model))
-      file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
-      manipulateConfig(tmpModelFile, cfg$gms)
-      rungamscompile(tmpModelFile, verbosegamscompile = "--interactive" %in% flags)
+      runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, verboseGamsCompile = "--interactive" %in% flags)
     } else if (start_now) {
       submit(cfg)
     }
