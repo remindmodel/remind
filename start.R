@@ -219,7 +219,7 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
 }
 
 # Check if dependencies for a model run are fulfilled
-if (packageVersion("piamenv") >= "0.2.0") {
+if (require("piamenv") && packageVersion("piamenv") >= "0.2.0") {
   piamenv::checkDeps(action = "ask")
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please run the following to update it:\n",
