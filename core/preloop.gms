@@ -159,13 +159,14 @@ p_agricult_shift_phasein("2035") = 0.75;
 p_agricult_shift_phasein(t)$(t.val ge 2040) = 1;
 
 loop((ext_regi)$p_agricult_base_shift(ext_regi), 
-  pm_macBaseMagpie(t,regi,enty)$( (emiMac2sector(enty,"agriculture","process","ch4") 
-                                      OR emiMac2sector(enty,"agriculture","process","n2o")) 
-                                      AND regi_group(ext_regi,regi))
-  = pm_macBaseMagpie(t,regi,enty)
-     * (1+p_agricult_shift_phasein(t)
+ loop(regi$regi_groupExt(ext_regi,regi),
+    pm_macBaseMagpie(t,regi,enty)$( emiMac2sector(enty,"agriculture","process","ch4") 
+                                    OR emiMac2sector(enty,"agriculture","process","n2o"))
+    = pm_macBaseMagpie(t,regi,enty)
+      * (1+p_agricult_shift_phasein(t)
           * p_agricult_base_shift(ext_regi))
-     * pm_macBaseMagpie(t,regi,enty);
+      * pm_macBaseMagpie(t,regi,enty);
+ );
 );
 $ENDIF.agricult_base_shift  
 
