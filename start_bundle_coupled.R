@@ -122,7 +122,7 @@ if (length(argv) > 0) {
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
-if (packageVersion("piamenv") >= "0.2.0") {
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
   piamenv::checkDeps(action = "ask")
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
