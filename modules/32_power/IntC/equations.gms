@@ -77,17 +77,14 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
 q32_elh2VREcapfromTestor(t,regi)..
   vm_cap(t,regi,"elh2","1") 
   =g= 
-  sum(te$testor(te), 
-  	p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 *** build additional h2 to seel capacities to use stored hydrogen
 q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1") 
-  	+ vm_cap(t,regi,"ngt","1")  
   =e= 
-  sum(te$testor(te), 
-  	p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 

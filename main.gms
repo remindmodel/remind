@@ -886,7 +886,7 @@ parameter
   cm_postTargetIncrease    = 0;      !! def = 0
 *'
 parameter
-  cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
+cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
 ;
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
@@ -951,7 +951,7 @@ parameter
   cm_noReboundEffect     = 0;
 *'
 parameter
-  cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 *** def <- -3  , price sensitivity of logit function for heating and cooking technological choice
 ;
   cm_priceSensiBuild     = -3;
@@ -1130,14 +1130,6 @@ parameter
 *** switch to cap annual DEU CDR amount by value assigned to switch, or no cap if -1, in MtCO2
 ;
   cm_deuCDRmax = -1; !! def = -1
-*'
-parameter
-  cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
-*** This switch is used to represent a limited gas supply in a energy security scenario. [EJ per yr]
-*** (0)                default, equals "off", no limit imposed
-*** (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
-;
-  cm_EnSecScen_limit = 0  !! def = 0
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS 
@@ -1351,22 +1343,19 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
-*** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
+*** Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)
 *** def <- "off", if import assumptions for Germany in Ariadne project -> switch to "on"
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 *** this switch activates ARIADNE-specific H2 imports for Germany, it requires that cm_import_EU is not "off"
 *** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
-*** cm_EnSecScen_price        "switch on tax on PE gas to simulate continued energy crisis in Germany for ARIADNE energy security scenario"
-***  (off) default
-***  (on)  switch on tax on PE gas and oil from 2025 in Germany
-$setGlobal cm_EnSecScen_price  off !! def off
-*** cm_indstExogScen           "choose data source for exogenous industry production fix"
-***  (off)            default, no fixing
-***  (forecast_bal)   fix to forecast outputs as used in the ARIADNE scenario "Balanced"
-***  (forecast_ensec) fix to forecast outputs as used in the ARIADNE scenario "EnSec"
-$setGlobal cm_indstExogScen  off !! def off
+*** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
+*** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
+*** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
+*** (on) energy security scenario for Germany
+*** (off) no energy security scenario
+$setGlobal cm_EnSecScen  off !! def off
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
