@@ -990,13 +990,6 @@ parameter
   cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
 *'
 parameter
-  cm_bioprod_histlim          "regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
-*** def -1, means no additional limit to bioenergy production relative to historic production
-*** limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
-;
-  cm_bioprod_histlim = -1; !! def -1
-*'
-parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
 *** cm_flex_tax "switch for flexibility tax/subsidy, switching it on activates a tax on a number of technologies with flexible or inflexible electricity input."
 *** technologies with flexible eletricity input get a subsidy corresponding to the lower-than-average electricity prices that they see, while 
@@ -1179,6 +1172,13 @@ $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
 $setglobal cm_tradbio_phaseout  default  !! def = default
+*** cm_bioprod_regi_lim
+*** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
+*** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
+*** limits in EU-regions (EUR region or EU-subregions) to 7.5 EJ/yr
+*** when defined per region groups comprising multiple regions, 
+*** the potential is distributed based on the share in total 2015 biomass production of this region in the region group
+$setGLobal cm_bioprod_regi_lim off !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
