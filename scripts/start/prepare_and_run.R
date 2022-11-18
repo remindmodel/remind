@@ -446,7 +446,7 @@ prepare <- function() {
               else "Your input data are outdated or in a different regional resolution",
               ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
-                          repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
+                          repositories = cfg$repositories, # defined in your environment variables
                           modelfolder  = ".",
                           debug        = FALSE,
 			  stopOnMissing = TRUE)
