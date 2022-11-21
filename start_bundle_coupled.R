@@ -407,7 +407,7 @@ for(scen in common){
         path_report <- path_report_found
       }
     } else {
-      # start_coupled.R uses the name of this run (iteration) to create the name of the MAgPIE report for the subsequent runs (next iteration)
+      # start_coupled.R uses the name of this run to create the name of the MAgPIE report for the subsequent runs (next iteration)
       path_report <- runname
     }
 
