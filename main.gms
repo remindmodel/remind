@@ -1137,7 +1137,7 @@ parameter
 *** (0)                default, equals "off", no limit imposed
 *** (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 ;
-  cm_EnSecScen_limit = 0  !! def = 0
+  cm_EnSecScen_limit = 0; !! def = 0
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS 
