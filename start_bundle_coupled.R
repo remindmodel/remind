@@ -43,7 +43,7 @@ path_magpie <- paste0(getwd(), "/../magpie/")
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_rev3p0p0.csv")
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v3.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # paste0(path_remind, "config/scenario_config.csv")
 
@@ -54,8 +54,8 @@ prefix_runname <- "C_"
 # If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below.
 # Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the
 # file that you specified on path_settings_coupled (scenario_config_coupled_xxx.csv).
-path_remind_oldruns <- "/p/projects/remind/runs/REMIND-MAgPIE-2022-10-12/remind/output/" #paste0(path_remind, "output/")   #
-path_magpie_oldruns <- "/p/projects/remind/runs/REMIND-MAgPIE-2022-10-12/magpie/output/" #paste0(path_magpie, "output/")   #
+path_remind_oldruns <- paste0(path_remind, "output/")
+path_magpie_oldruns <- paste0(path_magpie, "output/")
 
 # If you want the script to find gdxs or reports of older runs as starting point for new runs please
 # provide the prefix of the old run names so the script can find them.
