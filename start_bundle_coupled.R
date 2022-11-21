@@ -122,10 +122,10 @@ if (length(argv) > 0) {
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
-if (packageVersion("lucode2") >= "0.34.0") {
-  lucode2::checkDeps(action = "ask")
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
+  piamenv::checkDeps(action = "ask")
 } else {
-  stop("REMIND requires lucode2 >= 0.34.0, please use library snapshot 2022_10_26_R4 or later.")
+  stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
 }
 
 errorsfound <- 0

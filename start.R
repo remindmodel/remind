@@ -221,15 +221,15 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
 }
 
 # Check if dependencies for a model run are fulfilled
-if (packageVersion("lucode2") >= "0.34.0") {
-  lucode2::checkDeps(action = "ask")
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
+  piamenv::checkDeps(action = "ask")
 } else {
-  stop("REMIND requires lucode2 >= 0.34.0, please run the following to update it:\n",
-       "renv::install('lucode2'); renv::snapshot(prompt = FALSE)\n",
+  stop("REMIND requires piamenv >= 0.2.0, please run the following to update it:\n",
+       "renv::install('piamenv'); renv::snapshot(prompt = FALSE)\n",
        "and re-run start.R in a fresh R session.")
 }
 
-if (!getOption("autoRenvUpdates", FALSE) && !is.null(lucode2::showUpdates())) {
+if (!getOption("autoRenvUpdates", FALSE) && !is.null(piamenv::showUpdates())) {
   message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
   Sys.sleep(1)
 }
