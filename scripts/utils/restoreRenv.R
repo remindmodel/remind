@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # restores current renv to the state described in selected lockfile e.g. from the archive, and writes the restored state to renv.lock
 local({
   stopifnot(`No renv active. Try starting the R session in the repo root.` = !is.null(renv::project()))
