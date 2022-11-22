@@ -107,7 +107,7 @@ if ("--parallel" %in% flags) {
 }
 
 # load arguments from command line
-argv <- argv[! grepl("^-", argv)]
+argv <- grep('(^-|=|^test$)', argv, value = TRUE, invert = TRUE)
 if (length(argv) > 0) {
   file_exists <- file.exists(argv)
   if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
