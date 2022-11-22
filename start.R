@@ -22,7 +22,10 @@ helpText <- "
 #'
 #'    --help, -h:        show this help text and exit
 #'    --debug, -d:       start a debug run with cm_nash_mode = debug
-#'    --gamscompile, -g: compile gms of all selected runs
+#'    --gamscompile, -g: compile gms of all selected runs. Combined with
+#'                       --interactive, it stops in case of compilation errors,
+#'                       allowing the user to fix them and rerun gamscompile;
+#'                       combined with --restart, existing runs can be checked.
 #'    --interactive, -i: interactively select config file and run(s) to be
 #'                       started
 #'    --quick, -q:       starting one fast REMIND run with one region, one
@@ -182,7 +185,7 @@ if (length(argv) > 0) {
 
 if ("--gamscompile" %in% flags) {
   dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
-  runGamsCompile <- function(modelFile, cfg, verboseGamsCompile) {
+  runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
     tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
     file.copy(modelFile, tmpModelFile, overwrite = TRUE)
     manipulateConfig(tmpModelFile, cfg$gms)
@@ -191,12 +194,12 @@ if ("--gamscompile" %in% flags) {
       args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                    "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
     message(if (0 < exitcode) "FAIL " else " OK  ", gsub("gms$", "lst", tmpModelFile))
-    if (0 < exitcode && verboseGamsCompile) {
+    if (0 < exitcode && interactive) {
       system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
                    gsub("gms$", "lst", tmpModelFile)))
       message("Do you want to rerun, because you fixed the error already? y/n")
       if (gms::getLine() %in% c("Y", "y")) {
-        runGamsCompile(modelFile, cfg, verboseGamsCompile)
+        runGamsCompile(modelFile, cfg, interactive)
       }
     }
   }
@@ -258,7 +261,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     for (outputdir in outputdirs) {
       load(file.path("output", outputdir, "config.Rdata"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
-        runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, verboseGamsCompile = "--interactive" %in% flags)
+        runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, interactive = "--interactive" %in% flags)
         startedRuns <- startedRuns + 1
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
@@ -398,6 +401,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
     message("\nTrying to compile the selected runs...")
+    lockID <- gms::model_lock()
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig()
@@ -480,7 +484,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if ("--test" %in% flags) {
       message("   If this wasn't --test mode, I would submit ", scen, ".")
     } else if ("--gamscompile" %in% flags) {
-      runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, verboseGamsCompile = "--interactive" %in% flags)
+      runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, interactive = "--interactive" %in% flags)
     } else if (start_now) {
       submit(cfg)
     }
@@ -492,12 +496,14 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
     }
   }
+  message("")
+  if (exists("lockID")) gms::model_unlock(lockID)
 }
 
 message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. ",
         if (modeltestRunsUsed > 0) paste0(modeltestRunsUsed, " GDX files from modeltests selected."))
 if ("--gamscompile" %in% flags) {
-  message("To look at the errors, run: less -j 4 --pattern='^\\*\\*\\*\\*' filename.lst")
+  message("To investigate potential FAILs, run: less -j 4 --pattern='^\\*\\*\\*\\*' filename.lst")
 } else if ("--test" %in% flags) {
   message("You are in --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {

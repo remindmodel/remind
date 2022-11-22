@@ -46,10 +46,8 @@ use_cluster_defaults <- TRUE
 
 # add local directories, if any
 if ("" != remindReposDirs) {
-  directories <- unlist(
-    strsplit(remindReposDirs,
-             if ("Windows" == getElement(Sys.info(), "sysname")) ";" else ":",
-             fixed = TRUE))
+  directories <- unlist(strsplit(remindReposDirs, .Platform$path.sep,
+                                 fixed = TRUE))
   directoriesList <- rep(list(NULL), length(directories))
   names(directoriesList) <- directories
 
