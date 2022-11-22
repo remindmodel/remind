@@ -93,8 +93,6 @@ $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
   p47_implicitPePriceTax(t,regi,entyPe) = 0;
   
 $endIf.cm_implicitPePriceTarget
-$ENDIF.ESprice
-$offtext
 
 *** Increase SE2FE efficiency for gases in DEU following AGEB data from 2020
 pm_eta_conv("2010",regi,"tdfosgas")$(sameAs(regi,"DEU")) = 0.949;
