@@ -305,23 +305,21 @@ for(scen in common){
   if (! is.na(already_mag)) {
     iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
   } else {
-    message("Nothing found for ", suche, ", continue with path_report")
-    if (.isFileAndAvailable(scenarios_coupled[scen, "path_report"], "/report.mif")) {
-          already_mag <- scenarios_coupled[scen, "path_report"]
-    } else {
-      message("Nothing found for path_report continue with oldrun")
-      lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
-      suche <- paste0(path_magpie_oldruns, prefix_oldruns, lookfor, "-mag-*/report.mif")
-      already_mag <- mixedsort(Sys.glob(suche))[1]
-    }
+    message("Nothing found for ", suche, ", continue with oldrun")
+    lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
+    suche <- paste0(path_magpie_oldruns, prefix_oldruns, lookfor, "-mag-*/report.mif")
+    already_mag <- mixedsort(Sys.glob(suche))[1]
   }
 
   path_report_found <- NULL
-  if (is.na(already_mag)) {
-    message("Nothing found for ", suche, ", starting REMIND standalone.")
-  } else {
+  if (.isFileAndAvailable(scenarios_coupled[scen, "path_report"], "/report.mif")) {
+    path_report_found <- scenarios_coupled[scen, "path_report"]
+    message("Using MAgPIE report specified in ", basename(path_settings_coupled), ": ", scenarios_coupled[scen, "path_report"])
+  } else if (! is.na(already_mag)) {
     path_report_found <- normalizePath(already_mag)
     message("Found MAgPIE report here: ", path_report_found)
+  } else {
+    message("Nothing found for ", suche, ", starting REMIND standalone.")
   }
   
   # decide whether to continue with REMIND or MAgPIE
