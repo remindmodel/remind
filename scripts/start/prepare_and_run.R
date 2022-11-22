@@ -281,8 +281,8 @@ prepare <- function() {
 
   if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
+      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
     }
