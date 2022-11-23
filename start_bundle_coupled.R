@@ -214,10 +214,8 @@ for (scen in common) {
 
 # check REMIND settings
 
-# retrieve REMIND default settings
-  cfg <- readDefaultConfig(path_remind)
-  # read in GAMS related switches from main.gms
-  cfg$gms <- as.list(readSettings(paste0(path_remind,"main.gms")))
+# retrieve REMIND default settings including GAMS switches
+cfg <- readDefaultConfig(path_remind)
 
 knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                       "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
