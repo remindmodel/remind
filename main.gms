@@ -1076,13 +1076,6 @@ parameter
   cm_BioSupply_Adjust_EU = 3; !! def 3, 3*bioenergy supply slope obtained from input data
 *'
 parameter
-  cm_BioImportTax_EU          "factor for EU bioenergy import tax"
-***  def 1, 100% bioenergy import tax
-***  if larger zero, EU subregions pay cm_BioImportTax_EU of the world market price for in addition biomass imports after 2030 due to sustainability concerns
-;
-  cm_BioImportTax_EU = 1; !! def 0.25
-*'
-parameter
   cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 *** CCS limitations for Germany
 *** def 0, no suppression of Pe2Se Fossil Carbon Capture in Germany, if 1 then no pe2se fossil CO2 capture in Germany
@@ -1330,6 +1323,11 @@ $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 *** industry
 *** maximum secondary steel share
 $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
+*** cm_import_tax
+*** set tax on imports for specific regions on traded energy carriers
+*** as a fraction of import price
+*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price
+$setGlobal cm_import_tax "EUR_regi.pebiolc 1.0" !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)

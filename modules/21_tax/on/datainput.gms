@@ -221,10 +221,17 @@ elseif (cm_DiscRateScen eq 4),
 );
 
 
-*** FS: bioenergy import tax level
-*** EU subregions pay cm_BioImportTax_EU of the world market price in addition after 2030 due to sustainability concerns in the Global South
-p21_tau_BioImport(t,regi) = 0;
-p21_tau_BioImport(t,regi)$(regi_group("EUR_regi",regi) AND t.val ge 2030) = cm_BioImportTax_EU;
+*** FS: import tax level
+*** zero by default
+p21_tau_Import(t,regi,trade) = 0;
+*** read in import tax values from switch cm_import_tax
+$ifThen.import not "%cm_import_tax%" == "off" 
+loop((ext_regi,trade)$(p21_import_tax(ext_regi,trade)),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    p21_tau_Import(t,regi,trade) =  p21_import_tax(ext_regi,trade)
+  );
+);
+$endif.import
 
 *** sector-specific CO2 tax markup. Loop over ext_regi to set GLO values to individual countries etc.
 $ifThen.cm_CO2TaxSectorMarkup not "%cm_CO2TaxSectorMarkup%" == "off"
