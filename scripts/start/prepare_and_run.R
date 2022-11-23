@@ -349,7 +349,7 @@ prepare <- function() {
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # create modified version
   tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
-  file.copy(cfg$model, tmpModelFile)
+  file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
   manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
