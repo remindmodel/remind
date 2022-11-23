@@ -192,14 +192,19 @@ if ("--gamscompile" %in% flags) {
       command = "gams",
       args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                    "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
-    message(if (0 < exitcode) "FAIL " else " OK  ", gsub("gms$", "lst", tmpModelFile))
-    if (0 < exitcode && verboseGamsCompile) {
-      system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
-                   gsub("gms$", "lst", tmpModelFile)))
-      message("Do you want to rerun, because you fixed the error already? y/n")
-      if (gms::getLine() %in% c("Y", "y")) {
-        runGamsCompile(modelFile, cfg, verboseGamsCompile)
+    if (0 < exitcode) {
+      ignorederrors <<- ignorederrors + 1
+      message("FAIL ", gsub("gms$", "lst", tmpModelFile))
+      if (verboseGamsCompile) {
+        system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
+                    gsub("gms$", "lst", tmpModelFile)))
+        message("Do you want to rerun, because you fixed the error already? y/n")
+        if (gms::getLine() %in% c("Y", "y")) {
+          runGamsCompile(modelFile, cfg, verboseGamsCompile)
       }
+      }
+    } else {
+      message("OK ", gsub("gms$", "lst", tmpModelFile))
     }
   }
 }
@@ -505,4 +510,9 @@ if ("--gamscompile" %in% flags) {
   message("You are in --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
+}
+
+# make sure we have a non-zero exit status if there were any errors
+if (0 < ignorederrors) {
+  stop(ignorederrors, " runs were not started successfully.")
 }
