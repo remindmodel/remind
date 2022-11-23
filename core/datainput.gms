@@ -1196,7 +1196,11 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
 *FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
 * equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
-pm_data(regi,"learnMult_wFC",te)$(pm_data(regi,"tech_stat",te) eq 4) = pm_data(regi,"incolearn",te)/(fm_dataglob("ccap0",te)**pm_data(regi,"learnExp_wFC",te));
+pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
+  = pm_data(regi,"incolearn",te)
+  / ( fm_dataglob("ccap0",te)
+   ** pm_data(regi,"learnExp_wFC",te)
+    );
 
 
 
@@ -1210,36 +1214,50 @@ table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investme
 $include "./core/input/p_costMarkupAdvTech.prn"
 ;
 
-loop(teNoLearn(te),
-    pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
-    loop(ttot$(ttot.val ge 2005 AND ttot.val < 2035 ),
-        pm_inco0_t(ttot,regi,te) =  sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ), p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te) );
-    );
+loop (teNoLearn(te),
+  pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te) 
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
 );
 display pm_inco0_t;
 
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
-$if %cm_techcosts% == "REG"   loop(te$(teNoLearn(te) AND teRegTechCosts(te)),
-$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);  !! no value after 2020 is currently used (see convergence below)
+$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
+*** for those technologies, for which differentiated costs are available for
+*** 2015-2040, use those
+loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
+  !! no value after 2020 is currently used (see convergence below)
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  = p_inco0(ttot,regi,te);
 
-***linear convergence of investment costs from 2025 on for non-learning technologies with regionally differentiated costs
-***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"     loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
-$if %cm_techcosts% == "REG"       pm_inco0_t(ttot,regi,te) =   ( pm_ttot_val(ttot) - 2020 ) / 50 * fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                  + ( 2070 - pm_ttot_val(ttot) ) / 50 * pm_inco0_t("2020",regi,te) ;
-$if %cm_techcosts% == "REG"     );
-$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val gt 2070) = fm_dataglob("inco0",te);
-$if %cm_techcosts% == "REG"   );
+*** linear convergence of investment costs from 2025 on for non-learning
+*** technologies with regionally differentiated costs so that in 2070 all
+*** regions again have the technology cost data that is given in generisdata.prn
+  loop(ttot$( ttot.val ge 2020 AND ttot.val le 2070 ),
+    pm_inco0_t(ttot,regi,te)
+    = (pm_ttot_val(ttot) - 2020) / 50 * fm_dataglob("inco0",te)
+    + (2070 - pm_ttot_val(ttot)) / 50 * pm_inco0_t("2020",regi,te);
+  );
 
-*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
-$if %c_techcosts% == "REG" loop(teNoLearn(te)$(sameas(te,"igcc"),
-$if %c_techcosts% == "REG"      loop(ttot$(ttot.val ge 2005 AND ttot.val < 2035 ),
-$if %c_techcosts% == "REG"        pm_inco0_t(ttot,regi,te) = sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-$if %c_techcosts% == "REG" p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te)
-$if %c_techcosts% == "REG"                                   );
-$if %c_techcosts% == "REG"      );
-$if %c_techcosts% == "REG"    );
+  pm_inco0_t(ttot,regi,te)$( ttot.val gt 2070 ) = fm_dataglob("inco0",te);
+);
 
+*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost
+*** data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
+loop (teNoLearn(te)$( sameas(te,"igcc") ),
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te)
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
+);
+$endif.REG_techcosts
 
 *** rename f_datafecostsglob
 * p_esCapCost(regi,in)$f_datafecostsglob("lifetime",in)
