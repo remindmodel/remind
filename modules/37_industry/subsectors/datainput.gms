@@ -467,10 +467,9 @@ $offdelim
 p37_steel_secondary_max_share(t,regi)
   = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
 
-$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
 Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 
-p37_steel_secondary_share(t,regi_dyn29(regi))
+p37_steel_secondary_share(t,regi)
   = pm_cesdata(t,regi,"ue_steel_secondary","quantity")
   / ( pm_cesdata(t,regi,"ue_steel_primary","quantity")
     + pm_cesdata(t,regi,"ue_steel_secondary","quantity")
@@ -481,8 +480,8 @@ if (smax((t,regi),
     - p37_steel_secondary_max_share(t,regi)
     ) gt 0,
   put logfile, ">>> Modifying maximum secondary steel share <<<" /;
-  loop ((t,regi_dyn29(regi))$(   p37_steel_secondary_share(t,regi)
-                              gt p37_steel_secondary_max_share(t,regi) ),
+  loop ((t,regi)$(   p37_steel_secondary_share(t,regi)
+                  gt p37_steel_secondary_max_share(t,regi) ),
     put p37_steel_secondary_max_share.tn(t,regi), "   ",
         p37_steel_secondary_max_share(t,regi), " + ",
         ( p37_steel_secondary_share(t,regi)
@@ -493,7 +492,6 @@ if (smax((t,regi),
   );
 putclose logfile, " " /;
 );
-$endif.calibration
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions
