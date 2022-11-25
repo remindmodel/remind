@@ -341,5 +341,3 @@ rem_gdx[,,kyo] <- rem_gdx[,,kyo] * conversion
 
 mipArea(rem_gdx["GLO",getYears(rem_gdx)>="y2005" & getYears(rem_gdx) <="y2100",kyo]) + labs(title = "Emissions", subtitle = "Kyoto gases", y ="Mt CO2eq/yr")
 ```
-
-

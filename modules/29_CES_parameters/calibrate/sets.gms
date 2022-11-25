@@ -38,8 +38,8 @@ ppf_beyondcalib_29(all_in)    "all factors which are not part of in_29"
 ces_beyondcalib_29(all_in, all_in) "production relationships for the non calibrated CES"
 ces2_beyondcalib_29(all_in, all_in) "production relationships for the non calibrated CES"
 ipf_beyond_last(all_in) "intermediary factors which are just above the ppf_beyondcalib_29 level"
-ipf_beyond_29(all_in)  "all ces intermediary levels whose inputs are in beyond_calib" 
-ipf_beyond_29_excludeRoot(all_in)  "all ces intermediary levels whose inputs are in beyond_calib, excluding the roots" 
+ipf_beyond_29(all_in)  "all ces intermediary levels whose inputs are in beyond_calib"
+ipf_beyond_29_excludeRoot(all_in)  "all ces intermediary levels whose inputs are in beyond_calib, excluding the roots"
 
 te_29_report(all_te)  "set of technologies to report on"
 /
@@ -69,13 +69,13 @@ t_29(ttot)     "time steps considered in the calibration"
 
 pf_eff_target_dyn29(all_in)    "production factors with efficiency target"    / /
 pf_quan_target_dyn29(all_in)   "production factors with quantity target"      / /
-  
+
 capUnitType  "Type of technological data: for investments or for the standing capital"
 /
   cap   "estimate for the standing capital (with some depreciation)"
-  inv   "estimate for new investments (without depreciation)" 
-/ 
-  
+  inv   "estimate for new investments (without depreciation)"
+/
+
 index_Nr "index to differentiate data points with identical characteristics"
 /
   0 * 62
@@ -87,6 +87,12 @@ eff_scale_par   "parameters for scaling certain efficiencies during calibration"
   midperiod
   width
 /
+
+  CES_tc(all_in)   "CES tree traversal current node"
+  /   /
+  CES_tp(all_in)   "CES tree traversal pending nodes"
+  CES_ts(all_in)   "CES tree traversal swap node"
+  /   /
 ;
 
 alias(cesOut2cesIn_below,cesOut2cesIn_below2);
@@ -113,5 +119,5 @@ $offOrder
  t_29_last(ttot) = NO;
  t_29_last(t_29)$(ord(t_29) eq card(t_29)) = YES;
 $onOrder
-*** EOF ./modules/29_CES_parameters/calibrate/sets.gms
 
+*** EOF ./modules/29_CES_parameters/calibrate/sets.gms

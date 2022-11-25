@@ -240,7 +240,7 @@ $ifthen.module "%transport%" == "complex"
 $ifthen.demTtrend "%cm_demTcomplex%" == "fromEDGET"
 
 Parameter
- p29_fedemand_trasp(tall,all_regi,all_GDPscen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
+ p29_fedemand_trasp(tall,all_regi,all_GDPscen,all_demScen,EDGE_scenario_all,all_in)  "transport alternative demand for complex module based on EDGE-T"
 ;
 
 Parameter
@@ -252,11 +252,11 @@ $offdelim
 /
 ;
 $ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","ElecEraWise",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","Mix1Wise",in_dyn35);
 $elseif "%cm_calibration_FE%" == "medium"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $elseif "%cm_calibration_FE%" == "high"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $endif
 
 Parameter
@@ -329,8 +329,14 @@ $endif.industry_subsectors
 p29_capitalUnitProjections(all_regi,all_in,index_Nr)$ppfKap(all_in) =  p29_capitalUnitProjections(all_regi,all_in,index_Nr) * sm_TWa_2_kWh / sm_trillion_2_non;
 
 
-*** Load CES parameters parameters from the last run
-Execute_Load 'input'  p29_cesdata_load= pm_cesdata;
+*** Load CES parameters from the last run
+Execute_Load 'input'  p29_cesdata_load = pm_cesdata;
+$ifthen.testOneRegi "%optimization%" == "testOneRegi"   !! optimization
+  !! carry along CES parameters for other regions in testOneRegi runs
+  pm_cesdata(t,regi,in,cesParameter)$( NOT regi_dyn29(regi) )
+  = p29_cesdata_load(t,regi,in,cesParameter);
+$endif.testOneRegi
+
 *** FS: if some elasticities are 0 because they are not part of the input gdx, -> set them to 0.5 to avoid divsion by 0
 p29_cesdata_load(t,regi,in,"rho")$( p29_cesdata_load(t,regi,in,"rho") eq 0) = 0.5;
 
@@ -357,8 +363,8 @@ pm_cesdata(t,regi,in,"quantity") $p29_esdemand(t,regi,in) = p29_esdemand(t,regi,
 
 *** Load exogenous transport demand - required for the EDGE transport module
 $ifthen.edgesm %transport% ==  "edge_esm"
-pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_EDGEtr_scen%", in)
-           = p29_trpdemand(t,regi,"%cm_GDPscen%", "%cm_EDGEtr_scen%", in);
+pm_cesdata(t,regi,in,"quantity") $ p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in)
+           = p29_trpdemand(t,regi,"%cm_GDPscen%","%cm_demScen%","%cm_EDGEtr_scen%", in);
 $endif.edgesm
 
 *** Load capital quantities
@@ -395,8 +401,8 @@ loop ((t,regi_dyn29(regi)),
   );
 );
 
-* Use offset quantities for historic industry H2/HTH_el use, since it actually
-* didn't happen.
+*** Use offset quantities for historic industry H2/HTH_el use, since it actually
+*** did not happen.
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
                                   pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
@@ -472,13 +478,7 @@ loop ( (t0(t),regi, ppfIO_putty(in)),
     );
 );
 
-$ifthen.growth %cm_esubGrowth% ==  "low"
 p29_esubGrowth = 0.3;
-$elseif.growth %cm_esubGrowth% == "middle"
-p29_esubGrowth = 0.5;
-$elseif.growth %cm_esubGrowth% == "high"
-p29_esubGrowth = 1;
-$endif.growth
-;
+
 *** EOF ./modules/29_CES_parameters/calibrate/datainput.gms
 

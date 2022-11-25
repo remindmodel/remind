@@ -38,11 +38,11 @@ pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2030) = 1.2;
 pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2035) = 2;
 pm_cesdata_sigma(ttot,"enhgai")$ (ttot.val eq 2040) = 3;
 
-$IFTHEN.cm_INNOPATHS_eni not "%cm_INNOPATHS_eni%" == "off" 
-  pm_cesdata_sigma(ttot,"eni")$pm_cesdata_sigma(ttot,"eni") = pm_cesdata_sigma(ttot,"eni") * %cm_INNOPATHS_eni%;
+$IFTHEN.cm_eni not "%cm_eni%" == "off" 
+  pm_cesdata_sigma(ttot,"eni")$pm_cesdata_sigma(ttot,"eni") = pm_cesdata_sigma(ttot,"eni") * %cm_eni%;
   pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") gt 0.8) AND (pm_cesdata_sigma(ttot,"eni") lt 1)) = 0.8; !! If complementary factors, sigma should be below 0.8
   pm_cesdata_sigma(ttot,"eni")$( (pm_cesdata_sigma(ttot,"eni") ge 1) AND (pm_cesdata_sigma(ttot,"eni") lt 1.2)) = 1.2; !! If substitution factors, sigma should be above 1.2
-$ENDIF.cm_INNOPATHS_eni
+$ENDIF.cm_eni
 
 *** assuming a maximum 20% of heat pumps in heat industry to be more in line with industry subsectors
 pm_ppfen_shares(t,regi,"enhi","fehei") = 0.2;
@@ -58,8 +58,8 @@ $offdelim
 
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup not "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
-	pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_INNOPATHS_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
+$IFTHEN.Industry_CCS_markup not "%cm_Industry_CCS_markup%" == "off" 
+	pm_abatparam_Ind(ttot,regi,all_enty,steps)$pm_abatparam_Ind(ttot,regi,all_enty,steps) = (1/%cm_Industry_CCS_markup%)*pm_abatparam_Ind(ttot,regi,all_enty,steps);
 $ENDIF.Industry_CCS_markup
 
 *** fill in share of other industry sector
@@ -149,14 +149,6 @@ $elseif.feShareScenario "%cm_feShareLimits%" == "efficiency"
 $endif.feShareScenario
 
 $ENDIF.feShare
-
-*** ARIADNE-specific EU switches bounds on gases+liquids share and H2 share in industry
-$ifthen.feShareAriad "%cm_ARIADNE_FeShareBounds%" == "on" 
-*** at least 10% liquids+gases in industry FE up to midcentury to guarantee feedstocks input
-  pm_shGasLiq_fe_lo(t,regi,"indst")$(t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1; 
-*** at least 10% H2 in industry FE from 2040 onwards
-*** pm_shfe_lo(t,regi,"feh2s","indst")$(t.val ge 2040 AND t.val lt 2070 AND regi_group("EUR_regi",regi)) = 0.1;
-$endif.feShareAriad
 
 *** FS: CES markup cost industry
 p37_CESMkup(t,regi,in) = 0;

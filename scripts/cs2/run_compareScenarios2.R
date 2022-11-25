@@ -84,7 +84,7 @@ run_compareScenarios2 <- function(
   system(paste0("mv ", outputFilePath, " ."))
   system(paste0("rm -rf ", args$outputDir))
   
-  message("Done!.\n")
+  message("Done!\n")
 }
 
 run_compareScenarios2(outputDirs, outFileName, profileName)

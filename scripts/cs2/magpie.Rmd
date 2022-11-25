@@ -1,0 +1,159 @@
+# MAgPIE
+
+## Resources|Land Cover Change
+
+```{r}
+items <- c(
+  "Resources|Land Cover Change|Cropland",
+  "Resources|Land Cover Change|Pastures and Rangelands",
+  "Resources|Land Cover Change|Forest",
+  "Resources|Land Cover Change|Other Land",
+  "Resources|Land Cover Change|Urban Area")
+showAreaAndBarPlots(data, items)
+```
+
+### Resources|Land Cover Change|Forest
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest")
+```
+
+### Resources|Land Cover Change|Forest|Managed Forest
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Managed Forest")
+```
+
+### Resources|Land Cover Change|Forest|Natural Forest
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Natural Forest")
+```
+
+### Resources|NetForestChange
+
+```{r}
+showLinePlots(data, "Resources|NetForestChange")
+```
+
+##  Productivity
+
+
+### Productivity|Landuse Intensity Indicator Tau
+
+```{r}
+showLinePlots(data, "Productivity|Landuse Intensity Indicator Tau")
+```
+
+### Productivity|Yield
+
+```{r}
+items <- c(
+  "Productivity|Yield|Bioenergy crops",
+  "Productivity|Yield|Crops",
+  "Productivity|Yield|Forage",
+  "Productivity|Yield|Pasture")
+showAreaAndBarPlots(data, items)
+```
+
+#### Productivity|Yield|Bioenergy crops
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Bioenergy crops")
+```
+
+#### Productivity|Yield|Crops
+
+```{r}
+showLinePlots(data, "Productivity|Yield|Crops")
+```
+
+
+## SDG
+
+```{r results='asis'}
+items <- c(
+  "SDG|SDG02|Agricultural commodity price index wrt 2020",
+  "SDG|SDG02|Food availability",
+  "SDG|SDG02|Food expenditure share",
+  "SDG|SDG15|Industrial and intentional biological fixation of N",
+  "SDG|SDG12|Food waste",
+  "SDG|SDG06|Agricultural water use")
+walk(items, function(v) {
+  cat("###", v, "\n\n")
+  showLinePlots(data, v)
+  cat("\n\n")
+})
+```
+
+## Demand
+
+### Selection
+
+```{r}
+items <- c(
+  "Demand|Bioenergy crops",
+  "Demand|Crops",
+  "Demand|Fish",
+  "Demand|Livestock products",
+  "Demand|Secondary products")
+showAreaAndBarPlots(data, items)
+```
+
+### Aggregation 1
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1)
+```
+
+### Aggregation 2
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2)
+```
+
+
+
+## Nutrition
+
+### Nutrition|Calorie Intake
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Intake")
+```
+
+### Nutrition|Calorie Supply
+
+```{r}
+showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply")
+```
+
+
+## Prices|Food Expenditure Index
+
+```{r}
+showLinePlots(data, "Prices|Food Expenditure Index")
+```
+
+### Prices|Food Expenditure Index corrected for ghg costs
+
+```{r}
+showAreaAndBarPlots(
+  data,
+  vars = c(
+    "Prices|Food Expenditure Index corrected for ghg costs|Livestock food products",
+    "Prices|Food Expenditure Index corrected for ghg costs|Plant-based food products"),
+  tot = "Prices|Food Expenditure Index corrected for ghg costs")
+```
+
+### Prices|Food Expenditure Index|Livestock food products
+
+```{r}
+showLinePlots(data, "Prices|Food Expenditure Index|Livestock food products")
+```
+
+### Prices|Food Expenditure Index|Plant-based food products
+
+```{r}
+showLinePlots(data, "Prices|Food Expenditure Index|Plant-based food products")
+```

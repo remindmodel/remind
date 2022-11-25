@@ -27,19 +27,22 @@ if(cm_emiscen = 1,
 );
 
 ***----------------------------------------------------------------------------
-*** force synthetic liquids in as a share of total liquids
+*** force synthetic liquids in as a minimum share of total liquids if cm_shSynLiq switch used 
 ***----------------------------------------------------------------------------
 
-v39_shSynTrans.lo(t,regi)$(t.val eq 2035) = cm_shSynTrans / 4;
-v39_shSynTrans.lo(t,regi)$(t.val eq 2040) = cm_shSynTrans / 2;
-v39_shSynTrans.lo(t,regi)$(t.val ge 2045) = cm_shSynTrans;
+if (cm_shSynLiq gt 0,
+  v39_shSynLiq.lo(t,regi)$(t.val eq 2035) = cm_shSynLiq / 4;
+  v39_shSynLiq.lo(t,regi)$(t.val eq 2040) = cm_shSynLiq / 2;
+  v39_shSynLiq.lo(t,regi)$(t.val ge 2045) = cm_shSynLiq;
+);
 
 ***----------------------------------------------------------------------------
-*** force synthetic gases in as a share of total liquids
+*** force synthetic gases in as a minimum share of total liquids if cm_shSynGas switch used 
 ***----------------------------------------------------------------------------
 
+if (cm_shSynGas gt 0,
 v39_shSynGas.lo(t,regi)$(t.val eq 2035) = cm_shSynGas / 4;
 v39_shSynGas.lo(t,regi)$(t.val eq 2040) = cm_shSynGas / 2;
 v39_shSynGas.lo(t,regi)$(t.val ge 2045) = cm_shSynGas;
-
+);
 *** EOF ./modules/39_CCU/on/bounds.gms

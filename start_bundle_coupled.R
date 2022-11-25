@@ -5,8 +5,31 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(stringr)
 require(lucode2)
+require(magclass)
+require(gms)
+require(remind2)
+require(gtools) # required for mixedsort()
+require(dplyr) # for filter, secelt, %>%
+require(stringr) # for str_sub
+
+helpText <- "
+#' Usage:
+#' Before running this script, edit start_bundle_coupled.R
+#' and specify the user settings
+#'
+#' Rscript start_bundle_coupled.R [options]
+#' Rscript start_bundle_coupled.R scenario_config_coupled_*.csv
+#' Rscript start_bundle_coupled.R --test scenario_config_coupled_*.csv
+#'
+#' Control the script's behavior by providing additional arguments:
+#'
+#' --help, -h: show this help text and exit
+#'
+#' --test, -t: Test scenario configuration and writing the RData files in
+#'             the REMIND main folder without starting the runs.
+#'
+"
 
 ########################################################################################################
 #################################  U S E R   S E T T I N G S ###########################################
@@ -26,7 +49,6 @@ path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
-# !Currently not working for prefixes different from "C_". "C_" is hard-coded elsewhere!
 prefix_runname <- "C_"
 
 # If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below.
@@ -54,13 +76,6 @@ run_compareScenarios <- "short"
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
-require(magclass)
-require(gms)
-require(remind2)
-require(gtools) # required for mixedsort()
-require(dplyr) # for filter, secelt, %>%
-require(stringr) # for str_sub
-
 # Define colors for output
 red   <- "\033[0;31m"
 green <- "\033[0;32m"
@@ -78,34 +93,27 @@ message("max_iterations:        ", max_iterations)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
 
-# load arguments from command line
-if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-
-readArgs("startnow")
-if (! exists("startnow")) startnow <- "1" else argv <- setdiff(argv, paste0("startnow=", startnow))
-
 # define arguments that are accepted (test for backward compatibility)
-if ("test" %in% argv) argv <- unique(c(argv[! argv %in% c("test")], "--test"))
-accepted <- c(p = "--parallel", t = "--test")
-
-# search for strings that look like -i1asrR and transform them into long flags
-onedashflags <- unlist(strsplit(paste0(argv[grepl("^-[a-zA-Z0-9]*$", argv)], collapse = ""), split = ""))
-argv <- unique(c(argv[! grepl("^-[a-zA-Z0-9]*$", argv)], unlist(accepted[names(accepted) %in% onedashflags])))
-message("\nAll command line arguments: ", paste(argv, collapse = ", "))
-if (sum(! onedashflags %in% c(names(accepted), "-")) > 0) {
-  stop("Unknown single character flags: ", onedashflags[! onedashflags %in% c(names(accepted), "-")],
-  ". Only available: ", paste0("-", names(accepted), collapse = ", ") )
+flags <- lucode2::readArgs("startnow", .flags = c(h = "--help", p = "--parallel", t = "--test"))
+if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
+if (! exists("startnow")) startnow <- "1"
+if ("--help" %in% flags) {
+  message(helpText)
+  q()
+}
+if ("test" %in% argv) flags <- unique(c(flags, "--test"))
+if ("--parallel" %in% flags) {
+  message("The flag --parallel is not necessary anymore, as this is default now")
 }
 
-# check if user provided any unknown arguments or config files that do not exist
-known <- argv %in% accepted
-if (!all(known)) {
-  file_exists <- file.exists(argv[!known])
+# load arguments from command line
+argv <- grep('(^-|=|^test$)', argv, value = TRUE, invert = TRUE)
+if (length(argv) > 0) {
+  file_exists <- file.exists(argv)
   if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
-  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!known][!file_exists], collapse = ", "),
-  ".\nAccepted parameters: [config file], ", paste(accepted, collapse = ", "))
+  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
-  path_settings_coupled <- paste0(path_remind, argv[!known][[1]])
+  path_settings_coupled <- paste0(path_remind, argv[[1]])
   if (! grep("scenario_config_coupled", path_settings_coupled))
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
@@ -113,7 +121,13 @@ if (!all(known)) {
 
 if (! file.exists("output")) dir.create("output")
 
-parallel <- ifelse("--parallel" %in% argv, TRUE, FALSE)
+# Check if dependencies for a REMIND model run are fulfilled
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
+  piamenv::checkDeps(action = "ask")
+} else {
+  stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
+}
+
 errorsfound <- 0
 startedRuns <- 0
 waitingRuns <- 0
@@ -129,6 +143,13 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
   matches <- grepl(needle, stack)
   out <- c(stack[!matches], new)
   return(out)
+}
+
+# Returns TRUE if fullname ends with extension (eg. if "C_SSP2-Base/fulldata.gdx" ends with "fulldata.gdx")
+# AND if the file given in fullname exists.
+.isFileAndAvailable <- function(fullname, extension) {
+  isTRUE(stringr::str_sub(fullname, -nchar(extension), -1) == extension) &&
+    file.exists(fullname)
 }
 
 ####################################################
@@ -200,13 +221,14 @@ for (scen in common) {
 
 # check REMIND settings
 
-source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND default settings
+# retrieve REMIND default settings including GAMS switches
+cfg <- readDefaultConfig(path_remind)
 
 knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                      "regionmapping", "inputRevision", "slurmConfig")
+                      "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
 unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
 if (length(unknownColumnNames) > 0) {
-  message("\nAutomated checks did not find counterparts in default.cfg for these config file columns:")
+  message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these config file columns:")
   message("  ", paste(unknownColumnNames, collapse = ", "))
   message("The start script might simply ignore them. Please check if these switches are not deprecated.")
   message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start_bundle_coupled.R.\n")
@@ -222,7 +244,7 @@ if (length(unknownColumnNames) > 0) {
   }
 }
 
-if (parallel && file.exists("/p") && "qos" %in% names(scenarios_coupled)
+if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
     && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
       message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
       message("They may not be able to run in parallel on the PIK cluster.")
@@ -240,64 +262,66 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)           # name of the run that is used for the folder names
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) | is.na(qos)) qos <- if (parallel) "short" else "medium" # if qos could not be found in scenarios_coupled use short/medium
+  if(is.null(qos) | is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
   start_iter_first <- 1                                  # iteration to start the coupling with
 
-  # look whether there is already a REMIND run (check for old name if provided)
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
-  path_report_found <- NULL
-  start_magpie <- FALSE
+  # Look whether there is already a fulldata.gdx from a former REMIND run (check for old name if provided)
   iter_rem <- 0
-  needle <- scen
-  suche <- paste0(path_remind, "output/", prefix_runname, needle, "-rem-*/REMIND_generic_", prefix_runname, needle, "-rem-*.mif")
-  possibleRemindReport <- mixedsort(Sys.glob(suche))[1]
-  already_rem <- sub(paste0("REMIND_generic_", prefix_runname, needle, "-rem-.*\\.mif"), "fulldata.gdx", possibleRemindReport)
+  suche <- paste0(path_remind, "output/", prefix_runname, scen, "-rem-*/fulldata.gdx")
+  already_rem <- mixedsort(Sys.glob(suche))[1]
+
   if (! is.na(already_rem)) {
-    if (! file.exists(already_rem)) stop(possibleRemindReport, " exists, but ", already_rem, " not!")
     iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1", already_rem))
-  } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
+  } else {
     message("Nothing found for ", suche, ", continue with oldrun.")
-    if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/fulldata.gdx") &&
-        file.exists(scenarios_coupled[scen, "oldrun"])) {
-          already_rem <- c(scenarios_coupled[scen, "oldrun"])
+    if (.isFileAndAvailable(scenarios_coupled[scen, "oldrun"], "/fulldata.gdx")) {
+      already_rem <- scenarios_coupled[scen, "oldrun"]
     } else {
-      needle <- scenarios_coupled[scen, "oldrun"]
-      suche <- paste0(path_remind_oldruns, prefix_oldruns, needle, "-rem-*/fulldata.gdx")
+      lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
+      suche <- paste0(path_remind_oldruns, prefix_oldruns, lookfor, "-rem-*/fulldata.gdx")
       already_rem <- mixedsort(Sys.glob(suche))[1]
     }
   }
-  if (is.na(already_rem)) {
-    message("Nothing found for ", suche, ", starting with ", runname, "-rem-1.")
-  } else {
+  
+  if (.isFileAndAvailable(settings_remind[scen, "path_gdx"], "/fulldata.gdx")) {
+    # if there is a REMIND gdx given in scenario_cofig or scenario_config_coupled, use it instead of the one found automatically
+    message("Using REMIND gdx specified in ", basename(path_settings_coupled)," or ", basename(path_settings_remind),": ", settings_remind[scen, "path_gdx"])
+  } else if (! is.na(already_rem)) {
     # if there is an existing REMIND run, use its gdx for the run to be started
     settings_remind[scen, "path_gdx"] <- normalizePath(already_rem)
     message("Found REMIND gdx here: ", normalizePath(already_rem))
+  } else {
+    message("Nothing found for ", suche, ", starting with ", runname, "-rem-1.")
   }
+  
   # is there already a MAgPIE run with this name?
   iter_mag <- 0
-  needle <- scen
-  suche <- paste0(path_magpie, "output/", prefix_runname, needle,"-mag-*/report.mif")
+  suche <- paste0(path_magpie, "output/", prefix_runname, scen,"-mag-*/report.mif")
   already_mag <- mixedsort(Sys.glob(suche))[1]
+  
   if (! is.na(already_mag)) {
     iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
-  } else if (! is.na(scenarios_coupled[scen, "oldrun"])) {
-    message("Nothing found for ", suche, ", continue with oldrun")
-    if (isTRUE(str_sub(scenarios_coupled[scen, "oldrun"], -14, -1) == "/report.mif") &&
-        file.exists(scenarios_coupled[scen, "oldrun"])) {
-          already_mag <- c(scenarios_coupled[scen, "oldrun"])
-    } else {
-      needle <- scenarios_coupled[scen, "oldrun"]
-      suche <- paste0(path_magpie_oldruns, prefix_oldruns, needle, "-mag-*/report.mif")
-      already_mag <- mixedsort(Sys.glob(suche))[1]
-    }
-  }
-  if (is.na(already_mag)) {
-    message("Nothing found for ", suche, ", starting REMIND standalone.")
   } else {
+    message("Nothing found for ", suche, ", continue with oldrun")
+    lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
+    suche <- paste0(path_magpie_oldruns, prefix_oldruns, lookfor, "-mag-*/report.mif")
+    already_mag <- mixedsort(Sys.glob(suche))[1]
+  }
+
+  path_report_found <- NULL
+  if (.isFileAndAvailable(scenarios_coupled[scen, "path_report"], "/report.mif")) {
+    path_report_found <- scenarios_coupled[scen, "path_report"]
+    message("Using MAgPIE report specified in ", basename(path_settings_coupled), ": ", scenarios_coupled[scen, "path_report"])
+  } else if (! is.na(already_mag)) {
     path_report_found <- normalizePath(already_mag)
     message("Found MAgPIE report here: ", path_report_found)
+  } else {
+    message("Nothing found for ", suche, ", starting REMIND standalone.")
   }
+  
   # decide whether to continue with REMIND or MAgPIE
+  start_magpie <- FALSE
   if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
     # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
     start_iter_first  <- iter_rem
@@ -319,7 +343,7 @@ for(scen in common){
   }
 
 
-  source(paste0(path_remind,"config/default.cfg")) # retrieve REMIND settings
+  cfg <- readDefaultConfig(path_remind)   # retrieve REMIND settings
   cfg_rem <- cfg
   rm(cfg)
   cfg_rem$title <- scen
@@ -340,47 +364,8 @@ for(scen in common){
   # GHG prices will be set to zero (in start_run() of MAgPIE) until and including the year specified here
   cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"] 
   
-  # How to provide the exogenous TC to MAgPIE:
-  # Running MAgPIE with exogenous TC requires a path with exogenous TC. Using exo_indc_MAR17 the path is chosen via c13_tau_scen.
-  # Using exo_JUN13 the path is given in the file modules/13_tc/exo_JUN13/input/tau_scenario.csv
-  # This file can be generated (prior to all runs that use exogenous TC) using the following lines of code:
-  #  require(magpie) # for tau function
-  #  write.magpie(tau("/p/projects/htc/MagpieEmulator/r11356/magmaster/output/SSP2-SSP2-Ref-SPA0-endo-73-lessts/fulldata.gdx"),"modules/13_tc/exo_JUN13/input/tau_scenario.csv")
-  #  Useful in case years mismatch:
-  #  t  <- tau("/p/projects/htc/MagpieEmulator/r11356/magmaster/output/SSP2-SSP2-Ref-SPA0-endo-73/fulldata.gdx")
-  #  y  <- c(seq(2005,2060,5),seq(2070,2110,10),2130,2150)
-  #  tn <- time_interpolate(t,y,integrate_interpolated_years=TRUE,extrapolation_type = "constant")
-  #  write.magpie(tn,"modules/13_tc/exo_JUN13/input/tau_scenario.csv")
-
-  # Switch REMIND and MAgPIE to endogenous TC
-  #message("Setting MAgPIE to endogenous TC")
-  #cfg_mag$gms$tc      <- "inputlib"
-  #cfg_rem$gms$biomass <- "magpie_linear"
-
-  # Configure Afforestation in MAgPIE
-  # if (grepl("-aff760",scen)) {
-  #    message("Setting MAgPIE max_aff_area to 760")
-  #    cfg_mag$gms$s32_max_aff_area <- 760
-  #} else if (grepl("-aff900",scen)) {
-  #    message("Setting MAgPIE max_aff_area to 900")
-  #    cfg_mag$gms$s32_max_aff_area <- 900
-  #} else if (grepl("-affInf",scen)) {
-  #    message("Setting MAgPIE max_aff_area to Inf")
-  #    cfg_mag$gms$s32_max_aff_area <- Inf
-  #} else if (grepl("-cost2",scen)) {
-  #    message("Setting MAgPIE cprice_red_factor to 0.2")
-  #    cfg_mag$gms$s56_cprice_red_factor <- 0.2
-  #    cfg_mag$gms$s32_max_aff_area <- Inf
-  #} else if (grepl("-cost3",scen)) {
-  #    message("Setting MAgPIE cprice_red_factor to 0.3")
-  #    cfg_mag$gms$s56_cprice_red_factor <- 0.3
-  #    cfg_mag$gms$s32_max_aff_area <- Inf
-  #}
-
-  #cfg$logoption  <- 2  # Have the log output written in a file (not on the screen)
-
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
-  for (switchname in intersect(c("model", "regionmapping", "inputRevision"), names(settings_remind))) {
+  for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
     if ( ! is.na(settings_remind[scen, switchname] )) {
       cfg_rem[[switchname]] <- settings_remind[scen, switchname]
     }
@@ -404,10 +389,9 @@ for(scen in common){
   if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
     cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
   }
-  configureIterations <- if(parallel) max_iterations:start_iter_first else c(start_iter_first)
 
-  for (i in configureIterations) {
-    fullrunname <- paste0(runname, ifelse(parallel, paste0("-rem-", i), ""))
+  for (i in max_iterations:start_iter_first) {
+    fullrunname <- paste0(runname, "-rem-", i)
     start_iter <- i
 
     # If provided replace the path to the MAgPIE report found automatically with path given in scenario_config_coupled.csv
@@ -419,6 +403,7 @@ for(scen in common){
         path_report <- path_report_found
       }
     } else {
+      # start_coupled.R uses the name of this run to create the name of the MAgPIE report for the subsequent runs (next iteration)
       path_report <- runname
     }
 
@@ -426,12 +411,12 @@ for(scen in common){
     path_mif_ghgprice_land <- NULL
     if (i == 1 && "path_mif_ghgprice_land" %in% names(scenarios_coupled)) {
       if (! is.na(scenarios_coupled[scen, "path_mif_ghgprice_land"])) {
-        if (str_sub(scenarios_coupled[scen, "path_mif_ghgprice_land"], -4, -1) == ".mif") {
+        if (.isFileAndAvailable(scenarios_coupled[scen, "path_mif_ghgprice_land"], ".mif")) {
             # if real file is given (has ".mif" at the end) take it for path_mif_ghgprice_land
             path_mif_ghgprice_land <- scenarios_coupled[scen, "path_mif_ghgprice_land"]
         } else {
             # if no real file is given but a reference to another scenario (that has to run first) create path to the reference scenario
-            ghgprice_remindrun <- paste0(prefix_runname, scenarios_coupled[scen, "path_mif_ghgprice_land"], "-rem-", ifelse(parallel, i, max_iterations))
+            ghgprice_remindrun <- paste0(prefix_runname, scenarios_coupled[scen, "path_mif_ghgprice_land"], "-rem-", i)
             path_mif_ghgprice_land <- paste0(path_remind,"output/", ghgprice_remindrun ,"/REMIND_generic_", ghgprice_remindrun ,".mif")
         }
         cfg_mag$path_to_report_ghgprices <- path_mif_ghgprice_land
@@ -441,14 +426,12 @@ for(scen in common){
     # Create list of previously defined paths to gdxs
     gdxlist <- unlist(settings_remind[scen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
-    if (parallel) {
-      gdxlist[gdxlist %in% rownames(settings_coupled)] <- paste0(prefix_runname, gdxlist[gdxlist %in% rownames(settings_coupled)], "-rem-", i)
-      possibleFulldata <- paste0(path_remind, "output/", gdxlist, "/fulldata.gdx")
-      possibleRemindReport <- paste0(path_remind, "output/", gdxlist, "/REMIND_generic_", gdxlist, ".mif")
-      # if file fulldata.gdx and report already exists because run was already finished, use it directly as input
-      replaceByFulldata <- file.exists(possibleFulldata) & file.exists(possibleRemindReport)
-      gdxlist[replaceByFulldata] <- possibleFulldata[replaceByFulldata]
-    }
+    gdxlist[gdxlist %in% rownames(settings_coupled)] <- paste0(prefix_runname, gdxlist[gdxlist %in% rownames(settings_coupled)], "-rem-", i)
+    possibleFulldata <- paste0(path_remind, "output/", gdxlist, "/fulldata.gdx")
+    possibleRemindReport <- paste0(path_remind, "output/", gdxlist, "/REMIND_generic_", gdxlist, ".mif")
+    # if file fulldata.gdx and report already exists because run was already finished, use it directly as input
+    replaceByFulldata <- file.exists(possibleFulldata) & file.exists(possibleRemindReport)
+    gdxlist[replaceByFulldata] <- possibleFulldata[replaceByFulldata]
 
     if (i == start_iter_first) {
       gdx_specified <- grepl(".gdx", gdxlist, fixed = TRUE)
@@ -456,21 +439,21 @@ for(scen in common){
       start_now <- all(gdx_specified | gdx_na)
     }
 
-    # in parallel mode, remove gdxlist generated by earlier i
-    if (parallel) cfg_rem$files2export$start <- rem_filesstart
+    # remove gdxlist generated by earlier i
+    cfg_rem$files2export$start <- rem_filesstart
     # Remove potential elements that contain ".gdx" and append gdxlist
     cfg_rem$files2export$start <- .setgdxcopy(".gdx", cfg_rem$files2export$start, gdxlist)
 
     # add table with information about runs that need the fulldata.gdx of the current run as input (will be further processed in start_coupled.R)
     cfg_rem$RunsUsingTHISgdxAsInput <- settings_remind[common, ] %>% select(contains("path_gdx")) %>%    # select columns that have "path_gdx" in their name
                                                  filter(rowSums(. == scen, na.rm = TRUE) > 0)           # select rows that have the current scenario in any column
-    if (parallel && length(cfg_rem$RunsUsingTHISgdxAsInput[[1]]) > 0) {
+    if (length(cfg_rem$RunsUsingTHISgdxAsInput[[1]]) > 0) {
       cfg_rem$RunsUsingTHISgdxAsInput[! is.na(cfg_rem$RunsUsingTHISgdxAsInput)] <- paste0(prefix_runname,
                     cfg_rem$RunsUsingTHISgdxAsInput[! is.na(cfg_rem$RunsUsingTHISgdxAsInput)], "-rem-", i)
       rownames(cfg_rem$RunsUsingTHISgdxAsInput) <- paste0(prefix_runname, rownames(cfg_rem$RunsUsingTHISgdxAsInput), "-rem-", i)
     }
     # add the next remind run
-    if (parallel && i < max_iterations) {
+    if (i < max_iterations) {
       cfg_rem$RunsUsingTHISgdxAsInput[paste0(runname, "-rem-", (i+1)), "path_gdx"] <- fullrunname
     }
 
@@ -480,10 +463,10 @@ for(scen in common){
       for (path_gdx in names(path_gdx_list)) {
         if (! is.na(cfg_rem$files2export$start[path_gdx_list[path_gdx]]) && ! grepl(".gdx", cfg_rem$files2export$start[path_gdx_list[path_gdx]], fixed = TRUE)) {
           cfg_rem$files2export$start[path_gdx_list[path_gdx]] <- paste0(prefix_runname, settings_remind[scen, path_gdx],
-                                                                        "-rem-", ifelse(parallel, i, max_iterations))
+                                                                        "-rem-", i)
         }
       }
-      if (parallel & i > start_iter_first) {
+      if (i > start_iter_first) {
         cfg_rem$files2export$start["input.gdx"] <- paste0(runname, "-rem-", i-1)
       }
       # If the preceding run has already finished (= its gdx file exist) start 
@@ -495,17 +478,17 @@ for(scen in common){
         start_now <- TRUE
     }
     foldername <- file.path("output", fullrunname)
-    if (parallel && (i > start_iter_first | !start_magpie) && file.exists(foldername)) {
-      if (! "--test" %in% argv) unlink(foldername, recursive = TRUE, force = TRUE)
-      message("Delete ", foldername, if ("--test" %in% argv) " if not in test mode", ". ", appendLF = FALSE)
+    if ((i > start_iter_first | !start_magpie) && file.exists(foldername)) {
+      if (! "--test" %in% flags) unlink(foldername, recursive = TRUE, force = TRUE)
+      message("Delete ", foldername, if ("--test" %in% flags) " if not in test mode", ". ", appendLF = FALSE)
       deletedFolders <- deletedFolders + 1
     }
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
-         n600_iterations, path_report, qos, parallel, prefix_runname, run_compareScenarios, file = Rdatafile)
+         n600_iterations, path_report, qos, prefix_runname, run_compareScenarios, file = Rdatafile)
 
-  } # end for (i %in% configureIterations)
+  } # end for (i %in% iterations)
 
   # convert from logi to character so file.exists does not throw an error
   path_report <- as.character(path_report)
@@ -535,12 +518,11 @@ for(scen in common){
 
   if (start_now){
       startedRuns <- startedRuns + 1
-      if (! "--test" %in% argv) {
-        logfile <- if (parallel) file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
-                   else file.path("output", paste0("log_", sub("-rem-", if(start_magpie) "-mag-" else "-rem-", fullrunname), stamp, ".txt"))
+      if (! "--test" %in% flags) {
+        logfile <- file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        system(paste0("sbatch --qos=", qos, " --job-name=", if (parallel) fullrunname else runname,
+        system(paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
       } else {
@@ -558,19 +540,19 @@ for(scen in common){
   }
 }
 
-if (! "--test" %in% argv) {
+if (! "--test" %in% flags) {
  system(paste0("cp ", path_remind, ".Rprofile ", path_magpie, ".Rprofile"))
  message("\nCopied REMIND .Rprofile to MAgPIE folder.")
-  cs_runs <- paste0("output/", common, "-rem-", max_iterations, collapse = ",")
+  cs_runs <- paste0("output/", prefix_runname, common, "-rem-", max_iterations, collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
   cs_command <- paste0("sbatch --qos=", cs_qos, " --job-name=", cs_name, " --output=", cs_name, ".out --error=",
-    cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/utils/run_compareScenarios2.R outputdirs=",
-    cs_runs, " shortTerm=FALSE outfilename=", cs_name,
+    cs_name, ".out --mail-type=END --time=60 --wrap='Rscript scripts/cs2/run_compareScenarios2.R outputDirs=",
+    cs_runs, " profileName=REMIND-MAgPIE outFileName=", cs_name,
     " regionList=World,LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA mainRegName=World'")
   message("\n### To start a compareScenario once everything is finished, run:")
   message(cs_command)
 }
 
 message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. Number of problems: ",
-        errorsfound, ".", ifelse("--test" %in% argv, " You are in TEST mode, only RData files were written.", ""))
+        errorsfound, ".", ifelse("--test" %in% flags, " You are in TEST mode, only RData files were written.", ""))

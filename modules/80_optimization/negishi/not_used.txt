@@ -37,27 +37,23 @@ pm_nfa_start,                   input,      questionnaire
 pm_taxCO2eq_iterationdiff,      input,      questionnaire
 pm_taxCO2eq_iterationdiff_tmp,  input,      questionnaire
 sm_globalBudget_dev,            input,      questionnaire
-pm_factorRescaleCO2Tax,         input,      ??
-pm_regiTarget_dev,              input,      ??
-pm_regiCO2target,               input,      ??
-pm_emissionsRefYear,            input,      ??
-pm_regiTarget_dev_iter,         input,      ??
-pm_taxCO2eq_iteration,          input,      ??
-pm_emiRescaleCo2TaxETS,         input,      ??
-pm_ETSTarget_dev,               input,      ??
-pm_emissionsCurrent,            input,      ??
-pm_regiCO2ETStarget,            input,      ??
-pm_emissionsRefYearETS,         input,      ??
-pm_ETSTarget_dev_iter,          input,      ??
+pm_factorRescaleemiMktCO2Tax,   input,      ??
+pm_emiMktTarget,                input,      ??
+pm_emiMktTarget_dev_iter,       input,      ??
+pm_emiMktCurrent,               input,      ??
 pm_taxemiMkt_iteration,         input,      ??
-pm_emiRescaleCo2TaxESR,         input,      ??
-pm_ESRTarget_dev,               input,      ??
-vm_emiTeMkt,                    variable,   ??
-pm_emiTargetESR,                input,      ??
-pm_emissionsRefYearESR,         input,      ??
-pm_ESRTarget_dev_iter,          input,      ??
-pm_emiCurrentETS,               input,      ??
 cm_keep_presolve_gdxes,         switch,     not needed
 vm_capacityTradeBalance,        variable,   not implemented yet
+pm_emiMktTarget_dev,            parameter,  ???
+pm_emiMktRefYear,               parameter,  ???
+pm_implicitQttyTarget_isLimited,      parameter,  ???
+pm_implicitQttyTarget_dev,   parameter,  ???
+pm_implicitQttyTarget,       parameter,  ???
 pm_FEPrice,                     parameter,  not needed
 pm_FEPrice_iter,                parameter,  not needed
+pm_implicitPriceTarget,         parameter,  not needed
+pm_implicitPrice_NotConv,       parameter,  not needed
+pm_implicitPrice_ignConv,       parameter,  not needed
+pm_implicitPePriceTarget,       parameter,  not needed
+pm_implicitPePrice_NotConv,     parameter,  not needed
+pm_implicitPePrice_ignConv,     parameter,  not needed

@@ -14,20 +14,22 @@ load_all("/p/tmp/simonlei/this-is-remind2/remind2")
 library(lucode2)
 library(gms)
 library(methods)
+library(edgeTransport)
+library(quitte)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
 gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
 
 
 if(!exists("source_include")) {
-  #Define arguments that can be read from command line
-   outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
-   readArgs("outputdir","gdx_name","gdx_ref_name")
+   # Define arguments that can be read from command line
+   outputdir <- "."
+   readArgs("outputdir", "gdx_name", "gdx_ref_name")
 }
 
 gdx      <- file.path(outputdir,gdx_name)
 gdx_ref  <- file.path(outputdir,gdx_ref_name)
-if(!file.exists(gdx_ref)) { gdx_ref <- NULL }
+if (!file.exists(gdx_ref)) { gdx_ref <- NULL }
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
@@ -61,7 +63,7 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
              "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
              " < climate_reporting_template.txt ",
              " > ","../../../", magicc_reporting_file,"; ",
-             "sed -i 's/glob/World/g' ","../../../", magicc_reporting_file, "; ",
+             "sed -i 's/;glob;/;World;/g' ","../../../", magicc_reporting_file, "; ",
              "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
              sep = ""))
 }
@@ -71,10 +73,45 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 ## the reporting is appended to REMIND_generic_<scenario>.MIF
 ## REMIND_generic_<scenario>_withoutPlus.MIF is replaced.
 
-if(file.exists(file.path(outputdir, "EDGE-T"))){
-message("start generation of EDGE-T reporting")
-  reportEDGETransport(outputdir)
-message("end generation of EDGE-T reporting")
+edgetOutputDir <- file.path(outputdir, "EDGE-T")
+if(file.exists(edgetOutputDir)) {
+  if (! file.exists(file.path(edgetOutputDir, "demandF_plot_pkm.RDS"))) {
+    message("EDGE-T reporting files are missing, probably because the run was killed.")
+    message("Rerunning toolIterativeEDGETransport(reporting = TRUE).")
+    savewd <- getwd()
+    setwd(outputdir)
+    edgeTransport::toolIterativeEDGETransport(reporting = TRUE)
+    setwd(savewd)
+  }
+  message("start generation of EDGE-T reporting")
+  EDGET_output <- toolReportEDGET(edgetOutputDir,
+                                  extendedReporting = FALSE,
+                                  scenario_title = scenario, model_name = "REMIND",
+                                  gdx = file.path(outputdir, "fulldata.gdx"))
+
+  write.mif(EDGET_output, remind_reporting_file, append = TRUE)
+  deletePlus(remind_reporting_file, writemif = TRUE)
+
+  message("end generation of EDGE-T reporting")
+}
+
+configfile <- file.path(outputdir, "config.Rdata")
+envir <- new.env()
+load(configfile, envir = envir)
+magpie_reporting_file <- envir$cfg$pathToMagpieReport
+if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
+  message("add MAgPIE reporting from ", magpie_reporting_file)
+  tmp_rem <- read.report(remind_reporting_file, as.list=FALSE)
+  tmp_mag <- read.report(magpie_reporting_file, as.list=FALSE)[, getYears(tmp_rem), ]
+  # harmonize scenario name from -mag-xx to -rem-xx
+  getNames(tmp_mag, dim = 1) <- paste0(scenario)
+  tmp_rem_mag <- mbind(tmp_rem, tmp_mag)
+  if (any(getNames(tmp_rem_mag[, , "REMIND"], dim = 3) %in% getNames(tmp_rem_mag[, , "MAgPIE"], dim = 3))) {
+    message("Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!")
+  } else {
+    write.report(tmp_rem_mag, file = remind_reporting_file, ndigit = 7)
+    deletePlus(remind_reporting_file, writemif = TRUE)
+  }
 }
 
 message("### end generation of mif files at ", Sys.time())
@@ -85,10 +122,12 @@ tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execu
 message("end generation of LCOE reporting")
 
 ## generate DIETER reporting if it is needed
-## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory 
+## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
   message("start generation of DIETER reporting")
   remind2::reportDIETER(DIETERGDX,outputdir)
   message("end generation of DIETER reporting")
 }
+
+message("### reporting finished.")

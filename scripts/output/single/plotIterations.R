@@ -32,7 +32,6 @@ getLineCoerce <- function() {
 now <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
 rmdPath <- file.path(outputdir, paste0("plotIterations_", now, ".Rmd"))
 
-# choose variables
 cat("\n\nWhich variables/parameters do you want to plot? Separate with comma. (default: ", symbolNames, ") ")
 answer <- getLineCoerce()
 if (!identical(trimws(answer), "")) {
@@ -145,8 +144,7 @@ rmdFooter <- if (length(symbolNames) >= 2) {
 }
 
 writeLines(paste0(c(rmdHeader, vapply(symbolNames, rmdChunksForSymbol, character(1)), rmdFooter),
-                  collapse = "\n\n"
-), rmdPath)
+                  collapse = "\n\n"), rmdPath)
 
 cat("Render plots to html? (default: ", generateHtml, ") ")
 answer <- getLineCoerce()

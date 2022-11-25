@@ -35,9 +35,7 @@ Before starting the tutorial we need to download the input data we are going to 
 
 ```{r}
 download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "REMIND_generic_BAU.mif")
-
 ```
-
 
 ```{r reading_data, include=FALSE}
   #Reading a mif file
@@ -45,15 +43,12 @@ download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "
 
   # Selecting years until 2100
   data <- data[,getYears(data)<="y2100",]
-
 ```
 
-
-
 ```{r creating_charts, include=FALSE}
-  
+
   plot <- NULL 
-  
+
   # CO2 emissions per sector
   vars <- c("Emi|CO2|Energy|Supply|Non-Elec (Mt CO2/yr)",
             "Emi|CO2|Energy|Supply|Electricity|Gross (Mt CO2/yr)",
@@ -67,35 +62,34 @@ download.file("http://rse.pik-potsdam.de/data/example/REMIND_generic_BAU.mif", "
 
   plot$CO2emi <- mipArea(data["EUR",,vars]) +
     theme_minimal() +
-    ylab("Mt CO2/yr") 
-  
+    ylab("Mt CO2/yr")
+
   # CO2 price
   plot$CO2price <- mipLineHistorical(data["EUR",,"Price|Carbon (US$2005/t CO2)"],x_hist=NULL,ylab='US$2005/t CO2') + 
     theme_minimal()
   
   # Electricity mix
-  vars <- c("SE|Electricity|Coal|w/ CCS (EJ/yr)", 
+  vars <- c("SE|Electricity|Coal|w/ CCS (EJ/yr)",
             "SE|Electricity|Coal|w/o CCS (EJ/yr)",
             "SE|Electricity|Oil (EJ/yr)",
-            "SE|Electricity|Gas|w/ CCS (EJ/yr)", 
+            "SE|Electricity|Gas|w/ CCS (EJ/yr)",
             "SE|Electricity|Gas|w/o CCS (EJ/yr)",
-            "SE|Electricity|Biomass|w/ CCS (EJ/yr)",  
+            "SE|Electricity|Biomass|w/ CCS (EJ/yr)",
             "SE|Electricity|Biomass|w/o CCS (EJ/yr)",
-            "SE|Electricity|Nuclear (EJ/yr)", 
+            "SE|Electricity|Nuclear (EJ/yr)",
             "SE|Electricity|Hydrogen (EJ/yr)",
-            "SE|Electricity|Solar (EJ/yr)", 
+            "SE|Electricity|Solar (EJ/yr)",
             "SE|Electricity|Wind (EJ/yr)",
-            "SE|Electricity|Geothermal (EJ/yr)", 
+            "SE|Electricity|Geothermal (EJ/yr)",
             "SE|Electricity|Hydro (EJ/yr)")
-  
+
   conversionFactor <- 1/0.0036 # from EJ/yr to TWh
-  
-  plot$electricityMix <- mipArea(data["EUR",,vars]*conversionFactor, total = F) + 
+
+  plot$electricityMix <- mipArea(data["EUR",,vars]*conversionFactor, total = F) +
     theme_minimal() +
     ylab("Electricity Mix (TWh)")
 
 ```
-
 
 <!--############################# -->
 <!--#### START OF MENUS CODE #### -->
@@ -133,13 +127,11 @@ Column
 
 ### Emissions quantities empty container 1
 ```{r}
-
 ```
 
 
 ### Emissions quantities empty container 2
 ```{r}
-
 ```
 
 
@@ -170,8 +162,6 @@ Column
 ggplotly(plot$CO2price)
 ```
 
-
-
 <!-- ### Creating electricity sector main menu ### -->
 
 Electricity sector {data-icon="glyphicon glyphicon-scale"}
@@ -191,10 +181,6 @@ Electricity sector {data-icon="glyphicon glyphicon-scale"}
 ```{r}
 ggplotly(plot$electricityMix)
 ```
-
-
-
-
 
 <!-- ADVANCED: using CSS to define the appearance of the side bar --> 
 
@@ -225,8 +211,3 @@ ggplotly(plot$electricityMix)
   }
 
 </style>
-
-
-
-
-

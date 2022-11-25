@@ -37,6 +37,13 @@
 	"summary": {
 		"sections": "c(0,1,99)"
 	},
+	"REMIND-MAgPIE": {
+		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
+	},
+	"MAgPIE": {
+		"sections": "0",
+		"userSectionPath": "normalizePath('./scripts/cs2/magpie.Rmd')"
+	},
 	"mySection": {
 		"sections": "0",
 		"userSectionPath": "normalizePath('./scripts/cs2/mySection.Rmd')"

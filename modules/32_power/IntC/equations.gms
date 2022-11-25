@@ -72,19 +72,13 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
 *** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
 *** with VRE capacities which require storage (according to q32_limitCapTeStor): 
 
-
-*** build additional electrolysis capacities with stored VRE electricity
-q32_elh2VREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"elh2","1") 
-  =g= 
-  sum(te$testor(te), p32_storageCap(te,"elh2VREcapratio") * vm_cap(t,regi,te,"1") )
-;
-
 *** build additional h2 to seel capacities to use stored hydrogen
 q32_h2turbVREcapfromTestor(t,regi)..
-  vm_cap(t,regi,"h2turbVRE","1") 
-  =e= 
-  sum(te$testor(te), p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+  vm_cap(t,regi,"h2turbVRE","1")
+	+ vm_cap(t,regi,"ngt","1")
+  =g=
+  sum(te$testor(te), 
+  	p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 
@@ -117,7 +111,7 @@ $ENDIF.WindOff
 *** Calculation of share of electricity production of a technology:
 ***---------------------------------------------------------------------------
 q32_shSeEl(t,regi,teVRE)..
-    v32_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
+    vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
     =e=
     vm_usableSeTe(t,regi,"seel",teVRE)
 ;
@@ -130,7 +124,7 @@ q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
 	=g=
 	p32_factorStorage(regi,teVRE) * 100 
 	* (
-		(1.e-10 + (v32_shSeEl(t,regi,teVRE)+ sum(VRE2teVRElinked(teVRE,teVRE2), v32_shSeEl(t,regi,teVRE2)) /s32_storlink)/100 ) ** p32_storexp(regi,teVRE)    !! offset of 1.e-10 for numerical reasons: gams doesn't like 0 if the exponent is not integer 
+		(1.e-10 + (vm_shSeEl(t,regi,teVRE)+ sum(VRE2teVRElinked(teVRE,teVRE2), vm_shSeEl(t,regi,teVRE2)) /s32_storlink)/100 ) ** p32_storexp(regi,teVRE)    !! offset of 1.e-10 for numerical reasons: gams doesnt like 0 if the exponent is not integer 
 		- (1.e-10 ** p32_storexp(regi,teVRE) )       !! offset correction
 		- 0.07                                      !! first 7% of VRE share bring no negative effects
 	)
@@ -205,7 +199,7 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 q32_flexPriceShare(t,regi,te)$(teFlex(te))..
   v32_flexPriceShare(t,regi,te)
   =e=
-  1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, v32_shSeEl(t,regi,teVRE))/100
+  1 - (1-v32_flexPriceShareMin(t,regi,te)) * sum(teVRE, vm_shSeEl(t,regi,teVRE))/100
 ;
 
 *** This balance ensures that the lower electricity prices of flexible technologies are compensated 

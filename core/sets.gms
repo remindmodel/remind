@@ -66,7 +66,11 @@ gdp_SSP2EU
 gdp_SSP3        "SSP3 slowGROWTH slowCONV"
 gdp_SSP4        "SSP4  medGROWTH mixedCONV"
 gdp_SSP5        "SSP5 fastGROWTH fastCONV"
-gdp_SSP2_lowEn   "SSP2 with low energy"
+gdp_SSP2_lowEn  "SSP2 with low energy"
+gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
+gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
+gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -159,10 +163,6 @@ all_te          "all energy technologies, including from modules"
         igcc            "integrated coal gasification combined cycle"
         igccc           "integrated coal gasification combined cycle with capture"
         pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-        pcc             "pulverised coal power plant with capture"
-        pco             "pulverised coal power plant with oxyfuel capture"
-$endif
         coalchp         "combined heat powercoal"
         coalhp          "heating plantcoal"
         coaltr          "tranformation of coal"
@@ -321,6 +321,13 @@ $ENDIF.WindOff
         termX_nh3   "Export terminals for liquid ammonia (liquification)"
         termM_nh3   "Import terminals for liquid ammonia (regasification)"
         vess_nh3    "Vessels transporting liquid ammonia"
+*** PCV: technologies related to steel
+        ironMine     "Mining of iron ore"
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bfbof        "Blast furnace/basic-oxygen furnace"
+        pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
+        pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
 
 all_enty             "all types of quantities"
@@ -387,6 +394,12 @@ all_enty             "all types of quantities"
         ueHDVt       "transport useful energy heavy duty vehicles"
         ueLDVt       "transport useful energy light duty vehicles"
         ueelTt       "transport useful energy for electric trains"
+
+        !! materials, feedstock, and industrial goods
+        steel        "Steel"
+        dri          "Directly reduced iron"
+        scrap        "Steel scrap"
+        ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"
@@ -860,6 +873,8 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
 ***######################### R SECTION END (SETS) ################################
 ***###############################################################################
 
+set regi_groupExt(ext_regi,all_regi) "extended region group mapping. Mapping model regions that belong to region group, including one to one region mapping";
+
 set alt_regions "alternative region names initialization to allow conditionals use in code for different regional aggregations"
   / ENC, NES, EWN, ECS, ESC, ECE, UKI, NEN, ESW, EU27_regi, NEU_UKI_regi /;
 
@@ -878,13 +893,6 @@ $IFTHEN.RegScenCapt "%c_regi_capturescen%" == "all"
 $ELSE.RegScenCapt
   set regi_capturescen(all_regi) "regions which capturescen applies to" / %c_regi_capturescen% /;
 $ENDIF.RegScenCapt
-
-$IFTHEN.RegScenSens "%c_regi_sensscen%" == "all"
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to";
-  regi_sensscen(all_regi)=YES;
-$ELSE.RegScenSens
-  set regi_sensscen(all_regi) "regions which regional sensitivity parameters apply to" / %c_regi_sensscen% /;
-$ENDIF.RegScenSens
 
 *** definition of set of regions that use alternative FE emission factors from umweltbundesamt
 $ifthen.altFeEmiFac not "%cm_altFeEmiFac%" == "off"
@@ -1030,12 +1038,6 @@ tall            "time index"
         1900*3000
         /
 
-*LB* Different time-steps are used for the flags cm_less_TS (default), test_TS,
-*** and END2110. If none of these flags is set, five year steps are used.
-*** test_TS: 2005,2010,2020,2030,2040,2050,2070,2090,2110,2130,2150
-*** cm_less_TS: 2005,2010,2015,2020,2025,2030,2035,2040,2045,2050,2055,2060,
-*** 2070,2080,2090,2100,2110,2130,2150
-*** END2110: 2005:5:2105,2120
 *AJS* Defining ttot as sum of t and tsu will give errors from compiler, so do
 *** it manually instead:
 ttot(tall)      "time index with spin up"
@@ -1045,32 +1047,22 @@ ttot(tall)      "time index with spin up"
         1960, 1965, 1970, 1975, 1980, 1985,
         1990, 1995,
         2000, 2005, 2010,
-$if not setGlobal test_TS   2015,
-                            2020,
-$if not setGlobal test_TS   2025,
-                            2030,
-$if not setGlobal test_TS   2035,
-                            2040,
-$if not setGlobal test_TS   2045,
-                            2050,
-$if not setGlobal test_TS   2055,
-$if not setGlobal test_TS   2060,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2065,
-                            2070,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2075,
-$if not setGlobal test_TS   2080,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2085,
-                            2090,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2095,
-$if not setGlobal test_TS   2100,
-$if not setGlobal test_TS $if %cm_less_TS% == "off"  2105,
-$if setGlobal END2110       2120
-$if not setGlobal END2110 $if setGlobal test_TS  2110, 2130, 2150
-$if not setGlobal END2110 $if %cm_less_TS% == "on"  2110, 2130, 2150
-$if not setGlobal END2110 $if not setGlobal test_TS $if %cm_less_TS% == "off"  2110, 2115, 2120, 2125, 2130, 2135, 2140, 2145, 2150
+        2015,
+        2020,
+        2025,
+        2030,
+        2035,
+        2040,
+        2045,
+        2050,
+        2055,
+        2060,
+        2070,
+        2080,
+        2090,
+        2100,
+        2110, 2130, 2150
 /
-
-$if not setGlobal test_TS $if %cm_less_TS% == "off" t_interpol(ttot)/ 2065,2075,2085,2095,2105,2115,2125,2135,2145/
 
 *cb the content of those subsets is defined 16 lines further down
 t(ttot) "modeling time, usually starting in 2005, but later for fixed delay runs",
@@ -1087,8 +1079,6 @@ opTime5(opTimeYr)            "actual life time of ??? in years - 5 years time st
 /
 t0(tall)   "start of modelling time, not optimization" /2005/
 
-t_input_gdx(ttot)     "t loaded from input.gdx, used for t interpolation"
-t_interpolate(ttot)   "periods that need interpolation"
 ;
 
 t(ttot)$(ttot.val ge cm_startyear)=Yes;
@@ -1133,10 +1123,6 @@ te(all_te)              "energy technologies"
         igcc            "integrated coal gasification combined cycle"
         igccc           "integrated coal gasification combined cycle with carbon capture"
         pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-        pcc             "pulverised coal power plant with capture"
-        pco             "pulverised coal power plant with oxyfuel capture"
-$endif
         coalchp         "combined heat powercoal"
         coalhp          "heating plant coal"
         coaltr          "tranformation of coal"
@@ -1242,10 +1228,6 @@ teAdj(all_te)           "technologies with adjustment costs on capacity addition
   igcc            "integrated coal gasification combined cycle"
   igccc           "integrated coal gasification combined cycle with capture"
   pc              "pulverised coal power plant"
-$ifthen setGlobal cm_ccsfosall
-  pcc             "pulverised coal power plant with capture"
-  pco             "pulverised coal power plant with oxyfuel capture"
-$endif
   coalchp         "combined heat powercoal"
   coalhp          "heating plant coal"
   coaltr          "tranformation of coal"
@@ -1354,10 +1336,6 @@ teCCS(all_te)       "Technologies with CCS"
   ngccc       "natural gas combined cycle with carbon capture"
   gash2c      "gas to hydrogen with capture"
   igccc       "integrated coal gasification combined cycle with carbon capture"
-$ifthen setGlobal cm_ccsfosall
-  pcc         "pulverized coal power plant with capture"
-  pco         "pulverized coal power plant with oxyfuel capture"
-$endif
   coalftcrec  "coal based fischer-tropsch with capture recycle"
   coalh2c     "coal to hydrogen with capture"
   biogasc     "gasification of biomass with capture"
@@ -1477,13 +1455,9 @@ $ENDIF.WindOff
 teFosCCS(all_te)    "fossil technologies with CCS"
 /
         ngccc       "natural gas combined cycle with carbon capture"
-	gash2c      "gas to hydrogen with capture"
+        gash2c      "gas to hydrogen with capture"
         gasftcrec       "gas based fischer-tropsch with capture recycle"
         igccc       "integrated coal gasification combined cycle with carbon capture"
-$ifthen setGlobal cm_ccsfosall
-        pcc         "pulverized coal power plant with capture"
-        pco         "pulverized coal power plant with oxyfuel capture"
-$endif
         coalftcrec  "coal based fischer-tropsch with capture recycle"
         coalh2c     "coal to hydrogen with capture"
 /
@@ -1504,7 +1478,7 @@ teFosNoCCS(all_te)  "fossil technologies without CCS"
         coalhp       "coal heating plant"
         coalgas      "coal gasification"
         coaltr       "transformation of coal"
-$IF %cm_OILRETIRE% == "on"   refliq
+        refliq
 /
 teBioPebiolc(all_te)      "biomass technologies using pebiolc"
 /
@@ -1545,8 +1519,6 @@ teRegTechCosts(all_te) "all technologies for which we differantiate tech costs"
        ngcc
        ngt
        gaschp
-       pcc
-       pco
        igccc
        ngccc
        tnrs
@@ -2056,10 +2028,26 @@ entyFeSec2entyFeDetail(all_enty,emi_sectors,all_enty) "final energy (stationary)
 ***  feh2s.indst.feh2i
 /
 
-all_emiMkt         "emission markets"
+all_emiMkt      "emission markets"
 /	ETS     "ETS emission market"
 	ES      "Effort sharing emission market"
 	other	"other market configurations"
+/
+
+all_emiMktExt   "extended emission market definitions"
+/	
+        ETS     "ETS emission market"
+	ESR     "Effort sharing emission market"
+	other	"other market configurations"
+        all     "economy wide emission market"
+/
+
+emiMktGroup(all_emiMktExt,all_emiMkt) "set to allow selecting either a single emission market or all together (all=ETS+ESR+other)"
+/
+        ETS.(ETS)
+        ESR.(ES)
+        other.(other)
+        all.(ETS,ES,other)
 /
 
 sector2emiMkt(emi_sectors,all_emiMkt)  "mapping sectors to emission markets"
@@ -2337,6 +2325,7 @@ alias(rlf,rlf2);
 alias(regi,regi2,regi3);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
+alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
 alias(sector_types,type)
 
@@ -2368,10 +2357,6 @@ pe2se(all_enty,all_enty,all_te) "map primary energy carriers to secondary"
         pecoal.seel.igcc
         pecoal.seel.igccc
         pecoal.seel.pc
-$ifthen setGlobal cm_ccsfosall
-        pecoal.seel.pcc
-        pecoal.seel.pco
-$endif
         pecoal.seel.coalchp
         pecoal.sesofos.coaltr
         pecoal.segafos.coalgas
@@ -2602,14 +2587,6 @@ emi2te(all_enty,all_enty,all_te,all_enty)    " map emissions to technologies"
         pecoal.seel.pc.oc
         pecoal.seel.coalchp.oc
         pecoal.seel.igccc.co2
-$ifthen setGlobal cm_ccsfosall
-        pecoal.seel.pcc.co2
-        pecoal.seel.pco.co2
-        pecoal.seel.pcc.cco2
-        pecoal.seel.pco.cco2
-        pecoal.seel.pcc.n2o
-        pecoal.seel.pco.n2o
-$endif
         pecoal.seel.igccc.cco2
         pecoal.sesofos.coaltr.co2
         pecoal.sesofos.coaltr.so2
@@ -2830,9 +2807,6 @@ $ENDIF.WindOff
        igcc,igccc,pc,coaltr,coalgas,coalh2,coalh2c,coalchp,coalhp,coalftrec,coalftcrec,
        biotr,biotrmod,biogas,biogasc,bioftrec,bioftcrec,bioh2,bioh2c,biohp,biochp,bioigcc,bioigccc,
        elh2,h2turb,elh2VRE,h2turbVRE,bioethl,bioeths,biodiesel,tnrs,fnrs
-$ifthen setGlobal cm_ccsfosall
-       pcc, pco
-$endif
        ) . 1
 /
 

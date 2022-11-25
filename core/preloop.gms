@@ -143,12 +143,6 @@ p_macBaseExo(ttot,regi,"n2oagwaste")$((ttot.val ge 2005) AND p_aux_scaleEmiHisto
 display pm_macBaseMagpie;
 $ENDIF.scaleEmiHist
 
-*** FS: calculate total bioenregy primary energy demand from last iteration
-pm_demPeBio(ttot,regi) = 
-  sum(en2en(enty,enty2,te)$(peBio(enty)), 
-    vm_demPe.l(ttot,regi,enty,enty2,te))
-;
-
 !! all net negative co2luc
 p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
 
@@ -158,7 +152,7 @@ p_agriEmiPhaseOut("2030") = 0.5;
 p_agriEmiPhaseOut("2035") = 0.75;
 p_agriEmiPhaseOut(t)$(t.val ge 2040) = 1;
 
-*** Rescale non-co2 base line emissions from agriculture 
+*** Rescale non-co2 base line emissions from agriculture for all regions if c_BaselineAgriEmiRed switch is non-zero
 pm_macBaseMagpie(t,regi,enty)$(emiMac2sector(enty,"agriculture","process","ch4") OR emiMac2sector(enty,"agriculture","process","n2o"))
   = (1-p_agriEmiPhaseOut(t)*c_BaselineAgriEmiRed)*pm_macBaseMagpie(t,regi,enty);
   
