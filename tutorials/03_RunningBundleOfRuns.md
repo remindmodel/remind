@@ -25,7 +25,7 @@ Those two columns are mandatory and usually placed at the beginning:
 * `start` is a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0.
 
 Further columns are the configurations that you can choose for the specific runs.
-They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
+They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) and [`./main.gms`](../main.gms) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
 Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
@@ -63,6 +63,11 @@ Before you start the runs, you can test whether the right runs would be started 
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```
+If you want to check also whether the different runs compile correctly, run
+``` bash
+Rscript start.R --gamscompile config/scenario_config_XYZ.csv
+```
+
 Running the complete chain of runs, but only for one region and one iteration, can be started with:
 ```bash
 Rscript start.R --quick config/scenario_config_XYZ.csv
@@ -73,15 +78,15 @@ Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
 In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine all these options and use
 ```bash
-Rscript start.R -qit
+Rscript start.R -gqi
 ```
-as a shortcut, meaning `q` for `--quick`, `i` for `--interactive`, `t` for `--test`.
+as a shortcut, meaning `g` for `gamscompile`, `i` for `--interactive`, `q` for `--quick`. The shortcut `t` for `--test` avoids that `--gamscompile` is executed.
 
 
 Further notes:
 --------------
 
-* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_emiMktTarget` to enter comma separated values `2020.2050.USA.all.year.netGHG 1, 2020.2050.all.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
 * To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your REMIND directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
 

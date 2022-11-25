@@ -14,7 +14,7 @@ To start a run type in the main directory of REMIND:
 
 Rscript start.R [path to a config file]
 
-optionally providing a path to a config file, e.g. config/scenario_config.csv. If no config file is provided REMIND will use the settings in the default.cfg
+optionally providing a path to a config file, e.g. config/scenario_config.csv. If no config file is provided REMIND will use the settings in the main.gms and default.cfg
 
 The procedure in short:
 

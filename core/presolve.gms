@@ -124,29 +124,22 @@ else
 *** Define co2 price for entities that are used in MAC. 
 p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
 
-*** Redefine the MAC price for sectors and regions within the ETS
-$IFTHEN.macPriceETS not "%cm_emiMktETS%" == "off" 
-  loop(ETS_mkt,
-    loop(enty$(macSector2emiMkt(enty,"ETS")),
-      p_priceCO2forMAC(t,regi,enty2)$(ETS_regi(ETS_mkt,regi) AND emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ETS")* 1000;
+*** Redefine the MAC price for regions with emission tax defined by the regipol module
+$IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
+ loop(regiEmiMktTarget(ext_regi),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
+      p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
     );
   );
-$ENDIF.macPriceETS
-
-*** Redefine the MAC price for sectors and regions within the ES
-$IFTHEN.macPriceES not "%cm_emiMktES%" == "off" 
-  loop((regi,enty)$(pm_emiTargetESR("2030",regi) AND macSector2emiMkt(enty,"ES")),
-    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"ES")* 1000;
-  );
-  loop((regi,enty)$(pm_emiTargetESR("2030",regi) AND macSector2emiMkt(enty,"other")),
-    p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,"other")* 1000; !!0
-  );
-$ENDIF.macPriceES
+ );
+$ENDIF.emiMkt
 
 *** The co2 price for land-use entities needs to be reduced by the same factor as in MAgPIE.
 *** Attention: the reduction factors need to be the same as in MAgPIE -> if they change in MAgPIE they need to be adapted here!
-*** 1. Reduce co2 price for land-use entities by 50%, see s56_cprice_red_factor in MAgPIE
-p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSectorMagpie) * cm_cprice_red_factor;
+*** 1. Optional: Reduce co2 price for land-use entities (see s56_cprice_red_factor in MAgPIE). By default, the scaling factor 
+*** in MAgPIE is 1. Deviations from this MAgPIE default should only be handled in coupled runs and not in REMIND standalone runs.
+*** Therefore, we do not need a counterpart in REMIND standalone.
 *** 2. Phase-in of co2 price for land-use entities, see line 22-35 in preloop.gms in modules/56_ghg_policy/price_jan19 in MAgPIE
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val lt cm_startyear)    = 0;
 p_priceCO2forMAC(ttot,regi,MacSectorMagpie)$(ttot.val eq cm_startyear)    = 0.1 * p_priceCO2forMAC(ttot,regi,MacSectorMagpie);

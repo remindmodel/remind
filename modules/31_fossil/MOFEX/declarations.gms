@@ -54,9 +54,7 @@ p31_costfu_detail(tall,all_regi,all_enty)            "(Output) absolute fuel cos
 *LB* reporting parameters 
 p31_fuel_cost_marg(tall,all_regi,all_enty)           "(Output) marginal pure extraction costs, calculated by hand from Nico's elasticity equation. Unit:"
 p31_fuel_cost_noadj(tall,all_regi,all_enty)          "(Output) fuel cost without adjustment costs. Unit: "
-$IFTHEN.oilt %cm_OILRETIRE% == "on"
 p31_max_oil_extraction(all_regi,all_enty,rlf)        "maximum oil extraction, calculated from the total grade size and the decline constraint. Unit: TWyr"
-$ENDIF.oilt
 ***BAU 2010 fixing
 p31_fuel_cost(tall,all_regi,all_enty)                "Pure extraction costs"
 p31_sol_itr_max                                      "parameter for maximum solves for MOFEX"
@@ -79,9 +77,7 @@ $ENDIF.mofex
 positive variables
 *** Others
 v31_fuExtrCum(ttot,all_regi,all_enty,rlf)           "cumulated extraction of exhaustible resources"
-$IFTHEN.oilt %cm_OILRETIRE% == "on"
 v31_fuSlack(ttot,all_regi,all_enty,rlf)             "Amount of oil that is not extracted but put aside never to be used again. Unit: TWa/a"
-$ENDIF.oilt
 ;
 
 *-------------------------------------------
@@ -100,9 +96,7 @@ q31_fuExtrCum(ttot,all_regi,all_enty,rlf)              "cumulated extraction of 
 *** Dynamic constraints on fuel extraction
 q31_fuExtrDec(ttot,all_regi,all_enty,rlf)              "lower bound on decline rate of fuel extraction (vm_fuExtr)"
 q31_fuExtrInc(ttot,all_regi,all_enty,rlf)              "upper bound on growth rate of fuel extraction (vm_fuExtr)"
-$IFTHEN.oilt %cm_OILRETIRE% == "on"
 q31_smoothoilphaseout(ttot,all_regi,all_enty,rlf)      "limits the increase of v_fuelslack, leading to a smoother phase-out of oil"
-$ENDIF.oilt
 ;
 
 *** EOF ./modules/31_fossil/MOFEX/declarations.gms

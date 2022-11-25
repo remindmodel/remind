@@ -9,7 +9,7 @@ message("checking for pdflatex executable on your PATH - ok")
 
 message("checking if required R packages are installed")
 missingDeps <- Filter(function(x) !requireNamespace(x, quietly = TRUE),
-                      renv::dependencies(dev = TRUE)[, "Package"])
+                      setdiff(renv::dependencies(dev = TRUE)[, "Package"], "R"))
 if (length(missingDeps) > 0) {
   stop("Some required R packages are missing, install them with `renv::install(",
        paste(capture.output(dput(missingDeps)), collapse = ""), ")`")

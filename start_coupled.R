@@ -73,12 +73,11 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   mainwd <- getwd() # save folder in which this script is executed
 
   # Retrieve REMIND settings
-  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
-                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
-                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
-                                     "gms$cm_CES_configuration", "gms$c_description"))
+#  cfg_rem <- check_config(cfg_rem, paste0(path_remind,"config/default.cfg"), paste0(path_remind, "modules"),
+#                          extras = c("backup", "remind_folder", "pathToMagpieReport", "cm_nash_autoconverge_lastrun",
+#                                     "gms$c_expname", "restart_subsequent_runs", "gms$c_GDPpcScen",
+#                                     "gms$cm_CES_configuration", "gms$c_description"))
   cfg_rem$slurmConfig   <- "direct"
-  cm_iteration_max_tmp <- cfg_rem$gms$cm_iteration_max # save default setting
   cfg_rem_original <- c(setdiff(cfg_rem$output, "emulator"), "emulator") # save default remind output config and add "emulator" if missing
 
   # retrieve MAgPIE settings
@@ -116,27 +115,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     cfg_rem$title          <- paste0(runname,"-rem-",i)
     cfg_rem$force_replace  <- debug # overwrite existing output folders for debug
     #cfg_rem$gms$biomass    <- "magpie_linear"
-
-    # Control Negishi iterations
-    itr_offset <- 1 # Choose this if negishi iterations should only be adjusted for coupling iteration numbers below 3
-    #itr_offset <- start_iter # Choose this if negishi iterations should be adjusted for the first three iterations (regardless of their number)
-                  #	This is the case after the coupling was restarted continuing from existing iterations.
-    
-    double_iterations <- 1
-    if (cfg_rem$gms$cm_SlowConvergence == "on") double_iterations <- 2 
-    
-    if(i==itr_offset) {
-      # Set negisgi iteration to 1 for the first run
-      cfg_rem$gms$cm_iteration_max <- 1*double_iterations
-    #} else if (i==itr_offset+1) {
-    #  cfg_rem$gms$cm_iteration_max <- 2*double_iterations
-    #} else if (i==itr_offset+2) {
-    #  cfg_rem$gms$cm_iteration_max <- 3*double_iterations
-    } else {
-      # Set negishi iterations back to the value defined in the config file
-      cfg_rem$gms$cm_iteration_max <- cm_iteration_max_tmp
-    }
-    message("Set Negishi iterations to ",cfg_rem$gms$cm_iteration_max)
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {

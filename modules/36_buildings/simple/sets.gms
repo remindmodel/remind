@@ -21,7 +21,6 @@ Sets
     feelrhb "buildings use of electricity for space heating with resistive heating"    
   /
 
-   
   ppfen_buildings_dyn36(all_in)   "primary production factors energy - buildings"
   / fesob, fehob, fegab, feh2b, feheb, feelcb, feelhpb, feelrhb /
 
@@ -29,13 +28,12 @@ Sets
  
   ces_buildings_dyn36(all_in,all_in)   "CES tree structure - buildings"
   /
-    en    . enb
-    enb   . (enhb, feelcb)
-    enhb  . (fesob, fehob, feheb, feelhpb, feelrhb, enhgab)
+    en     . enb
+    enb    . (enhb, feelcb)
+    enhb   . (fesob, fehob, feheb, feelhpb, feelrhb, enhgab)
     enhgab . (fegab, feh2b)
   /
 
- 
   entyFe36(all_enty)   "FE carriers used in buildings"
   /
     fesos 
@@ -66,9 +64,14 @@ Sets
   feelb . (feelcb,feelhpb,feelrhb)
   /
   
- ue_dyn36(all_in)  "useful energy items"
- //
+  ue_dyn36(all_in)  "useful energy items"
+  //
 
+ ppfen_MkupCost36(all_in)  "primary production factors in buildings on which CES mark-up cost can be levied that are counted as expenses in the macroeconomic budget equation"
+  /
+  feelhpb
+  feheb
+  /
 ;
 
 cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;
@@ -76,11 +79,11 @@ cal_ppf_buildings_dyn36(ppfen_buildings_dyn36) = YES;
 ***-------------------------------------------------------------------------
 ***  add module specific sets and mappings to the global sets and mappings
 ***-------------------------------------------------------------------------
-in(in_buildings_dyn36)            = YES;
-ppfEn(ppfen_buildings_dyn36)      = YES;
-cesOut2cesIn(ces_buildings_dyn36) = YES;
-fe2ppfEn(fe2ppfEn36)              = YES;
-fe_tax_sub_sbi(fe_tax_sub36) = YES;
+in(in_buildings_dyn36)               = YES;
+ppfEn(ppfen_buildings_dyn36)         = YES;
+cesOut2cesIn(ces_buildings_dyn36)    = YES;
+fe2ppfEn(fe2ppfEn36)                 = YES;
+fe_tax_sub_sbi(fe_tax_sub36)         = YES;
 ppfen_CESMkup(ppfen_buildings_dyn36) = YES;
 
 *** EOF ./modules/36_buildings/simple/sets.gms
