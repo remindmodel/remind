@@ -973,15 +973,6 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
-  cm_GDPcovid                  "GDP correction for covid"
-*** switch to turn on short-term GDP loss by covid-19
-*** *ML* emulates a schock, only feasible with start year 2020, don't use in calibration
-***  (0):  off
-***  (1):  on
-;
-  cm_GDPcovid      = 0;            !! def = 0
-*'
-parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 *** cm_TaxConvCheck - switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 0.01% of GDP)
 *** 0 (off)
@@ -1511,8 +1502,6 @@ $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
 $setglobal cm_wind_offshore  1      !! def = 1
-*** *RP* Flag to allow the model to not extract oil, even though the eq_fuelex_dec would force it to extract.
-$setGlobal cm_OILRETIRE  on        !! def = on
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on
