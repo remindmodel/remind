@@ -68,17 +68,27 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2020 ) ..
 
 
 *** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
-*** represent H2 storage. This is implemented by automatically scaling up capacities of 
-*** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
-*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+*** represent H2 storage. This is implemented by scaling up capacities of 
+*** H2 turbines (h2turbVRE, seh2 -> seel) with VRE capacities which require storage (according to q32_limitCapTeStor). 
+*** These H2 turbines (h2turbVRE) do not have capital cost. Their cost are already considered in storage technologies.
+*** H2 turbines do not need be built if sufficient gas turbines (ngt) are available to provide flexibility. 
 
-*** build additional h2 to seel capacities to use stored hydrogen
+
+*** build additional gas turbines or hydrogen turbines in conjunction with storage capacities
 q32_h2turbVREcapfromTestor(t,regi)..
   vm_cap(t,regi,"h2turbVRE","1")
 	+ vm_cap(t,regi,"ngt","1")
   =g=
   sum(te$testor(te), 
   	p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
+;
+
+*** h2turbVRE hydrogen turbines should only be built in conjunction with storage capacities and not on its own
+q32_h2turbVREcapfromTestorUp(t,regi)..
+  vm_cap(t,regi,"h2turbVRE","1")
+  =l=
+  sum(te$testor(te), 
+      p32_storageCap(te,"h2turbVREcapratio") * vm_cap(t,regi,te,"1") )
 ;
 
 
