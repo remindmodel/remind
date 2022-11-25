@@ -252,11 +252,11 @@ $offdelim
 /
 ;
 $ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","ElecEraWise",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","Mix1Wise",in_dyn35);
 $elseif "%cm_calibration_FE%" == "medium"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $elseif "%cm_calibration_FE%" == "high"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $endif
 
 Parameter
@@ -401,8 +401,8 @@ loop ((t,regi_dyn29(regi)),
   );
 );
 
-* Use offset quantities for historic industry H2/HTH_el use, since it actually
-* didn't happen.
+*** Use offset quantities for historic industry H2/HTH_el use, since it actually
+*** did not happen.
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
                                   pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
@@ -478,13 +478,7 @@ loop ( (t0(t),regi, ppfIO_putty(in)),
     );
 );
 
-$ifthen.growth %cm_esubGrowth% ==  "low"
 p29_esubGrowth = 0.3;
-$elseif.growth %cm_esubGrowth% == "middle"
-p29_esubGrowth = 0.5;
-$elseif.growth %cm_esubGrowth% == "high"
-p29_esubGrowth = 1;
-$endif.growth
-;
+
 *** EOF ./modules/29_CES_parameters/calibrate/datainput.gms
 

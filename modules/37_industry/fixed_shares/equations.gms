@@ -11,7 +11,7 @@
 ***---------------------------------------------------------------------------
 q37_demFeIndst(ttot,regi,entyFe,emiMkt)$((ttot.val ge cm_startyear) AND (entyFe2Sector(entyFe,"indst"))) .. 
   sum((entySe,te)$(se2fe(entySe,entyFe,te)), 
-    vm_demFeSector(ttot,regi,entySe,entyFe,"indst",emiMkt)
+    vm_demFeSector_afterTax(ttot,regi,entySe,entyFe,"indst",emiMkt)
   ) 
   =e=
   sum(in$(fe2ppfEn(entyFe,in) and ppfen_industry_dyn37(in)),
@@ -156,7 +156,7 @@ q37_costAddH2PhaseIn(t,regi)..
     (1 / (1 + (3 ** v37_costExponent(t,regi)))) 
   * ( s37_costAddH2Inv 
     * sm_TWa_2_kWh / sm_trillion_2_non
-    * sum(emiMkt, vm_demFeSector(t,regi,"seh2","feh2s","indst",emiMkt))
+    * sum(emiMkt, vm_demFeSector_afterTax(t,regi,"seh2","feh2s","indst",emiMkt))
     )
   + (v37_expSlack(t,regi) * 1e-8)
 ;
@@ -174,11 +174,11 @@ q37_H2Share(t,regi)..
   v37_H2share(t,regi) 
   * sum(emiMkt, 
       sum(se2fe(entySe,entyFe,te)$(SAMEAS(entyFe,"feh2s") OR SAMEAS(entyFe,"fegas")),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt)))
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt)))
   =e=
   sum(emiMkt, 
       sum(se2fe(entySe,entyFe,te)$SAMEAS(entyFe,"feh2s"),   
-        vm_demFeSector(t,regi,entySe,entyFe,"indst",emiMkt))) 
+        vm_demFeSector_afterTax(t,regi,entySe,entyFe,"indst",emiMkt))) 
 ;
 
 ***---------------------------------------------------------------------------

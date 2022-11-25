@@ -72,7 +72,7 @@ $endif.process_based_steel
 q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
                                          AND entyFe2Sector(entyFe,"indst") ) ..
   sum(se2fe(entySE,entyFE,te),
-    vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+    vm_demFeSector_afterTax(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
@@ -196,7 +196,7 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 
 
 ***---------------------------------------------------------------------------
-*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+*'  CES markup cost that are accounted in the budget (GDP) to represent sector-specific demand-side transformation cost in industry
 ***---------------------------------------------------------------------------
 q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)

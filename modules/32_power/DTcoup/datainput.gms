@@ -44,8 +44,7 @@ f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"win
 $ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
-***INNOPATHS
-$if not "%cm_INNOPATHS_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_INNOPATHS_storageFactor%*p32_factorStorage(all_regi,all_te);
+$if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_storageFactor%*p32_factorStorage(all_regi,all_te);
 
 ***parameter p32_storexp(all_regi,all_te) - exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly
 p32_storexp(regi,"spv")     = 1;

@@ -50,15 +50,15 @@ q39_shSynGas(t,regi)$(cm_shSynGas gt 0)..
 
 *** impose same shares of synfuels in total biofuel+synfuel across all transport subsectors
 q39_EqualSecShare_BioSyn(t,regi,entyFe,sector,emiMkt)$(enty_BioSyn_39(entyFe,sector,emiMkt))..
-  vm_demFeSector(t,regi,"seliqsyn",entyFe,sector,emiMkt)
+  vm_demFeSector_afterTax(t,regi,"seliqsyn",entyFe,sector,emiMkt)
   * sum(enty_BioSyn_39(entyFe2,sector2,emiMkt2),
-      ( vm_demFeSector(t,regi,"seliqsyn",entyFe2,sector2,emiMkt2)
-      + vm_demFeSector(t,regi,"seliqbio",entyFe2,sector2,emiMkt2)))
+      ( vm_demFeSector_afterTax(t,regi,"seliqsyn",entyFe2,sector2,emiMkt2)
+      + vm_demFeSector_afterTax(t,regi,"seliqbio",entyFe2,sector2,emiMkt2)))
   =e=
-  ( vm_demFeSector(t,regi,"seliqsyn",entyFe,sector,emiMkt)
-    + vm_demFeSector(t,regi,"seliqbio",entyFe,sector,emiMkt))
+  ( vm_demFeSector_afterTax(t,regi,"seliqsyn",entyFe,sector,emiMkt)
+    + vm_demFeSector_afterTax(t,regi,"seliqbio",entyFe,sector,emiMkt))
   * sum(enty_BioSyn_39(entyFe2,sector2,emiMkt2), 
-      vm_demFeSector(t,regi,"seliqsyn",entyFe2,sector2,emiMkt2))
+      vm_demFeSector_afterTax(t,regi,"seliqsyn",entyFe2,sector2,emiMkt2))
 ;
 
 *** EOF ./modules/39_CCU/on/equations.gms

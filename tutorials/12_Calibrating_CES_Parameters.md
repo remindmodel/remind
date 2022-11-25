@@ -1,4 +1,4 @@
-# Calibrationg CES Parameters
+# Calibrating CES Parameters
 
 ## CES Production Function Basics
 
@@ -89,6 +89,11 @@ To set up a CES calibration run, simply set module 29 `CES_parameters` to the
 `calibration` realisation.  All data relevant to the calibration is configured
 according to the selected scenario configuration.  Keep them identical to the
 baseline scenario you want to calibrate.
+Set the `inputRevision` in `./config/default.cfg` to the input data revision
+you want to calibrate to.  You can find the latest input data revision on the
+cluster using `lastrev`.  Do not include the `rev` part of the revision name,
+just the part from the numbers on.  Use quote signs (`"`) around the revision,
+even if it is just numerical.
 As the calibration performs multiple REMIND runs (ten by default), allow for
 longer runtime, usually more than 24 hours, by selecting an appropriate slurm
 configuration.
@@ -136,6 +141,12 @@ and the .gdx file to the directory `./config/gdx-files/`.  At PIK, this is done
 automatically using the RSE support scripts.  See [this wiki
 page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
 for details.
+
+If the specific calibration settings (e.g. `cm_CES_configuration`) have not been
+calibrated and used in REMIND before, the names of the .gdx and .inc files have
+to be included in the `./config/gdx-files/files` and
+`./modules/29_CES_parameters/load/input/files` files, respectively, so that the
+new calibration results are copied into these directories during run setup.
 
 As for diagnostic output, there are the `full.log` and `full.lst` files for each
 calibration iteration (`full_01.log` …), the file `CES_calibration.csv`

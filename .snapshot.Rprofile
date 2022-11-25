@@ -1,9 +1,3 @@
-# source global .Rprofile (very important to load user specific settings)
-# DO NOT EDIT THIS LINE!
-if (file.exists("~/.Rprofile")) {
-  source("~/.Rprofile")
-}
-
 # This profile can be used to link the model to a specified library snapshot
 # (e.g. if your model version is from an older date and does not work with the
 # newest libraries anymore). By default it is not active.

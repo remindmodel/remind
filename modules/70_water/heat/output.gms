@@ -147,7 +147,7 @@ loop(descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd),
 
 ***Aggregated categories***-------------------------------------------------------
 p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
+  sum(te_elcool70$(sameas(te_elcool70,"igccc")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
@@ -339,7 +339,7 @@ p70_water_output(ttot,regi,"Water Consumption|Electricity|Dry Cooling; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
+  sum(te_elcool70$(sameas(te_elcool70,"igccc") ), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 

@@ -43,7 +43,7 @@ q_costInv(t,regi)..
   sum(sector2te_addTDCost(sector,te),
     vm_costAddTeInv(t,regi,te,sector)
   )
-*** end-use technology cost placed on CES nodes to represent demand-side investment cost:
+*** end-use transformation cost of novel technologies placed on CES nodes that are to be accounted in the budget equation
   +
   sum(in$(ppfen_CESMkup(in)),
     vm_costCESMkup(t,regi,in)
@@ -180,12 +180,8 @@ q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
                +  pm_dt(ttot)/2 / pm_dataeta(ttot,regi,te)
                 * pm_omeg(regi,"2",te)
                 * vm_deltaCap(ttot,regi,te,rlf)   
-$ifthen setglobal END2110
-                      - (pm_ts(ttot) / pm_dataeta(ttot,regi,te) * pm_omeg(regi,"11",te)
-                   * 0.5*vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
-$endif
-                                )
-                        );
+                )
+            );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -215,6 +211,13 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
     vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
   )
+; 
+
+*' FE balance equation including FE sectoral taxes effect
+q_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
+  vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
 ; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
@@ -312,16 +315,9 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
         +  ( pm_dt(ttot) / 2 
        * pm_omeg(regi,"2",te)
        * vm_deltaCap(ttot,regi,te,rlf)
-       )
-$ifthen setGlobal END2110
-    - ( pm_ts(ttot) / 2
-      * pm_omeg(regi,"11",te)
-      * vm_deltaCap(ttot,regi,te,rlf)
-      )$ (ord(ttot) eq card(ttot) )				   
-$endif
-);
-
-
+            )
+         )
+;
 
 q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
@@ -349,13 +345,13 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 q_windoff_low(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =g=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 q_windoff_high(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =l=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 $ENDIF.WindOff
@@ -501,7 +497,7 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se
 q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, v_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
@@ -558,7 +554,7 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
 q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  vm_emiTeMkt(t,regi,enty,emiMkt)
+  v_emiTeMkt(t,regi,enty,emiMkt)
   =e=
 ***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
@@ -585,7 +581,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
 	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
+	v_emiTeMkt(t,regi,emi,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
 	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
@@ -987,11 +983,11 @@ q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe
 
 
 *limit secondary energy district heating and heat pumps
-$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+$IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off" 
 q_heat_limit(t,regi)$(t.val gt 2020)..
     vm_prodFe(t,regi,"sehe","fehes","tdhes")
     =l=
-    %cm_INNOPATHS_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
+    %cm_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
 ;
 $ENDIF.sehe_upper
 

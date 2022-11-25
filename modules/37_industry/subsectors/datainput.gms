@@ -74,14 +74,36 @@ Parameter
 ;
 pm_cesdata_sigma(ttot,in)$( p37_cesdata_sigma(in) ) = p37_cesdata_sigma(in);
 
+
+*** increase elasticities of subsitution over time to account for ramp-up requirements of new technologies in the short-term
+pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val le 2025) = 0.7;
+pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2030) = 1.3;
+pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2035) = 1.7;
+pm_cesdata_sigma(ttot,"en_cement_non_electric")$ (ttot.val eq 2040) = 2.0;
+
+pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val le 2025) = 0.7;
+pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2030) = 1.3;
+pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2035) = 2.0;
+pm_cesdata_sigma(ttot,"en_chemicals_fhth")$ (ttot.val eq 2040) = 3.0;
+
+pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val le 2025) = 0.5;
+pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2030) = 0.7;
+pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2035) = 1.3;
+pm_cesdata_sigma(ttot,"en_steel_furnace")$ (ttot.val eq 2040) = 2.0;
+
+pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val le 2025) = 0.7;
+pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2030) = 1.3;
+pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2035) = 1.7;
+pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
+
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup NOT "%cm_INNOPATHS_Industry_CCS_markup%" == "off" 
+$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off" 
 pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
                                     pm_abatparam_Ind(ttot,regi,all_enty,steps) )
   = pm_abatparam_Ind(ttot,regi,all_enty,steps);
-  / %cm_INNOPATHS_Industry_CCS_markup%);
+  / %cm_Industry_CCS_markup%);
 $ENDIF.Industry_CCS_markup
 
 if (cm_IndCCSscen eq 1,
@@ -126,6 +148,7 @@ sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
                   !! thermodynamic limit
 sm_tmp  = 2050;   !! period in which closing could be achieved
 
+*** Specific energy demand limits for steel and cement relative to thermodynamic limit from input data
 loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
   p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
   = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
@@ -149,6 +172,35 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
       )
     );
 );
+
+*** Specific energy demand limits for other industry and chemicals in TWa/trUSD
+*** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
+sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value 
+sm_tmp  = 2100;   !! period in which closing could be achieved
+
+loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = ( ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline("2015",regi,in))
+      / p37_cesIO_baseline("2015",regi,out)
+      )
+    )
+  * exp((2015 - ttot.val) / ((2015 - sm_tmp) / log(1 - sm_tmp2)));
+
+  !! To account for strong 2015-20 drops due to imperfect 2020 energy data,
+  !! use the lower of the calculated curve, or 95 % of the baseline specific
+  !! energy demand
+  p37_energy_limit_slope(ttot,regi,out)$( ttot.val ge 2015 )
+  = min(
+      p37_energy_limit_slope(ttot,regi,out),
+      ( 0.95
+      * ( sum(ces_eff_target_dyn37(out,in), p37_cesIO_baseline(ttot,regi,in))
+        / p37_cesIO_baseline(ttot,regi,out)
+	)
+      )
+    );
+);
+
+display p37_energy_limit_slope;
 $endif.no_calibration
 
 *** CCS for industry is off by default
@@ -244,7 +296,7 @@ Table pm_calibrate_eff_scale(all_in,all_in,eff_scale_par)   "parameters for scal
 ;
 $offtext
 
-$ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
+$ifthen.bal_scenario "%cm_indstExogScen%" == "forecast_bal"   !! cm_indstExogScen
   Parameter
     p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
     !! from FORECAST v1.0_8Gt_Bal.xlsx
@@ -256,7 +308,7 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2040 . DEU . ue_cement   32.517921
       2045 . DEU . ue_cement   31.826778
       2050 . DEU . ue_cement   31.13703
-  
+
       2020 . DEU . ue_steel_primary     25.07355
       2025 . DEU . ue_steel_primary     27.08212
       2030 . DEU . ue_steel_primary     24.808956
@@ -264,7 +316,7 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2040 . DEU . ue_steel_primary     20.219831
       2045 . DEU . ue_steel_primary     19.946714
       2050 . DEU . ue_steel_primary     19.725106
-  
+
       2020 . DEU . ue_steel_secondary   10.50795
       2025 . DEU . ue_steel_secondary   14.288815
       2030 . DEU . ue_steel_secondary   16.181637
@@ -274,14 +326,14 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
       2050 . DEU . ue_steel_secondary   19.725106
     /
   ;
-  
+
   !! convert Mt to Gt
   p37_industry_quantity_targets(t,regi,in)$(
                                       p37_industry_quantity_targets(t,regi,in) )
     = p37_industry_quantity_targets(t,regi,in)
       !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
     * 1e-3;
-  
+
   !! extend beyond 2050
   !! FIXME: do this smarter, using something like GDPpC growth or something
   p37_industry_quantity_targets(t,regi,in)$(
@@ -289,6 +341,49 @@ $ifthen.bal_scenario "%cm_import_EU%" == "bal"   !! cm_import_EU
  	                     AND t.val ge 2050                                 )
     = p37_industry_quantity_targets("2050",regi,in);
 $endif.bal_scenario
+
+$ifthen.ensec_scenario "%cm_indstExogScen%" == "forecast_ensec"   !! cm_indstExogScen
+  Parameter
+    p37_industry_quantity_targets(ttot,all_regi,all_in)   "quantity targets for industry in policy scenarios"
+    !! from Ariadne_Industrieproduktion_Harmonisierung.xlsx
+    /
+      2020 . DEU . ue_cement   34.396171
+      2025 . DEU . ue_cement   34.086007
+      2030 . DEU . ue_cement   33.497825
+      2035 . DEU . ue_cement   32.984228
+      2040 . DEU . ue_cement   32.517921
+      2045 . DEU . ue_cement   31.826778
+
+      2020 . DEU . ue_steel_primary     23.597700
+      2025 . DEU . ue_steel_primary     25.641956
+      2030 . DEU . ue_steel_primary     23.563428
+      2035 . DEU . ue_steel_primary     21.597116
+      2040 . DEU . ue_steel_primary     19.814551
+      2045 . DEU . ue_steel_primary     17.777242
+
+      2020 . DEU . ue_steel_secondary   11.428800
+      2025 . DEU . ue_steel_secondary   15.183230
+      2030 . DEU . ue_steel_secondary   16.890665
+      2035 . DEU . ue_steel_secondary   18.631843
+      2040 . DEU . ue_steel_secondary   20.521511
+      2045 . DEU . ue_steel_secondary   22.116186
+    /
+  ;
+
+  !! convert Mt to Gt
+  p37_industry_quantity_targets(t,regi,in)$(
+                                      p37_industry_quantity_targets(t,regi,in) )
+    = p37_industry_quantity_targets(t,regi,in)
+      !! Mt/yr * 1e-3 Gt/Mt = Gt/yr
+    * 1e-3;
+
+  !! extend beyond 2045
+  !! FIXME: do this smarter, using something like GDPpC growth or something
+  p37_industry_quantity_targets(t,regi,in)$(
+                                 p37_industry_quantity_targets("2045",regi,in)
+ 	                     AND t.val ge 2045                                 )
+    = p37_industry_quantity_targets("2045",regi,in);
+$endif.ensec_scenario
 
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","level")     = 1.5;
 pm_calibrate_eff_scale("feelhth_chemicals","fega_chemicals","midperiod") = 2030;
@@ -317,32 +412,47 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 
 
-*** FS: CES markup cost industry
-*** default values of CES markup
+*` CES mark-up cost industry
+
+*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
+*` (1) They represent sectoral end-use cost not captured by the energy system. 
+*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
+*` and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
+*` are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
+*` Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and 
+*` obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios. 
+
+
+*` There are two ways in which mark-up cost can be set:
+*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
+*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+
+*` Mark-up cost in industry are modeled without budget-effect (b).
+
+*` Default industry mark-up cost with budget effect:
 p37_CESMkup(t,regi,in) = 0;
 
+*` Default industry mark-up cost without budget effect:
+*` mark-up cost on electrification (hth_electricity inputs), to reach >1 MRS to gas/liquids as technical efficiency gains from electrification
+pm_tau_ces_tax(t,regi,"feelhth_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feelhth_otherInd") = 300* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feel_steel_secondary") = 100* sm_TWa_2_MWh * 1e-12;
 
-*** place markup cost of 200 USD/MWh(el) on electricity high-temperature heat and electricity steel nodes
-*** to represent demand-side cost of electrification and reach higher subsitution rates
-p37_CESMkup(t,regi,"feelhth_chemicals") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feelhth_otherInd") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feel_steel_secondary") = 200* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feel_steel_primary") = 200* sm_TWa_2_MWh * 1e-12;
-
-*** place markup cost of 100 USD/MWh(H2) on H2 nodes
-*** to represent demand-side cost of hydrogen usage and reach higher subsitution rates
-p37_CESMkup(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_otherInd") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_steel") = 100* sm_TWa_2_MWh * 1e-12;
-p37_CESMkup(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
+*` mark-up cost on H2 inputs, to reach MRS around 1 to gas/liquids as similar technical efficiency
+pm_tau_ces_tax(t,regi,"feh2_chemicals") = 100* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_otherInd") = 50* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
+pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 
-*** overwrite or extent CES markup cost if specified by switch
+*` overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in)) = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
 $endIf.CESMkup
 
 display p37_CESMkup;
+display pm_tau_ces_tax;
 
 * Load secondary steel share limits
 Parameter
@@ -357,10 +467,9 @@ $offdelim
 p37_steel_secondary_max_share(t,regi)
   = f37_steel_secondary_max_share(t,regi,"%cm_GDPscen%");
 
-$ifthen.calibration "%CES_parameters%" == "calibrate"   !! CES_parameters
 Parameter p37_steel_secondary_share(tall,all_regi) "endogenous values to fix rounding issues with p37_steel_secondary_max_share";
 
-p37_steel_secondary_share(t,regi_dyn29(regi))
+p37_steel_secondary_share(t,regi)
   = pm_cesdata(t,regi,"ue_steel_secondary","quantity")
   / ( pm_cesdata(t,regi,"ue_steel_primary","quantity")
     + pm_cesdata(t,regi,"ue_steel_secondary","quantity")
@@ -371,8 +480,8 @@ if (smax((t,regi),
     - p37_steel_secondary_max_share(t,regi)
     ) gt 0,
   put logfile, ">>> Modifying maximum secondary steel share <<<" /;
-  loop ((t,regi_dyn29(regi))$(   p37_steel_secondary_share(t,regi)
-                              gt p37_steel_secondary_max_share(t,regi) ),
+  loop ((t,regi)$(   p37_steel_secondary_share(t,regi)
+                  gt p37_steel_secondary_max_share(t,regi) ),
     put p37_steel_secondary_max_share.tn(t,regi), "   ",
         p37_steel_secondary_max_share(t,regi), " + ",
         ( p37_steel_secondary_share(t,regi)
@@ -383,7 +492,6 @@ if (smax((t,regi),
   );
 putclose logfile, " " /;
 );
-$endif.calibration
 
 $ifthen.sec_steel_scen NOT "%cm_steel_secondary_max_share_scenario%" == "off"   !! cm_steel_secondary_max_share_scenario
 * Modify secondary steel share limits by scenario assumptions

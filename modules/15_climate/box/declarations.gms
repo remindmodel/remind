@@ -108,9 +108,8 @@ q15_concN2OQ(tall)       "N2O concentration"
 q15_concCH4Q(tall)       "CH4 concentration"
 q15_forcCH4Q(tall)       "CH4 radiative forcing"
 q15_forcN2OQ(tall)       "N2O radiative forcing"
-q15_forc_os(tall)  "calculate forcing overshoot"
 q15_linkEMI(ttot, ta10, all_enty, FOB10)         "links total global emissions to the climate system"
-$IF %cm_so2_out_of_opt% == "on" q15_linkEMI_aer(ttot, ta10, all_enty, FOB10)         "links total global aerosol emissions to the climate system, if flag cm_so2_out_of_opt is on"
+q15_linkEMI_aer(ttot, ta10, all_enty, FOB10)         "links total global aerosol emissions to the climate system"
 q15_interEMI(ta10, ttot, FOB10)		"interpolates timesteps of core model to one year timesteps"
 ;
 
