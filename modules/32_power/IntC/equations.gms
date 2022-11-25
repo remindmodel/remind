@@ -144,7 +144,7 @@ q32_TotVREshare(t,regi)..
   v32_TotVREshare(t,regi)
   =e=
   sum(teVRE, 
-    v32_shSeEl(t,regi,teVRE) 
+    vm_shSeEl(t,regi,teVRE) 
   )
 ;
 
@@ -154,7 +154,7 @@ q32_shAddIntCostTotVRE(t,regi)..
   v32_TotVREshare(t,regi)
   - p32_shThresholdTotVREAddIntCost(t)
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-  - 0.5 * v32_shSeEl(t,regi,"windoff")  !! for offshore wind, the correlation with other VRE is much smaller, reducing the additional integration challenge
+  - 0.5 * vm_shSeEl(t,regi,"windoff")  !! for offshore wind, the correlation with other VRE is much smaller, reducing the additional integration challenge
 $ENDIF.WindOff
 ;
 
