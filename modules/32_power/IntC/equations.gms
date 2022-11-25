@@ -139,8 +139,9 @@ q32_shStor(t,regi,teVRE)$(t.val ge 2015)..
 q32_storloss(t,regi,teVRE)$(t.val ge 2020)..
 	v32_storloss(t,regi,teVRE)
 	=e=
-	(v32_shStor(t,regi,teVRE) + p32_FactorAddIntCostTotVRE * v32_shAddIntCostTotVRE(t,regi)  )  
-	/ 100    
+	( v32_shStor(t,regi,teVRE)                                         !! integration challenges due to the technology itself
+	  + p32_FactorAddIntCostTotVRE * v32_shAddIntCostTotVRE(t,regi)    !! integration challenges due to the total VRE share
+	) / 100    
 	* sum(VRE2teStor(teVRE,teStor), (1 - pm_eta_conv(t,regi,teStor) ) /  pm_eta_conv(t,regi,teStor) )
 	* vm_usableSeTe(t,regi,"seel",teVRE)
 ;
@@ -149,7 +150,7 @@ q32_TotVREshare(t,regi)..
   v32_TotVREshare(t,regi)
   =e=
   sum(teVRE, 
-    v32_shSeEl(t,regi,teVRE) * (1 - 0.5$(sameas(teVRE, "windoff") ) )  !! for offshore wind, the correlation with other VRE is much smaller, reducing the additional integration challenge
+    v32_shSeEl(t,regi,teVRE) 
   )
 ;
 
@@ -158,6 +159,9 @@ q32_shAddIntCostTotVRE(t,regi)..
   =g=
   v32_TotVREshare(t,regi)
   - p32_shThresholdTotVREAddIntCost(t)
+$IFTHEN.WindOff %cm_wind_offshore% == "1"
+  - 0.5 * v32_shSeEl(t,regi,"windoff")  !! for offshore wind, the correlation with other VRE is much smaller, reducing the additional integration challenge
+$ENDIF.WindOff
 ;
 
 
