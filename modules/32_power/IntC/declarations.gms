@@ -16,7 +16,7 @@ parameters
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_PriceDurSlope(all_regi,all_te)              "slope of price duration curve used for calculation of electricity price for flexible technologies, determines how fast electricity price declines at lower capacity factors"
     o32_dispatchDownPe2se(ttot,all_regi,all_te)     "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
-    p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration costs arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
+    p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration challenges arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
     p32_FactorAddIntCostTotVRE                      "Multiplicative factor that influences how much the total VRE share increases integration challenges"
 ;
 
@@ -42,7 +42,7 @@ equations
     q32_limitCapTeGrid(ttot,all_regi)          		"calculate the additional grid capacity required by VRE"
     q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
     q32_shStor(ttot,all_regi,all_te)                "equation to calculate v32_shStor"
-    q32_storloss(ttot,all_regi,all_te)              "equation to calculate vm_storloss"
+    q32_storloss(ttot,all_regi,all_te)              "equation to calculate vm_storloss, and - as vm_storloss determines the storage capacity - also the general integration challenges"
     q32_operatingReserve(ttot,all_regi)  			"operating reserve for necessary flexibility"
     q32_limitSolarWind(tall,all_regi)           	"limits on fluctuating renewables, only turned on for special EMF27 scenarios"
 	q32_h2turbVREcapfromTestor(tall,all_regi)       "calculate capacities of dummy seel<--h2 technology from storXXX technologies"
