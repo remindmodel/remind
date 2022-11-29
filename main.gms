@@ -7,48 +7,48 @@
 *** SOF ./main.gms
 *' @title REMIND - REgional Model of INvestments and Development
 *'
-*' @description REMIND is a global multi-regional model incorporating the economy, the climate system 
-*' and a detailed representation of the energy sector. It solves for an intertemporal Pareto optimum 
-*' in economic and energy investments in the model regions, fully accounting for interregional trade in 
-*' goods, energy carriers and emissions allowances. REMIND enables analyses of technology options and 
+*' @description REMIND is a global multi-regional model incorporating the economy, the climate system
+*' and a detailed representation of the energy sector. It solves for an intertemporal Pareto optimum
+*' in economic and energy investments in the model regions, fully accounting for interregional trade in
+*' goods, energy carriers and emissions allowances. REMIND enables analyses of technology options and
 *' policy proposals for climate change mitigation.
 *'
-*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global 
-*' welfare is optimized subject to equilibrium constraints ([02_welfare]). Intertemporal optimization 
-*' ([80_optimization]) with perfect foresight is subject to market clearing. The model explicitly represents 
-*' trade in final goods, primary energy carriers, and when certain climate policies are enabled, emissions 
-*' allowances ([24_trade]). The macro-economic production factors are capital, labor, and final energy. 
-*' A nested production function with constant elasticity of substitution determines the final energy demand 
-*' ([01_macro], [29_CES_parameters]). REMIND uses economic output for investments in the macro-economic 
-*' capital stock as well as for consumption, trade, and energy system expenditures. 
-*' 
-*' The macro-economic core and the energy system part are hard-linked via the final energy demand and the 
-*' costs incurred by the energy system. Economic activity results in demand for final energy in different 
-*' sectors (transport ([35_transport]), industry ([37_industry]), buildings ([36_buildings])...) and of 
-*' different type (electric ([32_power]) and non-electric). The primary energy carriers in REMIND include 
-*' both exhaustible and renewable resources. Exhaustible resources comprise uranium as well as three fossil 
-*' resources ([31_fossil]), namely coal, oil, and gas. Renewable resources include hydro, wind, solar, 
-*' geothermal, and biomass ([30_biomass]). More than 50 technologies are available for the conversion of 
-*' primary energy into secondary energy carriers as well as for the distribution of secondary energy carriers 
+*' The macro-economic core of REMIND is a Ramsey-type optimal growth model in which intertemporal global
+*' welfare is optimized subject to equilibrium constraints ([02_welfare]). Intertemporal optimization
+*' ([80_optimization]) with perfect foresight is subject to market clearing. The model explicitly represents
+*' trade in final goods, primary energy carriers, and when certain climate policies are enabled, emissions
+*' allowances ([24_trade]). The macro-economic production factors are capital, labor, and final energy.
+*' A nested production function with constant elasticity of substitution determines the final energy demand
+*' ([01_macro], [29_CES_parameters]). REMIND uses economic output for investments in the macro-economic
+*' capital stock as well as for consumption, trade, and energy system expenditures.
+*'
+*' The macro-economic core and the energy system part are hard-linked via the final energy demand and the
+*' costs incurred by the energy system. Economic activity results in demand for final energy in different
+*' sectors (transport ([35_transport]), industry ([37_industry]), buildings ([36_buildings])...) and of
+*' different type (electric ([32_power]) and non-electric). The primary energy carriers in REMIND include
+*' both exhaustible and renewable resources. Exhaustible resources comprise uranium as well as three fossil
+*' resources ([31_fossil]), namely coal, oil, and gas. Renewable resources include hydro, wind, solar,
+*' geothermal, and biomass ([30_biomass]). More than 50 technologies are available for the conversion of
+*' primary energy into secondary energy carriers as well as for the distribution of secondary energy carriers
 *' into final energy.
 *'
-*' The model accounts for the full range of anthropogenic greenhouse gas (GHG) emissions, most of which are 
-*' represented by source. REMIND simulates emissions from long-lived GHGs (CO2, CH4, N2O), short-lived GHGs 
-*' (CO, NOx, VOC) and aerosols (SO2, BC, OC). It accounts for these emissions with different levels of detail 
-*' depending on the types and sources of emissions. It calculates CO2 emissions from fuel combustion, CH4 
-*' emissions from fossil fuel extraction and residential energy use, and N2O emissions from energy supply 
-*' based on sources. 
+*' The model accounts for the full range of anthropogenic greenhouse gas (GHG) emissions, most of which are
+*' represented by source. REMIND simulates emissions from long-lived GHGs (CO2, CH4, N2O), short-lived GHGs
+*' (CO, NOx, VOC) and aerosols (SO2, BC, OC). It accounts for these emissions with different levels of detail
+*' depending on the types and sources of emissions. It calculates CO2 emissions from fuel combustion, CH4
+*' emissions from fossil fuel extraction and residential energy use, and N2O emissions from energy supply
+*' based on sources.
 *'
-*' The code is structured in a modular way, with code belonging either to the model's core, or to one of the 
-*' modules. The folder structure is as follows: at the top level are the folders config, core, modules and 
-*' scripts. The config folder contains the REMIND settings and configuration information. The core folder 
-*' contains all the files that are part of the core. The modules folder holds all the files that belong to 
-*' the modules, with numbered sub-folders for every module. The scripts folder contains helpful scripts for 
+*' The code is structured in a modular way, with code belonging either to the model's core, or to one of the
+*' modules. The folder structure is as follows: at the top level are the folders config, core, modules and
+*' scripts. The config folder contains the REMIND settings and configuration information. The core folder
+*' contains all the files that are part of the core. The modules folder holds all the files that belong to
+*' the modules, with numbered sub-folders for every module. The scripts folder contains helpful scripts for
 *' starting a model run and analysing results.
-*' 
-*' REMIND is run by executing the main.gms file, which loads the configuration information and builds the model, 
-*' by concatenating all necessary files from the core and modules folders into a single file called full.gms. 
-*' The concatenation process starts with files from the core and continues with files from activated modules, 
+*'
+*' REMIND is run by executing the main.gms file, which loads the configuration information and builds the model,
+*' by concatenating all necessary files from the core and modules folders into a single file called full.gms.
+*' The concatenation process starts with files from the core and continues with files from activated modules,
 *' in increasing order of module-number. It observes the following structure:
 *'
 *' ```
@@ -101,18 +101,18 @@
 *' * "o_" to designate output parameters (parameters that do not affect the optimization, but are affected by it),
 *' * "p_" to designate other parameters (parameters that were derived from "f_" parameters or defined in code),
 *' * "c_" to designate config switches (parameters that enable different configuration choices),
-*' * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT 
+*' * "s_FIRSTUNIT_2_SECONDUNIT" to designate a scalar used to convert from the FIRSTUNIT to the SECONDUNIT
 *'                              through multiplication, e.g. s_GWh_2_EJ.
 *'
 *' These prefixes are extended in some cases by a second letter:
 *'
 *' * "?m_" to designate objects used in the core and in at least one module.
-*' * "?00_" to designate objects used in a single module, exclusively, with the 2-digit number corresponding 
+*' * "?00_" to designate objects used in a single module, exclusively, with the 2-digit number corresponding
 *'          to the module number.
 *'
-*' Sets are treated differently: instead of a prefix, sets exclusively used within a module get that module's 
-*' number added as a suffix. If the set is used in more than one module no suffix is given. 
-*' 
+*' Sets are treated differently: instead of a prefix, sets exclusively used within a module get that module's
+*' number added as a suffix. If the set is used in more than one module no suffix is given.
+*'
 *' The units (e.g., TWa, EJ, GtC, GtCO2, ...) of variables and parameters are documented in the declaration files.
 *'
 *' For the labels of parameters, scalars and set, use double quotes only.
@@ -122,22 +122,22 @@
 *' * Comment all parts of the code generously
 *' * For all equations, it should become clear from the comments what part of the equation is supposed to do what
 *' * Variables and parameters should be declared along with a descriptive text (use `" "` for descriptive text to avoid compilation errors)
-*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND 
+*' * Use three asterisks `***` for comments or `*'` if the comment should show up in the documentation of REMIND
 *' * Never use 4 asterisks (reserved for GAMS error messages)
 *' * Don't use the string `infes` in comments
 *' * Don't use `$+number` combinations, e.g., `$20` (this interferes with GAMS error codes).
-*' * Indicate the end of a file by inserting `*** EOF filename.inc ***` 
-*' 
+*' * Indicate the end of a file by inserting `*** EOF filename.inc ***`
+*'
 *' #### Sets
-*' 
+*'
 *' * Don't use set element names with three capital letters (like `ETS` or `ESR`), otherwise the maglcass R
 *' library might interpret this as a region name when reading in GDX data
-*' 
-*' 
+*'
+*'
 *' #### Equations:
 *' The general idea is not to write code and equations as short as possible, but to write them in a way they
 *' can be read and understood as fast as possible. To that end:
-*' 
+*'
 *' * Write the mathematical operator (`*`, `/`, `+`, `-`) at the beginning of a line, not the end of the last line
 *' * Leave a space before and after `+` and `-` operators and equation signs (`=g=`, `=l=`, `=e=`)
 *' * Leave a space behind the comma of a sum (not behind the commas in set element calling)
@@ -145,8 +145,8 @@
 *' * Use full quotes (`"feel"`) instead of single quotes (`'feel'`) when specifying individual elements of
 *' a set (this makes automatic replacement via sed easier)
 *' * Put the equation sign (`=g=`, `=l=`, `=e=`) in a single line without anything else
-*' 
-*' 
+*'
+*'
 *' #### Other general rules:
 *' * Decompose large model equations into several small equations to enhance readability and model diagnostics
 *' * Don't use hard-coded numbers in the equations part of the model
@@ -160,17 +160,17 @@
 *' * When declaring a parameter/variable/equation always add the sets it is declared for,
 *' e.g. `parameter test(x,y);` instead of `parameter test;`
 *' * do not set variables for all set entries to zero (if not necessary), as this will blow up memory requirements.
-*' 
+*'
 
 
 *##################### R SECTION START (VERSION INFO) ##########################
-* 
+*
 * Regionscode: 62eff8f7
-* 
+*
 * Input data revision: 6.316
-* 
+*
 * Last modification (input data): Wed Sep 28 10:35:42 2022
-* 
+*
 *###################### R SECTION END (VERSION INFO) ###########################
 
 *----------------------------------------------------------------------
@@ -312,7 +312,7 @@ $setglobal CDR  DAC        !! def = DAC
 *'---------------------    35_transport    ----------------------------------------
 *'
 *' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
-*' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies  
+*' * (edge_esm): transport realization with iterative coupling to logit-based transport model EDGE-Transport with detailed representation of transport modes and technologies
 $setglobal transport  edge_esm           !! def = edge_esm
 *'---------------------    36_buildings    ---------------------------------
 *'
@@ -434,7 +434,7 @@ $setGlobal optimization  nash         !! def = nash
 $setGlobal codePerformance  off       !! def = off
 
 ***-----------------------------------------------------------------------------
-*' ####                     SWITCHES 
+*' ####                     SWITCHES
 ***-----------------------------------------------------------------------------
 parameter
   cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
@@ -447,9 +447,10 @@ parameter
   cm_abortOnConsecFail   = 5;     !! def = 5
 *'
 parameter
-  c_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
+  cm_solver_try_max          "maximum number of inner iterations within one Negishi iteration (<10)"
 ;
-  c_solver_try_max       = 2;     !! def = 2
+  !! set to at least five by testOneRegi
+  cm_solver_try_max       = 2;     !! def = 2
 *'
 parameter
   c_keep_iteration_gdxes    "save intermediate iteration gdxes"
@@ -624,8 +625,8 @@ parameter
 *' (20)   Sets the emission factor to 20 kgCO2 per GJ, which for example
 *'        results in a tax of 2 $ per GJ (primary energy) at a carbon price of
 *'        100 $ per tCO2:
-*'                20 kgCO2 per GJ * 100 $ per tCO2 
-*'          eq    0.02 tCO2 per GJ * 100 $ per tCO2 
+*'                20 kgCO2 per GJ * 100 $ per tCO2
+*'          eq    0.02 tCO2 per GJ * 100 $ per tCO2
 *'          eq    2 $ per GJ
 *'
 parameter
@@ -653,7 +654,7 @@ parameter
 *'
 parameter
   cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
-***  Only working with magpie_40 realization of 30_biomass module. 
+***  Only working with magpie_40 realization of 30_biomass module.
 ***  (0): (default) No phaseout
 ***  (1): Phaseout capacities of all bioenergy technologies using pebiolc, as far
 ***       as historical bounds on bioenergy technologies allow it. This covers
@@ -886,7 +887,7 @@ parameter
   cm_postTargetIncrease    = 0;      !! def = 0
 *'
 parameter
-cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
+  cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
 ;
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
@@ -951,7 +952,7 @@ parameter
   cm_noReboundEffect     = 0;
 *'
 parameter
-cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
+  cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 *** def <- -3  , price sensitivity of logit function for heating and cooking technological choice
 ;
   cm_priceSensiBuild     = -3;
@@ -973,15 +974,6 @@ parameter
   cm_CO2priceRegConvEndYr  = 2050;   !! def = 2050
 *'
 parameter
-  cm_GDPcovid                  "GDP correction for covid"
-*** switch to turn on short-term GDP loss by covid-19
-*** *ML* emulates a schock, only feasible with start year 2020, don't use in calibration
-***  (0):  off
-***  (1):  on
-;
-  cm_GDPcovid      = 0;            !! def = 0
-*'
-parameter
   cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 *** cm_TaxConvCheck - switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 0.01% of GDP)
 *** 0 (off)
@@ -992,9 +984,9 @@ parameter
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
 *** cm_flex_tax "switch for flexibility tax/subsidy, switching it on activates a tax on a number of technologies with flexible or inflexible electricity input."
-*** technologies with flexible eletricity input get a subsidy corresponding to the lower-than-average electricity prices that they see, while 
+*** technologies with flexible eletricity input get a subsidy corresponding to the lower-than-average electricity prices that they see, while
 *** inflexible technologies get a tax corresponding to the higher-than-average electricity prices that they see
-*** (0) flexibility tax off 
+*** (0) flexibility tax off
 *** (1) flexibility tax on
 ;
   cm_flex_tax = 1; !! def 1
@@ -1007,14 +999,14 @@ parameter
 parameter
   cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 ***  cm_PriceDurSlope_elh2, slope of price duration curve for electrolysis (increase means more flexibility subsidy for electrolysis H2)
-*** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1 
+*** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1
 ;
   cm_PriceDurSlope_elh2 = 15; !! def 15
 *'
 parameter
   cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
-*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.  
-*** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings and industry. 
+*** cm_FlexTaxFeedback, switches on feedback of flexibility tax on buildings and industry.
+*** That is, electricity price decrease for electrolysis has to be matched by electrictiy price increase in buildings and industry.
 *** This switch only has an effect if the flexibility tax is on by cm_flex_tax set to 1.
 ;
   cm_FlexTaxFeedback = 0; !! def 0
@@ -1110,8 +1102,16 @@ parameter
 ;
   cm_deuCDRmax = -1; !! def = -1
 *'
+parameter
+  cm_EnSecScen_limit        "switch for limiting the gas demand from 2025 onward, currently only applied to Germany"
+*** This switch is used to represent a limited gas supply in a energy security scenario. [EJ per yr]
+*** (0)                default, equals "off", no limit imposed
+*** (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
+;
+  cm_EnSecScen_limit = 0; !! def = 0
+*'
 ***-----------------------------------------------------------------------------
-*' ####                     FLAGS 
+*' ####                     FLAGS
 ***-----------------------------------------------------------------------------
 *' cm_MAgPIE_coupling    "switch on coupling mode with MAgPIE"
 *'
@@ -1213,7 +1213,7 @@ $setglobal c_ccsinjecrateRegi  off  !! def = "off"
 ***   ("forcing_SSP2") settings consistent with SSP 2
 ***   ("forcing_SSP5") settings consistent with SSP 5
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
-*** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch, require regipol module to be set to regiCarbonPrice (e.g. GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494) )" 
+*** cm_regiExoPrice "set exogenous co2 tax path for specific regions using a switch, require regipol module to be set to regiCarbonPrice (e.g. GLO.(2025 38,2030 49,2035 63,2040 80,2045 102,2050 130,2055 166,2060 212,2070 346,2080 563,2090 917,2100 1494,2110 1494,2130 1494,2150 1494) )"
 $setGlobal cm_regiExoPrice  off    !! def = off
 *** cm_emiMktTarget "set a budget or year emission target, for all (all) or specific emission markets (ETS, ESD or other), and specific regions (e.g. DEU) or region groups (e.g. EU27)"
 ***   Example on how to use:
@@ -1230,11 +1230,11 @@ $setGlobal cm_prioRescaleFactor off !! def = off
 ***   Example on how to use:
 ***     '2050.EUR_regi.netGHG 0.000001, obliges European GHG emissions to be approximately zero from 2050 onward"
 $setGlobal cm_quantity_regiCO2target  off !! def = off
-*** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies, 
+*** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies,
 *** i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
 *** Example: if set to 10, then the CF of all pe2se technologies can be decreased by up to 10% from the default value
 *** Setting capacity factors free is numerically expensive but can be helpful to see if negative prices disappear in historic years as the model is allowed to dispatch.
-$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20% 
+$setGlobal cm_dispatchSetyDown  off   !! def = off  The amount that te producing any sety can dispatch less (in percent) - so setting "20" in a cm_dispatchSetyDown column in scenario_config will allow the model to reduce the output of this te by 20%
 *** cm_dispatchSeelDown <- "off", same as cm_dispatchSetyDown but only provides range to capacity factors of electricity generation technologies
 *** cm_steel_secondary_max_share_scenario
 *** defines maximum secondary steel share per region
@@ -1251,14 +1251,14 @@ $setGlobal cm_proNucRegiPol   off   !! def = off
 $setGlobal cm_CCSRegiPol     off   !! def = off
 *** cm_vehiclesSubsidies - If "on" applies country specific BEV and FCEV subsidies from 2020 onwards
 $setGlobal cm_vehiclesSubsidies  off !! def = off
-*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...). 
-***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations. 
+*** cm_implicitQttyTarget - Define quantity target for primary, secondary, final energy or CCS (PE, SE and FE in TWa, or CCS in Mt CO2) per target group (total, biomass, fossil, VRE, renewables, synthetic, ...).
+***   The target is achieved by an endogenous calculated markup in the form or a tax or subsidy in between iterations.
 ***   Example on how to use:
 ***     cm_implicitQttyTarget  "2030.EU27_regi.tax.t.FE.all 1.03263"
 ***       Enforce a tax (tax) that guarantees that the total (t=total) Final Energy (FE.all) in 2030 (2030) is at most the Final energy target in the Fit For 55 regulation in the European Union (EU27_regi) (1.03263 Twa).
-***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)   
-***     cm_implicitQttyTarget to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.          
-***       Enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions. 
+***       The p47_implicitQttyTargetTax parameter will contain the tax necessary to achieve that goal. (777.8 Mtoe = 777.8 * 1e6 toe = 777.8 * 1e6 * 41.868 GJ = 777.8 * 1e6 * 41.868 * 1e-9 EJ = 777.8 * 1e6 * 41.868 * 1e-9 * 0.03171 TWa = 1.03263 TWa)
+***     cm_implicitQttyTarget to "2050.GLO.sub.s.FE.electricity 0.8". The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
+***       Enforce a subsidy (sub) that guarantees a minimum share (s) of electricity in final energy (FE.electricity) equal to 80% (0.8) from 2050 (2050) onward in all World (GLO) regions.
 ***       The p47_implicitQttyTargetTax parameter will contain the subsidy necessary to achieve that goal.
 $setGlobal cm_implicitQttyTarget  off !! def = off
 *** cm_loadFromGDX_implicitQttyTargetTax "load p47_implicitQttyTargetTax values from gdx for first iteration. Usefull for policy runs."
@@ -1267,7 +1267,7 @@ $setGlobal cm_loadFromGDX_implicitQttyTargetTax  off !! def = off
 ***   Aceptable values: "off", "Initial", "HighElectricityPrice", "HighGasandLiquidsPrice", "HighPrice", "LowPrice", "LowElectricityPrice"
 $setGlobal cm_implicitPriceTarget  off !! def = off
 *** cm_implicitPePriceTarget "define tax/subsidies to match PE prices defined in the pm_implicitPePriceTarget parameter."
-***   Aceptable values: "off", "highFossilPrice".    
+***   Aceptable values: "off", "highFossilPrice".
 $setGlobal cm_implicitPePriceTarget  off !! def = off
 *** cm_VREminShare "minimum variable renewables share requirement per region."
 ***   Example on how to use:
@@ -1277,7 +1277,7 @@ $setGlobal cm_VREminShare    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
 ***     cm_CCSmaxBound   GLO 2, EUR 0.25
-***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28. 
+***     amount of Carbon Capture and Storage (including DACCS and BECCS) is limited to a maximum of 2GtCO2 per yr globally, and 250 Mt CO2 per yr in EU28.
 ***   This switch only works for model native regions. If you want to apply it to a group region use cm_implicitQttyTarget instead.
 $setGlobal cm_CCSmaxBound    off  !! def = off
 *** c_CES_calibration_new_structure      <-   0        switch to 1 if you want to calibrate a CES structure different from input gdx
@@ -1334,7 +1334,7 @@ $setGlobal cm_import_tax "EUR_regi.pebiolc 1.0" !! def off
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
-*** Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)
+*** cm_import_ariadne        "Germany-specific H2 imports assumptions for Ariadne project (needs cm_import_EU to be on)"
 *** def <- "off", if import assumptions for Germany in Ariadne project -> switch to "on"
 *** switch for ariadne import scenarios (needs cm_import_EU to be not off)
 *** this switch activates ARIADNE-specific H2 imports for Germany, it requires that cm_import_EU is not "off"
@@ -1352,6 +1352,15 @@ $setGlobal cm_trade_SE_exog off !! def off
 *** (on) energy security scenario for Germany
 *** (off) no energy security scenario
 $setGlobal cm_EnSecScen  off !! def off
+*** cm_EnSecScen_price        "switch on tax on PE gas to simulate continued energy crisis in Germany for ARIADNE energy security scenario"
+***  (off) default
+***  (on)  switch on tax on PE gas and oil from 2025 in Germany
+$setGlobal cm_EnSecScen_price  off !! def off
+*** cm_indstExogScen           "choose data source for exogenous industry production fix"
+***  (off)            default, no fixing
+***  (forecast_bal)   fix to forecast outputs as used in the ARIADNE scenario "Balanced"
+***  (forecast_ensec) fix to forecast outputs as used in the ARIADNE scenario "EnSec"
+$setGlobal cm_indstExogScen  off !! def off
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
@@ -1362,22 +1371,22 @@ $setGlobal cm_altFeEmiFac  off        !! def = off
 *** overwritte default fe trajectories with low, medium and high alternatives for buildings, transport and industry
 $setglobal cm_calibration_FE  off      !! def = off
 *** cm_eni "multiplicative factor applied to industry energy elasticity value (eni) used in fixed_shares realization. [factor]"
-***   def <- "off" = no change for industry energy elasticity (eni); 
+***   def <- "off" = no change for industry energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_eni  off  !! def = off
 *** cm_enb "multiplicative factor applied to buildings energy elasticity value (enb). [factor]"
-***   def <- "off" = no change for buildings energy elasticity (eni); 
+***   def <- "off" = no change for buildings energy elasticity (eni);
 ***   or number (ex. 2) = multiply by 2 the default value used in REMIND.
 $setglobal cm_enb  off  !! def = off
 *** cm_LDV_mkt_share "set upper or lower bounds to transport LDV market shares in complex realisation"
 ***   Example on how to use:
 ***     cm_LDV_mkt_share  apCarElT.up 80, apCarH2T.up 90, apCarPeT.lo 5
-***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market 
+***        maximum market share for EV equal to 80%, for H2V 90%, and minimum market share for ICE equal to 5% of the total LDv market
 $setglobal cm_LDV_mkt_share  off !! def = off
 *** cm_share_LDV_sales "set upper or lower bounds to transport LDV market share sales in complex realisation"
 ***   Example on how to use:
 ***     cm_share_LDV_sales    2030.2050.apCarElT.upper 80, 2030.2050.apCarH2T.upper 90, 2030.2050.apCarPeT.lower 5
-***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market 
+***        maximum sales market share for EV equal to 80%, for H2V 90%, and minimum sales market share for ICE equal to 5% in between the years 2030 and 2050 of the total LDV market
 $setglobal cm_share_LDV_sales  off !! def = off
 ***  cm_incolearn "change floor investment cost value"
 ***   Example on how to use:
@@ -1385,11 +1394,11 @@ $setglobal cm_share_LDV_sales  off !! def = off
 ***       floor investment costs from learning set to 17000 for EVs; and 1600, 5160 and 9500 for wind, solar pv and solar csp respectively.
 $setglobal cm_incolearn  off !! def = off
 *** cm_storageFactor "scale curtailment and storage requirements. [factor]"
-***   def <- "off" = no change for curtailment and storage requirements; 
+***   def <- "off" = no change for curtailment and storage requirements;
 ***   or number (ex. 0.66), multiply by 0.66 to resize the curtailment and storage requirements per region from the default REMIND values.
 $setglobal cm_storageFactor  off !! def = off
 *** cm_learnRate "change learn rate value by technology."
-***   def <- "off" = no change for learn rate value; 
+***   def <- "off" = no change for learn rate value;
 ***   or list of techs to change learn rate value. (ex. "apcarelt 0.2")
 $setglobal cm_learnRate  off !! def = off
 *** cm_adj_seed and cm_adj_seed_cont "overwrite the technology-dependent adjustment cost seed value. Smaller means slower scale-up."
@@ -1411,8 +1420,8 @@ $setglobal cm_adj_seed_multiplier  off
 *** cm_adj_coeff_multiplier "rescale adjustment cost coefficient value relative to default value. [factor]. Higher means higher adjustment cost."
 ***   def <- "off" = use default adj coefficient values.
 ***   or list of techs to change adj_cost value by a multiplication factor. (ex. "spv 2, storspv 2, wind 4")
-*** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to 
-*** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time. 
+*** A note on adjustment cost changes: A common practice of changing the adjustment cost parameterization is by using the same factor to
+*** increase the adjustment cost coefficent and to decrease the adjustment cost seed value at the same time.
 $setglobal cm_adj_coeff_multiplier  off
 *** cm_inco0Factor "change investment costs. [factor]."
 ***   def <- "off" = use default inco0 values.
@@ -1433,15 +1442,15 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 *** cm_renewables_floor_cost "additional floor cost for renewables"
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
-$setglobal cm_renewables_floor_cost  off  !! def = off 
+$setglobal cm_renewables_floor_cost  off  !! def = off
 *** cm_DAC_eff "multiplicative factor for energy demand per unit carbon captured with DAC"
 ***   def <- "off" = use default p33_dac_fedem value.
 ***   or list of stationary energy carriers with respective value to be multiplied to p33_dac_fedem
-$setglobal cm_DAC_eff  off  !! def = off 
+$setglobal cm_DAC_eff  off  !! def = off
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.
-$setglobal cm_sehe_upper  off !! def = off 
+$setglobal cm_sehe_upper  off !! def = off
 *** cm_rcp_scen_build     "chooses RCP scenario for demand in buildings (climate change impact)"
 $setglobal cm_rcp_scen_build  none   !! def = "none"
 *** cfg$gms$cm_pushCalib          <- "none" #def <- "none" , "hydrogen" also possible. Reduction of calibration factor over time in logit
@@ -1451,17 +1460,17 @@ $setGlobal cm_reducCostB  none  !! def = none
 *** cfg$gms$cm_effHP         <- 5 #def <- 5 , efficiency of heat pumps
 $setGlobal cm_effHP  5  !! def = 5
 *** Note on CES markup cost:
-*** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as 
-*** higher markup-cost in calibration will lead to higher efficiencies 
+*** represent the sector-specific demand-side transformation cost, can also be used to influence efficiencies during calibration as
+*** higher markup-cost in calibration will lead to higher efficiencies
 *** to change it to any specific value: set cm_CESMkup_ind e.g. to "feeli 0.8" -> this would apply a cost markup of 0.8 tr USD/TWa to feeli CES node of the industry fixed_shares module
 *** standard cost markups of the other nodes will remain unchanged unless you explicitly address them with this switch
-***   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings" 
+***   cm_CESMkup_build               "switch for setting markup cost to CES nodes in buildings"
 ***  def = "standard", applies a markup cost of 200 USD/MWh(el) to heat pumps (feelhpb) and 25 USD/MWh(heat) to district heating (feheb)
 *** CES markup cost for buildings to represent sector-specific demand-side transformation cost
 *** (only applies to buildings realization "simple" for now)
 $setGlobal cm_CESMkup_build  standard  !! def = standard
-***   cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry" 
-*** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli) 
+***   cm_CESMkup_ind                 "switch for setting markup cost to CES nodes in industry"
+*** def = "standard", applies a markup cost of 0.5 trUSD/TWa (57 USD/MWh(el)) to industry electricity (feeli)
 *** CES markup cost for industry to represent sector-specific demand-side transformation cost
 *** (only applies to industry realization "fixed_shares" for now)
 *** switch to change CES mark-up cost in industry
@@ -1469,15 +1478,15 @@ $setGlobal cm_CESMkup_build  standard  !! def = standard
 *** Setting the switch to, for example: "feelhth_otherInd 1.5, feh2_cement 0.6" would change the mark-up cost for feelhth_otherInd CES node to 1.3 trUSD/TWa and feh2_cement CES node to 0.6 trUSD/TWa
 *** and keep all other CES mark-up cost as in the standard configuration
 *** Note on CES markup cost:
-*** The CES mark-up cost represent the sector-specific demand-side transformation cost. 
+*** The CES mark-up cost represent the sector-specific demand-side transformation cost.
 *** When used in calibration/baseline runs they affect the CES efficiencies and can be used to increase/decrease them
 $setGlobal cm_CESMkup_ind  standard  !! def = standard
-*** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).   
+*** cm_feShareLimits <-   "off"  # def <- "off", limit the electricity final energy share to be in line with the industry maximum electrification levels (60% by 2050 in the electric scenario), 10% lower (=50% in 2050) in an increased efficiency World, or 20% lower (40% in 2050) in an incumbents future (incumbents). The incumbents scenario also limits a minimal coverage of buildings heat provided by gas and liquids (25% by 2050).
 $setglobal cm_feShareLimits  off  !! def = off
 *** VRE potential switches
 *** rescaling factor for sensitivity analysis on renewable potentials, this factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities swith existing capacities)
 *** (ex. "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
-*** rescaling factor for sensitivity analysis on renewable potentials. 
+*** rescaling factor for sensitivity analysis on renewable potentials.
 *** This factor rescales all grades of a renewable technology which have not been used by 2020 (to avoid infeasiblities with existing capacities)
 *** (example: "spv 0.5, wind 0.75" rescales solar and wind potential by the respective factors)
 $setGlobal c_VREPot_Factor  off  !! def = off
@@ -1488,7 +1497,7 @@ $setGlobal c_VREPot_Factor  off  !! def = off
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** cm_FEtax_trajectory_rel     "factor for scaling the FE tax level relative to cm_startyear from a given year onwards, before tax levels increases or decreases linearly to that value"
-*** factor for scaling FE tax relative to level in cm_startyear from a specific year onwards for a given sector and FE carrier 
+*** factor for scaling FE tax relative to level in cm_startyear from a specific year onwards for a given sector and FE carrier
 *** example: cm_FEtax_trajectory_rel   2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
@@ -1500,8 +1509,6 @@ $setGLobal c_agricult_base_shift off !! def off
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
 $setglobal cm_wind_offshore  1      !! def = 1
-*** *RP* Flag to allow the model to not extract oil, even though the eq_fuelex_dec would force it to extract.
-$setGlobal cm_OILRETIRE  on        !! def = on
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
 $setglobal cm_INCONV_PENALTY  on         !! def = on
@@ -1515,7 +1522,7 @@ $setGlobal cm_MOFEX  off        !! def = off
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
 $setGlobal cm_Full_Integration  off     !! def = off
-*'   MAGICC configuration 
+*'   MAGICC configuration
 *'   either uncalibrated or calibrate year 2000 temperature to HADCRUT4 data (which is very close to AR5).
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def = uncalibrated
 *'  Derive temperature impulse response to CO2 emissions, based on MAGICC. Adds around 10min runtime.
@@ -1548,7 +1555,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
-$setglobal cm_process_based_steel   off  !! off  
+$setglobal cm_process_based_steel   off  !! off
 *** c_CO2priceDependent_AdjCosts
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
@@ -1556,7 +1563,7 @@ $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
-$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_nash_mode  parallel      !! def = parallel
@@ -1625,4 +1632,3 @@ $include "./core/magicc.gms";    !!connection to MAGICC, needed for post-process
 $endif.c_skip_output
 
 *** EOF ./main.gms
-

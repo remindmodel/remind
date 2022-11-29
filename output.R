@@ -46,14 +46,6 @@ if (!exists("source_include")) {
   flags <- NULL
 }
 
-# Setting relevant paths
-if (file.exists("/iplex/01/landuse")) { # run is performed on the cluster
-  pythonpath <- "/iplex/01/landuse/bin/python/bin/"
-  latexpath <- "/iplex/01/sys/applications/texlive/bin/x86_64-linux/"
-} else {
-  pythonpath <- ""
-  latexpath <- NA
-}
 
 choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
@@ -102,7 +94,7 @@ if (! exists("outputdir")) {
   names(dirs) <- stringr::str_extract(dirs, "rem-[0-9]+$")
   names(dirs)[is.na(names(dirs))] <- ""
   selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation",
-                    userinfo = if ("policyCosts" %in% output) "The reference run will be selected separately!" else FALSE,
+                    userinfo = if ("policyCosts" %in% output) "The reference run will be selected separately!" else NULL,
                     returnBoolean = FALSE, multiple = TRUE)
   outputdirs <- file.path("output", selectedDirs)
   if ("policyCosts" %in% output) {

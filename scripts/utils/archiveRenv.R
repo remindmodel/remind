@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # updates renv.lock, copies updated renv.lock to the archive and appends current timestamp
 local({
   stopifnot(`No renv active. Try starting the R session in the repo root.` = !is.null(renv::project()))

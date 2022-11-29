@@ -151,8 +151,9 @@ Rscript start.R --debug --interactive --testOneRegi scenario_config_XYZ.csv
 and you will be asked which region you want to look at (the shortcut is `Rscript start.R -di1` + the file name).
 You can also run `Rscript start.R --reprepare --debug --testOneRegi` to get the results in the same output folder.
 Running `Rscript start.R --reprepare` a second time then resets the settings to the original ones.
-
-If the error was not in the first iteration, a faster and more convenient way might be to start the run again in parallel mode with `c_keep_iteration_gdxes = 1` specified in `main.gms` or the `scenario_config_XYZ.csv`. And then start a debug run that uses the `fulldata_07.gdx` (or the first iteration in which this occurs) of this first run as `input.gdx` specified in `path_gdx` of `scenario_config_XYZ.csv`. That way, you should see where the infeasibility is in the first iteration of the debug run already and not have to wait until the 7th iteration.
+The scripts will then start the debug run based on the `fulldata.gdx` that contains the data from the last successful iteration.
+Alternativly, you can point to this file in the `path_gdx` column of `scenario_config_XYZ.csv`.
+If you want to compare the different gdx files produced by all iterations, specify `c_keep_iteration_gdxes = 1` in `main.gms` or the `scenario_config_XYZ.csv`.
 
 If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 

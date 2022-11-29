@@ -70,7 +70,7 @@ q32_limitCapTeStor(t,regi,teStor)$( t.val ge 2015 ) ..
 *** H2 storage implementation: Storage technologies (storspv, storwind etc.) also
 *** represent H2 storage. This is implemented by automatically scaling up capacities of 
 *** elh2VRE (electrolysis from VRE, seel -> seh2) and H2 turbines (h2turbVRE, seh2 -> seel)
-*** with VRE capacities which require storage (according to q32_limitCapTeStor): 
+*** with VRE capacities which require storage (according to q32_limitCapTeStor):
 
 
 *** build additional electrolysis capacities with stored VRE electricity

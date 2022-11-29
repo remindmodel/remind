@@ -281,8 +281,8 @@ prepare <- function() {
 
   if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
+      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
     }
@@ -349,7 +349,7 @@ prepare <- function() {
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # create modified version
   tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
-  file.copy(cfg$model, tmpModelFile)
+  file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
   manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
@@ -446,7 +446,7 @@ prepare <- function() {
               else "Your input data are outdated or in a different regional resolution",
               ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
-                          repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
+                          repositories = cfg$repositories, # defined in your environment variables
                           modelfolder  = ".",
                           debug        = FALSE,
 			  stopOnMissing = TRUE)
@@ -511,8 +511,8 @@ prepare <- function() {
   # Merge GAMS files
   message("\nCreating full.gms")
   singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
-  # now that full.gms exists, we don't need tmpModelFile any more
-  file.remove(tmpModelFile)
+  # now that full.gms exists, we move tmpModelFile to the results folder (for debugging, restarting)
+  file.rename(tmpModelFile, file.path(cfg$results_folder, "main.gms"))
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -617,7 +617,7 @@ prepare <- function() {
                               list(c("q41_emitrade_restr_mp.M", "!!q41_emitrade_restr_mp.M")),
                               list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M")))
 
-    #AJS this symbol is not known and crashes the run - is it depreciated? TODO
+    #AJS this symbol is not known and crashes the run - is it deprecated? TODO
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
 
@@ -821,16 +821,19 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
-    # renamed because of https://github.com/remindmodel/remind/pull/848
+    # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
     levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_forcOs.L", "!!vm_forcOs.L")),
                              list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_forcOs.M", "!!vm_forcOs.M")),
                              list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
                              list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
-                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
+                             list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
+                             list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
+                             list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
     #filter out deprecated regipol items
     levs_manipulateThis <- c(levs_manipulateThis,

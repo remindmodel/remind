@@ -24,7 +24,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
     # Create output folder
     if (!file.exists(cfg$results_folder)) {
-      message("   Creating results folder", cfg$results_folder)
+      message("   Creating results folder ", cfg$results_folder)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     } else if (!cfg$force_replace) {
       couldnotdelete <- paste0("Results folder ",cfg$results_folder," already exists")
@@ -62,7 +62,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
 
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
-        } else if (!is.null(lucode2::showUpdates())) {
+        } else if (!is.null(piamenv::showUpdates())) {
           message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
         }
       }
