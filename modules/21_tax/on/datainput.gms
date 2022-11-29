@@ -222,16 +222,20 @@ elseif (cm_DiscRateScen eq 4),
 
 
 *** FS: import tax level
+*** works only on PEs at the moment as implementation requires pm_pvp
+*** which is only available for the commodities of the nash markets
 *** zero by default
-p21_tau_Import(t,regi,trade) = 0;
+p21_tau_Import(t,regi,tradePe) = 0;
 *** read in import tax values from switch cm_import_tax
 $ifThen.import not "%cm_import_tax%" == "off" 
-loop((ext_regi,trade)$(p21_import_tax(ext_regi,trade)),
+loop((ext_regi,tradePe)$(p21_import_tax(ext_regi,tradePe)),
   loop(regi$regi_groupExt(ext_regi,regi),
-    p21_tau_Import(t,regi,trade) =  p21_import_tax(ext_regi,trade)
+    p21_tau_Import(t,regi,tradePe) =  p21_import_tax(ext_regi,tradePe)
   );
 );
 $endif.import
+display p21_tau_Import;
+
 
 *** sector-specific CO2 tax markup. Loop over ext_regi to set GLO values to individual countries etc.
 $ifThen.cm_CO2TaxSectorMarkup not "%cm_CO2TaxSectorMarkup%" == "off"

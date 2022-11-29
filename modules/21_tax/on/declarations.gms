@@ -17,7 +17,7 @@ p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy lev
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
 p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
-p21_tau_Import(ttot,all_regi,all_enty)          "import tax level"
+p21_tau_Import(ttot,all_regi,all_enty)         "tax on energy imports, currently only works on primary energy levels as those are traded on nash markets [trUSD/TWa]"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
 pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
 

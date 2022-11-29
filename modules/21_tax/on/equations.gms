@@ -48,7 +48,7 @@
     + v21_implicitDiscRate(t,regi)
     + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
     + v21_taxrevFlex(t,regi)
-    + sum(trade, v21_taxrevImport(t,regi,trade))  
+    + sum(tradePe, v21_taxrevImport(t,regi,tradePe))  
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
     + vm_taxrevimplicitQttyTargetTax(t,regi)
 $endif.cm_implicitQttyTarget 
@@ -283,17 +283,17 @@ q21_taxrevFlex(t,regi)$( t.val ge max(2010, cm_startyear) ) ..
 
 
 ***---------------------------------------------------------------------------
-*'  FS: import tax 
-*'  can be used to place taxes on energy imports and adjusts imports price
+*'  FS: (PE) import tax 
+*'  can be used to place taxes on PE energy imports 
 *'  e.g. bioenergy import taxes due to sustainability concerns by importers
 ***---------------------------------------------------------------------------
 
-q21_taxrevImport(t,regi,trade)..
-  v21_taxrevImport(t,regi,trade)
+q21_taxrevImport(t,regi,tradePe)..
+  v21_taxrevImport(t,regi,tradePe)
   =e=
 *** import tax level * world market bioenergy price * bioenergy import
-  p21_tau_Import(t,regi,trade) * pm_pvp(t,trade) / pm_pvp(t,"good") * vm_Mport(t,regi,trade)
-    - p21_taxrevImport0(t,regi,trade)
+  p21_tau_Import(t,regi,tradePe) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe)
+    - p21_taxrevImport0(t,regi,tradePe)
 ;
 
 *** EOF ./modules/21_tax/on/equations.gms
