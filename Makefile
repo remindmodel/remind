@@ -1,4 +1,4 @@
-.PHONY: help docs update-renv update-all-renv check check-fix test
+.PHONY: help docs update-renv update-all-renv check check-fix test test-slow
 .DEFAULT_GOAL := help
 
 help:           ## Show this help.
@@ -30,3 +30,7 @@ check-fix:      ## Check if the GAMS code follows the coding etiquette
 test:           ## Test if the model compiles and runs without running a full
                 ## scenario. Tests take about 10 minutes to run.
 	R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
+
+test-slow:      ## Additionally test if the default scenario works. Takes
+                ## significantly longer than 10 minutes to run.
+	R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
