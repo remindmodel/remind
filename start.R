@@ -207,7 +207,7 @@ if ("--gamscompile" %in% flags) {
       }
       }
     } else {
-      message("OK ", gsub("gms$", "lst", tmpModelFile))
+      message("  OK ", gsub("gms$", "lst", tmpModelFile))
     }
   }
 }
