@@ -163,11 +163,12 @@ loop((ext_regi)$p_agricult_base_shift(ext_regi),
     pm_macBaseMagpie(t,regi,enty)$( emiMac2sector(enty,"agriculture","process","ch4") 
                                     OR emiMac2sector(enty,"agriculture","process","n2o"))
     = pm_macBaseMagpie(t,regi,enty)
-      * (1+p_agricult_shift_phasein(t)
-          * p_agricult_base_shift(ext_regi))
-      * pm_macBaseMagpie(t,regi,enty);
+      * (1 + p_agricult_shift_phasein(t)
+           * p_agricult_base_shift(ext_regi));
  );
 );
+
+display pm_macBaseMagpie;
 $ENDIF.agricult_base_shift  
 
 $IFTHEN.out "%cm_debug_preloop%" == "on" 
