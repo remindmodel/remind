@@ -8,20 +8,20 @@
 *** This is a standalone skeleton which should be used as template
 *** if only parts of the model should be run. It contains the basic,
 *** structural components of the model.
-*** To use it, please copy this file, give it an explaining name. 
-*** After that you can modify it based on the given requirements. 
-*** You can add own code, but also delete code 
+*** To use it, please copy this file, give it an explaining name.
+*** After that you can modify it based on the given requirements.
+*** You can add own code, but also delete code
 *** (e.g. the model statement or the provided loops) if these parts
 *** are irrelevant for your analysis.
 
 *##################### R SECTION START (VERSION INFO) ##########################
-* 
+*
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
-* 
+*
 * Input data revision: 5.846
-* 
+*
 * Last modification (input data): Tue Jul 02 13:58:54 2019
-* 
+*
 *###################### R SECTION END (VERSION INFO) ###########################
 
 $title model_title
@@ -119,7 +119,7 @@ $setGlobal codePerformance  off       !! def = off
 ***--------------- declaration of parameters for switches ----------------------
 parameters
 cm_iteration_max      "number of Negishi iterations (up to 49)"
-c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
+cm_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
@@ -196,7 +196,7 @@ cm_noReboundEffect      "Switch for allowing a rebound effect when closing the e
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-c_solver_try_max       = 2;     !! def = 2
+cm_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
@@ -232,7 +232,7 @@ cm_biolc_tech_phaseout  = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in core/datainput.gms based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in core/datainput.gms based on GDPscen)
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -295,7 +295,6 @@ cm_noReboundEffect = 0;
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel   !! def = parallel
-$setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
@@ -408,7 +407,7 @@ execute_loadpoint 'input';
 ***p00_example = vm_example.l  !! initialize relevant parameters for the model
 
 ***--------------------------------------------------------------------------
-***    start iteration loop 
+***    start iteration loop
 ***--------------------------------------------------------------------------
 
 ***################# START HERE AN ITERATION IF NEEDED ######################
@@ -426,7 +425,7 @@ $include    "./core/bounds.gms";   !! if necessary
 *$include "./modules/EXAMPLE/REALIZATION/presolve.gms"  !! if necessary
 
 ***--------------------------------------------------------------------------
-***         SOLVE 
+***         SOLVE
 ***--------------------------------------------------------------------------
 *solve m00_EXAMPLE using nlp minimizing/maximizing v00_EXAMPLE_costs;
     o_modelstat = m00_EXAMPLE.modelstat;
@@ -447,4 +446,3 @@ $include    "./core/bounds.gms";   !! if necessary
 ***                  save gdx
 *---------------------------------------------------------------------------
 execute_unload 'fulldata';
-
