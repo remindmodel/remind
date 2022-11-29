@@ -31,6 +31,6 @@ test:           ## Test if the model compiles and runs without running a full
                 ## scenario. Tests take about 10 minutes to run.
 	R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
 
-test-slow:      ## Additionally test if the default scenario works. Takes
+test-full:      ## Additionally test if the default scenario works. Takes
                 ## significantly longer than 10 minutes to run.
 	R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
