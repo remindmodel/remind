@@ -281,8 +281,8 @@ prepare <- function() {
 
   if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
+      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
     }
@@ -617,7 +617,7 @@ prepare <- function() {
                               list(c("q41_emitrade_restr_mp.M", "!!q41_emitrade_restr_mp.M")),
                               list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M")))
 
-    #AJS this symbol is not known and crashes the run - is it depreciated? TODO
+    #AJS this symbol is not known and crashes the run - is it deprecated? TODO
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
 
@@ -821,16 +821,19 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
-    # renamed because of https://github.com/remindmodel/remind/pull/848
+    # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
     levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("vm_forcOs.L", "!!vm_forcOs.L")),
                              list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("vm_forcOs.M", "!!vm_forcOs.M")),
                              list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
                              list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
-                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
+                             list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
+                             list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
+                             list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
     #filter out deprecated regipol items
     levs_manipulateThis <- c(levs_manipulateThis,
