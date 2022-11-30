@@ -511,23 +511,27 @@ prepare <- function() {
   # Merge GAMS files
   message("\nCreating full.gms")
 
-  # only compile the GAMS file to catch compilation errors and create a dump file with the full code
+  # only compile the GAMS file to catch compilation errors and create a dump
+  # file with the full code
   modelFilePathStem <- substr(tmpModelFile, 1, nchar(tmpModelFile) - 4)
   dumpFilePath <- paste0(modelFilePathStem, ".dmp")
   listFilePath <- paste0(modelFilePathStem, ".lst")
   logFilePath <- paste0(modelFilePathStem, ".log")
 
-  exitcode <- system2(cfg$gamsv, c(tmpModelFile, "action=c", "dumpopt=21", "logoption=", cfg$logoption))
-  if ( 0 < exitcode ) {
-    stop(paste("Compiling", tmpModelFile, "failed, stopping. Check",
-               logFilePath, ",", dumpFilePath, ", and", listFilePath, "for details." ))
-  }
-
+  exitcode <- system2(cfg$gamsv, c(tmpModelFile, "action=c", "dumpopt=21",
+                                   "logoption=", cfg$logoption))
   file.rename(dumpFilePath, file.path(cfg$results_folder, "full.gms"))
   file.rename(listFilePath, file.path(cfg$results_folder, "main.lst"))
   file.rename(tmpModelFile, file.path(cfg$results_folder, "main.gms"))
   if ( file.exists(logFilePath) ) {
     file.rename(logFilePath, file.path(cfg$results_folder, "main.log"))
+  }
+
+  if ( 0 < exitcode ) {
+      stop("Compiling ", tmpModelFile, " failed, stopping.", "\n",
+           "Use `less -j 4 --pattern='^\\*\\*\\*\\*' ",
+           file.path(cfg$results_folder, "main.lst"), "` to investigate ",
+           "compilation errors.")
   }
 
   # Collect run statistics (will be saved to central database in submit.R)
