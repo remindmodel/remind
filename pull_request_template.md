@@ -20,7 +20,8 @@
 - [ ] Changes are commented, particularly in hard-to-understand areas
 - [ ] I have updated the in-code documentation
 - [ ] I have adjusted reporting where it was needed
-- [ ] The model compiles and runs successfully (`Rscript start.R -q`)
+- [ ] All automated model tests compile successfully (`Rscript start.R -g config/scenario_config_AMT.csv`)
+- [ ] The model runs successfully (`Rscript start.R -q`)
 
 ## Further information (optional):
 

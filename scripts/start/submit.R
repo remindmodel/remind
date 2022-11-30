@@ -23,20 +23,20 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
     cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
     # Create output folder
-    cat("   Creating results folder",cfg$results_folder,"\n")
     if (!file.exists(cfg$results_folder)) {
+      message("   Creating results folder ", cfg$results_folder)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     } else if (!cfg$force_replace) {
-      couldnotdelete <- paste0("Results folder ",cfg$results_folder," could not be created because it already exists")
+      couldnotdelete <- paste0("Results folder ",cfg$results_folder," already exists")
       if (stopOnFolderCreateError) {
         stop(couldnotdelete, ".")
       } else if (! all(grepl("^log*.txt", list.files(cfg$results_folder)))) {
         stop(couldnotdelete, " and it contains not only log files.")
       } else {
-        message(couldnotdelete, " but it contains only log files.")
+        message(couldnotdelete, " containing only log files as expected for coupled runs.")
       }
     } else {
-      cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
+      message("    Results folder already exists, deleting and re-creating it: ",cfg$results_folder,"\n")
       unlink(cfg$results_folder, recursive = TRUE)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
@@ -62,26 +62,15 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
 
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
-        } else {
-          packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-          pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
-          installed <- utils::installed.packages()
-          outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
-          if (!is.null(outdatedPackages)) {
-            message("The following PIK packages can be updated:\n",
-                    paste("-", outdatedPackages[, "Package"], ":",
-                          outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
-                          collapse = "\n"),
-                    "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
-          }
+        } else if (!is.null(piamenv::showUpdates())) {
+          message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
         }
       }
 
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
-      message("Initializing renv, see ", renvLogPath)
+      message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function(resultsfolder, lockfile) {
-        # use same snapshot.type so renv::status()$synchronized always uses the same logic
-        renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
+        renv::init(resultsfolder)
 
         # restore same renv as previous run in cascade, or main renv if first run
         file.copy(lockfile, resultsfolder, overwrite = TRUE)

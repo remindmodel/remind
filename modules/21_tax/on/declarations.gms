@@ -16,10 +16,10 @@ p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy 
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
-p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
+p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
 p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
-pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to mimic production drain and transformation costs"
+pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
 
 pm_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
 pm_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
@@ -57,7 +57,7 @@ p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level valu
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
 
-p21_CO2TaxSectorMarkup(all_regi,emi_sectors)            "CO2 tax markup in building, industry or transport sector"
+p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)          "CO2 tax markup in building, industry or transport sector"
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 

@@ -18,9 +18,9 @@ gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for poli
 
 
 if(!exists("source_include")) {
-  #Define arguments that can be read from command line
-   outputdir <- "output/R17IH_SSP2_postIIASA-26_2016-12-23_16.03.23"     # path to the output folder
-   readArgs("outputdir","gdx_name","gdx_ref_name")
+   # Define arguments that can be read from command line
+   outputdir <- "."
+   readArgs("outputdir", "gdx_name", "gdx_ref_name")
 }
 
 gdx      <- file.path(outputdir,gdx_name)
@@ -59,7 +59,7 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
              "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
              " < climate_reporting_template.txt ",
              " > ","../../../", magicc_reporting_file,"; ",
-             "sed -i 's/glob/World/g' ","../../../", magicc_reporting_file, "; ",
+             "sed -i 's/;glob;/;World;/g' ","../../../", magicc_reporting_file, "; ",
              "cat ", "../../../",magicc_reporting_file, " >> ", "../../../",remind_reporting_file, "; ",
              sep = ""))
 }
@@ -71,16 +71,24 @@ if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
 
 edgetOutputDir <- file.path(outputdir, "EDGE-T")
 if(file.exists(edgetOutputDir)) {
-message("start generation of EDGE-T reporting")
+  if (! file.exists(file.path(edgetOutputDir, "demandF_plot_pkm.RDS"))) {
+    message("EDGE-T reporting files are missing, probably because the run was killed.")
+    message("Rerunning toolIterativeEDGETransport(reporting = TRUE).")
+    savewd <- getwd()
+    setwd(outputdir)
+    edgeTransport::toolIterativeEDGETransport(reporting = TRUE)
+    setwd(savewd)
+  }
+  message("start generation of EDGE-T reporting")
   EDGET_output <- toolReportEDGET(edgetOutputDir,
                                   extendedReporting = FALSE,
                                   scenario_title = scenario, model_name = "REMIND",
-                                  gdx = paste0(outputdir,"/fulldata.gdx"))
+                                  gdx = file.path(outputdir, "fulldata.gdx"))
 
   write.mif(EDGET_output, remind_reporting_file, append = TRUE)
   deletePlus(remind_reporting_file, writemif = TRUE)
 
-message("end generation of EDGE-T reporting")
+  message("end generation of EDGE-T reporting")
 }
 
 configfile <- file.path(outputdir, "config.Rdata")
@@ -117,3 +125,5 @@ if(file.exists(file.path(outputdir, DIETERGDX))){
   remind2::reportDIETER(DIETERGDX,outputdir)
   message("end generation of DIETER reporting")
 }
+
+message("### reporting finished.")

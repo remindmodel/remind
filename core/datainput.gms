@@ -25,10 +25,6 @@ pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
-if (cm_emiscen ne 8,
-cm_damage = 0.0;
-);
-
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
 *------------------------------------------------------------------------------------
@@ -37,7 +33,6 @@ p_tall_val(tall) = tall.val;
 
 pm_ts(ttot) = (pm_ttot_val(ttot+1)-(pm_ttot_val(ttot-1)))/2;
 pm_ts("1900") = 2.5;
-$if setGlobal END2110 pm_ts(ttot)$(ord(ttot) eq card(ttot)-1) =  pm_ts(ttot-1) ;
 pm_ts(ttot)$(ord(ttot) eq card(ttot)) = 27;
 pm_dt("1900") = 5;
 pm_dt(ttot)$(ttot.val > 1900) = ttot.val - pm_ttot_val(ttot-1);
@@ -323,8 +318,6 @@ pm_share_trans("2150",regi) = 0.872;
 if (c_ccscapratescen eq 2,
   fm_dataemiglob("pecoal","seel","igccc","co2")    = 0.2;
   fm_dataemiglob("pecoal","seel","igccc","cco2")   = 25.9;
-  fm_dataemiglob("pecoal","seel","pcc","co2")      = 0.2;
-  fm_dataemiglob("pecoal","seel","pcc","cco2")     = 25.9;
   fm_dataemiglob("pecoal","seel","coalh2c","co2")  = 0.2;
   fm_dataemiglob("pecoal","seel","coalh2c","cco2") = 25.9;
 $ifthen "%c_SSP_forcing_adjust%" == "forcing_SSP5"
@@ -777,18 +770,18 @@ $offdelim
 pm_dataren(all_regi,"maxprod",rlf,"windoff") = sm_EJ_2_TWa * f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf);
 pm_dataren(all_regi,"nur",rlf,"windoff")     = 1.25 * f_maxProdGradeRegiWindOff(all_regi,"nur",rlf);  !! increase wind offshore capacity factors by 25% as the NREL values seem to underestimate offshore capacity factors compared to historic values 
 
-p_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
+pm_shareWindPotentialOff2On(all_regi) = sum(rlf,f_maxProdGradeRegiWindOff(all_regi,"maxprod",rlf)$(rlf.val le 8)) /
                       sum(rlf,f_maxProdGradeRegiWindOn(all_regi,"maxprod",rlf)$(rlf.val le 8));
 
-p_shareWindOff("2010") = 0.05;
-p_shareWindOff("2015") = 0.1;
-p_shareWindOff("2020") = 0.15;
-p_shareWindOff("2025") = 0.2;
-p_shareWindOff("2030") = 0.35;
-p_shareWindOff("2035") = 0.5;
-p_shareWindOff("2040") = 0.65;
-p_shareWindOff("2045") = 0.8;
-p_shareWindOff(ttot)$((ttot.val ge 2050)) = 1;
+pm_shareWindOff("2010",regi) = 0.05;
+pm_shareWindOff("2015",regi) = 0.1;
+pm_shareWindOff("2020",regi) = 0.15;
+pm_shareWindOff("2025",regi) = 0.2;
+pm_shareWindOff("2030",regi) = 0.35;
+pm_shareWindOff("2035",regi) = 0.5;
+pm_shareWindOff("2040",regi) = 0.65;
+pm_shareWindOff("2045",regi) = 0.8;
+pm_shareWindOff(ttot,regi)$((ttot.val ge 2050)) = 1;
 
 $ENDIF.WindOff
 
@@ -1203,7 +1196,11 @@ $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC",teLearn(te))    = pm_
 $if %cm_techcosts% == "REG"   pm_data(regi,"learnMult_wFC","spv")    = pm_data(regi,"incolearn","spv")/(sum(regi2,p_capCum("2020",regi2,"spv"))**pm_data(regi,"learnExp_wFC","spv"));
 *FS initialize learning curve for most advanced technologies as defined by tech_stat = 4 in generisdata_tech.prn (with very small real-world capacities in 2020) 
 * equally for all regions based on global cumulate capacity of ccap0 and incolearn (difference between initial investment cost and floor cost) 
-pm_data(regi,"learnMult_wFC",te)$(pm_data(regi,"tech_stat",te) eq 4) = pm_data(regi,"incolearn",te)/(fm_dataglob("ccap0",te)**pm_data(regi,"learnExp_wFC",te));
+pm_data(regi,"learnMult_wFC",te)$( pm_data(regi,"tech_stat",te) eq 4 )
+  = pm_data(regi,"incolearn",te)
+  / ( fm_dataglob("ccap0",te)
+   ** pm_data(regi,"learnExp_wFC",te)
+    );
 
 
 
@@ -1217,36 +1214,50 @@ table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investme
 $include "./core/input/p_costMarkupAdvTech.prn"
 ;
 
-loop(teNoLearn(te),
-    pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
-    loop(ttot$(ttot.val ge 2005 AND ttot.val < 2035 ),
-        pm_inco0_t(ttot,regi,te) =  sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ), p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te) );
-    );
+loop (teNoLearn(te),
+  pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te) 
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
 );
 display pm_inco0_t;
 
-***for those technologies, for which differentiated costs are available for 2015-2040, use those
-$if %cm_techcosts% == "REG"   loop(te$(teNoLearn(te) AND teRegTechCosts(te)),
-$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val ge 2015 AND ttot.val lt 2040) = p_inco0(ttot,regi,te);  !! no value after 2020 is currently used (see convergence below)
+$ifthen.REG_techcosts "%cm_techcosts%" == "REG"   !! cm_techcosts
+*** for those technologies, for which differentiated costs are available for
+*** 2015-2040, use those
+loop(te$( teNoLearn(te) AND teRegTechCosts(te) ),
+  !! no value after 2020 is currently used (see convergence below)
+  pm_inco0_t(ttot,regi,te)$( ttot.val ge 2015 AND ttot.val lt 2040 )
+  = p_inco0(ttot,regi,te);
 
-***linear convergence of investment costs from 2025 on for non-learning technologies with regionally differentiated costs
-***so that in 2070 all regions again have the technology cost data that is given in generisdata.prn
-$if %cm_techcosts% == "REG"     loop(ttot$(ttot.val ge 2020 AND ttot.val le 2070),
-$if %cm_techcosts% == "REG"       pm_inco0_t(ttot,regi,te) =   ( pm_ttot_val(ttot) - 2020 ) / 50 * fm_dataglob("inco0",te)
-$if %cm_techcosts% == "REG"                                  + ( 2070 - pm_ttot_val(ttot) ) / 50 * pm_inco0_t("2020",regi,te) ;
-$if %cm_techcosts% == "REG"     );
-$if %cm_techcosts% == "REG"     pm_inco0_t(ttot,regi,te)$(ttot.val gt 2070) = fm_dataglob("inco0",te);
-$if %cm_techcosts% == "REG"   );
+*** linear convergence of investment costs from 2025 on for non-learning
+*** technologies with regionally differentiated costs so that in 2070 all
+*** regions again have the technology cost data that is given in generisdata.prn
+  loop(ttot$( ttot.val ge 2020 AND ttot.val le 2070 ),
+    pm_inco0_t(ttot,regi,te)
+    = (pm_ttot_val(ttot) - 2020) / 50 * fm_dataglob("inco0",te)
+    + (2070 - pm_ttot_val(ttot)) / 50 * pm_inco0_t("2020",regi,te);
+  );
 
-*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
-$if %c_techcosts% == "REG" loop(teNoLearn(te)$(sameas(te,"igcc"),
-$if %c_techcosts% == "REG"      loop(ttot$(ttot.val ge 2005 AND ttot.val < 2035 ),
-$if %c_techcosts% == "REG"        pm_inco0_t(ttot,regi,te) = sum(s_statusTe$(s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
-$if %c_techcosts% == "REG" p_costMarkupAdvTech(s_statusTe,ttot) * pm_inco0_t(ttot,regi,te)
-$if %c_techcosts% == "REG"                                   );
-$if %c_techcosts% == "REG"      );
-$if %c_techcosts% == "REG"    );
+  pm_inco0_t(ttot,regi,te)$( ttot.val gt 2070 ) = fm_dataglob("inco0",te);
+);
 
+*** re-insert effect of costMarkupAdvTech for IGCC in the regionalized cost
+*** data, as the IEA numbers have unrealistically low IGCC costs in 2005-2020
+loop (teNoLearn(te)$( sameas(te,"igcc") ),
+  loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
+    pm_inco0_t(ttot,regi,te)
+    = sum(s_statusTe$( s_statusTe.val eq pm_data(regi,"tech_stat",te) ),
+        p_costMarkupAdvTech(s_statusTe,ttot)
+      * pm_inco0_t(ttot,regi,te)
+      );
+  );
+);
+$endif.REG_techcosts
 
 *** rename f_datafecostsglob
 * p_esCapCost(regi,in)$f_datafecostsglob("lifetime",in)
@@ -1263,11 +1274,7 @@ $if %c_techcosts% == "REG"    );
 
 *** definition of budgets on energy emissions in GtC and associated time period
 s_t_start        = 2005;
-$IFTHEN.test setglobal test_TS
-sm_endBudgetCO2eq      = 2090;
-$ELSE.test
 sm_endBudgetCO2eq      = 2110;
-$ENDIF.test
 *cb single budget should cover the full modeling time, as otherwise CO2 prices show strange behaviour around 2100 (and rest of behaviour is also biased by foresight of cap-free post 2100)
 if (cm_emiscen eq 6,
 sm_endBudgetCO2eq      = 2150;
