@@ -997,6 +997,7 @@ loop(ttot$(ttot.val ge 2005),
   p_adj_seed_te(ttot,regi,'apCarDiEffT')     = 0.50;
   p_adj_seed_te(ttot,regi,'apCarDiEffH2T')   = 0.50;
   p_adj_seed_te(ttot,regi,'dac')             = 0.25;
+  p_adj_seed_te(ttot,regi,'geohe')           = 0.33;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
   p_adj_seed_te(ttot,regi,"windoff") = 0.5; 
@@ -1020,6 +1021,7 @@ $ENDIF.WindOff
   p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
   p_adj_coeff(ttot,regi,"spv")             = 0.08;
   p_adj_coeff(ttot,regi,"wind")            = 0.15;
+  p_adj_coeff(ttot,regi,"geohe")            = 0.6;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
