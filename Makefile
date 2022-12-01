@@ -1,4 +1,4 @@
-.PHONY: help docs update-renv update-all-renv check check-fix test test-slow
+.PHONY: help docs update-renv update-all-renv check check-fix test test-full
 .DEFAULT_GOAL := help
 
 help:           ## Show this help.

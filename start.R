@@ -520,5 +520,5 @@ if ("--gamscompile" %in% flags) {
 
 # make sure we have a non-zero exit status if there were any errors
 if (0 < ignorederrors) {
-  stop(ignorederrors, " runs were not started successfully.")
+  stop(ignorederrors, " errors were identified, check logs above for details.")
 }
