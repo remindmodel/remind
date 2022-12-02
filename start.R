@@ -230,7 +230,9 @@ if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= 
        "and re-run start.R in a fresh R session.")
 }
 
-if (!getOption("autoRenvUpdates", FALSE) && !is.null(piamenv::showUpdates())) {
+if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
+    && !getOption("autoRenvUpdates", FALSE)
+    && !is.null(piamenv::showUpdates())) {
   message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
   Sys.sleep(1)
 }
