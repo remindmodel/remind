@@ -182,7 +182,7 @@ if (!identical(common,character(0))) {
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
 } else {
-  message("No scenario selected.")
+  stop("No scenario found with start=", startnow, " in ", basename(path_settings_coupled), ".")
 }
 message("")
 
