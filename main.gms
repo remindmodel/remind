@@ -641,7 +641,7 @@ parameter
   cm_1stgen_phaseout = 0;          !! def = 0
 *'
 parameter
-  cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
+  cm_phaseoutBiolc          "Switch that allows for a full phaseout of all bioenergy technologies globally"
 ***  Only working with magpie_40 realization of 30_biomass module. 
 ***  (0): (default) No phaseout
 ***  (1): Phaseout capacities of all bioenergy technologies using pebiolc, as far
@@ -651,7 +651,7 @@ parameter
 ***       tagets in p40_ElecBioBound are removed. The first year, in which no new
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 ;
-  cm_biolc_tech_phaseout = 0;      !! def = 0
+  cm_phaseoutBiolc = 0;            !! def = 0
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"

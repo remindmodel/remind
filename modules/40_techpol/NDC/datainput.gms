@@ -26,7 +26,7 @@ if (cm_bioprod_histlim ge 0,
 
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
-if (cm_biolc_tech_phaseout eq 1,
+if (cm_phaseoutBiolc eq 1,
   p40_ElecBioBound(t,regi) = 0;
   );
 
