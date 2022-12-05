@@ -1203,10 +1203,6 @@ $setglobal cm_LU_emi_scen  SSP2   !! def = SSP2
 ***  (DEU):                  only Germany
 ***  (CAZ,EUR,JPN,NEU,USA):  only these five regions (more or less OECD)
 $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
-*** cm_tradbio_phaseout "Switch that allows for a faster phase out of traditional biomass"
-***  (default):  Default assumption, reaching zero demand in 2100
-***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
-$setglobal cm_tradbio_phaseout  default  !! def = default
 *** cm_maxProdBiolc  "Bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
 ***  (off):             (default) no bound
 ***  (100):             (e.g.) set maximum to 100 EJ per year
