@@ -192,7 +192,7 @@ if ("--gamscompile" %in% flags) {
     file.copy(modelFile, tmpModelFile, overwrite = TRUE)
     manipulateConfig(tmpModelFile, cfg$gms)
     exitcode <- system2(
-      command = "gams",
+      command = cfg$gamsv,
       args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                    "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
     if (0 < exitcode) {
