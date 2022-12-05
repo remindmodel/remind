@@ -13,7 +13,7 @@ local_system2 <- function(command, args = character(),
     })
     # add status attribute which is missing if the exit code was 0
     if (is.null(attr(output, 'status', exact = TRUE))) {
-        output$status <- 0
+        attr(output, 'status') <- 0
     }
     return(output)
 }

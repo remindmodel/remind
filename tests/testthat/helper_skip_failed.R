@@ -1,13 +1,14 @@
 failed <- FALSE
 
 expect_success_status <- function(output) {
-    if (output$status != 0) {
+    status <- attr(output, "status", exact = TRUE)
+    if (0 != status) {
         failed <<- TRUE
     }
-    expect_equal(output$status, 0)
+    expect_equal(status, 0)
 }
 
-skip_if_previous_failed <- function(status) {
+skip_if_previous_failed <- function() {
     if (failed) {
         skip("A previous test failed.")
     } else {

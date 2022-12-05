@@ -1,8 +1,6 @@
 print_if_failed <- function(output) {
-    if (0 != output$status) {
-        cat("Command stdout:")
-        cat(output$stdout)
-        cat("Command stderr:")
-        cat(output$stderr)
+    if (0 != attr(output, "status", exact = TRUE)) {
+        cat("Command output:\n")
+        cat(output, sep="\n")
     }
 }
