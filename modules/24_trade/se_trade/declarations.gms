@@ -19,7 +19,7 @@ p24_seTrade_Quantity(all_regi,all_regi,all_enty)      "Maximum import quantity i
 
 
 $IFTHEN.trade_SE_exog not "%cm_trade_SE_exog%" == "off"
-p24_trade_exog(ttot,ttot,ext_regi,ext_regi,all_enty)   "parameter to define exogenous SE trade trajectories" / %cm_trade_SE_exog% /
+p24_trade_exog(ttot,ttot,ext_regi,ext_regi,all_enty)   "parameter to define exogenous SE trade trajectories [EJ/yr]" / %cm_trade_SE_exog% /
 $ENDIF.trade_SE_exog
 
 p24_MportsRegi(tall,all_regi,all_regi,tradeSe)      "Mports to regi from regi2, assuming that trade is distributed uniformetly according existent capacities defined at p24_seTradeCapacity [TWa]"

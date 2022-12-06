@@ -50,6 +50,7 @@ loop( (ttot,ttot2,ext_regi,ext_regi2,entySe)$(p24_trade_exog(ttot,ttot2,ext_regi
 *** define trade quantities to converge to in the long-term (ttot2)
       p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge ttot2.val)=
         p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)
+          * sm_EJ_2_TWa
           * pm_gdp(t,regi) / sum(regi3$(regi_groupExt(ext_regi,regi3)),pm_gdp(t,regi3))
           * pm_gdp(t,regi2) / sum(regi4$(regi_groupExt(ext_regi2,regi4)),pm_gdp(t,regi4));
 *** define ramp-up of trade quantities, linear increase from ttot (start year) to ttot2 (end year), 
@@ -57,6 +58,7 @@ loop( (ttot,ttot2,ext_regi,ext_regi2,entySe)$(p24_trade_exog(ttot,ttot2,ext_regi
       p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge (ttot.val-pm_ts(ttot))
                                             AND t.val lt ttot2.val) =
         p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)
+        * sm_EJ_2_TWa
         * pm_gdp(t,regi) / sum(regi3$(regi_groupExt(ext_regi,regi3)),pm_gdp(t,regi3))
         * pm_gdp(t,regi2) / sum(regi4$(regi_groupExt(ext_regi2,regi4)),pm_gdp(t,regi4))
         * ((t.val - (ttot.val-pm_ts(ttot))) / (ttot2.val - (ttot.val-pm_ts(ttot))));
