@@ -145,10 +145,10 @@ $IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
 loop( ext_regi$(p30_bioprod_regi_lim(ext_regi)),
   loop(regi$regi_groupExt(ext_regi,regi),
     v30_BioPEProdTotal.up(t,regi)$(t.val ge 2035)= p30_bioprod_regi_lim(ext_regi)*sm_EJ_2_TWa
-*** distribute across regions in a region group by share in 2015 biomass production
-                                                    * v30_BioPEProdTotal.l("2015",regi) 
+*** distribute across regions in a region group by share in 2005 biomass production as the model is initialized in 2005 with fixed historic production
+                                                    * v30_BioPEProdTotal.l("2005",regi) 
                                                     / sum(regi2$regi_groupExt(ext_regi,regi2), 
-                                                        v30_BioPEProdTotal.l("2015",regi2));
+                                                        v30_BioPEProdTotal.l("2005",regi2));
   );
 );
 $ENDIF.bioprod_regi_lim
