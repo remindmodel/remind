@@ -100,7 +100,8 @@ p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GH
 
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
 p_agricult_base_shift(ext_regi)                      "fraction by which to scale agricultural emissions of baseline up or down, positive values increase emissions, negative values decrease emissions" / %c_agricult_base_shift% /
-p_agricult_shift_phasein(ttot)                              "phase in parameter for baseline agricultural process ch4 and no2 reduction"
+p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and no2 reduction"
+p_macBaseMagpie_beforeShift(ttot,all_regi,all_enty)  "pm_macBaseMagpie parameter before shift of c_agricult_base_shift is applied"
 $ENDIF.agricult_base_shift
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"

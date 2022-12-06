@@ -146,11 +146,10 @@ $ENDIF.scaleEmiHist
 !! all net negative co2luc
 p_macBaseMagpieNegCo2(t,regi) = pm_macBaseMagpie(t,regi,"co2luc")$(pm_macBaseMagpie(t,regi,"co2luc") < 0);
 
-
-
 *** Rescale agricultural emissions baseline if c_agricult_base_shift switch is activated
 $IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
 
+p_macBaseMagpie_beforeShift(t,regi,enty)=pm_macBaseMagpie(t,regi,enty);
 *** gradual phase-in of rescaling until 2040
 p_agricult_shift_phasein(t) = 0;
 p_agricult_shift_phasein("2025") = 0.25;
@@ -158,15 +157,19 @@ p_agricult_shift_phasein("2030") = 0.5;
 p_agricult_shift_phasein("2035") = 0.75;
 p_agricult_shift_phasein(t)$(t.val ge 2040) = 1;
 
-loop((ext_regi)$p_agricult_base_shift(ext_regi), 
+*** rescaling all ext_regi provided by c_agricult_base_shift
+loop((ext_regi)$(p_agricult_base_shift(ext_regi)), 
  loop(regi$regi_groupExt(ext_regi,regi),
+
     pm_macBaseMagpie(t,regi,enty)$( emiMac2sector(enty,"agriculture","process","ch4") 
                                     OR emiMac2sector(enty,"agriculture","process","n2o"))
-    = pm_macBaseMagpie(t,regi,enty)
+    = p_macBaseMagpie_beforeShift(t,regi,enty)
       * (1 + p_agricult_shift_phasein(t)
            * p_agricult_base_shift(ext_regi));
- );
+
+  );
 );
+
 
 display pm_macBaseMagpie;
 $ENDIF.agricult_base_shift  
