@@ -1168,9 +1168,11 @@ $setglobal cm_tradbio_phaseout  default  !! def = default
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
-*** limits in EU-regions (EUR region or EU-subregions) to 7.5 EJ/yr
-*** when defined per region groups comprising multiple regions, 
-*** the potential is distributed based on the share in total 2015 biomass production of this region in the region group
+*** limits in EU-regions (EUR region or EU-subregions) to 7.5 EJ/yr.
+*** For region groups (e.g. EU27_regi), regional limits will be dissaggregated by 2005 total biomass production. 
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "EU27_regi 7.5, DEU 1.5".
 $setGLobal cm_bioprod_regi_lim off !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
@@ -1326,8 +1328,11 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 *** cm_import_tax
 *** set tax on imports for specific regions on traded energy carriers
 *** as a fraction of import price
-*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price
-$setGlobal cm_import_tax "EUR_regi.pebiolc 1.0" !! def off
+*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "DEU.pegas 3, EU27_regi.pegas 1.5".
+$setGlobal cm_import_tax off !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
@@ -1344,7 +1349,11 @@ $setGlobal cm_import_ariadne  off !! def off
 *** cm_trade_SE_exog
 *** set exogenuous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
-*** linear scale-up of trade in 2030-2050 period
+*** linear scale-up of trade in 2030-2050 period.
+*** For region groups (e.g. EU27_regi), trade flows will be dissaggregated by GDP share.
+*** If you specify trade flows for a region within a region group,
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".  
 $setGlobal cm_trade_SE_exog off !! def off
 *** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
 *** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
@@ -1503,7 +1512,10 @@ $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
 *** Switch to scale agriculture baseline emissions per region relative to default (Magpie) levels
 *** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR, 
-*** phase-in of the scaling is gradual over time and full scaling is reached by 2040
+*** phase-in of the scaling is gradual over time and full scaling is reached by 2040.
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "DEU -0.2, EU27_regi -0.4".
 $setGLobal c_agricult_base_shift off !! def off
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
