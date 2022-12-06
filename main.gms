@@ -1370,6 +1370,16 @@ $setGlobal cm_EnSecScen_price  off !! def off
 ***  (forecast_bal)   fix to forecast outputs as used in the ARIADNE scenario "Balanced"
 ***  (forecast_ensec) fix to forecast outputs as used in the ARIADNE scenario "EnSec"
 $setGlobal cm_indstExogScen  off !! def off
+*** cm_exogDem_scen
+*** switch to fix FE or ES demand represented in CES function to trajectories 
+*** from exgenous sources (not EDGE models) given in file p47_exogDemScen.
+*** This switch fixes demand without recalibration of REMIND CES parameters.
+*** This should be kept in mind when comparing those runs to baseline runs without fixing
+*** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
+*** (off)              default, no fixing
+*** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
+*** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
+$setGLobal cm_exogDem_scen off !! def off
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
