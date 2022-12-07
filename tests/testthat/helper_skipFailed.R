@@ -1,15 +1,15 @@
-failed <- FALSE
+helperSkipFailed <- FALSE
 
-expect_success_status <- function(output) {
+expectSuccessStatus <- function(output) {
     status <- attr(output, "status", exact = TRUE)
     if (0 != status) {
-        failed <<- TRUE
+        helperSkipFailed <<- TRUE
     }
     expect_equal(status, 0)
 }
 
-skip_if_previous_failed <- function() {
-    if (failed) {
+skipIfPreviousFailed <- function() {
+    if (helperSkipFailed) {
         skip("A previous test failed.")
     } else {
         return(invisible(TRUE))
