@@ -189,7 +189,6 @@ vm_costFuEx.up(t,regi,peExGrade(enty)) = 10.0;
 *------------------------------------
 *** [Optional] Oil retirement to allow a region to extract less than the lower bound imposed by the decline rate
 *------------------------------------
-$IFTHEN.cm_OILRETIRE %cm_OILRETIRE% == "on"
   loop(enty2rlf_dec(enty,rlf)$(sameas(enty,"peoil")),
 ***   multiplying the total grade size by the maximum allowed decrease percentage gives the maximum possible extraction
     p31_max_oil_extraction(regi,enty,rlf) = p31_grades("2020",regi,"xi3",enty,rlf) * p31_datafosdyn(regi,enty,rlf,"dec"); 
@@ -199,7 +198,6 @@ $IFTHEN.cm_OILRETIRE %cm_OILRETIRE% == "on"
     v31_fuSlack.fx("2010",regi,enty,rlf) = 0;  
   );
   v31_fuSlack.fx(t,regi,enty,rlf)$(NOT SAMEAS(enty,"peoil")) = 0;
-$ENDIF.cm_OILRETIRE
 
 *------------------------------------
 *** Specific upper bounds

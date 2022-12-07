@@ -4,56 +4,57 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-name,                           type,       reason
-sm_tmp,                         scalar,     not needed
-sm_tmp2,                        scalar,     not needed
-sm_EJ_2_TWa,                    scalar,     ???
-vm_emiTe,                       variable,   ??
-vm_emiAll,                      variable,   ??
-vm_effGr,                       variable,   ??
-vm_fuExtr,                      variable,   ??
-vm_prodPe,                      variable,   ??
-pm_Xport0,                      parameter,  ???
-pm_shPerm,                      parameter,  ???
-pm_emicapglob,                  parameter,  ???
-cm_iteration_max,               switch,     ???
-cm_abortOnConsecFail,           switch,     ???
-cm_nash_autoconverge,           switch,     ???
-sm_eps,                         scalar,     ???
-pm_emissions0,                  parameter,  ???
-pm_co2eq0,                      parameter,  ???
-pm_capCum0,                     parameter,  ???
-vm_perm,                        variable,   ???
-pm_cesdata,                     parameter,  ???
-pm_budgetCO2eq,                 parameter,  ???
-sm_budgetCO2eqGlob,             parameter,  ???
-qm_co2eqCum,                    equation,   ???
-sm_endBudgetCO2eq,              scalar,     ???
-sm_fadeoutPriceAnticip,         scalar,     ???
-vm_co2eq,                       variable,   ???
-vm_cesIO,                       variable,   ???
-cm_TaxConvCheck,                variable,   ??
-pm_nfa_start,                   input,      questionnaire
-pm_taxCO2eq_iterationdiff,      input,      questionnaire
-pm_taxCO2eq_iterationdiff_tmp,  input,      questionnaire
-sm_globalBudget_dev,            input,      questionnaire
-pm_factorRescaleemiMktCO2Tax,   input,      ??
-pm_emiMktTarget,                input,      ??
-pm_emiMktTarget_dev_iter,       input,      ??
-pm_emiMktCurrent,               input,      ??
-pm_taxemiMkt_iteration,         input,      ??
-cm_keep_presolve_gdxes,         switch,     not needed
-vm_capacityTradeBalance,        variable,   not implemented yet
-pm_emiMktTarget_dev,            parameter,  ???
-pm_emiMktRefYear,               parameter,  ???
-pm_implicitQttyTarget_isLimited,      parameter,  ???
-pm_implicitQttyTarget_dev,   parameter,  ???
-pm_implicitQttyTarget,       parameter,  ???
-pm_FEPrice,                     parameter,  not needed
-pm_FEPrice_iter,                parameter,  not needed
-pm_implicitPriceTarget,         parameter,  not needed
-pm_implicitPrice_NotConv,       parameter,  not needed
-pm_implicitPrice_ignConv,       parameter,  not needed
-pm_implicitPePriceTarget,       parameter,  not needed
-pm_implicitPePrice_NotConv,     parameter,  not needed
-pm_implicitPePrice_ignConv,     parameter,  not needed
+name,                              type,        reason
+cm_abortOnConsecFail,              switch,      ???
+cm_iteration_max,                  switch,      ???
+cm_keep_presolve_gdxes,            switch,      not needed
+cm_nash_autoconverge,              switch,      ???
+cm_solver_try_max,                 switch,      not needed
+cm_TaxConvCheck,                   variable,    ??
+pm_budgetCO2eq,                    parameter,   ???
+pm_capCum0,                        parameter,   ???
+pm_cesdata,                        parameter,   ???
+pm_co2eq0,                         parameter,   ???
+pm_emicapglob,                     parameter,   ???
+pm_emiMktCurrent,                  input,       ??
+pm_emiMktRefYear,                  parameter,   ???
+pm_emiMktTarget_dev_iter,          input,       ??
+pm_emiMktTarget_dev,               parameter,   ???
+pm_emiMktTarget,                   input,       ??
+pm_emissions0,                     parameter,   ???
+pm_factorRescaleemiMktCO2Tax,      input,       ??
+pm_FEPrice_iter,                   parameter,   not needed
+pm_FEPrice,                        parameter,   not needed
+pm_implicitPePrice_ignConv,        parameter,   not needed
+pm_implicitPePrice_NotConv,        parameter,   not needed
+pm_implicitPePriceTarget,          parameter,   not needed
+pm_implicitPrice_ignConv,          parameter,   not needed
+pm_implicitPrice_NotConv,          parameter,   not needed
+pm_implicitPriceTarget,            parameter,   not needed
+pm_implicitQttyTarget_dev,         parameter,   ???
+pm_implicitQttyTarget_isLimited,   parameter,   ???
+pm_implicitQttyTarget,             parameter,   ???
+pm_nfa_start,                      input,       questionnaire
+pm_shPerm,                         parameter,   ???
+pm_taxCO2eq_iterationdiff,         input,       questionnaire
+pm_taxCO2eq_iterationdiff_tmp,     input,       questionnaire
+pm_taxemiMkt_iteration,            input,       ??
+pm_Xport0,                         parameter,   ???
+qm_co2eqCum,                       equation,    ???
+sm_budgetCO2eqGlob,                parameter,   ???
+sm_EJ_2_TWa,                       scalar,      ???
+sm_endBudgetCO2eq,                 scalar,      ???
+sm_eps,                            scalar,      ???
+sm_fadeoutPriceAnticip,            scalar,      ???
+sm_globalBudget_dev,               input,       questionnaire
+sm_tmp2,                           scalar,      not needed
+sm_tmp,                            scalar,      not needed
+vm_capacityTradeBalance,           variable,    not implemented yet
+vm_cesIO,                          variable,    ???
+vm_co2eq,                          variable,    ???
+vm_effGr,                          variable,    ??
+vm_emiAll,                         variable,    ??
+vm_emiTe,                          variable,    ??
+vm_fuExtr,                         variable,    ??
+vm_perm,                           variable,    ???
+vm_prodPe,                         variable,    ??
