@@ -12,7 +12,7 @@ help:           ## Show this help.
 	@Rscript -e $(HELP_PARSING)
 
 docs:           ## Generate/update model HTML documentation in the doc/ folder
-	Rscript -e 'goxygen::goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15)'
+	Rscript -e 'goxygen::goxygen(unitPattern = c("\\[","\\]"), includeCore=T, max_num_edge_labels="adjust", max_num_nodes_for_edge_labels = 15); warnings()'
 	@echo -e '\nOpen\ndoc/html/index.htm\nin your browser to view the generated documentation.'
 
 update-renv:    ## Upgrade all pik-piam packages in your renv to the respective
