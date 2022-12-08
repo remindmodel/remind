@@ -1127,7 +1127,9 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
-        stoprun <- TRUE
+        if (cfg$action == "ce") {
+          stoprun <- TRUE
+        }
       } else {
         modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
         max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
@@ -1146,7 +1148,7 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst") && cfg$action == "ce") {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
       "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes

@@ -1,0 +1,2 @@
+title;start;results_folder;output;force_replace;action;slurmConfig
+testOneRegi;1;output/testOneRegi;NA;TRUE;c;--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000 --time=10 --wait

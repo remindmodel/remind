@@ -61,7 +61,9 @@ configure_cfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile
     if (verboseGamsCompile) message("   Configuring cfg for ", iscen)
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
-    for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig"), names(iscenarios))) {
+    for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "action",
+                                   "inputRevision", "slurmConfig", "results_folder", "force_replace"),
+                                 names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
       }
@@ -190,17 +192,22 @@ if ("--gamscompile" %in% flags) {
     file.copy(modelFile, tmpModelFile, overwrite = TRUE)
     manipulateConfig(tmpModelFile, cfg$gms)
     exitcode <- system2(
-      command = "gams",
+      command = cfg$gamsv,
       args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                    "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
-    message(if (0 < exitcode) "FAIL " else " OK  ", gsub("gms$", "lst", tmpModelFile))
-    if (0 < exitcode && interactive) {
-      system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
-                   gsub("gms$", "lst", tmpModelFile)))
-      message("Do you want to rerun, because you fixed the error already? y/n")
-      if (gms::getLine() %in% c("Y", "y")) {
-        runGamsCompile(modelFile, cfg, interactive)
+    if (0 < exitcode) {
+      ignorederrors <<- ignorederrors + 1
+      message("FAIL ", gsub("gms$", "lst", tmpModelFile))
+      if (interactive) {
+        system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
+                    gsub("gms$", "lst", tmpModelFile)))
+        message("Do you want to rerun, because you fixed the error already? y/n")
+        if (gms::getLine() %in% c("Y", "y")) {
+          runGamsCompile(modelFile, cfg, interactive)
       }
+      }
+    } else {
+      message("  OK ", gsub("gms$", "lst", tmpModelFile))
     }
   }
 }
@@ -361,7 +368,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
     cfg <- readDefaultConfig(".")
     knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                          "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
+                          "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig", "results_folder",
+                          "force_replace", "action")
     unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
     if (length(unknownColumnNames) > 0) {
       message("\nAutomated checks did not find counterparts in default.cfg or main.gms for these config file columns:")
@@ -510,4 +518,9 @@ if ("--gamscompile" %in% flags) {
   message("You are in --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
+}
+
+# make sure we have a non-zero exit status if there were any errors
+if (0 < ignorederrors) {
+  stop(ignorederrors, " errors were identified, check logs above for details.")
 }
