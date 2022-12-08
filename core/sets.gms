@@ -1478,7 +1478,7 @@ teFosNoCCS(all_te)  "fossil technologies without CCS"
         coalhp       "coal heating plant"
         coalgas      "coal gasification"
         coaltr       "transformation of coal"
-$IF %cm_OILRETIRE% == "on"   refliq
+        refliq
 /
 teBioPebiolc(all_te)      "biomass technologies using pebiolc"
 /
