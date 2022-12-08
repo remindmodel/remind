@@ -194,7 +194,7 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 ### Dynamic part
 
 * bioenergy demand, GHG prices from REMIND to MAgPIE (technical: getReportData in [`startfunctions.R`](https://github.com/magpiemodel/magpie/blob/master/scripts/start_functions.R))
-* bioenergy prices, GHG emissions from MAgPIE to REMIND (technical: getReportData in [`prepare_and_run.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepare_and_run.R))
+* bioenergy prices, GHG emissions from MAgPIE to REMIND (technical: getReportData in [`getReportData.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/getReportData.R))
 
 ### Static part
 
