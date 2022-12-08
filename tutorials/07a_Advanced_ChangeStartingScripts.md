@@ -1,6 +1,6 @@
 # The REMIND starting scripts
 
-David Klein, Lavinia Baumstark, Mika Pflüger
+David Klein (<dklein@pik-potsdam.de>), Lavinia Baumstark (<baumstark@pik-potsdam.de>), Mika Pflüger (<mika.pflueger@pik-potsdam.de>)
 
 ## Introduction
 
@@ -15,7 +15,7 @@ start.R -> submit(cfg) -------------------------> prepare_and_run()
 
            - create output folder                 - fetch input data
            - copy config, prepare_and_run.R       - prepare NDCs
-	     to output folder                     - create full.gms
+             to output folder                     - create full.gms
            - send slurm job to cluster            - run GAMS
                                                   - reporting
 
@@ -61,15 +61,6 @@ Rscript start.R
 Our goal is to move closer to R standard practice, so our vision for the starting scripts is:
 * In `scripts/start/`: one file per function (you can have multiple functions in one file, but only the topmost should be used from other files), file name is the same as function name.
 * In `tests/testthat/test_*`: unit tests for functions from `scripts/start/`.
-* Top-level starting scripts in the main folder: contain only coordination, high-level logic, functionality moved into `scripts/start/`
+* Top-level starting scripts in the main folder: contain only coordination, high-level logic. Functionality is moved into `scripts/start/`
 
 This is a vision, not yet reality. Whenever you work on the starting scripts, try to move in this direction.
-
-## Licence
-
-(C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
-authors, and contributors see CITATION.cff file. This file is part
-of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
-AGPL-3.0, you are granted additional permissions described in the
-REMIND License Exception, version 1.0 (see LICENSE file).
-Contact: remind@pik-potsdam.de
