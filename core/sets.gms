@@ -2235,7 +2235,7 @@ charPeRe(char) "characteristics of renewables"
 /
 s_statusTe   "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
 /
-      0 * 3
+      0 * 4
 /
 ;
 

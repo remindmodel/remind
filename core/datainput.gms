@@ -1215,6 +1215,9 @@ table p_costMarkupAdvTech(s_statusTe,tall)              "Multiplicative investme
 $include "./core/input/p_costMarkupAdvTech.prn"
 ;
 
+*** add mark-up cost for tech_stat 4 technologies as for tech_stat 3 technologies in first years
+p_costMarkupAdvTech("4",ttot)=p_costMarkupAdvTech("3",ttot);
+
 loop (teNoLearn(te),
   pm_inco0_t(ttot,regi,te) = pm_data(regi,"inco0",te);
   loop (ttot$( ttot.val ge 2005 AND ttot.val lt 2035 ),
