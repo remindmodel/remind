@@ -1376,6 +1376,9 @@ $setGlobal cm_indstExogScen  off !! def off
 *** This switch fixes demand without recalibration of REMIND CES parameters.
 *** This should be kept in mind when comparing those runs to baseline runs without fixing
 *** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
+*** Warning: the formulation fixing CES quantity nodes in scenarios should be used with care and parsimony. 
+*** Price and tax-induced solutions are preferable from the REMIND formulation perspective 
+*** and consequences of fixing CES tree nodes directly require further investigation. 
 *** (off)              default, no fixing
 *** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
 *** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
