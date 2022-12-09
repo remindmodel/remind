@@ -310,6 +310,9 @@ vm_capCum.fx(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
 vm_costTeCapital.fx(t,regi,teLearn)$(t.val le 2020 AND pm_data(regi,"tech_stat",teLearn) eq 4)=fm_dataglob("inco0",teLearn);
 
+*** no technologies with tech_stat 5 before 2030
+vm_deltaCap.fx(t,regi,te,rlf)$(t.val le 2025 AND pm_data(regi,"tech_stat",te) eq 5)=0;
+
 
 *CB 2012024 -----------------------------------------------------
 *CB allow for early retirement at the start of free model time
