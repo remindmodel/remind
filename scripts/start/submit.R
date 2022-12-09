@@ -5,6 +5,8 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+source("scripts/utils/isSlurmAvailable.R")
+
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
   for(i in 1:length(filelist)) {
@@ -62,7 +64,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
 
         if (getOption("autoRenvUpdates", FALSE)) {
           source("scripts/utils/updateRenv.R")
-        } else if (!is.null(piamenv::showUpdates())) {
+        } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
+                   && !is.null(piamenv::showUpdates())) {
           message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
         }
       }
@@ -83,15 +86,15 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                stdout = renvLogPath, stderr = "2>&1")
     }
 
-    # Save the cfg (with the updated name of the result folder) into the results folder. 
-    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+    # Save the cfg (with the updated name of the result folder) into the results folder.
+    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
     filename <- file.path(cfg$results_folder, "config.Rdata")
     cat("   Writing cfg to file", filename, "\n")
     # remember main folder
     cfg$remind_folder <- normalizePath(".")
     save(cfg, file = filename)
-    
+
     # Copy files required to configure and start a run
     filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
                   ".Rprofile" = ".Rprofile")
@@ -103,15 +106,17 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   on.exit(setwd(cfg$remind_folder))
   # Change to run folder
   setwd(cfg$results_folder)
-  
-  # send prepare_and_run.R to cluster 
+
+  # send prepare_and_run.R to cluster
   cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
-  if (grepl("^direct", cfg$slurmConfig)) {
-    log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
-    system("Rscript prepare_and_run.R")
+  if (grepl("^direct", cfg$slurmConfig) || ! isSlurmAvailable()) {
+    exitCode <- system("Rscript prepare_and_run.R")
   } else {
-    system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
+    exitCode <- system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
     Sys.sleep(1)
+  }
+  if (0 < exitCode) {
+    stop("Executing prepare_and_run failed, stopping.")
   }
     
   return(cfg$results_folder)

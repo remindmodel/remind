@@ -123,7 +123,7 @@ if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  piamenv::checkDeps(action = "ask")
+  piamenv::checkDeps(action = "stop")
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
 }
@@ -182,7 +182,7 @@ if (!identical(common,character(0))) {
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
 } else {
-  message("No scenario selected.")
+  stop("No scenario found with start=", startnow, " in ", basename(path_settings_coupled), ".")
 }
 message("")
 

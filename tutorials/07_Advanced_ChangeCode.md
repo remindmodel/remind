@@ -67,30 +67,16 @@ It creates all additional gams files for your new realization "new" of the exist
 
 After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in the `main.gms` by hand.
 
-Compiling
-=============
+Compiling and Testing
+=====================
 
-Using the
-``` 
-cfg$action
-```
-option in `config/default.cfg` you can choose whether you want to start a run or simply check if your code compiles. By setting the option to simply `"c"` (for compile), your code will only be tested and no SLURM job will start on the cluster to execute the model (helps when the cluster is full). Default value for the option is `"ce"` (for compile and execute).
-
-You can also compile the file `main.gms` directly by running the command
-```bash
-gams main.gms -a=c -errmsg=1
-```
-or (only works on the PIK cluster, gives you highlighting of syntax errors)
-```bash
-gamscompile main.gms
-```
-This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast.
-
-If you want to compile the model including the changes you made to [`config/default.cfg`](../config/default.cfg) or [`main.gms`](../main.gms), start
+If you want to quickly check if the model including your changes compiles without running the model, start
 ```
 Rscript start.R -gi
 ```
-which will compile all the selected runs.
+and select runs which will be compiled.
 
-Before submitting the code changes to the REMIND repository, it is recommended to run `make check-fix` on the command line (or the equivalent but harder to remember `gms::codeCheck(strict = TRUE, interactive = TRUE)` in `R`). It performs some checks on the code. In particular, it may ask you some questions about the `not_used.txt` files in each realization that contain the parameter names that are used somewhere in this module, but not in this specific module realization.
-These tests are also performed on github once you submit a pull request, but it is recommended to run the tests yourself regularly during development so you don't have to fix everything at once in the end.
+Before submitting the code changes to the REMIND repository, it is recommended to run `make test` on the command line.
+It performs a collection of tests including compiling the model, a minimal run of the default configuration with relaxed convergence requirements, and checking for violations of the coding etiquette. If the checking of the coding etiquette `99-codeCheck` uncovers violations, you can use `make check-fix` to automatically fix some common errors. In particular, it may ask you some questions about the `not_used.txt` files in each realization that contain the parameter names that are used somewhere in this module, but not in this specific module realization.
+
+The automated tests do not contain a full run of the model by default. To include a full run in the tests, run `make test-full` and compare the output of a model with and without your changes. The standard run is useful to check changes in the default configuration and is recommended if you changed the model such that the output might change significantly. If you change a specific non-default configuration (e.g. a non-default module realization), you should also do specially tailored runs to compare the output of the model using the configuration you changed.

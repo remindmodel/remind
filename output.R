@@ -211,7 +211,7 @@ if (comp %in% c("comparison", "export")) {
 
     # output creation for --testOneRegi was switched off in start.R in this commit:
     # https://github.com/remindmodel/remind/commit/5905d9dd814b4e4a62738d282bf1815e6029c965
-    if (all(is.na(output))) {
+    if (all(is.na(output)) || output == "NA") {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")

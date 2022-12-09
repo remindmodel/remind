@@ -1,0 +1,2 @@
+title;start;cm_nash_mode;cm_iteration_max;optimization;results_folder;output;cm_quick_mode;force_replace;slurmConfig
+testOneRegi;1;debug;1;testOneRegi;output/testOneRegi;NA;on;TRUE;--qos=priority --nodes=1 --tasks-per-node=1 --mem=8000 --time=60 --wait
