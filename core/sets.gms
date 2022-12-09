@@ -2315,12 +2315,14 @@ alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
 alias(rlf,rlf2);
-alias(regi,regi2,regi3);
+alias(regi,regi2,regi3,regi4);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
 alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
-alias(sector_types,type)
+alias(sector_types,type);
+alias(ext_regi,ext_regi2);
+alias(regi_group,regi_group2);
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------

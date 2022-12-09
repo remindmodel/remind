@@ -130,6 +130,10 @@ if (cm_EnSecScen_limit gt 0,
     vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
 );
 
+*** Fix CES function quantity trajectories to exogenous data if cm_exogDem_scen is activated
+$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+vm_cesIO.fx(t,regi,in)$(pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in))=pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in);
+$endif.ExogDemScen
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

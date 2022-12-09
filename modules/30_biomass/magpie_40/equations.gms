@@ -127,13 +127,4 @@ q30_BioPEProdTotal(t,regi)..
 ;
 
 
-*** FS: limit biomass domestic production from cm_startyear or 2035 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
-q30_limitProdtoHist(t,regi)$(cm_bioprod_histlim ge 0 AND t.val ge 2035 AND regi_group("EUR_regi",regi))..
-        v30_BioPEProdTotal(t,regi)
-        =l=
-        cm_bioprod_histlim*v30_BioPEProdTotal("2015",regi)
-;
-
-
- 
 *** EOF ./modules/30_biomass/magpie_40/equations.gms
