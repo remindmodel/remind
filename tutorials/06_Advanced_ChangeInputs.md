@@ -47,6 +47,8 @@ The .log file lists the progress and potential errors. This process might take a
 
 4. If the process terminates without errors, do a test run with the new input data. To do this, clone the REMIND repo and update the data input version `cfg$revision` in `config/default.cfg` using your recently created data revision number file and run one scenario (e.g. SSP2EU-Base).
 
+4.a ATTENTION: If your new input data change FE pathways, population, GDP trajectories or substantial behaviour of REMIND, you need to rerun the CES parameter calibration (see tutorial 12_Calibrating_CES_Parameters) and adjust the input data revision together with the updated CES parameters.
+
 5. If the test run completes without errors, add the change in `config/default.cfg` and the update of the input data revision in `main.gms` that was automatically performed by the REMIND run to a commit in your REMIND clone. This can be best done by using
 ```bash
 git add -p config/default.cfg main.gms

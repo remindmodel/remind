@@ -383,10 +383,9 @@ prepare <- function() {
       '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD',
       '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R')
     content <- c(modification_warning,'','sets')
-    # write iso set with nice formatting (10 countries per line)
+    # create iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
     regions <- as.character(unique(map$RegionCode))
-    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
@@ -395,7 +394,7 @@ prepare <- function() {
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
       ) )
     }
-    # ext_regi
+    # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
     content <- c(content, '      /')
     content <- c(content, '        GLO,')
@@ -403,6 +402,8 @@ prepare <- function() {
     content <- c(content, '        ', paste(regions,collapse=','))
     content <- c(content, '      /')
     content <- c(content, ' ')
+    # declare all_regi
+    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -510,9 +511,39 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
-  # now that full.gms exists, we move tmpModelFile to the results folder (for debugging, restarting)
-  file.rename(tmpModelFile, file.path(cfg$results_folder, "main.gms"))
+
+  # only compile the GAMS file to catch compilation errors and create a dump
+  # file with the full code
+  modelFilePathStem <- substr(tmpModelFile, 1, nchar(tmpModelFile) - 4)
+  dumpFilePath <- paste0(modelFilePathStem, ".dmp")
+  listFilePath <- paste0(modelFilePathStem, ".lst")
+  logFilePath <- paste0(modelFilePathStem, ".log")
+
+  exitcode <- system2(cfg$gamsv, c(tmpModelFile, "action=c", "dumpopt=21",
+                                   "logoption=", cfg$logoption))
+
+  # move compilation files to results directory and rename appropriately, but
+  # only if they exist.
+  from <- c(dumpFilePath, listFilePath, tmpModelFile, logFilePath)
+  to <- file.path(cfg$results_folder, c('full.gms', 'main.lst', 'main.gms',
+                                        'main.log'))
+  exist <- file.exists(from)
+  # if any of the files main.dmp, main.lst, or main.gms is missing, panic!
+  # (honestly, no idea how that could happen, but you never know)
+  if (!all(exist[1:3])) {
+      stop('Something went horribly wrong, the files ',
+           paste(from[which(!exist[1:3])], collapse = ', '),
+           ' are missing.  Call RSE immediately')
+  }
+
+  file.rename(from[exist], to[exist])
+
+  if ( 0 < exitcode ) {
+      stop("Compiling ", tmpModelFile, " failed, stopping.", "\n",
+           "Use `less -j 4 --pattern='^\\*\\*\\*\\*' ",
+           file.path(cfg$results_folder, "main.lst"), "` to investigate ",
+           "compilation errors.")
+  }
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -1097,7 +1128,9 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
-        stoprun <- TRUE
+        if (cfg$action == "ce") {
+          stoprun <- TRUE
+        }
       } else {
         modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
         max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
@@ -1116,7 +1149,7 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst") && cfg$action == "ce") {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
       "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
