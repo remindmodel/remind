@@ -1,0 +1,3 @@
+title;start;cm_nash_mode;cm_iteration_max;optimization;output;cm_quick_mode;force_replace;slurmConfig;path_gdx_ref;path_gdx_bau
+SSP2EU-Base;1;debug;1;;;on;TRUE;settings given here need to be respected by start_coupled.R:L297 and start_bundle_coupled.R:L526;;
+SSP2EU-NDC;1;debug;1;;;on;TRUE;settings given here need to be respected by start_coupled.R:L297 and start_bundle_coupled.R:L526;SSP2EU-Base;SSP2EU-Base
