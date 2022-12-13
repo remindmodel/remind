@@ -23,6 +23,11 @@ pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic p
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
 
 
+$IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
+p30_bioprod_regi_lim(ext_regi)   "limit of total biomass production per region or region group [EJ/yr]" / %cm_bioprod_regi_lim% /
+$ENDIF.bioprod_regi_lim
+
+
 
 *** Shift factor calculation
 p30_pebiolc_costs_emu_preloop(ttot,all_regi)    "Bioenergy costs calculated with emulator using MAgPIE demand. For shift factor calculation [T$US]"
@@ -66,7 +71,6 @@ q30_priceshift                     "Calculates shift factor by minimizing least 
 q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported, no residues"
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
-q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production to multiple of cm_bioprod_histlim times 2015 level, active if cm_bioprod_histlim >= 0"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
 ;
 *** EOF ./modules/30_biomass/magpie_40/declarations.gms

@@ -20,12 +20,10 @@
 - [ ] Changes are commented, particularly in hard-to-understand areas
 - [ ] I have updated the in-code documentation
 - [ ] I have adjusted reporting where it was needed
-- [ ] All automated model tests compile successfully (`Rscript start.R -g config/scenario_config_AMT.csv`)
-- [ ] The model runs successfully (`Rscript start.R -q`)
+- [ ] All automated model tests pass (`FAIL 0` in the output of `make test`)
 
 ## Further information (optional):
 
 * Test runs are here: 
 * Comparison of results (what changes by this PR?): 
-
 

@@ -70,3 +70,5 @@ pm_shareWindPotentialOff2On,input,questionnaire
 cm_EnSecScen_limit,input,questionnaire
 pm_conv_TWa_EJ,input,questionnaire
 pm_shareWindOff,input,questionnaire
+vm_cesIO,input,added by codeCheck
+pm_exogDemScen,input,added by codeCheck
