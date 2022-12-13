@@ -25,6 +25,9 @@ pm_temperatureImpulseResponseCO2(tall,tall) = 0;
 vm_demFeForEs.L(t,regi,entyFe,esty,teEs) = 0;
 vm_demFeForEs.L(t,regi,fe2es(entyFe,esty,teEs)) = 0.1;
 
+pm_taxCO2eq_iterationdiff(t,regi) = 0;
+pm_taxCO2eq_iterationdiff_tmp(t,regi) = 0;
+
 *------------------------------------------------------------------------------------
 ***                        calculations based on sets
 *------------------------------------------------------------------------------------
