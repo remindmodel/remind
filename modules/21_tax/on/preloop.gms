@@ -8,6 +8,7 @@
 
 ***initialize co2 market taxes
 pm_taxemiMkt(t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
+pm_taxemiMkt_iteration(iteration,t,regi,emiMkt)$(t.val ge cm_startyear) = 0;
 
 *LB* set CO2 tax in 2005 and 2010 to 0
 pm_taxCO2eq("2005",regi)=0;
@@ -152,6 +153,7 @@ vm_flexAdj.l(ttot,all_regi,all_te) = 0;
 *** FS: set market price of good to non-zero to avoid division by zero in first iteration
 pm_pvp(ttot,"good")$(pm_pvp(ttot,"good") = 0) = sm_eps;
 
-
+*** initizalize taxrevImport
+v21_taxrevImport.l(t,regi,tradePe) = 0;
 
 *** EOF ./modules/21_tax/on/preloop.gms
