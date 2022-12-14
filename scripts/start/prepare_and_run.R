@@ -904,6 +904,16 @@ prepare <- function() {
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
 
+    # renamed because of https://github.com/remindmodel/remind/pull/1106
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v21_taxrevBioImport.L", "!!v21_taxrevBioImport.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
+                             list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
+                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
+
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
