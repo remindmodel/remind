@@ -33,7 +33,8 @@ Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
 *** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
 p47_taxemiMkt_init(t,regi,emiMkt)$(p47_taxCO2eq_ref(t,regi) and (NOT(p47_taxemiMkt_init(t,regi,emiMkt)))) = p47_taxCO2eq_ref(t,regi);
 
-*** Overwrite historical prices for Europe if they are uncontrolled
+*** Overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
+*** in this case, historical prices will reflect the ETS market observed prices instead of ther values defined at pm_taxCO2eqHist  
 loop(regi$regi_groupExt("EUR_regi",regi),
   if((cm_startyear le 2010),
     p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
