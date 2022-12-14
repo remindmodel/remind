@@ -10,7 +10,7 @@
 *NPi bounds are only applied after 2020, as NPi scenarios should always have cm_startyear higher than 2020.
 vm_cap.lo(t,regi,"spv","1")$(t.val gt 2020) = p40_TechBound(t,regi,"spv")*0.001; 
 vm_cap.lo(t,regi,"tnrs","1")$(t.val ge 2025) = p40_TechBound(t,regi,"tnrs")*0.001;
-vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$((t.val ge 2025) and (cm_nucscen eq 5)) = 0; !! resetting lower bound to value defined at cm_nucscen switch 
+vm_cap.lo(t,regi_nucscen,"tnrs",rlf)$((t.val ge 2025) and (cm_nucscen eq 5)) = 0; !! we assume: Nucscen (limiting nuclear deployment) overrides NDC targets -> resetting lower bound to value defined at cm_nucscen switch
 vm_cap.lo(t,regi,"hydro","1")$(t.val gt 2020) = p40_TechBound(t,regi,"hydro")*0.001;
 vm_cap.lo(t,regi,"apCarElT","1")$(t.val gt 2020) = p40_TechBound(t,regi,"apCarElT");
 
