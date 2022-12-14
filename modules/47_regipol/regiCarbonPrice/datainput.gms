@@ -22,7 +22,9 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 *** initialize emiMkt Target parameters
   p47_targetConverged(ttot2,ext_regi) = 0;
 
-*** initialize carbon taxes
+*** initialize carbon taxes based on reference runs
+***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
+***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
 p47_taxemiMkt_init(t,regi,emiMkt) = 0;
 
 Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
