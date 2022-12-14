@@ -437,7 +437,7 @@ $setGlobal codePerformance  off       !! def = off
 *' ####                     SWITCHES
 ***-----------------------------------------------------------------------------
 parameter
-  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconvergence = 0"
+  cm_iteration_max          "number of iterations, if optimization is set to negishi or testOneRegi; used in nash mode only with cm_nash_autoconverge = 0"
 ;
   cm_iteration_max       = 1;     !! def = 1
 *'
@@ -1555,6 +1555,11 @@ $setglobal cm_process_based_steel   off  !! off
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
+*' c_empty_model  "Short-circuit the model, just use the input as solution"
+*'
+*' (off): normal model operation, default
+*' (on): no model operation, instead input.gdx is copied to fulldata.gdx
+$setGlobal c_empty_model   off    !! def = off
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
@@ -1578,6 +1583,12 @@ $setglobal cm_fixCO2price  off !! def = off
 *ag* set conopt version
 option nlp = %cm_conoptv%;
 option cns = %cm_conoptv%;
+
+*** empty model just uses input.gdx as the result
+$ifthen.empty_model "%c_empty_model%" == "on"
+  execute "cp input.gdx fulldata.gdx";
+  abort.noerror "cp input.gdx fulldata.gdx";
+$endif.empty_model
 
 *--------------------------------------------------------------------------
 ***           SETS
