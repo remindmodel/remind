@@ -26,13 +26,6 @@ $IFTHEN.dispatchSeelDown not "%cm_dispatchSeelDown%" == "off"
 $ENDIF.dispatchSeelDown
 
 
-*** FS: for historically limited biomass production scenario in EU (cm_bioprod_histlim >= 0)
-*** to avoid infeasibilities with vintage biomass capacities
-*** allow bio techs to reduce capacity factor
-if ( cm_bioprod_histlim ge 0,
-	vm_capFac.lo(t,regi,teBioPebiolc)$(t.val ge 2030 AND regi_group("EUR_regi",regi)) = 0;
-);
-
 *** FS: if flexibility tax on, let capacity factor be endogenuously determined between 0.1 and 1 
 *** for technologies that get flexibility tax/subsity (teFlexTax)
 if ( cm_flex_tax eq 1,

@@ -740,9 +740,6 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 *** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
-
-   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
-
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
@@ -753,6 +750,9 @@ LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi
 LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
       /
  
+
+   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
+
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
       
@@ -2235,7 +2235,7 @@ charPeRe(char) "characteristics of renewables"
 /
 s_statusTe   "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
 /
-      0 * 3
+      0 * 5
 /
 ;
 
@@ -2315,12 +2315,14 @@ alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
 alias(rlf,rlf2);
-alias(regi,regi2,regi3);
+alias(regi,regi2,regi3,regi4);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
 alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
-alias(sector_types,type)
+alias(sector_types,type);
+alias(ext_regi,ext_regi2);
+alias(regi_group,regi_group2);
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------

@@ -27,5 +27,6 @@ fm_dataglob("flexibility","storcsp")  = 1.85;
 fm_dataglob("flexibility","storspv")  = 1.85;
 fm_dataglob("flexibility","geohdr")   = 0.8;
 fm_dataglob("flexibility","hydro")    = 1.2;
+fm_dataglob("flexibility","h2turbVRE") = 16;
 
 *** EOF ./core/input/generisdata_flexibility.prn
