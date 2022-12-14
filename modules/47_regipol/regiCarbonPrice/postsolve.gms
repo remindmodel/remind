@@ -29,7 +29,7 @@ p47_emiTargetMkt(ttot,regi,emiMktExt,"netCO2_noBunkers") =
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noLULUCF_noBunkers") = 
   p47_emiTargetMkt(ttot,regi,emiMktExt,"netCO2_noBunkers")
   - (
-    sum((emiMacSector,sector_types)$emiMac2sector(emiMacSector,"lulucf",sector_types,"co2"),
+    sum(emiMacSector$emiMac2sector(emiMacSector,"lulucf","process","co2"),
       vm_emiMacSector.l(ttot,regi,emiMacSector)
     )
   )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
