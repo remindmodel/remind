@@ -305,11 +305,8 @@ $setglobal fossil  grades2poly        !! def = grades2poly
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'
-*' * (off)        : no carbon dioxide removal technologies except BECCS
-*' * (weathering) : includes enhanced weathering
-*' * (DAC) :    includes direct air capture
-*' * (all) :    includes all CDR technologies
-$setglobal CDR  DAC        !! def = DAC
+*' * (portfolio) : CDR options added via switches: cm_33[option abbreviation]
+$setglobal CDR  portfolio        !! def = portfolio
 *'---------------------    35_transport    ----------------------------------------
 *'
 *' * (complex):  transport realization with aggregated transport demand (LDV, HDV, electric trains) via CES function with constrained choice on vehicle technologies
@@ -838,6 +835,16 @@ parameter
   cm_gdximport_target      = 0;      !! def = 0
 *' * (0): no import, the default starting value as specified in modules/ 0 /on/input/tax_CO2.inc, core/input/data_emibudget.inc, modules/15_climate/box/datainput.gms is used
 *' * (1): the values from the gdx are read in (works only if the gdx has a parameter value) ATTENTION: make sure that the values from the gdx have the right structure (e.g. regionally differentiated or not)
+*'
+parameter
+  cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio. 0 = DAC not used, 1 = used"
+;
+  cm_33DAC                 = 0;   !! def = 1
+*'
+parameter
+  cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio. 0 = EW not used, 1 = used"
+;
+  cm_33EW                  = 1;   !! def = 0
 *'
 parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
