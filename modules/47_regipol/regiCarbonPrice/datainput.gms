@@ -20,18 +20,19 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
 *** initialize emiMkt Target parameters
-  p47_targetConverged(ttot2,ext_regi) = 0;
+p47_targetConverged(ttot,ext_regi) = 0;
 
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
-p47_taxemiMkt_init(t,regi,emiMkt) = 0;
+p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
 
 Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
 Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
 
+
 *** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
-p47_taxemiMkt_init(t,regi,emiMkt)$(p47_taxCO2eq_ref(t,regi) and (NOT(p47_taxemiMkt_init(t,regi,emiMkt)))) = p47_taxCO2eq_ref(t,regi);
+p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
 
 *** Overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
 *** in this case, historical prices will reflect the ETS market observed prices instead of ther values defined at pm_taxCO2eqHist  
