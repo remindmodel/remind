@@ -1,3 +1,3 @@
-title;start;qos;magpie_scen;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt;path_report;c_empty_model
-SSP2EU-Base;1;priority;SSP2|NPI;y2150;2;;;;;;;on
-SSP2EU-NDC;1;priority;SSP2|NDC;y2150;2;;;;;;;on
+title;start;qos;magpie_scen;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_gdx_opt;path_report
+SSP2EU-Base;1;priority;SSP2|NPI;y2150;2;;;;;;
+SSP2EU-NDC;1;priority;SSP2|NDC;y2150;2;;;;;;
