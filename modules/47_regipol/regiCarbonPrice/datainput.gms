@@ -53,8 +53,8 @@ loop(regi$regi_groupExt("EUR_regi",regi),
 ***    p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
   );
 
-*** intialize EUR price trajectory after 2020 by a yearly increase of 1$/tCO2 when no price is available.
-  p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = p47_taxemiMkt_init("2020",regi,emiMkt) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+*** intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
+  p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
 );
 
 *** Auxiliar parameters based on emission targets information 
