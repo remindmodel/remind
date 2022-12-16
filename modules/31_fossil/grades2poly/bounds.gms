@@ -42,8 +42,7 @@ display v31_fuExtrCum.up;
 *------------------------------------
 *** Regionalised upper bound on uranium extraction
 *------------------------------------
-if(cm_limit_peur_scen eq 1,
- v31_fuExtrCum.up(ttot,regi,"peur", "1") = p31_fuExtrCumMaxBound(regi,"peur", "1");
-);
+v31_fuExtrCum.up(ttot,regi,"peur", "1") = p31_fuExtrCumMaxBound(regi,"peur", "1");
+
 
 *** EOF ./modules/31_fossil/grades2poly/bounds.gms

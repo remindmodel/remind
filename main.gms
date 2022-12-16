@@ -713,14 +713,6 @@ parameter
   cm_permittradescen  = 1;         !! def = 1
 *'
 parameter
-  cm_limit_peur_scen        "limit total uranium production"
-***  (0): off
-***  (1): on
-***  (2): high  tradecosts (default and SSP2)
-;
-  cm_limit_peur_scen  = 1;         !! def = 1
-*'
-parameter
   cm_rentdiscoil            "[grades2poly] discount factor for the oil rent"
 ;
   cm_rentdiscoil      = 0.2;       !! def 0.2
@@ -1587,12 +1579,16 @@ $setglobal cm_process_based_steel   off  !! off
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
+*' mode for solving nash problem
+*'
+*' * parallel  - all regions are run an parallel
+*' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
+$setGlobal cm_nash_mode  parallel      !! def = parallel
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off    !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2

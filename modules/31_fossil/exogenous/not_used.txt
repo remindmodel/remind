@@ -16,7 +16,6 @@ pm_ts, parameter, ??
 pm_prtp, parameter, ??
 cm_startyear, switch, ???
 cm_nucscen, switch, ???
-cm_limit_peur_scen,switch,???
 cm_rentdiscoil,switch,???
 cm_rentdiscoil2,switch,???
 cm_rentconvoil,switch,???
