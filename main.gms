@@ -1222,6 +1222,7 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
+***   Important: If you set multiple yearly targets to the same region, it is highly recommended to enable the switch cm_prioRescaleFactor to avoid conflicts between the targets priorities.
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_prioRescaleFactor "factor applied to carbon tax rescale factor to prioritize short term targets in the initial 15 iterations (and vice versa latter) [0..1].
 ***   Example on how to use:
