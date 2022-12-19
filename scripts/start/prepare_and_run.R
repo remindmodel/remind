@@ -1017,8 +1017,8 @@ run <- function(start_subsequent_runs = TRUE) {
       cat("CES calibration iteration: ", cal_itr, "\n")
 
       # Update calibration iteration in GAMS file
-      system(paste0("sed -i 's/^\\(\\$setglobal c_CES_calibration_iteration ",
-                    "\\).*/\\1", cal_itr, "/' full.gms"))
+      system(paste0("sed -i 's#^sm_CES_calibration_iteration.*/\\d/#",
+                             "sm_CES_calibration_iteration /", cal_itr, "/#' full.gms"))
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
                     " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))

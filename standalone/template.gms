@@ -309,7 +309,6 @@ $setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10   !! def = 10
-$setglobal c_CES_calibration_iteration        1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 

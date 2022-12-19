@@ -58,3 +58,4 @@ vm_emiTe,                          variable,    ??
 vm_fuExtr,                         variable,    ??
 vm_perm,                           variable,    ???
 vm_prodPe,                         variable,    ??
+sm_CES_calibration_iteration,      scalar,      only needed during calibration which is not support in negishi mode
