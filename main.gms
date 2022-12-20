@@ -698,7 +698,12 @@ parameter
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
-  cm_fetaxscen              "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
+*** (0): equal per capita redistribution
+*** (1): proportional redistribution
+ ;
+  cm_distrBeta	      = 1;	   !! def = 1
+*'
+parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
 ***  (1): CO2 only
 ***  (2): all GHG
@@ -1187,20 +1192,6 @@ $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
 ***  (medOil): medium (this is the new case)
 ***  (highOil): high (formerly this has been the "medium" case; RoSE relevant difference)
 ***  (4): very high (formerly this has been the "high" case; RoSE relevant difference)
-$setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
-$setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
-cm_GDPcovid      = 0;            !! def = 0
-
-*AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
-cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
-c_start_budget    = 2100;      !! def = 2100
-
-cm_prtpScen         = 3;         !! def = 3
-cm_distrBeta        = 1;         !! def = 1
-cm_fetaxscen        = 3;         !! def = 3
-cm_multigasscen     = 2;         !! def = 2
-cm_permittradescen  = 1;         !! def = 1
-cm_limit_peur_scen  = 1;         !! def = 1
 $setGlobal cm_oil_scen  medOil         !! def = medOil
 *** cm_gas_scen      "assumption on gas availability"
 ***  (lowGas): low
