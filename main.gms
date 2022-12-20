@@ -223,6 +223,7 @@ $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
 *' * (utilitarian) utilitarian aka. Benthamite social welfare function
+*' * (ineqLognormal) welfare function with subregional income distribution effects implemented with a lognormal approach
 $setGlobal welfare  utilitarian  !! def = utilitarian
 *'---------------------    04_PE_FE_parameters    ------------------------------
 *'
@@ -700,8 +701,8 @@ parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
 *** (0): equal per capita redistribution
 *** (1): proportional redistribution
- ;
-  cm_distrBeta	      = 1;	   !! def = 1
+;
+  cm_distrBeta        = 1;	   !! def = 1
 *'
 parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"

@@ -13,5 +13,6 @@ $Ifi "%phase%" == "declarations" $include "./modules/02_welfare/ineqLognormal/de
 $Ifi "%phase%" == "datainput" $include "./modules/02_welfare/ineqLognormal/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/02_welfare/ineqLognormal/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/02_welfare/ineqLognormal/bounds.gms"
+$Ifi "%phase%" == "postsolve" $include "./modules/02_welfare/ineqLognormal/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/02_welfare/ineqLognormal/realization.gms
