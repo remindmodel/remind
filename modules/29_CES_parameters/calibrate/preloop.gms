@@ -872,7 +872,7 @@ if (card(ppf_beyondcalib_29) >= 1,
   Display "  before computing xi in beyond", pm_cesdata;
 
   !! if prices haven't already been loaded
-  if (sm_CES_calibration_iteration > 1 or s29_CES_calibration_new_structure eq 1,
+  if (sm_CES_calibration_iteration > 1 or s29_CES_calibration_new_structure eq 0,
 
     !! Compute ppf prices from CES derivatives of previous run
     p29_CESderivative(t,regi_dyn29(regi),cesOut2cesIn(out,in))$(
