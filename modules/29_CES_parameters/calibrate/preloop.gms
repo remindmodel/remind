@@ -971,14 +971,14 @@ $endif.subsectors
                         AND pm_cesdata_sigma(t,out) eq -1                     ),
 
     if (sm_CES_calibration_iteration eq 1 and s29_CES_calibration_new_structure eq 1,
-      put sm_CES_calibration_iteration, "remind", t.tl, in.tl ;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in.tl ;
       put "price_Noscale", regi.tl, pm_cesdata(t,regi,in,"price") /;
-      put sm_CES_calibration_iteration, "remind", t.tl, in2.tl;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in2.tl;
       put "price_Noscale", regi.tl, pm_cesdata(t,regi,in2,"price") /;
     else
-      put sm_CES_calibration_iteration, "remind", t.tl, in.tl;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in.tl;
       put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in) /;
-      put sm_CES_calibration_iteration, "remind", t.tl, in2.tl;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in2.tl;
       put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in2) /;
     );
   );
@@ -1466,30 +1466,30 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND (sameAs(t, "2015") OR sameAs(t, "2050") OR sameAs(t, "2100"))) ,
 
        if ( sameAs(t,"2015"),
-           put sm_CES_calibration_iteration, "remind" ,"2015", out.tl   , "output_scale", regi.tl, p29_output_estimation(regi,out) /;
+           put sm_CES_calibration_iteration:0:0, "remind" ,"2015", out.tl   , "output_scale", regi.tl, p29_output_estimation(regi,out) /;
        );
 
-       put sm_CES_calibration_iteration, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
-       put sm_CES_calibration_iteration, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
-       put sm_CES_calibration_iteration, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in2,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in2,"quantity") $ ( ipf_putty(out))) /;
 
-       put sm_CES_calibration_iteration,"remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
-       put sm_CES_calibration_iteration,"remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
 
-       put sm_CES_calibration_iteration,"remind" , t.tl, in.tl , "effGr", regi.tl, pm_cesdata(t,regi,in,"effGr") /;
-       put sm_CES_calibration_iteration,"remind" , t.tl, in2.tl  , "effGr", regi.tl, pm_cesdata(t,regi,in2,"effGr") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "effGr", regi.tl, pm_cesdata(t,regi,in,"effGr") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "effGr", regi.tl, pm_cesdata(t,regi,in2,"effGr") /;
 
-       put sm_CES_calibration_iteration,"remind" , t.tl, in.tl , "xi", regi.tl, pm_cesdata(t,regi,in,"xi") /;
-       put sm_CES_calibration_iteration,"remind" , t.tl, in2.tl  , "xi", regi.tl, pm_cesdata(t,regi,in2,"xi") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "xi", regi.tl, pm_cesdata(t,regi,in,"xi") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "xi", regi.tl, pm_cesdata(t,regi,in2,"xi") /;
 
-       put sm_CES_calibration_iteration,"remind" , t.tl, in.tl , "price", regi.tl, pm_cesdata(t,regi,in,"price") /;
-       put sm_CES_calibration_iteration,"remind" , t.tl, in2.tl  , "price", regi.tl, pm_cesdata(t,regi,in2,"price") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "price", regi.tl, pm_cesdata(t,regi,in,"price") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "price", regi.tl, pm_cesdata(t,regi,in2,"price") /;
 
-       put sm_CES_calibration_iteration,"remind" , t.tl,out.tl  , "rho", regi.tl, pm_cesdata(t,regi,out,"rho") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl,out.tl  , "rho", regi.tl, pm_cesdata(t,regi,out,"rho") /;
        );
 
        loop ((index_Nr,in)$p29_capitalUnitProjections(regi, in, index_Nr),
-       put sm_CES_calibration_iteration,index_Nr.tl, "2015", in.tl , "quantity", regi.tl,  p29_capitalUnitProjections(regi,in,index_Nr) /;
+       put sm_CES_calibration_iteration:0:0,index_Nr.tl, "2015", in.tl , "quantity", regi.tl,  p29_capitalUnitProjections(regi,in,index_Nr) /;
        );
 );
 putclose;
