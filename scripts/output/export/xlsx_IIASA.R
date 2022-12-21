@@ -132,7 +132,8 @@ withCallingHandlers({ # piping messages to logFile
                           outputDirectory = outputFolder, outputPrefix = "",
                           logFile = logFile, generateSingleOutput = TRUE,
                           outputFilename = basename(OUTPUT_mif),
-                          iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
+                          iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL,
+                          generatePlots = TRUE)
 
 }, message = function(x) {
   cat(x$message, file = logFile, append = TRUE)

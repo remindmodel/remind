@@ -48,7 +48,7 @@ All the information printed to you during the run will also be present in the lo
 
 ## Step 3: check submission
 
-Check the logfile carefully for the variables that were omitted, failing summation checks etc. If you need information on a specific variable such as "Emi|CO2", you can run `piamInterfaces::variableInfo("Emi|CO2")` and it will provide a human-readable summary of the places this variable shows up in mapping templates and summation checks.
+Check the logfile carefully for the variables that were omitted, failing summation checks etc. If you need information on a specific variable such as "Emi|CO2", you can run `piamInterfaces::variableInfo("Emi|CO2")` and it will provide a human-readable summary of the places this variable shows up in mapping templates and summation checks. Running `piamInterfaces::variableInfo("Emi|CO2", template = c("AR6", "mapping.csv"))` allows to compare the mapping with the mapping template with respect to this variable.
 
 If you specify `iiasatemplate`, the scripts will delete all the variables not in the template. This can be the reason that summation checks fail, simply because some of the variables that were reported by REMIND were omitted.
 

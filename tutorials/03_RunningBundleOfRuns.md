@@ -63,6 +63,11 @@ Before you start the runs, you can test whether the right runs would be started 
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```
+If you want to check also whether the different runs compile correctly, run
+``` bash
+Rscript start.R --gamscompile config/scenario_config_XYZ.csv
+```
+
 Running the complete chain of runs, but only for one region and one iteration, can be started with:
 ```bash
 Rscript start.R --quick config/scenario_config_XYZ.csv
@@ -73,9 +78,9 @@ Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
 In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine all these options and use
 ```bash
-Rscript start.R -qit
+Rscript start.R -gqi
 ```
-as a shortcut, meaning `q` for `--quick`, `i` for `--interactive`, `t` for `--test`.
+as a shortcut, meaning `g` for `gamscompile`, `i` for `--interactive`, `q` for `--quick`. The shortcut `t` for `--test` avoids that `--gamscompile` is executed.
 
 
 Further notes:

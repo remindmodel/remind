@@ -281,8 +281,8 @@ prepare <- function() {
 
   if (file.exists(cfg$magicc_template)) {
       cat("Copying MAGICC files from",cfg$magicc_template,"to results folder\n")
-      system(paste0("cp -rp ",cfg$magicc_template," ",cfg$results_folder))
-      system(paste0("cp -rp core/magicc/* ",cfg$results_folder,"/magicc/"))
+      system(paste0("cp -nrp ",cfg$magicc_template," ",cfg$results_folder))
+      system(paste0("cp -nrp core/magicc/* ",cfg$results_folder,"/magicc/"))
     } else {
       cat("Could not copy",cfg$magicc_template,"because it does not exist\n")
     }
@@ -349,7 +349,7 @@ prepare <- function() {
   cfg$gms$c_description <- substr(cfg$description, 1, 255)
   # create modified version
   tmpModelFile <- sub(".gms", paste0("_", cfg$title, ".gms"), cfg$model)
-  file.copy(cfg$model, tmpModelFile)
+  file.copy(cfg$model, tmpModelFile, overwrite = TRUE)
   manipulateConfig(tmpModelFile, cfg$gms)
 
   ######## declare functions for updating information ####
@@ -383,10 +383,9 @@ prepare <- function() {
       '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD',
       '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R')
     content <- c(modification_warning,'','sets')
-    # write iso set with nice formatting (10 countries per line)
+    # create iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
     regions <- as.character(unique(map$RegionCode))
-    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
@@ -395,7 +394,7 @@ prepare <- function() {
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
       ) )
     }
-    # ext_regi
+    # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
     content <- c(content, '      /')
     content <- c(content, '        GLO,')
@@ -403,6 +402,8 @@ prepare <- function() {
     content <- c(content, '        ', paste(regions,collapse=','))
     content <- c(content, '      /')
     content <- c(content, ' ')
+    # declare all_regi
+    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -446,7 +447,7 @@ prepare <- function() {
               else "Your input data are outdated or in a different regional resolution",
               ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
-                          repositories = cfg$repositories, # defined in your local .Rprofile or on the cluster /p/projects/rd3mod/R/.Rprofile
+                          repositories = cfg$repositories, # defined in your environment variables
                           modelfolder  = ".",
                           debug        = FALSE,
 			  stopOnMissing = TRUE)
@@ -510,9 +511,39 @@ prepare <- function() {
 
   # Merge GAMS files
   message("\nCreating full.gms")
-  singleGAMSfile(mainfile=tmpModelFile, output = file.path(cfg$results_folder, "full.gms"))
-  # now that full.gms exists, we don't need tmpModelFile any more
-  file.remove(tmpModelFile)
+
+  # only compile the GAMS file to catch compilation errors and create a dump
+  # file with the full code
+  modelFilePathStem <- substr(tmpModelFile, 1, nchar(tmpModelFile) - 4)
+  dumpFilePath <- paste0(modelFilePathStem, ".dmp")
+  listFilePath <- paste0(modelFilePathStem, ".lst")
+  logFilePath <- paste0(modelFilePathStem, ".log")
+
+  exitcode <- system2(cfg$gamsv, c(tmpModelFile, "action=c", "dumpopt=21",
+                                   "logoption=", cfg$logoption))
+
+  # move compilation files to results directory and rename appropriately, but
+  # only if they exist.
+  from <- c(dumpFilePath, listFilePath, tmpModelFile, logFilePath)
+  to <- file.path(cfg$results_folder, c('full.gms', 'main.lst', 'main.gms',
+                                        'main.log'))
+  exist <- file.exists(from)
+  # if any of the files main.dmp, main.lst, or main.gms is missing, panic!
+  # (honestly, no idea how that could happen, but you never know)
+  if (!all(exist[1:3])) {
+      stop('Something went horribly wrong, the files ',
+           paste(from[which(!exist[1:3])], collapse = ', '),
+           ' are missing.  Call RSE immediately')
+  }
+
+  file.rename(from[exist], to[exist])
+
+  if ( 0 < exitcode ) {
+      stop("Compiling ", tmpModelFile, " failed, stopping.", "\n",
+           "Use `less -j 4 --pattern='^\\*\\*\\*\\*' ",
+           file.path(cfg$results_folder, "main.lst"), "` to investigate ",
+           "compilation errors.")
+  }
 
   # Collect run statistics (will be saved to central database in submit.R)
   lucode2::runstatistics(file = paste0(cfg$results_folder,"/runstatistics.rda"),
@@ -617,7 +648,7 @@ prepare <- function() {
                               list(c("q41_emitrade_restr_mp.M", "!!q41_emitrade_restr_mp.M")),
                               list(c("q41_emitrade_restr_mp2.M", "!!q41_emitrade_restr_mp2.M")))
 
-    #AJS this symbol is not known and crashes the run - is it depreciated? TODO
+    #AJS this symbol is not known and crashes the run - is it deprecated? TODO
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_pebiolc_price_base.L", "!!vm_pebiolc_price_base.L")))
 
@@ -821,16 +852,16 @@ prepare <- function() {
       fixings_manipulateThis <- c(fixings_manipulateThis, list(c("q35_transGDPshare.M", "!! q35_transGDPshare.M")))
     }
 
-    # renamed because of https://github.com/remindmodel/remind/pull/848
+    # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
     levs_manipulateThis <- c(levs_manipulateThis,
-                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
+                             list(c("vm_forcOs.L", "!!vm_forcOs.L")),
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
-                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
+                             list(c("vm_forcOs.M", "!!vm_forcOs.M")),
                              list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
-                            list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
-                            list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
+                             list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
+                             list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
     #filter out deprecated regipol items
     levs_manipulateThis <- c(levs_manipulateThis,
@@ -869,6 +900,27 @@ prepare <- function() {
                             list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+
+    # renamed because of https://github.com/remindmodel/remind/pull/1106
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v21_taxrevBioImport.L", "!!v21_taxrevBioImport.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
+                             list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
+                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
+
+    # renamed because of https://github.com/remindmodel/remind/pull/1128
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
+                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))    
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
+                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
+                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))   
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
@@ -1094,7 +1146,9 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
-        stoprun <- TRUE
+        if (cfg$action == "ce") {
+          stoprun <- TRUE
+        }
       } else {
         modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
         max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
@@ -1113,7 +1167,7 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst") && cfg$action == "ce") {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
       "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes

@@ -647,7 +647,7 @@ o_emissions(ttot,regi,emi)$(ttot.val ge 2005) =
 
 *** note! this still excludes industry CCS and CCU. To fix. 
 o_emissions_energy(ttot,regi,emi)$(ttot.val ge 2005) = 
-    sum(emiMkt, v_emiTeMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
+    sum(emiMkt, vm_emiTeMkt.l(ttot,regi,emi,emiMkt))*o_emi_conv(emi)
     - o_emissions_bunkers(ttot,regi,emi);
 
 *** note! this still excludes industry CCS. To fix. 
