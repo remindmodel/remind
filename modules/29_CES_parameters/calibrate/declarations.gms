@@ -69,6 +69,14 @@ q29_outputtech(all_regi,all_in,index_Nr)            "CES equation for technologi
 
 ;          
 
+*** Load calibration iteration number from environment variable
+*** cm_CES_calibration_iteration
+put_utility "shell" / "exit $cm_CES_calibration_iteration";
+sm_CES_calibration_iteration = errorlevel;
+if (sm_CES_calibration_iteration lt 1,
+  abort "sm_CES_calibration_iteration is zero.  Is cm_CES_calibration_iteration unset?";
+);
+
 file file_CES_calibration / "CES_calibration.csv" /;
 
 file_CES_calibration.ap =     1;   !! append to file
