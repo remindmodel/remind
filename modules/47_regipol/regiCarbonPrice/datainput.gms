@@ -20,34 +20,41 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
 *** initialize emiMkt Target parameters
-  p47_targetConverged(ttot2,ext_regi) = 0;
+p47_targetConverged(ttot,ext_regi) = 0;
 
-*** initialize carbon taxes before start year 
-if ( (cm_startyear gt 2005),
-  Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
-  Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
+*** initialize carbon taxes based on reference runs
+***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
+***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
+p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
 
-*** copying taxCO2eq value to emiMkt tax parameter for fixed years that contain no pm_taxemiMkt value
-  p47_taxemiMkt_init(ttot,regi,emiMkt)$((p47_taxCO2eq_ref(ttot,regi)) and (ttot.val le cm_startyear) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
+Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
+Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
 
-*** Initializing European ETS historical and reference prices
-  loop(regi$regi_groupExt("EUR_regi",regi),
-    p47_taxemiMkt_init("2005",regi,"ETS")$(cm_startyear le 2005) = 0;
-    p47_taxemiMkt_init("2010",regi,"ETS")$(cm_startyear le 2010)  = 15*sm_DptCO2_2_TDpGtC;
-    p47_taxemiMkt_init("2015",regi,"ETS")$(cm_startyear le 2015)  = 8*sm_DptCO2_2_TDpGtC;
-***  p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
-    p47_taxemiMkt_init("2020",regi,"ETS")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
 
-*** Initializing European ESR historical and reference prices
-    p47_taxemiMkt_init("2020",regi,"ES")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
-    p47_taxemiMkt_init("2020",regi,"other")$(cm_startyear le 2020)  = 30*sm_DptCO2_2_TDpGtC;
+*** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
+p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
+
+*** Overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
+*** in this case, historical prices will reflect the ETS market observed prices instead of ther values defined at pm_taxCO2eqHist  
+loop(regi$regi_groupExt("EUR_regi",regi),
+  if((cm_startyear le 2010),
+    p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
+    p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_DptCO2_2_TDpGtC;
+  );
+  if((cm_startyear le 2015),
+    p47_taxemiMkt_init("2015",regi,emiMkt) = 0;
+    p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_DptCO2_2_TDpGtC;
+  );
+  if((cm_startyear le 2020),
+    p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
+***  p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+    p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
+***    p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
+***    p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
   );
 
-*** intialize price trajectory after 2020 based on historical year prices for non policy scenarios 
-  if ( (cm_startyear le 2020),
-    p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020)  = p47_taxemiMkt_init("2020",regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-2020);
-  );
-
+*** intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
+  p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
 );
 
 *** Auxiliar parameters based on emission targets information 
@@ -211,37 +218,61 @@ p47_LULUCFEmi_GrassiShift(t,regi)$(p47_EmiLULUCFCountryAcc("2015",regi)) = (pm_m
 *** -------------------------Primary Energy Tax--------------------------
 
 *PW* charge tax on PE gas,oil,coal in energy security scenario for Germany (in trUSD/TWa) to hit Ariadne energy security price trajectories
-$ifThen.cm_EnSecScen "%cm_EnSecScen%" == "on"
-  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.4;
-  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.3;
-  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.25;
-  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.15;
-  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.1;
+$ifThen.cm_EnSecScen_price "%cm_EnSecScen_price%" == "on"
+  pm_tau_pe_tax("2025",regi,"pegas")$(sameAs(regi,"DEU")) = 0.32;
+  pm_tau_pe_tax("2030",regi,"pegas")$(sameAs(regi,"DEU")) = 0.24;
+  pm_tau_pe_tax("2035",regi,"pegas")$(sameAs(regi,"DEU")) = 0.2;
+  pm_tau_pe_tax("2040",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2045",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2050",regi,"pegas")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2055",regi,"pegas")$(sameAs(regi,"DEU")) = 0.12;
+  pm_tau_pe_tax("2060",regi,"pegas")$(sameAs(regi,"DEU")) = 0.08;
 
-  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
-  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
-  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = 0.15;
-  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = 0.2;
-  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = 0.15;
-  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = 0.1;
+  pm_tau_pe_tax("2025",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2030",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
+  pm_tau_pe_tax("2035",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
+  pm_tau_pe_tax("2040",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2045",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2050",regi,"peoil")$(sameAs(regi,"DEU")) = 0.16;
+  pm_tau_pe_tax("2055",regi,"peoil")$(sameAs(regi,"DEU")) = 0.12;
+  pm_tau_pe_tax("2060",regi,"peoil")$(sameAs(regi,"DEU")) = 0.08;
 
-  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.03;
-  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
-  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
-  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
-  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
-  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.02;
-  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
-  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.01;
-$endIf.cm_EnSecScen
+  pm_tau_pe_tax("2025",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.024;
+  pm_tau_pe_tax("2030",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
+  pm_tau_pe_tax("2035",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
+  pm_tau_pe_tax("2040",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
+  pm_tau_pe_tax("2045",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
+  pm_tau_pe_tax("2050",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.016;
+  pm_tau_pe_tax("2055",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
+  pm_tau_pe_tax("2060",regi,"pecoal")$(sameAs(regi,"DEU")) = 0.008;
+$endIf.cm_EnSecScen_price
+
+*** adapt parameters that determine the ratio of wind onshore and wind offshore installation for Germany
+*** as German government seeks to install at least 70 GW of offshore by 2045 and 160 GW onshore wind by 2040 (as of July 2022)
+*** parameter to determine temporal scale-up
+pm_shareWindOff("2010",regi)$(sameAs(regi,"DEU")) = 0.05;
+pm_shareWindOff("2015",regi)$(sameAs(regi,"DEU")) = 0.1;
+pm_shareWindOff("2020",regi)$(sameAs(regi,"DEU")) = 0.15;
+pm_shareWindOff("2025",regi)$(sameAs(regi,"DEU")) = 0.3;
+pm_shareWindOff("2030",regi)$(sameAs(regi,"DEU")) = 0.7;
+pm_shareWindOff(ttot,regi)$(ttot.val ge 2035 AND sameAs(regi,"DEU")) = 1;
+*** parameter to deteremine regional long-term share
+pm_shareWindPotentialOff2On(regi)$(sameAs(regi,"DEU")) = 0.7;
 
 *** intermediate solution for code check until ces tax gets implemented
 pm_tau_ces_tax("2025",regi,"ue_steel_primary")$(sameAs(regi,"DEU")) = 0.0;
+
+
+*** FE and ES demand trajectories from exogenous sources (not EDGE models) used for fixing via switch cm_exogDem_scen (not used in calibration)
+$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+Parameter pm_exogDemScen(ttot,all_regi,exogDemScen,all_in) "Exogenous demand trajectories to fix CES function to specific quantity trajectories"
+/
+$ondelim
+$include "./modules/47_regipol/regiCarbonPrice/input/p47_exogDemScen.cs4r"
+$offdelim
+/;
+
+$endif.ExogDemScen
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/datainput.gms

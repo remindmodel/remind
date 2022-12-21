@@ -8,20 +8,20 @@
 *** This is a standalone skeleton which should be used as template
 *** if only parts of the model should be run. It contains the basic,
 *** structural components of the model.
-*** To use it, please copy this file, give it an explaining name. 
-*** After that you can modify it based on the given requirements. 
-*** You can add own code, but also delete code 
+*** To use it, please copy this file, give it an explaining name.
+*** After that you can modify it based on the given requirements.
+*** You can add own code, but also delete code
 *** (e.g. the model statement or the provided loops) if these parts
 *** are irrelevant for your analysis.
 
 *##################### R SECTION START (VERSION INFO) ##########################
-* 
+*
 * Regionscode: 690d3718e151be1b450b394c1064b1c5
-* 
+*
 * Input data revision: 5.846
-* 
+*
 * Last modification (input data): Tue Jul 02 13:58:54 2019
-* 
+*
 *###################### R SECTION END (VERSION INFO) ###########################
 
 $title model_title
@@ -119,7 +119,7 @@ $setGlobal codePerformance  off       !! def = off
 ***--------------- declaration of parameters for switches ----------------------
 parameters
 cm_iteration_max      "number of Negishi iterations (up to 49)"
-c_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
+cm_solver_try_max      "maximum number of inner iterations within one Negishi iteration (<10)"
 c_keep_iteration_gdxes   "save intermediate iteration gdxes"
 cm_nash_autoconverge  "choice of nash convergence mode"
 cm_emiscen            "policy scenario choice"
@@ -147,7 +147,6 @@ cm_prtpScen            "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
 cm_multigasscen       "scenario on GHG portfolio to be included in permit trading scheme"
 cm_permittradescen    "scenario on permit trade"
-cm_limit_peur_scen    "limit total uranium production"
 cm_rentdiscoil        "[grades2poly] discount factor for the oil rent"
 cm_rentdiscoil2       "[grades2poly] discount factor for the oil rent achieved in 2100"
 cm_rentconvoil        "[grades2poly] number of years required to converge to the 2100 oil rent"
@@ -159,7 +158,6 @@ cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved 
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -169,7 +167,6 @@ cm_iterative_target_adj "whether or not a tax or a budget target should be itera
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
 cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
 cm_LimRock             "limit amount of rock spread each year [Gt]"
-c_tau_so2_xmpt       "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
 cm_expoLinear_yearStart "time at which carbon price increases lineraly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
@@ -198,7 +195,7 @@ cm_noReboundEffect      "Switch for allowing a rebound effect when closing the e
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 cm_iteration_max       = 1;     !! def = 1
-c_solver_try_max       = 2;     !! def = 2
+cm_solver_try_max       = 2;     !! def = 2
 c_keep_iteration_gdxes = 0;     !! def = 0
 cm_nash_autoconverge   = 1;     !! def = 1
 $setglobal cm_MAgPIE_coupling  off     !! def = "off"
@@ -234,7 +231,7 @@ cm_biolc_tech_phaseout  = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2  !! def = pop_SSP2
 $setglobal cm_GDPscen  gdp_SSP2  !! def = gdp_SSP2
-$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in core/datainput.gms based on GDPscen) 
+$setglobal c_GDPpcScen  SSP2     !! def = gdp_SSP2   (automatically adjusted in core/datainput.gms based on GDPscen)
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -244,7 +241,6 @@ cm_prtpScen         = 3;         !! def = 3
 cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
-cm_limit_peur_scen  = 1;         !! def = 1
 $setGlobal cm_oil_scen  medOil         !! def = medOil
 $setGlobal cm_gas_scen  medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
@@ -260,7 +256,6 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage              = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -271,7 +266,6 @@ cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
 cm_gs_ew                 = 20;     !! def = 20
 cm_LimRock               = 1000;   !! def = 1000
-c_tau_so2_xmpt           = 0;      !! def = 0
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
@@ -299,9 +293,7 @@ cm_noReboundEffect = 0;
 *--------------------flags------------------------------------------------------------
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel   !! def = parallel
-$setGlobal cm_OILRETIRE  off        !! def = off
 $setglobal cm_INCONV_PENALTY  on         !! def = on
-$setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
@@ -317,7 +309,6 @@ $setglobal cm_CES_configuration  indu_fixed_shares-buil_simple-tran_complex-POP_
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10   !! def = 10
-$setglobal c_CES_calibration_iteration        1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0.01    !! def = 0.01
 
@@ -413,7 +404,7 @@ execute_loadpoint 'input';
 ***p00_example = vm_example.l  !! initialize relevant parameters for the model
 
 ***--------------------------------------------------------------------------
-***    start iteration loop 
+***    start iteration loop
 ***--------------------------------------------------------------------------
 
 ***################# START HERE AN ITERATION IF NEEDED ######################
@@ -431,7 +422,7 @@ $include    "./core/bounds.gms";   !! if necessary
 *$include "./modules/EXAMPLE/REALIZATION/presolve.gms"  !! if necessary
 
 ***--------------------------------------------------------------------------
-***         SOLVE 
+***         SOLVE
 ***--------------------------------------------------------------------------
 *solve m00_EXAMPLE using nlp minimizing/maximizing v00_EXAMPLE_costs;
     o_modelstat = m00_EXAMPLE.modelstat;
@@ -452,4 +443,3 @@ $include    "./core/bounds.gms";   !! if necessary
 ***                  save gdx
 *---------------------------------------------------------------------------
 execute_unload 'fulldata';
-

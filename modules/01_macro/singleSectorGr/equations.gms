@@ -125,7 +125,7 @@ q01_prodCompl(t,regi,in,in2) $ (complements_ref(in,in2) AND (( NOT in_putty(in2)
 
 
 ***---------------------------------------------------------------------------    
-*' The capital stock is claculated recursively. Its amount in the previous time
+*' The capital stock is calculated recursively. Its amount in the previous time
 *' step is devaluated by an annual depreciation factor and enlarged by investments. 
 *' Both depreciation and investments are expressed as annual values,
 *' so the time step length is taken into account.
