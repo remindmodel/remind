@@ -29,4 +29,4 @@ pm_ue_eff_target,parameter,not needed
 pm_calibrate_eff_scale,parameter,not needed
 pm_fedemand,parameter,not needed
 pm_energy_limit
-
+sm_CES_calibration_iteration,scalar,only applicable during calibration

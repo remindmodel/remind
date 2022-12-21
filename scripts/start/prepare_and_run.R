@@ -1016,9 +1016,8 @@ run <- function(start_subsequent_runs = TRUE) {
     for (cal_itr in 1:cfg$gms$c_CES_calibration_iterations) {
       cat("CES calibration iteration: ", cal_itr, "\n")
 
-      # Update calibration iteration in GAMS file
-      system(paste0("sed -i 's/^\\(\\$setglobal c_CES_calibration_iteration ",
-                    "\\).*/\\1", cal_itr, "/' full.gms"))
+      # Update calibration iteration environment variable
+      Sys.setenv(cm_CES_calibration_iteration = cal_itr)
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
                     " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
