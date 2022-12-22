@@ -67,33 +67,6 @@ if (length(argv) > 0) {
   config.file <- argv[[1]]
 }
 
-if ("--gamscompile" %in% flags) {
-  dir.create(file.path("output", "gamscompile"), recursive = TRUE, showWarnings = FALSE)
-  runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
-    tmpModelFile <- file.path("output", "gamscompile", paste0("main_", cfg$title, ".gms"))
-    file.copy(modelFile, tmpModelFile, overwrite = TRUE)
-    manipulateConfig(tmpModelFile, cfg$gms)
-    exitcode <- system2(
-      command = cfg$gamsv,
-      args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
-                   "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
-    if (0 < exitcode) {
-      ignorederrors <<- ignorederrors + 1
-      message("FAIL ", gsub("gms$", "lst", tmpModelFile))
-      if (interactive) {
-        system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
-                    gsub("gms$", "lst", tmpModelFile)))
-        message("Do you want to rerun, because you fixed the error already? y/n")
-        if (gms::getLine() %in% c("Y", "y")) {
-          runGamsCompile(modelFile, cfg, interactive)
-      }
-      }
-    } else {
-      message("  OK ", gsub("gms$", "lst", tmpModelFile))
-    }
-  }
-}
-
 if ("--help" %in% flags) {
   message(gsub("#' ?", '', helpText))
   q()
@@ -152,7 +125,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     for (outputdir in outputdirs) {
       load(file.path("output", outputdir, "config.Rdata"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
-        runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, interactive = "--interactive" %in% flags)
+        gcresult <- runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, interactive = "--interactive" %in% flags)
+        ignorederrors <- ignorederrors + ! gcresult
         startedRuns <- startedRuns + 1
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
@@ -376,7 +350,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if ("--test" %in% flags) {
       message("   If this wasn't --test mode, I would submit ", scen, ".")
     } else if ("--gamscompile" %in% flags) {
-      runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, interactive = "--interactive" %in% flags)
+      gcresult <- runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, interactive = "--interactive" %in% flags)
+      ignorederrors <- ignorederrors + ! gcresult
     } else if (start_now) {
       submit(cfg)
     }
