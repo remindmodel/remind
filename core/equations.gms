@@ -43,7 +43,7 @@ q_costInv(t,regi)..
   sum(sector2te_addTDCost(sector,te),
     vm_costAddTeInv(t,regi,te,sector)
   )
-*** end-use technology cost placed on CES nodes to represent demand-side investment cost:
+*** end-use transformation cost of novel technologies placed on CES nodes that are to be accounted in the budget equation
   +
   sum(in$(ppfen_CESMkup(in)),
     vm_costCESMkup(t,regi,in)
@@ -180,12 +180,8 @@ q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
                +  pm_dt(ttot)/2 / pm_dataeta(ttot,regi,te)
                 * pm_omeg(regi,"2",te)
                 * vm_deltaCap(ttot,regi,te,rlf)   
-$ifthen setglobal END2110
-                      - (pm_ts(ttot) / pm_dataeta(ttot,regi,te) * pm_omeg(regi,"11",te)
-                   * 0.5*vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
-$endif
-                                )
-                        );
+                )
+            );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -319,16 +315,9 @@ q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
         +  ( pm_dt(ttot) / 2 
        * pm_omeg(regi,"2",te)
        * vm_deltaCap(ttot,regi,te,rlf)
-       )
-$ifthen setGlobal END2110
-    - ( pm_ts(ttot) / 2
-      * pm_omeg(regi,"11",te)
-      * vm_deltaCap(ttot,regi,te,rlf)
-      )$ (ord(ttot) eq card(ttot) )				   
-$endif
-);
-
-
+            )
+         )
+;
 
 q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
@@ -356,13 +345,13 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 q_windoff_low(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =g=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 q_windoff_high(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =l=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 $ENDIF.WindOff
@@ -388,8 +377,9 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 
 ***---------------------------------------------------------------------------
 *' Initial values for cumulated capacities (learning technologies only):
+*' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
 ***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)..
+q_capCumNet(t0,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4))..
   vm_capCum(t0,regi,teLearn)
   =e=
   pm_data(regi,"ccap0",teLearn);
@@ -424,7 +414,8 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
   sum(te$teReComp2pe(enty,te,rlf), (vm_capDistr(t,regi,te,rlf) / (pm_data(regi,"luse",te)/1000)));
 
 ***  learning curve for investment costs
-q_costTeCapital(t,regi,teLearn) .. 
+***  deactivate learning for tech_stat 4 technologies before 2025 as they are not built before
+q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) .. 
   vm_costTeCapital(t,regi,teLearn)
   =e=
 ***  special treatment for first time steps: using global estimates better
@@ -498,7 +489,7 @@ q_limitBiotrmod(t,regi)$(t.val > 2020)..
 q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetail(t,regi,enty,enty2,te,enty3)
   =e=
-  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
+  sum(emiMkt, vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
 ;
 
 ***--------------------------------------------------
@@ -508,7 +499,7 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se
 q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-  sum(emiMkt, v_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
@@ -519,7 +510,7 @@ q_emiTe(t,regi,emiTe(enty))..
 ***-----------------------------------------------------------------------------
 
 q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+  vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
       (
@@ -565,11 +556,11 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
 q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  v_emiTeMkt(t,regi,enty,emiMkt)
+  vm_emiTeMkt(t,regi,enty,emiMkt)
   =e=
 ***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
-      v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
+      vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
 ***   energy emissions fuel extraction
 	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
@@ -592,7 +583,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
 	=e=
-	v_emiTeMkt(t,regi,emi,emiMkt)
+	vm_emiTeMkt(t,regi,emi,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
 	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),

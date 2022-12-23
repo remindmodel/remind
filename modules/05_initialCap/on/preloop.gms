@@ -363,8 +363,6 @@ loop(regi,
   p05_eta_correct_factor(regi,"igcc")  = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"coalchp")  = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"biochp")  = p05_eta_correct_factor(regi,"pc");
-  p05_eta_correct_factor(regi,"pco")   = p05_eta_correct_factor(regi,"pc");
-  p05_eta_correct_factor(regi,"pcc")   = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"igccc") = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"ngccc") = p05_eta_correct_factor(regi,"ngcc");
     p05_eta_correct_factor(regi,"gaschp")  = p05_eta_correct_factor(regi,"ngcc");
@@ -373,12 +371,6 @@ loop(regi,
   pm_dataeta("2005",regi,"igccc")     = pm_dataeta("2005",regi,"igccc") * p05_eta_correct_factor(regi,"pc");
   pm_dataeta("2005",regi,"ngccc")     = pm_dataeta("2005",regi,"ngccc") * p05_eta_correct_factor(regi,"ngcc");
 *RP* for teEtaConst-technologies, set pm_data("eta"), and the rest will be scaled accordingly. Carefull - this is only ok if mix0 = 0, else it would override calibration values
-  if( (pm_data(regi,"mix0","pcc") eq 0),
-    pm_data(regi,"eta","pcc") =  fm_dataglob("eta","pcc") * p05_eta_correct_factor(regi,"pcc");
-  );
-  if( (pm_data(regi,"mix0","pco") eq 0),
-    pm_data(regi,"eta","pco") =  fm_dataglob("eta","pco") * p05_eta_correct_factor(regi,"pco");
-  );
   if( (pm_data(regi,"mix0","coalchp") eq 0),
     pm_data(regi,"eta","coalchp") =  fm_dataglob("eta","coalchp") * p05_eta_correct_factor(regi,"coalchp");
   );

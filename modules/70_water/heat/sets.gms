@@ -30,8 +30,6 @@ te_elcool70(all_te)   "electricity technologies that use cooling"
   igcc
   igccc
   pc
-  pcc
-  pco
   coalchp
   dot  
   biochp

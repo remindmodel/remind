@@ -6,15 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/36_buildings/simple/realization.gms
 
-*' @description 
-*' 
-*'The `simple` realization represents buildings energy demand within the CES function.
-*'It displays the energy demand for six energy carrier categories (electricity, solids, liquids, gas, district heating, hydrogen),
-*'at the final energy level.
-*'In policy scenarios, energy demand reacts to modified prices by switching to energy carriers whose relative prices decrease.
+*' @description The `simple` realization represents buildings energy demand
+*' within the CES function on a final energy level. We distinguish six energy
+*' carriers categories (electricity, solids, liquids, gas, district heating,
+*' hydrogen). Electricity if further split into (a) space heating with resitive
+*' heating, (b) space heating with heat pumps and (c) everything else (cooling,
+*' appliances & lighting, water heating and cooking). Heat pumps and district
+*' heating are attached with additional mark up costs used to represent both
+*' higher efficiency in the CES function and higher investment cost. Policies
+*' supporting a technology can be represented by lowering the respective mark
+*' up cost with respect to the calibration.
 *'
 *' @limitations This realization does not distinguish across end-uses.
-*'Also, it does not allow for substitution between energy consumption and end-use capital
+*' Also, it does not allow for substitution between energy consumption and
+*' end-use capital.
 
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "sets" $include "./modules/36_buildings/simple/sets.gms"

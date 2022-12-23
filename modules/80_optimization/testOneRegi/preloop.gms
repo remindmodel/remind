@@ -32,10 +32,10 @@ $ontext
         pm_pvp(ttot,trade) = 0;
          );
 $offtext
-        loop(regi,	    
+        loop(regi,
          pm_Xport0(ttot,regi,trade)$(NOT tradeSe(trade))  = vm_Xport.l(ttot,regi,trade);
          p80_Mport0(ttot,regi,trade)$(NOT tradeSe(trade)) = vm_Mport.l(ttot,regi,trade);
-       
+
 ***in case xport/mport is not found in gdx:
 $ontext
         if(pm_Xport0(ttot,regi,trade) eq NA,
@@ -49,7 +49,7 @@ $ontext
 $offtext
 
         p80_normalize0(ttot,regi,"good")   = vm_cons.l(ttot,regi);
-***        p80_normalize0(ttot,regi,"perm") = vm_cons.l(ttot,regi);  
+***        p80_normalize0(ttot,regi,"perm") = vm_cons.l(ttot,regi);
                     p80_normalize0(ttot,regi,"perm")$(ttot.val ge 2005) = max(abs(pm_shPerm(ttot,regi) * pm_emicapglob(ttot)) , 1E-6);
         p80_normalize0(ttot,regi,tradePe) =  0.5 * (sum(rlf,vm_fuExtr.l(ttot,regi,tradePe,rlf)) + vm_prodPe.l(ttot,regi,tradePe));
 
@@ -62,6 +62,7 @@ p80_taxrev0(ttot,regi) = vm_taxrev.l(ttot,regi);
 display "info: starting from this price path";
 display pm_pvp;
 
-
 display regi;
+
+cm_solver_try_max = max(5, cm_solver_try_max)
 *** EOF ./modules/80_optimization/testOneRegi/preloop.gms

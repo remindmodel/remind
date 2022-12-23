@@ -7,9 +7,12 @@
 *** SOF ./modules/15_climate/magicc/postsolve.gms
 
 ***---------------------------------------------------------------------------
-*' HERE goes the code for the iterative adjustment of the emission budget for SSP runs
-*' emission budgets are adjusted, such that a predefined forcing target in 2100 is met
-*' the actual 2100 forcing after each iteration is calculated by a magicc run started from GAMS
+*' The MAGICC scenario generation is set in `./core/magicc.gms`, but runs here.
+*' MAGICC is run and its output is read using different current R scripts in the external MAGICC folder
+*' that are copied to each run's folder during the preparation phase. Different parametrizations of MAGICC can also be chosen with `cm_magicc_config`,
+*' and are also handled during the preparation phase
+*'
+*' Below is the main code that handles the input prepration, running and output reading of MAGICC.
 ***---------------------------------------------------------------------------
 *' @code
 *** Generate MAGICC scenario file
@@ -25,7 +28,7 @@ Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemp
 pm_globalMeanTemperature(tall)$(tall.val gt 2300) = 0;
 
 ***---------------------------------------------------------------------------
-*' calibrate temperature (GMT anomaly) to match HADCRUT4 in 2000. 
+*' Raw temperature (GMT anomaly) from MAGICC is further calibrated to match HADCRUT4 in 2000. 
 *' This ensures that different MAGICC configurations start at the same observed temperature.
 ***---------------------------------------------------------------------------
 $ifthen.cm_magicc_calibrateTemperature2000 %cm_magicc_calibrateTemperature2000% == "HADCRUT4"
@@ -49,7 +52,11 @@ $endif.cm_magicc_calibrateTemperature2000
 *** offset from HADCRUT4 to zero temperature in 1900, instead of the default 1870 (20 year averages each).
 pm_globalMeanTemperatureZeroed1900(tall)  = pm_globalMeanTemperature(tall) + 0.092; 
 
-*** derive temperature impulse response (TIRF) from MAGICC pulse scenarios
+***---------------------------------------------------------------------------
+*' __TIRF derivation__
+*'
+*' Derive temperature impulse response (TIRF) from MAGICC pulse scenarios
+***---------------------------------------------------------------------------
 $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * the TIRF does not change much with emissions profile (see, e.g., figure in Schultes et al. 2017); 
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
@@ -62,7 +69,7 @@ if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
 $endif.cm_magicc_tirf
 
 ***---------------------------------------------------------------------------
-*' Iterative adjustment of budgets or carbon taxes to meet forcing target 
+*' __Iterative adjustment of budgets or carbon taxes to meet forcing target__
 ***---------------------------------------------------------------------------
 if (cm_iterative_target_adj eq 2, !! otherwise adjustment happens in core/postsolve.gms 
   

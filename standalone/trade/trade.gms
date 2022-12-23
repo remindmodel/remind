@@ -155,7 +155,6 @@ cm_prtpScen           "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
 cm_multigasscen       "scenario on GHG portfolio to be included in permit trading scheme"
 cm_permittradescen    "scenario on permit trade"
-cm_limit_peur_scen    "limit total uranium production"
 cm_rentdiscoil        "[grades2poly] discount factor for the oil rent"
 cm_rentdiscoil2       "[grades2poly] discount factor for the oil rent achieved in 2100"
 cm_rentconvoil        "[grades2poly] number of years required to converge to the 2100 oil rent"
@@ -167,7 +166,6 @@ cm_rentdisccoal2      "[grades2poly] discount factor for the coal rent achieved 
 cm_rentconvcoal       "[grades2poly] number of years required to converge to the 2100 coal rent"
 c_cint_scen           "additional GHG emissions from mining fossil fuels"
 cm_so2tax_scen         "level of SO2 tax"
-cm_damage              "cm_damage factor for forcing overshoot"
 cm_solwindenergyscen   "scenario for fluctuating renewables, 1 is reference, 2 is pessimistic with limits to fluctuating SE el share"
 c_techAssumptScen     "scenario for assumptions of energy technologies based on SSP scenarios, 1: SSP2 (default), 2: SSP1, 3: SSP5"
 c_ccsinjecratescen    "CCS injection rate factor, 0.5% by default yielding a 60 Mt per year IR"
@@ -177,7 +175,6 @@ cm_iterative_target_adj "whether or not a tax or a budget target should be itera
 cm_gdximport_target   "whether or not the starting value for iteratively adjusted budgets, tax scenarios, or forcing targets (emiscen 5,6,8,9) should be read in from the input.gdx"
 cm_gs_ew              "grain size (for enhanced weathering, CDR module) [micrometre]"
 cm_LimRock             "limit amount of rock spread each year [Gt]"
-c_tau_so2_xmpt       "switch for temporarily (mainly in the past) exempting chinese SO2 emissions from the SO2 tax"
 cm_expoLinear_yearStart "time at which carbon price increases lineraly instead of exponentially"
 
 c_budgetCO2FFI        "carbon budget for CO2 emissions from FFI (in GtCO2)"
@@ -208,7 +205,6 @@ cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in modu
 c_regi_nucscen				"regions to apply nucscen to"
 c_regi_capturescen			"region to apply ccapturescen to"
 c_regi_synfuelscen			"region to apply synfuelscen to"
-cm_GDPcovid                  "GDP correction for covid"
 cm_TaxConvCheck             "switch for enabling tax convergence check in nash mode"
 c_regi_sensscen				"regions which regional sensitivity parameters apply to"
 cm_biotrade_phaseout        "switch for phaseing out biomass trade in the respective regions by 2030"
@@ -219,7 +215,7 @@ cm_PriceDurSlope_elh2       "slope of price duration curve of electrolysis"
 cm_FlexTaxFeedback          "switch deciding whether flexibility tax feedback on buildlings and industry electricity prices is on"
 cm_VRE_supply_assumptions        "default (0), optimistic (1), sombre (2), or bleak (3) assumptions on VRE supply"
 cm_build_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels (default value: 6.5$/ 100 /Kwh)"
-cm_build_costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
+cm_build_H2costDecayStart     "simplified logistic function end of full value (ex. 5%  -> between 0 and 5% the function will have the value 1). [%]"
 cm_build_H2costDecayEnd     "simplified logistic function start of null value (ex. 10% -> after 10% the function will have the value 0). [%]"
 cm_indst_H2costAddH2Inv     "additional h2 distribution costs for low diffusion levels. [3.25$/ 0.1 /kWh]"
 cm_indst_costDecayStart     "simplified logistic function end of full value   (ex. 5%  -> between 0 and 5% the simplified logistic function will have the value 1). [%]"
@@ -295,7 +291,6 @@ $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
 $setglobal cm_demScen  gdp_SSP2EU  !! def = gdp_SSP2EU
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen) 
-cm_GDPcovid      = 0;            !! def = 0
 
 *AG* and *CB* for cm_startyear greater than 2005, you have to copy the fulldata.gdx (rename it to: input_ref.gdx) from the run you want to build your new run onto.
 cm_startyear      = 2005;      !! def = 2005 for a BAU, 2015 for policy runs
@@ -305,7 +300,6 @@ cm_prtpScen         = 3;         !! def = 3
 cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
-cm_limit_peur_scen  = 1;         !! def = 1
 $setGlobal cm_oil_scen  medOil         !! def = medOil
 $setGlobal cm_gas_scen  medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
@@ -321,7 +315,6 @@ cm_rentconvcoal     = 50;        !! def 50
 
 cm_so2tax_scen        = 1;         !! def =
 c_cint_scen           = 1;         !! def = 1
-cm_damage             = 0.005;     !! def = 0.005
 cm_solwindenergyscen  = 1;         !! def = 1
 c_techAssumptScen     = 1;         !! def = 1
 c_ccsinjecratescen    = 1;         !! def = 1
@@ -330,10 +323,8 @@ c_export_tax_scen     = 0;         !! def = 0
 cm_iterative_target_adj  = 0;      !! def = 0
 cm_gdximport_target      = 0;      !! def = 0
 $setglobal c_SSP_forcing_adjust  forcing_SSP2   !! def = forcing_SSP2
-$setglobal c_delayPolicy  SPA0           !! def = SPA0
 cm_gs_ew                 = 20;     !! def = 20
 cm_LimRock               = 1000;   !! def = 1000
-c_tau_so2_xmpt           = 0;      !! def = 0
 cm_expoLinear_yearStart  = 2050;   !! def = 2050
 c_budgetCO2FFI           = 1000;   !! def = 1000
 c_abtrdy                 = 2010;   !! def = 2010
@@ -368,7 +359,6 @@ cm_carbonprice_temperatureLimit       = 1.8;   !! def = 1.8
 cm_DiscRateScen        = 0;!! def = 0
 cm_noReboundEffect     = 0;
 cm_priceSensiBuild     = -3;
-$setGlobal cm_EsubGrowth         low  !! def = low
 $setGlobal c_scaleEmiHistorical  on  !! def = on
 $setGlobal cm_pushCalib  none !! def = none
 $setGlobal cm_reducCostB  none !! def = none
@@ -406,7 +396,7 @@ cm_VRE_supply_assumptions = 0; !! 0 - default, 1 - optimistic, 2 - sombre, 3 - b
 
 *** H2 simple buildings/industry switches
 cm_build_H2costAddH2Inv = 0.2;  !! def 6.5$/kg = 0.2 $/Kwh
-cm_build_costDecayStart = 0.05; !! def 5%
+cm_build_H2costDecayStart = 0.05; !! def 5%
 cm_build_H2costDecayEnd = 0.1;  !! def 10%
 
 cm_indst_H2costAddH2Inv = 0.1;  !! def 6.5$/kg = 0.2 $/Kwh
@@ -460,14 +450,11 @@ cm_deuCDRmax = -1; !! def = -1
 $SETGLOBAL cm_SlowConvergence  off        !! def = off
 $setGlobal cm_nash_mode  parallel      !! def = parallel
 $setGLobal cm_debug_preloop  off !! def = off
-$setGlobal cm_OILRETIRE  on        !! def = on
 $setglobal cm_INCONV_PENALTY  on         !! def = on
 $setglobal cm_INCONV_PENALTY_bioSwitch  off !! def = off
-$setGlobal cm_so2_out_of_opt  on         !! def = on
 $setGlobal c_skip_output  off        !! def = off
 $setGlobal cm_MOFEX  off        !! def = off
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
-$setGlobal cm_ccsfosall  off        !! def = off
 
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def=uncalibrated
@@ -480,7 +467,6 @@ $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_com
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
 $setglobal cm_calibration_string  off      !! def = off
@@ -526,8 +512,6 @@ $setglobal cm_feShareLimits  off  !! def = off
 $setglobal c_fuelprice_init  off !! def = off
 $setglobal cm_seTradeScenario  off  !! def = off
 
-$setglobal cm_altTransBunkersShare  off      !! def = off
-
 $setglobal cm_wind_offshore  0      !! def = 0
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *** --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -538,8 +522,6 @@ $setglobal cm_wind_offshore  0      !! def = 0
 *--------------------more flags-------------------------------------------------------
 *-------------------------------------------------------------------------------------
 *AG* the remaining flags outside the warning zone are usually not changed
-*GL* Flag for short time horizon
-***$setGlobal END2110             !! def = off
 $setGlobal cm_Full_Integration  off     !! def = off
 
 *-------------------------------------------------------------------------------------

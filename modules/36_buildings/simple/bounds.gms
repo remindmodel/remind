@@ -19,7 +19,7 @@ vm_demFeSector_afterTax.up('2025',regi,'seh2','feh2s','build','ES') = 1e-5;
 
 *** Assure that h2 penetration is not high in calibration so the extra t&d cost can be considered by the model. In case contrary, H2 is competitive against gas in buildings and industry even during calibration.
 $ifthen.CES_calibration "%CES_parameters%" == "calibrate"
-v36_H2share.up(t,regi) = s36_costDecayStart;
+v36_H2share.up(t,regi) = cm_build_H2costDecayStart;
 $endif.CES_calibration
 
 

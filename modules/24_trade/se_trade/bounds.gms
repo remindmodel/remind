@@ -116,12 +116,6 @@ loop(regi,
       );
 );
 
-*** FS: constrain biomass imports in EU subregions from cm_startyear or 2020 onwards to a quarter of 2015 PE bioenergy demand
-if ( cm_biotrade_phaseout eq 1,
-	vm_Mport.up(t,regi,"pebiolc")$(t.val ge cm_startyear AND t.val gt 2015 AND regi_group("EUR_regi",regi)) = 
-      pm_demPeBio("2015",regi)$(regi_group("EUR_regi",regi))/4;
-);
-
 *** Forbid bioenergy trade if 2nd gen. bioenergy should be phased out to avoid
 *** failing markets, which may in particular happening in early years, with
 *** still non-zero production
