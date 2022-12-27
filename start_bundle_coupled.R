@@ -76,6 +76,9 @@ run_compareScenarios <- "short"
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
+# Source everything from scripts/start so that all functions are available everywhere
+invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRUE), source))
+
 # Define colors for output
 red   <- "\033[0;31m"
 green <- "\033[0;32m"
@@ -157,17 +160,10 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 ####################################################
 # Read-in the switches table, use first column as row names
 
-settings_coupled <- read.csv2(path_settings_coupled, stringsAsFactors = FALSE, row.names=1, na.strings="")
-settings_remind  <- read.csv2(path_settings_remind, stringsAsFactors = FALSE, row.names=1, na.strings="")
+settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
+settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
-# Choose which scenarios to start: select rows according to "subset" and columns according to "select" (not used in the moment)
 scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
-
-# some checks for title
-if (any(nchar(rownames(scenarios_coupled)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios_coupled)[nchar(rownames(scenarios_coupled)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
-if (length(grep("\\.", rownames(scenarios_coupled))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios_coupled)[grep("\\.", rownames(scenarios_coupled))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
-if (length(grep("_$", rownames(scenarios_coupled))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios_coupled)[grep("_$", rownames(scenarios_coupled))], collapse = ", "), ". This may lead start_bundle_coupled.R to select wrong gdx files. Stopping now."))
-
 
 missing <- setdiff(rownames(scenarios_coupled),rownames(settings_remind))
 if (!identical(missing, character(0))) {
@@ -179,6 +175,7 @@ if (!identical(missing, character(0))) {
 common <- intersect(rownames(settings_remind),rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
 if (!identical(common,character(0))) {
+  message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
 } else {
@@ -186,61 +183,12 @@ if (!identical(common,character(0))) {
 }
 message("")
 
-# add lacking path_gdx columns
-miss_refpolicycost <- NULL
-if ("path_gdx_ref" %in% names(settings_remind) && ! "path_gdx_refpolicycost" %in% names(settings_remind)) {
-  settings_remind$path_gdx_refpolicycost <- settings_remind$path_gdx_ref
-  miss_refpolicycost <- c("settings_remind")
-}
-if ("path_gdx_ref" %in% names(scenarios_coupled) && ! "path_gdx_refpolicycost" %in% names(scenarios_coupled)) {
-  scenarios_coupled$path_gdx_refpolicycost <- scenarios_coupled$path_gdx_ref
-  miss_refpolicycost <- c(miss_refpolicycost, "settings_remind")
-}
-if (length(miss_refpolicycost) > 0) {
-  message("In ", paste(miss_refpolicycost, collapse = " and "),
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-}
-
-path_gdx_list <- c("path_gdx" = "input.gdx",
-                   "path_gdx_ref" = "input_ref.gdx",
-                   "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
-                   "path_gdx_bau" = "input_bau.gdx",
-                   "path_gdx_carbonprice" = "input_carbonprice.gdx")
-
-settings_remind[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings_remind)]] <- NA
-scenarios_coupled[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenarios_coupled)]] <- NA
-
 # If provided replace gdx paths given in scenario_config with paths given in scenario_config_coupled
 for (scen in common) {
   use_path_gdx <- names(path_gdx_list)[! is.na(scenarios_coupled[scen, names(path_gdx_list)])]
   if (length(use_path_gdx) > 0) {
     settings_remind[scen, use_path_gdx] <- scenarios_coupled[scen, use_path_gdx]
     message("For ", scen, ", use data specified in coupled config for: ", paste(use_path_gdx, collapse = ", "), ".")
-  }
-}
-
-# check REMIND settings
-
-# retrieve REMIND default settings including GAMS switches
-cfg <- readDefaultConfig(path_remind)
-
-knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                      "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig")
-unknownColumnNames <- names(settings_remind)[! names(settings_remind) %in% knownColumnNames]
-if (length(unknownColumnNames) > 0) {
-  message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these config file columns:")
-  message("  ", paste(unknownColumnNames, collapse = ", "))
-  message("The start script might simply ignore them. Please check if these switches are not deprecated.")
-  message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start_bundle_coupled.R.\n")
-  forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
-     "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
-     "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640"
-   )
-  for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
-    message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
-  }
-  if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
-    stop("Outdated column names found that must not be used. Stopped.")
   }
 }
 
@@ -339,7 +287,8 @@ for(scen in common){
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     next
   } else {
-    stop("REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
+    message("Error: REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
+    errorsfound <- errorsfound + 1
   }
 
 
@@ -554,5 +503,9 @@ if (! "--test" %in% flags) {
   message(cs_command)
 }
 
-message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting. Number of problems: ",
-        errorsfound, ".", ifelse("--test" %in% flags, " You are in TEST mode, only RData files were written.", ""))
+message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
+        if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
+# make sure we have a non-zero exit status if there were any errors
+if (0 < errorsfound) {
+  stop(errorsfound, " errors were identified, check logs above for details.")
+}

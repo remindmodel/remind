@@ -61,7 +61,7 @@ argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 # check if user provided any unknown arguments or config files that do not exist
 if (length(argv) > 0) {
   file_exists <- file.exists(argv)
-  if (sum(file_exists) > 1) stop("You provided two files, start.R can only handle one.")
+  if (sum(file_exists) > 1) stop("You provided more than one file, start.R can only handle one.")
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
   config.file <- argv[[1]]
@@ -99,7 +99,7 @@ if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
   Sys.sleep(1)
 }
 
-ignorederrors <- 0 # counts ignored errors in --test mode
+errorsfound <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
 modeltestRunsUsed <- 0
@@ -126,7 +126,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       load(file.path("output", outputdir, "config.Rdata"))
       if (file.exists(file.path("output", outputdir, "main.gms"))) {
         gcresult <- runGamsCompile(file.path("output", outputdir, "main.gms"), cfg, interactive = "--interactive" %in% flags)
-        ignorederrors <- ignorederrors + ! gcresult
+        errorsfound <- errorsfound + ! gcresult
         startedRuns <- startedRuns + 1
       } else {
         message(file.path("output", outputdir, "main.gms"), " not found. Skipping this folder.")
@@ -143,7 +143,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
                                                      "fulldata.gdx" = "fulldata_beforeRestart.gdx")
                     )
     message("\n", paste(names(filestomove), collapse = ", "), " will be moved and get a postfix '_beforeRestart'.\n")
-    if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+    if(! exists("slurmConfig")) {
+      slurmConfig <- choose_slurmConfig(flags = flags)
+    }
     if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
     message()
     for (outputdir in outputdirs) {
@@ -206,52 +208,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     cat(paste("\nReading config file", config.file, "\n"))
 
     # Read-in the switches table, use first column as row names
-    settings <- read.csv2(config.file, stringsAsFactors = FALSE, row.names = 1, comment.char = "#", na.strings = "")
-
-    # Add empty path_gdx_... columns if they are missing
-    path_gdx_list <- c("path_gdx" = "input.gdx",
-                       "path_gdx_ref" = "input_ref.gdx",
-                       "path_gdx_refpolicycost" = "input_refpolicycost.gdx",
-                       "path_gdx_bau" = "input_bau.gdx",
-                       "path_gdx_carbonprice" = "input_carbonprice.gdx")
-
-    if ("path_gdx_ref" %in% names(settings) && ! "path_gdx_refpolicycost" %in% names(settings)) {
-      settings$path_gdx_refpolicycost <- settings$path_gdx_ref
-      message("\nNo column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-    }
-    settings[, names(path_gdx_list)[! names(path_gdx_list) %in% names(settings)]] <- NA
-
-    # state if columns are unknown and probably will be ignored, and stop for some outdated parameters.
-    cfg <- readDefaultConfig(".")
-    knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
-                          "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig", "results_folder",
-                          "force_replace", "action")
-    unknownColumnNames <- names(settings)[! names(settings) %in% knownColumnNames]
-    if (length(unknownColumnNames) > 0) {
-      message("\nAutomated checks did not find counterparts in default.cfg or main.gms for these config file columns:")
-      message("  ", paste(unknownColumnNames, collapse = ", "))
-      message("start.R might simply ignore them. Please check if these switches are not deprecated.")
-      message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start.R.\n")
-      forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
-        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
-        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640"
-      )
-      for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
-        message("Column name ", i, " in ", config.file , " is outdated. ", forbiddenColumnNames[i])
-      }
-      if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
-        stop("Outdated column names found that must not be used. Stopped.")
-      }
-    }
+    settings <- readCheckScenarioConfig(config.file, ".")
 
     # Select scenarios that are flagged to start, some checks for titles
     if ("--interactive" %in% flags | ! any(settings$start == 1)) {
       settings$start <- gms::chooseFromList(setNames(rownames(settings), settings$start), type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
     }
     scenarios <- settings[settings$start == 1, ]
-    if (any(nchar(rownames(scenarios)) > 75)) stop(paste0("These titles are too long: ", paste0(rownames(scenarios)[nchar(rownames(scenarios)) > 75], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
-    if (length(grep("\\.", rownames(scenarios))) > 0) stop(paste0("These titles contain dots: ", paste0(rownames(scenarios)[grep("\\.", rownames(scenarios))], collapse = ", "), " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now."))
-    if (length(grep("_$", rownames(scenarios))) > 0) stop(paste0("These titles end with _: ", paste0(rownames(scenarios)[grep("_$", rownames(scenarios))], collapse = ", "), ". This may lead start.R to select wrong gdx files. Stopping now."))
   } else {
     # if no csv was provided create dummy list with default/testOneRegi as the only scenario
     if (any(c("--quick", "--testOneRegi") %in% flags)) {
@@ -269,8 +232,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     message("\nTrying to compile the selected runs...")
     lockID <- gms::model_lock()
   }
-  if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags) | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
-    slurmConfig <- choose_slurmConfig()
+  if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
+      | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
+    slurmConfig <- choose_slurmConfig(flags = flags)
     if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
@@ -335,11 +299,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     if (cfg$slurmConfig %in% c(NA, "")) {
-      if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig()
+      if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig(flags = flags)
       cfg$slurmConfig <- slurmConfig
     }
-    # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
 
+    # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
       filename <- paste0(cfg$title,".RData")
       message("   Writing cfg to file ", filename)
@@ -347,11 +311,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
     startedRuns <- startedRuns + start_now
     waitingRuns <- waitingRuns + 1 - start_now
-    if ("--test" %in% flags) {
+    if ("--test" %in% flags && start_now) {
       message("   If this wasn't --test mode, I would submit ", scen, ".")
     } else if ("--gamscompile" %in% flags) {
       gcresult <- runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, interactive = "--interactive" %in% flags)
-      ignorederrors <- ignorederrors + ! gcresult
+      errorsfound <- errorsfound + ! gcresult
     } else if (start_now) {
       submit(cfg)
     }
@@ -372,12 +336,12 @@ message("\nFinished: ", startedRuns, " runs started. ", waitingRuns, " runs are 
 if ("--gamscompile" %in% flags) {
   message("To investigate potential FAILs, run: less -j 4 --pattern='^\\*\\*\\*\\*' filename.lst")
 } else if ("--test" %in% flags) {
-  message("You are in --test mode: Rdata files were written, but no runs were started. ", ignorederrors, " errors were identified.")
+  message("You are in --test mode: Rdata files were written, but no runs were started. ", errorsfound, " errors were identified.")
 } else if (model_was_locked & (! "--restart" %in% flags | "--reprepare" %in% flags)) {
   message("The model was locked before runs were started, so they will have to queue.")
 }
 
 # make sure we have a non-zero exit status if there were any errors
-if (0 < ignorederrors) {
-  stop(ignorederrors, " errors were identified, check logs above for details.")
+if (0 < errorsfound) {
+  stop(errorsfound, " errors were identified, check logs above for details.")
 }
