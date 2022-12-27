@@ -9,7 +9,7 @@
 SETS
 target_type_47 "CO2 policy target type" / budget , year /
 
-emi_type_47 "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG_LULUCFGrassi_noBunkers /
+emi_type_47 "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG, netGHG_noLULUCF, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, netGHG_LULUCFGrassi, netGHG_LULUCFGrassi_noBunkers /
 
 *** Emission markets
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 

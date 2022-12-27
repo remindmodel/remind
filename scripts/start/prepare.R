@@ -673,15 +673,12 @@ prepare <- function() {
     # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_forcOs.L", "!!vm_forcOs.L")),
-                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("vm_forcOs.M", "!!vm_forcOs.M")),
-                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
                              list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                              list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
-                             list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
                              list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
     #filter out deprecated regipol items
@@ -732,6 +729,17 @@ prepare <- function() {
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
 
+    # renamed because of https://github.com/remindmodel/remind/pull/1128
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
+                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))    
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
+                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
+                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))   
+
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
     full_manipulateThis <- c(full_manipulateThis,
@@ -778,5 +786,4 @@ prepare <- function() {
                       timePrepareEnd   = timePrepareEnd)
 
   # on.exit sets working directory to results folder
-
 }

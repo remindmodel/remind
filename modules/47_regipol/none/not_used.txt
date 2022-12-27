@@ -8,7 +8,6 @@ name,type,reason
 sm_tgn_2_pgc,input,questionnaire
 sm_tgch4_2_pgc,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
-vm_emiTe,input,questionnaire
 vm_co2eqMkt,input,questionnaire
 vm_emiAllMkt,input,questionnaire
 vm_taxrevimplicitQttyTargetTax,input,questionnaire
@@ -72,3 +71,7 @@ pm_conv_TWa_EJ,input,questionnaire
 pm_shareWindOff,input,questionnaire
 vm_cesIO,input,added by codeCheck
 pm_exogDemScen,input,added by codeCheck
+vm_emiFgas,input,questionnaire
+vm_emiMacSector,input,questionnaire
+vm_emiTeDetailMkt,input,added by codeCheck
+vm_emiTeMkt,input,added by codeCheck

@@ -36,7 +36,7 @@ if (cm_keep_presolve_gdxes eq 1,
   loop (regi,
     execute_unload "presolve_tOR.gdx";
     put_utility logfile, "shell" /
-      "mv presolve_tOR.gdx presolve_tOR_" regi.tl "_CES-%c_CES_calibration_iteration%_Nash-" iteration.val "_Sol-" sol_itr.val ".gdx";
+      "mv presolve_tOR.gdx presolve_tOR_" regi.tl "_CES-" sm_CES_calibration_iteration "_Nash-" iteration.val "_Sol-" sol_itr.val ".gdx";
   );
   logfile.nr = sm_tmp;
   logfile.nd = sm_tmp2;

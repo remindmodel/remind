@@ -345,7 +345,7 @@ Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
 
 *** Load putty-clay quantities if relevant (initialise to 0 in case it is not)
 p29_cesIOdelta_load(t,regi,in) = 0;
-if ( (%c_CES_calibration_iteration% gt 1 OR %c_CES_calibration_new_structure% eq 0) AND (card(in_putty) gt 0),
+if ( (sm_CES_calibration_iteration gt 1 OR s29_CES_calibration_new_structure eq 0) AND (card(in_putty) gt 0),
 Execute_Loadpoint 'input'  p29_cesIOdelta_load = vm_cesIOdelta.l;
 );
 
@@ -461,7 +461,7 @@ loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
 p29_capitalPrice(t,regi) = 0.12;
 
 *** Load capital price assumption for the first iteration, otherwise take it from gdx prices
-if( %c_CES_calibration_iteration% = 1 AND %c_CES_calibration_new_structure% = 1,  pm_cesdata(t,regi,"kap","price") = p29_capitalPrice(t,regi));
+if( sm_CES_calibration_iteration eq 1 AND s29_CES_calibration_new_structure eq 1,  pm_cesdata(t,regi,"kap","price") = p29_capitalPrice(t,regi));
 
 *** In case there is one capital variable together with an energy variable in a same CES, give them the same efficiency growth pathways
 
