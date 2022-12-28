@@ -10,25 +10,29 @@
 #' @return list with scenario config content
 readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE) {
   if (testmode) {
-    cfg <- suppressWarnings(readDefaultConfig(remindPath))
+    cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
-    cfg <- readDefaultConfig(remindPath)
+    cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, row.names = 1, na.strings = "", comment.char = "#")
-  if (any(nchar(rownames(data)) > 75)) {
-    stop("These titles are too long: ",
-         paste0(rownames(scenConf)[nchar(rownames(scenConf)) > 75], collapse = ", "),
-         " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
+  errorsfound <- 0
+  if (any(nchar(rownames(scenConf)) > 75)) {
+    warning("These titles are too long: ",
+            paste0(rownames(scenConf)[nchar(rownames(scenConf)) > 75], collapse = ", "),
+            " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
+    errorsfound <- errorsfound + 1
   }
-  if (length(grep("\\.", rownames(data))) > 0) {
-    stop("These titles contain dots: ",
-         paste0(rownames(scenConf)[grep("\\.", rownames(scenConf))], collapse = ", "),
-         " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
+  if (length(grep("\\.", rownames(scenConf))) > 0) {
+    warning("These titles contain dots: ",
+            paste0(rownames(scenConf)[grep("\\.", rownames(scenConf))], collapse = ", "),
+            " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
+    errorsfound <- errorsfound + 1
   }
   if (length(grep("_$", rownames(scenConf))) > 0) {
-    stop("These titles end with _: ",
-         paste0(rownames(scenConf)[grep("_$", rownames(scenConf))], collapse = ", "),
-         ". This may lead to wrong gdx files being selected. Stopping now.")
+    warning("These titles end with _: ",
+            paste0(rownames(scenConf)[grep("_$", rownames(scenConf))], collapse = ", "),
+            ". This may lead to wrong gdx files being selected. Stopping now.")
+    errorsfound <- errorsfound + 1
   }
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
@@ -64,8 +68,10 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
     }
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
-      stop("Outdated column names found that must not be used. Stopped.")
+      warning("Outdated column names found that must not be used.")
+      errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
   }
+  if (errorsfound > 0) stop(errorsfound, " errors found.")
   return(scenConf)
 }
