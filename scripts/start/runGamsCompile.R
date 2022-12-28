@@ -17,8 +17,8 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
                  "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
   if (0 < exitcode) {
     message("FAIL ", gsub("gms$", "lst", tmpModelFile))
-    Sys.sleep(1)
     if (interactive) {
+      Sys.sleep(1)
       system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
                   gsub("gms$", "lst", tmpModelFile)))
       message("Do you want to rerun, because you fixed the error already? y/N")
