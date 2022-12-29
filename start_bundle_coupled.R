@@ -485,9 +485,10 @@ for(scen in common){
                                interactive = "--interactive" %in% flags)
     errorsfound <- errorsfound + ! gcresult
   }
-  if (errorsfound > 0) {
-    message("Errors found: run ", fullrunname, " NOT submitted to the cluster.")
-  } else if (start_now) {
+  if (start_now) {
+    if (errorsfound > 0) {
+      message("Errors found: run ", fullrunname, " NOT submitted to the cluster.")
+    } else {
       startedRuns <- startedRuns + 1
       if ("--test" %in% flags || "--gamscompile" %in% flags) {
         message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
@@ -499,11 +500,12 @@ for(scen in common){
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
       }
+    }
   } else {
       missingRefRuns <- unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na])
       message("Waiting for: ", blue, paste(intersect(knownRefRuns, missingRefRuns), collapse = ", "), NC)
       if (length(setdiff(missingRefRuns, knownRefRuns)) > 0) {
-        message("Cannot start because ", paste(setdiff(missingRefRuns, knownRefRuns), collapse = ", "), " not found!")
+        message(red, "Error", NC, ": Cannot start because ", paste(setdiff(missingRefRuns, knownRefRuns), collapse = ", "), " not found!")
         errorsfound <- errorsfound + length(setdiff(missingRefRuns, knownRefRuns))
       } else {
         waitingRuns <- waitingRuns + 1
