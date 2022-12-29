@@ -6,6 +6,10 @@
 #' @author Oliver Richters
 #' @return boolean whether compilation was successful
 runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
+  # Define colors for output
+  red   <- "\033[0;31m"
+  green <- "\033[0;32m"
+  NC    <- "\033[0m"   # No Color
   gcdir <- file.path(dirname(modelFile), "output", "gamscompile")
   dir.create(gcdir, recursive = TRUE, showWarnings = FALSE)
   tmpModelFile <- file.path(gcdir, paste0("main_", cfg$title, ".gms"))
@@ -16,7 +20,7 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
     args = paste(tmpModelFile, "-o", gsub("gms$", "lst", tmpModelFile),
                  "-action=c -errmsg=1 -pw=132 -ps=0 -logoption=0"))
   if (0 < exitcode) {
-    message("FAIL ", gsub("gms$", "lst", tmpModelFile))
+    message(red, "FAIL ", NC, gsub("gms$", "lst", tmpModelFile))
     if (interactive) {
       Sys.sleep(1)
       system(paste("less -j 4 --pattern='^\\*\\*\\*\\*'",
@@ -28,7 +32,7 @@ runGamsCompile <- function(modelFile, cfg, interactive = TRUE) {
     }
     return(FALSE)
   } else {
-    message("  OK ", gsub("gms$", "lst", tmpModelFile))
+    message(green, " OK  ", NC, gsub("gms$", "lst", tmpModelFile))
     return(TRUE)
   }
 }

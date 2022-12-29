@@ -57,10 +57,11 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by first renaming [.snapshot.Rprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment the following line by deleting `#` and change the date to today (the `_R4` is necessary if you run `R 4.0` or later):
+Direct the models to the snapshot you just created above by first renaming [.snapshot.Rprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically.
+As `snapshot`, enter the path to the snapshot you want to use (the `_R4` is necessary if you run `R 4.0` or later):
 
 ```bash
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_17_R4"
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_12_15_R4"
 ```
 
 ### What happens during a single coupled run
@@ -127,7 +128,7 @@ Required as `path_settings_coupled` is a file from [`./config/`](../config) that
 
 All the columns must be present in the `scenario_config_coupled.csv` file, but most of them can be left blank. The required ones are:
    - `title`: The name of the scenario, must be unique and match the `title` column in REMIND's `scenario_config.csv`
-   - `start`: Defines if a scenario run should be started (1) or not (0). Overrides whatever is set in REMIND's `scenario_config.csv`. If you have an unfinished coupled run, it will automatically try to continue from the last coupling iteration (i.e. REMIND or MAgPIE run), if it is not finished yet (i.e. reached `max_iterations`).
+   - `start`: Defines if a scenario run should be started (1) or not (0). Overrides whatever is set in REMIND's `scenario_config*.csv`. If you have an unfinished coupled run, it will automatically try to continue from the last coupling iteration (i.e. REMIND or MAgPIE run), if it is not finished yet (i.e. reached `max_iterations`).
    - `qos`: The SLURM qos the coupled runs should be submitted to. Currently, there is no default support for running a coupled run locally. If no `qos` is set here, the default one is `short`. Naturally, the `qos` names are likely different if you are running the models in a different cluster.
    - `magpie_scen`: A pipe (`|`) separated list of configurations to pass to MAgPIE. Each entry should correspond to a column in [MAgPIE's scenario_config](https://github.com/magpiemodel/magpie/blob/master/config/scenario_config.csv), each one of them setting the multiple configuration flags listed on that file. The configurations are applied in the order that they appear. For example, to configure MAgPIE with SSP2 settings and climate change impacts according to RCP45 set `magpie_scen` to `SSP2|cc|rcp4p5`.
    - `no_ghgprices_land_until`: Controls at which timestep in the MAgPIE runs GHG prices from REMIND will start to be applied. This essentially enables you to set whether or not (or when) GHG prices on land should be applied in MAgPIE. If you want MAgPIE to always apply the same GHG prices from REMIND, you should set this to a timestep corresponding to the start of your REMIND run, such as `y2020` to start in the 2020 timestep. If you want to disable GHG prices in MAgPIE, regardless of what REMIND finds, set this to the last timestep of the run (usually `y2150`). Values in between allow the simulation of policies where GHG prices are only applied in the land use sector after a certain year.
@@ -148,19 +149,27 @@ Other, optional columns allow you to make a run start only after another has fin
 
 ### Perform test start before actually submitting runs
 
-The `--test` (or `-t`) flag shows you if the scripts find all information that are crucial for starting the coupled runs, such as gdxes, mifs, model code. It also indicates if a run that crashed previously can be continuned and where (which model, which iteration).
+The `--test` (or `-t`) flag shows you if the scripts find all information that are crucial for starting the coupled runs, such as gdxes, mifs, model code. It also indicates if a run that crashed previously can be continued and where (which model, which iteration).
 
 ```bash
 Rscript start_bundle_coupled.R --test
 ```
 
-A shortcut for this command is `./start_bundle_coupled.R -t`.
+If you want to check whether your REMIND settings compile, run
+
+```bash
+Rscript start_bundle_coupled.R --gamscompile
+```
+
+A shortcut for these commands is `./start_bundle_coupled.R -t` and `./start_bundle_coupled.R -g`.
 
 If you provide a coupled config file as command line argument, it overwrites the settings in `start_bundle_coupled.R`:
 ```bash
 Rscript start_bundle_coupled.R --test config/scenario_config_coupled_XYZ.csv
 ```
 This assumes that the REMIND settings can be found in `config/scenario_config_XYZ.csv` without the `_coupled`.
+
+If you pass `--interactive` as a flag, the script asks you to choose the scenario to be started.
 
 ### Start runs after checking that coupling scripts finds all gdxes and mifs
 

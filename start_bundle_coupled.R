@@ -24,10 +24,14 @@ helpText <- "
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
-#' --help, -h: show this help text and exit
-#'
-#' --test, -t: Test scenario configuration and writing the RData files in
-#'             the REMIND main folder without starting the runs.
+#' --help, -h:        show this help text and exit
+#' --gamscompile, -g: compile gms of all selected runs. Combined with
+#'                    --interactive, it stops in case of compilation errors,
+#'                    allowing the user to fix them and rerun gamscompile;
+#' --interactive, -i: interactively select config file and run(s) to be
+#'                    started
+#' --test, -t:        Test scenario configuration and writing the RData files
+#'                    in the REMIND main folder without starting the runs.
 #'
 "
 
@@ -85,21 +89,9 @@ green <- "\033[0;32m"
 blue  <- "\033[0;34m"
 NC    <- "\033[0m"   # No Color
 
-message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
-message("path_magpie:           ", if (dir.exists(path_remind)) green else red, path_magpie, NC)
-message("path_settings_coupled: ", if (file.exists(path_remind)) green else red, path_settings_coupled, NC)
-message("path_settings_remind:  ", if (file.exists(path_remind)) green else red, path_settings_remind, NC)
-message("path_remind_oldruns:   ", if (dir.exists(path_remind)) green else red, path_remind_oldruns, NC)
-message("path_magpie_oldruns:   ", if (dir.exists(path_remind)) green else red, path_magpie_oldruns, NC)
-message("prefix_runname:        ", prefix_runname)
-message("max_iterations:        ", max_iterations)
-message("n600_iterations:       ", n600_iterations)
-message("run_compareScenarios:  ", run_compareScenarios)
-
 # define arguments that are accepted (test for backward compatibility)
-flags <- lucode2::readArgs("startnow", .flags = c(h = "--help", p = "--parallel", t = "--test"))
+flags <- lucode2::readArgs("startnow", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
-if (! exists("startnow")) startnow <- "1"
 if ("--help" %in% flags) {
   message(helpText)
   q()
@@ -120,7 +112,24 @@ if (length(argv) > 0) {
   if (! grep("scenario_config_coupled", path_settings_coupled))
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
+} else if (! file.exists(path_settings_coupled)) {
+  possiblecsv <- Sys.glob(c(file.path("./config/scenario_config_coupled*.csv"),
+                            file.path("./config","*","scenario_config_coupled*.csv")))
+  path_settings_coupled <- gms::chooseFromList(possiblecsv, type = "one coupled config file", returnBoolean = FALSE, multiple = FALSE)
+  path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
+  message("")
 }
+
+message("path_remind:           ", if (dir.exists(path_remind)) green else red, path_remind, NC)
+message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, path_magpie, NC)
+message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
+message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
+message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
+message("path_magpie_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_magpie_oldruns, NC)
+message("prefix_runname:        ", prefix_runname)
+message("max_iterations:        ", max_iterations)
+message("n600_iterations:       ", n600_iterations)
+message("run_compareScenarios:  ", run_compareScenarios)
 
 if (! file.exists("output")) dir.create("output")
 
@@ -163,6 +172,11 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
 settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
+if (! exists("startnow") && ("--interactive" %in% flags || ! any(settings_coupled$start == 1))) {
+  settings_coupled$start <- gms::chooseFromList(setNames(rownames(settings_coupled), settings_coupled$start),
+                            type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
+}
+if (! exists("startnow")) startnow <- "1"
 scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
 
 missing <- setdiff(rownames(scenarios_coupled),rownames(settings_remind))
@@ -174,7 +188,7 @@ if (!identical(missing, character(0))) {
 
 common <- intersect(rownames(settings_remind),rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
-if (!identical(common,character(0))) {
+if (! identical(common, character(0))) {
   message("\n################################\n")
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
@@ -287,7 +301,7 @@ for(scen in common){
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     next
   } else {
-    message("Error: REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
+    message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
     errorsfound <- errorsfound + 1
   }
 
@@ -465,17 +479,25 @@ for(scen in common){
     nr_of_regions <- 1
   }
 
-  if (start_now){
+  if ("--gamscompile" %in% flags) {
+    message("Compiling ", fullrunname)
+    gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
+                               interactive = "--interactive" %in% flags)
+    errorsfound <- errorsfound + ! gcresult
+  }
+  if (errorsfound > 0) {
+    message("Errors found: run ", fullrunname, " NOT submitted to the cluster.")
+  } else if (start_now) {
       startedRuns <- startedRuns + 1
-      if (! "--test" %in% flags) {
+      if ("--test" %in% flags || "--gamscompile" %in% flags) {
+        message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
+      } else {
         logfile <- file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
         system(paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
-      } else {
-        message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
       }
   } else {
       missingRefRuns <- unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na])
@@ -507,5 +529,5 @@ message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " run
         if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
-  stop(errorsfound, " errors were identified, check logs above for details.")
+  stop(red, errorsfound, NC, " errors were identified, check logs above for details.")
 }

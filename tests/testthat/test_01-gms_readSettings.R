@@ -1,3 +1,5 @@
-test_that("readSettings exists without warning", {
+test_that("readSettings exits without warning", {
   expect_warning(gms::readSettings("../../main.gms"), regexp = NA)
+  expect_warning(gms::readSettings("../../standalone/trade/trade.gms"), regexp = NA)
+  expect_warning(gms::readSettings("../../standalone/MOFEX/MOFEX.gms"), regexp = NA)
 })
