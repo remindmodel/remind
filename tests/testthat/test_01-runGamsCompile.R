@@ -1,4 +1,3 @@
-source("../../scripts/start/runGamsCompile.R")
 test_that("runGamsCompile works", {
   source("../../config/default.cfg")
   gmsfile <- tempfile(fileext = ".gms")
