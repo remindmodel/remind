@@ -95,7 +95,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
           if (!file.exists(isettings[iscen, path_to_gdx])){
             stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
             if (! any(c("--gamscompile", "--test") %in% flags)) stop(stoptext) else {
-              ignorederrors <<- ignorederrors + 1
+              if (exists("errorsfound")) errorsfound <<- errorsfound + 1
               message("Error: ", stoptext)
             }
           }
