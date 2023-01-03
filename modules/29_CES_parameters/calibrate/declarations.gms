@@ -6,6 +6,10 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/29_CES_parameters/calibrate/declarations.gms
 
+Scalars
+  s29_CES_calibration_new_structure    "CES structure differs from input.gdx"  /%c_CES_calibration_new_structure%/
+;
+
 Parameters
   p29_CESderivative(tall,all_regi,all_in,all_in)   "derivative of the CES function for calculating prices"
 
@@ -65,6 +69,14 @@ q29_outputtech(all_regi,all_in,index_Nr)            "CES equation for technologi
 
 ;          
 
+*** Load calibration iteration number from environment variable
+*** cm_CES_calibration_iteration
+put_utility "shell" / "exit $cm_CES_calibration_iteration";
+sm_CES_calibration_iteration = errorlevel;
+if (sm_CES_calibration_iteration lt 1,
+  abort "sm_CES_calibration_iteration is zero.  Is cm_CES_calibration_iteration unset?";
+);
+
 file file_CES_calibration / "CES_calibration.csv" /;
 
 file_CES_calibration.ap =     1;   !! append to file
@@ -75,7 +87,7 @@ file_CES_calibration.nd =     3;   !! three decimal places
 file_CES_calibration.nw =    10;   !! number width: +0.000e+00
 file_CES_calibration.pw = 32767;   !! page width
 
-if (%c_CES_calibration_iteration% eq 1,   !! c_CES_calibration_iteration
+if (sm_CES_calibration_iteration eq 1,
   !! print a comment header giving the order of production factors in the CES
   !! tree so that they can be displayed in a meaningful order in calibration
   !! reports
@@ -141,7 +153,7 @@ capital_unit.lw =  0;
 capital_unit.nw = 15;
 capital_unit.nd =  9;
 
-if (%c_CES_calibration_iteration% eq 1,
+if (sm_CES_calibration_iteration eq 1,
 put capital_unit;
 put "iteration","index","period","variable", "parameter","region","value" /;
 putclose;

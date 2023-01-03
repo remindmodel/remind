@@ -713,14 +713,6 @@ parameter
   cm_permittradescen  = 1;         !! def = 1
 *'
 parameter
-  cm_limit_peur_scen        "limit total uranium production"
-***  (0): off
-***  (1): on
-***  (2): high  tradecosts (default and SSP2)
-;
-  cm_limit_peur_scen  = 1;         !! def = 1
-*'
-parameter
   cm_rentdiscoil            "[grades2poly] discount factor for the oil rent"
 ;
   cm_rentdiscoil      = 0.2;       !! def 0.2
@@ -1222,6 +1214,7 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
+***   Important: If you set multiple yearly targets to the same region, it is highly recommended to enable the switch cm_prioRescaleFactor to avoid conflicts between the targets priorities.
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_prioRescaleFactor "factor applied to carbon tax rescale factor to prioritize short term targets in the initial 15 iterations (and vice versa latter) [0..1].
 ***   Example on how to use:
@@ -1586,18 +1579,21 @@ $setglobal cm_process_based_steel   off  !! off
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
+*' mode for solving nash problem
+*'
+*' * parallel  - all regions are run an parallel
+*' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
+$setGlobal cm_nash_mode  parallel      !! def = parallel
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off    !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
-$setglobal c_CES_calibration_iteration  1     !!  def  =  1
 $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_fixCO2price  off !! def = off
