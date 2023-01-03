@@ -88,7 +88,7 @@ q01_balLab(t,regi)..
 *** Keep in mind to adjust the calculation of derivatives and shares 
 *** in ./core/reswrite.inc if you change the structure of this function.
 ***---------------------------------------------------------------------------
-q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) ) ..
+q01_cesIO(t,regi,ipf(out))$( NOT ipf_putty(out) AND NOT in_pbs_37(out)) ..
   vm_cesIO(t,regi,out)
   =e=
   !! use exp(log(a) * b) = a ** b because the latter is not accurate in GAMS for

@@ -396,10 +396,12 @@ all_enty             "all types of quantities"
         ueelTt       "transport useful energy for electric trains"
 
         !! materials, feedstock, and industrial goods
-        steel        "Steel"
-        dri          "Directly reduced iron"
-        scrap        "Steel scrap"
-        ironore      "Iron ore"
+        prsteel      "Primary steel"
+        sesteel      "Secondary steel"
+        !!steel        "Steel"
+        !!dri          "Directly reduced iron"
+        !!scrap        "Steel scrap"
+        !!ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"

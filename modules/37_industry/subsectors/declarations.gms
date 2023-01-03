@@ -22,9 +22,12 @@ Parameters
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
+$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
+  p37_specMatsDem(mats,all_te,opModesPrcb)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+$endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-**p37_specMatsDem(mats,all_te,opModes)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-**p37_specFeDem(all_enty,all_te,opModes)                                       "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+  p37_specFeDem(all_enty,all_te)                                                 "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+  p37_mats2ue(all_enty,all_in)                                                      "Contribution of process output to ue in CES tree"
 $endif.process_based_steel
 
 *** output parameters only for reporting
@@ -51,12 +54,13 @@ Positive Variables
   vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
   v37_demMatsEcon(tall,all_regi,all_enty)                                   "External demand of materials from economy"
   v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
-  v37_prodMats(tall,all_regi,all_enty,all_te,opModes)                       "Production of materials"
-  v37_demFEMats(tall,all_regi,all_enty,all_emiMkt)                          "Final-energy demand of material-flow model"
-$endif.process_based_steel
+***not used right now
+  v37_demFEPrcb(tall,all_regi,all_enty,secInd37)                          "Final-energy demand of material-flow model"
+  v37_prodMats(tall,all_regi,all_enty)                                     "Production of materials"
+$endif.material_flows
 ;
 
 Equations
@@ -72,12 +76,14 @@ $endif.no_calibration
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
   q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
-  q37_demFEMats(tall,all_regi,all_enty,all_emiMkt)        "Final-energy demand of materail-flow model"
-$endif.process_based_steel
+***not used right now
+  q37_demFEPrcb(tall,all_regi,all_enty,secInd37)          "Final-energy demand of materail-flow model"
+  q37_mats2ue(tall,all_regi,all_enty)                              "Connect materials production to ue ces tree nodes"
+$endif.material_flows
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

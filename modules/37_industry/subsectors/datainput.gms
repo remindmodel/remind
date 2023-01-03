@@ -8,14 +8,14 @@
 
 vm_macBaseInd.l(ttot,regi,entyFE,secInd37) = 0;
 
+Parameters
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
-PARAMETERS
-  p37_specMatsDem(mats,teMats,opModes)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+$ifthen.material_flows "%cm_material_flows%" == "on"              !! cm_material_flows
+  p37_specMatsDem(mats,all_te,opModesPrcb)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /
-    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
+    !!ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
     
     dri.eaf.pri             1.0                                             !! DRI demand of EAF
     scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
@@ -27,20 +27,27 @@ PARAMETERS
     scrap.bfbof.pri         0.0
     ironore.bfbof.sec       0.0
   /
+$endif.material_flows
 
-  p37_specFeDem(entyFe,teMats,opModes)                                      "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
+  p37_specFeDem(all_enty,all_te) !!,opModesPrcb)
   /
-    feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
-    fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
-    feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
+    !!feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
+    !!fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
+    !!feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
     
-    feels.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
-    feels.eaf.sec           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
+    !!feel_steel_primary.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
+    feels.eaf          0.67                                            !! Specific electricy demand of EAF when operating with scrap.
     
-    fesos.bfbof.pri         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
-    fesos.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
+    fesos.bfbof         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
+    !!feso_steel.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
   /
-;
+
+  p37_mats2ue(all_enty,all_in) !!,opModesPrcb)
+  /
+    sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in t/a
+    prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in t/a
+  /
 $endif.process_based_steel
 
 
@@ -48,7 +55,6 @@ $endif.process_based_steel
 ***                     REST OF SUBSECTOR INDUSTRY MODULE
 ***-------------------------------------------------------------------------------
 *** substitution elasticities
-Parameter
   p37_cesdata_sigma(all_in)  "industry substitution elasticities"
   /
     ue_industry                      0.5   !! cement - chemicals - steel - other
