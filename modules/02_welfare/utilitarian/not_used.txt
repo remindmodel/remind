@@ -16,3 +16,4 @@ pm_interpolWeight_ttot_tall,input,questionnaire
 pm_tall_2_ttot,input,questionnaire
 cm_emiscen,switch,???
 cm_distrBeta,switch,???
+cm_distrAlphaDam,switch,???
