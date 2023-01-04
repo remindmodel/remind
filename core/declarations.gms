@@ -616,6 +616,8 @@ sm_globalBudget_dev                                   "actual level of global cu
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
+sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
+
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;

@@ -469,7 +469,6 @@ $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_com
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
 $setglobal cm_calibration_string  off      !! def = off
