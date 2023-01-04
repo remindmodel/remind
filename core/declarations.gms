@@ -421,7 +421,7 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
 
-vm_EnergyExp(ttot,all_regi)                     "regional energy expenditure "
+vm_energyExp(ttot,all_regi)                     "regional energy expenditure "
 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
@@ -543,10 +543,10 @@ q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energ
 $ENDIF.sehe_upper
 
 * energy expenditure
-qm_EnergyExp(ttot,all_regi)                                 "regional energy expenditure "
+q_energyExp(ttot,all_regi)                                 "regional energy expenditure "
 
 * emissions for taxes
-qm_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
+q_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
 
 
 ***----------------------------------------------------------------------------------------

@@ -51,16 +51,16 @@ $if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMk
 
 * This equation defines additional energy expenditure compared to baseline
 * 
-q02_EnergyExp_Add(ttot,regi)$(ttot.val ge cm_startyear)..
-    v02_EnergyExp_Add(ttot,regi)
+q02_energyExp_Add(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_energyExp_Add(ttot,regi)
   =e=
 * Preferred expression using energy expenditures (defined in the core)
 * It is worth 0 in the baseline (cm_emiscen=1)
-    (vm_EnergyExp(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+    (vm_energyExp(ttot,regi)-p02_energyExp_ref(ttot,regi))$(cm_emiscen ne 1)
 
 * Another expression (if we wanted to use energy system costs)
-* In that case adjust also the expression for p02_EnergyExp_ref in datainput
-*    (vm_costEnergySys(ttot,regi)-p02_EnergyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+* In that case adjust also the expression for p02_energyExp_ref in datainput
+*    (vm_costEnergySys(ttot,regi)-p02_energyExp_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 
 * This equation the ratio of additional energy expenditures over consumption
@@ -68,9 +68,9 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_energyexpShare(ttot,regi)
   =e=
 * simply divided by conso
-    v02_EnergyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
+    v02_energyExp_Add(ttot,regi)/(vm_cons(ttot,regi))
 * divided by adjusted conso
-*    (v02_EnergyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
+*    (v02_energyExp_Add(ttot,regi))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 
 ;
 
@@ -91,8 +91,15 @@ q02_relTaxlevels(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0)/vm_cons(ttot,regi)
 
 * Divided by adjusted conso
-*    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_EnergyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
+*    (v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))/(vm_cons(ttot,regi)+v02_energyExp_Add(ttot,regi)-v02_taxrev_Add(ttot,regi)$(v02_taxrev_Add.l(ttot,regi) ge 0))
 
+;
+
+* output damages calculated in the damage module are translated into consumption losses via an exogenous factor
+q02_consLossShare(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_damageConsShare(ttot,regi)
+  =e=
+    1/(p02_damConsFactor1(ttot,regi)+vm_damageFactor(ttot,regi)*p02_damConsFactor2(ttot,regi))-1
 ;
 
 * Alpha, the elasticity of energy expenditure, depends upon the region's GDP
@@ -132,6 +139,13 @@ q02_distrFinal_sigmaSq(ttot,regi)$(ttot.val ge cm_startyear)..
 
 ;
 
+***-- including damage effects in sigma ---
+q02_distrFinal_sigmaSq_postDam(ttot,regi)$(ttot.val ge cm_startyear)..
+   v02_distrFinal_sigmaSq_postDam(ttot,regi)
+ =e=
+    2*p02_ineqTheil(ttot,regi)*power((1+p02_distrBeta(ttot,regi)*v02_revShare(ttot,regi)-v02_distrAlpha(ttot,regi)*v02_energyexpShare(ttot,regi)-cm_distrAlphaDam*v02_damageConsShare(ttot,regi))/(1+v02_revShare(ttot,regi)-v02_energyexpShare(ttot,regi)-v02_damageConsShare(ttot,regi)),2)
+;
+
 ***---------------------------------------------------------------------------
 *' Defining a boundary to prevent welfare-enhancing effects
 ***---------------------------------------------------------------------------
@@ -154,11 +168,13 @@ q02_distrFinal_sigmaSq_limit(ttot,regi)$(ttot.val ge cm_startyear)..
 
 * I define sigmaSq_welfare as the maximum of sigmaSq and sigmaSq_limit
 * To do that I use a smooth approximation of the welfare function
+* FP: adjust to use the post damage Sigma
 *q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge 2015)..
 q02_distrFinal_sigmaSq_welfare(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_distrFinal_sigmaSq_welfare(ttot,regi)
         =e=
-    0.5*(v02_distrFinal_sigmaSq(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(power(v02_distrFinal_sigmaSq(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi),2)+0.00001))
+    0.5*(v02_distrFinal_sigmaSq_postDam(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(power(v02_distrFinal_sigmaSq_postDam(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi),2)+0.00001))
+*    0.5*(v02_distrFinal_sigmaSq(ttot,regi)+v02_distrFinal_sigmaSq_limit(ttot,regi)+sqrt(power(v02_distrFinal_sigmaSq(ttot,regi)-v02_distrFinal_sigmaSq_limit(ttot,regi),2)+0.00001))
 
 * test: sigma welfare equal to the level in the baseline...
 *    2*p02_ineqTheil(ttot,regi)

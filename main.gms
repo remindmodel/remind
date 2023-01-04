@@ -896,6 +896,13 @@ parameter
 ;
   c_refcapbnd          = 0;    !! def = 0
 *'
+
+parameter
+  cm_distrAlphaDam	"income elasticity of damages for inequality"
+;
+*** def = 1; 1 means damage is distributed proportional to income, i.e. distributionally neutral, 0 means equal per capita distribution of damage
+  cm_distrAlphaDam     = 1;    !! def = 1
+*'
 parameter
   cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 *** def = 0; {0,5} Selects the main Burke specification "pooled, short-run" (0) or an alternative one "pooled, long-run "(5)

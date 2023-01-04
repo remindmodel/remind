@@ -21,8 +21,12 @@ p02_distrAlpha(ttot,all_regi)                      "income elasticity of mitigat
 p02_distrBeta(ttot,all_regi)                       "income elasticity of revenues redistribution"
 
 p02_taxrev_redistr0_ref(ttot,all_regi)             "tax revenue in the reference run"
-p02_EnergyExp_ref(ttot,all_regi)                     "regional energy expenditure in the reference scenario "
+p02_energyExp_ref(ttot,all_regi)                     "regional energy expenditure in the reference scenario "
 p02_prodFe_ref(ttot,all_regi,all_enty,all_enty,all_te) "final energy in ref"
+
+p02_damConsFactor1(ttot,all_regi)		"factor translating output damages to consumption losses"
+p02_damConsFactor2(ttot,all_regi)		"factor translating output damages to consumption losses"
+pm_sccIneq(tall,all_regi)			"inequality term in SCC calculation"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 p02_inconvpen_lap(ttot,all_regi,all_te)           "Parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
@@ -42,8 +46,9 @@ vm_welfareGlob                                    "Global welfare"
 v02_taxrev_Add(ttot,all_regi)                      "tax revenue w.r.t. reference run"
 v02_energyexpShare(ttot,all_regi)                    "relative additional energy expenditure w.r.t. reference run"
 v02_revShare(ttot,all_regi)                         "tax revenues (share of consumption)"
-v02_EnergyExp_Add(ttot,all_regi)                   "additional energy expenditure w.r.t. reference run"
+v02_energyExp_Add(ttot,all_regi)                   "additional energy expenditure w.r.t. reference run"
 v02_distrAlpha(ttot,all_regi)                      "income elasticity of mitigation costs"
+v02_damageConsShare(ttot,all_regi)		  "share of consumption loss from damages in consumption"
 
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
@@ -54,8 +59,8 @@ $endif.inconv
 ;
 
 positive variables
-vm_forcOs(ttot)                                   "Forcing overshoot"
 v02_distrFinal_sigmaSq(ttot,all_regi)                  "sigma^2 parameter of final lognormal distribution (after redistributional effects of taxes)"
+v02_distrFinal_sigmaSq_postDam(ttot,all_regi)                  "sigma^2 parameter of final lognormal distribution (after redistributional effects of taxes and damages)"
 v02_distrFinal_sigmaSq_limit(ttot,all_regi)        "Limit past which inequality improvements do not lead to welfare benefits"
 v02_distrFinal_sigmaSq_welfare(ttot,all_regi)       "sigma^2 entering welfare"
 
@@ -75,15 +80,18 @@ q02_energyexpShare(ttot,all_regi)                    "additional energy exp w.r.
 q02_relTaxlevels(ttot,all_regi)                    "relative tax revenues "
 q02_taxrev_Add(ttot,all_regi)                      "tax revenue w.r.t. reference run"
 
-q02_EnergyExp_Add(ttot,all_regi)                       "regional additional energy expenditure w.r.t. reference run"
+q02_energyExp_Add(ttot,all_regi)                       "regional additional energy expenditure w.r.t. reference run"
+
+q02_consLossShare(ttot,all_regi)		"share of consumption loss from damages"
 
 q02_distrAlpha(ttot,all_regi)                      "income elasticity of mitigation costs"
 
 q02_energyexpShare_cap(ttot,all_regi)               "cap energy expenditure share"
 
 q02_distrFinal_sigmaSq(ttot,all_regi)             "sigma^2 parameter of lognormal final distribution (after costs and taxes)"
+q02_distrFinal_sigmaSq_postDam(ttot,all_regi)             "sigma^2 parameter of lognormal final distribution (after costs, taxes and damages)"
 q02_distrFinal_sigmaSq_limit(ttot,all_regi)        "sigma limit"
-q02_distrFinal_sigmaSq_welfare(ttot,all_regi)
+q02_distrFinal_sigmaSq_welfare(ttot,all_regi)	"sigma^2 entering welfare equation after applying the limit"
 
 q02_budget_first(ttot,all_regi)                 "making sure budget is positive"
 q02_budget_second(ttot,all_regi)                 "making sure budget is positive"

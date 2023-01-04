@@ -7,9 +7,6 @@
 *** SOF ./core/postsolve.gms
 
 *-------------------------------calculate regional permit prices-----------------------------------
-* Useful for tests:
-*p02_EnergyExp_Add(ttot,regi)=vm_EnergyExp.l(ttot,regi)-p02_EnergyExp_ref(ttot,regi);
-*pm_cons(ttot,regi)=vm_cons.l(ttot,regi);
 
 *** saving CO2 tax used in this iteration
 p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);

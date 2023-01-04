@@ -222,8 +222,8 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
 * 1/ Energy expenditures
 * I use max(2015,cm_startyear) because energy expenditure not working before 2015 in the baseline scenario
 * To double check, I think it was because prices were not defined before?
-qm_EnergyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
-    vm_EnergyExp(ttot,regi)
+q_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
+    vm_energyExp(ttot,regi)
     =e=
     sum(se2fe(entySe,entyFe,te),
         sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
@@ -234,7 +234,7 @@ qm_EnergyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
 * 2/ Emissions which will generate revenues
 * I follow the way emissions are summed in q_emiAllMkt while only retaining specific sources (see documentation)
 * Marian: In the future: try to remove non-energy emissions from FF and industry?
-qm_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
+q_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
     vm_emitaxredistr(ttot,regi)
     =e=
 * Summing on all markets energy emissions as well as CDR emissions.

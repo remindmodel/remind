@@ -28,14 +28,14 @@ $ENDIF.INCONV
 
 *BS* 2020-03-12: additional inputs for inequality
 * To Do: rename file, then also in "files" and moinput::fullREMIND.R
-parameter f_ineqTheil(tall,all_regi,all_GDPscen)        "Gini data"
+parameter f02_ineqTheil(tall,all_regi,all_GDPscen)        "Gini data"
 /
 $ondelim
 $include "./modules/02_welfare/ineqLognormal/input/f_ineqTheil.cs4r"
 $offdelim
 /
 ;
-p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f_ineqTheil(ttot,regi,"%cm_GDPscen%");
+p02_ineqTheil(ttot,regi)$(ttot.val ge 2005) = f02_ineqTheil(ttot,regi,"%cm_GDPscen%");
 display p02_ineqTheil;
 
 
@@ -43,11 +43,11 @@ display p02_ineqTheil;
 if ((cm_emiscen ne 1),
     Execute_Loadpoint 'input_bau' p02_taxrev_redistr0_ref=v02_taxrev_Add.l;
     Execute_Loadpoint 'input_bau' p02_cons_ref=vm_cons.l;
-    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_EnergyExp.l;
-    
-*    Former code using energy costs vm_costEnergySys as a proxy for energy expenditures:
-*    Execute_Loadpoint 'input_bau' p02_EnergyExp_ref=vm_costEnergySys.l;
-    
+    Execute_Loadpoint 'input_bau' p02_energyExp_ref=vm_energyExp.l;
+ 
+* if energy system costs are used:
+*    Execute_Loadpoint 'input_bau' p02_energyExp_ref=vm_costEnergySys.l;
+   
 );
 
 * income elasticity of tax revenues redistribution.
@@ -55,19 +55,29 @@ p02_distrBeta(ttot,regi)$(ttot.val ge 2005) = cm_distrBeta;
 
 
 * for a baseline we need the following variables to be 0:
-p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1)=0;
+p02_energyExp_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 p02_taxrev_redistr0_ref(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
-v02_EnergyExp_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
+v02_energyExp_Add.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_energyexpShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 v02_revShare.l(ttot,regi)$(cm_emiscen eq 1)=0;
 
 * For runs that are not baseline, we need to initialize:
 * taxrev_Add, because they are used in the condition sign:
 v02_taxrev_Add.l(ttot,regi)$(cm_emiscen ne 1)=0;
-* and vm_EnergyExp to the level in the baseline so the model can have a start value
-vm_EnergyExp.l(ttot,regi)$(cm_emiscen eq 1)=p02_EnergyExp_ref(ttot,regi)$(cm_emiscen eq 1);
+* and vm_energyExp to the level in the baseline so the model can have a start value
+vm_energyExp.l(ttot,regi)$(cm_emiscen eq 1)=p02_energyExp_ref(ttot,regi)$(cm_emiscen eq 1);
 
+*parameters for translating output damage into consumption loss
+parameter f02_damConsFactor(all_regi,dam_factors)    "for translating output to consumption losses from KW damage function"
+/
+$ondelim
+$include "./modules/02_welfare/ineqLognormal/input/damage2consumption_loss_coefs_noscen.inc"
+$offdelim
+/
+;
 
+p02_damConsFactor1(ttot,regi)=f02_damConsFactor(regi,"f1");
+p02_damConsFactor2(ttot,regi)=f02_damConsFactor(regi,"f2");
 
 *** EOF ./modules/02_welfare/ineqLognormal/datainput.gms
