@@ -6,6 +6,10 @@
 # |  Contact: remind@pik-potsdam.de
 
 configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile = TRUE) {
+    # Define colors for output
+    red   <- "\033[0;31m"
+    green <- "\033[0;32m"
+    NC    <- "\033[0m"   # No Color
 
     # Edit run title
     icfg$title <- iscen
@@ -92,12 +96,11 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
             }
           }
           # if the above has not created a path to a valid gdx, stop
-          if (!file.exists(isettings[iscen, path_to_gdx])){
-            stoptext <- paste0("Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ", path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a fulldata.gdx from a previous normally completed run.")
-            if (! any(c("--gamscompile", "--test") %in% flags)) stop(stoptext) else {
-              if (exists("errorsfound")) errorsfound <<- errorsfound + 1
-              message("Error: ", stoptext)
-            }
+          if (!file.exists(isettings[iscen, path_to_gdx])) {
+            icfg$errorsfoundInConfigureCfg <- sum(icfg$errorsfoundInConfigureCfg, 1)
+            message(red, "Error", NC, ": Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ",
+                    path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a ",
+                    "fulldata.gdx from a previous normally completed run.")
           }
         }
       }

@@ -274,6 +274,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if (! length(config.file) == 0) {
       cfg <- configureCfg(cfg, scen, scenarios, settings,
                           verboseGamsCompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
+      errorsfound <- sum(errorsfound, cfg$errorsfoundInConfigureCfg)
+      cfg$errorsfoundInConfigureCfg <- NULL
       # set optimization mode to testOneRegi, if specified as command line argument
       if (any(c("--quick", "--testOneRegi") %in% flags)) {
         cfg$description      <- paste("testOneRegi:", cfg$description)
@@ -317,7 +319,11 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       gcresult <- runGamsCompile(if (is.null(cfg$model)) "main.gms" else cfg$model, cfg, interactive = "--interactive" %in% flags)
       errorsfound <- errorsfound + ! gcresult
     } else if (start_now) {
-      submit(cfg)
+      if (errorsfound == 0) {
+        submit(cfg)
+      } else {
+        message("   Not started, as errors were found.")
+      }
     }
     # print names of runs to be waited and subsequent runs if there are any
     if (! start_now && ( ! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
