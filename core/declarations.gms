@@ -16,8 +16,6 @@ parameters
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
 ***
-*pm_cons(ttot,all_regi)                              "consumption parameter (needed for some tests)"
-
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
@@ -356,8 +354,6 @@ vm_costCESMkup(ttot,all_regi,all_in)                  "CES markup cost to repres
 vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "quantity target bound implemented through implict tax"
 vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
 vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "primary energy price target implemented through implict tax"
-vm_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
-
 
 ;
 
@@ -420,8 +416,6 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
-
-vm_energyExp(ttot,all_regi)                     "regional energy expenditure "
 
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
@@ -541,13 +535,6 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
-
-* energy expenditure
-q_energyExp(ttot,all_regi)                                 "regional energy expenditure "
-
-* emissions for taxes
-q_emitaxredistr(ttot,all_regi)                            "emissions that will be taxes and redistributed"
-
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------

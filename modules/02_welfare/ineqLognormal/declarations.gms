@@ -43,11 +43,13 @@ $ENDIF.INCONV_bioSwitch
 variables
 v02_welfare(all_regi)                             "Regional welfare"
 vm_welfareGlob                                    "Global welfare"
-v02_taxrev_Add(ttot,all_regi)                      "tax revenue w.r.t. reference run"
-v02_energyexpShare(ttot,all_regi)                    "relative additional energy expenditure w.r.t. reference run"
-v02_revShare(ttot,all_regi)                         "tax revenues (share of consumption)"
-v02_energyExp_Add(ttot,all_regi)                   "additional energy expenditure w.r.t. reference run"
-v02_distrAlpha(ttot,all_regi)                      "income elasticity of mitigation costs"
+v02_taxrev_Add(ttot,all_regi)                     "tax revenue w.r.t. reference run"
+v02_energyExp(ttot,all_regi)                      "regional energy expenditure "
+v02_energyexpShare(ttot,all_regi)                 "relative additional energy expenditure w.r.t. reference run"
+v02_emitaxredistr(ttot,all_regi)                  "emissions that will be taxes and redistributed"
+v02_revShare(ttot,all_regi)                       "tax revenues (share of consumption)"
+v02_energyExp_Add(ttot,all_regi)                  "additional energy expenditure w.r.t. reference run"
+v02_distrAlpha(ttot,all_regi)                     "income elasticity of mitigation costs"
 v02_damageConsShare(ttot,all_regi)		  "share of consumption loss from damages in consumption"
 
 
@@ -76,6 +78,8 @@ $ENDIF.INCONV_bioSwitch
 equations
 q02_welfareGlob                                   "Global welfare"
 q02_welfare                                       "Regional welfare"
+q02_energyExp(ttot,all_regi)                      "regional energy expenditure "
+q02_emitaxredistr(ttot,all_regi)                  "emissions that will be taxes and redistributed"
 q02_energyexpShare(ttot,all_regi)                    "additional energy exp w.r.t. reference run as a share of consumption"
 q02_relTaxlevels(ttot,all_regi)                    "relative tax revenues "
 q02_taxrev_Add(ttot,all_regi)                      "tax revenue w.r.t. reference run"

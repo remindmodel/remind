@@ -699,10 +699,10 @@ parameter
 *'
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
-*** (0): equal per capita redistribution
-*** (1): proportional redistribution
 ;
   cm_distrBeta        = 1;	   !! def = 1
+*' (0): equal per capita redistribution
+*' (1): proportional redistribution
 *'
 parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"

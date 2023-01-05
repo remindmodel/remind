@@ -213,43 +213,6 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   )
 ;
 
-***---------------------------------------------------------------------------
-*** Defining variables which are useful for the inequality module:
-*** 1/ Energy Expenditures
-*** 2/ Revenues from taxes
-***---------------------------------------------------------------------------
-
-* 1/ Energy expenditures
-* I use max(2015,cm_startyear) because energy expenditure not working before 2015 in the baseline scenario
-* To double check, I think it was because prices were not defined before?
-q_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
-    vm_energyExp(ttot,regi)
-    =e=
-    sum(se2fe(entySe,entyFe,te),
-        sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
-        vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt))
-        )
-;
-
-* 2/ Emissions which will generate revenues
-* I follow the way emissions are summed in q_emiAllMkt while only retaining specific sources (see documentation)
-* Marian: In the future: try to remove non-energy emissions from FF and industry?
-q_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
-    vm_emitaxredistr(ttot,regi)
-    =e=
-* Summing on all markets energy emissions as well as CDR emissions.
-    sum(emiMkt, 
-    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
-    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
-    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
-   )
-* Plus all non-energy emissions sources coming from FF and industrial processes:
-   	+ vm_emiMacSector(ttot,regi,"co2cement_process")
-    + sm_tgch4_2_pgc*(vm_emiMacSector(ttot,regi,"ch4coal")+vm_emiMacSector(ttot,regi,"ch4gas")+vm_emiMacSector(ttot,regi,"ch4oil"))
-    + sm_tgn_2_pgc*(vm_emiMacSector(ttot,regi,"n2otrans")+vm_emiMacSector(ttot,regi,"n2oadac")+vm_emiMacSector(ttot,regi,"n2onitac"))
-;
-
-
 *' FE balance equation including FE sectoral taxes effect
 q_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
   vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)

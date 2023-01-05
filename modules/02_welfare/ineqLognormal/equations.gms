@@ -42,6 +42,38 @@ $if "%cm_INCONV_PENALTY_FESwitch%" == "on"  - sum((entySe,entyFe,te,sector,emiMk
         )
 ;
 
+***---------------------------------------------------------------------------
+*' Defining variables which are useful for the inequality module:
+*' 1/ Energy Expenditures
+*' 2/ Revenues from taxes
+***---------------------------------------------------------------------------
+
+*NT* uses max(2015,cm_startyear) because energy expenditure not working before 2015 in the baseline scenario b/c prices not defined before(?)
+q02_energyExp(ttot,regi)$(ttot.val ge max(2015,cm_startyear))..
+    v02_energyExp(ttot,regi)
+    =e=
+    sum(se2fe(entySe,entyFe,te),
+        sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
+        vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt)*pm_FEPrice(ttot,regi,entyFe,sector,emiMkt))
+        )
+;
+
+*NT* 2/ Emissions which will generate revenues, following the way emissions are summed in q_emiAllMkt while only retaining specific sources (see documentation)
+*ML* In the future: try to remove non-energy emissions from FF and industry?
+q02_emitaxredistr(ttot,regi)$(ttot.val ge cm_startyear)..
+    v02_emitaxredistr(ttot,regi)
+    =e=
+* Summing on all markets energy emissions as well as CDR emissions.
+    sum(emiMkt, 
+    vm_emiTeMkt(ttot,regi,"co2",emiMkt)+vm_emiCdr(ttot,regi,"co2")$(sameas(emiMkt,"ETS"))
+    + sm_tgn_2_pgc   * (vm_emiTeMkt (ttot,regi,"n2o",emiMkt)+vm_emiCdr(ttot,regi,"n2o")$(sameas(emiMkt,"ETS")))
+    + sm_tgch4_2_pgc * (vm_emiTeMkt (ttot,regi,"ch4",emiMkt)+vm_emiCdr(ttot,regi,"ch4")$(sameas(emiMkt,"ETS")))
+   )
+* Plus all non-energy emissions sources coming from FF and industrial processes:
+   	+ vm_emiMacSector(ttot,regi,"co2cement_process")
+    + sm_tgch4_2_pgc*(vm_emiMacSector(ttot,regi,"ch4coal")+vm_emiMacSector(ttot,regi,"ch4gas")+vm_emiMacSector(ttot,regi,"ch4oil"))
+    + sm_tgn_2_pgc*(vm_emiMacSector(ttot,regi,"n2otrans")+vm_emiMacSector(ttot,regi,"n2oadac")+vm_emiMacSector(ttot,regi,"n2onitac"))
+;
 
 ***---------------------------------------------------------------------------
 *' Variables affecting inequalities:
@@ -56,7 +88,7 @@ q02_energyExp_Add(ttot,regi)$(ttot.val ge cm_startyear)..
   =e=
 * Preferred expression using energy expenditures (defined in the core)
 * It is worth 0 in the baseline (cm_emiscen=1)
-    (vm_energyExp(ttot,regi)-p02_energyExp_ref(ttot,regi))$(cm_emiscen ne 1)
+    (v02_energyExp(ttot,regi)-p02_energyExp_ref(ttot,regi))$(cm_emiscen ne 1)
 
 * Another expression (if we wanted to use energy system costs)
 * In that case adjust also the expression for p02_energyExp_ref in datainput
@@ -78,7 +110,7 @@ q02_energyexpShare(ttot,regi)$(ttot.val ge cm_startyear)..
 q02_taxrev_Add(ttot,regi)$(ttot.val ge cm_startyear)..
     v02_taxrev_Add(ttot,regi)
   =e=
-    ((pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*vm_emitaxredistr(ttot,regi)
+    ((pm_taxCO2eq(ttot,regi)+ pm_taxCO2eqSCC(ttot,regi)+pm_taxCO2eqHist(ttot,regi))*v02_emitaxredistr(ttot,regi)
     -p02_taxrev_redistr0_ref(ttot,regi))$(cm_emiscen ne 1)
 ;
 

@@ -9,8 +9,8 @@
 *' @description
 *' The ineqLognormal realization adds a representation of subregional inequality to the welfare equation. This is determined by the SSP-based Gini projections by Rao et al. and modified by the effects of climate damages and energy expenditure changes due to climate policy. It is also affected by the redistribution of carbon tax revenues, which can be distributed either proportional to income (distributionally neutral) or on an equal-per-capita basis.
 *####################### R SECTION START (PHASES) ##############################
-$Ifi "%phase%" == "declarations" $include "./modules/02_welfare/ineqLognormal/declarations.gms"
 $Ifi "%phase%" == "sets" $include "./modules/02_welfare/ineqLognormal/sets.gms"
+$Ifi "%phase%" == "declarations" $include "./modules/02_welfare/ineqLognormal/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/02_welfare/ineqLognormal/datainput.gms"
 $Ifi "%phase%" == "equations" $include "./modules/02_welfare/ineqLognormal/equations.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/02_welfare/ineqLognormal/bounds.gms"
