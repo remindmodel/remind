@@ -89,9 +89,11 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
   =e=
   sum(fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
-    sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in))$(NOT secInd37Prcb(secInd37)),
-        vm_cesIO(ttot,regi,in)
-      + pm_cesdata(ttot,regi,in,"offset_quantity")
+    sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_2_pf(secInd37,in)),
+      (
+          vm_cesIO(ttot,regi,in)
+        + pm_cesdata(ttot,regi,in,"offset_quantity")
+      )$((NOT secInd37Prcb(secInd37)) OR (ttot.val eq cm_startyear))
     )
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
@@ -105,7 +107,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
         !!v37_prodMats(ttot,regi,mats)
         sum(mats2ue(mats,ue_industry_dyn37(in)), 
           vm_cesIO(ttot,regi,in)/p37_mats2ue(mats,in)
-        )
+        )$(ttot.val gt cm_startyear)
       )
     )
   )
