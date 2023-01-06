@@ -115,21 +115,21 @@ loop(regi,
 if (cm_emiscen eq 9 or (cm_emiscen eq 10),
 *** TODO: take care, this means that the SCC are only priced into MAC-curve
 *** abatement if emiscen = 9 and for emiscen = 10 for CBA runs. Might want to change this.
-  pm_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
+  p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
 else
-  pm_priceCO2(ttot,regi) 
+  p_priceCO2(ttot,regi) 
   = abs(pm_pvpRegi(ttot,regi,"perm") / (pm_pvp(ttot,"good") + sm_eps))
   * 1000;
 );
 
 *** Define co2 price for entities that are used in MAC. 
-p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
+p_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
  loop(regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
-    pm_priceCO2(t,regi) = sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt)*vm_co2eqMkt.l(t,regi,emiMkt)) / sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt))* 1000;
+    p_priceCO2(t,regi) = sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt)*vm_co2eqMkt.l(t,regi,emiMkt)) / sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt))* 1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
       p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
     );
@@ -155,7 +155,7 @@ p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSect
 p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
 p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
 
-display pm_priceCO2,p_priceCO2forMAC;
+display p_priceCO2,p_priceCO2forMAC;
 ***--------------------------------------
 *** MAC baselines
 ***--------------------------------------
