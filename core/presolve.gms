@@ -129,7 +129,8 @@ p_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
  loop(regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
-    p_priceCO2(t,regi) = sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt)*vm_co2eqMkt.l(t,regi,emiMkt)) / sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt))* 1000;
+*** average CO2 price aggregated by FE
+    p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
       p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
     );
