@@ -129,8 +129,9 @@ p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
  loop(regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
+    pm_priceCO2(t,regi) = sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt)*vm_co2eqMkt.l(t,regi,emiMkt)) / sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt))* 1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
-      p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+      p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
     );
   );
  );
@@ -192,7 +193,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 *** pricing leads to significant price markups.
 
   pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = pm_priceCO2(ttot,regi) / sm_C_2_CO2;
+  = p_priceCO2forMAC(ttot,regi,"co2cement") / sm_C_2_CO2;
 
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
@@ -283,13 +284,13 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: pm_priceCO2 [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+*** Conversion: p_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
 p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
-  = min(801, ceil(max(pm_priceCO2(ttot,regi) * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(pm_priceCO2(ttot,regi) * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
+  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
   
 *** limit yearly increase of MAC usage to s_macChange
 p_macAbat_lim(ttot,regi,enty) 
