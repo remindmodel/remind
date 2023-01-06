@@ -45,7 +45,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
                         "results_folder", "force_replace", "action")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
-                          "no_ghgprices_land_until", "qos", "path_mif_ghgprice_land", "max_iterations")
+                          "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations")
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {

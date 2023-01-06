@@ -225,6 +225,8 @@ for(scen in common){
   path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
   if(is.null(qos) | is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
+  sbatch       <- scenarios_coupled[scen, "sbatch"]      # retrieve sbatch options from scenarios_coupled
+  if (is.null(sbatch) | is.na(sbatch)) sbatch <- ""       # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                  # iteration to start the coupling with
 
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
@@ -496,9 +498,11 @@ for(scen in common){
         logfile <- file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        system(paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
+        slurm_command <- paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
-        " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\""))
+        " ", sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+        message(slurm_command)
+        system(slurm_command)
       }
     }
   } else {
