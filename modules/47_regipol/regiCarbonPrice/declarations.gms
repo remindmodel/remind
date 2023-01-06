@@ -67,12 +67,6 @@ Parameter
   p47_taxemiMkt_SectorAggFE(ttot,all_regi,sector)    "CO2eq regional aggregated sectoral emission tax (aggregated by final energy)"
   p47_taxCO2eq_SectorAggFE(ttot,all_regi,sector)     "CO2eq global and regional aggregated sectoral emission taxes (aggregated by final energy)"
 ;
-
-$ifThen.prioRescaleFactor not "%cm_prioRescaleFactor%" == "off" 
-Parameter
-  s47_prioRescaleFactor   "factor to prioritize short term targets in the initial iterations (and vice versa latter) [0..1]" / %cm_prioRescaleFactor% /
-; 
-$endIf.prioRescaleFactor
  
 $endIf.emiMkt
 
