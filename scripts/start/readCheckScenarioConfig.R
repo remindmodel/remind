@@ -22,6 +22,12 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
             " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
     errorsfound <- errorsfound + 1
   }
+  if (any(nchar(rownames(scenConf)) < 4)) {
+    warning("These titles are too short: ",
+            paste0(rownames(scenConf)[nchar(rownames(scenConf)) < 4], collapse = ", "),
+            " – Titles with less than 4 characters may be confused with region names by magclass. Stopping now.")
+    errorsfound <- errorsfound + 1
+  }
   if (length(grep("\\.", rownames(scenConf))) > 0) {
     warning("These titles contain dots: ",
             paste0(rownames(scenConf)[grep("\\.", rownames(scenConf))], collapse = ", "),
