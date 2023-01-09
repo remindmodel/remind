@@ -133,7 +133,6 @@ message("prefix_runname:        ", prefix_runname)
 message("max_iterations:        ", max_iterations)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
-message("magpie_empty:          ", magpie_empty)
 
 if (! file.exists("output")) dir.create("output")
 
@@ -238,6 +237,7 @@ for(scen in common){
   sbatch       <- scenarios_coupled[scen, "sbatch"]      # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) | is.na(sbatch)) sbatch <- ""       # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                  # iteration to start the coupling with
+  magpie_empty <- scenarios_coupled[scen, "magpie_empty"]
 
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   # Look whether there is already a fulldata.gdx from a former REMIND run (check for old name if provided)
