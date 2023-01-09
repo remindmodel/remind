@@ -230,14 +230,15 @@ for(scen in common){
   message("\n################################\nPreparing run ", scen, "\n")
 
   start_now <- FALSE # initalize, will be overwritten if all conditions are satisfied
-  runname      <- paste0(prefix_runname, scen)           # name of the run that is used for the folder names
-  path_report  <- NULL                                   # sets the path to the report REMIND is started with in the first loop
-  qos          <- scenarios_coupled[scen, "qos"]         # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) | is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
-  sbatch       <- scenarios_coupled[scen, "sbatch"]      # retrieve sbatch options from scenarios_coupled
+  runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
+  path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
+  qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
+  if(is.null(qos) | is.na(qos)) qos <- "short"            # if qos could not be found in scenarios_coupled use short/medium
+  sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) | is.na(sbatch)) sbatch <- ""       # if sbatch could not be found in scenarios_coupled use empty string
-  start_iter_first <- 1                                  # iteration to start the coupling with
-  magpie_empty <- scenarios_coupled[scen, "magpie_empty"]
+  start_iter_first <- 1                                   # iteration to start the coupling with
+  magpie_empty <- scenarios_coupled[scen, "magpie_empty"] # if magpie should be replaced by an empty model
+  if (is.null(magpie_empty) | is.na(magpie_empty)) magpie_empty <- FALSE
 
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   # Look whether there is already a fulldata.gdx from a former REMIND run (check for old name if provided)
@@ -461,7 +462,8 @@ for(scen in common){
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
-         n600_iterations, path_report, qos, prefix_runname, run_compareScenarios, magpie_empty, file = Rdatafile)
+         n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
+         file = Rdatafile)
 
   } # end for (i %in% iterations)
 
