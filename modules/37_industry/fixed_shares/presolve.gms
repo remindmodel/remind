@@ -12,8 +12,6 @@ vm_macBase.fx(ttot,regi,emiInd37_fuel) = 0;
 *** adjust CO2 cement process emissions
 if (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1,
 
-***  display "CO2 price applied for Cement Demand Reduction [$/tC], check for co2cement:", pm_priceCO2forMAC;
-
   !! lowest price for which abatement equals current abatement
   pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
   = max(0,
