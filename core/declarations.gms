@@ -15,6 +15,7 @@ parameters
 
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
+***
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
@@ -305,6 +306,7 @@ p_share_seel_s(ttot,all_regi)                        "Share of electricity used 
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
 p_teAnnuity(all_te)                                  "Annuity factor of a technology"
+
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -352,6 +354,7 @@ vm_costCESMkup(ttot,all_regi,all_in)                  "CES markup cost to repres
 vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "quantity target bound implemented through implict tax"
 vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
 vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "primary energy price target implemented through implict tax"
+
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -413,6 +416,7 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
+
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
 
@@ -531,7 +535,6 @@ q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equati
 $IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
-
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------

@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/off/declarations.gms
 variables
-vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "CCS emissions from CDR [GtC / a]"
+vm_ccs_cdr(ttot,all_regi,all_enty,all_enty,all_te,rlf)    "CCS emissions from CDR [GtC per a]"
 ;
 
 *** EOF ./modules/33_CDR/off/declarations.gms
