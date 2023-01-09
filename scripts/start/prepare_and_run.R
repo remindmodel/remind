@@ -383,10 +383,9 @@ prepare <- function() {
       '*** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD',
       '*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R')
     content <- c(modification_warning,'','sets')
-    # write iso set with nice formatting (10 countries per line)
+    # create iso set with nice formatting (10 countries per line)
     tmp <- lapply(split(map$CountryCode, ceiling(seq_along(map$CountryCode)/10)),paste,collapse=",")
     regions <- as.character(unique(map$RegionCode))
-    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # Creating sets for H12 subregions
     subsets <- remind2::toolRegionSubsets(map=cfg$regionmapping,singleMatches=TRUE,removeDuplicates=FALSE)
     if(grepl("regionmapping_21_EU11", cfg$regionmapping, fixed = TRUE)){ #add EU27 region group
@@ -395,7 +394,7 @@ prepare <- function() {
         "NEU_UKI"=c("NES", "NEN", "UKI") #EU27 (without Ireland)
       ) )
     }
-    # ext_regi
+    # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
     content <- c(content, '      /')
     content <- c(content, '        GLO,')
@@ -403,6 +402,8 @@ prepare <- function() {
     content <- c(content, '        ', paste(regions,collapse=','))
     content <- c(content, '      /')
     content <- c(content, ' ')
+    # declare all_regi
+    content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
@@ -854,15 +855,12 @@ prepare <- function() {
     # renamed because of https://github.com/remindmodel/remind/pull/848, 1066
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("vm_forcOs.L", "!!vm_forcOs.L")),
-                             list(c("vm_emiTeMkt.L", "!!vm_emiTeMkt.L")),
                              list(c("v32_shSeEl.L", "!!v32_shSeEl.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("vm_forcOs.M", "!!vm_forcOs.M")),
-                             list(c("vm_emiTeMkt.M", "!!vm_emiTeMkt.M")),
                              list(c("v32_shSeEl.M", "!!v32_shSeEl.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                              list(c("vm_forcOs.FX", "!!vm_forcOs.FX")),
-                             list(c("vm_emiTeMkt.FX", "!!vm_emiTeMkt.FX")),
                              list(c("v32_shSeEl.FX", "!!v32_shSeEl.FX")))
 
     #filter out deprecated regipol items
@@ -902,6 +900,27 @@ prepare <- function() {
                             list(c("v47_emiTarget.FX", "!!v47_emiTarget.FX")),
                             list(c("v47_emiTargetMkt.FX", "!!v47_emiTargetMkt.FX")),
                             list(c("vm_taxrevimplEnergyBoundTax.FX", "!!vm_taxrevimplEnergyBoundTax.FX")))
+
+    # renamed because of https://github.com/remindmodel/remind/pull/1106
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v21_taxrevBioImport.L", "!!v21_taxrevBioImport.L")))
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
+                             list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
+                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
+
+    # renamed because of https://github.com/remindmodel/remind/pull/1128
+    levs_manipulateThis <- c(levs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
+                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))    
+    margs_manipulateThis <- c(margs_manipulateThis,
+                             list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
+                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))    
+    fixings_manipulateThis <- c(fixings_manipulateThis,
+                            list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
+                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))   
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
@@ -997,9 +1016,8 @@ run <- function(start_subsequent_runs = TRUE) {
     for (cal_itr in 1:cfg$gms$c_CES_calibration_iterations) {
       cat("CES calibration iteration: ", cal_itr, "\n")
 
-      # Update calibration iteration in GAMS file
-      system(paste0("sed -i 's/^\\(\\$setglobal c_CES_calibration_iteration ",
-                    "\\).*/\\1", cal_itr, "/' full.gms"))
+      # Update calibration iteration environment variable
+      Sys.setenv(cm_CES_calibration_iteration = cal_itr)
 
       system(paste0(cfg$gamsv, " full.gms -errmsg=1 -a=", cfg$action,
                     " -ps=0 -pw=185 -pc=2 -gdxcompress=1 -holdFixedAsync=1 -logoption=", cfg$logoption))
@@ -1127,7 +1145,9 @@ run <- function(start_subsequent_runs = TRUE) {
       }
       if(! file.exists("fulldata.gdx")) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
-        stoprun <- TRUE
+        if (cfg$action == "ce") {
+          stoprun <- TRUE
+        }
       } else {
         modelstat_fd <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_modelstat", format = "simplest"))
         max_iter_fd  <- as.numeric(readGDX(gdx = "fulldata.gdx", "o_iterationNumber", format = "simplest"))
@@ -1146,7 +1166,7 @@ run <- function(start_subsequent_runs = TRUE) {
     }
   }
 
-  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst")) {
+  if (identical(cfg$gms$optimization, "nash") && file.exists("full.lst") && cfg$action == "ce") {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
       "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes

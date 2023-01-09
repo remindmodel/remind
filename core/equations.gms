@@ -211,7 +211,7 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
     vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
   )
-; 
+;
 
 *' FE balance equation including FE sectoral taxes effect
 q_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
@@ -489,7 +489,7 @@ q_limitBiotrmod(t,regi)$(t.val > 2020)..
 q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetail(t,regi,enty,enty2,te,enty3)
   =e=
-  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
+  sum(emiMkt, vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
 ;
 
 ***--------------------------------------------------
@@ -499,7 +499,7 @@ q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se
 q_emiTe(t,regi,emiTe(enty))..
   vm_emiTe(t,regi,enty)
   =e=
-  sum(emiMkt, v_emiTeMkt(t,regi,enty,emiMkt))
+  sum(emiMkt, vm_emiTeMkt(t,regi,enty,emiMkt))
 ;
 
 ***-----------------------------------------------------------------------------
@@ -510,7 +510,7 @@ q_emiTe(t,regi,emiTe(enty))..
 ***-----------------------------------------------------------------------------
 
 q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+  vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
       (
@@ -556,11 +556,11 @@ q_emiEnFuelEx(t,regi,emiTe(enty))..
 *' Total energy-emissions per emission market, region and timestep  
 ***--------------------------------------------------
 q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
-  v_emiTeMkt(t,regi,enty,emiMkt)
+  vm_emiTeMkt(t,regi,enty,emiMkt)
   =e=
 ***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
-      v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
+      vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
 ***   energy emissions fuel extraction
 	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
@@ -583,7 +583,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
 	=e=
-	v_emiTeMkt(t,regi,emi,emiMkt)
+	vm_emiTeMkt(t,regi,emi,emiMkt)
 *** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
 *** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
 	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),

@@ -223,6 +223,7 @@ $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
 *' * (utilitarian) utilitarian aka. Benthamite social welfare function
+*' * (ineqLognormal) welfare function with subregional income distribution effects implemented with a lognormal approach
 $setGlobal welfare  utilitarian  !! def = utilitarian
 *'---------------------    04_PE_FE_parameters    ------------------------------
 *'
@@ -697,6 +698,13 @@ parameter
   cm_fetaxscen        = 3;         !! def = 3
 *'
 parameter
+  cm_distrBeta              "elasticity of tax revenue redistribution"
+;
+  cm_distrBeta        = 1;	   !! def = 1
+*' (0): equal per capita redistribution
+*' (1): proportional redistribution
+*'
+parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
 ***  (1): CO2 only
 ***  (2): all GHG
@@ -711,14 +719,6 @@ parameter
 ***  (3): limited trade (certain percentage of GDP)
 ;
   cm_permittradescen  = 1;         !! def = 1
-*'
-parameter
-  cm_limit_peur_scen        "limit total uranium production"
-***  (0): off
-***  (1): on
-***  (2): high  tradecosts (default and SSP2)
-;
-  cm_limit_peur_scen  = 1;         !! def = 1
 *'
 parameter
   cm_rentdiscoil            "[grades2poly] discount factor for the oil rent"
@@ -896,6 +896,13 @@ parameter
 ;
   c_refcapbnd          = 0;    !! def = 0
 *'
+
+parameter
+  cm_distrAlphaDam	"income elasticity of damages for inequality"
+;
+*** def = 1; 1 means damage is distributed proportional to income, i.e. distributionally neutral, 0 means equal per capita distribution of damage
+  cm_distrAlphaDam     = 1;    !! def = 1
+*'
 parameter
   cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 *** def = 0; {0,5} Selects the main Burke specification "pooled, short-run" (0) or an alternative one "pooled, long-run "(5)
@@ -980,13 +987,6 @@ parameter
 *** 1 (on), default
 ;
   cm_TaxConvCheck = 0; !! def 0, which means tax convergence check is off
-*'
-parameter
-  cm_bioprod_histlim          "regional parameter to limit biomass (pebiolc.1) production to a multiple of the 2015 production"
-*** def -1, means no additional limit to bioenergy production relative to historic production
-*** limit biomass domestic production from cm_startyear or 2020 onwards to cm_bioprod_histlim * 2015-level in a EU subregion
-;
-  cm_bioprod_histlim = -1; !! def -1
 *'
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
@@ -1075,13 +1075,6 @@ parameter
   cm_BioSupply_Adjust_EU = 3; !! def 3, 3*bioenergy supply slope obtained from input data
 *'
 parameter
-  cm_BioImportTax_EU          "factor for EU bioenergy import tax"
-***  def 1, 100% bioenergy import tax
-***  if larger zero, EU subregions pay cm_BioImportTax_EU of the world market price for in addition biomass imports after 2030 due to sustainability concerns
-;
-  cm_BioImportTax_EU = 1; !! def 0.25
-*'
-parameter
   cm_noPeFosCCDeu              "switch to suppress Pe2Se Fossil Carbon Capture in Germany"
 *** CCS limitations for Germany
 *** def 0, no suppression of Pe2Se Fossil Carbon Capture in Germany, if 1 then no pe2se fossil CO2 capture in Germany
@@ -1109,13 +1102,6 @@ parameter
 *** def 14, EDGE-T coupling starts at 14, if you want to test whether infeasibilities after EDGE-T -> set it to 1 to check after first iteration
 ;
   cm_startIter_EDGET = 14; !! def 14, by default EDGE-T is run first in iteration 14
-*'
-parameter
-  c_BaselineAgriEmiRed     "switch to lower agricultural base line emissions as fraction of standard assumption, a value of 0.25 will lower emissions by a fourth"
-*** switch to lower Baseline agriultural emissions in all regions, value is the fraction of reduction with respect to default assumptions,
-*** e.g. 0.4 means 40% lower emissions trajectory relative to default, reduction starts in 2030, reaches full reduction by 2040
-;
-  c_BaselineAgriEmiRed = 0; !! def = 0
 *'
 parameter
   cm_deuCDRmax                 "switch to limit maximum annual CDR amount in Germany in MtCO2 per y"
@@ -1186,6 +1172,15 @@ $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
 $setglobal cm_tradbio_phaseout  default  !! def = default
+*** cm_bioprod_regi_lim
+*** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
+*** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and
+*** limits in EU-regions (EUR region or EU-subregions) to 7.5 EJ/yr.
+*** For region groups (e.g. EU27_regi), regional limits will be dissaggregated by 2005 total biomass production. 
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "EU27_regi 7.5, DEU 1.5".
+$setGLobal cm_bioprod_regi_lim off !! def off
 *** cm_POPscen      "Population growth scenarios from UN data and IIASA projection used in SSP"
 *** pop_SSP1    "SSP1 population scenario"
 *** pop_SSP2    "SSP2 population scenario"
@@ -1234,6 +1229,7 @@ $setGlobal cm_regiExoPrice  off    !! def = off
 ***     cm_emiMktTarget = '2020.2050.EU27_regi.all.budget.netGHG_noBunkers 72, 2020.2050.DEU.all.year.netGHG_noBunkers 0.1'
 ***     sets a 72 GtCO2eq budget target for European 27 countries (EU27_regi), for all GHG emissions excluding bunkers between 2020 and 2050; and a 100 MtCO2 CO2eq emission target for the year 2050, for Germany"
 ***     Requires regiCarbonPrice realization in regipol module
+***   Important: If you set multiple yearly targets to the same region, it is highly recommended to enable the switch cm_prioRescaleFactor to avoid conflicts between the targets priorities.
 $setGlobal cm_emiMktTarget  off    !! def = off
 *** cm_prioRescaleFactor "factor applied to carbon tax rescale factor to prioritize short term targets in the initial 15 iterations (and vice versa latter) [0..1].
 ***   Example on how to use:
@@ -1337,6 +1333,14 @@ $setGlobal cm_EDGEtr_scen  Mix1  !! def = Mix1
 *** industry
 *** maximum secondary steel share
 $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for maximum secondary steel share
+*** cm_import_tax
+*** set tax on imports for specific regions on traded energy carriers
+*** as a fraction of import price
+*** example: "EUR.pebiolc 0.5" means bioenergy imports to EUR see 50% tax on top of world market price.
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "DEU.pegas 3, EU27_regi.pegas 1.5".
+$setGlobal cm_import_tax off !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
 *** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
@@ -1350,6 +1354,21 @@ $setGlobal cm_import_EU  off !! def off
 *** (on) ARIADNE-specific H2 imports for Germany, rest EU has H2 imports from cm_import_EU switch
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
+*** cm_trade_SE_exog
+*** set exogenuous SE trade scenarios (requires se_trade realization of modul 24 to be active)
+*** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
+*** linear scale-up of trade in 2030-2050 period.
+*** For region groups (e.g. EU27_regi), trade flows will be dissaggregated by GDP share.
+*** If you specify trade flows for a region within a region group,
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "2030.2050.MEA.EU27_regi.seh2 0.5, 2030.2050.MEA.DEU.seh2 0.3".  
+$setGlobal cm_trade_SE_exog off !! def off
+*** cm_EnSecScen             "switch for running an ARIADNE energy security scenario, introducing a tax on PE fossil energy in Germany"
+*** switch on energy security scenario for Germany (used in ARIADNE project), sets tax on fossil PE
+*** switch to activate energy security scenario assumptions for Germany including additional tax on gas/oil
+*** (on) energy security scenario for Germany
+*** (off) no energy security scenario
+$setGlobal cm_EnSecScen  off !! def off
 *** cm_EnSecScen_price        "switch on tax on PE gas to simulate continued energy crisis in Germany for ARIADNE energy security scenario"
 ***  (off) default
 ***  (on)  switch on tax on PE gas and oil from 2025 in Germany
@@ -1359,6 +1378,19 @@ $setGlobal cm_EnSecScen_price  off !! def off
 ***  (forecast_bal)   fix to forecast outputs as used in the ARIADNE scenario "Balanced"
 ***  (forecast_ensec) fix to forecast outputs as used in the ARIADNE scenario "EnSec"
 $setGlobal cm_indstExogScen  off !! def off
+*** cm_exogDem_scen
+*** switch to fix FE or ES demand represented in CES function to trajectories 
+*** from exgenous sources (not EDGE models) given in file p47_exogDemScen.
+*** This switch fixes demand without recalibration of REMIND CES parameters.
+*** This should be kept in mind when comparing those runs to baseline runs without fixing
+*** as the fixing shifts the CES function away from its optimal point based on the CES parameters used.
+*** Warning: the formulation fixing CES quantity nodes in scenarios should be used with care and parsimony. 
+*** Price and tax-induced solutions are preferable from the REMIND formulation perspective 
+*** and consequences of fixing CES tree nodes directly require further investigation. 
+*** (off)              default, no fixing
+*** (ariadne_bal)      steel and cement production trajectories for Germany used in the Ariadne "Balanced" scenario
+*** (ariadne_ensec)    steel and cement production trajectories for Germany used in the Ariadne "EnSec" (energy security) scenario
+$setGLobal cm_exogDem_scen off !! def off
 *** cm_Ger_Pol               "switch for selecting different policies for Germany used in the ARIADNE scenarios"
 *** switch for Germany-specific policies
 *** (off) default
@@ -1499,6 +1531,13 @@ $setGlobal cm_FEtax_trajectory_abs  off !! def = off
 *** example: cm_FEtax_trajectory_rel   2040.indst.feels 2 doubles FE electricity tax in industry relative to cm_startyear for all regions by 2040 and after, before: linear increase from cm_startyear to 2040
 *** (note: don't put values to 0 as this will make the model ignore the switch)
 $setGlobal cm_FEtax_trajectory_rel  off !! def = off
+*** Switch to scale agriculture baseline emissions per region relative to default (Magpie) levels
+*** example: "CHA 0.2, EUR -0.4" means 20% increase of agricultural baseline emissions in China, 40% decrease in EUR, 
+*** phase-in of the scaling is gradual over time and full scaling is reached by 2040.
+*** If you specify a value for a region within a region group (e.g. DEU in EU27_regi),
+*** then the values from the region group disaggregation will be overwritten by this region-specific value.
+*** For example: "DEU -0.2, EU27_regi -0.4".
+$setGLobal c_agricult_base_shift off !! def off
 *** wind offshore switch
 *** cm_wind_offshore  1, wind energy is represented by "wind" and "windoff", where "wind" means wind onshore. Later this will be the default and the name "wind" will be made to change to windon
 *** cm_wind_offshore  0, means wind energy is only represented by "wind", which is a mixture of both wind onshore and wind offshore
@@ -1558,18 +1597,21 @@ $setglobal cm_material_flows   off  !! off
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
 *** set conopt version. Warning: conopt4 is in beta
 $setGlobal cm_conoptv  conopt3    !! def = conopt3
+*' mode for solving nash problem
+*'
+*' * parallel  - all regions are run an parallel
+*' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
+$setGlobal cm_nash_mode  parallel      !! def = parallel
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
 $setGlobal c_scaleEmiHistorical  on  !! def = on
-$setGlobal cm_nash_mode  parallel      !! def = parallel
 $SetGlobal cm_quick_mode  off          !! def = off
 $setGLobal cm_debug_preloop  off    !! def = off
 $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
-$setglobal c_CES_calibration_iteration  1     !!  def  =  1
 $setglobal c_CES_calibration_industry_FE_target  1
 $setglobal c_testOneRegi_region  EUR       !! def = EUR
 $setglobal cm_fixCO2price  off !! def = off

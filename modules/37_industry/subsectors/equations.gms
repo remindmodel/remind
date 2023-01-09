@@ -133,10 +133,16 @@ $endif.no_calibration
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
 q37_limit_secondary_steel_share(ttot,regi)$(
          ttot.val ge cm_startyear
+
 $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
      AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
+$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off" 
+         !! do not limit steel production shares for fixed production
+     AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
+$endif.exogDem_scen 
+
                                                                             ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
   =l=

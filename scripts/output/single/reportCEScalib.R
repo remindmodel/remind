@@ -100,6 +100,11 @@ if (file.exists(filename)) {
 
 in_set = readGDX(gdx, "in", "sets")
 
+# normalize iteration numbers, which are characters because they contain "origin" and "target" as well
+CES.cal.report$iteration <- coalesce(
+  CES.cal.report$iteration %>% as.double() %>% as.character(),
+  CES.cal.report$iteration)
+
 itr <- getColValues(CES.cal.report,"iteration")
 itr_num <- sort(as.double(setdiff(itr, c("origin","target"))))
 itr <- c("origin", "target", itr_num)

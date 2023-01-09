@@ -156,7 +156,6 @@ cm_prtpScen           "pure rate of time preference standard values"
 cm_fetaxscen          "choice of final energy tax path, subsidy path and inconvenience cost path, values other than 0 make setting module 21_tax on"
 cm_multigasscen       "scenario on GHG portfolio to be included in permit trading scheme"
 cm_permittradescen    "scenario on permit trade"
-cm_limit_peur_scen    "limit total uranium production"
 cm_rentdiscoil        "[grades2poly] discount factor for the oil rent"
 cm_rentdiscoil2       "[grades2poly] discount factor for the oil rent achieved in 2100"
 cm_rentconvoil        "[grades2poly] number of years required to converge to the 2100 oil rent"
@@ -303,7 +302,6 @@ cm_prtpScen         = 3;         !! def = 3
 cm_fetaxscen        = 3;         !! def = 3
 cm_multigasscen     = 2;         !! def = 2
 cm_permittradescen  = 1;         !! def = 1
-cm_limit_peur_scen  = 1;         !! def = 1
 $setGlobal cm_oil_scen  medOil         !! def = medOil
 $setGlobal cm_gas_scen  medGas         !! def = medGas
 $setGlobal cm_coal_scen  medCoal        !! def = medCoal
@@ -471,7 +469,6 @@ $setglobal cm_CES_configuration  stat_off-indu_fixed_shares-buil_simple-tran_com
 
 $setglobal c_CES_calibration_new_structure  0    !! def =  0
 $setglobal c_CES_calibration_iterations  10    !! def = 10
-$setglobal c_CES_calibration_iteration          1    !! def =  1
 $setglobal c_CES_calibration_write_prices  0    !! def =  0
 $setglobal cm_CES_calibration_default_prices  0    !! def = 0
 $setglobal cm_calibration_string  off      !! def = off

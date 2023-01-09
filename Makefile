@@ -1,4 +1,4 @@
-.PHONY: help docs update-renv update-all-renv check check-fix
+.PHONY: help docs update-renv update-all-renv check check-fix test test-full
 .DEFAULT_GOAL := help
 
 # extracts the help text and formats it nicely
@@ -32,3 +32,13 @@ check-fix:      ## Check if the GAMS code follows the coding etiquette
                 ## and offer fixing any problems directly if possible
                 ## using gms::codeCheck
 	Rscript -e 'invisible(gms::codeCheck(strict = TRUE, interactive = TRUE))'
+
+test:           ## Test if the model compiles and runs without running a full
+                ## scenario. Tests take about 10 minutes to run.
+	$(info Tests take about 10 minutes to run, please be patient)
+	@R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
+
+test-full:      ## Additionally test if the default scenario works. Takes
+                ## significantly longer than 10 minutes to run.
+	$(info Full tests take more than an hour to run, please be patient)
+	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'

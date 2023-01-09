@@ -18,17 +18,17 @@ p40_TechBound(ttot,all_regi,all_te) = f40_TechBound(ttot,all_regi,"%cm_NDC_versi
 
 p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
-*** FS: in scenario with limited energy crop production, 
-*** switch-off biomass capacity targets of NDC 
-if (cm_bioprod_histlim ge 0,
-  p40_ElecBioBound(t,regi) = 0;
-  );
-
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
 if (cm_biolc_tech_phaseout eq 1,
   p40_ElecBioBound(t,regi) = 0;
   );
+
+*** In scenarios with regional limits to total bioenergy production
+*** switch-off biomass capacity targets of NDC
+$IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
+  p40_ElecBioBound(t,regi) = 0;
+$ENDIF.bioprod_regi_lim
 
 *** inputs for hard-coded share targets: they only apply if the respective country (or EU28) is a native region in the chosen REMIND setting
 *** otherwise, they are not considered in the model
