@@ -76,6 +76,9 @@ n600_iterations <- 0 # max_iterations
 # run a compareScenario for each scenario comparing all rem-x: Choose qos (short, priority) or set to FALSE
 run_compareScenarios <- "short"
 
+# use an empty magpie model (just reproduces the latest AMT results)
+magpie_empty <- FALSE
+
 ########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
@@ -130,6 +133,7 @@ message("prefix_runname:        ", prefix_runname)
 message("max_iterations:        ", max_iterations)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
+message("magpie_empty:          ", magpie_empty)
 
 if (! file.exists("output")) dir.create("output")
 
@@ -210,6 +214,12 @@ if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
     && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
       message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
       message("They may not be able to run in parallel on the PIK cluster.")
+}
+
+if ("max_iterations" %in% colnames(scenarios_coupled)) {
+  if (nrow(unique(scenarios_coupled["max_iterations"])) > 1) {
+    stop("You have specified different `max_iterations` for different scenarios, that is not supported.")
+  }
 }
 
 ####################################################
@@ -451,7 +461,7 @@ for(scen in common){
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
-         n600_iterations, path_report, qos, prefix_runname, run_compareScenarios, file = Rdatafile)
+         n600_iterations, path_report, qos, prefix_runname, run_compareScenarios, magpie_empty, file = Rdatafile)
 
   } # end for (i %in% iterations)
 

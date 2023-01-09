@@ -52,7 +52,7 @@ debug_coupled <- function(model = NULL, cfg) {
 
 start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations = 5, start_iter = 1,
                           n600_iterations = 0, report = NULL, qos, fullrunname = FALSE,
-                          prefix_runname = "C_", run_compareScenarios = TRUE) {
+                          prefix_runname = "C_", run_compareScenarios = TRUE, magpie_empty = FALSE) {
   require(lucode2)
   require(gms)
   require(magclass)
@@ -205,6 +205,17 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     source("scripts/start_functions.R")
     cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
     cfg_mag$title          <- paste0(runname,"-mag-",i)
+
+    if (magpie_empty) {
+      # Find latest fulldata.gdx from automated model test (AMT) runs
+      amtRunDirs <- list.files("/p/projects/landuse/tests/magpie/output",
+                              pattern = "default_\\d{4}-\\d{2}-\\d{2}_\\d{2}\\.\\d{2}.\\d{2}",
+                              full.names = TRUE)
+      fullDataGdxs <- file.path(amtRunDirs, "fulldata.gdx")
+      latestFullData <- sort(fullDataGdxs[file.exists(fullDataGdxs)], decreasing = TRUE)[[1]]
+      cfg_mag <- configureEmptyModel(cfg_mag, latestFullData)  # defined in start_functions.R
+      # cfg_mag$output <- 
+    }
 
     # Increase MAgPIE resolution n600_iterations before final iteration so that REMIND
     # runs n600_iterations iterations using results from MAgPIE with higher resolution
@@ -364,8 +375,10 @@ load(coupled_config)
 if (! exists("fullrunname")) fullrunname <- runname
 if (! exists("prefix_runname")) prefix_runname <- "C_"
 if (! exists("run_compareScenarios")) run_compareScenarios <- "short"
+if (! exists("magpie_empty")) magpie_empty <- FALSE
 start_coupled(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations, start_iter,
-              n600_iterations, path_report, qos, fullrunname, prefix_runname, run_compareScenarios)
+              n600_iterations, path_report, qos, fullrunname, prefix_runname, run_compareScenarios,
+              magpie_empty)
 
 message("### Print warnings ###")
 warnings()
