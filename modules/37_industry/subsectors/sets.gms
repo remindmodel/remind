@@ -76,6 +76,17 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 $endif.process_based_steel
   /
 
+entyFePrcb(all_enty)  "FE carriers in industry which are included in process-based modelling"
+  /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+    feels
+    fesos
+    fegas
+    fehos
+    feh2s
+$endif.process_based_steel
+  /
+
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   secInd37_tePrcb(secInd37,tePrcb)      "Mapping of technologies onto industry subsectors"
   /

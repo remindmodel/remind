@@ -57,10 +57,11 @@ Positive Variables
 $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
   v37_demMatsEcon(tall,all_regi,all_enty)                                   "External demand of materials from economy"
   v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
-***not used right now
+$endif.material_flows
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   v37_demFEPrcb(tall,all_regi,all_enty,secInd37)                          "Final-energy demand of material-flow model"
   v37_prodMats(tall,all_regi,all_enty)                                     "Production of materials"
-$endif.material_flows
+$endif.process_based_steel
 ;
 
 Equations
@@ -80,10 +81,11 @@ $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_mater
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
   q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
-***not used right now
+$endif.material_flows
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_demFEPrcb(tall,all_regi,all_enty,secInd37)          "Final-energy demand of materail-flow model"
   q37_mats2ue(tall,all_regi,all_enty)                              "Connect materials production to ue ces tree nodes"
-$endif.material_flows
+$endif.process_based_steel
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms

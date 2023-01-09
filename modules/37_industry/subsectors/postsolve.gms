@@ -18,21 +18,36 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 *** subsectors)
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
   = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt)), 
+                         secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR (ttot.val eq cm_startyear)), 
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
-    );
+    )
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+    +
+  sum(secInd37_emiMkt(secInd37Prcb,emiMkt),
+    v37_demFePrcb.l(ttot,regi,entyFE,secInd37Prcb)
+  )$(entyFePrcb(entyFE) AND (ttot.val gt cm_startyear))
+$endif.process_based_steel
+;
 
 *** share of subsector in FE industry energy carriers and emissions markets
 o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$( 
                                     o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
-  = sum(( fe2ppfEn37(entyFe,in),
+  = 
+  ( sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
           secInd37_emiMkt(secInd37,emiMkt)), 
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
+  )
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+  + sum((secInd37_emiMkt(secInd37,emiMkt))$(entyFePrcb(entyFE) AND secInd37Prcb(secInd37) AND (ttot.val gt cm_startyear)),
+      v37_demFePrcb.l(ttot,regi,entyFE,secInd37)
     )
-  / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt);
+$endif.process_based_steel
+  )
+  / o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
+;
 
 
 *** FE per subsector and energy carriers

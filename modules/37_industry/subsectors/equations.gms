@@ -48,33 +48,6 @@ q37_demMatsProc(t,regi,matsIn)..
       p37_specMatsDem(matsIn,tePrcb,opModesPrcb) * v37_prodMats(t,regi,matsOut,tePrcb,opModesPrcb)
     )
 ;
-
-***START: 
-***these two equations are now moved to the fe balane equation below
-*** and therefore hidden behind material_flows flag
-
-* Determine the final-energy demand of technologies operated in the 
-* materials-flow model.
-q37_demFEPrcb(t,regi,entyFE,secInd37Prcb)..
-    v37_demFEPrcb(t,regi,entyFE,secInd37Prcb)
-  =e=
-    sum(secInd37_tePrcb(secInd37Prcb,tePrcb),
-      p37_specFEDem(entyFE,tePrcb)
-      *
-      sum(tePrcb2matsOut(tePrcb,mats), 
-        v37_prodMats(t,regi,mats)
-      )
-    )
-;
-
-q37_mats2ue(t,regi,mats) ..
-    v37_prodMats(t,regi,mats)
-  =e= 
-    sum(mats2ue(mats,all_in), 
-      vm_cesIO(t,regi,all_in)/p37_mats2ue(mats,all_in)
-    )
-;
-***END
 $endif.material_flows
 
 
@@ -99,6 +72,13 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
   sum(secInd37_emiMkt(secInd37Prcb,emiMkt),
+    v37_demFePrcb(ttot,regi,entyFE,secInd37Prcb)
+  )$(entyFePrcb(entyFE) AND (ttot.val gt cm_startyear))
+$endif.process_based_steel
+*** old implementation without q37_demFEPrcb and q37_mats2ue
+$ontext
+  +
+  sum(secInd37_emiMkt(secInd37Prcb,emiMkt),
     !!v37_demFePrcb(ttot,regi,entyFE,secInd37Prcb)
     sum(secInd37_tePrcb(secInd37Prcb,tePrcb),
       p37_specFEDem(entyFE,tePrcb)
@@ -111,8 +91,32 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
       )
     )
   )
-$endif.process_based_steel
+$offtext
 ;
+
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+* Determine the final-energy demand of technologies operated in the 
+* materials-flow model.
+q37_demFEPrcb(ttot,regi,entyFE,secInd37Prcb)$(entyFePrcb(entyFE) AND (ttot.val ge cm_startyear))..
+    v37_demFEPrcb(ttot,regi,entyFE,secInd37Prcb)
+  =e=
+    sum(secInd37_tePrcb(secInd37Prcb,tePrcb),
+      p37_specFEDem(entyFE,tePrcb)
+      *
+      sum(tePrcb2matsOut(tePrcb,mats), 
+        v37_prodMats(ttot,regi,mats)
+      )
+    )
+;
+
+q37_mats2ue(ttot,regi,mats) ..
+    v37_prodMats(ttot,regi,mats)
+  =e= 
+    sum(mats2ue(mats,all_in), 
+      vm_cesIO(ttot,regi,all_in)/p37_mats2ue(mats,all_in)
+    )
+;
+$endif.process_based_steel
 
 *' Thermodynamic limits on subsector energy demand
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
