@@ -115,24 +115,22 @@ loop(regi,
 if (cm_emiscen eq 9 or (cm_emiscen eq 10),
 *** TODO: take care, this means that the SCC are only priced into MAC-curve
 *** abatement if emiscen = 9 and for emiscen = 10 for CBA runs. Might want to change this.
-  p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
+  pm_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
 else
-  p_priceCO2(ttot,regi) 
+  pm_priceCO2(ttot,regi) 
   = abs(pm_pvpRegi(ttot,regi,"perm") / (pm_pvp(ttot,"good") + sm_eps))
   * 1000;
 );
 
 *** Define co2 price for entities that are used in MAC. 
-p_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
+p_priceCO2forMAC(ttot,regi,enty) = pm_priceCO2(ttot,regi);
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
  loop(regiEmiMktTarget(ext_regi),
   loop(regi$regi_groupExt(ext_regi,regi),
-*** average CO2 price aggregated by FE
-    p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
-      p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+      p_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2) AND (t.val ge cm_startyear)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
     );
   );
  );
@@ -156,7 +154,7 @@ p_priceCO2forMAC(ttot,regi,MacSectorMagpie) = p_priceCO2forMAC(ttot,regi,MacSect
 p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) = p_priceCO2forMAC(ttot,regi,emiMacMagpieN2O) * (298/s_gwpN2O);
 p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) = p_priceCO2forMAC(ttot,regi,emiMacMagpieCH4) * (25/s_gwpCH4);
 
-display p_priceCO2,p_priceCO2forMAC;
+display pm_priceCO2,p_priceCO2forMAC;
 ***--------------------------------------
 *** MAC baselines
 ***--------------------------------------
@@ -194,7 +192,7 @@ if ( NOT (cm_IndCCSscen eq 1 AND cm_CCS_cement eq 1),
 *** pricing leads to significant price markups.
 
   pm_CementAbatementPrice(ttot,regi)$( ttot.val ge 2005 )
-  = p_priceCO2forMAC(ttot,regi,"co2cement") / sm_C_2_CO2;
+  = pm_priceCO2(ttot,regi) / sm_C_2_CO2;
 
   display "CO2 price for computing Cement Demand Reduction [$/tC]",
           pm_CementAbatementPrice;
@@ -285,13 +283,13 @@ pm_macStep(ttot,regi,enty)$(MacSector(enty))
   = min(801, ceil(p_priceCO2forMAC(ttot,regi,enty) / sm_dmac) + 1);
 
 *** If the gas price increase since 2005 is higher than the CO2 price, it will drive CH4 emission abatement.
-*** Conversion: p_priceCO2forMAC [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
+*** Conversion: pm_priceCO2 [$/tCeq]; T$/TWa = 1e6 M$/TWa * s_MtCH4_2_TWa * 1 MtCH4/s_gwpCH4 MtCO2eq * (44/12) MtCO2eq/MtCeq
 p_priceGas(ttot,regi)=q_balPe.m(ttot,regi,"pegas")/(qm_budget.m(ttot,regi)+sm_eps) * 1000000 * s_MtCH4_2_TWa * (1/s_gwpCH4) * 44/12;
 
 pm_macStep(ttot,regi,"ch4gas")
-  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4gas") * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
+  = min(801, ceil(max(pm_priceCO2(ttot,regi) * (25/s_gwpCH4), max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);
 pm_macStep(ttot,regi,"ch4coal")
-  = min(801, ceil(max(p_priceCO2forMAC(ttot,regi,"ch4coal") * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
+  = min(801, ceil(max(pm_priceCO2(ttot,regi) * (25/s_gwpCH4), 0.5 * max(0,(p_priceGas(ttot,regi)-p_priceGas("2005",regi))) ) / sm_dmac) + 1);    
   
 *** limit yearly increase of MAC usage to s_macChange
 p_macAbat_lim(ttot,regi,enty) 

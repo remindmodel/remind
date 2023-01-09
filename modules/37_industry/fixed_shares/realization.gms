@@ -22,6 +22,7 @@ $Ifi "%phase%" == "datainput" $include "./modules/37_industry/fixed_shares/datai
 $Ifi "%phase%" == "equations" $include "./modules/37_industry/fixed_shares/equations.gms"
 $Ifi "%phase%" == "preloop" $include "./modules/37_industry/fixed_shares/preloop.gms"
 $Ifi "%phase%" == "bounds" $include "./modules/37_industry/fixed_shares/bounds.gms"
+$Ifi "%phase%" == "presolve" $include "./modules/37_industry/fixed_shares/presolve.gms"
 $Ifi "%phase%" == "postsolve" $include "./modules/37_industry/fixed_shares/postsolve.gms"
 $Ifi "%phase%" == "output" $include "./modules/37_industry/fixed_shares/output.gms"
 *######################## R SECTION END (PHASES) ###############################
