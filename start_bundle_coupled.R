@@ -518,12 +518,14 @@ for(scen in common){
 }
 
 # start runs
+message("\nStarting Runs")
 for (scen in common) {
   start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
   start_magpie <- scenarios_coupled[scen, "start_magpie"]
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
   Rdatafile <- paste0(fullrunname, ".RData")
+  runEnv <- new.env()
   load(Rdatafile, envir = runEnv)
 
   if (runEnv$start_now) {
