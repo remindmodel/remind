@@ -294,18 +294,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       if (all(gdx_exist | gdx_na)) {
         message("Starting subsequent run ", run)
-        # for the sbatch command set the number of tasks per node
-        if (subseq.env$cfg_rem$gms$optimization == "nash" && subseq.env$cfg_rem$gms$cm_nash_mode == "parallel") {
-          # for nash: set the number of CPUs per node to number of regions + 1
-          nr_of_regions <- length(unique(read.csv2(subseq.env$cfg_rem$regionmapping)$RegionCode)) + 1
-        } else {
-          # for negishi: use only one CPU
-          nr_of_regions <- 1
-        }
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
-        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
+        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$nr_of_regions,
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {

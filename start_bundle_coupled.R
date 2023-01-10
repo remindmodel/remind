@@ -226,6 +226,7 @@ if ("max_iterations" %in% colnames(scenarios_coupled)) {
 ####################################################
 
 
+# prepare runs: write RData files
 for(scen in common){
   message("\n################################\nPreparing run ", scen, "\n")
 
@@ -317,6 +318,9 @@ for(scen in common){
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
     errorsfound <- errorsfound + 1
   }
+  # save to use it later when starting runs
+  scenarios_coupled[scen, "start_iter_first"] <- start_iter_first
+  scenarios_coupled[scen, "start_magpie"] <- start_magpie
 
 
   cfg <- readDefaultConfig(path_remind)   # retrieve REMIND settings
@@ -459,16 +463,26 @@ for(scen in common){
       message("Delete ", foldername, if ("--test" %in% flags) " if not in test mode", ". ", appendLF = FALSE)
       deletedFolders <- deletedFolders + 1
     }
+
+    if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
+      # for nash: set the number of CPUs per node to number of regions + 1
+      nr_of_regions <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
+    } else {
+      # for negishi: use only one CPU
+      nr_of_regions <- 1
+    }
+
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
          n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
-         file = Rdatafile)
+         nr_of_regions, start_now, file = Rdatafile)
 
   } # end for (i %in% iterations)
 
   # convert from logi to character so file.exists does not throw an error
   path_report <- as.character(path_report)
+
 
   message("\nSUMMARY")
   message("runname       : ", runname)
@@ -485,21 +499,34 @@ for(scen in common){
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
   message("no_ghgprices_land_until: ", cfg_mag$mute_ghgprices_until)
 
-  if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
-    # for nash: set the number of CPUs per node to number of regions + 1
-    nr_of_regions <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
-  } else {
-    # for negishi: use only one CPU
-    nr_of_regions <- 1
-  }
-
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
     errorsfound <- errorsfound + ! gcresult
   }
-  if (start_now) {
+  if (!start_now) {
+    missingRefRuns <- unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na])
+    message("Waiting for: ", blue, paste(intersect(knownRefRuns, missingRefRuns), collapse = ", "), NC)
+    if (length(setdiff(missingRefRuns, knownRefRuns)) > 0) {
+      message(red, "Error", NC, ": Cannot start because ", paste(setdiff(missingRefRuns, knownRefRuns), collapse = ", "), " not found!")
+      errorsfound <- errorsfound + length(setdiff(missingRefRuns, knownRefRuns))
+    } else {
+      waitingRuns <- waitingRuns + 1
+    }
+  }
+}
+
+# start runs
+for (scen in common) {
+  start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
+  start_magpie <- scenarios_coupled[scen, "start_magpie"]
+  runname <- paste0(prefix_runname, scen)
+  fullrunname <- paste0(runname, "-rem-", start_iter_first)
+  Rdatafile <- paste0(fullrunname, ".RData")
+  load(RData_file, envir = runEnv)
+
+  if (runEnv$start_now) {
     if (errorsfound > 0) {
       message("Errors found: run ", fullrunname, " NOT submitted to the cluster.")
     } else {
@@ -510,22 +537,13 @@ for(scen in common){
         logfile <- file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        slurm_command <- paste0("sbatch --qos=", qos, " --job-name=", fullrunname,
-        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
-        " ", sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
+        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$nr_of_regions,
+        " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
         system(slurm_command)
       }
     }
-  } else {
-      missingRefRuns <- unique(cfg_rem$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na])
-      message("Waiting for: ", blue, paste(intersect(knownRefRuns, missingRefRuns), collapse = ", "), NC)
-      if (length(setdiff(missingRefRuns, knownRefRuns)) > 0) {
-        message(red, "Error", NC, ": Cannot start because ", paste(setdiff(missingRefRuns, knownRefRuns), collapse = ", "), " not found!")
-        errorsfound <- errorsfound + length(setdiff(missingRefRuns, knownRefRuns))
-      } else {
-        waitingRuns <- waitingRuns + 1
-      }
   }
 }
 
