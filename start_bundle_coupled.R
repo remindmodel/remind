@@ -524,7 +524,7 @@ for (scen in common) {
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
   Rdatafile <- paste0(fullrunname, ".RData")
-  load(RData_file, envir = runEnv)
+  load(Rdatafile, envir = runEnv)
 
   if (runEnv$start_now) {
     if (errorsfound > 0) {
