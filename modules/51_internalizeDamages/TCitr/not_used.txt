@@ -24,3 +24,4 @@ pm_damageMarginalTC,input,questionnaire
 pm_damageImp,input,questionnaire
 pm_damageScc,input,questionnaire
 cm_damages_BurkeLike_persistenceTime,input,questionnaire
+pm_sccIneq,input,questionnaire

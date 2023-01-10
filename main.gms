@@ -223,6 +223,7 @@ $setGlobal macro  singleSectorGr  !! def = singleSectorGr
 *'---------------------    02_welfare    ---------------------------------------
 *'
 *' * (utilitarian) utilitarian aka. Benthamite social welfare function
+*' * (ineqLognormal) welfare function with subregional income distribution effects implemented with a lognormal approach
 $setGlobal welfare  utilitarian  !! def = utilitarian
 *'---------------------    04_PE_FE_parameters    ------------------------------
 *'
@@ -689,6 +690,13 @@ parameter
   cm_fetaxscen        = 3;         !! def = 3
 *'
 parameter
+  cm_distrBeta              "elasticity of tax revenue redistribution"
+;
+  cm_distrBeta        = 1;	   !! def = 1
+*' (0): equal per capita redistribution
+*' (1): proportional redistribution
+*'
+parameter
   cm_multigasscen           "scenario on GHG portfolio to be included in permit trading scheme"
 ***  (1): CO2 only
 ***  (2): all GHG
@@ -879,6 +887,13 @@ parameter
   c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 ;
   c_refcapbnd          = 0;    !! def = 0
+*'
+
+parameter
+  cm_distrAlphaDam	"income elasticity of damages for inequality"
+;
+*** def = 1; 1 means damage is distributed proportional to income, i.e. distributionally neutral, 0 means equal per capita distribution of damage
+  cm_distrAlphaDam     = 1;    !! def = 1
 *'
 parameter
   cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"

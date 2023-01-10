@@ -311,7 +311,7 @@ q32_hydroROR(t,regi)$(t.val > 2005)..  !! require that at least 20% of the hydro
 q32_limitCapTeChp(t,regi)..
 	sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
 	=l=
-	p32_shCHP(regi,"bscu") 
+	p32_shCHP(t,regi) 
 	* sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) );
 
 ***---------------------------------------------------------------------------
