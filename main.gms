@@ -844,12 +844,12 @@ parameter
 parameter
   cm_33DAC                  "choose whether DAC (direct air capture) should be included into the CDR portfolio. 0 = DAC not used, 1 = used"
 ;
-  cm_33DAC                 = 0;   !! def = 1
+  cm_33DAC                 = 1;   !! def = 1
 *'
 parameter
   cm_33EW                   "choose whether EW (enhanced weathering) should be included into the CDR portfolio. 0 = EW not used, 1 = used"
 ;
-  cm_33EW                  = 1;   !! def = 0
+  cm_33EW                  = 0;   !! def = 0
 *'
 parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
