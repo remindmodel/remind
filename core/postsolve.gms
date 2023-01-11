@@ -7,6 +7,7 @@
 *** SOF ./core/postsolve.gms
 
 *-------------------------------calculate regional permit prices-----------------------------------
+
 *** saving CO2 tax used in this iteration
 p_taxCO2eq_iteration(iteration,ttot,regi) = pm_taxCO2eq(ttot,regi);
 pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt);
