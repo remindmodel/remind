@@ -409,7 +409,7 @@ for(scen in common){
 
     # if provided use ghg prices for land (MAgPIE) from a different REMIND run than the one MAgPIE runs coupled to
     path_mif_ghgprice_land <- NULL
-    if (i == 1 && "path_mif_ghgprice_land" %in% names(scenarios_coupled)) {
+    if ("path_mif_ghgprice_land" %in% names(scenarios_coupled)) {
       if (! is.na(scenarios_coupled[scen, "path_mif_ghgprice_land"])) {
         if (.isFileAndAvailable(scenarios_coupled[scen, "path_mif_ghgprice_land"], ".mif")) {
             # if real file is given (has ".mif" at the end) take it for path_mif_ghgprice_land
