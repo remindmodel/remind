@@ -110,7 +110,7 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi_noBunkers") =
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
 *** Removing economy wide co2 tax parameters for regions within the emiMKt controlled targets (this is necessary here to remove any calculation made in other modules after the last run in the postsolve)
-  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
+  loop(ext_regi$regiEmiMktTarget(ext_regi),
     loop(regi$regi_groupExt(ext_regi,regi),
 *** Removing the economy wide co2 tax parameters for regions within the ETS markets
       pm_taxCO2eqSum(t,regi) = 0;
@@ -180,6 +180,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
     );
   );
 );
+p47_allTargetsConverged_iter(iteration,ext_regi) = p47_allTargetsConverged(ext_regi);
 
 *** Calculating the emissions tax rescale factor based on previous iterations emission reduction
 loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
@@ -216,7 +217,7 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
             / 
             (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
           ) + 1;
-      );		  
+      );
     );    
   );
 );
