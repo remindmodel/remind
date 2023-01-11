@@ -130,7 +130,6 @@ message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green 
 message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
 message("path_magpie_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_magpie_oldruns, NC)
 message("prefix_runname:        ", prefix_runname)
-message("max_iterations:        ", max_iterations)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
 
@@ -175,6 +174,14 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
 settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
+if ("max_iterations" %in% colnames(scenarios_coupled)) {
+  if (nrow(unique(scenarios_coupled["max_iterations"])) > 1) {
+    stop("You have specified different `max_iterations` for different scenarios, that is not supported.")
+  }
+  max_iterations <- scenarios_coupled[1, "max_iterations"]
+}
+message("max_iterations:        ", max_iterations)
+
 if (! exists("startnow") && ("--interactive" %in% flags || ! any(settings_coupled$start == 1))) {
   settings_coupled$start <- gms::chooseFromList(setNames(rownames(settings_coupled), settings_coupled$start),
                             type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
@@ -213,12 +220,6 @@ if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
     && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
       message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
       message("They may not be able to run in parallel on the PIK cluster.")
-}
-
-if ("max_iterations" %in% colnames(scenarios_coupled)) {
-  if (nrow(unique(scenarios_coupled["max_iterations"])) > 1) {
-    stop("You have specified different `max_iterations` for different scenarios, that is not supported.")
-  }
 }
 
 ####################################################
