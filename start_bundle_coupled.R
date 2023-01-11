@@ -174,14 +174,6 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
 settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
-if ("max_iterations" %in% colnames(scenarios_coupled)) {
-  if (nrow(unique(scenarios_coupled["max_iterations"])) > 1) {
-    stop("You have specified different `max_iterations` for different scenarios, that is not supported.")
-  }
-  max_iterations <- scenarios_coupled[1, "max_iterations"]
-}
-message("max_iterations:        ", max_iterations)
-
 if (! exists("startnow") && ("--interactive" %in% flags || ! any(settings_coupled$start == 1))) {
   settings_coupled$start <- gms::chooseFromList(setNames(rownames(settings_coupled), settings_coupled$start),
                             type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
@@ -195,6 +187,14 @@ if (!identical(missing, character(0))) {
           "' but could not be found in '", path_settings_remind, "':")
   message("  ", paste(missing, collapse = ", "), "\n")
 }
+
+if ("max_iterations" %in% colnames(scenarios_coupled)) {
+  if (nrow(unique(scenarios_coupled["max_iterations"])) > 1) {
+    stop("You have specified different `max_iterations` for different scenarios, that is not supported.")
+  }
+  max_iterations <- scenarios_coupled[1, "max_iterations"]
+}
+message("max_iterations:        ", max_iterations)
 
 common <- intersect(rownames(settings_remind),rownames(scenarios_coupled))
 knownRefRuns <- apply(expand.grid(prefix_runname , common, "-rem-", seq(max_iterations)), 1, paste, collapse="")
