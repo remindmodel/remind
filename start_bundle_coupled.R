@@ -235,13 +235,13 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) | is.na(qos)) qos <- "short"            # if qos could not be found in scenarios_coupled use short/medium
+  if(is.null(qos) || is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
   sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
-  if (is.null(sbatch) | is.na(sbatch)) sbatch <- ""       # if sbatch could not be found in scenarios_coupled use empty string
+  if (is.null(sbatch) || is.na(sbatch)) sbatch <- ""      # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                   # iteration to start the coupling with
   scenarios_coupled[scen, "start_iter_first"] <- start_iter_first  # is used again when starting runs
   magpie_empty <- scenarios_coupled[scen, "magpie_empty"] # if magpie should be replaced by an empty model
-  if (is.null(magpie_empty) | is.na(magpie_empty)) magpie_empty <- FALSE
+  if (is.null(magpie_empty) || is.na(magpie_empty)) magpie_empty <- FALSE
 
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   # Look whether there is already a fulldata.gdx from a former REMIND run (check for old name if provided)
