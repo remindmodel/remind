@@ -300,6 +300,7 @@ for(scen in common){
   
   # decide whether to continue with REMIND or MAgPIE
   scenarios_coupled[scen, "start_magpie"] <- FALSE
+  scenarios_coupled[scen, "start_scenario"] <- TRUE
   if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
     # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
     start_iter_first  <- iter_rem
@@ -315,6 +316,7 @@ for(scen in common){
     message("REMIND and MAgPIE each finished run ", iter_rem, ", proceeding with REMIND run rem-", start_iter_first)
   } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
+    scenarios_coupled[scen, "start_scenario"] <- FALSE
     next
   } else {
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -521,6 +523,9 @@ for(scen in common){
 # start runs
 message("\nStarting Runs")
 for (scen in common) {
+  if (!scenarios_coupled[scen, "start_scenario"]) {
+    next
+  }
   start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
