@@ -299,7 +299,7 @@ for(scen in common){
   }
   
   # decide whether to continue with REMIND or MAgPIE
-  start_magpie <- FALSE
+  scenarios_coupled[scen, "start_magpie"] <- FALSE
   if (iter_rem == iter_mag + 1 & iter_rem < max_iterations) {
     # if only remind has finished an iteration -> start with magpie in this iteration using a REMIND report
     start_iter_first  <- iter_rem
@@ -308,7 +308,7 @@ for(scen in common){
     if (is.na(path_report_found)) stop("There is a fulldata.gdx but no REMIND_generic_.mif in ",path_run,".\nPlease use Rscript output.R to produce it.")
     message("Found REMIND report here: ", path_report_found)
     message("Continuing with MAgPIE with mag-", start_iter_first)
-    start_magpie <- TRUE
+    scenarios_coupled[scen, "start_magpie"] <- TRUE
   } else if (iter_rem == iter_mag) {
     # if remind and magpie iteration is the same -> start next iteration with REMIND with or without MAgPIE report
     start_iter_first <- iter_rem + 1
@@ -322,7 +322,6 @@ for(scen in common){
   }
   # save to use it later when starting runs
   scenarios_coupled[scen, "start_iter_first"] <- start_iter_first
-  scenarios_coupled[scen, "start_magpie"] <- start_magpie
 
 
   cfg <- readDefaultConfig(path_remind)   # retrieve REMIND settings
@@ -460,7 +459,7 @@ for(scen in common){
         start_now <- TRUE
     }
     foldername <- file.path("output", fullrunname)
-    if ((i > start_iter_first | !start_magpie) && file.exists(foldername)) {
+    if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
       if (! "--test" %in% flags) unlink(foldername, recursive = TRUE, force = TRUE)
       message("Delete ", foldername, if ("--test" %in% flags) " if not in test mode", ". ", appendLF = FALSE)
       deletedFolders <- deletedFolders + 1
@@ -488,7 +487,7 @@ for(scen in common){
 
   message("\nSUMMARY")
   message("runname       : ", runname)
-  message("Start iter    : ", if (start_magpie) "mag-" else "rem-", start_iter_first)
+  message("Start iter    : ", if (scenarios_coupled[scen, "start_magpie"]) "mag-" else "rem-", start_iter_first)
   message("QOS           : ", qos)
   message("remind gdxes  :")
   for (path_gdx in names(path_gdx_list)) {
@@ -523,7 +522,6 @@ for(scen in common){
 message("\nStarting Runs")
 for (scen in common) {
   start_iter_first <- scenarios_coupled[scen, "start_iter_first"]
-  start_magpie <- scenarios_coupled[scen, "start_magpie"]
   runname <- paste0(prefix_runname, scen)
   fullrunname <- paste0(runname, "-rem-", start_iter_first)
   Rdatafile <- paste0(fullrunname, ".RData")
@@ -538,7 +536,7 @@ for (scen in common) {
       if ("--test" %in% flags || "--gamscompile" %in% flags) {
         message("Test mode: run ", fullrunname, " NOT submitted to the cluster.")
       } else {
-        logfile <- file.path("output", fullrunname, paste0("log", if (start_magpie) "-mag", ".txt"))
+        logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
         slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
