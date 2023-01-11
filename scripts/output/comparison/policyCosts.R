@@ -65,12 +65,11 @@ policy_costs_pdf <- function(policy_costs,
                  "<<echo=false>>=",
                  "options(width=110)",
                  "@")
-
+  tmpfolder <- paste0("tmp_", gsub("[\\. ]*", "", basename(fileName)))
   # Create temporary folder in which to create the policyCost pdf
-  system("mkdir tmp_policyCost")
-
+  dir.create(tmpfolder)
   # Open stream in tmp_folder
-  sw <- lusweave::swopen(fileName, folder = "tmp_policyCost", template = template)
+  sw <- lusweave::swopen(fileName, folder = tmpfolder, template = template)
 
   # Write title
   lusweave::swlatex(sw,"\\section{Policy Costs}")
@@ -110,8 +109,8 @@ policy_costs_pdf <- function(policy_costs,
   lusweave::swclose(sw)
 
   # Copy pdf from tmp folder to remind folder and delete tmp folder
-  system(paste0("mv tmp_policyCost/",fileName," ."))
-  system("rm -r tmp_policyCost")
+  system(paste0("mv ", file.path(tmpfolder, fileName), " ."))
+  system(paste0("rm -r ", tmpfolder))
 
 }
 
