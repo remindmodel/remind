@@ -160,14 +160,12 @@ pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) = pm_emiMktTa
 
 *** Checking sequentially if targets converged
 loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
-***    if(not (p47_targetConverged(ttot2,ext_regi)),
-      p47_targetConverged(ttot2,ext_regi) = 1;
-      loop((ttot,emiMktExt,target_type_47,emi_type_47)$((pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47))),
-        if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) > 0.01), !! if any emiMKt target did not converged
-          p47_targetConverged(ttot2,ext_regi) = 0;
-        );
-      );
-***    );
+  p47_targetConverged(ttot2,ext_regi) = 1;
+  loop((ttot,emiMktExt,target_type_47,emi_type_47)$((pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47))),
+    if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) > 0.01), !! if any emiMKt target did not converged
+      p47_targetConverged(ttot2,ext_regi) = 0;
+    );
+  );
 );
 p47_targetConverged_iter(iteration,ttot2,ext_regi) = p47_targetConverged(ttot2,ext_regi); !!save regional target converged iteration information for debugging
 
