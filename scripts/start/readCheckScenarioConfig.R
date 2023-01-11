@@ -15,36 +15,36 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     cfg <- gms::readDefaultConfig(remindPath)
   }
   scenConf <- read.csv2(filename, stringsAsFactors = FALSE, row.names = 1, na.strings = "", comment.char = "#")
-  errorsfound <- 0
-  if (any(nchar(rownames(scenConf)) > 75)) {
+  toolong <- nchar(rownames(scenConf)) > 75
+  if (any(toolong)) {
     warning("These titles are too long: ",
-            paste0(rownames(scenConf)[nchar(rownames(scenConf)) > 75], collapse = ", "),
+            paste0(rownames(scenConf)[toolong], collapse = ", "),
             " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
-    errorsfound <- errorsfound + 1
   }
-  if (any(nchar(rownames(scenConf)) < 4)) {
-    warning("These titles are too short: ",
-            paste0(rownames(scenConf)[nchar(rownames(scenConf)) < 4], collapse = ", "),
-            " – Titles with less than 4 characters may be confused with region names by magclass. Stopping now.")
-    errorsfound <- errorsfound + 1
+  regionname <- grepl("^(([A-Z]{3})|(glob))$", rownames(scenConf))
+  if (any(regionname)) {
+    warning("These titles may be confused with regions: ",
+            paste0(rownames(scenConf)[regionname], collapse = ", "),
+            " – Titles with three capital letters or 'glob' may be confused with region names by magclass. Stopping now.")
   }
-  if (length(grep("\\.", rownames(scenConf))) > 0) {
-    warning("These titles contain dots: ",
-            paste0(rownames(scenConf)[grep("\\.", rownames(scenConf))], collapse = ", "),
+  containsdot <- grep("\\.", rownames(scenConf))
+  if (any(containsdot)) {
+    warning("These titles contain a dot: ",
+            paste0(rownames(scenConf)[containsdot], collapse = ", "),
             " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
-    errorsfound <- errorsfound + 1
   }
-  if (length(grep("_$", rownames(scenConf))) > 0) {
+  underscore <- grep("_$", rownames(scenConf))
+  if (any(underscore)) {
     warning("These titles end with _: ",
-            paste0(rownames(scenConf)[grep("_$", rownames(scenConf))], collapse = ", "),
+            paste0(rownames(scenConf)[underscore], collapse = ", "),
             ". This may lead to wrong gdx files being selected. Stopping now.")
-    errorsfound <- errorsfound + 1
   }
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
     message("In ", filename,
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
   }
+  errorsfound <- sum(toolong) + sum(regionname) + sum(containsdot) + sum(underscore)
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                         "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
