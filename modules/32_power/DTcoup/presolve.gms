@@ -11,5 +11,4 @@
 pm_SEPrice(t,regi,entySE)$(abs (qm_budget.m(t,regi)) gt sm_eps AND sameas(entySE,"seel")) = 
        q32_balSe.m(t,regi,entySE) / qm_budget.m(t,regi);
 
-
 *** EOF ./modules/32_power/DTcoup/presolve.gms
