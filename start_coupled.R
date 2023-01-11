@@ -301,7 +301,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
-          system(subsequentcommand)
+          exitCode <- system(subsequentcommand)
+          if (0 < exitCode) {
+            stop("sbatch command failed, check logs")
+          }
         } else {
           message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")
         }

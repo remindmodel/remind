@@ -544,7 +544,11 @@ for (scen in common) {
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$nr_of_regions,
         " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
-        system(slurm_command)
+        exitCode <- system(slurm_command)
+        if (0 < exitCode) {
+          errorsfound <- errorsfound + 1
+          message("sbatch command failed, check logs.")
+        }
       }
     }
   }
