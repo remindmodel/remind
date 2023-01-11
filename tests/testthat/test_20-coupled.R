@@ -2,9 +2,9 @@ test_that("environment is suitable for coupled tests", {
   skipIfFast()
   skipIfPreviousFailed()
   # magpie needs to be cloned by the user before running coupled tests
-  expect_true(dir.exists("../magpie"))
+  expect_true(dir.exists("../../../magpie"))
   # coupled tests need slurm
-  exepct_true(isSlurmAvailable())
+  expect_true(isSlurmAvailable())
 })
 
 test_that("runs coupled to MAgPIE work", {
