@@ -128,7 +128,7 @@ message("path_magpie:           ", if (dir.exists(path_magpie)) green else red, 
 message("path_settings_coupled: ", if (file.exists(path_settings_coupled)) green else red, path_settings_coupled, NC)
 message("path_settings_remind:  ", if (file.exists(path_settings_remind)) green else red, path_settings_remind, NC)
 message("path_remind_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_remind_oldruns, NC)
-message("path_magpie_oldruns:   ", if (dir.exists(path_remind_oldruns)) green else red, path_magpie_oldruns, NC)
+message("path_magpie_oldruns:   ", if (dir.exists(path_magpie_oldruns)) green else red, path_magpie_oldruns, NC)
 message("prefix_runname:        ", prefix_runname)
 message("n600_iterations:       ", n600_iterations)
 message("run_compareScenarios:  ", run_compareScenarios)
