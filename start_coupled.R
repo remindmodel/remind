@@ -214,7 +214,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       fullDataGdxs <- file.path(amtRunDirs, "fulldata.gdx")
       latestFullData <- sort(fullDataGdxs[file.exists(fullDataGdxs)], decreasing = TRUE)[[1]]
       cfg_mag <- configureEmptyModel(cfg_mag, latestFullData)  # defined in start_functions.R
-      # cfg_mag$output <- 
+      # also configure magpie to only run the reportings necessary for coupling
+      # the other reportings are pointless anyway with an empty model
+      cfg_mag$output <- c("extra/reportMAgPIE2REMIND")
     }
 
     # Increase MAgPIE resolution n600_iterations before final iteration so that REMIND
