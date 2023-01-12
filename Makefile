@@ -41,7 +41,7 @@ test:           ## Test if the model compiles and runs without running a full
 test-coupled:   ## Test if the coupling with MAgPIE works. Takes significantly
                 ## longer than 10 minutes to run and needs slurm and magpie
                 ## available
-	$(info Coupling tests take more than 15 minutes to run, please be patient)
+	$(info Coupling tests take more than 30 minutes to run, please be patient)
 	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_file("tests/testthat/test_20-coupled.R")'
 
 test-full:      ## Run all tests, including coupling tests and a default
