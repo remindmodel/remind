@@ -44,7 +44,7 @@ if (length(remind_policy_reporting_file) > 0) {
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", Sys.time())
 tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF
-if(class(tmp)=="try-error") convGDX2MIF_fallback_for_coupling(gdx,file=remind_reporting_file,scenario=scenario)
+if(class(tmp)=="try-error") convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
 
 #  MAGICC code not working with REMIND-EU
 # generate MAGICC reporting and append to REMIND reporting
