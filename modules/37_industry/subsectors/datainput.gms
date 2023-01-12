@@ -40,9 +40,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! c
     feels.eaf          0.67                                            !! Specific electricy demand of EAF when operating with scrap.
     
     fesos.bfbof         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
-    fegas.bfbof         EPS
-    fehos.bfbof         EPS
-    feh2s.bfbof         EPS
+    feels.bfbof         0.30                                             !! Specific electricy demand of EAF when operating with scrap.
     !!feso_steel.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
   /
 

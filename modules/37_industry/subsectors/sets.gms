@@ -10,8 +10,8 @@ Sets
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   tePrcb(all_te)        "Technologies used in material-flow model"
   /
-    eaf                 "Electric-arc furnace"
     bfbof               "Blast furnace/basic-oxygen furnace"
+    eaf                 "Electric-arc furnace"
   /
 
   mats(all_enty)        "Materials considered in material-flow model"
@@ -22,8 +22,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
   tePrcb2matsOut(tePrcb,mats) "Mapping of technologies onto their output materials"
   /
-   eaf . prsteel
-   bfbof . sesteel
+   bfbof . prsteel
+   eaf . sesteel
   /
 
   mats2ue(mats,all_in) "Mapping of materials onto ue ces tree node"
@@ -81,9 +81,9 @@ entyFePrcb(all_enty)  "FE carriers in industry which are included in process-bas
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     feels
     fesos
-    fegas
-    fehos
-    feh2s
+    !!fegas
+    !!fehos
+    !!feh2s
 $endif.process_based_steel
   /
 

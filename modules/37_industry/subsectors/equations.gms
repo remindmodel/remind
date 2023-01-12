@@ -71,8 +71,8 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum(secInd37_emiMkt(secInd37Prcb,emiMkt),
-    v37_demFePrcb(ttot,regi,entyFE,secInd37Prcb)
+  sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb)),
+    v37_demFePrcb(ttot,regi,entyFE,tePrcb)
   )$(entyFePrcb(entyFE) AND (ttot.val gt cm_startyear))
 $endif.process_based_steel
 *** old implementation without q37_demFEPrcb and q37_mats2ue
@@ -97,15 +97,14 @@ $offtext
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 * Determine the final-energy demand of technologies operated in the 
 * materials-flow model.
-q37_demFEPrcb(ttot,regi,entyFE,secInd37Prcb)$(entyFePrcb(entyFE) AND (ttot.val ge cm_startyear))..
-    v37_demFEPrcb(ttot,regi,entyFE,secInd37Prcb)
+q37_demFEPrcb(ttot,regi,entyFE,tePrcb)$(entyFePrcb(entyFE) AND (ttot.val ge cm_startyear))..
+    v37_demFEPrcb(ttot,regi,entyFE,tePrcb)
   =e=
-    sum(secInd37_tePrcb(secInd37Prcb,tePrcb),
-      p37_specFEDem(entyFE,tePrcb)
-      *
-      sum(tePrcb2matsOut(tePrcb,mats), 
-        v37_prodMats(ttot,regi,mats)
-      )
+    p37_specFEDem(entyFE,tePrcb)
+    / (sm_TWa_2_MWh / sm_giga_2_non) !! from MWh/t to TWa/Gt 
+    *
+    sum(tePrcb2matsOut(tePrcb,mats), 
+      v37_prodMats(ttot,regi,mats)
     )
 ;
 

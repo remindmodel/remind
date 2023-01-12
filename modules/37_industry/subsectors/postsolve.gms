@@ -24,8 +24,8 @@ o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
     )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
     +
-  sum(secInd37_emiMkt(secInd37Prcb,emiMkt),
-    v37_demFePrcb.l(ttot,regi,entyFE,secInd37Prcb)
+  sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb)),
+    v37_demFePrcb.l(ttot,regi,entyFE,tePrcb)
   )$(entyFePrcb(entyFE) AND (ttot.val gt cm_startyear))
 $endif.process_based_steel
 ;
@@ -36,13 +36,14 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
   = 
   ( sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
-          secInd37_emiMkt(secInd37,emiMkt)), 
+          secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR (ttot.val eq cm_startyear)), 
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  + sum((secInd37_emiMkt(secInd37,emiMkt))$(entyFePrcb(entyFE) AND secInd37Prcb(secInd37) AND (ttot.val gt cm_startyear)),
-      v37_demFePrcb.l(ttot,regi,entyFE,secInd37)
+  + sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_tePrcb(secInd37,tePrcb))$(
+                   entyFePrcb(entyFE) AND secInd37Prcb(secInd37) AND (ttot.val gt cm_startyear)),
+      v37_demFePrcb.l(ttot,regi,entyFE,tePrcb)
     )
 $endif.process_based_steel
   )
