@@ -123,7 +123,10 @@ loop(regi,
   );
 
 *** Define co2 price for entities that are used in MAC. 
-pm_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
+loop((enty,enty2)$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
+  pm_priceCO2forMAC(ttot,regi,enty) = p_priceCO2(ttot,regi);
+  pm_priceCO2forMAC(ttot,regi,enty2) = p_priceCO2(ttot,regi);
+);
 
 *** Redefine the MAC price for regions with emission tax defined by the regipol module
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
@@ -132,7 +135,12 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 *** average CO2 price aggregated by FE
     p_priceCO2(t,regi) = ( (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) )*1000;
     loop((enty,emiMkt)$(macSector2emiMkt(enty,emiMkt)),
-      pm_priceCO2forMAC(t,regi,enty2)$(emiMac2mac(enty,enty2)) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+      loop(enty2$emiMac2mac(enty,enty2), !! make sure that both mac sectors and mac curves have prices asigned as both sets are used in calculations below
+        pm_priceCO2forMAC(t,regi,enty) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+        pm_priceCO2forMAC(t,regi,enty2) = pm_taxemiMkt(t,regi,emiMkt)* 1000;
+        pm_priceCO2forMAC(t,regi,"co2chemicals") = pm_taxemiMkt(t,regi,"ETS")* 1000;
+        pm_priceCO2forMAC(t,regi,"co2steel") = pm_taxemiMkt(t,regi,"ETS")* 1000;
+      );
     );
   );
  );
