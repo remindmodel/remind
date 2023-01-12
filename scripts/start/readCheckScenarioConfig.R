@@ -37,7 +37,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (any(underscore)) {
     warning("These titles end with _: ",
             paste0(rownames(scenConf)[underscore], collapse = ", "),
-            ". This may lead to wrong gdx files being selected. Stopping now.")
+            ". This may lead to wrong gdx files being selected. Please use # to make comments, not underscores.",
+            " Stopping now.")
   }
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
