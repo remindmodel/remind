@@ -19,44 +19,6 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-*** initialize emiMkt Target parameters
-p47_targetConverged(ttot,ext_regi) = 0;
-
-*** initialize carbon taxes based on reference runs
-***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
-***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
-p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
-
-Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
-Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
-
-
-*** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
-p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
-
-*** Overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
-*** in this case, historical prices will reflect the ETS market observed prices instead of ther values defined at pm_taxCO2eqHist  
-loop(regi$regi_groupExt("EUR_regi",regi),
-  if((cm_startyear le 2010),
-    p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
-    p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_DptCO2_2_TDpGtC;
-  );
-  if((cm_startyear le 2015),
-    p47_taxemiMkt_init("2015",regi,emiMkt) = 0;
-    p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_DptCO2_2_TDpGtC;
-  );
-  if((cm_startyear le 2020),
-    p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
-***  p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
-    p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
-***    p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
-***    p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
-  );
-
-*** intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
-  p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
-);
-
 *** Auxiliar parameters based on emission targets information 
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     regiEmiMktTarget(ext_regi) = yes;
@@ -71,6 +33,55 @@ loop(regi$regi_groupExt("EUR_regi",regi),
     loop(ttot$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
       p47_firstTargetYear(ext_regi) = ttot.val;
       break$(p47_firstTargetYear(ext_regi));
+    );
+  );
+
+*** initialize emiMkt Target parameters
+p47_targetConverged(ttot,ext_regi) = 0;
+
+*** initialize carbon taxes based on reference runs
+***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
+***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
+p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
+
+Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
+Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
+
+*** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
+p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);
+
+*** if there is a regional target, intialize price trajectory after 2020 with an yearly increase of 1$/tCO2 from a base value of 20$/tCO2 (2020)
+  loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
+    loop(regi$regi_groupExt(ext_regi,regi),
+      loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
+        p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (20*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+      );
+    );
+  );
+  
+*** if there is a European regional target, overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
+*** in this case, historical prices will reflect the ETS market observed prices instead of the values defined at pm_taxCO2eqHist  
+  loop(ext_regi$regiEmiMktTarget(ext_regi),
+    loop(regi$(regi_groupExt(ext_regi,regi) and regi_groupExt("EUR_regi",regi)), !!second condition is necessary to support also country targets
+      if((cm_startyear le 2010),
+        p47_taxemiMkt_init("2010",regi,emiMkt) = 0;
+        p47_taxemiMkt_init("2010",regi,"ETS")  = 15*sm_DptCO2_2_TDpGtC;
+      );
+      if((cm_startyear le 2015),
+        p47_taxemiMkt_init("2015",regi,emiMkt) = 0;
+        p47_taxemiMkt_init("2015",regi,"ETS")  = 8*sm_DptCO2_2_TDpGtC;
+      );
+      if((cm_startyear le 2020),
+        p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
+***     p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+        p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
+***     p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
+***     p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;
+      );
+***   intialize EUR price trajectory after 2020 with an yearly increase of 1$/tCO2 from a base value of 30$/tCO2 when no price is available.
+***   p47_taxemiMkt_init(t,regi,emiMkt)$(not(p47_taxemiMkt_init(t,regi,emiMkt)) and (t.val gt 2020)) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
+***   intialize EUR price trajectory after 2020 with a yearly increase of 1$/tCO2 from a base value of 30$/tCO2
+      p47_taxemiMkt_init(t,regi,emiMkt)$(t.val gt 2020) = (30*sm_DptCO2_2_TDpGtC) + (1*sm_DptCO2_2_TDpGtC)*(t.val-2020);
     );
   );
 
