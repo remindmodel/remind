@@ -469,17 +469,17 @@ for(scen in common){
 
     if (cfg_rem$gms$optimization == "nash" && cfg_rem$gms$cm_nash_mode == "parallel") {
       # for nash: set the number of CPUs per node to number of regions + 1
-      nr_of_regions <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
+      numberOfTasks <- length(unique(read.csv2(cfg_rem$regionmapping)$RegionCode)) + 1
     } else {
       # for negishi: use only one CPU
-      nr_of_regions <- 1
+      numberOfTasks <- 1
     }
 
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
          n600_iterations, path_report, qos, sbatch, prefix_runname, run_compareScenarios, magpie_empty,
-         nr_of_regions, start_now, file = Rdatafile)
+         numberOfTasks, start_now, file = Rdatafile)
 
   } # end for (i %in% iterations)
 
@@ -545,7 +545,7 @@ for (scen in common) {
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
         slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
-        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$nr_of_regions,
+        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
         exitCode <- system(slurm_command)

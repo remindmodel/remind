@@ -297,7 +297,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
-        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$nr_of_regions,
+        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
