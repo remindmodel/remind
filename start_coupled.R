@@ -118,7 +118,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
-      cfg_rem$output <- c("reporting", "emulator", "rds_report")
+      cfg_rem$output <- intersect(c("reporting", "emulator", "rds_report", "reportingREMIND2MAgPIE"), cfg_rem_original)
     } else {
       cfg_rem$output <- cfg_rem_original
     }
