@@ -308,6 +308,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           if (0 < exitCode) {
             message("sbatch command failed, check logs")
             errorsfound <- errorsfound + 1
+            # if sbatch has the --wait argument, the user is likely interactively
+            # waiting for the result of the run (like in a test). In that case,
+            # fail immediately so that the user knows about the failure asap.
             stopifnot(! grepl("--wait", subsequentcommand))
           }
         } else {
