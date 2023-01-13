@@ -70,7 +70,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
-       "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640"
+       "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
+       "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003"
      )
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
