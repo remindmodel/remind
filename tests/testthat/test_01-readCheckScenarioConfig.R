@@ -13,7 +13,7 @@ for (csvfile in csvfiles) {
       )) {
         next
       }
-  test_that(paste("perform readCheckScenarioConfig with", gsub("../../config/", "", csvfile)), {
+  test_that(paste("perform readCheckScenarioConfig with", gsub("../../config/", "", csvfile, fixed = TRUE)), {
     # regexp = NA means: expect no warning
     expect_warning(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE), regexp = NA)
   })

@@ -60,6 +60,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   library(methods)
   library(remind2)
 
+  errorsfound <- 0
   # delete entries in stack that contain needle and append new
   .setgdxcopy <- function(needle,stack,new){
     matches <- grepl(needle,stack)
@@ -306,6 +307,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           exitCode <- system(subsequentcommand)
           if (0 < exitCode) {
             message("sbatch command failed, check logs")
+            errorsfound <- errorsfound + 1
             stopifnot(! grepl("--wait", subsequentcommand))
           }
         } else {
@@ -356,6 +358,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       }
     }
   }
+  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
   message("### start_coupled() finished. ###")
 }
 
