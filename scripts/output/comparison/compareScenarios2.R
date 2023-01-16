@@ -11,7 +11,7 @@
 # Header ------------------------------------------------------------------
 
 
-source("./scripts/utils/isSlurmAvailable.R")
+source("./scripts/start/isSlurmAvailable.R")
 
 # This script expects a variable `outputdirs` to be defined.
 # Variables `slurmConfig` and `filename_prefix` are used if they defined.
