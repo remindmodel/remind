@@ -52,7 +52,7 @@ debug_coupled <- function(model = NULL, cfg) {
 
 start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations = 5, start_iter = 1,
                           n600_iterations = 0, report = NULL, qos, fullrunname = FALSE,
-                          prefix_runname = "C_", run_compareScenarios = TRUE) {
+                          prefix_runname = "C_", run_compareScenarios = TRUE, magpie_empty = FALSE) {
   require(lucode2)
   require(gms)
   require(magclass)
@@ -60,6 +60,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   library(methods)
   library(remind2)
 
+  errorsfound <- 0
   # delete entries in stack that contain needle and append new
   .setgdxcopy <- function(needle,stack,new){
     matches <- grepl(needle,stack)
@@ -118,7 +119,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
-      cfg_rem$output <- c("reporting", "emulator", "rds_report")
+      cfg_rem$output <- intersect(c("reporting", "emulator", "rds_report", "reportingREMIND2MAgPIE"), cfg_rem_original)
     } else {
       cfg_rem$output <- cfg_rem_original
     }
@@ -206,6 +207,19 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
     cfg_mag$title          <- paste0(runname,"-mag-",i)
 
+    if (magpie_empty) {
+      # Find latest fulldata.gdx from automated model test (AMT) runs
+      amtRunDirs <- list.files("/p/projects/landuse/tests/magpie/output",
+                              pattern = "default_\\d{4}-\\d{2}-\\d{2}_\\d{2}\\.\\d{2}.\\d{2}",
+                              full.names = TRUE)
+      fullDataGdxs <- file.path(amtRunDirs, "fulldata.gdx")
+      latestFullData <- sort(fullDataGdxs[file.exists(fullDataGdxs)], decreasing = TRUE)[[1]]
+      cfg_mag <- configureEmptyModel(cfg_mag, latestFullData)  # defined in start_functions.R
+      # also configure magpie to only run the reportings necessary for coupling
+      # the other reportings are pointless anyway with an empty model
+      cfg_mag$output <- c("extra/reportMAgPIE2REMIND")
+    }
+
     # Increase MAgPIE resolution n600_iterations before final iteration so that REMIND
     # runs n600_iterations iterations using results from MAgPIE with higher resolution
     if (i > (max_iterations - n600_iterations)) {
@@ -283,22 +297,22 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
       if (all(gdx_exist | gdx_na)) {
         message("Starting subsequent run ", run)
-        # for the sbatch command set the number of tasks per node
-        if (subseq.env$cfg_rem$gms$optimization == "nash" && subseq.env$cfg_rem$gms$cm_nash_mode == "parallel") {
-          # for nash: set the number of CPUs per node to number of regions + 1
-          nr_of_regions <- length(unique(read.csv2(subseq.env$cfg_rem$regionmapping)$RegionCode)) + 1
-        } else {
-          # for negishi: use only one CPU
-          nr_of_regions <- 1
-        }
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
-        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", nr_of_regions,
-        " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
+        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
+        " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
-          system(subsequentcommand)
+          exitCode <- system(subsequentcommand)
+          if (0 < exitCode) {
+            message("sbatch command failed, check logs")
+            errorsfound <- errorsfound + 1
+            # if sbatch has the --wait argument, the user is likely interactively
+            # waiting for the result of the run (like in a test). In that case,
+            # fail immediately so that the user knows about the failure asap.
+            stopifnot(! grepl("--wait", subsequentcommand))
+          }
         } else {
           message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")
         }
@@ -347,6 +361,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       }
     }
   }
+  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
   message("### start_coupled() finished. ###")
 }
 
@@ -364,8 +379,10 @@ load(coupled_config)
 if (! exists("fullrunname")) fullrunname <- runname
 if (! exists("prefix_runname")) prefix_runname <- "C_"
 if (! exists("run_compareScenarios")) run_compareScenarios <- "short"
+if (! exists("magpie_empty")) magpie_empty <- FALSE
 start_coupled(path_remind, path_magpie, cfg_rem, cfg_mag, runname, max_iterations, start_iter,
-              n600_iterations, path_report, qos, fullrunname, prefix_runname, run_compareScenarios)
+              n600_iterations, path_report, qos, fullrunname, prefix_runname, run_compareScenarios,
+              magpie_empty)
 
 message("### Print warnings ###")
 warnings()

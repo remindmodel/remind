@@ -1,0 +1,3 @@
+title;start;qos;sbatch;magpie_scen;magpie_empty;no_ghgprices_land_until;max_iterations;oldrun;path_gdx;path_gdx_ref;path_gdx_bau;path_report
+TESTTHAT-SSP2EU-Base;1;priority;--wait;SSP2|NPI;TRUE;y2150;2;;;;;
+TESTTHAT-SSP2EU-NDC;1;priority;--wait;SSP2|NDC;TRUE;y2150;2;;;;;

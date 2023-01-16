@@ -67,6 +67,11 @@ It creates all additional gams files for your new realization "new" of the exist
 
 After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in the `main.gms` by hand.
 
+Renaming switches
+=================
+Be careful when renaming switches or changing their behavior. Make sure you also update all scenario config files in the [`./config`](../config/) directory and all its subdirectories.
+Please also add the old name of the switch to `forbiddenColumnNames` of [`readCheckScenarioConfig()`](../scripts/start/readCheckScenarioConfig.R) with an explanation how the switch should be adapted and a link to further information.
+
 Compiling and Testing
 =====================
 

@@ -7,6 +7,13 @@ expectSuccessStatus <- function(output) {
     }
     expect_equal(status, 0)
 }
+expectFailStatus <- function(output) {
+    status <- attr(output, "status", exact = TRUE)
+    if (1 != status) {
+        helperSkipFailed <<- TRUE
+    }
+    expect_equal(status, 1)
+}
 
 skipIfPreviousFailed <- function() {
     if (helperSkipFailed) {
