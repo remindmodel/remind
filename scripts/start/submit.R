@@ -63,10 +63,10 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         }
 
         if (getOption("autoRenvUpdates", FALSE)) {
-          source("scripts/utils/updateRenv.R")
+          piamenv::updateRenv()
         } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
                    && !is.null(piamenv::showUpdates())) {
-          message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
+          message("Consider updating with `piamenv::updateRenv()`.")
         }
       }
 

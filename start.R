@@ -233,14 +233,14 @@ if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= 
   piamenv::checkDeps(action = "ask")
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please run the following to update it:\n",
-       "renv::install('piamenv'); renv::snapshot(prompt = FALSE)\n",
+       "renv::install('piamenv')\n",
        "and re-run start.R in a fresh R session.")
 }
 
 if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
     && !getOption("autoRenvUpdates", FALSE)
     && !is.null(piamenv::showUpdates())) {
-  message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
+  message("Consider updating with `piamenv::updateRenv()`.")
   Sys.sleep(1)
 }
 

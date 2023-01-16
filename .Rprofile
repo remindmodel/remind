@@ -1,3 +1,6 @@
+# setting RENV_PATHS_LIBRARY ensures packages are installed into renv/library
+# for some reason this also has implications for symlinking into the global cache
+Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
 source("renv/activate.R")
 
 if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
@@ -9,7 +12,6 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("R package dependencies are not installed in this renv, installing now...")
   renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
-  renv::snapshot(prompt = FALSE) # create renv.lock
   message("Finished installing R package dependencies.")
 }
 
