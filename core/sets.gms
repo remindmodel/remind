@@ -69,8 +69,9 @@ gdp_SSP5        "SSP5 fastGROWTH fastCONV"
 gdp_SSP2_lowEn  "SSP2 with low energy"
 gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
 gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
 gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
