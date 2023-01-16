@@ -58,7 +58,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         }
       }
 
-      message("Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
+      message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
       # suppress output of renv::snapshot
       utils::capture.output({
         utils::capture.output({

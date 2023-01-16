@@ -3,6 +3,7 @@ local({
 # for some reason this also has implications for symlinking into the global cache
 Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
 source("renv/activate.R")
+
 renvVersion <- "0.16.0"
 if (packageVersion("renv") != renvVersion) {
   renvLockExisted <- file.exists(renv::paths$lockfile())
