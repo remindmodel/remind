@@ -1,18 +1,6 @@
 csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
                        file.path("../../config", "*", "scenario_config*.csv")))
 for (csvfile in csvfiles) {
-  # This is a new test and we currently still have errors. Let's fix them ASAP.
-  if (csvfile %in% c(
-      "../../config/scenario_config_DeepEl.csv",
-      "../../config/scenario_config_EDGE-T_NDC_NPi_pkbudget.csv",
-      "../../config/scenario_config_GCS.csv",
-      "../../config/scenario_config_NAVIGATE_300.csv",
-      "../../config/21_regions_EU11/scenario_config_21_EU11_ARIADNE.csv",
-      "../../config/21_regions_EU11/scenario_config_21_EU11_ECEMF.csv",
-      "../../config/21_regions_EU11/scenario_config_21_EU11_Fit_for_55_sensitivity.csv"
-      )) {
-        next
-      }
   test_that(paste("perform readCheckScenarioConfig with", gsub("../../config/", "", csvfile, fixed = TRUE)), {
     # regexp = NA means: expect no warning
     expect_warning(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE), regexp = NA)
