@@ -11,10 +11,10 @@ Before GAMS can start solving the model, several steps are necessary. The input 
 ### Overview
 
 ```
-start.R -> submit(cfg) -------------------------> prepare_and_run()
+start.R -> submit(cfg) -------------------------> prepareAndRun()
 
            - create output folder                 - fetch input data
-           - copy config, prepare_and_run.R       - prepare NDCs
+           - copy config, prepareAndRun.R         - prepare NDCs
              to output folder                     - create full.gms
            - send slurm job to cluster            - run GAMS
                                                   - reporting
@@ -28,15 +28,15 @@ start.R -> submit(cfg) -------------------------> prepare_and_run()
 ```
 Rscript start.R
   -> choose_slurmConfig()               [scripts/start/choose_slurmConfig.R]
-     configure_cfg(cfg, scenario, ...)  [start.R]
+     configureCfg(cfg, scenario, ...)   [scripts/start/configureCfg.R]
      save cfg to runtitle.RData (in REMIND's mainfolder)
      submit(cfg)                        [scripts/start/submit.R]
        - create output folder
-       - copy scripts/start/prepare_and_run.R into results folder
+       - copy scripts/start/prepareAndRun.R into results folder
        - save cfg to config.Rdata into results folder
        - change to results folder
-       - send job to cluster: sbatch Rscript prepare_and_run.R
-            ->  prepare_and_run() [scripts/start/prepare_and_run.R]
+       - send job to cluster: sbatch Rscript prepareAndRun.R
+            ->  prepareAndRun() [scripts/start/prepareAndRun.R]
                    - load config.Rdata
                    - cd mainfolder
                    - LOCK model
