@@ -451,14 +451,31 @@ p05_deltacap_res(ttot,regi,teBioPebiolc) = vm_deltaCap.l(ttot,regi,teBioPebiolc,
 *** Note: make sure that this matches with the phaseout in core/bounds.gms
 
 * BS/DK* Developed regions phase out quickly (no new capacities)
-* BS/DK* Developing regions (GDP PPP threshold) phase out more slowly
+* BS/DK* Developing regions (GDP PPP threshold) phase out more slowly (varied by SSP)
 loop(regi,
   if ((pm_gdp("2005",regi)/pm_pop("2005",regi) / pm_shPPPMER(regi)) lt 4,
     p05_deltacap_res("2010",regi,"biotr") = 1.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
     p05_deltacap_res("2015",regi,"biotr") = 0.9  * vm_deltaCap.lo("2005",regi,"biotr","1");
     p05_deltacap_res("2020",regi,"biotr") = 0.7  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$ifthen NOT %cm_tradbio_phaseout% == "fast"   !! cm_tradbio_phaseout
+    p05_deltacap_res("2025",regi,"biotr") = 0.5  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2030",regi,"biotr") = 0.4  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2035",regi,"biotr") = 0.3  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2040",regi,"biotr") = 0.2  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2045",regi,"biotr") = 0.15 * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2050",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+    p05_deltacap_res("2055",regi,"biotr") = 0.1  * vm_deltaCap.lo("2005",regi,"biotr","1");
+$endif
   );
 );
+
+* quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
+$if %cm_GDPscen% == "gdp_SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
+$if %cm_GDPscen% == "gdp_SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
 
 display p05_deltacap_res;
 
@@ -529,4 +546,3 @@ if (cm_startyear gt 2005,
 
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
-

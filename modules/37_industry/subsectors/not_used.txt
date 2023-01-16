@@ -7,7 +7,7 @@
 name,type,reason
 vm_effGr,input,questionnaire
 pm_ppfen_shares,input,questionnaire
-pm_priceCO2,input,questionnaire
+pm_priceCO2forMAC,input,questionnaire
 pm_ResidualCementDemand,input,questionnaire
 pm_CementAbatementPrice,input,questionnaire
 pm_ttot_val,input,questionnaire
