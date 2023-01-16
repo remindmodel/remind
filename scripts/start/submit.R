@@ -50,7 +50,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
         if (getOption("autoRenvUpdates", FALSE)) {
-          piamenv::updateRenv()
+          installedUpdates <- piamenv::updateRenv()
+          piamenv::stopIfLoaded(names(installedUpdates))
         } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
                    && !is.null(piamenv::showUpdates())) {
           message("Consider updating with `piamenv::updateRenv()`.")

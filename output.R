@@ -26,7 +26,8 @@ argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
 # run updates before loading any packages
 if ("--update" %in% argv) {
   stopifnot(`--update must not be used together with --renv=...` = !any(startsWith(argv, "--renv=")))
-  piamenv::updateRenv()
+  installedUpdates <- piamenv::updateRenv()
+  piamenv::stopIfLoaded(names(installedUpdates))
 } else if (any(startsWith(argv, "--renv="))) {
   renvProject <- normalizePath(sub("^--renv=", "", grep("^--renv=", argv, value = TRUE)))
   renv::load(renvProject)

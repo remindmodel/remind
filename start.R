@@ -84,10 +84,11 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
 }
 
 # Check if dependencies for a model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  piamenv::checkDeps(action = "ask")
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
+  installedPackages <- piamenv::fixDeps(ask = TRUE)
+  piamenv::stopIfLoaded(names(installedPackages))
 } else {
-  stop("REMIND requires piamenv >= 0.2.0, please run the following to update it:\n",
+  stop("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
        "renv::install('piamenv')\n",
        "and re-run start.R in a fresh R session.")
 }
