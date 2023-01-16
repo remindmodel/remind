@@ -1,5 +1,8 @@
-csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
-                       file.path("../../config", "*", "scenario_config*.csv")))
+csvfiles <- system("git ls-files ../../config/scenario_config*.csv ../../config/*/scenario_config*.csv", intern = TRUE)
+if (length(csvfiles) == 0) {
+  csvfiles <- Sys.glob(c(file.path("../../config/scenario_config*.csv"),
+                         file.path("../../config", "*", "scenario_config*.csv")))
+}
 for (csvfile in csvfiles) {
   # This is a new test and we currently still have errors. Let's fix them ASAP.
   if (csvfile %in% c(
