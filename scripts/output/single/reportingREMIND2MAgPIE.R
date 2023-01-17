@@ -26,7 +26,7 @@ scenario <- getScenNames(outputdir)
 remind_reporting_file <- file.path(outputdir,paste0("REMIND_generic_",scenario,".mif"))
 
 # produce REMIND reporting *.mif based on gdx information
-convGDX2MIF_RMEIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
+convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
 
 # create common REMIND-MAgPIE reporting by sticking individual REMIND and MAgPIE reporting mifs together
 configfile <- file.path(outputdir, "config.Rdata")
