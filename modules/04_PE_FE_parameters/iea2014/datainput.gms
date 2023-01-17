@@ -13,6 +13,27 @@ $include "./modules/04_PE_FE_parameters/iea2014/input/f04_IO_input.cs4r"
 $offdelim
 /
 ;
+
+file diagnosis_f04_input_negatives;
+if( smin( (t,regi,entyPe,entySe,te), f04_IO_input(t,regi,entyPe,entySe,te)) < 0,
+  put diagnosis_f04_input_negatives;
+  put "f04_IO_input has the following negative values that are overwritten by 0 in 04/iea2014/datainput.gms" //;
+  put "te", @15, "regi", @20, "value"//;
+  loop(t,
+    loop(regi,
+      loop(pe2se(entyPe,entySe,te),
+        if( f04_IO_input(t,regi,entyPe,entySe,te)  lt 0,
+          put_utility "msg" / "**""** input data problem: f04_IO_input has negative values that are overwritten to still allow model solving." ;
+          put_utility "msg" / "Check input data. More details in the file diagnosis_f04_input_negatives";
+          put te.tl, @ 15, regi.tl, @20, f04_IO_input(t,regi,entyPe,entySe,te):10:8 /;
+        );
+      );
+    );
+  );
+  putclose diagnosis_f04_input_negatives;
+);
+f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
+
 *CG* setting historical production from wind offshore to 0 (due to the scarcity of offshore wind before 2015)
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 f04_IO_input(tall,all_regi,"pewin","seel","windoff") = 0;
@@ -26,6 +47,25 @@ $offdelim
 /
 ;
 
+file diagnosis_f04_output_negatives;
+if( smin( (t,regi,entyPe,entySe,te), f04_IO_output(t,regi,entyPe,entySe,te)) < 0,
+  put diagnosis_f04_output_negatives;
+  put "f04_IO_output has the following negative values that are overwritten by 0 in 04/iea2014/datainput.gms" //;
+  put "te", @15, "regi", @20, "value"//;
+  loop(t,
+    loop(regi,
+      loop(pe2se(entyPe,entySe,te),
+        if( f04_IO_output(t,regi,entyPe,entySe,te)  lt 0,
+          put_utility "msg" / "**""** input data problem: f04_IO_output has negative values that are overwritten to still allow model solving." ;
+          put_utility "msg" / "Check input data. More details in the file diagnosis_f04_output_negatives";
+          put te.tl, @ 15, regi.tl, @20, f04_IO_output(t,regi,entyPe,entySe,te):10:8 /;
+        );
+      );
+    );
+  );
+  putclose diagnosis_f04_output_negatives;
+);
+f04_IO_output(tall,regi,entyPe,entySe,te)$(f04_IO_output(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
 
 
