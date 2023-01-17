@@ -6,7 +6,7 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/40_techpol/NDC/equations.gms
 
-q40_ElecBioBound(t,regi)$(t.val gt 2015 AND (NOT cm_bioprod_histlim ge 0))..
+q40_ElecBioBound(t,regi)$(t.val gt 2015)..
 ***am minimum targets for certain technologies
     sum(te2rlf(te,rlf)$(sameas(te,"biochp") OR sameas(te,"bioigcc") OR sameas(te,"bioigccc")), vm_cap(t,regi,te,rlf))
       * 1000 =g= p40_ElecBioBound(t,regi);	 

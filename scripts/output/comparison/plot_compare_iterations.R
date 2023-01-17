@@ -142,7 +142,7 @@ plot_iterations <- function(runname) {
                    legend_position="right")
 
   ### LUC EMISSIONS (MAgPIE) ###
-  emi <- readAll(gdx_path,readpar,name="pm_macBaseMagpie",asList=FALSE)[,,"co2luc"]*1000*44/12
+  emi <- readAll(gdx_path,readpar,name=c("pm_macBaseMagpie","p_macBaseMagpie"),asList=FALSE)[,,"co2luc"]*1000*44/12
   emi <- mbind(emi,dimSums(emi,dim=1))
   getNames(emi) <- gsub(".*rem-","",getNames(emi))
 

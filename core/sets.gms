@@ -69,8 +69,9 @@ gdp_SSP5        "SSP5 fastGROWTH fastCONV"
 gdp_SSP2_lowEn  "SSP2 with low energy"
 gdp_SSP2EU_NAV_ele "NAVIGATE demand scenarios: Electrification and fuel shift"
 gdp_SSP2EU_NAV_act "NAVIGATE demand scenarios: Activity reduction and activity shift"
-gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures."
 gdp_SSP2EU_NAV_tec "NAVIGATE demand scenarios: Technological improvements - energy efficiency"
+gdp_SSP2EU_NAV_lce "NAVIGATE demand scenarios: Low consumption energy (act + tec)"
+gdp_SSP2EU_NAV_all "NAVIGATE demand scenarios: All measures (ele + act + tec)"
 /
 
 all_GDPpcScen    "all possible GDP per capita scenarios (GDP and Population from the same SSP-scenario"
@@ -737,12 +738,9 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 ***######################## R SECTION START (SETS) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT INPUT DOWNLOAD
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R
+*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
-
-   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
-
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
@@ -753,6 +751,9 @@ LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi
 LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
       /
  
+
+   all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
+
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
       
@@ -908,7 +909,7 @@ $endif.altFeEmiFac
 ***######################## R SECTION START (MODULES) ###############################
 *** THIS CODE IS CREATED AUTOMATICALLY, DO NOT MODIFY THESE LINES DIRECTLY
 *** ANY DIRECT MODIFICATION WILL BE LOST AFTER NEXT MODEL START
-*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare_and_run.R
+*** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
 
@@ -2235,7 +2236,7 @@ charPeRe(char) "characteristics of renewables"
 /
 s_statusTe   "technology status: how close a technology is to market readiness. Scale: 0-3, with 0 'I can go out and build a GW plant today' to 3 'Still some research necessary'"
 /
-      0 * 3
+      0 * 5
 /
 ;
 
@@ -2315,12 +2316,14 @@ alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
 alias(rlf,rlf2);
-alias(regi,regi2,regi3);
+alias(regi,regi2,regi3,regi4);
 alias(steps,steps2);
 alias(all_emiMkt,emiMkt,emiMkt2);
 alias(all_emiMktExt,emiMktExt);
 alias(emi_sectors,sector,sector2);
-alias(sector_types,type)
+alias(sector_types,type);
+alias(ext_regi,ext_regi2);
+alias(regi_group,regi_group2);
 
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------

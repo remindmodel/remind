@@ -84,8 +84,11 @@ $endif
   );
 );
 
-* quickest phaseout in SDP (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP"  vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0. * vm_deltaCap.lo(t,regi,"biotr","1");
+* quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
+$if %cm_GDPscen% == "gdp_SDP" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_EI" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_MC" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_RC" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0;
 $if %cm_GDPscen% == "gdp_SSP1" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 $if %cm_GDPscen% == "gdp_SSP5" vm_deltaCap.fx(t,regi,"biotr","1")$(t.val gt 2020) = 0.5 * vm_deltaCap.lo(t,regi,"biotr","1");
 
@@ -309,6 +312,9 @@ vm_cap.fx(t,regi,te,rlf)$(t.val le 2020 AND pm_data(regi,"tech_stat",te) eq 4)=0
 vm_capCum.fx(t0,regi,teLearn)$(pm_data(regi,"tech_stat",teLearn) eq 4) = 0;
 *** tech_stat 4 technologies don't learn before 2025, so capital cost should be fixed
 vm_costTeCapital.fx(t,regi,teLearn)$(t.val le 2020 AND pm_data(regi,"tech_stat",teLearn) eq 4)=fm_dataglob("inco0",teLearn);
+
+*** no technologies with tech_stat 5 before 2030
+vm_deltaCap.fx(t,regi,te,rlf)$(t.val le 2025 AND pm_data(regi,"tech_stat",te) eq 5)=0;
 
 
 *CB 2012024 -----------------------------------------------------

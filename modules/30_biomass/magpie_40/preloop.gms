@@ -117,5 +117,11 @@ vm_fuExtr.l(ttot,regi,"pebiolc","1")  = pm_pebiolc_demandmag(ttot,regi);
 ***  END: calculate shift factors
 ***-------------------------------------------------------------
 
+*** load values of v30_BioPEProdTotal from input GDX as this is required for switch cm_bioprod_regi_lim 
+$IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
+Execute_Loadpoint 'input' v30_BioPEProdTotal.l = v30_BioPEProdTotal.l;
+$ENDIF.bioprod_regi_lim
+
+
 *** EOF ./modules/30_biomass/magpie_40/preloop.gms
 

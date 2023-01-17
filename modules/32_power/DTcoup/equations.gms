@@ -94,7 +94,7 @@ q32_h2turbVREcapfromTestor(t,regi)..
 q32_limitCapTeChp(t,regi)..
     sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
     =l=
-    p32_shCHP(regi,"bscu") 
+    p32_shCHP(t,regi)
     * sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) )
 ;
 		 
@@ -232,7 +232,7 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
 	vm_flexAdj(t,regi,te) 
 	=e=
-	(1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel")$(cm_flex_tax eq 1 AND t.val ge 2025)
+	(1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel")$((cm_flex_tax eq 1) AND (t.val ge 2025) and (pm_SEPrice(t,regi,"seel") gt 0))
 ;
 
 *** EOF ./modules/32_power/DTcoup/equations.gms

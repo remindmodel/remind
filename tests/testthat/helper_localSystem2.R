@@ -4,7 +4,7 @@ localSystem2 <- function(command, args = character(),
                          minimized = FALSE, invisible = TRUE, timeout = 0) {
     # Call via system2 in remind main folder in conditions as if we were not running
     # in tests.
-    env <- paste0(env, "unset R_PROFILE_USER;unset TESTTHAT;")
+    env <- paste0("unset R_PROFILE_USER;unset TESTTHAT;", env)
     withr::with_dir("../..", {
         suppressWarnings({
             output <- system2(command, args, stdout, stderr, stdin, input, env,

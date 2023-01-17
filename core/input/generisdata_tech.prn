@@ -70,13 +70,13 @@ luse                                                                            
 
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            4                                    2                                               3          3  
-inco0               1350         480         360         600         700          0.1      0.1          700        800
-constrTme            2            2           1           2           2            1        1            2          2
+tech_stat            4                                    5           5            5                     3          3  
+inco0               1350         480         360         510         700          510      0.1          700        800
+constrTme            2            2           1           2           2            2        1            2          2
 mix0                                                                                                                    
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
-omf                 0.05        0.03        0.03        0.03        0.05         0.00      0.00         0.03       0.03
-omv                    3          12          12          24           0                                 3           12
+omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00         0.03       0.03
+omv                    3          12          12          24           0          24                      3           12
 lifetime              30          25          25          30          30          30        30            30          30
 incolearn           1200
 ccap0             0.0065 
@@ -138,12 +138,12 @@ omv                   36          76
 lifetime              50          50
 
 +                storspv    storwind     storcsp
-inco0               8350        3250        2520
+inco0               7720        2940        2520
 mix0                0.00        0.00        0.00
 eta                 0.74        0.85        0.79
 omf                 0.02        0.02        0.02
 lifetime              25          25          25
-incolearn           5710        2220        1800
+incolearn           5440        2090        1800
 ccap0            0.00005     0.00005     0.00005
 learn               0.10        0.10        0.10
 

@@ -5,9 +5,6 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-source("scripts/utils/pythonBinPath.R")
-source("scripts/start/createResultsfolderPythonVirtualEnv.R")
-source("scripts/utils/isSlurmAvailable.R")
 
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
@@ -102,7 +99,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     save(cfg, file = filename)
 
     # Copy files required to configure and start a run
-    filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
+    filelist <- c("prepareAndRun.R" = "scripts/start/prepareAndRun.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)
 
@@ -113,16 +110,22 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   # Change to run folder
   setwd(cfg$results_folder)
 
-  # send prepare_and_run.R to cluster
-  cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
+  # send prepareAndRun.R to cluster
+  cat("   Executing prepareAndRun for",cfg$results_folder,"\n")
   if (grepl("^direct", cfg$slurmConfig) || ! isSlurmAvailable()) {
-    exitCode <- system("Rscript prepare_and_run.R")
+    exitCode <- system("Rscript prepareAndRun.R")
   } else {
-    exitCode <- system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
+    exitCode <- system(paste0("sbatch --job-name=",
+                              cfg$title,
+                              " --output=log.txt",
+                              " --mail-type=END",
+                              " --comment=REMIND",
+                              " --wrap=\"Rscript prepareAndRun.R \" ",
+                              cfg$slurmConfig))
     Sys.sleep(1)
   }
   if (0 < exitCode) {
-    stop("Executing prepare_and_run failed, stopping.")
+    stop("Executing prepareAndRun failed, stopping.")
   }
     
   return(cfg$results_folder)

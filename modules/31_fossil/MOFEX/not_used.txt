@@ -19,5 +19,4 @@ cm_rentconvcoal,switch,???
 pm_IO_trade,input,questionnaire
 pm_EN_demand_from_initialcap2,input,questionnaire
 cm_nucscen,input,questionnaire
-cm_limit_peur_scen,input,questionnaire
 pm_ffPolyCumEx,input,questionnaire

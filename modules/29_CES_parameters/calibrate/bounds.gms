@@ -43,13 +43,13 @@ sm_tmp = 5;  !! last iteration with bounds on industry
 loop (pf_industry_relaxed_bounds_dyn37(in),
   vm_cesIO.lo(t_29(t),regi_dyn29(regi),in)
   = pm_cesdata(t,regi,in,"quantity")
-  * max(1e-12, 0.95 + min(0, (1 - %c_CES_calibration_iteration%) / sm_tmp));
+  * max(1e-12, 0.95 + min(0, (1 - sm_CES_calibration_iteration) / sm_tmp));
 
   vm_cesIO.up(t,regi_dyn29(regi),in)
   = ( pm_cesdata(t,regi,in,"quantity")
-    * (1.05 + max(0, (%c_CES_calibration_iteration% - 1) / sm_tmp))
-    )$( %c_CES_calibration_iteration% le sm_tmp )
-  + INF$( %c_CES_calibration_iteration% gt sm_tmp );
+    * (1.05 + max(0, (sm_CES_calibration_iteration - 1) / sm_tmp))
+    )$( sm_CES_calibration_iteration le sm_tmp )
+  + INF$( sm_CES_calibration_iteration gt sm_tmp );
 );
 
 *** EOF ./modules/29_CES_parameters/calibrate/bounds.gms
