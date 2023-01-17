@@ -76,7 +76,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_tradecost_bio" = "Rename to cm_tradecostBio, see https://github.com/remindmodel/remind/pull/1054",
        "cm_biolc_tech_phaseout" = "Rename to cm_phaseoutBiolc, see https://github.com/remindmodel/remind/pull/1054",
        "cm_INCONV_PENALTY_bioSwitch" = "Rename to cm_INCONV_PENALTY_FESwitch, see https://github.com/remindmodel/remind/pull/544",
-       "cm_shSynTrans" = "Rename to cm_shSynLiq, see https://github.com/remindmodel/remind/pull/1169"
+       "cm_shSynTrans" = "Rename to cm_shSynLiq, see https://github.com/remindmodel/remind/pull/1169",
+       "cm_build_costDecayStart" = "Rename to cm_build_H2costDecayStart, see https://github.com/remindmodel/remind/pull/1057"
      )
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
