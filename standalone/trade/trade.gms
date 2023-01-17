@@ -188,8 +188,6 @@ cm_trdadj              "parameter scale the adjustment cost parameter for increa
 
 cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
 
-c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
-
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
 cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
@@ -348,7 +346,6 @@ $setGlobal cm_implicitQttyTarget  off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
-c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
 
