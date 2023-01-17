@@ -74,7 +74,13 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_bioenergy_tax" = "Rename to cm_bioenergy_SustTax, see https://github.com/remindmodel/remind/pull/1003",
        "cm_bioenergymaxscen" = "Rename to cm_maxProdBiolc, see https://github.com/remindmodel/remind/pull/1054",
        "cm_tradecost_bio" = "Rename to cm_tradecostBio, see https://github.com/remindmodel/remind/pull/1054",
-       "cm_biolc_tech_phaseout" = "Rename to cm_phaseoutBiolc, see https://github.com/remindmodel/remind/pull/1054"
+       "cm_biolc_tech_phaseout" = "Rename to cm_phaseoutBiolc, see https://github.com/remindmodel/remind/pull/1054",
+       "cm_INCONV_PENALTY_bioSwitch" = "Rename to cm_INCONV_PENALTY_FESwitch, see https://github.com/remindmodel/remind/pull/544",
+       "cm_shSynTrans" = "Rename to cm_shSynLiq, see https://github.com/remindmodel/remind/pull/1169",
+       "cm_build_costDecayStart" = "Rename to cm_build_H2costDecayStart, see https://github.com/remindmodel/remind/pull/1057",
+       "c_BaselineAgriEmiRed" = "Use the more flexible c_agricult_base_shift switch instead, see https://github.com/remindmodel/remind/issues/1157",
+       "cm_bioprod_histlim" = "Use more flexible cm_bioprod_regi_lim switch instead, see https://github.com/remindmodel/remind/issues/1157",
+       "cm_BioImportTax_EU" = "Use more flexible cm_import_tax switch instead, see https://github.com/remindmodel/remind/issues/1157"
      )
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
