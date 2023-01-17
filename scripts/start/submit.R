@@ -54,7 +54,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
           piamenv::stopIfLoaded(names(installedUpdates))
         } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
                    && !is.null(piamenv::showUpdates())) {
-          message("Consider updating with `piamenv::updateRenv()`.")
+          message("Consider updating with `make update-renv`.")
         }
       }
 
@@ -68,7 +68,6 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       })
       message("done.")
 
-      # TODO remove renvLog?
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
       createResultsfolderRenv <- function() {
