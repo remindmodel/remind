@@ -33,19 +33,12 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
             paste0(rownames(scenConf)[containsdot], collapse = ", "),
             " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
   }
-  underscore <- grep("_$", rownames(scenConf))
-  if (any(underscore)) {
-    warning("These titles end with _: ",
-            paste0(rownames(scenConf)[underscore], collapse = ", "),
-            ". This may lead to wrong gdx files being selected. Please use # to make comments, not underscores.",
-            " Stopping now.")
-  }
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
     message("In ", filename,
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
   }
-  errorsfound <- sum(toolong) + sum(regionname) + sum(containsdot) + sum(underscore)
+  errorsfound <- sum(toolong) + sum(regionname) + sum(containsdot)
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                         "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
