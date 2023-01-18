@@ -14,19 +14,30 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
+
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+o37_demFePrcb(ttot,regi,entyFE,tePrcb)$(p37_specFEDem(entyFE,tePrcb) AND NOT sameas(ttot,"2005"))
+  = v37_prodVolPrcb.l(ttot,regi,tePrcb)
+    * p37_specFEDem(entyFE,tePrcb)
+;
+o37_demFePrcb("2005",regi,entyFE,tePrcb)$(p37_specFEDem(entyFE,tePrcb))
+  = EPS
+;
+$endif.process_based_steel
+
 *** total FE per energy carrier and emissions market in industry (sum over 
 *** subsectors)
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
   = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR (ttot.val eq cm_startyear)), 
+                         secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR sameas(ttot,"2005")), 
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
     +
   sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb)),
-    v37_demFePrcb.l(ttot,regi,entyFE,tePrcb)
-  )$(entyFePrcb(entyFE) AND (ttot.val gt cm_startyear))
+    o37_demFePrcb(ttot,regi,entyFE,tePrcb)
+  )$(NOT sameas(ttot,"2005"))
 $endif.process_based_steel
 ;
 
@@ -36,14 +47,13 @@ o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
   = 
   ( sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
-          secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR (ttot.val eq cm_startyear)), 
+          secInd37_emiMkt(secInd37,emiMkt))$((NOT secInd37Prcb(secInd37)) OR sameas(ttot,"2005")), 
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  + sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_tePrcb(secInd37,tePrcb))$(
-                   entyFePrcb(entyFE) AND secInd37Prcb(secInd37) AND (ttot.val gt cm_startyear)),
-      v37_demFePrcb.l(ttot,regi,entyFE,tePrcb)
+  + sum((secInd37_emiMkt(secInd37,emiMkt),secInd37_tePrcb(secInd37,tePrcb)),
+      o37_demFePrcb(ttot,regi,entyFE,tePrcb)
     )
 $endif.process_based_steel
   )

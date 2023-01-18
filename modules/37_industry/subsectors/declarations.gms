@@ -26,7 +26,7 @@ $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_mater
   p37_specMatsDem(mats,all_te,opModesPrcb)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
 $endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  p37_specFeDem(all_enty,all_te)                                               "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
+  p37_specFeDem(all_enty,all_te)                                               "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
   p37_mats2ue(all_enty,all_in)                                                 "Contribution of process output to ue in CES tree [Gt/Gt]"
 $endif.process_based_steel
 
@@ -37,6 +37,9 @@ $endif.process_based_steel
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"                                       
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"                                                                              
   o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)                          "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"   
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+  o37_demFePrcb(ttot,all_regi,all_enty,all_te)                           "Process-based FE demand per FE type and process"
+$endif.process_based_steel
 
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
@@ -59,7 +62,7 @@ $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_mater
   v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
 $endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_demFEPrcb(tall,all_regi,all_enty,all_te)                              "Final-energy demand of material-flow model [TWa]"
+  v37_prodVolPrcb(tall,all_regi,all_te)                                     "Production volume of processes in material-flow model [Gt]"
   v37_prodMats(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
 $endif.process_based_steel
 ;
@@ -83,8 +86,8 @@ $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_mater
   q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
 $endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  q37_demFEPrcb(tall,all_regi,all_enty,all_te)            "Final-energy demand of materail-flow model"
-  q37_mats2ue(tall,all_regi,all_enty)                              "Connect materials production to ue ces tree nodes"
+  q37_prodMats(tall,all_regi,mats)                        "Production volume of processes in material-flow model"
+  q37_mats2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
 $endif.process_based_steel
 ;
 

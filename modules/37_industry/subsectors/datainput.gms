@@ -30,24 +30,27 @@ $ifthen.material_flows "%cm_material_flows%" == "on"              !! cm_material
 $endif.material_flows
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
+  !! Read in in MWh/t, then convert to TWa/Gt directly below!!
   p37_specFeDem(all_enty,all_te) !!,opModesPrcb)
   /
-    !!feels.idr.(ng,h2)       0.33                                            !! Specific electric demand for both H2 and NG operation.
+    feels.idr           0.33                                            !! Specific electric demand for both H2 and NG operation.
     !!fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
-    !!feh2s.idr.h2            1.91                                            !! Specific hydrogen demand when operating with H2.
+    feh2s.idr           1.91                                            !! Specific hydrogen demand when operating with H2.
     
-    !!feel_steel_primary.eaf.pri           0.91                                            !! Specific electricy demand of EAF when operating with DRI.
-    feels.eaf          0.67                                            !! Specific electricy demand of EAF when operating with scrap.
+    feels.eaf           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
     
     fesos.bfbof         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
     feels.bfbof         0.30                                             !! Specific electricy demand of EAF when operating with scrap.
     !!feso_steel.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
-  /
+  /;
+!! Convert from MWh/t to TWa/Gt 
+p37_specFeDem(all_enty,all_te) = p37_specFeDem(all_enty,all_te)  / (sm_TWa_2_MWh / sm_giga_2_non);
 
+Parameters
   p37_mats2ue(all_enty,all_in) !!,opModesPrcb)
   /
-    sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in t/a
-    prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in t/a
+    sesteel.ue_steel_secondary   1.                                            !! Only contibution, both are measured in Gt/a
+    prsteel.ue_steel_primary     1.                                            !! Only contibution, both are measured in Gt/a
   /
 $endif.process_based_steel
 

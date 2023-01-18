@@ -12,6 +12,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
     bfbof               "Blast furnace/basic-oxygen furnace"
     eaf                 "Electric-arc furnace"
+    idr                 "Iron direct reduction"
   /
 
   mats(all_enty)        "Materials considered in material-flow model"
@@ -23,7 +24,14 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   tePrcb2matsOut(tePrcb,mats) "Mapping of technologies onto their output materials"
   /
    bfbof . prsteel
+   idr . prsteel
    eaf . sesteel
+  /
+
+  uePrcb(all_in) "Mapping of materials onto ue ces tree node"
+  /
+   ue_steel_primary
+   ue_steel_secondary
   /
 
   mats2ue(mats,all_in) "Mapping of materials onto ue ces tree node"
@@ -76,21 +84,10 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 $endif.process_based_steel
   /
 
-entyFePrcb(all_enty)  "FE carriers in industry which are included in process-based modelling"
-  /
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-    feels
-    fesos
-    !!fegas
-    !!fehos
-    !!feh2s
-$endif.process_based_steel
-  /
-
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   secInd37_tePrcb(secInd37,tePrcb)      "Mapping of technologies onto industry subsectors"
   /
-    !!steel . idr
+    steel . idr
     steel . eaf
     steel . bfbof
   /
