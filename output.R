@@ -35,7 +35,7 @@ if ("--update" %in% argv) {
 # load landuse library
 library(lucode2)
 library(gms)
-require(stringr)
+require(stringr, quietly = TRUE)
 
 ### Define arguments that can be read from command line
 if (!exists("source_include")) {

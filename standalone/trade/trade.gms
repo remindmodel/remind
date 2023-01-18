@@ -145,11 +145,11 @@ cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
-cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2/GJ]"
-cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
-cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
-cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
+cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
+cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
+cm_tradecostBio         "choose financal tradecosts for biomass (purpose grown pebiolc)"
+cm_1stgen_phaseout      "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_tradbio_phaseout     "switch that allows for a faster phase out of traditional biomass"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen           "pure rate of time preference standard values"
@@ -282,12 +282,12 @@ $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
 cm_bioenergy_EF_for_tax = 0;              !! def = 0
 $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
-cm_bioenergymaxscen     = 0;              !! def = 0
-cm_tradecost_bio        = 2;              !! def = 2
+$setglobal cm_maxProdBiolc  off           !! def = off
+cm_tradecostBio         = 0.5;            !! def = 0.5
 $setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
 cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
-cm_biolc_tech_phaseout  = 0;              !! def = 0
+cm_phaseoutBiolc        = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
