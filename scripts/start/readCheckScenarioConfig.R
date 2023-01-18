@@ -76,13 +76,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_BioImportTax_EU" = "Use more flexible cm_import_tax switch instead, see https://github.com/remindmodel/remind/issues/1157"
      )
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
-      message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
+      if (testmode) {
+        warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
+      } else {
+        message("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
+      }
     }
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
   }
-  if (errorsfound > 0) stop(errorsfound, " errors found.")
+  if (errorsfound > 0) if (testmode) warning(errorsfound, " errors found.") else stop(errorsfound, " errors found.")
   return(scenConf)
 }
