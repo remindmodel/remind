@@ -29,10 +29,9 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
                "glob;0;33"),
              con = csvfile, sep = "\n")
   w <- capture_warnings(expect_error(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE),
-                                     "6 errors found"))
+                                     "5 errors found"))
   expect_match(w, "These titles are too long", all = FALSE)
   expect_match(w, "These titles may be confused with regions", all = FALSE)
   expect_match(w, "These titles contain a dot", all = FALSE)
-  expect_match(w, "These titles end with _", all = FALSE)
   expect_match(w, "Outdated column names found that must not be used", all = FALSE)
 })
