@@ -55,7 +55,7 @@ q_costInv(t,regi)..
 q_costInvTeDir(t,regi,te)..
   v_costInvTeDir(t,regi,te)
   =e=
-  vm_costTeCapital(t,regi,te) * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf) )
+  vm_costTeCapital(t,regi,te) * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)) * 1.05**(pm_ts(t) / 2)
 ;
 
 
@@ -66,7 +66,9 @@ v_adjFactorGlob.fx(t,regi,te) = 0;
 q_costInvTeAdj(t,regi,teAdj)..
   v_costInvTeAdj(t,regi,teAdj)
   =e=
-  vm_costTeCapital(t,regi,teAdj) * ( (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj) ) )
+  vm_costTeCapital(t,regi,teAdj) * (
+    (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj))
+  ) * 1.05**(pm_ts(t) / 2)
 ;
 
 ***---------------------------------------------------------------------------
@@ -159,29 +161,24 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***---------------------------------------------------------------------------
 *MLB 05/2008* correction factor included to avoid pre-triangular infeasibility
 q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
-         vm_demPe(ttot,regi,enty,enty2,te)
-         =e=
-         (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
-         +
+    vm_demPe(ttot,regi,enty,enty2,te)
+     =e=
+    (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
+    +
 ***cb early retirement for some fossil technologies
-        (1 - vm_capEarlyReti(ttot,regi,te))
-        *
-
-		sum(teSe2rlf(teEtaIncr(te),rlf),
-                vm_capFac(ttot,regi,te)
-             * (
-                 sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
-                        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
-                      / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te) 
+    (1 - vm_capEarlyReti(ttot,regi,te))
+    *
+    sum(teSe2rlf(teEtaIncr(te),rlf),
+            vm_capFac(ttot,regi,te)
+            * (
+                sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+                        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+                      / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
                       * pm_omeg(regi,opTimeYr+1,te)
-                                * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-                      )
-*LB* add half of the last time step ttot
-               +  pm_dt(ttot)/2 / pm_dataeta(ttot,regi,te)
-                * pm_omeg(regi,"2",te)
-                * vm_deltaCap(ttot,regi,te,rlf)   
+                      * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
                 )
-            );
+            )
+    );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -300,24 +297,21 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 ***-----------------------------------------------------------------------------
 
 q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
-         vm_cap(ttot,regi,te,rlf)
-         =e=
-    !! early retirement for some fossil technologies
-        (1 - vm_capEarlyReti(ttot,regi,te))
-        *
+  vm_cap(ttot,regi,te,rlf)
+  =e=
+!! early retirement for some fossil technologies
+  (1 - vm_capEarlyReti(ttot,regi,te))
+  * (
+      sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+            pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+          * pm_omeg(regi,opTimeYr+1,te)
+          * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
+      )
 
-        (sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
-                  pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
-                * pm_omeg(regi,opTimeYr+1,te)
-                * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-            )
-       !! half of the last time step ttot
-        +  ( pm_dt(ttot) / 2 
-       * pm_omeg(regi,"2",te)
-       * vm_deltaCap(ttot,regi,te,rlf)
-            )
-         )
+  )
 ;
+
+
 
 q_capDistr(t,regi,teReNoBio(te))..
     sum(teRe2rlfDetail(te,rlf), vm_capDistr(t,regi,te,rlf) )
