@@ -164,6 +164,9 @@ if (o_modelstat le 2,
     put_utility logfile, "shell" /
       "cp fulldata.gdx fulldata_" iteration.val:0:0 ".gdx";
   );
+  put_utility logfile, "shell" /
+    "cp fulldata.gdx fulldata_%c_expname%.gdx";
+
 else
   execute_unload 'non_optimal';
   if (c_keep_iteration_gdxes eq 1,
