@@ -2,6 +2,14 @@ local({
 # setting RENV_PATHS_LIBRARY ensures packages are installed into renv/library
 # for some reason this also has implications for symlinking into the global cache
 Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
+
+# remind's renv integration previously relied on renv.lock, but now it should generally not be used anymore
+# this can safely be removed in January 2024
+if (file.exists("renv.lock") && !file.exists("renv/old_renv.lock")) {
+  file.rename("renv.lock", "renv/old_renv.lock")
+  message("moved legacy renv.lock to renv/old_renv.lock")
+}
+
 source("renv/activate.R")
 
 renvVersion <- "0.16.0"
