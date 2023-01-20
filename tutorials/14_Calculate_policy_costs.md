@@ -47,11 +47,11 @@ Short version if you have a single base run for all your scenarios:
 ```
 # NGFS
 remnr=5
-runs=(C_h_cpol C_h_ndc C_o_1p5c C_o_2p C_d_delfrag C_d_rap)
-baserun=C_h_cpol
+runs=(h_cpol h_ndc o_1p5c o_2p d_delfrag d_rap)
+baserun=h_cpol
 
 outputarray=( "${runs[@]/%/-rem-${remnr},${baserun}-rem-${remnr}}" )
-outputarray=( "${outputarray[@]/#/output/}" )
+outputarray=( "${outputarray[@]/#/output/C_}" )
 outputstring="$(IFS=,; echo "${outputarray[*]}")"
 Rscript output.R comp=T output=policyCosts outputdir=$outputstring
 ```
