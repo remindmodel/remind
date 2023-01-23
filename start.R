@@ -309,9 +309,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     if (cfg$pythonEnabled == "on") {
       if (firstScenario) {
-        pythonVirtualEnvLockFile <- updatePythonVirtualEnvLockFile()
+        updatePythonVirtualEnvLockFile()
       }
-      cfg$pythonVirtualEnvLockFile <- pythonVirtualEnvLockFile
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
