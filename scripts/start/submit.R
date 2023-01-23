@@ -49,39 +49,37 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
-        capture.output({ # suppress printing status
-          renvStatus <- renv::status()
-        })
-        if (!renvStatus$synchronized) {
-          message("The new run will use the package environment defined in renv.lock, ",
-                  "but it is out of sync, probably because you installed packages/updates manually. ",
-                  "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
-          if (tolower(gms::getLine()) %in% c("y", "")) {
-            renv::snapshot(prompt = FALSE)
-          }
-        }
-
         if (getOption("autoRenvUpdates", FALSE)) {
-          source("scripts/utils/updateRenv.R")
+          installedUpdates <- piamenv::updateRenv()
+          piamenv::stopIfLoaded(names(installedUpdates))
         } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
                    && !is.null(piamenv::showUpdates())) {
-          message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
+          message("Consider updating with `make update-renv`.")
         }
       }
 
+      message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
+      # suppress output of renv::snapshot
+      utils::capture.output({
+        utils::capture.output({
+          # snapshot current main renv into run folder
+          renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+        }, type = "message")
+      })
+      message("done.")
+
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
-      createResultsfolderRenv <- function(resultsfolder, lockfile) {
-        renv::init(resultsfolder)
-
-        # restore same renv as previous run in cascade, or main renv if first run
-        file.copy(lockfile, resultsfolder, overwrite = TRUE)
-        renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
+      createResultsfolderRenv <- function() {
+        renv::init() # will overwrite renv.lock if existing...
+        file.rename("_renv.lock", "renv.lock") # so we need this rename
+        renv::restore(prompt = FALSE)
       }
 
       # init renv in a separate session so the libPaths of the current session remain unchanged
       callr::r(createResultsfolderRenv,
-               list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
+               wd = cfg$results_folder,
+               env = c(RENV_PATHS_LIBRARY = "renv/library"),
                stdout = renvLogPath, stderr = "2>&1")
     }
 
@@ -123,6 +121,6 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   if (0 < exitCode) {
     stop("Executing prepareAndRun failed, stopping.")
   }
-    
+
   return(cfg$results_folder)
 }

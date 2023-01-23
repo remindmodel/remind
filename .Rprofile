@@ -1,4 +1,25 @@
+local({
+# setting RENV_PATHS_LIBRARY ensures packages are installed into renv/library
+# for some reason this also has implications for symlinking into the global cache
+Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
+
+# remind's renv integration previously relied on renv.lock, but now it should generally not be used anymore
+# this can safely be removed in January 2024
+if (file.exists("renv.lock") && !file.exists("renv/old_renv.lock")) {
+  file.rename("renv.lock", "renv/old_renv.lock")
+  message("moved legacy renv.lock to renv/old_renv.lock")
+}
+
 source("renv/activate.R")
+
+renvVersion <- "0.16.0"
+if (packageVersion("renv") != renvVersion) {
+  renvLockExisted <- file.exists(renv::paths$lockfile())
+  renv::upgrade(version = renvVersion, reload = TRUE, prompt = FALSE)
+  if (!renvLockExisted) {
+    unlink(renv::paths$lockfile())
+  }
+}
 
 if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
   options(repos = c(getOption("repos"), pik = "https://rse.pik-potsdam.de/r/packages"))
@@ -9,11 +30,9 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("R package dependencies are not installed in this renv, installing now...")
   renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
-  renv::snapshot(prompt = FALSE) # create renv.lock
   message("Finished installing R package dependencies.")
 }
 
-local({
 # Configure locations of REMIND input data
 # These can be located in directories on the local machine, remote directories,
 # or default directories on the cluster.

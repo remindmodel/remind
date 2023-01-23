@@ -16,13 +16,19 @@ docs:           ## Generate/update model HTML documentation in the doc/ folder
 	@echo -e '\nOpen\ndoc/html/index.htm\nin your browser to view the generated documentation.'
 
 update-renv:    ## Upgrade all pik-piam packages in your renv to the respective
-                ## latest release, make new snapshot
-	Rscript scripts/utils/updateRenv.R
+                ## latest release, write renv.lock into archive
+	Rscript -e 'piamenv::updateRenv()'
 
 update-all-renv: ## Upgrade all packages (including CRAN packages) in your renv
-                 ## to the respective latest release, make new snapshot
-	Rscript -e 'renv::update(exclude = "renv")'
-	Rscript -e 'renv::snapshot()'
+                 ## to the respective latest release, write renv.lock archive
+	Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
+
+archive-renv: ## Write renv.lock into archive.
+	Rscript -e 'piamenv::archiveRenv()'
+
+restore-renv: ## Restore renv to the state described in interactively
+              ## selected renv.lock from the archive or a run folder.
+	Rscript -e 'piamenv::restoreRenv()'
 
 check:          ## Check if the GAMS code follows the coding etiquette
                 ## using gms::codeCheck
