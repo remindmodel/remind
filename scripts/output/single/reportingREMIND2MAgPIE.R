@@ -37,11 +37,16 @@ if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- read.report(remind_reporting_file, as.list=FALSE)
   tmp_mag <- read.report(magpie_reporting_file, as.list=FALSE)[, getYears(tmp_rem), ]
+  # remove population from magpie reporting to avoid duplication (units "million" vs. "million people")
+  tmp_mag <- tmp_mag[, , "Population (million people)", invert = TRUE]  
   # harmonize scenario name from -mag-xx to -rem-xx
   getNames(tmp_mag, dim = 1) <- paste0(scenario)
   tmp_rem_mag <- mbind(tmp_rem, tmp_mag)
-  if (any(getNames(tmp_rem_mag[, , "REMIND"], dim = 3) %in% getNames(tmp_rem_mag[, , "MAgPIE"], dim = 3))) {
-    message("Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!")
+  # extract variable names without units for both models
+  remind_variables <- magclass::unitsplit(getNames(tmp_rem_mag[, , "REMIND"], dim = 3))$variable
+  magpie_variables <- magclass::unitsplit(getNames(tmp_rem_mag[, , "MAgPIE"], dim = 3))$variable
+  if (any(remind_variables %in% magpie_variables)) {
+      message("Cannot produce common REMIND-MAgPIE reporting because there are identical variable names in both models!")
   } else {
     write.report(tmp_rem_mag, file = remind_reporting_file, ndigit = 7)
     deletePlus(remind_reporting_file, writemif = TRUE)
