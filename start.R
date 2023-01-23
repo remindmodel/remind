@@ -309,7 +309,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     if (cfg$pythonEnabled == "on") {
       if (firstScenario) {
-        updatePythonVirtualEnvLockFile()
+        updatePythonVirtualEnv()
       }
     }
 
