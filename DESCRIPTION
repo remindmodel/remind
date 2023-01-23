@@ -50,7 +50,7 @@ Imports:
     ncdf4,
     nleqslv,
     optparse,
-    piamenv (>= 0.2.0),
+    piamenv (>= 0.3.4),
     piamInterfaces (>= 0.0.37),
     plotly,
     purrr,

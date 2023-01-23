@@ -78,13 +78,15 @@ if (! exists("logFile")) logFile <- paste0(outputFilename, ".log")
 message("### Find various logs in ", logFile)
 withCallingHandlers({ # piping messages to logFile
 
-  if (all(mapping %in% names(templateNames()))) {
-    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
-  } else if (length(mapping) == 1 && file.exists(mapping)) {
+  if (length(mapping) == 1 && file.exists(mapping)) {
     mappingFile <- mapping
+    mapping <- NULL
+  } else if (all(mapping %in% names(templateNames())) && length(mapping) > 0) {
+    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
   } else {
     message("# Mapping = '", paste(mapping, collapse = ","), " exists neither as file nor mapping name.")
-    mapping <- NULL
+    mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()))
+    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", mapping), collapse = "_"), ".csv"))
   }
 
   message("\n### Generating ", OUTPUT_mif, " and .xlsx.")

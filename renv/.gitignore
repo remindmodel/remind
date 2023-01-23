@@ -6,3 +6,4 @@ cellar/
 lock/
 python/
 staging/
+old_renv.lock

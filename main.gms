@@ -880,11 +880,6 @@ parameter
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
 parameter
-  c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
-;
-  c_refcapbnd          = 0;    !! def = 0
-*'
-parameter
   cm_distrAlphaDam	"income elasticity of damages for inequality"
 ;
   cm_distrAlphaDam     = 1;    !! def = 1
