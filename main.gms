@@ -470,8 +470,9 @@ parameter
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
 *' * (0): manually set number of iterations by adjusting cm_iteration_max
-*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
+*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! do not use in production runs !
 *' * (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
+*' * (3): run until solution is sufficiently converged using very relaxed targets  - very coarse tolerances, two times higher than option 1. ! do not use in production runs !
 *'
 parameter
   cm_emiscen                "policy scenario choice"
