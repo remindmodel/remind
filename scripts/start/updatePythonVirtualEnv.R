@@ -8,4 +8,5 @@
 updatePythonVirtualEnv <- function() {
   # install again to make sure newly added requirements are installed in the venv
   system2(pythonBinPath(".venv"), c("-mpip", "install", "-r", "requirements.txt"))
+  return(invisible(TRUE))
 }

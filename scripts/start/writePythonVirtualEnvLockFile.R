@@ -9,4 +9,5 @@ writePythonVirtualEnvLockFile <- function(filePath) {
   # read package versions from main venv
   packageVersions <- system2(pythonBinPath(".venv"), c("-mpip", "freeze", "--local"), stdout = TRUE)
   writeLines(packageVersions, filePath)
+  return(invisible(TRUE))
 }
