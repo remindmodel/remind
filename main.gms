@@ -968,6 +968,11 @@ parameter
 *' * 1 (on), default
 *'
 parameter
+  cm_maxFadeOutPriceAnticip   "switch to determine maximum allowed fadeout price anticipation to consider that the model converged."
+;
+  cm_maxFadeOutPriceAnticip = 1e-4; !! def 1e-4, the fadeout price anticipation term needs to be lower than 1e-4 to consider that the model converged.
+*'
+parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
 ;
   cm_flex_tax = 1; !! def 1
