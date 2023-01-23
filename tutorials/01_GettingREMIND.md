@@ -15,6 +15,7 @@ REQUIREMENTS
 - Windows only: RTools
 - LaTeX
 - pandoc
+- for couplings to other models: Python >= 3.7
 
 HOW TO INSTALL
 --------------
