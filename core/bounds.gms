@@ -272,23 +272,24 @@ loop(te$(sameas(te,"spv") OR sameas(te,"wind") OR sameas(te,"windoff")),
 
 $ENDIF.WindOff
 
-***CG: short-term fix of CHA gas power capacities
+***CG: fix CHA gas power capacities: 97 GW by September 2020 (Oxford Institute for Energy Studies, Natural gas in China’s power sector: Challenges and the road ahead, >60% are co-generation, rest are peaking)
+*** for 2018-2022, take 90GW, 90GW*0.6=54, the rest is split between ngcc and ngt
 loop(te$(sameas(te,"gaschp")),
 pm_histCap("2010","CHA",te) = 0.022;
 pm_histCap("2015","CHA",te) = 0.05;
-pm_histCap("2020","CHA",te) = 0.065;
+pm_histCap("2020","CHA",te) = 0.054;
 );
 
 loop(te$(sameas(te,"ngcc")),
-pm_histCap("2010","CHA",te) = 0.003;
-pm_histCap("2015","CHA",te) = 0.01;
-pm_histCap("2020","CHA",te) = 0.015;
+pm_histCap("2010","CHA",te) = 0.001;
+pm_histCap("2015","CHA",te) = 0.005;
+pm_histCap("2020","CHA",te) = 0.01;
 );
 
 loop(te$(sameas(te,"ngt")),
-pm_histCap("2010","CHA",te) = 0.001;
-pm_histCap("2015","CHA",te) = 0.01;
-pm_histCap("2020","CHA",te) = 0.01;
+pm_histCap("2010","CHA",te) = 0.003;
+pm_histCap("2015","CHA",te) = 0.016;
+pm_histCap("2020","CHA",te) = 0.026;
 );
 
 vm_cap.lo("2010","CHA","gaschp","1") = pm_histCap("2010","CHA","gaschp");
@@ -297,8 +298,9 @@ vm_cap.lo("2020","CHA","gaschp","1") = pm_histCap("2020","CHA","gaschp");
 
 *** lower bound on capacities for ngcc and ngt for regions defined at the pm_histCap file
 loop(te$(sameas(te,"ngcc") OR sameas(te,"ngt")),
+  vm_cap.lo("2010",regi,te,"1")$pm_histCap("2010",regi,te) = pm_histCap("2010",regi,te);
   vm_cap.lo("2015",regi,te,"1")$pm_histCap("2015",regi,te) = pm_histCap("2015",regi,te);
-  vm_cap.lo("2020",regi,te,"1")$pm_histCap("2020",regi,te) = 0.7 * pm_histCap("2020",regi,te);
+  vm_cap.lo("2020",regi,te,"1")$pm_histCap("2020",regi,te) = 0.75 * pm_histCap("2020",regi,te);
 );
 
 *** fix emissions to historical emissions in 2010
