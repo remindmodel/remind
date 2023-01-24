@@ -32,7 +32,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "9 errors found", all = FALSE)
   expect_match(w, "These titles are too long", all = FALSE)
   expect_match(w, "These titles may be confused with regions", all = FALSE)
-  expect_match(w, "These titles contain a dot", all = FALSE)
+  expect_match(w, "These titles contain illegal characters", all = FALSE)
   expect_match(w, "Outdated column names found that must not be used", all = FALSE)
   expect_match(w, "contain whitespaces", all = FALSE)
 })

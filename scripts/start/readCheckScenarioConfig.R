@@ -27,11 +27,11 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
             paste0(rownames(scenConf)[regionname], collapse = ", "),
             " – Titles with three capital letters or 'glob' may be confused with region names by magclass. Stopping now.")
   }
-  containsdot <- grepl("\\.", rownames(scenConf))
-  if (any(containsdot)) {
-    warning("These titles contain a dot: ",
-            paste0(rownames(scenConf)[containsdot], collapse = ", "),
-            " – GAMS would not tolerate this, and quit working at a point where you least expect it. Stopping now.")
+  illegalchars <- grepl("[^[:alnum:]_-]", rownames(scenConf))
+  if (any(illegalchars)) {
+    warning("These titles contain illegal characters: ",
+            paste0(rownames(scenConf)[illegalchars], collapse = ", "),
+            " – Please use only [:alnum:]_- to avoid errors. Stopping now.")
   }
   whitespaceerrors <- 0
   for (path_gdx in intersect(names(path_gdx_list), names(scenConf))) {
@@ -42,7 +42,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       whitespaceerrors <- whitespaceerrors + sum(haswhitespace)
     }
   }
-  errorsfound <- sum(toolong) + sum(regionname) + sum(containsdot) + whitespaceerrors
+  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceerrors
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
     message("In ", filename,
