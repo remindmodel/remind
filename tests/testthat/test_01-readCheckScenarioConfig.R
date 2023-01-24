@@ -6,7 +6,6 @@ if (length(csvfiles) == 0) {
 for (csvfile in csvfiles) {
   # This is a new test and we currently still have errors. Let's fix them ASAP.
   if (csvfile %in% c(
-      "../../config/21_regions_EU11/scenario_config_21_EU11_ARIADNE.csv",
       "../../config/21_regions_EU11/scenario_config_21_EU11_Fit_for_55_sensitivity.csv"
       )) {
         next
