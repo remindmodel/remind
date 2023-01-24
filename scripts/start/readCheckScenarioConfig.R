@@ -35,7 +35,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   whitespaceerrors <- 0
   for (path_gdx in intersect(names(path_gdx_list), names(scenConf))) {
-    haswhitespace <- grepl(" ", scenConf[[path_gdx]])
+    haswhitespace <- grepl("\\s", scenConf[[path_gdx]])
     if (any(haswhitespace)) {
       warning("The ", path_gdx, " cells of these runs contain whitespaces: ", paste0(rownames(scenConf)[haswhitespace], collapse = ", "),
               " – scripts will fail to find corresponding runs and gdx files. Stopping now.")
