@@ -26,10 +26,10 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   writeLines(c(";start;c_budgetCO2;path_gdx;path_gdx_carbonprice",
                "abc.loremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;33;;",
                "PBS;1;29; whitespacebefore;whitespaceafter ",
-               "glob;0;33; ;onlywhitespace"),
+               "glob;0;33; ;nobreakspace	tab"),
              con = csvfile, sep = "\n")
   w <- capture_warnings(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE))
-  expect_match(w, "8 errors found", all = FALSE)
+  expect_match(w, "9 errors found", all = FALSE)
   expect_match(w, "These titles are too long", all = FALSE)
   expect_match(w, "These titles may be confused with regions", all = FALSE)
   expect_match(w, "These titles contain a dot", all = FALSE)
