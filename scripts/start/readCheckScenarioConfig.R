@@ -31,7 +31,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   if (any(illegalchars)) {
     warning("These titles contain illegal characters: ",
             paste0(rownames(scenConf)[illegalchars], collapse = ", "),
-            " – Please use only letters, digits, '_' and '-' to avoid errors. Stopping now.")
+            " – Please use only letters, digits, '_' and '-' to avoid errors, not '",
+            gsub("[[:alnum:]_-]", "", paste(rownames(scenConf), collapse = "")), "'. Stopping now.")
   }
   whitespaceerrors <- 0
   for (path_gdx in intersect(names(path_gdx_list), names(scenConf))) {

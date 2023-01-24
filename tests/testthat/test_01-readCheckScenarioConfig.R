@@ -24,7 +24,7 @@ for (csvfile in csvfiles) {
 test_that("readCheckScenarioConfig fails on error-loaden config", {
   csvfile <- tempfile(pattern = "scenario_config_a", fileext = ".csv")
   writeLines(c(";start;c_budgetCO2;path_gdx;path_gdx_carbonprice",
-               "abc.loremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;33;;",
+               "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;33;;",
                "PBS;1;29; whitespacebefore;whitespaceafter ",
                "glob;0;33; ;nobreakspace	tab"),
              con = csvfile, sep = "\n")
@@ -33,6 +33,7 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_match(w, "These titles are too long", all = FALSE)
   expect_match(w, "These titles may be confused with regions", all = FALSE)
   expect_match(w, "These titles contain illegal characters", all = FALSE)
+  expect_match(w, "\\.@&", all = FALSE)
   expect_match(w, "Outdated column names found that must not be used", all = FALSE)
   expect_match(w, "contain whitespaces", all = FALSE)
 })
