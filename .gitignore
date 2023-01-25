@@ -74,5 +74,3 @@ plotRuntimeDependencies/
 
 # Main Python virtual environment
 .venv/
-# venv.lock (renv.lock equivalent for Python)
-venv.lock
