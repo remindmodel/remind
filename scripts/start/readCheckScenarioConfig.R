@@ -63,14 +63,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
             basename(filename), ":")
     message("  ", paste(unknownColumnNames, collapse = ", "))
-    if (testmode) {
-      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-      if (length(unknownColumnNamesNoComments) > 0) {
+    message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+    unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
+    if (length(unknownColumnNamesNoComments) > 0) {
+      if (testmode) {
         warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+      } else {
+        message("Do you want to continue and simply ignore them? Y/n")
+        userinput <- tolower(gms::getLine())
+        if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
       }
     }
-    message("The start script might simply ignore them. Please check if these switches are not deprecated.")
-    message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
