@@ -100,10 +100,6 @@ if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
   Sys.sleep(1)
 }
 
-if (cfg$pythonEnabled == "on") {
-  updatePythonVirtualEnv()
-}
-
 errorsfound <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
@@ -290,6 +286,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
       }
+      # Make sure all python requirements are installed
+      if (cfg$pythonEnabled == "on") {
+        updatePythonVirtualEnv()
+      }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
       gdx_na <- is.na(cfg$files2export$start[path_gdx_list])
@@ -311,7 +311,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
-
     if (! "--gamscompile" %in% flags) {
       filename <- paste0(cfg$title,".RData")
       message("   Writing cfg to file ", filename)
