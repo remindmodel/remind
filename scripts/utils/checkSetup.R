@@ -17,7 +17,7 @@ if (length(missingDeps) > 0) {
   message("all required R packages are installed")
 }
 
-if (Sys.which("python3") != "") {
+if (Sys.which("python3") != "" && startsWith(system2("python3", "--version", stdout = TRUE), "Python 3")) {
   message("checking for python3 executable on your PATH - ok")
 } else {
   message("python3 not found, some non-default configurations of REMIND will not work")
