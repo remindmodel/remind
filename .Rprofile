@@ -36,7 +36,7 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
 # bootstrapping python venv, will only run once after remind is freshly cloned
 if (!dir.exists(".venv/")
     && Sys.which("python3") != ""
-    && startsWith(system2("python3", "--version", stdout = TRUE), "Python 3")) {
+    && isTRUE(startsWith(system2("python3", "--version", stdout = TRUE), "Python 3"))) {
   source("scripts/start/pythonBinPath.R")
   message("Python venv is not available, setting up now...")
   # use system python to set up venv
