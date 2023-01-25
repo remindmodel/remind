@@ -18,10 +18,11 @@ if (length(missingDeps) > 0) {
 }
 
 if (Sys.which("python3") != ""
-    && suppressWarnings(isTRUE(startsWith(system2("python3", "--version", stdout = TRUE), "Python 3")))) {
-  message("checking for python3 executable on your PATH - ok")
+    || (Sys.which("python.exe") != ""
+        && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3"))))) {
+  message("checking for Python 3 - ok")
 } else {
-  message("python3 not found, some non-default configurations of REMIND will not work")
+  message("Python 3 not found, some non-default configurations of REMIND will not work")
 }
 
 message("Finished setup checks. Your system is ready to run REMIND if there were no errors/warnings.")

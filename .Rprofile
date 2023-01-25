@@ -35,12 +35,18 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
 
 # bootstrapping python venv, will only run once after remind is freshly cloned
 if (!dir.exists(".venv/")
-    && Sys.which("python3") != ""
-    && suppressWarnings(isTRUE(startsWith(system2("python3", "--version", stdout = TRUE), "Python 3")))) {
+    && (Sys.which("python3") != ""
+        || (Sys.which("python.exe") != ""
+            && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3")))
+           ))) {
   source("scripts/start/pythonBinPath.R")
   message("Python venv is not available, setting up now...")
   # use system python to set up venv
-  system2("python3", c("-mvenv", ".venv"))
+  if (.Platform$OS.type == "windows") {
+    system2("python.exe", c("-mvenv", ".venv"))
+  } else {
+    system2("python3", c("-mvenv", ".venv"))
+  }
   # use venv python to install dependencies in venv
   system2(pythonBinPath(".venv"), c("-mpip", "install", "--upgrade", "pip", "wheel"))
   system2(pythonBinPath(".venv"), c("-mpip", "install", "-r", "requirements.txt"))
