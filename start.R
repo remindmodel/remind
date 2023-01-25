@@ -100,6 +100,10 @@ if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
   Sys.sleep(1)
 }
 
+if (cfg$pythonEnabled == "on") {
+  updatePythonVirtualEnv()
+}
+
 errorsfound <- 0 # counts ignored errors in --test mode
 startedRuns <- 0
 waitingRuns <- 0
@@ -242,7 +246,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
   }
 
-  firstScenario <- TRUE
   # Modify and save cfg for all runs
   for (scen in rownames(scenarios)) {
 
@@ -305,12 +308,6 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if (cfg$slurmConfig %in% c(NA, "")) {
       if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig(flags = flags)
       cfg$slurmConfig <- slurmConfig
-    }
-
-    if (cfg$pythonEnabled == "on") {
-      if (firstScenario) {
-        updatePythonVirtualEnv()
-      }
     }
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
