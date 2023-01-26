@@ -20,6 +20,7 @@
 - [ ] Changes are commented, particularly in hard-to-understand areas
 - [ ] I have updated the in-code documentation
 - [ ] I have adjusted reporting where it was needed
+- [ ] I have adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches  
 - [ ] All automated model tests pass (`FAIL 0` in the output of `make test`)
 
 ## Further information (optional):
