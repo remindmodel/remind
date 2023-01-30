@@ -57,7 +57,7 @@ The `piamenv` functions explained earlier should cover all common tasks, use the
 - `renv::install("githubuser/package", ref = "<commit hash>")` install package from GitHub, optionally provide commit hash
 - `renv::install("/p/tmp/username/yourpackagefolder")` install package from sources
 - `renv::remove("package")` uninstall package
-- `renv::update(exclude = "renv")` (`make update-all-renv`) update all packages except renv (please do not update renv itself)
+- `renv::update(exclude = "renv")` (`make update-renv-all`) update all packages except renv (please do not update renv itself)
 - `renv::update("package")` update package
 - `renv::snapshot()` write renv.lock
 - `renv::status()` show differences between library and renv.lock

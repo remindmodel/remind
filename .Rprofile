@@ -5,7 +5,7 @@ Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
 
 # remind's renv integration previously relied on renv.lock, but now it should generally not be used anymore
 # this can safely be removed in January 2024
-if (file.exists("renv.lock") && !file.exists("renv/old_renv.lock")) {
+if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/old_renv.lock")) {
   file.rename("renv.lock", "renv/old_renv.lock")
   message("moved legacy renv.lock to renv/old_renv.lock")
 }

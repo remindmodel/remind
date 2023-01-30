@@ -1,4 +1,4 @@
-# Purpose of this PR
+## Purpose of this PR
 
 
 ## Type of change
@@ -15,11 +15,12 @@
 
 ## Checklist:
 
-- [ ] My code follows the coding etiquette
-- [ ] I have performed a self-review of my own code
-- [ ] Changes are commented, particularly in hard-to-understand areas
-- [ ] I have updated the in-code documentation
-- [ ] I have adjusted reporting where it was needed
+- [ ] My code follows the [coding etiquette](https://github.com/remindmodel/remind/blob/develop/main.gms#L80)
+- [ ] I performed a self-review of my own code
+- [ ] I explained my changes within the PR, particularly in hard-to-understand areas
+- [ ] I checked that the [in-code documentation](https://github.com/remindmodel/remind/blob/develop/main.gms#L120) is up-to-date
+- [ ] I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) where it was needed
+- [ ] I adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches
 - [ ] All automated model tests pass (`FAIL 0` in the output of `make test`)
 
 ## Further information (optional):

@@ -140,7 +140,7 @@ prepare <- function() {
                                          "En_",  cfg$gms$cm_demScen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         "Reg_", regionscode(cfg$regionmapping))
+                                         "Reg_", madrat::regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
@@ -256,8 +256,8 @@ prepare <- function() {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
+  input_new      <- c(paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -282,7 +282,7 @@ prepare <- function() {
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
-  update_info(regionscode(cfg$regionmapping), cfg$inputRevision)
+  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping, sep=";")
