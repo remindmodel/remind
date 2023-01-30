@@ -84,7 +84,7 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     }
 
     if (cfg$pythonEnabled == "on") {
-      createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
+      piamenv::createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
     } else {
       # create empty .venv folder so that new venv won't be initialized automatically by .Rprofile
       dir.create(file.path(cfg$results_folder, ".venv"))
