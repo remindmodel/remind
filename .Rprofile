@@ -43,10 +43,10 @@ if (!dir.exists(".venv/")
   # use system python to set up venv
   if (.Platform$OS.type == "windows") {
     system2("python.exe", c("-mvenv", ".venv"))
-    pythonInVenv <- normalizePath(file.path(".venv", "Scripts", "python.exe", mustWork = TRUE))
+    pythonInVenv <- normalizePath(file.path(".venv", "Scripts", "python.exe"), mustWork = TRUE)
   } else {
     system2("python3", c("-mvenv", ".venv"))
-    pythonInVenv <- normalizePath(file.path(".venv", "bin", "python", mustWork = TRUE))
+    pythonInVenv <- normalizePath(file.path(".venv", "bin", "python"), mustWork = TRUE)
   }
   # use venv python to install dependencies in venv
   system2(pythonInVenv, c("-mpip", "install", "--upgrade", "pip", "wheel"))
