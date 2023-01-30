@@ -10,44 +10,44 @@
 *' The macro-calibration takes place in `modules/29_CES_parameters/calibration/`. The calibration itself is in the file `preloop.gms`.
 *' 
 *' The aim of the calibration is to provide the efficiency parameters of the CES tree for each time step and each region. 
-*' Efficiency parameters have a strong influence on the level of energy demanded by the CES-tree to the energy system module. 
+*' Efficiency parameters have a strong influence on the level of energy that the CES-tree demands from the energy system module. 
 *' In order to avoid ad hoc assumptions on the level of these parameters, the new macro-calibration procedure loads exogenous 
 *' energy demand pathways and ensures that a baseline REMIND run will meet these trajectories.
 *' 
 *' #### How to calibrate Remind
 *'
-*' This documentation is focused on the implementation. For instructions on how to calibrate, refer to the tutorial 'Calibrating CES Parameters' in the `tutorials` folder.
+*' This documentation is focused on the implementation. For a practical guide on how to calibrate, refer to the tutorial 'Calibrating CES Parameters' in the `tutorials` folder.
 *'
 *'#### How the calibration works (Overview)
 *'
 *'##### 1. Prerequisites
 *'
-*'The CES tree in Remind consists of a tree of nested CES functions of the form 
+*'The CES tree in Remind consists of a tree of nested CES production functions of the form 
 *'
-*'$V_o = \left( \sum_{(o,i)} \xi_i \left( \theta_i \delta_i V_i \right)^{\rho_o} \right)^{1/\rho_o}$
+*'$V_o = \left( \sum_{i} \xi_i \left( \theta_i \delta_i V_i \right)^{\rho_o} \right)^{1/\rho_o}$
 *'
-*' where $V$ are the quantities (`quantity` in the code),
+*' where $V_o$ is the output quantity (`quantity` in the code) with the output node index $o$, 
+*' $V_i$ are the input quantities with the input node index $i$, 
 *' $\xi$ is the income share (`xi`), $\theta$ the efficiency parameter (`eff`),
 *' $\delta$ is the efficiency growth (`effGr`),
-*' $\rho$ (`rho`) is a parameter derived from the substitution elasticity,
-*' and $i,o$ are the elements of the input and output sets, respectively.
+*' and $\rho$ (`rho`) is a parameter derived from the substitution elasticity.
 *' 
-*' 'Nested' means that each output of one CES node serves as one of the inputs to the node above, up to the last level. The uppermost level of the tree is GDP (`inco`), the lowest ones (the 'leaves' of the tree) are called primary production factors (`ppf`). They include final energies (`ppfen`), different capitals, and labour (`lab`), which is a direct input to `inco`. 
+*' 'Nested' means that each output of one CES node serves as one of the inputs to the node above, up to the last level. The uppermost level of the tree is GDP (`inco`), the lowest ones (the 'leaves' of the tree) are called primary production factors (`ppf`). They include final energies (`ppfen`), different capitals, and labour (`lab`), which is a direct input to `inco`. Consequently, ppf only serve as input to a CES function and there are no CES functions in the tree with ppf as their output.
 *'
 *' In the following, the term 'efficiency parameters' will be used collectively for the parameters $\xi$, $\theta$ and $\delta$ (income share, efficiency and efficiency growth). A distinction will follow later.  
 *'
-*'The CES tree has to fulfill two constraints: An economical constraint and a technological constraint.
-*'The economical constraint defines the price of an input factor: During a REMIND run, the model will strive to find out the optimal solution in terms of costs. This means that the derivatives of the CES function, i.e. the marginal increase in income from increasing the considered input by one unit, must equal the price of that input. So the price $\pi_i$ of input $i$ can be calculated as 
+*'The CES tree has to fulfill two constraints: An economic constraint and a technological constraint.
+*'The economic constraint determines the price of an input factor: During a REMIND run, the model strives to find the optimal solution in terms of overall system cost. This means that the derivatives of the CES function, i.e. the marginal increase in income from increasing the considered input by one unit, must equal the price of that input. So the price $\pi_i$ of input $i$ can be calculated as 
 *'
 *'$\pi_i = \frac{\partial V_o(V_1,..., V_i,...,V_n)}{\partial V_i} = \xi_i \theta_i \delta_i \ V_o^{1 - \rho_o} \ \left(\theta_i \delta_i V_i\right)^{\rho_o - 1}.$
 *'
-*'The technological constraint states that the inputs of the CES function must yield the desired output.
-*'For homogenous functions of degree one (as the CES function), this entails (following the Euler's homogeneous function theorem)
-*'that the output is equal to the sum of derivative times quantity of inputs
+*'The technological constraint simply states that the CES function itself must be fulfilled, i.e. that the inputs of the CES function must yield the desired output.
+*'For homogenous functions of degree one (like the CES function), this entails (following the Euler's homogeneous function theorem)
+*'that the output is equal to the sum of derivative times quantity of each input
 *'
 *'$V_o = \sum_{i} \frac{\partial V_o}{\partial V_i} V_i$
 *'
-*'By combining both constraints, we deduce that the output is equal to the sum of inputs valued at their price.
+*'By combining both constraints, it follows that the output is equal to the sum of inputs valued at their price.
 *'
 *'$V_o = \sum_{i} \pi_i V_i$
 *'
@@ -57,12 +57,12 @@
 *'
 *' **The calibration adapts the efficiency parameters of the CES function so that precribed target trajectories for all inputs to the CES tree (FE and capital) and output (GDP, named `inco`) are met.**
 *'
-*' The target trajectories are usually provided by EDGE.
+*' The target trajectories are usually provided by EDGE models for the different sectors.
 *'
 *'The calibration works in several iterations, each consisting of one Remind run. In each iteration, the efficiency parameters are adjusted such that the target trajectories are met *with the prices of the primary production factors (ppf) from the previous iteration*. So the two steps of an iteration loop are: 
 *'
-*' 1. The calibration routine determines efficiencies
-*' 2. The rest of remind determines the ppf prices
+*' 1. The calibration routine determines efficiencies (based on prices of previous iteration)
+*' 2. The rest of the remind model run determines optimal ppf prices (given the efficiencies from 1.)
 *'
 *'Each iteration only differs from the others in the prices that are provided to the calibration. They represent the feedback from the energy system module.
 *'The assumption is that by adjusting the efficiency parameters in each iteration, the efficiency parameters and prices converge towards a stable coherent value.
@@ -73,45 +73,54 @@
 *' 
 *'##### 1. Computation of prices
 *'
-*'In the first iteration, for a new CES structure, there is no gdx file that could provide directly the equilibrium prices of the CES ppf. Therefore, exogenous price trajectories must be provided. Switch `cfg$gms$c_CES_calibration_new_structure` to 1 in `config/default.cfg` in case you want to use exogenous prices for the first iteration.
+*'Ppf prices are read in from the previous iteration from an `input.gdx` file. In the first iteration, there is no previous iteration, but a file from a previous different run can be used instead, provided that the structure of the CES tree is the same, such that all needed prices were computed in that previous run.
+*'
+*'In the first iteration, for a **new** CES tree structure, there is no gdx file from a previous run that could provide directly the equilibrium prices of the CES ppf. Therefore, exogenous price trajectories must be provided. Switch `cfg$gms$c_CES_calibration_new_structure` to 1 in `config/default.cfg` in case you want to use exogenous prices for the first iteration (If you have a new structure and do not set this switch to 1, you will get an error, as not all necessary prices are found).
 *'
 *'For other iterations, or if the structure is the one from the `input.gdx`, the equilibrium prices will be computed. 
 *'They are computed as the derivative **of GDP** in terms of each ppf input: 
-*'The prices $\pi_i$ are calculated as in the formula obove. They are derivatives of a node **to the input directly below**.
+*'The prices $\pi_i$ are calculated as in the formula obove. They are derivatives of a node with respect to **its direct input nodes** in the level below $\partial V_o / \partial V_i$.
+*'What we want, however, is the derivative of GDP (the topmost node) with respect to the ppf (the nodes at the very bottom).
 *'So we apply the chain rule: The derivatives of each level of the CES-tree must be multiplied to obtain the desired derivative of GDP w.r.t. ppf.
-*'We do this as a propagation from the top node (`inco`) down the tree, where we iteratively overwrite each `price` (which was previously w.r.t. the node above) with the product of all prices above the node.
+*'As an example, if one branch of the CES tree is `inco` - `en` - `industry` - `cement` - `eekcement`, then the price of `eekcement` is calculated as 
+*'
+*'$\frac{\partial V_{inco}}{\partial V_{eekcement}} = \frac{\partial V_{inco}}{\partial V_{en}} \frac{\partial V_{en}}{\partial V_{industry}} \frac{\partial V_{industry}}{\partial V_{cement}} \frac{\partial V_{cement}}{\partial V_{eekcement}}$
+*'$= \pi_{en} \pi_{industry} \pi_{cement} \pi_{eekcement}$  
+*'
+*'We do this as a propagation from the top node (`inco`) down the whole tree, where we iteratively overwrite each `price` (which was previously w.r.t. the node above) with the product of all prices above the node, so e.g. $\pi_{industry}$ is overwritten with $\pi_{en}\pi_{industry}$ and so on, such that the ppf on the last level contain the desired product as in the example above.
 *'
 *'Afterwards, the prices of the intermediate production factors (`ipf`) are set to one, since they are now already factored in at the ppf level. Setting ipf prices to one means that the prices `pi_i` of `ppf` in terms of their direct output correspond to their price in terms of GDP. (In later steps, efficiencies will be adapted to fit these newly prescribed `ipf` prices.)
 *'
-*'Prices are then smoothed in the early years of the simulation.
+*'In a subsequent step, prices are then smoothed in the early years of the simulation.
 *'
 *'##### 2. Calculation of Intermediate Production Factors
 *'
 *'Ppf quantity target trajectories are given as input to the calibration, but ipf trajectories are not given. 
 *'We determine them from the two constraints outlines above, i.e. from the equation 
 *'
-*'$V_o = \sum_{(o,i)} \pi_i V_i \qquad \forall o \in \text{ipf}$
+*'$V_o = \sum_{i} \pi_i V_i \qquad \forall o \in \text{ipf}$
 *'
 *'We have prescribed all prices and the quantities at ppf level, so we can move up the CES tree level by level from the ppf to compute quantities for ipf. 
 *'We don't do this for the last level `inco`, as it would yield a trajectory for `income` which differs from the one we prescribed. We will deal with that later.
 *'
-*'##### 3. Changing efficiencies to ensure that the economical constraint holds.
+*'##### 3. Changing efficiencies to ensure that the economic constraint holds.
 *'
-*'We have defined new prices which we precribe. Now we have to ensure that the derivatives of our CES functions are equal to these new prices. 
-*'We set the efficiency growth to one to simplify the computation. We will later split this efficiency into a time-constant 2005 efficiency and a time-dependent efficiency growth.
-*'The total efficiency is now two-dimensional: The income share $\theta$ and the efficiency parameter $\xi$. The simplified economical constraint now reads
+*'We have computed prices in step 1 which we precribe. Now we have to ensure that the derivatives of our CES functions are equal to these new prices. 
+*'We do this by adjusting the efficiencies.
+*'We set the efficiency growth to one to simplify the computation. (We will later split this efficiency into a time-constant 2005 efficiency and a time-dependent efficiency growth.)
+*'The total efficiency is now two-dimensional: The income share $\theta$ and the efficiency parameter $\xi$. The simplified economic constraint now reads
 *'
 *'$\pi_i = \xi_i \theta_i \ V_o^{1 - \rho_o} \ \left(\theta_i V_i\right)^{\rho_o - 1}$
 *'
-*'The couple $(\xi_i,\theta_i) = (\frac{\pi V_i}{Vo}, \frac{V_o}{V_i})$, i.e. setting
-*'
+*'So we have to degrees of freedom to fulfill one equation. The system is underdetermined an we have infinitely many combinations of $\xi_i$ and $\theta_i$ that fulfill it.
+*'One of these possible pairs is to set
 *'the income share $\xi_i = \frac{\pi_i V_i}{V_o} \qquad \forall (o,i) \in \text{CES}$
 *'
 *' and
 *'
-*'the efficiency $\theta_i = \frac{V_o}{V_i} \qquad \forall (o,i) \in \text{CES}$
-*'
-*'fulfills this constraint. We use it to update the efficiencies of all nodes except for `lab`.
+*'the efficiency $\theta_i = \frac{V_o}{V_i} \qquad \forall (o,i) \in \text{CES}$,
+*'which can be checked by inserting these in the equation above.
+*'We use these values to update the efficiencies $\xi_i$ and $\theta_i$ of all nodes except for `lab`.
 *'
 *'##### 4. Last level of the CES-tree: Ensure the GDP and Labour trajectories are met
 *'
@@ -124,7 +133,7 @@
 *'$V_o = \sum_{i} \pi_i V_i$
 *'
 *'for the new price of labour. From this, we can compute the efficiencies for labour as in the step above. 
-*'(From the information given in this tutorial, switching this step with the previous one would make sense. However, some consistency checks are performed in between, which makes this order necessary)
+*'(From the information given in this tutorial, switching this step with the previous one would make sense. However, some consistency checks are performed in between, which makes this order necessary.)
 *'
 *'##### 5. Calculate Efficiency growth parameter $\delta$
 *'
@@ -153,7 +162,7 @@
 *'
 *'Currently, in the industry part of the tree, both the useful energies (UE) and the ppf are calibrated to. This works in the following way:
 *'
-*'The 'main' calibration described above is only carried out down to the UE level. Everything below is left out at first. The part of the tree below UE is then treated in a separate calibration, which follows after the main one in `preloop.gms` under the label `Beyond Calibration`. The same steps as the one above are carried out for this. For this lower part of the tree, the UE are the topmost nodes and the ppfen and ppfkap are the inputs. Since the labour price is missing as an additional degree of freedom to match the trajectroy of the topmost node, a different approach is taken: All ppf input prices are mutliplied with the same factor (the ratio of prescribed to computed UE quantity), such that the quantity trajectories are met for UE. 
+*'The 'main' calibration described above is only carried out down to the UE level. Everything below is left out at first. The part of the tree below UE is then treated in a separate calibration, which follows after the main one in `preloop.gms` under the label `Beyond Calibration`. The same steps as the one above are carried out for this. For this lower part of the tree, the UE are the topmost nodes and the ppfen and ppfkap are the inputs. Since the labour price is missing as an additional degree of freedom to match the trajectroy of the topmost node, a different approach is taken: All ppfen (not ppfkap) input prices are mutliplied with the same factor (the ratio of prescribed to computed UE quantity, minus the ppfkap share), such that the quantity trajectories are met for UE. 
 *'
 *'##### Putty-Clay
 *'
