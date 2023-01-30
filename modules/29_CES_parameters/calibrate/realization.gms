@@ -160,7 +160,7 @@
 *'
 *'The CES nest cannot be calibrated on two levels lying one upon the other, as prescribing an additional quantity trajectory would make the equation system over-determined. Recall that we already calibrate to two levels above each other (ppf and inco), but we resolved the over-determined system by introducing the additional degree of freedom of labour price. 
 *'
-*'Currently, in the industry part of the tree, both the useful energies (UE) and the ppf are calibrated to. This works in the following way:
+*'Currently, in the industry part of the tree, both the useful energies (UE) and the ppf are calibrated to. This works in the following way (this documentation is only for the case `c_CES_calibration_industry_FE_target == 1`):
 *'
 *'The 'main' calibration described above is only carried out down to the UE level. Everything below is left out at first. The part of the tree below UE is then treated in a separate calibration, which follows after the main one in `preloop.gms` under the label `Beyond Calibration`. The same steps as the one above are carried out for this. For this lower part of the tree, the UE are the topmost nodes and the ppfen and ppfkap are the inputs. Since the labour price is missing as an additional degree of freedom to match the trajectroy of the topmost node, a different approach is taken: All ppfen (not ppfkap) input prices are mutliplied with the same factor (the ratio of prescribed to computed UE quantity, minus the ppfkap share), such that the quantity trajectories are met for UE. 
 *'
