@@ -140,6 +140,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     filestomove <- c("abort.gdx" = "abort_beforeRestart.gdx",
                      "non_optimal.gdx" = "non_optimal_beforeRestart.gdx",
                      "log.txt" = "log_beforeRestart.txt",
+                     "full.lst" = "full_beforeRestart.lst",
                      if ("--reprepare" %in% flags) c("full.gms" = "full_beforeRestart.gms",
                                                      "fulldata.gdx" = "fulldata_beforeRestart.gdx")
                     )
