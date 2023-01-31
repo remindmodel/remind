@@ -75,8 +75,8 @@
 *' 
 *'The following paragraphs describe the calculations happening in each of the iteration i.e in `preloop.gms`. They can be summarized in five steps: 
 *'
-*' 1. Load CES quantities, calculate prices $\pi_i=\partial V_o / \partial V_i$ from them and propagate via chain rule to get ppf price in terms of GDP $\partial V_{inco} / \partial V_{ppf}$. Overwrite loaded PPF prices $\pi_{ppf}$ with this chain rule product and set all ipf prices to one. 
-*' 2. Using these prices and the prescribed target quantities $V_{ppf}$, move up CES tree level by level and determine IPF trajectories using $V_o = \sum_{i} \pi_i V_i$. 
+*' 1. Load CES quantities, calculate prices $\pi_i=\partial V_o / \partial V_i$ from them and propagate via chain rule to get ppf price in terms of GDP $\partial V_{inco} / \partial V_{ppf}$. Set ppf prices $\pi_{ppf}$ to this chain rule product and set all ipf prices to one. 
+*' 2. Using these prices and the prescribed target quantities $V_{ppf}$, move up CES tree level by level and determine ipf trajectories using $V_o = \sum_{i} \pi_i V_i$. 
 *' 3. Determine efficiencies such that CES derivatives using target quantities from step 2 yield prices from step 1: $\xi_i = \frac{\pi_i V_i}{V_o}$ and $\theta_i = \frac{V_o}{V_i}$
 *' 4. Since GDP is a prescribed CES output quantity, adjust labour price such that all other (target) quantities and prices in that last CES node match; Now that labour price is known, do Step 3 also for labour. 
 *' 5. Move time-dependent part of $\xi$ and $\theta$ to $\delta$.
