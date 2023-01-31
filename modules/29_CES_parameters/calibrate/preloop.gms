@@ -9,15 +9,13 @@ $OFForder
 
 
 *** ==================================================================================
-*** ==================================================================================
 ***
-*** FOR A DETAILED DOCUMENTATION OF THIS FILE, SEE THE GOXYGEN DOCUMENTATION, CHAPTER
+*** For a detailed documentation of this file, see the goxygen documentation, chapter
 ***       CES parameters (29_CES_parameters) / Realizations / (A) Calibrate
 ***
-*** FOR A PRACTICAL CALIBRATION TUTORIAL, SEE 12_Calibrating_CES_Parameters.md 
-*** IN THE TUTORIALS FOLDER
+*** For a practical calibration tutorial, see 12_Calibrating_CES_Parameters.md 
+*** in the tutorials folder
 ***
-*** ==================================================================================
 *** ==================================================================================
 
 
