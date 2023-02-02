@@ -9,6 +9,7 @@ First, find out the state of your run by executing this in the run directory:
 Rscript -e "modelstats::loopRuns('.')"
 ```
 PIK cluster users can access information on all their runs in all directories by executing `rs2 -c` (or `rs2 -a` for only active runs).
+If you want information on all (or some) runs in a given output folder, no matter who ran them, simply type `rs2` and then select either `1` for all runs or just the runs you want information about. 
 In case of errors, this tutorial should help you.
 
 Case 1: REMIND did not start

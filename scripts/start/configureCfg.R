@@ -96,7 +96,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
           # if the above has not created a path to a valid gdx, stop
           if (!file.exists(isettings[iscen, path_to_gdx])) {
             icfg$errorsfoundInConfigureCfg <- sum(icfg$errorsfoundInConfigureCfg, 1)
-            message(red, "Error", NC, ": Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ",
+            message(red, "Error", NC, ": Can't find a gdx specified as '", isettings[iscen, path_to_gdx], "' in column ",
                     path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a ",
                     "fulldata.gdx from a previous normally completed run.")
           }
