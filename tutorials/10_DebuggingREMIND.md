@@ -160,17 +160,21 @@ If you want to compare the different gdx files produced by all iterations, speci
 
 If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 
-Once the debug run is finished you have access to a `full.lst` with extended logging. In this file, search for the `S O L V E` summary (note the whitespaces) and jump to the fourth occurance, which refers to "`MODEL hybrid`". From there search downwards for `****` to find the first equation which could not be solved and might be responsible for the run failing. 
+Once the debug run is finished you have access to a `full.lst` with extended logging. The tool `listinfes` will show you the infeasibilites which might be responsible for the run failing:
+
+```bash
+linfinfes <path_to_full.lst>
+```
 
 Spy on the solver
 ----------------------------------
 
-If you want a closer look on the GAMS CONOPT output during a REMIND run, you can access the solver logs by moving to the output folder and running:
+If you want a closer look on the GAMS CONOPT output during a REMIND run, users of the PIK cluster can use `conoptspy` to display the latest additions to `gmsgrid.log`. Manually, you can access the solver logs by moving to the output folder and running:
 
 ```bash
 find -name gmsgrid.log | xargs tail -n 12
 ```
-Users of the PIK cluster can use `conoptspy` instead to display the latest additions to `gmsgrid.log`. Note that `gmsgrid.log` is not always available as it is deleted between iterations.
+Note that `gmsgrid.log` is available only while CONOPT is working on this specific region and deleted as soon as it finishes (successful or otherwise).
 
 Only the first five columns are of particular interest:
 
@@ -181,7 +185,8 @@ Only the first five columns are of particular interest:
 - `RGmax`: if during phase 1-2 the sum of infeasibilities, it should always converge to a very small value (< 10e-7). If during phase 3/4 the reduced gradient (when small you are close to optimality).
 - `NSB`: the number of superbasic variables (basically the current number of degrees of freedom).
 
-Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change over time or has very high values (> 10 000), this can be a hint that CONOPT froze and the run should be restarted from the latest `fulldata.gdx`.
+Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change between consecutive calls to `conoptspy`, then CONOPT crashed. If CONOPT is at unusually high iterations (> 10 000), and there is little or no progress in the objective value, and the reduced gradient does not change or oscillates between values without making progress, then CONOPT is stuck somewhere in the solution space and won't get out.
+In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution).
 
 Asking for help
 ----------------------------------
