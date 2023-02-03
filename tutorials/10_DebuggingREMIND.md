@@ -186,7 +186,7 @@ Only the first five columns are of particular interest:
 - `NSB`: the number of superbasic variables (basically the current number of degrees of freedom).
 
 Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change between consecutive calls to `conoptspy`, then CONOPT crashed. If CONOPT is at unusually high iterations (> 10 000), and there is little or no progress in the objective value, and the reduced gradient does not change or oscillates between values without making progress, then CONOPT is stuck somewhere in the solution space and won't get out.
-In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution).
+In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution) which can be done by running `./start.R -r` and selecting said run.
 
 Asking for help
 ----------------------------------
