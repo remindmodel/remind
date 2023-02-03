@@ -91,6 +91,8 @@ If you find out that your run stopped specifically in iteration 14, you likely h
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
+After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will not converge. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
+
 ### Case 2c: GDX or R file missing
 
 Try to find out where this file should have come from by searching within the REMIND repository. Again, having a look at `full.lst`, searching for the filename and looking for `SOF` and `EOF` may help.
@@ -158,12 +160,17 @@ If you want to compare the different gdx files produced by all iterations, speci
 
 If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 
+Once the debug run is finished you have access to a `full.lst` with extended logging. In this file, search for the `S O L V E` summary (note the whitespaces) and jump to the fourth occurance, which refers to "`MODEL hybrid`". From there search downwards for `****` to find the first equation which could not be solved and might be responsible for the run failing. 
+
+Spy on the solver
+----------------------------------
+
 If you want a closer look on the GAMS CONOPT output during a REMIND run, you can access the solver logs by moving to the output folder and running:
 
 ```bash
 find -name gmsgrid.log | xargs tail -n 12
 ```
-Users of the PIK cluster can use `conoptspy` instead.
+Users of the PIK cluster can use `conoptspy` instead to display the latest additions to `gmsgrid.log`. Note that `gmsgrid.log` is not always available as it is deleted between iterations.
 
 Only the first five columns are of particular interest:
 
@@ -173,6 +180,8 @@ Only the first five columns are of particular interest:
 - `Infeasibility/Objective`: The left hand side during search for a feasible solution, and the objective value during phase 3/4.
 - `RGmax`: if during phase 1-2 the sum of infeasibilities, it should always converge to a very small value (< 10e-7). If during phase 3/4 the reduced gradient (when small you are close to optimality).
 - `NSB`: the number of superbasic variables (basically the current number of degrees of freedom).
+
+Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change over time or has very high values (> 10 000), this can be a hint that CONOPT froze and the run should be restarted from the latest `fulldata.gdx`.
 
 Asking for help
 ----------------------------------
