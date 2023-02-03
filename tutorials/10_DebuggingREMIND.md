@@ -163,7 +163,7 @@ If the iterations are not sufficient to converge, you can run REMIND for more it
 Once the debug run is finished you have access to a `full.lst` with extended logging. The tool `listinfes` will show you the infeasibilites which might be responsible for the run failing:
 
 ```bash
-linfinfes <path_to_full.lst>
+listinfes <path_to_full.lst>
 ```
 
 Spy on the solver
