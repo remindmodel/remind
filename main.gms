@@ -1556,6 +1556,7 @@ $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RC
 *' MAGICC version
 *' different MAGICC versions have slightly different parameter names
 *' choose either 6005_REMIND, or 7.5.3
+*' Note that the magicc version configured here has to correspond to the template given in cfg$magicc_template in default.cfg
 $setGlobal cm_magicc_version  6005_REMIND   !! def = 6005_REMIND
 *'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
