@@ -1553,6 +1553,10 @@ $setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
 *' roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
 *' choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
 $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RCP26_[5,15,..,95], TCRE_[LOWEST,LOW,MEDIUM,HIGH,HIGHEST] }
+*' MAGICC version
+*' different MAGICC versions have slightly different parameter names
+*' choose either 6005_REMIND, or 7.5.3
+$setGlobal cm_magicc_version  6005_REMIND   !! def = 6005_REMIND
 *'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
