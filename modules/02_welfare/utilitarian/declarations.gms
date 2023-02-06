@@ -10,9 +10,11 @@
 ***                                   PARAMETERS
 ***-------------------------------------------------------------------------------
 parameters
-pm_welf(tall)                                     "Weight parameter in the welfare function to avoid jumps with cm_less_TS"
+pm_welf(tall)                                     "Weight parameter in the welfare function to avoid jumps for years between differnet time step lengths"
 pm_w(all_regi)                                    "Negishi weights"
 pm_prtp(all_regi)                                 "Pure rate of time preference"
+
+pm_sccIneq(tall,all_regi)			  "inequality term in the SCC calculation"
 
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 p02_inconvpen_lap(ttot,all_regi,all_te)           "Parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
@@ -38,8 +40,6 @@ $endif.inconv
 ;
 
 positive variables
-vm_forcOs(ttot)                                   "Forcing overshoot"
-
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 v02_NegInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Negative inconvenience penalty in the welfare function for bio/synfuel shares switch between sectors and emissions markets"
 v02_PosInconvPenFeBioSwitch(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "Positive inconvenience penalty in the welfare function for bio/synfuel shares switch between sectors and emissions markets"

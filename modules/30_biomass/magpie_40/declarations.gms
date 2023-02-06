@@ -8,7 +8,6 @@
 
 scalars
 s30_D2TD                "Multiplicative factor to convert from Dollar to TeraDollar"     /1.0e-12/
-s30_max_pebiolc         "Absolute end value of bound on global pebiolc production [TWa]"
 s30_switch_shiftcalc    "Switch to activate equation for shift calculation before main solve and to deactivate it during main solve" /0/
 ;
 
@@ -16,11 +15,15 @@ parameter
 p30_datapebio(all_regi,all_enty,rlf,charPeRe,ttot) "Global bioenergy potential for lignocellulosic residues and 1st generation crops [TWa]"
 p30_max_pebiolc_path(all_regi,tall)             "Time path of regional maximal pebiolc production [TWa]"
 p30_max_pebiolc_path_glob(tall)                 "Time path of global maximal pebiolc production [TWa]"
-p30_max200_path(tall)                           "Time path of global maximal pebiolc production containing values for 200 EJ case [TWa]"
 p30_maxprod_residue(ttot,all_regi)              "Maximal potential of residues enhanced by demand of biotr [TWa]"
 p30_pebiolc_pricemag(tall,all_regi)             "Prices for lignocellulosic purpose grown bioenergy from MAgPIE [T$US/TWa]"
 pm_pebiolc_demandmag(tall,all_regi)             "Production of lignocellulosic purpose grown bioenergy from MAgPIE [TWa]"
 p30_demPe(ttot,all_regi)                        "Primary energy demand imported from gdx or previous iteration [TWa]"
+
+
+$IFTHEN.bioprod_regi_lim not "%cm_bioprod_regi_lim%" == "off"
+p30_bioprod_regi_lim(ext_regi)   "limit of total biomass production per region or region group [EJ/yr]" / %cm_bioprod_regi_lim% /
+$ENDIF.bioprod_regi_lim
 
 
 
@@ -38,7 +41,7 @@ i30_bioen_price_a(ttot,all_regi)   "Time dependent intercept in bioenergy price 
 i30_bioen_price_b(ttot,all_regi)   "Time dependent slope in bioenergy price formula [T$US/TWa/TWa]"
 
 *** Parameters used for the determination of regional biomass bounds consistent with global bound based on same marginal supply costs
-p30_pebiolc_price_dummy            "Dummy for the bio-energy price to match the bioenergy bound s30_max_pebiolc"
+p30_pebiolc_price_dummy            "Dummy for the bio-energy price to match the bioenergy bound cm_maxProdBiolc"
 p30_max_pebiolc_dummy              "Dummy for bio energy supply at p30_pebiolc_price_dummy"
 p30_fuelex_dummy(all_regi)         "Dummy for bio-energy supply per region"
 ;
@@ -66,7 +69,6 @@ q30_priceshift                     "Calculates shift factor by minimizing least 
 q30_limitXpBio(ttot,all_regi)      "Only purpose grown bioenergy may be exported, no residues"
 q30_costAdj(ttot,all_regi)         "Improve convergence penalizing deviations from last coupling iteration"
 q30_limitTeBio(ttot,all_regi)      "Limit BECCS in policy runs relative to reference scenario"
-q30_limitProdtoHist(ttot,all_regi) "Limit regional energy crop production to multiple of cm_bioprod_histlim times 2015 level, active if cm_bioprod_histlim >= 0"
 q30_BioPEProdTotal(ttot,all_regi)  "Calculate total domestic PE biomass production"
 ;
 *** EOF ./modules/30_biomass/magpie_40/declarations.gms

@@ -57,10 +57,11 @@ bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 
 ### Activate snapshot for REMIND and MAgPIE
 
-Direct the models to the snapshot you just created above by first renaming [.snapshot.Rsprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically. Uncomment the following line by deleting `#` and change the date to today (the `_R4` is necessary if you run `R 4.0` or later):
+Direct the models to the snapshot you just created above by first renaming [.snapshot.Rprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically.
+As `snapshot`, enter the path to the snapshot you want to use (the `_R4` is necessary if you run `R 4.0` or later):
 
 ```bash
-# snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_05_17_R4"
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_12_15_R4"
 ```
 
 ### What happens during a single coupled run
@@ -127,32 +128,40 @@ Required as `path_settings_coupled` is a file from [`./config/`](../config) that
 
 All the columns must be present in the `scenario_config_coupled.csv` file, but most of them can be left blank. The required ones are:
    - `title`: The name of the scenario, must be unique and match the `title` column in REMIND's `scenario_config.csv`
-   - `start`: Defines if a scenario run should be started (1) or not (0). Overrides whatever is set in REMIND's `scenario_config.csv`. If you have an unfinished coupled run, it will automatically try to continue from the last coupling iteration (i.e. REMIND or MAgPIE run), if it is not finished yet (i.e. reached `max_iterations`).
+   - `start`: Defines if a scenario run should be started (1) or not (0). Overrides whatever is set in REMIND's `scenario_config*.csv`. If you have an unfinished coupled run, it will automatically try to continue from the last coupling iteration (i.e. REMIND or MAgPIE run), if it is not finished yet (i.e. reached `max_iterations`).
    - `qos`: The SLURM qos the coupled runs should be submitted to. Currently, there is no default support for running a coupled run locally. If no `qos` is set here, the default one is `short`. Naturally, the `qos` names are likely different if you are running the models in a different cluster.
    - `magpie_scen`: A pipe (`|`) separated list of configurations to pass to MAgPIE. Each entry should correspond to a column in [MAgPIE's scenario_config](https://github.com/magpiemodel/magpie/blob/master/config/scenario_config.csv), each one of them setting the multiple configuration flags listed on that file. The configurations are applied in the order that they appear. For example, to configure MAgPIE with SSP2 settings and climate change impacts according to RCP45 set `magpie_scen` to `SSP2|cc|rcp4p5`.
    - `no_ghgprices_land_until`: Controls at which timestep in the MAgPIE runs GHG prices from REMIND will start to be applied. This essentially enables you to set whether or not (or when) GHG prices on land should be applied in MAgPIE. If you want MAgPIE to always apply the same GHG prices from REMIND, you should set this to a timestep corresponding to the start of your REMIND run, such as `y2020` to start in the 2020 timestep. If you want to disable GHG prices in MAgPIE, regardless of what REMIND finds, set this to the last timestep of the run (usually `y2150`). Values in between allow the simulation of policies where GHG prices are only applied in the land use sector after a certain year.
 
 Other, optional columns allow you to make a run start only after another has finished, set starting conditions, and give you finer control over which data is fed to MAgPIE.
    - `path_gdx`, `path_gdx_ref`, `path_gdx_refpolicycost`, `path_gdx_carbonprice`, `path_gdx_bau`, : Override these same settings in REMIND's `scenario_config`, see [`03_RunningBundleOfRuns`](./03_RunningBundleOfRuns.md) for a detailed explanation.
-      - You can set these switches either to the full path of a `fulldata.gdx` file or simply to the name of another scenario in the file (without the "C_"!). So if you want a certain scenario (say `NDC`) to use as starting point the results of a `Base` scenario, you can simply set `path_gdx` to `Base` and it will automatically locate the appropriate `fulldata.gdx` in `Base`, for example `path_remind/C_Base-rem-5/fulldata.gdx` if 5 iterations where requested and you run in "serial" mode.
+      - You can set these switches either to the full path of a `fulldata.gdx` file or simply to the name of another scenario in the file (without the "C_"!). So if you want a certain scenario (say `NDC`) to use as starting point the results of a `Base` scenario, you can simply set `path_gdx` to `Base` and it will automatically locate the appropriate `fulldata.gdx` in `Base`, for example `path_remind/C_Base-rem-x/fulldata.gdx`.
       - If you set any of these `path_gdx…` columns (or `path_mif_ghgprice_land`, below) with a scenario name such as `Base`, the coupling script will not start any runs that depend on an unfinished run, and automatically start them when that run finishes. So, in the example above, you can set `start` to `1` in both `Base` and `NDC`, `NDC` will only start *after* `Base` is finished. `NDC-rem-2` will start after `NDC-rem-1` and `Base-rem-2` are finished.
-      - If you set any of these settings with a scenario name, the script will automatically try to detect whether the required "parent" run including the reporting is already finished and uses the appropriate `fulldata.gdx` then. In "serial" mode, if for some reason you changed `max_iterations` between the "parent" run and the current one, it's safer to specify a full path to a `fulldata.gdx` in these settings, otherwise the script may look for the wrong iteration of the "parent" scenario.
+      - If you set any of these settings with a scenario name, the script will automatically try to detect whether the required "parent" run including the reporting is already finished and uses the appropriate `fulldata.gdx` then.
       - You can also set it to `C_Base-rem-3` if for some reason, you want the results of a specific iteration.
+      - `path_gdx`: if you provide a full path to a fulldata.gdx this will overwrite whatever might have been automatically found from former REMIND runs. 
    - `path_mif_ghgprice_land`: This setting allows MAgPIE to be run using an exogenous, fixed GHG price path, regardless of the GHG price in the REMIND coupling. This can be useful if you want to simulate different GHG pricing policies in the land-use sector. Its timing is also controlled by `no_ghgprices_land_until`.
       - As with the `path_gdx*` settings, this can be set both to the full path of a REMIND `.mif` reporting file (*not* a `.gdx`) or to the name of another scenario. If set to the name of another scenario, it will also wait for that run to finish before starting the dependent run as described.
    - `oldrun`: This setting can be used to continue a coupled run that had a different name and/or is in a different folder. It works in almost the same way as `path_gdx`, but it is used only if no REMIND run has been finished for this scenario. It will look in the path set in `start_bundle_coupled.R`'s `path_remind_oldruns`. This can be useful when continuing a previous experiment that was made in another REMIND copy, or after changing scenario names.
+   - `path_report: Provide a path to a MAgPIE report here if you want REMIND to start with it. It overwrites whatever might have been automatically found from former MAgPIE runs. 
    - `cm_nash_autoconverge_lastrun`: can be used to specify `cm_nash_autoconverge`, but only for the last REMIND run, for example to increase precision there by setting it to `2`.
 
 
 ### Perform test start before actually submitting runs
 
-The `--test` (or `-t`) flag shows you if the scripts find all information that are crucial for starting the coupled runs, such as gdxes, mifs, model code. It also indicates if a run that crashed previously can be continuned and where (which model, which iteration).
+The `--test` (or `-t`) flag shows you if the scripts find all information that are crucial for starting the coupled runs, such as gdxes, mifs, model code. It also indicates if a run that crashed previously can be continued and where (which model, which iteration).
 
 ```bash
 Rscript start_bundle_coupled.R --test
 ```
 
-A shortcut for this command is `./start_bundle_coupled.R -t`.
+If you want to check whether your REMIND settings compile, run
+
+```bash
+Rscript start_bundle_coupled.R --gamscompile
+```
+
+A shortcut for these commands is `./start_bundle_coupled.R -t` and `./start_bundle_coupled.R -g`.
 
 If you provide a coupled config file as command line argument, it overwrites the settings in `start_bundle_coupled.R`:
 ```bash
@@ -160,13 +169,15 @@ Rscript start_bundle_coupled.R --test config/scenario_config_coupled_XYZ.csv
 ```
 This assumes that the REMIND settings can be found in `config/scenario_config_XYZ.csv` without the `_coupled`.
 
+If you pass `--interactive` as a flag, the script asks you to choose the scenario to be started.
+
 ### Start runs after checking that coupling scripts finds all gdxes and mifs
 
 ```bash
 Rscript start_bundle_coupled.R [configfile]
 ```
 
-You can append `&> start_log.txt` (or a different filename) to this command if you want to save the log of this procedure to a file, instead of printing it to the screen. You can have a look with `less start_log.txt`.
+You can use `Rscript start_bundle_coupled.R [configfile] | tee -a start_log.txt` (or a different filename) if you want to save the log of this procedure to a file, additionally to printing it to the screen.
 
 # Check the convergence
 
@@ -192,7 +203,7 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 ### Dynamic part
 
 * bioenergy demand, GHG prices from REMIND to MAgPIE (technical: getReportData in [`startfunctions.R`](https://github.com/magpiemodel/magpie/blob/master/scripts/start_functions.R))
-* bioenergy prices, GHG emissions from MAgPIE to REMIND (technical: getReportData in [`prepare_and_run.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/prepare_and_run.R))
+* bioenergy prices, GHG emissions from MAgPIE to REMIND (technical: getReportData in [`getReportData.R`](https://github.com/remindmodel/remind/blob/develop/scripts/start/getReportData.R))
 
 ### Static part
 

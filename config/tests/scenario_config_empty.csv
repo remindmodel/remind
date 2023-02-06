@@ -1,0 +1,2 @@
+title;start;results_folder;force_replace;c_empty_model;output;slurmConfig
+empty_model;1;output/empty_model;TRUE;on;reporting;--qos=standby --nodes=1 --tasks-per-node=12 --wait

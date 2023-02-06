@@ -123,4 +123,5 @@ q47_CCSmaxBound(t,regi)$p47_CCSmaxBound(regi)..
 
 $endIf.cm_CCSmaxBound
 
-*** EOF ./modules/47_regiPol/regiCarbonPrice/equations.gms
+
+*** EOF ./modules/47_regipol/regiCarbonPrice/equations.gms

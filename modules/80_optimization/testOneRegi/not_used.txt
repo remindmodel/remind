@@ -47,12 +47,13 @@ pm_emiMktCurrent,               input,      ??
 pm_taxemiMkt_iteration,         input,      ??
 pm_emiMktTarget_dev,            parameter,  ???
 pm_emiMktRefYear,               parameter,  ???
-pm_implicitQttyTarget_isLimited,      parameter,  ???
-pm_implicitQttyTarget_dev,   parameter,  ???
-pm_implicitQttyTarget,       parameter,  ???
+pm_implicitQttyTarget_isLimited, parameter,  ???
+pm_implicitQttyTarget_dev,      parameter,  ???
+pm_implicitQttyTarget,          parameter,  ???
 pm_implicitPriceTarget,         parameter,  not needed
 pm_implicitPrice_NotConv,       parameter,  not needed
 pm_implicitPrice_ignConv,       parameter,  not needed
 pm_implicitPePriceTarget,       parameter,  not needed
 pm_implicitPePrice_NotConv,     parameter,  not needed
 pm_implicitPePrice_ignConv,     parameter,  not needed
+cm_maxFadeOutPriceAnticip,      parameter,   ???

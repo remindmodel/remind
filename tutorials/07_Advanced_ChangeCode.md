@@ -65,23 +65,23 @@ gms::module.skeleton(100, "bla", c("on", "off", "new"))
 ```
 It creates all additional gams files for your new realization "new" of the existing module `100_bla`. You can find more information about the function `module_skeleton` in its documentation.
 
-After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in both the `main.gms` and in the `default.cfg` by hand.
+After you have created all of your new files and lines for the new module or realization you have to add the description of this new feature in the `main.gms` by hand.
 
-Compiling
-=============
+Renaming switches
+=================
+Be careful when renaming switches or changing their behavior. Make sure you also update all scenario config files in the [`./config`](../config/) directory and all its subdirectories.
+Please also add the old name of the switch to `forbiddenColumnNames` of [`readCheckScenarioConfig()`](../scripts/start/readCheckScenarioConfig.R) with an explanation how the switch should be adapted and a link to further information.
 
-Using the
-``` 
-cfg$action
-```
-option in `config/default.cfg` you can choose whether you want to start a run or simply check if your code compiles. By setting the option to simply `"c"` (for compile), your code will only be tested and no SLURM job will start on the cluster (helps when the cluster is full). Default value for the option is `"ce"` (for compile and execute).
+Compiling and Testing
+=====================
 
-You can also compile the file `main.gms` directly by running the command
-```bash
-gams main.gms -a=c -errmsg=1
+If you want to quickly check if the model including your changes compiles without running the model, start
 ```
-or (only works on the PIK cluster, gives you highlighting of syntax errors)
-```bash
-gamscompile main.gms
+Rscript start.R -gi
 ```
-This has the additional advantage of telling you in which exact file a compilation error occurred and running really fast. However, this will not take into consideration the changes you made to [`config/default.cfg`](../config/default.cfg). So if you want to test changes you made to a non-standard module realization, be sure to update the settings in [`main.gms`](../main.gms) by either editing it manually or running `./start.R -0` which resets `main.gms` to the entries of `config/default.cfg` (to get the settings of a `scenario_config*.csv`, start a single run with `start.R -i` and wait until `main.gms` is updated, then kill the run).
+and select runs which will be compiled.
+
+Before submitting the code changes to the REMIND repository, it is recommended to run `make test` on the command line.
+It performs a collection of tests including compiling the model, a minimal run of the default configuration with relaxed convergence requirements, and checking for violations of the coding etiquette. If the checking of the coding etiquette `99-codeCheck` uncovers violations, you can use `make check-fix` to automatically fix some common errors. In particular, it may ask you some questions about the `not_used.txt` files in each realization that contain the parameter names that are used somewhere in this module, but not in this specific module realization.
+
+The automated tests do not contain a full run of the model by default. To include a full run in the tests, run `make test-full` and compare the output of a model with and without your changes. The standard run is useful to check changes in the default configuration and is recommended if you changed the model such that the output might change significantly. If you change a specific non-default configuration (e.g. a non-default module realization), you should also do specially tailored runs to compare the output of the model using the configuration you changed.

@@ -1,0 +1,25 @@
+# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  authors, and contributors see CITATION.cff file. This file is part
+# |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
+# |  AGPL-3.0, you are granted additional permissions described in the
+# |  REMIND License Exception, version 1.0 (see LICENSE file).
+# |  Contact: remind@pik-potsdam.de
+name,type,reason
+v02_emitaxredistr,variable,???
+v02_energyExp,variable,???
+vm_damageFactor,variable,???
+vm_emiMacSector,variable,???
+vm_emiCdr,variable,???
+vm_emiTeMkt,variable,???
+pm_taxCO2eq,input,questionnaire
+pm_taxCO2eqHist,input,questionnaire
+pm_taxCO2eqSCC,input,questionnaire
+pm_SolNonInfes,input,questionnaire
+pm_interpolWeight_ttot_tall,input,questionnaire
+pm_tall_2_ttot,input,questionnaire
+pm_FEPrice,input,questionnaire
+cm_emiscen,switch,???
+cm_distrBeta,switch,???
+cm_distrAlphaDam,switch,???
+sm_tgn_2_pgc,scalar,???
+sm_tgch4_2_pgc,scalar,???

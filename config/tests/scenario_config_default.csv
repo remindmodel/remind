@@ -1,0 +1,2 @@
+title;start;slurmConfig
+default;1;--qos=standby --nodes=1 --tasks-per-node=12 --wait

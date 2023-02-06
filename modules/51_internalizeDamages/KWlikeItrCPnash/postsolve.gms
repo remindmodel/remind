@@ -23,6 +23,7 @@ p51_sccParts(tall,tall2,regi)$((tall.val ge 2010) and (tall.val le 2150) and (ta
 *	* pm_consPC(tall,regi)/pm_consPC(tall2,regi) 
         * pm_damage(tall2,regi) * pm_GDPGross(tall2,regi) 
 	* p51_marginalDamageCumul(tall,tall2,regi) 
+	* pm_sccIneq(tall2,regi)
 ;
 
 p51_scc(tall,regi)$((tall.val ge 2010) and (tall.val le 2150)) = 1000 *

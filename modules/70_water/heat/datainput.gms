@@ -34,12 +34,8 @@ $offdelim
 
 ***------------*Assign data*------------------------------------------------------
 *---------------------------------------------------------------------------------
-$ifthen "%cm_cooling_shares%" == "static" 
-i70_cool_share_time(ttot2,regi,te_elcool70,coolte70) = i70_cool_share_time("2005",regi,te_elcool70,coolte70);
-$elseif "%cm_cooling_shares%" == "dynamic"
 i70_cool_share_time(ttot2,regi,te_elcool70,coolte70)$(ttot2.val lt 2020) = i70_cool_share_time("2005",regi,te_elcool70,coolte70);
 i70_cool_share_time(ttot2,regi,te_elcool70,coolte70)$(ttot2.val ge 2020) = i70_cool_share_time("2020",regi,te_elcool70,coolte70);  
-$endif
 
 i70_efficiency(ttot,regi,te_elcool70,coolte70) = 1;
 
