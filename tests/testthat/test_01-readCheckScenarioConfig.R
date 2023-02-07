@@ -23,17 +23,19 @@ for (csvfile in csvfiles) {
 }
 test_that("readCheckScenarioConfig fails on error-loaden config", {
   csvfile <- tempfile(pattern = "scenario_config_a", fileext = ".csv")
-  writeLines(c(";start;c_budgetCO2;path_gdx;path_gdx_carbonprice",
-               "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;33;;",
-               "PBS;1;29; whitespacebefore;whitespaceafter ",
-               "glob;0;33; ;nobreakspace	tab"),
+  writeLines(c(";start;copyConfigFrom;c_budgetCO2;path_gdx;path_gdx_carbonprice",
+               "abc.loremipsumloremipsum@lorem&ipsumloremipsumloremipsumloremipsumloremipsumloremipsum_;0;;33;;",
+               "PBS;1;glob;29; whitespacebefore;whitespaceafter ",
+               "glob;0;missing_copyConfigFrom;33; ;nobreakspace	tab"),
              con = csvfile, sep = "\n")
   w <- capture_warnings(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE))
-  expect_match(w, "9 errors found", all = FALSE)
+  expect_match(w, "11 errors found", all = FALSE)
   expect_match(w, "These titles are too long", all = FALSE)
   expect_match(w, "These titles may be confused with regions", all = FALSE)
   expect_match(w, "These titles contain illegal characters", all = FALSE)
   expect_match(w, "\\.@&", all = FALSE)
   expect_match(w, "Outdated column names found that must not be used", all = FALSE)
   expect_match(w, "contain whitespaces", all = FALSE)
+  expect_match(w, "following scenario names indicated in copyConfigFrom column were not found", all = FALSE)
+  expect_match(w, "following scenarios references in copyConfigFrom column a scenario defined only later", all = FALSE)
 })
