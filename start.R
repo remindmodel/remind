@@ -84,18 +84,19 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
 }
 
 # Check if dependencies for a model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  piamenv::checkDeps(action = "ask")
+if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
+  installedPackages <- piamenv::fixDeps(ask = TRUE)
+  piamenv::stopIfLoaded(names(installedPackages))
 } else {
-  stop("REMIND requires piamenv >= 0.2.0, please run the following to update it:\n",
-       "renv::install('piamenv'); renv::snapshot(prompt = FALSE)\n",
+  stop("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
+       "renv::install('piamenv')\n",
        "and re-run start.R in a fresh R session.")
 }
 
 if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
     && !getOption("autoRenvUpdates", FALSE)
     && !is.null(piamenv::showUpdates())) {
-  message("Consider updating with `Rscript scripts/utils/updateRenv.R`.")
+  message("Consider updating with `piamenv::updateRenv()`.")
   Sys.sleep(1)
 }
 
@@ -139,6 +140,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     filestomove <- c("abort.gdx" = "abort_beforeRestart.gdx",
                      "non_optimal.gdx" = "non_optimal_beforeRestart.gdx",
                      "log.txt" = "log_beforeRestart.txt",
+                     "full.lst" = "full_beforeRestart.lst",
                      if ("--reprepare" %in% flags) c("full.gms" = "full_beforeRestart.gms",
                                                      "fulldata.gdx" = "fulldata_beforeRestart.gdx")
                     )
@@ -284,6 +286,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+      }
+      # Make sure all python requirements are installed
+      if (cfg$pythonEnabled == "on") {
+        piamenv::updatePythonVirtualEnv()
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
