@@ -479,14 +479,9 @@ parameter
   cm_emiscen        = 1;               !! def = 1
 *' *  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
 *' *  (1): BAU
-*' *  (2): temperature cap
-*' *  (3): CO2 concentration cap
 *' *  (4): emission time path
-*' *  (5): forcing target from 2010 (not to exceed)
 *' *  (6): budget
-*' *  (8): forcing target from 2100 onwards (overshoot scen)
 *' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
-*' *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
 *'
 parameter

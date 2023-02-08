@@ -821,10 +821,6 @@ q_limitSo2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (c
          =l=
          vm_emiTe(ttot,regi,"so2");
 
-q_limitCO2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (ttot.val le 2100) AND (cm_emiscen eq 8)) ..
-         vm_emiTe(ttot+1,regi,"co2")
-         =l=
-         vm_emiTe(ttot,regi,"co2");
 
 q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
          v_adjFactor(ttot,regi,te)
