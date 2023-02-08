@@ -21,7 +21,10 @@ update-renv:     ## Upgrade all pik-piam packages in your renv to the respective
 
 update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
                  ## to the respective latest release, write renv.lock archive
+                 ## Upgrade all packages in python venv, if python venv exists
 	Rscript -e 'renv::update(exclude = "renv"); piamenv::archiveRenv()'
+	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
+	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt
 
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
