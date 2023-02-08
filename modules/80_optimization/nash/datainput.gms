@@ -33,6 +33,12 @@ cm_iteration_max = 100;
   p80_surplusMaxTolerance("good") = 20/1000;                  !! in internal unit, trillion Dollar
   p80_surplusMaxTolerance("perm") = 70 * 12/44 / 1000 ;                !! convert MtCO2eq into internal unit GtC
    );
+ if(cm_nash_autoconverge eq 3,
+***convergences thresholds - very coarse 
+  p80_surplusMaxTolerance(tradePe) = 2* 1.5 * sm_EJ_2_TWa;          !! convert EJ/yr into internal unit TWa
+  p80_surplusMaxTolerance("good") = 2* 100/1000;                  !! in internal unit, trillion Dollar
+  p80_surplusMaxTolerance("perm") = 2* 300 * 12/44 / 1000;                !! convert MtCO2eq into internal unit GtC
+   );
 );
     
 

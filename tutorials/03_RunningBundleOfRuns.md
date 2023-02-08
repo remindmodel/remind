@@ -21,7 +21,7 @@ Example for a scenario_config of REMIND
 
 Those two columns are mandatory and usually placed at the beginning:
 
-* `title` labels that run. It contains a unique identifier for each run, which must not contain a `.` to avoid a GAMS failure. The more runs you will have, the more it will be important that you label them in a way such that you easily remember the specific settings you chose for this run.
+* `title` labels that run. It contains a unique identifier for each run that must only consist of letters, digits, `_` and `-`. The more runs you will have, the more it will be important that you label them in a way such that you easily remember the specific settings you chose for this run.
 * `start` can be used as a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0. You can also write a group name in this cell, and by running `./start.R --interactive`, you can select this group to be started.
 
 Further columns are the configurations that you can choose for the specific runs.
