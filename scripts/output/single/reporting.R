@@ -23,6 +23,10 @@ if(!exists("source_include")) {
    readArgs("outputdir", "gdx_name", "gdx_ref_name")
 }
 
+configfile <- file.path(outputdir, "config.Rdata")
+envir <- new.env()
+load(configfile, envir = envir)
+cfg <- envir$cfg
 gdx      <- file.path(outputdir,gdx_name)
 gdx_ref  <- file.path(outputdir,gdx_ref_name)
 if (!file.exists(gdx_ref)) { gdx_ref <- NULL }
@@ -46,16 +50,20 @@ message("\n### start generation of mif files at ", Sys.time())
 tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF
 if(class(tmp)=="try-error") convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
 
-#  MAGICC code not working with REMIND-EU
 # generate MAGICC reporting and append to REMIND reporting
-if (0 == nchar(Sys.getenv('MAGICC_BINARY'))) {
-  warning('Can\'t find magicc executable under environment variable MAGICC_BINARY')
+if (cfg$gms$magicc_version == "6005_REMIND") {
+  magiccBinary <- file.path(cfg$magicc_template, "magicc6")
+} else if (cfg$gms$magicc_version == "7.5.3") {
+  magiccBinary <- file.path(cfg$magicc_template, "magicc")
+}
+if (!file.exists(magiccBinary)) {
+  warning(paste('Can\'t find magicc executable at', magiccBinary))
 } else {
   message("Generate ", basename(magicc_reporting_file))
   system(paste("cd ",outputdir ,"/magicc; ",
              "pwd;",
              "sed -f modify_MAGCFG_USER_CFG.sed -i MAGCFG_USER.CFG; ",
-             Sys.getenv('MAGICC_BINARY'), '; ',
+             magiccBinary, '; ',
              "awk -f MAGICC_reporting.awk -v c_expname=\"", scenario, "\"",
              " < climate_reporting_template.txt ",
              " > ","../../../", magicc_reporting_file,"; ",
@@ -91,10 +99,7 @@ if(file.exists(edgetOutputDir)) {
   message("end generation of EDGE-T reporting")
 }
 
-configfile <- file.path(outputdir, "config.Rdata")
-envir <- new.env()
-load(configfile, envir = envir)
-magpie_reporting_file <- envir$cfg$pathToMagpieReport
+magpie_reporting_file <- cfg$pathToMagpieReport
 if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- read.report(remind_reporting_file, as.list=FALSE)
