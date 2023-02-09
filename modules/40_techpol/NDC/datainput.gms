@@ -20,7 +20,7 @@ p40_ElecBioBound("2030",regi) = p40_TechBound("2030",regi,"bioigcc");
 
 *** In scenarios with 2nd generation bioenergy technology phaseout,
 *** switch-off biomass capacity targets of NDC
-if (cm_biolc_tech_phaseout eq 1,
+if (cm_phaseoutBiolc eq 1,
   p40_ElecBioBound(t,regi) = 0;
   );
 

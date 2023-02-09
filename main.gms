@@ -470,8 +470,9 @@ parameter
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
 *' * (0): manually set number of iterations by adjusting cm_iteration_max
-*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
+*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! do not use in production runs !
 *' * (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
+*' * (3): run until solution is sufficiently converged using very relaxed targets  - very coarse tolerances, two times higher than option 1. ! do not use in production runs !
 *'
 parameter
   cm_emiscen                "policy scenario choice"
@@ -627,20 +628,13 @@ parameter
 *'          eq    2 $ per GJ
 *'
 parameter
-  cm_bioenergymaxscen       "choose bound on global pebiolc production excluding residues"
+  cm_tradecostBio           "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
 ;
-  cm_bioenergymaxscen = 0;         !! def = 0
-*' *  (0): no bound
-*' *  (1): 100 EJ global bioenergy potential
-*' *  (2): 200 EJ global bioenergy potential
-*' *  (3): 300 EJ global bioenergy potential
-*' *  (4): 152 EJ global bioenergy potential
+  cm_tradecostBio     = 1;         !! def = 1
+***  (1):               medium trade costs (used e.g. for for SSP2)
+***  (0.5)              low tradecosts (used e.g. for other SSP scenarios than SSP2)
+***  (any value ge 0):  set costs multiplier to that value
 *'
-parameter
-  cm_tradecost_bio          "choose financal tradecosts for biomass (purpose grown pebiolc)"
-;
-  cm_tradecost_bio     = 2;         !! def = 2
-*'  (1): low   tradecosts (for other SSP scenarios than SSP2)
 parameter
   cm_1stgen_phaseout        "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap equals 0)"
 ;
@@ -649,23 +643,22 @@ parameter
 *' *  (1): no new capacities for 1st generation biofuel technologies may be built after 2030 -> phaseout until ~2060
 *'
 parameter
-  cm_biolc_tech_phaseout    "Switch that allows for a full phaseout of all bioenergy technologies globally"
+  cm_phaseoutBiolc          "Switch that allows for a full phaseout of all bioenergy technologies globally"
 ;
-  cm_biolc_tech_phaseout = 0;        !! def = 0
-*' Only working with magpie_40 realization of 30_biomass module.
-*'
-*' *  (0): (default) No phaseout
-*' *  (1): Phaseout capacities of all bioenergy technologies using pebiolc, as far
-*'         as historical bounds on bioenergy technologies allow it. This covers
-*'         all types of lignocellulosic feedstocks, i.e. purpose grown biomass and
-*'         residues. Lower bounds on future electricity production due to NDC
-*'         tagets in p40_ElecBioBound are removed. The first year, in which no new
-*'         capacities are allowed, is 2025 or cm_startyear if larger.
+  cm_phaseoutBiolc    = 0;         !! def = 0
+***  Only working with magpie_40 realization of 30_biomass module. 
+***  (0): (default) No phaseout
+***  (1): Phaseout capacities of all bioenergy technologies using pebiolc, as far
+***       as historical bounds on bioenergy technologies allow it. This covers
+***       all types of lignocellulosic feedstocks, i.e. purpose grown biomass and
+***       residues. Lower bounds on future electricity production due to NDC
+***       tagets in p40_ElecBioBound are removed. The first year, in which no new
+***       capacities are allowed, is 2025 or cm_startyear if larger.
 *'
 parameter
   cm_startyear              "first optimized modelling time step [year]"
 ;
-  cm_startyear      = 2005;      !! def = 2005 for a baseline
+  cm_startyear        = 2005;      !! def = 2005 for a baseline
 *' *  (2005): standard for basline to check if model is well calibrated
 *' *  (2015): standard for all policy runs (eq. to fix2010), NDC, NPi and production baselines, especially if various baselines with varying parameters are explored
 *' *  (....): later start for delay policy runs, eg. 2025 for what used to be delay2020
@@ -673,7 +666,7 @@ parameter
 parameter
   c_start_budget            "start of GHG budget limit"
 ;
-  c_start_budget    = 2100;      !! def = 2100
+  c_start_budget      = 2100;      !! def = 2100
 *'
 parameter
   cm_prtpScen               "pure rate of time preference standard values"
@@ -887,11 +880,6 @@ parameter
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
 parameter
-  c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
-;
-  c_refcapbnd          = 0;    !! def = 0
-*'
-parameter
   cm_distrAlphaDam	"income elasticity of damages for inequality"
 ;
   cm_distrAlphaDam     = 1;    !! def = 1
@@ -973,6 +961,11 @@ parameter
 *'  switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 0.01% of GDP)
 *' * 0 (off)
 *' * 1 (on), default
+*'
+parameter
+  cm_maxFadeOutPriceAnticip   "switch to determine maximum allowed fadeout price anticipation to consider that the model converged."
+;
+  cm_maxFadeOutPriceAnticip = 1e-4; !! def 1e-4, the fadeout price anticipation term needs to be lower than 1e-4 to consider that the model converged.
 *'
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
@@ -1157,6 +1150,11 @@ $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
 ***  (default):  Default assumption, reaching zero demand in 2100
 ***  (fast):     Fast phase out, starting in 2025 reaching zero demand in 2070 (close to zero in 2060)
 $setglobal cm_tradbio_phaseout  default  !! def = default
+*** cm_maxProdBiolc  "Bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
+***  (off):             (default) no bound
+***  (100):             (e.g.) set maximum to 100 EJ per year
+***  (any value ge 0):  set maximum to that value
+$setglobal cm_maxProdBiolc  off  !! def = off     
 *** cm_bioprod_regi_lim
 *** limit to total biomass production (including residues) by region to an upper value in EJ/yr from 2035 on
 *** example: "CHA 20, EUR_regi 7.5" limits total biomass production in China to 20 EJ/yr and

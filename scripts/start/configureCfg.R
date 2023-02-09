@@ -17,7 +17,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
     for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "action",
-                                   "inputRevision", "slurmConfig", "results_folder", "force_replace"),
+                                   "inputRevision", "slurmConfig", "results_folder", "force_replace", "pythonEnabled"),
                                  names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
@@ -77,11 +77,9 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
                 if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
               } else {
                 # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
-                # for folder names only allows: cell content, an optional _, datetimepattern
-                # the optional _ can be appended in the scenario-config path_to_gdx cell to force using an
-                # existing fulldata.gdx instead of queueing as a subsequent run, see tutorial 3.
+                # for folder names only allows: cell content, _, datetimepattern
                 datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-                dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_?", datetimepattern, "/fulldata.gdx"), dirs)]
+                dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_", datetimepattern, "/fulldata.gdx"), dirs)]
                 # if anything found, pick latest
                 if(length(dirs) > 0 && ! all(is.na(dirs))) {
                   lapply(dirs, str_sub, -32, -14) %>%
@@ -98,7 +96,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
           # if the above has not created a path to a valid gdx, stop
           if (!file.exists(isettings[iscen, path_to_gdx])) {
             icfg$errorsfoundInConfigureCfg <- sum(icfg$errorsfoundInConfigureCfg, 1)
-            message(red, "Error", NC, ": Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ",
+            message(red, "Error", NC, ": Can't find a gdx specified as '", isettings[iscen, path_to_gdx], "' in column ",
                     path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a ",
                     "fulldata.gdx from a previous normally completed run.")
           }

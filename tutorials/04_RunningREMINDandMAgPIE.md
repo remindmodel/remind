@@ -177,7 +177,7 @@ If you pass `--interactive` as a flag, the script asks you to choose the scenari
 Rscript start_bundle_coupled.R [configfile]
 ```
 
-You can append `&> start_log.txt` (or a different filename) to this command if you want to save the log of this procedure to a file, instead of printing it to the screen. You can have a look with `less start_log.txt`.
+You can use `Rscript start_bundle_coupled.R [configfile] | tee -a start_log.txt` (or a different filename) if you want to save the log of this procedure to a file, additionally to printing it to the screen.
 
 # Check the convergence
 

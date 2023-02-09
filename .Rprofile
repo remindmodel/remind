@@ -1,4 +1,25 @@
+local({
+# setting RENV_PATHS_LIBRARY ensures packages are installed into renv/library
+# for some reason this also has implications for symlinking into the global cache
+Sys.setenv(RENV_PATHS_LIBRARY = "renv/library")
+
+# remind's renv integration previously relied on renv.lock, but now it should generally not be used anymore
+# this can safely be removed in January 2024
+if (file.exists("renv.lock") && file.exists("README.md") && !file.exists("renv/old_renv.lock")) {
+  file.rename("renv.lock", "renv/old_renv.lock")
+  message("moved legacy renv.lock to renv/old_renv.lock")
+}
+
 source("renv/activate.R")
+
+renvVersion <- "0.16.0"
+if (packageVersion("renv") != renvVersion) {
+  renvLockExisted <- file.exists(renv::paths$lockfile())
+  renv::upgrade(version = renvVersion, reload = TRUE, prompt = FALSE)
+  if (!renvLockExisted) {
+    unlink(renv::paths$lockfile())
+  }
+}
 
 if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
   options(repos = c(getOption("repos"), pik = "https://rse.pik-potsdam.de/r/packages"))
@@ -9,11 +30,29 @@ if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("R package dependencies are not installed in this renv, installing now...")
   renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
-  renv::snapshot(prompt = FALSE) # create renv.lock
   message("Finished installing R package dependencies.")
 }
 
-local({
+# bootstrapping python venv, will only run once after remind is freshly cloned
+if (!dir.exists(".venv/")
+    && (Sys.which("python3") != ""
+        || (Sys.which("python.exe") != ""
+            && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3")))
+           ))) {
+  message("Python venv is not available, setting up now...")
+  # use system python to set up venv
+  if (.Platform$OS.type == "windows") {
+    system2("python.exe", c("-mvenv", ".venv"))
+    pythonInVenv <- normalizePath(file.path(".venv", "Scripts", "python.exe"), mustWork = TRUE)
+  } else {
+    system2("python3", c("-mvenv", ".venv"))
+    pythonInVenv <- normalizePath(file.path(".venv", "bin", "python"), mustWork = TRUE)
+  }
+  # use venv python to install dependencies in venv
+  system2(pythonInVenv, c("-mpip", "install", "--upgrade", "pip", "wheel"))
+  system2(pythonInVenv, c("-mpip", "install", "-r", "requirements.txt"))
+}
+
 # Configure locations of REMIND input data
 # These can be located in directories on the local machine, remote directories,
 # or default directories on the cluster.

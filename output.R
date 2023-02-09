@@ -21,12 +21,40 @@ options(error = quote({
   q()
 }))
 
+helpText <- "
+#' Rscript output.R [options]
+#'
+#'    [options] can be the following flags:
+#'
+#'    --help, -h:      show this help text and exit
+#'    --test, -t:      tests output.R without actually starting any run
+#'
+#'    [options] can also specify the following variables. If they are not specified
+#'    but needed, the scripts will ask the user.
+#'
+#'    comp:            comp=single means output for single runs (reporting, …)
+#'                     comp=comparison means scripts to compare runs (compareScenarios2, …)
+#'                     comp=export means scripts to export runs (xlsx_IIASA, …)
+#'    filename_prefix: string to be added to filenames by some output scripts
+#'                     (compareScenarios, xlsx_IIASA)
+#'    output:          output=compareScenarios2 directly selects the specific script
+#'    outputdir:       Can be used to specify the output directories to be used.
+#'                     Example: outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1
+#'    remind_dir:      path to remind or output folder(s) where runs can be found.
+#'                     Defaults to ./output but can also be used to specify multiple
+#'                     folders, comma-separated, such as remind_dir=.,../otherremind
+#'    slurmConfig:     use slurmConfig=direct, priority, short or standby to specify
+#'                     slurm selection. You may also pass complicated arguments such as
+#'                     slurmConfig='--qos=priority --mem=8000'
+"
+
 argv <- get0("argv", ifnotfound = commandArgs(trailingOnly = TRUE))
 
 # run updates before loading any packages
 if ("--update" %in% argv) {
   stopifnot(`--update must not be used together with --renv=...` = !any(startsWith(argv, "--renv=")))
-  source("scripts/utils/updateRenv.R")
+  installedUpdates <- piamenv::updateRenv()
+  piamenv::stopIfLoaded(names(installedUpdates))
 } else if (any(startsWith(argv, "--renv="))) {
   renvProject <- normalizePath(sub("^--renv=", "", grep("^--renv=", argv, value = TRUE)))
   renv::load(renvProject)
@@ -41,11 +69,16 @@ require(stringr, quietly = TRUE)
 if (!exists("source_include")) {
   # if this script is not being sourced by another script but called from the command line via Rscript read the command
   # line arguments and let the user choose the slurm options
-  flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix", .flags = c(t = "--test"))
+  flags <- readArgs("outputdir", "output", "comp", "remind_dir", "slurmConfig", "filename_prefix",
+                    .flags = c(t = "--test", h = "--help"))
 } else {
   flags <- NULL
 }
 
+if ("--help" %in% flags) {
+  message(gsub("#' ?", '', helpText))
+  q()
+}
 
 choose_slurmConfig_output <- function(slurmExceptions = NULL) {
   slurm_options <- c("--qos=priority", "--qos=short", "--qos=standby",
@@ -92,21 +125,22 @@ if (! exists("outputdir")) {
   modulesNeedingMif <- c("compareScenarios2", "xlsx_IIASA", "policyCosts", "Ariadne_output",
                          "plot_compare_iterations", "varListHtml")
   needingMif <- any(modulesNeedingMif %in% output)
-  dir_folder <- if (exists("remind_dir")) remind_dir else "./output"
-  dirs <- basename(dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx"))))
-  if (needingMif) dirs <- intersect(dirs, unique(basename(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif"))))))
-  names(dirs) <- stringr::str_extract(dirs, "rem-[0-9]+$")
-  names(dirs)[is.na(names(dirs))] <- ""
-  selectedDirs <- chooseFromList(dirs, type = "runs to be used for output generation",
+  dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
+  dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
+  if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
+  dirnames <- if (length(dir_folder) <= 2) basename(dirs) else dirs
+  names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
+  names(dirnames)[is.na(names(dirnames))] <- ""
+  selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
-                    returnBoolean = FALSE, multiple = TRUE)
-  outputdirs <- file.path("output", selectedDirs)
+                    returnBoolean = TRUE, multiple = TRUE)
+  outputdirs <- dirs[selectedDirs]
   if ("policyCosts" %in% output) {
-    policyrun <- file.path("output", chooseFromList(dirs, type = "reference run to which policy run will be compared",
-                           userinfo = "Select a single reference run.",
-                           returnBoolean = FALSE, multiple = FALSE))
-    outputdirs <- c(rbind(outputdirs, policyrun))
+    policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
+                                userinfo = "Select a single reference run.",
+                                returnBoolean = TRUE, multiple = FALSE)
+    outputdirs <- c(rbind(outputdirs, dirs[policyrun])) # generate 3,1,4,1,5,1 out of 3,4,5 and policyrun 1
   }
 } else {
   outputdirs <- outputdir

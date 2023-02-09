@@ -116,6 +116,14 @@ loop(regi,
       );
 );
 
+*** Forbid bioenergy trade if 2nd gen. bioenergy should be phased out to avoid
+*** failing markets, which may in particular happening in early years, with
+*** still non-zero production
+if (cm_phaseoutBiolc eq 1,
+   vm_Mport.up(t,regi,"pebiolc")$(t.val ge cm_startyear) = 1e-6;
+   vm_Xport.up(t,regi,"pebiolc")$(t.val ge cm_startyear) = 1e-6;
+);
+
 *** set maximum import and export secondary energy trade based on trading capacities 
 vm_Mport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi2,regi,entySe));
 vm_Xport.up(t,regi,entySe) = sum(regi2,p24_seTradeCapacity(t,regi,regi2,entySe));

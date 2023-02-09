@@ -49,7 +49,7 @@ prepare <- function() {
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -140,7 +140,7 @@ prepare <- function() {
                                          "En_",  cfg$gms$cm_demScen, "-",
                                          "Kap_", cfg$gms$capitalMarket, "-",
                                          if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         "Reg_", regionscode(cfg$regionmapping))
+                                         "Reg_", madrat::regionscode(cfg$regionmapping))
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
@@ -256,8 +256,8 @@ prepare <- function() {
   } else {
       input_old     <- "no_data"
   }
-  input_new      <- c(paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
-                      paste0("rev",cfg$inputRevision,"_", regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
+  input_new      <- c(paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),"_", tolower(cfg$model_name),".tgz"),
+                      paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data
   if(!setequal(input_new, input_old) | cfg$force_download) {
@@ -282,7 +282,7 @@ prepare <- function() {
 
   ############ update information ########################
   # update_info, which regional resolution and input data revision in tmpModelFile
-  update_info(regionscode(cfg$regionmapping), cfg$inputRevision)
+  update_info(madrat::regionscode(cfg$regionmapping), cfg$inputRevision)
   # update_sets, which is updating the region-depending sets in core/sets.gms
   #-- load new mapping information
   map <- read.csv(cfg$regionmapping, sep=";")
@@ -725,20 +725,20 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
                              list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
-                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))    
+                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
 
     # renamed because of https://github.com/remindmodel/remind/pull/1128
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
-                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))    
+                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
-                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))    
+                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
-                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))   
+                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.
