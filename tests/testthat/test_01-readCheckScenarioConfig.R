@@ -4,12 +4,6 @@ if (length(csvfiles) == 0) {
                          file.path("../../config", "*", "scenario_config*.csv")))
 }
 for (csvfile in csvfiles) {
-  # This is a new test and we currently still have errors. Let's fix them ASAP.
-  if (csvfile %in% c(
-      "../../config/21_regions_EU11/scenario_config_21_EU11_Fit_for_55_sensitivity.csv"
-      )) {
-        next
-      }
   test_that(paste("perform readCheckScenarioConfig with", gsub("../../config/", "", csvfile, fixed = TRUE)), {
     # regexp = NA means: expect no warning
     expect_warning(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE), regexp = NA)
