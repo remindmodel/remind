@@ -6,12 +6,6 @@ if (length(csvfiles) == 0) {
 for (csvfile in csvfiles) {
   # This is a new test and we currently still have errors. Let's fix them ASAP.
   if (csvfile %in% c(
-      "../../config/scenario_config_DeepEl.csv",
-      "../../config/scenario_config_EDGE-T_NDC_NPi_pkbudget.csv",
-      "../../config/scenario_config_GCS.csv",
-      "../../config/scenario_config_NAVIGATE_300.csv",
-      "../../config/21_regions_EU11/scenario_config_21_EU11_ARIADNE.csv",
-      "../../config/21_regions_EU11/scenario_config_21_EU11_ECEMF.csv",
       "../../config/21_regions_EU11/scenario_config_21_EU11_Fit_for_55_sensitivity.csv"
       )) {
         next
