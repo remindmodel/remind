@@ -136,6 +136,7 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
+# Use ensureRequirementsInstalled(rerunPrompt="start_bundle_coupled.R") when coupled runs are using renv.
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
   piamenv::checkDeps(action = "stop")
 } else {

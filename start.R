@@ -83,15 +83,7 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
   if (gms::getLine() %in% c("Y", "y")) flags <- c(flags, "--reprepare")
 }
 
-# Check if dependencies for a model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
-  installedPackages <- piamenv::fixDeps(ask = TRUE)
-  piamenv::stopIfLoaded(names(installedPackages))
-} else {
-  stop("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
-       "renv::install('piamenv')\n",
-       "and re-run start.R in a fresh R session.")
-}
+ensureRequirementsInstalled()
 
 if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
     && !getOption("autoRenvUpdates", FALSE)
