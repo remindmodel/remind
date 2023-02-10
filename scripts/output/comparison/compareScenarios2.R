@@ -53,7 +53,7 @@ startComp <- function(
   outFileName <- jobName
   script <- "scripts/cs2/run_compareScenarios2.R"
   cat("Starting ", jobName, "\n")
-  if (isSlurmAvailable()) {
+  if (isSlurmAvailable() && ! identical(slurmConfig, "direct")) {
     clcom <- paste0(
       "sbatch ", slurmConfig,
       " --job-name=", jobName,
