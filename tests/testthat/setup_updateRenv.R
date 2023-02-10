@@ -1,4 +1,4 @@
-env <- paste0("unset R_PROFILE_USER;unset TESTTHAT;autoRenvFixDeps=TRUE;")
+env <- paste0("unset R_PROFILE_USER;unset TESTTHAT;autoRenvFixDeps=TRUE ")
 withr::with_dir("../..", {
   returnCode <- system2(
     "make", "ensure-reqs",
