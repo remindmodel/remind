@@ -9,8 +9,8 @@ sets
 
 te_all33(all_te)  "all CDR technologies"
 /
-	weathering	"enhanced weathering"
-	dac		"direct air capture"
+    weathering	"enhanced weathering"
+    dac		"direct air capture"
 /
 
 te_used33(all_te) "used CDR technologies (specified by switches)"
