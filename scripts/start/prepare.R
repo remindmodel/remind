@@ -49,7 +49,7 @@ prepare <- function() {
             "flexdashboard", "gdx", "gdxdt", "gdxrrw", "ggplot2", "gtools",
             "lucode2", "luplot", "luscale", "magclass", "magpie4", "methods",
             "mip", "mrremind", "mrvalidation", "optparse", "parallel",
-            "plotly", "remind2", "rlang", "rmndt", "tidyverse",
+            "plotly", "remind2", "reticulate", "rlang", "rmndt", "tidyverse",
             "tools"),
 
         'Package') %>%
@@ -725,20 +725,20 @@ prepare <- function() {
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("v21_taxrevBioImport.M", "!!v21_taxrevBioImport.M")),
                              list(c("q21_taxrevBioImport.M", "!!q21_taxrevBioImport.M")),
-                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))    
+                             list(c("q30_limitProdtoHist.M", "!!q30_limitProdtoHist.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v21_taxrevBioImport.FX", "!!v21_taxrevBioImport.FX")))
 
     # renamed because of https://github.com/remindmodel/remind/pull/1128
     levs_manipulateThis <- c(levs_manipulateThis,
                              list(c("v_emiTeDetailMkt.L", "!!v_emiTeDetailMkt.L")),
-                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))    
+                             list(c("v_emiTeMkt.L", "!!v_emiTeMkt.L")))
     margs_manipulateThis <- c(margs_manipulateThis,
                              list(c("v_emiTeDetailMkt.M", "!!v_emiTeDetailMkt.M")),
-                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))    
+                             list(c("v_emiTeMkt.M", "!!v_emiTeMkt.M")))
     fixings_manipulateThis <- c(fixings_manipulateThis,
                             list(c("v_emiTeDetailMkt.FX", "!!v_emiTeDetailMkt.FX")),
-                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))   
+                             list(c("v_emiTeMkt.FX", "!!v_emiTeMkt.FX")))
 
     # Include fixings (levels) and marginals in full.gms at predefined position
     # in core/loop.gms.

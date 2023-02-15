@@ -55,7 +55,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   copyFromLater <- NULL
   if ("copyConfigFrom" %in% names(scenConf)) {
     copyFromMissing <- setdiff(scenConf[, "copyConfigFrom"], c(NA, rownames(scenConf)))
-    copyFromLater <- ! (match(scenConf[, "copyConfigFrom"], rownames(scenConf)) < seq_along(rownames(scenConf)) | is.na(scenConf[, "copyConfigFrom"]) | scenConf[, "copyConfigFrom"] %in% copyFromMissing)
+    copyFromLater <- ! (match(scenConf[, "copyConfigFrom"], rownames(scenConf)) < seq_along(rownames(scenConf)) | 
+                     is.na(scenConf[, "copyConfigFrom"]) | scenConf[, "copyConfigFrom"] %in% copyFromMissing)
     if (length(copyFromMissing) > 0) {
       warning("The following scenario names indicated in copyConfigFrom column were not found in scenario list: ",
               paste0(copyFromMissing, collapse = ", "), ". Stopping now.")
@@ -79,7 +80,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   # check column names
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                         "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "copyConfigFrom")
+                        "results_folder", "force_replace", "action", "pythonEnabled")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
