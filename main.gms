@@ -689,7 +689,7 @@ parameter
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
 ;
-  cm_distrBeta        = 1;	   !! def = 1
+  cm_distrBeta        = 1;       !! def = 1
 *' (0): equal per capita redistribution
 *' (1): proportional redistribution
 *'
@@ -880,7 +880,7 @@ parameter
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
 parameter
-  cm_distrAlphaDam	"income elasticity of damages for inequality"
+  cm_distrAlphaDam    "income elasticity of damages for inequality"
 ;
   cm_distrAlphaDam     = 1;    !! def = 1
 *'  1 means damage is distributed proportional to income, i.e. distributionally neutral, 0 means equal per capita distribution of damage

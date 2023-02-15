@@ -87,9 +87,11 @@ Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mc
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
 But it is important that the error may have first appeared in this equation, but may have been caused somewhere else.
 
-If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. In your run folder, you can find the model script on [`EDGE_transport.R`](https://github.com/remindmodel/remind/blob/develop/scripts/iterative/EDGE_transport.R) and its input/output data in the `EDGE-T` subfolder. You should find an error message in `log.txt`. If this is not helpful, try opening that script in an interactive `R` session (on your run's folder) and run it line by line, you'll have a better idea of what the problem actually was. Forcing the model to redownload it's input data (see above) can help if something in either model changed when you created that folder. Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you'll often find that a newer EDGE-T library (that would be loaded if you didn't set a snapshot or updated your renv) won't work with a REMIND folder that is even a few days old. 
+If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::toolIterativeEDGETransport`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`. If this is not helpful, try opening that script in an interactive `R` session (on your run's folder) and run it line by line, you'll have a better idea of what the problem actually was. Forcing the model to redownload it's input data (see above) can help if something in either model changed when you created that folder. Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you'll often find that a newer EDGE-T library (that would be loaded if you didn't set a snapshot or updated your renv) won't work with a REMIND folder that is even a few days old.
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
+
+After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will not converge. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
 
 ### Case 2c: GDX or R file missing
 
@@ -158,12 +160,21 @@ If you want to compare the different gdx files produced by all iterations, speci
 
 If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 
-If you want a closer look on the GAMS CONOPT output during a REMIND run, you can access the solver logs by moving to the output folder and running:
+Once the debug run is finished you have access to a `full.lst` with extended logging. The tool `listinfes` will show you the infeasibilites which might be responsible for the run failing:
+
+```bash
+listinfes <path_to_full.lst>
+```
+
+Spy on the solver
+----------------------------------
+
+If you want a closer look on the GAMS CONOPT output during a REMIND run, users of the PIK cluster can use `conoptspy` to display the latest additions to `gmsgrid.log`. Manually, you can access the solver logs by moving to the output folder and running:
 
 ```bash
 find -name gmsgrid.log | xargs tail -n 12
 ```
-Users of the PIK cluster can use `conoptspy` instead.
+Note that `gmsgrid.log` is available only while CONOPT is working on this specific region and deleted as soon as it finishes (successful or otherwise).
 
 Only the first five columns are of particular interest:
 
@@ -173,6 +184,9 @@ Only the first five columns are of particular interest:
 - `Infeasibility/Objective`: The left hand side during search for a feasible solution, and the objective value during phase 3/4.
 - `RGmax`: if during phase 1-2 the sum of infeasibilities, it should always converge to a very small value (< 10e-7). If during phase 3/4 the reduced gradient (when small you are close to optimality).
 - `NSB`: the number of superbasic variables (basically the current number of degrees of freedom).
+
+Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change between consecutive calls to `conoptspy`, then CONOPT crashed. If CONOPT is at unusually high iterations (> 10 000), and there is little or no progress in the objective value, and the reduced gradient does not change or oscillates between values without making progress, then CONOPT is stuck somewhere in the solution space and won't get out.
+In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution) which can be done by running `./start.R -r` and selecting said run.
 
 Asking for help
 ----------------------------------

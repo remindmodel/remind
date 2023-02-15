@@ -83,15 +83,7 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
   if (gms::getLine() %in% c("Y", "y")) flags <- c(flags, "--reprepare")
 }
 
-# Check if dependencies for a model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
-  installedPackages <- piamenv::fixDeps(ask = TRUE)
-  piamenv::stopIfLoaded(names(installedPackages))
-} else {
-  stop("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
-       "renv::install('piamenv')\n",
-       "and re-run start.R in a fresh R session.")
-}
+ensureRequirementsInstalled()
 
 if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
     && !getOption("autoRenvUpdates", FALSE)
@@ -286,6 +278,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+      }
+      # Make sure all python requirements are installed
+      if (cfg$pythonEnabled == "on") {
+        piamenv::updatePythonVirtualEnv()
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)
