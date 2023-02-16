@@ -13,7 +13,7 @@ p46_taxCO2eqGlobal2030 = 0 * sm_DptCO2_2_TDpGtC;
 Scalar p46_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
 
 *** load NDC data
-Table f46_factorTargetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
+Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_factorTargetyear.cs3r"
@@ -26,7 +26,7 @@ p46_factorTargetyear(ttot,all_regi) = f46_factorTargetyear(ttot,all_regi,"%cm_ND
 
 display p46_factorTargetyear;
 
-Table f46_2005shareTarget(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
+Table f46_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_2005shareTarget.cs3r"
