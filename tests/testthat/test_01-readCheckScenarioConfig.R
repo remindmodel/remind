@@ -33,3 +33,20 @@ test_that("readCheckScenarioConfig fails on error-loaden config", {
   expect_identical(scenConf["PBScopy", "path_gdx_carbonprice"], "mustbedifferenttoPBS")
   expect_identical(scenConf["PBS", "path_gdx_carbonprice"], "whitespaceafter ")
 })
+
+test_that("copyConfigFrom copies settings properly", {
+  scenConf <- data.frame(title = c("run1", "run2", "run3", "run4", "run5"),
+                         A = c("A1", "A2", NA, "A4", "A5"),
+                         copyConfigFrom = c(NA, "run1", "run2", NA, "run4"),
+                         B = c(NA, NA, "B3", "B4", NA),
+                         C = c("C1", NA, NA, "C4", NA),
+                         row.names = 1)
+  expected <- data.frame(title = c("run1", "run2", "run3", "run4", "run5"),
+                         A = c("A1", "A2", "A2", "A4", "A5"),
+                         copyConfigFrom = c(0, "run1", "run2", NA, "run4"),
+                         B = c(NA, NA, "B3", "B4", "B4"),
+                         C = c("C1", "C1", "C1", "C4", "C4"),
+                         row.names = 1)
+  actual <- copyConfigFrom(scenConf)
+  expect_identical(actual, expected)
+})
