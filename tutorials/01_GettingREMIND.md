@@ -20,17 +20,18 @@ REQUIREMENTS
 HOW TO INSTALL
 --------------
 
-To get the REMIND code first install git (<https://git-scm.com/downloads>). Then, to get the latest REMIND release:
+To get the REMIND code first install git (<https://git-scm.com/downloads>).
+Then, to get the latest REMIND release:
 ```sh
-git clone -b master https://github.com/remindmodel/remind.git
+git clone -b master --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
 To get a specific REMIND release (e.g. 2.2.0):
 ```sh
-git clone -b v2.2.0 https://github.com/remindmodel/remind.git
+git clone -b v2.2.0 --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
 To get the latest development version (might be unstable):
 ```sh
-git clone https://github.com/remindmodel/remind.git
+git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
 
 REMIND requires *GAMS* (<https://www.gams.com/>) including licenses for the solvers *CONOPT* and (optionally) *CPLEX* for its core calculations. Please make sure that the GAMS installation path is added to the PATH variable of the system:
@@ -42,7 +43,7 @@ This tutorial shows how to check and add variables to your PATH variable: <https
 
 Please add the GAMS training license you have been provided (gamslice.txt) by saving the file to your local GAMS folder. Under Windows something like `C:\Program Files (x86)\GAMS\<version number>`
 
-In addition *R* (<https://www.r-project.org/>) is required for pre- and postprocessing and run management (needs to be added to the user's PATH variable as well). It is recommended to also install RSudio (<https://www.rstudio.com>).
+In addition, *R* (<https://www.r-project.org/>) is required for pre- and postprocessing and run management (needs to be added to the user's PATH variable as well). It is recommended to also install RSudio (<https://www.rstudio.com>).
 
 On Windows you need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and add it to the system PATH variable.
 
