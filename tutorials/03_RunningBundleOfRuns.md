@@ -96,3 +96,15 @@ Further notes:
 git diffmif scenario_config_1.csv scenario_config_2.csv
 git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
 ```
+
+* As noted above, while the bundle is running, you may not change the code or `git checkout` another branch, because that would disturb runs which are started later. If you want to work on other things in REMIND while the bundle is running, you should therefore make a copy of the REMIND clone before starting the bundle. On linux, use `rsync` for a fast copy:
+
+```shell
+rsync -a --exclude='/output/' /path/to/remind/ /path/to/remind-copy
+```
+replace `/path/to/remind/` with the path to remind, and `/path/to/remind-copy` with the desired path for the remind copy. Note that you have to use a `/` at the end of the existing path, and no `/` at the end of the new path.
+
+After the run is finished, you can use `mv` to move the output folder generated in the copy back into the main folder, to have all your run output in one place:
+```shell
+mv /path/to/remind-copy/output/* /path/to/remind/output/
+```

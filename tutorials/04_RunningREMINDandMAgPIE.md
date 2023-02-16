@@ -34,8 +34,9 @@ David Klein (<dklein@pik-potsdam.de>)
 
 ```bash
 git clone https://github.com/magpiemodel/magpie.git
-git clone https://github.com/remindmodel/remind.git
+git clone --filter=blob:limit=1m https://github.com/remindmodel/remind.git
 ```
+Note: On the PIK cluster, use `cloneremind https://github.com/remindmodel/remind.git` instead of `git clone --filter…` to clone REMIND.
 
 ### Switch to relevant branchs
 
