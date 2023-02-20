@@ -533,7 +533,7 @@ $ENDIF.tech_earlyreti
 *SB* Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
-*** Allow no early retirement in future periods under baseline
+*** Allow no early retirement in future periods under baseline for China; disallowing early retirement of coal all regions runs into EUR infesibility under H12
 pm_regiEarlyRetiRate(t,"CHA","pc")$(t.val ge 2020) = 0;
 $endif.Base_techpol
 $endif.Base_Cprice
