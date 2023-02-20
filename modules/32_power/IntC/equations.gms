@@ -101,7 +101,7 @@ q32_h2turbVREcapfromTestorUp(t,regi)..
 q32_limitCapTeChp(t,regi)..
     sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
     =l=
-    p32_shCHP(regi,"bscu") 
+    p32_shCHP(t,regi) 
     * sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) )
 ;
 		 
@@ -271,16 +271,22 @@ q32_flexPriceBalance(t,regi)$(cm_FlexTaxFeedback eq 1)..
 
 
 *** This calculates the flexibility benefit or cost per unit electricity input 
-*** of flexibile or inflexibly technology. 
-*** In the tax module, vm_flexAdj is then deduced from the electricity price via the flexibility tax formulation. 
-*** Below, pm_SEPrice(t,regi,"seel") is the (average) electricity price from the last iteration. 
-*** Flexible technologies benefit (v32_flexPriceShare < 1),
-*** while inflexible technologies are penalized (v32_flexPriceShare > 1).  
-*** Flexibility tax is switched only if cm_flex_tax = 1 and is active from 2025 onwards. 
+*** of flexibile or inflexible technology.  Flexible technologies benefit
+*** (v32_flexPriceShare < 1), while inflexible technologies are penalized
+*** (v32_flexPriceShare > 1).  
+*** In the tax module, vm_flexAdj is then deduced from the electricity price via
+*** the flexibility tax formulation. 
+*** Below, pm_SEPrice(t,regi,"seel") is the (average) electricity price from the
+*** last iteration, limited between 0 and 230 $/MWh (= 2 T$/TWa) to prevent
+*** unreasonable FE prices caused by meaningless marginals in infeasible Nash
+*** iterations from propagating through the model.
+*** Fixed to 0 if cm_flex_tax != 1, and before 2025.
 q32_flexAdj(t,regi,te)$(teFlexTax(te))..
-	vm_flexAdj(t,regi,te) 
-	=e=
-	(1-v32_flexPriceShare(t,regi,te)) * pm_SEPrice(t,regi,"seel")$(cm_flex_tax eq 1 AND t.val ge 2025)
+  vm_flexAdj(t,regi,te) 
+  =e=
+  ( (1 - v32_flexPriceShare(t,regi,te))
+  * max(0, min(2, pm_SEPrice(t,regi,"seel")))
+  )$( cm_flex_tax eq 1 AND t.val ge 2025 )
 ;
 
 *** EOF ./modules/32_power/IntC/equations.gms

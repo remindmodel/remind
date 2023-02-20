@@ -14,6 +14,8 @@ pm_welf(tall)                                     "Weight parameter in the welfa
 pm_w(all_regi)                                    "Negishi weights"
 pm_prtp(all_regi)                                 "Pure rate of time preference"
 
+pm_sccIneq(tall,all_regi)			  "inequality term in the SCC calculation"
+
 $ifthen.inconv %cm_INCONV_PENALTY% == "on"
 p02_inconvpen_lap(ttot,all_regi,all_te)           "Parameter for inconvenience penalty for local air pollution. [T$/TWa at Consumption of 1000$/cap]"
 $endif.inconv

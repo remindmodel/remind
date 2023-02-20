@@ -32,45 +32,50 @@ else
 *** Bounds on 2nd generation biomass annual production
 *** -------------------------------------------------------------
 
-*** bound on global annual pebiolc production in EJ/a
-s30_max_pebiolc $(cm_bioenergymaxscen=1) = 100;
-s30_max_pebiolc $(cm_bioenergymaxscen=2) = 200;
-s30_max_pebiolc $(cm_bioenergymaxscen=3) = 300;
-s30_max_pebiolc $(cm_bioenergymaxscen=4) = 152;
+*** In REMIND there are two grades for fuel extraxtion from pebiolc. The first
+*** grade is purpose grown bioenergy, the second grade are residues. The
+*** residue grade of pebiolc (pebiolc.2) in REMIND is roughly MAgPIE's residue
+*** potential (plus some extra demand for traditional biomass, see below).
 
-p30_max200_path(t) = s30_max_pebiolc;
+***-------------------------------------------------------------
+*** 1. Bound on residues
+*** Already in the initial years there are technologies in REMIND that demand
+*** biomass. pm_pedem_res contains the biomass demand as it would evolve if all
+*** these biomass technologies that are present in 2005 would phase out (phase-
+*** out-trajectory). When calculating the maximal residue potential
+*** p30_maxprod_residue we make sure (by applying the max operator) that the
+*** resulting residue potential is big enough to feed these technologies so
+*** they do not need to demand purpose-grown biomass. This is necessary,
+*** because in the early years MAgPIE's residue potential is smaller than the
+*** initial demand from REMIND's technologies. Except for "biotr" all
+*** technologies present in 2005 are allowed to expand, but the resulting
+*** additional demand for biomass (exceeding the phase-out-trajectory) can then
+*** be supplied  from purpose-grown biomass.
+p30_maxprod_residue(ttot,regi)     = max(p30_datapebio(regi,"pebiolc","2","maxprod",ttot), sum(teBioPebiolc, pm_pedem_res(ttot,regi,teBioPebiolc)));
+vm_fuExtr.up(t,regi,"pebiolc","2") = p30_maxprod_residue(t,regi)*1.0001;
 
-*** bounds until 2025 taken from old 200 EJ maxprod in generisdata_biosupply_grades.prn (EJ/yr)
-p30_max200_path("2005") = 68.25;
-p30_max200_path("2010") = 100;
-p30_max200_path("2015") = 130;
-p30_max200_path("2020") = 160;
-p30_max200_path("2025") = 190;
+***-------------------------------------------------------------
+*** 2. Bound on purpose grown biomass
+*** The bound on purpose grown biomass is disabled by default, it is only
+*** applied according to a switch.
+$ifthen.bioenergymaxscen not %cm_maxProdBiolc% == "off"
+*** Set bound on global annual pebiolc production and convert from EJ to TWa
+p30_max_pebiolc_path_glob(t) = %cm_maxProdBiolc% * sm_EJ_2_TWa;
 
-*** Use values if they are smaller than the maximal allowed value (s30_max_pebiolc)
-*** otherwise limit to maximal allowed value (s30_max_pebiolc)
-loop(t,
-     if (p30_max200_path(t)<s30_max_pebiolc, 
-       p30_max_pebiolc_path_glob(t) = p30_max200_path(t);
-     ELSE
-       p30_max_pebiolc_path_glob(t) = s30_max_pebiolc;
-     );
-);
-
-*** Reduce the global upper bound on purpose grown bio-energy by residues, since the total bound applies to the sum of residues and purpose grown
-p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) * sm_EJ_2_TWa -  sum(regi, p30_datapebio(regi,"pebiolc","2","maxprod",t)); 
-
+*** Reduce the global upper bound on purpose grown bio-energy by residues,
+*** since the total bound as defined in cm_maxProdBiolc applies to the sum of
+*** residues and purpose grown.
+p30_max_pebiolc_path_glob(t) = p30_max_pebiolc_path_glob(t) - sum(regi, p30_maxprod_residue(t,regi));
 display p30_max_pebiolc_path_glob;
 
-***-------------------------------------------------------------
-*** Calclate regional bounds with equal marginal costs 
-*** from global bound (inverting the supply curve)
-***-------------------------------------------------------------
+*** Calclate regional bounds with equal marginal costs from global bound
+*** (inverting the supply curve)
 loop(ttot$(ttot.val ge cm_startyear),
 *** initialization
      p30_max_pebiolc_dummy = 0;
      p30_pebiolc_price_dummy = 0.01;
      while(p30_max_pebiolc_dummy < p30_max_pebiolc_path_glob(ttot),
+*** Exclude JPN to avoid UNDF in p30_max_pebiolc_dummy
            loop(regi$(NOT sameas(regi,'JPN')),
 *** Avoid execution errors for x**y with x<0 by applying the if-clause
                 if( p30_pebiolc_price_dummy > (i30_bioen_price_a(ttot,regi)) * 1.01,
@@ -79,53 +84,26 @@ loop(ttot$(ttot.val ge cm_startyear),
                       p30_fuelex_dummy(regi) = 0;
                 );
            ); 
-*** Exclude JPN to avoid UNDF in p30_max_pebiolc_dummy
            p30_max_pebiolc_dummy = sum(regi, p30_fuelex_dummy(regi));
            p30_pebiolc_price_dummy = p30_pebiolc_price_dummy + 0.001;
      );
      p30_max_pebiolc_path(regi,ttot) = p30_fuelex_dummy(regi);
 );
-
 display p30_max_pebiolc_path;
-***-------------------------------------------------------------
 
-*** In REMIND there are two grades for fuel extraxtion from pebiolc. The first grade
-*** is purpose grown bioenergy, the second grade are residues. The residue grade of
-*** pebiolc (pebiolc.2) in REMIND is roughly MAgPIE's residue potential (plus some 
-*** extra demand for traditional biomass, see below).
-
-*** Already in the initial years there are technologies in REMIND that demand biomass. 
-*** pm_pedem_res contains the biomass demand as it would evolve if all these biomass 
-*** technologies that are present in 2005 would phase out (phase-out-trajectory). When
-*** calculating the maximal residue potential p30_maxprod_residue we make sure (by
-*** applying the max operator) that the resulting residue potential is big enough to 
-*** feed these technologies so they do not need to demand purpose-grown biomass.
-*** This is necessary, because in the early years MAgPIE's residue potential is smaller 
-*** than the initial demand from REMIND's technologies. Except for "biotr" all 
-*** technologies present in 2005 are allowed to expand, but the resulting additional 
-*** demand for biomass (exceeding the phase-out-trajectory) will then be supplied 
-*** from purpose-grown biomass.  
-
-p30_maxprod_residue(ttot,regi)     = max(p30_datapebio(regi,"pebiolc","2","maxprod",ttot), sum(teBioPebiolc, pm_pedem_res(ttot,regi,teBioPebiolc)));
-vm_fuExtr.up(t,regi,"pebiolc","2") = p30_maxprod_residue(t,regi)*1.0001;
-
-*** According to EMF guidelines, the upper bound on total (residues+purpose) global
-*** biomass production does not include traditional biomass use. Since the demand 
-*** for traditional biomass is already supplied by the residue grade we expand the
-*** purpose-grown grade by the demand for traditional biomass.
-
-if(cm_bioenergymaxscen>0,
+*** According to EMF guidelines, the upper bound on total (residues+purpose)
+*** global biomass production does not include traditional biomass use. Since
+*** the demand for traditional biomass is already supplied by the residue grade
+*** we expand the purpose-grown grade by the demand for traditional biomass.
 vm_fuExtr.up(t,regi,"pebiolc","1") = p30_max_pebiolc_path(regi,t) + pm_pedem_res(t,regi,"biotr");
-);
+$endif.bioenergymaxscen
 
-*** FS: test regional bounds on pebiolc.1 production
-***vm_fuExtr.up(t,"DEU","pebiolc","1")$(t.val ge 2030) = 0.0077;
 
 *** -------------------------------------------------------------
 *** Phase out capacities of bioenergy technologies that use
 *** pebiolc as feedstock, if defined in config
 *** -------------------------------------------------------------
-if (cm_biolc_tech_phaseout eq 1,
+if (cm_phaseoutBiolc eq 1,
     loop(t$(t.val ge max(2025, cm_startyear)),
         loop(regi,
             loop(te(teBioPebiolc),

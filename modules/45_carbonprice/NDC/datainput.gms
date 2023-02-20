@@ -32,7 +32,7 @@ elseif cm_NDC_divergentScenario = 2,
 );
 
 *** load NDC data
-Table f45_factorTargetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
+Table f45_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
 $offlisting
 $ondelim
 $include "./modules/45_carbonprice/NDC/input/fm_factorTargetyear.cs3r"
@@ -45,7 +45,7 @@ p45_factorTargetyear(ttot,all_regi) = f45_factorTargetyear(ttot,all_regi,"%cm_ND
 
 display p45_factorTargetyear;
 
-Table f45_2005shareTarget(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
+Table f45_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
 $offlisting
 $ondelim
 $include "./modules/45_carbonprice/NDC/input/fm_2005shareTarget.cs3r"

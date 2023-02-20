@@ -11,7 +11,7 @@
 # Header ------------------------------------------------------------------
 
 
-source("./scripts/utils/isSlurmAvailable.R")
+source("./scripts/start/isSlurmAvailable.R")
 
 # This script expects a variable `outputdirs` to be defined.
 # Variables `slurmConfig` and `filename_prefix` are used if they defined.
@@ -53,7 +53,7 @@ startComp <- function(
   outFileName <- jobName
   script <- "scripts/cs2/run_compareScenarios2.R"
   cat("Starting ", jobName, "\n")
-  if (isSlurmAvailable()) {
+  if (isSlurmAvailable() && ! identical(slurmConfig, "direct")) {
     clcom <- paste0(
       "sbatch ", slurmConfig,
       " --job-name=", jobName,

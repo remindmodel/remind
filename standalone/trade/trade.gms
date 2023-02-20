@@ -145,11 +145,11 @@ cm_CCS_chemicals     "CCS for chemicals sub-sector"
 cm_CCS_steel         "CCS for steel sub-sector"
 c_solscen             "solar option choice"
 cm_bioenergy_SustTax    "level of the bioenergy sustainability tax in fraction of bioenergy price"
-cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2/GJ]"
-cm_bioenergymaxscen   "choose bound on global pebiolc production excluding residues"
-cm_tradecost_bio       "choose financal tradecosts for biomass (purpose grown pebiolc)"
-cm_1stgen_phaseout    "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
-cm_tradbio_phaseout   "Switch that allows for a faster phase out of traditional biomass"
+cm_bioenergy_EF_for_tax "bioenergy emission factor that is used to derive a bioenergy tax [kgCO2 per GJ]"
+cm_maxProdBiolc         "bound on global pebiolc production including residues but excluding traditionally used biomass [EJ per yr]"
+cm_tradecostBio         "choose financal tradecosts for biomass (purpose grown pebiolc)"
+cm_1stgen_phaseout      "choose if 1st generation biofuels should phase out after 2030 (vm_deltaCap=0)"
+cm_tradbio_phaseout     "switch that allows for a faster phase out of traditional biomass"
 cm_startyear          "first optimized modelling time step [year]"
 c_start_budget        "start of GHG budget limit"
 cm_prtpScen           "pure rate of time preference standard values"
@@ -187,8 +187,6 @@ cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
 cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
-
-c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
@@ -282,12 +280,12 @@ $setglobal cm_secondary_steel_bound  none   !! def = "scenario"
 cm_bioenergy_SustTax    = 1.5;            !! def = 1.5
 cm_bioenergy_EF_for_tax = 0;              !! def = 0
 $setGlobal cm_regi_bioenergy_EFTax  glob  !! def = glob
-cm_bioenergymaxscen     = 0;              !! def = 0
-cm_tradecost_bio        = 2;              !! def = 2
+$setglobal cm_maxProdBiolc  off           !! def = off
+cm_tradecostBio         = 0.5;            !! def = 0.5
 $setglobal cm_LU_emi_scen  SSP2           !! def = SSP2
 cm_1stgen_phaseout      = 0;              !! def = 0
 $setglobal cm_tradbio_phaseout  default   !! def = default
-cm_biolc_tech_phaseout  = 0;              !! def = 0
+cm_phaseoutBiolc        = 0;              !! def = 0
 
 $setglobal cm_POPscen  pop_SSP2EU  !! def = pop_SSP2EU
 $setglobal cm_GDPscen  gdp_SSP2EU  !! def = gdp_SSP2EU
@@ -348,7 +346,6 @@ $setGlobal cm_implicitQttyTarget  off !! def = off
 
 cm_trdadj            = 2;    !! def = 2.0
 cm_trdcst            = 1.5;  !! def = 1.5
-c_refcapbnd          = 0;    !! def = 0
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
 

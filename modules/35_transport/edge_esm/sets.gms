@@ -144,6 +144,7 @@ ECEMF_HighH2_ModEff
 NAV_act
 NAV_tec
 NAV_ele
+NAV_lce
 NAV_all
 /
 
