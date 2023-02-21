@@ -512,7 +512,7 @@ prepare <- function() {
                                 list(c("v39_shSynGas.M", "!!v39_shSynGas.M")),
                                 list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
                                 list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
-                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M"))))
+                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")))
     }
 
     #RP filter out module 40 techpol fixings
