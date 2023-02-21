@@ -20,7 +20,6 @@ equations
 q39_emiCCU(ttot,all_regi,all_te)                                        "calculate CCU emissions"
 q39_shSynLiq(ttot,all_regi)                                             "calculate share of of synthetic liquids in all SE liquids."
 q39_shSynGas(ttot,all_regi)                                             "calculate share of of synthetic gas in all SE gases."
-q39_EqualSecShare_BioSyn(ttot,all_regi,all_enty,emi_sectors,emiMkt)     "constraint on equal share of synfuels in biofuels+synfuels for sectors"
 ;
 
 *** EOF ./modules/39_CCU/on/declarations.gms
