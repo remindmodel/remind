@@ -33,6 +33,36 @@ q33_emiCDR(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
+*'  Calculation of (negative) CO2 emissions from capacity.
+*'  Negative emissions from enhanced weathering also result from decaying rock
+*'  spread in previous timesteps, so emissions do not equal to the capacity
+*'  (i.e., how much rock is spread in a given timestep).
+***---------------------------------------------------------------------------
+q33_capconst(t,regi,te_used33)$(not sameAs(te_used33, "weathering"))..
+    v33_emi(t,regi,te_used33)
+    =e=
+    - sum(teNoTransform2rlf33(te_used33,rlf),
+        vm_capFac(t,regi,te_used33) * vm_cap(t,regi,te_used33,rlf)
+    )
+    ;
+
+***---------------------------------------------------------------------------
+*'  Preparation of captured emissions to enter the CCS chain.
+*'  The first part of the equation describes emissions captured from the ambient air by DAC,
+*'  the second part calculates the CO2 captured from the gas used for heat production
+*'  required for all CDR assuming 90% capture rate. The third part is the CCS needed for
+*'  limestone decomposition emissions for ocean alkalinity enhancement.
+***---------------------------------------------------------------------------
+q33_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
+    sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+    =e=
+    - v33_emi(t,regi,"dac")
+    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
+    - s33_CO2_chem_decomposition * v33_emi(t,regi,"oae")
+    ;
+
+
+***---------------------------------------------------------------------------
 *'  Limit the amount of H2 from biomass to the demand without CDR.
 *'  It's a sustainability bound to prevent a large demand for biomass.
 ***---------------------------------------------------------------------------
@@ -44,30 +74,6 @@ q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
 
 ***---------------------------------------------------------------------------
 *** DAC
-
-***---------------------------------------------------------------------------
-*'  Calculation of (negative) CO2 emissions from direct air capture.
-***---------------------------------------------------------------------------
-q33_DAC_capconst(t,regi)..
-    v33_emi(t,regi,"dac")
-    =e=
-    - sum(teNoTransform2rlf33("dac",rlf),
-        vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
-    )
-    ;
-
-***---------------------------------------------------------------------------
-*'  Preparation of captured emissions to enter the CCS chain.
-*'  The first part of the equation describes emissions captured from the ambient air,
-*'  the second part calculates the CO2 captured from the gas used for heat production
-*'  assuming 90% capture rate.
-***---------------------------------------------------------------------------
-q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
-    sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
-    =e=
-    - v33_emi(t,regi,"dac")
-    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
-    ;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of FE demand for DAC, i.e., electricity demand for ventilation,
@@ -163,6 +169,16 @@ q33_EW_LimEmi(t,regi)..
     sum((rlf_cz33, rlf), v33_EW_onfield(t,regi,rlf_cz33,rlf))
     =l=
     cm_LimRock * p33_LimRock(regi)
+    ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of FE demand for OAE, i.e., electricity for rock preprocessing,
+*'  and heat for calcination.
+***---------------------------------------------------------------------------
+q33_OAE_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"oae"))..
+    sum(fe2cdr(entyFe,entyFe2,"oae"), v33_FEdemand(t,regi,entyFe,entyFe2,"oae"))
+    =e=
+    p33_fedem("oae", entyFe2) * sm_EJ_2_TWa * (- v33_emi(t,regi,"dac"))
     ;
 
 *** EOF ./modules/33_CDR/portfolio/equations.gms

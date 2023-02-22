@@ -165,14 +165,14 @@ incolearn          19000        0.00       29000
 ccap0              0.003                   0.003
 learn               0.10                    0.10
 
-+             weathering         dac
++             weathering         dac         oae
 tech_stat                          4
-inco0               0.01       18800
-mix0                   0           0
-eta                 1.00        1.00
-omf                 0.84       0.025
+inco0               0.01       18800         856
+mix0                   0           0           0
+eta                 1.00        1.00        1.00
+omf                 0.84       0.025        0.07
 omv                    0
-lifetime              20          20
+lifetime              20          20          25
 incolearn                      14000
 ccap0                         0.0008
 learn                           0.15   

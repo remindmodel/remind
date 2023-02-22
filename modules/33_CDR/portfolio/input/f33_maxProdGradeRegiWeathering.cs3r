@@ -1,7 +1,7 @@
 * description: This file includes max. potential for enhanced weathering in Gt of ground stone/a for different regions and warm (1) and temperate (2) grades. (=maxprod)
 * unit: Gt of ground stone/a
-* origin: calcOutput(type = "PotentialWeathering", file = "f33_maxProdGradeRegiWeathering.cs3r", round = 3) (madrat 2.20.10 | mrremind 0.151.2)
-* creation date: Tue Dec 20 18:17:34 2022
+* origin: calcOutput(type = "PotentialWeathering", file = "f33_maxProdGradeRegiWeathering.cs3r", round = 3) (madrat 2.21.3 | mrremind 0.151.6)
+* creation date: Mon Jan 16 12:15:00 2023
 dummy,1,2
 LAM,22.155,2.641
 OAS,24.825,0.481
