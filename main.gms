@@ -862,6 +862,32 @@ parameter
 *' * (0): not included
 *'
 parameter
+  cm_33OAE                  "choose whether OAE (ocean alkalinity enhancement) should be included into the CDR portfolio. 0 = OAE not used, 1 = used"
+;
+  cm_33OAE                 = 0;   !! def = 0
+*' * (1): ocean alkalinity enhancement is included
+*' * (0): not included
+*'
+parameter
+  cm_33_OAE_eff             "OAE efficiency measured in tCO2 uptaken by the ocean per tCaO. Typically between 0.9-1.4. [tCO2/tCaO]"
+;
+  cm_33_OAE_eff            = 0.9; !! def = 0.9
+*'
+parameter
+  cm_33_OAE_scen            "OAE distribution scenarios"
+;
+  cm_33_OAE_scen           = 0; !! def = 0
+*' *  (0): pessimistic: a rather low discharge rate (30 tCaO per h), corresponding to high distribution costs
+*' *  (1): optimistic: a high discharge rate (250 tCaO per h), corresponding to lower distribution costs
+*'
+parameter
+  cm_33_OAE_startyr         "The year when OAE could start being deployed [year]"
+;
+  cm_33_OAE_startyr        = 2025; !! def = 2025  !! regexp = 2025|20[3-9](0|5)
+*' *  (2025): earliest year when OAE could be deployed
+*' *  (....): later timesteps
+*'
+parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
 ;
   cm_gs_ew                 = 20;     !! def = 20  !! regexp = is.numeric
@@ -1567,6 +1593,11 @@ $setglobal cm_Industry_CCS_markup  off !! def = off
 ***   def <- "off" = use default floor cost for renewables.
 ***   or list of techs with respective value to be added to the renewables floor cost in Europe
 $setglobal cm_renewables_floor_cost  off  !! def = off
+*** cm_33_OAE_lim "Global limit for OAE [MtCO2 per yr]"
+***  (off):             no bound
+***  (5000):            (default) global limit of 5GtCO2 per yr
+***  (any value ge 0):  set maximum to that value
+$setglobal cm_33_OAE_lim  5000  !! def = 5000  !! regexp = off|is.nonnegative
 *** cm_sehe_upper "secondary energy district heating and heat pumps upper bound"
 ***   def <- "off" = no additional limit for district heating and heat pumps.
 ***   or number (ex. 2), district heating and heat pumps are limited to an upper bound of 2 times the 2020 model values.

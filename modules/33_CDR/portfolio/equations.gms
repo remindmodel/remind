@@ -34,26 +34,16 @@ q33_emiCDR(t,regi)..
     ;
 
 ***---------------------------------------------------------------------------
-*'  Limit the amount of H2 from biomass to the demand without CDR.
-*'  It's a sustainability bound to prevent a large demand for biomass.
+*'  Calculation of (negative) CO2 emissions from capacity.
+*'  Negative emissions from enhanced weathering also result from decaying rock
+*'  spread in previous timesteps, so emissions do not equal to the capacity
+*'  (i.e., how much rock is spread in a given timestep).
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi)..
-    sum(pe2se("pebiolc","seh2",te), vm_prodSe(t,regi,"pebiolc","seh2",te))
-    =l=
-    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
-    ;
-
-***---------------------------------------------------------------------------
-*' #### DAC equations
-
-***---------------------------------------------------------------------------
-*'  Calculation of (negative) atmospheric CO2 captured by direct air capture.
-***---------------------------------------------------------------------------
-q33_DAC_emi(t,regi)..
-    vm_emiCdrTeDetail(t,regi,"dac")
+q33_capconst(t, regi, te_used33)$(not sameAs(te_used33, "weathering"))..
+    vm_emiCdrTeDetail(t, regi, te_used33)
     =e=
-    - sum(teNoTransform2rlf33("dac",rlf),
-        vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
+    - sum(teNoTransform2rlf33(te_used33, rlf),
+        vm_capFac(t, regi, te_used33) * vm_cap(t, regi, te_used33, rlf)
     )
     ;
 
@@ -61,14 +51,29 @@ q33_DAC_emi(t,regi)..
 *'  Preparation of captured emissions to enter the CCUS chain.
 *'  The first part of the equation describes emissions captured from the ambient air,
 *'  the second part calculates the CO2 captured from the gas used for heat production
-*'  assuming 90% capture rate.
+*'  required for all CDR assuming 90% capture rate. The third part is the CCS needed for
+*'  limestone decomposition emissions for ocean alkalinity enhancement.
 ***---------------------------------------------------------------------------
-q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
-    sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
+q33_ccsbal(t, regi, ccs2te(ccsCo2(enty), enty2, te))..
+    sum(teCCS2rlf(te, rlf), vm_ccs_cdr(t, regi, enty, enty2, te, rlf))
     =e=
-    - vm_emiCdrTeDetail(t,regi,"dac")
+    - vm_emiCdrTeDetail(t, regi, "dac")
     + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
+    - s33_OAE_chem_decomposition * vm_emiCdrTeDetail(t, regi, "oae")
     ;
+
+***---------------------------------------------------------------------------
+*'  Limit the amount of H2 from biomass to the demand without CDR.
+*'  It's a sustainability bound to prevent a large demand for biomass.
+***---------------------------------------------------------------------------
+q33_H2bio_lim(t,regi)..
+    sum(pe2se("pebiolc","seh2",te), vm_prodSE(t,regi,"pebiolc","seh2",te))
+    =l=
+    vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
+    ;
+
+***---------------------------------------------------------------------------
+*' #### DAC equations
 
 ***---------------------------------------------------------------------------
 *'  Calculation of FE demand for DAC, i.e., electricity demand for ventilation,
@@ -166,5 +171,19 @@ q33_EW_LimEmi(t,regi)..
     cm_LimRock * p33_LimRock(regi)
     ;
 	
+
+***---------------------------------------------------------------------------
+*' #### OAE equations
+
+***---------------------------------------------------------------------------
+*'  Calculation of FE demand for OAE, i.e., electricity for rock preprocessing,
+*'  and heat for calcination.
+***---------------------------------------------------------------------------
+q33_OAE_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"oae"))..
+    sum(fe2cdr(entyFe,entyFe2,"oae"), v33_FEdemand(t,regi,entyFe,entyFe2,"oae"))
+    =e=
+    p33_fedem("oae", entyFe2) * sm_EJ_2_TWa * (- vm_emiCdrTeDetail(t,regi,"oae"))
+    ;
+
 *' @stop
 *** EOF ./modules/33_CDR/portfolio/equations.gms

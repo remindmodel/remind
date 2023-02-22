@@ -55,4 +55,11 @@ if(not te_used33("weathering"),
     vm_cap.fx(t,regi,"weathering",rlf) = 0;
 );
 
+if(te_used33("oae"),
+$ifthen not %cm_33_OAE_lim% == "off"
+    vm_emiCdrTeDetail.lo(t, regi, "oae") = - (pm_gdp("2005",regi) / sum(regi2, pm_gdp("2005", regi2))) * s33_OAE_glo_limit / sm_c_2_co2;
+$endif
+    vm_cap.fx(t, regi, "oae", rlf)$(t.val lt cm_33_OAE_startyr) = 0;
+);
+
 *** EOF ./modules/33_CDR/portfolio/bounds.gms

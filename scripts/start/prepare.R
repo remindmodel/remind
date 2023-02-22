@@ -13,7 +13,8 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  require(remind2, quietly = TRUE,warn.conflicts =FALSE)
+  devtools::load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
+  # require(remind2)
   require(mrremind)
   require(mrvalidation)
 
@@ -519,6 +520,8 @@ prepare <- function() {
                                 list(c("q33_DacFEdemand_heat.M", "!!q33_DacFEdemand_heat.M")),
                                 list(c("q33_DacFEdemand_el.M", "!!q33_DacFEdemand_el.M")),
                                 list(c("q33_capconst_dac.M", "!!q33_capconst_dac.M")),
+                                list(c("q33_DAC_capconst.M", "!!q33_DAC_capconst.M")),
+                                list(c("q33_DAC_ccsbal.M", "!!q33_DAC_ccsbal.M")),
                                 list(c("q33_ccsbal.M", "!!q33_ccsbal.M")),
                                 list(c("q33_H2bio_lim.M", "!!q33_H2bio_lim.M")),
                                 list(c("q33_demFeCDR.M", "!!q33_demFeCDR.M")),

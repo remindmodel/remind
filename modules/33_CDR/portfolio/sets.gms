@@ -11,6 +11,7 @@ te_all33(all_te)  "all CDR technologies"
 /
     weathering	"enhanced weathering"
     dac		"direct air capture"
+    oae		"ocean alkalinity enhancement"
 /
 
 te_used33(all_te) "used CDR technologies (specified by switches)"
@@ -34,6 +35,11 @@ fe2cdr(all_enty,all_enty,all_te) "mapping of FE carriers supplying FE demand for
       fegas.fehes.dac
       feels.feels.weathering
       fedie.fedie.weathering
+      feels.feels.oae
+      fegas.fehes.oae
+      feels.fehes.oae
+      feh2s.fehes.oae
+      fedie.fedie.oae
 /
 
 rlf_cz33(rlf) "representing weathering rates depending on climate zones according to Strefler, Amann et al. (2017)"
@@ -60,6 +66,14 @@ if(cm_33EW eq 1,
       te_used33("weathering") = YES;
       teNoTransform33("weathering") = YES;
       teNoTransform2rlf33("weathering", "1") = YES;
+);
+
+if(cm_33OAE eq 1,
+      te_used33("oae") = YES;
+      teNoTransform33("oae") = YES;
+      teNoTransform2rlf33("oae", "1") = YES;
+      teAdj33("oae") = YES;
+      te_ccs33("oae") = YES;
 );
 
 ***-------------------------------------------------------------------------
