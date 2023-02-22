@@ -847,6 +847,11 @@ parameter
   cm_33EW                  = 0;   !! def = 0
 *'
 parameter
+  cm_33OAE                   "choose whether OAE (ocean alkalinity enhancement) should be included into the CDR portfolio. 0 = EW not used, 1 = used"
+;
+  cm_33OAE                 = 0;   !! def = 0
+*'
+parameter
   cm_gs_ew                  "grain size (for enhanced weathering, CDR module) [micrometre]"
 ;
   cm_gs_ew                 = 20;     !! def = 20
