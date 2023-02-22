@@ -36,4 +36,17 @@ p33_fedem("weathering", "fedie") = 0.3;
 
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
 
+*** ocean alkalinity enhancement input data
+s33_oae_rock_demand = 1.7; !! limestone from Renforth et al. 2013 TODO document other rock types
+s33_CO2_chem_decomposition = 1.0; !! can be set to zero if no calcination is considered
+
+!! TODO describe the sources, plug in the right numbers
+!! feels from OL csv: 1.251753282
+!! fehes from OL csv: 4.385187431
+!! fedie from OL csv: 0.131163399 (for distribution) / total fuel: 0.187017546 per 1tCO2 seq 
+
+p33_fedem("oae", "feels") = 1.8 * 3.67; !! TODO change this to s33_oae_rock_demand * energy demand per 1t rock
+p33_fedem("oae", "fehes") = 5.4 * 3.67; !! TODO change this to s33_oae_rock_demand * energy demand per 1t rock
+p33_fedem("oae", "fedie") = 0.1 * s33_oae_rock_demand * 3.67; !! 0.1EJ / 1 Gt rock
+
 *** EOF ./modules/33_CDR/portfolio/datainput.gms

@@ -6,11 +6,15 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/33_CDR/portfolio/declarations.gms
 scalars
+*JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C. Numbers from Report from Micah Broehm.
 s33_co2_rem_pot             "specific carbon removal potential [Gt C per Gt ground rock]"
 s33_co2_rem_rate            "carbon removal rate [fraction of annual reduction of total carbon removal potential]"
 s33_costs_fix               "fixed costs for mining, grinding, spreading [T$/Gt stone]"
 s33_step                    "size of bins in v33_weathering_onfield [Gt stone]"
-*JeS* GJ/tCO2 = EJ/Gt CO2 = 44/12 EJ/Gt C. Numbers from Report from Micah Broehm.
+
+*KK scalars for oae*
+s33_oae_rock_demand         "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
+s33_CO2_chem_decomposition  "the fraction of CO2 that comes from chemical decomposition in the calcination process"
 ;
 
 parameters
@@ -34,10 +38,10 @@ v33_emi(ttot,all_regi,all_te)               "negative emissions from CDR [GtC / 
 equations
 q33_demFeCDR(ttot,all_regi,all_enty)  "CDR demand balance for final energy"
 q33_emiCDR(ttot,all_regi)  "calculates the (negative) emissions due to CDR technologies"
+q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_H2bio_lim(ttot,all_regi,all_te)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
-q33_DAC_capconst(ttot,all_regi)  "calculates amount of carbon captured by DAC"
+q33_capconst(ttot,all_regi,all_te)  "calculates amount of carbon captured by DAC and OAE"
 q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
-q33_DAC_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
 q33_EW_capconst(ttot,all_regi)  "calculates amount of ground rock spred on fields"
 q33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields"
 q33_EW_omcosts(ttot,all_regi)  "calculates O&M costs for spreading ground rocks on fields"
@@ -45,6 +49,7 @@ q33_EW_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from no
 q33_EW_potential(ttot,all_regi,rlf)  "limits the total potential of EW per region and grade"
 q33_EW_emi(ttot,all_regi)  "calculates amount of carbon captured by EW"
 q33_EW_LimEmi(ttot,all_regi)  "limits EW to a maximal annual amount of ground rock of cm_LimRock"
+q33_OAE_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand for ocean alkalinity enhancement"
 ;
 
 *** EOF ./modules/33_CDR/portfolio/declarations.gms
