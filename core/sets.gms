@@ -2707,6 +2707,7 @@ emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technolog
         pebiolc.seliqbio.bioftcrec.cco2
         pebiolc. seel.bioigccc.cco2
         pebiolc.seh2.bioh2c.cco2
+	pebiolc.segabio.biogasc.cco2
 /
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion

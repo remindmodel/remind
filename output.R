@@ -28,6 +28,8 @@ helpText <- "
 #'
 #'    --help, -h:      show this help text and exit
 #'    --test, -t:      tests output.R without actually starting any run
+#'    --renv=<path>    load the renv located at <path>, incompatible with --update
+#'    --update         update packages in renv first, incompatible with --renv=<path>
 #'
 #'    [options] can also specify the following variables. If they are not specified
 #'    but needed, the scripts will ask the user.
