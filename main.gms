@@ -373,7 +373,7 @@ $setglobal banking  off          !! def = off
 *' * (NDC2constant): linearly phase in global constant price from NDC prices (default 2020-2040 phase-in)
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *' * (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
-*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
+*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
 *'
@@ -1114,13 +1114,15 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 *' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
-*' *  (2022_cond):   all NDCs conditional to international financial support
-*' *  (2022_uncond): all NDCs independent of international financial support
+*' *  (2023_cond):   all NDCs conditional to international financial support published until February 24, 2023
+*' *  (2023_uncond): all NDCs independent of international financial support published until February 24, 2023
+*' *  (2022_cond):   all NDCs conditional to international financial support published until December 31, 2022
+*' *  (2022_uncond): all NDCs independent of international financial support published until December 31, 2022
 *' *  (2021_cond):   all NDCs conditional to international financial support published until December 31, 2021
 *' *  (2021_uncond): all NDCs independent of international financial support published until December 31, 2021
 *' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 *' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
-$setglobal cm_NDC_version  2022_cond    !! def = "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
+$setglobal cm_NDC_version  2022_cond    !! def = "2023_cond", "2023_uncond", "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
 *** cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 ***  (NGFS2022):       settings used for NGFS 2022
 ***  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
