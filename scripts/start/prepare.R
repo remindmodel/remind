@@ -512,8 +512,7 @@ prepare <- function() {
                                 list(c("v39_shSynGas.M", "!!v39_shSynGas.M")),
                                 list(c("q39_emiCCU.M", "!!q39_emiCCU.M")),
                                 list(c("q39_shSynTrans.M", "!!q39_shSynTrans.M")),
-                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")),
-                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
+                                list(c("q39_shSynGas.M", "!!q39_shSynGas.M")))
     }
 
     #RP filter out module 40 techpol fixings
@@ -635,8 +634,8 @@ prepare <- function() {
     fixings_manipulateThis <- c(fixings_manipulateThis,
                                 list(c("vm_shBioFe.FX","!!vm_shBioFe.FX")))
     margs_manipulateThis <- c(margs_manipulateThis,
-                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")))
-
+                                list(c("vm_shBioFe.M", "!!vm_shBioFe.M")),
+                                list(c("q39_EqualSecShare_BioSyn.M", "!!q39_EqualSecShare_BioSyn.M")))
 
     # OR: renamed for sectoral taxation
     levs_manipulateThis <- c(levs_manipulateThis,
