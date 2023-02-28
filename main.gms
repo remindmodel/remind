@@ -799,7 +799,7 @@ parameter
 *' *   (0) no "CCS" as in no carbon sequestration at all
 *' *   (1) reference case: 0.005
 *' *   (2) lower estimate: 0.0025
-*' *   (3) upper estimate: 0.075
+*' *   (3) upper estimate: 0.0075
 *' *   (4) unconstrained: 1
 *' *   (5) sustainability case: 0.001
 *'
