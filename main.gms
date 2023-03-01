@@ -628,7 +628,7 @@ parameter
 *'          eq    2 $ per GJ
 *'
 parameter
-  cm_tradecostBio           "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
+  cm_tradecostBio           "choose financial tradecosts multiplier for biomass (purpose grown pebiolc)"
 ;
   cm_tradecostBio     = 1;         !! def = 1
 ***  (1):               medium trade costs (used e.g. for for SSP2)
@@ -652,7 +652,7 @@ parameter
 ***       as historical bounds on bioenergy technologies allow it. This covers
 ***       all types of lignocellulosic feedstocks, i.e. purpose grown biomass and
 ***       residues. Lower bounds on future electricity production due to NDC
-***       tagets in p40_ElecBioBound are removed. The first year, in which no new
+***       targets in p40_ElecBioBound are removed. The first year, in which no new
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 *'
 parameter
@@ -799,7 +799,7 @@ parameter
 *' *   (0) no "CCS" as in no carbon sequestration at all
 *' *   (1) reference case: 0.005
 *' *   (2) lower estimate: 0.0025
-*' *   (3) upper estimate: 0.075
+*' *   (3) upper estimate: 0.0075
 *' *   (4) unconstrained: 1
 *' *   (5) sustainability case: 0.001
 *'
@@ -1322,7 +1322,7 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 $setGlobal cm_import_tax off !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
-*** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
+*** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
@@ -1334,7 +1334,7 @@ $setGlobal cm_import_EU  off !! def off
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_trade_SE_exog
-*** set exogenuous SE trade scenarios (requires se_trade realization of modul 24 to be active)
+*** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
 *** linear scale-up of trade in 2030-2050 period.
 *** For region groups (e.g. EU27_regi), trade flows will be dissaggregated by GDP share.
