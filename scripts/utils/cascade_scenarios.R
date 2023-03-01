@@ -3,7 +3,6 @@
 # Cascade REMIND scenarios in config files.
 
 cascade_scenarios <- function(file = NULL, cascade = NULL) {
-
     help_text <- 'Cascade REMIND scenarios inside scenario configuration file.
 Usage: `cascade_scenarios(file, cascade)`
   `file`:    path to a REMIND scenario config .csv file
@@ -20,6 +19,8 @@ manually before using them.
         cat(help_text)
         return(invisible())
     }
+
+    require(tidyverse)
 
     lines <- read_lines(file = file)
     non_comment_lines <- which(!grepl('^[[:blank:]]*#', lines))
@@ -79,14 +80,14 @@ manually before using them.
                               .data$value)) %>%
         pivot_wider()
 
-    for (i in non_comment_lines) {
+    for (i in seq_along(non_comment_lines)) {
         if (1 == i) {
             text <- colnames(result)
         } else {
             text <- result[i-1,]
         }
 
-        lines[i] <- paste(text, collapse = ';')
+        lines[non_comment_lines[i]] <- paste(text, collapse = ';')
     }
 
     write_lines(lines, file)
