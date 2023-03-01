@@ -285,15 +285,27 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget
 );
 
 *** output helper parameter
-p47_taxemiMkt_AggEmi(ttot,regi) = (sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt))) / (sum(emiMkt, vm_co2eqMkt.l(ttot,regi,emiMkt)));
+p47_taxemiMkt_AggEmi(ttot,regi)$(sum(emiMkt, vm_co2eqMkt.l(ttot,regi,emiMkt))) = (sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt))) / (sum(emiMkt, vm_co2eqMkt.l(ttot,regi,emiMkt)));
 p47_taxCO2eq_AggEmi(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
 p47_taxCO2eq_AggEmi(ttot,regi)$p47_taxemiMkt_AggEmi(ttot,regi) = p47_taxemiMkt_AggEmi(ttot,regi);
 
-p47_taxemiMkt_AggFE(ttot,regi) = (sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxemiMkt_AggFE(ttot,regi)$(sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt))) = 
+  (
+    sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * 
+    sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))
+  ) 
+  / 
+  (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
 p47_taxCO2eq_AggFE(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
 p47_taxCO2eq_AggFE(ttot,regi)$p47_taxemiMkt_AggFE(ttot,regi) = p47_taxemiMkt_AggFE(ttot,regi);
 
-p47_taxemiMkt_SectorAggFE(ttot,regi,sector)$(sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt))) = (sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * sum((entySe,entyFe)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxemiMkt_SectorAggFE(ttot,regi,sector)$(sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt))) = 
+  (
+    sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) 
+    * sum((entySe,entyFe)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))
+  ) 
+  /
+  (sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
 p47_taxCO2eq_SectorAggFE(ttot,regi,sector) = pm_taxCO2eqSum(ttot,regi);
 p47_taxCO2eq_SectorAggFE(ttot,regi,sector)$p47_taxemiMkt_SectorAggFE(ttot,regi,sector) = p47_taxemiMkt_SectorAggFE(ttot,regi,sector);
 
