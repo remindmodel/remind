@@ -240,9 +240,9 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
         loop(regi$regi_groupExt(ext_regi,regi),
 ***       terminal year price
           if((iteration.val eq 1) and (pm_taxemiMkt(ttot2,regi,emiMkt) eq 0), !!intialize price for first iteration if it is missing 
-            pm_taxemiMkt(ttot2,regi,emiMkt) = max(1* sm_DptCO2_2_TDpGtC, 2*pm_taxemiMkt(ttot,regi,emiMkt));    
+            pm_taxemiMkt(ttot2,regi,emiMkt) = 1* sm_DptCO2_2_TDpGtC;    
           else !!update price using rescaling factor
-            pm_taxemiMkt(ttot2,regi,emiMkt) = max(1* sm_DptCO2_2_TDpGtC, pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt));
+            pm_taxemiMkt(ttot2,regi,emiMkt) = pm_taxemiMkt(ttot2,regi,emiMkt) * pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt);
           );
 ***       linear price between first free year and current target terminal year
           loop(ttot3,
@@ -259,11 +259,11 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***         if not last year target, then assume weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
           if((not(ttot2.val eq p47_lastTargetYear(ext_regi))),
             p47_averagetaxemiMkt(t,regi) = 
-              (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47))
+              (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
               /
-              (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47));
+              (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
             loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot2 = beginning of slope; ttot3 = end of slope
-              pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot2,regi) + ((p47_averagetaxemiMkt(ttot2,regi)-p47_averagetaxemiMkt(ttot,regi))/(ttot2.val-ttot.val))*(ttot3.val-ttot2.val); !! price at the next target year, p47_nextConvergencePeriod, as linear projection of average price in this target period 
+              pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot3,regi);
               pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
               pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
             );
@@ -285,17 +285,29 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget
 );
 
 *** output helper parameter
-p47_taxemiMkt_AggEmi(t,regi) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * vm_co2eqMkt.l(t,regi,emiMkt))) / (sum(emiMkt, vm_co2eqMkt.l(t,regi,emiMkt)));
+p47_taxemiMkt_AggEmi(ttot,regi)$(sum(emiMkt, vm_co2eqMkt.l(ttot,regi,emiMkt))) = (sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.l(ttot,regi,emiMkt))) / (sum(emiMkt, vm_co2eqMkt.l(ttot,regi,emiMkt)));
 p47_taxCO2eq_AggEmi(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
-p47_taxCO2eq_AggEmi(t,regi)$p47_taxemiMkt_AggEmi(t,regi) = p47_taxemiMkt_AggEmi(t,regi);
+p47_taxCO2eq_AggEmi(ttot,regi)$p47_taxemiMkt_AggEmi(ttot,regi) = p47_taxemiMkt_AggEmi(ttot,regi);
 
-p47_taxemiMkt_AggFE(t,regi) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxemiMkt_AggFE(ttot,regi)$(sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt))) = 
+  (
+    sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) * 
+    sum((entySe,entyFe,sector)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))
+  ) 
+  / 
+  (sum((entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
 p47_taxCO2eq_AggFE(ttot,regi) = pm_taxCO2eqSum(ttot,regi);
-p47_taxCO2eq_AggFE(t,regi)$p47_taxemiMkt_AggFE(t,regi) = p47_taxemiMkt_AggFE(t,regi);
+p47_taxCO2eq_AggFE(ttot,regi)$p47_taxemiMkt_AggFE(ttot,regi) = p47_taxemiMkt_AggFE(ttot,regi);
 
-p47_taxemiMkt_SectorAggFE(t,regi,sector)$(sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))) = (sum(emiMkt, pm_taxemiMkt(t,regi,emiMkt) * sum((entySe,entyFe)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) / (sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)));
+p47_taxemiMkt_SectorAggFE(ttot,regi,sector)$(sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt))) = 
+  (
+    sum(emiMkt, pm_taxemiMkt(ttot,regi,emiMkt) 
+    * sum((entySe,entyFe)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))
+  ) 
+  /
+  (sum((entySe,entyFe,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)),vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)));
 p47_taxCO2eq_SectorAggFE(ttot,regi,sector) = pm_taxCO2eqSum(ttot,regi);
-p47_taxCO2eq_SectorAggFE(t,regi,sector)$p47_taxemiMkt_SectorAggFE(t,regi,sector) = p47_taxemiMkt_SectorAggFE(t,regi,sector);
+p47_taxCO2eq_SectorAggFE(ttot,regi,sector)$p47_taxemiMkt_SectorAggFE(ttot,regi,sector) = p47_taxemiMkt_SectorAggFE(ttot,regi,sector);
 
 *** display pm_emiMktTarget,pm_emiMktCurrent,pm_emiMktRefYear,pm_emiMktTarget_dev,pm_factorRescaleemiMktCO2Tax;
 
