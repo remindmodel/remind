@@ -53,10 +53,11 @@ manually before using them.
 
             by = 'name', multiple = 'all'
         ) %>%
-            mutate(value = ifelse(.data$value == .data$base, '', .data$value),
-                   copyConfigFrom = names(cascade[i])) %>%
+            mutate(
+                value = ifelse(.data$value == .data$base, '', .data$value)) %>%
             select(-'base') %>%
-            pivot_wider()
+            pivot_wider() %>%
+            mutate(copyConfigFrom = names(cascade[i]))
 
         result <- bind_rows(result, cooked_scenarios)
     }
