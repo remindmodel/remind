@@ -130,14 +130,15 @@ if (! exists("outputdir")) {
   dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
-  dirnames <- if (length(dir_folder) <= 2) basename(dirs) else dirs
+  dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
   names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
   names(dirnames)[is.na(names(dirnames))] <- ""
   selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
-                    returnBoolean = TRUE, multiple = TRUE)
-  outputdirs <- dirs[selectedDirs]
+                    returnBoolean = FALSE, multiple = TRUE)
+  outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
+
   if ("policyCosts" %in% output) {
     policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",
