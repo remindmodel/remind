@@ -156,4 +156,7 @@ pm_pvp(ttot,"good")$(pm_pvp(ttot,"good") = 0) = sm_eps;
 *** initialize taxrevImport
 v21_taxrevImport.l(t,regi,tradePe) = 0;
 
+*** initialize taxrevImport
+v21_taxrevChProdStartYear.l(t,regi) = 0;
+
 *** EOF ./modules/21_tax/on/preloop.gms

@@ -519,5 +519,12 @@ $IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on"
   vm_transpGDPscale.fx(t,regi) = 1;
 $ENDIF.transpGDPscale
 
+***----------------------------------------------------------------------------
+*'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to REF in cm_startyear
+***----------------------------------------------------------------------------
+
+v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + cm_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - cm_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+
 
 *** EOF ./core/bounds.gms

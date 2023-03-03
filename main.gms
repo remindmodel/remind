@@ -1095,6 +1095,16 @@ parameter
 *' * (0)                default, equals "off", no limit imposed
 *' * (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 *'
+parameter
+  cm_SlackMultiplier   "sets the slack size for v_changeProdStartyearSlack"
+;
+  cm_SlackMultiplier = 1; !! def 1
+*'
+parameter
+  cm_changeProdCost   "sets the cost for vm_changeProdStartyearCost"
+;
+  cm_changeProdCost = 5; !! def 5
+*'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
 ***-----------------------------------------------------------------------------
