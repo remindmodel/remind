@@ -373,7 +373,7 @@ $setglobal banking  off          !! def = off
 *' * (NDC2constant): linearly phase in global constant price from NDC prices (default 2020-2040 phase-in)
 *' * (diffCurvPhaseIn2Lin): [REMIND 2.1 default for validation peakBudget runs, in combination with "iterative_target_adj" = 9] curved convergence of CO2 prices between regions until cm_CO2priceRegConvEndYr; developed countries have linear path from 0 in 2010 through cm_co2_tax_2020 in 2020;
 *' * (diffPhaseIn2Constant): !experimental! linearly phase in global constant price, with starting values differentiated by GDP/cap
-*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2022_cond", "2022_uncond", or replace 2022 by 2021 or 2018 to get all NDC published until end of these years.
+*' * (NDC): implements a carbon price trajectory consistent with the NDC targets (up to 2030) and a trajectory of comparable ambition post 2030 (1.25%/yr price increase and regional convergence of carbon price). Choose version using cm_NDC_version "2023_cond", "2023_uncond", or replace 2023 by 2022, 2021 or 2018 to get all NDC published until end of these years.
 $setglobal carbonprice  none           !! def = none
 *'---------------------    46_carbonpriceRegi  ---------------------------------
 *'
@@ -470,8 +470,9 @@ parameter
 ;
   cm_nash_autoconverge   = 1;     !! def = 1
 *' * (0): manually set number of iterations by adjusting cm_iteration_max
-*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! donot use in production runs !
+*' * (1): run until solution is sufficiently converged  - coarse tolerances, quick solution.  ! do not use in production runs !
 *' * (2): run until solution is sufficiently converged  - fine tolerances, for production runs.
+*' * (3): run until solution is sufficiently converged using very relaxed targets  - very coarse tolerances, two times higher than option 1. ! do not use in production runs !
 *'
 parameter
   cm_emiscen                "policy scenario choice"
@@ -627,7 +628,7 @@ parameter
 *'          eq    2 $ per GJ
 *'
 parameter
-  cm_tradecostBio           "choose financal tradecosts multiplier for biomass (purpose grown pebiolc)"
+  cm_tradecostBio           "choose financial tradecosts multiplier for biomass (purpose grown pebiolc)"
 ;
   cm_tradecostBio     = 1;         !! def = 1
 ***  (1):               medium trade costs (used e.g. for for SSP2)
@@ -651,7 +652,7 @@ parameter
 ***       as historical bounds on bioenergy technologies allow it. This covers
 ***       all types of lignocellulosic feedstocks, i.e. purpose grown biomass and
 ***       residues. Lower bounds on future electricity production due to NDC
-***       tagets in p40_ElecBioBound are removed. The first year, in which no new
+***       targets in p40_ElecBioBound are removed. The first year, in which no new
 ***       capacities are allowed, is 2025 or cm_startyear if larger.
 *'
 parameter
@@ -688,7 +689,7 @@ parameter
 parameter
   cm_distrBeta              "elasticity of tax revenue redistribution"
 ;
-  cm_distrBeta        = 1;	   !! def = 1
+  cm_distrBeta        = 1;       !! def = 1
 *' (0): equal per capita redistribution
 *' (1): proportional redistribution
 *'
@@ -798,7 +799,7 @@ parameter
 *' *   (0) no "CCS" as in no carbon sequestration at all
 *' *   (1) reference case: 0.005
 *' *   (2) lower estimate: 0.0025
-*' *   (3) upper estimate: 0.075
+*' *   (3) upper estimate: 0.0075
 *' *   (4) unconstrained: 1
 *' *   (5) sustainability case: 0.001
 *'
@@ -879,12 +880,7 @@ parameter
   cm_emiMktTargetDelay    = 0;       !! def = 0
 *'
 parameter
-  c_refcapbnd           "switch for fixing refinery capacities to the SSP2 levels in 2010 (if equal zero then no fixing)"
-;
-  c_refcapbnd          = 0;    !! def = 0
-*'
-parameter
-  cm_distrAlphaDam	"income elasticity of damages for inequality"
+  cm_distrAlphaDam    "income elasticity of damages for inequality"
 ;
   cm_distrAlphaDam     = 1;    !! def = 1
 *'  1 means damage is distributed proportional to income, i.e. distributionally neutral, 0 means equal per capita distribution of damage
@@ -965,6 +961,11 @@ parameter
 *'  switches tax convergence check in nash mode on and off (check that tax revenue in all regions, periods be smaller than 0.01% of GDP)
 *' * 0 (off)
 *' * 1 (on), default
+*'
+parameter
+  cm_maxFadeOutPriceAnticip   "switch to determine maximum allowed fadeout price anticipation to consider that the model converged."
+;
+  cm_maxFadeOutPriceAnticip = 1e-4; !! def 1e-4, the fadeout price anticipation term needs to be lower than 1e-4 to consider that the model converged.
 *'
 parameter
   cm_flex_tax                 "switch for enabling flexibility tax"
@@ -1113,13 +1114,15 @@ $setglobal cm_MAgPIE_coupling  off     !! def = "off"
 *' *  (rcp85): RCP8.5
 $setglobal cm_rcp_scen  none         !! def = "none"
 *' cm_NDC_version            "choose version year of NDC targets as well as conditional vs. unconditional targets"
-*' *  (2022_cond):   all NDCs conditional to international financial support
-*' *  (2022_uncond): all NDCs independent of international financial support
+*' *  (2023_cond):   all NDCs conditional to international financial support published until February 24, 2023
+*' *  (2023_uncond): all NDCs independent of international financial support published until February 24, 2023
+*' *  (2022_cond):   all NDCs conditional to international financial support published until December 31, 2022
+*' *  (2022_uncond): all NDCs independent of international financial support published until December 31, 2022
 *' *  (2021_cond):   all NDCs conditional to international financial support published until December 31, 2021
 *' *  (2021_uncond): all NDCs independent of international financial support published until December 31, 2021
 *' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 *' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
-$setglobal cm_NDC_version  2022_cond    !! def = "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
+$setglobal cm_NDC_version  2022_cond    !! def = "2023_cond", "2023_uncond", "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
 *** cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 ***  (NGFS2022):       settings used for NGFS 2022
 ***  (ENGAGE4p5_GlP):  settings used for ENGAGE 4.5 Glasgow+ scenario
@@ -1319,7 +1322,7 @@ $setglobal cm_steel_secondary_max_share_scenario  off !! def off , switch on for
 $setGlobal cm_import_tax off !! def off
 *** cm_import_EU                "EU switch for different scenarios of EU SE import assumptions"
 *** EU-specific SE import assumptions (used for ariadne)
-*** different exogenuous hydorgen import scenarios for EU regions (developed in ARIADNE project)
+*** different exogenous hydrogen import scenarios for EU regions (developed in ARIADNE project)
 *** "bal", "low_elec", "high_elec", "low_h2", "high_h2", "low_synf", "high_synf"
 *** see 24_trade/se_trade/datainput for H2 import assumptions, this switch only works if the trade realization "se_trade" is selected
 $setGlobal cm_import_EU  off !! def off
@@ -1331,7 +1334,7 @@ $setGlobal cm_import_EU  off !! def off
 *** (off) no ARIADNE-specific H2 imports for Germany
 $setGlobal cm_import_ariadne  off !! def off
 *** cm_trade_SE_exog
-*** set exogenuous SE trade scenarios (requires se_trade realization of modul 24 to be active)
+*** set exogenous SE trade scenarios (requires se_trade realization of modul 24 to be active)
 *** e.g. "2030.2050.MEA.DEU.seh2 0.5", means import of SE hydrogen from MEA to Germany from 2050 onwards of 0.5 EJ/yr, 
 *** linear scale-up of trade in 2030-2050 period.
 *** For region groups (e.g. EU27_regi), trade flows will be dissaggregated by GDP share.

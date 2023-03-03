@@ -24,14 +24,14 @@ helpText <- "
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
-#' --help, -h:        show this help text and exit
-#' --gamscompile, -g: compile gms of all selected runs. Combined with
-#'                    --interactive, it stops in case of compilation errors,
-#'                    allowing the user to fix them and rerun gamscompile;
-#' --interactive, -i: interactively select config file and run(s) to be
-#'                    started
-#' --test, -t:        Test scenario configuration and writing the RData files
-#'                    in the REMIND main folder without starting the runs.
+#'  --help, -h:        show this help text and exit
+#'  --gamscompile, -g: compile gms of all selected runs. Combined with
+#'                     --interactive, it stops in case of compilation errors,
+#'                     allowing the user to fix them and rerun gamscompile
+#'  --interactive, -i: interactively select run(s) to be started. Asks for config
+#'                     file also if none is specified as path_settings_coupled.
+#'  --test, -t:        Test scenario configuration and writing the RData files
+#'                     in the REMIND main folder without starting the runs.
 #'
 "
 
@@ -136,6 +136,7 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
+# Use ensureRequirementsInstalled(rerunPrompt="start_bundle_coupled.R") when coupled runs are using renv.
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
   piamenv::checkDeps(action = "stop")
 } else {

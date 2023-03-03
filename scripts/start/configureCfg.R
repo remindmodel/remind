@@ -17,7 +17,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
 
     # Edit main model file, region settings and input data revision based on scenarios table, if cell non-empty
     for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "action",
-                                   "inputRevision", "slurmConfig", "results_folder", "force_replace"),
+                                   "inputRevision", "slurmConfig", "results_folder", "force_replace", "pythonEnabled"),
                                  names(iscenarios))) {
       if ( ! is.na(iscenarios[iscen, switchname] )) {
         icfg[[switchname]] <- iscenarios[iscen, switchname]
@@ -96,7 +96,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
           # if the above has not created a path to a valid gdx, stop
           if (!file.exists(isettings[iscen, path_to_gdx])) {
             icfg$errorsfoundInConfigureCfg <- sum(icfg$errorsfoundInConfigureCfg, 1)
-            message(red, "Error", NC, ": Can't find a gdx specified as ", isettings[iscen, path_to_gdx], " in column ",
+            message(red, "Error", NC, ": Can't find a gdx specified as '", isettings[iscen, path_to_gdx], "' in column ",
                     path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a ",
                     "fulldata.gdx from a previous normally completed run.")
           }
