@@ -300,7 +300,7 @@ q21_taxrevImport(t,regi,tradePe)..
 ***---------------------------------------------------------------------------
 *'  Calculation of costs limiting the change compared to the reference run in cm_startyear.
 ***---------------------------------------------------------------------------
-q21_taxrevChProdStartYear(t,regi)$(t.val ge max(2010,cm_startyear)).. ..
+q21_taxrevChProdStartYear(t,regi)$(t.val ge max(2010,cm_startyear))..
   v21_taxrevChProdStartYear(t,regi)
   =e=
   sum(en2en(enty,enty2,te), vm_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) )
