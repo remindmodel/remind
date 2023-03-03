@@ -1550,6 +1550,8 @@ p_prodAllReference(t,regi,te) =
   + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
 ;
 
+*' initialize vm_changeProdStartyearCost for tax calculation
+vm_changeProdStartyearCost.l(t,regi,te) = 0;
 
 *** EOF ./core/datainput.gms
 
