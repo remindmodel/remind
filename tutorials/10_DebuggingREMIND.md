@@ -13,7 +13,7 @@ If you want information on all (or some) runs in a given output folder, no matte
 
 This tutorial should help you if REMIND (1) [did not start](#case-1-remind-did-not-start), (2) [did produce an error](#case-2-remind-did-produce-an-error), (3) [ran into infeasibilities](#case-3-remind-ran-into-infeasibilities) or (4) [did not converge](#case-4-remind-did-not-converge).
 
-You can [start a debug run](#more-information-needed-debug-runs) and [spy on the solver](#spy-on-the-solver) to get further information, and feel free to [ask for help](#asking-for-help)
+You can [start a debug run](#more-information-needed-debug-runs) and [spy on the solver](#spy-on-the-solver) to get further information, and feel free to [ask for help](#asking-for-help).
 
 Case 1: REMIND did not start
 ----------------------------
@@ -22,7 +22,7 @@ The first place to look is `log.txt` in the output subfolder for each run. It sh
 
 - the model is still locked? Another model run has locked the folder, so you have to wait until it has unlocked it again.
 - because of a locked folder in the R libraries, outdated packages were loaded: consider [creating a new snapshot](04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries).
-- input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn't help, the input generation may be broken.
+- input files are missing or outdated? delete `input/source_files.log` or set `cfg$force_download <- TRUE` to force the loading of new ones. If this doesn’t help, the input generation may be broken.
 - you use an outdated git branch? check `git log` or use main branch with `git checkout main/develop; git pull`.
 - a recent change in the start scripts may have broken the prepare scripts, check the [file history](https://github.com/remindmodel/remind/commits/develop/scripts/start/) for changes.
 
@@ -49,7 +49,7 @@ If full.log exists, this is the next place to look at. Either open it in your fa
 less full.log
 ```
 and then type `G` to get to the end of the file. `q` finishes looking at the file.
-Another option is to use the editor `vi` by typing `vi full.log`, in which case `:q` closes the editor. `less` is generally faster when looking at large file, but doesn't offer color coding.
+Another option is to use the editor `vi` by typing `vi full.log`, in which case `:q` closes the editor. `less` is generally faster when looking at large file, but doesn’t offer color coding.
 
 You may find:
 
@@ -90,7 +90,9 @@ Again, tutorials such as as the [McCarl GAMS User Guide](https://www.gams.com/mc
 If not, it is worth looking at the `.gms` file this equation is part of, by searching for `SOF` (start of file) and `EOF` (end of file) marks above and below the equation. Then navigate to this file in github and see in the history whether it was recently changed, which may have caused this error.
 But it is important that the error may have first appeared in this equation, but may have been caused somewhere else.
 
-If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::toolIterativeEDGETransport`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`. If this is not helpful, try opening that script in an interactive `R` session (on your run's folder) and run it line by line, you'll have a better idea of what the problem actually was. Forcing the model to redownload it's input data (see above) can help if something in either model changed when you created that folder. Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you'll often find that a newer EDGE-T library (that would be loaded if you didn't set a snapshot or updated your renv) won't work with a REMIND folder that is even a few days old.
+If you find out that your run stopped specifically in iteration 14, you likely have a problem with the EDGE-T transport model. It runs iteratively with REMIND, but only after iteration 14. It calls [`edgeTransport::toolIterativeEDGETransport`](https://github.com/pik-piam/edgeTransport/blob/master/R/iterativeEDGETransport.R) and its input/output data are in the `EDGE-T` subfolder. You should find an error message in `log.txt`.
+If this is not helpful, try opening that script in an interactive `R` session (on your run’s folder) and run it line by line, you’ll have a better idea of what the problem actually was. Forcing the model to redownload its input data (see above) can help if something in either model changed when you created that folder.
+Also make sure that you are using a snapshot/renv that was created around the same time you cloned (or last pulled) your REMIND folder. The EDGE-T model makes heavy use of specific libraries that are updated constantly. So you’ll often find that a newer EDGE-T library (that would be loaded if you didn’t set a snapshot or updated your renv) won’t work with a REMIND folder that is even a few days old.
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
@@ -150,7 +152,9 @@ in your output subfolder to see the "Convergence diagnostics" of the last iterat
 
 If trade is the issue, search with `?p80_messageFailedMarket` to see how the failed markets evolved over the iterations. Looking at `p80_defic_sum_rel` will show you how the sum over all market imbalances developped over the iterations. Often, it improves a lot until iteration 20-30, then either converges or becomes worse again for 10-30 iterations, before improving again for 10-20 iterations, then becoming worse again. One can look which iteration in the range 20..35 was best, then go back to that iteration by searching backward for `o_iterationNumber` to check which markets were above the threshold then, comparing the values plotted below `p80_surplusMax2100` with `p80_surplusMaxTolerance`.
 
-If the run was mostly converged in that iteration (which depends on your standards), one can set `cm_nash_autoconverge` to `3`, which relaxes the requirements on market clearing further. This should then lead to the restarted run actually converging in that iteration. You can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
+If the run was mostly converged in that iteration (which depends on your standards, an example would be `p80_defic_sum_rel` < 0.02), one can set `cm_nash_autoconverge` to `3`, which relaxes the requirements on market clearing further. This should then lead to the restarted run actually converging in that iteration.
+You should not use this setting for production runs.
+You can also run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
 
 In the output subfolder, you also find a file `nash_info_convergence.csv` which contains the price and surplus information for the relevant markets for all iterations and time-steps:
 - `p80_surplus`, the "surplus on commodity markets"
@@ -201,19 +205,19 @@ Note that `gmsgrid.log` is available only while CONOPT is working on this specif
 Only the first five columns are of particular interest:
 
 - `Iter`: CONOPT Iteration number.
-- `Phase`: 0/1/2 means CONOPT is looking for a feasible solution, 3/4 means it's looking for an optimal solution.
+- `Phase`: 0/1/2 means CONOPT is looking for a feasible solution, 3/4 means it is looking for an optimal solution.
 - `Ninf`: if during phase 1/2, the number of infeasibilities.
 - `Infeasibility/Objective`: The left hand side during search for a feasible solution, and the objective value during phase 3/4.
 - `RGmax`: if during phase 1-2 the sum of infeasibilities, it should always converge to a very small value (< 10e-7). If during phase 3/4 the reduced gradient (when small you are close to optimality).
 - `NSB`: the number of superbasic variables (basically the current number of degrees of freedom).
 
-Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change between consecutive calls to `conoptspy`, then CONOPT crashed. If CONOPT is at unusually high iterations (> 10 000), and there is little or no progress in the objective value, and the reduced gradient does not change or oscillates between values without making progress, then CONOPT is stuck somewhere in the solution space and won't get out.
+Displaying the CONOPT output multiple times will show you which regions are still being solved and if they are making progress. If `Iter` does not change between consecutive calls to `conoptspy`, then CONOPT crashed. If CONOPT is at unusually high iterations (> 10 000), and there is little or no progress in the objective value, and the reduced gradient does not change or oscillates between values without making progress, then CONOPT is stuck somewhere in the solution space and won’t get out.
 In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution) which can be done by running `./start.R -r` and selecting said run.
 
 Asking for help
 ---------------
 
-In any case, don't hesitate to ask for help in [pik-piam/discussions](https://github.com/pik-piam/discussions). Please provide:
+In any case, don’t hesitate to ask for help in [pik-piam/discussions](https://github.com/pik-piam/discussions). Please provide:
 
 - which version of REMIND was used
 - as much information on your run, such as the scenario config file and the run name
