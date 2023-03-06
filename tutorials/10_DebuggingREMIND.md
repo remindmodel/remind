@@ -9,8 +9,11 @@ First, find out the state of your run by executing this in the run directory:
 Rscript -e "modelstats::loopRuns('.')"
 ```
 PIK cluster users can access information on all their runs in all directories by executing `rs2 -c` (or `rs2 -a` for only active runs).
-If you want information on all (or some) runs in a given output folder, no matter who ran them, simply type `rs2` and then select either `1` for all runs or just the runs you want information about. 
-In case of errors, this tutorial should help you.
+If you want information on all (or some) runs in a given output folder, no matter who ran them, simply type `rs2` and then select either `1` for all runs or just the runs you want information about.
+
+This tutorial should help you if REMIND (1) [did not start](#case-1-remind-did-not-start), (2) [did produce an error](#case-2-remind-did-produce-an-error), (3) [ran into infeasibilities](#case-3-remind-ran-into-infeasibilities) or (4) [did not converge](#case-4-remind-did-not-converge).
+
+You can [start a debug run](#more-information-needed-debug-runs) and [spy on the solver](#spy-on-the-solver) to get further information, and feel free to [ask for help](#asking-for-help)
 
 Case 1: REMIND did not start
 ----------------------------
@@ -91,7 +94,7 @@ If you find out that your run stopped specifically in iteration 14, you likely h
 
 The file `abort.gdx` contains the latest data at the point GAMS aborted execution, which can be analysed using GAMS Studio.
 
-After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will not converge. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
+After a certain number of consecutive infeasibilities (default: `cm_abortOnConsecFail` = 5) REMIND will stop automatically, to avoid loosing too much time on an already doomed run. While REMIND sometimes is able to recover from a region being infes for 1 or 2 iterations, more will likely mean that the run will fail. In this case an `execution error` will be raised and the message `Run was aborted because the maximum number of consecutive failures was reached in at least one region!` can be found in the `full.log` and `full.lst` files. Continue with "Case 3" to solve the infeasibility.
 
 ### Case 2c: GDX or R file missing
 
@@ -99,7 +102,7 @@ Try to find out where this file should have come from by searching within the RE
 
 
 Case 3: REMIND ran into infeasibilities
-----------------------------------------
+---------------------------------------
 
 If some infeasibility was created, the next suggested step is to search for `p80_repy` in `full.lst` and how it changes over the iterations.
 On the PIK cluster,
@@ -134,8 +137,29 @@ If infeasibilities show up already in the first iteration, it may be related to 
 
 There are different types of solver infeasibilities: pre-triangular and optimization infeasibilities. In pre-triangular infeasibilities, GAMS shows you in the solution report the equations that are incompatible with each other. For optimization infeasibilies, the CONOPT solver tries to reduce the infeasibility to the thing that less affects the objective function. It does not show all affected equations, as it is not a simple problem as a non-square system of equations like in the pre-triangular case. You need to check if it is bound-related: the variables bounds, and the equation bounds starting from the infeasibility and going through the variables that have relation with it. You can always force in another run the variable that is infeasible to a feasible value to see what else is affected by it. But this is usually not necessary as just checking the logic behind the equation and the infeasible variable is usually sufficient to find the limitation.
 
+Case 4: REMIND did not converge
+-------------------------------
+
+If the iterations are not sufficient to converge, you will see in the output of `rs2 -c` that `RunStatus` is `Normal completion`, but `Conv` shows `not_converged`.
+
+You can run
+```
+less -j 7 +?diagnostics full.lst
+```
+in your output subfolder to see the "Convergence diagnostics" of the last iteration (`+?diagnostics` searches for the last occurrence of `diagnostics`). Below, you should find reasons for non-convergence.
+
+If trade is the issue, search with `?p80_messageFailedMarket` to see how the failed markets evolved over the iterations. Looking at `p80_defic_sum_rel` will show you how the sum over all market imbalances developped over the iterations. Often, it improves a lot until iteration 20-30, then either converges or becomes worse again for 10-30 iterations, before improving again for 10-20 iterations, then becoming worse again. One can look which iteration in the range 20..35 was best, then go back to that iteration by searching backward for `o_iterationNumber` to check which markets were above the threshold then, comparing the values plotted below `p80_surplusMax2100` with `p80_surplusMaxTolerance`.
+
+If the run was mostly converged in that iteration (which depends on your standards), one can set `cm_nash_autoconverge` to `3`, which relaxes the requirements on market clearing further. This should then lead to the restarted run actually converging in that iteration. You can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
+
+In the output subfolder, you also find a file `nash_info_convergence.csv` which contains the price and surplus information for the relevant markets for all iterations and time-steps:
+- `p80_surplus`, the "surplus on commodity markets"
+- `p80_pvp_itr`, the "price on commodity markets"
+- `p80_surplusMax`, the "worst residual market surplus until given year, absolute value", with units: TWa, trillion Dollar, GtC.
+- `p80_surplusMaxRel`, the "worst residual market surplus until given year, in per cent".
+
 More information needed? debug runs
---------------------------
+-----------------------------------
 
 If you would like GAMS to print specific information, add a `display` statement as close to the solve statement as possible, i.e., in presolve, or right after the data is loaded in datainput, and use `Rscript start.R --reprepare` to regenerate the `full.gms` file and restart the model, or change `full.gms` directly and restart the folder with `Rscript start.R --restart`.
 
@@ -158,8 +182,6 @@ The scripts will then start the debug run based on the `fulldata.gdx` that conta
 Alternativly, you can point to this file in the `path_gdx` column of `scenario_config_XYZ.csv`.
 If you want to compare the different gdx files produced by all iterations, specify `c_keep_iteration_gdxes = 1` in `main.gms` or the `scenario_config_XYZ.csv`.
 
-If the iterations are not sufficient to converge, you can run REMIND for more iterations by modifying `cm_iteration_max` in [`80_optimization/nash/datainput.gms`](../modules/80_optimization/nash/datainput.gms) and the set iteration in [`core/sets.gms`](../core/sets.gms), which by default only goes to 200.
-
 Once the debug run is finished you have access to a `full.lst` with extended logging. The tool `listinfes` will show you the infeasibilites which might be responsible for the run failing:
 
 ```bash
@@ -167,7 +189,7 @@ listinfes <path_to_full.lst>
 ```
 
 Spy on the solver
-----------------------------------
+-----------------
 
 If you want a closer look on the GAMS CONOPT output during a REMIND run, users of the PIK cluster can use `conoptspy` to display the latest additions to `gmsgrid.log`. Manually, you can access the solver logs by moving to the output folder and running:
 
@@ -189,7 +211,7 @@ Displaying the CONOPT output multiple times will show you which regions are stil
 In both cases, abort the run and restart from the `fulldata.gdx` (the last feasible solution) which can be done by running `./start.R -r` and selecting said run.
 
 Asking for help
-----------------------------------
+---------------
 
 In any case, don't hesitate to ask for help in [pik-piam/discussions](https://github.com/pik-piam/discussions). Please provide:
 

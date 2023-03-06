@@ -24,28 +24,28 @@ options(error = quote({
 helpText <- "
 #' Rscript output.R [options]
 #'
-#'    [options] can be the following flags:
+#' [options] can be the following flags:
 #'
-#'    --help, -h:      show this help text and exit
-#'    --test, -t:      tests output.R without actually starting any run
-#'    --renv=<path>    load the renv located at <path>, incompatible with --update
-#'    --update         update packages in renv first, incompatible with --renv=<path>
+#'   --help, -h:      show this help text and exit
+#'   --test, -t:      tests output.R without actually starting any run
+#'   --renv=<path>    load the renv located at <path>, incompatible with --update
+#'   --update         update packages in renv first, incompatible with --renv=<path>
 #'
-#'    [options] can also specify the following variables. If they are not specified
-#'    but needed, the scripts will ask the user.
+#' [options] can also specify the following variables. If they are not specified
+#' but needed, the scripts will ask the user.
 #'
-#'    comp:            comp=single means output for single runs (reporting, …)
+#'   comp=             comp=single means output for single runs (reporting, …)
 #'                     comp=comparison means scripts to compare runs (compareScenarios2, …)
 #'                     comp=export means scripts to export runs (xlsx_IIASA, …)
-#'    filename_prefix: string to be added to filenames by some output scripts
+#'   filename_prefix=  string to be added to filenames by some output scripts
 #'                     (compareScenarios, xlsx_IIASA)
-#'    output:          output=compareScenarios2 directly selects the specific script
-#'    outputdir:       Can be used to specify the output directories to be used.
+#'   output=           output=compareScenarios2 directly selects the specific script
+#'   outputdir=        Can be used to specify the output directories to be used.
 #'                     Example: outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1
-#'    remind_dir:      path to remind or output folder(s) where runs can be found.
+#'   remind_dir=       path to remind or output folder(s) where runs can be found.
 #'                     Defaults to ./output but can also be used to specify multiple
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
-#'    slurmConfig:     use slurmConfig=direct, priority, short or standby to specify
+#'   slurmConfig=      use slurmConfig=direct, priority, short or standby to specify
 #'                     slurm selection. You may also pass complicated arguments such as
 #'                     slurmConfig='--qos=priority --mem=8000'
 "
