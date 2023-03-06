@@ -674,7 +674,7 @@ q_emiMac(t,regi,emiMac) ..
 ***--------------------------------------------------
 q_emiCdrAll(t,regi)..
   vm_emiCdrAll(t,regi)
-  =e= !! BECC + DACC
+       =e= !! BECC + DACC
   (sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail(t,regi,enty,enty2,te,enty3))
   + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
   !! scaled by the fraction that gets stored geologically
@@ -684,8 +684,8 @@ q_emiCdrAll(t,regi)..
         vm_co2capture(t,regi,"cco2","ico2","ccsinje",rlf))+sm_eps))
   !! net negative emissions from co2luc
   -  p_macBaseMagpieNegCo2(t,regi)
-  !! negative emissions from the cdr module that are not stored geologically
-  - (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
+       !! negative emissions from the cdr module that are not stored geologically
+       -       (vm_emiCdr(t,regi,"co2") + sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,"cco2","ico2","ccsinje",rlf)))
 ;
 
 
@@ -721,43 +721,34 @@ q_emiAllGlob(t,emi(enty))..
 ***------------------------------------------------------
 *mlb 8/2010* extension for multigas accounting/trading 
 *cb only "static" equation to be active before cm_startyear, as multigasscen could be different from a scenario to another that is fixed on the first
-q_co2eq(ttot,regi)$(ttot.val ge cm_startyear)..
-  vm_co2eq(ttot,regi)
-  =e=
-  sum(emiMkt, vm_co2eqMkt(ttot,regi,emiMkt))
-;
+  q_co2eq(ttot,regi)$(ttot.val ge cm_startyear)..
+         vm_co2eq(ttot,regi)
+         =e=
+         sum(emiMkt, vm_co2eqMkt(ttot,regi,emiMkt));
 
-q_co2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
+  q_co2eqMkt(ttot,regi,emiMkt)$(ttot.val ge cm_startyear)..
   vm_co2eqMkt(ttot,regi,emiMkt)
   =e=
   vm_emiAllMkt(ttot,regi,"co2",emiMkt)
-  + (sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) 
-  + sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
-  - vm_emiMacSector(ttot,regi,"co2luc") $((cm_multigasscen eq 3) AND (sameas(emiMkt,"other")))
-;	
+  + (sm_tgn_2_pgc   * vm_emiAllMkt(ttot,regi,"n2o",emiMkt) +
+     sm_tgch4_2_pgc * vm_emiAllMkt(ttot,regi,"ch4",emiMkt)) $(cm_multigasscen eq 2 or cm_multigasscen eq 3) 
+  - vm_emiMacSector(ttot,regi,"co2luc") $((cm_multigasscen eq 3) AND (sameas(emiMkt,"other")));	
 
 ***------------------------------------------------------
 *' Total global emissions in CO2 equivalents that are part of the climate policy also take into account foreign emissions. 
 ***------------------------------------------------------
 *mlb 20140108* computation of global emissions (related to cap)
-q_co2eqGlob(t) $(t.val > 2010)..
-  vm_co2eqGlob(t) 
-  =e= 
-  sum(regi, vm_co2eq(t,regi) + pm_co2eqForeign(t,regi) )
-  ; 
+  q_co2eqGlob(t) $(t.val > 2010)..
+        vm_co2eqGlob(t) =e= sum(regi, vm_co2eq(t,regi) + pm_co2eqForeign(t,regi)); 
 
 ***------------------------------------
 *' Linking GHG emissions to tradable emission permits.
 ***------------------------------------
 *mh for each region and time step: emissions + permit trade balance < emission cap
 q_emiCap(t,regi) ..
-  vm_co2eq(t,regi) 
-  + vm_Xport(t,regi,"perm") 
-  - vm_Mport(t,regi,"perm")
-  + vm_banking(t,regi)
-  =l= 
-  vm_perm(t,regi)
-;
+                vm_co2eq(t,regi) + vm_Xport(t,regi,"perm") - vm_Mport(t,regi,"perm")
+                + vm_banking(t,regi)
+                =l= vm_perm(t,regi);
 
 ***-----------------------------------------------------------------
 *** Budgets on GHG emissions (single or two subsequent time periods)
