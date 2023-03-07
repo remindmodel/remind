@@ -1096,9 +1096,9 @@ parameter
 *' * (any other number) limit of gas demand from 2025 on in Germany in EJ/yr
 *'
 parameter
-  cm_SlackMultiplier   "sets the slack size for v_changeProdStartyearSlack"
+  c_SlackMultiplier   "sets the slack size for v_changeProdStartyearSlack"
 ;
-  cm_SlackMultiplier = 1; !! def 1
+  c_SlackMultiplier = 1; !! def 1
 *'
 parameter
   c_changeProdCost   "sets the cost for vm_changeProdStartyearCost"
