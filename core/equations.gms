@@ -866,12 +866,12 @@ q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) 
 *' calculating the relative change 
 q_relChangeProdStartYear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
   v_relChangeProdStartYear(t,regi,te)
-  =e=
-  ( v_changeProdStartyear(t,regi,te) - v_changeProdStartyearSlack(t,regi,te) ) !! always allow some change (depending on .up / .lo of the slack variable) 
-  / 
+  *  
   (   p_prodAllReference(t,regi,te) 
     + p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te)  !! taking into account the region and technology-specific seed values
   )
+  =e=
+  ( v_changeProdStartyear(t,regi,te) - v_changeProdStartyearSlack(t,regi,te) ) !! always allow some change (depending on .up / .lo of the slack variable) 
 ;
 
 *' calculating the absolute effect size: (relative change)^2 * value in the reference run * construction time (as proxy for "how easy to change on short notice") 
