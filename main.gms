@@ -1101,9 +1101,9 @@ parameter
   cm_SlackMultiplier = 1; !! def 1
 *'
 parameter
-  cm_changeProdCost   "sets the cost for vm_changeProdStartyearCost"
+  c_changeProdCost   "sets the cost for vm_changeProdStartyearCost"
 ;
-  cm_changeProdCost = 5; !! def 5
+  c_changeProdCost = 5; !! def 5
 *'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS

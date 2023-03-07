@@ -887,7 +887,7 @@ q_changeProdStartyearAdj(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear
 q_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )  ..
   vm_changeProdStartyearCost(t,regi,te)
   =e=
-  cm_changeProdCost * sm_DpGJ_2_TDpTWa
+  c_changeProdCost * sm_DpGJ_2_TDpTWa
   * p_adj_coeff(t,regi,te)
   * v_changeProdStartyearAdj(t,regi,te)
 ;
