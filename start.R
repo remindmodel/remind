@@ -13,34 +13,34 @@ require(stringr, quietly = TRUE)
 helpText <- "
 #' Rscript start.R [options] [file]
 #'
-#'    Without [file] argument starts a single REMIND run using the settings from
-#'    `config/default.cfg` and `main.gms`.
+#' Without [file] argument starts a single REMIND run using the settings from
+#' config/default.cfg` and `main.gms`.
 #'
-#'    [file] must be a scenario config .csv file (usually in the config/
-#'    directory).  Using this will start all REMIND runs specified by
-#'    \"start = 1\" in that file.
+#' [file] must be a scenario config .csv file (usually in the config/
+#' directory).  Using this will start all REMIND runs specified by
+#' \"start = 1\" in that file.
 #'
-#'    --help, -h:        show this help text and exit
-#'    --debug, -d:       start a debug run with cm_nash_mode = debug
-#'    --gamscompile, -g: compile gms of all selected runs. Combined with
+#'   --help, -h:         show this help text and exit
+#'   --debug, -d:        start a debug run with cm_nash_mode = debug
+#'   --gamscompile, -g:  compile gms of all selected runs. Combined with
 #'                       --interactive, it stops in case of compilation errors,
 #'                       allowing the user to fix them and rerun gamscompile;
 #'                       combined with --restart, existing runs can be checked.
-#'    --interactive, -i: interactively select config file and run(s) to be
+#'   --interactive, -i:  interactively select config file and run(s) to be
 #'                       started
-#'    --quick, -q:       starting one fast REMIND run with one region, one
+#'   --quick, -q:        starting one fast REMIND run with one region, one
 #'                       iteration and reduced convergence criteria for testing
 #'                       the full model.
-#'    --reprepare, -R:   rewrite full.gms and restart run
-#'    --restart, -r:     interactively restart run(s)
-#'    --test, -t:        test scenario configuration and writing the RData files
+#'   --reprepare, -R:    rewrite full.gms and restart run
+#'   --restart, -r:      interactively restart run(s)
+#'   --test, -t:         test scenario configuration and writing the RData files
 #'                       in the REMIND main folder without starting the runs
-#'    --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
 #'
-#'    You can combine --reprepare with --debug, --testOneRegi or --quick and the
-#'    selected folders will be restarted using these settings.  Afterwards,
-#'    using --reprepare alone will restart the runs using their original
-#'    settings.
+#' You can combine --reprepare with --debug, --testOneRegi or --quick and the
+#' selected folders will be restarted using these settings.  Afterwards,
+#' using --reprepare alone will restart the runs using their original
+#' settings.
 "
 
 # Source everything from scripts/start so that all functions are available everywhere

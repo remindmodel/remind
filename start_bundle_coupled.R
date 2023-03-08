@@ -24,14 +24,15 @@ helpText <- "
 #'
 #' Control the script's behavior by providing additional arguments:
 #'
-#'  --help, -h:        show this help text and exit
-#'  --gamscompile, -g: compile gms of all selected runs. Combined with
-#'                     --interactive, it stops in case of compilation errors,
-#'                     allowing the user to fix them and rerun gamscompile
-#'  --interactive, -i: interactively select run(s) to be started. Asks for config
-#'                     file also if none is specified as path_settings_coupled.
-#'  --test, -t:        Test scenario configuration and writing the RData files
-#'                     in the REMIND main folder without starting the runs.
+#'   --help, -h:        show this help text and exit
+#'   --gamscompile, -g: compile gms of all selected runs. Combined with
+#'                      --interactive, it stops in case of compilation
+#'                      errors, allowing to fix them and rerun gamscompile
+#'   --interactive, -i: interactively select run(s) to be started. Asks for
+#'                      config file also if the one specified as
+#'                      path_settings_coupled cannot be found.
+#'   --test, -t:        Test scenario configuration and write the RData files
+#'                      in the REMIND main folder without starting the runs.
 #'
 "
 
