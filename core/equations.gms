@@ -57,7 +57,7 @@ q_costInvTeDir(t,regi,te)..
   =e=
   vm_costTeCapital(t,regi,te) 
   * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)) 
-  * (1.02 + pm_prtp(regi) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
+  * (1.02 + pm_prtp(regi) ) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
   !! half a time step earlier, using an interest rate of pm_prtp + 2%, which is close to the model-endogenous interest rate. 
   !! We do this to reduce the difference to the previous version where the effect of deltacap on capacity was split 
   !! half to the current and half to the next time.   
@@ -74,7 +74,7 @@ q_costInvTeAdj(t,regi,teAdj)..
   vm_costTeCapital(t,regi,teAdj) * (
     (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj))
   ) 
-  * (1.02 + pm_prtp(regi) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
+  * (1.02 + pm_prtp(regi) ) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
   !! half a time step earlier, using an interest rate of pm_prtp + 2%, which is close to the model-endogenous interest rate. 
   !! We do this to reduce the difference to the previous version where the effect of deltacap on capacity was split 
   !! half to the current and half to the next time. 
@@ -857,7 +857,7 @@ q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
       + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
 ;
-
+incluence 
 ***---------------------------------------------------------------------------
 *' Calculate changes to reference in cm_startyear - needed to limit them via refunded adj costs 
 ***---------------------------------------------------------------------------
