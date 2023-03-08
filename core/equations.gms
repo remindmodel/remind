@@ -874,7 +874,7 @@ q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) 
 
 *' calculating the relative change 
 q_relChangeProdStartYear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
-  v_relChangeProdStartYear(t,regi,te)
+  v_relChangeProdStartYear(t,regi,te) / 100
   *  
   (   p_prodAllReference(t,regi,te) 
     + p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te)  !! taking into account the region and technology-specific seed values
@@ -887,12 +887,12 @@ q_relChangeProdStartYear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear
 q_changeProdStartyearAdj(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
   v_changeProdStartyearAdj(t,regi,te)
   =e=
-  power( v_relChangeProdStartYear(t,regi,te), 2 )  !! taking the square to a) treat increase and decrease the same; b) to penalize larger changes 
+  power( v_relChangeProdStartYear(t,regi,te) / 100, 2 )  !! taking the square to a) treat increase and decrease the same; b) to penalize larger changes 
   * ( p_prodAllReference(t,regi,te) + p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ) !! tie back to the absolute change 
   * ( pm_data(regi,"constrTme",te)$(pm_data(regi,"constrTme",te) gt 0) + 2$(pm_data(regi,"constrTme",te) eq 0)) !! take construction time 
 ;
 
-*' calculating the resulting costs (which are applied as a tax in module 21, so they have no budget effect but only incluence REMIND choices)
+*' calculating the resulting costs (which are applied as a tax in module 21, so they have no budget effect but only influence REMIND choices)
 q_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )  ..
   vm_changeProdStartyearCost(t,regi,te)
   =e=
