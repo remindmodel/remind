@@ -857,7 +857,7 @@ q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
       + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
 ;
-incluence 
+ 
 ***---------------------------------------------------------------------------
 *' Calculate changes to reference in cm_startyear - needed to limit them via refunded adj costs 
 ***---------------------------------------------------------------------------
