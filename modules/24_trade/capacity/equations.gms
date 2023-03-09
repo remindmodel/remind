@@ -56,14 +56,10 @@ q24_capTrade(ttot,trade_regi,regi,teTrade)$(
 ***    (1 - v24_capEarlyRetiTrade(ttot,trade_regi,regi,tradeCap,teTradeTransp))
 ***    *
     (
-      sum(opTimeYr2te(teTrade,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+      sum(opTimeYr2te(teTrade,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
         pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
       * pm_omeg(regi,opTimeYr+1,teTrade)
       * v24_deltaCapTrade(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),trade_regi,regi,teTrade)
-      )
-    + ( pm_dt(ttot) / 2
-      * pm_omeg(regi,"2",teTrade)
-      * v24_deltaCapTrade(ttot,trade_regi,regi,teTrade)
       )
     )
 ;

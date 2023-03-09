@@ -1534,5 +1534,24 @@ $endif.cm_rcp_scen_build
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
 
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+if (cm_startyear gt 2005,
+execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
+execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
+execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
+execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+);
+
+p_prodAllReference(t,regi,te) =
+    sum(pe2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te),  p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(fe2ue(enty,enty2,te),  p_prodUeReference(t,regi,enty,enty2,te) )
+  + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
+;
+
+*' initialize vm_changeProdStartyearCost for tax calculation
+vm_changeProdStartyearCost.l(t,regi,te) = 0;
+
 *** EOF ./core/datainput.gms
 

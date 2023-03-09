@@ -18,16 +18,11 @@ p70_cap_vintages(ttot,regi,te,ttot2)$( ttot.val ge 2005 )
     sum(te2rlf(te,rlf),
 ***      pm_correctcap(ttot,regi,te,rlf)
     + sum((opTimeYr2te(te,opTimeYr),tsu2opTimeYr(ttot,opTimeYr))$(
-             opTimeYr.val gt 1 AND opTimeYr.val eq (ttot.val - ttot2.val + 1) ),
+             opTimeYr.val ge 1 AND opTimeYr.val eq (ttot.val - ttot2.val + 1) ),
         pm_ts(ttot2)
       * pm_omeg(regi,opTimeYr+1,te)
       * vm_deltaCap.l(ttot2,regi,te,rlf)
       )$( ttot.val gt ttot2.val )
-    + (
-        pm_dt(ttot) / 2
-      * pm_omeg(regi,"2",te)
-      * vm_deltaCap.l(ttot,regi,te,rlf)
-      )$( ttot.val eq ttot2.val )
     )
 ;
 
