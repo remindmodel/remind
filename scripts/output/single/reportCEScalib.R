@@ -148,7 +148,17 @@ CES.cal.report$value <- as.numeric(as.character(CES.cal.report$value))
 
 CES.cal.report = CES.cal.report %>% filter(iteration %in% c("target", "origin", itr_num))
 
-
+#removing intermediate nodes
+interm.node <- c()
+config.Rdata <- new.env()
+load(file.path(outputdir, "config.Rdata"), envir = config.Rdata) # load config.Rdata
+if(config.Rdata$cfg$gms$industry == "subsectors"){
+  interm.node <- c(interm.node, "ue_industry", "ue_cement", "en_cement", "en_cement_non_electric", "ue_chemicals", "en_chemicals", "en_chemicals_fhth", "ue_steel", "ue_otherInd", "en_otherInd", "en_otherInd_hth")
+  if(config.Rdata$cfg$gms$cm_process_based_steel != "on"){
+    interm.node <- c(interm.node, "ue_steel_secondary", "ue_steel_primary", "en_steel_primary", "en_steel_furnace")
+  }
+}
+CES.cal.report <- CES.cal.report %>% filter(!(pf %in% c(interm.node)))
 
 iter.max = max(itr_num)
 
