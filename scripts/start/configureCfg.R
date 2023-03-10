@@ -67,7 +67,7 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
           if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
             # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
             # may include folders that only _start_ with this string. They are sorted out later.
-            dirfolders <- c("./output/", icfg$modeltests_folder)
+            dirfolders <- c("./output", icfg$modeltests_folder)
             for (dirfolder in dirfolders) {
               dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
               # if path_to_gdx cell content exactly matches folder name, use this one
