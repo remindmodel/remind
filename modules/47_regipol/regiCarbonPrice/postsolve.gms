@@ -93,6 +93,16 @@ p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_noLULUCF_noBunkers") =
   )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"))
 ;
 
+*** net CO2 per Mkt with Grassi LULUCF shift
+p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi") =
+  p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2")
+  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+
+*** net CO2 per Mkt without bunkers and with Grassi LULUCF shift
+p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_LULUCFGrassi_noBunkers") =
+  p47_emiTargetMkt(ttot,regi, emiMktExt,"netCO2_noBunkers")
+  - ( p47_LULUCFEmi_GrassiShift(ttot,regi) )$(sameas(emiMktExt,"other") or sameas(emiMktExt,"all"));
+
 *** net GHG per Mkt with Grassi LULUCF shift
 p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG_LULUCFGrassi") =
   p47_emiTargetMkt(ttot,regi, emiMktExt,"netGHG")
@@ -247,7 +257,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 ***       linear price between first free year and current target terminal year
           loop(ttot3,
             s47_firstFreeYear = ttot3.val;
-            break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear) and (ttot.val ge 2020)); !!initial free price year
+            break$((ttot3.val ge ttot.val) and (ttot3.val ge cm_startyear) and (ttot3.val ge 2020)); !!initial free price year
             s47_prefreeYear = ttot3.val;
           );
           if(not(ttot2.val eq p47_firstTargetYear(ext_regi)), !! delay price change by cm_emiMktTargetDelay years for later targets
