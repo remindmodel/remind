@@ -97,9 +97,9 @@ display s_actualbudgetco2;
 		);
 		display sm_budgetCO2eqGlob;
 	elseif cm_emiscen eq 9,
+		display pm_taxCO2eq;
 	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
 		  sm_globalBudget_dev = s_actualbudgetco2 / c_budgetCO2from2020; 
-    display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2from2020 > 1200,
@@ -116,19 +116,22 @@ display s_actualbudgetco2;
 			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
-      display o_taxCO2eq_iterDiff_Itr;
 		else
 			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
-			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
+				o_taxCO2eq_iterDiff_Itr(iteration,regi) = 0;
 			else
 *** if budget has turned negative, reduce CO2 price by 20%
-			pm_taxCO2eq(t,regi) = 0.8*pm_taxCO2eq(t,regi);
+				pm_taxCO2eq_iterationdiff(t,regi) = -0.2*pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi);
+				o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
 			);	
 		);
+		display o_taxCO2eq_iterDiff_Itr;
 		
     pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
     display pm_taxCO2eq;
-	 );
+	);
 );
 
 if(cm_iterative_target_adj eq 6,
@@ -154,8 +157,8 @@ display s_actualbudgetco2;
 		);
 		display sm_budgetCO2eqGlob;
 	elseif cm_emiscen eq 9,
+		display pm_taxCO2eq;
 	    if(o_modelstat eq 2 AND ord(iteration)<cm_iteration_max AND s_actualbudgetco2 > 0 AND abs(c_budgetCO2from2020 - s_actualbudgetco2) ge 0.5,   !!only for optimal iterations, and not after the last one, and only if budget still possitive, and only if target not yet reached
-		display pm_taxCO2eq;		
 *** make sure that iteration converges: 
 *** use multiplicative for budgets higher than 1200 Gt; for lower budgets, use multiplicative adjustment only for first 3 iterations, 
 			if(ord(iteration) lt 3 or c_budgetCO2from2020 > 1200,
@@ -172,19 +175,22 @@ display s_actualbudgetco2;
 			    pm_taxCO2eq_iterationdiff(t,regi) = pm_taxCO2eq_iterationdiff_tmp(t,regi);
 			);
       o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
-      display o_taxCO2eq_iterDiff_Itr;
 		else
 			if(s_actualbudgetco2 > 0 or abs(c_budgetCO2from2020 - s_actualbudgetco2) < 2, !! if model was not optimal, or if budget already reached, keep tax constant
-			pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi);
+				o_taxCO2eq_iterDiff_Itr(iteration,regi) = 0;
 			else
 *** if budget has turned negative, reduce CO2 price by 20%
-			pm_taxCO2eq(t,regi) = 0.8*pm_taxCO2eq(t,regi);
+				pm_taxCO2eq_iterationdiff(t,regi) = -0.2*pm_taxCO2eq(t,regi);
+				pm_taxCO2eq(t,regi) = pm_taxCO2eq(t,regi) + pm_taxCO2eq_iterationdiff(t,regi);
+				o_taxCO2eq_iterDiff_Itr(iteration,regi) = pm_taxCO2eq_iterationdiff("2030",regi);
 			);	
 		);
+		display o_taxCO2eq_iterDiff_Itr;
 		
     pm_taxCO2eq(t,regi)$(t.val gt 2110) = pm_taxCO2eq("2110",regi); !! to prevent huge taxes after 2110 and the resulting convergence problems, set taxes after 2110 equal to 2110 value
     display pm_taxCO2eq;
-	 );
+	);
 );
 
 *** ---------------------------------------------------------------------------------------------------------------
