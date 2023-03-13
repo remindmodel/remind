@@ -18,7 +18,6 @@ option p47_implicitQttyTargetTax_prevIter:3:2:2;
 option pm_implicitQttyTarget_dev:3:2:2;
 option p47_implicitQttyTargetTax:3:2:2;
 option p47_implicitQttyTargetTaxRescale:3:2:2;
-option p47_implicitQttyTargetTax0:3:2:2;
 
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
