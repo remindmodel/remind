@@ -6,6 +6,20 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option p47_implicitQttyTarget_dev_iter:3:1:4;  
+option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
+option p47_implicitQttyTargetTax_iter:3:1:4;
+option p47_implicitQttyTargetCurrent_iter:3:1:4;
+option p47_implicitQttyTargetCurrent:3:2:2;
+option pm_implicitQttyTarget:3:2:2;
+option p47_implicitQttyTargetTax_prevIter:3:2:2;
+option pm_implicitQttyTarget_dev:3:2:2;
+option p47_implicitQttyTargetTax:3:2:2;
+option p47_implicitQttyTargetTaxRescale:3:2:2;
+option p47_implicitQttyTargetTax0:3:2:2;
+
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
 
