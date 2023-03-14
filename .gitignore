@@ -71,3 +71,6 @@ plotRuntimeDependencies/
 
 # ignore RStudio project files
 /*.Rproj
+
+# Main Python virtual environment
+.venv/

@@ -56,17 +56,22 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                    && !is.null(piamenv::showUpdates())) {
           message("Consider updating with `make update-renv`.")
         }
+
+        message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
+        # suppress output of renv::snapshot
+        utils::capture.output({
+          utils::capture.output({
+            # snapshot current main renv into run folder
+            renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+          }, type = "message")
+        })
+        message("done.")
+      } else {
+        # a run renv is loaded, we are presumably starting new run in a cascade
+        message("Copying lockfile into '", cfg$results_folder, "'")
+        file.copy(renv::paths$lockfile(), file.path(cfg$results_folder, "_renv.lock"))
       }
 
-      message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
-      # suppress output of renv::snapshot
-      utils::capture.output({
-        utils::capture.output({
-          # snapshot current main renv into run folder
-          renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
-        }, type = "message")
-      })
-      message("done.")
 
       renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
       message("   Initializing renv, see ", renvLogPath)
@@ -81,6 +86,13 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
                wd = cfg$results_folder,
                env = c(RENV_PATHS_LIBRARY = "renv/library"),
                stdout = renvLogPath, stderr = "2>&1")
+    }
+
+    if (cfg$pythonEnabled == "on") {
+      piamenv::createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
+    } else {
+      # create empty .venv folder so that new venv won't be initialized automatically by .Rprofile
+      dir.create(file.path(cfg$results_folder, ".venv"))
     }
 
     # Save the cfg (with the updated name of the result folder) into the results folder.

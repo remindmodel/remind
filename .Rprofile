@@ -28,9 +28,29 @@ if (!"https://rse.pik-potsdam.de/r/packages" %in% getOption("repos")) {
 # bootstrapping, will only run once after remind is freshly cloned
 if (isTRUE(rownames(installed.packages(priority = "NA")) == "renv")) {
   message("R package dependencies are not installed in this renv, installing now...")
-  renv::install("yaml", prompt = FALSE) # yaml is required to find dependencies in Rmd files
+  renv::install("rmarkdown", prompt = FALSE) # rmarkdown is required to find dependencies in Rmd files
   renv::hydrate() # auto-detect and install all dependencies
   message("Finished installing R package dependencies.")
+}
+
+# bootstrapping python venv, will only run once after remind is freshly cloned
+if (!dir.exists(".venv/")
+    && (Sys.which("python3") != ""
+        || (Sys.which("python.exe") != ""
+            && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3")))
+           ))) {
+  message("Python venv is not available, setting up now...")
+  # use system python to set up venv
+  if (.Platform$OS.type == "windows") {
+    system2("python.exe", c("-mvenv", ".venv"))
+    pythonInVenv <- normalizePath(file.path(".venv", "Scripts", "python.exe"), mustWork = TRUE)
+  } else {
+    system2("python3", c("-mvenv", ".venv"))
+    pythonInVenv <- normalizePath(file.path(".venv", "bin", "python"), mustWork = TRUE)
+  }
+  # use venv python to install dependencies in venv
+  system2(pythonInVenv, c("-mpip", "install", "--upgrade", "pip", "wheel"))
+  system2(pythonInVenv, c("-mpip", "install", "-r", "requirements.txt"))
 }
 
 # Configure locations of REMIND input data

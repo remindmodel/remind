@@ -6,9 +6,10 @@
 #' @param filename string with scenario_config*.csv filename
 #' @param remindPath path to remind main directory
 #' @param testmode if TRUE, generates warnings if unknownColumnNames exist
+#' @param fillWithDefault boolean whether empty cells should be filled with defaults
 #' @author Oliver Richters
 #' @return list with scenario config content
-readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE) {
+readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE, fillWithDefault = FALSE) {
   if (testmode) {
     cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
@@ -32,27 +33,45 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     warning("These titles contain illegal characters: ",
             paste0(rownames(scenConf)[illegalchars], collapse = ", "),
             " – Please use only letters, digits, '_' and '-' to avoid errors, not '",
-            gsub("[[:alnum:]_-]", "", paste(rownames(scenConf), collapse = "")), "'. Stopping now.")
+            unique(gsub("[[:alnum:]_-]", "", paste(rownames(scenConf), collapse = ""))),
+            "'. Stopping now.")
   }
-  whitespaceerrors <- 0
+  whitespaceErrors <- 0
   for (path_gdx in intersect(names(path_gdx_list), names(scenConf))) {
     haswhitespace <- grepl("\\s", scenConf[[path_gdx]])
     if (any(haswhitespace)) {
       warning("The ", path_gdx, " cells of these runs contain whitespaces: ", paste0(rownames(scenConf)[haswhitespace], collapse = ", "),
               " – scripts will fail to find corresponding runs and gdx files. Stopping now.")
-      whitespaceerrors <- whitespaceerrors + sum(haswhitespace)
+      whitespaceErrors <- whitespaceErrors + sum(haswhitespace)
     }
   }
-  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceerrors
   if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
     scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
     message("In ", filename,
         ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
   }
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
+
+  # fill empty cells with values from scenario written in copyConfigFrom cell
+  copyConfigFromErrors <- 0
+  if ("copyConfigFrom" %in% names(scenConf)) {
+    scenConf <- copyConfigFrom(scenConf)
+    copyConfigFromErrors <- as.numeric(scenConf[1, "copyConfigFrom"])
+    scenConf[1, "copyConfigFrom"] <- NA
+  }
+
+  if (fillWithDefault) {
+    for (switchname in intersect(names(scenConf), names(cfg$gms))) {
+      scenConf[is.na(scenConf[, switchname]), switchname] <- cfg$gms[[switchname]]
+    }
+  }
+
+  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors
+
+  # check column names
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                         "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action")
+                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -63,7 +82,8 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
             basename(filename), ":")
     message("  ", paste(unknownColumnNames, collapse = ", "))
-    message("This check was added Jan. 2022. If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+    message("This check was added Jan. 2022. ",
+            "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
     unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
     if (length(unknownColumnNamesNoComments) > 0) {
       if (testmode) {
@@ -100,6 +120,32 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
     }
   }
-  if (errorsfound > 0) if (testmode) warning(errorsfound, " errors found.") else stop(errorsfound, " errors found, see explanation in warnings.")
+  if (errorsfound > 0) {
+    if (testmode) warning(errorsfound, " errors found.")
+      else stop(errorsfound, " errors found, see explanation in warnings.")
+  }
+  return(scenConf)
+}
+
+copyConfigFrom <- function(scenConf) {
+  copyFromMissing <- setdiff(scenConf[, "copyConfigFrom"], c(NA, rownames(scenConf)))
+  copyFromLater <- ! (match(scenConf[, "copyConfigFrom"], rownames(scenConf)) < seq_along(rownames(scenConf)) |
+                   is.na(scenConf[, "copyConfigFrom"]) | scenConf[, "copyConfigFrom"] %in% copyFromMissing)
+  if (length(copyFromMissing) > 0) {
+    warning("The following scenario names indicated in copyConfigFrom column were not found in scenario list: ",
+            paste0(copyFromMissing, collapse = ", "), ". Stopping now.")
+  }
+  if (any(copyFromLater)) {
+    warning("The following scenarios specify in copyConfigFrom column a scenario name defined below in the file: ",
+            paste0(rownames(scenConf)[copyFromLater], collapse = ", "), ". Fix the order of scenarios. Stopping now.")
+  }
+  for (run in rownames(scenConf)) {
+    copyConfigFrom <- scenConf[run, "copyConfigFrom"]
+    if (! is.na(copyConfigFrom)) {
+      scenConf[run, is.na(scenConf[run, ])] <- scenConf[copyConfigFrom, is.na(scenConf[run, ])]
+    }
+  }
+  # save error count into first element which must be NA anyway
+  scenConf[1, "copyConfigFrom"] <- length(copyFromMissing) + sum(copyFromLater)
   return(scenConf)
 }

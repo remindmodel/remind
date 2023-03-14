@@ -13,34 +13,34 @@ require(stringr, quietly = TRUE)
 helpText <- "
 #' Rscript start.R [options] [file]
 #'
-#'    Without [file] argument starts a single REMIND run using the settings from
-#'    `config/default.cfg` and `main.gms`.
+#' Without [file] argument starts a single REMIND run using the settings from
+#' config/default.cfg` and `main.gms`.
 #'
-#'    [file] must be a scenario config .csv file (usually in the config/
-#'    directory).  Using this will start all REMIND runs specified by
-#'    \"start = 1\" in that file.
+#' [file] must be a scenario config .csv file (usually in the config/
+#' directory).  Using this will start all REMIND runs specified by
+#' \"start = 1\" in that file.
 #'
-#'    --help, -h:        show this help text and exit
-#'    --debug, -d:       start a debug run with cm_nash_mode = debug
-#'    --gamscompile, -g: compile gms of all selected runs. Combined with
+#'   --help, -h:         show this help text and exit
+#'   --debug, -d:        start a debug run with cm_nash_mode = debug
+#'   --gamscompile, -g:  compile gms of all selected runs. Combined with
 #'                       --interactive, it stops in case of compilation errors,
 #'                       allowing the user to fix them and rerun gamscompile;
 #'                       combined with --restart, existing runs can be checked.
-#'    --interactive, -i: interactively select config file and run(s) to be
+#'   --interactive, -i:  interactively select config file and run(s) to be
 #'                       started
-#'    --quick, -q:       starting one fast REMIND run with one region, one
+#'   --quick, -q:        starting one fast REMIND run with one region, one
 #'                       iteration and reduced convergence criteria for testing
 #'                       the full model.
-#'    --reprepare, -R:   rewrite full.gms and restart run
-#'    --restart, -r:     interactively restart run(s)
-#'    --test, -t:        test scenario configuration and writing the RData files
+#'   --reprepare, -R:    rewrite full.gms and restart run
+#'   --restart, -r:      interactively restart run(s)
+#'   --test, -t:         test scenario configuration and writing the RData files
 #'                       in the REMIND main folder without starting the runs
-#'    --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
 #'
-#'    You can combine --reprepare with --debug, --testOneRegi or --quick and the
-#'    selected folders will be restarted using these settings.  Afterwards,
-#'    using --reprepare alone will restart the runs using their original
-#'    settings.
+#' You can combine --reprepare with --debug, --testOneRegi or --quick and the
+#' selected folders will be restarted using these settings.  Afterwards,
+#' using --reprepare alone will restart the runs using their original
+#' settings.
 "
 
 # Source everything from scripts/start so that all functions are available everywhere
@@ -83,15 +83,7 @@ if (any(c("--testOneRegi", "--debug", "--quick") %in% flags) & "--restart" %in% 
   if (gms::getLine() %in% c("Y", "y")) flags <- c(flags, "--reprepare")
 }
 
-# Check if dependencies for a model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
-  installedPackages <- piamenv::fixDeps(ask = TRUE)
-  piamenv::stopIfLoaded(names(installedPackages))
-} else {
-  stop("REMIND requires piamenv >= 0.3.4, please run the following to update it:\n",
-       "renv::install('piamenv')\n",
-       "and re-run start.R in a fresh R session.")
-}
+ensureRequirementsInstalled()
 
 if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
     && !getOption("autoRenvUpdates", FALSE)
@@ -231,6 +223,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
+    if (! file.exists("input/source_files.log")) {
+      message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
+      system("Rscript start.R config/tests/scenario_config_compile.csv")
+    }
     message("\nTrying to compile the selected runs...")
     lockID <- gms::model_lock()
   }
@@ -286,6 +282,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
         # overwrite slurmConfig settings provided in scenario config file with those selected by user
         cfg$slurmConfig      <- slurmConfig
         if (testOneRegi_region != "") cfg$gms$c_testOneRegi_region <- testOneRegi_region
+      }
+      # Make sure all python requirements are installed
+      if (cfg$pythonEnabled == "on") {
+        piamenv::updatePythonVirtualEnv()
       }
       # Directly start runs that have a gdx file location given as path_gdx... or where this field is empty
       gdx_specified <- grepl(".gdx", cfg$files2export$start[path_gdx_list], fixed = TRUE)

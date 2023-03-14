@@ -27,38 +27,39 @@
 *'  This means, taxes are budget-neutral: the revenue is always recycled back and still available for the economy. 
 *'  Nevertheless, the marginal of the (variable of) taxed activities is impacted by the tax which leads to the adjustment effect.
 ***---------------------------------------------------------------------------
-  q21_taxrev(t,regi)$(t.val ge max(2010,cm_startyear))..
-    vm_taxrev(t,regi)
-    =e=
-      v21_taxrevGHG(t,regi)
-    + sum(emi_sectors, v21_taxrevCO2Sector(t,regi,emi_sectors))
-    + v21_taxrevCO2luc(t,regi)
-    + v21_taxrevCCS(t,regi) 
-    + v21_taxrevNetNegEmi(t,regi)
-    + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
-    + v21_taxrevFE(t,regi)
-    + sum(in, v21_taxrevCES(t,regi,in))
-    + v21_taxrevResEx(t,regi)   
-    + v21_taxrevPE2SE(t,regi)
-    + v21_taxrevTech(t,regi)
-    + v21_taxrevXport(t,regi)
-    + v21_taxrevSO2(t,regi)
-    + v21_taxrevBio(t,regi)
-    - vm_costSubsidizeLearning(t,regi)
-    + v21_implicitDiscRate(t,regi)
-    + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
-    + v21_taxrevFlex(t,regi)
-    + sum(tradePe, v21_taxrevImport(t,regi,tradePe))  
+q21_taxrev(t,regi)$(t.val ge max(2010,cm_startyear))..
+  vm_taxrev(t,regi)
+  =e=
+    v21_taxrevGHG(t,regi)
+  + sum(emi_sectors, v21_taxrevCO2Sector(t,regi,emi_sectors))
+  + v21_taxrevCO2luc(t,regi)
+  + v21_taxrevCCS(t,regi) 
+  + v21_taxrevNetNegEmi(t,regi)
+  + sum(entyPe, v21_taxrevPE(t,regi,entyPe))
+  + v21_taxrevFE(t,regi)
+  + sum(in, v21_taxrevCES(t,regi,in))
+  + v21_taxrevResEx(t,regi)   
+  + v21_taxrevPE2SE(t,regi)
+  + v21_taxrevTech(t,regi)
+  + v21_taxrevXport(t,regi)
+  + v21_taxrevSO2(t,regi)
+  + v21_taxrevBio(t,regi)
+  - vm_costSubsidizeLearning(t,regi)
+  + v21_implicitDiscRate(t,regi)
+  + sum(emiMkt, v21_taxemiMkt(t,regi,emiMkt))  
+  + v21_taxrevFlex(t,regi)
+  + sum(tradePe, v21_taxrevImport(t,regi,tradePe))  
+  + v21_taxrevChProdStartYear(t,regi)
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
-    + vm_taxrevimplicitQttyTargetTax(t,regi)
+  + vm_taxrevimplicitQttyTargetTax(t,regi)
 $endif.cm_implicitQttyTarget 
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
-    + sum((entySe,entyFe,sector)$(entyFe2Sector(entyFe,sector)),vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector))
+  + sum((entySe,entyFe,sector)$(entyFe2Sector(entyFe,sector)),vm_taxrevimplicitPriceTax(t,regi,entySe,entyFe,sector))
 $endIf.cm_implicitPriceTarget
 $ifthen.cm_implicitPePriceTarget not "%cm_implicitPePriceTarget%" == "off"
-    + sum(entyPe,vm_taxrevimplicitPePriceTax(t,regi,entyPe))
+  + sum(entyPe,vm_taxrevimplicitPePriceTax(t,regi,entyPe))
 $endIf.cm_implicitPePriceTarget
- ;
+;
 
 ***---------------------------------------------------------------------------
 *'  Calculation of greenhouse gas taxes: tax rate (combination of 4 components) times ghg emissions
@@ -295,5 +296,17 @@ q21_taxrevImport(t,regi,tradePe)..
   p21_tau_Import(t,regi,tradePe) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe)
     - p21_taxrevImport0(t,regi,tradePe)
 ;
+
+***---------------------------------------------------------------------------
+*'  Calculation of costs limiting the change compared to the reference run in cm_startyear.
+***---------------------------------------------------------------------------
+q21_taxrevChProdStartYear(t,regi)$(t.val ge max(2010,cm_startyear))..
+  v21_taxrevChProdStartYear(t,regi)
+  =e=
+  sum(en2en(enty,enty2,te), vm_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) )
+  - p21_taxrevChProdStartYear0(t,regi)
+;
+
+
 
 *** EOF ./modules/21_tax/on/equations.gms

@@ -49,14 +49,54 @@ upstream repository (the original remindmodel fork).
 
 ## 2.2 Clone (download your personal repository)
 
-It is basically possible to change the code just using the GitHub
-interface, but since you want to test and run your code locally you have
-to clone the repository from your fork anyway. This can be done using
-the 'https' or 'ssh' address of your fork together with the `git clone`
-command (cmd/bash/GUI) at your machine. We recommend to upload an
-ssh-key and use ssh to connect to GitHub. Under Windows open a git bash as follows: 
-open the file explorer, right-click on the folder you want to execute the git commands in
-and choose "Git Bash Here" from the context menu. You need to have git installed.
+To run REMIND on your local machine or a high-performance cluster, you have to clone (download) the code from your fork.
+This can be done with your preferred git client (e.g. the `git` command line program or [GitHub Desktop](https://desktop.github.com/)).
+We recommend to upload an ssh-key and use ssh to connect to GitHub.
+
+If you want to use the `git` command line program in windows, open a git bash as follows: 
+open the file explorer, right-click on the folder you want to execute the git commands in and choose "Git Bash Here" from the context menu.
+You need to have git installed.
+
+Because of a storied history, the full REMIND repository is about 1.2 GB in size; therefore, it is recommended to only clone (download) the parts you need, or use a local reference repository if available.
+
+### Option 1: With a local reference
+
+If you have a local reference available (e.g. on the PIK cluster, or because you cloned REMIND previously), we strongly recommend to use it to avoid re-downloading and duplicating all data.
+On the PIK cluster, use the `cloneremind` command like this:
+```shell
+cloneremind git@github.com:<yourname>/remind.git
+```
+where you replace `<yourname>` with your GitHub username.
+
+If you are not on the PIK cluster but have a reference clone available, use
+```shell
+git clone --reference /path/to/reference/clone git@github.com:<yourname>/remind.git
+```
+where you replace `/path/to/reference/clone` with the path to your existing REMIND clone and `<yourname>` with your GitHub username.
+Do not delete the reference.
+
+### Option 2: Download only needed parts
+
+If you don't have a local reference available, you can filter large files when cloning REMIND.
+This saves a lot of time downloading everything and also saves space for storage, in exchange for needing to automatically download things on-demand if you want to examine old versions of remind.
+
+Using the git command line program, use
+```shell
+git clone --filter=blob:limit=1m git@github.com:<yourname>/remind.git
+```
+where you replace `<yourname>` with your GitHub username.
+
+### Option 3: Download everything
+
+If you don't care for download time and storage requirements, or want access to all historical versions of REMIND without internet access, just clone normally.
+
+Using the git command line program, use
+```shell
+git clone git@github.com:<yourname>/remind.git
+```
+where you replace `<yourname>` with your GitHub username.
+
+### Exercise
 
 > **Exercise**: Visit your fork and clone the repository at your
 > machine.
@@ -75,7 +115,7 @@ After you have added your changes locally, push (upload) them to your personal r
 ## 2.4 Pull (updates from the upstream repository)
 
 To keep your fork up-to-date with the upstream repository you can use
-the GitHub interface. Via `Compare` you are able to check, if the
+the GitHub interface. Via `Compare` you can check if the
 upstream is some commits ahead. If so merge these new changes into
 your fork. 
 
