@@ -54,7 +54,7 @@ Parameter f36_uedemand_build(tall,all_regi,all_demScen,all_rcp_scen,all_in)   "u
 $onverbatim
 $Offlisting
 $ondelim
-$include "./modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
+$include "../../modules/36_buildings/simple/input/f36_uedemand_build.cs4r"
 $offdelim
 $Onlisting
 $offverbatim
