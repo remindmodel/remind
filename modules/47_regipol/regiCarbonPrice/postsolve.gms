@@ -438,7 +438,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   display "p47_implicitQttyTargetTaxRescale before dampening: ", p47_implicitQttyTargetTaxRescale;
 *** dampen rescale factor when closer than 1.5 / 0.75 to reduce oscillations
   if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1,
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 2.5, !! prevent numeric explosion
+    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 2.5, !! prevent numeric explosion by limiting the maximum value
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 2.5;
     );
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
@@ -451,15 +451,16 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       + 1
     ;
   else !! if rescale is <1, do the same procedure on (1/rescale)
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.4,  !! prevent numeric explosion
+    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.4,  !! prevent numeric explosion by limiting the minimum value
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.4;
+      display "rescale limited to 0.4"
     );
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       1
       / (
           (  
-            ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
-            * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
+            ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+            * exp( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
             * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterstions, 
               !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
           )
