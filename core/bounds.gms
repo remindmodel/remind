@@ -165,15 +165,15 @@ if (cm_startyear le 2015,
   loop(regi,
     p_CapFixFromRWfix("2015",regi,"tnrs") = max( pm_aux_capLowerLimit("tnrs",regi,"2015") , pm_NuclearConstraint("2015",regi,"tnrs") );
     p_deltaCapFromRWfix("2015",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  )
-                                      / 7.5;
+                                      / 7.5;  !! this parameter is currently only for display and not further used to fix anything
     p_deltaCapFromRWfix("2010",regi,"tnrs") = ( p_CapFixFromRWfix("2015",regi,"tnrs") - pm_aux_capLowerLimit("tnrs",regi,"2015")  )
-                                      / 7.5;
+                                      / 7.5; !! this parameter is currently only for display and not further used to fix anything
     vm_cap.fx("2015",regi,"tnrs","1") = p_CapFixFromRWfix("2015",regi,"tnrs");
   );
 );
 
-if (cm_startyear le 2020,   !! require the realization of at least 50% of the plants that are currently under construction and thus might be finished in the time period 2018-2022
-   vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.5 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
+if (cm_startyear le 2020,   !! require the realization of at least 70% of the plants that are currently under construction and thus might be finished until 2020 - should be updated with real-world 2020 numbers
+   vm_deltaCap.lo("2020",regi,"tnrs","1") = 0.70 * pm_NuclearConstraint("2020",regi,"tnrs") / 5;
    vm_deltaCap.up("2020",regi,"tnrs","1") = pm_NuclearConstraint("2020",regi,"tnrs") / 5;
 );
 if (cm_startyear le 2025,   !! upper bound calculated in mrremind/R/calcCapacityNuclear.R: 50% of planned and 30% of proposed plants, plus extra for lifetime extension and newcomers
@@ -518,6 +518,13 @@ vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
 $IFTHEN.transpGDPscale not "%cm_transpGDPscale%" == "on" 
   vm_transpGDPscale.fx(t,regi) = 1;
 $ENDIF.transpGDPscale
+
+***----------------------------------------------------------------------------
+*'  Limit slack variable and uncontrolled variable values for adj costs that limit changes to reference in cm_startyear
+***----------------------------------------------------------------------------
+
+v_changeProdStartyearSlack.up(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = + c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
+v_changeProdStartyearSlack.lo(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) = - c_SlackMultiplier * p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ;
 
 
 *** EOF ./core/bounds.gms

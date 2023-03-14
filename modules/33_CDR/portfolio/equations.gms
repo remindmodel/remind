@@ -178,7 +178,7 @@ q33_EW_LimEmi(t,regi)..
 q33_OAE_FEdemand(t,regi,entyFe2)$sum(entyFe, fe2cdr(entyFe,entyFe2,"oae"))..
     sum(fe2cdr(entyFe,entyFe2,"oae"), v33_FEdemand(t,regi,entyFe,entyFe2,"oae"))
     =e=
-    p33_fedem("oae", entyFe2) * sm_EJ_2_TWa * (- v33_emi(t,regi,"dac"))
+    p33_fedem("oae", entyFe2) * sm_EJ_2_TWa * (- v33_emi(t,regi,"oae"))
     ;
 
 *** EOF ./modules/33_CDR/portfolio/equations.gms

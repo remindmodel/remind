@@ -132,8 +132,7 @@ withCallingHandlers({ # piping messages to logFile
   generateIIASASubmission(filename_remind2_mif, mapping = mapping, model = model, mappingFile = mappingFile,
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder, outputPrefix = "",
-                          logFile = logFile, generateSingleOutput = TRUE,
-                          outputFilename = basename(OUTPUT_mif),
+                          logFile = logFile, outputFilename = basename(OUTPUT_mif),
                           iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL,
                           generatePlots = TRUE)
 
