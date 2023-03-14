@@ -13,7 +13,7 @@ option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
 option p47_implicitQttyTargetTax_iter:3:1:4;
 option p47_implicitQttyTargetCurrent_iter:3:1:4;
 option p47_implicitQttyTargetCurrent:3:2:2;
-option pm_implicitQttyTarget:3:2:2;
+option pm_implicitQttyTarget:3:2:4;
 option p47_implicitQttyTargetTax_prevIter:3:2:2;
 option pm_implicitQttyTarget_dev:3:2:2;
 option p47_implicitQttyTargetTax:3:2:2;
