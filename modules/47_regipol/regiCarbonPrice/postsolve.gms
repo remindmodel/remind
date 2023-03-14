@@ -442,9 +442,15 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 2.5;
     );
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-     ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
-     * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 )
-     + 1
+      (  ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+         * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 )
+         + 1
+      )
+      *
+      ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also create some dampening over iterstions, 
+      !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
+    ;
+
   else !! if rescale is <1, do the same procedure on (1/rescale)
     if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.4,  !! prevent numeric explosion
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.4;
@@ -452,10 +458,13 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       1
       / (
-         ( (1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) - 1 )
-         * exp( ( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) - 1.5 ) * 2 )
-         + 1
-      )
+          (  ( (1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) - 1 )
+             * exp( ( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) - 1.5 ) * 2 )
+             + 1
+          )
+          *
+          ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100
+        )
   );
   option p47_implicitQttyTargetTaxRescale:3:0:4; display "p47_implicitQttyTargetTaxRescale after dampening: ", p47_implicitQttyTargetTaxRescale;
 
