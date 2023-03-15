@@ -485,7 +485,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
                 * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) < 0 
             ) AND  !! sign changed between iteration -1 and current iteration
             ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) 
-                p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) ) < 0
+                * p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) ) < 0
            ) !! sign changed between iteration -2 and iteration -1
         ) ,
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
