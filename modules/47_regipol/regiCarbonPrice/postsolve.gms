@@ -481,19 +481,20 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 *** dampen if rescale oscillates
   if( (iteration.val > 3) , 
     if ( ( 
-            ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup)  
-                * p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) < 0 
-            ) AND  !! sign changed between iteration -1 and current iteration
-            ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) 
-                * p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) ) < 0
-           ) !! sign changed between iteration -2 and iteration -1
+            ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) 
+                * ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) ) < 0 
+            ) AND  !! test if rescale changed from >1 to <1 or vice versa between iteration -1 and current iteration
+            ( ( ( p47_implicitQttyTargetTaxRescale_iter(iteration-1,ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
+                * ( p47_implicitQttyTargetTaxRescale_iter(iteration-2,ttot,ext_regi,qttyTarget,qttyTargetGroup) -1 ) ) < 0
+           ) !! test if rescale changed from >1 to <1 or vice versa between iteration -2 and iteration -1
         ) ,
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
         1 + ( ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) / 2 ) 
       ; !! this brings the value closer to one. The formulation works reasonably well within the range of 0.5..2
+      display "reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations: ", p47_implicitQttyTargetTaxRescale;
     );
   );
-  display "p47_implicitQttyTargetTaxRescale reduction for oscillation in the previous 3 iterations: ", p47_implicitQttyTargetTaxRescale;  
+    
 );
 
 p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup);
