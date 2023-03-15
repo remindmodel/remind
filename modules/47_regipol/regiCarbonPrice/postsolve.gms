@@ -438,8 +438,8 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   display "p47_implicitQttyTargetTaxRescale before dampening: ", p47_implicitQttyTargetTaxRescale;
 *** dampen rescale factor when closer than 1.5 / 0.75 to reduce oscillations
   if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1,
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 2.5, !! prevent numeric explosion by limiting the maximum value
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 2.5;
+    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1.7, !! prevent numeric explosion by limiting the maximum value
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 1.7;
     );
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       (  
@@ -451,9 +451,8 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       + 1
     ;
   else !! if rescale is <1, do the same procedure on (1/rescale)
-    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.4,  !! prevent numeric explosion by limiting the minimum value
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.4;
-      display "rescale limited to 0.4"
+    if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) < 0.6,  !! prevent numeric explosion by limiting the minimum value
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 0.6;
     );
     p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       1
@@ -472,10 +471,10 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 
 *** put a bound around the rescale factor with increasing iterations to help convergence
   p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
-    max( min( 2 * EXP( -0.08 * iteration.val ) + 1.01 ,
+    max( min( 2 * EXP( -0.05 * iteration.val ) + 1.01 ,
               p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup)
          ),
-         1 / ( 2 * EXP( -0.08 * iteration.val ) + 1.01)
+         1 / ( 2 * EXP( -0.05 * iteration.val ) + 1.01)
     );
   display "p47_implicitQttyTargetTaxRescale after boundaries: ", p47_implicitQttyTargetTaxRescale;
 );
@@ -532,7 +531,8 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) = ttot.val;
 );
 
-p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(ttot,all_regi,qttyTarget,qttyTargetGroup);
+*** tax associated with a specific iteration is the tax that was used in this iteration
+p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup); 
 
 display p47_implicitQttyTargetCurrent, pm_implicitQttyTarget, p47_implicitQttyTargetTax_prevIter, pm_implicitQttyTarget_dev, p47_implicitQttyTarget_dev_iter, p47_implicitQttyTargetTax, 
         p47_implicitQttyTargetTaxRescale, p47_implicitQttyTargetTaxRescale_iter, p47_implicitQttyTargetTax_iter, p47_implicitQttyTargetCurrent_iter, p47_implicitQttyTargetTax0;
