@@ -40,6 +40,7 @@ helpText <- "
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
 #'                       specified by \"start = MYGROUP\"
+#'   titletag=MYTAG      prepend \"MYTAG-\" to all titles of all runs that are started
 #'
 #' You can combine --reprepare with --debug, --testOneRegi or --quick and the
 #' selected folders will be restarted using these settings.  Afterwards,
@@ -55,7 +56,7 @@ invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRU
 acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "--gamscompile", i = "--interactive",
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 startgroup <- "1"
-flags <- lucode2::readArgs("startgroup", .flags = acceptedFlags, .silent = TRUE)
+flags <- lucode2::readArgs("startgroup", "titletag", .flags = acceptedFlags, .silent = TRUE)
 
 # initialize config.file
 config.file <- NULL
@@ -216,6 +217,10 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     } else {
       scenarios <- data.frame("default" = "default", row.names = "default")
     }
+  }
+
+  if (exists("titletag")) {
+    row.names(scenarios) <- paste0(titletag, "-", row.names(scenarios))
   }
 
   ###################### Loop over scenarios ###############################
