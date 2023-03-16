@@ -148,7 +148,11 @@ CES.cal.report$value <- as.numeric(as.character(CES.cal.report$value))
 
 CES.cal.report = CES.cal.report %>% filter(iteration %in% c("target", "origin", itr_num))
 
-
+#selecting only calibrated nodes to show on report
+ppf_29 <- readGDX(gdx, "ppf_29")
+pf_eff_target_dyn37 <- readGDX(gdx, "pf_eff_target_dyn37")
+calib.node = c(ppf_29, pf_eff_target_dyn37)
+CES.cal.report <- CES.cal.report %>% filter((pf %in% c(calib.node)))
 
 iter.max = max(itr_num)
 
