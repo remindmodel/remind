@@ -446,7 +446,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       (  
         ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
           * exp( (p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
-          * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterstions, 
+          * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterations, 
       !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
       )
       + 1
@@ -461,7 +461,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
           (  
             ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 )
             * exp( ( 1 / p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1.5 ) * 2 ) !! this is 0.4 at p47_rescale = 1.01; 1 at 1.5, 2.7 at 2 
-            * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterstions, 
+            * ( 2 * ( exp( -0.025 * iteration.val) + 0.1 ) )  !! in order to also have some dampening over iterations, 
               !! this line decreases from 2.1 at iteration 1 to 0.36 in iteration 100. 
           )
           + 1
