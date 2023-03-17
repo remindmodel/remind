@@ -220,8 +220,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
   }
 
+  # Append titletag to scenario names in the scenario title and titles of reference scenarios
   if (exists("titletag")) {
-    row.names(scenarios) <- paste0(row.names(scenarios), "-", titletag)
+    scenarios <- addTitletag(titletag = titletag, scenarios = scenarios)
   }
 
   ###################### Loop over scenarios ###############################
