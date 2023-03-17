@@ -21,11 +21,17 @@ Example for a scenario_config of REMIND
 
 Those two columns are mandatory and usually placed at the beginning:
 
-* `title` labels that run. It contains a unique identifier for each run, which must not contain a `.` and must not end with a `_`. The more runs you will have, the more it will be important that you label them in a way such that you easily remember the specific settings you chose for this run.
-* `start` is a boolean switch that lets you choose whether or not you would like to start this run once you submit this config file to the modeling routine. It often makes sense to keep some runs in the csv file to remember their configurations for the next time although you do not want to run them now and therefore switch them off. You do this by setting `start` to 0.
+* `title` labels that run. It contains a unique identifier for each run that must only consist of letters, digits, `_` and `-`. The more runs you will have, the more it will be important that you label them in a way such that you easily remember the specific settings you chose for this run.
+* `start` can be used to start specified runs by default or sort the runs into different groups. By default, only runs which have `1` in their `start` column will be started. It often makes sense to keep some runs in the csv file to remember their configurations, but not start them by default. You can do this by either setting `start` to `0`, so they will never be started; or by setting start to a custom group like `calibrate` (for calibration runs), so they will only be started when this group is selected. You can specify multiple groups, separated by commas, then the run will be part of all of the groups. To specify which group to start, either run `./start.R --interactive` and select the group, or run e.g. `start.R startgroup=calibrate config/scenario_config.csv` directly.
+
+The column `copyFromConfig` allows to specify a scenario from the same config file. All empty cells are copied from this scenario, allowing to generate scenario variations efficiently. Nested assignment is allowed, so `NDC` can specify `Base` here, and `Policy` can specify `NDC`, so if both `Policy` and `NDC` don't specify a certain switch, the value is taken from `Base`. The only restriction is that the scenario specified in the `copyFromConfig` cell must be defined in an earlier row. To get the full settings for a specific scenario (here: `SSP2EU-Base` in `scenario_config.csv`) including those copied, run in your REMIND folder:
+``` R
+source("scripts/start/readCheckScenarioConfig.R"); source("scripts/start/path_gdx_list.R")
+readCheckScenarioConfig("config/scenario_config.csv")["SSP2EU-Base", ]
+```
 
 Further columns are the configurations that you can choose for the specific runs.
-They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
+They may contain values for parameters such as `cm_rcp_scen` and module realizations such as `exponential` for [`./module/carbonprice/`](../modules/45_carbonprice). They overwrite the default defined and explained in [`./config/default.cfg`](../config/default.cfg) and [`./main.gms`](../main.gms) by the respective cell value for each run. If you leave a cell empty or if no column exists for a setting, the default value is used.
 
 An important feature of scenario_config files is the possibility to execute runs which build on each other.
 Examples are (1) using the base run for all time steps until `cm_startyear`, or (2) use it to compare the impact of certain policies to a situation without them.
@@ -50,7 +56,7 @@ These columns starting with `path…` can point to either finished runs or other
 * provide a path to an existing `gdx` file such as `./output/SSP2-Base_2021-12-24_19.30.00/fulldata.gdx`. For subfolders of `./output/`, writing the folder name `SSP2-Base_2021-12-24_19.30.00` is sufficient.
 * provide the entry of a `title` of another row, such as `SSP2-Base`.
   * If the run with this `title` is set to `start = 1`, then runs that point to this `title` are turned into “subsequent runs“ that will be started after the linked one is finished. Note that in this case, the REMIND code must not change until the `full.gms` file of the last subsequent run was generated.
-  * If the run with this `title` is set to `start = 0` or does not exist in the `scenario_config_XYZ.csv` file, the function `configure_cfg` of [`start.R`](../start.R) searches in `./output` for folder with that title which contain a `fulldata.gdx` and whose `full.log` states `*** Status: Normal completion`, and then picks the one with the latest date and time in the folder name. Appending a `_` to a `path_gdx…` entry forces REMIND to always take a `fulldata.gdx` from an earlier run. So if you have a row with `title` `BAU_Nash` and you add `BAU_Nash_` to the `path_gdx` column, REMIND always uses an earlier run with the same name as initial condition, speeding up convergence.
+  * If the run with this `title` is set to `start = 0` or does not exist in the `scenario_config_XYZ.csv` file, the function `configureCfg` from [`configureCfg.R`](../scripts/start/configureCfg.R) searches in `./output` for folder with that title which contain a `fulldata.gdx` and whose `full.log` states `*** Status: Normal completion`, and then picks the one with the latest date and time in the folder name.
   * If no run is found, the script also looks in `cfg$modeltests_folder` and so if you use a title of a scenario from the automated model tests in [`scenario_config_AMT.csv`](../config/scenario_config_AMT.csv), the most recent of these run is picked which is useful for testing purposes.
 
 The image above shows these possibilities used for `path_gdx_ref`. Run `RCP20` has a complete path specified but will not be executed because `start = 0`. `RCP37` provides a complete folder name and therefore starts immediately using the `fulldata.gdx` from this folder, `RCP26_subsequent` waits for `SSP2-Base` to be finished, and `RCP26_forceoldrun` selects the latest already finished `SSP2-Base` run in the output folder and starts immediately. If you set `start = 0` also for `SSP2-Base`, then `RCP26_subsequent` will also try to find an old run in a folder that looks like `SSP2-Base_YYYY-MM-DD_HH.MM.SS`. Note that the fact that “subsequent“ is part of the `title` is only to ease the understanding, you can name these runs however you want.
@@ -63,6 +69,11 @@ Before you start the runs, you can test whether the right runs would be started 
 ```bash
 Rscript start.R --test config/scenario_config_XYZ.csv
 ```
+If you want to check also whether the different runs compile correctly, run
+``` bash
+Rscript start.R --gamscompile config/scenario_config_XYZ.csv
+```
+
 Running the complete chain of runs, but only for one region and one iteration, can be started with:
 ```bash
 Rscript start.R --quick config/scenario_config_XYZ.csv
@@ -73,15 +84,15 @@ Rscript start.R --interactive config/scenario_config_XYZ.csv
 ```
 In interactive mode, the scripts lets you select a config file if you do not specify one. You can combine all these options and use
 ```bash
-Rscript start.R -qit
+Rscript start.R -gqi
 ```
-as a shortcut, meaning `q` for `--quick`, `i` for `--interactive`, `t` for `--test`.
+as a shortcut, meaning `g` for `gamscompile`, `i` for `--interactive`, `q` for `--quick`. The shortcut `t` for `--test` avoids that `--gamscompile` is executed.
 
 
 Further notes:
 --------------
 
-* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_regiCO2target` to enter comma separated values `2020.2050.USA.year.netGHG 1, 2020.2050.EUR.year.netGHG 1` to specify emission goals for multiple regions.
+* The cells need not contain only a single value, but for example module realization [`47_regipol/regiCarbonPrice`](../modules/47_regipol/regiCarbonPrice) allows to specify in the parameter `cm_emiMktTarget` to enter comma separated values `2020.2050.USA.all.year.netGHG 1, 2020.2050.all.EUR.year.netGHG 1` to specify emission goals for multiple regions.
 
 * To compare a `scenario_config*.csv` file to the current default configuration, you can run `Rscript -e "remind2::colorScenConf()"` in your REMIND directory and select the file you are interested in. [`colorScenConf()`](https://github.com/pik-piam/remind2/blob/master/R/colorScenConf.R) produces a file ending with `_colorful.xlsx` in the same directory and provides you with information how to interpret the colors within.
 
@@ -90,4 +101,16 @@ Further notes:
 ```bash
 git diffmif scenario_config_1.csv scenario_config_2.csv
 git diff --word-diff=color --word-diff-regex=. --no-index scenario_config_1.csv scenario_config_2.csv
+```
+
+* As noted above, while the bundle is running, you may not change the code or `git checkout` another branch, because that would disturb runs which are started later. If you want to work on other things in REMIND while the bundle is running, you should therefore make a copy of the REMIND clone before starting the bundle. On linux, use `rsync` for a fast copy:
+
+```shell
+rsync -a --exclude='/output/' /path/to/remind/ /path/to/remind-copy
+```
+replace `/path/to/remind/` with the path to remind, and `/path/to/remind-copy` with the desired path for the remind copy. Note that you have to use a `/` at the end of the existing path, and no `/` at the end of the new path.
+
+After the run is finished, you can use `mv` to move the output folder generated in the copy back into the main folder, to have all your run output in one place:
+```shell
+mv /path/to/remind-copy/output/* /path/to/remind/output/
 ```

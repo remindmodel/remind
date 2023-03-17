@@ -16,16 +16,16 @@ p21_tau_pe2se_sub(tall,all_regi,all_te)        "subsidy path for primary energy 
 p21_max_fe_sub(tall,all_regi,all_enty)         "maximum final energy subsidy levels from REMIND version prior to rev. 5429 [$/TWa]"
 p21_prop_fe_sub(tall,all_regi,all_enty)        "subsidy proportional cap to avoid liquids increasing dramatically"
 p21_tau_fuEx_sub(tall,all_regi,all_enty)       "subsidy path for fuel extraction [$/TWa]"
-p21_tau_bioenergy_tax(ttot)                    "linearly over time increasing tax on bioenergy emulator price"
-p21_tau_BioImport(ttot,all_regi)               "bioenergy import tax level"
+p21_bio_EF(ttot,all_regi)                      "bioenergy emission factor, which is used to calculate the emission-factor-based tax level [GtC/TWa]"
+p21_tau_Import(ttot,all_regi,all_enty)         "tax on energy imports, currently only works on primary energy levels as those are traded on nash markets [trUSD/TWa]"
 pm_tau_pe_tax(ttot,all_regi,all_enty)          "pe tax path"
-pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to mimic production drain and transformation costs"
+pm_tau_ces_tax(ttot,all_regi,all_in)           "ces production tax to implement CES mark-up cost in a budget-neutral way"
 
-p21_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
-p21_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
-p21_taxrevCO2luc0(ttot,all_regi)                 "reference level value of co2luc emission tax"
+pm_taxrevGHG0(ttot,all_regi)                    "reference level value of GHG emission tax"
+pm_taxrevCO2Sector0(ttot,all_regi,emi_sectors)  "reference level value of CO2 sector markup tax"
+pm_taxrevCO2LUC0(ttot,all_regi)                 "reference level value of co2luc emission tax"
 p21_taxrevCCS0(ttot,all_regi)                    "reference level value of CCS tax"
-p21_taxrevNetNegEmi0(ttot,all_regi)              "reference level value of net-negative emissions tax"
+pm_taxrevNetNegEmi0(ttot,all_regi)              "reference level value of net-negative emissions tax"
 p21_emiALLco2neg0(ttot,all_regi)                 "reference level value of negative CO2 emissions for taxes"
 p21_taxrevPE0(ttot,all_regi,all_enty)            "reference level value of primary energy tax"
 p21_taxrevFE0(ttot,all_regi)                     "reference level value of final energy tax"
@@ -39,7 +39,8 @@ p21_taxrevBio0(ttot,all_regi)                    "reference level value of bioen
 p21_implicitDiscRate0(ttot,all_regi)             "reference level value of implicit tax on energy efficient capital"
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)         "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                   "reference level value of flexibility tax"
-p21_taxrevBioImport0(ttot,all_regi)              "reference level value of bioenergy import tax"
+p21_taxrevImport0(ttot,all_regi,all_enty)        "reference level value of import tax"
+p21_taxrevChProdStartYear0(ttot,all_regi)        "reference level value of tax to limit changes compared to reference run in cm_startyear"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
@@ -55,9 +56,10 @@ p21_taxrevSO2_iter(iteration,ttot,all_regi)                "reference level valu
 p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level value of bioenergy tax revenue"
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
-p21_taxrevBioImport_iter(iteration,ttot,all_regi)          "reference level value of bioenergy import tax"
+p21_taxrevImport_iter(iteration,ttot,all_regi,all_enty)    "reference level value of import tax"
+p21_taxrevChProdStartYear_iter(iteration,ttot,all_regi)    "Difference to tax revenues in last iteration for: tax to limit changes compared to reference run in cm_startyear"
 
-p21_CO2TaxSectorMarkup(all_regi,emi_sectors)            "CO2 tax markup in building, industry or transport sector"
+p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)          "CO2 tax markup in building, industry or transport sector"
 
 p21_deltarev(iteration,all_regi)             "convergence criteria for iteration on tax revenue recycling"
 
@@ -66,6 +68,13 @@ p21_tau_CO2_tax_gdx_bau(ttot,all_regi)       "tax path from gdx, may overwrite d
 
 p21_implicitDiscRateMarg(ttot,all_regi,all_in)  "Difference between the normal discount rate and the implicit discount rate"
 ;
+
+
+$ifThen.import not "%cm_import_tax%" == "off" 
+Parameter
+  p21_import_tax(ext_regi,all_enty) "parameter to read in configurations from import tax switch" / %cm_import_tax% /
+;
+$endif.import
 
 
 $ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
@@ -105,7 +114,8 @@ v21_taxrevBio(ttot,all_regi)                    "tax on bioenergy (to reflect su
 v21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexible or inflexible electricity input"
 v21_implicitDiscRate(ttot,all_regi)              "implicit tax on energy efficient capital"
 v21_taxemiMkt(ttot,all_regi,all_emiMkt)         "tax on greenhouse gas emissions"
-v21_taxrevBioImport(ttot,all_regi)              "bioenergy import tax"
+v21_taxrevImport(ttot,all_regi,all_enty)        "tax on energy imports"
+v21_taxrevChProdStartYear(ttot,all_regi)        "tax to limit changes compared to reference run in cm_startyear"
 ;
 
 Positive Variable
@@ -134,7 +144,8 @@ q21_taxrevBio(ttot,all_regi)                    "calculation of tax on bioenergy
 q21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexible or inflexible electricity input"
 q21_implicitDiscRate(ttot,all_regi)             "calculation of the implicit discount rate on energy efficiency capital"
 q21_taxemiMkt(ttot,all_regi,all_emiMkt)         "calculation of specific emission market tax on CO2 emissions"
-q21_taxrevBioImport(ttot,all_regi)              "calculation of bioenergy import tax"
+q21_taxrevImport(ttot,all_regi,all_enty)        "calculation of import tax"
+q21_taxrevChProdStartYear(ttot,all_regi)        "calculation of tax to limit changes compared to reference run in cm_startyear"
 ;
 
 *** EOF ./modules/21_tax/on/declarations.gms

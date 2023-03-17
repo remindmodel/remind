@@ -311,7 +311,7 @@ q32_hydroROR(t,regi)$(t.val > 2005)..  !! require that at least 20% of the hydro
 q32_limitCapTeChp(t,regi)..
 	sum(pe2se(enty,"seel",teChp(te)), vm_prodSe(t,regi,enty,"seel",te) )
 	=l=
-	p32_shCHP(regi,"bscu") 
+	p32_shCHP(t,regi) 
 	* sum(pe2se(enty,"seel",te), vm_prodSe(t,regi,enty,"seel",te) );
 
 ***---------------------------------------------------------------------------
@@ -336,6 +336,15 @@ q32_limitSolarWind(t,regi)$( (cm_solwindenergyscen = 2) OR (cm_solwindenergyscen
 	vm_usableSeTe(t,regi,"seel","spv") + vm_usableSeTe(t,regi,"seel","wind") + vm_usableSeTe(t,regi,"seel","csp") 
 	=l=
 	0.2 * vm_usableSe(t,regi,"seel")
+;
+
+***---------------------------------------------------------------------------
+*** Calculation of share of electricity production of a technology:
+***---------------------------------------------------------------------------
+q32_shSeEl(t,regi,teVRE)..
+    vm_shSeEl(t,regi,teVRE) / 100 * vm_usableSe(t,regi,"seel")
+    =e=
+    vm_usableSeTe(t,regi,"seel",teVRE)
 ;
 
 *** EOF ./modules/32_power/RLDC/equations.gms

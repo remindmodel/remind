@@ -13,7 +13,7 @@ parameters
     p32_avCapFac(ttot,all_regi,all_te)			"Average load factor (Nur) of the first 5 grades of a technology"
     p32_ResMarg(ttot,all_regi)					"Reserve margin as markup on actual peak capacity [0,1]"
     p32_curtOn(all_regi)						"Control variable for curtailment fitted from the DIMES-Results"
-    p32_shCHP(all_regi,char)            		"Upper boundary of chp electricity generation"
+    p32_shCHP(ttot,all_regi)            		"Upper boundary of chp electricity generation"
     p32_grid_factor(all_regi)					"Multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
     p32_LoBheight0(all_regi,LoB)	            "Load band heights at 0% VRE share (declared here, on the data input file, because it is only used for the p32_capFacDem definition) [0,1]"
 ;
@@ -34,6 +34,7 @@ positive variables
     v32_H2cof_Lob3(ttot,all_regi)				"Amount of cofiring of gas/H2 to CSP needed due to use of CSP in LoB 3, which has a high CF" 
     v32_H2cof_CSPsh(ttot,all_regi)				"Amount of cofiring of gas/H2 to CSP needed due to self-correlation of CSP"
     v32_sqrtCurt(ttot,all_regi)					"Helper variable: share of the year for which curtailment is higher than 1/3 of maximum curtailment - this is the amount that we assume we can use for producing H2. Because we assume a 1-to-3 ratio of time to capacity for curtailment, it is also used to calculate the curtailed capacity" 
+    vm_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
 ;
 
 variables	
@@ -72,6 +73,7 @@ equations
     q32_limitCapTeChp(ttot,all_regi)  			"Capacitiy constraint for chp electricity generation"
     q32_limitCapTeGrid(ttot,all_regi)   		"Calculate the additional grid capacity required by VRE"
     q32_limitSolarWind(tall,all_regi)    		"Limits on fluctuating renewables, only turned on for special EMF27 scenarios"
+    q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
 ;
 
 *** EOF ./modules/32_power/RLDC/declarations.gms

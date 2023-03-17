@@ -15,6 +15,7 @@ parameters
 
 ***----------------------------------------------------------------------------------------
 ***--------------------------------------------------MACRO module--------------------------
+***
 ***prices
 pm_pvp(ttot,all_enty)                                "Price on commodity markets",
 p_pvpRef(ttot,all_enty)                              "Price on commodity markets - imported from REF gdx",
@@ -31,7 +32,7 @@ pm_taxCO2eq(ttot,all_regi)                           "CO2 tax path in T$/GtC = $
 pm_taxCO2eqRegi(tall,all_regi)                       "additional regional CO2 tax path in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqHist(ttot,all_regi)                       "Historic CO2 tax path in 2010 and 2015 (also in BAU!) in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
 pm_taxCO2eqSum(tall,all_regi)                        "sum of pm_taxCO2eq, pm_taxCO2eqRegi, pm_taxCO2eqHist, pm_taxCO2eqSCC in T$/GtC = $/kgC. To get $/tCO2, multiply with 272 [T$/GtC]"
-pm_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
+p_taxCO2eq_iteration(iteration,ttot,all_regi)       "save CO2eq tax used in iteration"
 pm_taxCO2eq_iterationdiff(ttot,all_regi)              "help parameter for iterative adjustment of taxes"
 pm_taxCO2eq_iterationdiff_tmp(ttot,all_regi)          "help parameter for iterative adjustment of taxes"
 o_taxCO2eq_iterDiff_Itr(iteration,all_regi) "track p_taxCO2eq_iterationdiff over iterations"
@@ -72,7 +73,6 @@ o_taxCO2eq_afterPeakShiftLoop_Itr_1regi(ttot, iteration) "CO2 taxed in the last 
 pm_emiExog(tall,all_regi,all_enty)                   "exogenous emissions"
 pm_macBaseMagpie(tall,all_regi,all_enty)              "baseline emissions from MAgPIE (type emiMacMagpie)"
 p_macBaseMagpieNegCo2(tall,all_regi)                 "net negative emissions from co2luc"
-p_agriEmiPhaseOut(tall)                              "phase in parameter for baseline agricultural process ch4 and no2 reduction"
 p_macBaseExo(tall,all_regi,all_enty)                 "exogenous baseline emissions (type emiMacExo)"
 pm_macAbat(tall,all_regi,all_enty,steps)             "abatement levels based on data from van Vuuren [fraction]"
 pm_macAbatLev(tall,all_regi,all_enty)                "actual level of abatement per time step, region, and source [fraction]"
@@ -85,8 +85,8 @@ pm_macCost(tall,all_regi,all_enty)                   "abatement costs for all em
 pm_macStep(tall,all_regi,all_enty)                   "step number of abatement level [integer]"
 pm_macSwitch(all_enty)                               "switch to include mac option in the code"
 pm_macCostSwitch(all_enty)                           "switch to include mac costs in the code (e.g. in coupled scenarios, we want to include the costs in REMIND, but MAC effects on emissions are calculated in MAgPIE)"
-pm_priceCO2(tall,all_regi)                           "carbon price [$/tC]"
-p_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
+p_priceCO2(tall,all_regi)                           "carbon price [$/tC]"
+pm_priceCO2forMAC(tall,all_regi,all_enty)             "carbon price defined for MAC gases [$/tC]"
 p_priceGas(tall,all_regi)                            "gas price in [$/tCeq] for ch4gas MAC"
 pm_ResidualCementDemand(tall,all_regi)               "reduction in cemend demand (and thus process emissions) due to climate policy [0...1]"
 pm_CementAbatementPrice(ttot,all_regi)               "CO2 price used during calculation of cement demand reduction [$/tCO2]"
@@ -98,6 +98,12 @@ p_adj_coeff(ttot,all_regi,all_te)                    "coefficient for adjustment
 p_adj_coeff_glob(all_te)                             "coefficient for adjustment costs - global scale"
 p_switch_cement(ttot,all_regi)                       "describes an s-curve to provide a smooth switching from the short-term behavior (depending on per capita capital investments) to the long-term behavior (constant per capita emissions) of CO2 emissions from cement production"
 p_cint(all_regi,all_enty,all_enty,rlf)               "additional emissions of GHG from mining, on top of emissions from combustion"
+
+$IFTHEN.agricult_base_shift not "%c_agricult_base_shift%" == "off"
+p_agricult_base_shift(ext_regi)                      "fraction by which to scale agricultural emissions of baseline up or down, positive values increase emissions, negative values decrease emissions" / %c_agricult_base_shift% /
+p_agricult_shift_phasein(ttot)                       "phase in parameter for baseline agricultural process ch4 and no2 reduction"
+p_macBaseMagpie_beforeShift(ttot,all_regi,all_enty)  "pm_macBaseMagpie parameter before shift of c_agricult_base_shift is applied"
+$ENDIF.agricult_base_shift
 
 pm_eta_conv(tall,all_regi,all_te)                    "Time-dependent eta for technologies that do not have explicit time-dependant etas, still eta converges until 2050 to dataglob_values. [efficiency (0..1)]"
 
@@ -121,7 +127,6 @@ pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciat
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
-pm_demPeBio(tall,all_regi)                                  "Primary energy bioenergy demand from last iteration [TWyr]"
 
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
@@ -134,8 +139,8 @@ p_aux_scaleEmiHistorical_n2o(all_regi)                      "aux. param. to resc
 p_aux_scaleEmiHistorical_ch4(all_regi)                      "aux. param. to rescale MAgPIE ch4 emissions to historical values"
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
-p_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
-p_shareWindOff(ttot)                                 "windoff rollout as a fraction of technical potential"
+pm_shareWindPotentialOff2On(all_regi)                 "ratio of technical potential of windoff to windon"
+pm_shareWindOff(ttot,all_regi)                        "windoff rollout as a fraction of technical potential"
 $ENDIF.WindOff
 
 pm_fe2es(tall,all_regi,all_teEs)                     "Conversion factor from final energies to energy services. Default is 1."
@@ -151,23 +156,23 @@ p_adj_coeff_Orig(ttot,all_regi,all_te)               "initial value of p_adj_coe
 p_adj_seed_te_Orig(ttot,all_regi,all_te)             "initial value of p_adj_seed_te"
 p_varyAdj_mult_adjSeedTe(ttot,all_regi)              "Multiplicative factor to adjust adjustment cost parameter p_adj_seed_te according to CO2 price level"
 p_varyAdj_mult_adjCoeff(ttot,all_regi)               "Multiplicative factor to adjust adjustment cost parameter p_adj_coeff according to CO2 price level"
-$ifthen not "%cm_INNOPATHS_adj_seed_cont%" == "off"
-  p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_INNOPATHS_adj_seed% , %cm_INNOPATHS_adj_seed_cont% /
-$elseif not "%cm_INNOPATHS_adj_seed%" == "off"
-  p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"  / %cm_INNOPATHS_adj_seed% /
+$ifthen not "%cm_adj_seed_cont%" == "off"
+  p_new_adj_seed(all_te)                               "redefine adjustment seed parameters through model config switch" / %cm_adj_seed% , %cm_adj_seed_cont% /
+$elseif not "%cm_adj_seed%" == "off"
+  p_new_adj_seed(all_te)                               "redefine adjustment coefficient parameters through model config switch"  / %cm_adj_seed% /
 $endif
-$ifthen not "%cm_INNOPATHS_adj_coeff_cont%" == "off"
-  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% , %cm_INNOPATHS_adj_coeff_cont% /
-$elseif not "%cm_INNOPATHS_adj_coeff%" == "off"
-  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_INNOPATHS_adj_coeff% /
-$endif
-
-$ifthen not "%cm_INNOPATHS_adj_seed_multiplier%" == "off"
-  p_adj_seed_multiplier(all_te)                               "factor to multiply standard adjustment seed with" / %cm_INNOPATHS_adj_seed_multiplier% /
+$ifthen not "%cm_adj_coeff_cont%" == "off"
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_adj_coeff% , %cm_adj_coeff_cont% /
+$elseif not "%cm_adj_coeff%" == "off"
+  p_new_adj_coeff(all_te)                              "new adj coef parameters" / %cm_adj_coeff% /
 $endif
 
-$ifthen not "%cm_INNOPATHS_adj_coeff_multiplier%" == "off"
-  p_adj_coeff_multiplier(all_te)                               "factor to multiply standard adjustment cost coefficient with" / %cm_INNOPATHS_adj_coeff_multiplier% /
+$ifthen not "%cm_adj_seed_multiplier%" == "off"
+  p_adj_seed_multiplier(all_te)                               "factor to multiply standard adjustment seed with" / %cm_adj_seed_multiplier% /
+$endif
+
+$ifthen not "%cm_adj_coeff_multiplier%" == "off"
+  p_adj_coeff_multiplier(all_te)                               "factor to multiply standard adjustment cost coefficient with" / %cm_adj_coeff_multiplier% /
 $endif
 
 $ifthen.VREPot_Factor not "%c_VREPot_Factor%" == "off"
@@ -223,11 +228,36 @@ pm_share_CCS_CCO2(ttot,all_regi)                      "share of stored CO2 from 
 
 pm_delta_histCap(tall,all_regi,all_te)                "parameter to store data of historic capacity additions [TW/yr]"
 
-* Fuel Prices
-pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)                "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
+p_prodSeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Secondary Energy output of a te in the reference run [TWa]"
+p_prodFEReference(ttot,all_regi,all_enty,all_enty,all_te)         "Final Energy output of a te in the reference run [TWa]"
+p_prodUeReference(ttot,all_regi,all_enty,all_enty,all_te)         "Useful Energy output of a te in the reference run [TWa]"
+p_co2CCSReference(ttot,all_regi,all_enty,all_enty,all_te,rlf)     "Captured CO2 put through the CCS chain in ccs2te (pipelines/injection) in the reference run [GtC]"
+p_prodAllReference(ttot,all_regi,all_te)                          "Sum of the above in the reference run. As each te has only one type of output, the differing units should not be a problem"
+
+
+* Energy carrier Prices
+pm_FEPrice(ttot,all_regi,all_enty,sector,emiMkt)      "parameter to capture all FE prices across sectors and markets (tr$2005/TWa)"
 pm_FEPrice_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to capture all FE prices across sectors and markets (tr$2005/TWa) across iterations"
-pm_SEPrice(ttot,all_regi,all_enty)                              "parameter to capture all SE prices (tr$2005/TWa)"
-pm_PEPrice(ttot,all_regi,all_enty)                              "parameter to capture all PE prices (tr$2005/TWa)"
+pm_SEPrice(ttot,all_regi,all_enty)                    "parameter to capture all SE prices (tr$2005/TWa)"
+pm_PEPrice(ttot,all_regi,all_enty)                    "parameter to capture all PE prices (tr$2005/TWa)"
+
+p_FEPrice_by_SE_Sector_EmiMkt(ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save FE price per SE, sector and emission market (tr$2005/TWa)"
+p_FEPrice_by_Sector_EmiMkt(ttot,all_regi,all_enty,sector,emiMkt) "parameter to save FE marginal price per sector and emission market (tr$2005/TWa)"
+pm_FEPrice_by_SE_Sector(ttot,all_regi,entySe,all_enty,sector)     "parameter to save FE marginal price per SE and sector (tr$2005/TWa)"
+p_FEPrice_by_SE_EmiMkt(ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save FE marginal price per SE and emission market (tr$2005/TWa)"
+p_FEPrice_by_SE(ttot,all_regi,entySe,all_enty)                   "parameter to save FE marginal price per SE (tr$2005/TWa)"
+p_FEPrice_by_Sector(ttot,all_regi,all_enty,sector)               "parameter to save FE marginal price per sector (tr$2005/TWa)"
+p_FEPrice_by_EmiMkt(ttot,all_regi,all_enty,emiMkt)               "parameter to save FE marginal price per emission market (tr$2005/TWa)"
+p_FEPrice_by_FE(ttot,all_regi,all_enty)                          "parameter to save FE marginal price (tr$2005/TWa)"
+
+p_FEPrice_by_SE_Sector_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per SE, sector and emission market (tr$2005/TWa)"
+p_FEPrice_by_Sector_EmiMkt_iter(iteration,ttot,all_regi,all_enty,sector,emiMkt) "parameter to save iteration FE marginal price per sector and emission market (tr$2005/TWa)"
+p_FEPrice_by_SE_Sector_iter(iteration,ttot,all_regi,entySe,all_enty,sector)     "parameter to save iteration FE marginal price per SE and sector (tr$2005/TWa)"
+p_FEPrice_by_SE_EmiMkt_iter(iteration,ttot,all_regi,entySe,all_enty,emiMkt)     "parameter to save iteration FE marginal price per SE and emission market (tr$2005/TWa)"
+p_FEPrice_by_SE_iter(iteration,ttot,all_regi,entySe,all_enty)                   "parameter to save iteration FE marginal price per SE (tr$2005/TWa)"
+p_FEPrice_by_Sector_iter(iteration,ttot,all_regi,all_enty,sector)               "parameter to save iteration FE marginal price per sector (tr$2005/TWa)"
+p_FEPrice_by_EmiMkt_iter(iteration,ttot,all_regi,all_enty,emiMkt)               "parameter to save iteration FE marginal price per emission market (tr$2005/TWa)"
+p_FEPrice_by_FE_iter(iteration,ttot,all_regi,all_enty)                          "parameter to save iteration FE marginal price (tr$2005/TWa)"
 
 pm_tau_fe_tax(ttot,all_regi,emi_sectors,all_enty)    "tax path for final energy"
 pm_tau_fe_sub(ttot,all_regi,emi_sectors,all_enty)    "subsidy path for final energy"
@@ -283,6 +313,7 @@ p_share_seel_s(ttot,all_regi)                        "Share of electricity used 
 
 p_discountedLifetime(all_te)                         "Sum over the discounted (@6%) depreciation factor (omega)"
 p_teAnnuity(all_te)                                  "Annuity factor of a technology"
+
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -321,12 +352,18 @@ vm_costFuBio(ttot,all_regi)                          "fuel costs from bio energy
 vm_omcosts_cdr(tall,all_regi)                        "O&M costs for spreading grinded rocks on fields"
 vm_costpollution(tall,all_regi)                      "costs for air pollution policies"
 vm_emiFgas(ttot,all_regi,all_enty)                   "F-gas emissions by single gases from IMAGE"
-v_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from fuel combustion per region, technology and emission market. [GtC, Mt CH4, Mt N]"
+vm_emiTeDetailMkt(tall,all_regi,all_enty,all_enty,all_te,all_enty,all_emiMkt) "emissions from fuel combustion per region, technology and emission market. [GtC, Mt CH4, Mt N]"
 vm_emiTeMkt(tall,all_regi,all_enty,all_emiMkt)       "total energy-emissions of each region and emission market. [GtC, Mt CH4, Mt N]"
 v_emiEnFuelEx(ttot,all_regi,all_enty)                 "energy emissions from fuel extraction [GtC, Mt CH4, Mt N]"
 vm_emiAllMkt(tall,all_regi,all_enty,all_emiMkt)      "total regional emissions for each emission market. [GtC, Mt CH4, Mt N]"
 vm_flexAdj(tall,all_regi,all_te)                     "flexibility adjustment used for flexibility subsidy (tax) to emulate price changes of technologies which see lower-than-average (higher-than-average) elec. prices [trUSD/TWa]"
-vm_taxrevimplFETax(ttot,all_regi)                    "implicit efficiency directive target tax"
+vm_costCESMkup(ttot,all_regi,all_in)                  "CES markup cost to represent demand-side technology cost of end-use transformation [trUSD/TWa]"
+vm_taxrevimplicitQttyTargetTax(ttot,all_regi)        "quantity target bound implemented through implict tax"
+vm_taxrevimplicitPriceTax(ttot,all_regi,entySe,all_enty,sector)   "final energy price target implemented through implict tax"
+vm_taxrevimplicitPePriceTax(ttot,all_regi,all_enty)  "primary energy price target implemented through implict tax"
+v_changeProdStartyear(ttot,all_regi,all_te)          "absolute change of output with respect to the reference run for each te. Unit: [TWa] for all energy-conversion tech, [GtC] for the CCS chain in ccs2te (pipelines/injection)"
+v_relChangeProdStartYear(ttot,all_regi,all_te)       "calculating the relative change of output with respect to the reference run for each te. Unit: [Percent]"
+v_changeProdStartyearSlack(ttot,all_regi,all_te)     "slack variable to allow a minimum cost-free change with respect to the reference run"
 ;
 
 ***----------------------------------------------------------------------------------------
@@ -354,7 +391,8 @@ vm_prodPe(ttot,all_regi,all_enty)                    "pe production. [TWa, Urani
 vm_demSe(ttot,all_regi,all_enty,all_enty,all_te)     "se demand. [TWa]"
 vm_prodSe(tall,all_regi,all_enty,all_enty,all_te)    "se production. [TWa]"
 vm_prodFe(ttot,all_regi,all_enty,all_enty,all_te)    "fe production. [TWa]"
-vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. [TWa]"
+vm_demFeSector(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt)          "fe demand per sector and emission market. Taxes should be applied to this variable or variables closer to the supply side whenever possible so the marginal prices include the tax effects. [TWa]"
+vm_demFeSector_afterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "fe demand per sector and emission market after tax. Demand sectors should use this variable in their fe balance equations so demand side marginals include taxes effects. [TWa]"
 v_costFu(ttot,all_regi)                              "fuel costs"
 vm_costFuEx(ttot,all_regi,all_enty)                  "fuel costs from exhaustible energy [tril$US]"
 vm_pebiolc_price(ttot,all_regi)                      "Bioenergy price according to MAgPIE supply curves [T$US/TWa]"
@@ -385,13 +423,14 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
+v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
+vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
+
 *** ES layer variables
 vm_demFeForEs(ttot,all_regi,all_enty,all_esty,all_teEs)     "Final energy which will be used in the ES layer."
+
 vm_prodEs(ttot,all_regi,all_enty,all_esty,all_teEs)          "Energy services (unit determined by conversion factor pm_fe2es)."
 vm_transpGDPscale(ttot,all_regi)                            "dampening factor to align edge-t non-energy transportation costs with historical GDP data"  
-
-*** CES markup to represent end-use technology cost
-vm_costCESMkup(ttot,all_regi,all_in)                                   "CES markup cost to represent demand-side technology cost of end-use transformation [trUSD/TWa]"
 
 ;
 ***----------------------------------------------------------------------------------------
@@ -431,6 +470,7 @@ q_costTeCapital(tall,all_regi,all_te)                "calculation of investment 
 q_balPe(ttot,all_regi,all_enty)                      "balance of primary energy (pe)"
 q_balSe(ttot,all_regi,all_enty)                      "balance of secondary energy (se)"
 qm_balFe(ttot,all_regi,all_enty,all_enty,all_te)     "balance of final energy (fe)"
+q_balFeAfterTax(ttot,all_regi,all_enty,all_enty,emi_sectors,all_emiMkt) "balance of final energy after considering FE sectoral taxes (fe)"
 
 q_transPe2se(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation pe to se"
 q_transSe2fe(ttot,all_regi,all_enty,all_enty,all_te) "energy tranformation se to fe"
@@ -479,6 +519,11 @@ q_costInvTeAdj(ttot,all_regi,all_te)                  "calculation of total adju
 q_costInvTeDir(ttot,all_regi,all_te)                  "calculation of total direct investment costs (without adjustment costs) for a technology"
 q_eqadj(all_regi,tall,all_te)                         "calculation of adjustment factor for a technology"
 
+q_changeProdStartyear(ttot,all_regi,all_te)           "calculating the absolute change of output with respect to the reference run for each te"
+q_relChangeProdStartYear(ttot,all_regi,all_te)        "calculating the relative change"
+q_changeProdStartyearAdj(ttot,all_regi,all_te)        "calculating the absolute effect size"
+q_changeProdStartyearCost(ttot,all_regi,all_te)       "calculating the resulting costs"
+
 q_limitCapEarlyReti(ttot,all_regi,all_te)             "constraint to avoid reactivation of retired capacities"
 q_smoothphaseoutCapEarlyReti(ttot,all_regi,all_te)    "phase-out constraint for early retirement to avoid immediate retirement"
 q_limitBiotrmod(ttot,all_regi)                        "limit the total amount of modern biomass use for solids to the amount of coal use for solids "
@@ -504,10 +549,9 @@ q_capH2BI(ttot,all_regi)                                  "H2 infrastructure cap
 q_limitCapFeH2BI(ttot,all_regi,emi_sectors)               "capacity limit equation for H2 infrastructure capacities of buildings and industry"
 
 
-$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off"
+$IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off"
 q_heat_limit(ttot,all_regi)  "equation to limit maximum level of secondary energy district heating and heat pumps use"
 $ENDIF.sehe_upper
-
 
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
@@ -576,6 +620,8 @@ sm_globalBudget_dev                                   "actual level of global cu
 
 sm_eps                                                "small number: 1e-9 "  /1e-9/
 
+sm_CES_calibration_iteration                          "current calibration iteration number, loaded from environment variable cm_CES_calibration_iteration"  /0/
+
 ***----------------------------------------------------------------------------------------
 ***----------------------------------------------trade module------------------------------
 ;
@@ -601,9 +647,7 @@ file magicc_sed_script /                                 "./magicc/modify_MAGCFG
 
 magicc_sed_script.ap = 0;
 
-
-
-*** INNOPATHS emissions reporting
+*** emissions reporting helper parameters
 
 Parameter
 o_emissions(ttot,all_regi,all_enty)   "output parameter"

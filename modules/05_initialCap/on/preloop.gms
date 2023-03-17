@@ -85,10 +85,9 @@ loop(regi,
   loop(te,
 *--- Sum all historical capacities
     p05_aux_vintage_renormalization(regi,te)
-      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val > 1) ),
+      = sum(opTimeYr2te(te,opTimeYr)$( opTime5(opTimeYr) AND (opTimeYr.val ge 1) ),
           (pm_vintage_in(regi,opTimeYr,te) * pm_omeg(regi,opTimeYr+1,te))
-        )
-        + pm_vintage_in(regi,"1",te) * pm_omeg(regi,"2",te) * 0.5;
+        );
 *--- Normalization
     if(p05_aux_vintage_renormalization(regi,te) gt 0,
       p05_vintage(regi,opTimeYr,te) = pm_vintage_in(regi,opTimeYr,te)/p05_aux_vintage_renormalization(regi,te);
@@ -217,15 +216,11 @@ loop( ttot$( ( ttot.val > 2000 ) AND ( ttot.val < 2030 ) ),
   pm_aux_capLowerLimit(te,regi,ttot) =
 ***cb early retirement for some fossil technologies
 *RP* assume no ER         (1 - vm_capEarlyReti(ttot,regi,te)) *
-  (sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+  (sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
                     pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
                   * pm_omeg(regi,opTimeYr+1,te)
                   * vm_deltaCap.l(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,"1") * p05_aux_calccapLowerLimitSwitch(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
               )
-*LB* half of the last time step ttot
-          +  pm_dt(ttot)/2
-           * pm_omeg(regi,"2",te)
-           * vm_deltaCap.l(ttot,regi,te,"1") * p05_aux_calccapLowerLimitSwitch(ttot)
   )
   ;
 );
@@ -283,47 +278,34 @@ loop(regi,
     p05_initial_capacity(regi,te)
     = sum(ttot$sameas(ttot,"2005"),
         sum(teSe2rlf(te,rlf),
-          sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+          sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
             pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
             * pm_omeg(regi,opTimeYr+1,te)
             * vm_deltaCap.lo(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
           )
-*LB* add half of the last time step ttot
-          + pm_dt(ttot)/2
-          * pm_omeg(regi,"2",te)
-          * vm_deltaCap.lo(ttot,regi,te,rlf)
         )
       );
       p05_inital_output(regi,te)
       = sum(ttot$sameas(ttot,"2005"),
           pm_cf(ttot,regi,te)
           * sum(teSe2rlf(te,rlf),
-              sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+              sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
                 pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
                 * pm_omeg(regi,opTimeYr+1,te)
                 * vm_deltaCap.lo(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
               )
-*LB* add half of the last time step ttot
-              + pm_dt(ttot)/2
-              * pm_omeg(regi,"2",te)
-              * vm_deltaCap.lo(ttot,regi,te,rlf)
             )
         );
         p05_inital_input(regi,te)
         = sum(ttot$sameas(ttot,"2005"),
             sum(teSe2rlf(teEtaIncr(te),rlf),
               pm_cf(ttot,regi,te)
-              *(sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+              *(sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
                   pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
                   / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
                   * pm_omeg(regi,opTimeYr+1,te)
                   * vm_deltaCap.lo(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
                 )
-*LB* add half of the last time step ttot
-                + (pm_dt(ttot)/2)
-                / pm_dataeta(ttot,regi,te)
-                * pm_omeg(regi,"2",te)
-                * vm_deltaCap.lo(ttot,regi,te,rlf)
               )
             )
           );
@@ -337,17 +319,12 @@ loop(regi,
           = sum(ttot$sameas(ttot,"2005"),
               sum(teSe2rlf(teEtaIncr(te),rlf),
                 pm_cf(ttot,regi,te)
-                *(sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+                *(sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
                     pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
                     / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
                     * pm_omeg(regi,opTimeYr+1,te)
                     * vm_deltaCap.lo(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
                   )
-*LB* add half of the last time step ttot
-                  +  (pm_dt(ttot)/2)
-                  / pm_dataeta(ttot,regi,te)
-                  * pm_omeg(regi,"2",te)
-                  * vm_deltaCap.lo(ttot,regi,te,rlf)
                  )
               )
             );
@@ -363,8 +340,6 @@ loop(regi,
   p05_eta_correct_factor(regi,"igcc")  = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"coalchp")  = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"biochp")  = p05_eta_correct_factor(regi,"pc");
-  p05_eta_correct_factor(regi,"pco")   = p05_eta_correct_factor(regi,"pc");
-  p05_eta_correct_factor(regi,"pcc")   = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"igccc") = p05_eta_correct_factor(regi,"pc");
   p05_eta_correct_factor(regi,"ngccc") = p05_eta_correct_factor(regi,"ngcc");
     p05_eta_correct_factor(regi,"gaschp")  = p05_eta_correct_factor(regi,"ngcc");
@@ -373,12 +348,6 @@ loop(regi,
   pm_dataeta("2005",regi,"igccc")     = pm_dataeta("2005",regi,"igccc") * p05_eta_correct_factor(regi,"pc");
   pm_dataeta("2005",regi,"ngccc")     = pm_dataeta("2005",regi,"ngccc") * p05_eta_correct_factor(regi,"ngcc");
 *RP* for teEtaConst-technologies, set pm_data("eta"), and the rest will be scaled accordingly. Carefull - this is only ok if mix0 = 0, else it would override calibration values
-  if( (pm_data(regi,"mix0","pcc") eq 0),
-    pm_data(regi,"eta","pcc") =  fm_dataglob("eta","pcc") * p05_eta_correct_factor(regi,"pcc");
-  );
-  if( (pm_data(regi,"mix0","pco") eq 0),
-    pm_data(regi,"eta","pco") =  fm_dataglob("eta","pco") * p05_eta_correct_factor(regi,"pco");
-  );
   if( (pm_data(regi,"mix0","coalchp") eq 0),
     pm_data(regi,"eta","coalchp") =  fm_dataglob("eta","coalchp") * p05_eta_correct_factor(regi,"coalchp");
   );
@@ -477,8 +446,11 @@ $endif
   );
 );
 
-* quickest phaseout in SDP (no new capacities allowed), quick phaseout in SSP1 und SSP5
-$if %cm_GDPscen% == "gdp_SDP"  p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0. * p05_deltacap_res(t,regi,"biotr");
+* quickest phaseout in SDP scenarios (no new capacities allowed), quick phaseout in SSP1 und SSP5
+$if %cm_GDPscen% == "gdp_SDP" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_EI" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_MC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
+$if %cm_GDPscen% == "gdp_SDP_RC" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0;
 $if %cm_GDPscen% == "gdp_SSP1" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
 $if %cm_GDPscen% == "gdp_SSP5" p05_deltacap_res(t,regi,"biotr")$(t.val gt 2020) = 0.5 * p05_deltacap_res(t,regi,"biotr");
 
@@ -551,4 +523,3 @@ if (cm_startyear gt 2005,
 
 
 *** EOF ./modules/05_initialCap/on/preloop.gms
-

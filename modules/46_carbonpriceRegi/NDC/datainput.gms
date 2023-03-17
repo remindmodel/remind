@@ -13,7 +13,7 @@ p46_taxCO2eqGlobal2030 = 0 * sm_DptCO2_2_TDpGtC;
 Scalar p46_taxCO2eqYearlyIncrease "yearly multiplicative increase of co2 tax, write 3% as 1.03" /1/;
 
 *** load NDC data
-Table f46_factorTargetyear(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
+Table f46_factorTargetyear(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_factorTargetyear.cs3r"
@@ -26,7 +26,7 @@ p46_factorTargetyear(ttot,all_regi) = f46_factorTargetyear(ttot,all_regi,"%cm_ND
 
 display p46_factorTargetyear;
 
-Table f46_2005shareTarget(ttot,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
+Table f46_2005shareTarget(tall,all_regi,NDC_version,all_GDPscen) "Table for all NDC versions with 2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years"
 $offlisting
 $ondelim
 $include "./modules/46_carbonpriceRegi/NDC/input/fm_2005shareTarget.cs3r"
@@ -55,7 +55,9 @@ display p46_histShare;
 Parameter p46_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario"
   /
 $ondelim
+$ifthen exist "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
 $include "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
+$endif
 $offdelim
   /;
 
@@ -79,6 +81,7 @@ p46_2005shareTarget(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 1;
 
 *** parameters for selecting NDC years
 Scalar p46_ignoreNDCbefore          "NDC targets before this years are ignored, for example to exclude 2030 targets" /2028/;
+p46_ignoreNDCbefore = max(p46_ignoreNDCbefore, cm_startyear)
 Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, for example to exclude 2050 net zero targets" /2070/;
 Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best." /0.2/;
 Scalar p46_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /0/;

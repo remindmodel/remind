@@ -44,18 +44,6 @@ omf                 0.03        0.03        0.03        0.03        0.03        
 omv                   38          61          30          72          36                                  43          43           6           6
 lifetime              40          40          40          40          40          35          35          35          35          35          35   
 
-$ifthen setGlobal cm_ccsfosall
-+                  pcc         pco
-tech_stat           2           2
-inco0              4160        3770  
-constrTme           5            5 
-mix0                   
-eta                0.36        0.37     
-omf                0.03        0.03   
-omv                  76          61  
-lifetime             40          40 
-$endif
-
 +                 biotr   biotrmod      biochp       biohp     bioigcc    bioigccc      biogas     biogasc     bioh2      bioh2c     bioethl     bioeths   biodiesel    bioftrec   bioftcrec
 tech_stat                                                           1           3           1          3         2           3           2                                   3           3   
 inco0                 10        300        3000         550        2450        4100        1200      1230       1680        2650        2860         590         160        3000        4680
@@ -75,22 +63,22 @@ mix0
 eta                 1.00        1.00        1.00        1.00         1.00       1.00        1.00        1.00
 omf                 0.04        0.06       0.025        0.02         0.03       0.02                   0.025
 lifetime              30          25         130          25           25         30          25          30
-incolearn                                               2200         4400       5110                    8960
+incolearn                                               2200         4400       5155                    8960
 ccap0                                                   0.06       0.0007      0.005                  0.0002
 learn                                                   0.108        0.12      0.207                   0.103
 luse                                                                            0.09                   0.021
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            1                                    2                                               3          3 
-inco0               2500         480         360         600         700          0.1      0.1          700        800
+tech_stat            4                                    5           5            5                      3          3 
+inco0               2000         480         360         510         700          510      0.1          700        800
 constrTme            2            2           1           2           2            1        1            2          2
 mix0                                                                                                                    
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
 omf                 0.05        0.03        0.03        0.03        0.05         0.00      0.00         0.03       0.03
 omv                    3          12          12          24           0                                 3           12
 lifetime              30          25          25          30          30          30        30           30          30
-incolearn           2000
-ccap0             0.0005 
+incolearn           1500
+ccap0              0.013 
 learn               0.15
 
 +                 tdels     tdbiogas    tdfosgas    tdbiohos    tdfoshos       tdh2s       tdh2t      
@@ -153,7 +141,7 @@ mix0                0.00        0.00        0.00
 eta                 0.78        0.89        0.83
 omf                 0.02        0.02        0.02
 lifetime              25          25          25
-incolearn           6240        2430        1940
+incolearn           7000        2430        1940
 ccap0            0.00005     0.00005     0.00005
 learn               0.10        0.10        0.10
 
@@ -176,15 +164,15 @@ ccap0              0.003                   0.003
 learn               0.10                    0.10
 
 +              rockgrind         dac
-tech_stat                          3
-inco0               0.01       21600
+tech_stat                          4
+inco0               0.01       18800
 mix0                   0           0
 eta                 1.00        1.00
 omf                 0.84       0.025
 omv                    0
 lifetime              20          20
-incolearn                      18000
-ccap0                       0.000001
+incolearn                      14000
+ccap0                         0.0008
 learn                           0.15  
 
 *** EOF ./core/input/generisdata_tech.prn

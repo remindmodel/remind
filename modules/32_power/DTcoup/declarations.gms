@@ -10,7 +10,7 @@ parameters
     p32_grid_factor(all_regi)						"multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
     p32_gridexp(all_regi,all_te)					"exponent that determines how grid requirement per kW increases with market share of wind and solar. 1 means specific marginal costs increase linearly"
     p32_storexp(all_regi,all_te)					"exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly"
-    p32_shCHP(all_regi,char)            			"upper boundary of chp electricity generation"
+    p32_shCHP(ttot,all_regi)            			"upper boundary of chp electricity generation"
     p32_factorStorage(all_regi,all_te)      		"multiplicative factor that scales total curtailment and storage requirements up or down in different regions for different technologies (e.g. down for PV in regions where high solar radiation coincides with high electricity demand)"
     f32_storageCap(char, all_te)                    "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
     p32_storageCap(all_te,char)                     "multiplicative factor between dummy seel<-->h2 technologies and storXXX technologies"
@@ -24,7 +24,7 @@ s32_storlink                                        "how strong is the influence
 positive variables
     v32_shStor(ttot,all_regi,all_te)         		"share of seel production from renewables that needs to be stored, range 0..1 [0,1]"
     v32_storloss(ttot,all_regi,all_te)         		"total energy loss from storage for a given technology [TWa]"
-    v32_shSeEl(ttot,all_regi,all_te)				"new share of electricity production in % [%]"
+    vm_shSeEl(ttot,all_regi,all_te)				    "new share of electricity production in % [%]"
     v32_testdemSeShare(ttot,all_regi,all_te)        "test variable for tech share of SE electricity demand"
 ;
 
@@ -35,7 +35,7 @@ equations
     q32_limitCapTeStor(ttot,all_regi,teStor)		"calculate the storage capacity required by vm_storloss"
     q32_limitCapTeChp(ttot,all_regi)                "capacitiy constraint for chp electricity generation"
     q32_limitCapTeGrid(ttot,all_regi)          		"calculate the additional grid capacity required by VRE"
-    q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (v32_shSeEl)"
+    q32_shSeEl(ttot,all_regi,all_te)         		"calculate share of electricity production of a technology (vm_shSeEl)"
     q32_shStor(ttot,all_regi,all_te)                "equation to calculate v32_shStor"
     q32_storloss(ttot,all_regi,all_te)              "equation to calculate vm_storloss"
     q32_operatingReserve(ttot,all_regi)  			"operating reserve for necessary flexibility"

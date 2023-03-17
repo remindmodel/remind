@@ -23,10 +23,6 @@ pegas.seliqfos.gasftcrec       13.8       1.5
 pecoal.seel.igcc               26.1             0.04415
 pecoal.seel.pc                 26.1             0.04415
 pecoal.seel.igccc               2.6      23.5   0.04415
-$ifthen setGlobal cm_ccsfosall
-pecoal.seel.pcc                 2.6      23.5   0.04415
-pecoal.seel.pco                 0.2      25.9   0.04415
-$endif
 pecoal.seel.coalchp            26.1             0.04415
 pecoal.sehe.coalhp             26.1             0.04415
 pecoal.seh2.coalh2             26.1             0.04415

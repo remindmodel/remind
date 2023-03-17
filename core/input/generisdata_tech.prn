@@ -44,19 +44,6 @@ omf                 0.03        0.03        0.03        0.03        0.03        
 omv                   38          61          30          72          36                                  43          43           6           6
 lifetime              40          40          40          40          40          35          35          35          35          35          35   
 
-$ifthen setGlobal cm_ccsfosall
-+                  pcc         pco
-tech_stat           2           2
-inco0              3200        2900  
-constrTme           5            5 
-mix0                   
-eta                0.36        0.37     
-omf                0.03        0.03   
-omv                  76          61  
-lifetime             40          40 
-$endif
-
-
 +                 biotr   biotrmod      biochp       biohp     bioigcc    bioigccc      biogas       biogasc      bioh2      bioh2c     bioethl     bioeths   biodiesel    bioftrec   bioftcrec
 tech_stat                                                           1           3           1            3          2           3           2                                   3           3   
 inco0                 10        300        3000         550        2450        3150        1200        1230        1680        2040        2860         590         160        3000        3600
@@ -83,16 +70,16 @@ luse                                                                            
 
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
-tech_stat            1                                    2                                               3          3  
-inco0               2500         480         360         600         700          0.1      0.1          700        800
-constrTme            2            2           1           2           2            1        1            2          2
+tech_stat            4                                    5           5            5                     3          3  
+inco0               1350         480         360         510         700          510      0.1          700        800
+constrTme            2            2           1           2           2            2        1            2          2
 mix0                                                                                                                    
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
-omf                 0.05        0.03        0.03        0.03        0.05         0.00      0.00         0.03       0.03
-omv                    3          12          12          24           0                                 3           12
+omf                 0.05        0.03        0.03        0.03        0.05         0.03      0.00         0.03       0.03
+omv                    3          12          12          24           0          24                      3           12
 lifetime              30          25          25          30          30          30        30            30          30
-incolearn           2000
-ccap0             0.0005 
+incolearn           1200
+ccap0             0.0065 
 learn               0.15  
 
 
@@ -151,12 +138,12 @@ omv                   36          76
 lifetime              50          50
 
 +                storspv    storwind     storcsp
-inco0               8350        3250        2520
+inco0               7720        2940        2520
 mix0                0.00        0.00        0.00
 eta                 0.74        0.85        0.79
 omf                 0.02        0.02        0.02
 lifetime              25          25          25
-incolearn           5710        2220        1800
+incolearn           5440        2090        1800
 ccap0            0.00005     0.00005     0.00005
 learn               0.10        0.10        0.10
 
@@ -179,14 +166,47 @@ ccap0              0.003                   0.003
 learn               0.10                    0.10
 
 +              rockgrind         dac
-tech_stat                          3
-inco0               0.01       21600
+tech_stat                          4
+inco0               0.01       18800
 mix0                   0           0
 eta                 1.00        1.00
 omf                 0.84       0.025
 omv                    0
 lifetime              20          20
-incolearn                      18000
-ccap0                       0.000001
+incolearn                      14000
+ccap0                         0.0008
 learn                           0.15   
+
+
+
+$ontext
+Explanations:
+ 
+Electrolysis - elh2
+learning parameterization:
+Assume that 10 GW(el) electrolysis installed globally and CAPEX of 800 EUR/kW(el) in 2025
+(slightly optimistic due to recent policies, e.g. EU Hydrogen Bank and US Inflation Reduction Act)
+(Odenweller et al. (2022), https://doi.org/10.1038/s41560-022-01097-4,
+Ueckerdt et al. (2021), https://doi.org/10.1038/s41558-021-01032-7, Fig. S3).
+10 GW(el) * 0.65 (elh2 efficiency) * 1e-3 ~ 0.0065 TW(H2) = ccap0
+800 EUR/kW(el) / 0.65 (elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 1350 USD/kW(H2) = inco0
+Assume floor cost: 100 EUR/kW(el)
+100 EUR/kW(el) / 0.75 (long-term elh2 efficiency) * 1.1 (EUR to USD, 2015) ~ 150 USD/kW(H2) -> incolearn = 1200
+
+Direct Air Capture - dac
+learning parameterization:
+Assume that 3 MtCO2/yr DAC capacity installed gobally by 2025 (https://www.iea.org/reports/direct-air-capture) 
+that produce at (unit) cost of 400 USD/tCO2 (Climeworks).
+Assume that all 400 USD/tCO2 are investment cost as current plants runs with waste energy. 
+
+3 MtCO2/yr / 3.66 * / 1000 ~ 0.0008 GtC/yr = ccap0
+400 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
+* 3.66 (tCO2 to tC) ~ 18800 USD/(tC/yr)
+Assume floor cost 100 USD/tCO2. 
+100 USD/tCO2 * 0.9 (capacity factor) / (0.07 1/yr) (annuity factor, stretch cost over plant lifetime) 
+* 3.66 (tCO2 to tC) ~ 4800 USD/(tC/yr) -> incolearn = 14000
+
+annuity factor = r * (1+r)^lifetime/(-1+(1+r)^lifetime), factor to annualize total investment cost of plant, discounting r = 0.05 
+$offtext
+
 *** EOF ./core/input/generisdata_tech.prn

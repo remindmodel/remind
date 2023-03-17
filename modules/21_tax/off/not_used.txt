@@ -17,7 +17,8 @@ pm_taxCO2eq, parameter, ???
 pm_tau_fe_sub, parameter, ???
 pm_tau_fe_tax, parameter, ???
 pm_ts, parameter, ???
-cm_bioenergy_tax, switch, ???
+cm_bioenergy_SustTax,input,questionnaire
+cm_bioenergy_EF_for_tax,input,questionnaire
 cm_startyear, switch, ???
 cm_fetaxscen, switch, ???
 cm_gdximport_target, switch, ???
@@ -30,7 +31,6 @@ vm_co2eq,variable,???
 cm_emiscen,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
-vm_emiAll,input,questionnaire
 vm_co2CCS,input,questionnaire
 pm_taxCO2eqHist,input,questionnaire
 pm_dataccs,input,questionnaire
@@ -44,26 +44,30 @@ pm_ttot_val,input,questionnaire
 p21_implicitDiscRateMarg,input,questionnaire
 vm_emiMacSector,input,questionnaire
 cm_multigasscen,input,questionnaire
-cm_cprice_red_factor,input,questionnaire
 vm_pebiolc_price,input,questionnaire
 vm_demSe,input,questionnaire
 vm_flexAdj,input,questionnaire
 sm_eps,input,questionnaire
 vm_co2eqMkt,input,questionnaire
-vm_taxrevimplFETax,input,questionnaire
+vm_taxrevimplicitQttyTargetTax,input,questionnaire
 vm_demFeSector,input,questionnaire
 pm_pvp,input,questionnaire
 pm_taxemiMkt,input,questionnaire
-cm_BioImportTax_EU,input,questionnaire
+pm_taxemiMkt_iteration,input,questionnaire
 vm_Mport,input,questionnaire
 vm_deltaCap, variable, ???
 sm_TWa_2_MWh,input,questionnaire
-cm_FEtax_trajectory_abs,input,questionnaire
-cm_FEtax_trajectory_rel,input,questionnaire
-cm_CO2TaxSectorMarkup,input,questionnaire
 vm_emiCO2Sector,input,questionnaire
 pm_taxCO2eqRegi,input,questionnare
 pm_taxCO2eqSum,input,questionnare
 pm_tau_pe_tax,input,questionnaire
 pm_ccsinjecrate,input,questionaire
+vm_emiAll,input,questionaire
+pm_taxrevGHG0,input,questionaire
+pm_taxrevCO2Sector0,input,questionaire
+pm_taxrevCO2LUC0,input,questionaire
+pm_taxrevNetNegEmi0,input,questionaire
 pm_tau_ces_tax,input,questionnaire
+vm_taxrevimplicitPriceTax,input,questionnaire
+vm_taxrevimplicitPePriceTax,input,questionnaire
+vm_changeProdStartyearCost, variable, ???

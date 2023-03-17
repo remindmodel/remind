@@ -7,13 +7,25 @@
 *** SOF ./modules/29_CES_parameters/calibrate/preloop.gms
 $OFForder
 
+
+*** ==================================================================================
+***
+*** For a documentation of this file, see the goxygen documentation, chapter
+***       CES parameters (29_CES_parameters) / Realizations / (A) Calibrate
+***
+*** For a practical calibration tutorial, see 12_Calibrating_CES_Parameters.md
+*** in the tutorials folder
+***
+*** ==================================================================================
+
+
 option pm_cesdata:4:3:1;
 display "check sets production function 29", ces_29, in_29, ppf_29, ipf_29,
         ppf_beyondcalib_29, ipf_beyond_29;
 display "check starting pm_cesdata", pm_cesdata;
 
-*** Check if new structure flag is not set but should be
-$ifthen.check_structure %c_CES_calibration_new_structure% == "0"
+*** Abort if new structure flag is not set but should be
+$ifthen.old_structure %c_CES_calibration_new_structure% == "0"
 Execute_Load 'input'  ces2_29=cesOut2cesIn;
 sm_tmp = 0;
 loop ( ces2_29(out,in)$( NOT cesOut2cesIn2(out,in) ), sm_tmp = 1);
@@ -31,136 +43,130 @@ if (sm_tmp,
   execute_unload "abort.gdx";
   abort "Regional structure does not match. Enable c_CES_calibration_new_structure";
 );
-
-$endif.check_structure
-
-
-*** Determine if prices should be derived or loaded
-$set c_CES_calibration_prices "derive"
-$ifthen.new_structure   %c_CES_calibration_new_structure% == "1"
-$ifthen.first_iteration %c_CES_calibration_iteration%     == "1"
-$set c_CES_calibration_prices "load"
-$endif.first_iteration
-$endif.new_structure
+$endif.old_structure
 
 
-*** In the first iteration with a changed CES structure, load ppf prices
-$ifthen.get_prices %c_CES_calibration_prices% == "load"
-
-*** Set CES prices to the value specified by cm_CES_calibration_default_prices
-*** and abort if cm_CES_calibration_default_prices == 0
+***_____________________________ START OF: GET PRICES _____________________________
+*** In the first iteration with a changed CES structure, ppf prices can't be loaded from file, so they have to be set to an initial default.
+if( sm_CES_calibration_iteration eq 1 and s29_CES_calibration_new_structure eq 1,
+  !! Set CES prices to the value specified by cm_CES_calibration_default_prices
+  !! and abort if cm_CES_calibration_default_prices == 0
 $ifthen.default_prices %cm_CES_calibration_default_prices% == "0"
-   abort "Please set cm_CES_calibration_default_prices > 0 to get the calibration started";
+    abort "Please set cm_CES_calibration_default_prices > 0 to get the calibration started";
 $endif.default_prices
-pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
+  pm_cesdata(t,regi,all_in,"price") = %cm_CES_calibration_default_prices%;
 
-pm_cesdata(t,regi,ipf_29,"price")
-  = 1;
-pm_cesdata(t,regi,in_complements(in),"price") = 1;
+  pm_cesdata(t,regi,ipf_29,"price") = 1;
+  pm_cesdata(t,regi,in_complements(in),"price") = 1;
 
+  pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
+                                            pm_cesdata(t,regi,in,"price") eq 1 )
+    = %cm_CES_calibration_default_prices%;
 
-pm_cesdata(t,regi,industry_ue_calibration_target_dyn37(in),"price")$(
-                                          pm_cesdata(t,regi,in,"price") eq 1 )
-  = %cm_CES_calibration_default_prices%;
+else
+  !! If not first iteration or known CES structure, compute ppf prices from CES derivatives load from file
 
+  !! Compute prices of each node from CES derivatives of previous run:
+  !! d(V_o)/d(V_i) = pi_i  = xi_i * eff_i * effGr_i * V_o**(1-rho_o)  *  (eff_i * effGr_i * V_i)**(rho_o-1)
+  p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(
+                                                      p29_cesIO_load(t,regi,in))
+    = p29_cesdata_load(t,regi,in,"xi")
+    * p29_cesdata_load(t,regi,in,"eff")
+    * p29_effGr(t,regi,in)
 
-*** If not first iteration or known CES structure, compute ppf prices
-$else.get_prices
+    * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out))
+      + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out))
+      )
+    ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
-*** Compute ppf prices from CES derivatives of previous run
-p29_CESderivative(t,regi_dyn29(regi),ces_29(out,in))$(
-                                                     p29_cesIO_load(t,regi,in))
-  = p29_cesdata_load(t,regi,in,"xi")
-  * p29_cesdata_load(t,regi,in,"eff")
-  * p29_effGr(t,regi,in)
+    * exp(
+      log(
+      p29_cesdata_load(t,regi,in,"eff")
+      * p29_effGr(t,regi,in)
+      * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+        + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out)))
+      )
+      * (p29_cesdata_load(t,regi,out,"rho") - 1));
 
-  * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out))
-    + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out))
-    )
- ** (1 - p29_cesdata_load(t,regi,out,"rho"))
-
-  * exp(
-	  log(
-		p29_cesdata_load(t,regi,in,"eff")
-		* p29_effGr(t,regi,in)
-		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out)))
-		)
-		* (p29_cesdata_load(t,regi,out,"rho") - 1));
-
-*** Propagate price down the CES tree
-loop ((cesLevel2cesIO(counter,in),ces_29(in,in2),ces2_29(in2,in3)),
-    p29_CESderivative(t,regi_dyn29(regi),"inco",in3)
-    = p29_CESderivative(t,regi,"inco",in2)
-    * p29_CESderivative(t,regi,in2,in3);
-);
-
-
-*** Prices of intermediate production factors are all 1, except on the level 
-*** above the perfect substitutes if they are ppf_29.
-loop ( cesOut2cesIn(in2,in) $ (
-                    NOT ( ppf_29(in) AND in_complements(in))
-                    ),
-  p29_CESderivative(t,regi_dyn29(regi),out,ipf_29(in2))$(
-                                             p29_CESderivative(t,regi,out,in2) )
-  = 1;
-);
-
-*** Prices of perfect substitutes factors are all 1
-p29_CESderivative(t,regi_dyn29(regi),out,ppf_29(in2))$(
-                     p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
-  = 1;
-*** Price of inco is 1, too
-p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
-
-*** Transfer prices
-
-pm_cesdata(t,regi_dyn29(regi), in, "price") =
- p29_CESderivative(t,regi,"inco",in);
-
-option
-  p29_CESderivative:3:3:1
-  pm_cesdata:3:3:1
-;
-
-*** The calibration of elasticities of substitution takes
-*** much longer to converge if it starts from a high elasticity of
-*** substitution. To avoid this situation, the price of the capital stock
-*** is increased
-if (%c_CES_calibration_iteration% eq 1,
- loop (cesOut2cesIn(out,in)$(pm_cesdata_sigma("2015",out) eq -1 AND ppfKap(in) AND in_29(in)),
-       pm_cesdata(t,regi,in,"price") = pm_cesdata(t,regi,in,"price") *1.3;
-       );
-);
-
-display "derivatives", p29_CESderivative, p29_effGr, p29_cesIO_load;
-
-*** Write prices to file and abort, to use them in calibration with differing
-*** CES structure
-$ifthen.write_prices %c_CES_calibration_write_prices% == "1"
-file file_pm_cesdata_price /"pm_cesdata_price"/;
-
-file_pm_cesdata_price.lw =  0;
-file_pm_cesdata_price.nw = 20;
-file_pm_cesdata_price.nd = 15;
-
-put file_pm_cesdata_price;
-
-loop ((ttot,regi_dyn29(regi),ppf_29(in)),
-  if (ttot.val ge 2005 AND p29_cesdata_load(ttot,regi,in,"price") gt 0,
-    put p29_cesdata_load.tn(ttot,regi,in,"price"), " = ";
-    put p29_cesdata_load(ttot,regi,in,"price"), ";" /;
+  !! Propagate price down the CES tree to get prices in terms of inco,
+  !! i.e. calc d(inco)/d(in) by applying the chain rule (product of node derivatives)
+  !! Going down, iteratively compute each income derivative as product of all prices in branch above
+  !! Ppf prices will later be used as: pm_cesdata(in,"price") = p29_CESderivative("inco",in).
+  !! the rest is discarded.
+  loop ((cesLevel2cesIO(counter,in),ces_29(in,in2),ces2_29(in2,in3)),
+      !! in3 is the current node, in2 is the node above.
+      p29_CESderivative(t,regi_dyn29(regi),"inco",in3) !!   d(inco)/d(in3)
+      = p29_CESderivative(t,regi,"inco",in2)           !! = d(inco)/d(in2)
+      * p29_CESderivative(t,regi,in2,in3);             !! * d(in2 )/d(in3)
   );
-);
 
-putclose file_pm_cesdata_price;
 
-abort "wrote pm_cesdata_price as by c_CES_calibration_write_prices setting" ;
+  !! Prices of intermediate production factors are all set to 1,
+  !! To account for the chain rule multiplication above.
+  !! except on the level above the perfect substitutes if they are ppf_29.
+  !! Here, the level above gets the price, while the perfect substitutes below get 1.
+  loop ( cesOut2cesIn(in2,in) $ (
+                      NOT ( ppf_29(in) AND in_complements(in))
+                      ),
+    p29_CESderivative(t,regi_dyn29(regi),out,ipf_29(in2))$(
+                                              p29_CESderivative(t,regi,out,in2) )
+    = 1;
+  );
+
+  !! Prices of perfect substitutes factors are all 1
+  p29_CESderivative(t,regi_dyn29(regi),out,ppf_29(in2))$(
+                      p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
+    = 1;
+  !! Price of inco is 1, too
+  p29_cesdata_load(t,regi_dyn29(regi),"inco","price") = 1;   !! unit price
+
+  !! Transfer prices
+  pm_cesdata(t,regi_dyn29(regi), in, "price") =
+  p29_CESderivative(t,regi,"inco",in);
+
+  option
+    p29_CESderivative:3:3:1
+    pm_cesdata:3:3:1
+  ;
+
+  !! The calibration of elasticities of substitution takes
+  !! much longer to converge if it starts from a high elasticity of
+  !! substitution. To avoid this situation, the price of the capital stock
+  !! is increased
+  if (sm_CES_calibration_iteration eq 1,
+    loop (cesOut2cesIn(out,in)$(pm_cesdata_sigma("2015",out) eq -1 AND ppfKap(in) AND in_29(in)),
+        pm_cesdata(t,regi,in,"price") = pm_cesdata(t,regi,in,"price") *1.3;
+    );
+  );
+
+  display "derivatives", p29_CESderivative, p29_effGr, p29_cesIO_load;
+
+  !! Write prices to file and abort, to use them in calibration with differing
+  !! CES structure
+$ifthen.write_prices %c_CES_calibration_write_prices% == "1"
+  file file_pm_cesdata_price /"pm_cesdata_price"/;
+
+  file_pm_cesdata_price.lw =  0;
+  file_pm_cesdata_price.nw = 20;
+  file_pm_cesdata_price.nd = 15;
+
+  put file_pm_cesdata_price;
+
+  loop ((ttot,regi_dyn29(regi),ppf_29(in)),
+    if (ttot.val ge 2005 AND p29_cesdata_load(ttot,regi,in,"price") gt 0,
+      put p29_cesdata_load.tn(ttot,regi,in,"price"), " = ";
+      put p29_cesdata_load(ttot,regi,in,"price"), ";" /;
+    );
+  );
+
+  putclose file_pm_cesdata_price;
+
+  abort "wrote pm_cesdata_price as by c_CES_calibration_write_prices setting" ;
 $endif.write_prices
+)
 
-$endif.get_prices
 
-*** Check if all ppf prices are > 0
+*** Abort if any ppf prices are <= 0
 if (smin((t,regi_dyn29(regi),ppf_29(in)), pm_cesdata(t,regi,in,"price")) le 0,
   put logfile;
   loop ((t,regi_dyn29(regi),ppf_29(in))$( pm_cesdata(t,regi,in,"price") le 0 ),
@@ -171,11 +177,11 @@ if (smin((t,regi_dyn29(regi),ppf_29(in)), pm_cesdata(t,regi,in,"price")) le 0,
 );
 
 
-
-if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
+*** Write prices to file
+if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
   put file_CES_calibration;
 
-  loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
+  loop ((t,regi_dyn29(regi),in)$(    ppf_29(in)
                                   OR sameas(in,"inco")
                                   OR ppf_beyondcalib_29(in)
                                   OR sameas(in,"enhb")
@@ -238,9 +244,9 @@ if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
   );
   putclose file_CES_calibration;
 );
-
 option pm_cesdata:4:3:1;
 display "loaded", pm_cesdata;
+
 
 *** # Abort if any prices are zero or negative
 sm_tmp = 0;
@@ -252,7 +258,7 @@ loop ((t_29(t),regi_dyn29(regi),ppf_29(in))$(
 );
 putclose logfile;
 
-if (sm_tmp eq 1, 
+if (sm_tmp eq 1,
   execute_unload "abort.gdx";
   abort "some prices are negative. See log file";
 );
@@ -274,6 +280,12 @@ pm_cesdata(t,regi,in_29,"price")$(    (NOT (ord(t) le 1 OR ord(t) eq card(t)))
     + pm_cesdata(t+1,regi,in_29,"price") / 8
     ) / 1.25;
 
+*** Further smooth prices from 2005-2020 by calculating a linear fit
+*** price_fit = alpha + beta * t
+*** and then taking the arithmetic mean of the unsmoothed price and the linear fit
+
+*** compute beta = cov(price,t) / var(t)
+*** (search linear regression for more info)
 p29_beta(regi_dyn29(regi),in_29)$( ppf_29(in_29) )
   = ( ((2020 - 2000) / 5)
     * sum(ttot$( ttot.val ge 2005 AND ttot.val le 2020 ),
@@ -291,6 +303,7 @@ p29_beta(regi_dyn29(regi),in_29)$( ppf_29(in_29) )
     - sqr(sum(ttot$( ttot.val ge 2005 AND ttot.val le 2020 ), ttot.val))
     );
 
+*** compute alpha = avg(price) - beta * avg(t)
 p29_alpha(regi_dyn29(regi),in_29)$(ppf_29(in_29))
   = ( sum(ttot$( ttot.val ge 2005 AND ttot.val le 2020 ),
         pm_cesdata(ttot,regi,in_29,"price")
@@ -302,7 +315,8 @@ p29_alpha(regi_dyn29(regi),in_29)$(ppf_29(in_29))
 
 Display p29_alpha, p29_beta;
 
-*** for entrp_frgt_lo
+
+*** for entrp_frgt_lo (energy transport - freight transport - long distance)
 *** pass on to pm_cesdata and ensure the resulting price is positive
 $ifthen.edge_esm %transport% == "edge_esm"
 
@@ -357,7 +371,7 @@ loop (ttot$( ttot.val ge 2005),
 
 display "after all but entrp_frgt_lo smoothening", pm_cesdata;
 
-*** Smooth prices for the whole period for elements in or below the putty-clay 
+*** Smooth prices for the whole period for elements in or below the putty-clay
 *** structure. Problem if there are several ppfIO_putty below each other,
 *** prices are then smoothed twice.
 loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
@@ -375,7 +389,9 @@ loop ((t_29,cesOut2cesIn_below(out,in))$( ppfIO_putty(out) ),
 
 display "after price smoothing",  cesOut2cesIn_below, pm_cesdata;
 
-*** Finalize calibration by ensuring the consistency of pm_cesdata ***
+***_____________________________ END OF: GET PRICES _____________________________
+
+***_____________________________ START OF: CALCULATE IPF _____________________________
 
 display "start consistency", pm_cesdata;
 
@@ -401,7 +417,7 @@ loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out)
 );
 display "compute putty" , pm_cesdata;
 
-v29_cesdata_putty.lo(t_29,regi_dyn29(regi),in) $ putty_compute_in(in) 
+v29_cesdata_putty.lo(t_29,regi_dyn29(regi),in) $ putty_compute_in(in)
    = 1e-6;
 v29_cesdata_putty.L(t_29,regi_dyn29(regi),in) $ putty_compute_in(in)
    =  pm_cesdata(t_29,regi,in,"quantity")
@@ -441,7 +457,7 @@ if (execError > 0,
 
 solve putty_paths minimizing v29_putty_obj using nlp;
 
-if ( NOT (( putty_paths.solvestat eq 1  
+if ( NOT (( putty_paths.solvestat eq 1
             AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
     OR   (putty_paths.solvestat eq 4
           AND putty_paths.modelstat eq 7)
@@ -450,7 +466,7 @@ if ( NOT (( putty_paths.solvestat eq 1
   abort "model putty_paths is infeasible";
 );
 
-pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) 
+pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in)
               = v29_cesdata_putty.L(t_29,regi,in);
 
 
@@ -462,15 +478,15 @@ loop ( cesOut2cesIn_below(out,in)$putty_compute_in(out),
                 ;
 );
 
-pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in) 
+pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in)
         = v29_cesdata.L(t_29,regi,in);
 
 
-
-if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
+!! Write to file
+if (sm_CES_calibration_iteration eq 1, !! first CES calibration iteration
   put file_CES_calibration;
 
-  loop ((t,regi_dyn29(regi),in)$(    ppf_29(in) 
+  loop ((t,regi_dyn29(regi),in)$(    ppf_29(in)
                                   OR sameas(in,"inco")
                                   OR ppf_beyondcalib_29(in)
                                   OR sameas(in,"enhb")
@@ -521,7 +537,7 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
     * pm_cesdata_putty(t,regi_dyn29,in,"quantity")
     );
 
-  !! compute the total for factors that are ppf in the CES and ipf in the 
+  !! compute the total for factors that are ppf in the CES and ipf in the
   !! putty. For the first period, we assume that pm_cesdata stays constant
   pm_cesdata(t,regi_dyn29,out,"quantity")$( t0(t) AND ppfIO_putty(out) )
   = pm_cesdata_putty(t,regi_dyn29,out,"quantity")
@@ -541,9 +557,9 @@ loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
     );
 );
 
+
 *** Ensure that the labour share in GDP is at least 20 % for historical periods
 *** and 0.5 % for others.
-
 sm_tmp  = 0;
 sm_tmp2 = 0;
 
@@ -561,7 +577,7 @@ loop ((t_29hist(t),regi_dyn29(regi)),
 
    put t.tl, " ", regi.tl, " labour share in GDP: ", (1 - sm_tmp);
 
-     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab") 
+     pm_cesdata(t,regi,ppf_29(in),"price") $ ( NOT (  sameAs(in, "lab")
                                                        OR in_complements(in)) )
      = pm_cesdata(t,regi,in,"price")
      * (0.8$( t_29hist(t) ) + 0.995$( NOT t_29hist(t) ))
@@ -580,9 +596,9 @@ loop ((t_29hist(t),regi_dyn29(regi)),
 );
 putclose logfile;
 
-  !! if there has been a rescaling for historical steps
-if ( sm_tmp2 gt 0,
-  !! Repeat previous steps with new prices
+!! If there has been a rescaling for historical steps, repeat previous steps with new prices
+if ( sm_tmp2 gt 0, !! If there has been a rescaling
+
   loop (cesRev2cesIO(counter,ipf_29(out))$(   in_below_putty(out)
                                       OR ppf_putty(out)      ),
     pm_cesdata(t_29,regi_dyn29,out,"quantity")
@@ -600,7 +616,7 @@ if ( sm_tmp2 gt 0,
   solve putty_paths minimizing v29_putty_obj using nlp;
 
 
-  if ( NOT (( putty_paths.solvestat eq 1  
+  if ( NOT (( putty_paths.solvestat eq 1
               AND (putty_paths.modelstat eq 1 OR putty_paths.modelstat eq 2))
       OR   (putty_paths.solvestat eq 4
             AND putty_paths.modelstat eq 7)
@@ -609,7 +625,7 @@ if ( sm_tmp2 gt 0,
     abort "model putty_paths is infeasible";
   );
 
-  pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in) 
+  pm_cesdata_putty(t_29,regi_dyn29(regi),in,"quantity") $ v29_cesdata_putty.L(t_29,regi,in)
                 = v29_cesdata_putty.L(t_29,regi,in);
 
 
@@ -621,10 +637,10 @@ if ( sm_tmp2 gt 0,
                   ;
   );
 
-  pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in) 
+  pm_cesdata(t_29,regi_dyn29(regi),in,"quantity") $ putty_compute_in(in)
           = v29_cesdata.L(t_29,regi,in);
 
-   
+
   loop  ((t,cesRev2cesIO(counter,ipf_29(out)))$( NOT (  sameas(out,"inco")
                                                         OR in_below_putty(out)
                                                         OR ppf_putty(out))     ),
@@ -640,7 +656,7 @@ if ( sm_tmp2 gt 0,
       * pm_cesdata_putty(t,regi_dyn29,in,"quantity")
       );
 
-    !! compute the total for factors that are ppf in the CES and ipf in the 
+    !! compute the total for factors that are ppf in the CES and ipf in the
     !! putty. For the first period, we assume that pm_cesdata stays constant
     pm_cesdata(t,regi_dyn29,out,"quantity")$( t0(t) AND ppfIO_putty(out) )
     = pm_cesdata_putty(t,regi_dyn29,out,"quantity")
@@ -661,8 +677,7 @@ if ( sm_tmp2 gt 0,
   );
 );
 
-
-*** Check if some quantities are negative.
+*** Abort if any quantities in pm_cesdata_putty are negative.
 if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,in,"quantity")) lt 0,
   put logfile;
   loop ((t_29,regi_dyn29(regi),in)$(in_putty(in)  AND pm_cesdata_putty(t_29,regi,in,"quantity") lt 0 ),
@@ -672,7 +687,11 @@ if (smin((t_29,regi_dyn29(regi),in)$(in_putty(in)), pm_cesdata_putty(t_29,regi,i
   abort "Some pm_cesdata_putty are <= 0. Check logfile!";
 );
 
-*** Then, we ensure that these prices correspond to the derivatives, because 
+***_____________________________ END OF: CALCULATE IPF _____________________________
+
+***_____________________________ START OF: CHANGE EFFICIENCIES TO FULFILL ECONOMIC CONSTRAINT _____________________________
+
+*** We ensure that the prices correspond to the derivatives, because
 *** the Euler equation holds for derivatives. Using prices makes only sense if
 *** prices equal derivatives.
 loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
@@ -701,9 +720,13 @@ loop  ((cesRev2cesIO(counter,ipf_29(out)),ces_29(out,in))$(
 );
 display "after change up to en consistency", pm_cesdata;
 
+***_____________________________ END OF: CHANGE EFFICIENCIES TO FULFILL ECONOMIC CONSTRAINT _____________________________
+
+***_____________________________ START OF: ENSURE GDP CONSISTENCY VIA LABOUR PRICE _____________________________
+
 * Then, we consider the bottom level of the CES tree, where capital and labor
 * have specific restrictions.  Capital works as for the other ppfen, Labour
-* will be the adjustment variable to meet inco.  xi will not be equal to the
+* will be the adjustment variable to meet inco. xi will not be equal to the
 * income share of capital (from equation price = derivative)
 pm_cesdata(t,regi_dyn29,"kap","xi")
   = pm_cesdata(t,regi_dyn29,"kap","price")
@@ -769,7 +792,7 @@ if (smax((t,regi_dyn29(regi)),
       = pm_cesdata(t,regi,"kap","price")
       * sm_tmp2;
 
-      put pm_cesdata(t,regi,"en","price"), ", ", 
+      put pm_cesdata(t,regi,"en","price"), ", ",
           pm_cesdata(t,regi,"kap","price") /;
     );
   );
@@ -873,103 +896,111 @@ if (sm_tmp,
   abort "assertion xi gt 0 failed, see .log file for details";
 );
 
+***_____________________________ END OF: ENSURE GDP CONSISTENCY VIA LABOUR PRICE _____________________________
+
 display " end consistency", pm_cesdata;
 *** End of the part ensuring consistency given the ppfEn prices and quantities, the ipf prices,
 *** the labor quantities, and the capital efficiency growth.
 
-***_____________________________ START OF BEYOND CALIB _________________________________________________
+***_____________________________ START OF: BEYOND CALIB _________________________________________________
 
-*** Adapt the 2005 efficiencies of the CES items outside the calibration
-*** so that it matches the quantities given exogenously.
-if (card(ppf_beyondcalib_29) >= 1,
+*** Beyond calib allows for calibration of intermediate levels.
+*** At the time of documentation, this was mainly used for the industry module subsectors realization.
+*** Here, the above steps are only carried out down to the UE level of the different sectors.
+*** (Hence sets like 'in' have a trimmed duplicate like 'in_29').
+*** 'Beyond calib' now handles the part of the CES tree below this intermediate level.
+*** To this end, in the following, a similar procedure as for the upper part of the tree is carried out.
+*** However, consistency with the top most node(s) of the respective part of the tree is handled differently:
+*** Here, all ppfen prices are scaled in beyond calib, instead of labour price in the 'normal' part.
+
+if (card(ppf_beyondcalib_29) >= 1, !! if there are any nodes in beyond calib
   Display "  before computing xi in beyond", pm_cesdata;
 
-!! if "load", prices have already been loaded
-$ifthen.prices_beyond NOT %c_CES_calibration_prices% == "load"
+  !! if prices haven't already been loaded
+  if (sm_CES_calibration_iteration > 1 or s29_CES_calibration_new_structure eq 0,
 
-  !! Compute ppf prices from CES derivatives of previous run
-  p29_CESderivative(t,regi_dyn29(regi),cesOut2cesIn(out,in))$(
-                                                     p29_cesIO_load(t,regi,in) )
-    = p29_cesdata_load(t,regi,in,"xi")
-    * p29_cesdata_load(t,regi,in,"eff")
-    * p29_effGr(t,regi,in)
+    !! Compute ppf prices from CES derivatives of previous run
+    p29_CESderivative(t,regi_dyn29(regi),cesOut2cesIn(out,in))$(
+                                                      p29_cesIO_load(t,regi,in) )
+      = p29_cesdata_load(t,regi,in,"xi")
+      * p29_cesdata_load(t,regi,in,"eff")
+      * p29_effGr(t,regi,in)
 
-    * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out) )
-      + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out) )
-      )
-   ** (1 - p29_cesdata_load(t,regi,out,"rho"))
+      * ( p29_cesIO_load(t,regi,out)$( NOT ipf_putty(out) )
+        + p29_cesIOdelta_load(t,regi,out)$( ipf_putty(out) )
+        )
+      ** (1 - p29_cesdata_load(t,regi,out,"rho"))
 
-   * exp(
-	  log(
-		p29_cesdata_load(t,regi,in,"eff")
-		* p29_effGr(t,regi,in)
-		* ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
-			+ p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
-		  )
-		)
-		* (p29_cesdata_load(t,regi,out,"rho") - 1));
+      * exp(
+        log(
+        p29_cesdata_load(t,regi,in,"eff")
+        * p29_effGr(t,regi,in)
+        * ( p29_cesIO_load(t,regi,in)$( NOT ipf_putty(out))
+          + p29_cesIOdelta_load(t,regi,in)$( ipf_putty(out))
+          )
+        )
+        * (p29_cesdata_load(t,regi,out,"rho") - 1));
 
-  !! Propagate price down the CES tree
-  loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
-    p29_CESderivative(t,regi_dyn29(regi),"inco",in3)
-    = p29_CESderivative(t,regi,"inco",in2)
-    * p29_CESderivative(t,regi,in2,in3);
-  );
+    !! Propagate price down the CES tree
+    loop ((cesLevel2cesIO(counter,in),cesOut2cesIn(in,in2),cesOut2cesIn2(in2,in3)),
+      p29_CESderivative(t,regi_dyn29(regi),"inco",in3)
+      = p29_CESderivative(t,regi,"inco",in2)
+      * p29_CESderivative(t,regi,in2,in3);
+    );
 
-  
-  !! Prices of intermediate production factors are all 1, except on the level
-  !! above the perfect substitutes if they are ppf_29
-  loop (cesOut2cesIn(in2,in)$(
-                          NOT (ppf_beyondcalib_29(in) AND in_complements(in)) ),
-    p29_CESderivative(t,regi_dyn29(regi),out,ipf_beyond_29_excludeRoot(in2))$(
-                                             p29_CESderivative(t,regi,out,in2) )
+
+    !! Prices of intermediate production factors are all 1, except on the level
+    !! above the perfect substitutes if they are ppf_29
+    loop (cesOut2cesIn(in2,in)$(
+                            NOT (ppf_beyondcalib_29(in) AND in_complements(in)) ),
+      p29_CESderivative(t,regi_dyn29(regi),out,ipf_beyond_29_excludeRoot(in2))$(
+                                              p29_CESderivative(t,regi,out,in2) )
+      = 1;
+    );
+
+    !!  Prices of perfect substitutes factors are all 1
+    p29_CESderivative(t,regi_dyn29(regi),out,ppf_beyondcalib_29(in2))$(
+                      p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
     = 1;
-  );
 
-  !!  Prices of perfect substitutes factors are all 1
-  p29_CESderivative(t,regi_dyn29(regi),out,ppf_beyondcalib_29(in2))$(
-                     p29_CESderivative(t,regi,out,in2) AND in_complements(in2) )
-  = 1;
+    display "check p29_CESderivative", p29_CESderivative;
 
-  display "check p29_CESderivative", p29_CESderivative;
-
-  loop ((regi_dyn29(regi),
-         cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in))),
-    pm_cesdata(t,regi,in,"price")
-    = p29_CESderivative(t,regi,out,in);
-  );
+    loop ((regi_dyn29(regi),
+          cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(in))),
+      pm_cesdata(t,regi,in,"price")
+      = p29_CESderivative(t,regi,out,in);
+    );
 
 $ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.FE_target "%c_CES_calibration_industry_FE_target%" == "1" !! c_CES_calibration_industry_FE_target
-  !! set minimum price on ppf_industry
-  pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")
-  = max(pm_cesdata(t,regi,in,"price"), 1e-5);
+    !! set minimum price on ppf_industry
+    pm_cesdata(t,regi_dyn29(regi),ppf_industry_dyn37(in),"price")
+    = max(pm_cesdata(t,regi,in,"price"), 1e-5);
 $endif.FE_target
 $endif.subsectors
 
-  !! smooth historical prices
-  pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
-                                            in_beyond_calib_29_excludeRoot(in) )
-  = (0.25 * pm_cesdata(t,regi,in,"price"))
-  + ( 0.75
-    * sum(t_29hist2(t2), pm_cesdata(t2,regi,in,"price"))
-    / card(t_29hist2)
-    );
+    !! smooth historical prices
+    pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"price")$(
+                                              in_beyond_calib_29_excludeRoot(in) )
+    = (0.25 * pm_cesdata(t,regi,in,"price"))
+    + ( 0.75
+      * sum(t_29hist2(t2), pm_cesdata(t2,regi,in,"price"))
+      / card(t_29hist2)
+      );
 
-$else.prices_beyond
+  else
+    !! complements are not treated in the first iteration
+    pm_cesdata(t,regi,ipf_beyond_29(in),"price")$( NOT ue_industry_dyn37(in) )
+    = 1;
 
-  pm_cesdata(t,regi,ipf_beyond_29(in),"price")$( NOT ue_industry_dyn37(in) )
-  = 1;
-  !! complements are not treated in the first iteration
+  );
 
-$endif.prices_beyond
-
-  !! The calibration of elasticities of substitution takes much longer to 
+  !! The calibration of elasticities of substitution takes much longer to
   !! converge if it starts from a high elasticity of substitution. To avoid
   !! this situation, the price of the capital stock is increased.
-  if (%c_CES_calibration_iteration% eq 1,
+  if (sm_CES_calibration_iteration eq 1,
     loop (cesOut2cesIn(out,in_beyond_calib_29_excludeRoot(ppfKap(in)))$(
-                                           pm_cesdata_sigma("2015",out) eq -1 ),
+                                            pm_cesdata_sigma("2015",out) eq -1 ),
       pm_cesdata(t,regi,in,"price")
       = pm_cesdata(t,regi,in,"price")
       * 5;
@@ -984,21 +1015,21 @@ $endif.prices_beyond
                         AND (t.val eq 2005 OR t.val eq 2050 OR t.val eq 2100)
                         AND pm_cesdata_sigma(t,out) eq -1                     ),
 
-$ifthen.repEsubs  %c_CES_calibration_prices% == "load"
-    put "%c_CES_calibration_iteration%", "remind", t.tl, in.tl ;
-    put "price_Noscale", regi.tl, pm_cesdata(t,regi,in,"price") /;
-    put "%c_CES_calibration_iteration%", "remind", t.tl, in2.tl;
-    put "price_Noscale", regi.tl, pm_cesdata(t,regi,in2,"price") /;
-$else.repEsubs
-    put "%c_CES_calibration_iteration%", "remind", t.tl, in.tl;
-    put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in) /;
-    put "%c_CES_calibration_iteration%", "remind", t.tl, in2.tl;
-    put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in2) /;
-$endif.repEsubs
+    if (sm_CES_calibration_iteration eq 1 and s29_CES_calibration_new_structure eq 1,
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in.tl ;
+      put "price_Noscale", regi.tl, pm_cesdata(t,regi,in,"price") /;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in2.tl;
+      put "price_Noscale", regi.tl, pm_cesdata(t,regi,in2,"price") /;
+    else
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in.tl;
+      put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in) /;
+      put sm_CES_calibration_iteration:0:0, "remind", t.tl, in2.tl;
+      put "price_Noscale", regi.tl, p29_CESderivative(t,regi,"inco",in2) /;
+    );
   );
   putclose;
 
-  !! First, we compute the quantity for the root deriving from the ppf 
+  !! First, we compute the quantity for the root deriving from the ppf
   !! quantities and prices and we adjust the ppf prices so that it matches the
   !! root quantity. The current formulation does not support putty in beyond
   !! and complements.
@@ -1064,7 +1095,7 @@ $endif.repEsubs
       * pm_cesdata(t_29,regi_dyn29,in,"quantity")
       );
 
-    pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")$( ipf_putty(out) ) 
+    pm_cesdata_putty(t_29,regi_dyn29,out,"quantity")$( ipf_putty(out) )
     = sum(cesOut2cesIn(out,in),
         pm_cesdata(t_29,regi_dyn29,in,"price")
       * pm_cesdata_putty(t_29,regi_dyn29,in, "quantity")
@@ -1134,9 +1165,14 @@ $endif.repEsubs
   );
 );
 
-***_____________________________ END OF BEYOND CALIB ________________________________________
+***_____________________________ END OF: BEYOND CALIB ________________________________________
 
-***_________ COMPUTE ELASTICITIES OF SUBSTITUTION _________
+***_____________________________ START OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
+
+*** Elasticities of substitution are normally prescribed manually.
+*** However, they can also be estimated from technological data. This is done here.
+*** At the time of documentation, the nodes for which this is done are in the services_with_capital realization of the
+*** buildings module.
 
 *** Compute the rho parameter from the elasticity of substitution
 pm_cesdata(ttot,regi,ipf(out),"rho")$(    ttot.val ge 2005
@@ -1214,8 +1250,10 @@ pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 AND pm_ce
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = max ( v29_rho.lo(regi,in), pm_cesdata(t,regi,in,"rho"));
 pm_cesdata(t,regi_dyn29(regi),in,"rho")$( pm_cesdata_sigma(t,in) eq -1 ) = min ( v29_rho.up(regi,in), pm_cesdata(t,regi,in,"rho"));
 
-***_________ END COMPUTATION OF ELASTICITIES OF SUBSTITUTION _________
+***_____________________________ END OF: COMPUTE ELASTICITIES OF SUBSTITUTION ________________________________________
 
+
+***_____________________________ START OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
 
 *** Finally, we take the evolution of xi and eff, and pass it on to effGr.
 *** (a) for items in ces_29
@@ -1231,7 +1269,7 @@ loop ((t,regi_dyn29(regi),ces_29(out,in),t0),
 
 pm_cesdata(t,regi_dyn29(regi),"inco","effgr") = 1;
 
-*** (b) for items beyond calibration, whose growth beyond t_29hist is treated 
+*** (b) for items beyond calibration, whose growth beyond t_29hist is treated
 *** below
 
 loop ((t_29,t0,cesOut2cesIn(out,in),regi_dyn29(regi))$(
@@ -1262,7 +1300,7 @@ loop ((t_29hist_last(t2),regi_dyn29(regi),cesOut2cesIn(out,in))$(
   = pm_cesdata(t2,regi,in, "effGr");
 );
 
-*** Second, change efficiencies for the variables which have exogenous pathways 
+*** Second, change efficiencies for the variables which have exogenous pathways
 *** in case UE = f(FE,K)
 loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   pm_cesdata(t_29,regi_dyn29(regi),in, "effGr")$( NOT t_29hist(t_29) )
@@ -1271,9 +1309,18 @@ loop ((t_29hist_last(t2),cesOut2cesIn(out,in))$(    ue_fe_kap_29(out) ),
   / p29_efficiency_growth(t2,regi,in);
 );
 
+***_____________________________ END OF: PASS EFF TIME EVOLUTION TO EFFGR ________________________________________
+
+
+***_____________________________ START OF: BEYOND CALIBRATION PART II ________________________________________
+
 $ifthen.subsectors "%industry%" == "subsectors"
 $ifthen.industry_FE_target "%c_CES_calibration_industry_FE_target%" == "1"
-*** Check for industry EEK value to be lower than subsector output quantity
+
+*** c_CES_calibration_industry_FE_target == 1 means that
+*** industry ppfen input prices are scaled to make the Euler identity hold
+
+*** Abort if any industry EEK value is lower than subsector output quantity
 sm_tmp = smin((t,regi_dyn29(regi),
                cesOut2cesIn(ue_industry_dyn37(out),ppfKap(in))),
 	   pm_cesdata(t,regi,out,"quantity")
@@ -1304,7 +1351,7 @@ if (0 gt sm_tmp,
   abort "assertion EEK value < subsector output quantity failed. See log for details.";
 );
 
-*** scale industry input prices as a slack variable to make the Euler identity
+*** scale industry ppfen input prices as a slack variable to make the Euler identity
 *** hold
 put logfile, ">>> Industry FE Price Rescaling <<<" /;
 loop ((t,regi_dyn29(regi),ue_industry_dyn37(out)),
@@ -1346,7 +1393,7 @@ loop (cesRev2cesIO(counter,ipf_industry_dyn37(out))$(
     );
 );
 
-loop ((t,regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$( 
+loop ((t,regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$(
                                                     NOT ue_industry_dyn37(in) ),
   pm_cesdata(t,regi,in,"xi")
   = pm_cesdata(t,regi,in,"price")
@@ -1368,7 +1415,10 @@ loop ((t,regi_dyn29(regi),cesOut2cesIn(out,in_industry_dyn37(in)))$(
   );
 );
 $else.industry_FE_target
-*** Apply efficiency improvements assumptions to industrial final energy and capital inputs
+
+*** c_CES_calibration_industry_FE_target == 0 means that
+*** the efficiency time evolution computed above if discarded and instead
+*** efficiency improvements assumptions to industrial final energy and capital inputs are applied:
 loop ((t_29hist_last(t2),cesOut2cesIn_below(out,in))$(
                                             industry_ue_calibration_target_dyn37(out)
                                             AND ppf_beyondcalib_29(in)),
@@ -1430,6 +1480,8 @@ loop (cesOut2cesIn(in_industry_dyn37(out),in)$(
 $endif.industry_FE_target
 $endif.subsectors
 
+***_____________________________ END OF: BEYOND CALIBRATION PART II ________________________________________
+
 option p29_efficiency_growth:8;
 display "after long term efficiencies", pm_cesdata, p29_efficiency_growth;
 
@@ -1443,7 +1495,7 @@ loop (complements_ref(in, in2),
   = pm_cesdata(t,regi,in,"quantity")
   / pm_cesdata(t,regi,in2,"quantity");
 
-  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")$( 
+  pm_cesdata(t,regi_dyn29(regi),in2,"compl_coef")$(
              in_putty(in2) AND  (NOT ppfIO_putty(in2)) )
   = pm_cesdata_putty(t,regi,in,"quantity")
   / pm_cesdata_putty(t,regi,in2,"quantity");
@@ -1451,7 +1503,7 @@ loop (complements_ref(in, in2),
 ***_______________________ END COMPLEMENTARY CONSTRAINTS _____________________________
 
 
-*** All efficiences after t_29_last are set to their t_29_last values. This is 
+*** All efficiences after t_29_last are set to their t_29_last values. This is
 *** done in order to avoid xi negative in the latest periods. Should not be
 *** necessary to split pre and post-t_29_last with reasonable FE pathways
 * Exclude industry from this, since it may lead to infeasibilities.
@@ -1468,11 +1520,9 @@ loop ((t,t_29_last,in)$(    t.val gt t_29_last.val
 
 );
 
-***_______________________ REPORTING FOR THE ELASTICITIES OF SUBSTITUTION_______________
+*** REPORTING for the elasticities of substitution
 *** it has been separated from the esubs model results since the PDF reporting needs the CES efficiencies after 2015 as well
-
 put capital_unit;
-
 loop (regi_dyn29(regi),
 loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND ( cesOut2cesIn(out,in) AND cesOut2cesIn2(out,in2))
@@ -1480,39 +1530,37 @@ loop ((out,in,in2,t)$((pm_cesdata_sigma(t,out) eq -1)
                                     AND (sameAs(t, "2015") OR sameAs(t, "2050") OR sameAs(t, "2100"))) ,
 
        if ( sameAs(t,"2015"),
-           put "%c_CES_calibration_iteration%", "remind" ,"2015", out.tl   , "output_scale", regi.tl, p29_output_estimation(regi,out) /;
+           put sm_CES_calibration_iteration:0:0, "remind" ,"2015", out.tl   , "output_scale", regi.tl, p29_output_estimation(regi,out) /;
        );
 
-       put "%c_CES_calibration_iteration%", "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
-       put "%c_CES_calibration_iteration%", "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
-       put "%c_CES_calibration_iteration%", "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in2,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, out.tl   , "quantity", regi.tl, ( pm_cesdata(t,regi,out,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,out,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in.tl , "quantity", regi.tl, ( pm_cesdata(t,regi,in,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in,"quantity") $ ( ipf_putty(out))) /;
+       put sm_CES_calibration_iteration:0:0, "remind" , t.tl, in2.tl  , "quantity", regi.tl, ( pm_cesdata(t,regi,in2,"quantity") $ ( NOT ipf_putty(out)) + pm_cesdata_putty(t,regi,in2,"quantity") $ ( ipf_putty(out))) /;
 
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "eff", regi.tl, pm_cesdata(t,regi,in,"eff") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "eff", regi.tl, pm_cesdata(t,regi,in2,"eff") /;
 
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in.tl , "effGr", regi.tl, pm_cesdata(t,regi,in,"effGr") /;
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in2.tl  , "effGr", regi.tl, pm_cesdata(t,regi,in2,"effGr") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "effGr", regi.tl, pm_cesdata(t,regi,in,"effGr") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "effGr", regi.tl, pm_cesdata(t,regi,in2,"effGr") /;
 
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in.tl , "xi", regi.tl, pm_cesdata(t,regi,in,"xi") /;
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in2.tl  , "xi", regi.tl, pm_cesdata(t,regi,in2,"xi") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "xi", regi.tl, pm_cesdata(t,regi,in,"xi") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "xi", regi.tl, pm_cesdata(t,regi,in2,"xi") /;
 
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in.tl , "price", regi.tl, pm_cesdata(t,regi,in,"price") /;
-       put "%c_CES_calibration_iteration%","remind" , t.tl, in2.tl  , "price", regi.tl, pm_cesdata(t,regi,in2,"price") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in.tl , "price", regi.tl, pm_cesdata(t,regi,in,"price") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl, in2.tl  , "price", regi.tl, pm_cesdata(t,regi,in2,"price") /;
 
-       put "%c_CES_calibration_iteration%","remind" , t.tl,out.tl  , "rho", regi.tl, pm_cesdata(t,regi,out,"rho") /;
+       put sm_CES_calibration_iteration:0:0,"remind" , t.tl,out.tl  , "rho", regi.tl, pm_cesdata(t,regi,out,"rho") /;
        );
 
        loop ((index_Nr,in)$p29_capitalUnitProjections(regi, in, index_Nr),
-       put "%c_CES_calibration_iteration%",index_Nr.tl, "2015", in.tl , "quantity", regi.tl,  p29_capitalUnitProjections(regi,in,index_Nr) /;
+       put sm_CES_calibration_iteration:0:0,index_Nr.tl, "2015", in.tl , "quantity", regi.tl,  p29_capitalUnitProjections(regi,in,index_Nr) /;
        );
 );
 putclose;
 
 
-***_____________________________ END OF ESUBS REPORTING ________________________________________
+***_____________________________ START OF: CONSISTENCY CHECKS ________________________________________
 
-
-***_____________________________ START OF CONSISTENCY CHECKS ________________________________________
 *** check technological consistency of the CES tree.
 p29_test_CES_recursive(t_29,regi,in) = 0;
 
@@ -1525,11 +1573,11 @@ p29_test_CES_recursive(t_29,regi_dyn29,ppf_29(in))$( NOT ppf_putty(in) )
 p29_test_CES_putty_recursive(t_29,regi_dyn29,ppf_29(in))$( ppf_putty(in) )
 = pm_cesdata_putty(t_29,regi_dyn29,in,"quantity");
 
-p29_test_CES_putty_recursive(t_29hist,regi_dyn29,ppf_putty(in))$( 
+p29_test_CES_putty_recursive(t_29hist,regi_dyn29,ppf_putty(in))$(
                                                                 NOT ppf_29(in) )
 = pm_cesdata_putty(t_29hist,regi_dyn29,in,"quantity");
 
-display "consistency beyond 1", p29_test_CES_recursive, 
+display "consistency beyond 1", p29_test_CES_recursive,
         p29_test_CES_putty_recursive;
 
 *** test for the historical periods, where beyond_calib is also taken into account
@@ -1589,7 +1637,7 @@ p29_test_CES_putty_recursive(t,regi_dyn29,ppf_putty(out))$( NOT t0(t) )
 );
 putclose logfile;
 
-display "consistency beyond 2", p29_test_CES_recursive, 
+display "consistency beyond 2", p29_test_CES_recursive,
         p29_test_CES_putty_recursive;
 
 *** test for the other periods, and restrict to in_29
@@ -1653,7 +1701,7 @@ loop ((t_29(t),regi_dyn29(regi),cesRev2cesIO(counter,ipf_29(out)))$(
     );
 );
 
-display "consistency beyond 3", p29_test_CES_recursive, 
+display "consistency beyond 3", p29_test_CES_recursive,
         p29_test_CES_putty_recursive;
 
 option p29_test_CES_recursive:8;
@@ -1740,12 +1788,10 @@ if (sm_tmp,
 );
 putclose logfile;
 
-***_____________________________ END OF CONSISTENCY CHECKS ________________________________________
-
-***_____________________________ END OF CONSISTENCY CHECKS ________________________________________
+***_____________________________ END OF: CONSISTENCY CHECKS ________________________________________
 
 *** Add information on ppf_putty quantities which are not in ppf_29
-if (%c_CES_calibration_iteration% eq 1, !! first CES calibration iteration
+if (sm_CES_calibration_iteration eq 1,
   put file_CES_calibration;
 
   loop ((t,regi_dyn29(regi),in)$(( NOT ppf_29(in)) AND ppf_putty(in)),

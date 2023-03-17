@@ -30,19 +30,40 @@ $offdelim
 pm_costsTradePeFinancial(regi,"XportElasticity", tradePe(enty)) = 100;
 pm_costsTradePeFinancial(regi, "tradeFloor", tradePe(enty))     = 0.0125;
 
-*DK* Only for SSP cases other than SSP2: use default trade costs
-if(cm_tradecost_bio = 1,
-pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(regi,"Xport", "pebiolc")/2;
-);
+*** Adjust tradecosts based on switch
+pm_costsTradePeFinancial(regi,"Xport", "pebiolc") = pm_costsTradePeFinancial(regi,"Xport", "pebiolc") * cm_tradecostBio;
 
-pm_costsTradePeFinancial(regi,"Xport", "pegas") = cm_trdcst * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
-pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = cm_trdadj *pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
+pm_costsTradePeFinancial(regi,"Xport", "pegas") = 1.5 * pm_costsTradePeFinancial(regi,"Xport", "pegas") ;
+pm_costsTradePeFinancial(regi,"XportElasticity","pegas") = 2 * pm_costsTradePeFinancial(regi,"XportElasticity","pegas");
 
 *** initialize secondary energy trade capacity
 p24_seTradeCapacity(t,regi2,regi,entySe) = 0;
 
 *** Secondary Energy exogenously defined trade scenarios
+$IFTHEN.trade_SE_exog not "%cm_trade_SE_exog%" == "off"
+loop( (ttot,ttot2,ext_regi,ext_regi2,entySe)$(p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)),
+  loop(regi$regi_groupExt(ext_regi,regi),
+    loop(regi2$regi_groupExt(ext_regi2,regi2),
 
+*** define trade quantities to converge to in the long-term (ttot2)
+      p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge ttot2.val)=
+        p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)
+          * sm_EJ_2_TWa
+          * pm_gdp(t,regi) / sum(regi3$(regi_groupExt(ext_regi,regi3)),pm_gdp(t,regi3))
+          * pm_gdp(t,regi2) / sum(regi4$(regi_groupExt(ext_regi2,regi4)),pm_gdp(t,regi4));
+*** define ramp-up of trade quantities, linear increase from ttot (start year) to ttot2 (end year), 
+*** ttot should have first non-zero values
+      p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge (ttot.val-pm_ts(ttot))
+                                            AND t.val lt ttot2.val) =
+        p24_trade_exog(ttot,ttot2,ext_regi,ext_regi2,entySe)
+        * sm_EJ_2_TWa
+        * pm_gdp(t,regi) / sum(regi3$(regi_groupExt(ext_regi,regi3)),pm_gdp(t,regi3))
+        * pm_gdp(t,regi2) / sum(regi4$(regi_groupExt(ext_regi2,regi4)),pm_gdp(t,regi4))
+        * ((t.val - (ttot.val-pm_ts(ttot))) / (ttot2.val - (ttot.val-pm_ts(ttot))));
+    );
+  );
+);
+$ENDIF.trade_SE_exog
 
 *** Scenario Assumptions for Imports to the EU from MEA (Ariadne Scenarios)
 p24_seTrade_Quantity(regi,regi2,entySe) = 0;
@@ -138,12 +159,13 @@ $ifthen.import_h2_ariadne "%cm_import_ariadne%" == "on"
 $endif.import_h2_ariadne
 $endif.import_h2_EU
 
+$ifthen.import_h2_EU not "%cm_import_EU%" == "off"
 *** phase in import quantities given by p24_seTrade_Quantity linearly from 2035 to 2050
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val ge 2050) = p24_seTrade_Quantity(regi,regi2,entySe);
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2045) = p24_seTrade_Quantity(regi,regi2,entySe)*0.75;
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2040) = p24_seTrade_Quantity(regi,regi2,entySe)*0.5;
 p24_seTradeCapacity(t,regi,regi2,entySe)$(t.val eq 2035) = p24_seTrade_Quantity(regi,regi2,entySe)*0.25;
-
+$endif.import_h2_EU
 
 *** in energy security scenario, phase-in trade earlier already from 2030
 $ifthen.import_h2_EU "%cm_Ger_Pol%" == "ensec"

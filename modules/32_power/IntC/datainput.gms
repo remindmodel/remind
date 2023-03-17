@@ -10,16 +10,16 @@
 ***                        IntC specific data input
 *------------------------------------------------------------------------------------
 
-***parameter p32_shCHP(all_regi,char) - upper boundary of chp electricity generation
-parameter f32_shCHP(all_regi,char)  "upper boundary of chp electricity generation"
+parameter f32_shCHP(ttot,all_regi)  "upper boundary of chp electricity generation"
 /
 $ondelim
 $include "./modules/32_power/IntC/input/f32_shCHP.cs4r"
 $offdelim
 /
 ;
-p32_shCHP(all_regi,char) = f32_shCHP(all_regi,char);
-
+p32_shCHP(ttot,all_regi) = f32_shCHP(ttot,all_regi) + 0.05;
+p32_shCHP(ttot,all_regi)$(ttot.val ge 2050) = min(p32_shCHP("2020",all_regi) + 0.15, 0.75);
+p32_shCHP(ttot,all_regi)$((ttot.val gt 2020) and (ttot.val lt 2050)) = p32_shCHP("2020",all_regi) + ((p32_shCHP("2050",all_regi) - p32_shCHP("2020",all_regi)) / 30 * (ttot.val - 2020));
 
 ***parameter p32_grid_factor(all_regi) - multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India
 parameter p32_grid_factor(all_regi)                "multiplicative factor that scales total grid requirements down in comparatively small or homogeneous regions like Japan, Europe or India"
@@ -38,14 +38,14 @@ $include "./modules/32_power/IntC/input/f32_factorStorage.cs4r"
 $offdelim
 /
 ;
+
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 f32_factorStorage(all_regi,"windoff") = f32_factorStorage(all_regi,"wind");
 f32_factorStorage(all_regi,"wind")      = 1.35 * f32_factorStorage(all_regi,"wind"); 
 $ENDIF.WindOff
 p32_factorStorage(all_regi,all_te) = f32_factorStorage(all_regi,all_te);
 
-***INNOPATHS
-$if not "%cm_INNOPATHS_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_INNOPATHS_storageFactor%*p32_factorStorage(all_regi,all_te);
+$if not "%cm_storageFactor%" == "off" p32_factorStorage(all_regi,all_te)=%cm_storageFactor%*p32_factorStorage(all_regi,all_te);
 
 ***parameter p32_storexp(all_regi,all_te) - exponent that determines how curtailment and storage requirements per kW increase with market share of wind and solar. 1 means specific marginal costs increase linearly
 p32_storexp(regi,"spv")     = 1;
@@ -72,6 +72,16 @@ $ENDIF.WindOff
 
 p32_storageCap(te,char) = f32_storageCap(char,te);
 display p32_storageCap;
+
+*** set total VRE share threshold above which additional integration challenges arise: 
+p32_shThresholdTotVREAddIntCost(t)$(t.val < 2030) = 50;
+p32_shThresholdTotVREAddIntCost("2030") = 60;
+p32_shThresholdTotVREAddIntCost("2035") = 70;
+p32_shThresholdTotVREAddIntCost("2040") = 80;
+p32_shThresholdTotVREAddIntCost("2045") = 90;
+p32_shThresholdTotVREAddIntCost(t)$(t.val > 2045) = 95;
+
+p32_FactorAddIntCostTotVRE = 1.5;
 
 $ontext
 parameter p32_flex_maxdiscount(all_regi,all_te) "maximum electricity price discount for flexible technologies reached at high VRE shares"

@@ -252,11 +252,11 @@ $offdelim
 /
 ;
 $ifthen "%cm_calibration_FE%" == "low"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","ElecEraWise",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SDP","Mix1Wise",in_dyn35);
 $elseif "%cm_calibration_FE%" == "medium"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $elseif "%cm_calibration_FE%" == "high"
-  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix",in_dyn35);
+  pm_fedemand(t,regi,in_dyn35)$(t.val ge 2006) = p29_fedemand_trasp(t,regi,"gdp_SSP2","Mix1",in_dyn35);
 $endif
 
 Parameter
@@ -345,7 +345,7 @@ Execute_Loadpoint 'input'  p29_cesIO_load = vm_cesIO.l, p29_effGr = vm_effGr.l;
 
 *** Load putty-clay quantities if relevant (initialise to 0 in case it is not)
 p29_cesIOdelta_load(t,regi,in) = 0;
-if ( (%c_CES_calibration_iteration% gt 1 OR %c_CES_calibration_new_structure% eq 0) AND (card(in_putty) gt 0),
+if ( (sm_CES_calibration_iteration gt 1 OR s29_CES_calibration_new_structure eq 0) AND (card(in_putty) gt 0),
 Execute_Loadpoint 'input'  p29_cesIOdelta_load = vm_cesIOdelta.l;
 );
 
@@ -401,8 +401,8 @@ loop ((t,regi_dyn29(regi)),
   );
 );
 
-* Use offset quantities for historic industry H2/HTH_el use, since it actually
-* didn't happen.
+*** Use offset quantities for historic industry H2/HTH_el use, since it actually
+*** did not happen.
 loop (pf_quantity_shares_37(in,in2),
   pm_cesdata(t_29hist(t),regi_dyn29(regi),in,"offset_quantity")$(
                                   pm_cesdata(t,regi,in,"offset_quantity") eq 0 )
@@ -461,7 +461,7 @@ loop((t,regi,in)$(    (ppf(in) OR ppf_29(in))
 p29_capitalPrice(t,regi) = 0.12;
 
 *** Load capital price assumption for the first iteration, otherwise take it from gdx prices
-if( %c_CES_calibration_iteration% = 1 AND %c_CES_calibration_new_structure% = 1,  pm_cesdata(t,regi,"kap","price") = p29_capitalPrice(t,regi));
+if( sm_CES_calibration_iteration eq 1 AND s29_CES_calibration_new_structure eq 1,  pm_cesdata(t,regi,"kap","price") = p29_capitalPrice(t,regi));
 
 *** In case there is one capital variable together with an energy variable in a same CES, give them the same efficiency growth pathways
 
@@ -478,13 +478,7 @@ loop ( (t0(t),regi, ppfIO_putty(in)),
     );
 );
 
-$ifthen.growth %cm_esubGrowth% ==  "low"
 p29_esubGrowth = 0.3;
-$elseif.growth %cm_esubGrowth% == "middle"
-p29_esubGrowth = 0.5;
-$elseif.growth %cm_esubGrowth% == "high"
-p29_esubGrowth = 1;
-$endif.growth
-;
+
 *** EOF ./modules/29_CES_parameters/calibrate/datainput.gms
 

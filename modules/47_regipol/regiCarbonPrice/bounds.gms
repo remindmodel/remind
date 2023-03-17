@@ -6,8 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/bounds.gms
 
-
+***---------------------------------------------------------------------------
 *** region-specific bounds (with hard-coded regions)
+***---------------------------------------------------------------------------
 
 ** Force historical bounds on nuclear
 vm_cap.fx("2015",regi,"tnrs","1")$((cm_startyear le 2015) and (sameas(regi,"DEU"))) = 10.8/1000; 
@@ -55,18 +56,16 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"ESW") or sameas(regi,"FRA") )) = 1E-6;
     vm_cap.up(t,regi,te,"1")$((t.val ge 2030) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"ENC") or sameas(regi,"ESC") or sameas(regi,"EWN") )) = 1E-6;
 
-*** DEU coal capacity phase-out
-    vm_cap.up("2025",regi,te,"1")$((cm_startyear le 2025) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"DEU"))) = 25.125/1000;
-    vm_cap.up("2030",regi,te,"1")$((cm_startyear le 2020) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"DEU"))) = 16.7/1000;
-    vm_cap.up("2035",regi,te,"1")$((cm_startyear le 2025) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"DEU"))) = 6.375/1000;
-    vm_cap.up(t,regi,te,"1")$((t.val ge 2040) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"DEU"))) = 1E-6;
-
+*** DEU coal-power capacity phase-out, upper bounds following the Kohleausstiegsgesetz from 2020
+*** https://www.bmuv.de/themen/klimaschutz-anpassung/klimaschutz/nationale-klimapolitik/fragen-und-antworten-zum-kohleausstieg-in-deutschland
+    vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
+    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
+    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
+    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1E-6;
 *** UK coal capacity phase-out
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
 $ENDIF.CoalRegiPol  
-
-
 
 *** further bounds for Germany
 *** upper bound on capacity additions for 2025 based on near-term trends
@@ -76,11 +75,12 @@ loop(regi$(sameAs(regi,"DEU")),
   vm_deltaCap.up("2025",regi,"spv","1")=2*smax(tall$(tall.val ge 2011 and tall.val le 2020), pm_delta_histCap(tall,regi,"spv"));
 );
 
-
 *** bounds on historic gas capacities in Germany
 vm_capTotal.up("2015",regi,"pegas","seel")$(sameas(regi,"DEU"))=30/1000;
 vm_capTotal.up("2020",regi,"pegas","seel")$(sameas(regi,"DEU"))=34/1000;
 
+*** limit coal-power capacity to at least 5 GW in 2030 to account for emissions from fossil waste (~20 MtCO2/yr as of 2020) in 2030 target as waste currently subsumed under coal-power in REMIND
+vm_capTotal.lo("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=5/1000;
 
 
 *** only small amount of co2 injection ccs until 2030 in Germany
@@ -89,7 +89,6 @@ vm_co2CCS.up(t,regi,"cco2","ico2",te,rlf)$((t.val le 2030) AND (sameas(regi,"DEU
 vm_emiTeDetail.up(t,regi,peFos,entySe,teFosCCS,"cco2")$((sameas(regi,"DEU")) AND (cm_noPeFosCCDeu = 1)) = 1e-4;
 *** limit German CDR amount (Energy system BECCS, DACCS, EW and negative Landuse Change emissions), conversion from MtCO2 to GtC
 vm_emiCdrAll.up(t,regi)$((cm_deuCDRmax ge 0) AND (sameas(regi,"DEU"))) = cm_deuCDRmax / 1000 / sm_c_2_co2;
-
 
 *** adaptation of power system for Germany in early years  to prevent coal to gas switch in Germany due to coal-phase out policies
 loop(regi$(sameAs(regi,"DEU")),
@@ -100,12 +99,41 @@ vm_deltaCap.up("2025",regi,"ngcc","1") = 0.0015;
 vm_capEarlyReti.up('2025',regi,'pc') = 0.65; 
 );
 
-
-
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
 $endIf.ensec
+
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables share in electricity:
+***---------------------------------------------------------------------------
+$ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
+  loop((ttot,ext_regi)$(p47_VREminShare(ttot,ext_regi)),
+    loop(regi$(regi_group(ext_regi,regi)),
+      v47_VREshare.lo(t,regi)$(t.val ge ttot.val) = p47_VREminShare(t,ext_regi);
+    )
+  )
+;
+$endIf.cm_VREminShare
+*** provide range for gas and coal power CF in EnSec scenario in 2025 and 2030 for subsitution
+$ifThen.ensec "%cm_Ger_Pol%" == "ensec"
+    vm_capFac.up("2025",regi,"pc")$sameas(regi,"DEU") = 0.6;
+    vm_capFac.up("2030",regi,"pc")$sameas(regi,"DEU") = 0.6;
+
+*** fix gas power to lower value in 2025 for short-term substitution
+    vm_capFac.fx("2025",regi,"ngcc")$sameas(regi,"DEU") = 0.2;
+    vm_capFac.lo("2030",regi,"ngcc")$sameas(regi,"DEU") = 0.2;
+$endIf.ensec
+
+*** PW: limit PE gas demand from 2025 on to cm_EnSecScen_limit EJ/yr gas imports + domestic gas in Germany
+if (cm_EnSecScen_limit gt 0,
+    vm_prodPe.up(t,regi,"pegas")$((t.val ge 2025) AND (sameas(regi,"DEU"))) = cm_EnSecScen_limit/pm_conv_TWa_EJ;
+);
+
+*** Fix CES function quantity trajectories to exogenous data if cm_exogDem_scen is activated
+$ifthen.ExogDemScen NOT "%cm_exogDem_scen%" == "off"
+vm_cesIO.fx(t,regi,in)$(pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in))=pm_exogDemScen(t,regi,"%cm_exogDem_scen%",in);
+$endif.ExogDemScen
 
 
 *** EOF ./modules/47_regipol/regiCarbonPrice/bounds.gms

@@ -18,16 +18,11 @@ p70_cap_vintages(ttot,regi,te,ttot2)$( ttot.val ge 2005 )
     sum(te2rlf(te,rlf),
 ***      pm_correctcap(ttot,regi,te,rlf)
     + sum((opTimeYr2te(te,opTimeYr),tsu2opTimeYr(ttot,opTimeYr))$(
-             opTimeYr.val gt 1 AND opTimeYr.val eq (ttot.val - ttot2.val + 1) ),
+             opTimeYr.val ge 1 AND opTimeYr.val eq (ttot.val - ttot2.val + 1) ),
         pm_ts(ttot2)
       * pm_omeg(regi,opTimeYr+1,te)
       * vm_deltaCap.l(ttot2,regi,te,rlf)
       )$( ttot.val gt ttot2.val )
-    + (
-        pm_dt(ttot) / 2
-      * pm_omeg(regi,"2",te)
-      * vm_deltaCap.l(ttot,regi,te,rlf)
-      )$( ttot.val eq ttot2.val )
     )
 ;
 
@@ -147,7 +142,7 @@ loop(descr_water_int2ext(descr_water_int,descr_water_extn,descr_water_extd),
 
 ***Aggregated categories***-------------------------------------------------------
 p70_water_output(ttot,regi,"Water Consumption|Electricity|Coal|w/ CCS; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
+  sum(te_elcool70$(sameas(te_elcool70,"igccc")), 
     o70_water_consumption(ttot,regi,te_elcool70))
 ;
 
@@ -339,7 +334,7 @@ p70_water_output(ttot,regi,"Water Consumption|Electricity|Dry Cooling; km3/yr;")
     ) * sm_TWa_2_MWh / sm_giga_2_non)      
 ;
 p70_water_output(ttot,regi,"Water Withdrawal|Electricity|Coal|w/ CCS; km3/yr;") = 
-  sum(te_elcool70$(sameas(te_elcool70,"igccc") OR sameas(te_elcool70,"pcc") OR sameas(te_elcool70,"pco")), 
+  sum(te_elcool70$(sameas(te_elcool70,"igccc") ), 
     o70_water_withdrawal(ttot,regi,te_elcool70))
 ;
 

@@ -43,7 +43,7 @@ q_costInv(t,regi)..
   sum(sector2te_addTDCost(sector,te),
     vm_costAddTeInv(t,regi,te,sector)
   )
-*** end-use technology cost placed on CES nodes to represent demand-side investment cost:
+*** end-use transformation cost of novel technologies placed on CES nodes that are to be accounted in the budget equation
   +
   sum(in$(ppfen_CESMkup(in)),
     vm_costCESMkup(t,regi,in)
@@ -55,7 +55,12 @@ q_costInv(t,regi)..
 q_costInvTeDir(t,regi,te)..
   v_costInvTeDir(t,regi,te)
   =e=
-  vm_costTeCapital(t,regi,te) * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf) )
+  vm_costTeCapital(t,regi,te) 
+  * sum(te2rlf(te,rlf), vm_deltaCap(t,regi,te,rlf)) 
+  * (1.02 + pm_prtp(regi) ) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
+  !! half a time step earlier, using an interest rate of pm_prtp + 2%, which is close to the model-endogenous interest rate. 
+  !! We do this to reduce the difference to the previous version where the effect of deltacap on capacity was split 
+  !! half to the current and half to the next time.   
 ;
 
 
@@ -66,7 +71,13 @@ v_adjFactorGlob.fx(t,regi,te) = 0;
 q_costInvTeAdj(t,regi,teAdj)..
   v_costInvTeAdj(t,regi,teAdj)
   =e=
-  vm_costTeCapital(t,regi,teAdj) * ( (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj) ) )
+  vm_costTeCapital(t,regi,teAdj) * (
+    (p_adj_coeff(t,regi,teAdj) * v_adjFactor(t,regi,teAdj)) + (p_adj_coeff_glob(teAdj) * v_adjFactorGlob(t,regi,teAdj))
+  ) 
+  * (1.02 + pm_prtp(regi) ) ** (pm_ts(t) / 2) !! This increases the investments as if the money was actually borrowed 
+  !! half a time step earlier, using an interest rate of pm_prtp + 2%, which is close to the model-endogenous interest rate. 
+  !! We do this to reduce the difference to the previous version where the effect of deltacap on capacity was split 
+  !! half to the current and half to the next time. 
 ;
 
 ***---------------------------------------------------------------------------
@@ -159,33 +170,24 @@ q_balSe(t,regi,enty2)$( entySE(enty2) AND (NOT (sameas(enty2,"seel"))) )..
 ***---------------------------------------------------------------------------
 *MLB 05/2008* correction factor included to avoid pre-triangular infeasibility
 q_transPe2se(ttot,regi,pe2se(enty,enty2,te))$(ttot.val ge cm_startyear)..
-         vm_demPe(ttot,regi,enty,enty2,te)
-         =e=
-         (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
-         +
+    vm_demPe(ttot,regi,enty,enty2,te)
+     =e=
+    (1 / pm_eta_conv(ttot,regi,te) * vm_prodSe(ttot,regi,enty,enty2,te))$teEtaConst(te)
+    +
 ***cb early retirement for some fossil technologies
-        (1 - vm_capEarlyReti(ttot,regi,te))
-        *
-
-		sum(teSe2rlf(teEtaIncr(te),rlf),
-                vm_capFac(ttot,regi,te)
-             * (
-                 sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
-                        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
-                      / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te) 
+    (1 - vm_capEarlyReti(ttot,regi,te))
+    *
+    sum(teSe2rlf(teEtaIncr(te),rlf),
+            vm_capFac(ttot,regi,te)
+            * (
+                sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+                        pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+                      / pm_dataeta(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te)
                       * pm_omeg(regi,opTimeYr+1,te)
-                                * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-                      )
-*LB* add half of the last time step ttot
-               +  pm_dt(ttot)/2 / pm_dataeta(ttot,regi,te)
-                * pm_omeg(regi,"2",te)
-                * vm_deltaCap(ttot,regi,te,rlf)   
-$ifthen setglobal END2110
-                      - (pm_ts(ttot) / pm_dataeta(ttot,regi,te) * pm_omeg(regi,"11",te)
-                   * 0.5*vm_deltaCap(ttot,regi,te,rlf))$(ord(ttot) eq card(ttot))
-$endif
-                                )
-                        );
+                      * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
+                )
+            )
+    );
 
 ***---------------------------------------------------------------------------
 *' Transformation from secondary to final energy:
@@ -215,6 +217,13 @@ qm_balFe(t,regi,entySe,entyFe,te)$se2fe(entySe,entyFe,te)..
   sum((sector2emiMkt(sector,emiMkt),entyFE2sector(entyFE,sector)),
     vm_demFEsector(t,regi,entySE,entyFE,sector,emiMkt)
   )
+;
+
+*' FE balance equation including FE sectoral taxes effect
+q_balFeAfterTax(t,regi,entySe,entyFe,sector,emiMkt)$(sefe(entySe,entyFe) AND entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt))..
+  vm_demFeSector(t,regi,entySe,entyFe,sector,emiMkt)
+  =e=
+  vm_demFeSector_afterTax(t,regi,entySe,entyFe,sector,emiMkt)
 ; 
 
 ***To be moved to specific modules---------------------------------------------------------------------------
@@ -297,29 +306,19 @@ q_limitCapCCS(t,regi,ccs2te(enty,enty2,te),rlf)$teCCS2rlf(te,rlf)..
 ***-----------------------------------------------------------------------------
 
 q_cap(ttot,regi,te2rlf(te,rlf))$(ttot.val ge cm_startyear)..
-         vm_cap(ttot,regi,te,rlf)
-         =e=
-    !! early retirement for some fossil technologies
-        (1 - vm_capEarlyReti(ttot,regi,te))
-        *
+  vm_cap(ttot,regi,te,rlf)
+  =e=
+!! early retirement for some fossil technologies
+  (1 - vm_capEarlyReti(ttot,regi,te))
+  * (
+      sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1)),
+            pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1))
+          * pm_omeg(regi,opTimeYr+1,te)
+          * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
+      )
 
-        (sum(opTimeYr2te(te,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
-                  pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
-                * pm_omeg(regi,opTimeYr+1,te)
-                * vm_deltaCap(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,te,rlf)
-            )
-       !! half of the last time step ttot
-        +  ( pm_dt(ttot) / 2 
-       * pm_omeg(regi,"2",te)
-       * vm_deltaCap(ttot,regi,te,rlf)
-       )
-$ifthen setGlobal END2110
-    - ( pm_ts(ttot) / 2
-      * pm_omeg(regi,"11",te)
-      * vm_deltaCap(ttot,regi,te,rlf)
-      )$ (ord(ttot) eq card(ttot) )				   
-$endif
-);
+  )
+;
 
 
 
@@ -349,13 +348,13 @@ $IFTHEN.WindOff %cm_wind_offshore% == "1"
 q_windoff_low(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =g=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 0.5 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 q_windoff_high(t,regi)$(t.val > 2020)..
    sum(rlf, vm_deltaCap(t,regi,"windoff",rlf))
    =l=
-   p_shareWindOff(t) * p_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
+   pm_shareWindOff(t,regi) * pm_shareWindPotentialOff2On(regi) * 2 * sum(rlf, vm_deltaCap(t,regi,"wind",rlf))
 ;
 
 $ENDIF.WindOff
@@ -381,8 +380,9 @@ qm_deltaCapCumNet(ttot,regi,teLearn)$(ord(ttot) lt card(ttot) AND pm_ttot_val(tt
 
 ***---------------------------------------------------------------------------
 *' Initial values for cumulated capacities (learning technologies only):
+*' (except for tech_stat 4 technologies that have no standing capacities in 2005 and ccap0 refers to another year)
 ***---------------------------------------------------------------------------
-q_capCumNet(t0,regi,teLearn)..
+q_capCumNet(t0,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4))..
   vm_capCum(t0,regi,teLearn)
   =e=
   pm_data(regi,"ccap0",teLearn);
@@ -417,7 +417,8 @@ q_limitGeopot(t,regi,peReComp(enty),rlf)..
   sum(te$teReComp2pe(enty,te,rlf), (vm_capDistr(t,regi,te,rlf) / (pm_data(regi,"luse",te)/1000)));
 
 ***  learning curve for investment costs
-q_costTeCapital(t,regi,teLearn) .. 
+***  deactivate learning for tech_stat 4 technologies before 2025 as they are not built before
+q_costTeCapital(t,regi,teLearn)$(NOT (pm_data(regi,"tech_stat",teLearn) eq 4 AND t.val le 2020)) .. 
   vm_costTeCapital(t,regi,teLearn)
   =e=
 ***  special treatment for first time steps: using global estimates better
@@ -491,7 +492,7 @@ q_limitBiotrmod(t,regi)$(t.val > 2020)..
 q_emiTeDetail(t,regi,enty,enty2,te,enty3)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetail(t,regi,enty,enty2,te,enty3)
   =e=
-  sum(emiMkt, v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
+  sum(emiMkt, vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt))
 ;
 
 ***--------------------------------------------------
@@ -512,7 +513,7 @@ q_emiTe(t,regi,emiTe(enty))..
 ***-----------------------------------------------------------------------------
 
 q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
-  v_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
+  vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
       (
@@ -562,7 +563,7 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
   =e=
 ***   emissions from fuel combustion
     sum(emi2te(enty2,enty3,te,enty),     
-      v_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
+      vm_emiTeDetailMkt(t,regi,enty2,enty3,te,enty,emiMkt)
     )
 ***   energy emissions fuel extraction
 	+ v_emiEnFuelEx(t,regi,enty)$(sameas(emiMkt,"ETS"))
@@ -840,16 +841,65 @@ q_limitCO2(ttot+1,regi) $((pm_ttot_val(ttot+1) ge max(cm_startyear,2055)) AND (t
          =l=
          vm_emiTe(ttot,regi,"co2");
 
+***---------------------------------------------------------------------------
+*' Adjustment costs - calculation of the relative change to last time step 
+***---------------------------------------------------------------------------
+
 q_eqadj(regi,ttot,teAdj(te))$(ttot.val ge max(2010, cm_startyear)) ..
-         v_adjFactor(ttot,regi,te)
-         =e=
-         power(
-         (sum(te2rlf(te,rlf),vm_deltaCap(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)))/(pm_ttot_val(ttot)-pm_ttot_val(ttot-1))
-         ,2)
-                /( sum(te2rlf(te,rlf),vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
-                   + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
-                   + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
-                  );
+  v_adjFactor(ttot,regi,te)
+  =e=
+  power(
+    ( sum(te2rlf(te,rlf), vm_deltaCap(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap(ttot-1,regi,te,rlf)) )
+    / ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) )
+  , 2)
+  / ( sum(te2rlf(te,rlf), vm_deltaCap(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)  
+      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
+    )
+;
+ 
+***---------------------------------------------------------------------------
+*' Calculate changes to reference in cm_startyear - needed to limit them via refunded adj costs 
+***---------------------------------------------------------------------------
+*' calculating the absolute change of output with respect to the value in reference for each te (counting SE, FE, UE and CCS)
+q_changeProdStartyear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
+  v_changeProdStartyear(t,regi,te)
+  =e=
+  sum(pe2se(enty,enty2,te),   vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2se(enty,enty2,te), vm_prodSe(t,regi,enty,enty2,te)  - p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te), vm_prodFE(t,regi,enty,enty2,te)  - p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(fe2ue(enty,enty2,te), vm_prodUe(t,regi,enty,enty2,te)  - p_prodUeReference(t,regi,enty,enty2,te) )
+  + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), vm_co2CCS(t,regi,enty,enty2,te,rlf) - p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
+;
+
+*' calculating the relative change 
+q_relChangeProdStartYear(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
+  v_relChangeProdStartYear(t,regi,te) / 100
+  *  
+  (   p_prodAllReference(t,regi,te) 
+    + p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te)  !! taking into account the region and technology-specific seed values
+  )
+  =e=
+  ( v_changeProdStartyear(t,regi,te) - v_changeProdStartyearSlack(t,regi,te) ) !! always allow some change (depending on .up / .lo of the slack variable) 
+;
+
+*' calculating the absolute effect size: (relative change)^2 * value in the reference run * construction time (as proxy for "how easy to change on short notice") 
+q_changeProdStartyearAdj(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )..
+  v_changeProdStartyearAdj(t,regi,te)
+  =e=
+  power( v_relChangeProdStartYear(t,regi,te) / 100, 2 )  !! taking the square to a) treat increase and decrease the same; b) to penalize larger changes 
+  * ( p_prodAllReference(t,regi,te) + p_adj_seed_reg(t,regi) * p_adj_seed_te(t,regi,te) ) !! tie back to the absolute change 
+  * ( pm_data(regi,"constrTme",te)$(pm_data(regi,"constrTme",te) gt 0) + 2$(pm_data(regi,"constrTme",te) eq 0)) !! take construction time 
+;
+
+*' calculating the resulting costs (which are applied as a tax in module 21, so they have no budget effect but only influence REMIND choices)
+q_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) )  ..
+  vm_changeProdStartyearCost(t,regi,te)
+  =e=
+  c_changeProdCost * sm_DpGJ_2_TDpTWa
+  * p_adj_coeff(t,regi,te)
+  * v_changeProdStartyearAdj(t,regi,te)
+;
 
 ***---------------------------------------------------------------------------
 *' The use of early retirement is restricted by the following equations:
@@ -987,11 +1037,11 @@ q_shGasLiq_fe(t,regi,sector)$(pm_shGasLiq_fe_up(t,regi,sector) OR pm_shGasLiq_fe
 
 
 *limit secondary energy district heating and heat pumps
-$IFTHEN.sehe_upper not "%cm_INNOPATHS_sehe_upper%" == "off" 
+$IFTHEN.sehe_upper not "%cm_sehe_upper%" == "off" 
 q_heat_limit(t,regi)$(t.val gt 2020)..
     vm_prodFe(t,regi,"sehe","fehes","tdhes")
     =l=
-    %cm_INNOPATHS_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
+    %cm_sehe_upper%*vm_prodFe("2020",regi,"sehe","fehes","tdhes")
 ;
 $ENDIF.sehe_upper
 

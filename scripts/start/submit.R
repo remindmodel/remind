@@ -5,6 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+
 .copy.fromlist <- function(filelist,destfolder) {
   if(is.null(names(filelist))) names(filelist) <- rep("",length(filelist))
   for(i in 1:length(filelist)) {
@@ -23,20 +24,21 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
     cfg$results_folder <- gsub(":date:", date, cfg$results_folder, fixed = TRUE)
     cfg$results_folder <- gsub(":title:", cfg$title, cfg$results_folder, fixed = TRUE)
     # Create output folder
-    cat("   Creating results folder",cfg$results_folder,"\n")
     if (!file.exists(cfg$results_folder)) {
+      message("   Creating results folder ", cfg$results_folder)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     } else if (!cfg$force_replace) {
-      couldnotdelete <- paste0("Results folder ",cfg$results_folder," could not be created because it already exists")
+      couldnotdelete <- paste0("Results folder ",cfg$results_folder," already exists")
       if (stopOnFolderCreateError) {
         stop(couldnotdelete, ".")
       } else if (! all(grepl("^log*.txt", list.files(cfg$results_folder)))) {
-        stop(couldnotdelete, " and it contains not only log files.")
+        message(couldnotdelete, " and it contains not only log files. ",
+                "Probably the slurm job was aborted and restarted.")
       } else {
-        message(couldnotdelete, " but it contains only log files.")
+        message(couldnotdelete, " containing only log files as expected for coupled runs.")
       }
     } else {
-      cat("    Deleting results folder because it already exists:",cfg$results_folder,"\n")
+      message("    Results folder already exists, deleting and re-creating it: ",cfg$results_folder,"\n")
       unlink(cfg$results_folder, recursive = TRUE)
       dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
     }
@@ -48,57 +50,63 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       # detected like this
       firstRunInCascade <- normalizePath(renv::project()) == normalizePath(".")
       if (firstRunInCascade) {
-        if (!renv::status()$synchronized) {
-          message("The new run will use the package environment defined in renv.lock, ",
-                  "but it is out of sync, probably because you installed packages/updates manually. ",
-                  "Write current package environment into renv.lock first? (Y/n)", appendLF = FALSE)
-          if (tolower(gms::getLine()) %in% c("y", "")) {
-            renv::snapshot(prompt = FALSE)
-          }
-        }
-
         if (getOption("autoRenvUpdates", FALSE)) {
-          source("scripts/utils/updateRenv.R")
-        } else {
-          packagesUrl <- "https://pik-piam.r-universe.dev/src/contrib/PACKAGES"
-          pikPackages <- sub("^Package: ", "", grep("^Package: ", readLines(packagesUrl), value = TRUE))
-          installed <- utils::installed.packages()
-          outdatedPackages <- utils::old.packages(instPkgs = installed[installed[, "Package"] %in% pikPackages, ])
-          if (!is.null(outdatedPackages)) {
-            message("The following PIK packages can be updated:\n",
-                    paste("-", outdatedPackages[, "Package"], ":",
-                          outdatedPackages[, "Installed"], "->", outdatedPackages[, "ReposVer"],
-                          collapse = "\n"),
-                    "\nConsider updating with `Rscript scripts/utils/updateRenv.R`.")
-          }
+          installedUpdates <- piamenv::updateRenv()
+          piamenv::stopIfLoaded(names(installedUpdates))
+        } else if (   'TRUE' != Sys.getenv('ignoreRenvUpdates')
+                   && !is.null(piamenv::showUpdates())) {
+          message("Consider updating with `make update-renv`.")
         }
+
+        message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
+        # suppress output of renv::snapshot
+        utils::capture.output({
+          utils::capture.output({
+            # snapshot current main renv into run folder
+            renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+          }, type = "message")
+        })
+        message("done.")
+      } else {
+        # a run renv is loaded, we are presumably starting new run in a cascade
+        message("Copying lockfile into '", cfg$results_folder, "'")
+        file.copy(renv::paths$lockfile(), file.path(cfg$results_folder, "_renv.lock"))
       }
 
-      createResultsfolderRenv <- function(resultsfolder, lockfile) {
-        # use same snapshot.type so renv::status()$synchronized always uses the same logic
-        renv::init(resultsfolder, settings = list(snapshot.type = renv::settings$snapshot.type()))
 
-        # restore same renv as previous run in cascade, or main renv if first run
-        file.copy(lockfile, resultsfolder, overwrite = TRUE)
-        renv::restore(lockfile = file.path(resultsfolder, basename(lockfile)), prompt = FALSE)
+      renvLogPath <- file.path(cfg$results_folder, "log_renv.txt")
+      message("   Initializing renv, see ", renvLogPath)
+      createResultsfolderRenv <- function() {
+        renv::init() # will overwrite renv.lock if existing...
+        file.rename("_renv.lock", "renv.lock") # so we need this rename
+        renv::restore(prompt = FALSE)
       }
+
       # init renv in a separate session so the libPaths of the current session remain unchanged
       callr::r(createResultsfolderRenv,
-               list(normalizePath(cfg$results_folder), normalizePath(renv::paths$lockfile())),
-               show = TRUE)
+               wd = cfg$results_folder,
+               env = c(RENV_PATHS_LIBRARY = "renv/library"),
+               stdout = renvLogPath, stderr = "2>&1")
     }
 
-    # Save the cfg (with the updated name of the result folder) into the results folder. 
-    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it 
+    if (cfg$pythonEnabled == "on") {
+      piamenv::createResultsfolderPythonVirtualEnv(normalizePath(cfg$results_folder))
+    } else {
+      # create empty .venv folder so that new venv won't be initialized automatically by .Rprofile
+      dir.create(file.path(cfg$results_folder, ".venv"))
+    }
+
+    # Save the cfg (with the updated name of the result folder) into the results folder.
+    # Do not save the new name of the results folder to the .RData file in REMINDs main folder, because it
     # might be needed to restart subsequent runs manually and should not contain the time stamp in this case.
-    filename <- paste0(cfg$results_folder,"/config.Rdata")
-    cat("   Writing cfg to file",filename,"\n")
+    filename <- file.path(cfg$results_folder, "config.Rdata")
+    cat("   Writing cfg to file", filename, "\n")
     # remember main folder
     cfg$remind_folder <- normalizePath(".")
-    save(cfg,file=filename)
-    
+    save(cfg, file = filename)
+
     # Copy files required to configure and start a run
-    filelist <- c("prepare_and_run.R" = "scripts/start/prepare_and_run.R",
+    filelist <- c("prepareAndRun.R" = "scripts/start/prepareAndRun.R",
                   ".Rprofile" = ".Rprofile")
     .copy.fromlist(filelist,cfg$results_folder)
 
@@ -108,16 +116,24 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
   on.exit(setwd(cfg$remind_folder))
   # Change to run folder
   setwd(cfg$results_folder)
-  
-  # send prepare_and_run.R to cluster 
-  cat("   Executing prepare_and_run.R for",cfg$results_folder,"\n")
-  if (grepl("^direct", cfg$slurmConfig)) {
-    log <- format(Sys.time(), paste0(cfg$title,"-%Y-%H-%M-%S-%OS3.log"))
-    system("Rscript prepare_and_run.R")
+
+  # send prepareAndRun.R to cluster
+  cat("   Executing prepareAndRun for",cfg$results_folder,"\n")
+  if (grepl("^direct", cfg$slurmConfig) || ! isSlurmAvailable()) {
+    exitCode <- system("Rscript prepareAndRun.R")
   } else {
-    system(paste0("sbatch --job-name=",cfg$title," --output=log.txt --mail-type=END --comment=REMIND --wrap=\"Rscript prepare_and_run.R \" ",cfg$slurmConfig))
+    exitCode <- system(paste0("sbatch --job-name=",
+                              cfg$title,
+                              " --output=log.txt",
+                              " --mail-type=END",
+                              " --comment=REMIND",
+                              " --wrap=\"Rscript prepareAndRun.R \" ",
+                              cfg$slurmConfig))
     Sys.sleep(1)
   }
-    
+  if (0 < exitCode) {
+    stop("Executing prepareAndRun failed, stopping.")
+  }
+
   return(cfg$results_folder)
 }

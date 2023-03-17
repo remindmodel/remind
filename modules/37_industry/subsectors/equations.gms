@@ -72,7 +72,7 @@ $endif.process_based_steel
 q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
                                          AND entyFe2Sector(entyFe,"indst") ) ..
   sum(se2fe(entySE,entyFE,te),
-    vm_demFEsector(ttot,regi,entySE,entyFE,"indst",emiMkt)
+    vm_demFeSector_afterTax(ttot,regi,entySE,entyFE,"indst",emiMkt)
   )
   =e=
   sum((fe2ppfEN(entyFE,ppfen_industry_dyn37(in)),
@@ -101,10 +101,16 @@ $endif.no_calibration
 $ifthen.process_based_steel NOT "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
 q37_limit_secondary_steel_share(ttot,regi)$(
          ttot.val ge cm_startyear
+
 $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
      AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
+$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off" 
+         !! do not limit steel production shares for fixed production
+     AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
+$endif.exogDem_scen 
+
                                                                             ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")
   =l=
@@ -196,7 +202,7 @@ q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
 
 
 ***---------------------------------------------------------------------------
-*'  CES markup cost to represent sector-specific demand-side transformation cost in industry
+*'  CES markup cost that are accounted in the budget (GDP) to represent sector-specific demand-side transformation cost in industry
 ***---------------------------------------------------------------------------
 q37_costCESmarkup(t,regi,in)$(ppfen_industry_dyn37(in))..
   vm_costCESMkup(t,regi,in)

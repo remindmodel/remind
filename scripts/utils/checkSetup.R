@@ -9,12 +9,20 @@ message("checking for pdflatex executable on your PATH - ok")
 
 message("checking if required R packages are installed")
 missingDeps <- Filter(function(x) !requireNamespace(x, quietly = TRUE),
-                      renv::dependencies(dev = TRUE)[, "Package"])
+                      setdiff(renv::dependencies(dev = TRUE)[, "Package"], "R"))
 if (length(missingDeps) > 0) {
   stop("Some required R packages are missing, install them with `renv::install(",
        paste(capture.output(dput(missingDeps)), collapse = ""), ")`")
 } else {
   message("all required R packages are installed")
+}
+
+if (Sys.which("python3") != ""
+    || (Sys.which("python.exe") != ""
+        && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3"))))) {
+  message("checking for Python 3 - ok")
+} else {
+  message("Python 3 not found, some non-default configurations of REMIND will not work")
 }
 
 message("Finished setup checks. Your system is ready to run REMIND if there were no errors/warnings.")
