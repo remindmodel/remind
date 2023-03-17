@@ -21,7 +21,7 @@ vm_cesIO.up(ttot,regi,"ue_steel_secondary")
       p37_cesIO_up_steel_secondary(ttot,regi,"%cm_GDPscen%")
     );
 $elseif.secondary_steel_bound "%cm_secondary_steel_bound%" == "scenario"
-if (1 eq cm_emiscen,
+if (cm_startyear eq 2005,
   !! In no-policy scenarios, tight bounds representing usual scrap recycling
   !! rates apply.  Only 10% of the difference between projected secondary
   !! steel production and the upper bound with increased recycling rates are

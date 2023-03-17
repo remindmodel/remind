@@ -138,7 +138,7 @@ pm_energy_limit(in)
 * gain" (e.g. 75 %) between baseline value and thermodynamic limit at a given
 * year (e.g. 2050).
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
-if (cm_emiscen eq 1,
+if (cm_startyear eq 2005,
   execute_loadpoint "input.gdx"     p37_cesIO_baseline = vm_cesIO.l;
 else
   execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
@@ -538,7 +538,7 @@ display "scenario limits for maximum secondary steel share",
 $endif.sec_steel_scen
 
 *' load baseline industry ETS solids demand
-if (cm_emiscen ne 1,   !! not a BAU scenario
+if (cm_startyear ne 2005,   !! not a BAU scenario
 execute_load "input_ref.gdx", vm_demFEsector;
   p37_BAU_industry_ETS_solids(t,regi)
   = sum(se2fe(entySE,"fesos",te),
