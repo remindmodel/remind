@@ -40,7 +40,7 @@ helpText <- "
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
 #'                       specified by \"start = MYGROUP\"
-#'   titletag=MYTAG      prepend \"MYTAG-\" to all titles of all runs that are started
+#'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
 #'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig instead of asking the user
 #'
 #' You can combine --reprepare with --debug, --testOneRegi or --quick and the
@@ -221,7 +221,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   }
 
   if (exists("titletag")) {
-    row.names(scenarios) <- paste0(titletag, "-", row.names(scenarios))
+    row.names(scenarios) <- paste0(row.names(scenarios), "-", titletag)
   }
 
   ###################### Loop over scenarios ###############################
