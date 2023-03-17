@@ -41,7 +41,9 @@ helpText <- "
 #'                       everything specified by \"start = 1\", instead start everything
 #'                       specified by \"start = MYGROUP\"
 #'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
-#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig instead of asking the user
+#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig instead of asking the user.
+#'                       Note that the provided CONFIG is only used for scenarios where
+#'                       no slurmConfig is specified in the scenario config csv file.
 #'
 #' You can combine --reprepare with --debug, --testOneRegi or --quick and the
 #' selected folders will be restarted using these settings.  Afterwards,
