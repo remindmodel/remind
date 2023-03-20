@@ -148,7 +148,11 @@ CES.cal.report$value <- as.numeric(as.character(CES.cal.report$value))
 
 CES.cal.report = CES.cal.report %>% filter(iteration %in% c("target", "origin", itr_num))
 
-
+#selecting only calibrated nodes to show on report
+ppf_29 <- readGDX(gdx, "ppf_29")
+pf_eff_target_dyn37 <- readGDX(gdx, "pf_eff_target_dyn37")
+calib.node = c(ppf_29, pf_eff_target_dyn37)
+CES.cal.report <- CES.cal.report %>% filter((pf %in% c(calib.node)))
 
 iter.max = max(itr_num)
 
@@ -160,20 +164,51 @@ iter.max = max(itr_num)
 
 pdf(file.path(outputdir,paste0("CES_calibration_report_",scenario,".pdf")),
     width = 42 / 2.54, height = 29.7 / 2.54, title = "CES calibration report")
-
+total_rows_per_page = 35 
+start_row = 1 
 
 # Include tables with quantities outliers
-try(grid.table(quant_outliers(CES.cal.report, threshold_quant), rows = NULL))
-grid.text(paste0("Quantities diverge by more than ",threshold_quant *100," %"),rot = 90,x = 0.05, y = 0.5,
-          gp=gpar(fontsize=20, col="grey38"))
+try(quant.outlier <- quant_outliers(CES.cal.report, threshold_quant))
 
-# nclude tables with price outliers
-grid.newpage()
-try(grid.table(price_outliers(CES.cal.report, threshold_price), rows = NULL))
-grid.text(paste0("Prices below ",threshold_price),rot = 90,x = 0.05, y = 0.5,
-          gp=gpar(fontsize=20, col="grey38"))
+if(total_rows_per_page > nrow(quant.outlier)){
+  end_row = nrow(quant.outlier)
+}else {
+  end_row = total_rows_per_page 
+}    
+for(i in 1:ceiling(nrow(quant.outlier)/total_rows_per_page)){
+  grid.table(quant.outlier[start_row:end_row, ], rows = NULL)
+  start_row = end_row + 1
+  if((total_rows_per_page + end_row) < nrow(quant.outlier)){
+    end_row = total_rows_per_page + end_row
+  }else {
+    end_row = nrow(quant.outlier)
+  }
+  grid.text(paste0("Quantities diverge by more than ",threshold_quant *100," %"),rot = 90,x = 0.05, y = 0.5,
+            gp=gpar(fontsize=20, col="grey38"))
+  grid.newpage()   
+}
 
+# Include tables with price outliers
+try(price.outlier <- price_outliers(CES.cal.report, threshold_price))
 
+start_row = 1 
+if(total_rows_per_page > nrow(price.outlier)){
+  end_row = nrow(price.outlier)
+}else {
+  end_row = total_rows_per_page 
+}    
+for(i in 1:ceiling(nrow(price.outlier)/total_rows_per_page)){
+  grid.table(price.outlier[start_row:end_row, ], rows = NULL)
+  start_row = end_row + 1
+  if((total_rows_per_page + end_row) < nrow(price.outlier)){
+    end_row = total_rows_per_page + end_row
+  }else {
+    end_row = nrow(price.outlier)
+  }
+  grid.text(paste0("Prices below ",threshold_price),rot = 90,x = 0.05, y = 0.5,
+            gp=gpar(fontsize=20, col="grey38"))
+  grid.newpage()   
+}
 
 for (s in levels(CES.cal.report$scenario)) {
   for (r in unique(CES.cal.report[CES.cal.report$scenario == s,][["regi"]])) {

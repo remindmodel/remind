@@ -22,17 +22,25 @@ helpText <- "
 #' Rscript start_bundle_coupled.R scenario_config_coupled_*.csv
 #' Rscript start_bundle_coupled.R --test scenario_config_coupled_*.csv
 #'
+#' scenario_config_coupled_*.csv must be a coupled scenario config .csv file (usually
+#' in the config/ directory), which corresponds to a normal scenario_config_*.csv file.
+#' Using this will start all REMIND runs specified by \"start = 1\" in that file
+#' (check the startgroup option to start a specific group).
+#'
 #' Control the script's behavior by providing additional arguments:
 #'
-#'  --help, -h:        show this help text and exit
-#'  --gamscompile, -g: compile gms of all selected runs. Combined with
-#'                     --interactive, it stops in case of compilation errors,
-#'                     allowing the user to fix them and rerun gamscompile
-#'  --interactive, -i: interactively select run(s) to be started. Asks for config
-#'                     file also if none is specified as path_settings_coupled.
-#'  --test, -t:        Test scenario configuration and writing the RData files
-#'                     in the REMIND main folder without starting the runs.
-#'
+#'   --help, -h:        show this help text and exit
+#'   --gamscompile, -g: compile gms of all selected runs. Combined with
+#'                      --interactive, it stops in case of compilation
+#'                      errors, allowing to fix them and rerun gamscompile
+#'   --interactive, -i: interactively select run(s) to be started. Asks for
+#'                      config file also if the one specified as
+#'                      path_settings_coupled cannot be found.
+#'   --test, -t:        Test scenario configuration and write the RData files
+#'                      in the REMIND main folder without starting the runs.
+#'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
+#'                       everything specified by \"start = 1\", instead start everything
+#'                       specified by \"start = MYGROUP\"
 "
 
 ########################################################################################################
@@ -93,7 +101,8 @@ blue  <- "\033[0;34m"
 NC    <- "\033[0m"   # No Color
 
 # define arguments that are accepted (test for backward compatibility)
-flags <- lucode2::readArgs("startnow", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
+startgroup <- "1"
+flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 if ("--help" %in% flags) {
   message(helpText)
@@ -175,12 +184,9 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
 settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
-if (! exists("startnow") && ("--interactive" %in% flags || ! any(settings_coupled$start == 1))) {
-  settings_coupled$start <- gms::chooseFromList(setNames(rownames(settings_coupled), settings_coupled$start),
-                            type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
-}
-if (! exists("startnow")) startnow <- "1"
-scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
+scenarios_coupled <- selectScenarios(settings = settings_coupled,
+                                     interactive = "--interactive" %in% flags,
+                                     startgroup = startgroup)
 
 missing <- setdiff(rownames(scenarios_coupled),rownames(settings_remind))
 if (!identical(missing, character(0))) {
@@ -204,7 +210,7 @@ if (! identical(common, character(0))) {
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
 } else {
-  stop("No scenario found with start=", startnow, " in ", basename(path_settings_coupled), ".")
+  stop("No scenario found with start=", startgroup, " in ", basename(path_settings_coupled), ".")
 }
 message("")
 
