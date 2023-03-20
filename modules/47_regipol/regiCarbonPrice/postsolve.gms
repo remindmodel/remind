@@ -278,8 +278,16 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
               pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
             );
           else
-***         fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
-            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+***         behavior after terminal year: fixed price (cm_postTargetIncrease=off or 0), global convergence (cm_postTargetIncrease=NPi or NDC), or fixed year increase (cm_postTargetIncrease €/tCO2 increase per year)
+$ifthen %cm_postTargetIncrease% == "off"
+            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt);
+$elseif %cm_postTargetIncrease% == "NPi"
+
+$elseif %cm_postTargetIncrease% == "NDC"
+
+$else
+            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (%cm_postTargetIncrease%*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+$endif
           );
         );
       );
