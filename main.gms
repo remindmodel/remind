@@ -1226,10 +1226,10 @@ $setGlobal cm_emiMktTarget  off    !! def = off
 $setGlobal cm_postTargetIncrease  off    !! def = off, alternatives: NPi, NDC, number
 *** cm_postTargetIncrease "carbon price behavior after the last regipol emission target"
 ***   Example on how to use:
-***     'any number', e.g. '2', carbon prices increase 2 euros per tCO2 per year after regipol emission target is reached
+***     'any number', e.g. '2', carbon price increases 2 euros per tCO2 per year after regipol emission target is reached
 ***     'NPi', carbon price follow NPi global convergence criteria after regipol emission target is reached
 ***     'NDC', carbon price follow NDC global convergence criteria after regipol emission target is reached 
-***     '0' or 'off', carbon prices is kept without change year after regipol emission target is reached
+***     '0' or 'off', carbon price is kept without change year after regipol emission target is reached
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 *** cm_dispatchSetyDown <- "off", if set to some value, this allows dispatching of pe2se technologies,
 *** i.e. the capacity factors can be varied by REMIND and are not fixed. The value of this switch gives the percentage points by how much the lower bound of capacity factors should be lowered.
