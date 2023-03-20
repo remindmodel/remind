@@ -509,7 +509,7 @@ for(scen in common){
   }
   if(!is.null(path_mif_ghgprice_land)) message("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land), green,red), path_mif_ghgprice_land, NC, "\n",sep="")
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
-  message("no_ghgprices_land_until: ", cfg_mag$mute_ghgprices_until)
+  message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
