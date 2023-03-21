@@ -8,25 +8,8 @@
 
 *' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
 *' For non-iteration values show time and regi down, and the other two sets to the right
-option p47_implicitQttyTarget_dev_iter:3:1:4;  
-option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
-option p47_implicitQttyTargetTax_iter:3:1:4;
-option p47_implicitQttyTargetCurrent_iter:3:1:4;
-option p47_implicitQttyTargetCurrent:3:2:2;
-option pm_implicitQttyTarget:3:2:4;
-option p47_implicitQttyTargetTax_prevIter:3:2:2;
-option pm_implicitQttyTarget_dev:3:2:2;
-option p47_implicitQttyTargetTax:3:2:2;
-option p47_implicitQttyTargetTaxRescale:3:2:2;
 option pm_emiMktTarget_dev:3:3:1;
-option pm_factorRescaleemiMktCO2Tax:3:3:1;
-option pm_emiMktCurrent:3:3:1;
-option pm_emiMktTarget:3:3:3;
-option pm_emiMktRefYear:3:3:1;
 option pm_taxemiMkt_iteration:3:3:1;
-option pm_emiMktTarget_dev_iter:3:1:4;
-
-
 
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
@@ -41,7 +24,7 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
-
+  
 *** Auxiliar parameters based on emission targets information 
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     regiEmiMktTarget(ext_regi) = yes;
