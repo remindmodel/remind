@@ -435,8 +435,8 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
     );  
   );
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):5:3 ; 
-  display "p47_implicitQttyTargetTaxRescale before dampening: ", p47_implicitQttyTargetTaxRescale;
+  put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3 ; 
+
 *** dampen rescale factor when closer than 1.5 / 0.75 to reduce oscillations
   if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1,
     if( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) > 1.7, !! prevent numeric explosion by limiting the maximum value
@@ -468,8 +468,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
         )
     ;
   );
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):5:3 ; 
-  display "p47_implicitQttyTargetTaxRescale after dampening: ", p47_implicitQttyTargetTaxRescale;
+  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after dampening: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3 ; 
 
 *** put a bound around the rescale factor with increasing iterations to help convergence
   p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
@@ -478,8 +477,7 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
          ),
          1 / ( 2 * EXP( -0.05 * iteration.val ) + 1.01)
     );
-  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after boundaries: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):5:3 ; 
-  display "p47_implicitQttyTargetTaxRescale after boundaries: ", p47_implicitQttyTargetTaxRescale;
+  put_utility "msg" / "p47_implicitQttyTargetTaxRescale after boundaries: " ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3 ; 
 
 *** dampen if rescale oscillates
   if( (iteration.val > 3) , 
@@ -494,9 +492,8 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
       p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
         1 + ( ( p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) - 1 ) / 2 ) 
       ; !! this brings the value closer to one. The formulation works reasonably well within the range of 0.5..2
-      put_utility "msg" / "reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations:"; 
-      put_utility "msg" / ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):5:3 ; 
-      display "reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations: ", p47_implicitQttyTargetTaxRescale;
+      put_utility "msg" / "Reducing p47_implicitQttyTargetTaxRescale due to oscillation in the previous 3 iterations:"; 
+      put_utility "msg" / ttot.tl " " ext_regi.tl " "  qttyTarget.tl " " qttyTargetGroup.tl " " p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup):10:3 ; 
     );
   );
     
