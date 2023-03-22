@@ -84,7 +84,7 @@ withCallingHandlers({ # piping messages to logFile
   } else if (all(mapping %in% names(templateNames())) && length(mapping) > 0) {
     mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
   } else {
-    message("# Mapping = '", paste(mapping, collapse = ","), " exists neither as file nor mapping name.")
+    message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
     mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()))
     mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", mapping), collapse = "_"), ".csv"))
   }
@@ -131,7 +131,7 @@ withCallingHandlers({ # piping messages to logFile
 
   generateIIASASubmission(filename_remind2_mif, mapping = mapping, model = model, mappingFile = mappingFile,
                           removeFromScen = removeFromScen, addToScen = addToScen,
-                          outputDirectory = outputFolder, outputPrefix = "",
+                          outputDirectory = outputFolder,
                           logFile = logFile, outputFilename = basename(OUTPUT_mif),
                           iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL,
                           generatePlots = TRUE)
