@@ -279,7 +279,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # configure cfg according to settings from csv if provided
     if (! length(config.file) == 0) {
-      cfg <- configureCfg(cfg, scen, scenarios, settings,
+      cfg <- configureCfg(cfg, scen, scenarios,
                           verboseGamsCompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       errorsfound <- sum(errorsfound, cfg$errorsfoundInConfigureCfg)
       cfg$errorsfoundInConfigureCfg <- NULL
