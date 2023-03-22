@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile = TRUE) {
+configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     # Define colors for output
     red   <- "\033[0;31m"
     green <- "\033[0;32m"
