@@ -58,7 +58,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   require(magclass)
   require(gdx)
   library(methods)
-  library(remind2)
+#  library(remind2)
+  library(devtools)
+  load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae/")
 
   errorsfound <- 0
   # delete entries in stack that contain needle and append new

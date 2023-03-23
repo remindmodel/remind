@@ -11,8 +11,10 @@ prepare_NDC<-function(gdx, cfg){
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode2,quietly=TRUE,warn.conflicts =FALSE)
   library(gdx,quietly=TRUE,warn.conflicts =FALSE)
-  library(remind2,quietly = TRUE,warn.conflicts =FALSE)
-
+#  library(remind2,quietly = TRUE,warn.conflicts =FALSE)
+  library(devtools)
+  load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae/")
+  
   ############################# BASIC CONFIGURATION #############################
 
   #Define arguments that can be read from command line

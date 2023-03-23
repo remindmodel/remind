@@ -4,7 +4,9 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-library(remind2)
+# library(remind2)
+library(devtools)
+load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae/")
 
 if (!exists("source_include")) {
   lucode2::readArgs("outputDirs", "outFileName", "profileName")
