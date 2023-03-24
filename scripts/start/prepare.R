@@ -22,8 +22,12 @@ prepare <- function() {
     for(i in 1:length(filelist)) {
       if(!is.na(filelist[i])) {
         to <- paste0(destfolder,"/",names(filelist)[i])
-	      if(!file.copy(filelist[i],to=to,recursive=dir.exists(to),overwrite=T))
-	        cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
+	      if(!file.copy(filelist[i],to=to,recursive=dir.exists(to),overwrite=T)) {
+           cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
+        } else {
+           cat(paste0("Copied ",filelist[i]," to ",to,"\n"))
+        }
+	        
       }
 	  }
   }
@@ -312,6 +316,8 @@ prepare <- function() {
   if (0 != system(paste('cp', gdx_name,
 			file.path(cfg$results_folder, 'input.gdx')))) {
     stop('Could not copy gdx file ', gdx_name)
+  } else {
+    message('Copied ', gdx_name, ' to input.gdx')
   }
 
   # choose which conopt files to copy
