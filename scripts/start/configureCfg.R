@@ -5,7 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
-configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile = TRUE) {
+configureCfg <- function(icfg, iscen, iscenarios, verboseGamsCompile = TRUE) {
     # Define colors for output
     red   <- "\033[0;31m"
     green <- "\033[0;32m"
@@ -59,51 +59,52 @@ configureCfg <- function(icfg, iscen, iscenarios, isettings, verboseGamsCompile 
     if (verboseGamsCompile) {
       # for columns path_gdx…, check whether the cell is non-empty, and not the title of another run with start = 1
       # if not a full path ending with .gdx provided, search for most recent folder with that title
-      if (any(iscen %in% isettings[iscen, names(path_gdx_list)])) {
+      if (any(iscen %in% iscenarios[iscen, names(path_gdx_list)])) {
         stop("Self-reference: ", iscen , " refers to itself in a path_gdx... column.")
       }
+      # if a scenario is referenced that is not in the list of scenarios to be started, try to find a gdx automatically
       for (path_to_gdx in names(path_gdx_list)) {
-        if (!is.na(isettings[iscen, path_to_gdx]) & ! isettings[iscen, path_to_gdx] %in% row.names(iscenarios)) {
-          if (! str_sub(isettings[iscen, path_to_gdx], -4, -1) == ".gdx") {
+        if (!is.na(iscenarios[iscen, path_to_gdx]) & ! iscenarios[iscen, path_to_gdx] %in% row.names(iscenarios)) {
+          if (! str_sub(iscenarios[iscen, path_to_gdx], -4, -1) == ".gdx") {
             # search for fulldata.gdx in output directories starting with the path_to_gdx cell content.
             # may include folders that only _start_ with this string. They are sorted out later.
             dirfolders <- c("./output", icfg$modeltests_folder)
             for (dirfolder in dirfolders) {
-              dirs <- Sys.glob(file.path(dirfolder, paste0(isettings[iscen, path_to_gdx], "*/fulldata.gdx")))
+              dirs <- Sys.glob(file.path(dirfolder, paste0(iscenarios[iscen, path_to_gdx], "*/fulldata.gdx")))
               # if path_to_gdx cell content exactly matches folder name, use this one
-              if (file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
-                message(paste0("   For ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
-                isettings[iscen, path_to_gdx] <- file.path(dirfolder, isettings[iscen, path_to_gdx], "fulldata.gdx")
+              if (file.path(dirfolder, iscenarios[iscen, path_to_gdx], "fulldata.gdx") %in% dirs) {
+                message(paste0("   For ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx], ", a folder with fulldata.gdx was found."))
+                iscenarios[iscen, path_to_gdx] <- file.path(dirfolder, iscenarios[iscen, path_to_gdx], "fulldata.gdx")
                 if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
               } else {
                 # sort out unfinished runs and folder names that only _start_ with the path_to_gdx cell content
                 # for folder names only allows: cell content, _, datetimepattern
                 datetimepattern <- "[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}"
-                dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(isettings[iscen, path_to_gdx],"_", datetimepattern, "/fulldata.gdx"), dirs)]
+                dirs <- dirs[unlist(lapply(dirs, didremindfinish)) & grepl(paste0(iscenarios[iscen, path_to_gdx],"_", datetimepattern, "/fulldata.gdx"), dirs)]
                 # if anything found, pick latest
                 if(length(dirs) > 0 && ! all(is.na(dirs))) {
                   lapply(dirs, str_sub, -32, -14) %>%
                     strptime(format='%Y-%m-%d_%H.%M.%S') %>%
                     as.numeric %>%
                     which.max -> latest_fulldata
-                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", isettings[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
-                  isettings[iscen, path_to_gdx] <- dirs[latest_fulldata]
+                  message(paste0("   Use newest normally completed run for ", path_to_gdx, " = ", iscenarios[iscen, path_to_gdx], ":\n     ", str_sub(dirs[latest_fulldata],if (dirfolder == icfg$modeltests_folder) 0 else 10 ,-14)))
+                  iscenarios[iscen, path_to_gdx] <- dirs[latest_fulldata]
                   if (dirfolder == icfg$modeltests_folder) modeltestRunsUsed <<- modeltestRunsUsed + 1
                 }
               }
             }
           }
           # if the above has not created a path to a valid gdx, stop
-          if (!file.exists(isettings[iscen, path_to_gdx])) {
+          if (!file.exists(iscenarios[iscen, path_to_gdx])) {
             icfg$errorsfoundInConfigureCfg <- sum(icfg$errorsfoundInConfigureCfg, 1)
-            message(red, "Error", NC, ": Can't find a gdx specified as '", isettings[iscen, path_to_gdx], "' in column ",
+            message(red, "Error", NC, ": Can't find a gdx specified as '", iscenarios[iscen, path_to_gdx], "' in column ",
                     path_to_gdx, ".\nPlease specify full path to gdx or name of output subfolder that contains a ",
                     "fulldata.gdx from a previous normally completed run.")
           }
         }
       }
     # Define path where the GDXs will be taken from
-    gdxlist <- unlist(isettings[iscen, names(path_gdx_list)])
+    gdxlist <- unlist(iscenarios[iscen, names(path_gdx_list)])
     names(gdxlist) <- path_gdx_list
 
     # add gdxlist to list of files2export
