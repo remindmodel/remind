@@ -187,6 +187,7 @@ $ifThen %cm_magicc_version% == 6005_REMIND
 put 's|  FILE_EMISSIONSCENARIO.*|  FILE_EMISSIONSCENARIO =  "REMIND_%c_expname%",|g' /;
 $elseIf %cm_magicc_version% == 7.5.3
 put 's|  FILE_EMISSCEN.*|  FILE_EMISSCEN =  "REMIND_%c_expname%.SCEN",|g' /;
+put 's|  FILE_EMISSIONSCENARIO.*|  FILE_EMISSCEN =  "REMIND_%c_expname%.SCEN",|g' /;
 $endIf
 put 's|  RUNNAME.*|  RUNNAME =  "%c_expname%",|g' /;
 put 's|  RUNDATE.*|  RUNDATE =  "%system.date%",|g' /;
