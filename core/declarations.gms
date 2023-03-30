@@ -484,7 +484,6 @@ q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
 q_emiTe(ttot,all_regi,all_enty)                      "total energy-emissions per region"
 q_emiAll(ttot,all_regi,all_enty)                     "calculates all regional emissions as sum over energy and non-energy relates emissions"
-q_emiAllGlob(ttot,all_enty)                          "calculates all global emissions as sum over regions"
 q_emiCap(ttot,all_regi)                              "emission cap"
 q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
@@ -509,7 +508,6 @@ q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carb
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
 
 q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
-q_limitCO2(ttot,all_regi)                             "prevent CO2 from rising again after 2050"
 
 q_limitGeopot(ttot,all_regi,all_enty,rlf)             "constraint on annual renewable production due to competition for the same geographical potential"
 
