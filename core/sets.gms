@@ -1024,7 +1024,7 @@ RCP_regions_world(RCP_regions_world_bunkers) "five RCP regions plus total (world
 ***-----------------------------------------------------------------------------
 Sets
   counter   "helper set to facilitate looping in defined order"   / 1 * 20 /
-  NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"  /2018_cond, 2018_uncond, 2021_cond, 2021_uncond, 2022_cond, 2022_uncond/
+  NDC_version "NDC data version for NDC realizations of 40_techpol and 45_carbonprice"  /2018_cond, 2018_uncond, 2021_cond, 2021_uncond, 2022_cond, 2022_uncond, 2023_cond, 2023_uncond/
 ;
 
 ***-----------------------------------------------------------------------------
@@ -2707,6 +2707,7 @@ emiBECCS2te(all_enty,all_enty,all_te,all_enty) "mapping of BECCS PE,SE,technolog
         pebiolc.seliqbio.bioftcrec.cco2
         pebiolc. seel.bioigccc.cco2
         pebiolc.seh2.bioh2c.cco2
+	pebiolc.segabio.biogasc.cco2
 /
 
 *NB*111125 emissions from fossil fuel extraction by grade that is on top of combustion

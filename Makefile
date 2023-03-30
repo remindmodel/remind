@@ -26,6 +26,12 @@ update-renv-all: ## Upgrade all packages (including CRAN packages) in your renv
 	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade pip wheel
 	[ -e ".venv/bin/python" ] && .venv/bin/python -mpip install --upgrade --upgrade-strategy eager -r requirements.txt
 
+ensure-reqs:     ## Ensure the REMIND library requirements are fulfilled
+                 ## by installing updates and new libraries as necessary. Does not
+                 ## install updates unless it is required.
+	@Rscript -e 'source("scripts/start/ensureRequirementsInstalled.R"); ensureRequirementsInstalled(rerunPrompt="make ensure-reqs")'
+	@[ -e ".venv/bin/python" ] && .venv/bin/python -mpip -qq install -r requirements.txt
+
 archive-renv:    ## Write renv.lock into archive.
 	Rscript -e 'piamenv::archiveRenv()'
 

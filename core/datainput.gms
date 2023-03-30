@@ -371,6 +371,7 @@ loop(emi2te(enty,enty2,te,enty3)$teCCS(te),
 );
 
 *** Allocate emission factors to pm_emifac
+option pm_emifac:3:3:1; 
 pm_emifac(ttot,regi,enty,enty2,te,"co2")$emi2te(enty,enty2,te,"co2")   = fm_dataemiglob(enty,enty2,te,"co2");
 pm_emifac(ttot,regi,enty,enty2,te,"cco2")$emi2te(enty,enty2,te,"cco2") = fm_dataemiglob(enty,enty2,te,"cco2");
 *JeS scale N2O energy emissions to EDGAR
@@ -533,8 +534,12 @@ $ENDIF.tech_earlyreti
 *SB* Time-dependent early retirement rates in Baseline scenarios
 $ifthen.Base_Cprice %carbonprice% == "none"
 $ifthen.Base_techpol %techpol% == "none"
-*** Allow very little early retirement future periods
-pm_regiEarlyRetiRate(t,regi,"pc")$(t.val gt 2025) = 0.01;
+*** CG: Allow no early retirement in future periods under baseline for developing countries
+loop(regi,
+if ( p_developmentState("2015",regi) < 1,
+pm_regiEarlyRetiRate(t,regi,"pc")= 0;
+);
+);
 $endif.Base_techpol
 $endif.Base_Cprice
 
@@ -809,7 +814,7 @@ pm_dataren(all_regi,"maxprod","1","geohdr") = 1e-5; !!minimal production potenti
 
 pm_dataren(all_regi,"maxprod","1","geohdr")$f_maxProdGeothermal(all_regi,"maxprod") = sm_EJ_2_TWa * f_maxProdGeothermal(all_regi,"maxprod");
 *** FS: temporary fix: set minimum geothermal potential across all regions to 10 PJ (still negligible even in small regions) to get rid of infeasibilities
-***pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
+pm_dataren(all_regi,"maxprod","1","geohdr")$(f_maxProdGeothermal(all_regi,"maxprod") <= 0.01) = sm_EJ_2_TWa * 0.01;
 
 
 *mh* set 'nur' for all non renewable technologies to '1':
@@ -1529,6 +1534,25 @@ $endif.cm_rcp_scen_build
 
 *** initialize global target deviation scalar
 sm_globalBudget_dev = 1;
+
+*' load production values from reference gdx to allow penalizing changes vs reference run in the first time step via q_changeProdStartyearCost/q21_taxrevChProdStartYear
+if (cm_startyear gt 2005,
+execute_load "input_ref.gdx", p_prodSeReference = vm_prodSe.l;
+execute_load "input_ref.gdx", p_prodFEReference = vm_prodFE.l;
+execute_load "input_ref.gdx", p_prodUeReference = vm_prodUe.l;
+execute_load "input_ref.gdx", p_co2CCSReference = vm_co2CCS.l;
+);
+
+p_prodAllReference(t,regi,te) =
+    sum(pe2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2se(enty,enty2,te),  p_prodSeReference(t,regi,enty,enty2,te) )
+  + sum(se2fe(enty,enty2,te),  p_prodFEReference(t,regi,enty,enty2,te) )
+  + sum(fe2ue(enty,enty2,te),  p_prodUeReference(t,regi,enty,enty2,te) )
+  + sum(ccs2te(enty,enty2,te), sum(teCCS2rlf(te,rlf), p_co2CCSReference(t,regi,enty,enty2,te,rlf) ) )
+;
+
+*' initialize vm_changeProdStartyearCost for tax calculation
+vm_changeProdStartyearCost.l(t,regi,te) = 0;
 
 *** EOF ./core/datainput.gms
 

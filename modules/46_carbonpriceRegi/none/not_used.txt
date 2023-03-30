@@ -5,6 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 name,type,reason
+cm_startyear,switch,not needed
 sm_c_2_co2,input,questionnaire
 sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2eq,input,questionnaire
