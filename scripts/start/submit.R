@@ -32,7 +32,8 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
       if (stopOnFolderCreateError) {
         stop(couldnotdelete, ".")
       } else if (! all(grepl("^log*.txt", list.files(cfg$results_folder)))) {
-        stop(couldnotdelete, " and it contains not only log files.")
+        message(couldnotdelete, " and it contains not only log files. ",
+                "Probably the slurm job was aborted and restarted.")
       } else {
         message(couldnotdelete, " containing only log files as expected for coupled runs.")
       }
