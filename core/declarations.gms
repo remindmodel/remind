@@ -22,7 +22,6 @@ p_pvpRef(ttot,all_enty)                              "Price on commodity markets
 pm_pvpRegi(ttot,all_regi,all_enty)                   "prices of traded commodities - regional. only used for permit trade"
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
-pm_pricePerm(ttot)                                   "permit price in special case when the marginal is only found in box module"
 
 p_share(ttot,all_regi,all_in,all_in)                 "share of production factors"
 pm_share_trans(tall,all_regi)                        "transportation share"
