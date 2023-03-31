@@ -13,7 +13,9 @@ option pm_taxemiMkt_iteration:3:3:1;
 
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+$endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
 *** EUR in 2030 ~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 = 92% EU28"
