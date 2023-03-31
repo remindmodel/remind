@@ -4,7 +4,7 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-
+  
 # Only output messages to the log if it is the first run of exoGAINS to avoid repetion in the log.txt file 
 firstIteration = FALSE
 if (file.exists("log.txt")){
@@ -18,12 +18,11 @@ if (file.exists("log.txt")){
 #rm(list=ls())
 
 # load required packages
-# for (pkg in c('madrat', 'dplyr', 'luscale', 'remind2', 'gdx')) {
 for (pkg in c('madrat', 'dplyr', 'luscale', 'gdx')) {
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
-library(devtools)
-load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae/")
+
+devtools::load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae")
 
 # stop madrat reporting its default settings _every damn time_
 invisible(getConfig(option = NULL, verbose = firstIteration))

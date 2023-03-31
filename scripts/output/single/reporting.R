@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 
 library(magclass)
-library(remind2)
+devtools::load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae")
 library(lucode2)
 library(gms)
 library(methods)
