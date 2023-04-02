@@ -68,7 +68,15 @@ Parameter
   p47_taxemiMkt_SectorAggFE(ttot,all_regi,sector)    "CO2eq regional aggregated sectoral emission tax (aggregated by final energy)"
   p47_taxCO2eq_SectorAggFE(ttot,all_regi,sector)     "CO2eq global and regional aggregated sectoral emission taxes (aggregated by final energy)"
 ;
- 
+
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option pm_emiMktTarget:3:3:3; !! ensure bett
+option pm_factorRescaleemiMktCO2Tax:3:3:1;
+option pm_emiMktCurrent:3:3:1;
+option pm_emiMktRefYear:3:3:1;
+option pm_emiMktTarget_dev_iter:3:1:4;
+
 $endIf.emiMkt
 
 ***---------------------------------------------------------------------------
@@ -94,6 +102,19 @@ Parameter
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 ;
+
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option p47_implicitQttyTarget_dev_iter:3:1:4;  
+option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
+option p47_implicitQttyTargetTax_iter:3:1:4;
+option p47_implicitQttyTargetCurrent_iter:3:1:4;
+option p47_implicitQttyTargetCurrent:3:2:2;
+option pm_implicitQttyTarget:3:2:4;
+option p47_implicitQttyTargetTax_prevIter:3:2:2;
+option pm_implicitQttyTarget_dev:3:2:2;
+option p47_implicitQttyTargetTax:3:2:2;
+option p47_implicitQttyTargetTaxRescale:3:2:2;
 
 Equations
   q47_implicitQttyTargetTax(ttot,all_regi)  "implicit quantity target tax (PE, SE, FE and/or FE CCS) to represent non CO2-price-driven policies or exogenously defined quantity constraint scenarios"
