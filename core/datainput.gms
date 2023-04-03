@@ -462,6 +462,11 @@ $offdelim
 $Onlisting
 $ENDIF.WindOff
 
+*** test-add USA cap. Forecast by Wood Mackenzie Solar Market Insight Report 2022 ~ 265 GW DC in 2025 in bullish scenario
+!! Should be less in GW_AC, but REMIND corrects for lower model CF than real world by upscaling capacity - should be roughly ok.
+pm_histCap("2025","USA","spv") = 0.265;
+
+
 *** calculate historic capacity additions
 pm_delta_histCap(tall,regi,te) = pm_histCap(tall,regi,te) - pm_histCap(tall-1,regi,te);
 
