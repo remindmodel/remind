@@ -15,6 +15,7 @@ ensureRequirementsInstalled <- function(
   # Check if dependencies for a model run are fulfilled
   if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.3.4") {
     if (is.null(renv::project())) {
+      message("Checking dependencies. If this fails, use a more recent snapshot.")
       piamenv::checkDeps()
     } else {
       installedPackages <- piamenv::fixDeps(ask = ask)
