@@ -17,7 +17,7 @@ $offtext
 
                    ngcc       ngccc         ngt       gastr      gaschp       gashp       gash2      gash2c       gasftrec    gasftcrec
 tech_stat                        2                                                           0           1           2            3
-inco0                950        1350         500          60        1200         400        900         1400        2030        2400
+inco0                950        1350         500          60        1200         400       1000         1400        2030        2400
 constrTme             3          3            2           1          3            2           2           2           3           3
 mix0                                                                                        0.70        0.00        0.00        0.00
 eta                 0.57        0.49        0.38        1.00        0.47        0.80        0.73        0.70        0.73        0.70
@@ -71,7 +71,7 @@ luse                                                                            
 
 +                  elh2         dot         dhp       h2turb      h2curt       h2turbVRE  elh2VRE      h22ch4      MeOH
 tech_stat            4                                    5           5            5                     3          3  
-inco0               1350         480         360         510         700          510      0.1          700       1300
+inco0               1350         480         360         510         700          510      0.1          700       1400
 constrTme            2            2           1           2           2            2        1            2          2
 mix0                                                                                                                    
 eta                 0.73        0.30        0.80        0.40        0.62         0.40      0.73         0.8        0.7
