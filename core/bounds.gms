@@ -257,6 +257,7 @@ loop(te$(sameas(te,"spv") OR sameas(te,"wind") ),
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
   vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
+  vm_cap.up("2025",regi,te,"1")$(pm_histCap("2025",regi,te) gt 1e-6) = 1.05 * pm_histCap("2025",regi,te)$(pm_histCap("2025",regi,te) gt 1e-6); !! only set a bound if values >1MW are in pm_histCap
 );
 
 $ENDIF.WindOff
@@ -268,6 +269,7 @@ loop(te$(sameas(te,"spv") OR sameas(te,"wind") OR sameas(te,"windoff")),
   vm_cap.up("2015",regi,te,"1") = 1.05 * pm_histCap("2015",regi,te)$(pm_histCap("2015",regi,te) gt 1e-10);
   vm_cap.lo("2020",regi,te,"1") = 0.95 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
   vm_cap.up("2020",regi,te,"1") = 1.05 * pm_histCap("2020",regi,te)$(pm_histCap("2020",regi,te) gt 1e-10);
+  vm_cap.up("2025",regi,te,"1")$(pm_histCap("2025",regi,te) gt 1e-6) = 1.05 * pm_histCap("2025",regi,te)$(pm_histCap("2025",regi,te) gt 1e-10); !! only set a bound if values >1MW are in pm_histCap
 );
 
 $ENDIF.WindOff
