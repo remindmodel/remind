@@ -101,7 +101,7 @@ vm_capEarlyReti.up('2025',regi,'pc') = 0.65;
 
 *** energy security policy for Germany: 5GW(el) electrolysis installed by 2030 in Germany at minimum
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
-    vm_cap.lo("2030",regi,"elh2","1")$(sameAs(regi,"DEU"))=5*pm_eta_conv("2030",regi,"elh2")/1000;
+    vm_cap.lo("2030","DEU","elh2","1")=5*pm_eta_conv("2030","DEU","elh2")/1000;
 $endIf.ensec
 
 ***---------------------------------------------------------------------------
@@ -115,6 +115,20 @@ $ifthen.cm_VREminShare not "%cm_VREminShare%" == "off"
   )
 ;
 $endIf.cm_VREminShare
+
+***---------------------------------------------------------------------------
+*** per region minimun variable renewables capacities:
+***---------------------------------------------------------------------------
+*** TODO: implement in analogy to VREminShare
+$ifthen.cm_VREminCap "%cm_VREminCap%" == "ampel"
+    vm_cap.lo("2030","DEU","spv","1")     = 0.215;
+    vm_cap.lo("2030","DEU","wind","1")    = 0.115;
+    vm_cap.lo("2030","DEU","windoff","1") = 0.03;
+    vm_cap.lo("2035","DEU","windoff","1") = 0.04;
+    vm_cap.lo("2045","DEU","windoff","1") = 0.07;
+    vm_cap.lo("2030","DEU","elh2","1")    = 10*pm_eta_conv("2030","DEU","elh2")/1000;
+$endIf.cm_VREminCap
+
 *** provide range for gas and coal power CF in EnSec scenario in 2025 and 2030 for subsitution
 $ifThen.ensec "%cm_Ger_Pol%" == "ensec"
     vm_capFac.up("2025",regi,"pc")$sameas(regi,"DEU") = 0.6;

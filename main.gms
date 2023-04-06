@@ -1275,6 +1275,10 @@ $setGlobal cm_implicitPePriceTarget  off !! def = off
 ***     cm_VREminShare = "2050.EUR_regi 0.7".
 ***       Require a minimum 70% VRE share (wind plus solar) in electricity production for all regions that belong to EUR."
 $setGlobal cm_VREminShare    off !! def = off
+*** cm_VREminCap "minimum variable renewables capacities."
+***  (off):   (default) no bounds
+***  (ampel): sets lower bounds on capacities for wind, solar and H2 as specified in the ampel coalition agreement and KSG."
+$setGlobal cm_VREminCap    off !! def = off
 *** cm_CCSmaxBound "limits Carbon Capture and Storage (including DACCS and BECCS) to a maximum value."
 ***   Example on how to use:
 ***     cm_CCSmaxBound   GLO 2, EUR 0.25
