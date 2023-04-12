@@ -24,28 +24,28 @@ options(error = quote({
 helpText <- "
 #' Rscript output.R [options]
 #'
-#'    [options] can be the following flags:
+#' [options] can be the following flags:
 #'
-#'    --help, -h:      show this help text and exit
-#'    --test, -t:      tests output.R without actually starting any run
-#'    --renv=<path>    load the renv located at <path>, incompatible with --update
-#'    --update         update packages in renv first, incompatible with --renv=<path>
+#'   --help, -h:      show this help text and exit
+#'   --test, -t:      tests output.R without actually starting any run
+#'   --renv=<path>    load the renv located at <path>, incompatible with --update
+#'   --update         update packages in renv first, incompatible with --renv=<path>
 #'
-#'    [options] can also specify the following variables. If they are not specified
-#'    but needed, the scripts will ask the user.
+#' [options] can also specify the following variables. If they are not specified
+#' but needed, the scripts will ask the user.
 #'
-#'    comp:            comp=single means output for single runs (reporting, …)
+#'   comp=             comp=single means output for single runs (reporting, …)
 #'                     comp=comparison means scripts to compare runs (compareScenarios2, …)
 #'                     comp=export means scripts to export runs (xlsx_IIASA, …)
-#'    filename_prefix: string to be added to filenames by some output scripts
+#'   filename_prefix=  string to be added to filenames by some output scripts
 #'                     (compareScenarios, xlsx_IIASA)
-#'    output:          output=compareScenarios2 directly selects the specific script
-#'    outputdir:       Can be used to specify the output directories to be used.
+#'   output=           output=compareScenarios2 directly selects the specific script
+#'   outputdir=        Can be used to specify the output directories to be used.
 #'                     Example: outputdir=./output/SSP2-Base-rem-1,./output/NDC-rem-1
-#'    remind_dir:      path to remind or output folder(s) where runs can be found.
+#'   remind_dir=       path to remind or output folder(s) where runs can be found.
 #'                     Defaults to ./output but can also be used to specify multiple
 #'                     folders, comma-separated, such as remind_dir=.,../otherremind
-#'    slurmConfig:     use slurmConfig=direct, priority, short or standby to specify
+#'   slurmConfig=      use slurmConfig=direct, priority, short or standby to specify
 #'                     slurm selection. You may also pass complicated arguments such as
 #'                     slurmConfig='--qos=priority --mem=8000'
 "
@@ -130,14 +130,15 @@ if (! exists("outputdir")) {
   dir_folder <- if (exists("remind_dir")) c(file.path(remind_dir, "output"), remind_dir) else "./output"
   dirs <- dirname(Sys.glob(file.path(dir_folder, "*", "fulldata.gdx")))
   if (needingMif) dirs <- intersect(dirs, unique(dirname(Sys.glob(file.path(dir_folder, "*", "REMIND_generic_*.mif")))))
-  dirnames <- if (length(dir_folder) <= 2) basename(dirs) else dirs
+  dirnames <- if (length(dir_folder) == 1) basename(dirs) else dirs
   names(dirnames) <- stringr::str_extract(dirnames, "rem-[0-9]+$")
   names(dirnames)[is.na(names(dirnames))] <- ""
   selectedDirs <- chooseFromList(dirnames, type = "runs to be used for output generation",
                     userinfo = paste0(if ("policyCosts" %in% output) "The reference run will be selected separately! " else NULL,
                                       if (needingMif) "Do you miss a run? Check if .mif exists and rerun reporting. " else NULL),
-                    returnBoolean = TRUE, multiple = TRUE)
-  outputdirs <- dirs[selectedDirs]
+                    returnBoolean = FALSE, multiple = TRUE)
+  outputdirs <- if (length(dir_folder) == 1) file.path(dir_folder, selectedDirs) else selectedDirs
+
   if ("policyCosts" %in% output) {
     policyrun <- chooseFromList(dirnames, type = "reference run to which policy run will be compared",
                                 userinfo = "Select a single reference run.",

@@ -6,9 +6,10 @@
 #' @param filename string with scenario_config*.csv filename
 #' @param remindPath path to remind main directory
 #' @param testmode if TRUE, generates warnings if unknownColumnNames exist
+#' @param fillWithDefault boolean whether empty cells should be filled with defaults
 #' @author Oliver Richters
 #' @return list with scenario config content
-readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE) {
+readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE, fillWithDefault = FALSE) {
   if (testmode) {
     cfg <- suppressWarnings(gms::readDefaultConfig(remindPath))
   } else {
@@ -52,12 +53,17 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # fill empty cells with values from scenario written in copyConfigFrom cell
+  copyConfigFromErrors <- 0
   if ("copyConfigFrom" %in% names(scenConf)) {
     scenConf <- copyConfigFrom(scenConf)
     copyConfigFromErrors <- as.numeric(scenConf[1, "copyConfigFrom"])
-    scenConf$copyConfigFrom <- NULL
-  } else {
-    copyConfigFromErrors <- 0
+    scenConf[1, "copyConfigFrom"] <- NA
+  }
+
+  if (fillWithDefault) {
+    for (switchname in intersect(names(scenConf), names(cfg$gms))) {
+      scenConf[is.na(scenConf[, switchname]), switchname] <- cfg$gms[[switchname]]
+    }
   }
 
   errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors
@@ -65,7 +71,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   # check column names
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",
                         "regionmapping", "extramappings_historic", "inputRevision", "slurmConfig",
-                        "results_folder", "force_replace", "action", "pythonEnabled")
+                        "results_folder", "force_replace", "action", "pythonEnabled", "copyConfigFrom")
   if (grepl("scenario_config_coupled", filename)) {
     knownColumnNames <- c(knownColumnNames, "cm_nash_autoconverge_lastrun", "oldrun", "path_report", "magpie_scen",
                           "no_ghgprices_land_until", "qos", "sbatch", "path_mif_ghgprice_land", "max_iterations",
@@ -139,6 +145,7 @@ copyConfigFrom <- function(scenConf) {
       scenConf[run, is.na(scenConf[run, ])] <- scenConf[copyConfigFrom, is.na(scenConf[run, ])]
     }
   }
-  scenConf[1, "copyConfigFrom"] <- length(copyFromMissing) + sum(copyFromLater) # save error count into first element
+  # save error count into first element which must be NA anyway
+  scenConf[1, "copyConfigFrom"] <- length(copyFromMissing) + sum(copyFromLater)
   return(scenConf)
 }

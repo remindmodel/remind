@@ -68,7 +68,15 @@ Parameter
   p47_taxemiMkt_SectorAggFE(ttot,all_regi,sector)    "CO2eq regional aggregated sectoral emission tax (aggregated by final energy)"
   p47_taxCO2eq_SectorAggFE(ttot,all_regi,sector)     "CO2eq global and regional aggregated sectoral emission taxes (aggregated by final energy)"
 ;
- 
+
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option pm_emiMktTarget:3:3:3; !! ensure bett
+option pm_factorRescaleemiMktCO2Tax:3:3:1;
+option pm_emiMktCurrent:3:3:1;
+option pm_emiMktRefYear:3:3:1;
+option pm_emiMktTarget_dev_iter:3:1:4;
+
 $endIf.emiMkt
 
 ***---------------------------------------------------------------------------
@@ -82,10 +90,10 @@ Parameter
   p47_implicitQttyTargetTax_prevIter(ttot,all_regi,qttyTarget,qttyTargetGroup) "previous iteration quantity target tax"
   p47_implicitQttyTargetTax0(ttot,all_regi)                                    "previous iteration quantity target tax revenue"
 
-  p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup)        "tax/subsidy level necessary to achieve a quantity target per iteration"
-  pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)                 "deviation of current iteration quantity target from target"
-  p47_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "parameter to save pm_implicitQttyTarget_dev across iterations"
-  p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax per iteration"    
+  p47_implicitQttyTargetTax_iter(iteration,ttot,all_regi,qttyTarget,qttyTargetGroup)  "tax/subsidy level to achieve a quantity target that the model saw in a given iteration"
+  pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)                 "deviation of current iteration quantity target from target - relative for total targets, absolute (= share points) for share targets"
+  p47_implicitQttyTarget_dev_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "deviation of current iteration quantity from target after the given iteration"
+  p47_implicitQttyTargetTaxRescale_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup) "rescale factor for current implicit quantity target tax after the given iteration"    
   p47_implicitQttyTargetCurrent_iter(iteration,ttot,ext_regi,qttyTarget,qttyTargetGroup)    "current iteration total value for an specific quantity target per iteration"   
 
   pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)  "quantity target [absolute: TWa or GtC; or percentage: 0.1]"  / %cm_implicitQttyTarget% /
@@ -94,6 +102,19 @@ Parameter
 
   p47_implicitQttyTarget_initialYear(ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup) "initial year of quantity target for a given region [year]"
 ;
+
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option p47_implicitQttyTarget_dev_iter:3:1:4;  
+option p47_implicitQttyTargetTaxRescale_iter:3:1:4;
+option p47_implicitQttyTargetTax_iter:3:1:4;
+option p47_implicitQttyTargetCurrent_iter:3:1:4;
+option p47_implicitQttyTargetCurrent:3:2:2;
+option pm_implicitQttyTarget:3:2:4;
+option p47_implicitQttyTargetTax_prevIter:3:2:2;
+option pm_implicitQttyTarget_dev:3:2:2;
+option p47_implicitQttyTargetTax:3:2:2;
+option p47_implicitQttyTargetTaxRescale:3:2:2;
 
 Equations
   q47_implicitQttyTargetTax(ttot,all_regi)  "implicit quantity target tax (PE, SE, FE and/or FE CCS) to represent non CO2-price-driven policies or exogenously defined quantity constraint scenarios"

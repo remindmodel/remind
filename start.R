@@ -13,34 +13,44 @@ require(stringr, quietly = TRUE)
 helpText <- "
 #' Rscript start.R [options] [file]
 #'
-#'    Without [file] argument starts a single REMIND run using the settings from
-#'    `config/default.cfg` and `main.gms`.
+#' Without [file] argument starts a single REMIND run using the settings from
+#' config/default.cfg` and `main.gms`.
 #'
-#'    [file] must be a scenario config .csv file (usually in the config/
-#'    directory).  Using this will start all REMIND runs specified by
-#'    \"start = 1\" in that file.
+#' [file] must be a scenario config .csv file (usually in the config/
+#' directory).  Using this will start all REMIND runs specified by
+#' \"start = 1\" in that file (check the startgroup option to start a specific
+#' group).
 #'
-#'    --help, -h:        show this help text and exit
-#'    --debug, -d:       start a debug run with cm_nash_mode = debug
-#'    --gamscompile, -g: compile gms of all selected runs. Combined with
+#'   --help, -h:         show this help text and exit
+#'   --debug, -d:        start a debug run with cm_nash_mode = debug
+#'   --gamscompile, -g:  compile gms of all selected runs. Combined with
 #'                       --interactive, it stops in case of compilation errors,
 #'                       allowing the user to fix them and rerun gamscompile;
 #'                       combined with --restart, existing runs can be checked.
-#'    --interactive, -i: interactively select config file and run(s) to be
+#'   --interactive, -i:  interactively select config file and run(s) to be
 #'                       started
-#'    --quick, -q:       starting one fast REMIND run with one region, one
+#'   --quick, -q:        starting one fast REMIND run with one region, one
 #'                       iteration and reduced convergence criteria for testing
 #'                       the full model.
-#'    --reprepare, -R:   rewrite full.gms and restart run
-#'    --restart, -r:     interactively restart run(s)
-#'    --test, -t:        test scenario configuration and writing the RData files
+#'   --reprepare, -R:    rewrite full.gms and restart run
+#'   --restart, -r:      interactively restart run(s)
+#'   --test, -t:         test scenario configuration and writing the RData files
 #'                       in the REMIND main folder without starting the runs
-#'    --testOneRegi, -1: starting the REMIND run(s) in testOneRegi mode
+#'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
+#'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
+#'                       everything specified by \"start = 1\", instead start everything
+#'                       specified by \"start = MYGROUP\"
+#'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
+#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
+#'                       to select one of the options shown when running './start.R -t'.
+#'                       CONFIG is used only for scenarios where no slurmConfig
+#'                       is specified in the scenario config csv file, or
+#'                       for all scenarios if --debug, --quick or --testOneRegi is used.
 #'
-#'    You can combine --reprepare with --debug, --testOneRegi or --quick and the
-#'    selected folders will be restarted using these settings.  Afterwards,
-#'    using --reprepare alone will restart the runs using their original
-#'    settings.
+#' You can combine --reprepare with --debug, --testOneRegi or --quick and the
+#' selected folders will be restarted using these settings.  Afterwards,
+#' using --reprepare alone will restart the runs using their original
+#' settings.
 "
 
 # Source everything from scripts/start so that all functions are available everywhere
@@ -50,7 +60,11 @@ invisible(sapply(list.files("scripts/start", pattern = "\\.R$", full.names = TRU
 # define arguments that are accepted
 acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "--gamscompile", i = "--interactive",
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
-flags <- lucode2::readArgs(.flags = acceptedFlags, .silent = TRUE)
+startgroup <- "1"
+flags <- lucode2::readArgs("startgroup", "titletag", "slurmConfig", .flags = acceptedFlags, .silent = TRUE)
+if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
+  slurmConfig <- choose_slurmConfig(identifier = slurmConfig)
+}
 
 # initialize config.file
 config.file <- NULL
@@ -140,7 +154,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if(! exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig(flags = flags)
     }
-    if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
+    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     message()
     for (outputdir in outputdirs) {
       message("Restarting ", outputdir)
@@ -203,12 +217,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # Read-in the switches table, use first column as row names
     settings <- readCheckScenarioConfig(config.file, ".")
-
-    # Select scenarios that are flagged to start, some checks for titles
-    if ("--interactive" %in% flags | ! any(settings$start == 1)) {
-      settings$start <- gms::chooseFromList(setNames(rownames(settings), settings$start), type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
-    }
-    scenarios <- settings[settings$start == 1, ]
+    scenarios <- selectScenarios(settings = settings, interactive = "--interactive" %in% flags, startgroup = startgroup)
   } else {
     # if no csv was provided create dummy list with default/testOneRegi as the only scenario
     if (any(c("--quick", "--testOneRegi") %in% flags)) {
@@ -218,18 +227,27 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
   }
 
+  # Append titletag to scenario names in the scenario title and titles of reference scenarios
+  if (exists("titletag")) {
+    scenarios <- addTitletag(titletag = titletag, scenarios = scenarios)
+  }
+
   ###################### Loop over scenarios ###############################
 
   # ask for slurmConfig if not specified for every run
   if ("--gamscompile" %in% flags) {
     slurmConfig <- "direct"
+    if (! file.exists("input/source_files.log")) {
+      message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
+      system("Rscript start.R config/tests/scenario_config_compile.csv")
+    }
     message("\nTrying to compile the selected runs...")
     lockID <- gms::model_lock()
   }
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
       | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig(flags = flags)
-    if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
+    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
@@ -266,7 +284,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # configure cfg according to settings from csv if provided
     if (! length(config.file) == 0) {
-      cfg <- configureCfg(cfg, scen, scenarios, settings,
+      cfg <- configureCfg(cfg, scen, scenarios,
                           verboseGamsCompile = ! "--gamscompile" %in% flags || "--interactive" %in% flags)
       errorsfound <- sum(errorsfound, cfg$errorsfoundInConfigureCfg)
       cfg$errorsfoundInConfigureCfg <- NULL

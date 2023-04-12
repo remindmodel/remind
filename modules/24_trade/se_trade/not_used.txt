@@ -11,4 +11,3 @@ pm_omeg,parameter,only used in capacity realization
 pm_data,parameter,only used in capacity realization
 pm_tsu2opTimeYr,parameter,only used in capacity realization
 pm_ttot_val,parameter,only used in capacity realization
-pm_dt,parameter,only used in capacity realization
