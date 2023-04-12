@@ -6,9 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/46_carbonpriceRegi/netZero/sets.gms
 
-$ifthenE.scen (sameas("%cm_netZeroScen%","NGFS2022"))or(sameas("%cm_netZeroScen%","NGFS_v4_20pc"))
+$ifthenE.scen (sameas("%cm_netZeroScen%","NGFS_v4"))or(sameas("%cm_netZeroScen%","NGFS_v4_20pc"))
 SETS
-    nz_reg2050(all_regi)    "regions with net-zero 2050 target"   / "CAZ","EUR","JPN","USA" /
+    nz_reg2050(all_regi)    "regions with net-zero 2050 target"   / "CAZ","EUR","JPN","LAM","USA" /
     nz_reg2055(all_regi)    "regions with net-zero 2055 target"   /  /
     nz_reg2060(all_regi)    "regions with net-zero 2060 target"   / "CHA","REF" /
     nz_reg2070(all_regi)    "regions with net-zero 2070 target"   / "IND" /
