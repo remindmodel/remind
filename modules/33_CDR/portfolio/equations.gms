@@ -15,10 +15,10 @@
 ***---------------------------------------------------------------------------
 q33_demFeCDR(t,regi,entyFe)$(entyFe2Sector(entyFe,"cdr"))..
     sum(fe2cdr(entyFe,entyFe2,te_used33),
-          v33_FEdemand(t,regi,entyFe,entyFe2,te_used33)
+        v33_FEdemand(t,regi,entyFe,entyFe2,te_used33)
     )
-      =e=
-      sum((entySe,te)$se2fe(entySe,entyFe,te),
+    =e=
+    sum((entySe,te)$se2fe(entySe,entyFe,te),
         vm_demFeSector_afterTax(t,regi,entySe,entyFe,"cdr","ETS")
     )
     ;
@@ -36,8 +36,8 @@ q33_emiCDR(t,regi)..
 *'  Limit the amount of H2 from biomass to the demand without CDR.
 *'  It's a sustainability bound to prevent a large demand for biomass.
 ***---------------------------------------------------------------------------
-q33_H2bio_lim(t,regi,te)$pe2se("pebiolc","seh2",te)..
-    vm_prodSE(t,regi,"pebiolc","seh2",te)
+q33_H2bio_lim(t,regi)..
+    sum(pe2se("pebiolc","seh2",te), vm_prodSE(t,regi,"pebiolc","seh2",te))
     =l=
     vm_prodFe(t,regi,"seh2","feh2s","tdh2s") - sum(fe2cdr("feh2s",entyFe2,te_used33), v33_FEdemand(t,regi,"feh2s",entyFe2,te_used33))
     ;
@@ -54,6 +54,7 @@ q33_DAC_capconst(t,regi)..
     - sum(teNoTransform2rlf33("dac",rlf),
         vm_capFac(t,regi,"dac") * vm_cap(t,regi,"dac",rlf)
     )
+    - (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------
@@ -66,7 +67,6 @@ q33_DAC_ccsbal(t,regi,ccs2te(ccsCo2(enty),enty2,te))..
     sum(teCCS2rlf(te,rlf), vm_ccs_cdr(t,regi,enty,enty2,te,rlf))
     =e=
     - v33_emi(t,regi,"dac")
-    + (1 / pm_eta_conv(t,regi,"gash2c")) * fm_dataemiglob("pegas","seh2","gash2c","cco2") * sum(fe2cdr("fegas",entyFe2,te_used33), v33_FEdemand(t,regi,"fegas", entyFe2,te_used33))
     ;
 
 ***---------------------------------------------------------------------------

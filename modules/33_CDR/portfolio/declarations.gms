@@ -34,7 +34,7 @@ v33_emi(ttot,all_regi,all_te)               "negative emissions from CDR [GtC / 
 equations
 q33_demFeCDR(ttot,all_regi,all_enty)  "CDR demand balance for final energy"
 q33_emiCDR(ttot,all_regi)  "calculates the (negative) emissions due to CDR technologies"
-q33_H2bio_lim(ttot,all_regi,all_te)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
+q33_H2bio_lim(ttot,all_regi)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
 q33_DAC_capconst(ttot,all_regi)  "calculates amount of carbon captured by DAC"
 q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
 q33_DAC_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
