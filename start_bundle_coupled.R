@@ -513,8 +513,10 @@ for(scen in common){
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
+    lockID <- gms::model_lock()
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
+    gms::model_unlock(lockID)
     errorsfound <- errorsfound + ! gcresult
   }
   if (!start_now) {
