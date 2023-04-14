@@ -221,12 +221,13 @@ pc_pairs <- paste0(ifelse(file.exists(pol_mifs) & file.exists(pol_gdxs), crayon:
                    " w.r.t. ", ifelse(file.exists(ref_gdxs), crayon::green(ref_names), crayon::red(ref_names)))
 
 # If this script was called from output.R, check with user if the pol-ref pairs are correct.
+message(crayon::blue("\nSet-up:"))
+if (! all(file.exists(c(pol_mifs, pol_gdxs, ref_gdxs)))) message(crayon::red("Red"), " folder names have no fitting mif or gdx file, first run the reporting.")
+message("From the order with which you selected the directories, the following policy costs will be computed:")
+message(paste0("\t", pc_pairs, "\n"))
+
 if (exists("source_include")) {
-  message(crayon::blue("\nPlease confirm the set-up."))
-  if (! all(file.exists(c(pol_mifs, pol_gdxs, ref_gdxs)))) message(crayon::red("Red"), " folder names have no fitting mif or gdx file, first run the reporting.")
-  message("From the order with which you selected the directories, the following policy costs will be computed:")
-  message(paste0("\t", pc_pairs, "\n"))
-  message("Is that what you intended?")
+  message(crayon::blue("Is that what you intended? Please confirm the set-up"))
   message("Type '", crayon::green("y"), "' to continue, '", crayon::blue("s"), "' to skip red ones, ", crayon::red("n"), "' to abort: ")
 
   user_input <- gms::getLine()
