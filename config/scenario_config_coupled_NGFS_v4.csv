@@ -8,7 +8,7 @@ o_2c;NGFS;;o_2c;;short;SSP2|NDC|cc|rcp2p6;y2030;2;;;
 o_lowdem;NGFS;;o_lowdem;;short;SSP2|NDC|cc|rcp1p9;y2030;2;;;
 d_delfrag;NGFS;;d_delfrag;;priority;SSP2|NDC|cc|rcp2p6;y2030;2;;;
 d_rap;0;;d_rap;;priority;SSP2|NDC|cc|rcp1p9;y2030;2;;;
-d_strain;NGFS;;d_strain;;priority;SSP2|NDC|cc|rcp4p5;y2030;2;;;
+d_strain;NGFS;;d_strain;;short;SSP2|NDC|cc|rcp4p5;y2030;2;;;
 SSP2-Base_d50;d50;SSP2-Base;SSP2-Base;;priority;;;;;;
 SSP2-Base_d95;d95;SSP2-Base;SSP2-Base;;priority;;;;;;
 SSP2-Base_d50high;d50high;SSP2-Base;SSP2-Base;;priority;;;;;;
