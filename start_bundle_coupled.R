@@ -233,6 +233,16 @@ if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
 
+findLastRem <- function(folder, scenario) {
+  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-rem-*"), "fulldata.gdx"))
+  filesfound <- grep("-rem-[0-9]+.fulldata\\.gdx$", filesfound, value = TRUE)
+  return(mixedsort(filesfound)[1])
+}
+findLastMag <- function(folder, scenario) {
+  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-mag-*"), "report.mif"))
+  filesfound <- grep("-mag-[0-9]+.report\\.mif$", filesfound, value = TRUE)
+  return(mixedsort(filesfound)[1])
+}
 
 # prepare runs: write RData files
 for(scen in common){
@@ -253,9 +263,7 @@ for(scen in common){
   # Check for existing REMIND and MAgPIE runs and whether iteration can be continued from those (at least one REMIND iteration has to exist!)
   # Look whether there is already a fulldata.gdx from a former REMIND run (check for old name if provided)
   iter_rem <- 0
-  suche <- file.path(path_remind, "output", paste0(prefix_runname, scen, "-rem-*"), "fulldata.gdx")
-  already_rem <- mixedsort(Sys.glob(suche))[1]
-
+  already_rem <- findLastRem(file.path(path_remind, "output"), paste0(prefix_runname, scen))
   if (! is.na(already_rem)) {
     iter_rem <- as.integer(sub(".*rem-(\\d.*)/.*","\\1", already_rem))
   } else {
@@ -264,8 +272,7 @@ for(scen in common){
       already_rem <- scenarios_coupled[scen, "oldrun"]
     } else {
       lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
-      suche <- file.path(path_remind_oldruns, paste0(prefix_oldruns, lookfor, "-rem-*"), "fulldata.gdx")
-      already_rem <- mixedsort(Sys.glob(suche))[1]
+      already_rem <- findLastRem(path_remind_oldruns, paste0(prefix_oldruns, lookfor))
     }
   }
 
@@ -284,15 +291,13 @@ for(scen in common){
   # is there already a MAgPIE run with this name?
   iter_mag <- 0
   suche <- file.path(path_magpie, "output", paste0(prefix_runname, scen,"-mag-*"), "report.mif")
-  already_mag <- mixedsort(Sys.glob(suche))[1]
-
+  already_mag <- findLastMag(file.path(path_magpie, "output"), paste0(prefix_runname, scen))
   if (! is.na(already_mag)) {
     iter_mag <- as.integer(sub(".*mag-(\\d.*)/.*","\\1",already_mag))
   } else {
     message("Nothing found for ", suche, ", continue with oldrun")
     lookfor <- if (is.na(scenarios_coupled[scen, "oldrun"])) scen else scenarios_coupled[scen, "oldrun"]
-    suche <- file.path(path_magpie_oldruns, paste0(prefix_oldruns, lookfor, "-mag-*"), "report.mif")
-    already_mag <- mixedsort(Sys.glob(suche))[1]
+    already_mag <- findLastMag(path_magpie_oldruns, paste0(prefix_oldruns, lookfor))
   }
 
   path_report_found <- NULL
