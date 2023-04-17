@@ -188,4 +188,9 @@ if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
 );
 
+*** load vm_capEarlyReti(ttot,regi,te) from reference gdx to have a reference point for q_smoothphaseoutCapEarlyReti and q_limitCapEarlyReti
+if (cm_startyear gt 2005,
+Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
+);
+
 *** EOF ./core/preloop.gms

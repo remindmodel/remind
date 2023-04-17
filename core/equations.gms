@@ -888,17 +888,18 @@ q_changeProdStartyearCost(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyea
 ***---------------------------------------------------------------------------
 *' The use of early retirement is restricted by the following equations:
 ***---------------------------------------------------------------------------
-q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2109 AND pm_ttot_val(ttot+1) ge max(2010, cm_startyear))..
-        vm_capEarlyReti(ttot+1,regi,te)
+q_limitCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot) ge max(2010, cm_startyear)).. !! 2000 doesn't have capacity, so for cm_startyear = 2005 the equation should not be applied
+        vm_capEarlyReti(ttot,regi,te)
         =g=
-        vm_capEarlyReti(ttot,regi,te);
+        vm_capEarlyReti(ttot-1,regi,te);
 
-q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot+1) gt max(2010, cm_startyear))..
-        vm_capEarlyReti(ttot+1,regi,te)
+q_smoothphaseoutCapEarlyReti(ttot,regi,te)$(ttot.val lt 2120 AND pm_ttot_val(ttot) ge max(2010, cm_startyear)).. !! 2000 doesn't have capacity, so for cm_startyear = 2005 the equation should not be applied
+        vm_capEarlyReti(ttot,regi,te)
         =l=
-        vm_capEarlyReti(ttot,regi,te) + (pm_ttot_val(ttot+1)-pm_ttot_val(ttot)) * 
+        vm_capEarlyReti(ttot-1,regi,te) + 
 *** Region- and tech-specific max early retirement rates, e.g. more retirement possible for coal power plants in CHA, EUR, REF and USA to account for relatively old fleet or short historical lifespans
-        pm_regiEarlyRetiRate(ttot,regi,te) 
+        ( pm_ttot_val(ttot) - pm_ttot_val(ttot-1) ) * 
+        ( pm_regiEarlyRetiRate(ttot,regi,te) + 0.2$( (ttot.val eq 2010) AND sameas(te,"pc") ) ) !! for some (currently unclear) reason, pc needs some extra flexibility in 2010
     ;
 
 
