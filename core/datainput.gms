@@ -108,9 +108,6 @@ Execute_Loadpoint 'input'      vm_cesIO, vm_invMacro;
 pm_gdp_gdx(ttot,regi)    = vm_cesIO.l(ttot,regi,"inco");
 p_inv_gdx(ttot,regi)     = vm_invMacro.l(ttot,regi,"kap");
 
-*** permit price initilization
-pm_pricePerm(ttot) = 0;
-
 
 *------------------------------------------------------------------------------------
 *------------------------------------------------------------------------------------
