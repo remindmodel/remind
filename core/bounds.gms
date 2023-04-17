@@ -363,13 +363,6 @@ if ( c_ccsinjecratescen gt 0,
 
 );
 
-*** fix 2010 emissions to historic projections when running a policy scenarios without fixing the 2010 time step to a BAU run. This way, the gdx are better suited for later runs that are based on baselines until 2010 or longer.
-*AJS*02122014 Exclude this bound in nash cases, as trying to limit global emissions there will lead to infeasibilities
-$ifi %optimization% == "negishi" if( (cm_startyear le 2010 AND cm_emiscen > 1), vm_emiAllGlob.fx('2010','co2') = 8.9 + 1.46; ); !! 8.9 is fossil emissions + cement, 1.4 land use
-
-
-
-
 
 *** strong reliance on coal-to-liquids is not consistent with SSP1 storyline, therefore limit their use in the SSP 1 and SSP2 policy scenarios
 $ifthen %c_SSP_forcing_adjust% == "forcing_SSP1"
