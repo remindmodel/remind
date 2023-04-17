@@ -1011,25 +1011,32 @@ $ENDIF.WindOff
 *** pm_conv_cap_2_MioLDV <- 650  # The world has slightly below 800million cars in 2005 (IEA TECO2), so with a global vm_cap of 1.2, this gives ~650
 *** ==> 1TW power plant ~ 650 million LDV
 
-  p_adj_coeff(ttot,regi,te)                = 0.2;
+  p_adj_coeff(ttot,regi,te)                = 0.25;
   p_adj_coeff(ttot,regi,"pc")              = 0.5;
-  p_adj_coeff(ttot,regi,"ngcc")            = 0.5;
+  p_adj_coeff(ttot,regi,"ngcc")            = 0.4;
   p_adj_coeff(ttot,regi,"igcc")            = 0.5;
+  p_adj_coeff(ttot,regi,"bioigcc")         = 0.55;
+  p_adj_coeff(ttot,regi,"gaschp")          = 0.4;
+  p_adj_coeff(ttot,regi,"coalchp")         = 0.5;
+  p_adj_coeff(ttot,regi,"biochp")          = 0.55;
   p_adj_coeff(ttot,regi,"coaltr")          = 0.1;
   p_adj_coeff(ttot,regi,"tnrs")            = 1.0;
   p_adj_coeff(ttot,regi,"hydro")           = 1.0;
-  p_adj_coeff(ttot,regi,teCCS)             = 1.0;
   p_adj_coeff(ttot,regi,"gasftrec")        = 0.4;
-  p_adj_coeff(ttot,regi,"gasftcrec")       = 0.8;
   p_adj_coeff(ttot,regi,"coalftrec")       = 0.6;
-  p_adj_coeff(ttot,regi,"coalftcrec")      = 0.8;
-  p_adj_coeff(ttot,regi,"spv")             = 0.08;
-  p_adj_coeff(ttot,regi,"wind")            = 0.15;
-  p_adj_coeff(ttot,regi,"geohe")            = 0.6;
+  p_adj_coeff(ttot,regi,"bioftrec")        = 0.65;
+  p_adj_coeff(ttot,regi,"gash2")           = 0.35;
+  p_adj_coeff(ttot,regi,"coalh2")          = 0.55;
+  p_adj_coeff(ttot,regi,"bioh2")           = 0.6;
+  p_adj_coeff(ttot,regi,teCCS)             = 1.0;
+  p_adj_coeff(ttot,regi,"ccsinje")         = 1.0;
+  p_adj_coeff(ttot,regi,"spv")             = 0.15;
+  p_adj_coeff(ttot,regi,"wind")            = 0.25;
+  p_adj_coeff(ttot,regi,"geohe")           = 0.6;
 
 $IFTHEN.WindOff %cm_wind_offshore% == "1"
 
-  p_adj_coeff(ttot,regi,"windoff")         = 0.3;
+  p_adj_coeff(ttot,regi,"windoff")         = 0.35;
 $ENDIF.WindOff
 
   p_adj_coeff(ttot,regi,"dac")             = 0.8;
@@ -1064,7 +1071,7 @@ $elseif not "%cm_adj_coeff%" == "off"
   p_adj_coeff(t,regi,te)$p_new_adj_coeff(te) = p_new_adj_coeff(te);
 $endif
 
-p_adj_coeff(ttot,regi,te)            = 25 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
+p_adj_coeff(ttot,regi,te)            = 32 * p_adj_coeff(ttot,regi,te);  !! Rescaling all adjustment cost coefficients
 
 p_adj_coeff_Orig(ttot,regi,te)    = p_adj_coeff(ttot,regi,te);
 p_adj_seed_te_Orig(ttot,regi,te)  = p_adj_seed_te(ttot,regi,te);
