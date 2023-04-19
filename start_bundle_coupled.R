@@ -382,6 +382,9 @@ for(scen in common){
     cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
   }
 
+  # abort on too long paths ----
+  cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
+
   for (i in max_iterations:start_iter_first) {
     fullrunname <- paste0(runname, "-rem-", i)
     start_iter <- i

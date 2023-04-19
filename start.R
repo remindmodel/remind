@@ -322,17 +322,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     }
 
     # abort on too long paths ----
-    cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg)
-    CESfile <- file.path(getwd(), 'modules/29_CES_parameters/load/input',
-                         paste0(cfg$gms$cm_CES_configuration, '.inc'))
-    if (nchar(CESfile) > 255) {
-      stop("Filename of CES file has more than 255 characters, which will ",
-           "cause GAMS to fail on loading it.\n",
-           "Rename and shorten the path to your REMIND directory by ",
-           (nchar(CESfile) - 255), " characters.\n",
-           "Like so: '",
-           substr(getwd(), 1, nchar(getwd()) - (nchar(CESfile) - 255)), "'")
-    }
+    cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
