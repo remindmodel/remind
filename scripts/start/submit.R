@@ -61,11 +61,17 @@ submit <- function(cfg, restart = FALSE, stopOnFolderCreateError = TRUE) {
         message("   Generating lockfile '", file.path(cfg$results_folder, "renv.lock"), "'... ", appendLF = FALSE)
         # suppress output of renv::snapshot
         utils::capture.output({
-          utils::capture.output({
-            # snapshot current main renv into run folder
-            renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+          errorMessage <- utils::capture.output({
+            snapshotSuccess <- tryCatch({
+              # snapshot current main renv into run folder
+              renv::snapshot(lockfile = file.path(cfg$results_folder, "_renv.lock"), prompt = FALSE)
+              TRUE
+            }, error = function(error) FALSE)
           }, type = "message")
         })
+        if (!snapshotSuccess) {
+          stop(paste(errorMessage, collapse = "\n"))
+        }
         message("done.")
       } else {
         # a run renv is loaded, we are presumably starting new run in a cascade

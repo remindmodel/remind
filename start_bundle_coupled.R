@@ -55,7 +55,7 @@ path_magpie <- paste0(getwd(), "/../magpie/")
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v3.csv")
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v4.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # paste0(path_remind, "config/scenario_config.csv")
 
@@ -513,8 +513,10 @@ for(scen in common){
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
+    lockID <- gms::model_lock()
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
+    gms::model_unlock(lockID)
     errorsfound <- errorsfound + ! gcresult
   }
   if (!start_now) {
