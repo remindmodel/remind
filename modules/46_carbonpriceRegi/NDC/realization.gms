@@ -11,6 +11,8 @@
 *' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of
 *' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
+*' For more information, see 45_carbonprice/NDC
+
 *####################### R SECTION START (PHASES) ##############################
 $Ifi "%phase%" == "declarations" $include "./modules/46_carbonpriceRegi/NDC/declarations.gms"
 $Ifi "%phase%" == "datainput" $include "./modules/46_carbonpriceRegi/NDC/datainput.gms"

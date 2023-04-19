@@ -17,4 +17,12 @@ if (length(missingDeps) > 0) {
   message("all required R packages are installed")
 }
 
+if (Sys.which("python3") != ""
+    || (Sys.which("python.exe") != ""
+        && suppressWarnings(isTRUE(startsWith(system2("python.exe", "--version", stdout = TRUE), "Python 3"))))) {
+  message("checking for Python 3 - ok")
+} else {
+  message("Python 3 not found, some non-default configurations of REMIND will not work")
+}
+
 message("Finished setup checks. Your system is ready to run REMIND if there were no errors/warnings.")

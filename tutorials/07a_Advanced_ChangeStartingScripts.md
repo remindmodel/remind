@@ -33,6 +33,8 @@ Rscript start.R
      submit(cfg)                        [scripts/start/submit.R]
        - create output folder
        - copy scripts/start/prepareAndRun.R into results folder
+       - create renv in results folder
+       - create python virtual env in results folder if cfg$pythonEnabled
        - save cfg to config.Rdata into results folder
        - change to results folder
        - send job to cluster: sbatch Rscript prepareAndRun.R

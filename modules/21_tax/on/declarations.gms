@@ -40,6 +40,7 @@ p21_implicitDiscRate0(ttot,all_regi)             "reference level value of impli
 p21_taxemiMkt0(ttot,all_regi,all_emiMkt)         "reference level value of co2 emission taxes per emission market"
 p21_taxrevFlex0(ttot,all_regi)                   "reference level value of flexibility tax"
 p21_taxrevImport0(ttot,all_regi,all_enty)        "reference level value of import tax"
+p21_taxrevChProdStartYear0(ttot,all_regi)        "reference level value of tax to limit changes compared to reference run in cm_startyear"
 
 p21_taxrevGHG_iter(iteration,ttot,all_regi)                "reference level value of GHG emission tax revenue"
 p21_taxrevCCS_iter(iteration,ttot,all_regi)                "reference level value of CCS tax revenue"
@@ -56,6 +57,7 @@ p21_taxrevBio_iter(iteration,ttot,all_regi)                "reference level valu
 p21_implicitDiscRate_iter(iteration,ttot,all_regi)         "reference level value of implicit tax on energy efficient capital"
 p21_taxrevFlex_iter(iteration,ttot,all_regi)               "reference level value of flexibility tax revenue"
 p21_taxrevImport_iter(iteration,ttot,all_regi,all_enty)    "reference level value of import tax"
+p21_taxrevChProdStartYear_iter(iteration,ttot,all_regi)    "Difference to tax revenues in last iteration for: tax to limit changes compared to reference run in cm_startyear"
 
 p21_CO2TaxSectorMarkup(ttot,all_regi,emi_sectors)          "CO2 tax markup in building, industry or transport sector"
 
@@ -113,6 +115,7 @@ v21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexib
 v21_implicitDiscRate(ttot,all_regi)              "implicit tax on energy efficient capital"
 v21_taxemiMkt(ttot,all_regi,all_emiMkt)         "tax on greenhouse gas emissions"
 v21_taxrevImport(ttot,all_regi,all_enty)        "tax on energy imports"
+v21_taxrevChProdStartYear(ttot,all_regi)        "tax to limit changes compared to reference run in cm_startyear"
 ;
 
 Positive Variable
@@ -142,6 +145,7 @@ q21_taxrevFlex(ttot,all_regi)                   "tax on technologies with flexib
 q21_implicitDiscRate(ttot,all_regi)             "calculation of the implicit discount rate on energy efficiency capital"
 q21_taxemiMkt(ttot,all_regi,all_emiMkt)         "calculation of specific emission market tax on CO2 emissions"
 q21_taxrevImport(ttot,all_regi,all_enty)        "calculation of import tax"
+q21_taxrevChProdStartYear(ttot,all_regi)        "calculation of tax to limit changes compared to reference run in cm_startyear"
 ;
 
 *** EOF ./modules/21_tax/on/declarations.gms

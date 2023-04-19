@@ -54,7 +54,7 @@ p21_taxemiMkt0(ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiMkt) * vm_co2eqMkt.
 p21_taxrevFlex0(ttot,regi)   =  sum(en2en(enty,enty2,te)$(teFlexTax(te)),
                                         -vm_flexAdj.l(ttot,regi,te) * vm_demSe.l(ttot,regi,enty,enty2,te));
 p21_taxrevImport0(ttot,regi,tradePe) = p21_tau_Import(ttot,regi,tradePe) * pm_pvp(ttot,tradePe) / pm_pvp(ttot,"good") * vm_Mport.l(ttot,regi,tradePe);
-
+p21_taxrevChProdStartYear0(t,regi) = sum(en2en(enty,enty2,te), vm_changeProdStartyearCost.l(t,regi,te)$( (t.val gt 2005) AND (t.val eq cm_startyear ) ) );
 
 *** Save reference level of tax revenues for each iteration
 p21_taxrevGHG_iter(iteration+1,ttot,regi) = v21_taxrevGHG.l(ttot,regi);
@@ -73,6 +73,7 @@ p21_taxrevBio_iter(iteration+1,ttot,regi) = v21_taxrevBio.l(ttot,regi);
 p21_implicitDiscRate_iter(iteration+1,ttot,regi) = v21_implicitDiscRate.l(ttot,regi);
 p21_taxrevFlex_iter(iteration+1,ttot,regi) = v21_taxrevFlex.l(ttot,regi);
 p21_taxrevImport_iter(iteration+1,ttot,regi,tradePe) = v21_taxrevImport.l(ttot,regi,tradePe);
+p21_taxrevChProdStartYear_iter(iteration+1,t,regi) = v21_taxrevChProdStartYear.l(t,regi);
 
 display p21_taxrevFE_iter;
 
