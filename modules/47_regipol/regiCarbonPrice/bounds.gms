@@ -62,6 +62,15 @@ $IFTHEN.CoalRegiPol not "%cm_CoalRegiPol%" == "off"
     vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=17/1000;
     vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=6/1000;
     vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
+
+*** Force 2030 coal phase-out in ARIADNE Ampel scenarios (leave residual for waste, see below)
+$IFTHEN.EarlyPhaseOut "%cm_CoalRegiPol%" == "ampel"
+    vm_capTotal.up("2025",regi,"pecoal","seel")$(sameas(regi,"DEU"))=25/1000;
+    vm_capTotal.up("2030",regi,"pecoal","seel")$(sameas(regi,"DEU"))=3.1/1000;
+    vm_capTotal.up("2035",regi,"pecoal","seel")$(sameas(regi,"DEU"))=2.1/1000;
+    vm_capTotal.up("2040",regi,"pecoal","seel")$(sameas(regi,"DEU"))=1.1/1000;
+$ENDIF.EarlyPhaseOut
+
 *** UK coal capacity phase-out
     vm_cap.up(t,regi,te,"1")$((t.val ge 2025) and (t.val ge cm_startyear) and (sameas(te,"igcc") or sameas(te,"pc") or sameas(te,"coalchp")) and (sameas(regi,"UKI"))) = 1E-6;
 
