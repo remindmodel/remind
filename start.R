@@ -321,6 +321,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       cfg$slurmConfig <- slurmConfig
     }
 
+    # abort on too long paths ----
+    cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
+
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
       filename <- paste0(cfg$title,".RData")
