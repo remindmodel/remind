@@ -504,8 +504,8 @@ v_shfe.lo(t,regi,entyFe,sector)$pm_shfe_lo(t,regi,entyFe,sector) = pm_shfe_lo(t,
 v_shGasLiq_fe.up(t,regi,sector)$pm_shGasLiq_fe_up(t,regi,sector) = pm_shGasLiq_fe_up(t,regi,sector);
 v_shGasLiq_fe.lo(t,regi,sector)$pm_shGasLiq_fe_lo(t,regi,sector) = pm_shGasLiq_fe_lo(t,regi,sector);
 
-*** FS: allow for H2 use in buildings only from 2030 onwards
-vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le 2025)=0;
+*** RH: Fix H2 in buildings to zero until given year (always zero by default)
+vm_demFeSector.up(t,regi,"seh2","feh2s","build",emiMkt)$(t.val le c_H2InBuildOnlyAfter) = 0;
 
 ***----------------------------------------------------------------------------
 ***  Controlling if active, dampening factor to align edge-t non-energy transportation costs with historical GDP data
