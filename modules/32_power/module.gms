@@ -15,7 +15,9 @@
 *'
 *'               The `RLDC` realization (Residual Load Duration Curve) distinguishes different operation electricity supply decisions under four distinct load bands, plus additional peak capacity requirements.
 *'
-*' @authors Robert Pietzcker, Falko Ueckerdt, Renato Rodrigues
+*'               The `DTcoup` realization (DIETER-coupled) soft-couples REMIND to DIETER (an hourly power sector model), and is currently only at conceptual stage and not merged (it is only a copy of IntC)
+*'
+*' @authors Robert Pietzcker, Falko Ueckerdt, Renato Rodrigues, Chen Chris Gong
 
 *###################### R SECTION START (MODULETYPES) ##########################
 $Ifi "%power%" == "DTcoup" $include "./modules/32_power/DTcoup/realization.gms"
