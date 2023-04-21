@@ -1,6 +1,6 @@
 {
   "title": "REMIND - REgional Model of INvestments and Development",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "creators": [
     {
       "name": "Luderer, Gunnar",
@@ -249,5 +249,5 @@
   "license": {
     "id": "AGPL-3.0-or-later"
   },
-  "publication_date": "2023-02-10"
+  "publication_date": "2023-04-21"
 }
