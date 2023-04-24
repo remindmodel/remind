@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -55,7 +55,7 @@ path_magpie <- paste0(getwd(), "/../magpie/")
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v3.csv")
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v4.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # paste0(path_remind, "config/scenario_config.csv")
 
@@ -386,6 +386,9 @@ for(scen in common){
     cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
   }
 
+  # abort on too long paths ----
+  cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
+
   for (i in max_iterations:start_iter_first) {
     fullrunname <- paste0(runname, "-rem-", i)
     start_iter <- i
@@ -517,8 +520,10 @@ for(scen in common){
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
+    lockID <- gms::model_lock()
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
+    gms::model_unlock(lockID)
     errorsfound <- errorsfound + ! gcresult
   }
   if (!start_now) {

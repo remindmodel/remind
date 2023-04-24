@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -41,9 +41,11 @@ helpText <- "
 #'                       everything specified by \"start = 1\", instead start everything
 #'                       specified by \"start = MYGROUP\"
 #'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
-#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig instead of asking the user.
-#'                       Note that the provided CONFIG is only used for scenarios where
-#'                       no slurmConfig is specified in the scenario config csv file.
+#'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
+#'                       to select one of the options shown when running './start.R -t'.
+#'                       CONFIG is used only for scenarios where no slurmConfig
+#'                       is specified in the scenario config csv file, or
+#'                       for all scenarios if --debug, --quick or --testOneRegi is used.
 #'
 #' You can combine --reprepare with --debug, --testOneRegi or --quick and the
 #' selected folders will be restarted using these settings.  Afterwards,
@@ -60,6 +62,9 @@ acceptedFlags <- c("0" = "--reset", "1" = "--testOneRegi", d = "--debug", g = "-
                    r = "--restart", R = "--reprepare", t = "--test", h = "--help", q = "--quick")
 startgroup <- "1"
 flags <- lucode2::readArgs("startgroup", "titletag", "slurmConfig", .flags = acceptedFlags, .silent = TRUE)
+if (exists("slurmConfig") && slurmConfig %in% paste(seq(1:16))) {
+  slurmConfig <- choose_slurmConfig(identifier = slurmConfig)
+}
 
 # initialize config.file
 config.file <- NULL
@@ -149,7 +154,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if(! exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig(flags = flags)
     }
-    if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
+    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     message()
     for (outputdir in outputdirs) {
       message("Restarting ", outputdir)
@@ -242,7 +247,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
   if (! exists("slurmConfig") & (any(c("--debug", "--quick", "--testOneRegi") %in% flags)
       | ! "slurmConfig" %in% names(scenarios) || any(is.na(scenarios$slurmConfig)))) {
     slurmConfig <- choose_slurmConfig(flags = flags)
-    if ("--quick" %in% flags) slurmConfig <- paste(slurmConfig, "--time=60")
+    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     if (any(c("--debug", "--quick", "--testOneRegi") %in% flags) && ! length(config.file) == 0) {
       message("\nYour slurmConfig selection will overwrite the settings in your scenario_config file.")
     }
@@ -315,6 +320,9 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       if(! exists("slurmConfig")) slurmConfig <- choose_slurmConfig(flags = flags)
       cfg$slurmConfig <- slurmConfig
     }
+
+    # abort on too long paths ----
+    cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {

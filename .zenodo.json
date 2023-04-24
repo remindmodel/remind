@@ -1,6 +1,6 @@
 {
   "title": "REMIND - REgional Model of INvestments and Development",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "creators": [
     {
       "name": "Luderer, Gunnar",
@@ -65,6 +65,11 @@
       "name": "Dirnaichner, Alois",
       "affiliation": "Potsdam Institute for Climate Impact Research",
       "orcid": "0000-0002-3240-2608"
+    },
+    {
+      "name": "Fuchs, Sophie",
+      "affiliation": "Potsdam Institute for Climate Impact Research",
+      "orcid": "0009-0000-7258-1287"
     },
     {
       "name": "Führlich, Pascal",
@@ -132,7 +137,13 @@
     },
     {
       "name": "Malik, Aman",
-      "affiliation": "Potsdam Institute for Climate Impact Research"
+      "affiliation": "Potsdam Institute for Climate Impact Research",
+      "orcid": "0000-0002-7310-8448"
+    },
+    {
+      "name": "Mandaroux, Rahel",
+      "affiliation": "Potsdam Institute for Climate Impact Research",
+      "orcid": "0000-0001-5596-2571"
     },
     {
       "name": "Manger, Susanne"
@@ -238,5 +249,5 @@
   "license": {
     "id": "AGPL-3.0-or-later"
   },
-  "publication_date": "2023-02-10"
+  "publication_date": "2023-04-21"
 }

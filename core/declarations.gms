@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,7 +22,6 @@ p_pvpRef(ttot,all_enty)                              "Price on commodity markets
 pm_pvpRegi(ttot,all_regi,all_enty)                   "prices of traded commodities - regional. only used for permit trade"
 
 p_pvpRegiBeforeStartYear(ttot,all_regi,all_enty)     "prices of traded commodities before start year - regional. only used for permit trade"
-pm_pricePerm(ttot)                                   "permit price in special case when the marginal is only found in box module"
 
 p_share(ttot,all_regi,all_in,all_in)                 "share of production factors"
 pm_share_trans(tall,all_regi)                        "transportation share"
@@ -335,7 +334,6 @@ vm_emiMacSector(ttot,all_regi,all_enty)              "total non-energy-related e
 vm_emiCdr(ttot,all_regi,all_enty)                    "total (negative) emissions due to CDR technologies of each region. [GtC]"
 vm_emiMac(ttot,all_regi,all_enty)                    "total non-energy-related emission of each region. [GtC, Mt CH4, Mt N]"
 vm_emiAll(ttot,all_regi,all_enty)                    "total regional emissions. [GtC, Mt CH4, Mt N]"
-vm_emiAllGlob(ttot,all_enty)                         "total global emissions - link to the climate module. [GtC, Mt CH4, Mt N]"
 vm_perm(ttot,all_regi)                               "emission allowances"
 vm_co2eqGlob(ttot)                                   "global emissions to be balanced by allowances. [GtCeq]"
 vm_co2eq(ttot,all_regi)                              "total emissions measured in co2 equivalents ATTENTION: content depends on multigasscen. [GtCeq]"
@@ -486,7 +484,6 @@ q_macBase(tall,all_regi,all_enty)                    "baseline emissions for all
 q_emiMacSector(ttot,all_regi,all_enty)               "total non-energy-related emission of each region"
 q_emiTe(ttot,all_regi,all_enty)                      "total energy-emissions per region"
 q_emiAll(ttot,all_regi,all_enty)                     "calculates all regional emissions as sum over energy and non-energy relates emissions"
-q_emiAllGlob(ttot,all_enty)                          "calculates all global emissions as sum over regions"
 q_emiCap(ttot,all_regi)                              "emission cap"
 q_emiMac(ttot,all_regi,all_enty)                     "summing up all non-energy emissions"
 q_co2eq(ttot,all_regi)                               "regional emissions in co2 equivalents"
@@ -511,7 +508,6 @@ q_balcapture(ttot,all_regi,all_enty,all_enty,all_te)  "balance equation for carb
 q_balCCUvsCCS(ttot,all_regi)                          "balance equation for captured carbon to CCU or CCS or valve"
 
 q_limitSo2(ttot,all_regi)                             "prevent SO2 from rising again after 2050"
-q_limitCO2(ttot,all_regi)                             "prevent CO2 from rising again after 2050"
 
 q_limitGeopot(ttot,all_regi,all_enty,rlf)             "constraint on annual renewable production due to competition for the same geographical potential"
 
