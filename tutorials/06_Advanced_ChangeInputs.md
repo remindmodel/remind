@@ -4,6 +4,7 @@ Miško Stevanović (<stevanovic@pik-potsdam.de>), Lavinia Baumstark (<baumstark@
 -   [Introduction](#introduction)
 -   [Input data](#input-data)
     * [How to Update Input Data](#how-to-update-input-data)
+    * [Enhancing Input Data using madrat](#adjusting-and-enhancing-input-data-using-madrat)
 -   [Initial parameter values](#initial-parameter-values)
     * [Different Regional Resolutions](#different-regional-resolutions)
 -   [CES Parameter Values](#ces-parameter-values)
@@ -54,6 +55,45 @@ The .log file lists the progress and potential errors. This process might take a
 git add -p config/default.cfg main.gms
 ```
 and then selecting the change in `default.cfg` and the first change to the input data in `main.gms` with `y`, and then ignoring possible other changes in `main.gms` with `d`. Create a pull request to push this change to the main REMIND repository, and REMIND will use the new data by default.
+
+## Adjusting and Enhancing Input Data using madrat
+
+To learn the basics about [madrat](https://pik-piam.r-universe.dev/articles/madrat/madrat.html) and [madrat caching](https://pik-piam.r-universe.dev/madrat/doc/madrat-caching.html), please refer to the corresponding vignettes.
+
+### Remote development on the cluster using VS Code
+
+If you are developing in R using VS Code, you can connect to the cluster via ssh and develop on the cluster remotely. Please check the following tutorial for detailed information:
+
+- [Using R in the cluster with VSCode](https://gitlab.pik-potsdam.de/pascalfu/bettercode-vscode/-/blob/main/R_VScode_in_the_cluster.md)
+- [How to connect VScode to the cluster using ssh](https://github.com/pik-piam/discussions/discussions/4)
+
+### Build an up-to-date cache on the cluster for local development
+
+If you want to develop a madrat package locally, you might want to work with an up-to-date cache to avoid gathering all source data locally and re-running lengthy calculations on your own computer.
+
+The default cache folder on the cluster is too large for this purpose, but you can create your own cache on the cluster and download it. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
+
+- Make sure your own madrat settings are used: `cachetype <- "def"`
+- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")`
+- Set a development suffix to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
+
+After input data generation succeeded, you can download your cache folder from the path you set in your madrat config and use it as your local cache. 
+
+### Development on the cluster using RStudio
+
+Unfortunately, there is no way known to achieve this. 
+
+You can use use a program like WinSCP or FileZilla to download and edit files in RStudio locally and sync them back to the cluster when done. Alternatively you can add changes to your GitHub branch locally and check them out on the cluster. 
+
+In any case, you won't be able to use RStudio to run and debug your code on the cluster. So using VSCode on the cluster or developing locally are most likely better options.
+
+### Updating sources on the cluster
+
+The original sources can be found on the cluster in the madrat source folder `/p/projects/rd3mod/inputdata/sources`. A madrat function `readABC` expects a corresponding folder `ABC` in the cluster folder where it looks for the source data to be read in.
+
+When you update a source with newer data, don't just replace the outdated source file, but create a new file (or a new subfolder) for each new version of the data. For example, if `tau_data_1995-2000.mz` is replaced by `tau_data_1995-2010.mz`, keep both files in the madrat source folder and update the reference in the code. By doing so, you ensure backwards compatibility.
+
+If both versions of the data are still used in your madrat package, use subtypes in your read function to manage the source version to be read in. 
 
 ## Initial Parameter Values
 
