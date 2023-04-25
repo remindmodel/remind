@@ -159,6 +159,11 @@ deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 
+if ("--gamscompile" %in% flags && ! file.exists("input/source_files.log")) {
+  message("\n### Input data missing, need to compile REMIND first (2 min.)\n")
+  system("Rscript start.R config/tests/scenario_config_compile.csv")
+}
+
 ####################################################
 ############## F U N C T I O N S ###################
 ####################################################
@@ -174,6 +179,18 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 .isFileAndAvailable <- function(fullname, extension) {
   isTRUE(stringr::str_sub(fullname, -nchar(extension), -1) == extension) &&
     file.exists(fullname)
+}
+
+# find last REMIND / MAgPIE run
+findLastRem <- function(folder, scenario) {
+  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-rem-*"), "fulldata.gdx"))
+  filesfound <- grep("-rem-[0-9]+.fulldata\\.gdx$", filesfound, value = TRUE)
+  return(mixedsort(filesfound)[1])
+}
+findLastMag <- function(folder, scenario) {
+  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-mag-*"), "report.mif"))
+  filesfound <- grep("-mag-[0-9]+.report\\.mif$", filesfound, value = TRUE)
+  return(mixedsort(filesfound)[1])
 }
 
 ####################################################
@@ -232,17 +249,6 @@ if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
 ####################################################
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
-
-findLastRem <- function(folder, scenario) {
-  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-rem-*"), "fulldata.gdx"))
-  filesfound <- grep("-rem-[0-9]+.fulldata\\.gdx$", filesfound, value = TRUE)
-  return(mixedsort(filesfound)[1])
-}
-findLastMag <- function(folder, scenario) {
-  filesfound <- Sys.glob(file.path(folder, paste0(scenario, "-mag-*"), "report.mif"))
-  filesfound <- grep("-mag-[0-9]+.report\\.mif$", filesfound, value = TRUE)
-  return(mixedsort(filesfound)[1])
-}
 
 # prepare runs: write RData files
 for(scen in common){
@@ -429,7 +435,6 @@ for(scen in common){
           errorsfound <- errorsfound + 1
           path_mif_ghgprice_land <- FALSE
         }
-        message("path_mif_ghgprice_land: ", path_mif_ghgprice_land)
         cfg_mag$path_to_report_ghgprices <- path_mif_ghgprice_land
       }
     }

@@ -234,7 +234,7 @@ test_that("Check path_mif_ghgprice_land with file", {
     configfile <- paste0("../../C_", scen, "-rem-", (max_iterations - 1), ".RData")
     envir <- new.env()
     load(configfile, envir = envir)
-    expect_true(envir$cfg_mag$path_to_report_ghgprices == normalizePath(file.path("../..", config[scen, "path_mif_ghgprice_land"], mustWork = FALSE)))
+    expect_true(envir$cfg_mag$path_to_report_ghgprices == normalizePath(file.path("../..", config[scen, "path_mif_ghgprice_land"]), mustWork = FALSE))
     magpie_config <- file.path(magpie_folder, "output", paste0("C_", scen, "-mag-", (max_iterations - 1)), "config.yml")
     expect_true(file.exists(magpie_config))
     cfg_mag <- gms::loadConfig(magpie_config)
