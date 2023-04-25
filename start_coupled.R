@@ -124,11 +124,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       cfg_rem$output <- cfg_rem_original
     }
 
-    # change precision only for last run if setup in coupled config
-     if (i == max_iterations && ! is.null(cfg_rem$cm_nash_autoconvergence_lastrun) && ! is.na(cfg_rem$cm_nash_autoconverge_lastrun)) {
-       cfg_rem$gms$cm_nash_autoconverge <- cfg_rem$cm_nash_autoconverge_lastrun
-    }
-
     ############ DECIDE IF AND HOW TO START REMIND ###################
     outfolder_rem <- NULL
     if (is.null(report)) {
@@ -180,10 +175,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       report_rem <- file.path(path_remind, outfolder_rem, paste0("REMIND_generic_", cfg_rem$title, ".mif"))
       if (i == max_iterations) {
         # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
-        tmp_rem_mag <- read.report(report_rem, as.list=FALSE)
-        getNames(tmp_rem_mag, dim=2) <- gsub("REMIND|MAgPIE", "REMIND-MAgPIE", getNames(tmp_rem_mag, dim=2))
-        getNames(tmp_rem_mag, dim=1) <- runname
-        write.report(tmp_rem_mag, file = paste0("output/",runname,".mif"), ndigit = 7)
+        tmp_rem_mag <- quitte::as.quitte(report_rem)
+        tmp_rem_mag$model <- "REMIND-MAgPIE"
+        tmp_rem_mag$scenario <- runname
+        quitte::write.mif(tmp_rem_mag, path = file.path("output", paste0(runname, ".mif")))
         message("\n### output/", runname, ".mif written: model='REMIND-MAgPIE', scenario='", runname, "'.")
       }
     }
@@ -299,7 +294,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         message("Starting subsequent run ", run)
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
-        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
+        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --mem=8000 --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
@@ -337,7 +332,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     readRuntime(ret, plot=TRUE, coupled=TRUE)
     unlink(c("runtime.log", "runtime.out", "runtime.rda"))
 
-    if (max_iterations > 1) {
+    if (max_iterations > 1 && ! grepl("TESTTHAT", runname)) {
       # set required variables and execute script to create convergence plots
       message("### COUPLING ### Preparing convergence pdf");
       source_include <- TRUE
