@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -301,7 +301,7 @@ $setglobal fossil  grades2poly        !! def = grades2poly
 *'
 *' * (IntC)      :    Power sector formulation with Integration Cost (IntC) markups and curtailment for VRE integration - linearly increasing with VRE share -, and fixed capacity factors for dispatchable power plants
 *' * (RLDC)      :    Power sector formulation with Residual Load Duration Curve (RLDC) formulation for VRE power integration, and flexible capacity factors for dispatchable power plants
-*' * (DTcoup)    :    Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
+*' * (DTcoup)    :    (currently not merged, only a copy of IntC) Power sector formulation with iterative coupling to hourly power-sector model DIETER: REMIND gives DIETER costs of technologies, power demand, CO2 price and capacity bounds; DIETER gives REMIND markups of generation, capacity factors, peak hourly residual demand
 $setglobal power  IntC        !! def = IntC
 *'---------------------    33_CDR       ----------------------------------------
 *'
@@ -480,14 +480,9 @@ parameter
   cm_emiscen        = 1;               !! def = 1
 *' *  (0): no global budget. Policy may still be prescribed by 41_emicaprei module.
 *' *  (1): BAU
-*' *  (2): temperature cap
-*' *  (3): CO2 concentration cap
 *' *  (4): emission time path
-*' *  (5): forcing target from 2010 (not to exceed)
 *' *  (6): budget
-*' *  (8): forcing target from 2100 onwards (overshoot scen)
 *' *  (9): tax scenario (requires running module 21_tax "on"), tax level controlled by module 45_carbonprice and cm_co2_tax_2020, other ghg etc. controlled by cm_rcp_scen
-*' *RP* WARNING: cm_emiscen 3 should not be used anymore, as the MACs are not updated anymore.
 *' *JeS* WARNING: data for cm_emiscen 4 only exists for multigas_scen 2 bau scenarios and for multigas_scen 1
 *'
 parameter
@@ -935,6 +930,11 @@ parameter
   cm_noReboundEffect     = 0;
 *'  price sensitivity of logit function for heating and cooking technological choice
 parameter
+  c_H2InBuildOnlyAfter "Switch to fix H2 in buildings to zero until given year"
+;
+  c_H2InBuildOnlyAfter = 2150;   !! def = 2150 (rule out H2 in buildings)
+*' For all years until the given year, FE demand for H2 in buildings is set to zero
+parameter
   cm_priceSensiBuild    "Price sensitivity of energy carrier choice in buildings"
 ;
   cm_priceSensiBuild     = -3;
@@ -947,7 +947,7 @@ parameter
 parameter
   cm_taxCO2inc_after_peakBudgYr "annual increase of CO2 price after the Peak Budget Year in $ per tCO2"
 ;
-  cm_taxCO2inc_after_peakBudgYr = 3; !! def = 3
+  cm_taxCO2inc_after_peakBudgYr = 0; !! def = 0 . For weak targets (higher than 1100 Peak Budget), this value might need to increased to prevent continually increasing temperatures
 *'
 parameter
   cm_CO2priceRegConvEndYr      "Year at which regional CO2 prices converge in module 45 realization diffPhaseIn2LinFlex"

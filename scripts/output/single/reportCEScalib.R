@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -335,25 +335,30 @@ for (s in levels(CES.cal.report$scenario)) {
 
 
     # plot delta_cap
-    CES.cal.report %>%
-      filter(scenario == s,
-             t        <= 2100,
-             t >= 1980,
-             regi     == r,
-             variable == "vm_deltaCap",
-             pf%in% .pf$TE) %>%
-      order.levels(pf = getElement(.pf, "TE")) %>%
-      ggplot(aes(x = t, y = value, colour = iteration,
-                 linetype = iteration)) +
-      geom_line() +
-      facet_wrap(~ pf, scales = "free", as.table = FALSE) +
-      expand_limits(y = 0) +
-      scale_colour_manual(values = col) +
-      scale_linetype_manual(values = lns) +
-      geom_vline(xintercept = 2005) +
-      ggtitle(paste("vm_deltaCap", r, s)) -> p
-    plot(p)
-
+    if ('vm_deltaCap' %in% unique(CES.cal.report$variable)) {
+      CES.cal.report %>%
+        filter(scenario == s,
+               t        <= 2100,
+               t >= 1980,
+               regi     == r,
+               variable == "vm_deltaCap",
+               pf %in% .pf$TE) %>%
+        order.levels(pf = getElement(.pf, "TE")) %>%
+        ggplot(aes(
+          x = t,
+          y = value,
+          colour = iteration,
+          linetype = iteration
+        )) +
+        geom_line() +
+        facet_wrap( ~ pf, scales = "free", as.table = FALSE) +
+        expand_limits(y = 0) +
+        scale_colour_manual(values = col) +
+        scale_linetype_manual(values = lns) +
+        geom_vline(xintercept = 2005) +
+        ggtitle(paste("vm_deltaCap", r, s)) -> p
+      plot(p)
+    }
   }
 }
 
