@@ -12,6 +12,19 @@ if(ord(iteration) > p46_startInIteration, !!start only after 10 iterations, so t
 
 p46_emi_2020(regi) = vm_co2eq.l("2020",regi) * sm_c_2_co2 * 1000;
 
+***define offsets
+p46_offset(all_regi) = 0;
+$ifthen.offsets "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
+  p46_offset(nz_reg)$(sameas(nz_reg, "EUR")) = 100;
+$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4_20pc"
+  p46_offset(nz_reg) = 0.2 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.6 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4"
+  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.5 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+$endif.offsets
+
+display p46_offset;
+
 *** OR: calculate actual emissions for all with GHG target
 
 p46_emi_actual(nz_reg2050(all_regi))$(not nz_reg_CO2(all_regi))

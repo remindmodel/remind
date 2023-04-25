@@ -37,7 +37,7 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
       } else {
         message("! abort.gdx exists, a file containing the latest data at the point GAMS aborted execution.")
       }
-      if (! file.exists(file.path("non_optimal.gdx"))) {
+      if (! file.exists(file.path(folder, "non_optimal.gdx"))) {
         message("  non_optimal.gdx does not exist, a file written if at least one iteration did not find a locally optimal solution.")
       } else {
         modelstat_no <- as.numeric(readGDX(gdx = file.path(folder, "non_optimal.gdx"), "o_modelstat", format = "simplest"))
@@ -46,7 +46,7 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
           "modelstat: ", modelstat_no, if (modelstat_no %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat_no], ")"))
         modelstat[[as.character(max_iter_no)]] <- modelstat_no
       }
-      if(! file.exists(file.path("fulldata.gdx"))) {
+      if(! file.exists(file.path(folder, "fulldata.gdx"))) {
         message("! fulldata.gdx does not exist, so output generation will fail.")
         if (cfg$action == "ce") {
           stoprun <- TRUE
@@ -72,11 +72,11 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
   if (identical(cfg$gms$optimization, "nash") && file.exists(file.path(folder, "full.lst")) && cfg$action == "ce") {
     message("\nInfeasibilities extracted from full.lst with nashstat -F:")
     command <- paste(
-      "li=$(nashstat -F | wc -l); cat",   # li-1 = #infes
+      "li=$(nashstat -F", folder, "| wc -l); cat",   # li-1 = #infes
       "<(if (($li < 2)); then echo no infeasibilities found; fi)",
-      "<(if (($li > 1)); then nashstat -F | head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 1)); then nashstat -F", folder, "| head -n 2 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
       "<(if (($li > 4)); then echo ... $(($li - 3)) infeasibilities omitted, show all with 'nashstat -a' ...; fi)",
-      "<(if (($li > 2)); then nashstat -F | tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
+      "<(if (($li > 2)); then nashstat -F", folder, "| tail -n 1 | sed -r 's/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'; fi)",
       "<(if (($li > 3)); then echo If infeasibilities appear some iterations before GAMS failed, check 'nashstat -a' carefully.; fi)",
       "<(if (($li > 3)); then echo The error that stopped GAMS is probably not the actual reason to fail.; fi)")
     nashstatres <- try(system2("/bin/bash", args = c("-c", shQuote(command))))

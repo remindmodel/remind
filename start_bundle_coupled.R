@@ -55,7 +55,7 @@ path_magpie <- paste0(getwd(), "/../magpie/")
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v3.csv")
+path_settings_coupled <- paste0(path_remind, "config/scenario_config_coupled_NGFS_v4.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # paste0(path_remind, "config/scenario_config.csv")
 
@@ -351,8 +351,10 @@ for(scen in common){
   }
   cfg_mag <- check_config(cfg_mag, reference_file=paste0(path_magpie,"config/default.cfg"), modulepath = paste0(path_magpie,"modules/"))
   
-  # GHG prices will be set to zero (in start_run() of MAgPIE) until and including the year specified here
-  cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"] 
+  # GHG prices will be set to zero (in MAgPIE) until and including the year specified here
+  cfg_mag$gms$c56_mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
+  # To ensure backwards compatibility keep the old switch here for a while (has been transformed into a gms switch in MAgPIE)
+  cfg_mag$mute_ghgprices_until <- cfg_mag$gms$c56_mute_ghgprices_until
   
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
   for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
@@ -507,12 +509,14 @@ for(scen in common){
   }
   if(!is.null(path_mif_ghgprice_land)) message("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land), green,red), path_mif_ghgprice_land, NC, "\n",sep="")
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
-  message("no_ghgprices_land_until: ", cfg_mag$mute_ghgprices_until)
+  message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
+    lockID <- gms::model_lock()
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
+    gms::model_unlock(lockID)
     errorsfound <- errorsfound + ! gcresult
   }
   if (!start_now) {
