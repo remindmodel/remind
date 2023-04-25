@@ -278,8 +278,28 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
               pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
             );
           else
-***         fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
-            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+***         behavior after terminal year: fixed price (cm_postTargetIncrease=off or 0), global convergence (cm_postTargetIncrease=NPi or NDC), or fixed year increase (cm_postTargetIncrease €/tCO2 increase per year)
+$ifthen %cm_postTargetIncrease% == "off"
+            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt);
+$elseif %cm_postTargetIncrease% == "NPi"
+*** convergence scheme post ttot2.val: exponential increase of 5$ in 2020 with 1.25% AND regional convergence until 2100
+            pm_taxemiMkr(t,regi,emiMkt)$(t.val gt ttot2.val)
+              = (
+                  sum(ttot3, pm_taxCO2eq(ttot3,regi)$(ttot3.val eq ttot2.val - 5)) * max(2100 - t.val,  0)
+                  + 5 * sm_DptCO2_2_TDpGtC * 1.0125**(t.val-2020)                  * min(t.val - 2020, 80)
+                )/80;
+$elseif %cm_postTargetIncrease% == "NDC"
+*** convergence scheme post ttot2.val: exponential increase of 30$ in 2030 AND regional convergence until 2100, both increasing with 1.25% per year
+            pm_taxemiMkr(t,regi,emiMkt)$(t.val gt ttot2.val)
+              = (
+                  sum(ttot3, pm_taxCO2eq(ttot3,regi)$(ttot3.val eq ttot2.val - 5)) * 1.0125**(t.val-ttot2.val) * max(2100 - t.val, 0)
+                  + 30 * sm_DptCO2_2_TDpGtC * 1.0125**(t.val-2030)                                             * min(t.val - 2030, 70)
+                )/70;
+*** as a minimum, have linear price increase starting from 1$ in 2030
+            pm_taxemiMkr(t,regi,emiMkr)$(t.val gt ttot2.val) = max(pm_taxemiMkr(t,regi,emiMkr), 1 * sm_DptCO2_2_TDpGtC * (1+(t.val-2030)*9/7));
+$else
+            pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (%cm_postTargetIncrease%*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+$endif
           );
         );
       );

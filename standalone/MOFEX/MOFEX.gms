@@ -182,8 +182,6 @@ c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 cm_trdcst              "parameter to scale trade export cost for gas"
 cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
 
-cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
-
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
 cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
@@ -326,7 +324,7 @@ c_abtrdy                 = 2010;   !! def = 2010
 c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 0;   !! def = 1300
 $setGlobal cm_emiMktTarget  off   !! def = off
-cm_postTargetIncrease    = 0;      !! def = 0
+$setGlobal cm_postTargetIncrease off   !! def = 0
 $setGlobal cm_quantity_regiCO2target  off !! def = off
 cm_peakBudgYr            = 2050;   !! def = 2050
 cm_taxCO2inc_after_peakBudgYr = 2; !! def = 2
