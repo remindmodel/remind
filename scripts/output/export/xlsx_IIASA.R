@@ -6,13 +6,9 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(data.table)
-require(iamc)
-require(rmndt)
 library(dplyr, warn.conflicts = FALSE)
 library(quitte)
 library(lucode2)
-library(magclass)
-library(magpie4)
 library(piamInterfaces)
 library(stringr) # str_sub, str_split
 library(tibble)
