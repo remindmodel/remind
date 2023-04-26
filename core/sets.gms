@@ -2507,8 +2507,9 @@ pc2te(all_enty,all_enty,all_te,all_enty)    "mapping for own consumption of tech
         pecoal.seh2.coalh2.seel
         pecoal.seh2.coalh2c.seel
         pebiolc.seel.biochp.sehe
+        pebiolc.segabio.biogasc.seel
         segabio.fegas.tdbiogas.seel
-		segafos.fegas.tdfosgas.seel
+	segafos.fegas.tdfosgas.seel
         pegeo.sehe.geohe.seel
         cco2.ico2.ccsinje.seel
         fedie.uedit.apCarDiEffT.feelt
