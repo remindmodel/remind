@@ -367,9 +367,13 @@ for(scen in common){
                           modulepath = file.path(path_magpie, "modules"))
 
   # GHG prices will be set to zero (in MAgPIE) until and including the year specified here
-  cfg_mag$gms$c56_mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
-  # To ensure backwards compatibility keep the old switch here for a while (has been transformed into a gms switch in MAgPIE)
-  cfg_mag$mute_ghgprices_until <- cfg_mag$gms$c56_mute_ghgprices_until
+  if (!is.null(cfg_mag$gms$c56_mute_ghgprices_until)) {
+    # Use the new name of the switch if it exists
+    cfg_mag$gms$c56_mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
+  } else {
+    # To ensure backwards compatibility keep the old switch here for a while (has been transformed into a gms switch in MAgPIE)
+    cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
+  }
 
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
   for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
