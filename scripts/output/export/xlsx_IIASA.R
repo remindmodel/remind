@@ -16,7 +16,7 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- "REMIND 3.0"                            # modelname in final file
+model <- "REMIND 3.2"                          # modelname in final file
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 addToScen <- NULL                              # is added at the beginning
 
@@ -33,10 +33,10 @@ if (! exists("project")) {
 } else {
   message("# Overwrite settings with project settings for '", project, "'.")
   if ("TESTTHAT" %in% project) {
-    model <- "REMIND 3.1"
+    model <- "REMIND 3.2"
     mapping <- "AR6"
   } else if ("NGFS_v4" %in% project) {
-    model <- "REMIND-MAgPIE 3.1-4.6"
+    model <- "REMIND-MAgPIE 3.2-4.6"
     mapping <- c("AR6", "AR6_NGFS")
     iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
     removeFromScen <- "C_|_bIT|_bit|_bIt"
