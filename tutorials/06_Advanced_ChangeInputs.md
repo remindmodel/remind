@@ -67,11 +67,16 @@ If you are developing in R using VS Code, you can connect to the cluster via ssh
 - [Using R in the cluster with VSCode](https://gitlab.pik-potsdam.de/pascalfu/bettercode-vscode/-/blob/main/R_VScode_in_the_cluster.md)
 - [How to connect VScode to the cluster using ssh](https://github.com/pik-piam/discussions/discussions/4)
 
-### Build an up-to-date cache on the cluster for local development
+**Important: Keep in mind that heavy workloads must not be executed on login nodes and should be passed to compute nodes instead.** Make sure to read the section ["A word of caution on using the cluster"](https://gitlab.pik-potsdam.de/pascalfu/bettercode-vscode/-/blob/main/R_VScode_in_the_cluster.md#a-word-of-caution-on-using-the-cluster) before working in the cluster.
 
-If you want to develop a madrat package locally, you might want to work with an up-to-date cache to avoid gathering all source data locally and re-running lengthy calculations on your own computer.
+### Get an up-to-date cache on the cluster for local development
 
-The default cache folder on the cluster is too large for this purpose, but you can create your own cache on the cluster and download it. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
+If you want to develop a madrat package locally, you might want to work with an up-to-date cache to avoid gathering all source data locally and re-running lengthy calculations on your own computer. The default cache folder on the cluster is too large for this purpose, but there are two ways to creat your own cache and download it. 
+
+**Option 1**: You can use the tool `idrcp` to achieve this. The tool extracts all cache files either written to or read from listed in the logfile of a REMIND input data revision and stores them in an archive you can download. You just need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3mod/inputdata/output/rev6.99_remind.tgz`. (The script looks up the cache folder used for this revision in the log file of the archive and then extracts all cache files mentioned in the log from that folder and stores them in an archive.)
+
+
+**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
 
 - Make sure your own madrat settings are used: `cachetype <- "def"`
 - Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")`
