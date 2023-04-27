@@ -247,7 +247,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** updating the emiMkt co2 tax for the first non converged yearly target  
     loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
-        loop(regi$regi_groupExt(ext_regi,regi),
+        loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
 ***       terminal year price
           if((iteration.val eq 1) and (pm_taxemiMkt(ttot2,regi,emiMkt) eq 0), !!intialize price for first iteration if it is missing 
             pm_taxemiMkt(ttot2,regi,emiMkt) = 1* sm_DptCO2_2_TDpGtC;    
