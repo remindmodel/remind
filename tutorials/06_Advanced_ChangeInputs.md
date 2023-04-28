@@ -75,7 +75,9 @@ If you want to develop a madrat package locally, you might want to work with an 
 
 **Option 1**: You can use the tool `idrcp` to achieve this. The tool extracts all cache files either written to or read from listed in the logfile of a REMIND input data revision and stores them in an archive you can download.
 
-You need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3mod/inputdata/output/rev6.51_62eff8f7_remind.tgz`. Be sure to select a `62eff8f7` file, as that region mapping (H12) is generated first, and subsequent region mappings (`2b1450bc` / EU21) only re-aggregate the results without using the cache. Also, select a remind or a validation file, depending on which cache you need – basically whether the function you are working on is called from `mrremind::fullREMIND()` or `mrremind::fullVALIDATIONREMIND()`.
+You need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3mod/inputdata/output/rev6.51_62eff8f7_remind.tgz`. Select a remind or a validation file, depending on which cache you need – basically whether the function you are working on is called from `mrremind::fullREMIND()` or `mrremind::fullVALIDATIONREMIND()`.
+
+Unfortunately, this does not work for archives that were created using a [portable unaggregated collection (puc)](https://pik-piam.r-universe.dev/articles/madrat/madrat-puc.html). If the diagnostics.log file has an entry looking like this under "Current madrat configuration", the archive won't be suitable for the script: `cachefolder -> "/p/tmp/benke/.Rtmp/RtmpU9rYHO/file25418fd5e15/puc"`
 
 
 **Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
