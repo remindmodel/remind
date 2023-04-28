@@ -31,6 +31,9 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     regiEmiMktTarget(ext_regi) = yes;
     regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes;
+  );
+
+  loop((ext_regi,ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     loop(regi$regi_groupExt(ext_regi,regi),
       regiEmiMktTarget2regi_47(ext_regi2,regi) = NO;
       regiEmiMktTarget2regi_47(ext_regi,regi) = YES;
