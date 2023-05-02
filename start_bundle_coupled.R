@@ -6,8 +6,11 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 if (!is.null(renv::project())) {
-  stop("Coupled runs are currently not supported with renv. Please use a snapshot instead, ",
-       "see https://github.com/remindmodel/remind/blob/develop/tutorials/11_ManagingRenv.md#legacy-snapshots")
+  stop("Coupled runs are currently not supported with renv. Please use a snapshot instead. ",
+       "How to switch from renv to snapshots: ",
+       "https://github.com/remindmodel/remind/blob/develop/tutorials/11_ManagingRenv.md#legacy-snapshots ",
+       "How to create a snapshot: https://github.com/remindmodel/remind/blob/develop/tutorials/",
+       "04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries")
 }
 require(lucode2)
 require(magclass)
