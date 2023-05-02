@@ -5,6 +5,10 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
+if (!is.null(renv::project())) {
+  stop("Coupled runs are currently not supported with renv. Please use a snapshot instead, ",
+       "see https://github.com/remindmodel/remind/blob/develop/tutorials/11_ManagingRenv.md#legacy-snapshots")
+}
 require(lucode2)
 require(magclass)
 require(gms)
