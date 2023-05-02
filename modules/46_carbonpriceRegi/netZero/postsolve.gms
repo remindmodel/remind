@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -11,6 +11,19 @@ if(sameas("%carbonprice%","none"), p46_startInIteration = 0);
 if(ord(iteration) > p46_startInIteration, !!start only after 10 iterations, so to already have some stability of the overall carbon price trajectory
 
 p46_emi_2020(regi) = vm_co2eq.l("2020",regi) * sm_c_2_co2 * 1000;
+
+***define offsets
+p46_offset(all_regi) = 0;
+$ifthen.offsets "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
+  p46_offset(nz_reg)$(sameas(nz_reg, "EUR")) = 100;
+$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4_20pc"
+  p46_offset(nz_reg) = 0.2 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.6 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+$elseif.offsets "%cm_netZeroScen%" == "NGFS_v4"
+  p46_offset(nz_reg)$(sameas(nz_reg, "LAM")) = 0.5 * vm_co2eq.l("2020", nz_reg) * sm_c_2_co2 * 1000;
+$endif.offsets
+
+display p46_offset;
 
 *** OR: calculate actual emissions for all with GHG target
 

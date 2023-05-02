@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -8,7 +8,7 @@
 
 p46_zeroYear = 2100;
 $ifthen.p46_zeroYear "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
-p46_zeroYear = 2200;
+  p46_zeroYear = 2200;
 $endif.p46_zeroYear
 
 
@@ -67,13 +67,5 @@ pm_taxCO2eqRegi(ttot,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(ttot,regi);
 p46_taxCO2eqRegiLast(t,regi) = 0;
 p46_taxCO2eqLast(t,regi)     = 0;
 
-***define offsets
-p46_offset(all_regi) = 0;
-$ifthen.cm_netZeroScen "%cm_netZeroScen%" == "ENGAGE4p5_GlP"
-p46_offset(nz_reg)$(sameas(nz_reg, "EUR")) = 100;
-*** p46_offset(nz_reg)$(sameas(nz_reg, "SSA")) = 2000;
-$endif.cm_netZeroScen
-
 *** EOF ./modules/46_carbonpriceRegi/netZero/datainput.gms
-
 

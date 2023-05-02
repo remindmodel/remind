@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,15 +6,10 @@
 # |  Contact: remind@pik-potsdam.de
 name, type, reason
 sm_budgetCO2eqGlob, parameter, ??
-vm_emiAllGlob, variable, ??
 pm_taxCO2eq, parameter, ??
-pm_pricePerm, parameter, ??
 pm_budgetCO2eq, parameter, ??
-pm_ttot_val, parameter, ??
 cm_emiscen, switch, ???
 cm_startyear, switch, ???
-cm_gdximport_target, switch, ???
-v15_temp, variable, ???
 cm_iterative_target_adj, switch, ???
 pm_globalMeanTemperatureZeroed1900,input,questionnaire
 pm_temperatureImpulseResponseCO2,input,questionnaire

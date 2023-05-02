@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -84,14 +84,19 @@ startComp <- function(
 # Load cs2 profiles.
 profiles <- remind2::getCs2Profiles()
 
+lucode2::readArgs("profileNames")
+
 # Let user choose cs2 profile(s).
 profileNamesDefault <- determineDefaultProfiles(outputdirs[1])
-profileNames <- names(profiles)[gms::chooseFromList(
-  ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
-  type = "profiles for cs2",
-  userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
-  returnBoolean = TRUE
-)]
+
+if (! exists("profileNames") || ! all(profileNames %in% names(profiles))) {
+  profileNames <- names(profiles)[gms::chooseFromList(
+    ifelse(names(profiles) %in% profileNamesDefault, crayon::cyan(names(profiles)), names(profiles)),
+    type = "profiles for cs2",
+    userinfo = paste0("Leave empty for ", crayon::cyan("cyan"), " default profiles."),
+    returnBoolean = TRUE
+  )]
+}
 if (length(profileNames) == 0) {
   profileNames <- profileNamesDefault
   message("Default: ", paste(profileNamesDefault, collapse = ", "), ".\n")

@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -22,8 +22,12 @@ prepare <- function() {
     for(i in 1:length(filelist)) {
       if(!is.na(filelist[i])) {
         to <- paste0(destfolder,"/",names(filelist)[i])
-	      if(!file.copy(filelist[i],to=to,recursive=dir.exists(to),overwrite=T))
-	        cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
+	      if(!file.copy(filelist[i],to=to,recursive=dir.exists(to),overwrite=T)) {
+           cat(paste0("Could not copy ",filelist[i]," to ",to,"\n"))
+        } else {
+           cat(paste0("Copied ",filelist[i]," to ",to,"\n"))
+        }
+	        
       }
 	  }
   }
@@ -131,20 +135,13 @@ prepare <- function() {
     create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
   }
 
-  # Calculate CES configuration string
-  cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
-                                         "buil_",cfg$gms$buildings,"-",
-                                         "tran_",cfg$gms$transport,"-",
-                                         "POP_", cfg$gms$cm_POPscen, "-",
-                                         "GDP_", cfg$gms$cm_GDPscen, "-",
-                                         "En_",  cfg$gms$cm_demScen, "-",
-                                         "Kap_", cfg$gms$capitalMarket, "-",
-                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         "Reg_", madrat::regionscode(cfg$regionmapping))
+  cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg)
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
-                  content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
+                  content = paste0('$include "',
+                                   "./modules/29_CES_parameters/load/input/",
+                                   cfg$gms$cm_CES_configuration, ".inc\""),
                   subject = "CES INPUT")
 
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)
@@ -312,6 +309,8 @@ prepare <- function() {
   if (0 != system(paste('cp', gdx_name,
 			file.path(cfg$results_folder, 'input.gdx')))) {
     stop('Could not copy gdx file ', gdx_name)
+  } else {
+    message('Copied ', gdx_name, ' to input.gdx')
   }
 
   # choose which conopt files to copy

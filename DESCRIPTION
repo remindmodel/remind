@@ -1,7 +1,7 @@
 Package: remindmodel
 Title: REMIND - REgional Model of INvestments and Development
 Version: 0.1
-Date: 2022-08-31
+Date: 2023-04-21
 Description: This is not a package yet, the purpose of this file is to
     document metadata, notably dependencies.
 License: file LICENSE
@@ -24,7 +24,7 @@ Imports:
     gdxdt,
     gdxrrw,
     ggplot2,
-    gms (>= 0.25.0),
+    gms (>= 0.25.2),
     goxygen,
     gridExtra,
     gtools,
