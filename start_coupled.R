@@ -270,7 +270,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   if (length(rownames(cfg_rem$RunsUsingTHISgdxAsInput)) > 0) {
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- paste0(path_remind, cfg_rem$results_folder, "/fulldata.gdx")
-    stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_rem$title) to their cfg files
 
