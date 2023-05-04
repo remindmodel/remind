@@ -5,6 +5,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 
+skipIfFast()
 coupledConfig <- "config/tests/scenario_config_coupled_shortCascade.csv"
 magpie_folder <- "../../../magpie"
 config <- readCheckScenarioConfig(file.path("..", "..", coupledConfig), remindPath <- file.path("..", ".."))
@@ -27,7 +28,6 @@ for (scen in rownames(config)) {
 expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
 
 test_that("environment is suitable for coupled tests", {
-  skipIfFast()
   skipIfPreviousFailed()
   # magpie needs to be cloned by the user before running coupled tests
   expect_true(dir.exists(magpie_folder))
@@ -36,7 +36,6 @@ test_that("environment is suitable for coupled tests", {
 })
 
 test_that("using start_bundle_coupled.R --gamscompile works", {
-  skipIfFast()
   skipIfPreviousFailed()
   # try compiling
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", "--gamscompile", coupledConfig),
@@ -56,7 +55,6 @@ test_that("using start_bundle_coupled.R --gamscompile works", {
 })
 
 test_that("using start_bundle_coupled.R --test works", {
-  skipIfFast()
   skipIfPreviousFailed()
   # just test the settings and RData files are written
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", "--test", coupledConfig),
@@ -97,7 +95,6 @@ test_that("using start_bundle_coupled.R --test works", {
 })
 
 test_that("runs coupled to MAgPIE work", {
-  skipIfFast()
   skipIfPreviousFailed()
   # try running actual runs
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig),
@@ -154,7 +151,6 @@ test_that("runs coupled to MAgPIE work", {
 })
 
 test_that("don't run again if completed", {
-  skipIfFast()
   skipIfPreviousFailed()
   # do not delete anything to simulate re-running already completed run
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig),
@@ -168,7 +164,6 @@ test_that("don't run again if completed", {
 })
 
 test_that("delete last REMIND run to simulate re-starting aborted run", {
-  skipIfFast()
   skipIfPreviousFailed()
   scen <- rownames(config)[[2]]
   filestodelete <- c(
@@ -223,7 +218,6 @@ test_that("delete last REMIND run to simulate re-starting aborted run", {
 
 test_that("Check path_mif_ghgprice_land with file", {
   # note: needs Base-rem-1 and -2 still present
-  skipIfFast()
   skipIfPreviousFailed()
   output <- localSystem2("Rscript", c("start_bundle_coupled.R", coupledConfig, "startgroup=2"),
                          env = "R_PROFILE_USER=.snapshot.Rprofile")
@@ -244,7 +238,6 @@ test_that("Check path_mif_ghgprice_land with file", {
 
 test_that("delete files to leave clean state", {
   # leave clean state
-  skipIfFast()
   skipIfPreviousFailed()
   expect_true(0 == unlink(deleteallfiles, recursive = TRUE))
 })
