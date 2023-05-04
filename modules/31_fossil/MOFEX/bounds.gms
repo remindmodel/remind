@@ -15,7 +15,6 @@
 *   change for example.
 *===========================================
 * Authors...: SB
-* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
 *   - 2019-09-10 : Creation
 *===========================================

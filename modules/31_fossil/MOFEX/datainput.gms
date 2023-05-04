@@ -15,7 +15,6 @@
 *   change for example.
 *===========================================
 * Authors...: SB
-* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
 *   - 2012-09-10 : Creation
 *===========================================
@@ -113,7 +112,7 @@ p31_fosadjco_xi5xi6(regi, "xi6", "pegas")  = 1/1;
 *NB*110720 include data for constraints on maximum growth and decline of vm_fuExtr, and also the offsets
 *SB*04022020 Hardcoded this into the preloop instead of the FFECCM input routines
 
-p31_datafosdyn(regi,"pegas",rlf,"alph") = cm_trdadj * p31_datafosdyn(regi,"pegas",rlf,"alph");
+p31_datafosdyn(regi,"pegas",rlf,"alph") = 2 * p31_datafosdyn(regi,"pegas",rlf,"alph");
 
 p31_extraseed(ttot,regi,enty,rlf) = 0;
 *NB* extra seed value for the US gas sector to reduce initial price in EJ/yr
