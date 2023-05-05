@@ -1,3 +1,4 @@
 title;start;c_empty_model;path_gdx_ref;path_gdx_bau;output
 TESTTHAT-SSP2EU-Base;1;on;;;reportingREMIND2MAgPIE
 TESTTHAT-SSP2EU-NDC;1;on;TESTTHAT-SSP2EU-Base;TESTTHAT-SSP2EU-Base;reportingREMIND2MAgPIE
+TESTTHAT-SSP2EU-Policy;2;on;TESTTHAT-SSP2EU-Base;TESTTHAT-SSP2EU-Base;reportingREMIND2MAgPIE

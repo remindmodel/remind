@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,13 +6,9 @@
 # |  Contact: remind@pik-potsdam.de
 
 require(data.table)
-require(iamc)
-require(rmndt)
 library(dplyr, warn.conflicts = FALSE)
 library(quitte)
 library(lucode2)
-library(magclass)
-library(magpie4)
 library(piamInterfaces)
 library(stringr) # str_sub, str_split
 library(tibble)
@@ -20,7 +16,7 @@ library(tidyr)
 
 options(warn = 1)
 
-model <- "REMIND 3.0"                            # modelname in final file
+model <- "REMIND 3.2"                          # modelname in final file
 removeFromScen <- ""                           # you can use regex such as: "_diff|_expoLinear"
 addToScen <- NULL                              # is added at the beginning
 
@@ -36,12 +32,14 @@ if (! exists("project")) {
   project <- NULL
 } else {
   message("# Overwrite settings with project settings for '", project, "'.")
-  if ("NGFS_v3" %in% project) {
-    model <- "REMIND-MAgPIE 3.0-4.4"
+  if ("TESTTHAT" %in% project) {
+    model <- "REMIND 3.2"
+    mapping <- "AR6"
+  } else if ("NGFS_v4" %in% project) {
+    model <- "REMIND-MAgPIE 3.2-4.6"
     mapping <- c("AR6", "AR6_NGFS")
-    iiasatemplate <- "../ngfs-internal-workflow/definitions/variable/variables.yaml"
+    iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
     removeFromScen <- "C_|_bIT|_bit|_bIt"
-    filename_prefix <- "NGFS"
   } else if ("ENGAGE_4p5" %in% project) {
     model <- "REMIND 3.0"
     mapping <- c("AR6", "AR6_NGFS")
@@ -71,7 +69,6 @@ if (! exists("outputFilename")) {
 } else {
   outputFilename <- gsub("\\.mif$|\\.xlsx$", "", outputFilename)
 }
-OUTPUT_mif  <- paste0(outputFilename, ".mif")
 OUTPUT_xlsx <- paste0(outputFilename, ".xlsx")
 if (! exists("logFile")) logFile <- paste0(outputFilename, ".log")
 
@@ -81,15 +78,20 @@ withCallingHandlers({ # piping messages to logFile
   if (length(mapping) == 1 && file.exists(mapping)) {
     mappingFile <- mapping
     mapping <- NULL
-  } else if (all(mapping %in% names(templateNames())) && length(mapping) > 0) {
-    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
   } else {
-    message("# Mapping = '", paste(mapping, collapse = ","), " exists neither as file nor mapping name.")
-    mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()))
-    mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", mapping), collapse = "_"), ".csv"))
+    if (all(mapping %in% names(templateNames())) && length(mapping) > 0) {
+      mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
+    } else {
+      message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
+      mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()))
+      mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", mapping), collapse = "_"), ".csv"))
+    }
+    generateMappingfile(templates = mapping, outputDirectory = NULL,
+                        fileName = mappingFile, model = model, logFile = logFile,
+                        iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
   }
 
-  message("\n### Generating ", OUTPUT_mif, " and .xlsx.")
+  message("\n### Generating ", OUTPUT_xlsx, ".")
   ### define filenames
 
   gdxs <- file.path(outputdirs, "fulldata.gdx")
@@ -126,14 +128,13 @@ withCallingHandlers({ # piping messages to logFile
         file = logFile, append = TRUE)
   mifdata <- filter(mifdata, ! variable %in% temporarydelete)
 
-  message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
-  write.mif(mifdata, filename_remind2_mif)
+  # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
+  # write.mif(mifdata, filename_remind2_mif)
 
-  generateIIASASubmission(filename_remind2_mif, mapping = mapping, model = model, mappingFile = mappingFile,
+  generateIIASASubmission(mifdata, mapping = NULL, model = model, mappingFile = mappingFile,
                           removeFromScen = removeFromScen, addToScen = addToScen,
-                          outputDirectory = outputFolder, outputPrefix = "",
-                          logFile = logFile, generateSingleOutput = TRUE,
-                          outputFilename = basename(OUTPUT_mif),
+                          outputDirectory = outputFolder,
+                          logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
                           iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL,
                           generatePlots = TRUE)
 

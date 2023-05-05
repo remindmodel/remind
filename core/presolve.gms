@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -112,9 +112,9 @@ loop(regi,
           );
     );
 
-  if (cm_emiscen eq 9 or (cm_emiscen eq 10),
+  if (cm_emiscen eq 9,
 *** TODO: take care, this means that the SCC are only priced into MAC-curve
-*** abatement if emiscen = 9 and for emiscen = 10 for CBA runs. Might want to change this.
+*** abatement if emiscen = 9. Might want to change this.
     p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
   else
     p_priceCO2(ttot,regi) 

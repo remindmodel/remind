@@ -66,6 +66,11 @@ authors:
   orcid: https://orcid.org/0000-0002-3240-2608
   affiliation: "Potsdam Institute for Climate Impact Research"
 
+- family-names: "Fuchs"
+  given-names:  "Sophie"
+  orcid: https://orcid.org/0009-0000-7258-1287
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
 - family-names: "Führlich"
   given-names:  "Pascal"
   orcid: https://orcid.org/0000-0002-6856-8239
@@ -132,6 +137,12 @@ authors:
 
 - family-names: "Malik"
   given-names:  "Aman"
+  orcid: https://orcid.org/0000-0002-7310-8448
+  affiliation: "Potsdam Institute for Climate Impact Research"
+
+- family-names: "Mandaroux"
+  given-names:  "Rahel"
+  orcid: https://orcid.org/0000-0001-5596-2571
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 - family-names: "Manger"
@@ -234,8 +245,8 @@ authors:
   affiliation: "Potsdam Institute for Climate Impact Research"
 
 title: REMIND - REgional Model of INvestments and Development
-version: "3.1.0"
-date-released: 2023-02-10
+version: "3.2.0"
+date-released: 2023-04-21
 repository-code: https://github.com/remindmodel/remind
 keywords:
   - energy
