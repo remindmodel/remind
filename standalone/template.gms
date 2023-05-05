@@ -175,9 +175,6 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-cm_trdcst              "parameter to scale trade export cost for gas"
-cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
-
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
 cm_damages_BurkeLike_persistenceTime    " persistence time in years for Burke-like damage functions"
 cm_damages_SccHorizon               "Horizon for SCC calculation. Damages cm_damagesSccHorizon years into the future are internalized."
@@ -272,8 +269,6 @@ c_abtcst                 = 1;      !! def = 1
 c_budgetCO2              = 1350;   !! def = 1300
 $setGlobal cm_emiMktTarget  off   !! def = off
 
-cm_trdadj            = 2;    !! def = 2.0
-cm_trdcst             = 1.5;  !! def = 1.5
 cm_frac_CCS          = 10;   !! def = 10
 cm_frac_NetNegEmi    = 0.5;  !! def = 0.5
 
