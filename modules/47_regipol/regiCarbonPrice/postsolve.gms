@@ -275,7 +275,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
             loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot2 = beginning of slope; ttot3 = end of slope
               pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot3,regi);
               pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
-              pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
+***              pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year -- this line needs to be reinstated, covering the options that cm_postTargetIncrease is off, NPi or NDC
             );
           else
 ***         behavior after terminal year: fixed price (cm_postTargetIncrease=off or 0), global convergence (cm_postTargetIncrease=NPi or NDC), or fixed year increase (cm_postTargetIncrease €/tCO2 increase per year)
