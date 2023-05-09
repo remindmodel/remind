@@ -39,7 +39,7 @@ Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives
 
 ### 3.1 Access the Cluster
 
-To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster on [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Getting_ready_to_use_the_Cluster).
+To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster in [the gitlab wiki](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Updating-Inputs-from-Magpie).
 
 ### 3.2 Load a mif file as a Magpie Object
 
