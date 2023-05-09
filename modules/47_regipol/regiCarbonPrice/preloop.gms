@@ -22,6 +22,19 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       );
     );
   );
+
+*** make sure no values for auxiliary convergence parameters are loaded from the gdx
+  p47_targetConverged(ttot,ext_regi) = 0;
+  p47_targetConverged_iter(iteration,ttot,ext_regi) = 0;
+  p47_allTargetsConverged(ext_regi) = 0;
+  p47_allTargetsConverged_iter(iteration,ext_regi) = 0;
+  p47_firstTargetYear(ext_regi) = 0;
+  p47_lastTargetYear(ext_regi) = 0;
+  p47_currentConvergencePeriod(ext_regi) = 0;
+  p47_currentConvergence_iter(iteration,ttot,ext_regi) = 0;
+  p47_nextConvergencePeriod(ext_regi) = 0;
+  p47_averagetaxemiMkt(ttot,all_regi) = 0;
+
 $ENDIF.emiMkt
 
 ***---------------------------------------------------------------------------

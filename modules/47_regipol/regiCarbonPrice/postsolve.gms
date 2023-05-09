@@ -232,6 +232,8 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
 p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
 p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
 
+p47_currentConvergence_iter(iteration,ttot,ext_regi) = 0;
+
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
   if(not(p47_allTargetsConverged(ext_regi)), !!no rescale need if all targets already converged
@@ -246,6 +248,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
     );
 *** updating the emiMkt co2 tax for the first non converged yearly target  
     loop((ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$(pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47) AND (ttot2.val eq p47_currentConvergencePeriod(ext_regi))),
+      p47_currentConvergence_iter(iteration,ttot2,ext_regi) = 1;
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt),
         loop(regi$regiEmiMktTarget2regi_47(ext_regi,regi),
 ***       terminal year price
@@ -266,20 +269,28 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
           loop(ttot3$(ttot3.val eq s47_prefreeYear), !! ttot3 = beginning of slope; ttot2 = end of slope
             pm_taxemiMkt(t,regi,emiMkt)$((t.val ge s47_firstFreeYear) AND (t.val lt ttot2.val))  = pm_taxemiMkt(ttot3,regi,emiMkt) + ((pm_taxemiMkt(ttot2,regi,emiMkt) - pm_taxemiMkt(ttot3,regi,emiMkt))/(ttot2.val-ttot3.val))*(t.val-ttot3.val); 
           );
-***         if not last year target, then assume weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
-          if((not(ttot2.val eq p47_lastTargetYear(ext_regi))),
-            p47_averagetaxemiMkt(t,regi) = 
-              (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
-              /
-              (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
-            loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot2 = beginning of slope; ttot3 = end of slope
-              pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot2,regi);
-              pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
-              pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
-            );
-          else
-***         fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
+***       if last year target, fixed year increase after terminal year price (cm_postTargetIncrease €/tCO2 increase per year)
+          if((ttot2.val eq p47_lastTargetYear(ext_regi)),
             pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot2.val) = pm_taxemiMkt(ttot2,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot2.val);
+***       if not last year target, define price trajectory for years after the current target terminal year
+          else 
+            loop(ttot3$(ttot3.val eq p47_nextConvergencePeriod(ext_regi)), !! ttot3 = next convergence terminal year
+***           if next target was executed at least once by the algorithm, update next target initial year value to the value adjusted in this iteration and linearly converge it to the previously set target terminal year 
+              if(sum(iteration2, p47_currentConvergence_iter(iteration2,ttot3,ext_regi)) gt 0, !! ttot2 = beginning of next target slope; ttot3 = end of slope
+                display "next target converged at least once, update next target initial year value to the value adjusted in this iteration and linearly converge it to the previously set target terminal year", p47_nextConvergencePeriod;
+                pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
+***           else if next target was never executed by the algorithm, initialize next target value as weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)
+              else
+                display "next target did not converged yet, initialize next target value as weighted average convergence price between current target terminal year (ttot2.val) and next target year (p47_nextConvergencePeriod)", p47_nextConvergencePeriod;
+                p47_averagetaxemiMkt(t,regi) = 
+                  (pm_taxemiMkt(t,regi,"ETS")*p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + pm_taxemiMkt(t,regi,"ES")*p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + pm_taxemiMkt(t,regi,"other")*p47_emiTargetMkt(t,regi,"other",emi_type_47))
+                  /
+                  (p47_emiTargetMkt(t,regi,"ETS",emi_type_47) + p47_emiTargetMkt(t,regi,"ESR",emi_type_47) + p47_emiTargetMkt(t,regi,"other",emi_type_47));
+                pm_taxemiMkt(ttot3,regi,emiMkt) = p47_averagetaxemiMkt(ttot2,regi); !! ttot2 = beginning of slope; ttot3 = end of slope
+                pm_taxemiMkt(t,regi,emiMkt)$((t.val gt ttot2.val) AND (t.val lt ttot3.val)) = pm_taxemiMkt(ttot2,regi,emiMkt) + ((pm_taxemiMkt(ttot3,regi,emiMkt) - pm_taxemiMkt(ttot2,regi,emiMkt))/(ttot3.val-ttot2.val))*(t.val-ttot2.val); !! price in between current target year and next target year
+                pm_taxemiMkt(t,regi,emiMkt)$(t.val gt ttot3.val) = pm_taxemiMkt(ttot3,regi,emiMkt) + (cm_postTargetIncrease*sm_DptCO2_2_TDpGtC)*(t.val-ttot3.val); !! price after next target year
+              );
+            );
           );
         );
       );
