@@ -26,7 +26,7 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
-  
+
 *** Auxiliar parameters based on emission targets information 
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     regiEmiMktTarget(ext_regi) = yes;
@@ -50,10 +50,7 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       break$(p47_firstTargetYear(ext_regi));
     );
   );
-
-*** initialize emiMkt Target parameters
-p47_targetConverged(ttot,ext_regi) = 0;
-
+  
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
