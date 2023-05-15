@@ -27,12 +27,16 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-*** Auxiliar parameters based on emission targets information 
+*** Auxiliar parameters based on emission targets information
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
-    regiEmiMktTarget(ext_regi) = yes;
-    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes;
+    regiEmiMktTarget(ext_regi) = yes; !! assigning values to set containing extended regions that have regional emission targets  
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets  
   );
 
+*** Calculating set containing regions that should be controlled by a given regional emission target. 
+***   Emission targets defined at lower aggregated regions (e.g. country-specific targets) have precedence controlling carbon pricing
+***   over emission targets applied to more aggregated regions that also contain the given region or country. 
+***   For more details about how this code work: https://github.com/remindmodel/remind/pull/1315#discussion_r1190875836   
   loop((ext_regi,ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
     loop(regi$regi_groupExt(ext_regi,regi),
       regiEmiMktTarget2regi_47(ext_regi2,regi) = NO;
