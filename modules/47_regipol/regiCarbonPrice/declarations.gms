@@ -44,7 +44,7 @@ Parameter
   pm_emiMktTarget_dev_iter(iteration, ttot,ttot2,ext_regi,emiMktExt) "parameter to save pm_emiMktTarget_dev across iterations [%]"
 
 *** Parameters necessary to calculate the emission tax rescaling factor
-  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliar parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
+  p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt)     "auxiliary parameter to save the slope corresponding to the observed mitigation derivative regarding to co2tax level changes from the two previous iterations [#]"
   p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save mitigation curve slope across iterations [#]"
   pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) "multiplicative tax rescale factor that rescales emiMkt carbon price from iteration to iteration to reach regipol targets [%]"
   p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) "parameter to save rescale factor across iterations for debugging purposes [%]"
@@ -56,9 +56,10 @@ Parameter
   p47_allTargetsConverged_iter(iteration,ext_regi)   "parameter to save p47_allTargetsConverged across iterations [0 or 1]"
   p47_firstTargetYear(ext_regi)                      "first year with a pre defined policy emission target in the region [year]"
   p47_lastTargetYear(ext_regi)                       "last year with a pre defined policy emission target in the region [year]"
-  p47_currentConvergencePeriod(ext_regi)             "auxiliar parameter to store the current target year being executed by the convergence algorithm [year]"
-  p47_nextConvergencePeriod(ext_regi)                "auxiliar parameter to store the next target year being executed by the convergence algorithm [year]"
-  p47_averagetaxemiMkt(ttot,all_regi)                "auxiliar parameter to store the weighted average convergence price between the current target terminal year and the next target year. Only applied for target years different than p47_lastTargetYear"
+  p47_currentConvergencePeriod(ext_regi)             "auxiliary parameter to store the current target year being executed by the convergence algorithm [year]"
+  p47_currentConvergence_iter(iteration,ttot,ext_regi) "auxiliary parameter to store if carbon price adjustment in response to a specific emission target is being executed by the convergence algorithm in the specific REMIND iteration [0 or 1]"
+  p47_nextConvergencePeriod(ext_regi)                "auxiliary parameter to store the next target year being executed by the convergence algorithm [year]"
+  p47_averagetaxemiMkt(ttot,all_regi)                "auxiliary parameter to store the weighted average convergence price between the current target terminal year and the next target year. Only applied for target years different than p47_lastTargetYear"
 
 *** output parameters
   p47_taxemiMkt_AggEmi(ttot,all_regi)                "CO2eq regional aggregated emission tax (aggregated by emissions)"
