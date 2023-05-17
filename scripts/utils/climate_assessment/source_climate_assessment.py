@@ -66,7 +66,15 @@ if not(os.path.exists(outdir) and os.path.isdir(outdir)):
 outdir
 
 #%%
+print("Reading "+ excel_file)
+print("Keep in mind that the initial read of the Excel time can take up to minutes, so dont expect any output for a while")
+inxls = pyam.IamDataFrame(excel_file)
 
+#%%
+csv_file = os.path.splitext(excel_file)[0] + ".csv"
+print("Filtering regions and writing to " + csv_file)
+inxls.filter(region="World").to_csv(csv_file)
+#%%
 # %%
 # FIXME: This is commented, but is needed if we use mifs
 # instead of xls files. The definitive solution will definitely
@@ -90,9 +98,9 @@ outdir
 # testread
 
 # %%
+print("Starting workflow using "+ excel_file)
 run_workflow(
-    # csv_file,
-    excel_file,
+    csv_file,
     outdir,
     model=model,
     model_version=model_version,
