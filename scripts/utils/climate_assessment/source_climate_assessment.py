@@ -48,8 +48,8 @@ probabilistic_file = os.path.join(
 
 # Use fewer (e.g. 10) if you just want to do a test run but note that this breaks
 # the stats of the probabilistic ensemble
-# num_cfgs = 600
-num_cfgs = 10
+num_cfgs = 600
+# num_cfgs = 10
 # Set to True if you're not using the full MAGICC ensemble
 test_run = False
 # test_run = True
