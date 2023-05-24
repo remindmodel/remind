@@ -15,7 +15,6 @@
 *   change for example.
 *===========================================
 * Authors...: JH, NB, TAC, SB
-* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
 *   - 2020-04-15 : Created moinput functions for input data handling, including region-specific constraints
 *                  previously in the GAMS code. Data aggregated to H12 regions.

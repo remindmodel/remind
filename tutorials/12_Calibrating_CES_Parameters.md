@@ -139,7 +139,7 @@ use the calibration results, copy the parameter (`.inc`) file (without the
 iteration counter) to the directory `./modules/29_CES_parameters/load/input/`
 and the .gdx file to the directory `./config/gdx-files/`.  At PIK, this is done
 automatically using the RSE support scripts.  See [this wiki
-page](https://redmine.pik-potsdam.de/projects/remind-r/wiki/GDX_and_CES_parameter_Handling)
+page](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Handling-of-Gdx-and-Ces-Parameter-Files-in-Remind)
 for details.
 
 If the specific calibration settings (e.g. `cm_CES_configuration`) have not been

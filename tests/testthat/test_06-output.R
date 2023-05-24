@@ -15,13 +15,24 @@ test_that("output.R -> single -> reporting works", {
 })
 
 test_that("output.R -> export -> xlsx_IIASA works", {
-  skipIfFast()
+# skipIfFast()
   skipIfPreviousFailed()
+  exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
+  unlink(exportfiles)
   output <- localSystem2("Rscript", c("output.R", "project=TESTTHAT", "filename_prefix=TESTTHAT",
                                       "comp=export", "output=xlsx_IIASA", "outputdir=output/testOneRegi"))
   printIfFailed(output)
   exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
-  expect_true(length(exportfiles) >= 3)
-  unlink(exportfiles)
+  expect_true(sum(grepl("REMIND_TESTTHAT.*xlsx$", exportfiles)) == 1)
+  expect_true(sum(grepl("REMIND_TESTTHAT.*log$", exportfiles)) == 1)
+  expect_true(sum(grepl("REMIND_TESTTHAT.*checkSummations\\.csv$", exportfiles)) == 1)
+  expect_true(sum(grepl("REMIND_TESTTHAT.*checkSummations.*pdf$", exportfiles)) == 1)
   expectSuccessStatus(output)
+})
+
+test_that("cleanup output.R", {
+  skipIfFast()
+  skipIfPreviousFailed()
+  exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
+  unlink(exportfiles)
 })

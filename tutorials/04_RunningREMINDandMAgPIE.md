@@ -207,7 +207,7 @@ There are two components of the REMIND-MAgPIE coupling: the prominent dynamic pa
 * GHG emission baselines for SSPs/RCPs (delivered to REMIND via (updated in coupled runs)
 * total agricultural production costs (fixed for standalone and coupled)
 
-Please find here a [detailed list of the REMIND input files and were they come from](https://redmine.pik-potsdam.de/projects/remind-r/wiki/Updating_inputs_from_MAgPIE).
+Please find a detailed list of the REMIND input files and were they come from [in the gitlab wiki](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Updating-Inputs-from-Magpie).
 
 ### Assumptions
 
