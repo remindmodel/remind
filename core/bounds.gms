@@ -21,7 +21,7 @@ vm_costTeCapital.fx(t,regi,teNoLearn)     = pm_inco0_t(t,regi,teNoLearn);
 *** CB 20120402 Lower limit on all P2SE technologies capacities to 100 kW of all technologies and all time steps
 loop(pe2se(enty,enty2,te)$((not sameas(te,"biotr"))  AND (not sameas(te,"biodiesel")) AND (not sameas(te,"bioeths")) AND (not sameas(te,"gasftcrec")) AND (not sameas(te,"gasftrec"))
 AND (not sameas(te,"tnrs"))),
-  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val lt 2100) = 1e-7;
+  vm_cap.lo(t,regi,te,"1")$(t.val gt 2021 AND t.val le 2070) = 1e-7;
 );
 
 
