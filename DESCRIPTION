@@ -59,7 +59,7 @@ Imports:
     raster,
     readr,
     readxl,
-    remind2 (>= 1.104.1),
+    remind2 (>= 1.111.2),
     renv,
     reshape2,
     reticulate,

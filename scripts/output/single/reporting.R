@@ -14,7 +14,8 @@ library(edgeTransport)
 library(quitte)
 ############################# BASIC CONFIGURATION #############################
 gdx_name     <- "fulldata.gdx"             # name of the gdx
-gdx_ref_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
+gdx_ref_name <- "input_ref.gdx"            # name of the ref for < cm_startyear
+gdx_refpolicycost_name <- "input_refpolicycost.gdx"  # name of the reference gdx (for policy cost calculation)
 
 
 if(!exists("source_include")) {
@@ -23,9 +24,11 @@ if(!exists("source_include")) {
    readArgs("outputdir", "gdx_name", "gdx_ref_name")
 }
 
-gdx      <- file.path(outputdir,gdx_name)
-gdx_ref  <- file.path(outputdir,gdx_ref_name)
-if (!file.exists(gdx_ref)) { gdx_ref <- NULL }
+gdx     <- file.path(outputdir, gdx_name)
+gdx_ref <- file.path(outputdir, gdx_ref_name)
+gdx_refpolicycost <- file.path(outputdir, gdx_refpolicycost_name)
+if (! file.exists(gdx_ref)) { gdx_ref <- NULL }
+if (! file.exists(gdx_refpolicycost)) { gdx_refpolicycost <- NULL }
 scenario <- getScenNames(outputdir)
 ###############################################################################
 # paths of the reporting files
@@ -47,7 +50,7 @@ load(configfile, envir = envir)
 
 # produce REMIND reporting *.mif based on gdx information
 message("\n### start generation of mif files at ", Sys.time())
-tmp <- try(convGDX2MIF(gdx,gdx_ref,file=remind_reporting_file,scenario=scenario)) # try to execute convGDX2MIF
+tmp <- try(convGDX2MIF(gdx,gdx_ref = gdx_refpolicycost,file=remind_reporting_file,scenario=scenario, gdx_refprices = gdx_ref)) # try to execute convGDX2MIF
 if (inherits(tmp, "try-error")) {
   convGDX2MIF_REMIND2MAgPIE(gdx, file = remind_reporting_file, scenario = scenario)
 }
