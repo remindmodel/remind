@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -252,7 +252,7 @@ loop(regi,
 );
 
 ***additional criterion: are the anticipation terms sufficienctly small?
-if(sm_fadeoutPriceAnticip gt 1E-4, 
+if(sm_fadeoutPriceAnticip gt cm_maxFadeOutPriceAnticip, 
   s80_bool = 0;
   p80_messageShow("anticip") = YES;
 );
@@ -366,7 +366,8 @@ display "Reasons for non-convergence in this iteration (if not yet converged)";
 	      );
         if(sameas(convMessage80, "anticip"),
 		      display "#### 5.) The fadeout price anticipation terms are not sufficiently small.";
-          display "#### Check out sm_fadeoutPriceAnticip which needs to be below 1e-4.";
+          display "#### Check out sm_fadeoutPriceAnticip which needs to be below cm_maxFadeOutPriceAnticip.";
+          display sm_fadeoutPriceAnticip, cm_maxFadeOutPriceAnticip;
 	      );
         if(sameas(convMessage80, "target"),
 		      display "#### 6.) A global climate target has not been reached yet.";

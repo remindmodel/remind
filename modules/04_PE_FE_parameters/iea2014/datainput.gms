@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -14,24 +14,17 @@ $offdelim
 /
 ;
 
-file diagnosis_f04_IO_input_negatives;
-if( smin( (t,regi,entyPe,entySe,te), f04_IO_input(t,regi,entyPe,entySe,te)) lt 0,
-  put_utility "msg" / "**""** input data problem: f04_IO_input has negative values that are overwritten to still allow model solving." ;
-  put_utility "msg" / "Check input data. More details in the file diagnosis_f04_input_negatives";
-  put diagnosis_f04_IO_input_negatives;
-  put "f04_IO_input has the following negative values that are overwritten by 0 in 04/iea2014/datainput.gms" //;
-  put "te", @15, "regi", @20, "value"//;
-  loop(t,
-    loop(regi,
-      loop(pe2se(entyPe,entySe,te),
-        if( f04_IO_input(t,regi,entyPe,entySe,te)  lt 0,
-          put te.tl, @ 15, regi.tl, @20, f04_IO_input(t,regi,entyPe,entySe,te):10:8 /;
-        );
-      );
+if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_input(t,regi,entyPe,entySe,te)) lt 0,
+  put_utility "msg" / "**""** input data problem: f04_IO_input has negative values that are overwritten";
+  put_utility "msg" / "**""** to still allow model solving. Check input data." /;
+  loop ((t,regi,pe2se(entyPe,entySe,te)),
+    if (f04_IO_input(t,regi,entyPe,entySe,te) lt 0,
+      put_utility "msg" /
+	f04_IO_input.tn(t,regi,entyPE,entySE,te), " = ",
+        f04_IO_input(t,regi,entyPe,entySe,te):10:8;
     );
   );
 );
-putclose diagnosis_f04_IO_input_negatives;
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_input(tall,regi,entyPe,entySe,te)$(f04_IO_input(tall,regi,entyPe,entySe,te) lt 0) = 0;
 
@@ -48,24 +41,17 @@ $offdelim
 /
 ;
 
-file diagnosis_f04_IO_output_negatives;
-if( smin( (t,regi,entyPe,entySe,te), f04_IO_output(t,regi,entyPe,entySe,te)) lt 0,
-  put_utility "msg" / "**""** input data problem: f04_IO_output has negative values that are overwritten to still allow model solving." ;
-  put_utility "msg" / "Check input data. More details in the file diagnosis_f04_IO_output_negatives";
-  put diagnosis_f04_IO_output_negatives;
-  put "f04_IO_output has the following negative values that are overwritten by 0 in 04/iea2014/datainput.gms" //;
-  put "te", @15, "regi", @20, "value"//;
-  loop(t,
-    loop(regi,
-      loop(pe2se(entyPe,entySe,te),
-        if( f04_IO_output(t,regi,entyPe,entySe,te)  lt 0,
-          put te.tl, @ 15, regi.tl, @20, f04_IO_output(t,regi,entyPe,entySe,te):10:8 /;
-        );
-      );
+if (smin((t,regi,pe2se(entyPe,entySe,te)), f04_IO_output(t,regi,entyPe,entySe,te)) lt 0,
+  put_utility "msg" / "**""** input data problem: f04_IO_output has negative values that are overwritten" /
+  put_utility "msg" / "**""** to still allow model solving. Check input data." /;
+  loop ((t,regi,pe2se(entyPe,entySe,te)),
+    if (f04_IO_output(t,regi,entyPe,entySe,te) lt 0,
+     put_utility "msg" /
+       f04_IO_output.tn(t,regi,entyPE,entySE, te), " = ",
+       f04_IO_output(t,regi,entyPe,entySe,te):10:8;
     );
   );
 );
-putclose diagnosis_f04_IO_output_negatives;
 
 *' overwrite negative values with 0 to allow the model to solve. In the mid-term, the input data/mapping needs to be improved to prevent negative values
 f04_IO_output(tall,regi,entyPe,entySe,te)$(f04_IO_output(tall,regi,entyPe,entySe,te) lt 0) = 0;

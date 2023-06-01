@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -36,19 +36,13 @@ q36_cap(ttot,regi_dyn36(regi),fe2es_dyn36(enty,esty,teEs)) $
    
     v36_prodEs(ttot,regi,enty,esty,teEs)
    =e=
-   sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val gt 1) ),
+   sum(opTimeYr2teEs(teEs,opTimeYr)$(tsu2opTimeYr(ttot,opTimeYr) AND (opTimeYr.val ge 1) ),
                   pm_ts(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1)) 
                 * p36_omegEs(regi,opTimeYr+1,teEs)
                 * (v36_deltaProdEs(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
                    - v36_vintageInfes(ttot-(pm_tsu2opTimeYr(ttot,opTimeYr)-1),regi,enty,esty,teEs)
                    )
             )
- !! half of the last time step ttot
-        +  pm_dt(ttot)/2 
-         * p36_omegEs(regi,"2",teEs)
-         * (v36_deltaProdEs(ttot,regi,enty,esty,teEs)
-            - v36_vintageInfes(ttot,regi,enty,esty,teEs)
-         )
    ; 
    
 q36_budget(t36_scen(ttot),regi_dyn36(regi))..

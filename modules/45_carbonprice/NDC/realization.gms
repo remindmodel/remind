@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -12,11 +12,11 @@
 *' @limitations The NDC emission target refers to GHG emissions w/o land-use change and international bunkers. However, the submitted NDC targets of
 *' several countries include land-use emissions (e.g. Australia and US). See https://www4.unfccc.int/sites/NDCStaging/Pages/All.aspx. To be checked!
 
-*** Next update (2022):
-*** - Add NDC_2023.xlsx in /p/projects/rd3mod/inputdata/sources/UNFCCC_NDC/ on cluster, see README.txt in this folder
-*** - Set switch cm_NDC_version in /config/default.cfg and /main.gms to new year
-*** - add 2023_cond, 2023_uncond to set NDC_version in /core/sets.gms
-*** - Add new 2023 option in mrremind: calcEmiTarget, calcCapTarget, readUNFCCC_NDC
+*** Next update (2023):
+*** - Add NDC_2024.xlsx in /p/projects/rd3mod/inputdata/sources/UNFCCC_NDC/ on cluster, see README.txt in this folder
+*** - Set switch cm_NDC_version in ./main.gms to new year
+*** - add 2024_cond, 2024_uncond to set NDC_version in ./core/sets.gms
+*** - Add new 2024 option in mrremind: calcEmiTarget, calcCapTarget, readUNFCCC_NDC
 
 
 *####################### R SECTION START (PHASES) ##############################

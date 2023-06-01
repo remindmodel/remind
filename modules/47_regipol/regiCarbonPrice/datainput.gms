@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -6,11 +6,19 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/47_regipol/regiCarbonPrice/datainput.gms
 
+*' RP: improve formatting of output: always have the iteration separate to allow easy comparison over iterations.
+*' For non-iteration values show time and regi down, and the other two sets to the right
+option pm_emiMktTarget_dev:3:3:1;
+option pm_taxemiMkt_iteration:3:3:1;
+
 *** initialize regipol target deviation parameter
 pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) = 0;
+$ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
+p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTargetGroup) = 0;
+$endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
-*** EUR in 2030 =~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 =~ 92% EU28"
+*** EUR in 2030 ~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 = 92% EU28"
 p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.1194863;
 p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 
@@ -19,10 +27,21 @@ p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
 ***--------------------------------------------------
 $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off" 
 
-*** Auxiliar parameters based on emission targets information 
+*** Auxiliar parameters based on emission targets information
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
-    regiEmiMktTarget(ext_regi) = yes;
-    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes;
+    regiEmiMktTarget(ext_regi) = yes; !! assigning values to set containing extended regions that have regional emission targets  
+    regiANDperiodEmiMktTarget_47(ttot2,ext_regi) = yes; !! assigning values to set containing extended regions and terminal years of regional emission targets  
+  );
+
+*** Calculating set containing regions that should be controlled by a given regional emission target. 
+***   Emission targets defined at lower aggregated regions (e.g. country-specific targets) have precedence controlling carbon pricing
+***   over emission targets applied to more aggregated regions that also contain the given region or country. 
+***   For more details about how this code work: https://github.com/remindmodel/remind/pull/1315#discussion_r1190875836   
+  loop((ext_regi,ttot,ttot2,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47), !!calculated sets that depends on data parameter
+    loop(regi$regi_groupExt(ext_regi,regi),
+      regiEmiMktTarget2regi_47(ext_regi2,regi) = NO;
+      regiEmiMktTarget2regi_47(ext_regi,regi) = YES;
+    );
   );
 
   loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
@@ -35,10 +54,7 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       break$(p47_firstTargetYear(ext_regi));
     );
   );
-
-*** initialize emiMkt Target parameters
-p47_targetConverged(ttot,ext_regi) = 0;
-
+  
 *** initialize carbon taxes based on reference runs
 ***  p47_taxemiMkt_init saves information from reference runs about pm_taxCO2eq (carbon price defined on the carbonprice module) and/or
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
@@ -73,7 +89,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
       );
       if((cm_startyear le 2020),
         p47_taxemiMkt_init("2020",regi,emiMkt) = 0;
-***     p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 =~ 16.5€/tCO2, 2019 =~ 25€/tCO2, 2020 =~ 25€/tCO2, 2021 =~ 53.65€/tCO2, 2022 =~ 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
+***     p47_taxemiMkt_init("2020",regi,"ETS")   = 41.28*sm_DptCO2_2_TDpGtC; !! 2018 = 16.5€/tCO2, 2019 = 25€/tCO2, 2020 = 25€/tCO2, 2021 = 53.65€/tCO2, 2022 = 80€/tCO2 -> average 2020 = 40€/tCO2 -> 40*1.032 $/tCO2 = 41.28 $/t CO2
         p47_taxemiMkt_init("2020",regi,"ETS")  = 30*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"ES")   = 30*sm_DptCO2_2_TDpGtC;
 ***     p47_taxemiMkt_init("2020",regi,"other")= 30*sm_DptCO2_2_TDpGtC;

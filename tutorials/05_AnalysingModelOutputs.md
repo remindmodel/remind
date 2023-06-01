@@ -39,7 +39,7 @@ Looking at the *REMIND_generic_NameofYourRun.mif*, the column **scenario** gives
 
 ### 3.1 Access the Cluster
 
-To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster on [Redmine](https://redmine.pik-potsdam.de/projects/mo/wiki/Getting_ready_to_use_the_Cluster).
+To analyze your model results, you can load the output of the mif-file into a local session in RStudio. To get the file from the cluster, you can download the mif-file, for example, via WinSCP. You can read more details on how to access the cluster in [the gitlab wiki](https://gitlab.pik-potsdam.de/REMIND/wiki/-/wikis/Updating-Inputs-from-Magpie).
 
 ### 3.2 Load a mif file as a Magpie Object
 
@@ -171,7 +171,7 @@ In the command prompt, use the following command:
 Rscript output.R
 ```
 
-You are now asked to choose the output mode: 1: Output for single run 2: Comparison across runs
+You are now asked to choose the output mode: 1: Output for single run. 2: Comparison across runs. 3: Export.
 
 <img src="figures/Rscript_outputR.png" alt="Executing output scripts via command window" width="70%" />
 <p class="caption">
@@ -187,8 +187,9 @@ One recommended script for comparison of different scenarios is `compareScenario
 You can also specify the parameters in the command line, for example starting a `compareScenario2` run without any prefix as:
 
 ``` bash
-Rscript output.R comp=TRUE filename_prefix= output=compareScenarios2 slurmConfig=priority
+Rscript output.R comp=comparison filename_prefix= output=compareScenarios2 slurmConfig=priority
 ```
+If you want to compare runs from different REMIND folders, add `remind_dir=.,../otherremind` as a parameter.
 
 How to create new plots is described in the tutorial [8_Advanced_AnalysingModelOutputs.Rmd](./8_Advanced_AnalysingModelOutputs.Rmd).
 Another useful and compatible resource for generating plots (e.g. box plots) from REMIND results is UTokyo's *mipplot* R package: https://github.com/UTokyo-mip/mipplot.

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -63,8 +63,8 @@ $endif.complex_transport
 
  display vm_cap.lo;
 ***NDCplus variant: additional bounds on nuclear policies:  no nuclear renaissance - no further ramping up of the industry, and focus on countries currently investing (mostly CHA, IND, RUS)
-***nuclear yearly additions per year are max. 10% of total currently under construction and 2.5% of combined planned and proposed plants 
-vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.1 * pm_NuclearConstraint("2020",regi,"tnrs") + 0.025 * (pm_NuclearConstraint("2025",regi,"tnrs")+pm_NuclearConstraint("2030",regi,"tnrs"));
+***nuclear yearly additions per year are max. 30% of total currently under construction and 7.5% of combined planned and proposed plants
+vm_deltaCap.up(t,regi,"tnrs","1")$(t.val gt 2030) = 0.3 * pm_NuclearConstraint("2020",regi,"tnrs") + 0.075 * (pm_NuclearConstraint("2025",regi,"tnrs")+pm_NuclearConstraint("2030",regi,"tnrs"));
 
 ***SR/BS/CB 2020-09-09
 *** -----------------------------------------------------------------------------------------------------------------
