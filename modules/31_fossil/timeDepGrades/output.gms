@@ -15,7 +15,6 @@
 *   change for example.
 *===========================================
 * Authors...: JH, NB, TAC
-* Wiki......: http://redmine.pik-potsdam.de/projects/remind-r/wiki/31_fossil
 * History...:
 *   - 2015-12-03 : Cleaning up
 *   - 2013-10-01 : Cleaning up

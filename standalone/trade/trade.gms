@@ -183,9 +183,6 @@ c_abtrdy              "first year in which advanced bio-energy technology are re
 c_abtcst              "scaling of the cost of advanced bio-energy technologies (no unit, 50% increase means 1.5)"
 c_budgetCO2        "carbon budget for all CO2 emissions (in GtCO2)"
 
-cm_trdcst              "parameter to scale trade export cost for gas"
-cm_trdadj              "parameter scale the adjustment cost parameter for increasing gas trade export"
-
 cm_postTargetIncrease     "carbon price increase per year after target is reached (euro per tCO2)"
 
 cm_damages_BurkeLike_specification      "empirical specification for Burke-like damage functions"
