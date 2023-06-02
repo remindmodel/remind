@@ -265,7 +265,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) || is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
+  if(is.null(qos) || is.na(qos)) qos <- "auto"            # if qos could not be found in scenarios_coupled use short/priority
   sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) || is.na(sbatch)) sbatch <- ""      # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                   # iteration to start the coupling with
@@ -598,6 +598,10 @@ for (scen in common) {
         logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
+        if (isTRUE(runEnv$qos == "auto")) {
+          sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
+          runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+        }
         slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --mem=8000 --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")

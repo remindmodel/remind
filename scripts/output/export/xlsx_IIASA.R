@@ -41,7 +41,7 @@ if (! exists("project")) {
     iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
     removeFromScen <- "C_|_bIT|_bit|_bIt"
   } else if ("ENGAGE_4p5" %in% project) {
-    model <- "REMIND 3.0"
+    model <- "REMIND 3.2"
     mapping <- c("AR6", "AR6_NGFS")
     iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
     removeFromScen <- "_diff|_expoLinear"
