@@ -17,7 +17,7 @@ pm_taxCO2eqRegi("2035",nz_reg2050)=5;
 pm_taxCO2eqRegi("2040",nz_reg2050)=10;
 pm_taxCO2eqRegi("2045",nz_reg2050)=15;
 pm_taxCO2eqRegi("2050",nz_reg2050)=20;
-pm_taxCO2eqRegi(ttot,nz_reg2050)$(ttot.val > 2050) = max(0, pm_taxCO2eqRegi("2050", nz_reg2050) * (ttot.val - p46_zeroYear) / (2050 - p46_zeroYear));
+pm_taxCO2eqRegi(t,nz_reg2050)$(t.val > 2050) = max(0, pm_taxCO2eqRegi("2050", nz_reg2050) * (t.val - p46_zeroYear) / (2050 - p46_zeroYear));
 
 *** profile for countries with 2055 CO2 target
 pm_taxCO2eqRegi("2035",nz_reg2055)=3;
@@ -25,7 +25,7 @@ pm_taxCO2eqRegi("2040",nz_reg2055)=6;
 pm_taxCO2eqRegi("2045",nz_reg2055)=10;
 pm_taxCO2eqRegi("2050",nz_reg2055)=16;
 pm_taxCO2eqRegi("2055",nz_reg2055)=24;
-pm_taxCO2eqRegi(ttot,nz_reg2055)$(ttot.val > 2055) = max(0, pm_taxCO2eqRegi("2055", nz_reg2055) * (ttot.val - p46_zeroYear) / (2055 - p46_zeroYear));
+pm_taxCO2eqRegi(t,nz_reg2055)$(t.val > 2055) = max(0, pm_taxCO2eqRegi("2055", nz_reg2055) * (t.val - p46_zeroYear) / (2055 - p46_zeroYear));
 
 *** profile for countries with 2060 target
 pm_taxCO2eqRegi("2035",nz_reg2060)=2;
@@ -34,7 +34,7 @@ pm_taxCO2eqRegi("2045",nz_reg2060)=9;
 pm_taxCO2eqRegi("2050",nz_reg2060)=14;
 pm_taxCO2eqRegi("2055",nz_reg2060)=20;
 pm_taxCO2eqRegi("2060",nz_reg2060)=28;
-pm_taxCO2eqRegi(ttot,nz_reg2060)$(ttot.val > 2060) = max(0, pm_taxCO2eqRegi("2060", nz_reg2060) * (ttot.val - p46_zeroYear) / (2060 - p46_zeroYear));
+pm_taxCO2eqRegi(t,nz_reg2060)$(t.val > 2060) = max(0, pm_taxCO2eqRegi("2060", nz_reg2060) * (t.val - p46_zeroYear) / (2060 - p46_zeroYear));
 
 *** profile for countries with 2070 target
 pm_taxCO2eqRegi("2035",nz_reg2070)=2;
@@ -45,7 +45,7 @@ pm_taxCO2eqRegi("2055",nz_reg2070)=17;
 pm_taxCO2eqRegi("2060",nz_reg2070)=21;
 pm_taxCO2eqRegi("2065",nz_reg2070)=25;
 pm_taxCO2eqRegi("2070",nz_reg2070)=29;
-pm_taxCO2eqRegi(ttot,nz_reg2070)$(ttot.val > 2070) = max(0, pm_taxCO2eqRegi("2070", nz_reg2070) * (ttot.val - p46_zeroYear) / (2070 - p46_zeroYear));
+pm_taxCO2eqRegi(t,nz_reg2070)$(t.val > 2070) = max(0, pm_taxCO2eqRegi("2070", nz_reg2070) * (t.val - p46_zeroYear) / (2070 - p46_zeroYear));
 
 *** profile for countries with 2080 target
 pm_taxCO2eqRegi("2035",nz_reg2080)=2;
@@ -58,10 +58,10 @@ pm_taxCO2eqRegi("2065",nz_reg2080)=19;
 pm_taxCO2eqRegi("2070",nz_reg2080)=22;
 pm_taxCO2eqRegi("2075",nz_reg2080)=25;
 pm_taxCO2eqRegi("2080",nz_reg2080)=28;
-pm_taxCO2eqRegi(ttot,nz_reg2080)$(ttot.val > 2080) = max(0, pm_taxCO2eqRegi("2080", nz_reg2080) * (ttot.val - p46_zeroYear) / (2080 - p46_zeroYear));
+pm_taxCO2eqRegi(t,nz_reg2080)$(t.val > 2080) = max(0, pm_taxCO2eqRegi("2080", nz_reg2080) * (t.val - p46_zeroYear) / (2080 - p46_zeroYear));
 
 ***rescale
-pm_taxCO2eqRegi(ttot,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(ttot,regi);
+pm_taxCO2eqRegi(t,regi) = sm_DptCO2_2_TDpGtC * pm_taxCO2eqRegi(t,regi);
 
 ***initialize parameter
 p46_taxCO2eqRegiLast(t,regi) = 0;

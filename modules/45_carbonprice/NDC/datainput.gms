@@ -38,7 +38,7 @@ $offdelim
 $onlisting
 ;
 
-Parameter p45_factorTargetyear(t,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
+Parameter p45_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
 p45_factorTargetyear(t,all_regi) = f45_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p45_factorTargetyear;
@@ -51,7 +51,7 @@ $offdelim
 $onlisting
 ;
 
-Parameter p45_2005shareTarget(t,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
+Parameter p45_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
 p45_2005shareTarget(t,all_regi) = f45_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p45_2005shareTarget;
@@ -85,9 +85,9 @@ Scalar p45_ignoreNDCafter           "NDC targets after  this years are ignored, 
 Scalar p45_minRatioOfCoverageToMax  "only targets whose coverage is this times p45_bestNDCcoverage are considered. Use 1 for only best." /1.0/;
 Scalar p45_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /2030.4/;
 
-Set p45_NDCyearSet(t,all_regi)                 "YES for years whose NDC targets is used";
+Set p45_NDCyearSet(ttot,all_regi)                 "YES for years whose NDC targets is used";
 Parameter p45_bestNDCcoverage(all_regi)        "highest coverage of NDC targets within region";
-Parameter p45_distanceToOptyear(t,all_regi)    "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets";
+Parameter p45_distanceToOptyear(ttot,all_regi)    "distance to p45_useSingleYearCloseTo to favor years in case of multiple equally good targets";
 Parameter p45_minDistanceToOptyear(all_regi)   "minimal distance to p45_useSingleYearCloseTo per region";
 
 p45_bestNDCcoverage(regi) = smax(t$(t.val <= p45_ignoreNDCafter AND t.val >= p45_ignoreNDCbefore), p45_2005shareTarget(t,regi));
