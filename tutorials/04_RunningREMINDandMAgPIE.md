@@ -6,8 +6,6 @@ David Klein (<dklein@pik-potsdam.de>)
 - [How to start coupled runs](#how-to-start-coupled-runs)
     + [Clone the models](#clone-the-models)
     + [Switch to relevant branchs](#switch-to-relevant-branchs)
-    + [Create snapshot of R libraries](#create-snapshot-of-r-libraries)
-    + [Activate snapshot for REMIND and MAgPIE](#activate-snapshot-for-remind-and-magpie)
     + [What happens during a single coupled run](#what-happens-during-a-single-coupled-run)
     + [What happens during a bundle of coupled runs](#what-happens-during-a-bundle-of-coupled-runs)
     + [Configure start_bundle_coupled.R](#configure-start_bundle_coupledr)
@@ -39,28 +37,9 @@ For both models switch to the git branches you want to use for your runs, for ex
 git checkout develop
 ```
 
-### Create snapshot of R libraries
-
-Coupled runs may take a bit longer. During the runtime some of the R packages that are used by the coupled runs might get updated.
-Updates might change the behaviour of functions in an unexpected way. To avoid this create a snapshot of the R libraries before starting
-the runs:
-
-```bash
-bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
-```
-
-### Activate snapshot for REMIND and MAgPIE
-
-Direct the models to the snapshot you just created above by first renaming [.snapshot.Rprofile](../.snapshot.Rprofile) to `.Rprofile`. The default `.Rprofile` is activating renv, but coupled runs must use a snapshot at the moment. Then edit this new `.Rprofile` in REMIND's main folder. This file will be copied to the MAgPIE main folder automatically.
-As `snapshot`, enter the path to the snapshot you want to use (the `_R4` is necessary if you run `R 4.0` or later):
-
-```bash
-snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2022_12_15_R4"
-```
-
 ### What happens during a single coupled run
 
-You can find a more technical explanation in the sections below, but the start script is essentially creating new runs of each model that use previous runs as input. These runs's name follow a specific pattern of suffixes and prefixes, and "communicate" through ".mif" reporting files.
+You can find a more technical explanation in the sections below, but the start script is essentially creating new runs of each model that use previous runs as input. These runs' names follow a specific pattern of suffixes and prefixes, and "communicate" through ".mif" reporting files.
 
 <a href="figures/4-REMIND-MAgPIE-circle.png"><img src="figures/4-REMIND-MAgPIE-circle.png" align="right" style="margin-left:2em; width:400px; " /></a>
 
@@ -223,6 +202,7 @@ The meta scripts for coupled runs that configure the models, start the runs, and
 <img src="figures/coupling-scripts.png" style="display: block; margin: auto;" />
 
 * `start_bundle_coupled.R`
+  * installs MAgPIE dependencies, ensures both REMIND and MAgPIE run in the same renv
   * reads scenario_config_coupled.csv and scenario_config.csv files and updates model cfgs accordingly
   * saves all settings (including cfgs) to individual `.RData` files in the REMIND main folder such as `C_Base-rem-x.RData`
   * sends a job to the cluster for each scenario specified in the csvs. Each job executes `start_coupled.R`.
