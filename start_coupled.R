@@ -201,7 +201,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     source("scripts/start_functions.R")
     cfg_mag$results_folder <- paste0("output/",runname,"-mag-",i)
     cfg_mag$title          <- paste0(runname,"-mag-",i)
-    cfg_mag$coupling_renv_lock <- normalizePath(file.path(path_remind, cfg_rem$results_folder, "renv.lock"))
+    cfg_mag$renv_lock <- normalizePath(file.path(path_remind, cfg_rem$results_folder, "renv.lock"))
 
     if (magpie_empty) {
       # Find latest fulldata.gdx from automated model test (AMT) runs
