@@ -93,11 +93,13 @@ magpie_empty <- FALSE
 ########################################################################################################
 #################################  install magpie dependencies  ########################################
 ########################################################################################################
-magpieDeps <- renv::dependencies(path_magpie)
-installedPackages <- installed.packages()[, "Package"]
-missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
-if (length(missingDeps) > 0) {
-  renv::install(missingDeps)
+if (!is.null(renv::project())) {
+  magpieDeps <- renv::dependencies(path_magpie)
+  installedPackages <- installed.packages()[, "Package"]
+  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
+  if (length(missingDeps) > 0) {
+    renv::install(missingDeps)
+  }
 }
 
 ########################################################################################################
