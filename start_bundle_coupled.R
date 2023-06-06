@@ -161,7 +161,11 @@ if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+  if (is.null(renv::project())) {
+    piamenv::checkDeps(action = "stop")
+  } else {
+    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+  }
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
 }
@@ -620,6 +624,10 @@ for (scen in common) {
 }
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
+  if (is.null(renv::project())) {
+    system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
+    message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  }
   cs_runs <- paste0(file.path("output", paste0(prefix_runname, common, "-rem-", max_iterations)), collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
