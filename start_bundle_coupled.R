@@ -5,12 +5,8 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-if (!is.null(renv::project())) {
-  stop("Coupled runs are currently not supported with renv. Please use a snapshot instead. ",
-       "How to switch from renv to snapshots: ",
-       "https://github.com/remindmodel/remind/blob/develop/tutorials/11_ManagingRenv.md#legacy-snapshots ",
-       "How to create a snapshot: https://github.com/remindmodel/remind/blob/develop/tutorials/",
-       "04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries")
+if (is.null(renv::project())) {
+  warning("Coupled runs are now recommended to be run using renv instead of snapshots")
 }
 require(lucode2)
 require(magclass)
@@ -95,6 +91,18 @@ run_compareScenarios <- "short"
 magpie_empty <- FALSE
 
 ########################################################################################################
+#################################  install magpie dependencies  ########################################
+########################################################################################################
+if (!is.null(renv::project())) {
+  magpieDeps <- renv::dependencies(path_magpie)
+  installedPackages <- installed.packages()[, "Package"]
+  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
+  if (length(missingDeps) > 0) {
+    renv::install(missingDeps)
+  }
+}
+
+########################################################################################################
 #################################  load command line arguments  ########################################
 ########################################################################################################
 
@@ -152,9 +160,12 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
-# Use ensureRequirementsInstalled(rerunPrompt="start_bundle_coupled.R") when coupled runs are using renv.
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  piamenv::checkDeps(action = "stop")
+  if (is.null(renv::project())) {
+    piamenv::checkDeps(action = "stop")
+  } else {
+    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+  }
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
 }
@@ -613,8 +624,10 @@ for (scen in common) {
 }
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
-  system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
-  message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  if (is.null(renv::project())) {
+    system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
+    message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  }
   cs_runs <- paste0(file.path("output", paste0(prefix_runname, common, "-rem-", max_iterations)), collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
