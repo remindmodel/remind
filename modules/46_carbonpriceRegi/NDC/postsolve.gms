@@ -102,4 +102,4 @@ p46_taxCO2eqRegi_iter(iteration,p46_NDCyearSet(t,regi)) = pm_taxCO2eqRegi(t,regi
 p46_taxCO2eq_iter(iteration,p46_NDCyearSet(t,regi)) = pm_taxCO2eq(t,regi);
 p46_vm_co2eq_iter(iteration,p46_NDCyearSet(t,regi)) = vm_co2eq.l(t,regi);
 
-e** EOF ./modules/46_carbonpriceRegi/NDC/postsolve.gms
+*** EOF ./modules/46_carbonpriceRegi/NDC/postsolve.gms

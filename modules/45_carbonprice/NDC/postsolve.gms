@@ -53,9 +53,9 @@ p45_factorRescaleCO2TaxLtd_iter(iteration,t,regi) = p45_factorRescaleCO2TaxLtd(t
 display p45_factorRescaleCO2TaxLtd_iter;
 
 *CB* special case SSA: maximum carbon price at 7.5$ in 2020, 30 in 2025, 45 in 2030, to reflect low energy productivity of region, and avoid high losses
-pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")),7.5 * sm_DptCO2_2_TDpGtC);
-pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")),30 * sm_DptCO2_2_TDpGtC);
-pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")) = min(pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")),45 * sm_DptCO2_2_TDpGtC);
+pm_taxCO2eq(t,regi)$(sameas(t,"2020") AND sameas(regi,"SSA")) = min(pm_taxCO2eq("2020",regi)$(sameas(regi,"SSA")),7.5 * sm_DptCO2_2_TDpGtC);
+pm_taxCO2eq(t,regi)$(sameas(t,"2020") AND sameas(regi,"SSA")) = min(pm_taxCO2eq("2025",regi)$(sameas(regi,"SSA")),30 * sm_DptCO2_2_TDpGtC);
+pm_taxCO2eq(t,regi)$(sameas(t,"2025") AND sameas(regi,"SSA")) = min(pm_taxCO2eq("2030",regi)$(sameas(regi,"SSA")),45 * sm_DptCO2_2_TDpGtC);
 
 *** calculate tax path until NDC target year - linear increase
 p45_taxCO2eqFirstNDCyear(regi) = smax(t$(t.val = p45_firstNDCyear(regi)), pm_taxCO2eq(t,regi));
@@ -80,7 +80,7 @@ pm_taxCO2eq(t,regi)$(t.val gt p45_lastNDCyear(regi))
 pm_taxCO2eq(t,regi)$(t.val gt 2030) = max(pm_taxCO2eq(t,regi),1*sm_DptCO2_2_TDpGtC * (1+(t.val-2030)*9/7));
 
 *** new 2020 carbon price definition: weighted average of 2015 and 2025, with triple weight for 2015 (which is zero for all non-eu regions).
-pm_taxCO2eq("2020",regi) = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
+pm_taxCO2eq(t,regi)$sameas(t,"2020") = (3*pm_taxCO2eq("2015",regi)+pm_taxCO2eq("2025",regi))/4;
 
         display pm_taxCO2eq;
 
