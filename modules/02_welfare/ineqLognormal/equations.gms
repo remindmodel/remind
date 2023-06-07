@@ -54,10 +54,10 @@ $ifthen %cm_INCONV_PENALTY% == "on"
 $endif
 $ifthen "%cm_INCONV_PENALTY_FESwitch%" == "on"
       - sum((entySe,entyFe,te,sector,emiMkt)$(
-	        se2fe(entySe,entyFe,te)
-            AND entyFe2Sector(entyFe,sector)
-            AND sector2emiMkt(sector,emiMkt) 
-	    AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ),
+                                    se2fe(entySe,entyFe,te)
+                                AND entyFe2Sector(entyFe,sector)
+                                AND sector2emiMkt(sector,emiMkt) 
+                                AND (entySeBio(entySe) OR  entySeFos(entySe)) ),
           v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
 	+ v02_PosInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)
 	)
@@ -320,11 +320,11 @@ $ENDIF.INCONV
 *** between time steps as those sectors and markets do not have se2fe capcities
 $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 q02_inconvPenFeBioSwitch(ttot,regi,entySe,entyFe,te,sector,emiMkt)$(
-              ttot.val ge cm_startyear
-          AND se2fe(entySe,entyFe,te) 
-          AND entyFe2Sector(entyFe,sector) 
-          AND sector2emiMkt(sector,emiMkt) 
-          AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe)) ) ..
+                                  ttot.val ge cm_startyear
+                              AND se2fe(entySe,entyFe,te) 
+                              AND entyFe2Sector(entyFe,sector) 
+                              AND sector2emiMkt(sector,emiMkt) 
+                              AND (entySeBio(entySe) OR  entySeFos(entySe)) ) ..
     vm_demFeSector(ttot,regi,entySe,entyFe,sector,emiMkt) 
   - vm_demFeSector(ttot-1,regi,entySe,entyFe,sector,emiMkt)
   + v02_NegInconvPenFeBioSwitch(ttot,regi,entySe,entyFe,sector,emiMkt)

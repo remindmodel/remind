@@ -11,14 +11,14 @@ $IFTHEN.INCONV_bioSwitch "%cm_INCONV_PENALTY_FESwitch%" == "on"
 *** is relative to consumption
 p02_inconvPen_Switch_Track(t,regi)
   = sum((entySe,entyFe,te,sector,emiMkt)$(
-              se2fe(entySe,entyFe,te) 
-          AND entyFe2Sector(entyFe,sector) 
-          AND sector2emiMkt(sector,emiMkt) 
-          AND (entySeBio(entySe) OR entySeSyn(entySe) OR entySeFos(entySe) )), 
+                                    se2fe(entySe,entyFe,te) 
+                                AND entyFe2Sector(entyFe,sector) 
+                                AND sector2emiMkt(sector,emiMkt) 
+                                AND (entySeBio(entySe) OR  entySeFos(entySe) )), 
       v02_NegInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt) 
     + v02_PosInconvPenFeBioSwitch.l(t,regi,entySe,entyFe,sector,emiMkt)
     )
-  / 1e3
+  / 1e3;
 $ENDIF.INCONV_bioSwitch
 
 *the inequality term in the SCC calculation is set to 1 here
