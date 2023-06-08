@@ -78,7 +78,7 @@ p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_t
   );
   
 *** if there is a European regional target, overwrite historical prices for Europe if the historical years are free in the cm_emiMktTarget run. 
-*** in this case, historical prices will reflect the ETS market observed prices instead of the values defined at pm_taxCO2eqHist  
+*** in this case, historical prices will reflect the ETS market observed prices instead of the values defined pm_taxCO2eq
   loop(ext_regi$regiEmiMktTarget(ext_regi),
     loop(regi$(regi_groupExt(ext_regi,regi) and regi_groupExt("EUR_regi",regi)), !!second condition is necessary to support also country targets
       if((cm_startyear le 2010),

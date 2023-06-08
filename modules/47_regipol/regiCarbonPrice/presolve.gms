@@ -18,7 +18,6 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
       pm_taxCO2eqSum(t,regi) = 0;
       pm_taxCO2eq(t,regi) = 0;
       pm_taxCO2eqRegi(t,regi) = 0;
-      pm_taxCO2eqHist(t,regi) = 0;
       pm_taxCO2eqSCC(t,regi) = 0;
 
       pm_taxrevGHG0(t,regi) = 0;

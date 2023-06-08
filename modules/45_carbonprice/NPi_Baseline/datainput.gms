@@ -8,6 +8,19 @@
 
 pm_taxCO2eq(ttot,regi)$(ttot.val lt 2020) = 0;
 
+*** Carbon prices defined in $/t CO2, will be rescaled to right unit at the end of this file
+parameter f45_taxCO2eqHist(ttot,all_regi)        "historic CO2 prices ($/tCO2)"
+/
+$ondelim
+$include "./modules/45_carbonprice/NPi_Baseline/input/pm_taxCO2eqHist.cs4r"
+$offdelim
+/
+;
+
+pm_taxCO2eq(t,regi)$(t.val < 2025) = f21_taxCO2eqHist(t,regi)
+
+*** the next lines basically invalidate the lines before, but whatever :)
+
 * rough EU ETS carbon prices for EUR and NEU regions in 2010 and 2015
 * as higher prices in 2010 don't really reflect higher ambition than compared to 2015, a flat 10 $ (2005)/t CO2 seems reasonable
 pm_taxCO2eq("2010",regi)$sameas(regi,"EUR")= 10;
@@ -67,10 +80,16 @@ pm_taxCO2eq("2020",regi)$sameas(regi,"SSA") = 1;
 pm_taxCO2eq("2020",regi)$sameas(regi,"USA") = 20;
 
 
-*** convergence scheme post 2020: exponential increase of 5$ dollar in 2020with 1.25% AND regional convergence
+*** convergence scheme post 2020: exponential increase of 5$ dollar in 2020 with 1.25% AND regional convergence
 pm_taxCO2eq(ttot,regi)$(ttot.val ge 2025) =
-  (pm_taxCO2eq("2020",regi)*max(2100-2020-ttot.val+cm_startyear,0)
-  + 5 * sm_DptCO2_2_TDpGtC * 1.0125**(ttot.val-2025)*min(ttot.val-2025,2100-2025))/(2100-2025);
+  (
+     pm_taxCO2eq("2020",regi)    * max(2100-ttot.val,0)
+   + 5 * 1.0125**(ttot.val-2020) * min(ttot.val-2020,2100-2020)
+  )/(2100-2020);
+
+*** rescale to $/t CO2
+pm_taxCO2eq(ttot,regi) = pm_taxCO2eq(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 display pm_taxCO2eq;
+
 *** EOF ./modules/45_carbonprice/NPi_Baseline/datainput.gms

@@ -12,7 +12,6 @@ vm_emiMacSector,variable,???
 vm_emiCdr,variable,???
 vm_emiTeMkt,variable,???
 pm_taxCO2eq,input,questionnaire
-pm_taxCO2eqHist,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
 pm_SolNonInfes,input,questionnaire
 pm_interpolWeight_ttot_tall,input,questionnaire
