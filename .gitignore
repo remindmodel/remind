@@ -65,6 +65,7 @@ config/gdx-files/*.gdx
 plotRuntime*.html
 plotRuntimeDependencies/
 .Rproj.user
+runtime.rds
 
 # main renv.lock should only be commited for releases
 /.Rbuildignore
@@ -74,3 +75,7 @@ plotRuntimeDependencies/
 
 # Main Python virtual environment
 .venv/
+
+# ignore slurm logs
+slurm-[0-9]*.log
+slurm-[0-9]*.out
