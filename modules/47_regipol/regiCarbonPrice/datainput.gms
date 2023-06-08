@@ -60,8 +60,10 @@ $IFTHEN.emiMkt not "%cm_emiMktTarget%" == "off"
 ***  pm_taxemiMkt (regipol carbon price) so the carbon tax can be initialized for regions with CO2 tax controlled by cm_emiMktTarget  
 p47_taxemiMkt_init(ttot,regi,emiMkt) = 0;
 
+if (cm_startyear gt 2005,
 Execute_Loadpoint 'input_ref' p47_taxCO2eq_ref = pm_taxCO2eq;
 Execute_Loadpoint 'input_ref' p47_taxemiMkt_init = pm_taxemiMkt;
+);
 
 *** copying taxCO2eq value to emiMkt tax parameter for years and regions that contain no pm_taxemiMkt value
 p47_taxemiMkt_init(ttot,regi,emiMkt)$(p47_taxCO2eq_ref(ttot,regi) and (NOT(p47_taxemiMkt_init(ttot,regi,emiMkt)))) = p47_taxCO2eq_ref(ttot,regi);

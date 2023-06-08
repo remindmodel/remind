@@ -111,7 +111,7 @@ q30_limitXpBio(t,regi)..
 ;
 
 *** Limit BECCS in policy runs to 35% of total PE in BAU or to 130% of bioenergy demand in BAU
-q30_limitTeBio(t,regi)$(cm_emiscen ne 1)..
+q30_limitTeBio(t,regi)$(cm_startyear gt 2005)..
         sum(pe2se(enty,enty2,teBio)$(teCCS(teBio)), vm_demPe(t,regi,enty,enty2,teBio))
         =l=
         0.5 * p30_demPe(t,regi);
