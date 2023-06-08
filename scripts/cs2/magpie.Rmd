@@ -17,25 +17,25 @@ items <- c(
   "Resources|Land Cover Change|Forest",
   "Resources|Land Cover Change|Other Land",
   "Resources|Land Cover Change|Urban Area")
-showAreaAndBarPlots(data, items)
+showAreaAndBarPlots(data, items, scales = "fixed")
 ```
 
 ### Resources|Land Cover Change|Forest
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest")
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest", scales = "fixed")
 ```
 
 ### Resources|Land Cover Change|Forest|Managed Forest
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Managed Forest")
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Managed Forest", scales = "fixed")
 ```
 
 ### Resources|Land Cover Change|Forest|Natural Forest
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Natural Forest")
+showAreaAndBarPlotsPlus(data, "Resources|Land Cover Change|Forest|Natural Forest", scales = "fixed")
 ```
 
 ### Resources|NetForestChange
@@ -61,7 +61,7 @@ items <- c(
   "Productivity|Yield|Crops",
   "Productivity|Yield|Forage",
   "Productivity|Yield|Pasture")
-showAreaAndBarPlots(data, items)
+showAreaAndBarPlots(data, items, scales = "fixed")
 ```
 
 #### Productivity|Yield|Bioenergy crops
@@ -105,19 +105,19 @@ items <- c(
   "Demand|Fish",
   "Demand|Livestock products",
   "Demand|Secondary products")
-showAreaAndBarPlots(data, items)
+showAreaAndBarPlots(data, items, scales = "fixed")
 ```
 
 ### Aggregation 1
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1)
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 1, scales = "fixed")
 ```
 
 ### Aggregation 2
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2)
+showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2, scales = "fixed")
 ```
 
 
@@ -127,13 +127,13 @@ showAreaAndBarPlotsPlus(data, "Demand", plusNum = 2)
 ### Nutrition|Calorie Intake
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Intake")
+showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Intake", scales = "fixed")
 ```
 
 ### Nutrition|Calorie Supply
 
 ```{r}
-showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply")
+showAreaAndBarPlotsPlus(data, "Nutrition|Calorie Supply", scales = "fixed")
 ```
 
 
@@ -151,7 +151,8 @@ showAreaAndBarPlots(
   vars = c(
     "Prices|Food Expenditure Index corrected for ghg costs|Livestock food products",
     "Prices|Food Expenditure Index corrected for ghg costs|Plant-based food products"),
-  tot = "Prices|Food Expenditure Index corrected for ghg costs")
+  tot = "Prices|Food Expenditure Index corrected for ghg costs",
+  scales = "fixed")
 ```
 
 ### Prices|Food Expenditure Index|Livestock food products
