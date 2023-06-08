@@ -1470,7 +1470,7 @@ pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie"
 parameter f_nechem_emissionFactors(ttot,all_regi,*)  
 /
 $ondelim
-$include "./input/f_nechem_emissionFactors.cs4r"
+$include "./core/input/f_nechem_emissionFactors.cs4r"
 $offdelim
 /
 ;
