@@ -9,7 +9,8 @@
 pm_taxCO2eq(ttot,regi)$(ttot.val lt 2020) = 0;
 
 *** Carbon prices defined in $/t CO2, will be rescaled to right unit at the end of this file
-parameter f45_taxCO2eqHist(ttot,all_regi)        "historic CO2 prices ($/tCO2)"
+
+parameter f45_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
 /
 $ondelim
 $include "./modules/45_carbonprice/NPi_Baseline/input/pm_taxCO2eqHist.cs4r"
@@ -54,16 +55,16 @@ pm_taxCO2eq("2015",regi)$sameas(regi,"NES")= 5;
 *2020 price assumptions for all regions
 *EUR price oriented at a rough average price in the 2020-2022 period in the ETS
 
-pm_taxCO2eq("2020",regi)$sameas(regi,"EUR") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"DEU") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ECE") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ECS") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ENC") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ESC") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ESW") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"EWN") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"FRA") = 50;
-pm_taxCO2eq("2020",regi)$sameas(regi,"UKI") = 50;
+pm_taxCO2eq("2020",regi)$sameas(regi,"EUR") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"DEU") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"ECE") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"ECS") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"ENC") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"ESC") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"ESW") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"EWN") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"FRA") = 25;
+pm_taxCO2eq("2020",regi)$sameas(regi,"UKI") = 25;
 pm_taxCO2eq("2020",regi)$sameas(regi,"NEU") = 10;
 pm_taxCO2eq("2020",regi)$sameas(regi,"NEN") = 10;
 pm_taxCO2eq("2020",regi)$sameas(regi,"NES") = 10;
@@ -87,7 +88,7 @@ pm_taxCO2eq(ttot,regi)$(ttot.val ge 2025) =
    + 5 * 1.0125**(ttot.val-2020) * min(ttot.val-2020,2100-2020)
   )/(2100-2020);
 
-*** rescale to $/t CO2
+*** rescale everything to $/t CO2
 pm_taxCO2eq(ttot,regi) = pm_taxCO2eq(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 display pm_taxCO2eq;
