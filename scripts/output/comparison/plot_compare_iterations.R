@@ -83,20 +83,6 @@ readvar <- function(gdx,name,enty=NULL) {
 # aufblasen auf alle jahre mit in die obige funktion, sodass man immer mult und shift mit vollen dimensionen zurueckbekommt.
 # diese dann fuer jede region ueber der zeit fuer alle iterationen plotten
 
-# If input (x) is not defined for years copy single value for all given years
-fillyears <- function (x,years) {
-  if (fulldim(x)[[1]][2]==1){
-    a<-new.magpie(getRegions(x),years,getNames(x))
-    for (i in years) {
-      for (r in getRegions(a)) {
-        a[r,i,]<-as.vector(x[r,1,])
-      }
-    }
-    x<-a
-  }
-  return(x)
-}
-
 # Plot dimension specified for 'color' over time
 myplot <- function(data, xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
   getNames(data) <- gsub(".*rem-","",getNames(data))
@@ -243,7 +229,6 @@ plot_iterations <- function(runname) {
   p_it_price_carbon_2 <- myplot(tmp[, getYears(tmp)>"y2020" & getYears(tmp)<="y2100", ], 
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
 
-  
   # ---- Print to pdf ----
   
   out<-swopen(template="david")
