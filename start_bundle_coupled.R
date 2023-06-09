@@ -417,11 +417,8 @@ for(scen in common){
     cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
 
+  # save cm_nash_autoconverge to be used for all but last REMIND run
   cm_nash_autoconverge <- cfg_rem$gms$cm_nash_autoconverge
-  # save cm_nash_autoconverge to be used for last REMIND run
-  if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
-    cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
-  }
 
   # abort on too long paths ----
   cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
@@ -494,10 +491,11 @@ for(scen in common){
       rownames(cfg_rem$RunsUsingTHISgdxAsInput) <- paste0(prefix_runname, rownames(cfg_rem$RunsUsingTHISgdxAsInput), "-rem-", i)
     }
     # add the next remind run
+    cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
     if (i < max_iterations) {
       cfg_rem$RunsUsingTHISgdxAsInput[paste0(runname, "-rem-", (i+1)), "path_gdx"] <- fullrunname
-      cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
-    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
+    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled) && ! is.na(scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"])) {
+      # change autoconverge only in last iteration and if well-defined
       cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
     }
 
