@@ -80,10 +80,8 @@ readvar <- function(gdx,name,enty=NULL) {
   out <- collapseNames(out)
   return(out)
 }
-# aufblasen auf alle jahre mit in die obige funktion, sodass man immer mult und shift mit vollen dimensionen zurueckbekommt.
-# diese dann fuer jede region ueber der zeit fuer alle iterationen plotten
 
-# Plot dimension specified for 'color' over time
+# Plot dimension specified for 'color' over dimension specified for 'xaxis' as line plot or bar plot
 myplot <- function(data, type = "line", xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
   getNames(data) <- gsub(".*rem-","",getNames(data))
   getSets(data) <- c("region","year","iteration")
@@ -144,6 +142,7 @@ plot_iterations <- function(runname) {
   years <- c("y2005","y2010","y2015","y2020","y2025","y2030","y2035","y2040","y2045","y2050","y2055","y2060","y2070","y2080","y2090","y2100") # used for fillyears
   sm_tdptwyr2dpgj <- 31.71 # convert [TerraDollar per TWyear] to [Dollar per GJoule]
   
+  
   # ---- PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ----
   
   price <- readAll(gdx_path,readbioprice,name="p30_pebiolc_pricemag",asList=FALSE)
@@ -151,12 +150,14 @@ plot_iterations <- function(runname) {
 
   p_price_mag <- myplot(price[r, years, ], ylab = "$/GJ", title = paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n"))
   
+  
   # ---- CO2LUC (MAgPIE) ----
   
   emi <- readAll(gdx_path,readpar,name=c("pm_macBaseMagpie","p_macBaseMagpie"),asList=FALSE)[,,"co2luc"]*1000*44/12
   emi <- collapseDim(emi, dim = 3.2)  # remove 'co2luc'
 
   p_emi_mag <- myplot(emi[r, y, ], ylab = "Mt CO2/yr", title = paste(runname,"Emissions|CO2|Land Use (Mt CO2/yr)",sep="\n"))
+  
 
   # ---- PRODUCTION OF PURPOSE GROWN BIOENERGY (REMIND) ----
   
@@ -170,6 +171,7 @@ plot_iterations <- function(runname) {
   p_it_fuelex      <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
   p_it_fuelex_fix  <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
   p_it_fuelex_2060 <- myplot(fuelex_bio[r, "y2060" ], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  
 
   # ---- DEMAND FOR PURPOSE GROWN BIOENERGY (REMIND)  ----
   
@@ -181,6 +183,7 @@ plot_iterations <- function(runname) {
   
   p_prodPE    <- myplot(prodPE_bio[r, years, ],                                        ylab = "EJ/yr", title = title)
   p_it_prodPE <- myplot(prodPE_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  
 
   # ---- PRICE SHIFT FACTOR IN 2060 ----
   
@@ -190,6 +193,7 @@ plot_iterations <- function(runname) {
   title <- paste(runname,"Price|Biomass|Shiftfactor in 2060", sep="\n")
   
   p_shift_2060 <- myplot(shift[r,"y2060",], type = "bar", xaxis = "iteration", color = "period", ylab = "$/GJ", title = title, scales = "fixed")
+  
 
   # ---- Price shift over time ----
 
@@ -198,6 +202,7 @@ plot_iterations <- function(runname) {
   title <- paste(runname, "Price shift", sep = "\n")
   
   p_shift <- myplot(v_shift[r, years, ], ylab = "$/GJ", title = title)
+  
 
   # ---- Price scaling factor over time ----
   
@@ -207,11 +212,13 @@ plot_iterations <- function(runname) {
   
   p_mult <- myplot(v_mult[r, years, ], title = title)
 
+
   # ---- CO2 price ----
   
   report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
   report_path <- report_path[!grepl("with|adj",report_path)]
 
+  message("Reading ", length(report_path), " REMIND reports.")
   tmp <- NULL
   for (rep in report_path) {
     tmp1 <- read.report(rep, as.list=FALSE)
@@ -225,6 +232,7 @@ plot_iterations <- function(runname) {
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
   p_it_price_carbon_2 <- myplot(tmp[, getYears(tmp)>"y2020" & getYears(tmp)<="y2100", ], 
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
+
 
   # ---- Print to pdf ----
   
@@ -249,7 +257,6 @@ plot_iterations <- function(runname) {
   file.remove(paste0(filename,c(".log",".out")))
   return("Done\n")
 }
-
 
 withr::with_dir(folder, {
 
