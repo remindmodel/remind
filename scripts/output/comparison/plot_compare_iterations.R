@@ -84,7 +84,7 @@ readvar <- function(gdx,name,enty=NULL) {
 # diese dann fuer jede region ueber der zeit fuer alle iterationen plotten
 
 # Plot dimension specified for 'color' over time
-myplot <- function(data, xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
+myplot <- function(data, type = "line", xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
   getNames(data) <- gsub(".*rem-","",getNames(data))
   getSets(data) <- c("region","year","iteration")
   dat <- as.quitte(data)
@@ -92,11 +92,14 @@ myplot <- function(data, xaxis = "period", color = "iteration", scales = "free_y
   text_size <- 10
   scale_color <- as.character(plotstyle(as.character(unique(dat[[color]])),out="color"))
   
-  #browser()
-  p <- ggplot() +
-    geom_line( mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, size=1) +
-    geom_point(mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, size=1) +
-    facet_wrap(~region, scales=scales) + 
+  p <- ggplot()
+  if (type == "line") {
+    p <- p + geom_line( mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, size=1)
+    p <- p + geom_point(mapping = aes(x=!!sym((xaxis)), y=value, color=!!sym(color), group = !!sym(color)), data = dat, size=1)
+  } else if (type == "bar"){
+    p <- p + geom_col(  mapping = aes(x=!!sym((xaxis)), y=value, fill=!!sym(color),  group = !!sym(color)), data = dat)
+  }
+    p <- p + facet_wrap(~region, scales=scales) + 
     labs(x = NULL, y = ylab, title = title) +
     scale_color_manual(values=scale_color) +
     theme(
@@ -163,14 +166,10 @@ plot_iterations <- function(runname) {
 
   title <- paste(runname,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)",sep="\n")
 
-  p_fuelex        <- myplot(fuelex_bio[r, years, ],                                        ylab = "EJ/yr", title = title)
-  p_it_fuelex     <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
-  p_it_fuelex_fix <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
-
-  getNames(fuelex_bio) <- gsub(".*rem-","",getNames(fuelex_bio))
-  p_it_fuelex_2060 <- magpie2ggplot2(fuelex_bio[r,"y2060",],scenario=1,
-                        geom="bar",fill="Data1",stack=T,facet_x="Region",xaxis="Scenario",ylab="EJ/yr",
-                        title=paste0(title," in 2060"),xlab="Scenario",ncol=4)
+  p_fuelex         <- myplot(fuelex_bio[r, years, ],                                        ylab = "EJ/yr", title = title)
+  p_it_fuelex      <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  p_it_fuelex_fix  <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  p_it_fuelex_2060 <- myplot(fuelex_bio[r, "y2060" ], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
 
   # ---- DEMAND FOR PURPOSE GROWN BIOENERGY (REMIND)  ----
   
@@ -188,11 +187,9 @@ plot_iterations <- function(runname) {
   shift <- readAll(gdx_path,readshift,asList=FALSE)* sm_tdptwyr2dpgj
   getNames(shift) <- gsub(".*rem-","",getNames(shift))
 
-  title <- paste(runname,"Price|Biomass|Shiftfactor",sep="\n")
+  title <- paste(runname,"Price|Biomass|Shiftfactor in 2060", sep="\n")
   
-  p_shift_2060 <- magpie2ggplot2(shift[r,"y2060",],scenario=1,
-                       geom="bar",fill="Data1",stack=T,facet_x="Region",xaxis="Scenario",ylab="[-]",
-                       title=paste0(title," in 2060"),xlab="Scenario",ncol=4)
+  p_shift_2060 <- myplot(shift[r,"y2060",], type = "bar", xaxis = "iteration", color = "period", ylab = "$/GJ", title = title, scales = "fixed")
 
   # ---- Price shift over time ----
 
