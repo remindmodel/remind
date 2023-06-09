@@ -175,6 +175,7 @@ if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= 
 
 errorsfound <- 0
 startedRuns <- 0
+finishedRuns <- 0
 waitingRuns <- 0
 deletedFolders <- 0
 
@@ -359,6 +360,7 @@ for(scen in common){
   } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     scenarios_coupled[scen, "start_scenario"] <- FALSE
+    finishedRuns <- finishedRuns + 1
     next
   } else {
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -644,7 +646,8 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
-message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
+message("\nDone: ", finishedRuns, " runs already finished. ", deletedFolders, " folders deleted. ",
+        startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
         if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
