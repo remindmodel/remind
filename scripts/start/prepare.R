@@ -210,19 +210,25 @@ prepare <- function() {
       ) )
     }
     # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
+    content <- c(content, ' ')
+    content <- c(content, paste('*** Several parts of the REMIND code relies in the order that the regional set is defined.'))
+    content <- c(content, paste('***   Therefore, you must always abide with the below rules:'))
+    content <- c(content, paste('***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.'))
+    content <- c(content, paste('***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).'))
+    content <- c(content, paste('***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.'))
+    content <- c(content, ' ')
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
     content <- c(content, '      /')
     content <- c(content, '        GLO,')
-    content <- c(content, '        ', paste(paste0(names(subsets),"_regi"),collapse=','),",")
-    content <- c(content, '        ', paste(regions,collapse=','))
+    content <- c(content, paste0('        ',paste(paste0(names(subsets),"_regi"),collapse=','),","))
+    content <- c(content, paste0('        ',paste(regions,collapse=',')))
     content <- c(content, '      /')
-    content <- c(content, ' ')
     # declare all_regi
     content <- c(content, '',paste('   all_regi "all regions" /',paste(regions,collapse=','),'/',sep=''),'')
     # regi_group
     content <- c(content, '   regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"')
     content <- c(content, '      /')
-    content <- c(content, '      ', paste('GLO.(',paste(regions,collapse=','),')'))
+    content <- c(content, paste0('        ',paste('GLO.(',paste(regions,collapse=','),')')))
     for (i in 1:length(subsets)){
         content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
     }

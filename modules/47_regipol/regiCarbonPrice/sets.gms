@@ -9,12 +9,18 @@
 SETS
 target_type_47 "CO2 policy target type" / budget , year /
 
-emi_type_47 "emission type used in regional target" / netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, grossEnCO2_noBunkers, netGHG, netGHG_noLULUCF, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, netCO2_LULUCFGrassi, netCO2_LULUCFGrassi_noBunkers, netGHG_LULUCFGrassi, netGHG_LULUCFGrassi_noBunkers /
+emi_type_47 "emission type used in regional target" 
+/ 
+  netCO2, netCO2_noBunkers, netCO2_noLULUCF_noBunkers, netCO2_LULUCFGrassi, netCO2_LULUCFGrassi_noBunkers, netCO2_LULUCFGrassi_intraRegBunker,
+  netGHG, netGHG_noBunkers, netGHG_noLULUCF_noBunkers, netGHG_LULUCFGrassi, netGHG_LULUCFGrassi_noBunkers, netGHG_LULUCFGrassi_intraRegBunker, netGHG_noLULUCF,
+  grossEnCO2_noBunkers 
+/
 
 *** Emission markets
 $ifThen.emiMkt not "%cm_emiMktTarget%" == "off" 
   regiEmiMktTarget(ext_regi)               "regions with emiMkt targets" / /
   regiANDperiodEmiMktTarget_47(ttot,ext_regi) "regions and periods with emiMkt targets" / /
+  regiEmiMktTarget2regi_47(ext_regi,all_regi)  "regions controlled by emiMkt market set to ext_regi" / / 
 $ENDIF.emiMkt
 
 *** Implicit tax/subsidy necessary to achieve quantity target for primary, secondary, final energy and/or CCS

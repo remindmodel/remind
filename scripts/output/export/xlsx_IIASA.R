@@ -41,7 +41,7 @@ if (! exists("project")) {
     iiasatemplate <- "../ngfs-phase-4-internal-workflow/definitions/variable/variables.yaml"
     removeFromScen <- "C_|_bIT|_bit|_bIt"
   } else if ("ENGAGE_4p5" %in% project) {
-    model <- "REMIND 3.0"
+    model <- "REMIND 3.2"
     mapping <- c("AR6", "AR6_NGFS")
     iiasatemplate <- "ENGAGE_CD-LINKS_template_2019-08-22.xlsx"
     removeFromScen <- "_diff|_expoLinear"
@@ -56,6 +56,17 @@ lucode2::readArgs("outputdirs", "filename_prefix", "outputFilename", "model",
 
 # variables to be deleted although part of the template
 temporarydelete <- NULL # example: c("GDP|MER", "GDP|PPP")
+
+### select mapping
+
+mappingFile <- NULL
+if (length(mapping) == 1 && file.exists(mapping)) {
+  mappingFile <- mapping
+  mapping <- NULL
+} else if (! all(mapping %in% names(templateNames())) || length(mapping) == 0) {
+  message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
+  mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()), type = "mapping template")
+}
 
 ### define filenames
 
@@ -74,22 +85,6 @@ if (! exists("logFile")) logFile <- paste0(outputFilename, ".log")
 
 message("### Find various logs in ", logFile)
 withCallingHandlers({ # piping messages to logFile
-
-  if (length(mapping) == 1 && file.exists(mapping)) {
-    mappingFile <- mapping
-    mapping <- NULL
-  } else {
-    if (all(mapping %in% names(templateNames())) && length(mapping) > 0) {
-      mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", if (is.null(project)) mapping else project), collapse = "_"), ".csv"))
-    } else {
-      message("# Mapping = '", paste(mapping, collapse = ","), "' exists neither as file nor mapping name.")
-      mapping <- gms::chooseFromList(names(piamInterfaces::templateNames()))
-      mappingFile <- file.path(outputFolder, paste0(paste0(c("mapping", mapping), collapse = "_"), ".csv"))
-    }
-    generateMappingfile(templates = mapping, outputDirectory = NULL,
-                        fileName = mappingFile, model = model, logFile = logFile,
-                        iiasatemplate = if (file.exists(iiasatemplate)) iiasatemplate else NULL)
-  }
 
   message("\n### Generating ", OUTPUT_xlsx, ".")
   ### define filenames
@@ -131,7 +126,7 @@ withCallingHandlers({ # piping messages to logFile
   # message("\n### Generate joint mif, remind2 format: ", filename_remind2_mif)
   # write.mif(mifdata, filename_remind2_mif)
 
-  generateIIASASubmission(mifdata, mapping = NULL, model = model, mappingFile = mappingFile,
+  generateIIASASubmission(mifdata, mapping = mapping, model = model, mappingFile = mappingFile,
                           removeFromScen = removeFromScen, addToScen = addToScen,
                           outputDirectory = outputFolder,
                           logFile = logFile, outputFilename = basename(OUTPUT_xlsx),
