@@ -81,14 +81,14 @@ plot_iterations <- function(runname) {
   sm_tdptwyr2dpgj <- 31.71 # convert [TerraDollar per TWyear] to [Dollar per GJoule]
   
   
-  # ---- PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ----
+  # ---- Plot: MAgPIE prices for purpose grown bioenergy ----
   
   var <- "Internal|Price|Biomass|MAgPIE (US$2005/GJ)"
 
   p_price_mag <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep = "\n"))
   
   
-  # ---- CO2LUC (MAgPIE) ----
+  # ---- Plot: MAgPIE co2luc ----
 
   # core/datainput.gms
   # $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
@@ -104,7 +104,7 @@ plot_iterations <- function(runname) {
   p_emi_mag <- myplot(reports[r, y, var], ylab = "Mt CO2/yr", title = paste(runname, var, sep = "\n"))
   
 
-  # ---- PRODUCTION OF PURPOSE GROWN BIOENERGY (REMIND) ----
+  # ---- Plot: REMIND Production of purpose grown bioenergy ----
   
   # remind2::reportExtraction.R
   # vm_fuExtr[, , "pebiolc.1"] -> "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
@@ -119,7 +119,7 @@ plot_iterations <- function(runname) {
   p_fuelex_it_2060 <- myplot(reports[r, "y2060", var], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
   
 
-  # ---- DEMAND FOR PURPOSE GROWN BIOENERGY (REMIND)  ----
+  # ---- Plot: REMIND Demand for purpose grown bioenergy ----
   
   # remind2::reportPE.R
   # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|Energy Crops (EJ/yr)"
@@ -131,7 +131,7 @@ plot_iterations <- function(runname) {
   p_prodPE_it <- myplot(reports[r, years, var], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
   
 
-  # ---- PRICE SHIFT FACTOR ----
+  # ---- Plot: REMIND Price shift factor ----
   
   # remind2::reportPrices.R
   # p30_pebiolc_pricshift -> "Internal|Price|Biomass|Shiftfactor ()"
@@ -141,7 +141,7 @@ plot_iterations <- function(runname) {
   p_shift <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep="\n"))
   
 
-  # ---- Price scaling factor over time ----
+  # ---- Plot: REMIND Price scaling factor ----
   
   # remind2::reportPrices.R
   # p30_pebiolc_pricmult -> "Internal|Price|Biomass|Multfactor ()"
@@ -151,16 +151,16 @@ plot_iterations <- function(runname) {
   p_mult <- myplot(reports[r, years, var], title = paste(runname, var, sep = "\n"))
 
   
-  # ---- CO2 price ----
+  # ---- Plot: REMIND co2 price ----
   
   var <- "Price|Carbon (US$2005/t CO2)"
   title <- paste(runname, var, sep = "\n")
 
   p_price_carbon      <- myplot(reports[r, years, var], ylab = "$/tCO2", title = title)
 
-  p_price_carbon_it_1 <- myplot(reports[, getYears(reports)<"y2025", var],
+  p_price_carbon_it_1 <- myplot(reports[r, getYears(reports)<"y2025", var],
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
-  p_price_carbon_it_2 <- myplot(reports[, getYears(reports)>"y2020" & getYears(reports)<="y2100", var], 
+  p_price_carbon_it_2 <- myplot(reports[r, getYears(reports)>"y2020" & getYears(reports)<="y2100", var], 
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
 
 
@@ -172,14 +172,14 @@ plot_iterations <- function(runname) {
   lusweave::swfigure(out, print, p_fuelex,            sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_fuelex_it,         sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_fuelex_it_fix,     sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_prodPE_it,         sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_fuelex_it_2060,    sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_prodPE_it,         sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_emi_mag,           sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_shift,             sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_mult,              sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_shift,             sw_option = "height=9,width=16")
+  lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_price_carbon_it_1, sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_price_carbon_it_2, sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
   
   filename <- paste0(runname, "-", length(getItems(reports, dim = 3.1)))
   lusweave::swclose(out, outfile = filename, clean_output = TRUE, save_stream = FALSE)
