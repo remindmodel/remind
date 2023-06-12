@@ -27,52 +27,6 @@ if (!exists("source_include") | !exists("runs") | !exists("folder")) {
 
 ############################# DEFINE FUNCTIONS ###########################
 
-readfuelex <- function(gdx,enty) {
-  out <- gdx::readGDX(gdx,name="vm_fuExtr", format="first_found", field="l")[,,enty]
-  out <- collapseNames(out)
-  return(out)
-}
-
-readprodPE <- function(gdx,enty) {
-  out <- gdx::readGDX(gdx,name="vm_prodPe", format="first_found", field="l")[,,enty]
-  out <- collapseNames(out)
-  return(out)
-}
-
-readshift <- function(gdx) {
-  out <- gdx::readGDX(gdx,name="p30_pebiolc_pricshift", format="first_found")
-  getNames(out) <- "pebiolc_priceshift"   # something has to be here, will be removed by collapseNames anyway
-  out <- collapseNames(out)
-  return(out)
-}
-
-readbioprice <- function(gdx,name) {
-  out <- gdx::readGDX(gdx, name, format="first_found")
-  getNames(out) <- "pebiolc_pricemag"   # something has to be here, will be removed by collapseNames anyway
-  out <- collapseNames(out)
-  return(out)
-}
-
-# function to read parameter from gdx file
-readpar <- function(gdx,name) {
-  out <- gdx::readGDX(gdx, name, format="first_found")
-  #getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
-  #out <- collapseNames(out)
-  return(out)
-}
-
-# function to read variable from gdx file
-readvar <- function(gdx,name,enty=NULL) {
-  if (is.null(enty)) {
-    out <- gdx::readGDX(gdx,name, format="first_found", field="l")
-    getNames(out) <- "dummy" # something has to be here, will be removed by collapseNames anyway
-  } else {
-    out <- gdx::readGDX(gdx,name=name, format="first_found", field="l")[,,enty]
-  }
-  out <- collapseNames(out)
-  return(out)
-}
-
 # Plot dimension specified for 'color' over dimension specified for 'xaxis' as line plot or bar plot
 myplot <- function(data, type = "line", xaxis = "period", color = "iteration", scales = "free_y", ylab = NULL, title = NULL) {
   getNames(data) <- gsub(".*rem-","",getNames(data))
@@ -104,26 +58,18 @@ myplot <- function(data, type = "line", xaxis = "period", color = "iteration", s
 
 # The main function that compiles all plots
 plot_iterations <- function(runname) {
-  # ---- Find gdx files and scenario names ----
-  message("Searching for gdx files for ", runname)
-  gdx_path <- Sys.glob(paste0(runname,"-rem-*/fulldata.gdx"))
-  gdx_path <- rev(gtools::mixedsort(gdx_path)) # sort runs from 1,10,2,20 to 1,2,10,20
-  message("The following gdx files were found:")
-  message(paste(gdx_path, collapse = ", "))
 
-  # Read runnames and use them to name the rows of gdx_path
-  outputdirs <- sub("/fulldata.gdx","",gdx_path)
-  if(length(outputdirs) == 0) {
-    return("No gdx files found\n\n")
+  # ---- Read REMIND reportings for all scenarios ----
+  
+  message("Searching for REMIND_generic_*.mif files for ", runname)
+  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
+  report_path <- report_path[!grepl("with|adj",report_path)]
+  
+  message("Reading ", length(report_path), " REMIND reports.")
+  reports <- NULL
+  for (rep in report_path) {
+    reports <- mbind(reports, read.report(rep, as.list=FALSE)) #[,,"Price|Carbon (US$2005/t CO2)"])
   }
-
-  scenNames_path <- file.path(outputdirs, "config.Rdata")
-  scenNames <- c()
-  for (i in scenNames_path) {
-    load(i)
-    scenNames[i] <- cfg$title
-  }
-  names(gdx_path) <- scenNames
 
   # ---- Settings ----
   
@@ -137,96 +83,84 @@ plot_iterations <- function(runname) {
   
   # ---- PRICES (MAgPIE) OF PURPOSE GROWN BIOENERGY ----
   
-  # "Internal|Price|Biomass|MAgPIE (US$2005/GJ)"
-  price <- remind2::readAll(gdx_path,readbioprice,name="p30_pebiolc_pricemag",asList=FALSE)
-  price <- price / TWa2EJ * 1000
+  var <- "Internal|Price|Biomass|MAgPIE (US$2005/GJ)"
 
-  p_price_mag <- myplot(price[r, years, ], ylab = "$/GJ", title = paste(runname,"Price|Biomass|MAgPIE (US$2005/GJ)",sep="\n"))
+  p_price_mag <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep = "\n"))
   
   
   # ---- CO2LUC (MAgPIE) ----
-  
-  emi <- remind2::readAll(gdx_path,readpar,name=c("pm_macBaseMagpie","p_macBaseMagpie"),asList=FALSE)[,,"co2luc"]*1000*44/12
-  emi <- collapseDim(emi, dim = 3.2)  # remove 'co2luc'
 
-  p_emi_mag <- myplot(emi[r, y, ], ylab = "Mt CO2/yr", title = paste(runname,"Emissions|CO2|Land Use (Mt CO2/yr)",sep="\n"))
+  # core/datainput.gms
+  # $if %cm_MAgPIE_coupling% == "on"  pm_macBaseMagpie(ttot,regi,emiMacMagpie(enty))$(ttot.val ge 2005) = f_macBaseMagpie_coupling(ttot,regi,emiMacMagpie);
+  # core/presolve.gms
+  # vm_macBase.fx(ttot,regi,"co2luc") = pm_macBaseMagpie(ttot,regi,"co2luc")-p_macPolCO2luc(ttot,regi);
+  # core/equations.gms
+  # vm_emiMacSector(t,regi,enty) =e= vm_macBase [...] + p_macPolCO2luc(t,regi)$( sameas(enty,"co2luc")
+  # remind2::reportEmi.R
+  # setNames(dimSums(vm_emiMacSector[, , "co2luc"], dim = 3) * GtC_2_MtCO2, "Emi|CO2|+|Land-Use Change (Mt CO2/yr)")
+
+  var <- "Emi|CO2|+|Land-Use Change (Mt CO2/yr)"
+
+  p_emi_mag <- myplot(reports[r, y, var], ylab = "Mt CO2/yr", title = paste(runname, var, sep = "\n"))
   
 
   # ---- PRODUCTION OF PURPOSE GROWN BIOENERGY (REMIND) ----
   
-  # vm_fuExtr[, , "pebiolc.1"]
-  # "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
-  # "Primary Energy Production|Biomass|Energy Crops (EJ/yr)"
+  # remind2::reportExtraction.R
+  # vm_fuExtr[, , "pebiolc.1"] -> "PE|Production|Biomass|+|Lignocellulosic (EJ/yr)"
+  # vm_fuExtr[, , "pebiolc.1"] -> "Primary Energy Production|Biomass|Energy Crops (EJ/yr)" (used also in coupling interface in MAgPIE)
 
-  fuelex_bio <- remind2::readAll(gdx_path,readfuelex,enty="pebiolc",asList=FALSE)[,,"1"] * TWa2EJ
-  fuelex_bio <- collapseNames(fuelex_bio)
-  fuelex_bio <- mbind(fuelex_bio,dimSums(fuelex_bio,dim=1))
+  var <- "Primary Energy Production|Biomass|Energy Crops (EJ/yr)"
+  title <- paste(runname, var , sep = "\n")
 
-  title <- paste(runname,"Primary Energy Production|Biomass|Energy Crops (EJ/yr)",sep="\n")
-
-  p_fuelex         <- myplot(fuelex_bio[r, years, ],                                        ylab = "EJ/yr", title = title)
-  p_fuelex_it      <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
-  p_fuelex_it_fix  <- myplot(fuelex_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
-  p_fuelex_it_2060 <- myplot(fuelex_bio[r, "y2060" ], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  p_fuelex         <- myplot(reports[r, years,   var],                                                      ylab = "EJ/yr", title = title)
+  p_fuelex_it      <- myplot(reports[r, years,   var],               xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  p_fuelex_it_fix  <- myplot(reports[r, years,   var],               xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
+  p_fuelex_it_2060 <- myplot(reports[r, "y2060", var], type = "bar", xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title, scales = "fixed")
   
 
   # ---- DEMAND FOR PURPOSE GROWN BIOENERGY (REMIND)  ----
   
-  # vm_prodPe
-  # "PE|Biomass|Modern (EJ/yr)"
-  # "PE|Biomass|Energy Crops (EJ/yr)"
-  prodPE     <- remind2::readAll(gdx_path,readprodPE,enty="pebiolc",asList=FALSE)
-  prodPE_bio <- collapseNames(prodPE) * TWa2EJ
-  prodPE_bio <- mbind(prodPE_bio,dimSums(prodPE_bio,dim=1))
-
-  title  <- paste(runname,"PE|Biomass|Modern (EJ/yr)",sep="\n")
+  # remind2::reportPE.R
+  # fuelex[,,"pebiolc.1"] + (1-p_costsPEtradeMp[,,"pebiolc"]) * Mport[,,"pebiolc"] - Xport[,,"pebiolc"] -> "PE|Biomass|Energy Crops (EJ/yr)"
   
-  p_prodPE    <- myplot(prodPE_bio[r, years, ],                                        ylab = "EJ/yr", title = title)
-  p_prodPE_it <- myplot(prodPE_bio[r, years, ], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
+  var <- "PE|Biomass|Energy Crops (EJ/yr)"
+  title  <- paste(runname, var, sep = "\n")
+  
+  p_prodPE    <- myplot(reports[r, years, var],                                        ylab = "EJ/yr", title = title)
+  p_prodPE_it <- myplot(reports[r, years, var], xaxis = "iteration", color = "period", ylab = "EJ/yr", title = title)
   
 
   # ---- PRICE SHIFT FACTOR ----
   
-  # p30_pebiolc_pricshift
-  # "Internal|Price|Biomass|Shiftfactor ()"
-  shift <- remind2::readAll(gdx_path,readshift,asList=FALSE)* sm_tdptwyr2dpgj
-  getNames(shift) <- gsub(".*rem-","",getNames(shift))
+  # remind2::reportPrices.R
+  # p30_pebiolc_pricshift -> "Internal|Price|Biomass|Shiftfactor ()"
 
-  title <- paste(runname,"Price|Biomass|Shiftfactor in 2060", sep="\n")
+  var <- "Internal|Price|Biomass|Shiftfactor ()"
   
-  p_shift      <- myplot(shift[r, years, ],                                                      ylab = "$/GJ", title = title)
-  p_shift_2060 <- myplot(shift[r,"y2060",], type = "bar", xaxis = "iteration", color = "period", ylab = "$/GJ", title = title, scales = "fixed")
+  p_shift <- myplot(reports[r, years, var], ylab = "$/GJ", title = paste(runname, var, sep="\n"))
   
 
   # ---- Price scaling factor over time ----
   
-  # p30_pebiolc_pricmult
-  # "Internal|Price|Biomass|Multfactor ()"
-  v_mult <- remind2::readAll(gdx_path,readvar,name="v30_pricemult",asList=FALSE)
-
-  title <- paste(runname, "Price multiplication factor", sep = "\n")
+  # remind2::reportPrices.R
+  # p30_pebiolc_pricmult -> "Internal|Price|Biomass|Multfactor ()"
   
-  p_mult <- myplot(v_mult[r, years, ], title = title)
+  var <- "Internal|Price|Biomass|Multfactor ()"
+    
+  p_mult <- myplot(reports[r, years, var], title = paste(runname, var, sep = "\n"))
 
-
+  
   # ---- CO2 price ----
   
-  report_path <- Sys.glob(paste0(runname,"-rem-*/REMIND_generic_*.mif"))
-  report_path <- report_path[!grepl("with|adj",report_path)]
+  var <- "Price|Carbon (US$2005/t CO2)"
+  title <- paste(runname, var, sep = "\n")
 
-  message("Reading ", length(report_path), " REMIND reports.")
-  tmp <- NULL
-  for (rep in report_path) {
-    tmp1 <- read.report(rep, as.list=FALSE)
-    tmp <- mbind(tmp, tmp1[,,"Price|Carbon (US$2005/t CO2)"])
-  }
-  title <- paste(runname, "Price|Carbon (US$2005/t CO2)", sep = "\n")
+  p_price_carbon      <- myplot(reports[r, years, var], ylab = "$/tCO2", title = title)
 
-  p_price_carbon      <- myplot(tmp[r, years, ], ylab = "$/tCO2", title = title)
-
-  p_price_carbon_it_1 <- myplot(tmp[, getYears(tmp)<"y2025", ],
+  p_price_carbon_it_1 <- myplot(reports[, getYears(reports)<"y2025", var],
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
-  p_price_carbon_it_2 <- myplot(tmp[, getYears(tmp)>"y2020" & getYears(tmp)<="y2100", ], 
+  p_price_carbon_it_2 <- myplot(reports[, getYears(reports)>"y2020" & getYears(reports)<="y2100", var], 
                                 ylab = "$/tCO2", xaxis = "iteration", color = "period", title = title)
 
 
@@ -242,13 +176,12 @@ plot_iterations <- function(runname) {
   lusweave::swfigure(out, print, p_fuelex_it_2060,    sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_emi_mag,           sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_shift,             sw_option = "height=9,width=16")
-  lusweave::swfigure(out, print, p_shift_2060,        sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_mult,              sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_price_carbon_it_1, sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_price_carbon_it_2, sw_option = "height=9,width=16")
   lusweave::swfigure(out, print, p_price_carbon,      sw_option = "height=9,width=16")
   
-  filename <- paste0(runname, "-", length(scenNames))
+  filename <- paste0(runname, "-", length(getItems(reports, dim = 3.1)))
   lusweave::swclose(out, outfile = filename, clean_output = TRUE, save_stream = FALSE)
   file.remove(paste0(filename,c(".log",".out")))
   return("Done\n")
