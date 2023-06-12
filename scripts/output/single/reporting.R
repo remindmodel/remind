@@ -105,7 +105,7 @@ magpie_reporting_file <- envir$cfg$pathToMagpieReport
 if (! is.null(magpie_reporting_file) && file.exists(magpie_reporting_file)) {
   message("add MAgPIE reporting from ", magpie_reporting_file)
   tmp_rem <- quitte::as.quitte(remind_reporting_file)
-  tmp_mag <- quitte::as.quitte(magpie_reporting_file)
+  tmp_mag <- dplyr::filter(quitte::as.quitte(magpie_reporting_file), .data$period %in% levels(tmp_rem$period))
   # remove population from magpie reporting to avoid duplication (units "million" vs. "million people")
   sharedvariables <- intersect(tmp_mag$variable, tmp_rem$variable)
   if (length(sharedvariables) > 0) {
