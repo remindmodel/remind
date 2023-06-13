@@ -12,6 +12,8 @@
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 SETS
+numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /  
+
 * Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
@@ -1735,10 +1737,11 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-entySeSyn(all_enty)   "synfuel secondary energy types"
+entySeSyn(all_enty)       "synfuel secondary energy types"
 /
-  seliqsyn   "secondary energy liquids from H2"
-  segasyn    "secondary energy gas from H2"
+	seliqbio     "secondary energy liquids from biomass"
+	sesobio      "secondary energy solids from biomass"
+	segabio      "secondary energy gas from biomass"
 /
 
 entySeFos(all_enty) "secondary energy types from fossil primary energy"
