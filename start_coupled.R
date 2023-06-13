@@ -297,23 +297,34 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         message("Starting subsequent run ", run)
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
-        if (isTRUE(subseq.env$qos == "auto")) {
+        startnow <- TRUE
+        if (isTRUE(subseq.env$qos %in% c("auto", "multiplayer"))) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
-          subseq.env$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+          startnow <- is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4
+          subseq.env$qos <- if (startnow || subseq.env$qos == "multiplayer") "priority" else "short"
+          if (subseq.env$qos == "auto") startnow <- TRUE
         }
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --mem=8000 --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
-          exitCode <- system(subsequentcommand)
-          if (0 < exitCode) {
-            message("sbatch command failed, check logs")
-            errorsfound <- errorsfound + 1
-            # if sbatch has the --wait argument, the user is likely interactively
-            # waiting for the result of the run (like in a test). In that case,
-            # fail immediately so that the user knows about the failure asap.
-            stopifnot(! grepl("--wait", subsequentcommand))
+          if (startnow) {
+            exitCode <- system(subsequentcommand)
+            if (0 < exitCode) {
+              message("sbatch command failed, check logs")
+              errorsfound <- errorsfound + 1
+              # if sbatch has the --wait argument, the user is likely interactively
+              # waiting for the result of the run (like in a test). In that case,
+              # fail immediately so that the user knows about the failure asap.
+              stopifnot(! grepl("--wait", subsequentcommand))
+            }
+          } else {
+            lockID <- gms::model_lock()
+            multiplayersh <- "scripts/start/multiplayer.sh"
+            write(subsequentcommand, file = multiplayersh, append = TRUE)
+            message("Subsequent run not started, but written to ", multiplayersh)
+            gms::model_unlock(lockID)
           }
         } else {
           message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")
@@ -345,7 +356,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       source_include <- TRUE
       runs <- runname
       folder <- "./output"
-      source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
+      pci <- try(source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE))
+      if (inherits(pci, "try-error")) errorsfound <- errorsfound + 1
       cs_runs <- findIterations(runname, modelpath = remindpath, latest = FALSE)
       cs_name <- paste0("compScen-rem-1-", max_iterations, "_", runname)
       cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
@@ -363,8 +375,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       }
     }
   }
-  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
   message("### start_coupled() finished. ###")
+  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
 }
 
 ##################################################################

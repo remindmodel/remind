@@ -7,7 +7,8 @@
 
 skipIfFast()
 coupledConfig <- "config/tests/scenario_config_coupled_shortCascade.csv"
-magpie_folder <- "../../../magpie"
+magpie_folder <- "../../magpie"
+if (! dir.exists(magpie_folder)) magpie_folder <- paste0("../", magpie_folder)
 config <- readCheckScenarioConfig(file.path("..", "..", coupledConfig), remindPath <- file.path("..", ".."))
 max_iterations <- if ("max_iterations" %in% names(config)) max(config$max_iterations) else 5
 # for a fresh run, delete all left-overs from previous test
