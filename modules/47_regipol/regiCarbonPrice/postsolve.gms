@@ -198,7 +198,7 @@ loop((ext_regi,ttot2)$regiANDperiodEmiMktTarget_47(ttot2,ext_regi),
     loop(regi$regi_groupExt(ext_regi,regi),
       loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
 ***     if emiMKt target did not converged and we are not forcing negative prices (if the price is at minimal level (1$/tCO2) and current emissions are lower than the target) 
-        if(((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) > 0.01) and (not ((pm_taxemiMkt(ttot2,regi,emiMkt) eq 1*sm_DptCO2_2_TDpGtC) and (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt 0)))), !! if emiMKt target did not converged and 
+        if(((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance) and (not ((pm_taxemiMkt(ttot2,regi,emiMkt) eq 1*sm_DptCO2_2_TDpGtC) and (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt 0)))), !! if emiMKt target did not converged and 
           p47_targetConverged(ttot2,ext_regi) = 0;
         );
       );
