@@ -284,8 +284,6 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
 p47_factorRescaleSlope_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt);
 p47_factorRescaleemiMktCO2Tax_iter(iteration,ttot,ttot2,ext_regi,emiMktExt) = pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt); !!save rescale factor across iterations for debugging of target convergence issues
 
-display p47_slopeReferenceIteration;
-
 loop(ext_regi$regiEmiMktTarget(ext_regi),
 *** solving targets sequentially, i.e. only apply target convergence algorithm if previous yearly targets were already achieved
   if(not(p47_allTargetsConverged(ext_regi) eq 1), !!no rescale need if all targets already converged
