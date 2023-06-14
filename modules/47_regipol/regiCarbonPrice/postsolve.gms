@@ -238,14 +238,14 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
   );
 );
 
-*** define refrence year for calculating mitigation cost slope.
+*** reference iteration from which to calculate the mitigation cost slope.
 loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
   if(ord(iteration) eq 1,
-    p47_slopeReferenceIteration(iteration,ttot,ext_regi) = 1;
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
   elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))),
-    p47_slopeReferenceIteration(iteration,ttot,ext_regi) = ord(iteration);
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
   else
-    p47_slopeReferenceIteration(iteration,ttot,ext_regi) = p47_slopeReferenceIteration(iteration-1,ttot,ext_regi);
+    p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
   );
 );
 
@@ -254,9 +254,9 @@ loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
 loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47),
   loop(emiMkt$emiMktGroup(emiMktExt,emiMkt), 
     loop(regi$regi_groupExt(ext_regi,regi),
-      loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
+      loop(iteration2$((iteration2.val le iteration.val) and (iteration2.val eq p47_slopeReferenceIteration_iter(iteration,ttot2,ext_regi))), !!reference iteration for slope calculation
 ***     if it is the first iteration or the reference iteration changed, initialize the rescale factor based on remaining deviation
-        if(iteration.val eq p47_slopeReferenceIteration(iteration,ttot,ext_regi),
+        if(iteration.val eq p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi),
           pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = (1+pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) ** 2;
 ***     else if for the extreme case of a perfect match with no change between the two iterations emisssion taxes used in the slope calculation, in order to avoid a division by zero error assume the rescale factor based on remaining deviation
         elseif((pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt) eq pm_taxemiMkt_iteration(iteration2,ttot2,regi,emiMkt))),
