@@ -242,7 +242,7 @@ loop(ext_regi$regiEmiMktTarget(ext_regi),
 loop((ext_regi,ttot)$regiANDperiodEmiMktTarget_47(ttot,ext_regi),
   if(ord(iteration) eq 1,
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = 1;
-  elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))),
+  elseif(NOT(p47_currentConvergence_iter(iteration,ttot,ext_regi) eq p47_currentConvergence_iter(iteration-1,ttot,ext_regi))), !! reset the iteration reference for slope calculation if the target that is being analyzed changes
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = ord(iteration);
   else
     p47_slopeReferenceIteration_iter(iteration,ttot,ext_regi) = p47_slopeReferenceIteration_iter(iteration-1,ttot,ext_regi);
