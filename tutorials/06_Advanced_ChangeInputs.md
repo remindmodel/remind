@@ -80,11 +80,11 @@ You need to pass the path to a input data revision, e.g. `idrcp /p/projects/rd3m
 Unfortunately, this does not work for archives that were created using a [portable unaggregated collection (puc)](https://pik-piam.r-universe.dev/articles/madrat/madrat-puc.html). If the diagnostics.log file has an entry looking like this under "Current madrat configuration", the archive won't be suitable for the script: `cachefolder -> "/p/tmp/benke/.Rtmp/RtmpU9rYHO/file25418fd5e15/puc"`
 
 
-**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments to the `start.R` script:
+**Option 2**: If you need a cache file for every single intermediate step executed during input data generation, you might want to generate your own cache from scratch. To do so, follow the steps 2) and 3) under [How to update input data](#how-to-update-input-data), but make further adjustments:
 
-- Make sure your own madrat settings are used: `cachetype <- "def"`
-- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")`
-- Set a development suffix to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
+- Make sure your own madrat settings are used in `config/default.cfg`: `cachetype <- "def"` 
+- Adjust your madrat settings to read from / write to your own cache folder instead of the shared default cache. If you are not using an empty folder, make sure to disable forcing cache use: `setConfig(forcecache = F, cachefolder = "[PATH/TO/YOUR/CACHE]")` (insert this line in `run_preprocessing.R` after the libraries have been loaded)
+- Set a development suffix in `config/default.cfg` to distinguish your own input data version from other versions: `dev <- "my-personal-cache"` (optional)
 
 After input data generation succeeded, you can download your cache folder from the path you set in your madrat config and use it as your local cache. 
 
