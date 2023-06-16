@@ -297,12 +297,12 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         message("Starting subsequent run ", run)
         logfile <- file.path("output", subseq.env$fullrunname, "log.txt")
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
-        startnow <- TRUE
+        starthere <- TRUE
         if (isTRUE(subseq.env$qos %in% c("auto", "multiplayer"))) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
-          startnow <- is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4
-          subseq.env$qos <- if (startnow || subseq.env$qos == "multiplayer") "priority" else "short"
-          if (subseq.env$qos == "auto") startnow <- TRUE
+          starthereprio <- is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4
+          starthere <- subseq.env$qos == "auto" || starthereprio
+          subseq.env$qos <- if (starthereprio || subseq.env$qos == "multiplayer") "priority" else "short"
         }
         subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
@@ -310,7 +310,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
-          if (startnow) {
+          if (starthere) {
             exitCode <- system(subsequentcommand)
             if (0 < exitCode) {
               message("sbatch command failed, check logs")
@@ -321,8 +321,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
               stopifnot(! grepl("--wait", subsequentcommand))
             }
           } else {
-            lockID <- gms::model_lock()
-            multiplayersh <- "scripts/start/multiplayer.sh"
+            lockID <- gms::model_lock(folder = file.path("scripts", "multiplayer"), file = ".lock")
+            multiplayersh <- file.path("scripts", "multiplayer", "slurmjobs.sh")
             write(subsequentcommand, file = multiplayersh, append = TRUE)
             message("Subsequent run not started, but written to ", multiplayersh)
             gms::model_unlock(lockID)

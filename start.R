@@ -76,12 +76,12 @@ argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 if (length(argv) == 1) {
   if (file.exists(argv)) {
     config.file <- argv
-  } else if (file.exists(file.path("config", argv)) {
+  } else if (file.exists(file.path("config", argv))) {
     config.file <- file.path("config", argv)
   } else {
     stop("Unknown parameter provided: ", paste(argv, collapse = ", "))
   }
-} else {
+} else if (length(argv) > 1) {
   stop("You provided more than one file or other command line argument, start.R can only handle one.")
 }
 

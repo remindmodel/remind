@@ -52,7 +52,8 @@ helpText <- "
 
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- getwd()   # provide path to REMIND. Default: the actual path which the script is started from
-path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
+path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
+if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
@@ -177,6 +178,7 @@ errorsfound <- 0
 startedRuns <- 0
 finishedRuns <- 0
 waitingRuns <- 0
+multiplayerRuns <- 0
 deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -616,19 +618,31 @@ for (scen in common) {
         logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        if (isTRUE(runEnv$qos == "auto")) {
+        starthere <- TRUE
+        if (isTRUE(runEnv$qos %in% c("auto", "multiplayer"))) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
-          runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+          starthereprio <- is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4
+          starthere <- runEnv$qos == "auto" || starthereprio
+          runEnv$qos <- if (starthereprio || runEnv$qos == "multiplayer") "priority" else "short"
         }
         slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
         if (runEnv$numberOfTasks == 1) " --mem=8000", " ", runEnv$sbatch,
         " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
-        exitCode <- system(slurm_command)
-        if (0 < exitCode) {
-          errorsfound <- errorsfound + 1
-          message("sbatch command failed, check logs.")
+        if (starthere) {
+          exitCode <- system(slurm_command)
+          if (0 < exitCode) {
+            errorsfound <- errorsfound + 1
+            message("sbatch command failed, check logs.")
+          }
+        } else {
+          lockID <- gms::model_lock(folder = file.path("scripts", "multiplayer"), file = ".lock")
+          multiplayersh <- file.path("scripts", "multiplayer", "slurmjobs.sh")
+          write(slurm_command, file = multiplayersh, append = TRUE)
+          message("Subsequent run not started, but written to ", multiplayersh)
+          multiplayerRuns <- multiplayerRuns + 1
+          gms::model_unlock(lockID)
         }
       }
     }
@@ -651,12 +665,15 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
-message("\nDone: ", finishedRuns, " runs already finished. ", deletedFolders, " folders deleted. ",
-        startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
-        if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
+message("\nDone.", if(any(c("--test", "--gamscompile") %in% flags)) " You are in TEST or gamscompile mode, no runs were actually started.")
+message("- ", finishedRuns, " runs already finished.")
+message("- ", deletedFolders, " folders deleted.")
+message("- ", startedRuns, " runs started.")
+message("- ", waitingRuns, " runs are waiting.")
 if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
     && any(scenarios_coupled[common, "qos"] == "multiplayer")) {
-  message("Some runs use multiplayer mode. Either you or a colleagues has to run 'Rscript scripts/utils/multiplayer.R' ",
+  message("- ", multiplayerRuns, " wait for someone else to start them.")
+  message("Some runs use multiplayer mode. Either you or a colleagues has to run 'Rscript scripts/multiplayer/start.R' ",
           "which creates a recurrent slurm job that starts the runs for which no free priority slot was available. ",
           "You have to terminate the 'multiplayer' job once all runs are started.")
 }
