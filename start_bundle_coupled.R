@@ -175,6 +175,7 @@ if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= 
 
 errorsfound <- 0
 startedRuns <- 0
+finishedRuns <- 0
 waitingRuns <- 0
 deletedFolders <- 0
 
@@ -359,6 +360,7 @@ for(scen in common){
   } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     scenarios_coupled[scen, "start_scenario"] <- FALSE
+    finishedRuns <- finishedRuns + 1
     next
   } else {
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -417,11 +419,8 @@ for(scen in common){
     cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
 
+  # save cm_nash_autoconverge to be used for all but last REMIND run
   cm_nash_autoconverge <- cfg_rem$gms$cm_nash_autoconverge
-  # save cm_nash_autoconverge to be used for last REMIND run
-  if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
-    cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
-  }
 
   # abort on too long paths ----
   cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
@@ -494,10 +493,11 @@ for(scen in common){
       rownames(cfg_rem$RunsUsingTHISgdxAsInput) <- paste0(prefix_runname, rownames(cfg_rem$RunsUsingTHISgdxAsInput), "-rem-", i)
     }
     # add the next remind run
+    cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
     if (i < max_iterations) {
       cfg_rem$RunsUsingTHISgdxAsInput[paste0(runname, "-rem-", (i+1)), "path_gdx"] <- fullrunname
-      cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
-    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
+    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled) && ! is.na(scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"])) {
+      # change autoconverge only in last iteration and if well-defined
       cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
     }
 
@@ -646,7 +646,8 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
-message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
+message("\nDone: ", finishedRuns, " runs already finished. ", deletedFolders, " folders deleted. ",
+        startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
         if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
