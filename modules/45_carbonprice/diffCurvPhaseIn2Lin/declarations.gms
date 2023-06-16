@@ -13,7 +13,6 @@ parameters
 p45_tauCO2_ref(ttot, all_regi)              "CO2 tax path of reference policy (NDC)"
 p45_gdppcap2015_PPP(all_regi)               "2015 GDP per capita (k $ PPP 2005)"
 p45_phasein_2025ratio(all_regi)             "ratio of CO2 price to that of developed region in 2025"
-p45_spreadFactor                            "Maximum spreadfactor, discrete choice by user; defined for 10 and 20; general formula missing"
 
 p45_regCO2priceFactor(ttot,all_regi)                    "regional multiplicative factor to the CO2 price of the developed countries"
 p45_CO2priceTrajDeveloped(ttot)                         "CO2 price trajectory for developed/rich countries"

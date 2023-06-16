@@ -27,7 +27,7 @@ p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 11 and p45_gdppcap2015
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 14 and p45_gdppcap2015_PPP(regi) le 19) = 0.8;
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 19 and p45_gdppcap2015_PPP(regi) le 24) = 0.9;
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 24) = 1;
-)
+);
 
 if(cm_co2_tax_spread eq 20,
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) le 3.5) = 0.05;
@@ -38,7 +38,7 @@ p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 11 and p45_gdppcap2015
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 14 and p45_gdppcap2015_PPP(regi) le 19) = 0.6;
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 19 and p45_gdppcap2015_PPP(regi) le 24) = 0.8;
 p45_phasein_2025ratio(regi)$(p45_gdppcap2015_PPP(regi) gt 24) = 1;
-)
+);
 display p45_phasein_2025ratio;
 
 
