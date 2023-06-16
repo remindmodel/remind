@@ -178,7 +178,7 @@ errorsfound <- 0
 startedRuns <- 0
 finishedRuns <- 0
 waitingRuns <- 0
-multiplayerRuns <- 0
+qosRuns <- NULL
 deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -264,10 +264,12 @@ for (scen in common) {
   }
 }
 
-if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
-    && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
-      message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
-      message("They may not be able to run in parallel on the PIK cluster.")
+qos_default <- "multiplayer"
+if (! "qos" %in% names(scenarios_coupled)) scenarios_coupled[, "qos"] <- qos_default
+scenarios_coupled[, "qos"] <- ifelse(is.na(scenarios_coupled[, "qos"]), qos_default, scenarios_coupled[, "qos"])
+if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
+  message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
+  message("They may not be able to run in parallel on the PIK cluster.")
 }
 
 ####################################################
@@ -282,7 +284,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) || is.na(qos)) qos <- "auto"            # if qos could not be found in scenarios_coupled use short/priority
+  qosRuns[qos] <- if (is.null(qosRuns[qos])) 1 else qosRuns[qos] + 1 # count
   sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) || is.na(sbatch)) sbatch <- ""      # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                   # iteration to start the coupling with
@@ -640,8 +642,7 @@ for (scen in common) {
           lockID <- gms::model_lock(folder = file.path("scripts", "multiplayer"), file = ".lock")
           multiplayersh <- file.path("scripts", "multiplayer", "slurmjobs.sh")
           write(slurm_command, file = multiplayersh, append = TRUE)
-          message("Subsequent run not started, but written to ", multiplayersh)
-          multiplayerRuns <- multiplayerRuns + 1
+          message("Run not started, but written to ", multiplayersh)
           gms::model_unlock(lockID)
         }
       }
@@ -665,17 +666,20 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
+message("#### Summary ####")
 message("\nDone.", if(any(c("--test", "--gamscompile") %in% flags)) " You are in TEST or gamscompile mode, no runs were actually started.")
 message("- ", finishedRuns, " runs already finished.")
 message("- ", deletedFolders, " folders deleted.")
 message("- ", startedRuns, " runs started.")
 message("- ", waitingRuns, " runs are waiting.")
-if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
-    && any(scenarios_coupled[common, "qos"] == "multiplayer")) {
-  message("- ", multiplayerRuns, " wait for someone else to start them.")
-  message("Some runs use multiplayer mode. Either you or a colleagues has to run 'Rscript scripts/multiplayer/start.R' ",
-          "which creates a recurrent slurm job that starts the runs for which no free priority slot was available. ",
-          "You have to terminate the 'multiplayer' job once all runs are started.")
+message("qos statistics: ", paste0(names(qosRuns), ": ", qosRuns, collapse = ", "))
+if (file.exists("/p") && isTRUE(qosRuns["multiplayer"] > 0)) {
+  startfile <- file.path("scripts", "multiplayer", "start.R")
+  message("Some runs use multiplayer mode. Ask your colleagues to run 'Rscript ", startfile, "' in this folder.")
+  message("This creates a recurrent slurm job that starts the runs for which no free priority slot was available.")
+  message("You have to terminate the 'multiplayer' jobs manually once all runs are started.")
+  message("Starting such a job for you as well to use all 'priority' slots to guarantee that the cascades finishes even if nobody wants to help you.")
+  system(paste("Rscript", startfile)) # better than source to avoid changes in working directory etc
 }
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {

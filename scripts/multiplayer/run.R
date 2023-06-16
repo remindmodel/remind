@@ -37,6 +37,6 @@ if (file.exists(bashfile)) {
   message("# ", bashfile, " does not exist, skipping.")
 }
 gms::model_unlock(lockID)
-system(paste0("sbatch --qos=standby --wrap='Rscript ", Rfile, "' --job-name=multiplayer --output=log.txt ",
+system(paste0("sbatch --qos=short --wrap='Rscript ", Rfile, "' --job-name=multiplayer --output=log.txt ",
               "--error=log.txt --open-mode=append --time=10 --begin=now+15minutes"))
 message("### ", Sys.info()[["user"]], " will be back in 15 minutes.\n\n")
