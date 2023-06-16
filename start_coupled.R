@@ -304,9 +304,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           subseq.env$qos <- if (startnow || subseq.env$qos == "multiplayer") "priority" else "short"
           if (subseq.env$qos == "auto") startnow <- TRUE
         }
-        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --mem=8000 --job-name=", subseq.env$fullrunname, " --output=", logfile,
+        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
-        " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
+        if (subseq.env$numberOfTasks == 1) " --mem=8000", " ", subseq.env$sbatch,
+        " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
           if (startnow) {

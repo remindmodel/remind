@@ -620,9 +620,10 @@ for (scen in common) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --mem=8000 --job-name=", fullrunname,
-        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-        " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+        if (runEnv$numberOfTasks == 1) " --mem=8000", " ", runEnv$sbatch,
+        " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
         exitCode <- system(slurm_command)
         if (0 < exitCode) {
