@@ -363,45 +363,59 @@ $ENDIF.emiMkt
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 
 *** saving previous iteration value for implicit tax revenue recycling
+*** the same line exists in presolve.gms, don't forget to update there
 p47_implicitQttyTargetTax_prevIter(t,regi,qttyTarget,qttyTargetGroup) = p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup);
 p47_implicitQttyTargetTax0(t,regi) =
   sum((qttyTarget,qttyTargetGroup)$p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup),
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te))) 
-    )$(sameas(qttyTarget,"PE")) 
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te))) 
-    )$(sameas(qttyTarget,"SE")) 
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt)))) 
-    )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
-    +
-    ( p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
-    )$(sameas(qttyTarget,"CCS"))    
+    p47_implicitQttyTargetTax(t,regi,qttyTarget,qttyTargetGroup) * (
+      ( sum(entyPe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(t,regi,entyPe,entySe,te)))
+      )$(sameas(qttyTarget,"PE"))
+      +
+      ( sum(entySe$energyQttyTargetANDGroup2enty(qttyTarget,qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(t,regi,entySe,entyFe,te)))
+      )$(sameas(qttyTarget,"SE"))
+      +
+      ( sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(t,regi,entySe,entyFe,sector,emiMkt))))
+      )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
+      +
+      ( sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(t,regi,enty,enty2,te,rlf)))
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      (( !! Supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(t,regi,enty,enty2,te,enty3))
+        !! Industry BECCS (using biofuels in Industry with CCS)
+      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt))
+      ) * pm_share_CCS_CCO2(t,regi) )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+    )
   )
 ;
 
 ***  Calculating current quantity target levels (PE, SE, FE and/or CCS level)
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if(sameas(targetType,"t"), !!absolute target (t=total) 
-    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
+  if(sameas(targetType,"t"), !!absolute target (t=total)
+    p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) =
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(entyPe$energyQttyTargetANDGroup2enty("PE",qttyTargetGroup,entyPe), sum(pe2se(entyPe,entySe,te), vm_demPe.l(ttot,regi,entyPe,entySe,te))) )
-      )$(sameas(qttyTarget,"PE")) 
+      )$(sameas(qttyTarget,"PE"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("SE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), vm_demSe.l(ttot,regi,entySe,entyFe,te))) )
-      )$(sameas(qttyTarget,"SE")) 
+      )$(sameas(qttyTarget,"SE"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi),  sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te), sum((sector,emiMkt)$(entyFe2Sector(entyFe,sector) AND sector2emiMkt(sector,emiMkt)), vm_demFeSector.l(ttot,regi,entySe,entyFe,sector,emiMkt)))) )
         + ( - ( sum(regi$regi_groupExt(ext_regi,regi), sum(entySe$energyQttyTargetANDGroup2enty("FE",qttyTargetGroup,entySe), sum(se2fe(entySe,entyFe,te),  vm_demFeSector.l(ttot,regi,entySe,entyFe,"trans","other")) )) ) !! removing bunkers from FE targets
         )$(sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
         +
         ( - ( p47_nonEnergyUse(ttot,ext_regi) )$((sameas(qttyTargetGroup,"all") or sameas(qttyTargetGroup,"fossil"))) !! removing non-energy use if energy type = all (this assumes all no energy use belongs to fossil and should be changed once feedstocks are endogenous to the model)
-        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e")) 
+        )$(sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       )$(sameas(qttyTarget,"FE") or sameas(qttyTarget,"FE_wo_b") or sameas(qttyTarget,"FE_wo_n_e") or sameas(qttyTarget,"FE_wo_b_wo_n_e"))
       +
       ( sum(regi$regi_groupExt(ext_regi,regi), sum(ccs2te(ccsCO2(enty),enty2,te), sum(teCCS2rlf(te,rlf),vm_co2CCS.l(ttot,regi,enty,enty2,te,rlf))))
-      )$(sameas(qttyTarget,"CCS")) 
-    ;
-  ); 
+      )$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"all"))
+      +
+      sum(regi$regi_groupExt(ext_regi,regi), ( !! Supply side BECCS
+        sum(emiBECCS2te(enty,enty2,te,enty3),vm_emiTeDetail.l(ttot,regi,enty,enty2,te,enty3))
+        !! Industry BECCS (using biofuels in Industry with CCS)
+      + sum((emiMkt,entySe,secInd37,entyFe)$entySeBio(entySe), pm_IndstCO2Captured(ttot,regi,entySe,entyFe,secInd37,emiMkt))
+      ) * pm_share_CCS_CCO2(ttot,regi))$(sameas(qttyTarget,"CCS") AND sameas(qttyTargetGroup,"biomass"))
+  );
   if(sameas(targetType,"s"), !!relative target (s=share) (not applied to CCS)
     p47_implicitQttyTargetCurrent(ttot,ext_regi,qttyTarget,qttyTargetGroup) = 
       (
@@ -455,16 +469,16 @@ loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQt
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
   if(sameas(taxType,"tax"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
     else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 + pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
     );  
   );
   if(sameas(taxType,"sub"),
     if(iteration.val lt 15,
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 4;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 4);
     else
-      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = (1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) ) ** 2;
+      p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) = power(1 - pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup), 2);
     );  
   );
   put_utility "msg" / "p47_implicitQttyTargetTaxRescale before dampening:" ttot.tl ext_regi.tl  qttyTarget.tl qttyTargetGroup.tl p47_implicitQttyTargetTaxRescale(ttot,ext_regi,qttyTarget,qttyTargetGroup) ; 
