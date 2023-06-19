@@ -264,7 +264,7 @@ for (scen in common) {
   }
 }
 
-qos_default <- "multiplayer"
+qos_default <- "auto"
 if (! "qos" %in% names(scenarios_coupled)) scenarios_coupled[, "qos"] <- qos_default
 scenarios_coupled[, "qos"] <- ifelse(is.na(scenarios_coupled[, "qos"]), qos_default, scenarios_coupled[, "qos"])
 if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
@@ -677,7 +677,7 @@ if (file.exists("/p") && isTRUE(qosRuns["multiplayer"] > 0)) {
   startfile <- file.path("scripts", "multiplayer", "start.R")
   message("Some runs use multiplayer mode. Ask your colleagues to run 'Rscript ", startfile, "' in this folder.")
   message("This creates a recurrent slurm job that starts the runs for which no free priority slot was available.")
-  message("You have to terminate the 'multiplayer' jobs manually once all runs are started.")
+  message("Terminate all these multiplayer jobs by deleting the file 'scripts/multiplayer/slurmjobs.sh'.")
   message("Starting such a job for you as well to use all 'priority' slots to guarantee that the cascades finishes even if nobody wants to help you.")
   system(paste("Rscript", startfile)) # better than source to avoid changes in working directory etc
 }

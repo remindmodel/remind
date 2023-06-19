@@ -63,7 +63,7 @@ test_that("using start_bundle_coupled.R --test works", {
                          env = paste0("R_PROFILE_USER=", Rprofile))
   printIfFailed(output)
   expectSuccessStatus(output)
-  expect_true(any(grepl("TEST mode", output)))
+  expect_true(any(grepl("TEST or gamscompile mode", output)))
   expect_true(any(grepl("NOT submitted", output)))
   for (scen in rownames(config)[config$start == 1]) {
     expect_true(any(grepl(paste0("starting with C_", scen, "-rem-1"), output)))

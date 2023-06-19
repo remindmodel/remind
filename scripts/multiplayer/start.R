@@ -7,18 +7,29 @@ if (! basename(folder) == "multiplayer" || ! file.exists(Rfile)) {
   }
 }
 
-command <- paste0("sbatch --qos=short --wrap='Rscript ", Rfile, "' --job-name=multiplayer --output=log.txt ",
-                  "--error=log.txt --open-mode=append --time=10")
+bashfile <- "slurmjobs.sh"
+if (! file.exists(bashfile)) {
+  lockID <- try(gms::model_lock(file = ".lock", timeout1 = 0.05), silent = TRUE)
+  if (inherits(lockID, "try-error")) {
+    stop("Could not get lock within 3 minutes, skipping.")
+  } else {
+    write("", file = bashfile, append = TRUE)
+    gms::model_unlock(lockID)
+  }
+}
 
-squeueresult <- system(paste0("squeue -u ", Sys.info()[["user"]], " -h -o '%j %Z' | grep multiplayer"), intern = TRUE)
+command <- paste0("sbatch --qos=short --wrap='Rscript --vanilla ", Rfile, "' --job-name=multiplayer --output=log.txt ",
+                  "--error=log.txt --open-mode=append --time=5")
+
+squeueresult <- suppressWarnings(system(paste0("squeue -u ", Sys.info()[["user"]], " -h -o '%j %Z' | grep multiplayer"), intern = TRUE))
 if (any(squeueresult == paste("multiplayer", getwd()))) {
   message("\n### A multiplayer job is already running for your user in this folder. Skipping.")
 } else {
   message("\n### Thanks for entering multiplayer mode.")
-  message("A slurm job named 'multiplayer' on the 'standby' node will be started.")
-  message("It tries to start new runs on 'priority' slots every 15 minutes and starts itself again.")
-  message("Please kill this job manually once you don't need it anymore.")
-  message("Check 'scripts/multiplayer/log.txt' to see how it goes.")
+  message("A slurm job named 'multiplayer' on the 'short' qos will be started.")
+  message("It tries to start new runs on 'priority' slots regularly and starts itself again.")
+  message("If you are ready, delete 'scripts/multiplayer/slurmjobs.sh' which will stop all multiplayer runs.")
+  message("Check 'scripts/multiplayer/log.txt' to see the progress.")
   system(command)
 }
 
