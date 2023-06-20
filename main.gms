@@ -496,8 +496,10 @@ parameter
 *'
 parameter
   cm_co2_tax_growth         "growth rate of carbon tax"
+  cm_co2_tax_spread         "spread factor of CO2 prices used for the realization diffCurvPhaseIn2Lin; one implies uniform carbon prices"
 ;
   cm_co2_tax_growth = 1.05;            !! def = 1.05
+  cm_co2_tax_spread = 10;              !! def = 10
 *'  (any number >= 0): rate of exponential increase over time
 parameter
   c_macscen                 "use of mac"

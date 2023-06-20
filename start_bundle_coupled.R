@@ -52,19 +52,20 @@ helpText <- "
 
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- getwd()   # provide path to REMIND. Default: the actual path which the script is started from
-path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
+path_magpie <- paste0(getwd(), "/../magpie")
+
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
 # path_settings_coupled defines which runs will be started, coupling infos, and optimal gdx and report information that overrides path_settings_remind
 # these settings will be overwritten if you provide the path to the coupled file as first command line argument
-path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled_NGFS_v4.csv")
+path_settings_coupled <- file.path(path_remind, "config", "scenario_config_coupled_NAVIGATE_T2p6.csv")
 path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
                          # file.path(path_remind, "config", "scenario_config.csv")
 
 # You can put a prefix in front of the names of your runs, this will turn e.g. "SSP2-Base" into "prefix_SSP2-Base".
 # This allows storing results of multiple coupled runs (which have the same scenario names) in the same MAgPIE and REMIND output folders.
-prefix_runname <- "C_"
+prefix_runname <- "SUP_"
 
 # If there are existing runs you would like to take the gdxes (REMIND) or reportings (REMIND or MAgPIE) from, provide the path here and the name prefix below.
 # Note: the scenario names of the old runs have to be identical to the runs that are to be started. If they differ please provide the names of the old scenarios in the
@@ -74,7 +75,7 @@ path_magpie_oldruns <- file.path(path_magpie, "output")
 
 # If you want the script to find gdxs or reports of older runs as starting point for new runs please
 # provide the prefix of the old run names so the script can find them.
-prefix_oldruns <-  "C_"
+prefix_oldruns <-  "SUP_"
 
 # number of coupling iterations, can also be specified in path_settings_coupled
 max_iterations <- 5
@@ -143,6 +144,7 @@ if (length(argv) > 0) {
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
 } else if (! file.exists(path_settings_coupled)) {
+  message("Cannot find ", path_settings_coupled)
   possiblecsv <- Sys.glob(c(file.path("config", "scenario_config_coupled*.csv"),
                             file.path("config", "*", "scenario_config_coupled*.csv")))
   path_settings_coupled <- gms::chooseFromList(possiblecsv, type = "one coupled config file", returnBoolean = FALSE, multiple = FALSE)
