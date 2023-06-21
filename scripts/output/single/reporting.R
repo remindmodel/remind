@@ -123,18 +123,18 @@ message("### end generation of mif files at ", Sys.time())
 
 ## produce REMIND LCOE reporting *.csv based on gdx information
 if (! isTRUE(envir$cfg$gms$c_empty_model == "on") || ! grepl("^C_TESTTHAT", scenario)) {
-  message("start generation of LCOE reporting")
+  message("### start generation of LCOE reporting at ", Sys.time())
   tmp <- try(convGDX2CSV_LCOE(gdx,file=LCOE_reporting_file,scen=scenario)) # execute convGDX2MIF_LCOE
-  message("end generation of LCOE reporting")
+  message("### end generation of LCOE reporting at ", Sys.time())
 }
 
 ## generate DIETER reporting if it is needed
 ## the reporting is appended to REMIND_generic_<scenario>.MIF in "DIETER" Sub Directory
 DIETERGDX <- "report_DIETER.gdx"
 if(file.exists(file.path(outputdir, DIETERGDX))){
-  message("start generation of DIETER reporting")
+  message("start generation of DIETER reporting at ", Sys.time())
   remind2::reportDIETER(DIETERGDX,outputdir)
-  message("end generation of DIETER reporting")
+  message("end generation of DIETER reporting at ", Sys.time())
 }
 
 message("### reporting finished.")
