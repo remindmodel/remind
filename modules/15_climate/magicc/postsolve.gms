@@ -18,11 +18,11 @@
 *** Generate MAGICC scenario file
 $include "./core/magicc.gms";
 *** execute MAGICC (this is cheap enough, ~2s)
-Execute "Rscript --vanilla run_magicc.R";
+Execute "Rscript run_magicc.R";
 *** read in results
-Execute "Rscript --vanilla read_DAT_TOTAL_ANTHRO_RF.R";
+Execute "Rscript read_DAT_TOTAL_ANTHRO_RF.R";
 Execute_Loadpoint 'p15_forc_magicc'  p15_forc_magicc;
-Execute "Rscript --vanilla read_DAT_SURFACE_TEMP.R";
+Execute "Rscript read_DAT_SURFACE_TEMP.R";
 Execute_Loadpoint 'p15_magicc_temp' pm_globalMeanTemperature = pm_globalMeanTemperature;
 *** MAGICC only reports unitl 2300:
 pm_globalMeanTemperature(tall)$(tall.val gt 2300) = 0;
@@ -62,7 +62,7 @@ $ifthen.cm_magicc_tirf "%cm_magicc_temperatureImpulseResponse%" == "on"
 * thus only compute TIRF after each of the first 10 iterations, then only every fifth iteration. 
 * runtime is ca 30s, so switching on TIRF adds ca 10min to runtime
 if( ((iteration.val le 10) or ( mod(iteration.val,5 ) eq 0)) ,
-    execute "Rscript --vanilla run_magicc_temperatureImpulseResponse.R";
+    execute "Rscript run_magicc_temperatureImpulseResponse.R";
     execute_loadpoint 'pm_magicc_temperatureImpulseResponse'  pm_temperatureImpulseResponseCO2 = pm_temperatureImpulseResponse;
 );
 *NOTE the MAGICC results (*.OUT files) are from  the last pulse experiment now, so take care if reading them in after this point.
