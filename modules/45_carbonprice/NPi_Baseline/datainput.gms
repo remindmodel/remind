@@ -20,67 +20,6 @@ $offdelim
 
 pm_taxCO2eq(t,regi)$(t.val < 2025) = f45_taxCO2eqHist(t,regi);
 
-*** the next lines basically invalidate the lines before, but whatever :)
-
-* rough EU ETS carbon prices for EUR and NEU regions in 2010 and 2015
-* as higher prices in 2010 don't really reflect higher ambition than compared to 2015, a flat 10 $ (2005)/t CO2 seems reasonable
-pm_taxCO2eq("2010",regi)$sameas(regi,"EUR")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"DEU")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"ECE")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"ECS")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"ENC")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"ESC")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"ESW")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"EWN")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"FRA")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"UKI")= 10;
-pm_taxCO2eq("2010",regi)$sameas(regi,"NEU")= 2.5;
-pm_taxCO2eq("2010",regi)$sameas(regi,"NEN")= 2.5;
-pm_taxCO2eq("2010",regi)$sameas(regi,"NES")= 2.5;
-
-pm_taxCO2eq("2015",regi)$sameas(regi,"EUR")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"DEU")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"ECE")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"ECS")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"ENC")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"ESC")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"ESW")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"EWN")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"FRA")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"UKI")= 10;
-pm_taxCO2eq("2015",regi)$sameas(regi,"NEU")= 5;
-pm_taxCO2eq("2015",regi)$sameas(regi,"NEN")= 5;
-pm_taxCO2eq("2015",regi)$sameas(regi,"NES")= 5;
-
-*2020 price assumptions for all regions
-*EUR price oriented at a rough average price in the 2020-2022 period in the ETS
-
-pm_taxCO2eq("2020",regi)$sameas(regi,"EUR") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"DEU") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ECE") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ECS") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ENC") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ESC") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"ESW") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"EWN") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"FRA") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"UKI") = 25;
-pm_taxCO2eq("2020",regi)$sameas(regi,"NEU") = 10;
-pm_taxCO2eq("2020",regi)$sameas(regi,"NEN") = 10;
-pm_taxCO2eq("2020",regi)$sameas(regi,"NES") = 10;
-
-pm_taxCO2eq("2020",regi)$sameas(regi,"CAZ") = 20; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"CHA") = 5; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"IND") = 1; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"JPN") = 15; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"LAM") = 10; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"MEA") = 2.5; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"OAS") = 5; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"REF") = 2.5; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"SSA") = 1; 
-pm_taxCO2eq("2020",regi)$sameas(regi,"USA") = 20;
-
-
 *** convergence scheme post 2020: exponential increase of 5$ dollar in 2020 with 1.25% AND regional convergence
 pm_taxCO2eq(ttot,regi)$(ttot.val ge 2025) =
   (
