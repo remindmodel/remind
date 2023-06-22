@@ -10,7 +10,7 @@ library(magclass)
 ######remove for CLEAN UP------------------------
 #library(remind2)
 library(devtools)
-load_all("/p/tmp/simonlei/this-is-remind2/remind2")
+load_all("/p/projects/remind/users/simonlei/Feedstocks_clean/remind2")
 
 library(lucode2)
 library(gms)
