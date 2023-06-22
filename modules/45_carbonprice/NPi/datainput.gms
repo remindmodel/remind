@@ -4,7 +4,7 @@
 *** |  AGPL-3.0, you are granted additional permissions described in the
 *** |  REMIND License Exception, version 1.0 (see LICENSE file).
 *** |  Contact: remind@pik-potsdam.de
-*** SOF ./modules/45_carbonprice/NPi_Baseline/datainput.gms
+*** SOF ./modules/45_carbonprice/NPi/datainput.gms
 
 pm_taxCO2eq(ttot,regi)$(ttot.val lt 2020) = 0;
 
@@ -13,7 +13,7 @@ pm_taxCO2eq(ttot,regi)$(ttot.val lt 2020) = 0;
 parameter f45_taxCO2eqHist(ttot,all_regi)       "historic CO2 prices ($/tCO2)"
 /
 $ondelim
-$include "./modules/45_carbonprice/NPi_Baseline/input/pm_taxCO2eqHist.cs4r"
+$include "./modules/45_carbonprice/NPi/input/pm_taxCO2eqHist.cs4r"
 $offdelim
 /
 ;
@@ -32,4 +32,4 @@ pm_taxCO2eq(ttot,regi) = pm_taxCO2eq(ttot,regi) * sm_DptCO2_2_TDpGtC;
 
 display pm_taxCO2eq;
 
-*** EOF ./modules/45_carbonprice/NPi_Baseline/datainput.gms
+*** EOF ./modules/45_carbonprice/NPi/datainput.gms
