@@ -263,8 +263,8 @@ prepare <- function() {
                       paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data
-  if(!setequal(input_new, input_old) | cfg$force_download) {
-      message(if (cfg$force_download) "You set 'cfg$force_download = TRUE'"
+  if (! setequal(input_new, input_old) || isTRUE(cfg$force_download)) {
+      message(if (isTRUE(cfg$force_download)) "You set 'cfg$force_download = TRUE'"
               else "Your input data are outdated or in a different regional resolution",
               ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
@@ -277,7 +277,7 @@ prepare <- function() {
   }
 
   # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
-  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
+  if (isTRUE(cfg$gms$carbonprice == "NDC") || isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
     cat("\nRun scripts/input/prepare_NDC.R.\n")
     source("scripts/input/prepare_NDC.R")
     prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)

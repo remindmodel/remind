@@ -199,7 +199,7 @@ if (comp %in% c("comparison", "export")) {
   if (! exists("source_include")) {
     # for selected output scripts, only slurm configurations matching these regex are available
     slurmExceptions <- if ("reporting" %in% output) "--mem=[0-9]*[0-9]{3}" else NULL
-    if (all(output %in% outputUsingDirect)) slurmConfig <- "direct"
+    if (any(output %in% outputUsingDirect)) slurmConfig <- "direct"
     # if this script is not being sourced by another script but called from the command line via Rscript let the user
     # choose the slurm options
     if (!exists("slurmConfig")) {
@@ -257,38 +257,38 @@ if (comp %in% c("comparison", "export")) {
       message("\nNo output generation, as output was set to NA, as for example for --testOneRegi or --quick.")
     } else {
       message("\nStarting output generation for ", outputdir, "\n")
-      for (rout in output) {
-        name <- paste(rout, ".R", sep = "")
-        if ("--test" %in% flags) {
-          message("Test mode, not executing ", paste0("scripts/output/single/", name))
-        } else {
-          if (file.exists(paste0("scripts/output/single/", name))) {
-            if (slurmConfig == "direct" | rout %in% outputUsingDirect) {
-              # execute output script directly (without sending it to slurm)
-              message("Executing ", name)
-              tmp.env <- new.env()
-              tmp.error <- try(sys.source(paste0("scripts/output/single/", name), envir = tmp.env))
-              #        rm(list=ls(tmp.env),envir=tmp.env)
-              rm(tmp.env)
-              gc()
-              if (!is.null(tmp.error)) {
-                warning("Script ", name, " was stopped by an error and not executed properly!")
-              }
-            } else {
-              # send the output script to slurm
-              logfile <- paste0(outputdir, "/log_", rout, ".txt")
-              slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
-                                 " --mail-type=END --comment=", rout, " --wrap=\"Rscript scripts/output/single/", rout,
-                                 ".R  outputdir=", outputdir, "\"")
-              message("Sending to slurm: ", name, ". Find log in ", logfile)
-              system(slurmcmd)
-              Sys.sleep(1)
+      name <- paste0(output, ".R")
+      if ("--test" %in% flags) {
+        message("Test mode, not executing scripts/output/single/", paste(name, collapse = ", "))
+      } else if (all(file.exists(paste0("scripts/output/single/", name)))) {
+        if (slurmConfig == "direct") {
+          # execute output script directly (without sending it to slurm)
+          for (n in name) {
+            message("Executing ", n)
+            tmp.env <- new.env()
+            tmp.error <- try(sys.source(paste0("scripts/output/single/", n), envir = tmp.env))
+            #        rm(list=ls(tmp.env),envir=tmp.env)
+            rm(tmp.env)
+            gc()
+            if (!is.null(tmp.error)) {
+              warning("Script ", n, " was stopped by an error and not executed properly!")
             }
           }
+        } else {
+          # send the output script to slurm
+          logfile <- file.path(outputdir, "log_output.txt")
+          Rscripts <- paste0("Rscript scripts/output/single/", name, " outputdir=", outputdir, collapse = "; ")
+          slurmcmd <- paste0("sbatch ", slurmConfig, " --job-name=", logfile, " --output=", logfile,
+                       " --mail-type=END --comment=output.R --wrap='", Rscripts, "'")
+          message("Sending to slurm: ", paste(name, collapse = ", "), ". Find log in ", logfile)
+          system(slurmcmd)
         }
+        # finished
+        message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting job for "), "output generation for ", outputdir, "!\n")
+      } else {
+        warning("Skipping ", outputdir, " because some output script selected could not be found ",
+                "in scripts/output/single: ", name[! name %in% dir("scripts/output/single")])
       }
-      # finished
-      message("\nFinished ", ifelse(slurmConfig == "direct", "", "starting jobs for "), "output generation for ", outputdir, "!\n")
     }
 
     rm(source_include)

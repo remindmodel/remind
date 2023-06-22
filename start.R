@@ -73,12 +73,16 @@ config.file <- NULL
 if(!exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 argv <- argv[! grepl("^-", argv) & ! grepl("=", argv)]
 # check if user provided any unknown arguments or config files that do not exist
-if (length(argv) > 0) {
-  file_exists <- file.exists(argv)
-  if (sum(file_exists) > 1) stop("You provided more than one file, start.R can only handle one.")
-  if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
-  # set config file to not known parameter where the file actually exists
-  config.file <- argv[[1]]
+if (length(argv) == 1) {
+  if (file.exists(argv)) {
+    config.file <- argv
+  } else if (file.exists(file.path("config", argv))) {
+    config.file <- file.path("config", argv)
+  } else {
+    stop("Unknown parameter provided: ", paste(argv, collapse = ", "))
+  }
+} else if (length(argv) > 1) {
+  stop("You provided more than one file or other command line argument, start.R can only handle one.")
 }
 
 if ("--help" %in% flags) {

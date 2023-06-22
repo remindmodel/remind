@@ -9,14 +9,14 @@
 ##################################################################
 
 # This function will be called in start_coupled() instead of the regular
-# submit() (for REMIND) and start_run (for MAgPIE) functions if the debug
+# submit() (for REMIND) and start_run (for MAgPIE) functions if the debug 
 # mode is set to TRUE in start_coupled().
-# It creates empty output folders and copies dummy reports into them
+# It creates empty output folders and copies dummy reports into them 
 # without calling the start scripts of the models.
 
 debug_coupled <- function(model = NULL, cfg) {
    if(is.null(model)) stop("COUPLING DEBUG: Coupling was run in debug mode but no model was specified")
-
+   
    message("   Creating results folder ", cfg$results_folder)
    if (!file.exists(cfg$results_folder)) {
      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
@@ -27,7 +27,7 @@ debug_coupled <- function(model = NULL, cfg) {
      unlink(cfg$results_folder, recursive = TRUE)
      dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
    }
-
+ 
    if (model == "rem") {
       message("COUPLING DEBUG: assuming REMIND")
       report <- "/home/dklein/REMIND_generic_C_SSP2EU-Tall-PkBudg1020-imp-rem-5.mif"
@@ -39,9 +39,9 @@ debug_coupled <- function(model = NULL, cfg) {
    } else {
      stop("COUPLING DEBUG: Coupling was started in debug mode but model is unknown")
    }
-
+   
    message("COUPLING DEBUG: to = ",to)
-
+   
    if(!file.copy(from = report, to = to)) message("Could not copy ", report, " to ", to)
    return(cfg$results_folder)
 }
@@ -116,7 +116,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     cfg_rem$title          <- paste0(runname,"-rem-",i)
     cfg_rem$force_replace  <- debug # overwrite existing output folders for debug
     #cfg_rem$gms$biomass    <- "magpie_linear"
-
+    
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
       cfg_rem$output <- intersect(c("reporting", "emulator", "rds_report", "reportingREMIND2MAgPIE"), cfg_rem_original)
@@ -268,7 +268,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   if (length(rownames(cfg_rem$RunsUsingTHISgdxAsInput)) > 0) {
     # fulldatapath may be written into gdx paths of subsequent runs
     fulldatapath <- file.path(path_remind, cfg_rem$results_folder, "fulldata.gdx")
-    stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 
     # Loop possible subsequent runs, saving path to fulldata.gdx of current run (== cfg_rem$title) to their cfg files
 
