@@ -512,8 +512,9 @@ q_emiTe(t,regi,emiTe(enty))..
 *' from secondary to final energy transformation (some air pollutants), or
 *' transformations within the chain of CCS steps (Leakage).
 ***-----------------------------------------------------------------------------
-
-q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) OR (pe2se(enty,enty2,te) AND sameas(enty3,"cco2")) ) ..
+q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3) 
+                                                    OR (pe2se(enty,enty2,te) 
+                                                    AND sameas(enty3,"cco2")) ) ..
   vm_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)
   =e=
     sum(emi2te(enty,enty2,te,enty3),
@@ -539,7 +540,6 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
 *later we can add a term to represent waste incineration and the diff between using synfuels and fossil fuels as feedstocks
       )  
 ;
-
 ***--------------------------------------------------
 *' energy emissions from fuel extraction  
 ***--------------------------------------------------
@@ -599,22 +599,24 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 ***--------------------------------------------------
 q_emiAllMkt(t,regi,emi,emiMkt)..
   vm_emiAllMkt(t,regi,emi,emiMkt)
-	=e=
-	vm_emiTeMkt(t,regi,emi,emiMkt)
-*** Non-energy sector emissions. Note: These are emissions from all MAC curves. 
-*** So, this includes fugitive emissions, which are sometimes also subsumed under the term energy emissions. 
-	+	sum(emiMacSector2emiMac(emiMacSector,emiMac(emi))$macSector2emiMkt(emiMacSector,emiMkt),
-   	vm_emiMacSector(t,regi,emiMacSector)
-  )
-*** CDR from CDR module
-	+ vm_emiCdr(t,regi,emi)$(sameas(emi,"co2") AND sameas(emiMkt,"ETS")) 
-*** Exogenous emissions
-  +	pm_emiExog(t,regi,emi)$(sameas(emiMkt,"other"))
-*ADD here non energy emi from chem sector (feedstock emissions):
+  =e=
+    vm_emiTeMkt(t,regi,emi,emiMkt)
+    !! Non-energy sector emissions. Note: These are emissions from all MAC
+    !! curves.  So, this includes fugitive emissions, which are sometimes also
+    !! subsumed under the term energy emissions. 
+  + sum((emiMacSector2emiMac(emiMacSector,emiMac(emi)),
+         macSector2emiMkt(emiMacSector,emiMkt)),
+      vm_emiMacSector(t,regi,emiMacSector)
+    )
+    !! CDR from CDR module
+  + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") ) 
+    !! Exogenous emissions
+  + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
+    !! non energy emi from chem sector (feedstock emissions):
   + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
-        se2fe(entySe,entyFe,te)), 
+         se2fe(entySe,entyFe,te)), 
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
-       * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
+    * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
     )
 ;
 
