@@ -487,8 +487,10 @@ parameter
 *'
 parameter
   cm_co2_tax_2020           "level of co2 tax in year 2020 in $ per t CO2eq, makes sense only for emiscen eq 9 and 45_carbonprice exponential"
+  cm_co2_tax_spread         "spread factor of CO2 prices used for the realization diffCurvPhaseIn2Lin; one implies uniform carbon prices"
 ;
   cm_co2_tax_2020   = -1;              !! def = -1
+  cm_co2_tax_spread = 10;              !! def = 10 
 *' * (-1): default setting equivalent to no carbon tax
 *' * (any number >= 0): tax level in 2020, with 5% exponential increase over time
 *'
