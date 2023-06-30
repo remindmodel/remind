@@ -30,7 +30,7 @@ pm_taxCO2eq(ttot,regi)$( (ttot.val ge 2025) AND (ttot.val le 2070)) =
         ) ** 2 
     )
 ;
-pm_taxCO2eq(ttot,regi)$(ttot.val gt 2070) = pm_taxCO2eq("2070",regi);
+pm_taxCO2eq(ttot,regi)$(ttot.val gt 2070) = pm_taxCO2eq("2070",regi) + (ttot.val - 2070) * 0.5;
 
 *** rescale everything to $/t CO2
 pm_taxCO2eq(ttot,regi) = pm_taxCO2eq(ttot,regi) * sm_DptCO2_2_TDpGtC;
