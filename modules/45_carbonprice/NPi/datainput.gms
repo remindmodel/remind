@@ -20,12 +20,17 @@ $offdelim
 
 pm_taxCO2eq(t,regi)$(t.val < 2025) = f45_taxCO2eqHist(t,regi);
 
-*** convergence scheme post 2020: exponential increase of 5$ dollar in 2020 with 1.25% AND regional convergence
-pm_taxCO2eq(ttot,regi)$(ttot.val ge 2025) =
-  (
-     pm_taxCO2eq("2020",regi)    * max(2100-ttot.val,0)
-   + 5 * 1.0125**(ttot.val-2020) * min(ttot.val-2020,2100-2020)
-  )/(2100-2020);
+*** convergence scheme post 2020: parabolic convergence up to 40$/tCO2 in the convergence year (here chosen as 2070) and then linear increase of 2$/year afterwards
+pm_taxCO2eq(ttot,regi)$( (ttot.val ge 2025) AND (ttot.val le 2070)) =
+  pm_taxCO2eq("2020",regi) 
+  + ( 
+      ( 40 - pm_taxCO2eq("2020",regi) ) 
+      * ( 
+          (ttot.val - 2020) / (2070 - 2020) 
+        ) ** 2 
+    )
+;
+pm_taxCO2eq(ttot,regi)$(ttot.val gt 2070) = pm_taxCO2eq("2070",regi);
 
 *** rescale everything to $/t CO2
 pm_taxCO2eq(ttot,regi) = pm_taxCO2eq(ttot,regi) * sm_DptCO2_2_TDpGtC;
