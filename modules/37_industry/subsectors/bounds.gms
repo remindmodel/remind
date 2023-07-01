@@ -21,7 +21,7 @@ vm_cesIO.up(ttot,regi,"ue_steel_secondary")
       p37_cesIO_up_steel_secondary(ttot,regi,"%cm_GDPscen%")
     );
 $elseif.secondary_steel_bound "%cm_secondary_steel_bound%" == "scenario"
-if (cm_startyear eq 2005,
+$ifthen.rcp_scen "%cm_rcp_scen%" == "none"
   !! In no-policy scenarios, tight bounds representing usual scrap recycling
   !! rates apply.  Only 10% of the difference between projected secondary
   !! steel production and the upper bound with increased recycling rates are
@@ -35,12 +35,54 @@ if (cm_startyear eq 2005,
       + 1
       )
     * pm_fedemand(t,regi,"ue_steel_secondary");
-else
+$elseif.rcp_scen "%cm_rcp_scen%" == "rcp85"
+  !! In no-policy scenarios, tight bounds representing usual scrap recycling
+  !! rates apply.  Only 10% of the difference between projected secondary
+  !! steel production and the upper bound with increased recycling rates are
+  !! available for increased production.
+  vm_cesIO.up(t,regi,"ue_steel_secondary")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+        / pm_fedemand(t,regi,"ue_steel_secondary")
+        - 1
+        )
+      / 10
+      + 1
+      )
+    * pm_fedemand(t,regi,"ue_steel_secondary");
+$elseif.rcp_scen "%cm_rcp_scen%" == "rcp60"
+  !! In no-policy scenarios, tight bounds representing usual scrap recycling
+  !! rates apply.  Only 10% of the difference between projected secondary
+  !! steel production and the upper bound with increased recycling rates are
+  !! available for increased production.
+  vm_cesIO.up(t,regi,"ue_steel_secondary")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+        / pm_fedemand(t,regi,"ue_steel_secondary")
+        - 1
+        )
+      / 10
+      + 1
+      )
+    * pm_fedemand(t,regi,"ue_steel_secondary");
+$elseif.rcp_scen "%cm_rcp_scen%" == "rcp45"
+  !! In no-policy scenarios, tight bounds representing usual scrap recycling
+  !! rates apply.  Only 10% of the difference between projected secondary
+  !! steel production and the upper bound with increased recycling rates are
+  !! available for increased production.
+  vm_cesIO.up(t,regi,"ue_steel_secondary")
+    = ( ( p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%")
+        / pm_fedemand(t,regi,"ue_steel_secondary")
+        - 1
+        )
+      / 10
+      + 1
+      )
+    * pm_fedemand(t,regi,"ue_steel_secondary");
+$else.rcp_scen
   !! In policy scenarios, secondary steel production can be increased up to the
   !! limit of theoretical scrap availability.
   vm_cesIO.up(t,regi,"ue_steel_secondary")
     = p37_cesIO_up_steel_secondary(t,regi,"%cm_GDPscen%");
-);
+$endif.rcp_scen
 $endif.secondary_steel_bound
 $endif.CES_parameters
 
