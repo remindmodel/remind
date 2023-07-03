@@ -115,7 +115,7 @@ p11_share_sector(ttot,"peoil","seliqfos","refliq","res",regi)   = (1-pm_share_tr
 $ELSE.sectorshares
 
 
-if (cm_emiscen eq 1,
+if (cm_startyear eq 2005,
   Execute_Loadpoint 'input'      p11_cesIO = vm_cesIO.l;
 else
   Execute_Loadpoint 'input_ref'  p11_cesIO = vm_cesIO.l;

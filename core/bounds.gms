@@ -209,7 +209,7 @@ if(cm_1stgen_phaseout=1,
 *mh Implementation of scenarios where capacities are fixed at BAU level:
 *** -----------------------------------------------------------
 
-if (cm_emiscen ne 1,
+if (cm_startyear gt 2005,
   if (c_solscen eq 3,
     vm_cap.up(t,regi,"spv",rlf)$(t.val ge 2010)  = p_boundtmp(t,regi,"spv",rlf);
   );
