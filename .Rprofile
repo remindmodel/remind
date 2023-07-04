@@ -8,7 +8,9 @@ local({ # prevent variables defined here from ending up in the global env
 # Snapshots must be compatible to the R version used. If you are using R 4.1
 # make sure the selected snapshot's name ends with '_R4'.
 
-snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_03_17_R4"
+#snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_03_17_R4"  # not working for MAgPIE
+#snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_03_04_R4"  # ok for MAgPIE
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_03_24_R4"  # ok for MAgPIE
 
 activateSnapshot <- function(snapshot) {
   stopifnot(file.exists(snapshot))
