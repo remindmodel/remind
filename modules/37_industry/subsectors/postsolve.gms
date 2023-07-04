@@ -14,21 +14,21 @@ pm_FEPrice(ttot,regi,entyFE,"indst",emiMkt)$( abs(qm_budget.m(ttot,regi)) gt sm_
 
 *** calculate reporting parameters for FE per subsector and SE origin to make R
 *** reporting easier
-*** total FE per energy carrier and emissions market in industry (sum over 
+*** total FE per energy carrier and emissions market in industry (sum over
 *** subsectors)
 o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt)
   = sum((fe2ppfEn37(entyFe,in),secInd37_2_pf(secInd37,in),
-                         secInd37_emiMkt(secInd37,emiMkt)), 
+                         secInd37_emiMkt(secInd37,emiMkt)),
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     );
 
 *** share of subsector in FE industry energy carriers and emissions markets
-o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$( 
+o37_shIndFE(ttot,regi,entyFe,secInd37,emiMkt)$(
                                     o37_demFeIndTotEn(ttot,regi,entyFe,emiMkt) )
   = sum(( fe2ppfEn37(entyFe,in),
           secInd37_2_pf(secInd37,in),
-          secInd37_emiMkt(secInd37,emiMkt)), 
+          secInd37_emiMkt(secInd37,emiMkt)),
       (vm_cesIO.l(ttot,regi,in)
       +pm_cesdata(ttot,regi,in,"offset_quantity"))
     )
@@ -47,16 +47,16 @@ o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
 *** NOTE: not used for pm_IndstCO2Captured anymore since it did not take into
 *** account the different emission factors of FE carriers.  But used in remind2,
 *** so kept for backwards compatibility.
-o37_demFeIndSub_SecCC(ttot,regi,secInd37) 
+o37_demFeIndSub_SecCC(ttot,regi,secInd37)
   = sum((se2fe(entySe,entyFe,te),macBaseInd37(entyFe,secInd37),
-                                 sector2emiMkt("indst",emiMkt)), 
+                                 sector2emiMkt("indst",emiMkt)),
       o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
     );
 
 *** industry captured fuel CO2
 pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
                   macBaseInd37(entyFE,secInd37)
-              AND sum(se2fe(entySE2,entyFE,te), 
+              AND sum(se2fe(entySE2,entyFE,te),
                     o37_demFEindsub(ttot,regi,entySE2,entyFE,secInd37,emiMkt)) )
   = ( o37_demFEindsub(ttot,regi,entySE,entyFE,secInd37,emiMkt)
     * sum(se2fe(entySE2,entyFE,te),

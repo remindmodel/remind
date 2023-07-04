@@ -20,4 +20,3 @@ $Ifi "%phase%" == "presolve" $include "./modules/37_industry/subsectors/presolve
 $Ifi "%phase%" == "postsolve" $include "./modules/37_industry/subsectors/postsolve.gms"
 *######################## R SECTION END (PHASES) ###############################
 *** EOF ./modules/37_industry/subsectors/realization.gms
-
