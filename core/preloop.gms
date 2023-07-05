@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -186,6 +186,11 @@ $ENDIF.out
 *** load PE, SE, FE price parameters from reference gdx to have prices in time steps before cm_startyear
 if (cm_startyear gt 2005,
 execute_load "input_ref.gdx", pm_PEPrice, pm_SEPrice, pm_FEPrice;
+);
+
+*** load vm_capEarlyReti(ttot,regi,te) from reference gdx to have a reference point for q_smoothphaseoutCapEarlyReti and q_limitCapEarlyReti
+if (cm_startyear gt 2005,
+Execute_Loadpoint 'input_ref' vm_capEarlyReti.l = vm_capEarlyReti.l;
 );
 
 *** EOF ./core/preloop.gms

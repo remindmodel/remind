@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -24,6 +24,11 @@ helpText <- "
 #' Rscript start_bundle_coupled.R scenario_config_coupled_*.csv
 #' Rscript start_bundle_coupled.R --test scenario_config_coupled_*.csv
 #'
+#' scenario_config_coupled_*.csv must be a coupled scenario config .csv file (usually
+#' in the config/ directory), which corresponds to a normal scenario_config_*.csv file.
+#' Using this will start all REMIND runs specified by \"start = 1\" in that file
+#' (check the startgroup option to start a specific group).
+#'
 #' Control the script's behavior by providing additional arguments:
 #'
 #'   --help, -h:        show this help text and exit
@@ -35,7 +40,9 @@ helpText <- "
 #'                      path_settings_coupled cannot be found.
 #'   --test, -t:        Test scenario configuration and write the RData files
 #'                      in the REMIND main folder without starting the runs.
-#'
+#'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
+#'                       everything specified by \"start = 1\", instead start everything
+#'                       specified by \"start = MYGROUP\"
 "
 
 ########################################################################################################
@@ -96,7 +103,8 @@ blue  <- "\033[0;34m"
 NC    <- "\033[0m"   # No Color
 
 # define arguments that are accepted (test for backward compatibility)
-flags <- lucode2::readArgs("startnow", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
+startgroup <- "1"
+flags <- lucode2::readArgs("startgroup", .flags = c(h = "--help", g = "--gamscompile", i = "--interactive", p = "--parallel", t = "--test"))
 if (! exists("argv")) argv <- commandArgs(trailingOnly = TRUE)
 if ("--help" %in% flags) {
   message(helpText)
@@ -178,12 +186,9 @@ stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
 settings_coupled <- readCheckScenarioConfig(path_settings_coupled, path_remind)
 settings_remind  <- readCheckScenarioConfig(path_settings_remind, path_remind)
 
-if (! exists("startnow") && ("--interactive" %in% flags || ! any(settings_coupled$start == 1))) {
-  settings_coupled$start <- gms::chooseFromList(setNames(rownames(settings_coupled), settings_coupled$start),
-                            type = "runs", returnBoolean = TRUE) * 1 # all with '1' will be started
-}
-if (! exists("startnow")) startnow <- "1"
-scenarios_coupled  <- subset(settings_coupled, subset = (start == startnow))
+scenarios_coupled <- selectScenarios(settings = settings_coupled,
+                                     interactive = "--interactive" %in% flags,
+                                     startgroup = startgroup)
 
 missing <- setdiff(rownames(scenarios_coupled),rownames(settings_remind))
 if (!identical(missing, character(0))) {
@@ -207,7 +212,7 @@ if (! identical(common, character(0))) {
   message("The following ", length(common), " scenarios will be started:")
   message("  ", paste(common, collapse = ", "))
 } else {
-  stop("No scenario found with start=", startnow, " in ", basename(path_settings_coupled), ".")
+  stop("No scenario found with start=", startgroup, " in ", basename(path_settings_coupled), ".")
 }
 message("")
 
@@ -348,8 +353,10 @@ for(scen in common){
   }
   cfg_mag <- check_config(cfg_mag, reference_file=paste0(path_magpie,"config/default.cfg"), modulepath = paste0(path_magpie,"modules/"))
   
-  # GHG prices will be set to zero (in start_run() of MAgPIE) until and including the year specified here
-  cfg_mag$mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"] 
+  # GHG prices will be set to zero (in MAgPIE) until and including the year specified here
+  cfg_mag$gms$c56_mute_ghgprices_until <- scenarios_coupled[scen, "no_ghgprices_land_until"]
+  # To ensure backwards compatibility keep the old switch here for a while (has been transformed into a gms switch in MAgPIE)
+  cfg_mag$mute_ghgprices_until <- cfg_mag$gms$c56_mute_ghgprices_until
   
   # Edit remind main model file, region settings and input data revision based on scenarios table, if cell non-empty
   for (switchname in intersect(c("model", "regionmapping", "extramappings_historic", "inputRevision"), names(settings_remind))) {
@@ -376,6 +383,9 @@ for(scen in common){
   if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
     cfg_rem$cm_nash_autoconverge_lastrun <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
   }
+
+  # abort on too long paths ----
+  cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
 
   for (i in max_iterations:start_iter_first) {
     fullrunname <- paste0(runname, "-rem-", i)
@@ -504,12 +514,14 @@ for(scen in common){
   }
   if(!is.null(path_mif_ghgprice_land)) message("ghg_price_mag : ",ifelse(file.exists(path_mif_ghgprice_land), green,red), path_mif_ghgprice_land, NC, "\n",sep="")
   message("path_report   : ",ifelse(file.exists(path_report),green,red), path_report, NC)
-  message("no_ghgprices_land_until: ", cfg_mag$mute_ghgprices_until)
+  message("no_ghgprices_land_until: ", cfg_mag$gms$c56_mute_ghgprices_until)
 
   if ("--gamscompile" %in% flags) {
     message("Compiling ", fullrunname)
+    lockID <- gms::model_lock()
     gcresult <- runGamsCompile(if (is.null(cfg_rem$model)) "main.gms" else cfg_rem$model, cfg_rem,
                                interactive = "--interactive" %in% flags)
+    gms::model_unlock(lockID)
     errorsfound <- errorsfound + ! gcresult
   }
   if (!start_now) {

@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -13,7 +13,7 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae")
+  devtools::load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
   require(mrremind)
   require(mrvalidation)
 
@@ -131,20 +131,13 @@ prepare <- function() {
     create_input_for_45_carbonprice_exogenous(as.character(cfg$files2export$start["input_carbonprice.gdx"]))
   }
 
-  # Calculate CES configuration string
-  cfg$gms$cm_CES_configuration <- paste0("indu_",cfg$gms$industry,"-",
-                                         "buil_",cfg$gms$buildings,"-",
-                                         "tran_",cfg$gms$transport,"-",
-                                         "POP_", cfg$gms$cm_POPscen, "-",
-                                         "GDP_", cfg$gms$cm_GDPscen, "-",
-                                         "En_",  cfg$gms$cm_demScen, "-",
-                                         "Kap_", cfg$gms$capitalMarket, "-",
-                                         if(cfg$gms$cm_calibration_string == "off") "" else paste0(cfg$gms$cm_calibration_string, "-"),
-                                         "Reg_", madrat::regionscode(cfg$regionmapping))
+  cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg)
 
   # write name of corresponding CES file to datainput.gms
   replace_in_file(file    = "./modules/29_CES_parameters/load/datainput.gms",
-                  content = paste0('$include "./modules/29_CES_parameters/load/input/',cfg$gms$cm_CES_configuration,'.inc"'),
+                  content = paste0('$include "',
+                                   "./modules/29_CES_parameters/load/input/",
+                                   cfg$gms$cm_CES_configuration, ".inc\""),
                   subject = "CES INPUT")
 
   # If a path to a MAgPIE report is supplied use it as REMIND input (used for REMIND-MAgPIE coupling)

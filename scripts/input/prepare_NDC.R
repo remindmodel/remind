@@ -1,4 +1,4 @@
-# |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+# |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 # |  authors, and contributors see CITATION.cff file. This file is part
 # |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 # |  AGPL-3.0, you are granted additional permissions described in the
@@ -11,7 +11,7 @@ prepare_NDC<-function(gdx, cfg){
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(lucode2,quietly=TRUE,warn.conflicts =FALSE)
   library(gdx,quietly=TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/cdr-portfolio-oae")
+  devtools::load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
 
   ############################# BASIC CONFIGURATION #############################
 

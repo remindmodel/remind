@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -37,8 +37,8 @@ p33_fedem("weathering", "fedie") = 0.3;
 p33_LimRock(regi) = pm_pop("2005",regi) / sum(regi2,pm_pop("2005",regi2));
 
 *** ocean alkalinity enhancement input data
-s33_oae_rock_demand = 1.7; !! limestone from Renforth et al. 2013 TODO document other rock types
-s33_CO2_chem_decomposition = 1.0; !! can be set to zero if no calcination is considered
+s33_OAE_rock_demand = 1.7; !! limestone from Renforth et al. 2013 TODO document other rock types
+s33_OAE_chem_decomposition = 0.44 * s33_oae_rock_demand; !! can be set to zero if no calcination is considered
 
 !! TODO describe the sources, plug in the right numbers
 !! feels from OL csv: 1.251753282
@@ -47,6 +47,6 @@ s33_CO2_chem_decomposition = 1.0; !! can be set to zero if no calcination is con
 
 p33_fedem("oae", "feels") = 1.8 * 3.67; !! TODO change this to s33_oae_rock_demand * energy demand per 1t rock
 p33_fedem("oae", "fehes") = 5.4 * 3.67; !! TODO change this to s33_oae_rock_demand * energy demand per 1t rock
-p33_fedem("oae", "fedie") = 0.1 * s33_oae_rock_demand * 3.67; !! 0.1EJ / 1 Gt rock
+p33_fedem("oae", "fedie") = 0.1 * s33_OAE_rock_demand * 3.67; !! 0.1EJ / 1 Gt rock
 
 *** EOF ./modules/33_CDR/portfolio/datainput.gms

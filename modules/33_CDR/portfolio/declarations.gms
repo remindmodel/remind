@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -13,8 +13,8 @@ s33_costs_fix               "fixed costs for mining, grinding, spreading [T$/Gt 
 s33_step                    "size of bins in v33_weathering_onfield [Gt stone]"
 
 *KK scalars for oae*
-s33_oae_rock_demand         "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
-s33_CO2_chem_decomposition  "the fraction of CO2 that comes from chemical decomposition in the calcination process"
+s33_OAE_rock_demand         "the amount of rock required to sequester 1GtC [Gt rock / GtC]"
+s33_OAE_chem_decomposition  "the fraction of CO2 that comes from chemical decomposition in the calcination process"
 ;
 
 parameters
@@ -38,9 +38,9 @@ v33_emi(ttot,all_regi,all_te)               "negative emissions from CDR [GtC / 
 equations
 q33_demFeCDR(ttot,all_regi,all_enty)  "CDR demand balance for final energy"
 q33_emiCDR(ttot,all_regi)  "calculates the (negative) emissions due to CDR technologies"
-q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
-q33_H2bio_lim(ttot,all_regi,all_te)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
 q33_capconst(ttot,all_regi,all_te)  "calculates amount of carbon captured by DAC and OAE"
+q33_ccsbal(ttot,all_regi,all_enty,all_enty,all_te)  "calculates CCS emissions from CDR technologies"
+q33_H2bio_lim(ttot,all_regi)  "limits H2 from bioenergy to FE - H2 demand from CDR, i.e. no H2 from bioenergy for DAC"
 q33_DAC_FEdemand(ttot,all_regi,all_enty)  "calculates final energy demand from no transformation technologies (e.g. enhanced weathering)"
 q33_EW_capconst(ttot,all_regi)  "calculates amount of ground rock spred on fields"
 q33_EW_onfield_tot(ttot,all_regi,rlf,rlf)  "total amount of ground rock on fields"

@@ -1,4 +1,4 @@
-*** |  (C) 2006-2022 Potsdam Institute for Climate Impact Research (PIK)
+*** |  (C) 2006-2023 Potsdam Institute for Climate Impact Research (PIK)
 *** |  authors, and contributors see CITATION.cff file. This file is part
 *** |  of REMIND and licensed under AGPL-3.0-or-later. Under Section 7 of
 *** |  AGPL-3.0, you are granted additional permissions described in the
@@ -25,13 +25,14 @@ v33_FEdemand.fx(t,regi,entyFe,entyFe2,te_all33)$(not te_used33(te_all33) and fe2
 
 *' Bounds for DAC (cm_emiscen ne 1 avoids setting the boundary for the business-as-usual scenario)
 if (te_used33("dac") and cm_emiscen ne 1,
-    vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge max(2025,cm_startyear))) = 1e-7;
+    vm_cap.lo(t,regi,"dac",rlf)$(teNoTransform2rlf33("dac",rlf) AND (t.val ge max(2025,cm_startyear))) = sm_eps;
 );
 
 *' Bounds for enhanced weathering
 if(te_used33("weathering"),
     v33_EW_onfield_tot.up(t,regi,rlf_cz33,rlf) = s33_step;
     v33_EW_onfield.fx(t,regi,rlf_cz33,rlf)$(rlf.val gt 10) = 0; !! rlfs that are not used
+    v33_EW_onfield_tot.fx(t,regi,rlf_cz33,rlf)$(rlf.val gt 10) = 0; !! rlfs that are not used
     v33_EW_onfield.fx(ttot,regi,rlf_cz33,rlf)$(ttot.val lt max(2025,cm_startyear)) = 0.0;
     v33_EW_onfield_tot.fx(ttot,regi,rlf_cz33,rlf)$(ttot.val lt max(2025,cm_startyear)) = 0.0;
 );
