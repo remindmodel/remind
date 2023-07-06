@@ -18,10 +18,16 @@ p47_implicitQttyTargetTaxRescale_iter("1", "2030",ext_regi,qttyTarget,qttyTarget
 $endIf.cm_implicitQttyTarget
 
 *** RR this should be replaced as soon as non-energy is treated endogenously in the model
-*** EUR in 2030 ~ 90Mtoe (90 * 10^6 toe -> 90 * 10^6 toe * 41.868 GJ/toe -> 3768.12 * 10^6 GJ * 10^-9 EJ/GJ -> 3.76812 EJ * 1 TWa/31.536 EJ -> 0.1194863 TWa) EU27 = 92% EU28"
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.1194863;
-p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.11;
+*** non-energy use values are calculated by taking the time path as contained in pm_fe_nechem.cs4r (where eg the 2030 value for EU27 is 91.6% of the 2020 value) and rescaling that with historic non-energy values from Eurostat
+*** historical values can be found at: https://ec.europa.eu/eurostat/databrowser/bookmark/f7c8aa0e-3cf6-45d6-b85c-f2e76e90b4aa?lang=en
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.916; 
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.924;
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EU27_regi")) = 0.121606*0.815; 
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "EUR_regi")) = 0.13*0.841;
 
+p47_nonEnergyUse("2030",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.928; 
+p47_nonEnergyUse("2045",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.848; 
+p47_nonEnergyUse("2050",ext_regi)$(sameas(ext_regi, "DEU")) = 0.03*0.822; 
 ***--------------------------------------------------
 *** Emission markets (EU Emission trading system and Effort Sharing)
 ***--------------------------------------------------

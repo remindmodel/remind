@@ -12,6 +12,8 @@
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 SETS
+numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /  
+
 * Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
