@@ -300,8 +300,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
           subseq.env$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --mem=8000 --job-name=", subseq.env$fullrunname, " --output=", logfile,
+        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
         " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
+        if (subseq.env$numberOfTasks == 1) " --mem=8000",
         " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
@@ -344,7 +345,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       source_include <- TRUE
       runs <- runname
       folder <- "./output"
-      source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE)
+      pci <- try(source("scripts/output/comparison/plot_compare_iterations.R", local = TRUE))
+      if (inherits(pci, "try-error")) errorsfound <- errorsfound + 1
       cs_runs <- findIterations(runname, modelpath = remindpath, latest = FALSE)
       cs_name <- paste0("compScen-rem-1-", max_iterations, "_", runname)
       cs_qos <- if (!isFALSE(run_compareScenarios)) run_compareScenarios else "short"
@@ -362,8 +364,8 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       }
     }
   }
-  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
   message("### start_coupled() finished. ###")
+  if (errorsfound > 0) stop(errorsfound, " errors found, check the logs.")
 }
 
 ##################################################################

@@ -123,7 +123,11 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
   }
   .agriculture_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Costs Without Incentives (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    if ("Costs Without Incentives (million US$05/yr)" %in% getNames(mag)) {
+      out <- mag[,,"Costs Without Incentives (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    } else {
+      out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # old reporting
+    }
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling.csv"),file_type="csvr")
