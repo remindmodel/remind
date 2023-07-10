@@ -9,7 +9,9 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
   
   library(luplot,quietly=TRUE,warn.conflicts =FALSE)
   library(gms,quietly=TRUE,warn.conflicts =FALSE)
-  require(remind2,quietly = TRUE,warn.conflicts =FALSE)
+  # library(remind2)
+  library(devtools)
+  load_all("/p/tmp/merfort/RESCUE/v2/libraries/remind2")
   
   p_fpath <- "./modules/45_carbonprice/exogenous/input/p45_tau_co2_tax.inc"
   
@@ -55,7 +57,10 @@ create_input_for_45_carbonprice_exogenous<-function(gdx){
       cat("p45_tau_co2_tax(\"",gsub("y","",y),"\",\"",r,"\")=",pr[r,y,],";\n", sep = "", file = p_fpath, append = TRUE)
     }
   }
-  
+   
   cat("*** EOF ",p_fpath,"\n", file = p_fpath, sep = "", append = TRUE)
   
+  load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
+
+
 }
