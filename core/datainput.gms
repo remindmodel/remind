@@ -240,7 +240,6 @@ Parameter p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate facto
 loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
   pm_ccsinjecrate(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
 );
-pm_ccsinjecrate(regi) = s_ccsinjecrate;
 ;
 $endIf.c_ccsinjecrateRegi
 
