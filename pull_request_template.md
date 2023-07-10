@@ -12,7 +12,6 @@
 - [ ] Fundamental change
 - [ ] This change requires a documentation update
 
-
 ## Checklist:
 
 - [ ] My code follows the [coding etiquette](https://github.com/remindmodel/remind/blob/develop/main.gms#L80)
@@ -22,9 +21,15 @@
 - [ ] I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) where it was needed
 - [ ] I adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches
 - [ ] All automated model tests pass (`FAIL 0` in the output of `make test`)
+- [ ] Include in next release changelog (I filled out the changelog section below)
+
+## Information for release changelog (optional):
+
+(Leave empty if this PR does not concern changes to be mentioned in the changelog)
 
 ## Further information (optional):
 
 * Test runs are here: 
 * Comparison of results (what changes by this PR?): 
+
 
