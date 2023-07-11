@@ -14,8 +14,8 @@
 * production routes of steel. Trade is also currently forced to zero.
 *
 $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-* Balance equation: Demand of materials equals to production of those materials, 
-* accounting for trade. Demand of materials arises either due to external demand 
+* Balance equation: Demand of materials equals to production of those materials,
+* accounting for trade. Demand of materials arises either due to external demand
 * from the economy (i.e. steel) or due to internal demand of the processes modelled
 * in the materials-flow model (i.e. directly reduced iron).
 q37_balMats(t,regi,mats)..
@@ -29,7 +29,7 @@ q37_balMats(t,regi,mats)..
   - vm_Xport(t,regi,mats)
 ;
 
-* The production of a material determined by the installed capacity of 
+* The production of a material determined by the installed capacity of
 * a technology that can produce that material, multiplied by the capacity
 * factor of that tech.
 q37_limitCapMat(t,regi,matsOut,tePrcb)$(matsOut2tePrcb(matsOut,tePrcb))..
@@ -41,6 +41,8 @@ q37_limitCapMat(t,regi,matsOut,tePrcb)$(matsOut2tePrcb(matsOut,tePrcb))..
 ;
 
 * Process demand of materials.
+* (duplicate, already implemeted differently below)
+$ontext
 q37_demMatsProc(t,regi,matsIn)..
     v37_demMatsProc(t,regi,matsIn)
   =e=
@@ -48,6 +50,7 @@ q37_demMatsProc(t,regi,matsIn)..
       p37_specMatsDem(matsIn,tePrcb,opModesPrcb) * v37_prodMats(t,regi,matsOut,tePrcb,opModesPrcb)
     )
 ;
+$offtext
 $endif.material_flows
 
 
@@ -71,27 +74,37 @@ q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
   )
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   +
-  sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb)),
-    p37_specFEDem(entyFE,tePrcb)
+  sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
+    p37_specFEDem(entyFE,tePrcb,opModesPrcb)
     *
-    v37_prodVolPrcb(ttot,regi,tePrcb)
+    v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
   )$(NOT sameas(ttot,"2005"))
 $endif.process_based_steel
 ;
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-q37_prodMats(ttot,regi,mats)$(ttot.val ge cm_startyear)..
+q37_demMatsPrc(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsIn(mats))..
     v37_prodMats(ttot,regi,mats)
-  =e= 
-    sum(tePrcb2matsOut(tePrcb,mats), 
-      v37_prodVolPrcb(ttot,regi,tePrcb)
+  =e=
+    sum(tePrcb2matsIn(tePrcb,opModesPrcb,mats),
+      p37_specMatsDem(mats,tePrcb,opModesPrcb)
+      *
+      v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+    )
+;
+
+q37_prodMats(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsOut(mats))..
+    v37_prodMats(ttot,regi,mats)
+  =e=
+    sum(tePrcb2matsOut(tePrcb,opModesPrcb,mats),
+      v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
     )
 ;
 
 q37_mats2ue(ttot,regi,all_in)$(uePrcb(all_in) AND (ttot.val ge cm_startyear))..
     vm_cesIO(ttot,regi,all_in)
-  =e= 
-    sum(mats2ue(mats,all_in), 
+  =e=
+    sum(mats2ue(mats,all_in),
       p37_mats2ue(mats,all_in)
       *
       v37_prodMats(ttot,regi,mats)
@@ -119,10 +132,10 @@ $ifthen.fixed_production "%cm_import_EU%" == "bal"   !! cm_import_EU
          !! do not limit steel production shares for fixed production
      AND p37_industry_quantity_targets(ttot,regi,"ue_steel_secondary") eq 0
 $endif.fixed_production
-$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off" 
+$ifthen.exogDem_scen NOT "%cm_exogDem_scen%" == "off"
          !! do not limit steel production shares for fixed production
      AND pm_exogDemScen(ttot,regi,"%cm_exogDem_scen%","ue_steel_secondary") eq 0
-$endif.exogDem_scen 
+$endif.exogDem_scen
 
                                                                             ) ..
   vm_cesIO(ttot,regi,"ue_steel_secondary")

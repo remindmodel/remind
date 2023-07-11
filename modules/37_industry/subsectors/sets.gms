@@ -10,7 +10,8 @@ Sets
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   tePrcb(all_te)        "Technologies used in material-flow model"
   /
-    bfbof               "Blast furnace/basic-oxygen furnace"
+    bf                  "Blast furnace"
+    bof                 "Basic oxygen furnace"
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
   /
@@ -19,16 +20,82 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
     prsteel             "Primary steel"
     sesteel             "Secondary steel"
+    scrap               "Steel scrap"
+    pigiron             "Pig iron"
+    driron              "Direct reduced iron"
+    ironore             "Iron Ore"
   /
 
-  tePrcb2matsOut(tePrcb,mats) "Mapping of technologies onto their output materials"
+  matsIn(all_enty)      "Materials which serve as input to a process"
   /
-   bfbof . prsteel
-   idr . prsteel
-   eaf . sesteel
+    scrap               "Steel scrap"
+    pigiron             "Pig iron"
+    driron              "Direct reduced iron"
+    ironore             "Iron Ore"
   /
 
-  uePrcb(all_in) "Mapping of materials onto ue ces tree node"
+  matsOut(all_enty)     "Materials which serve as output of a process"
+  /
+    prsteel             "Primary steel"
+    sesteel             "Secondary steel"
+    pigiron             "Pig iron"
+    driron              "Direct reduced iron"
+  /
+
+  opModesPrcb               "Operation modes for technologies in material-flow model"
+  /
+    ng                  "Direct reduction using natural gas"
+    h2                  "Direct reduction using hydrogen"
+    unheated            "BOF operation with maximum amount of scrap possible without external heating"
+    pri                 "Primary production of steel (based on iron ore or DRI)"
+    sec                 "Secondary production of steel (based on scrap)"
+    standard            "Only one operation mode implemented"
+  /
+
+  tePrcb2matsIn(tePrcb,opModesPrcb,mats)    "Mapping of technologies onto input materials"
+  /
+    idr . (h2,ng) . ironore
+    eaf . pri . driron
+    eaf . sec . scrap
+    bf  . standard . ironore
+    bof . unheated . (pigiron,scrap)
+  /
+
+  tePrcb2matsOut(tePrcb,opModesPrcb,mats) "Mapping of technologies onto their output materials"
+  /
+   bf  . standard . pigiron
+   bof . unheated . prsteel
+   idr . (h2,ng) . driron
+   eaf . pri . prsteel
+   eaf . sec . sesteel
+  /
+
+  tePrcb2ue(tePrcb,opModesPrcb,all_in)
+  /
+   bf  . standard . ue_steel_primary
+   bof . unheated . ue_steel_primary
+   idr . (h2,ng) . ue_steel_primary
+   eaf . pri . ue_steel_primary
+   eaf . sec . ue_steel_secondary
+  /
+
+*  routes(all_te)  "Process routes"
+*  /
+*    idreaf
+*    bfbof
+*    seceaf
+*  /
+*
+*  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
+*  /
+*    idr . (h2,ng) . idreaf
+*    eaf . pri . idreaf
+*    eaf . sec . seceaf
+*    bf  . standard . bfbof
+*    bof . unheated . bfbof
+*  /
+
+  uePrcb(all_in) "Ue ces tree nodes connected to process based implementation"
   /
    ue_steel_primary
    ue_steel_secondary
@@ -39,35 +106,15 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    prsteel . ue_steel_primary
    sesteel . ue_steel_secondary
   /
-$endif.process_based_steel
-  
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-***START not strictly connected to material_flows, but not needed right now, so hidden behind witch
-  opModesPrcb               "Operation modes for technologies in material-flow model"
-  /
-    ng                  "Direct reduction using natural gas"
-    h2                  "Direct reduction using hydrogen"
-    pri                 "Primary production of steel (based on iron ore or DRI)"
-    sec                 "Secondary production of steel (based on scrap)"
-  /
 
   tePrcb2opModesPrcb(tePrcb,opModesPrcb)    "Mapping of technologies onto available operation modes"
   /
     idr . (ng,h2)
     eaf . (pri,sec)
-    bfbof . (pri,sec)
+    bf . (standard)
+    bof . (unheated)
   /
-***END
-  
-  
-  tePrcb2matsIn(tePrcb,mats)    "Mapping of technologies onto input materials"
-  /
-    idr . ironore
-    eaf . (dri,scrap)
-    bfbof . (ironore,scrap)
-  /
-  
-$endif.material_flows
+$endif.process_based_steel
 
   secInd37   "industry sub-sectors"
   /
@@ -89,7 +136,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
   /
     steel . idr
     steel . eaf
-    steel . bfbof
+    steel . bf
+    steel . bof
   /
 $endif.process_based_steel
 
@@ -244,10 +292,10 @@ $endif.process_based_steel
     ue_cement . (feso_cement, feli_cement, fega_cement, feh2_cement,
                  feel_cement)
 
-    ue_chemicals . (feso_chemicals, feli_chemicals, fega_chemicals, 
+    ue_chemicals . (feso_chemicals, feli_chemicals, fega_chemicals,
                     feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
-    ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel, 
+    ue_steel_primary . (feso_steel, feli_steel, fega_steel, feh2_steel,
                         feel_steel_primary)
 
     ue_steel_secondary . feel_steel_secondary
@@ -332,7 +380,7 @@ $endif.process_based_steel
     ue_cement . (en_cement, kap_cement, en_cement_non_electric, feso_cement,
                  feli_cement, fega_cement, feh2_cement, feel_cement)
 
-    ue_chemicals . (en_chemicals, kap_chemicals, en_chemicals_fhth, 
+    ue_chemicals . (en_chemicals, kap_chemicals, en_chemicals_fhth,
                     feso_chemicals, feli_chemicals, fega_chemicals,
 		    feh2_chemicals, feelhth_chemicals, feelwlth_chemicals)
 
@@ -367,7 +415,7 @@ $endif.process_based_steel
              feelwlth_otherInd)
   /
 
-  
+
  fe_tax_sub37(all_in,all_in)  "correspondence between tax and subsidy input data resolution and model sectoral resolution"
   /
     fesoi . (feso_cement, feso_chemicals, feso_steel, feso_otherInd)

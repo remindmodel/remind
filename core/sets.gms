@@ -326,7 +326,11 @@ $ENDIF.WindOff
         ironMine     "Mining of iron ore"
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
-        bfbof        "Blast furnace/basic-oxygen furnace"
+        bf           "Blast furnace"
+        bof          "Basic-oxygen furnace"
+*        bfbof        "BF/BOF route"
+*        idreaf       "Direct reduction / EAF route"
+*        seceaf       "Scrap-loaded EAF route"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
@@ -400,9 +404,11 @@ all_enty             "all types of quantities"
         prsteel      "Primary steel"
         sesteel      "Secondary steel"
         !!steel        "Steel"
-        !!dri          "Directly reduced iron"
-        !!scrap        "Steel scrap"
-        !!ironore      "Iron ore"
+        dri          "Directly reduced iron"
+        scrap        "Steel scrap"
+        pigiron      "Pig Iron"
+        driron       "Direct reduced iron"
+        ironore      "Iron ore"
 
         !! emissions
         co2          "carbon dioxide emissions"
@@ -743,23 +749,25 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 *** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
+ 
+*** Several parts of the REMIND code relies in the order that the regional set is defined.
+***   Therefore, you must always abide with the below rules:
+***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.
+***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).
+***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.
+ 
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
-        
-LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi
-,
-        
-LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
+        LAM_regi,OAS_regi,SSA_regi,EUR_regi,NEU_regi,MEA_regi,REF_regi,CAZ_regi,CHA_regi,IND_regi,JPN_regi,USA_regi,
+        LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA
       /
- 
 
    all_regi "all regions" /LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA/
 
    regi_group(ext_regi,all_regi) "region groups (regions that together corresponds to a H12 region)"
       /
-      
-GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
+        GLO.( LAM,OAS,SSA,EUR,NEU,MEA,REF,CAZ,CHA,IND,JPN,USA )
         LAM_regi .(LAM)
         OAS_regi .(OAS)
         SSA_regi .(SSA)
@@ -1628,7 +1636,7 @@ enty(all_enty)       "all types of quantities"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
         n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
-        n2opeatland "n2o emissions from peatlands (no MAC available)"        
+        n2opeatland "n2o emissions from peatlands (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1848,7 +1856,7 @@ emiMacSector(all_enty)  "types of climate-relevant non-energy emissions with mac
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
         n2oagwaste "n2o emissions from agricultural waste burning (no MAC available)"
-        n2opeatland "n2o emissions from peatlands (no MAC available)"        
+        n2opeatland "n2o emissions from peatlands (no MAC available)"
         n2owaste   "n2o emissions from waste (domestic sewage)"
         co2luc     "co2 emissions from land use change"
         co2cement_process  "co2 from cement production (only process emissions)"
@@ -1884,7 +1892,7 @@ MacSectorMagpie(all_enty)  "land-use sectors for which mac curves exist in REMIN
         ch4peatland "ch4 emissions from peatlands (no MAC available)"
         n2ofert    "Inorganic fertilizers"
         n2oanwst   "manure applied to croplands"
-        n2opeatland "n2o emissions from peatlands (no MAC available)"        
+        n2opeatland "n2o emissions from peatlands (no MAC available)"
         co2luc     "land use change"
 /
 
@@ -1896,7 +1904,7 @@ emiMacMagpieN2O(all_enty)  "types of climate-relevant non-energy N2O emissions w
         n2ofertsom "n2o emissions from soil organic matter loss (som_n2o)"
         n2oanwstc  "n2o emissions from manure applied to croplands (man_crop_n2o)"
         n2oanwstm  "n2o emissions from animal waste management (awms_n2o)"
-        n2opeatland "n2o emissions from peatlands (no MAC available)"        
+        n2opeatland "n2o emissions from peatlands (no MAC available)"
         n2oanwstp  "n2o emissions from manure excreted on pasture (man_past_n2o)"
 /
 emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
@@ -1904,7 +1912,7 @@ emiMacMagpieCH4(all_enty)  "types of climate-relevant non-energy CH4 emissions w
         ch4rice    "ch4 emissions from rice cultivation (rice_ch4)"
         ch4animals "ch4 emissions from enteric fermentation of ruminants (ent_ferm_ch4)"
         ch4anmlwst "ch4 emissions from animal waste management(awms_ch4)"
-        ch4peatland "ch4 emissions from peatlands peatland_ch4)"        
+        ch4peatland "ch4 emissions from peatlands peatland_ch4)"
 /
 emiMacMagpieCO2(all_enty)  "types of climate-relevant non-energy CH4 emissions with mac curve where baseline emissions come from MAgPIE only"
 /
@@ -2039,7 +2047,7 @@ all_emiMkt      "emission markets"
 /
 
 all_emiMktExt   "extended emission market definitions"
-/	
+/
         ETS     "ETS emission market"
 	ESR     "Effort sharing emission market"
 	other	"other market configurations"
@@ -2081,7 +2089,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         ch4animals.ES
         ch4anmlwst.ES
         ch4agwaste.ES
-        ch4peatland.other        
+        ch4peatland.other
         ch4forest.other
         ch4savan.other
         n2oforest.other
@@ -2097,7 +2105,7 @@ macSector2emiMkt(all_enty,all_emiMkt)  "mapping mac sectors to emission markets"
         n2oanwstp.ES
         n2oagwaste.ES
         n2owaste.ES
-        n2opeatland.other        
+        n2opeatland.other
         co2luc.other
         co2cement_process.ETS
 /
@@ -2414,7 +2422,7 @@ seAgg2se(all_enty,all_enty) "map secondary energy aggregation to se"
 /
 
 capTotal(all_enty,all_enty)    "mapping of input to output carriers for calculating total capacities without technology differentiation vm_capTotal"
-/       
+/
         pecoal.seel
         pegas.seel
         pebiolc.seel
@@ -2824,7 +2832,7 @@ sector2te_addTDCost(emi_sectors,all_te) "mapping of sectors to t&d technologies 
 /
 
 ppfen_CESMkup(all_in)                   "production factors of CES function to which CES markup cost can be applied"
-/     
+/
 /
 
 

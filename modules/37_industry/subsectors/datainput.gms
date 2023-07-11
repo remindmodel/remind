@@ -12,39 +12,42 @@ Parameters
 ***-------------------------------------------------------------------------------
 ***                         MATERIAL-FLOW IMPLEMENTATION
 ***-------------------------------------------------------------------------------
-$ifthen.material_flows "%cm_material_flows%" == "on"              !! cm_material_flows
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
   p37_specMatsDem(mats,all_te,opModesPrcb)                                      "Specific materials demand of a production technology and operation mode [t_input/t_output]"
   /
-    !!ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source)
-    
-    dri.eaf.pri             1.0                                             !! DRI demand of EAF
-    scrap.eaf.sec           1.0                                             !! Scrap demand of EAF
-    dri.eaf.sec             0.0
-    scrap.eaf.pri           0.0
-    
-    ironore.bfbof.pri       1.5                                             !! Iron ore demand of BF-BOF
-    scrap.bfbof.sec         1.0                                             !! Scrap demand of BF-BOF
-    scrap.bfbof.pri         0.0
-    ironore.bfbof.sec       0.0
-  /
-$endif.material_flows
+    ironore.idr.(ng,h2)     1.5                                             !! Iron ore demand of iron direct-reduction (independent of fuel source) POSTED
 
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"              !! cm_process_based_steel
-  !! Read in in MWh/t, then convert to TWa/Gt directly below!!
-  p37_specFeDem(all_enty,all_te) !!,opModesPrcb)
+    driron.eaf.pri          1.08                                            !! DRI demand of EAF POSTED
+    scrap.eaf.sec           1.09                                            !! Scrap demand of EAF POSTED
+
+    ironore.bf.standard     1.5                                             !! Iron ore demand of BF-BOF
+
+    scrap.bof.unheated      0.22                                             !! Scrap demand of BF-BOF
+    pigiron.bof.unheated    0.8
   /
-    feels.idr           0.33                                            !! Specific electric demand for both H2 and NG operation.
-    !!fegas.idr.ng            2.94                                            !! Specific natural gas demand when operating with NG.
-    feh2s.idr           1.91                                            !! Specific hydrogen demand when operating with H2.
-    
-    feels.eaf           0.67                                            !! Specific electricy demand of EAF when operating with scrap.
-    
-    fesos.bfbof         2.0                                             !! Specific coal demand of BF-BOF when operating with DRI -- this number is just a guess
-    feels.bfbof         0.30                                             !! Specific electricy demand of EAF when operating with scrap.
-    !!feso_steel.bfbof.sec         0.5                                             !! Specific coal demand of BF-BOF when operating with scrap -- this number is just a guess
+
+  !! h2:
+  !! Read in in MWh/t, then convert to TWa/Gt directly below!!
+  p37_specFeDem(all_enty,all_te,opModesPrcb)
+  /
+    !! reduction: 504 m^3; heat 242 m^3; conversion: x / 11.126 m^3/kg * 0.0333 MWh/kg
+    feh2s.idr.h2           2.23                                            !! Specific hydrogen demand when operating with H2. POSTED
+    feels.idr.h2           0.08                                            !! Specific electric demand for both H2 and NG operation. POSTED
+
+    fegas.idr.ng           2.69                                            !! Specific natural gas demand when operating with NG. POSTED
+    feels.idr.ng           0.08                                            !! Specific electric demand for both H2 and NG operation. POSTED
+
+    feels.eaf.pri          0.67                                            !! Specific electricy demand of EAF when operating with iron sponge POSTED
+    feels.eaf.sec          0.67                                            !! Specific electricy demand of EAF when operating with scrap. POSTED
+
+    fesos.bf.standard      3.9                                             !! Specific coal demand of BF-BOF when operating with DRI OTTO_ET_AL
+    fegas.bf.standard      0.18                                            !! Specific coal demand of BF-BOF when operating with DRI DUMMY
+    feels.bf.standard      0.20                                            !! Specific electricy demand of EAF when operating with scrap. DUMMY
+
+    feels.bof.unheated     0.05                                            !! Specific electricy demand of EAF when operating with scrap. DUMMY
   /;
-!! Convert from MWh/t to TWa/Gt 
-p37_specFeDem(all_enty,all_te) = p37_specFeDem(all_enty,all_te)  / (sm_TWa_2_MWh / sm_giga_2_non);
+!! Convert from MWh/t to TWa/Gt
+p37_specFeDem(all_enty,all_te,opModesPrcb) = p37_specFeDem(all_enty,all_te,opModesPrcb)  / (sm_TWa_2_MWh / sm_giga_2_non);
 
 Parameters
   p37_mats2ue(all_enty,all_in) !!,opModesPrcb)
@@ -109,7 +112,7 @@ pm_cesdata_sigma(ttot,"en_otherInd_hth")$ (ttot.val eq 2040) = 2.0;
 *** abatement parameters for industry CCS MACs
 $include "./modules/37_industry/fixed_shares/input/pm_abatparam_Ind.gms";
 
-$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off" 
+$IFTHEN.Industry_CCS_markup NOT "%cm_Industry_CCS_markup%" == "off"
 pm_abatparam_Ind(ttot,regi,all_enty,steps)$(
                                     pm_abatparam_Ind(ttot,regi,all_enty,steps) )
   = pm_abatparam_Ind(ttot,regi,all_enty,steps);
@@ -154,7 +157,7 @@ else
   execute_loadpoint "input_ref.gdx" p37_cesIO_baseline = vm_cesIO.l;
 );
 
-sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to 
+sm_tmp2 = 0.75;   !! maximum "efficiency gain", from 2015 baseline value to
                   !! thermodynamic limit
 sm_tmp  = 2050;   !! period in which closing could be achieved
 
@@ -185,7 +188,7 @@ loop (industry_ue_calibration_target_dyn37(out)$( pm_energy_limit(out) ),
 
 *** Specific energy demand limits for other industry and chemicals in TWa/trUSD
 *** exponential decrease of minimum specific energy demand per value added up to 90% by 2100
-sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value 
+sm_tmp2 = 0.9;   !! maximum "efficiency gain" relative to 2015 baseline value
 sm_tmp  = 2100;   !! period in which closing could be achieved
 
 loop (industry_ue_calibration_target_dyn37(out)$( sameas(out,"ue_chemicals") OR  sameas(out,"ue_otherInd")),
@@ -424,18 +427,18 @@ pm_ue_eff_target("ue_otherInd")         = 0.008;
 
 *` CES mark-up cost industry
 
-*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions. 
-*` (1) They represent sectoral end-use cost not captured by the energy system. 
-*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration 
+*` The Mark-up cost on primary production factors (final energy) of the CES tree have two functions.
+*` (1) They represent sectoral end-use cost not captured by the energy system.
+*` (2) As they alter prices to of the CES function inputs, they affect the CES efficiency parameters during calibration
 *` and therefore influence the efficiency of different FE CES inputs. The resulting economic subsitution rates
 *` are given by the marginal rate of subsitution (MRS) in the parameter o01_CESmrs.
-*` Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and 
-*` obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios. 
+*` Mark-up cost were tuned as to obtain similar or slightly higher marginal rate of substitution (MRS) to gas/liquids than technical subsitution rates and
+*` obtain similar specific energy consumption per value added in chemicals and other industry across high and low electrification scenarios.
 
 
 *` There are two ways in which mark-up cost can be set:
-*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup. 
-*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax. 
+*` (a) Mark-up cost on inputs in ppfen_MkupCost37: Those are counted as expenses in the budget and set by the parameter p37_CESMkup.
+*` (b) Mark-up cost on other inputs: Those are budget-neutral and implemented as a tax. They are set by the parameter pm_tau_ces_tax.
 
 *` Mark-up cost in industry are modeled without budget-effect (b).
 

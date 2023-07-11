@@ -14,34 +14,32 @@ Parameters
   pm_abatparam_Ind(ttot,all_regi,all_enty,steps)                               "industry CCS MAC curves [ratio @ US$2005]"
   pm_energy_limit(all_in)                                                      "thermodynamic/technical limits of subsector energy use [GJ/t product]"
   p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
-  p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"                                         
-  pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"                               
-  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market"   
-  p37_CESMkup(ttot,all_regi,all_in)                                            "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"                                  
-  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                      "upper limit to secondary steel production based on scrap availability"        
+  p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
+  pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market"
+  p37_CESMkup(ttot,all_regi,all_in)                                            "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
+  p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                      "upper limit to secondary steel production based on scrap availability"
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-  p37_specMatsDem(mats,all_te,opModesPrcb)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
-$endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  p37_specFeDem(all_enty,all_te)                                               "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
+  p37_specMatsDem(mats,all_te,opModesPrcb)                                     "Specific materials demand of a production technology and operation mode [t_input/t_output]"
+  p37_specFeDem(all_enty,all_te,opModesPrcb)                                   "Specific final-energy demand of a production technology and operation mode [TWa/Gt_output]"
   p37_mats2ue(all_enty,all_in)                                                 "Contribution of process output to ue in CES tree [Gt/Gt]"
 $endif.process_based_steel
 
 *** output parameters only for reporting
-  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"                                                                                
-  o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"                                                                              
+  o37_emiInd(ttot,all_regi,all_enty,secInd37,all_enty)                   "industry CCS emissions [GtC/a]"
+  o37_cementProcessEmissions(ttot,all_regi,all_enty)                     "cement process emissions [GtC/a]"
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
-  o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"                                       
-  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"                                                                              
-  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)                          "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"   
+  o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
+  o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
+  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)                          "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  o37_demFePrcb(ttot,all_regi,all_enty,all_te)                           "Process-based FE demand per FE type and process"
+  o37_demFePrcb(ttot,all_regi,all_enty,all_te,opModesPrcb)               "Process-based FE demand per FE type and process"
 $endif.process_based_steel
 
-$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard" 
+$ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
   p37_CESMkup_input(all_in)  "markup cost parameter read in from config for CES levels in industry to influence demand-side cost and efficiencies in CES tree [trUSD/CES input]" / %cm_CESMkup_ind% /
 $endIf.CESMkup
 
@@ -62,7 +60,7 @@ $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_mater
   v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
 $endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
-  v37_prodVolPrcb(tall,all_regi,all_te)                                     "Production volume of processes in material-flow model [Gt]"
+  v37_prodVolPrcb(tall,all_regi,all_te,opModesPrcb)                         "Production volume of processes in material-flow model [Gt]"
   v37_prodMats(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
 $endif.process_based_steel
 ;
@@ -83,9 +81,9 @@ $endif.no_calibration
 $ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
   q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
-  q37_demMatsProc(tall,all_regi,all_enty)                 "Demand of process materials"
 $endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+  q37_demMatsPrc(tall,all_regi,mats)                      "Demand of process materials"
   q37_prodMats(tall,all_regi,mats)                        "Production volume of processes in material-flow model"
   q37_mats2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
 $endif.process_based_steel
