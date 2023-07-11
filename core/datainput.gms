@@ -238,9 +238,8 @@ pm_ccsinjecrate(regi) = s_ccsinjecrate;
 $ifThen.c_ccsinjecrateRegi not "%c_ccsinjecrateRegi%" == "off"
 Parameter p_extRegiccsinjecrateRegi(ext_regi) "Regional CCS injection rate factor. 1/a. (extended regions)" / %c_ccsinjecrateRegi% /;
 loop((ext_regi)$p_extRegiccsinjecrateRegi(ext_regi),
-  pm_ccsinjecrate(regi)$(regi_group(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
+  pm_ccsinjecrate(regi)$(regi_groupExt(ext_regi,regi)) = p_extRegiccsinjecrateRegi(ext_regi);
 );
-pm_ccsinjecrate(regi) = s_ccsinjecrate;
 ;
 $endIf.c_ccsinjecrateRegi
 
