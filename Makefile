@@ -63,3 +63,6 @@ test-full:       ## Run all tests, including coupling tests and a default
                  ## REMIND scenario. Takes significantly longer than 10 minutes to run.
 	$(info Full tests take more than an hour to run, please be patient)
 	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
+test-validation: ## Run validation tests, requires a full set of runs in the output folder
+	$(info Run validation tests, requires a full set of runs in the output folder)
+	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
