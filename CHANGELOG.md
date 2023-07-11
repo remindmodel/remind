@@ -7,16 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### added
+- **config** regex tests for many parameters
+- **testthat** test and compile all config files
 
 ## [3.2.1] - 2023-07-13 (incomplete)
 
 ### changed
 - **documentation** MAgPIE coupling, DIETER coupling, input changes
-- **config** NGFS, SHAPE
+- **config** NGFS_v4, SHAPE
 - **scripts** re-enable summation checks for IIASA submission
 
 ### added
-- **45_carbonprice** added realization for National Policies Implemented 
+- **45_carbonprice** added realization `NPi` (National Policies Implemented)
 - **47_carbonpriceRegi** now supports BECCS quantity targets
 - **MAgPIE coupling** added `qos=auto` mode
 - **MAgPIE coupling** added renv support mode

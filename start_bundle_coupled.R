@@ -142,7 +142,7 @@ if (length(argv) > 0) {
   if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
-  path_settings_coupled <- file.path(path_remind, argv[[1]])
+  path_settings_coupled <- normalizePath(argv[[1]])
   if (! isTRUE(grepl("scenario_config_coupled", path_settings_coupled)))
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R.\n",
          "Your command line arguments were: ", paste0(argv, collapse = " "))
@@ -539,6 +539,8 @@ for(scen in common){
       # for negishi and model tests: use only one CPU
       numberOfTasks <- 1
     }
+
+    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind)
 
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
