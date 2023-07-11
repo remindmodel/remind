@@ -63,7 +63,7 @@ modelSummary <- function(folder = ".", gams_runtime = NULL) {
         message("  Modelstat after ", as.numeric(names(modelstat)), " iterations: ", modelstat,
                 if (modelstat %in% names(explain_modelstat)) paste0(" (", explain_modelstat[modelstat], ")"))
       }
-      logStatus <- grep("*** Status", readLines(file.path(folder, "full.log")), fixed = TRUE, value = TRUE)
+      logStatus <- grep("*** Status", readLines(file.path(folder, "full.log"), warn = FALSE), fixed = TRUE, value = TRUE)
       message("  full.log states: ", paste(logStatus, collapse = ", "))
       if (! all("*** Status: Normal completion" == logStatus)) stoprun <- TRUE
     }

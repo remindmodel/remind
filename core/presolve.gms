@@ -115,7 +115,7 @@ loop(regi,
   if (cm_emiscen eq 9,
 *** TODO: take care, this means that the SCC are only priced into MAC-curve
 *** abatement if emiscen = 9. Might want to change this.
-    p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi)  + pm_taxCO2eqSCC(ttot,regi) + pm_taxCO2eqHist(ttot,regi) )* 1000;
+    p_priceCO2(ttot,regi) = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi) )* 1000;
   else
     p_priceCO2(ttot,regi) 
     = abs(pm_pvpRegi(ttot,regi,"perm") / (pm_pvp(ttot,"good") + sm_eps))

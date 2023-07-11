@@ -30,9 +30,7 @@ vm_cesIO,variable,???
 vm_co2eq,variable,???
 cm_emiscen,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
-sm_DptCO2_2_TDpGtC,input,questionnaire
 vm_co2CCS,input,questionnaire
-pm_taxCO2eqHist,input,questionnaire
 pm_dataccs,input,questionnaire
 pm_data,input,questionnaire
 pm_inco0_t,input,questionnaire

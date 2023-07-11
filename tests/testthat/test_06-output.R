@@ -15,7 +15,7 @@ test_that("output.R -> single -> reporting works", {
 })
 
 test_that("output.R -> export -> xlsx_IIASA works", {
-# skipIfFast()
+  skipIfFast()
   skipIfPreviousFailed()
   exportfiles <- Sys.glob(file.path("..", "..", "output", "export", "*TESTTHAT*"))
   unlink(exportfiles)

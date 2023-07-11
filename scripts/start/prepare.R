@@ -210,13 +210,13 @@ prepare <- function() {
       ) )
     }
     # declare ext_regi (needs to be declared before ext_regi to keep order of ext_regi)
-    content <- c(content, ' ')
+    content <- c(content, '')
     content <- c(content, paste('*** Several parts of the REMIND code relies in the order that the regional set is defined.'))
     content <- c(content, paste('***   Therefore, you must always abide with the below rules:'))
     content <- c(content, paste('***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.'))
     content <- c(content, paste('***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).'))
     content <- c(content, paste('***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.'))
-    content <- c(content, ' ')
+    content <- c(content, '')
     content <- c(content, paste('   ext_regi "extended regions list (includes subsets of H12 regions)"'))
     content <- c(content, '      /')
     content <- c(content, '        GLO,')
@@ -233,7 +233,7 @@ prepare <- function() {
         content <- c(content, paste0('        ', paste(c(paste0(names(subsets)[i],"_regi"))), ' .(',paste(subsets[[i]],collapse=','), ')'))
     }
     content <- c(content, '      /')
-    content <- c(content, ' ')
+    content <- c(content, '')
     # iso countries set
     content <- c(content,'   iso "list of iso countries" /')
     content <- c(content, .tmp(map$CountryCode, suffix1=",", suffix2=" /"),'')
@@ -263,8 +263,8 @@ prepare <- function() {
                       paste0("rev",cfg$inputRevision,"_", madrat::regionscode(cfg$regionmapping),ifelse(cfg$extramappings_historic == "","",paste0("-", madrat::regionscode(cfg$extramappings_historic))),"_", tolower(cfg$validationmodel_name),".tgz"),
                       paste0("CESparametersAndGDX_",cfg$CESandGDXversion,".tgz"))
   # download and distribute needed data
-  if(!setequal(input_new, input_old) | cfg$force_download) {
-      message(if (cfg$force_download) "You set 'cfg$force_download = TRUE'"
+  if (! setequal(input_new, input_old) || isTRUE(cfg$force_download)) {
+      message(if (isTRUE(cfg$force_download)) "You set 'cfg$force_download = TRUE'"
               else "Your input data are outdated or in a different regional resolution",
               ". New input data are downloaded and distributed.")
       download_distribute(files        = input_new,
@@ -277,7 +277,7 @@ prepare <- function() {
   }
 
   # extract BAU emissions for NDC runs to set up emission goals for region where only some countries have a target
-  if ((!is.null(cfg$gms$carbonprice) && (cfg$gms$carbonprice == "NDC")) | (!is.null(cfg$gms$carbonpriceRegi) && (cfg$gms$carbonpriceRegi == "NDC")) ){
+  if (isTRUE(cfg$gms$carbonprice == "NDC") || isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
     cat("\nRun scripts/input/prepare_NDC.R.\n")
     source("scripts/input/prepare_NDC.R")
     prepare_NDC(as.character(cfg$files2export$start["input_bau.gdx"]), cfg)

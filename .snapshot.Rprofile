@@ -5,10 +5,12 @@
 local({ # prevent variables defined here from ending up in the global env
 
 # Set the snapshot path to a path of your choice.
+# You can create a new snapshot with the following command (cluster only):
+# bash /p/projects/rd3mod/R/libraries/Scripts/create_snapshot_with_day.sh
 # Snapshots must be compatible to the R version used. If you are using R 4.1
 # make sure the selected snapshot's name ends with '_R4'.
 
-snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_04_12_R4"
+snapshot <- "/p/projects/rd3mod/R/libraries/snapshots/2023_06_05_R4"
 
 activateSnapshot <- function(snapshot) {
   stopifnot(file.exists(snapshot))

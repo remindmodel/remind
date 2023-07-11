@@ -12,7 +12,6 @@ vm_emiMacSector,variable,???
 vm_emiCdr,variable,???
 vm_emiTeMkt,variable,???
 pm_taxCO2eq,input,questionnaire
-pm_taxCO2eqHist,input,questionnaire
 pm_taxCO2eqSCC,input,questionnaire
 pm_SolNonInfes,input,questionnaire
 pm_interpolWeight_ttot_tall,input,questionnaire
@@ -23,3 +22,4 @@ cm_distrBeta,switch,???
 cm_distrAlphaDam,switch,???
 sm_tgn_2_pgc,scalar,???
 sm_tgch4_2_pgc,scalar,???
+pm_taxCO2eqRegi,input,added by codeCheck

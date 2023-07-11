@@ -111,30 +111,6 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
     for (i in 1:nrow(map)) {
         tmp<-setNames(mag[,,map[i,]$emimag],map[i,]$emirem)
         tmp<-tmp*map[i,]$factor_mag2rem
-        #tmp["JPN",is.na(tmp["JPN",,]),] <- 0
-        # preliminary fix 20160111
-        #cat("Preliminary quick fix: filtering out NAs for all and negative values for almost all landuse emissions except for co2luc and n2ofertrb\n")
-        #tmp[is.na(tmp)] <- 0
-        # preliminary 20160114: filter out negative values except for co2luc and n2ofertrb
-        #if (map[i,]$emirem!="co2luc" &&  map[i,]$emirem!="n2ofertrb") {
-        # tmp[tmp<0] <- 0
-        #}
-
-        # Check for negative values, since only "co2luc" is allowed to be
-        # negative. All other emission variables are positive by definition.
-        if(map[i,]$emirem != "co2luc"){
-          if( !(all(tmp>=0)) ){
-            # Hotfix 2021-09-28: Raise warning and set negative values to zero.
-            # XXX Todo XXX: Make sure that MAgPIE is not reporting negative N2O
-            # or CH4 emissions and convert this warning into an error that
-            # breaks the model instead of setting the values to zero.
-            print(paste0("Warning: Negative values detected for '",
-                         map[i,]$emirem, "' / '", map[i,]$emimag, "'. ",
-                         "Hot fix: Set respective values to zero."))
-            tmp[tmp < 0] <- 0
-          }
-        }
-
         # Add emission variable to full dataframe
         out<-mbind(out,tmp)
     }
@@ -147,7 +123,11 @@ getReportData <- function(path_to_report,inputpath_mag="magpie",inputpath_acc="c
   }
   .agriculture_costs <- function(mag){
     notGLO <- getRegions(mag)[!(getRegions(mag)=="GLO")]
-    out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    if ("Costs Without Incentives (million US$05/yr)" %in% getNames(mag)) {
+      out <- mag[,,"Costs Without Incentives (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    } else {
+      out <- mag[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # old reporting
+    }
     out["JPN",is.na(out["JPN",,]),] <- 0
     dimnames(out)[[3]] <- NULL #Delete variable name to prevent it from being written into output file
     write.magpie(out[notGLO,,],paste0("./modules/26_agCosts/",inputpath_acc,"/input/p26_totLUcost_coupling.csv"),file_type="csvr")

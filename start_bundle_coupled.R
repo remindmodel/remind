@@ -5,12 +5,8 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-if (!is.null(renv::project())) {
-  stop("Coupled runs are currently not supported with renv. Please use a snapshot instead. ",
-       "How to switch from renv to snapshots: ",
-       "https://github.com/remindmodel/remind/blob/develop/tutorials/11_ManagingRenv.md#legacy-snapshots ",
-       "How to create a snapshot: https://github.com/remindmodel/remind/blob/develop/tutorials/",
-       "04_RunningREMINDandMAgPIE.md#create-snapshot-of-r-libraries")
+if (is.null(renv::project())) {
+  warning("Coupled runs are now recommended to be run using renv instead of snapshots")
 }
 require(lucode2)
 require(magclass)
@@ -56,7 +52,8 @@ helpText <- "
 
 # Please provide all files and paths relative to the folder where start_coupled is executed
 path_remind <- getwd()   # provide path to REMIND. Default: the actual path which the script is started from
-path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
+path_magpie <- normalizePath(file.path(getwd(), "magpie"), mustWork = FALSE)
+if (! dir.exists(path_magpie)) path_magpie <- normalizePath(file.path(getwd(), "..", "magpie"))
 
 # Paths to the files where scenarios are defined
 # path_settings_remind contains the detailed configuration of the REMIND scenarios
@@ -88,11 +85,29 @@ max_iterations <- 5
 # Afterwards REMIND runs for "n600_iterations" iterations with results from higher resolution.
 n600_iterations <- 0 # max_iterations
 
+# Use this qos if none is specified in config file. "auto" means use "priority" slot if available, else "short"
+qos_default <- "auto"
+
 # run a compareScenario for each scenario comparing all rem-x: Choose qos (short, priority) or set to FALSE
 run_compareScenarios <- "short"
 
 # use an empty magpie model (just reproduces the latest AMT results)
 magpie_empty <- FALSE
+
+########################################################################################################
+#################################  install magpie dependencies  ########################################
+########################################################################################################
+if (!is.null(renv::project())) {
+  magpieDeps <- renv::dependencies(path_magpie)
+  installedPackages <- installed.packages()[, "Package"]
+  missingDeps <- setdiff(unique(magpieDeps$Package), installedPackages)
+  if (length(missingDeps) > 0) {
+    renv::install(missingDeps)
+  }
+  if (! any(grepl("renvVersion", readLines(file.path(path_magpie, ".Rprofile"), warn = FALSE)))) {
+    stop("REMIND uses renv, but no renvVersion defined in MAgPIE .Rprofile. Checkout a recent .Rprofile in ", path_magpie)
+  }
+}
 
 ########################################################################################################
 #################################  load command line arguments  ########################################
@@ -128,8 +143,9 @@ if (length(argv) > 0) {
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
   path_settings_coupled <- file.path(path_remind, argv[[1]])
-  if (! grep("scenario_config_coupled", path_settings_coupled))
-    stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
+  if (! isTRUE(grepl("scenario_config_coupled", path_settings_coupled)))
+    stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R.\n",
+         "Your command line arguments were: ", paste0(argv, collapse = " "))
   path_settings_remind  <- sub("scenario_config_coupled", "scenario_config", path_settings_coupled)
 } else if (! file.exists(path_settings_coupled)) {
   possiblecsv <- Sys.glob(c(file.path("config", "scenario_config_coupled*.csv"),
@@ -152,16 +168,21 @@ message("run_compareScenarios:  ", run_compareScenarios)
 if (! file.exists("output")) dir.create("output")
 
 # Check if dependencies for a REMIND model run are fulfilled
-# Use ensureRequirementsInstalled(rerunPrompt="start_bundle_coupled.R") when coupled runs are using renv.
 if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  piamenv::checkDeps(action = "stop")
+  if (is.null(renv::project())) {
+    piamenv::checkDeps(action = "stop")
+  } else {
+    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
+  }
 } else {
   stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
 }
 
 errorsfound <- 0
 startedRuns <- 0
+finishedRuns <- 0
 waitingRuns <- 0
+qosRuns <- NULL
 deletedFolders <- 0
 
 stamp <- format(Sys.time(), "_%Y-%m-%d_%H.%M.%S")
@@ -247,10 +268,11 @@ for (scen in common) {
   }
 }
 
-if (file.exists("/p") && "qos" %in% names(scenarios_coupled)
-    && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
-      message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
-      message("They may not be able to run in parallel on the PIK cluster.")
+if (! "qos" %in% names(scenarios_coupled)) scenarios_coupled[, "qos"] <- qos_default
+scenarios_coupled[, "qos"] <- ifelse(is.na(scenarios_coupled[, "qos"]), qos_default, scenarios_coupled[, "qos"])
+if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.rm = TRUE) > 4) {
+  message("\nAttention, you want to start more than 4 runs with qos=priority mode.")
+  message("They may not be able to run in parallel on the PIK cluster.")
 }
 
 ####################################################
@@ -265,7 +287,7 @@ for(scen in common){
   runname      <- paste0(prefix_runname, scen)            # name of the run that is used for the folder names
   path_report  <- NULL                                    # sets the path to the report REMIND is started with in the first loop
   qos          <- scenarios_coupled[scen, "qos"]          # set the SLURM quality of service (priority/short/medium/...)
-  if(is.null(qos) || is.na(qos)) qos <- "short"           # if qos could not be found in scenarios_coupled use short/medium
+  qosRuns[qos] <- if (isTRUE(qosRuns[qos] > 0)) qosRuns[qos] + 1 else 1 # count
   sbatch       <- scenarios_coupled[scen, "sbatch"]       # retrieve sbatch options from scenarios_coupled
   if (is.null(sbatch) || is.na(sbatch)) sbatch <- ""      # if sbatch could not be found in scenarios_coupled use empty string
   start_iter_first <- 1                                   # iteration to start the coupling with
@@ -345,6 +367,7 @@ for(scen in common){
   } else if (iter_rem >= max_iterations & iter_mag >= max_iterations - 1) {
     message("This scenario is already completed with rem-", iter_rem, " and mag-", iter_mag, " and max_iterations=", max_iterations, ".")
     scenarios_coupled[scen, "start_scenario"] <- FALSE
+    finishedRuns <- finishedRuns + 1
     next
   } else {
     message(red, "Error", NC, ": REMIND has finished ", iter_rem, " runs, but MAgPIE ", iter_mag, " runs. Something is wrong!")
@@ -403,11 +426,8 @@ for(scen in common){
     cfg_rem$description <- paste0("Coupled REMIND and MAgPIE run ", scen, " started by ", path_settings_remind, " and ", path_settings_coupled, ".")
   }
 
+  # save cm_nash_autoconverge to be used for all but last REMIND run
   cm_nash_autoconverge <- cfg_rem$gms$cm_nash_autoconverge
-  # save cm_nash_autoconverge to be used for last REMIND run
-  if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
-    cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
-  }
 
   # abort on too long paths ----
   cfg_rem$gms$cm_CES_configuration <- calculate_CES_configuration(cfg_rem, check = TRUE)
@@ -480,10 +500,11 @@ for(scen in common){
       rownames(cfg_rem$RunsUsingTHISgdxAsInput) <- paste0(prefix_runname, rownames(cfg_rem$RunsUsingTHISgdxAsInput), "-rem-", i)
     }
     # add the next remind run
+    cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
     if (i < max_iterations) {
       cfg_rem$RunsUsingTHISgdxAsInput[paste0(runname, "-rem-", (i+1)), "path_gdx"] <- fullrunname
-      cfg_rem$gms$cm_nash_autoconverge <- cm_nash_autoconverge
-    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled)) {
+    } else if ("cm_nash_autoconverge_lastrun" %in% names(scenarios_coupled) && ! is.na(scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"])) {
+      # change autoconverge only in last iteration and if well-defined
       cfg_rem$gms$cm_nash_autoconverge <- scenarios_coupled[scen, "cm_nash_autoconverge_lastrun"]
     }
 
@@ -509,10 +530,14 @@ for(scen in common){
     }
     foldername <- file.path("output", fullrunname)
     if ((i > start_iter_first || !scenarios_coupled[scen, "start_magpie"]) && file.exists(foldername)) {
-      if (errorsfound == 0) {
-        if (! "--test" %in% flags) unlink(foldername, recursive = TRUE, force = TRUE)
-        message("Delete ", foldername, if ("--test" %in% flags) " if not in test mode", ". ", appendLF = FALSE)
-        deletedFolders <- deletedFolders + 1
+      if (errorsfound == 0 && ! any(c("--test", "--gamscompile") %in% flags)) {
+        message("Folder ", foldername, " exists but incomplete. Delete it and rerun (else will be skipped)? y/N")
+        if (tolower(gms::getLine()) %in% c("y", "yes")) {
+          unlink(foldername, recursive = TRUE, force = TRUE)
+          deletedFolders <- deletedFolders + 1
+        } else {
+          start_now <- FALSE
+        }
       }
     }
 
@@ -598,8 +623,13 @@ for (scen in common) {
         logfile <- file.path("output", fullrunname, paste0("log", if (scenarios_coupled[scen, "start_magpie"]) "-mag", ".txt"))
         if (! file.exists(dirname(logfile))) dir.create(dirname(logfile))
         message("Find logging in ", logfile)
-        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --mem=8000 --job-name=", fullrunname,
+        if (isTRUE(runEnv$qos == "auto")) {
+          sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
+          runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
+        }
+        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
         " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+        if (runEnv$numberOfTasks == 1) " --mem=8000", " ", runEnv$sbatch,
         " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
         message(slurm_command)
         exitCode <- system(slurm_command)
@@ -613,8 +643,10 @@ for (scen in common) {
 }
 
 if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
-  system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
-  message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  if (is.null(renv::project())) {
+    system(paste("cp", file.path(path_remind, ".Rprofile "), file.path(path_magpie, ".Rprofile")))
+    message("\nCopied REMIND .Rprofile to MAgPIE folder.")
+  }
   cs_runs <- paste0(file.path("output", paste0(prefix_runname, common, "-rem-", max_iterations)), collapse = ",")
   cs_name <- paste0("compScen-all-rem-", max_iterations)
   cs_qos <- if (! isFALSE(run_compareScenarios)) run_compareScenarios else "short"
@@ -626,8 +658,13 @@ if (! "--test" %in% flags && ! "--gamscompile" %in% flags) {
   message(cs_command)
 }
 
-message("\nFinished: ", deletedFolders, " folders deleted. ", startedRuns, " runs started. ", waitingRuns, " runs are waiting.",
-        if("--test" %in% flags) "\nYou are in TEST mode, only RData files were written.")
+message("#### Summary ####")
+message("\nDone.", if(any(c("--test", "--gamscompile") %in% flags)) " You are in TEST or gamscompile mode, no runs were actually started.")
+message("- ", finishedRuns, " runs already finished.")
+message("- ", deletedFolders, " folders deleted.")
+message("- ", startedRuns, " runs started.")
+message("- ", waitingRuns, " runs are waiting.")
+message("qos statistics: ", paste0(names(qosRuns), ": ", qosRuns, collapse = ", "), ".")
 # make sure we have a non-zero exit status if there were any errors
 if (0 < errorsfound) {
   stop(red, errorsfound, NC, " errors were identified, check logs above for details.")

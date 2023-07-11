@@ -12,6 +12,8 @@
 ***-----------------------------------------------------------------------------
 ***-----------------------------------------------------------------------------
 SETS
+numberOrder     "set to assure that numeric values follow ascending order in the GAMS entry order (e.g. iterations and years used in loop statements)" / 1*2200 /
+
 * Save select compiler flags as sets, to make them accessible from the final gdx
 c_expname       "c_expname as set for use in GDX"       /%c_expname%/
 c_description   "%c_description%"   /"for model description, see explanatory text"/
@@ -749,13 +751,13 @@ teEs(all_teEs)           "ES technologies which are actually used (to be filled 
 *** CHANGES CAN BE DONE USING THE RESPECTIVE LINES IN scripts/start/prepare.R
 
 sets
- 
+
 *** Several parts of the REMIND code relies in the order that the regional set is defined.
 ***   Therefore, you must always abide with the below rules:
 ***   - The first regional set to be declared must be the ext_regi set, which includes the model native regions and all possible regional aggregations considered in REMIND.
 ***   - The ext_regi set needs to be declared in the order of more aggregated to less aggregated region order (e.g. World comes first and country regions goes last).
 ***   - IMPORTANT: You CANNOT use any of the ext_regi set elements in any set definition made prior to the ext_regi set declaration in the code.
- 
+
    ext_regi "extended regions list (includes subsets of H12 regions)"
       /
         GLO,
@@ -781,7 +783,7 @@ sets
         JPN_regi .(JPN)
         USA_regi .(USA)
       /
- 
+
    iso "list of iso countries" /
        ABW,AFG,AGO,AIA,ALA,ALB,AND,ARE,ARG,ARM,
        ASM,ATA,ATF,ATG,AUS,AUT,AZE,BDI,BEL,BEN,
@@ -872,7 +874,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
          /
        EUR . EUR
        CHA . CHA
@@ -1745,11 +1747,10 @@ entySeBio(all_enty)       "biomass secondary energy types"
 	segabio      "secondary energy gas from biomass"
 /
 
-entySeSyn(all_enty)       "synfuel secondary energy types"
+entySeSyn(all_enty)   "synfuel secondary energy types"
 /
-	seliqbio     "secondary energy liquids from biomass"
-	sesobio      "secondary energy solids from biomass"
-	segabio      "secondary energy gas from biomass"
+  seliqsyn   "secondary energy liquids from H2"
+  segasyn    "secondary energy gas from H2"
 /
 
 entySeFos(all_enty) "secondary energy types from fossil primary energy"
