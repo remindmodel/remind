@@ -21,7 +21,7 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_factorTargetyear(t,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
+Parameter p46_factorTargetyear(ttot,all_regi) "Multiplier for target year emissions vs 2005 emissions, as weighted average for all countries with quantifyable emissions under NDC in particular region";
 p46_factorTargetyear(t,all_regi) = f46_factorTargetyear(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_factorTargetyear;
@@ -34,8 +34,8 @@ $offdelim
 $onlisting
 ;
 
-Parameter p46_2005shareTarget(t,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
-p46_2005shareTarget(t,all_regi) = f46_2005shareTarget(t,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
+Parameter p46_2005shareTarget(ttot,all_regi) "2005 GHG emission share of countries with quantifyable emissions under NDC in particular region, time dimension specifies alternative future target years";
+p46_2005shareTarget(ttot,all_regi) = f46_2005shareTarget(ttot,all_regi,"%cm_NDC_version%","%cm_GDPscen%");
 
 display p46_2005shareTarget;
 
@@ -52,7 +52,7 @@ p46_histShare(tall,all_regi) = f46_histShare(tall,all_regi,"%cm_NDC_version%");
 
 display p46_histShare;
 
-Parameter p46_BAU_reg_emi_wo_LU_bunkers(t,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario"
+Parameter p46_BAU_reg_emi_wo_LU_bunkers(ttot,all_regi) "regional GHG emissions (without LU and bunkers) in BAU scenario"
   /
 $ondelim
 $ifthen exist "./modules/46_carbonpriceRegi/NDC/input/pm_BAU_reg_emi_wo_LU_bunkers.cs4r"
@@ -71,12 +71,12 @@ $offdelim
 *** 0.2 is a rounded value valid for all except 2018_uncond, because Brazil had no unconditional target then.
 
 if (not sameas("%cm_NDC_version%","2018_uncond"),
-    p46_factorTargetyear(t,regi)$(sameas(regi,"LAM") AND sameas(t,"2030")) = p46_factorTargetyear(t,regi) + 0.2;
+    p46_factorTargetyear(ttot,regi)$(sameas(regi,"LAM") AND sameas(ttot,"2030")) = p46_factorTargetyear(ttot,regi) + 0.2;
 );
 
 *** add 2060 GHG net zero target for China, not yet in the UNFCCC_NDC database
-p46_factorTargetyear(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 0;
-p46_2005shareTarget(t,regi)$(sameas(regi,"CHA") AND sameas(t,"2060")) = 1;
+p46_factorTargetyear(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 0;
+p46_2005shareTarget(ttot,regi)$(sameas(regi,"CHA") AND sameas(ttot,"2060")) = 1;
 
 
 *** parameters for selecting NDC years
@@ -86,9 +86,9 @@ Scalar p46_ignoreNDCafter           "NDC targets after  this years are ignored, 
 Scalar p46_minRatioOfCoverageToMax  "only targets whose coverage is this times p46_bestNDCcoverage are considered. Use 1 for only best." /0.2/;
 Scalar p46_useSingleYearCloseTo     "if 0: use all. If > 0: use only one single NDC target per country closest to this year (use 2030.4 to prefer 2030 over 2035 over 2025)" /0/;
 
-Set p46_NDCyearSet(t,all_regi)               "YES for years whose NDC targets is used";
+Set p46_NDCyearSet(ttot,all_regi)               "YES for years whose NDC targets is used";
 Parameter p46_bestNDCcoverage(all_regi)         "highest coverage of NDC targets within region";
-Parameter p46_distanceToOptyear(t,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets";
+Parameter p46_distanceToOptyear(ttot,all_regi)  "distance to p46_useSingleYearCloseTo to favor years in case of multiple equally good targets";
 Parameter p46_minDistanceToOptyear(all_regi)    "minimal distance to p46_useSingleYearCloseTo per region";
 
 p46_bestNDCcoverage(regi) = smax(t$(t.val <= p46_ignoreNDCafter AND t.val >= p46_ignoreNDCbefore), p46_2005shareTarget(t,regi));
