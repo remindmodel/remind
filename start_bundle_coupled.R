@@ -167,16 +167,7 @@ message("run_compareScenarios:  ", run_compareScenarios)
 
 if (! file.exists("output")) dir.create("output")
 
-# Check if dependencies for a REMIND model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  if (is.null(renv::project())) {
-    piamenv::checkDeps(action = "stop")
-  } else {
-    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
-  }
-} else {
-  stop("REMIND requires piamenv >= 0.2.0, please update piamenv.")
-}
+ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
 
 errorsfound <- 0
 startedRuns <- 0
