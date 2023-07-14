@@ -7,7 +7,8 @@
 
 skipIfFast()
 coupledConfig <- "config/tests/scenario_config_coupled_shortCascade.csv"
-magpie_folder <- "../../../magpie"
+magpie_folder <- "../../magpie"
+if (! dir.exists(magpie_folder)) magpie_folder <- paste0("../", magpie_folder)
 config <- readCheckScenarioConfig(file.path("..", "..", coupledConfig), remindPath <- file.path("..", ".."))
 max_iterations <- if ("max_iterations" %in% names(config)) max(config$max_iterations) else 5
 # for a fresh run, delete all left-overs from previous test
@@ -62,7 +63,7 @@ test_that("using start_bundle_coupled.R --test works", {
                          env = paste0("R_PROFILE_USER=", Rprofile))
   printIfFailed(output)
   expectSuccessStatus(output)
-  expect_true(any(grepl("TEST mode", output)))
+  expect_true(any(grepl("TEST or gamscompile mode", output)))
   expect_true(any(grepl("NOT submitted", output)))
   for (scen in rownames(config)[config$start == 1]) {
     expect_true(any(grepl(paste0("starting with C_", scen, "-rem-1"), output)))

@@ -278,7 +278,7 @@ if (cm_TaxConvCheck eq 1,
 $ifthen.emiMkt not "%cm_emiMktTarget%" == "off" 
 loop((ttot,ttot2,ext_regi,emiMktExt)$pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt),
 *** regipol targets must be met within 1% of target deviation, deviation for budget targets is measured relative to target value, while for year targets it is relative to 2015 emissions
-  if( (pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) gt 0.01 OR pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt) lt -0.01),
+  if((abs(pm_emiMktTarget_dev(ttot,ttot2,ext_regi,emiMktExt)) gt cm_emiMktTarget_tolerance),
     s80_bool = 0;
     p80_messageShow("regiTarget") = YES;
   );
@@ -288,7 +288,7 @@ $endif.emiMkt
 *** additional criterion: Were the quantity targets reached by implicit taxes and/or subsidies? 
 $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
 loop((ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup)$pm_implicitQttyTarget(ttot,ext_regi,taxType,targetType,qttyTarget,qttyTargetGroup),
-  if( (pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0.01 OR pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt -0.01),
+  if(abs(pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup)) gt cm_implicitQttyTarget_tolerance,
     if(NOT ((sameas(taxType,"tax") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) lt 0) OR (sameas(taxType,"sub") and pm_implicitQttyTarget_dev(ttot,ext_regi,qttyTarget,qttyTargetGroup) gt 0)),
       if(NOT(pm_implicitQttyTarget_isLimited(iteration,qttyTarget,qttyTargetGroup) eq 1), !!no tax update either by reaching target or due to tax changes not affecting quantitties  
         s80_bool = 0;
@@ -382,8 +382,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2005 emissions to reach convergence.";
-          display pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -392,8 +392,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTarget_dev;
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"
@@ -486,8 +486,8 @@ $ifthen.emiMkt not "%cm_emiMktTarget%" == "off"
           display "#### Check out the pm_emiMktTarget_dev parameter of 47_regipol module.";
           display "#### For budget targets, the parameter gives the percentage deviation of current emissions in relation to the target value.";
           display "#### For yearly targets, the parameter gives the current emissions minus the target value in relative terms to the 2005 emissions.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) of 2005 emissions to reach convergence.";
-          display pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
+          display "#### The deviation must to be less than cm_emiMktTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_emiMktTarget_tolerance, pm_emiMktTarget_dev, pm_factorRescaleemiMktCO2Tax, pm_emiMktCurrent, pm_emiMktTarget, pm_emiMktRefYear;
           display pm_emiMktTarget_dev_iter;
           display pm_taxemiMkt_iteration;
 	      );
@@ -496,8 +496,8 @@ $ifthen.cm_implicitQttyTarget not "%cm_implicitQttyTarget%" == "off"
         if(sameas(convMessage80, "implicitEnergyTarget"),
 		      display "#### 10) A primary, secondary and/or final energy target has not been reached yet.";
           display "#### Check out the pm_implicitQttyTarget_dev parameter of 47_regipol module.";
-          display "#### The deviation must to be less than 1% (in between -0.01 and 0.01) to reach convergence.";
-          display pm_implicitQttyTarget_dev;
+          display "#### The deviation must to be less than cm_implicitQttyTarget_tolerance. By default within 1%, i.e. in between -0.01 and 0.01 of 2005 emissions to reach convergence.";
+          display cm_implicitQttyTarget_tolerance, pm_implicitQttyTarget_dev;
 	      );
 $endif.cm_implicitQttyTarget
 $ifthen.cm_implicitPriceTarget not "%cm_implicitPriceTarget%" == "off"

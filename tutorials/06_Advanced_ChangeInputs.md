@@ -41,7 +41,7 @@ If you want to peek inside the archive to debug something or out of curiosity yo
 
 1. Run the helper tool `lastrev` (`/p/projects/rd3mod/tools/lastrev`) to get a list of the last five `revX.XXX*_remind.tgz` items in the default madrat output directory. Alternatively, you can also check by hand in the `/p/projects/rd3mod/inputdata/output` folder on the PIK cluster.
 
-2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `config/default.cfg` file by inserting the next revision number. Use at least 4 decimal places for development/testing or use the additional argument `dev` to specify your test. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
+2. Clone the [remind-preprocessing repo](https://github.com/remindmodel/pre-processing) to your tmp folder on the cluster and edit its `config/default.cfg` file by inserting the next revision number. Use the additional argument `dev` for testing. If an old revision number is used, the input data will not be recalculated. Input data for a new regional resolution will be recalculated based on the existing cache information in the PUC file.
 
 3. Start the script with `Rscript submit_preprocessing.R`.
 The .log file lists the progress and potential errors. This process might take a while (currently >8 hours).

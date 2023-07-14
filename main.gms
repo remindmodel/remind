@@ -870,6 +870,17 @@ parameter
   cm_postTargetIncrease    = 0;      !! def = 0
 *'
 parameter
+  cm_emiMktTarget_tolerance "tolerance for regipol emission target deviations convergence."
+;
+  cm_emiMktTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol emission targets must be met within 1% of target deviation
+*'  For budget targets the tolerance is measured relative to the target value. For year targets the tolerance is relative to 2005 emissions.
+*'
+parameter
+  cm_implicitQttyTarget_tolerance "tolerance for regipol implicit quantity target deviations convergence."
+;
+  cm_implicitQttyTarget_tolerance    = 0.01;       !! def = 0.01, i.e. regipol implicit quantity targets must be met within 1% of target deviation
+*'
+parameter
   cm_emiMktTargetDelay  "number of years for delayed price change in the emission tax convergence algorithm. Not applied to first target set."
 ;
   cm_emiMktTargetDelay    = 0;       !! def = 0

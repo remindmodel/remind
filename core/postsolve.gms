@@ -14,7 +14,7 @@ pm_taxemiMkt_iteration(iteration,ttot,regi,emiMkt) = pm_taxemiMkt(ttot,regi,emiM
 
 *RP* added the historic 2010/2015 CO2 prices 
 if (cm_emiscen eq 9,
- pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqHist(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
+ pm_pvpRegi(ttot,regi,"perm") = (pm_taxCO2eq(ttot,regi) + pm_taxCO2eqRegi(ttot,regi) + pm_taxCO2eqSCC(ttot,regi))* pm_pvp(ttot,"good");
 elseif (cm_emiscen eq 6), !! the 2010/2015 CO2 prices do not need to be individually included, as they already influence the marginal of the q_co2eq equation (empirically tested) 
 
 $ifthen.neg %optimization% == 'negishi'     
@@ -23,8 +23,8 @@ $else.neg
 pm_pvpRegi(ttot,regi,"perm") = abs(q_co2eq.m(ttot,regi)) / (abs(qm_budget.m(ttot,regi) )+ sm_eps) * pm_pvp(ttot,"good") ; 
 $endif.neg 
    
-elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015 CO2 prices should be reported
- pm_pvpRegi(ttot,regi,"perm") = ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
+elseif (cm_emiscen eq 1),  !! even in a BAU scenario without other climate policies, the 2010/2015/2020 CO2 prices should be reported (that still needs to be fixed, I guess, maybe by adding the historic prices to the 45/carbonprice/off variation
+ pm_pvpRegi(ttot,regi,"perm")$(ttot.val < 2025) = ( pm_taxCO2eq(ttot,regi) * pm_pvp(ttot,"good") );
     
 );
 *** if the bau or ref gdx has been run with a carbon tax (e.g. cm_emiscen=9), overwrite values before cm_startyear  
@@ -37,7 +37,7 @@ if ( (cm_startyear gt 2005),
 loop(ttot$(ttot.val ge 2005),
   loop(regi,
     if(pm_pvpRegi(ttot,regi,"perm") eq NA,
-      pm_pvpRegi(ttot,regi,"perm") = pm_pvp(ttot,"perm") + ( pm_taxCO2eqHist(ttot,regi) * pm_pvp(ttot,"good") );
+      pm_pvpRegi(ttot,regi,"perm") = pm_pvp(ttot,"perm");
     );
   );
 );
@@ -615,11 +615,13 @@ $endif.CO2priceDependent_AdjCosts
 
 *** CG: calculate marginal adjustment cost for capacity investment: d(v_costInvTeAdj) / d(vm_deltaCap)  !!!! the closed formula only holds when v_adjFactorGlob.fx(t,regi,te) = 0;
 o_margAdjCostInv(ttot,regi,te)$(ttot.val ge max(2010, cm_startyear) AND teAdj(te)) =  vm_costTeCapital.l(ttot,regi,te) * p_adj_coeff(ttot,regi,te)
-    * 2
-    * (sum(te2rlf(te,rlf),vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf))) / power((pm_ttot_val(ttot)-pm_ttot_val(ttot-1)),2)
-    /( sum(te2rlf(te,rlf),vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
-    + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+    * 2 * (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot,regi,te,rlf)) - sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)))
+    / power((pm_ttot_val(ttot) - pm_ttot_val(ttot-1)), 2)
+    / (sum(te2rlf(te,rlf), vm_deltaCap.l(ttot-1,regi,te,rlf)) + p_adj_seed_reg(ttot,regi) * p_adj_seed_te(ttot,regi,te)
+      + p_adj_deltacapoffset("2010",regi,te)$(ttot.val eq 2010) + p_adj_deltacapoffset("2015",regi,te)$(ttot.val eq 2015)
+      + p_adj_deltacapoffset("2020",regi,te)$(ttot.val eq 2020) + p_adj_deltacapoffset("2025",regi,te)$(ttot.val eq 2025)
     )
+    * (1.02 + pm_prtp(regi)) ** (pm_ts(ttot) / 2)
 ;
 
 *** CG: calculate average adjustment cost for capacity investment: v_costInvTeAdj / vm_deltaCap
