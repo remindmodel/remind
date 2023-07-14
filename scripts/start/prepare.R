@@ -13,7 +13,7 @@ prepare <- function() {
   #require(lucode, quietly = TRUE,warn.conflicts =FALSE)
   require(magclass, quietly = TRUE,warn.conflicts =FALSE)
   require(tools, quietly = TRUE,warn.conflicts =FALSE)
-  devtools::load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
+  devtools::load_all("/p/tmp/merfort/RESCUE/v2/libraries/remind2_oae")
   require(mrremind)
   require(mrvalidation)
 

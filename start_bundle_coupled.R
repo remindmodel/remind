@@ -13,7 +13,7 @@ require(magclass)
 require(gms)
 # require(remind2)
 library(devtools)
-load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
+load_all("/p/tmp/merfort/RESCUE/v2/libraries/remind2_oae")
 require(gtools) # required for mixedsort()
 require(dplyr) # for filter, secelt, %>%
 require(stringr) # for str_sub

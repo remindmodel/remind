@@ -6,7 +6,7 @@
 # |  Contact: remind@pik-potsdam.de
 # library(remind2)
 library(devtools)
-load_all("/p/tmp/katarkow/remind2/rebased-cdr-portfolio-oae")
+load_all("/p/tmp/merfort/RESCUE/v2/libraries/remind2_oae")
 
 if (!exists("source_include")) {
   lucode2::readArgs("outputDirs", "outFileName", "profileName")
