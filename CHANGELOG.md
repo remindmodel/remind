@@ -20,3 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **47_carbonpriceRegi** now supports BECCS quantity targets
 - **MAgPIE coupling** added `qos=auto` mode for MAgPIE coupling
 - **MAgPIE coupling** added renv support mode for MAgPIE coupling
+
+
+
+[Unreleased]: https://github.com/remindmodel/remind/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/remindmodel/remind/compare/v3.2.0...v3.2.1
