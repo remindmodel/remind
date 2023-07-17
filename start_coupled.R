@@ -4,47 +4,6 @@
 # |  AGPL-3.0, you are granted additional permissions described in the
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
-##################################################################
-################# D E F I N E  debug_coupled #####################
-##################################################################
-
-# This function will be called in start_coupled() instead of the regular
-# submit() (for REMIND) and start_run (for MAgPIE) functions if the debug 
-# mode is set to TRUE in start_coupled().
-# It creates empty output folders and copies dummy reports into them 
-# without calling the start scripts of the models.
-
-debug_coupled <- function(model = NULL, cfg) {
-   if(is.null(model)) stop("COUPLING DEBUG: Coupling was run in debug mode but no model was specified")
-   
-   message("   Creating results folder ", cfg$results_folder)
-   if (!file.exists(cfg$results_folder)) {
-     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-   } else if (!cfg$force_replace) {
-     stop(paste0("Results folder ",cfg$results_folder," could not be created because it already exists."))
-   } else {
-     message("    Deleting results folder because it already exists: ", cfg$results_folder)
-     unlink(cfg$results_folder, recursive = TRUE)
-     dir.create(cfg$results_folder, recursive = TRUE, showWarnings = FALSE)
-   }
- 
-   if (model == "rem") {
-      message("COUPLING DEBUG: assuming REMIND")
-      report <- "/home/dklein/REMIND_generic_C_SSP2EU-Tall-PkBudg1020-imp-rem-5.mif"
-      to <- paste0(cfg$results_folder,"/REMIND_generic_",cfg$title,".mif")
-   } else if (model == "mag") {
-      message("COUPLING DEBUG: assuming MAGPIE")
-      report <- "/home/dklein/report.mif"
-      to <- paste0(cfg$results_folder,"/report.mif")
-   } else {
-     stop("COUPLING DEBUG: Coupling was started in debug mode but model is unknown")
-   }
-   
-   message("COUPLING DEBUG: to = ",to)
-   
-   if(!file.copy(from = report, to = to)) message("Could not copy ", report, " to ", to)
-   return(cfg$results_folder)
-}
 
 ##################################################################
 ################# D E F I N E  start_coupled #####################
@@ -67,9 +26,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     out <- c(stack[!matches],new)
     return(out)
   }
-
-  # start coupling in debug mode (just create empty results folders and copy dummy reports without running the models)
-  debug <- FALSE
 
   mainwd <- getwd() # save folder in which this script is executed
 
@@ -114,8 +70,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     cfg_rem$results_folder <- paste0("output/",runname,"-rem-",i)
     cfg_rem$title          <- paste0(runname,"-rem-",i)
-    cfg_rem$force_replace  <- debug # overwrite existing output folders for debug
-    #cfg_rem$gms$biomass    <- "magpie_linear"
     
     # Switch off generation of needless output for all but the last REMIND iteration
     if (i < max_iterations) {
@@ -132,7 +86,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         cfg_rem$gms$cm_MAgPIE_coupling <- "off"
         message("### COUPLING ### No MAgPIE report for REMIND input provided.")
         message("### COUPLING ### REMIND will be started in stand-alone mode with\n    ", runname, "\n    ", cfg_rem$results_folder)
-        outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem, stopOnFolderCreateError = FALSE))
+        outfolder_rem <- submit(cfg_rem, stopOnFolderCreateError = FALSE)
       } else {
         stop("I'm in coupling iteration ", i, ", but no REMIND or MAgPIE report from earlier iterations found. That should never have happened.")
       }
@@ -144,7 +98,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       # Keep path to MAgPIE report in mind to have it available after the coupling loop
       mag_report_keep_in_mind <- report
       cfg_rem$pathToMagpieReport <- report
-      outfolder_rem <- ifelse(debug, debug_coupled(model="rem",cfg_rem), submit(cfg_rem, stopOnFolderCreateError = FALSE))
+      outfolder_rem <- submit(cfg_rem, stopOnFolderCreateError = FALSE)
       ############################
     } else if (grepl("REMIND_generic_",report)) { # if it is a REMIND report
       ############### O M I T   R E M I N D  ###############################
@@ -166,8 +120,6 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
         }
       } else if (file.exists(paste0(outfolder_rem,"/non_optimal.gdx"))) {
         stop("### COUPLING ### REMIND didn't find an optimal solution. Coupling iteration stopped!")
-      } else if (debug){
-        # continue
       } else {
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
@@ -239,7 +191,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
     # if no different mif was set for GHG prices use the same as for bioenergy
     if(! use_external_ghgprices) cfg_mag$path_to_report_ghgprices <- report
     ########### START MAGPIE #############
-    outfolder_mag <- ifelse(debug, debug_coupled(model="mag", cfg_mag), start_run(cfg_mag, codeCheck=FALSE))
+    outfolder_mag <- start_run(cfg_mag, codeCheck=FALSE)
     ######################################
     message("### COUPLING ### MAgPIE output was stored in ", outfolder_mag)
     report_mag <- file.path(path_magpie, outfolder_mag, "report.mif")
@@ -247,9 +199,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
 
     # Checking whether MAgPIE is optimal in all years
     file_modstat <- file.path(outfolder_mag, "glo.magpie_modelstat.csv")
-    if (debug) {
-      modstat_mag <- 2
-    } else if (file.exists(file_modstat)) {
+    if (file.exists(file_modstat)) {
       modstat_mag <- read.csv(file_modstat, stringsAsFactors = FALSE, row.names=1, na.strings="")
     } else {
       modstat_mag <- readGDX(file.path(outfolder_mag, "fulldata.gdx"), "p80_modelstat", "o_modelstat", format="first_found")
@@ -313,7 +263,9 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
             # if sbatch has the --wait argument, the user is likely interactively
             # waiting for the result of the run (like in a test). In that case,
             # fail immediately so that the user knows about the failure asap.
-            stopifnot(! grepl("--wait", subsequentcommand))
+            if(grepl("--wait", subsequentcommand)) {
+              stop("You seem to be waiting for ", subseq.env$fullrunname, " to finish but the sbatch command failed")
+            }
           }
         } else {
           message(RData_file, " already contained a gdx for this run. To avoid runs to be started twice, I'm not starting it. You can start it by running the command directly above.")

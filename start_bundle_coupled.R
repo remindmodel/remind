@@ -6,7 +6,7 @@
 # |  REMIND License Exception, version 1.0 (see LICENSE file).
 # |  Contact: remind@pik-potsdam.de
 if (is.null(renv::project())) {
-  warning("Coupled runs are now recommended to be run using renv instead of snapshots")
+  stop("No renv found. Coupled runs must run via renv.")
 }
 require(lucode2)
 require(magclass)
@@ -167,16 +167,7 @@ message("run_compareScenarios:  ", run_compareScenarios)
 
 if (! file.exists("output")) dir.create("output")
 
-# Check if dependencies for a REMIND model run are fulfilled
-if (requireNamespace("piamenv", quietly = TRUE) && packageVersion("piamenv") >= "0.2.0") {
-  if (is.null(renv::project())) {
-    piamenv::checkDeps(action = "stop")
-  } else {
-    ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
-  }
-} else {
-  stop("REMIND requires piamenv >= 0.2.0, please use snapshot 2022_11_18_R4 or later.")
-}
+ensureRequirementsInstalled(rerunPrompt = "start_bundle_coupled.R")
 
 errorsfound <- 0
 startedRuns <- 0
