@@ -22,6 +22,7 @@
 - [ ] I adjusted the reporting in [`remind2`](https://github.com/pik-piam/remind2) where it was needed
 - [ ] I adjusted `forbiddenColumnNames` in [readCheckScenarioConfig.R](https://github.com/remindmodel/remind/blob/develop/scripts/start/readCheckScenarioConfig.R) in case the PR leads to deprecated switches
 - [ ] All automated model tests pass (`FAIL 0` in the output of `make test`)
+- [ ] The changelog `CHANGELOG.md` [has been updated correctly](https://gitlab.pik-potsdam.de/rse/rsewiki/-/wikis/Standards-for-Writing-a-Changelog)
 
 ## Further information (optional):
 
