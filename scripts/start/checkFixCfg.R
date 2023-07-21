@@ -8,23 +8,34 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   errorsfound <- 0
 
+  # extract all instances of 'regexp' from main.gms
   code <- system(paste0("grep regexp ", file.path(remindPath, "main.gms")), intern = TRUE)
+  # this is used to replace all 'regexp = is.numeric'
   grepisnum <- "((\\+|-)?[0-9]*([0-9]\\.?|\\.?[0-9])[0-9]*)"
+  # some simple tests
+  stopifnot(all(grepl(paste0("^", grepisnum, "$"), c("2", "2.2", "32.", "+32.", "+.05", "-0.5", "-.5", "-5", "-7."))))
+  stopifnot(all(! grepl(paste0("^", grepisnum, "$"), c("2.2.", "0a", "1e1", ".2.", "ab", "2.3a", "--a", "++2"))))
 
   for (n in names(cfg$gms)) {
     errormsg <- NULL
+    # how parameter n is defined in main.gms
     paramdef <- paste0("^([ ]*", n, "[ ]*=|\\$setglobal[ ]+", n, " )")
+    # filter fitting parameter definition from code snippets containing regexp
     filtered <- grep(paste0(paramdef, ".*regexp[ ]*=[ ]*"), code, value = TRUE)
     if (length(filtered) == 1) {
       # search for string '!! regexp = whatever', potentially followed by '!! otherstuff' and extract 'whatever'
       regexp <- paste0("^(", trimws(gsub("!!.*", "", gsub("^.*regexp[ ]*=", "", filtered))), ")$")
+      # replace is.numeric by pattern defined above
       useregexp <- gsub("is.numeric", grepisnum, regexp, fixed = TRUE)
+      # check whether parameter value fits regular expression
       if (! grepl(useregexp, cfg$gms[[n]])) {
         errormsg <- paste0("Parameter cfg$gms$", n, "=", cfg$gms[[n]], " does not fit this regular expression: ", regexp)
       }
     } else if (length(filtered) > 1) {
+      # fail if more than one regexp found for parameter
       errormsg <- paste0("More than one regexp found for ", n, ". These are the code lines:\n", paste(filtered, collapse = "\n"))
     }
+    # count errors
     if (! is.null(errormsg)) {
       errorsfound <- errorsfound + 1
       if (testmode) warning(errormsg) else message(errormsg)
