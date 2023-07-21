@@ -1,3 +1,12 @@
+#' take a REMIND cfg, runs some consistency checks and automatically fix some wrong settings
+#' The regexp check loads the code from main.gms and looks for 'regexp = ' patterns.
+#' It then checks whether the current cfg matches those patterns.
+#'
+#' @param cfg list with REMIND setting
+#' @param remindPath path to REMIND directory containing the main.gms
+#' @param testmode boolean. Default is FALSE which fails on errors, in testmode only raise warnings
+#' @author Oliver Richters
+#' @return updated cfg
 checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   refcfg <- gms::readDefaultConfig(remindPath)
   gms::check_config(cfg, reference_file = refcfg, modulepath = file.path(remindPath, "modules"),
@@ -8,6 +17,7 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
 
   errorsfound <- 0
 
+  ## regexp check
   # extract all instances of 'regexp' from main.gms
   code <- system(paste0("grep regexp ", file.path(remindPath, "main.gms")), intern = TRUE)
   # this is used to replace all 'regexp = is.numeric'
