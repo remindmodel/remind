@@ -6,58 +6,9 @@
 *** |  Contact: remind@pik-potsdam.de
 *** SOF ./modules/37_industry/subsectors/equations.gms
 
-
-***-------------------------------------------------------------------------------
-***                         MATERIAL-FLOW IMPLEMENTATION
-***-------------------------------------------------------------------------------
-* For the moment the only group of materials considered here belong to any of the
-* production routes of steel. Trade is also currently forced to zero.
-*
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-* Balance equation: Demand of materials equals to production of those materials,
-* accounting for trade. Demand of materials arises either due to external demand
-* from the economy (i.e. steel) or due to internal demand of the processes modelled
-* in the materials-flow model (i.e. directly reduced iron).
-q37_balMats(t,regi,mats)..
-    v37_demMatsEcon(t,regi,mats)
-  + v37_demMatsProc(t,regi,mats)
-  =e=
-    sum((matsOut2tePrcb(mats,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
-      v37_prodMats(t,regi,mats,tePrcb,opModesPrcb)
-    )
-  + vm_Mport(t,regi,mats)
-  - vm_Xport(t,regi,mats)
-;
-
-* The production of a material determined by the installed capacity of
-* a technology that can produce that material, multiplied by the capacity
-* factor of that tech.
-q37_limitCapMat(t,regi,matsOut,tePrcb)$(matsOut2tePrcb(matsOut,tePrcb))..
-    sum(tePrcb2opModesPrcb(tePrcb,opModesPrcb),
-      v37_prodMats(t,regi,matsOut,tePrcb,opModesPrcb)
-    )
-  =e=
-    vm_capFac(t,regi,tePrcb) * vm_cap(t,regi,tePrcb,"1")
-;
-
-* Process demand of materials.
-* (duplicate, already implemeted differently below)
-$ontext
-q37_demMatsProc(t,regi,matsIn)..
-    v37_demMatsProc(t,regi,matsIn)
-  =e=
-    sum((tePrcb2matsIn(tePrcb,matsIn),matsOut2tePrcb(matsOut,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
-      p37_specMatsDem(matsIn,tePrcb,opModesPrcb) * v37_prodMats(t,regi,matsOut,tePrcb,opModesPrcb)
-    )
-;
-$offtext
-$endif.material_flows
-
-
-***-------------------------------------------------------------------------------
-***                     REST OF SUBSECTOR INDUSTRY MODULE
-***-------------------------------------------------------------------------------
+***------------------------------------------------------
 *' Industry final energy balance
+***------------------------------------------------------
 q37_demFeIndst(ttot,regi,entyFe,emiMkt)$(    ttot.val ge cm_startyear
                                          AND entyFe2Sector(entyFe,"indst") ) ..
   sum(se2fe(entySE,entyFE,te),
@@ -95,6 +46,9 @@ q37_demMatsPrc(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsIn(mats))..
     )
 ;
 
+***------------------------------------------------------
+*' Output material production
+***------------------------------------------------------
 q37_prodMats(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsOut(mats))..
     v37_prodMats(ttot,regi,mats)
   =e=
@@ -103,6 +57,9 @@ q37_prodMats(ttot,regi,mats)$((ttot.val ge cm_startyear) AND matsOut(mats))..
     )
 ;
 
+***------------------------------------------------------
+*' Hand-over to CES
+***------------------------------------------------------
 q37_mats2ue(ttot,regi,all_in)$(uePrcb(all_in) AND (ttot.val ge cm_startyear))..
     vm_cesIO(ttot,regi,all_in)
   =e=
@@ -116,19 +73,21 @@ q37_mats2ue(ttot,regi,all_in)$(uePrcb(all_in) AND (ttot.val ge cm_startyear))..
 ***------------------------------------------------------
 *' Definition of capacity constraints
 ***------------------------------------------------------
-q37_limitCapMats(t,regi,fe2mats(entyFe,mats,te))..
-    sum(tePrcb2matsOut(tePrcb,opModesPrcb,mats),
+q37_limitCapMats(t,regi,tePrcb)..
+    sum(tePrcb2opModesPrcb(tePrcb,opModesPrcb),
       v37_prodVolPrcb(t,regi,tePrcb,opModesPrcb)
     )
     =l=
-    sum(teMats2rlf(te,rlf),
-        vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)
+    sum(teMats2rlf(tePrcb,rlf),
+        vm_capFac(t,regi,tePrcb) * vm_cap(t,regi,tePrcb,rlf)
     )
 ;
 
 $endif.process_based_steel
 
+***------------------------------------------------------
 *' Thermodynamic limits on subsector energy demand
+***------------------------------------------------------
 $ifthen.no_calibration "%CES_parameters%" == "load"   !! CES_parameters
 q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
                                       ttot.val gt 2020
@@ -140,7 +99,9 @@ q37_energy_limits(ttot,regi,industry_ue_calibration_target_dyn37(out))$(
 ;
 $endif.no_calibration
 
+***------------------------------------------------------
 *' Limit the share of secondary steel to historic values, fading to 90 % in 2050
+***------------------------------------------------------
 q37_limit_secondary_steel_share(ttot,regi)$(
          ttot.val ge cm_startyear
 
@@ -162,8 +123,10 @@ $endif.exogDem_scen
   * p37_steel_secondary_max_share(ttot,regi)
 ;
 
+***------------------------------------------------------
 *' Compute gross industry emissions before CCS by multiplying sub-sector energy
 *' use with fuel-specific emission factors.
+***------------------------------------------------------
 q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   vm_macBaseInd(ttot,regi,entyFE,secInd37)
   =e=
@@ -176,8 +139,10 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
     )
 ;
 
+***------------------------------------------------------
 *' Compute maximum possible CCS level in industry sub-sectors given the current
 *' CO2 price.
+***------------------------------------------------------
 q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   v37_emiIndCCSmax(ttot,regi,emiInd37)
   =e=
@@ -198,14 +163,18 @@ q37_emiIndCCSmax(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   )
 ;
 
+***------------------------------------------------------
 *' Limit industry CCS to maximum possible CCS level.
+***------------------------------------------------------
 q37_IndCCS(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_emiIndCCS(ttot,regi,emiInd37)
   =l=
   v37_emiIndCCSmax(ttot,regi,emiInd37)
 ;
 
+***------------------------------------------------------
 *' Fix cement fuel and cement process emissions to the same abatement level.
+***------------------------------------------------------
 q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
                           AND pm_macswitch("co2cement")
                           AND pm_macAbatLev(ttot,regi,"co2cement") ) ..
@@ -216,7 +185,9 @@ q37_cementCCS(ttot,regi)$(    ttot.val ge cm_startyear
   * v37_emiIndCCSmax(ttot,regi,"co2cement")
 ;
 
+***------------------------------------------------------
 *' Calculate industry CCS costs.
+***------------------------------------------------------
 q37_IndCCSCost(ttot,regi,emiInd37)$( ttot.val ge cm_startyear ) ..
   vm_IndCCSCost(ttot,regi,emiInd37)
   =e=

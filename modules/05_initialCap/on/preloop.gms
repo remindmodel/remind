@@ -48,7 +48,7 @@ q05_eedemini(regi,enty)..
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
-    )
+    )$(NOT tePrcb(te)) !! TODO temp fix until efficiencies are implemented
     !! subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
   - sum(pc2te(enty3,enty4,te2,enty),
       pm_prodCouple(regi,enty3,enty4,te2,enty)
@@ -58,7 +58,7 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en(enty,enty2,te)) ..
+q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrcb(te)) .. !! TODO temp fix until efficiencies are implemented
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)
   * v05_INIcap0(regi,te)

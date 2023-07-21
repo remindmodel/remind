@@ -55,10 +55,6 @@ Positive Variables
   vm_IndCCSCost(ttot,alL_regi,all_enty)                                     "industry CCS cost"
   v37_emIIndCCSmax(ttot,all_regi,emiInd37)                                  "maximum abatable industry emissions"
 
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-  v37_demMatsEcon(tall,all_regi,all_enty)                                   "External demand of materials from economy"
-  v37_demMatsProc(tall,all_regi,all_enty)                                   "Internal demand of materials from processes"
-$endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   v37_prodVolPrcb(tall,all_regi,all_te,opModesPrcb)                         "Production volume of processes in material-flow model [Gt]"
   v37_prodMats(tall,all_regi,all_enty)                                      "Production of materials [Gt]"
@@ -78,14 +74,11 @@ $endif.no_calibration
   q37_demFeIndst(ttot,all_regi,all_enty,all_emiMkt)       "industry final energy demand (per emission market)"
   q37_costCESmarkup(ttot,all_regi,all_in)                 "calculation of additional CES markup cost to represent demand-side technology cost of end-use transformation, for example, cost of heat pumps etc."
 
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-  q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"
-  q37_limitCapMat(tall,all_regi,all_enty,all_te)          "Material-flow conversion is limited by capacities"
-$endif.material_flows
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_demMatsPrc(tall,all_regi,mats)                      "Demand of process materials"
   q37_prodMats(tall,all_regi,mats)                        "Production volume of processes in material-flow model"
   q37_mats2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
+  q37_limitCapMats(tall,all_regi,all_enty,all_te)         "Material-flow conversion is limited by capacities"
 $endif.process_based_steel
 ;
 

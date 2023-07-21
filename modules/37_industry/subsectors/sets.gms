@@ -117,11 +117,11 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
 
   fe2mats_dyn37(all_enty,all_enty,all_te)    "map FE carriers to materials"
   /
-    TODO.TODO.bf
-    TODO.TODO.bof
-    TODO.TODO.idr
-    TODO.TODO.eaf
-    TODO.TODO.eaf
+    entydummy.entydummy.bf
+    entydummy.entydummy.bof
+    entydummy.entydummy.idr
+    entydummy.entydummy.eaf
+    entydummy.entydummy.eaf
   /
 $endif.process_based_steel
 

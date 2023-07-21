@@ -1591,9 +1591,6 @@ $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
 $setglobal cm_process_based_steel   off  !! off
-*** cm_material_flows      "switch to turn on industry material flow model"
-*** enable material flow model in the subsectors realisation of industry module
-$setglobal cm_material_flows   off  !! off
 *** c_CO2priceDependent_AdjCosts
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on

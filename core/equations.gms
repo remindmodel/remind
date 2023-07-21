@@ -96,7 +96,7 @@ q_costOM(t,regi)..
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2)
          + sum(tePrcb2opModesPrcb(te,opModesPrcb),
                v37_prodVolPrcb(t,regi,te,opModesPrcb)
-               )
+               )$tePrcb(te)
         )
   )
   +
