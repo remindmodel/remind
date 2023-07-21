@@ -21,6 +21,8 @@ test_that("checkFixCfg works", {
     "cm_startyear" = "1985",
     "cm_netZeroScen" = "NöööGFS_v4",
     "cm_rcp_scen" = "apocalypse",
+    "c_testOneRegi_region" = "LOONG",
+    "c_shGreenH2" = "1.5",
   NULL)
 
   cfg <- savecfg

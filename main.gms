@@ -159,7 +159,8 @@
 *' * The value behind 'def' contains the default value and is added only for the user to remember if changed manually
 *' * The value behind regexp is read by scripts/start/checkFixCfg.R to check the validity of the input.
 *' In this case, it checks whether the value fits this regular expression: ^(0|1)$
-*' Use 'value1|value2' for specific values, use '[1-7]' for a row of integers and use 'is.numeric' for numeric values.
+*' Use 'value1|value2' for specific values, use '[1-7]' for a row of integers.
+*' Two shortcut are defined: use 'is.numeric' for numeric values and 'is.share' if the value must be >= 0 and <= 1
 *'
 *'
 *' #### Other general rules:
@@ -555,22 +556,22 @@ parameter
 parameter
   c_shGreenH2               "lower bound on share of green hydrogen in all hydrogen from 2030 onwards"
 ;
-  c_shGreenH2      = 0;        !! def = 0
+  c_shGreenH2      = 0;        !! def = 0  !! regexp = is.share
 *'   (a number between 0 and 1): share
 parameter
   c_shBioTrans              "upper bound on share of bioliquids in transport from 2025 onwards"
 ;
-  c_shBioTrans     = 1;        !! def = 1
+  c_shBioTrans     = 1;        !! def = 1  !! regexp = is.share
 *'  (a number between 0 and 1): share
 parameter
   cm_shSynLiq               "lower bound on share of synfuels in SE liquids by 2045, gradual scale-up before"
 ;
-  cm_shSynLiq    = 0;        !! def = 0
+  cm_shSynLiq    = 0;          !! def = 0  !! regexp = is.share
 *'   (a number between 0 and 1): share
 parameter
   cm_shSynGas               "lower bound on share of synthetic gas in SE gases by 2045, gradual scale-up before"
 ;
-  cm_shSynGas      = 0;        !! def = 0
+  cm_shSynGas      = 0;        !! def = 0  !! regexp = is.share
 *'
 parameter
   cm_IndCCSscen             "CCS for Industry"
@@ -1566,22 +1567,22 @@ $setGLobal c_agricult_base_shift off !! def off
 $setglobal cm_wind_offshore  1      !! def = 1
 ***  cm_INCONV_PENALTY  on     !! def = on
 *** *RP* 2012-03-06 Flag to turn on inconvenience penalties, e.g. for air pollution
-$setglobal cm_INCONV_PENALTY  on         !! def = on
+$setglobal cm_INCONV_PENALTY  on         !! def = on  !! regexp = off|on
 *** cm_INCONV_PENALTY_FESwitch  off     !! def = off
 *** flag to trun on inconvenience penalty to avoid switching shares on buildings, transport and industry biomass use if costs are relatively close (seLiqbio, sesobio, segabio)
-$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on
+$setglobal cm_INCONV_PENALTY_FESwitch  on !! def = on  !! regexp = off|on
 ***  cm_MOFEX  off    !! def=off
 *** *JH/LB* Activate MOFEX partial fossil fuel extraction cost minimization model
 *** * Warning: Use a well-converged run since the model uses vm_prodPe from the input GDX
-$setGlobal cm_MOFEX  off        !! def = off
+$setGlobal cm_MOFEX  off        !! def = off  !! regexp = off|on
 *** cm_Full_Integration
 ***    use "on" to treat wind and solar as fully dispatchable electricity production technologies
-$setGlobal cm_Full_Integration  off     !! def = off
+$setGlobal cm_Full_Integration  off     !! def = off  !! regexp = off|on
 *'   MAGICC configuration
 *'   either uncalibrated or calibrate year 2000 temperature to HADCRUT4 data (which is very close to AR5).
 $setGlobal cm_magicc_calibrateTemperature2000  uncalibrated  !! def = uncalibrated
 *'  Derive temperature impulse response to CO2 emissions, based on MAGICC. Adds around 10min runtime.
-$setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off
+$setGlobal cm_magicc_temperatureImpulseResponse  off           !! def = off  !! regexp = off|on
 *' MAGICC configuration
 *' roughly comparable to TCRE value, or even more roughly, equivalent climate sensitivity
 *' choose from OLDDEFAULT (REMIND1.7 legacy file); or different percentiles of RCP26 or generic TCRE outcomes calibrated to CMIP5 (see Schultes et al. (2018) for details)
@@ -1589,17 +1590,17 @@ $setGlobal cm_magicc_config  OLDDEFAULT    !! def = OLDDEFAULT ; {OLDDEFAULT, RC
 *'  climate damages (HowardNonCatastrophic, DICE2013R, DICE2016, HowardNonCatastrophic, HowardInclCatastrophic, KWcross, KWpanelPop}
 $setGlobal cm_damage_DiceLike_specification  HowardNonCatastrophic   !! def = HowardNonCatastrophic
 *** cfg$gms$cm_damage_Labor_exposure <- "low" # def = "low"; {low,high}
-$setGlobal cm_damage_Labor_exposure  low    !!def = low
+$setGlobal cm_damage_Labor_exposure  low    !! def = low  !! regexp = low|high
 *** cfg$gms$cm_TCssp <- "SSP2"  #def = "SSP2"; {SSP2,SSP5} the scenario for which the damage function is specified - currently only SSP2 and SSP5 are available
-$setGlobal cm_TCssp  SSP2  !! def = SSP2
+$setGlobal cm_TCssp  SSP2  !! def = SSP2  !! regexp = SSP2|SSP5
 *** cfg$gms$cm_TCpers <- 8   #def = 8; {0,1,2,3,4,5,6,7,8,9} the lags taken into account in the damage function
-$setGlobal cm_TCpers  8  !! def = 8
-*** cfg$gms$cm_TCspec <- "mean"  #def = mean; {mean,median,95,05,83,17}  the uncertainty estimate of the TC damage function
-$setGlobal cm_TCspec  mean  !! def = mean
+$setGlobal cm_TCpers  8  !! def = 8  !! regexp = [0-9]
+*** cfg$gms$cm_TCspec <- "mean"  # def = mean; {mean,median,95,05,83,17}  the uncertainty estimate of the TC damage function
+$setGlobal cm_TCspec  mean  !! def = mean  !! regexp = mean|median|95|05|83|17
 *** #cm_transpGDPscale <- "on"  # def "on", activate dampening factor to align edge-t non-energy transportation costs with historical GDP data"
-$setglobal cm_transpGDPscale  off  !! def = off
+$setglobal cm_transpGDPscale  off  !! def = off  !! regexp = off|on
 *** This flag turns off output production
-$setGlobal c_skip_output  off        !! def = off
+$setGlobal c_skip_output  off        !! def = off  !! regexp = off|on
 ***  cm_CO2TaxSectorMarkup     "CO2 tax markup in buildings or transport sector, a value of 0.5 means CO2 tax increased by 50%"
 ***  (off): no markup
 ***  ("GLO.build 1, USA_regi.trans 0.25, EUR_regi.trans 0.25"): "example for CO2 tax markup in transport of 25% in USA and EUR, and CO2eq tax markup in buildings sector of 100 % in all regions. Currently, build and trans are the only two elements of the set emi_sectors that are supported."
@@ -1610,7 +1611,7 @@ $setGlobal c_regi_nucscen  all  !! def = all
 $setGlobal c_regi_capturescen  all  !! def = all
 *** cm_process_based_steel      "switch to turn on process-based steel implementation"
 *** enable process-based implementation of steel in subsectors realisation of industry module
-$setglobal cm_process_based_steel   off  !! off
+$setglobal cm_process_based_steel   off  !! def = off  !! regexp = off|on
 *** c_CO2priceDependent_AdjCosts
 ***    default on changes adjustment costs for advanced vehicles in dependence of CO2 prices
 $setglobal c_CO2priceDependent_AdjCosts    on   !! def = on
@@ -1637,7 +1638,7 @@ $setGlobal cm_APscen  SSP2          !! def = SSP2
 $setglobal cm_CES_configuration  indu_subsectors-buil_simple-tran_edge_esm-POP_pop_SSP2EU-GDP_gdp_SSP2EU-En_gdp_SSP2EU-Kap_debt_limit-Reg_62eff8f7   !! this will be changed by start_run()
 $setglobal c_CES_calibration_iterations  10     !!  def  =  10
 $setglobal c_CES_calibration_industry_FE_target  1
-$setglobal c_testOneRegi_region  EUR       !! def = EUR
+$setglobal c_testOneRegi_region  EUR       !! def = EUR  !! regexp = [A-Z]{3}
 $setglobal cm_fixCO2price  off !! def = off
 
 *' @stop
