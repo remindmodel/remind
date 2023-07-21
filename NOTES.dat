@@ -1,0 +1,126 @@
+-------------------------------------
+UNSORTED THOUGHTS
+-------------------------------------
+- fundamental difference to other te: not only one input and output
+
+- q_costOM: Maybe (ab)use teNoTransform set/term, if omv is not needed;
+    - do we need omv / is the capacity factor fixed?
+
+- q_costInv: new term
+
+- q_limitCapXe needs new equation? similar to Fe
+- q_transXetoYe needs new equation; Similar to pe2se if eta varies, else similar to se2fe
+
+- q_costEnergySys: Industry should not be part of this --> exclude from v_costOM and v_costInv?? 
+  - maybe leave as is
+  - v_costFu includes Coal! i.e. cost for coal is accounted for in the ESM
+
+
+- pm_regiEarlyRetiRate is a thing that needs to be set
+
+- look into core/input/p_inco0.cs4r
+
+- cement process emissions via core/input/generisdata_emi.prn?
+
+- at first: do NOT add to teAdj
+
+- emissions:
+  - route is pecoal to sesofos via coaltr, then to fesos via tdfessos
+  - CH4 building coal hea2ting is accounted on SE level(?): pm_emifac(t,regi,"pecoal","sesofos","coaltr","ch4") = 9.46 * (1-pm_share_ind_fesos("2005",regi));
+
+- is coaltr an actual process or just a dummy? what does it do / include? 
+- Nocnvenience: 
+  - Why is there inconvenience cost on coaltr?? p02_inconvpen_lap(ttot,regi,"coaltr")$(ttot.val ge 2005)      = 0.5;   !! In dollar per GJ seprod at 1.000$/cap GDP, or 10$/GJ at 10.000$_GDP/cap
+  - In q02_inconvPen, it seems like they forgot about industry, as pm_share_ind_fesos is not used.
+
+- teEtaIncr is filled automatically from contents of generisdata_varying_eta.prn
+
+- pm_eta_conv is efficiency of all standig stock in a given year; 
+- pm_data('eta') is result of calibration in module 04, and represents all standing stock (in 2005)
+
+- pm_fedemand conatains ue_ level, and is read from core/input/f_fedemand.cs4r. 
+
+- 29/calibrate/input/pm_fe_demand_medium.cs4r and core/input/f_fedemand.cs4r give different 2005 values, e.g. for 
+2005,LAM,gdp_SSP2,ue_steel_secondary (0.01600863 vs 0.01552)
+or
+2005,LAM,gdp_SSP2,fesos (1.44310847 vs 1.473)
+29 is only used for a switch ==medium which is ==off by default; When is this used?
+
+
+-------------------------------------
+pm_fedemand: 
+-------------------------------------
+- for now: take pm_fedemand data as is, in michaja's implementation. 
+- add different operation modes for BF using different tuyere fuels --> enables penny-switching, which is OK for now
+- one alpha for all right now; idea: alpha relative to BAT? 
+- time-constant alpha, convergence until 2050
+
+- later: follow what's happening in tool_fix_IEA_data_... by running R debugger and looking at DF after each step
+
+-question for michaja: 
+  - what's happening in tool_fix_IEA_data_...? 
+  - what sense did you make of IEA flows; do you have any sources apart from the documentation? 
+  - explain proposed methodology regarding efficiencies; see what he thinks 
+
+
+-------------------------------------
+CAPACITY 1ST SHOT: STRATEGY
+-------------------------------------
+. = done; ! = To DO; ? = unclear; - = nothing to do
+- SETS: 
+  . opTimeYr2te is filled automatically from pm_data('liftetime')
+  . teNoLearn if filled automatically per set difference (since not included explicitly in teLearn)
+  . teMats2rlf is set in 37/sets
+      . added to te2rlf in sets_calculations
+  . vm_capFac / pm_cf
+      - pm_cf from f_cf, in core/input/f_cf.cs3r, from mrremind; set manually for some as hotfix
+         . hotfix: set manually in core/datainput as hotfix as well.
+      - 32/(all 3)/bounds: vm_capFac.fx(t,regi,te) = pm_cf(t,regi,te);
+  . v_costInvTeDir has no dependencies 
+  . vm_costTeCapital is fixed for teNoLearn
+  . teAdj must be set explicitly (skipped for now)
+      - v_costInvTeAdj always has $teAdj constraint
+  . en2en /fe2mats
+      - build: 
+        . declare (core) and set (37) fe2mats  
+        . set and declare fe2mats_dyn37 
+            . entydummy introduced.
+            ? okay?
+        . add fe2mats to en2en in sets_calculations
+      . en2en used in:
+          . q_costOM
+              . adapted, should work fine
+          . q_costInv
+              . adapted, should work fine
+          . q05_eedemini and q05_ccapini 
+              . temp fix until eta is implemented correctly
+          - (further stuff in 21_tax via vm_changeProdStartyearCost if p_adj_coeff is set non-zero (not yet))
+      - q_changeProdStartyear changes adjustment costs
+          - skipped for now (should not be defined for pbs, since fe2mats is not included)
+
+! check 04 datainput and 05 preloop thoroughly
+! check equations that where added / replaced 
+! check actual data in _tech.prn and _vintages.prn
+
+-------------------------------------
+EFFICIENCY 1ST SHOT: STRATEGY
+-------------------------------------
+
+
+
+-------------------------------------
+NOTES ON FURTHER STEPS
+-------------------------------------
+
+-------------------------------------
+TODO / NEW ADDITIONS TO PLANNING DOC
+-------------------------------------
+- emissions 
+- re-assess CCS
+- adjustment costs (teAdjust) 
+- variable eta 
+- learning / teLearn
+- use pm_histfegrowth or a different method for regionally varying vintage stock 
+- smaller stuff:
+  - replace explicit sets by automatically filles sets, e.g. as with feForUe (is this the "any" operator I have been looking for?)
+
