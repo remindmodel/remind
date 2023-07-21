@@ -142,7 +142,7 @@ if (length(argv) > 0) {
   if (sum(file_exists) > 1) stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R")
   if (!all(file_exists)) stop("Unknown parameter provided: ", paste(argv[!file_exists], collapse = ", "))
   # set config file to not known parameter where the file actually exists
-  path_settings_coupled <- file.path(path_remind, argv[[1]])
+  path_settings_coupled <- normalizePath(argv[[1]])
   if (! isTRUE(grepl("scenario_config_coupled", path_settings_coupled)))
     stop("Enter only a scenario_config_coupled* file via command line or set all files manually in start_bundle_coupled.R.\n",
          "Your command line arguments were: ", paste0(argv, collapse = " "))
@@ -540,6 +540,8 @@ for(scen in common){
       numberOfTasks <- 1
     }
 
+    cfg_rem <- checkFixCfg(cfg_rem, remindPath = path_remind)
+
     Rdatafile <- paste0(fullrunname, ".RData")
     message("Save settings to ", Rdatafile)
     save(path_remind, path_magpie, cfg_rem, cfg_mag, runname, fullrunname, max_iterations, start_iter,
@@ -618,12 +620,12 @@ for (scen in common) {
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j'"), intern = TRUE)
           runEnv$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        slurm_command <- paste0("sbatch --qos=", runEnv$qos, " --job-name=", fullrunname,
-        " --output=", logfile, " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
-        if (runEnv$numberOfTasks == 1) " --mem=8000", " ", runEnv$sbatch,
-        " ", runEnv$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
-        message(slurm_command)
-        exitCode <- system(slurm_command)
+        slurmOptions <- combine_slurmConfig(paste0("--qos=", runEnv$qos, " --job-name=", fullrunname, " --output=", logfile,
+          " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", runEnv$numberOfTasks,
+          if (runEnv$numberOfTasks == 1) " --mem=8000"), runEnv$sbatch)
+        slurmCommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", Rdatafile, "\"")
+        message(slurmCommand)
+        exitCode <- system(slurmCommand)
         if (0 < exitCode) {
           errorsfound <- errorsfound + 1
           message("sbatch command failed, check logs.")

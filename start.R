@@ -39,7 +39,7 @@ helpText <- "
 #'   --testOneRegi, -1:  starting the REMIND run(s) in testOneRegi mode
 #'   startgroup=MYGROUP  when reading a scenario config .csv file, don't start
 #'                       everything specified by \"start = 1\", instead start everything
-#'                       specified by \"start = MYGROUP\"
+#'                       specified by \"start = MYGROUP\". Use startgroup=* to start all.
 #'   titletag=MYTAG      append \"-MYTAG\" to all titles of all runs that are started
 #'   slurmConfig=CONFIG  use the provided CONFIG as slurmConfig: a string, or an integer <= 16
 #'                       to select one of the options shown when running './start.R -t'.
@@ -327,6 +327,8 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
 
     # abort on too long paths ----
     cfg$gms$cm_CES_configuration <- calculate_CES_configuration(cfg, check = TRUE)
+
+    cfg <- checkFixCfg(cfg)
 
     # save the cfg object for the later automatic start of subsequent runs (after preceding run finished)
     if (! "--gamscompile" %in% flags) {
