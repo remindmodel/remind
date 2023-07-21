@@ -114,6 +114,15 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     bf . (standard)
     bof . (unheated)
   /
+
+  fe2mats_dyn37(all_enty,all_enty,all_te)    "map FE carriers to materials"
+  /
+    TODO.TODO.bf
+    TODO.TODO.bof
+    TODO.TODO.idr
+    TODO.TODO.eaf
+    TODO.TODO.eaf
+  /
 $endif.process_based_steel
 
   secInd37   "industry sub-sectors"
@@ -472,9 +481,10 @@ pf_eff_target_dyn29(pf_eff_target_dyn37)    = YES;
 pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
-$ifthen.material_flows "%cm_material_flows%" == "on"                 !! cm_material_flows
-alias(mats,mats2,matsIn,matsOut);
-$endif.material_flows
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+teMats2rlf(tePrcb,1) = YES;
+fe2mats(fe2mats_dyn37)       = YES;
+$endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
 alias(fe2ppfen37,fe2ppfen37_2);
 

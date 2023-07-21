@@ -76,6 +76,8 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   +
   sum((secInd37_emiMkt(secInd37Prcb,emiMkt),secInd37_tePrcb(secInd37Prcb,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
     p37_specFEDem(entyFE,tePrcb,opModesPrcb)
+*    /
+*    pm_eta_conv(t,regi,tePrcb)
     *
     v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
   )$(NOT sameas(ttot,"2005"))
@@ -110,6 +112,20 @@ q37_mats2ue(ttot,regi,all_in)$(uePrcb(all_in) AND (ttot.val ge cm_startyear))..
       v37_prodMats(ttot,regi,mats)
     )
 ;
+
+***------------------------------------------------------
+*' Definition of capacity constraints
+***------------------------------------------------------
+q37_limitCapMats(t,regi,fe2mats(entyFe,mats,te))..
+    sum(tePrcb2matsOut(tePrcb,opModesPrcb,mats),
+      v37_prodVolPrcb(t,regi,tePrcb,opModesPrcb)
+    )
+    =l=
+    sum(teMats2rlf(te,rlf),
+        vm_capFac(t,regi,te) * vm_cap(t,regi,te,rlf)
+    )
+;
+
 $endif.process_based_steel
 
 *' Thermodynamic limits on subsector energy demand

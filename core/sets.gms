@@ -2505,6 +2505,9 @@ fete(all_enty,all_te) "map final energy to technologies"
 fe2ue(all_enty,all_enty,all_te)    "map FE carriers to ES via appliances"
 //
 
+fe2mats(all_enty,all_enty,all_te)    "map FE carriers to materials"
+//
+
 fe2es(all_enty,all_esty,all_teEs)    "map FE carriers to ES via ES technologies"
 //
 
@@ -2808,6 +2811,9 @@ teFe2rlfH2BI(all_te,rlf) "mapping for final energy to grades of helper technolog
 /
 
 teue2rlf(all_te,rlf)     "mapping for ES production technologies to grades"
+//
+
+teMats2rlf(all_te,rlf)     "mapping for material production technologies to grades"
 //
 
 teCCS2rlf(all_te,rlf)     "mapping for CCS technologies to grades"
