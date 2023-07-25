@@ -58,6 +58,11 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
     }
   }
 
+  if (errorsfound > 0) {
+    if (testmode) warning(errorsfound, " errors found.")
+      else stop(errorsfound, " errors found, see above. Either adapt the parameter choice or the regexp in main.gms")
+  }
+
   # Check for compatibility with subsidizeLearning
   if ((cfg$gms$optimization != "nash") && (cfg$gms$subsidizeLearning == "globallyOptimal") ) {
     message("Only optimization='nash' is compatible with subsidizeLearning='globallyOptimal'. Switching subsidizeLearning to 'off' now.\n")
@@ -68,10 +73,20 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   if (! isTRUE(cfg$gms$CES_parameters == "calibrate")) {
     cfg$output <- setdiff(cfg$output, "reportCEScalib")
   }
-  if (errorsfound > 0) {
-    if (testmode) warning(errorsfound, " errors found.")
-      else stop(errorsfound, " errors found, see above. Either adapt the parameter choice or the regexp in main.gms")
-  }
-
+  
+  # Make sure that an input_bau.gdx has been specified if an NDC is to be calculated.
+  if (isTRUE(cfg$gms$carbonprice == "NDC") | isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
+    if (is.na(cfg$files2export$start["input_bau.gdx"])) {
+      errormsg <- "'carbonprice' or 'carbonpriceRgi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty."
+      if (testmode) warning(errormsg) else stop(errormsg)
+    }
+  } else {
+    if (!is.na(cfg$files2export$start["input_bau.gdx"])) {
+      message("Neither 'carbonprice' nor 'carbonpriceRgi' is set to 'NDC' but 'path_gdx_bau' ",
+              "is not empty introduing an unnecesary dependency to another run. Seeting 'path_gdx_bau' to NA")
+      cfg$files2export$start["input_bau.gdx"] <- NA        
+    }
+  }  
+  
   return(cfg)
 }
