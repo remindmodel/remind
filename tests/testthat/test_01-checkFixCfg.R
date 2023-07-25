@@ -7,8 +7,7 @@
 test_that("checkFixCfg works", {
   remind_folder <- "../.."
   savecfg <- cfg <- gms::readDefaultConfig(remind_folder)
-  # regexp = NA means: no warning
-  expect_warning(checkFixCfg(cfg, remind_folder, testmode = TRUE), regexp = NA)
+  expect_no_warning(checkFixCfg(cfg, remind_folder, testmode = TRUE))
 
   wrongsetting <- c(
     "cm_NDC_version" = "2004_cond",
