@@ -11,8 +11,7 @@ if (length(csvfiles) == 0) {
 }
 for (csvfile in csvfiles) {
   test_that(paste("perform readCheckScenarioConfig with", basename(csvfile)), {
-    # regexp = NA means: expect no warning
-    expect_warning(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE), regexp = NA)
+    expect_no_warning(readCheckScenarioConfig(csvfile, remindPath = "../../", testmode = TRUE))
   })
 }
 test_that("readCheckScenarioConfig fails on error-loaden config", {

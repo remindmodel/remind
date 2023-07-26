@@ -124,7 +124,11 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       } else {
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
-      # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
+
+      # In the coupling, at the end of each REMIND run, report.R already automatically appends the MAgPIE
+      # report of the previous MAgPIE run to the normal REMIND_generic reporting.
+      # After the last coupling iteration: read this combined report from the REMIND output folder, set the 
+      # model name to 'REMIND-MAgPIE' and write the combined report directly to the 'output' folder.
       report_rem <- file.path(path_remind, outfolder_rem, paste0("REMIND_generic_", cfg_rem$title, ".mif"))
       if (i == max_iterations) {
         # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
