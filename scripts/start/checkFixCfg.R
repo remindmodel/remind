@@ -77,13 +77,13 @@ checkFixCfg <- function(cfg, remindPath = ".", testmode = FALSE) {
   # Make sure that an input_bau.gdx has been specified if an NDC is to be calculated.
   if (isTRUE(cfg$gms$carbonprice == "NDC") | isTRUE(cfg$gms$carbonpriceRegi == "NDC")) {
     if (is.na(cfg$files2export$start["input_bau.gdx"])) {
-      errormsg <- "'carbonprice' or 'carbonpriceRgi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty."
+      errormsg <- "'carbonprice' or 'carbonpriceRegi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty."
       if (testmode) warning(errormsg) else stop(errormsg)
     }
   } else {
     if (!is.na(cfg$files2export$start["input_bau.gdx"])) {
-      message("Neither 'carbonprice' nor 'carbonpriceRgi' is set to 'NDC' but 'path_gdx_bau' ",
-              "is not empty introduing an unnecesary dependency to another run. Seeting 'path_gdx_bau' to NA")
+      message("Neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC' but 'path_gdx_bau' ",
+              "is not empty introducing an unnecessary dependency to another run. Setting 'path_gdx_bau' to NA")
       cfg$files2export$start["input_bau.gdx"] <- NA        
     }
   }  
