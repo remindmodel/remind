@@ -18,6 +18,7 @@ parameters
     o32_dispatchDownPe2se(ttot,all_regi,all_te)     "output parameter to check by how much a pe2se te reduced its output below the normal, in % of the normal output."
     p32_shThresholdTotVREAddIntCost(ttot)           "Total VRE share threshold above which additional integration challenges arise. Increases with time as eg in 2030, there is still little experience with managing systems with 80% VRE share. Unit: Percent"
     p32_FactorAddIntCostTotVRE                      "Multiplicative factor that influences how much the total VRE share increases integration challenges"
+    p32_phaseInFlexTax(ttot)                        "phase-in factor for flexibility tax, scales linearly between 0 in 2020 and 1 in 2040"
 ;
 
 scalars
