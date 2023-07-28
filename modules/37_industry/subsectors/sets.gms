@@ -79,21 +79,38 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
    eaf . sec . ue_steel_secondary
   /
 
-*  routes(all_te)  "Process routes"
-*  /
-*    idreaf
-*    bfbof
-*    seceaf
-*  /
-*
-*  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
-*  /
-*    idr . (h2,ng) . idreaf
-*    eaf . pri . idreaf
-*    eaf . sec . seceaf
-*    bf  . standard . bfbof
-*    bof . unheated . bfbof
-*  /
+  routes(all_te)  "Process routes"
+  /
+    idreaf
+    bfbof
+    seceaf
+  /
+
+  route2ue(all_te,all_in)  "Process routes"
+  /
+    idreaf . ue_steel_primary
+    bfbof . ue_steel_primary
+    seceaf . ue_steel_secondary
+  /
+
+
+  tePrcb2route(tePrcb,opModesPrcb,routes)    "Mapping of technologies onto route"
+  /
+    idr . (h2,ng) . idreaf
+    eaf . pri . idreaf
+    eaf . sec . seceaf
+    bf  . standard . bfbof
+    bof . unheated . bfbof
+  /
+
+  tePrcb2route2ue(tePrcb,opModesPrcb,routes,all_in)    "Mapping of technologies onto route"
+  /
+    idr . (h2,ng) . idreaf . ue_steel_primary
+    eaf . pri . idreaf . ue_steel_primary
+    eaf . sec . seceaf . ue_steel_secondary
+    bf  . standard . bfbof . ue_steel_primary
+    bof . unheated . bfbof . ue_steel_primary
+  /
 
   uePrcb(all_in) "Ue ces tree nodes connected to process based implementation"
   /

@@ -328,9 +328,9 @@ $ENDIF.WindOff
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
         bof          "Basic-oxygen furnace"
-*        bfbof        "BF/BOF route"
-*        idreaf       "Direct reduction / EAF route"
-*        seceaf       "Scrap-loaded EAF route"
+        bfbof        "BF/BOF route"
+        idreaf       "Direct reduction / EAF route"
+        seceaf       "Scrap-loaded EAF route"
         pcc          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
         pco          "outdated technology, only here to avoid compilation errors if input data containing information for this technology are used"
 /
