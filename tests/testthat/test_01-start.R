@@ -22,6 +22,7 @@ test_that("start.R --test startgroup=AMT titletag=AMT config/scenario_config.csv
                            c("start.R", "--test", "slurmConfig=16", "startgroup=AMT", "titletag=TESTTHAT", "config/scenario_config.csv"))
     printIfFailed(output)
     expectSuccessStatus(output)
+    expect_false(any(grepl("Waiting for.* NA( |$)", output)))
     },
     getLine = function() stop("getLine should not called."),
     .package = "gms"
@@ -48,6 +49,7 @@ test_that("start.R --test succeeds on all configs", {
                              c("start.R", "--test", "slurmConfig=16", "startgroup=*", "titletag=TESTTHAT", csvfile))
         printIfFailed(output)
         expectSuccessStatus(output)
+        expect_false(any(grepl("Waiting for.* NA( |$)", output)))
       })
     },
     getLine = function() stop("getLine should not called."),
