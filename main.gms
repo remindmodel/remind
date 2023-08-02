@@ -1621,17 +1621,17 @@ $setGlobal cm_conoptv  conopt3    !! def = conopt3
 *'
 *' (off): normal model operation, default
 *' (on): no model operation, instead input.gdx is copied to fulldata.gdx
-$setGlobal c_empty_model   off    !! def = off
+$setGlobal c_empty_model   off    !! def = off  !! regexp = off|on
 *' mode for solving nash problem
 *'
 *' * parallel  - all regions are run an parallel
 *' * debug     - all regions are run in a sequence and the lst-file will contain information on infeasiblities
-$setGlobal cm_nash_mode  parallel      !! def = parallel
+$setGlobal cm_nash_mode  parallel      !! def = parallel  !! regexp = debug|parallel|serial
 
 $setglobal cm_secondary_steel_bound  scenario   !! def = scenario
 $setglobal c_GDPpcScen  SSP2EU     !! def = gdp_SSP2   (automatically adjusted by start_run() based on GDPscen)
 $setglobal cm_demScen  gdp_SSP2EU     !! def = gdp_SSP2EU
-$setGlobal c_scaleEmiHistorical  on  !! def = on
+$setGlobal c_scaleEmiHistorical  on  !! def = on  !! regexp = off|on
 $SetGlobal cm_quick_mode  off          !! def = off  !! regexp = off|on
 $setGLobal cm_debug_preloop  off    !! def = off  !! regexp = off|on
 $setGlobal cm_APscen  SSP2          !! def = SSP2
