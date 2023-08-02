@@ -44,11 +44,11 @@ q05_eedemini(regi,enty)..
       )
     ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
-  + sum(en2en(enty,enty2,te),
+  + sum(en2en_inicap(enty,enty2,te),
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
-    )$(NOT tePrcb(te)) !! TODO temp fix until efficiencies are implemented
+    ) !! TODO temp fix until efficiencies are implemented
     !! subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
   - sum(pc2te(enty3,enty4,te2,enty),
       pm_prodCouple(regi,enty3,enty4,te2,enty)
@@ -58,7 +58,7 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrcb(te)) .. !! TODO temp fix until efficiencies are implemented
+q05_ccapini(regi,en2en_inicap(enty,enty2,te)).. !! TODO temp fix until efficiencies are implemented
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)
   * v05_INIcap0(regi,te)
@@ -495,8 +495,8 @@ display pm_EN_demand_from_initialcap2, p05_emi2005_from_initialcap2;
 *** To be moved to new emiAccounting module
 * Discounting se2fe emissions from pe2se emission factors
 loop(entySe$(sameas(entySe,"segafos") OR sameas(entySe,"seliqfos") OR sameas(entySe,"sesofos")),
-  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") = 
-    pm_emifac(ttot,regi,entyPe,entySe,te,"co2") 
+  pm_emifac(ttot,regi,entyPe,entySe,te,"co2")$pm_emifac(ttot,regi,entyPe,entySe,te,"co2") =
+    pm_emifac(ttot,regi,entyPe,entySe,te,"co2")
     - pm_eta_conv(ttot,regi,te)
       *( sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"), pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2")*pm_eta_conv(ttot,regi,te2))/sum(se2fe(entySe,entyFe2,te2)$pm_emifac(ttot,regi,entySe,entyFe2,te2,"co2"),1)  );
 );

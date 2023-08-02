@@ -78,7 +78,7 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !
   q37_demMatsPrc(tall,all_regi,mats)                      "Demand of process materials"
   q37_prodMats(tall,all_regi,mats)                        "Production volume of processes in material-flow model"
   q37_mats2ue(tall,all_regi,all_in)                       "Connect materials production to ue ces tree nodes"
-  q37_limitCapMats(tall,all_regi,all_enty,all_te)         "Material-flow conversion is limited by capacities"
+  q37_limitCapMats(tall,all_regi,all_te)                  "Material-flow conversion is limited by capacities"
 $endif.process_based_steel
 ;
 

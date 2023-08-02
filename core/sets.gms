@@ -875,7 +875,7 @@ iso_regi "all iso countries and EU and greater China region" /  EUR,CHA,
        UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,
        VIR,VNM,VUT,WLF,WSM,YEM,ZAF,ZMB,ZWE /
 
-   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country"
+   map_iso_regi(iso_regi,all_regi) "mapping from iso countries to regions that represent country" 
          /
        EUR . EUR
        CHA . CHA
@@ -2348,6 +2348,7 @@ Sets
 *NB* mappings resulting from set opertations
 en2en(all_enty,all_enty,all_te)  "all energy conversion mappings"
 en2en2(all_enty,all_enty,all_te) "alias of en2en: all energy conversion mappings"
+en2en_inicap(all_enty,all_enty,all_te)  "all energy conversion mappings without pbs (hotfix)"
 en2se(all_enty,all_enty,all_te)   "all energy conversion mappings producing SE"
 te2rlf(all_te,rlf)               "all technologies to grades"
 

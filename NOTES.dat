@@ -3,6 +3,8 @@ UNSORTED THOUGHTS
 -------------------------------------
 - fundamental difference to other te: not only one input and output
 
+- fix BF opModes split to 2005 values to avoid penny switching 
+
 - q_costOM: Maybe (ab)use teNoTransform set/term, if omv is not needed;
     - do we need omv / is the capacity factor fixed?
 
@@ -101,6 +103,7 @@ CAPACITY 1ST SHOT: STRATEGY
 ! check 04 datainput and 05 preloop thoroughly
 ! check equations that where added / replaced 
 ! check actual data in _tech.prn and _vintages.prn
+    ! check units for all (and how that works)
 
 -------------------------------------
 EFFICIENCY 1ST SHOT: STRATEGY
@@ -115,7 +118,6 @@ NOTES ON FURTHER STEPS
 -------------------------------------
 TODO / NEW ADDITIONS TO PLANNING DOC
 -------------------------------------
-- emissions 
 - re-assess CCS
 - adjustment costs (teAdjust) 
 - variable eta 

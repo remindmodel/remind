@@ -121,7 +121,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     entydummy.entydummy.bof
     entydummy.entydummy.idr
     entydummy.entydummy.eaf
-    entydummy.entydummy.eaf
   /
 $endif.process_based_steel
 
@@ -482,7 +481,7 @@ pf_quan_target_dyn29(pf_quan_target_dyn37)  = YES;
 $endif.calibrate
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
-teMats2rlf(tePrcb,1) = YES;
+teMats2rlf(tePrcb,"1") = YES;
 fe2mats(fe2mats_dyn37)       = YES;
 $endif.process_based_steel
 alias(secInd37_2_pf,secInd37_2_pf2);
