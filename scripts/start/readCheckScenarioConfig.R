@@ -51,12 +51,6 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
       whitespaceErrors <- whitespaceErrors + sum(haswhitespace)
     }
   }
-  if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
-    scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
-    message("In ", filename,
-        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
-  }
-  scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
 
   # fill empty cells with values from scenario written in copyConfigFrom cell
   copyConfigFromErrors <- 0
@@ -72,7 +66,36 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     }
   }
 
-  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors
+  pathgdxerrors <- 0
+  # fix missing path_gdx and inconsistencies
+  if ("path_gdx_ref" %in% names(scenConf) && ! "path_gdx_refpolicycost" %in% names(scenConf)) {
+    scenConf$path_gdx_refpolicycost <- scenConf$path_gdx_ref
+    message("In ", filename,
+        ", no column path_gdx_refpolicycost for policy cost comparison found, using path_gdx_ref instead.")
+  }
+  if ("path_gdx_bau" %in% names(scenConf)) {
+    # fix if bau given despite not needed
+    NDC45 <- if ("carbonprice" %in% names(scenConf)) scenConf$carbonprice %in% "NDC" else FALSE
+    NDC46 <- if ("carbonpriceRegi" %in% names(scenConf)) scenConf$carbonpriceRegi %in% "NDC" else FALSE
+    noNDCbutBAU <- ! is.na(scenConf$path_gdx_bau) & ! (NDC45 | NDC46)
+    if (sum(noNDCbutBAU) > 0) {
+      message("Neither 'carbonprice' nor 'carbonpriceRegi' is set to 'NDC', but 'path_gdx_bau' is not empty.\n",
+              "To avoid an unnecessary dependency to another run, setting 'path_gdx_bau' to NA.")
+      scenConf$path_gdx_bau[noNDCbutBAU] <- NA
+    }
+    # fail if bau not given but needed
+    noBAUbutNDC <- is.na(scenConf$path_gdx_bau) & (NDC45 | NDC46)
+    print(noBAUbutNDC)
+    if (sum(noBAUbutNDC) > 0) {
+      pathgdxerrors <- pathgdxerrors + sum(noBAUbutNDC)
+      warning("'carbonprice' or 'carbonpriceRegi' is set to 'NDC' which requires a reference gdx in 'path_gdx_bau' but it is empty.")
+    }
+  }
+  # make sure every path gdx column exists
+  scenConf[, names(path_gdx_list)[! names(path_gdx_list) %in% names(scenConf)]] <- NA
+
+  # collect errors
+  errorsfound <- sum(toolong) + sum(regionname) + sum(illegalchars) + whitespaceErrors + copyConfigFromErrors + pathgdxerrors
 
   # check column names
   knownColumnNames <- c(names(cfg$gms), names(path_gdx_list), "start", "output", "description", "model",

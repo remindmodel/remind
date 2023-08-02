@@ -158,7 +158,7 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
     if(! exists("slurmConfig")) {
       slurmConfig <- choose_slurmConfig(flags = flags)
     }
-    if ("--quick" %in% flags) slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
+    if ("--quick" %in% flags && ! slurmConfig == "direct") slurmConfig <- combine_slurmConfig(slurmConfig, "--time=60")
     message()
     for (outputdir in outputdirs) {
       message("Restarting ", outputdir)
