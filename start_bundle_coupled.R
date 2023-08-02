@@ -270,6 +270,9 @@ if (file.exists("/p") && sum(scenarios_coupled[common, "qos"] == "priority", na.
 ######## PREPARE AND START COUPLED RUNS ############
 ####################################################
 
+# initialize madrat settings
+invisible(madrat::getConfig(verbose = FALSE))
+
 # prepare runs: write RData files
 for(scen in common){
   message("\n################################\nPreparing run ", scen, "\n")

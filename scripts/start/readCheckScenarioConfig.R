@@ -36,7 +36,7 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   nameisNA <- grepl("^NA$", rownames(scenConf))
   if (any(nameisNA)) {
-    warning("Don't use 'NA' as scenario name, you fool. Stopping now.")
+    warning("Do not use 'NA' as scenario name, you fool. Stopping now.")
   }
   illegalchars <- grepl("[^[:alnum:]_-]", rownames(scenConf))
   if (any(illegalchars)) {
