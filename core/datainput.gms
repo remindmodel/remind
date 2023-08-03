@@ -138,37 +138,37 @@ $include "./core/input/generisdata_trade.prn"
 !! Modify spv and storspv parameters for optimistic VRE supply assumptions
 if (cm_VRE_supply_assumptions eq 1,
   if (fm_dataglob("learn","spv") ne 0.207,
-    abort "fm_dataglob('learn','spv') is to be modified, but changed externally";
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("learn","spv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
     fm_dataglob("learn","spv") = 0.257;
   );
 
-  if (fm_dataglob("inco0","storspv") ne 8350,
-    abort "fm_dataglob('inco0','storspv') is to be modified, but changed externally";
+  if (fm_dataglob("inco0","storspv") ne 7720,
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("inco0","storspv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
-    fm_dataglob("inco0","storspv") = 7000;
+    fm_dataglob("inco0","storspv") = 6470;
   );
 
-  if (fm_dataglob("incolearn","storspv") ne 5710,
-    abort "fm_dataglob('incolearn','storspv') is to be modified, but changed externally";
+  if (fm_dataglob("incolearn","storspv") ne 5440,
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("incolearn","storspv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
-    fm_dataglob("incolearn","storspv") = 4240;
+    fm_dataglob("incolearn","storspv") = 4040;
   );
 
   if (fm_dataglob("learn","storspv") ne 0.10,
-    abort "fm_dataglob('learn','storspv') is to be modified, but changed externally";
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("learn","storspv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
     fm_dataglob("learn","storspv") = 0.12;
   );
 elseif cm_VRE_supply_assumptions eq 2,
   if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("incolearn","spv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
     fm_dataglob("incolearn","spv") = 5010;
   );
 elseif cm_VRE_supply_assumptions eq 3,
   if (fm_dataglob("incolearn","spv") ne 5060,
-    abort "fm_dataglob('incolearn','spv') is to be modified, but changed externally";
+    abort "input data in core/input/generisdata_tech.prn has been externally changed, so fm_dataglob("incolearn","spv") specified here no longer matches the data there; code here needs to be updated to the new input data";
   else
     fm_dataglob("incolearn","spv") = 4960;
   );
