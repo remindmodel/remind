@@ -276,6 +276,14 @@ loop((ttot,ttot2,ext_regi,emiMktExt,target_type_47,emi_type_47)$pm_emiMktTarget(
               (p47_factorRescaleSlope(ttot,ttot2,ext_regi,emiMktExt) * pm_taxemiMkt_iteration(iteration,ttot2,regi,emiMkt))
             ) + 1;
         );
+***     dampen strong fluctuations in carbon price by setting upper and lower bounds on rescale factor
+        if( ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) > 3 ),
+          put_utility "msg" / "pm_factorRescaleemiMktCO2Tax above 3, will be decreased to 3:" ttot.tl ttot2.tl ext_regi.tl  emiMktExt.tl pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ;
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 3;
+        elseif (pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) < 0.33 ),
+          put_utility "msg" / "pm_factorRescaleemiMktCO2Tax below 0.33, will be increased to 0.33:" ttot.tl ttot2.tl ext_regi.tl  emiMktExt.tl pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ;
+          pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 0.33;
+          )
       );
     );    
   );
@@ -793,10 +801,4 @@ loop((ttot,ext_regi)$p47_exoCo2tax(ext_regi,ttot),
 display 'update of CO2 prices due to exogenously given CO2 prices in p47_exoCo2tax', pm_taxCO2eq;
 $endIf.regiExoPrice
 
-if( ( pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) > 3 ),
-  put_utility "msg" / "pm_factorRescaleemiMktCO2Tax above 3, will be decreased to 3:" ttot.tl ttot2.tl ext_regi.tl  emiMktExt.tl pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ;
-  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 3;
-elseif (pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) < 0.33 ),
-  put_utility "msg" / "pm_factorRescaleemiMktCO2Tax below 0.33, will be increased to 0.33:" ttot.tl ttot2.tl ext_regi.tl  emiMktExt.tl pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) ;
-  pm_factorRescaleemiMktCO2Tax(ttot,ttot2,ext_regi,emiMktExt) = 0.33;
 *** EOF ./modules/47_regipol/regiCarbonPrice/postsolve.gms
