@@ -44,11 +44,11 @@ q05_eedemini(regi,enty)..
       )
     ) * s05_inic_switch
     !! Transformation pathways that consume this enty:
-  + sum(en2en_inicap(enty,enty2,te),
+  + sum(en2en(enty,enty2,te)$(NOT tePrcb(te)), !! TODO Prcb temp fix until efficiencies are implemented
       pm_cf("2005",regi,te)
     / pm_data(regi,"eta",te)
     * v05_INIcap0(regi,te)
-    ) !! TODO temp fix until efficiencies are implemented
+    )
     !! subtract couple production pathways that produce this enty (= add couple production pathways that consume this enty):
   - sum(pc2te(enty3,enty4,te2,enty),
       pm_prodCouple(regi,enty3,enty4,te2,enty)
@@ -58,7 +58,7 @@ q05_eedemini(regi,enty)..
 ;
 
 *** capacity meets demand of the produced energy:
-q05_ccapini(regi,en2en_inicap(enty,enty2,te)).. !! TODO temp fix until efficiencies are implemented
+q05_ccapini(regi,en2en(enty,enty2,te))$(NOT tePrcb(te)).. !! TODO temp fix until efficiencies are implemented
     pm_cf("2005",regi,te)
   * pm_dataren(regi,"nur","1",te)
   * v05_INIcap0(regi,te)
@@ -110,6 +110,12 @@ solve initialcap2 using cns;
 display v05_INIdemEn0.l, v05_INIcap0.l;
 
 pm_cap0(regi,te) = v05_INIcap0.l(regi,te);
+
+!! TODO: Prcb hotfix until variable eta is implemented
+pm_cap0(regi,'bof') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005",regi,'bof');
+pm_cap0(regi,'bf') = pm_fedemand('2005',regi,'ue_steel_primary') / pm_cf("2005",regi,'bf');  !! measure bf capacity in t steel, not t pigiron! Skip: * p37_specMatsDem('pigiron','bof','unheated'));
+pm_cap0(regi,'eaf') = pm_fedemand('2005',regi,'ue_steel_secondary') / pm_cf("2005",regi,'eaf');
+pm_cap0(regi,'idr') = 0.;
 
 *RP keep energy demand for the Kyoto target calibration
 pm_EN_demand_from_initialcap2(regi,enty) = v05_INIdemEn0.l(regi,enty);

@@ -48,6 +48,7 @@ or
 2005,LAM,gdp_SSP2,fesos (1.44310847 vs 1.473)
 29 is only used for a switch ==medium which is ==off by default; When is this used?
 
+! p_inco0 is used for cm_techcosts == REGi; adjustment of tech cost in module 05 is for cm_techcosts == GLO.
 
 -------------------------------------
 pm_fedemand: 
@@ -68,7 +69,7 @@ pm_fedemand:
 -------------------------------------
 CAPACITY 1ST SHOT: STRATEGY
 -------------------------------------
-. = done; ! = To DO; ? = unclear; - = nothing to do
+. = done; ! = To Do; ? = unclear; - = nothing to do
 - SETS: 
   . opTimeYr2te is filled automatically from pm_data('liftetime')
   . teNoLearn if filled automatically per set difference (since not included explicitly in teLearn)
@@ -100,10 +101,13 @@ CAPACITY 1ST SHOT: STRATEGY
       - q_changeProdStartyear changes adjustment costs
           - skipped for now (should not be defined for pbs, since fe2mats is not included)
 
+! add pm_cap0 for Prcb te until we unclude it in the data above
 ! check 04 datainput and 05 preloop thoroughly
 ! check equations that where added / replaced 
 ! check actual data in _tech.prn and _vintages.prn
     ! check units for all (and how that works)
+    ? Do we want ironore and scrap to be free? (short-term fix: omv should include material cost (ironore and scrap))
+! add technologies to generisdata_tech_SSPX.prn
 
 -------------------------------------
 EFFICIENCY 1ST SHOT: STRATEGY
@@ -123,6 +127,9 @@ TODO / NEW ADDITIONS TO PLANNING DOC
 - variable eta 
 - learning / teLearn
 - use pm_histfegrowth or a different method for regionally varying vintage stock 
+- use p_inco0 for regionalized technology cost
 - smaller stuff:
-  - replace explicit sets by automatically filles sets, e.g. as with feForUe (is this the "any" operator I have been looking for?)
+  - replace explicit sets by automatically filled sets, e.g. as with feForUe (is this the "any" operator I have been looking for?)
+- use pm_histcap to set a corridor for years 2015-2025?
+- introduce material costs? 
 

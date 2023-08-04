@@ -1225,6 +1225,10 @@ $ENDIF.WindOff
         termX_lng   'Export terminals for LNG (liquification)'
         termM_lng   'Import terminals for LNG (regasification)'
         vess_lng    'Vessels transporting LNG'
+        idr          "Iron direct reduction"
+        eaf          "Electric-arc furnace"
+        bf           "Blast furnace"
+        bof          "Basic-oxygen furnace"
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /
@@ -2348,7 +2352,6 @@ Sets
 *NB* mappings resulting from set opertations
 en2en(all_enty,all_enty,all_te)  "all energy conversion mappings"
 en2en2(all_enty,all_enty,all_te) "alias of en2en: all energy conversion mappings"
-en2en_inicap(all_enty,all_enty,all_te)  "all energy conversion mappings without pbs (hotfix)"
 en2se(all_enty,all_enty,all_te)   "all energy conversion mappings producing SE"
 te2rlf(all_te,rlf)               "all technologies to grades"
 
