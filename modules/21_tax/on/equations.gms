@@ -293,9 +293,19 @@ q21_taxrevImport(t,regi,tradePe)..
   v21_taxrevImport(t,regi,tradePe)
   =e=
 *** import tax level * world market bioenergy price * bioenergy import
-  p21_tau_Import(t,regi,tradePe) * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe)
-    - p21_taxrevImport0(t,regi,tradePe)
+sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup") 
+   * pm_pvp(t,tradePe) / pm_pvp(t,"good") * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "worldPricemarkup") 
+ +
+ p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup") * 
+ max(0,(pm_taxCO2eqSum(t,regi)- sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2)))) * 
+ p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "c02taxmarkup")
++
+ p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup") * 
+ max(pm_taxCO2eqSum(t,regi), sum(regi2, pm_taxCO2eqSum(t,regi2))/(card(regi2))) * 
+ p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup") )
 ;
+
+
 
 ***---------------------------------------------------------------------------
 *'  Calculation of costs limiting the change compared to the reference run in cm_startyear.
