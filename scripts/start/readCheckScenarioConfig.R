@@ -144,8 +144,9 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
        "cm_BioImportTax_EU" = "Use more flexible cm_import_tax switch instead, see https://github.com/remindmodel/remind/issues/1157",
        "cm_trdcst" = "Now always fixed to 1.5, see https://github.com/remindmodel/remind/pull/1052",
        "cm_trdadj" = "Now always fixed to 2, see https://github.com/remindmodel/remind/pull/1052",
-       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102"
-     )
+       "cm_OILRETIRE" = "Now always on by default, see https://github.com/remindmodel/remind/pull/1102",
+       "cm_fixCO2price" = "Was never in use, removed in https://github.com/remindmodel/remind/pull/1369",
+     NULL)
     for (i in intersect(names(forbiddenColumnNames), unknownColumnNames)) {
       if (testmode) {
         warning("Column name ", i, " in remind settings is outdated. ", forbiddenColumnNames[i])
