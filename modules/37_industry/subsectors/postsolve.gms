@@ -64,7 +64,7 @@ pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
 	!! non-zero emission factors
         pm_emifac(ttot,regi,entySE2,entyFE,te,"co2")
       )
-    ) !! subsector emissions
+    ) !! subsector emissions (smokestack, i.e. including biomass & synfuels)
 
   * ( sum(secInd37_2_emiInd37(secInd37,emiInd37(emiInd37_fuel)),
         vm_emiIndCCS.l(ttot,regi,emiInd37)
