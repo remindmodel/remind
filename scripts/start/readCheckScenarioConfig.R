@@ -114,21 +114,6 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
   }
   unknownColumnNames <- names(scenConf)[! names(scenConf) %in% knownColumnNames]
   if (length(unknownColumnNames) > 0) {
-    message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
-            basename(filename), ":")
-    message("  ", paste(unknownColumnNames, collapse = ", "))
-    message("This check was added Jan. 2022. ",
-            "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
-    unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
-    if (length(unknownColumnNamesNoComments) > 0) {
-      if (testmode) {
-        warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
-      } else {
-        message("Do you want to continue and simply ignore them? Y/n")
-        userinput <- tolower(gms::getLine())
-        if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
-      }
-    }
     forbiddenColumnNames <- list(   # specify forbidden column name and what should be done with it
        "c_budgetCO2" = "Rename to c_budgetCO2from2020, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
        "c_budgetCO2FFI" = "Rename to c_budgetCO2from2020FFI, adapt emission budgets, see https://github.com/remindmodel/remind/pull/640",
@@ -157,6 +142,25 @@ readCheckScenarioConfig <- function(filename, remindPath = ".", testmode = FALSE
     if (any(names(forbiddenColumnNames) %in% unknownColumnNames)) {
       warning("Outdated column names found that must not be used.")
       errorsfound <- errorsfound + length(intersect(names(forbiddenColumnNames), unknownColumnNames))
+    }
+    # sort out known but forbidden names from unknown
+    unknownColumnNames <- setdiff(unknownColumnNames, names(forbiddenColumnNames))
+    if (length(unknownColumnNames) > 0) {
+      message("\nAutomated checks did not find counterparts in main.gms and default.cfg for these columns in ",
+              basename(filename), ":")
+      message("  ", paste(unknownColumnNames, collapse = ", "))
+      message("This check was added Jan. 2022. ",
+              "If you find false positives, add them to knownColumnNames in start/scripts/readCheckScenarioConfig.R.\n")
+      unknownColumnNamesNoComments <- unknownColumnNames[! grepl("^\\.", unknownColumnNames)]
+      if (length(unknownColumnNamesNoComments) > 0) {
+        if (testmode) {
+          warning("Unknown column names: ", paste(unknownColumnNamesNoComments, collapse = ", "))
+        } else if (errorsfound == 0) {
+          message("Do you want to continue and simply ignore them? Y/n")
+          userinput <- tolower(gms::getLine())
+          if (! userinput %in% c("y", "")) stop("Ok, so let's stop.")
+        }
+      }
     }
   }
   if (errorsfound > 0) {
