@@ -264,6 +264,35 @@ q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   * p37_FeedstockCarbonContent(ttot,regi,entyFE)
 ;
 
+*** calculate carbon contained in plastics [GtC]
+*** this is used in emissions accounting to subtract the carbon that gets sequestered in plastic products
+q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+  vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
+  * s37_plasticsShare
+;
+
+*** calculate emissions from plastics incineration
+q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+  vm_incinerationEmi(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+  * pm_incinerationRate(ttot,regi)
+; 
+
+*** calculate flow of carbon contained in chemical feedstock with unknown fate
+*** it is assumed that this carbon is re-emitted in the same timestep 
+q37_feedstockEmiUnknownFate(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+  vm_feedstockEmiUnknownFate(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    vm_FeedstocksCarbon(ttot,regi,entySE,entyFE,emiMkt)
+  * (1 - s37_plasticsShare)
+;
+
 *** in baseline runs, all industrial feedstocks should come from fossil energy
 *** carriers, no biofuels or synfuels
 q37_FossilFeedstock_Base(t,regi,entyFE,emiMkt)$(

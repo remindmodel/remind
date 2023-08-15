@@ -123,6 +123,7 @@ pm_dataeta(tall,all_regi,all_te)                            "regional eta data"
 p_emi_quan_conv_ar4(all_enty)                               "conversion factor for various gases to GtCeq"
 pm_emifac(tall,all_regi,all_enty,all_enty,all_te,all_enty)  "emission factor by technology for all types of emissions in emiTe"
 pm_emifacNonEnergy(ttot,all_regi,all_enty,all_enty,emi_sectors,all_enty)                "emission factor for non-energy fedstocks. For now only for Chemicals Industry [GtC per TWa]"
+pm_incinerationRate(ttot,all_regi)                          "share of plastic waste that gets incinerated [fraction]"
 pm_omeg (all_regi,opTimeYr,all_te)                          "technical depreciation parameter, gives the share of a capacity that is still usable after tlt. [none/share, value between 0 and 1]"
 p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter for calculating life times, calculated externally in excel sheet"
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
@@ -423,7 +424,9 @@ v_shGasLiq_fe(ttot,all_regi,emi_sectors)             "share of gases and liquids
 
 vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
-vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)     "carbon contained in chemical feedstocks [GtC]"
+vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)             "carbon contained in chemical feedstocks [GtC]"
+vm_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "carbon contained in plastics [GtC]"
+vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "carbon contained in plastics [GtC]"
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
 

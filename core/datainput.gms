@@ -1462,10 +1462,8 @@ pm_emifac(ttot,regi,"seliqfos","fepet","tdfospet","co2") = p_ef_dem(regi,"fepet"
 pm_emifac(ttot,regi,"seliqfos","fedie","tdfosdie","co2") = p_ef_dem(regi,"fedie") / (sm_c_2_co2*1000*sm_EJ_2_TWa); !! GtC/TWa
 
 ***------ Read in emission factors for process emissions in chemicals sector---
-*' will need an update after new IEA balances are integrated
 *' calculated using IEA data on feedstocks flows and UNFCCC data on chem sector process emissions
-
-***remember to remove the "*" before merging by modif the input file (fegas instead of gases, etc.)
+***TO DO: remove the "*" by modif the input file (fegas instead of gases, etc.)
 *** "non-energy emission factors [GtC per ZJ]"
 parameter f_nechem_emissionFactors(ttot,all_regi,*)  
 /
@@ -1486,6 +1484,15 @@ pm_emifacNonEnergy(ttot,regi,'sesobio','fesos','indst','co2') = f_nechem_emissio
 pm_emifacNonEnergy(ttot,regi,'segasyn','fegas','indst','co2') = f_nechem_emissionFactors(ttot,regi,"gases") / s_zj_2_twa;
 pm_emifacNonEnergy(ttot,regi,'seliqsyn','fehos','indst','co2') = f_nechem_emissionFactors(ttot,regi,"liquids") / s_zj_2_twa;
 
+***------ Read in projections for incineration rates of plastic waste---
+*** "incineration rates [fraction]"
+parameter f_incinerationShares(ttot,all_regi)  
+/
+$ondelim
+$include "./core/input/f_incinerationShares.cs4r"
+$offdelim
+/
+;
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

@@ -537,7 +537,6 @@ q_emiTeDetailMkt(t,regi,enty,enty2,te,enty3,emiMkt)$(emi2te(enty,enty2,te,enty3)
               vm_demFENonEnergySector(t,regi,enty,enty2,sector,emiMkt))
             )
           )
-*later we can add a term to represent waste incineration and the diff between using synfuels and fossil fuels as feedstocks
       )  
 ;
 ***--------------------------------------------------
@@ -579,16 +578,15 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
 		)$( sameas(enty,"co2") )
 	)$(sameas(emiMkt,"ETS"))
-*** substract carbon in feedstocks from biogenic or synthetic origin, generates negative emissions
+*** substract carbon from biogenic or synthetic origin contained in plastics ("plastic removals")
   - sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum( se2fe(entySe, entyFe, te)$(entySeBio(entySe) OR entySeSyn(entySe)),
-        vm_FeedstocksCarbon(t,regi,entySe,entyFe,emiMkt)
+        vm_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
     )
-  )$( sameas(enty,"co2") )    
+  )$( sameas(enty,"co2") )     
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)
-***  SM The CCU module will be refactored because now this is also including carbon that is sequestered in products of the chemicals sector
   + sum(teCCU2rlf(te2,rlf),
 		vm_co2CCUshort(t,regi,"cco2","ccuco2short",te2,rlf)$( sameas(enty,"co2") ) 
 	)$(sameas(emiMkt,"ETS"))
@@ -612,12 +610,15 @@ q_emiAllMkt(t,regi,emi,emiMkt)..
   + vm_emiCdr(t,regi,emi)$( sameas(emi,"co2") AND sameas(emiMkt,"ETS") ) 
     !! Exogenous emissions
   + pm_emiExog(t,regi,emi)$( sameas(emiMkt,"other") )
-    !! non energy emi from chem sector (feedstock emissions):
+    !! non energy emi from chem sector (process emissions from feedstocks):
   + sum((entyFe2sector2emiMkt_NonEn(entyFe,sector,emiMkt), 
          se2fe(entySe,entyFe,te)), 
       vm_demFENonEnergySector(t,regi,entySe,entyFe,sector,emiMkt)
     * pm_emifacNonEnergy(t,regi,entySe,entyFe,sector,emi)
     )
+    !!emissions from plastics incineration
+
+    !!emissions from chemical feedstock with unknown fate (assumed to go into the atmosphere)
 ;
 
 

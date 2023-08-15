@@ -8,6 +8,7 @@
 
 Scalar
   s37_clinker_process_CO2   "CO2 emissions per unit of clinker production"
+  s37_plasticsShare         "share of carbon cointained in feedstocks for the chemicals subsector that goes to plastics"
 ;
 
 Parameters
@@ -88,6 +89,9 @@ $endif.no_calibration
   q37_demFeFeedstockChemIndst(ttot,all_regi,all_enty,all_emiMkt)    "defines energy flow of non-energy feedstocks for the chemicals industry. It is used for emissions accounting"
   q37_FossilFeedstock_Base(ttot,all_regi,all_enty,all_emiMkt)       "in baseline runs feedstocks only come from fossil energy carriers"
   q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
+  q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics [GtC]"
+  q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in plastics that are incinerated [GtC]"
+  q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
   q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "restrict feedstocks flow to total energy flows into industry"
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
