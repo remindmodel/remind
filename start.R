@@ -354,11 +354,13 @@ if (any(c("--reprepare", "--restart") %in% flags)) {
       }
     }
     # print names of runs to be waited and subsequent runs if there are any
-    if (! start_now && ( ! "--gamscompile" %in% flags || "--interactive" %in% flags)) {
-      message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
-    }
-    if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
-      message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+    if (! "--gamscompile" %in% flags || "--interactive" %in% flags) {
+      if (! start_now) {
+        message("   Waiting for: ", paste(unique(cfg$files2export$start[path_gdx_list][! gdx_specified & ! gdx_na]), collapse = ", "))
+      }
+      if (length(rownames(cfg$RunsUsingTHISgdxAsInput)) > 0) {
+        message("   Subsequent runs: ", paste(rownames(cfg$RunsUsingTHISgdxAsInput), collapse = ", "))
+      }
     }
   }
   message("")
