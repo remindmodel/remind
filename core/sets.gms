@@ -275,7 +275,8 @@ $ENDIF.WindOff
         apCarElT        "Cars using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
         apTrnElT        "Trains using final energy electricity (FEELT) to produce useful energy as electricity for transport (UEELT)"
 ***  appCarGaT  "Cars using FEGAT to produce ESGAT."  ???
-        rockgrind       "grinding rock for enhanced weathering"
+        rockgrind       "grinding rock for enhanced weathering" !! deprecated, will be removed with CDR module refactoring
+        weathering      "enhanced weathering"
         dac             "direct air capture"
         x_gas2elec
         d_bio2elec      "d_* transmission and distribution losses"
