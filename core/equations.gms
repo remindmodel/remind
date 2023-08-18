@@ -578,12 +578,24 @@ q_emiTeMkt(t,regi,emiTe(enty),emiMkt)..
 		  vm_emiIndCCS(t,regi,emiInd37_fuel)
 		)$( sameas(enty,"co2") )
 	)$(sameas(emiMkt,"ETS"))
-*** substract carbon from biogenic or synthetic origin contained in plastics ("plastic removals")
+*** substract carbon from biogenic or synthetic origin contained in plastics that don't get incinerated ("plastic removals")
   - sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
       sum( se2fe(entySe, entyFe, te)$(entySeBio(entySe) OR entySeSyn(entySe)),
-        vm_plasticsCarbon(t,regi,entySe,entyFe,emiMkt)
+        vm_nonIncineratedPlastics(t,regi,entySe,entyFe,emiMkt)
     )
-  )$( sameas(enty,"co2") )     
+  )$( sameas(enty,"co2") )
+*** add emissions from plastics incineration. CHECK FOR DOUBLE-COUNTING RISK
+  + sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum( se2fe(entySe, entyFe, te),
+        vm_incinerationEmi(t,regi,entySe,entyFe,emiMkt)
+    )
+  )$( sameas(enty,"co2") )
+*** add emissions from chemical feedstock with unknown fate
+  + sum( entyFe2sector2emiMkt_NonEn(entyFe,"indst",emiMkt),
+      sum( se2fe(entySe, entyFe, te),
+        vm_feedstockEmiUnknownFate(t,regi,entySe,entyFe,emiMkt)
+    )
+  )$( sameas(enty,"co2") )
 ***   LP, Valve from cco2 capture step, to mangage if capture capacity and CCU/CCS capacity don't have the same lifetime
   + ( v_co2capturevalve(t,regi)$( sameas(enty,"co2") ) )$(sameas(emiMkt,"ETS"))
 ***  JS CO2 from short-term CCU (short term CCU co2 is emitted again in a time period shorter than 5 years)

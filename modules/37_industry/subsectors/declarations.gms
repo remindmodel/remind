@@ -91,8 +91,9 @@ $endif.no_calibration
   q37_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)  "calculate carbon contained in feedstocks [GtC]"
   q37_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "calculate carbon contained in plastics [GtC]"
   q37_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "calculate carbon contained in plastics that are incinerated [GtC]"
+  q37_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)    "calculate carbon contained in plastics that are not incinerated [GtC]"
   q37_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)   "calculate carbon contained in chemical feedstock with unknown fate [GtC]"
-  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)            "restrict feedstocks flow to total energy flows into industry"
+  q37_feedstocksLimit(ttot,all_regi,all_enty,all_enty,all_emiMkt)           "restrict feedstocks flow to total energy flows into industry"
 
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   q37_balMats(tall,all_regi,all_enty)                     "Balance of materials in material-flow model"

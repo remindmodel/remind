@@ -265,7 +265,6 @@ q37_FeedstocksCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
 ;
 
 *** calculate carbon contained in plastics [GtC]
-*** this is used in emissions accounting to subtract the carbon that gets sequestered in plastic products
 q37_plasticsCarbon(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
                           entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
   vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
@@ -281,7 +280,17 @@ q37_incinerationEmi(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
   =e=
     vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
   * pm_incinerationRate(ttot,regi)
-; 
+;
+
+***calculate carbon contained in non-incinerated plastics
+*** this is used in emissions accounting to subtract the carbon that gets sequestered in plastic products
+q37_nonIncineratedPlastics(ttot,regi,sefe(entySE,entyFE),emiMkt)$(
+                          entyFE2sector2emiMkt_NonEn(entyFE,"indst",emiMkt) ) ..
+  vm_nonIncineratedPlastics(ttot,regi,entySE,entyFE,emiMkt)
+  =e=
+    vm_plasticsCarbon(ttot,regi,entySE,entyFE,emiMkt)
+  * (1-pm_incinerationRate(ttot,regi))
+  ;
 
 *** calculate flow of carbon contained in chemical feedstock with unknown fate
 *** it is assumed that this carbon is re-emitted in the same timestep 

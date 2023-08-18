@@ -267,6 +267,10 @@ p37_clinker_cement_ratio(t,regi)
 *** costs have to be calculated.
 pm_CementDemandReductionCost(ttot,regi) = 0;
 
+*** Exogenous share of carbon in chemical feedstock that is embeded into plastics
+** calculated based on energy flows in REMIND, plastics production from (Geyer et.al., 2017) and stoichiometric calculations
+s37_plasticsShare = 0.629;
+
 *** FIXME calibration debug
 Parameter
   p37_arcane_FE_limits(all_in,all_in)   "minimum ratio of feelhth/feelwlth and feh2/fega (may be needed for calibration)"

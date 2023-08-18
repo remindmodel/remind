@@ -1486,13 +1486,14 @@ pm_emifacNonEnergy(ttot,regi,'seliqsyn','fehos','indst','co2') = f_nechem_emissi
 
 ***------ Read in projections for incineration rates of plastic waste---
 *** "incineration rates [fraction]"
-parameter f_incinerationShares(ttot,all_regi)  
+parameter f_incinerationShares(ttot,all_regi)         "incineration rate of plastic waste"
 /
 $ondelim
 $include "./core/input/f_incinerationShares.cs4r"
 $offdelim
 /
 ;
+pm_incinerationRate(ttot,all_regi)=f_incinerationShares(ttot,all_regi);
 
 *** some balances are not matching by small amounts;
 *** the differences are cancelled out here!!!

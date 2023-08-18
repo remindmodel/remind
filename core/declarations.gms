@@ -129,6 +129,9 @@ p_aux_lifetime(all_regi,all_te)                             "auxiliary parameter
 pm_pedem_res(ttot,all_regi,all_te)                          "Demand for pebiolc residues, needed for enhancement of residue potential [TWa]"
 p_ef_dem(all_regi,all_enty)                                 "Demand side emission factor of final energy carriers [MtCO2/EJ]"
 
+*** share of plastic waste that is incinerated REDUNDANT; DELETE ME
+pm_incinerationShares(ttot,all_regi)                        "Share of plastic waste that gets incinerated [fraction]"
+
 pm_secBioShare(ttot,all_regi,all_enty,emi_sectors)           "share of biomass per carrier for each sector"
 
 p_avCapFac2015(all_regi,all_te)                             "average capacity factor of non-bio renewables in 2015 in REMIND"
@@ -426,7 +429,10 @@ vm_emiCdrAll(ttot,all_regi)                          "all CDR emissions"
 
 vm_FeedstocksCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)             "carbon contained in chemical feedstocks [GtC]"
 vm_plasticsCarbon(ttot,all_regi,all_enty,all_enty,all_emiMkt)               "carbon contained in plastics [GtC]"
-vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "carbon contained in plastics [GtC]"
+vm_feedstockEmiUnknownFate(ttot,all_regi,all_enty,all_enty,all_emiMkt)      "carbon contained in plastics with unknown fate (assumed to go back into the atmosphere) [GtC]"
+vm_incinerationEmi(ttot,all_regi,all_enty,all_enty,all_emiMkt)              "Emissions from incineration of plastic waste [GtC]"
+vm_nonIncineratedPlastics(ttot,all_regi,all_enty,all_enty,all_emiMkt)       "carbon contained in plastics that are not incinerated [GtC]"
+
 v_changeProdStartyearAdj(ttot,all_regi,all_te)       "Absolute effect size of changing output with respect to the reference run for each te"
 vm_changeProdStartyearCost(ttot,all_regi,all_te)     "Costs for changing output with respect to the reference run for each te"
 
