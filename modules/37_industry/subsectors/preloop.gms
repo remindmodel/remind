@@ -10,4 +10,3 @@
 pm_IndstCO2Captured(t,regi,entySe,entyFe,secInd37,emiMkt) = 0;
 
 *** EOF ./modules/37_industry/subsectors/preloop.gms
-

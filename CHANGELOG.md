@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **config** regex tests for many parameters
 - **testthat** test and compile all config files
 
+### fixed
+- fixed weights of energy carriers in `pm_IndstCO2Captured`
+    [[#1354](https://github.com/remindmodel/remind/pull/1354)]
+
 ## [3.2.1] - 2023-07-13 (incomplete)
 
 ### changed

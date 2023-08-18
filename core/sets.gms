@@ -2315,7 +2315,7 @@ alias(te,te2,te3);
 alias(all_enty,all_enty2);
 alias(enty,enty2,enty3,enty4,enty5,enty6,enty7);
 alias(entyPE,entyPE2);
-alias(entySe,entySe2);
+alias(entySE,entySE2);
 alias(entyFe,entyFe2);
 alias(teEs,teEs2);
 alias(esty,esty2);
