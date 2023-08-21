@@ -42,17 +42,6 @@ o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
     * vm_demFeSector_afterTax.l(ttot,regi,entySe,entyFe,"indst",emiMkt)
   );
 
-*** FE per subsector whose emissions can be captured (helper parameter for 
-*** calculation of industry captured CO2 below)
-*** NOTE: not used for pm_IndstCO2Captured anymore since it did not take into
-*** account the different emission factors of FE carriers.  But used in remind2,
-*** so kept for backwards compatibility.
-o37_demFeIndSub_SecCC(ttot,regi,secInd37)
-  = sum((se2fe(entySe,entyFe,te),macBaseInd37(entyFe,secInd37),
-                                 sector2emiMkt("indst",emiMkt)),
-      o37_demFeIndSub(ttot,regi,entySe,entyFe,secInd37,emiMkt)
-    );
-
 *** industry captured fuel CO2
 pm_IndstCO2Captured(ttot,regi,entySE,entyFE(entyFEcc37),secInd37,emiMkt)$(
                      macBaseInd37(entyFE,secInd37)
