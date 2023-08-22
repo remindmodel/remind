@@ -114,14 +114,25 @@ p36_CESMkup(t,regi,"feelhpb") = 200 * sm_TWa_2_MWh * 1e-12;
 *` which makes district heating in buildings more expensive than in industry
 p36_CESMkup(t,regi,"feheb") = 25 * sm_TWa_2_MWh * 1e-12;
 
+
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_build
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p36_CESMkup_policy_phasein(t) = 0;
+p36_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p36_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
+
 *` overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_build%" == "standard"
+
   p36_CESMkup(t,regi,in)$(p36_CESMkup_input(in)
-                          AND ppfen_MkupCost36(in)) =
-    p36_CESMkup_input(in);
+                          AND ppfen_MkupCost36(in)) = 
+    p36_CESMkup(t,regi,in) + p36_CESMkup_policy_phasein(t) * (p36_CESMkup_input(in) - p36_CESMkup(t,regi,in));
+
   pm_tau_ces_tax(t,regi,in)$(p36_CESMkup_input(in)
                              AND (NOT ppfen_MkupCost36(in))) =
-    p36_CESMkup_input(in);
+    pm_tau_ces_tax(t,regi,in) + p36_CESMkup_policy_phasein(t) * (p36_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 $endIf.CESMkup
 
 display p36_CESMkup;
