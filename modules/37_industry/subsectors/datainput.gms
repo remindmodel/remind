@@ -445,10 +445,24 @@ pm_tau_ces_tax(t,regi,"feh2_steel") = 50* sm_TWa_2_MWh * 1e-12;
 pm_tau_ces_tax(t,regi,"feh2_cement") = 100* sm_TWa_2_MWh * 1e-12;
 
 
+
+*` temporal phase-in of mark-up cost changes defined by cm_CESMkup_ind
+*` no changes to mark-up cost before 2025, then gradual phase-in until 2040
+p37_CESMkup_policy_phasein(t) = 0;
+p37_CESMkup_policy_phasein(t)$(t.val ge 2040) = 1;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2035) = 1/2;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2030) = 1/4;
+p37_CESMkup_policy_phasein(t)$(t.val eq 2025) = 1/8;
+
 *` overwrite or extent CES markup cost if specified by switch
 $ifThen.CESMkup not "%cm_CESMkup_ind%" == "standard"
-  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) AND ppfen_MkupCost37(in)) = p37_CESMkup_input(in);
-  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) AND (NOT ppfen_MkupCost37(in))) = p37_CESMkup_input(in);
+  p37_CESMkup(t,regi,in)$(p37_CESMkup_input(in) 
+                            AND ppfen_MkupCost37(in)) = 
+    p37_CESMkup(t,regi,in) + p37_CESMkup_policy_phasein(t) * (p37_CESMkup_input(in) - p37_CESMkup(t,regi,in));
+
+  pm_tau_ces_tax(t,regi,in)$(p37_CESMkup_input(in) 
+                              AND (NOT ppfen_MkupCost37(in))) =
+    pm_tau_ces_tax(t,regi,in) + p37_CESMkup_policy_phasein(t) * (p37_CESMkup_input(in) - pm_tau_ces_tax(t,regi,in));
 $endIf.CESMkup
 
 display p37_CESMkup;

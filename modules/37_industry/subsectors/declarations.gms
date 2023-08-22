@@ -22,6 +22,7 @@ Parameters
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
   p37_BAU_industry_ETS_solids(tall,all_regi)                                   "industry solids demand in baseline scenario"
   p37_cesIO_baseline(tall,all_regi,all_in)                                     "vm_cesIO from the baseline scenario"
+  p37_CESMkup_policy_phasein(ttot)                                             "parameter to define temporal phase-in of CES mark-up cost changes via switch cm_CESMkup_ind"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 **p37_specMatsDem(mats,all_te,opModes)                                         "Specific materials demand of a production technology and operation mode [t_input/t_output]"
 **p37_specFeDem(all_enty,all_te,opModes)                                       "Specific final-energy demand of a production technology and operation mode [MWh/t_output]"
