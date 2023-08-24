@@ -16,7 +16,7 @@ Parameters
   p37_energy_limit_slope(tall,all_regi,all_in)                                 "limit for subsector specific energy demand that converges towards the thermodynamic/technical limit [GJ/t product]"
   p37_clinker_cement_ratio(ttot,all_regi)                                      "clinker content per unit cement used"
   pm_ue_eff_target(all_in)                                                     "energy efficiency target trajectories [% p.a.]"
-  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market"
+  pm_IndstCO2Captured(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)     "Captured CO2 in industry by energy carrier, subsector and emissions market [GtC/a]"
   p37_CESMkup(ttot,all_regi,all_in)                                            "parameter for those CES markup cost accounted as investment cost in the budget [trUSD/CES input]"
   p37_cesIO_up_steel_secondary(tall,all_regi,all_GDPscen)                      "upper limit to secondary steel production based on scrap availability"
   p37_steel_secondary_max_share(tall,all_regi)                                 "maximum share of secondary steel production"
@@ -34,7 +34,6 @@ $endif.process_based_steel
   o37_demFeIndTotEn(ttot,all_regi,all_enty,all_emiMkt)                   "total FE per energy carrier and emissions market in industry (sum over subsectors)"
   o37_shIndFE(ttot,all_regi,all_enty,secInd37,all_emiMkt)                "share of subsector in FE industry energy carriers and emissions markets"
   o37_demFeIndSub(ttot,all_regi,all_enty,all_enty,secInd37,all_emiMkt)   "FE demand per industry subsector"
-  o37_demFeIndSub_SecCC(ttot,all_regi,secInd37)                          "FE per subsector whose emissions can be captured, helper parameter for calculation of industry captured CO2"
 $ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
   o37_demFePrcb(ttot,all_regi,all_enty,all_te,opModesPrcb)               "Process-based FE demand per FE type and process"
 $endif.process_based_steel
@@ -83,4 +82,3 @@ $endif.process_based_steel
 ;
 
 *** EOF ./modules/37_industry/subsectors/declarations.gms
-

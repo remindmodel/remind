@@ -18,6 +18,7 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
   require(gdx)
   library(methods)
   library(remind2)
+  source("scripts/start/combine_slurmConfig.R")
 
   errorsfound <- 0
   # delete entries in stack that contain needle and append new
@@ -123,7 +124,11 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
       } else {
         stop("### COUPLING ### REMIND didn't produce any gdx. Coupling iteration stopped!")
       }
-      # combine REMIND and MAgPIE reports of last coupling iteration (and REMIND water reporting if existing)
+
+      # In the coupling, at the end of each REMIND run, report.R already automatically appends the MAgPIE
+      # report of the previous MAgPIE run to the normal REMIND_generic reporting.
+      # After the last coupling iteration: read this combined report from the REMIND output folder, set the 
+      # model name to 'REMIND-MAgPIE' and write the combined report directly to the 'output' folder.
       report_rem <- file.path(path_remind, outfolder_rem, paste0("REMIND_generic_", cfg_rem$title, ".mif"))
       if (i == max_iterations) {
         # Replace REMIND and MAgPIE with REMIND-MAgPIE and write directly to output folder
@@ -250,10 +255,10 @@ start_coupled <- function(path_remind, path_magpie, cfg_rem, cfg_mag, runname, m
           sq <- system(paste0("squeue -u ", Sys.info()[["user"]], " -o '%q %j' | grep -v ", fullrunname), intern = TRUE)
           subseq.env$qos <- if (is.null(attr(sq, "status")) && sum(grepl("^priority ", sq)) < 4) "priority" else "short"
         }
-        subsequentcommand <- paste0("sbatch --qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
-        " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
-        if (subseq.env$numberOfTasks == 1) " --mem=8000",
-        " ", subseq.env$sbatch, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
+        slurmOptions <- combine_slurmConfig(paste0("--qos=", subseq.env$qos, " --job-name=", subseq.env$fullrunname, " --output=", logfile,
+           " --mail-type=END --comment=REMIND-MAgPIE --tasks-per-node=", subseq.env$numberOfTasks,
+          if (subseq.env$numberOfTasks == 1) " --mem=8000"), subseq.env$sbatch)
+        subsequentcommand <- paste0("sbatch ", slurmOptions, " --wrap=\"Rscript start_coupled.R coupled_config=", RData_file, "\"")
         message(subsequentcommand)
         if (length(needfulldatagdx) > 0) {
           exitCode <- system(subsequentcommand)
