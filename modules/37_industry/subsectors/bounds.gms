@@ -89,9 +89,19 @@ $endif.CES_parameters
 vm_cesIO.fx("2005",regi,ppfkap_industry_dyn37(in))
   = pm_cesdata("2005",regi,in,"quantity");
 
-vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$( 
+vm_cesIO.lo(t,regi_dyn29(regi),in_industry_dyn37(in))$(
                                                   0 eq vm_cesIO.lo(t,regi,in) )
   = sm_eps;
+
+$ontext
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
+vm_cesIO.fx(ttot,regi,in_pbs_37(in))$(
+            ttot.val gt 2005
+            AND NOT sameas(in,"ue_steel_primary")
+            AND NOT sameas(in,"ue_steel_secondary"))
+  = 0.;
+$endif.process_based_steel
+$offtext
 
 *' Limit biomass solids use in industry to 25% (or historic shares, if they are higher)
 *' of baseline solids
