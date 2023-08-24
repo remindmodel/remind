@@ -51,7 +51,7 @@ check-fix:       ## Check if the GAMS code follows the coding etiquette
 test:            ## Test if the model compiles and runs without running a full
                  ## scenario. Tests take about 10 minutes to run.
 	$(info Tests take about 10 minutes to run, please be patient)
-	@R_PROFILE_USER= Rscript -e 'testthat::test_dir("tests/testthat")'
+	@R_PROFILE_USER= Rscript -e 'invisible(gms::codeCheck(strict = TRUE)); testthat::test_dir("tests/testthat")'
 
 test-coupled:    ## Test if the coupling with MAgPIE works. Takes significantly
                  ## longer than 60 minutes to run and needs slurm and magpie
@@ -69,4 +69,4 @@ test-full:       ## Run all tests, including coupling tests and a default
 	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat")'
 test-validation: ## Run validation tests, requires a full set of runs in the output folder
 	$(info Run validation tests, requires a full set of runs in the output folder)
-	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'	
+	@R_PROFILE_USER= TESTTHAT_RUN_SLOW=TRUE Rscript -e 'testthat::test_dir("tests/testthat/validation")'
