@@ -132,11 +132,25 @@ q37_macBaseInd(ttot,regi,entyFE,secInd37)$( ttot.val ge cm_startyear ) ..
   =e=
     sum((secInd37_2_pf(secInd37,ppfen_industry_dyn37(in)),
          fe2ppfen(entyFECC37(entyFE),in)),
-      vm_cesIO(ttot,regi,in)
+    (
+         vm_cesIO(ttot,regi,in)
     * sum(se2fe(entySEfos,entyFE,te),
         pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
-      )
+      ) )$((NOT secInd37Prcb(secInd37)) OR sameas(ttot,"2005"))
     )
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
+  +
+  ( sum((secInd37_tePrcb(secInd37Prcb,tePrcb),tePrcb2opModesPrcb(tePrcb,opModesPrcb)),
+    p37_specFEDem(entyFE,tePrcb,opModesPrcb)
+    *
+    v37_prodVolPrcb(ttot,regi,tePrcb,opModesPrcb)
+     )    
+   * 
+  sum(se2fe(entySEfos,entyFE,te),
+        pm_emifac(ttot,regi,entySEfos,entyFE,te,"co2")
+      )
+  )$(NOT sameas(ttot,"2005"))
+$endif.process_based_steel
 ;
 
 ***------------------------------------------------------
