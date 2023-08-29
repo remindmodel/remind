@@ -101,13 +101,14 @@ CAPACITY 1ST SHOT: STRATEGY
       - q_changeProdStartyear changes adjustment costs
           - skipped for now (should not be defined for pbs, since fe2mats is not included)
 
-! add pm_cap0 for Prcb te until we unclude it in the data above
 ! check 04 datainput and 05 preloop thoroughly
-! check equations that where added / replaced 
 ! check actual data in _tech.prn and _vintages.prn
     ! check units for all (and how that works)
     ? Do we want ironore and scrap to be free? (short-term fix: omv should include material cost (ironore and scrap))
 ! add technologies to generisdata_tech_SSPX.prn
+
+! check pm_regiEarlyRetiRate
+! make sure baseline works
 
 -------------------------------------
 EFFICIENCY 1ST SHOT: STRATEGY
