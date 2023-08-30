@@ -1226,10 +1226,12 @@ $ENDIF.WindOff
         termX_lng   'Export terminals for LNG (liquification)'
         termM_lng   'Import terminals for LNG (regasification)'
         vess_lng    'Vessels transporting LNG'
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
         idr          "Iron direct reduction"
         eaf          "Electric-arc furnace"
         bf           "Blast furnace"
         bof          "Basic-oxygen furnace"
+$endif.process_based_steel
 /
 teAdj(all_te)           "technologies with adjustment costs on capacity additions"
 /

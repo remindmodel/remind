@@ -107,7 +107,7 @@ CAPACITY 1ST SHOT: STRATEGY
     ? Do we want ironore and scrap to be free? (short-term fix: omv should include material cost (ironore and scrap))
 ! add technologies to generisdata_tech_SSPX.prn
 
-! check pm_regiEarlyRetiRate
+! check pm_regiEarlyRetiRate: currently set as default - 0.15 in EUR, 0.09 everywhere else
 ! make sure baseline works
 
 -------------------------------------

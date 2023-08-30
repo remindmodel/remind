@@ -94,9 +94,11 @@ q_costOM(t,regi)..
     pm_data(regi,"omv",te)
       * (vm_prodSe(t,regi,enty,enty2,te)$entySe(enty2)
          + vm_prodFe(t,regi,enty,enty2,te)$entyFe(enty2)
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
          + sum(tePrcb2opModesPrcb(tePrcb(te),opModesPrcb),
                v37_prodVolPrcb(t,regi,te,opModesPrcb)
                )
+$endif.process_based_steel
         )
   )
   +

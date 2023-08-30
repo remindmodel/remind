@@ -177,6 +177,7 @@ incolearn                      14000
 ccap0                         0.0008
 learn                           0.15
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 +                     bf         bof         idr         eaf
 tech_stat
 inco0              500.0       100.0       700.0       200.0
@@ -185,6 +186,7 @@ eta                 1.00        1.00        1.00        1.00
 omf                  0.1         0.1         0.1        0.05
 omv                    0           0           0           0
 lifetime              20          20          20          20
+$endif.process_based_steel
 
 
 

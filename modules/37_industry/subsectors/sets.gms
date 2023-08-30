@@ -7,15 +7,17 @@
 *** SOF ./modules/37_industry/subsectors/sets.gms
 
 Sets
-$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   tePrcb(all_te)        "Technologies used in material-flow model"
   /
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
     bf                  "Blast furnace"
     bof                 "Basic oxygen furnace"
     eaf                 "Electric-arc furnace"
     idr                 "Iron direct reduction"
+$endif.process_based_steel
   /
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm_process_based_steel
   mats(all_enty)        "Materials considered in material-flow model"
   /
     prsteel             "Primary steel"
@@ -101,15 +103,6 @@ $ifthen.process_based_steel "%cm_process_based_steel%" == "on"             !! cm
     eaf . sec . seceaf
     bf  . standard . bfbof
     bof . unheated . bfbof
-  /
-
-  tePrcb2route2ue(tePrcb,opModesPrcb,routes,all_in)    "Mapping of technologies onto route"
-  /
-    idr . (h2,ng) . idreaf . ue_steel_primary
-    eaf . pri . idreaf . ue_steel_primary
-    eaf . sec . seceaf . ue_steel_secondary
-    bf  . standard . bfbof . ue_steel_primary
-    bof . unheated . bfbof . ue_steel_primary
   /
 
   uePrcb(all_in) "Ue ces tree nodes connected to process based implementation"

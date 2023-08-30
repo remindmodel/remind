@@ -172,6 +172,7 @@ $offtext
 31       1.0
 36       1.0
 
+$ifthen.process_based_steel "%cm_process_based_steel%" == "on"                 !! cm_process_based_steel
 +         bf           bof           idr          eaf
 1        1.0           1.0           1.0          1.0
 6        1.0           1.0           1.0          1.0
@@ -181,6 +182,7 @@ $offtext
 26       1.0           1.0           1.0          1.0
 31       1.0           1.0           1.0          1.0
 36       1.0           1.0           1.0          1.0
+$endif.process_based_steel
 
 
 *** EOF ./core/input/generisdata_vintages.prn
