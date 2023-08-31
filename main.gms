@@ -1143,7 +1143,7 @@ $setglobal cm_rcp_scen  none         !! def = "none"
 *' *  (2021_uncond): all NDCs independent of international financial support published until December 31, 2021
 *' *  (2018_cond):   all NDCs conditional to international financial support published until December 31, 2018
 *' *  (2018_uncond): all NDCs independent of international financial support published until December 31, 2018
-$setglobal cm_NDC_version  2023_cond    !! def = "2023_cond", "2023_uncond", "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
+$setglobal cm_NDC_version  2022_cond    !! def = "2023_cond", "2023_uncond", "2022_cond", "2022_uncond", "2021_cond", "2021_uncond", "2018_cond", "2018_uncond"
 *** cm_netZeroScen     "choose scenario of net zero targets of netZero realization of module 46_carbonpriceRegi"
 ***  (NGFS_v4):        settings used for NGFS v4, 2023
 ***  (NGFS_v4_20pc):   settings used for NGFS v4, 2023, with still 20% of 2020 emissions in netZero year
