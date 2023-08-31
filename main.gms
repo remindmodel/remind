@@ -1116,6 +1116,11 @@ parameter
 ;
   c_changeProdCost = 5; !! def 5
 *'
+parameter
+  cm_LearningSpillover      "Activate Learningspillover from foreign capacity in learning technogolies"
+;
+  cm_LearningSpillover = 1; !! def 1 = Learningspillover activated (set to 0 to deactivate)
+*'
 ***-----------------------------------------------------------------------------
 *' ####                     FLAGS
 ***-----------------------------------------------------------------------------
