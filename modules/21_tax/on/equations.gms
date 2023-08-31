@@ -305,6 +305,33 @@ sum(tax_import_type_21, p21_tau_Import(t, regi, tradePe, tax_import_type_21)$sam
  p_cintraw(tradePe) * vm_Mport(t,regi,tradePe) - p21_taxrevImport0(t,regi,tradePe,tax_import_type_21)$sameas(tax_import_type_21, "avC02taxmarkup") )
 ;
 
+***-------------------------------------------
+*' SF: revenue recycling of CO2tax to RE investments: 
+*' investments in renewables are those of reference scenario with tax and no revenue recycling 
+*' and the revenues received from the tax
+***-------------------------------------------------------
+
+$ifthen.importtaxrc %cm_taxrc_RE% == "REdirect"
+q21_rc_tau_import_RE(t,regi)..                       
+  sum(en2en(enty,enty2,te)$(teVRE(te)),
+      v_costInvTeDir(t,regi,te) + v_costInvTeAdj(t,regi,te)$teAdj(te) 
+  )
+  +
+  sum(teNoTransform,
+    v_costInvTeDir(t,regi,teNoTransform) + v_costInvTeAdj(t,regi,teNoTransform)$teAdj(teNoTransform)
+  )
+=g= 
+  sum(tradePE, v21_taxrevImport(t,regi,tradePe))        
+  +
+  sum(en2en(enty,enty2,te)$(teVRE(te)),
+      p47_ref_costInvTeDir_RE(t,regi,te) + p47_ref_costInvTeAdj_RE(t,regi,te)$teAdj(te)  !! Reference VRE investment
+  )
+  +
+  sum(teNoTransform,
+    p47_ref_costInvTeDir_RE(t,regi,teNoTransform) + p47_ref_costInvTeAdj_RE(t,regi,teNoTransform)$teAdj(teNoTransform)  !! Reference grid + storage investment
+  )
+;
+$endif.importtaxrc
 
 
 ***---------------------------------------------------------------------------

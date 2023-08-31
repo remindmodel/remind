@@ -76,6 +76,12 @@ Parameter
 ;
 $endif.import
 
+$ifthen.importtaxrc %cm_taxrc_RE% == "REdirect"
+Parameters 
+  p47_ref_costInvTeDir_RE(ttot,all_regi,all_te)                                  "RE direct investment volume in reference scenario"
+  p47_ref_costInvTeAdj_RE(ttot,all_regi,all_te)                                  "RE adjustment cost investment volume in reference scenario"
+;
+$endif.importtaxrc
 
 $ifthen.fetax not "%cm_FEtax_trajectory_abs%" == "off" 
 Parameters
